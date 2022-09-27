@@ -95,7 +95,7 @@ import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 // a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
 // concerning axis range control
 import { NumberOrDateRange } from '../../../types/general';
@@ -359,11 +359,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'showMissingness',
     true,
     true
-  );
-
-  // for vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
@@ -814,10 +809,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.valueSpecConfig,
   ]);
 
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+      vizConfig.checkedLegendItems,
+    updateVizConfig
   );
 
   const legendTitle = useMemo(() => {
@@ -1351,8 +1347,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={legendTitle}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       showOverlayLegend={showOverlayLegend}
     />
   );

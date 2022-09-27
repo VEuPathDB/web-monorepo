@@ -73,7 +73,7 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
 // concerning axis range control
 import {
@@ -279,11 +279,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
     true
   );
 
-  // for custom legend: vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
-  );
-
   const findEntityAndVariable = useFindEntityAndVariable();
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
@@ -487,11 +482,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+      vizConfig.checkedLegendItems,
+    updateVizConfig
   );
 
   // axis range control
@@ -917,8 +912,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
       <PlotLegend
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
+        onCheckedLegendItemsChange={setCheckedLegendItems}
         legendTitle={histogramProps.legendTitle}
-        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
         // add a condition to show legend even for single overlay data and check legendItems exist
         showOverlayLegend={showOverlayLegend}
       />

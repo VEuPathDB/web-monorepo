@@ -90,7 +90,7 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
@@ -408,11 +408,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     true
   );
 
-  // for vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
-  );
-
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
     true,
@@ -702,11 +697,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems: not working well with plot options
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+      vizConfig.checkedLegendItems,
+    updateVizConfig
   );
 
   const areRequiredInputsSelected = useMemo(() => {
@@ -1249,8 +1244,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={legendTitle}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
       showOverlayLegend={showOverlayLegend}
     />

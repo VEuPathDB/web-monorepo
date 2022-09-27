@@ -19,7 +19,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
-import { InputSpec, InputVariables } from '../InputVariables';
+import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
@@ -58,7 +58,7 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { useVizConfig } from '../../../hooks/visualizations';
 
 // concerning axis range control
@@ -274,11 +274,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     true
   );
 
-  // for custom legend: vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
-  );
-
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   // Abundance boxplots already know their entity, x, and y vars. If we're in the abundance app, set
   // the output entity here so that the boxplot can appear on load.
@@ -477,11 +472,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+      vizConfig.checkedLegendItems,
+    updateVizConfig
   );
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
@@ -556,8 +551,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={overlayLabel}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
       showOverlayLegend={showOverlayLegend}
     />
