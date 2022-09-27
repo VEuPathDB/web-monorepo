@@ -240,11 +240,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     true
   );
 
-  // for custom legend: vizconfig.checkedLegendItems
-  // const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-  //   'checkedLegendItems'
-  // );
-
   const providedOverlayVariable = options?.getOverlayVariable?.(
     computation.descriptor.configuration
   );
@@ -420,13 +415,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
         })
       : [];
   }, [data]);
-
-  // set checkedLegendItems
-  // const checkedLegendItems = useCheckedLegendItemsStatus(
-  //   legendItems,
-  //   options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-  //     vizConfig.checkedLegendItems
-  // );
 
   const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
