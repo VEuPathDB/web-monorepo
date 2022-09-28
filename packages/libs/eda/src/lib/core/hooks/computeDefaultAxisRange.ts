@@ -47,10 +47,14 @@ export function useDefaultAxisRange(
 
       // 4 significant figures
       if (
-        Variable.is(variable) &&
-        (variable.type === 'number' || variable.type === 'integer') &&
-        typeof defaultRange?.min === 'number' &&
-        typeof defaultRange?.max === 'number'
+        // consider computed variable as well
+        (Variable.is(variable) &&
+          (variable.type === 'number' || variable.type === 'integer') &&
+          typeof defaultRange?.min === 'number' &&
+          typeof defaultRange?.max === 'number') ||
+        (ComputedVariableMetadata.is(variable) &&
+          typeof defaultRange?.min === 'number' &&
+          typeof defaultRange?.max === 'number')
       )
         return {
           min: numberSignificantFigures(defaultRange.min, 4, 'down'),

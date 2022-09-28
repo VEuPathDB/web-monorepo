@@ -147,17 +147,25 @@ export function numberDateDefaultAxisRange(
     variable.displayRangeMin != null &&
     variable.displayRangeMax != null
   ) {
-    // TO DO: checked for plotName=='scatterplot' previously - do we need to do this still?
-    return {
-      min: min([
-        // computedVariableMetadata.displayRangeMin/Max are strings
-        Number(variable.displayRangeMin),
-        Number(observedMin),
-      ]) as number,
-      max: max([
-        Number(variable.displayRangeMax),
-        Number(observedMax),
-      ]) as number,
-    };
+    return axisValueSpec === 'Full'
+      ? {
+          min: logScale
+            ? (observedMinPos as number)
+            : (min([
+                // computedVariableMetadata.displayRangeMin/Max are strings
+                Number(variable.displayRangeMin),
+                Number(observedMin),
+              ]) as number),
+          max: max([
+            Number(variable.displayRangeMax),
+            Number(observedMax),
+          ]) as number,
+        }
+      : {
+          min: logScale
+            ? (observedMinPos as number)
+            : (Number(observedMin) as number),
+          max: Number(observedMax) as number,
+        };
   } else return undefined;
 }
