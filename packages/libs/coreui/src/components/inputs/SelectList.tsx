@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import PopoverButton from "../buttons/PopoverButton/PopoverButton";
 import CheckboxList, { CheckboxListProps } from "./checkboxes/CheckboxList";
   
@@ -21,9 +21,18 @@ export default function SelectList({
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
 
     const onClose = () => {
-        onChange(selected)
+        onChange(selected);
         setButtonDisplayContent(selected.length ? selected.join(', ') : defaultButtonDisplayContent);
     }
+
+    /**
+     * Need to ensure that the state syncs with parent component in the event of an external
+     * clearSelection button, as is the case in EDA's line plot controls
+     */
+    useEffect(() => {
+        setSelected(value);
+        setButtonDisplayContent(value.length ? value.join(', ') : defaultButtonDisplayContent);
+    }, [value, defaultButtonDisplayContent])
 
     const buttonLabel = (
         <span
