@@ -3,6 +3,7 @@ import { CheckboxList } from '@veupathdb/wdk-client/lib/Components';
 import { isEqual, sortBy } from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
+import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 
 export type ValuePickerProps = {
   allowedValues?: string[];
@@ -70,7 +71,7 @@ export function ValuePicker({
       placement="top"
       arrow={true}
     >
-      <div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <PopoverButton key={selectedValuesSerialNumber} label={label}>
           <div style={{ padding: '.75em 0.25em 0.25em' }}>
             <CheckboxList
@@ -111,6 +112,11 @@ export function ValuePicker({
             </Button>
           </div>
         </PopoverButton>
+        <ClearSelectionButton
+          onClick={() => onSelectedValuesChange([])}
+          disabled={selectedValues.length === 0}
+          style={{ marginLeft: 8, position: 'relative', top: 1 }}
+        />
       </div>
     </Tooltip>
   );
