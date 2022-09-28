@@ -108,7 +108,12 @@ import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useFlattenedConstraints,
+  useNeutralPaletteProps,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
@@ -119,6 +124,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -239,16 +245,50 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     computation.descriptor.configuration
   );
 
-  const providedOverlayVariable = options?.getOverlayVariable?.(
-    computation.descriptor.configuration
+  const providedOverlayVariableDescriptor = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
   );
-  // moved the location of this findEntityAndVariable
+
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    yAxisVariable: vizConfig.yAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const flattenedConstraints = useFlattenedConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities
+  );
+
+  useProvidedOptionalVariable<ScatterplotConfig>(
+    options?.getOverlayVariable,
+    'overlayVariable',
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    entities,
+    flattenedConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    updateVizConfig,
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
+  );
+
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable();
 
   const {
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
@@ -258,15 +298,16 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(
-        providedOverlayVariable ?? vizConfig.overlayVariable
-      ) ?? {};
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: providedOverlayVariable } =
+      findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      providedOverlayVariable,
       overlayEntity,
       facetVariable,
       facetEntity,
@@ -277,7 +318,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
-    providedOverlayVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   // set the state of truncation warning message
@@ -450,7 +491,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           valueSpec: valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: providedOverlayVariable ?? vizConfig.overlayVariable,
+          overlayVariable: vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
             : [],
@@ -510,7 +551,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         facetVariable,
         // pass computation
         computation,
-        entities
+        entities,
+        neutralPaletteProps.colorPalette
       );
     }, [
       vizConfig.xAxisVariable,
@@ -582,6 +624,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
+    const palette = neutralPaletteProps.colorPalette ?? ColorPaletteDefault;
+
     const allData = data.value?.dataSetProcess;
 
     /**
@@ -623,7 +667,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     const legendLabelColor = legendLabel?.map((label, index) => {
       return {
         label: label,
-        color: ColorPaletteDefault[index],
+        color: palette[index],
       };
     });
 
@@ -783,7 +827,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                         .filter((n: string) => n !== '')
                         .toString()
                     : '#ffffff' // just set not to be empty
-                  : ColorPaletteDefault[0], // set first color for no overlay variable selected
+                  : palette[0], // set first color for no overlay variable selected
               // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
               hasData: !isFaceted(allData)
                 ? dataItem.y != null &&
@@ -812,12 +856,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable,
     vizConfig.showMissingness,
     vizConfig.valueSpecConfig,
+    neutralPaletteProps,
   ]);
 
+  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined
   );
 
   const legendTitle = useMemo(() => {
@@ -885,7 +934,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     plotContainerStyles,
     [
       data,
-      checkedLegendItems,
+      vizConfig.checkedLegendItems,
       vizConfig.independentAxisRange,
       vizConfig.dependentAxisRange,
       vizConfig.independentAxisLogScale,
@@ -1004,6 +1053,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
       : undefined,
+    // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
   const plotNode = (
@@ -1471,13 +1521,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                     name: 'overlayVariable',
                     label: 'Overlay',
                     role: 'stratification',
+                    providedOptionalVariable: providedOverlayVariableDescriptor,
                     readonlyValue:
                       options?.getOverlayVariable != null
-                        ? providedOverlayVariable
-                          ? legendTitle
-                          : 'none'
+                        ? providedOverlayVariableDescriptor
+                          ? variableDisplayWithUnit(providedOverlayVariable)
+                          : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
                         : undefined,
-                    // TO DO: verbiage for 'none'
                   } as const,
                 ]),
             ...(options?.hideFacetInputs
@@ -1491,12 +1541,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            yAxisVariable: vizConfig.yAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -1586,7 +1631,8 @@ export function scatterplotResponseToData(
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
   computation?: Computation,
-  entities?: StudyEntity[]
+  entities?: StudyEntity[],
+  colorPaletteOverride?: string[]
 ): ScatterPlotDataWithCoverage {
   const modeValue = 'markers';
 
@@ -1634,7 +1680,8 @@ export function scatterplotResponseToData(
       // pass computation here to add conditions for apps
       computation,
       response.scatterplot.config.computedVariableMetadata,
-      entities
+      entities,
+      colorPaletteOverride
     );
 
     return {
@@ -1704,7 +1751,8 @@ function processInputData<T extends number | string>(
   facetVariable?: Variable,
   computation?: Computation,
   computedVariableMetadata?: ComputedVariableMetadata,
-  entities?: StudyEntity[]
+  entities?: StudyEntity[],
+  colorPaletteOverride?: string[]
 ) {
   // set variables for x- and yaxis ranges: no default values are set
   let xMin: number | string | undefined;
@@ -1734,19 +1782,21 @@ function processInputData<T extends number | string>(
 
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
+    const palette = colorPaletteOverride ?? ColorPaletteDefault;
     if (showMissingness && index === responseScatterplotData.length - 1) {
       return gray;
     } else {
-      return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
+      return palette[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
 
   // using dark color: function to return color or gray where needed if showMissingness == true
   const markerColorDark = (index: number) => {
+    const palette = colorPaletteOverride ?? ColorPaletteDark;
     if (showMissingness && index === responseScatterplotData.length - 1) {
       return gray;
     } else {
-      return ColorPaletteDark[index] ?? 'black'; // TO DO: decide on overflow behaviour
+      return palette[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
 

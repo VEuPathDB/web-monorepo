@@ -134,9 +134,9 @@ interface VariableListProps {
   customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
   startExpanded?: boolean;
   asDropdown?: boolean;
-  clearSelectionButton?: ReactNode;
   dropdownLabel?: string;
   scope?: VariableScope;
+  clearSelectionButton?: ReactNode;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -162,9 +162,9 @@ export default function VariableList({
   customCheckboxes,
   startExpanded,
   asDropdown,
-  clearSelectionButton,
   dropdownLabel,
   scope,
+  clearSelectionButton,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -715,6 +715,10 @@ export default function VariableList({
     <div
       style={{
         position: 'relative',
+        display: 'flex',
+        columnGap: '0.5em',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
       }}
     >
       <SelectTree
@@ -722,27 +726,25 @@ export default function VariableList({
         {...sharedProps}
         buttonDisplayContent={dropdownLabel}
         wrapPopover={(treeSection) => (
-          <>
-            {clearSelectionButton}
-            <div
-              style={{
-                position: 'relative',
-                borderRadius: '0.25em',
-                padding: '0.5em 0.5em 0.5em 0',
-                height: '60vh',
-                width: '30em',
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              {renderDisabledFields()}
-              {renderFeaturedFields()}
-              {treeSection}
-            </div>
-          </>
+          <div
+            style={{
+              position: 'relative',
+              borderRadius: '0.25em',
+              padding: '0.5em 0.5em 0.5em 0',
+              height: '60vh',
+              width: '30em',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {renderDisabledFields()}
+            {renderFeaturedFields()}
+            {treeSection}
+          </div>
         )}
       />
+      {clearSelectionButton}
     </div>
   ) : (
     <div
@@ -758,7 +760,6 @@ export default function VariableList({
     >
       {renderDisabledFields()}
       {renderFeaturedFields()}
-
       <CheckboxTree {...sharedProps} />
     </div>
   );

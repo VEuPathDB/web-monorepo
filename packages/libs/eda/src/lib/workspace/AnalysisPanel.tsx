@@ -197,7 +197,7 @@ export function AnalysisPanel({
     );
   if (analysis == null || approvalStatus === 'loading') return <Loading />;
   if (
-    (studyRecord.attributes.is_public !== 'true' && !showUnreleasedData) ||
+    (studyRecord.attributes.is_public === 'false' && !showUnreleasedData) ||
     approvalStatus === 'not-approved' ||
     isStubEntity(studyMetadata.rootEntity)
   )

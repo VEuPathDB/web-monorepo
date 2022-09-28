@@ -525,11 +525,15 @@ function MosaicViz(props: Props<Options>) {
               label: 'Y-axis',
               role: 'axis',
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as const,
+                ]),
           ]}
           entities={entities}
           selectedVariables={{

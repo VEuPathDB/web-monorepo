@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import SelectList from '@veupathdb/coreui/dist/components/inputs/SelectList';
+import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 
 export type ValuePickerProps = {
   allowedValues?: string[];
@@ -25,11 +26,18 @@ export function ValuePicker({
   );
 
   return (
-    <SelectList
-      defaultButtonDisplayContent={'Select value(s)'}
-      items={items}
-      onChange={onSelectedValuesChange}
-      value={selectedValues}
-    />
+    <>
+      <SelectList
+        defaultButtonDisplayContent={'Select value(s)'}
+        items={items}
+        onChange={onSelectedValuesChange}
+        value={selectedValues}
+      />
+      <ClearSelectionButton
+        onClick={() => onSelectedValuesChange([])}
+        disabled={!selectedValues.length}
+        style={{ marginLeft: '0.5em' }}
+      />
+    </>
   );
 }

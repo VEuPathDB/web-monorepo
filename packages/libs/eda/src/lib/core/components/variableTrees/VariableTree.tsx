@@ -12,7 +12,7 @@ import {
   useFeaturedFieldsFromTree,
 } from './hooks';
 
-import { Button } from '@material-ui/core';
+import { ClearSelectionButton } from './VariableTreeDropdown';
 
 export interface VariableTreeProps {
   starredVariables?: VariableDescriptor[];
@@ -77,19 +77,8 @@ export default function VariableTree({
     ?.variables.find((v) => v.id === variableId);
   const label = variable?.displayName ?? 'Select a variable';
 
-  const clearSelectionButton = variable && (
-    <div style={{ textAlign: 'center', padding: '.75em 0.25em 0.25em' }}>
-      <Button
-        type="button"
-        style={{ width: '90%' }}
-        variant="contained"
-        color="default"
-        size="small"
-        onClick={() => onChange()}
-      >
-        Clear selection
-      </Button>
-    </div>
+  const clearSelectionButton = (
+    <ClearSelectionButton onClick={() => onChange()} disabled={!variable} />
   );
 
   return (
@@ -107,8 +96,8 @@ export default function VariableTree({
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
       asDropdown={asDropdown}
-      clearSelectionButton={clearSelectionButton}
       dropdownLabel={label}
+      clearSelectionButton={clearSelectionButton}
     />
   );
 }
