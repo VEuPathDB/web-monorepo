@@ -5,9 +5,12 @@ import { VariableDescriptor } from './variable';
 import { Computation } from './visualization';
 
 export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
-export const AnalysisPreferences = t.partial({
-  pinnedAnalyses: t.array(t.string),
-});
+export const AnalysisPreferences = t.intersection([
+  t.partial({
+    pinnedAnalyses: t.array(t.string),
+  }),
+  t.record(t.string, t.unknown),
+]);
 
 export type AnalysisProvenance = t.TypeOf<typeof AnalysisProvenance>;
 export const AnalysisProvenance = t.type({

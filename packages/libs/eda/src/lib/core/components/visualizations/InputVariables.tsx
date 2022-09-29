@@ -3,7 +3,7 @@ import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
-  excludedVariables,
+  disabledVariablesForInput,
   flattenConstraints,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
@@ -14,6 +14,8 @@ import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { isEqual } from 'lodash';
 
 export interface InputSpec {
   name: string;
@@ -23,6 +25,18 @@ export interface InputSpec {
    */
   readonlyValue?: string;
   role?: 'axis' | 'stratification';
+  /**
+   * Instead of just providing a string, as above, provide a variable that the
+   * user will be able to choose with a radio button group (the other option is "no variable").
+   *
+   * However, you should additionaly use the `readonlyValue` prop as a label to display
+   * when the provided variable is null.
+   *
+   * The variable will only be selected/selectable if the constraints are met.
+   * (Meaning that if you pass a new provided variable that isn't compatible, the radio button
+   * will switch to "no variable")
+   */
+  providedOptionalVariable?: VariableDescriptor;
 }
 
 interface SectionSpec {
@@ -120,7 +134,7 @@ export function InputVariables(props: Props) {
     starredVariables,
     toggleStarredVariable,
     enableShowMissingnessToggle = false,
-    showMissingness,
+    showMissingness = false,
     onShowMissingnessChange,
     outputEntity,
     customSections,
@@ -143,77 +157,13 @@ export function InputVariables(props: Props) {
   > = useMemo(
     () =>
       inputs.reduce((map, input) => {
-        const disabledVariables = excludedVariables(
-          entities[0],
-          flattenedConstraints && flattenedConstraints[input.name]
+        map[input.name] = disabledVariablesForInput(
+          input.name,
+          entities,
+          flattenedConstraints,
+          dataElementDependencyOrder,
+          selectedVariables
         );
-        if (dataElementDependencyOrder == null) {
-          map[input.name] = disabledVariables;
-          return map;
-        }
-        const index = dataElementDependencyOrder.indexOf(input.name);
-        // no change if dependencyOrder is not declared
-        if (index === -1) {
-          map[input.name] = disabledVariables;
-          return map;
-        }
-
-        const prevSelectedVariable = dataElementDependencyOrder
-          .slice(0, index)
-          .map((n) => selectedVariables[n])
-          .reverse()
-          .find((v) => v != null);
-        const nextSelectedVariable = dataElementDependencyOrder
-          .slice(index + 1)
-          .map((n) => selectedVariables[n])
-          .find((v) => v != null);
-
-        // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevSelectedVariable`
-        if (prevSelectedVariable) {
-          const ancestors = entities.reduceRight((ancestors, entity) => {
-            if (
-              entity.id === prevSelectedVariable.entityId ||
-              entity.children?.includes(ancestors[0])
-            ) {
-              ancestors.unshift(entity);
-            }
-            return ancestors;
-          }, [] as StudyEntity[]);
-          const excludedEntities = entities.filter(
-            (entity) => !ancestors.includes(entity)
-          );
-          const excludedVariables = excludedEntities.flatMap((entity) =>
-            entity.variables.map((variable) => ({
-              variableId: variable.id,
-              entityId: entity.id,
-            }))
-          );
-          disabledVariables.push(...excludedVariables);
-        }
-
-        // Remove variables for entities which are not descendants of, or equal to, `nextSelectedVariable`
-        if (nextSelectedVariable) {
-          const entity = entities.find(
-            (entity) => entity.id === nextSelectedVariable.entityId
-          );
-          if (entity == null)
-            throw new Error('Unkonwn entity: ' + nextSelectedVariable.entityId);
-          const descendants = Array.from(
-            preorder(entity, (entity) => entity.children ?? [])
-          );
-          const excludedEntities = entities.filter(
-            (entity) => !descendants.includes(entity)
-          );
-          const excludedVariables = excludedEntities.flatMap((entity) =>
-            entity.variables.map((variable) => ({
-              variableId: variable.id,
-              entityId: entity.id,
-            }))
-          );
-          disabledVariables.push(...excludedVariables);
-        }
-
-        map[input.name] = disabledVariables;
         return map;
       }, {} as Record<string, VariableDescriptor[]>),
     [
@@ -267,7 +217,11 @@ export function InputVariables(props: Props) {
                         className={classes.label}
                         style={{ cursor: 'default' }}
                       >
-                        {input.label + (input.readonlyValue ? ' (fixed)' : '')}
+                        {input.label +
+                          (input.readonlyValue &&
+                          !input.providedOptionalVariable
+                            ? ' (fixed)'
+                            : '')}
                         {!input.readonlyValue &&
                         flattenedConstraints &&
                         flattenedConstraints[input.name].isRequired ? (
@@ -277,7 +231,49 @@ export function InputVariables(props: Props) {
                         )}
                       </div>
                     </Tooltip>
-                    {!input.readonlyValue ? (
+                    {input.providedOptionalVariable ? (
+                      // render a radio button to choose between provided and nothing
+                      // check if provided var is in disabledVariablesByInputName[input.name]
+                      // and disable radio input if needed
+                      <RadioButtonGroup
+                        disabledList={
+                          disabledVariablesByInputName[
+                            input.name
+                          ].find((variable) =>
+                            isEqual(variable, input.providedOptionalVariable)
+                          )
+                            ? ['provided']
+                            : []
+                        }
+                        options={['none', 'provided']}
+                        optionLabels={[
+                          'None',
+                          input.readonlyValue ?? 'Provided',
+                        ]}
+                        selectedOption={
+                          selectedVariables[input.name] ? 'provided' : 'none'
+                        }
+                        onOptionSelected={(selection) =>
+                          handleChange(
+                            input.name,
+                            selection === 'none'
+                              ? undefined
+                              : input.providedOptionalVariable
+                          )
+                        }
+                        //                        onSelectedOptionDisabled={(_) => {
+                        //                          handleChange(input.name, undefined);
+                        //                          enqueueSnackbar(
+                        //                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
+                        //                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
+                        //                          );
+                        //                        }}
+                      />
+                    ) : input.readonlyValue ? (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {input.readonlyValue}
+                      </span>
+                    ) : (
                       <VariableTreeDropdown
                         scope="variableTree"
                         showMultiFilterDescendants
@@ -295,10 +291,6 @@ export function InputVariables(props: Props) {
                           handleChange(input.name, variable);
                         }}
                       />
-                    ) : (
-                      <span style={{ height: '32px', lineHeight: '32px' }}>
-                        {input.readonlyValue}
-                      </span>
                     )}
                   </div>
                 ))}
