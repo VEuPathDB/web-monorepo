@@ -70,9 +70,9 @@
     "@types/uuid": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
-    "@veupathdb/components": "^0.14.4",
-    "@veupathdb/coreui": "^0.16.3",
-    "@veupathdb/react-scripts": "^1.2.0",
+    "@veupathdb/components": "^0.19.2",
+    "@veupathdb/coreui": "^0.18.6",
+    "@veupathdb/react-scripts": "^2.0.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^23.1.2",
     "eslint": "^7.12.1",
@@ -93,8 +93,8 @@
     "typescript": "^3.7.5"
   },
   "peerDependencies": {
-    "@veupathdb/components": "^0.14.4",
-    "@veupathdb/coreui": "^0.16.3",
+    "@veupathdb/components": "^0.19.2",
+    "@veupathdb/coreui": "^0.18.6",
     "notistack": "^1.0.10",
     "react": ">=16.14",
     "react-dom": ">=16.14",
