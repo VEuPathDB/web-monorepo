@@ -6,11 +6,13 @@ import { boxplotVisualization } from '../../visualizations/implementations/Boxpl
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
-import { isEqual } from 'lodash';
+import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
+import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import { useState, useEffect } from 'react';
 
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -134,6 +136,23 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
+  const selectedDataConfig = collections.find(
+    (collectionVar) =>
+      collectionVar.id === collectionVariable.variableId &&
+      collectionVar.entityId === collectionVariable.entityId
+  );
+  const dataConfigButtonDisplay =
+    selectedDataConfig?.entityDisplayName +
+    ' > ' +
+    selectedDataConfig?.displayName;
+
+  const [selectedDataValue, setSelectedDataValue] = useState('');
+
+  useEffect(() => {
+    if (!selectedDataValue.length) return;
+    changeConfigHandler('collectionVariable', JSON.parse(selectedDataValue));
+  }, [selectedDataValue]);
+
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
       <H6 additionalStyles={{ margin: 0 }}>
@@ -152,92 +171,34 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
         }}
       >
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
-        <select
-          css={{
-            backgroundColor: '#e0e0e0',
-            cursor: 'pointer',
-            border: 0,
-            padding: '6px 16px',
-            fontSize: '0.8125rem',
-            minWidth: '64px',
-            boxSizing: 'border-box',
-            transition:
-              'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            fontFamily:
-              'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
-            fontWeight: 500,
-            lineHeight: 1.25,
-            borderRadius: '4px',
-            textTransform: 'none',
-            boxShadow:
-              '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
-            '&:hover': {
-              boxShadow: `0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)`,
-              backgroundColor: `#d5d5d5`,
-            },
-          }}
+        <SingleSelect
           value={variableDescriptorToString({
             variableId: collectionVariable.variableId,
             entityId: collectionVariable.entityId,
           })}
-          onChange={(e) =>
-            changeConfigHandler(
-              'collectionVariable',
-              JSON.parse(e.target.value)
-            )
-          }
-        >
-          {collections.map((collectionVar) => {
-            return (
-              <option
-                key={collectionVar.id}
-                value={variableDescriptorToString({
-                  variableId: collectionVar.id,
-                  entityId: collectionVar.entityId,
-                })}
-              >
-                {collectionVar.entityDisplayName} {' > '}{' '}
-                {collectionVar.displayName}
-              </option>
-            );
-          })}
-        </select>
+          buttonDisplayContent={dataConfigButtonDisplay}
+          items={collections.map((collectionVar) => ({
+            value: variableDescriptorToString({
+              variableId: collectionVar.id,
+              entityId: collectionVar.entityId,
+            }),
+            display:
+              collectionVar.entityDisplayName +
+              ' > ' +
+              collectionVar.displayName,
+          }))}
+          onSelect={setSelectedDataValue}
+        />
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Method</div>
-        <select
-          css={{
-            backgroundColor: '#e0e0e0',
-            cursor: 'pointer',
-            border: 0,
-            padding: '6px 16px',
-            fontSize: '0.8125rem',
-            minWidth: '64px',
-            boxSizing: 'border-box',
-            transition:
-              'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-            fontFamily:
-              'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
-            fontWeight: 500,
-            lineHeight: 1.25,
-            borderRadius: '4px',
-            textTransform: 'none',
-            boxShadow:
-              '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
-            '&:hover': {
-              boxShadow: `0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)`,
-              backgroundColor: `#d5d5d5`,
-            },
-          }}
+        <SingleSelect
           value={alphaDivMethod}
-          onChange={(e) =>
-            changeConfigHandler('alphaDivMethod', e.target.value)
-          }
-        >
-          {ALPHA_DIV_METHODS.map((method) => (
-            <option key={method} value={method}>
-              {method}
-            </option>
-          ))}
-        </select>
+          buttonDisplayContent={alphaDivMethod}
+          items={ALPHA_DIV_METHODS.map((method) => ({
+            value: method,
+            display: method,
+          }))}
+          onSelect={partial(changeConfigHandler, 'alphaDivMethod')}
+        />
       </div>
     </div>
   );
