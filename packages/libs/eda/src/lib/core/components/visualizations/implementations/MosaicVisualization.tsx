@@ -55,6 +55,7 @@ import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/Face
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
+import Svg2x2 from './selectorIcons/2x2';
 
 const plotContainerStyles = {
   width: 750,
@@ -117,6 +118,7 @@ export const contTableVisualization = createVisualizationPlugin({
 
 export const twoByTwoVisualization = createVisualizationPlugin({
   selectorIcon: twoxtwo,
+  selectorSVG: Svg2x2,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

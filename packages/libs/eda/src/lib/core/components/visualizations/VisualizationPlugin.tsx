@@ -1,3 +1,4 @@
+import { DuotoneSvgProps } from './implementations/selectorIcons/types';
 import {
   IsEnabledInPickerParams,
   VisualizationProps,
@@ -8,6 +9,8 @@ export interface VisualizationPluginSpec<Options = undefined> {
   fullscreenComponent: React.ComponentType<VisualizationProps<Options>>;
   /** Image URI used in selector */
   selectorIcon: string;
+  /**  */
+  selectorSVG?: React.ComponentType<DuotoneSvgProps>;
   /** Function used to create a default configuration when a visualization instance is created */
   createDefaultConfig: () => unknown;
   /** Function used to determine if visualization is compatible with study */

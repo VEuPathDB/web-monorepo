@@ -80,6 +80,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
+import SvgBox from './selectorIcons/box';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -120,6 +121,7 @@ interface Options
 
 export const boxplotVisualization = createVisualizationPlugin({
   selectorIcon: box,
+  selectorSVG: SvgBox,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

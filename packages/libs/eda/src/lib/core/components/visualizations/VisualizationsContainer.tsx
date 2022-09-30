@@ -39,8 +39,22 @@ import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
+
+export const useVizIconColors = () => {
+  const themeColor = useUITheme()?.palette.primary;
+
+  return useMemo(() => {
+    const primaryColor = themeColor?.hue[themeColor.level - 200] ?? '#85B3C3';
+    const secondaryColor = themeColor?.hue[themeColor.level] ?? '#508E9D';
+    return {
+      primaryColor,
+      secondaryColor,
+    };
+  }, [themeColor]);
+};
 
 interface Props {
   analysisState: AnalysisState;
@@ -303,8 +317,10 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
     },
     includeHeader = true,
   } = props;
+  const { primaryColor, secondaryColor } = useVizIconColors();
   const history = useHistory();
   const { computationId } = computation;
+
   return (
     <div className={cx('-PickerContainer')}>
       {includeHeader && (
@@ -360,11 +376,18 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                     }}
                   >
                     {vizPlugin ? (
-                      <img
-                        alt={vizOverview.displayName}
-                        style={{ height: '100%', width: '100%' }}
-                        src={vizPlugin.selectorIcon}
-                      />
+                      'selectorSVG' in vizPlugin && vizPlugin.selectorSVG ? (
+                        <vizPlugin.selectorSVG
+                          primaryColor={primaryColor}
+                          secondaryColor={secondaryColor}
+                        />
+                      ) : (
+                        <img
+                          alt={vizOverview.displayName}
+                          style={{ height: '100%', width: '100%' }}
+                          src={vizPlugin.selectorIcon}
+                        />
+                      )
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}

@@ -83,6 +83,7 @@ import {
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
+import SvgBar from './selectorIcons/bar';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -109,6 +110,7 @@ const modalPlotContainerStyles = {
 
 export const barplotVisualization = createVisualizationPlugin({
   selectorIcon: bar,
+  selectorSVG: SvgBar,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });
