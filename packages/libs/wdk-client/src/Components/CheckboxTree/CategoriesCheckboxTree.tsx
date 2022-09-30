@@ -9,7 +9,8 @@ import {
   CategoryTreeNode
 } from 'wdk-client/Utils/CategoryUtils';
 import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
-import CheckboxTree, { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+// import CheckboxTree, { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getFilteredNodeChildren, nodeSearchPredicateWithHiddenNodes } from 'wdk-client/Utils/CheckboxTreeUtils';
 
 type ChangeHandler = (ids: string[]) => void;
