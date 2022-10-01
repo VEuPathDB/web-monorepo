@@ -59,7 +59,12 @@ import PlotLegend, {
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useFlattenedConstraints,
+  useNeutralPaletteProps,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
 
 // concerning axis range control
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -80,6 +85,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -212,14 +218,44 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const computedYAxisDetails = options?.getComputedYAxisDetails?.(
     computation.descriptor.configuration
   );
-  const providedOverlayVariable = options?.getOverlayVariable?.(
-    computation.descriptor.configuration
+
+  const providedOverlayVariableDescriptor = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
+  );
+
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    yAxisVariable: vizConfig.yAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const flattenedConstraints = useFlattenedConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities
+  );
+
+  useProvidedOptionalVariable<BoxplotConfig>(
+    options?.getOverlayVariable,
+    'overlayVariable',
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    entities,
+    flattenedConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    updateVizConfig,
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
   );
 
   const {
     xAxisVariable,
     yAxisVariable,
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
@@ -229,15 +265,16 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     const { variable: yAxisVariable } =
       findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(
-        providedOverlayVariable ?? vizConfig.overlayVariable
-      ) ?? {};
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: providedOverlayVariable } =
+      findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       xAxisVariable,
       yAxisVariable,
       overlayVariable,
+      providedOverlayVariable,
       overlayEntity,
       facetVariable,
       facetEntity,
@@ -248,7 +285,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
-    providedOverlayVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   // prettier-ignore
@@ -325,7 +362,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           mean: 'TRUE',
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: providedOverlayVariable ?? vizConfig.overlayVariable,
+          overlayVariable: vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
             : [],
@@ -477,11 +514,14 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
+  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined
   );
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
@@ -501,6 +541,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
 
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
+  );
 
   const plotNode = (
     <Plot
@@ -533,6 +577,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       dependentAxisMinMax={dependentAxisMinMax}
+      {...neutralPaletteProps}
     />
   );
 
@@ -681,13 +726,13 @@ function BoxplotViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              providedOptionalVariable: providedOverlayVariableDescriptor,
               readonlyValue:
                 options?.getOverlayVariable != null
-                  ? providedOverlayVariable
-                    ? overlayLabel
-                    : 'none'
+                  ? providedOverlayVariableDescriptor
+                    ? variableDisplayWithUnit(providedOverlayVariable)
+                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
                   : undefined,
-              // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
               ? []
@@ -700,12 +745,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            yAxisVariable: vizConfig.yAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -774,9 +814,8 @@ function Plot({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, checkedLegendItems, vizConfig.dependentAxisRange]
+    [data, vizConfig.checkedLegendItems, vizConfig.dependentAxisRange]
   );
-
   // set truncation flags: will see if this is reusable with other application
   const {
     truncationConfigIndependentAxisMin,

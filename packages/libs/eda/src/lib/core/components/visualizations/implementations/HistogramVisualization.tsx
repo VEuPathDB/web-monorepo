@@ -92,11 +92,17 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
-import { useVizConfig } from '../../../hooks/visualizations';
+import {
+  useFlattenedConstraints,
+  useNeutralPaletteProps,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { histogramDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -298,24 +304,53 @@ function HistogramViz(props: VisualizationProps<Options>) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
-  const providedOverlayVariable = options?.getOverlayVariable?.(
-    computation.descriptor.configuration
+  const providedOverlayVariableDescriptor = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
+  );
+
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const flattenedConstraints = useFlattenedConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities
+  );
+
+  useProvidedOptionalVariable<HistogramConfig>(
+    options?.getOverlayVariable,
+    'overlayVariable',
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    entities,
+    flattenedConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    updateVizConfig,
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
   );
 
   const {
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
   } = useMemo(() => {
     const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(
-        providedOverlayVariable ?? vizConfig.overlayVariable
-      ) ?? {};
+      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: providedOverlayVariable } =
+      findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       overlayVariable,
+      providedOverlayVariable,
       overlayEntity,
       facetVariable,
       facetEntity,
@@ -324,7 +359,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     findEntityAndVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
-    providedOverlayVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   const data = usePromise(
@@ -348,8 +383,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filters ?? [],
         valueType,
         vizConfig,
-        xAxisVariable,
-        providedOverlayVariable
+        xAxisVariable
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
@@ -419,7 +453,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
       valueType,
       // get data when changing independentAxisRange
       vizConfig.independentAxisRange,
-      providedOverlayVariable,
     ])
   );
 
@@ -487,11 +520,14 @@ function HistogramViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
+  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
   const checkedLegendItems = useCheckedLegendItemsStatus(
     legendItems,
-    options?.getCheckedLegendItems?.(computation.descriptor.configuration) ??
-      vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined
   );
 
   // axis range control
@@ -677,13 +713,17 @@ function HistogramViz(props: VisualizationProps<Options>) {
     plotContainerStyles,
     [
       data,
-      checkedLegendItems,
+      vizConfig.checkedLegendItems,
       vizConfig.dependentAxisLogScale,
       vizConfig.dependentAxisRange,
     ]
   );
 
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
+  );
 
   const histogramProps: HistogramProps = {
     containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
@@ -715,6 +755,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    ...neutralPaletteProps,
   };
 
   const plotNode = (
@@ -983,13 +1024,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              providedOptionalVariable: providedOverlayVariableDescriptor,
               readonlyValue:
                 options?.getOverlayVariable != null
-                  ? providedOverlayVariable
-                    ? overlayLabel
-                    : 'none'
+                  ? providedOverlayVariableDescriptor
+                    ? variableDisplayWithUnit(providedOverlayVariable)
+                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
                   : undefined,
-              // TO DO: verbiage for 'none'
             },
             ...(options?.hideFacetInputs
               ? []
@@ -1002,11 +1043,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -1151,8 +1188,7 @@ function getRequestParams(
   filters: Filter[],
   valueType: 'number' | 'date',
   vizConfig: HistogramConfig,
-  variable?: Variable,
-  providedOverlayVariable?: VariableDescriptor
+  variable?: Variable
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
@@ -1195,7 +1231,7 @@ function getRequestParams(
       outputEntityId: xAxisVariable!.entityId,
       xAxisVariable,
       barMode: 'stack',
-      overlayVariable: providedOverlayVariable ?? overlayVariable,
+      overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       valueSpec,
       ...binSpec,
