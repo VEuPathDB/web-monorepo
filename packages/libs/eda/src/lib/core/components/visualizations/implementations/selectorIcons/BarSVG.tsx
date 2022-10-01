@@ -1,6 +1,6 @@
 import { DuotoneSvgProps } from './types';
 
-export default function SvgBar({
+export default function BarSVG({
   primaryColor,
   secondaryColor,
 }: DuotoneSvgProps) {

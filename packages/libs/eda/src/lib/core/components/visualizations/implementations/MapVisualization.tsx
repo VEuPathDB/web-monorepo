@@ -2,7 +2,7 @@ import {
   IsEnabledInPickerParams,
   VisualizationProps,
 } from '../VisualizationTypes';
-import map from './selectorIcons/map.svg';
+import MapSVG from './selectorIcons/MapSVG';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 
@@ -48,7 +48,7 @@ import { LayoutOptions } from '../../layouts/types';
 import { useMapMarkers } from '../../../hooks/mapMarkers';
 
 export const mapVisualization = createVisualizationPlugin({
-  selectorIcon: map,
+  selectorIcon: MapSVG,
   fullscreenComponent: MapViz,
   createDefaultConfig: createDefaultConfig,
   isEnabledInPicker: isEnabledInPicker,

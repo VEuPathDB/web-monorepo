@@ -1,6 +1,6 @@
 import { MonotoneSvgProps } from './types';
 
-export default function Svg2x2({ primaryColor }: MonotoneSvgProps) {
+export default function TwoByTwoSVG({ primaryColor }: MonotoneSvgProps) {
   return (
     // <!-- Generator: Adobe Illustrator 25.4.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg

@@ -41,7 +41,7 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
-import bar from './selectorIcons/bar.svg';
+import BarSVG from './selectorIcons/BarSVG';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -83,7 +83,6 @@ import {
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
-import SvgBar from './selectorIcons/bar';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -109,8 +108,7 @@ const modalPlotContainerStyles = {
 };
 
 export const barplotVisualization = createVisualizationPlugin({
-  selectorIcon: bar,
-  selectorSVG: SvgBar,
+  selectorIcon: BarSVG,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

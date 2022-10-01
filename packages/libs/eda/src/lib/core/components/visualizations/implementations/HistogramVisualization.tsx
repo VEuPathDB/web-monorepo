@@ -51,7 +51,7 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
-import histogram from './selectorIcons/histogram.svg';
+import HistogramSVG from './selectorIcons/HistogramSVG';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -123,7 +123,7 @@ const modalPlotContainerStyles = {
 };
 
 export const histogramVisualization = createVisualizationPlugin({
-  selectorIcon: histogram,
+  selectorIcon: HistogramSVG,
   fullscreenComponent: HistogramViz,
   createDefaultConfig: createDefaultConfig,
 });

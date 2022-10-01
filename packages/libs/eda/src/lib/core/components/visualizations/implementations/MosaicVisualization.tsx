@@ -33,8 +33,8 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
-import rxc from './selectorIcons/RxC.svg';
-import twoxtwo from './selectorIcons/2x2.svg';
+import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
+import RxCSVG from './selectorIcons/RxCSVG';
 import { TabbedDisplay } from '@veupathdb/coreui';
 
 // import axis label unit util
@@ -55,7 +55,6 @@ import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/Face
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
-import Svg2x2 from './selectorIcons/2x2';
 
 const plotContainerStyles = {
   width: 750,
@@ -111,14 +110,13 @@ type TwoByTwoDataWithCoverage = (TwoByTwoData | FacetedData<TwoByTwoData>) &
   CoverageStatistics;
 
 export const contTableVisualization = createVisualizationPlugin({
-  selectorIcon: rxc,
+  selectorIcon: RxCSVG,
   fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });
 
 export const twoByTwoVisualization = createVisualizationPlugin({
-  selectorIcon: twoxtwo,
-  selectorSVG: Svg2x2,
+  selectorIcon: TwoByTwoSVG,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

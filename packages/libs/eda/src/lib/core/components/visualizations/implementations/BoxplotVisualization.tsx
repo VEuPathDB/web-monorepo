@@ -19,13 +19,13 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
-import { InputSpec, InputVariables } from '../InputVariables';
+import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
   VisualizationProps,
 } from '../VisualizationTypes';
-import box from './selectorIcons/box.svg';
+import BoxSVG from './selectorIcons/BoxSVG';
 import {
   BoxplotData as BoxplotSeries,
   FacetedData,
@@ -80,7 +80,6 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
-import SvgBox from './selectorIcons/box';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -120,8 +119,7 @@ interface Options
 }
 
 export const boxplotVisualization = createVisualizationPlugin({
-  selectorIcon: box,
-  selectorSVG: SvgBox,
+  selectorIcon: BoxSVG,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

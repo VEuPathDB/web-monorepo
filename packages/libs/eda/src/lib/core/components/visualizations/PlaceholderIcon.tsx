@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import SvgHeatmap from './implementations/selectorIcons/heatmap';
-import SvgDensity from './implementations/selectorIcons/density';
-import line from './implementations/selectorIcons/line.svg';
-import map from './implementations/selectorIcons/map.svg';
-import scatter from './implementations/selectorIcons/scatter.svg';
-import { useVizIconColors } from './VisualizationsContainer';
+import { useVizIconColors } from './implementations/selectorIcons/types';
+import HeatmapSVG from './implementations/selectorIcons/HeatmapSVG';
+import DensitySVG from './implementations/selectorIcons/DensitySVG';
+import MapSVG from './implementations/selectorIcons/MapSVG';
+import LineSVG from './implementations/selectorIcons/LineSVG';
+import ScatterSVG from './implementations/selectorIcons/ScatterSVG';
 
 const style = { height: '100%', width: '100%', opacity: 0.2 };
 
@@ -20,17 +20,29 @@ export default function PlaceholderIcon(props: Props) {
     () => ({
       heatmap: (
         <div style={style}>
-          <SvgHeatmap {...colors} />
+          <HeatmapSVG {...colors} />
         </div>
       ),
       densityplot: (
         <div style={style}>
-          <SvgDensity {...colors} />
+          <DensitySVG {...colors} />
         </div>
       ),
-      'map-markers': <img alt="Map marker" src={map} style={style} />,
-      lineplot: <img alt="Time Series" src={line} style={style} />,
-      scatterplot: <img alt="Scatter plot" src={scatter} style={style} />,
+      'map-markers': (
+        <div style={style}>
+          <MapSVG {...colors} />
+        </div>
+      ),
+      lineplot: (
+        <div style={style}>
+          <LineSVG {...colors} />
+        </div>
+      ),
+      scatterplot: (
+        <div style={style}>
+          <ScatterSVG {...colors} />
+        </div>
+      ),
     }),
     [colors]
   );
