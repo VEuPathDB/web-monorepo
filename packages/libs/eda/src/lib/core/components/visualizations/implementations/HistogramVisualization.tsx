@@ -770,13 +770,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor
   );
 
-  // add more type to HistogramProps
-  type HistogramPropsMore = {
-    independentAxisValueSpec: string | undefined;
-    dependentAxisValueSpec: string | undefined;
-  };
-
-  const histogramProps: HistogramProps & HistogramPropsMore = {
+  const histogramProps: HistogramProps = {
     containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'Main',
@@ -806,8 +800,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
-    independentAxisValueSpec: vizConfig.independentAxisValueSpec,
-    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
     ...neutralPaletteProps,
   };
 

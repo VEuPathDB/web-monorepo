@@ -877,7 +877,6 @@ function Plot({
         max: truncationConfigDependentAxisMax,
       },
     },
-    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
   };
 
   // TO DO: standardise web-components/BoxplotData to have `series` key

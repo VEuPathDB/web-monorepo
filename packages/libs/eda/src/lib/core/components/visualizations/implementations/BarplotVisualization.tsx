@@ -558,10 +558,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
-  // add more type to BarplotProps
-  type BarplotPropsMore = {
-    dependentAxisValueSpec: string | undefined;
-  };
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
   const neutralPaletteProps = useNeutralPaletteProps(
     vizConfig.overlayVariable,
@@ -570,7 +566,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
-  const plotProps: BarplotProps & BarplotPropsMore = {
+  const plotProps: BarplotProps = {
     containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
     spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     orientation: 'vertical',
@@ -599,7 +595,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
-    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
     ...neutralPaletteProps,
   };
 

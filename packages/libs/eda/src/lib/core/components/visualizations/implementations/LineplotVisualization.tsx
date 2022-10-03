@@ -850,13 +850,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
-  // add more type to LinePlotProps
-  type LinePlotPropsMore = {
-    independentAxisValueSpec: string | undefined;
-    dependentAxisValueSpec: string | undefined;
-  };
-
-  const lineplotProps: LinePlotProps & LinePlotPropsMore = {
+  const lineplotProps: LinePlotProps = {
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'X-axis',
     dependentAxisLabel:
       vizConfig.valueSpecConfig === 'Proportion'
@@ -904,8 +898,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.independentAxisRange ?? defaultIndependentAxisRange,
     dependentAxisRange:
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
-    independentAxisValueSpec: vizConfig.independentAxisValueSpec,
-    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
   };
 
   const plotNode = (

@@ -1037,13 +1037,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
-  // add more type to ScatterPlotProps
-  type ScatterPlotPropsMore = {
-    independentAxisValueSpec: string | undefined;
-    dependentAxisValueSpec: string | undefined;
-  };
-
-  const scatterplotProps: ScatterPlotProps & ScatterPlotPropsMore = {
+  const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'X-axis',
@@ -1081,8 +1075,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
       : undefined,
-    independentAxisValueSpec: vizConfig.independentAxisValueSpec,
-    dependentAxisValueSpec: vizConfig.dependentAxisValueSpec,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
