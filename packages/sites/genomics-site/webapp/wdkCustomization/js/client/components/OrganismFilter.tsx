@@ -6,7 +6,8 @@ import { QuestionWithParameters, SearchConfig, TreeBoxVocabNode } from '@veupath
 import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
-import { Loading, CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { mapStructure, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';

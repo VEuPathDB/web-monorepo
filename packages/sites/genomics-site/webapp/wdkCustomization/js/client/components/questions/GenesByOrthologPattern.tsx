@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CheckboxTree, HelpIcon } from '@veupathdb/wdk-client/lib/Components';
-import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+// import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { CheckBoxEnumParam, ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
