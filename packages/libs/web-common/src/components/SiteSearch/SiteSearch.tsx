@@ -1,6 +1,7 @@
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { DataGrid } from '@veupathdb/coreui';
-import { CheckboxList, CheckboxTree, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import { CheckboxList, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { AnchoredTooltip, PaginationMenu } from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';

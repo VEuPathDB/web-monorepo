@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { bindAll } from 'lodash';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
-import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+// import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 class TreeDataViewer extends Component {

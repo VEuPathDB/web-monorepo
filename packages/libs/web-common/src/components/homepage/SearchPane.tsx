@@ -4,10 +4,11 @@ import { useSelector } from 'react-redux';
 import { memoize, noop, keyBy } from 'lodash';
 
 import { CategoriesCheckboxTree, Link, Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
-import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+// import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
-import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent, isIndividual, getFormattedTooltipContent } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, isIndividual, getFormattedTooltipContent } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { makeClassNameHelper, wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
