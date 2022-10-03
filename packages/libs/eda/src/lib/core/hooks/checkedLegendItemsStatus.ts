@@ -17,9 +17,12 @@ export function useCheckedLegendItems(
   /**
    * Reset checkedLegendItems to all-checked (actually none checked)
    * if ANY of the checked items are NOT in the vocabulary
-   * OR if ALL of the checked items ARE in the vocabulary
-   *
-   * TO DO: generalise this for use in all visualizations
+   * OR if ALL of the checked items ARE in the vocabulary. Mainly useful
+   * for the map visualizations where, for high-cardinality variables,
+   * the vocabulary changes, depending on the current viewport.
+   * (The vocabulary is the 7 most common categories + 1 "other".)
+   * For other visualizations, when the vocabulary is constant/unchanging
+   * the useEffect won't do anything other than waste a few CPU cycles.
    */
   useEffect(() => {
     if (vizConfigCheckedLegendItems == null || vocabulary == null) return;
@@ -41,6 +44,9 @@ export function useCheckedLegendItems(
     [updateVizConfig]
   );
 
+  /**
+   * If no items are checked or unchecked, return
+   */
   const checkedLegendItems = useMemo(() => {
     return vizConfigCheckedLegendItems ?? legendItems.map((item) => item.label);
   }, [vizConfigCheckedLegendItems, legendItems]);
