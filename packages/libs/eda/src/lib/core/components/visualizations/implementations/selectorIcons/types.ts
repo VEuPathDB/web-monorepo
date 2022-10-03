@@ -16,10 +16,17 @@ export const useVizIconColors = () => {
   const themeColor = useUITheme()?.palette.primary;
 
   return useMemo(() => {
+    const primaryLevel =
+      themeColor &&
+      (themeColor.level > 200
+        ? themeColor.level - 200
+        : themeColor.level + 100);
+
     const primaryColor =
-      themeColor?.hue[themeColor.level - 200] ?? defaultPrimaryColor;
+      (primaryLevel && themeColor?.hue[primaryLevel]) || defaultPrimaryColor;
     const secondaryColor =
       themeColor?.hue[themeColor.level] ?? defaultSecondaryColor;
+
     return {
       primaryColor,
       secondaryColor,
