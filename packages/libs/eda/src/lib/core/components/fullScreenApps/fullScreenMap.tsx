@@ -1,6 +1,6 @@
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
@@ -124,6 +124,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
         getOverlayVariable: (_) => appState.overlayVariable,
+        getOverlayVariableHelp: () =>
+          'The overlay variable can be selected via the top-right panel.',
         getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
@@ -138,7 +140,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         conttable: vizWithOptions(contTableVisualization),
         scatterplot: vizWithOptions(scatterplotVisualization),
         lineplot: vizWithOptions(lineplotVisualization),
-        'map-markers': vizWithOptions(mapVisualization),
+        // 'map-markers': vizWithOptions(mapVisualization), // disabling because of potential confusion between marker colors
         barplot: vizWithOptions(barplotVisualization),
         boxplot: vizWithOptions(boxplotVisualization),
       },
@@ -269,6 +271,17 @@ function FullScreenMap(props: FullScreenComponentProps) {
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(filters);
 
+  // to avoid double-triggering of the `data = usePromise(...` in visualizations
+  // (first triggered when `filters` changes, then again when `filteredCounts.pending`
+  // goes from true to false)
+  //
+  // only allow `filters` prop for the floating visualization to change
+  // when the `filteredCounts` has gone into pending state
+  const [filtersForViz, setFiltersForViz] = useState(filters);
+  useEffect(() => {
+    if (filteredCounts.pending) setFiltersForViz(filters);
+  }, [filters, filteredCounts.pending]);
+
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
   const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
@@ -372,6 +385,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
         onBoundsChanged={setBoundsZoomLevel}
         onViewportChanged={onViewportChanged}
         onMouseModeChange={onMouseModeChange}
+        showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
+        zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
       />
       {/* </div> */}
       <div
@@ -482,7 +497,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 visualizationsOverview={app.visualizations!}
                 geoConfigs={[geoConfig]}
                 computationAppOverview={app}
-                filters={filters}
+                filters={filtersForViz}
                 starredVariables={
                   props.analysisState.analysis?.descriptor.starredVariables ??
                   []
