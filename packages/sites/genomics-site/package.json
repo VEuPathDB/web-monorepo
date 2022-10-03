@@ -23,7 +23,7 @@
     "@veupathdb/multi-blast": "^3.0.2",
     "@veupathdb/preferred-organisms": "^1.1.11",
     "@veupathdb/study-data-access": "^0.3.5",
-    "@veupathdb/user-datasets": "^0.1.11",
+    "@veupathdb/user-datasets": "0.1.12",
     "@veupathdb/wdk-client": "^0.9.13",
     "@veupathdb/web-common": "^0.6.23",
     "ciena-dagre": "^1.0.0",
