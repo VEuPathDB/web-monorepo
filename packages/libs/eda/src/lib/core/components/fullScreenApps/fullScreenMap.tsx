@@ -191,6 +191,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
     (selectedVariables: VariablesByInputName) => {
       setAppState({
         overlayVariable: selectedVariables.overlay,
+        checkedLegendItems: undefined,
         // reset marker type to pie if no overlay var
         ...(selectedVariables.overlay == null ? { markerType: 'pie' } : {}),
       });
