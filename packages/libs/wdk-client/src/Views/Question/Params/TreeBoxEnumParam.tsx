@@ -3,7 +3,8 @@ import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 import { intersection } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
-import CheckboxTree, { Props as CheckboxTreeProps } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+// import CheckboxTree, { Props as CheckboxTreeProps } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { CheckboxTreeProps } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
