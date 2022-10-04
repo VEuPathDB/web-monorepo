@@ -64,7 +64,7 @@ import PlotLegend, {
 // import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
 // concerning axis range control
 import { NumberOrDateRange, NumberRange } from '../../../types/general';
@@ -460,14 +460,16 @@ function BarplotViz(props: VisualizationProps<Options>) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  // set checkedLegendItems to either the config-stored items, or all items if
+  // nothing stored (or if no overlay locally configured)
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     vizConfig.overlayVariable
       ? options?.getCheckedLegendItems?.(
           computation.descriptor.configuration
         ) ?? vizConfig.checkedLegendItems
-      : undefined
+      : undefined,
+    updateVizConfig
   );
 
   const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
@@ -730,8 +732,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={overlayLabel}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       // add a condition to show legend even for single overlay data and check legendItems exist
       showOverlayLegend={showOverlayLegend}
     />

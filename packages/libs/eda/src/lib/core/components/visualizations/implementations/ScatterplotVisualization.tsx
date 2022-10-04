@@ -95,7 +95,7 @@ import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 // a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
 // concerning axis range control
 import { NumberOrDateRange } from '../../../types/general';
@@ -418,11 +418,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'showMissingness',
     true,
     true
-  );
-
-  // for vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
@@ -879,14 +874,16 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     neutralPaletteProps,
   ]);
 
-  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  // set checkedLegendItems to either the config-stored items, or all items if
+  // nothing stored (or if no overlay locally configured)
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     vizConfig.overlayVariable
       ? options?.getCheckedLegendItems?.(
           computation.descriptor.configuration
         ) ?? vizConfig.checkedLegendItems
-      : undefined
+      : undefined,
+    updateVizConfig
   );
 
   const legendTitle = useMemo(() => {
@@ -1483,8 +1480,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={legendTitle}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       showOverlayLegend={showOverlayLegend}
     />
   );
