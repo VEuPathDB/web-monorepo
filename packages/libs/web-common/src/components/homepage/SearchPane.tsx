@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react';
+/** @jsx jsx */
+import { jsx, css } from '@emotion/react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { memoize, noop, keyBy } from 'lodash';
 
 import { CategoriesCheckboxTree, Link, Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
-// import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
@@ -39,11 +40,18 @@ export const SearchPane = (props: Props) => {
   const alphabetizedSearchTree = useAlphabetizedSearchTree(props.searchTree);
 
   return (
-    <nav className={combineClassNames(cx(), props.containerClassName)}>
+    <nav 
+      className={combineClassNames(cx(), props.containerClassName)}
+      style={{fontSize: '14px'}}  
+    >
       <h2>
         Search for...
       </h2> 
-      <div className={cx('CheckboxTreeContainer')}>
+      <div 
+        style={{
+          fontSize: '1.2em',
+        }}
+      >
         <SearchCheckboxTree 
           searchTree={alphabetizedSearchTree}
           searchTerm={searchTerm}
@@ -88,7 +96,6 @@ export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => 
   return !props.searchTree 
     ? <Loading />
     : <CategoriesCheckboxTree
-        containerClassName="wdk-SearchTree"
         selectedLeaves={noSelectedLeaves}
         onChange={noop}
         tree={props.searchTree}
@@ -103,6 +110,34 @@ export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => 
         onSearchTermChange={props.setSearchTerm}
         showSearchBox={props.showSearchBox != null ? props.showSearchBox : true}
         linksPosition={props.linksPosition != null ? props.linksPosition : LinksPosition.Top}
+        styleOverrides={{
+          searchBox: {
+            container: {margin: '0 0.5em'},
+            clearSearchButton: {top: '3px'},
+            input: {
+              borderRadius: '0.5em',
+              fontSize: '0.9em',
+              borderColor: '#999',
+              padding: '0.2em 1.5em 0.2em 2.5em',
+              backgroundColor: '#dfdfdf',
+              width: 'calc(100% - 4em)',
+            },
+          },
+          treeNode: {
+            topLevelNode: {
+              backgroundColor: '#dfdfdf',
+              margin: '.25em 0',
+              border: '.0625rem solid #ddd',
+              borderRadius: '.5em',
+              padding: '.5em .6em .5em 1.2em',
+            }
+          },
+          treeSection: {
+            ul: {
+              padding: '0 1em 0 0.5em',
+            }
+          }
+        }}
       />;
 });
 
@@ -161,10 +196,24 @@ function SearchPaneNode({
         }}
         to={`/search/${getRecordClassUrlSegment(node)}/${urlSegment}`}
       >
-        <IconAlt fa="search" />
-        {displayName}
+        <div style={{display: 'flex', alignItems: 'center'}}>
+          <span style={{marginRight: '0.25em', color: 'gray', fontSize: '0.7em'}}>
+            <IconAlt fa="search" />
+          </span>
+          {displayName}
+        </div>
       </Link>
-    : <span className={path?.length === 2 ? 'SubcategoryText' : undefined}>{displayName}</span>
+    : <span 
+        css={{
+          cursor: 'pointer',
+          fontWeight: path?.length === 1 ? 'bold' : 'normal',
+          '&:hover': {
+            textDecoration: 'underline',
+          }
+        }}
+      >
+        {displayName}
+      </span>
 
   const tooltipContent = getFormattedTooltipContent(node);
 
