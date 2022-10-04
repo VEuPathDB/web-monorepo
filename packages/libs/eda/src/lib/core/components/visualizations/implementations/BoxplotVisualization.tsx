@@ -83,6 +83,7 @@ import { ComputedVariableMetadata } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
@@ -135,7 +136,9 @@ function FullscreenComponent(props: VisualizationProps<Options>) {
 }
 
 function createDefaultConfig(): BoxplotConfig {
-  return {};
+  return {
+    dependentAxisValueSpec: 'Full',
+  };
 }
 
 // export
@@ -151,6 +154,7 @@ export const BoxplotConfig = t.partial({
   checkedLegendItems: t.array(t.string),
   // dependent axis range control: NumberRange or NumberOrDateRange
   dependentAxisRange: NumberOrDateRange,
+  dependentAxisValueSpec: t.string,
 });
 
 function BoxplotViz(props: VisualizationProps<Options>) {
@@ -203,6 +207,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         // set undefined for variable change
         checkedLegendItems: undefined,
         dependentAxisRange: undefined,
+        dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
@@ -302,6 +307,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 	      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
+  );
+
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
+    false,
+    true
   );
 
   // set checkedLegendItems: undefined for the change of showMissingness
@@ -464,7 +475,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     dependentAxisMinMax?.min,
     undefined, // no minPos needed if no logscale option offered
     dependentAxisMinMax?.max,
-    false // never logscale
+    false, // never logscale
+    vizConfig.dependentAxisValueSpec
   ) as NumberRange;
 
   // custom legend items for checkbox
@@ -589,6 +601,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // pass useState of truncation warnings
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
+      axisRangeOptions={['Full', 'Auto-zoom', 'Custom']}
+      dependentAxisValueSpec={vizConfig.dependentAxisValueSpec}
+      onDependentAxisValueSpecChange={onDependentAxisValueSpecChange}
     />
   );
 
@@ -811,8 +826,14 @@ function Plot({
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, vizConfig.checkedLegendItems, vizConfig.dependentAxisRange]
+    [
+      data,
+      vizConfig.checkedLegendItems,
+      vizConfig.dependentAxisRange,
+      vizConfig.dependentAxisValueSpec,
+    ]
   );
+
   // set truncation flags: will see if this is reusable with other application
   const {
     truncationConfigIndependentAxisMin,
@@ -914,6 +935,9 @@ type ControlsProps = {
   setTruncatedDependentAxisWarning: (
     truncatedDependentAxisWarning: string
   ) => void;
+  axisRangeOptions: string[];
+  dependentAxisValueSpec: string | undefined;
+  onDependentAxisValueSpecChange: (newAxisRangeOption: string) => void;
 };
 
 function Controls({
@@ -922,6 +946,9 @@ function Controls({
   defaultDependentAxisRange,
   truncatedDependentAxisWarning,
   setTruncatedDependentAxisWarning,
+  axisRangeOptions,
+  dependentAxisValueSpec = 'Full',
+  onDependentAxisValueSpecChange,
 }: ControlsProps) {
   // axis range control
   const handleDependentAxisRangeChange = useCallback(
@@ -936,6 +963,7 @@ function Controls({
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       dependentAxisRange: undefined,
+      dependentAxisValueSpec: 'Full',
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -946,48 +974,74 @@ function Controls({
     <>
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis controls">
-          {/* Y-axis range control */}
-          <NumberRangeInput
-            label="Range"
-            // add range: for now, handle number only
-            range={
-              (vizConfig.dependentAxisRange as NumberRange) ??
-              defaultDependentAxisRange
-            }
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange as NumberRange);
-            }}
-            allowPartialRange={false}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // change maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset to defaults'}
-            onClick={handleDependentAxisSettingsReset}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+          <LabelledGroup
+            label="Y-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
+              fontSize: '0.9em',
+              // width: '350px',
+              marginTop: '-0.8em',
             }}
-          />
-        </LabelledGroup>
+          >
+            <RadioButtonGroup
+              options={axisRangeOptions}
+              selectedOption={dependentAxisValueSpec}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            {/* Y-axis range control */}
+            <NumberRangeInput
+              label="Range"
+              // add range: for now, handle number only
+              range={
+                (vizConfig.dependentAxisRange as NumberRange) ??
+                defaultDependentAxisRange
+              }
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // change maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              text={'Reset to defaults'}
+              onClick={handleDependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+              }}
+            />
+          </LabelledGroup>
+        </div>
       </div>
     </>
   );

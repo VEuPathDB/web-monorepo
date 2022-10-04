@@ -129,6 +129,7 @@ function createDefaultConfig(): BarplotConfig {
   return {
     dependentAxisLogScale: false,
     valueSpec: 'count',
+    dependentAxisValueSpec: 'Full',
   };
 }
 
@@ -153,6 +154,7 @@ export const BarplotConfig = t.intersection([
     checkedLegendItems: t.array(t.string),
     // dependent axis range control
     dependentAxisRange: NumberRange,
+    dependentAxisValueSpec: t.string,
   }),
 ]);
 
@@ -206,6 +208,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         checkedLegendItems: undefined,
         dependentAxisRange: undefined,
         dependentAxisLogScale: false,
+        dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
@@ -235,6 +238,12 @@ function BarplotViz(props: VisualizationProps<Options>) {
   );
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',
+    false,
+    true
+  );
+
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
     false,
     true
   );
@@ -472,10 +481,14 @@ function BarplotViz(props: VisualizationProps<Options>) {
       ? {
           min: minPosMax.min,
           // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
-          max: vizConfig.valueSpec === 'proportion' ? 1 : minPosMax.max,
+          max:
+            vizConfig.valueSpec === 'proportion' &&
+            vizConfig.dependentAxisValueSpec === 'Full'
+              ? 1
+              : minPosMax.max,
         }
       : undefined;
-  }, [data, vizConfig.valueSpec]);
+  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
 
   // using custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -483,7 +496,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
     0,
     dependentMinPosMax?.min,
     dependentMinPosMax?.max,
-    vizConfig.dependentAxisLogScale
+    vizConfig.dependentAxisLogScale,
+    vizConfig.dependentAxisValueSpec
   ) as NumberRange;
 
   // axis range control
@@ -495,6 +509,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
+      dependentAxisValueSpec: 'Full',
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -541,6 +556,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       vizConfig.checkedLegendItems,
       vizConfig.dependentAxisRange,
       vizConfig.dependentAxisLogScale,
+      vizConfig.dependentAxisValueSpec,
     ]
   );
 
@@ -632,53 +648,80 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis controls">
-          <div style={{ display: 'flex' }}>
-            <Toggle
-              label="Log scale:"
-              value={vizConfig.dependentAxisLogScale}
-              onChange={onDependentAxisLogScaleChange}
-              themeRole="primary"
-            />
-          </div>
-          {/* Y-axis range control */}
-          <NumberRangeInput
-            label="Range"
-            // add range
-            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange as NumberRange);
-            }}
-            allowPartialRange={false}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // change maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset to defaults'}
-            onClick={handleDependentAxisSettingsReset}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup label="Y-axis controls">
+            <div style={{ display: 'flex' }}>
+              <Toggle
+                label="Log scale:"
+                value={vizConfig.dependentAxisLogScale}
+                onChange={onDependentAxisLogScaleChange}
+                themeRole="primary"
+              />
+            </div>
+          </LabelledGroup>
+          <LabelledGroup
+            label="Y-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
+              fontSize: '0.9em',
+              // width: '350px',
             }}
-          />
-        </LabelledGroup>
+          >
+            <RadioButtonGroup
+              options={['Full', 'Auto-zoom', 'Custom']}
+              selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+
+            {/* Y-axis range control */}
+            <NumberRangeInput
+              label="Range"
+              // add range
+              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // change maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              text={'Reset to defaults'}
+              onClick={handleDependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+              }}
+            />
+          </LabelledGroup>
+        </div>
       </div>
     </>
   );
