@@ -14,9 +14,11 @@ export type CheckboxTreeNodeStyleSpec = {
     margin: CSSProperties['margin']
   },
   topLevelNode?: React.CSSProperties;
+  leafNodeLabel?: React.CSSProperties;
+  nodeLabel?: React.CSSProperties;
 };
 
-const defaultStyleSpec = {
+const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
   list: {
     listStyle: 'none',
   },
@@ -25,6 +27,16 @@ const defaultStyleSpec = {
     margin: 0,
   },
   topLevelNode: {},
+  leafNodeLabel: {
+    display: 'flex',
+    width: '100%',
+    marginLeft: '1em',
+  },
+  nodeLabel: {
+    display: 'flex',
+    width: '100%',
+    marginLeft: 0,
+  }
 }
 
 const visibleElement = { display: '' };
@@ -132,8 +144,8 @@ export default function CheckboxTreeNode<T>({
 
     return (
       <li css={{
-        ...nodeVisibilityCss, 
-        ...styleSpec.list,
+          ...nodeVisibilityCss, 
+          ...styleSpec.list,
       }}>
         <div 
           css={
@@ -147,12 +159,20 @@ export default function CheckboxTreeNode<T>({
               <ArrowDropDown 
                 style={{color: '#aaa', lineHeight: '1em'}} 
                 tabIndex={0} 
-                onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleExpansion(node);
+                }}
+                onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
               /> :
               <ArrowRight 
                 style={{color: '#aaa', lineHeight: '1em'}}
                 tabIndex={0} 
-                onClick={() => toggleExpansion(node)} onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleExpansion(node);
+                }}
+                onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
               />
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
@@ -163,11 +183,9 @@ export default function CheckboxTreeNode<T>({
               {nodeElement}
             </div>
           ) : (
-            <label css={{
-              display: 'flex',
-              width: '100%',
-              marginLeft: isLeafNode ? '1em' : 0,
-            }}>
+            <label css={
+              isLeafNode ? {...styleSpec.leafNodeLabel} : {...styleSpec.nodeLabel}
+            }>
               {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
                   ? <IndeterminateCheckbox {...checkboxProps} />
                   : <TreeRadio
@@ -201,7 +219,8 @@ export default function CheckboxTreeNode<T>({
                 getNodeId={getNodeId}
                 getNodeChildren={getNodeChildren}
                 renderNode={renderNode}
-                customCheckboxes={customCheckboxes} />
+                customCheckboxes={customCheckboxes} 
+                styleOverrides={styleOverrides} />
             )}
           </ul>
         }
