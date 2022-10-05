@@ -122,6 +122,9 @@ export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => 
               backgroundColor: '#dfdfdf',
               width: 'calc(100% - 4em)',
             },
+            optionalIcon: {
+              cursor: 'text',
+            }
           },
           treeNode: {
             topLevelNode: {
@@ -129,7 +132,7 @@ export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => 
               margin: '.25em 0',
               border: '.0625rem solid #ddd',
               borderRadius: '.5em',
-              padding: '.5em .6em .5em 1.2em',
+              padding: '.35em',
             }
           },
           treeSection: {
