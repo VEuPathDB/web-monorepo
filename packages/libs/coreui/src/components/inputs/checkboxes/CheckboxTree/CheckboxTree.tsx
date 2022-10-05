@@ -24,6 +24,7 @@ export enum LinksPosition {
 export type TreeLinksStyleSpec = {
   container?: React.CSSProperties;
   links?: React.CSSProperties;
+  actionsContainerStyle?: React.CSSProperties
 };
 
 const defaultTreeLinksStyleSpec: TreeLinksStyleSpec = {
@@ -39,12 +40,16 @@ const defaultTreeLinksStyleSpec: TreeLinksStyleSpec = {
       background: 0,
       color: '#069',
       textDecoration: 'default',
-    }
+      padding: 0,
+      margin: 0,
+    },
+    actionsContainerStyle: {}
 };
 
 const linksHoverDecoration = css({
   textDecoration: 'underline',
   cursor: 'pointer',
+  background: 'none',
 })
 
 export type CheckboxTreeStyleSpec = {
@@ -294,7 +299,7 @@ function TreeLinks({
       </div>
 
       { additionalActions && additionalActions.length > 0 &&
-        <div>
+        <div style={treeLinksStyleSpec.actionsContainerStyle}>
           { additionalActions.map((action, index, additionalActions) => (
             <span key={index}>
               {action}
