@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { merge } from 'lodash';
 // use safeHtml for enabling html (e.g., italic) at helpText
 import { safeHtml } from '../SelectTree/Utils';
-import { Close } from '../../icons';
+import { Close, Filter } from '../../icons';
 import { Help, Search } from '@material-ui/icons';
 import { Tooltip } from '@material-ui/core';
 
@@ -24,29 +25,69 @@ type Props = {
 
   /** Text to appear as tooltip of help icon, should describe how the search is performed. Defaults to empty (no icon) */
   helpText?: string;
+
+  styleOverrides?: SearchBoxStyleSpec;
 }
 
-const defaultStyle = {
+export type SearchBoxStyleSpec = {
+  helpIcon?: React.CSSProperties;
+  optionalIcon?: React.CSSProperties;
+  clearSearchIcon?: React.CSSProperties;
+  input?: React.CSSProperties;
+  container?: React.CSSProperties;
+  clearSearchButton?: React.CSSProperties;
+}
+
+const searchIconStyleSpec = {
+  width: '0.7em',
+  height: '0.7em',
+  color: '#999999',
+  position: 'relative',
+  right: '25px',
+  top: '4px',
+};
+
+const filterIconStyleSpec = {
+  fill: '#999999',
+  position: 'relative',
+  left: '5px',
+  fontSize: '1.5em',
+}
+
+const defaultStyleSpec: SearchBoxStyleSpec = {
   helpIcon: {
     width: '0.7em',
     height: '0.7em',
-    marginLeft: '0.5em',
-    color: '#17b'
+    color: '#17b',
+    marginLeft: '0.25em',
   },
-  searchIcon: {
-    width: '0.7em',
-    height: '0.7em',
-    color: '#999999',
-  },
+  optionalIcon: {},
   clearSearchIcon: {
     width: '1em',
     height: '1em',
     fill: '#999999',
   },
-  searchBox: {
+  clearSearchButton: {
+    background: 'none',
+    border: 0,
+    position: 'relative',
+    margin: 0,
+    padding: 0,
+    right: '23px',
+    top: '2px',
+  },
+  input: {
     border: '1px solid #888',
     borderRadius: '16px',
     padding: '0.2em 1.5em 0.2em 1em',
+    width: 'calc(100% - 2.5em)',
+  },
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+    whiteSpace: 'nowrap',
+    width: '100%',
+    margin: '0 0.5em 0 2em',
   }
 }
 
@@ -61,7 +102,17 @@ export default function SearchBox({
   onSearchTermChange = () => {},
   placeholderText = '',
   helpText = '',
+  iconName = 'search',
+  styleOverrides = {},
 }: Props) {
+
+  const styleSpec: SearchBoxStyleSpec = useMemo(() => {
+    const defaultStyleWithIcon = {
+      ...defaultStyleSpec,
+      optionalIcon: iconName === 'search' ? {...searchIconStyleSpec} : {...filterIconStyleSpec}
+    }
+    return merge({}, defaultStyleWithIcon, styleOverrides)
+  }, [styleOverrides])
 
   function handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
     let searchTerm = e.currentTarget.value;
@@ -79,17 +130,32 @@ export default function SearchBox({
     onSearchTermChange!('');
   }
 
+  const optionalIcon = iconName === 'filter' ? (
+    <Filter style={styleSpec.optionalIcon} />
+  ) : (
+    <Search style={styleSpec.optionalIcon} />
+  );
+
   return (
-    <div css={{
-      display: 'flex',
-      alignItems: 'center',
-      whiteSpace: 'nowrap',
+    <div style={{
+      ...styleSpec.container
     }}>
-      <label>
+      <label css={{
+        flexGrow: 1,
+      }}>
+        {iconName === 'filter' && !searchTerm ?
+          <span style={{
+            position: 'absolute',
+            height: 0,
+            width: 0,
+          }}>
+            {optionalIcon}
+          </span>
+          : null
+        }
         <input 
-          css={{
-            ...defaultStyle.searchBox, 
-            width: 'calc(100% - 2em)'
+          style={{
+            ...styleSpec.input, 
           }}
           type="search"
           autoFocus={autoFocus}
@@ -100,27 +166,23 @@ export default function SearchBox({
         />
         {searchTerm ?
           <button
-            css={{
-              background: 'none',
-              border: 0,
-              position: 'relative',
-              margin: 0,
-              padding: 0,
-              right: '23px',
-              top: '2px',
+            style={{
+              ...styleSpec.clearSearchButton
             }}
             type="button" 
             onClick={handleResetClick}
           >
-            <Close style={defaultStyle.clearSearchIcon} />
+            <Close style={styleSpec.clearSearchIcon} />
           </button> :
-          <span css={{
-            position: 'relative',
-            right: '25px',
-            top: '4px'
+          iconName === 'search' ?
+          <span style={{
+            position: 'absolute',
+            height: 0,
+            width: 0,
           }}>
-            <Search style={defaultStyle.searchIcon} />
+            {optionalIcon}
           </span>
+          : null
         }
       </label>
       {/* use safeHtml for helpText to allow italic */}
@@ -129,7 +191,7 @@ export default function SearchBox({
         <Tooltip
           title={safeHtml(helpText)}
         >
-          <Help style={defaultStyle.helpIcon}/>  
+          <Help style={styleSpec.helpIcon}/>  
         </Tooltip>}
     </div>
   );

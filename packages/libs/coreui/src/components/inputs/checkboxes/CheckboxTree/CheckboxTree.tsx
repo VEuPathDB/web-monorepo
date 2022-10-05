@@ -1,9 +1,9 @@
 import React, { useCallback, MouseEventHandler, useMemo } from 'react';
 import { css } from '@emotion/react';
-import { CSSProperties } from '@emotion/serialize';
+import { merge } from 'lodash';
 
-import CheckboxTreeNode, { CustomCheckboxes } from './CheckboxTreeNode';
-import SearchBox from '../../SearchBox/SearchBox';
+import CheckboxTreeNode, { CustomCheckboxes, CheckboxTreeNodeStyleSpec } from './CheckboxTreeNode';
+import SearchBox, { SearchBoxStyleSpec } from '../../SearchBox/SearchBox';
 import { Warning } from '../../../icons';
 
 import { addOrRemove } from '../../SelectTree/Utils';
@@ -21,34 +21,63 @@ export enum LinksPosition {
   Both = Top | Bottom
 }
 
-export type CheckboxTreeStyleSpec = {
-  treeLinks: {
-    containerHeight: CSSProperties['height'],
-    containerPadding: CSSProperties['padding'],
-    fontSize: CSSProperties['fontSize'],
-    color: CSSProperties['color'],
-    textDecoration: CSSProperties['textDecoration'],
-    background: CSSProperties['background'],
-    border: CSSProperties['border'],
-  },
+export type TreeLinksStyleSpec = {
+  container?: React.CSSProperties;
+  links?: React.CSSProperties;
+  actionsContainerStyle?: React.CSSProperties
 };
 
-const defaultStyle: CheckboxTreeStyleSpec = {
-  treeLinks: {
-    containerHeight: '2em',
-    containerPadding: '0.5em 0',
-    fontSize: '0.9em',
-    color: '#069',
-    textDecoration: 'default',
-    background: 0,
-    border: 0,
-  },
+const defaultTreeLinksStyleSpec: TreeLinksStyleSpec = {
+    container: {
+      display: 'flex',
+      justifyContent: 'center',
+      height: '2em',
+      padding: '0.5em 0',
+    },
+    links: {
+      fontSize: '0.9em',
+      border: 0,
+      background: 0,
+      color: '#069',
+      textDecoration: 'default',
+      padding: 0,
+      margin: 0,
+    },
+    actionsContainerStyle: {}
 };
 
 const linksHoverDecoration = css({
   textDecoration: 'underline',
   cursor: 'pointer',
+  background: 'none',
 })
+
+export type CheckboxTreeStyleSpec = {
+  treeLinks?: TreeLinksStyleSpec;
+  searchBox?: SearchBoxStyleSpec;
+  treeNode?: CheckboxTreeNodeStyleSpec;
+  treeSection?: {
+    container?: React.CSSProperties;
+    ul?: React.CSSProperties;
+  }
+}
+
+const defaultCheckboxTreeStyleSpec: CheckboxTreeStyleSpec = {
+  treeLinks: defaultTreeLinksStyleSpec,
+  treeNode: {},
+  searchBox: {},
+  treeSection: {
+    container: {
+      flexGrow: 2, 
+      overflowY: 'auto'
+    },
+    ul: {
+      width: '100%', 
+      margin: '0.5em 0', 
+      padding: '0 1em', 
+    }
+  }
+}
 
 type StatefulNode<T> = T & {
   __expandableTreeState: {
@@ -169,6 +198,8 @@ export type CheckboxTreeProps<T> = {
 
   /** Wrap tree section with additional UI elements */
   wrapTreeSection?: (treeSection: React.ReactNode) => React.ReactNode;
+
+  styleOverrides?: CheckboxTreeStyleSpec;
 };
 
 type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
@@ -189,6 +220,7 @@ type TreeLinksProps = {
   selectDefaultList: TreeLinkHandler;
   isFiltered: boolean;
   additionalActions?: React.ReactNode[];
+  treeLinksStyleSpec: TreeLinksStyleSpec;
 }
 
 /**
@@ -209,20 +241,18 @@ function TreeLinks({
     removeVisible,
     selectOnlyVisible,
     isFiltered,
-    additionalActions
+    additionalActions,
+    treeLinksStyleSpec
 }: TreeLinksProps) {
 
   const linkStyles = {
-    ...defaultStyle.treeLinks,
+    ...treeLinksStyleSpec.links,
     '&:hover': linksHoverDecoration,
   }
 
   return (
     <div css={{
-        display: 'flex',
-        justifyContent: 'center',
-        height: defaultStyle.treeLinks.containerHeight,
-        padding: defaultStyle.treeLinks.containerPadding,
+        ...treeLinksStyleSpec.container
       }}>
 
       { isFiltered && showSelectionLinks &&
@@ -268,7 +298,7 @@ function TreeLinks({
       </div>
 
       { additionalActions && additionalActions.length > 0 &&
-        <div>
+        <div style={treeLinksStyleSpec.actionsContainerStyle}>
           { additionalActions.map((action, index, additionalActions) => (
             <span key={index}>
               {action}
@@ -573,8 +603,13 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         shouldExpandOnClick = true,
         customCheckboxes,
         expandedList,
-        renderNoResults
+        renderNoResults,
+        styleOverrides = {},
     } = props;
+
+    const styleSpec: CheckboxTreeStyleSpec = useMemo(() => {
+      return merge({}, defaultCheckboxTreeStyleSpec, styleOverrides)
+    }, [styleOverrides])
 
     // initialize stateful tree; this immutable tree structure will be replaced with each state change
     const treeState = useMemo(() => {
@@ -759,31 +794,37 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         showDefaultLink={defaultList != null}
         showExpansionLinks={!isActiveSearch(props)}
         additionalActions={additionalActions}
+        treeLinksStyleSpec={styleSpec.treeLinks ?? defaultTreeLinksStyleSpec}
       />
     );
 
     let treeSection = (
-      <div css={{flexGrow: 2, overflowY: 'auto'}}>
-        <ul css={{width: '100%', margin: '0', padding: '0 1em', alignSelf: 'flex-start'}}>
+      <div style={styleSpec.treeSection?.container}>
+        <ul style={styleSpec.treeSection?.ul}>
           {topLevelNodes.map((node, index) => {
             const nodeId = getNodeId(node);
 
-            return <CheckboxTreeNode
-              key={"node_" + nodeId}
-              name={name || ''}
-              node={node}
-              path={[index]}
-              getNodeState={getNodeState}
-              isSelectable={!!isSelectable}
-              isMultiPick={!!isMultiPick}
-              isActiveSearch={isActiveSearch(props)}
-              toggleSelection={toggleSelection}
-              toggleExpansion={toggleExpansion}
-              shouldExpandOnClick={shouldExpandOnClick}
-              getNodeId={getNodeId}
-              getNodeChildren={getStatefulChildren}
-              renderNode={renderNode}
-              customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>} />
+            return (
+              <CheckboxTreeNode
+                key={"node_" + nodeId}
+                name={name || ''}
+                node={node}
+                path={[index]}
+                getNodeState={getNodeState}
+                isSelectable={!!isSelectable}
+                isMultiPick={!!isMultiPick}
+                isActiveSearch={isActiveSearch(props)}
+                toggleSelection={toggleSelection}
+                toggleExpansion={toggleExpansion}
+                shouldExpandOnClick={shouldExpandOnClick}
+                getNodeId={getNodeId}
+                getNodeChildren={getStatefulChildren}
+                renderNode={renderNode}
+                customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>}
+                styleOverrides={styleSpec.treeNode}
+                isTopLevelNode={true}
+              />
+            )
             })
           }
         </ul>
@@ -797,8 +838,6 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
           <div css={{
             display: 'flex',
             justifyContent: 'center',
-            columnGap: '1em',
-            margin: '0.5em 0'
           }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
@@ -807,6 +846,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
               placeholderText={searchBoxPlaceholder}
               iconName={searchIconName}
               helpText={searchBoxHelp}
+              styleOverrides={styleSpec.searchBox}
             />
             <AdditionalFilters
               filters={additionalFilters}
