@@ -563,12 +563,12 @@ export default function SubsetDownloadModal({
   const LockIcon = () => (
     <div
       style={{
-        width: 13,
-        height: 13,
+        width: 14,
+        height: 'auto',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        margin: '1px 4px 1px 0',
+        margin: '1px',
       }}
       onClick={(event) => event.preventDefault()}
     >
