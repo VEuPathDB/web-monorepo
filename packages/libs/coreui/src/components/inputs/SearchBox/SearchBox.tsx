@@ -80,14 +80,14 @@ const defaultStyleSpec: SearchBoxStyleSpec = {
     border: '1px solid #888',
     borderRadius: '16px',
     padding: '0.2em 1.5em 0.2em 1em',
-    width: '100%',
+    width: 'calc(100% - 2.5em)',
   },
   container: {
     display: 'flex',
     alignItems: 'center',
     whiteSpace: 'nowrap',
     width: '100%',
-    margin: '0 2em',
+    margin: '0 0.5em 0 2em',
   }
 }
 

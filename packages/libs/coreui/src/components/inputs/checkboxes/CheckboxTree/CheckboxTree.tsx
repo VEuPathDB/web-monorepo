@@ -839,7 +839,6 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
           <div css={{
             display: 'flex',
             justifyContent: 'center',
-            columnGap: '1em',
           }}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
