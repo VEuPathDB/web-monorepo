@@ -16,6 +16,7 @@ export type CheckboxTreeNodeStyleSpec = {
   topLevelNode?: React.CSSProperties;
   leafNodeLabel?: React.CSSProperties;
   nodeLabel?: React.CSSProperties;
+  checkboxLabel?: React.CSSProperties;
 };
 
 const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
@@ -36,6 +37,10 @@ const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
     display: 'flex',
     width: '100%',
     marginLeft: 0,
+  },
+  checkboxLabel: {
+    width: '100%', 
+    margin: 'auto 0'
   }
 }
 
@@ -194,7 +199,7 @@ export default function CheckboxTreeNode<T>({
                     />
               } 
               <div
-                css={{width: '100%', margin: 'auto 0'}}
+                css={{...styleSpec.checkboxLabel}}
               >
                 {nodeElement}
               </div>
