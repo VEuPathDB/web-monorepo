@@ -61,6 +61,7 @@ interface Props {
   geoConfigs: GeoConfig[];
   baseUrl?: string;
   isSingleAppMode: boolean;
+  disableThumbnailCreation?: boolean;
 }
 
 /**
@@ -428,7 +429,8 @@ type FullScreenVisualizationPropKeys =
   | 'filteredCounts'
   | 'geoConfigs'
   | 'baseUrl'
-  | 'isSingleAppMode';
+  | 'isSingleAppMode'
+  | 'disableThumbnailCreation';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -454,6 +456,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     geoConfigs,
     baseUrl,
     isSingleAppMode,
+    disableThumbnailCreation,
     actions,
   } = props;
   const history = useHistory();
@@ -651,7 +654,9 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             updateConfiguration={updateConfiguration}
-            updateThumbnail={updateThumbnail}
+            updateThumbnail={
+              disableThumbnailCreation ? undefined : updateThumbnail
+            }
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
             geoConfigs={geoConfigs}

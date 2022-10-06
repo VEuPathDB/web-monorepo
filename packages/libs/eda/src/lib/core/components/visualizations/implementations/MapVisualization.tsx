@@ -135,6 +135,8 @@ function MapViz(props: VisualizationProps<Options>) {
 
   const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
     ({ center, zoom }) => {
+      console.log('viewport changed with center:');
+      console.log({ center });
       if (center != null && center.length === 2 && zoom != null) {
         updateVizConfig({
           mapCenterAndZoom: {
@@ -221,6 +223,8 @@ function MapViz(props: VisualizationProps<Options>) {
       vizConfig.mouseMode,
     ]
   );
+
+  console.log({ latitude, longitude });
 
   const plotNode = (
     <>

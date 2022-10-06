@@ -12,8 +12,8 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { ThumbnailDimensions, makePlotThumbnailUrl } from '../utils/thumbnails';
 
 export function useUpdateThumbnailEffect(
-  updateThumbnail: (src: string) => void,
-  thumbnailDimensions: ThumbnailDimensions,
+  updateThumbnail?: (src: string) => void,
+  thumbnailDimensions?: ThumbnailDimensions,
   deps?: DependencyList
 ) {
   const plotRef = useRef<FacetedPlotRef | PlotRef>();
@@ -24,6 +24,7 @@ export function useUpdateThumbnailEffect(
     updateThumbnail,
     thumbnailDimensions,
   });
+
   useEffect(() => {
     thumbnailArgsRef.current = {
       updateThumbnail,
@@ -45,18 +46,20 @@ export function useUpdateThumbnailEffect(
     // Update the thumbnail.
     // Returns a cancel function for the useLayoutEffect's cleanup.
     // This in effect (pun intended) provides debouncing functionality
-    return Task.fromPromise(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(resolve, 2000);
-        })
-    )
-      .chain(() =>
-        Task.fromPromise(() =>
-          makePlotThumbnailUrl(plotInstance, thumbnailDimensions)
-        )
+    if (updateThumbnail && thumbnailDimensions) {
+      return Task.fromPromise(
+        () =>
+          new Promise((resolve) => {
+            setTimeout(resolve, 2000);
+          })
       )
-      .run(updateThumbnail);
+        .chain(() =>
+          Task.fromPromise(() =>
+            makePlotThumbnailUrl(plotInstance, thumbnailDimensions)
+          )
+        )
+        .run(updateThumbnail);
+    }
 
     // Disabling react-hooks/exhaustive-deps because it objects to the use
     // of "deps" which are not array literals
