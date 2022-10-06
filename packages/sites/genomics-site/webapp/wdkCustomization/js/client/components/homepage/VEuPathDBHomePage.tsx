@@ -317,6 +317,7 @@ const useHeaderMenuItems = (
               expandedBranches={expandedBranches}
               setSearchTerm={setSearchTerm}
               setExpandedBranches={setExpandedBranches}
+              type='headerMenu'
             />
           ),
           type: 'custom'
