@@ -104,7 +104,10 @@ let {
           {
             ...sharedCheckboxTreeContainerStyleSpec,
             minWidth: '18.75em',
-          } : {}
+          } : 
+          {
+            ...sharedCheckboxTreeContainerStyleSpec,
+          }
         }
       >
         <CheckboxTree<CategoryTreeNode>
