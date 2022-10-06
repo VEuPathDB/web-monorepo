@@ -250,22 +250,25 @@ function TreeLinks({
     '&:hover': linksHoverDecoration,
   }
 
+  const filteredSelectionLinks = (
+    <span>
+      <button css={linkStyles} type="button" onClick={selectOnlyVisible}>select only these</button>
+      <Bar/>
+      <button css={linkStyles} type="button" onClick={addVisible}>add these</button>
+      <Bar/>
+      <button css={linkStyles} type="button" onClick={removeVisible}>clear these</button>
+    </span>
+  );
+
   return (
     <div css={{
         ...treeLinksStyleSpec.container
       }}>
 
-      { isFiltered && showSelectionLinks &&
-        <div>
-          <button css={linkStyles} type="button" onClick={selectOnlyVisible}>select only these</button>
-          <Bar/>
-          <button css={linkStyles} type="button" onClick={addVisible}>add these</button>
-          <Bar/>
-          <button css={linkStyles} type="button" onClick={removeVisible}>clear these</button>
-        </div>
-      }
-
       <div>
+        { isFiltered && showSelectionLinks && 
+          filteredSelectionLinks
+        }
         { !isFiltered && showSelectionLinks &&
           <span>
             <button css={linkStyles} type="button" onClick={selectAll}>select all</button>
