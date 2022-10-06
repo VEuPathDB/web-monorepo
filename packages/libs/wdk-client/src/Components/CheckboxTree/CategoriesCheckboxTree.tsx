@@ -12,6 +12,14 @@ import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import CheckboxTree, { LinksPosition, CheckboxTreeStyleSpec } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getFilteredNodeChildren, nodeSearchPredicateWithHiddenNodes } from 'wdk-client/Utils/CheckboxTreeUtils';
 
+const sharedCheckboxTreeContainerStyleSpec: React.CSSProperties = {
+  position: 'relative',
+  maxHeight: '75vh',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+};
+
 type ChangeHandler = (ids: string[]) => void;
 
 type NodePredicate = (node: CategoryTreeNode) => boolean;
@@ -43,6 +51,7 @@ type Props = {
   showSearchBox?: boolean;
   containerClassName?: string;
   styleOverrides?: CheckboxTreeStyleSpec;
+  type?: string;
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
@@ -72,6 +81,7 @@ let {
   showSearchBox,
   containerClassName = '',
   styleOverrides = {},
+  type
 } = props;
 
   if (tree.children.length == 0) {
@@ -84,7 +94,19 @@ let {
   return (
     <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>
       {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
-      <div className="wdk-CategoriesCheckboxTreeWrapper">
+      <div
+        style={
+          type === 'searchPane' ? 
+          {
+            ...sharedCheckboxTreeContainerStyleSpec,
+            borderBottom: '0.0625rem solid #694b66',
+          } : type === 'headerMenu' ? 
+          {
+            ...sharedCheckboxTreeContainerStyleSpec,
+            minWidth: '18.75em',
+          } : {}
+        }
+      >
         <CheckboxTree<CategoryTreeNode>
           searchBoxHelp={searchBoxHelp}
           isSearchable={true}
