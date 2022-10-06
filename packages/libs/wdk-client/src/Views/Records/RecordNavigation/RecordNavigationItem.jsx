@@ -2,7 +2,7 @@ import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { getId, getDisplayName, isIndividual } from 'wdk-client/Utils/CategoryUtils';
 
-let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSectionToggle}) => {
+let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSectionToggle, isActiveSearch}) => {
   let id = getId(category);
   let activeId = activeCategory && getId(activeCategory);
   let displayName = getDisplayName(category)
@@ -14,9 +14,22 @@ let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSe
   let offerCheckbox = path.length === 1;
 
   return (
-    <div className="wdk-RecordNavigationItem">
+    <div 
+      className="wdk-RecordNavigationItem"
+      style={{
+        margin: isIndividual(category) && !isActiveSearch ? '0.25em 0 0.25em 2em' : '0.25em 0',
+        display: 'flex',
+        position: 'relative',
+      }}
+    >
       {activeId === id ? (
-        <i className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"/>
+        <i 
+          className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"
+          style={{
+            left: isActiveSearch ? '-1.5em' : '-3em',
+            cursor: 'pointer',
+          }}  
+        />
       ) : null}
       {offerCheckbox &&
         <input

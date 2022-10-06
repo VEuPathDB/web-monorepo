@@ -1,3 +1,4 @@
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { includes, memoize, throttle, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -95,8 +96,29 @@ class RecordNavigationSection extends React.PureComponent {
               onSectionToggle={onSectionToggle}
               activeCategory={this.state.activeCategory}
               checked={!includes(collapsedSections, getId(node))}
+              isActiveSearch={!!navigationQuery}
             />
           }
+          linksPosition={LinksPosition.Top}
+          styleOverrides={{
+            searchBox: {
+              container: {margin: '0 0.5em'},
+              optionalIcon: {top: '2px'},
+              input: {
+                padding: '0.2em 1em 0.2em 2em',
+                width: 'calc(100% - 3em)',
+              },
+            },
+            treeSection: {
+              container: {
+                margin: navigationQuery ? '0.5em 0 0 1em' : 0,
+                overflowY: navigationQuery ? 'visible' : 'auto',
+              },
+              ul: {
+                paddingRight: '0',
+              }
+            },
+          }}
         />
       </div>
     );
