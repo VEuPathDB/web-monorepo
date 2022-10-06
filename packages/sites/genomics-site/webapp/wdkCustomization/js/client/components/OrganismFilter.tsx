@@ -314,14 +314,21 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                   },
                 },
                 treeSection: {
+                  container: {
+                    margin: searchTerm ? '0.5em 0 0 1em' : 0,
+                  },
                   ul: {
                     padding: '0',
                   }
                 },
                 treeNode: {
                   leafNodeLabel: {
-                    padding: '0.125em 0',
-                  }
+                    padding: searchTerm ? 0 : '0.125em 0',
+                    marginLeft: searchTerm ? 0 : '2em',
+                  },
+                  checkboxLabel: {
+                    margin: searchTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+                  },
                 }
               }}
             />
