@@ -25,7 +25,7 @@ import {
   ComputedVariableDetails,
   VisualizationProps,
 } from '../VisualizationTypes';
-import box from './selectorIcons/box.svg';
+import BoxSVG from './selectorIcons/BoxSVG';
 import {
   BoxplotData as BoxplotSeries,
   FacetedData,
@@ -129,7 +129,7 @@ interface Options
 }
 
 export const boxplotVisualization = createVisualizationPlugin({
-  selectorIcon: box,
+  selectorIcon: BoxSVG,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

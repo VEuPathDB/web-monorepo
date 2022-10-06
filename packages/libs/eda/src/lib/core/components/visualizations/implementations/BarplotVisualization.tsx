@@ -41,7 +41,7 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
-import bar from './selectorIcons/bar.svg';
+import BarSVG from './selectorIcons/BarSVG';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -117,7 +117,7 @@ const modalPlotContainerStyles = {
 };
 
 export const barplotVisualization = createVisualizationPlugin({
-  selectorIcon: bar,
+  selectorIcon: BarSVG,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 });

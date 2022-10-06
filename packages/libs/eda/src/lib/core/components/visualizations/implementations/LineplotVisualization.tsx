@@ -34,7 +34,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
 import { Toggle } from '@veupathdb/coreui';
-import line from './selectorIcons/line.svg';
+import LineSVG from './selectorIcons/LineSVG';
 
 // use lodash instead of Math.min/max
 import {
@@ -156,7 +156,7 @@ interface LinePlotDataWithCoverage extends CoverageStatistics {
 type LinePlotDataResponse = LineplotResponse;
 
 export const lineplotVisualization = createVisualizationPlugin({
-  selectorIcon: line,
+  selectorIcon: LineSVG,
   fullscreenComponent: LineplotViz,
   createDefaultConfig: createDefaultConfig,
 });
