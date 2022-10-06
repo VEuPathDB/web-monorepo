@@ -20,12 +20,8 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
-import {
-  useFindEntityAndVariable,
-  useStudyEntities,
-  useStudyMetadata,
-} from '../../../hooks/workspace';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useStudyEntities, useStudyMetadata } from '../../../hooks/workspace';
+import { useMemo, useCallback, useState } from 'react';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -34,7 +30,7 @@ import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -205,25 +201,6 @@ function MapViz(props: VisualizationProps<Options>) {
   });
 
   /**
-   * Reset checkedLegendItems to all-checked (actually none checked)
-   * if ANY of the checked items are NOT in the vocabulary
-   * OR if ALL of the checked items ARE in the vocabulary
-   *
-   * TO DO: generalise this for use in other visualizations
-   */
-  useEffect(() => {
-    if (vizConfig.checkedLegendItems == null || vocabulary == null) return;
-
-    if (
-      vizConfig.checkedLegendItems.some(
-        (label) => vocabulary.findIndex((vocab) => vocab === label) === -1
-      ) ||
-      vizConfig.checkedLegendItems.length === vocabulary.length
-    )
-      updateVizConfig({ checkedLegendItems: undefined });
-  }, [vocabulary, vizConfig.checkedLegendItems, updateVizConfig]);
-
-  /**
    * Now render the visualization
    */
   const [height, width] = [600, 1000];
@@ -337,37 +314,19 @@ function MapViz(props: VisualizationProps<Options>) {
     [updateVizConfig]
   );
 
-  const handleCheckedLegendItemsChange = useCallback(
-    (newCheckedItems) => {
-      if (newCheckedItems != null)
-        updateVizConfig({ checkedLegendItems: newCheckedItems });
-    },
-    [updateVizConfig]
-  );
-
-  // set checkedLegendItems
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
-    vizConfig.checkedLegendItems
+    vizConfig.checkedLegendItems,
+    updateVizConfig,
+    vocabulary
   );
-
-  // WIP hook--see checkedLegendItemsStatus.ts
-  // const [
-  //   checkedLegendItems,
-  //   setCheckedLegendItems,
-  // ] = useCheckedLegendItemsStatus(
-  //   legendItems,
-  //   vizConfig.checkedLegendItems,
-  //   vocabulary,
-  //   updateVizConfig
-  // );
 
   const legendNode = legendItems != null && xAxisVariable != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={variableDisplayWithUnit(xAxisVariable)}
-      onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
       showOverlayLegend={true}
     />
   );
