@@ -88,6 +88,9 @@ import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
+import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
+import { Tooltip } from '@material-ui/core';
+
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 type BoxplotComputedVariableMetadata = {
@@ -972,13 +975,43 @@ function Controls({
     setTruncatedDependentAxisWarning('');
   }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
+  // set Undo icon props
+  const undoSize = 20;
+  const undoColor = '#006699';
+
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
     <>
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip title={'Reset to defaults'}>
+                <button
+                  onClick={handleDependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                >
+                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+
           <LabelledGroup
             label="Y-axis range"
             containerStyles={{
@@ -1033,16 +1066,6 @@ function Controls({
                 containerStyles={{ maxWidth: '350px' }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              text={'Reset to defaults'}
-              onClick={handleDependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-              }}
-            />
           </LabelledGroup>
         </div>
       </div>

@@ -107,6 +107,9 @@ import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
+import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
+import { Tooltip } from '@material-ui/core';
+
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
@@ -827,6 +830,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
     </>
   );
 
+  // set Undo icon props
+  const undoSize = 20;
+  const undoColor = '#006699';
+
   const controlsNode = (
     <>
       {/* Plot mode */}
@@ -834,6 +841,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         label="Plot mode"
         selectedOption={vizConfig.valueSpec}
         options={['count', 'proportion']}
+        optionLabels={['Count', 'Proportion']}
         buttonColor={'primary'}
         margins={['1em', '0', '0', '1em']}
         onOptionSelected={(newOption) => {
@@ -849,11 +857,40 @@ function HistogramViz(props: VisualizationProps<Options>) {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* make switch and radiobutton single line with space
                   also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
-          <LabelledGroup
-            label="X-axis controls"
-            containerStyles={{
-              marginRight: '1em',
-              // marginRight: valueType === 'date' ? '1em' : '0em',
+
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup label="X-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip title={'Reset to defaults'}>
+                <button
+                  onClick={handleIndependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                >
+                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: '1em',
+              marginTop: '-0.5em',
             }}
           >
             <BinWidthControl
@@ -878,7 +915,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
                 maxWidth: valueType === 'date' ? '215px' : '315px',
               }}
             />
-          </LabelledGroup>
+          </div>
+
           <LabelledGroup
             label="X-axis range"
             containerStyles={{
@@ -932,18 +970,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
                 }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              text={'Reset to defaults'}
-              onClick={handleIndependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-                // to match reset button with date range form
-                marginRight: valueType === 'date' ? '-1em' : '',
-              }}
-            />
           </LabelledGroup>
         </div>
 
@@ -952,7 +978,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '20em',
+            height: '16em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -962,27 +988,47 @@ function HistogramViz(props: VisualizationProps<Options>) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup
-            label="Y-axis controls"
-            containerStyles={{
-              marginRight: '0em',
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Toggle
-                label="Log scale:"
-                value={histogramProps.dependentAxisLogScale ?? false}
-                onChange={onDependentAxisLogScaleChange}
-                styleOverrides={{
-                  container: {
-                    minHeight: widgetHeight,
-                  },
-                }}
-                themeRole="primary"
-              />
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip title={'Reset to defaults'}>
+                <button
+                  onClick={handleDependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                >
+                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
+                </button>
+              </Tooltip>
             </div>
-          </LabelledGroup>
-          {/* <div style={{ height: '4em' }} /> */}
+          </div>
+
+          <div style={{ marginLeft: '1em', marginTop: '-0.6em' }}>
+            <Toggle
+              label="Log scale:"
+              value={histogramProps.dependentAxisLogScale ?? false}
+              onChange={onDependentAxisLogScaleChange}
+              styleOverrides={{
+                container: {
+                  minHeight: widgetHeight,
+                },
+              }}
+              themeRole="primary"
+            />
+          </div>
+
           <LabelledGroup
             label="Y-axis range"
             containerStyles={{
@@ -1033,16 +1079,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
                 containerStyles={{ maxWidth: '350px' }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              text={'Reset to defaults'}
-              onClick={handleDependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-              }}
-            />
           </LabelledGroup>
         </div>
       </div>

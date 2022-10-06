@@ -126,6 +126,9 @@ import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
+import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
+import { Tooltip } from '@material-ui/core';
+
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
 const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
@@ -1182,6 +1185,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  // set Undo icon props
+  const undoSize = 20;
+  const undoColor = '#006699';
+
   const controlsNode = (
     <>
       {!options?.hideTrendlines && (
@@ -1218,51 +1225,72 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup
-            label="X-axis controls"
-            containerStyles={{
-              marginRight: '1em',
+          {/* X-axis controls   */}
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
-            {/* X-Axis range control */}
-            <div
-              style={{
-                display: 'flex',
-                marginTop: '0.8em',
-              }}
-            >
-              <Toggle
-                label="Log scale (will exclude values &le; 0):"
-                value={vizConfig.independentAxisLogScale ?? false}
-                onChange={(newValue: boolean) => {
-                  setDismissedIndependentAllNegativeWarning(false);
-                  onIndependentAxisLogScaleChange(newValue);
-                  if (newValue && vizConfig.valueSpecConfig !== 'Raw')
-                    enqueueSnackbar(
-                      'Log scale is only available for Raw plot mode'
-                    );
-                }}
-                // disable log scale for date variable
-                disabled={scatterplotProps.independentValueType === 'date'}
-                themeRole="primary"
-              />
+            <LabelledGroup label="X-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip title={'Reset to defaults'}>
+                <button
+                  onClick={handleIndependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                >
+                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
+                </button>
+              </Tooltip>
             </div>
-            {independentAllNegative &&
-            !dismissedIndependentAllNegativeWarning ? (
-              <Notification
-                title={''}
-                text={
-                  'Nothing can be plotted with log scale because all values are zero or negative'
-                }
-                color={'#5586BE'}
-                onAcknowledgement={() =>
-                  setDismissedIndependentAllNegativeWarning(true)
-                }
-                showWarningIcon={true}
-                containerStyles={{ maxWidth: '350px' }}
-              />
-            ) : null}
-          </LabelledGroup>
+          </div>
+
+          <div
+            style={{
+              marginLeft: '1em',
+              marginTop: '-0.3em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Toggle
+              label="Log scale (will exclude values &le; 0):"
+              value={vizConfig.independentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
+                setDismissedIndependentAllNegativeWarning(false);
+                onIndependentAxisLogScaleChange(newValue);
+                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
+                  enqueueSnackbar(
+                    'Log scale is only available for Raw plot mode'
+                  );
+              }}
+              // disable log scale for date variable
+              disabled={scatterplotProps.independentValueType === 'date'}
+              themeRole="primary"
+            />
+          </div>
+          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are zero or negative'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedIndependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+
           <LabelledGroup
             label="X-axis range"
             containerStyles={{
@@ -1319,22 +1347,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              // change text
-              text={'Reset to defaults'}
-              onClick={handleIndependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-                // to match reset button with date range form
-                marginRight:
-                  scatterplotProps.independentValueType === 'date'
-                    ? '-1em'
-                    : '',
-              }}
-            />
           </LabelledGroup>
         </div>
         {/* add vertical line in btw Y- and X- controls */}
@@ -1342,7 +1354,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '17.25em',
+            height: '13.25em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1353,51 +1365,71 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
         {/* Y-axis controls   */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup
-            label="Y-axis controls"
-            containerStyles={{
-              marginRight: '0em',
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
-            {/* Y-axis range control */}
-            <div
-              style={{
-                display: 'flex',
-                marginTop: '0.8em',
-                // marginBottom: '0.8em',
-              }}
-            >
-              <Toggle
-                label="Log scale (will exclude values &le; 0):"
-                value={vizConfig.dependentAxisLogScale ?? false}
-                onChange={(newValue: boolean) => {
-                  setDismissedDependentAllNegativeWarning(false);
-                  onDependentAxisLogScaleChange(newValue);
-                  if (newValue && vizConfig.valueSpecConfig !== 'Raw')
-                    enqueueSnackbar(
-                      'Log scale is only available for Raw plot mode'
-                    );
-                }}
-                // disable log scale for date variable
-                disabled={scatterplotProps.dependentValueType === 'date'}
-                themeRole="primary"
-              />
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip title={'Reset to defaults'}>
+                <button
+                  onClick={handleDependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                >
+                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
+                </button>
+              </Tooltip>
             </div>
-            {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
-              <Notification
-                title={''}
-                text={
-                  'Nothing can be plotted with log scale because all values are zero or negative'
-                }
-                color={'#5586BE'}
-                onAcknowledgement={() =>
-                  setDismissedDependentAllNegativeWarning(true)
-                }
-                showWarningIcon={true}
-                containerStyles={{ maxWidth: '350px' }}
-              />
-            ) : null}
-          </LabelledGroup>
+          </div>
+
+          <div
+            style={{
+              marginLeft: '1em',
+              marginTop: '-0.3em',
+              marginBottom: '0.8em',
+            }}
+          >
+            <Toggle
+              label="Log scale (will exclude values &le; 0):"
+              value={vizConfig.dependentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
+                setDismissedDependentAllNegativeWarning(false);
+                onDependentAxisLogScaleChange(newValue);
+                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
+                  enqueueSnackbar(
+                    'Log scale is only available for Raw plot mode'
+                  );
+              }}
+              // disable log scale for date variable
+              disabled={scatterplotProps.dependentValueType === 'date'}
+              themeRole="primary"
+            />
+          </div>
+          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            <Notification
+              title={''}
+              text={
+                'Nothing can be plotted with log scale because all values are zero or negative'
+              }
+              color={'#5586BE'}
+              onAcknowledgement={() =>
+                setDismissedDependentAllNegativeWarning(true)
+              }
+              showWarningIcon={true}
+              containerStyles={{ maxWidth: '350px' }}
+            />
+          ) : null}
+
           <LabelledGroup
             label="Y-axis range"
             containerStyles={{
@@ -1454,20 +1486,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              // change text
-              text={'Reset to defaults'}
-              onClick={handleDependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-                // to match reset button with date range form
-                marginRight:
-                  scatterplotProps.dependentValueType === 'date' ? '-1em' : '',
-              }}
-            />
           </LabelledGroup>
         </div>
       </div>

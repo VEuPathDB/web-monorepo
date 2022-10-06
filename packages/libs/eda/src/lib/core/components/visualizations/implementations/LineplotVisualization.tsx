@@ -121,6 +121,9 @@ import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
+import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
+import { Tooltip } from '@material-ui/core';
+
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -987,6 +990,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
       independentAxisRange: undefined,
       independentAxisLogScale: false,
       independentAxisValueSpec: 'Full',
+      useBinning: false,
+      binWidth: undefined,
+      binWidthTimeUnit: undefined,
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1017,6 +1023,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
       dependentAxisValueSpec: 'Full',
+      showErrorBars: false,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1055,38 +1062,102 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  // set Undo icon props
+  const undoSize = 20;
+  const undoColor = '#006699';
+
   const controlsNode = (
     <>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup
+          {/* X-axis controls   */}
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup label="X-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip
+                title={
+                  lineplotProps.independentValueType === 'string'
+                    ? 'Reset to defaults (not available)'
+                    : 'Reset to defaults'
+                }
+              >
+                <button
+                  onClick={handleIndependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                  // reset button is diabled for categorical X
+                  disabled={lineplotProps.independentValueType === 'string'}
+                >
+                  <Undo
+                    width={undoSize}
+                    height={undoSize}
+                    // reset button color is set to be lightgray for categorical X
+                    fill={
+                      lineplotProps.independentValueType === 'string'
+                        ? 'lightgray'
+                        : undoColor
+                    }
+                  />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+
+          {/* <LabelledGroup
             label="X-axis controls"
             containerStyles={{
               marginRight: '1em',
             }}
+          > </LabelledGroup> */}
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              marginTop: '-0.3em',
+              marginBottom: '0.8em',
+              marginLeft: '1em',
+            }}
           >
-            <div
-              style={{
-                display: 'flex',
-                marginTop: '0.8em',
-                marginBottom: '0.8em',
+            <Toggle
+              label="Log scale (will exclude values &le; 0):"
+              value={vizConfig.independentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
+                setDismissedIndependentAllNegativeWarning(false);
+                onIndependentAxisLogScaleChange(newValue);
+                if (newValue && vizConfig.useBinning)
+                  enqueueSnackbar(
+                    'Binning is no longer appropriate and has been disabled'
+                  );
               }}
-            >
-              <Toggle
-                label="Log scale (will exclude values &le; 0):"
-                value={vizConfig.independentAxisLogScale ?? false}
-                onChange={(newValue: boolean) => {
-                  setDismissedIndependentAllNegativeWarning(false);
-                  onIndependentAxisLogScaleChange(newValue);
-                  if (newValue && vizConfig.useBinning)
-                    enqueueSnackbar(
-                      'Binning is no longer appropriate and has been disabled'
-                    );
-                }}
-                disabled={lineplotProps.independentValueType === 'date'}
-                themeRole="primary"
-              />
-            </div>
+              disabled={
+                lineplotProps.independentValueType === 'date' ||
+                lineplotProps.independentValueType === 'string'
+              }
+              themeRole="primary"
+            />
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              // marginTop: '-0.3em',
+              marginBottom: '0.8em',
+              marginLeft: '1em',
+            }}
+          >
             {independentAllNegative &&
             !dismissedIndependentAllNegativeWarning ? (
               <Notification
@@ -1099,7 +1170,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
                   setDismissedIndependentAllNegativeWarning(true)
                 }
                 showWarningIcon={true}
-                containerStyles={{ maxWidth: '350px' }}
+                containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
               />
             ) : null}
             <Toggle
@@ -1141,7 +1212,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
               }}
               disabled={!vizConfig.useBinning || neverUseBinning}
             />
-          </LabelledGroup>
+          </div>
+
           <LabelledGroup
             label="X-axis range"
             containerStyles={{
@@ -1161,6 +1233,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
               buttonColor={'primary'}
               margins={['0em', '0', '0', '0em']}
               itemMarginRight={25}
+              // add disabled list
+              disabledList={
+                lineplotProps.independentValueType === 'string'
+                  ? ['Full', 'Auto-zoom', 'Custom']
+                  : []
+              }
             />
             {/* X-Axis range control */}
             {/* designed to disable X-axis range control for categorical X */}
@@ -1210,21 +1288,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              text={'Reset to defaults'}
-              onClick={handleIndependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-                // to match reset button with date range form
-                marginRight:
-                  lineplotProps.independentValueType === 'date' ? '-1em' : '',
-              }}
-              // reset button is diabled for categorical X
-              disabled={lineplotProps.independentValueType === 'string'}
-            />
           </LabelledGroup>
         </div>
 
@@ -1233,7 +1296,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '24.5em',
+            height: '20.3em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1243,35 +1306,66 @@ function LineplotViz(props: VisualizationProps<Options>) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup
-            label="Y-axis controls"
-            containerStyles={{
-              marginRight: '0em',
-              // marginTop: '-0.8em',
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                marginTop: '0.8em',
-                marginBottom: '0.8em',
-              }}
-            >
-              <Toggle
-                label="Log scale (will exclude values &le; 0):"
-                value={vizConfig.dependentAxisLogScale ?? false}
-                onChange={(newValue: boolean) => {
-                  setDismissedDependentAllNegativeWarning(false);
-                  onDependentAxisLogScaleChange(newValue);
-                  if (newValue && vizConfig.showErrorBars)
-                    enqueueSnackbar(
-                      'Error bars are no longer appropriate and have been disabled'
-                    );
-                }}
-                disabled={lineplotProps.dependentValueType === 'date'}
-                themeRole="primary"
-              />
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.3em' }}>
+              <Tooltip title={'Reset to defaults'}>
+                <button
+                  onClick={handleDependentAxisSettingsReset}
+                  style={{
+                    width: undoSize,
+                    height: undoSize,
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                >
+                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
+                </button>
+              </Tooltip>
             </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              marginTop: '-0.3em',
+              marginBottom: '0.8em',
+              marginLeft: '1em',
+            }}
+          >
+            <Toggle
+              label="Log scale (will exclude values &le; 0):"
+              value={vizConfig.dependentAxisLogScale ?? false}
+              onChange={(newValue: boolean) => {
+                setDismissedDependentAllNegativeWarning(false);
+                onDependentAxisLogScaleChange(newValue);
+                if (newValue && vizConfig.showErrorBars)
+                  enqueueSnackbar(
+                    'Error bars are no longer appropriate and have been disabled'
+                  );
+              }}
+              disabled={lineplotProps.dependentValueType === 'date'}
+              themeRole="primary"
+            />
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+
+              marginBottom: '0.8em',
+              marginLeft: '1em',
+            }}
+          >
             {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
               <Notification
                 title={''}
@@ -1283,7 +1377,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
                   setDismissedDependentAllNegativeWarning(true)
                 }
                 showWarningIcon={true}
-                containerStyles={{ maxWidth: '350px' }}
+                containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
               />
             ) : null}
             <Toggle
@@ -1299,7 +1393,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               disabled={neverShowErrorBars}
               themeRole="primary"
             />
-          </LabelledGroup>
+          </div>
           {/* Y-axis range control */}
           {/* make some space to match with X-axis range control */}
           <div style={{ height: '4em' }} />
@@ -1355,20 +1449,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 containerStyles={{ maxWidth: '350px' }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              // change text
-              text={'Reset to defaults'}
-              onClick={handleDependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-                // to match reset button with date range form
-                marginRight:
-                  lineplotProps.dependentValueType === 'date' ? '-1em' : '',
-              }}
-            />
           </LabelledGroup>
         </div>
       </div>
