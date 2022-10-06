@@ -45,7 +45,7 @@ export default configure({
         siteSearchServiceUrl: process.env.SITE_SEARCH_SERVICE_ENDPOINT,
         useUserDatasetsWorkspace: process.env.USER_DATASETS_WORKSPACE_ENABLED === 'true',
         datasetImportUrl: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT,
-        useEda: true,
+        useEda: process.env.EDA_ENABLED === "true",
         edaExampleAnalysesAuthor: process.env.EDA_EXAMPLE_ANALYSES_AUTHOR,
         edaServiceUrl: process.env.EDA_SERVICE_ENDPOINT,
         edaSingleAppMode: process.env.EDA_SINGLE_APP_MODE,
