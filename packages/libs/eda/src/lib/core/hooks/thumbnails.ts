@@ -11,6 +11,17 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import { ThumbnailDimensions, makePlotThumbnailUrl } from '../utils/thumbnails';
 
+/**
+ * A custom hook that makes a new thumnbail of a plot two seconds after any
+ * change in the dependencies.
+ *
+ * @param updateThumbnail Callback that receives the new string-formatted
+ * thumbnail image. If undefined, no thumbnail is created on dependency change.
+ * @param thumbnailDimensions Dimensions of new thumbnail. If undefined, no
+ * thumbnail is created on dependency change.
+ * @param deps Depencencies that, when changed, should trigger a thumbnail update.
+ * @returns A ref that should be passed to the plot component.
+ */
 export function useUpdateThumbnailEffect(
   updateThumbnail?: (src: string) => void,
   thumbnailDimensions?: ThumbnailDimensions,
