@@ -6,8 +6,7 @@ import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-// import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { isFilterField, isMulti, isRange, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
@@ -128,6 +127,17 @@ export default class FieldList extends React.Component { // eslint-disable-line 
               handleFieldSelect={this.handleFieldSelect}
             />
           )}
+          linksPosition={LinksPosition.Top}
+          styleOverrides={{
+            searchBox: {
+              container: {
+                margin: '0 0.25em',
+              },
+              input: {
+                backgroundColor: '#fff',
+              }
+            }
+          }}
         />
       </div>
     );
