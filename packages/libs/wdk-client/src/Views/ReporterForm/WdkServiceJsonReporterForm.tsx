@@ -14,6 +14,7 @@ import {
   getAttributesChangeHandler,
   getTableTree,
 } from 'wdk-client/Views/ReporterForm/reporterUtils';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 type Props<T, U> = {
   scope: string;
@@ -34,7 +35,7 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
   let getUpdateHandler = (fieldName: string) => getChangeHandler(fieldName, updateFormState, formState);
   let getUiUpdateHandler = (fieldName: string) => getChangeHandler(fieldName, updateFormUiState, formUiState);
   return (
-    <div>
+    <div style={{maxWidth:'800px'}}>
       <ReporterSortMessage scope={scope}/>
       <CategoriesCheckboxTree
         title="Choose Columns:"
@@ -49,6 +50,44 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onChange={getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
         onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
         onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+
+        linksPosition={LinksPosition.Top}
+        styleOverrides={{
+          searchBox: {
+            container: {
+              margin: '0 0.5em',
+            },
+            input: {
+              padding: '0.2em 1em 0.2em 2em',
+              width: 'calc(100% - 3em)',
+            },
+            optionalIcon: {
+              top: '2px',
+            }
+          },
+          treeSection: {
+            container: {
+              marginTop: '0.5em',
+            },
+            ul: {
+              margin: 0,
+            }
+          },
+          treeNode: {
+            topLevelNode: {
+              height: '1.5em',
+              alignItems: 'center',
+              overflow: 'hidden',
+            },
+            leafNodeLabel: {
+              padding: formUiState.attributeSearchText ? 0 : '0.125em 0',
+              marginLeft: formUiState.attributeSearchText ? 0 : '2em',
+            },
+            checkboxLabel: {
+              margin: formUiState.attributeSearchText ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+            },
+          }
+        }}
       />
 
       <CategoriesCheckboxTree
@@ -64,10 +103,46 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onChange={getUpdateHandler('tables')}
         onUiChange={getUiUpdateHandler('expandedTableNodes')}
         onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+
+        linksPosition={LinksPosition.Top}
+        styleOverrides={{
+          searchBox: {
+            container: {
+              margin: '0 0.5em',
+            },
+            input: {
+              padding: '0.2em 1em 0.2em 2em',
+              width: 'calc(100% - 3em)',
+            },
+            optionalIcon: {
+              top: '2px',
+            }
+          },
+          treeSection: {
+            container: {
+              marginTop: '0.5em',
+            },
+            ul: {
+              margin: 0,
+            }
+          },
+          treeNode: {
+            topLevelNode: {
+              margin: formUiState.tableSearchText ? 0: '-0.5em 0',
+            },
+            leafNodeLabel: {
+              padding: formUiState.tableSearchText ? 0 : '0.125em 0',
+              marginLeft: formUiState.tableSearchText ? 0 : '2em',
+            },
+            checkboxLabel: {
+              margin: formUiState.tableSearchText ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+            },
+          }
+        }}
       />
 
       { includeSubmit &&
-        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
+        <div style={{maxWidth:'800px',textAlign:'center', margin:'0.6em 0'}}>
           <button className="btn" type="submit" onClick={onSubmit}>Get {recordClass.displayNamePlural}</button>
         </div>
       }
