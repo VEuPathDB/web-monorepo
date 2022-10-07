@@ -39,6 +39,7 @@ import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
+import { useVizIconColors } from './implementations/selectorIcons/types';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -304,8 +305,10 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
     },
     includeHeader = true,
   } = props;
+  const colors = useVizIconColors();
   const history = useHistory();
   const { computationId } = computation;
+
   return (
     <div className={cx('-PickerContainer')}>
       {includeHeader && (
@@ -361,11 +364,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                     }}
                   >
                     {vizPlugin ? (
-                      <img
-                        alt={vizOverview.displayName}
-                        style={{ height: '100%', width: '100%' }}
-                        src={vizPlugin.selectorIcon}
-                      />
+                      <vizPlugin.selectorIcon {...colors} />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}
