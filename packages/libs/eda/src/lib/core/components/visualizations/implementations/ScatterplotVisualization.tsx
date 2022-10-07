@@ -33,7 +33,7 @@ import {
   VisualizationProps,
 } from '../VisualizationTypes';
 
-import scatter from './selectorIcons/scatter.svg';
+import ScatterSVG from './selectorIcons/ScatterSVG';
 
 // use lodash instead of Math.min/max
 import {
@@ -168,7 +168,7 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 type ScatterPlotDataResponse = ScatterplotResponse;
 
 export const scatterplotVisualization = createVisualizationPlugin({
-  selectorIcon: scatter,
+  selectorIcon: ScatterSVG,
   fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
 });

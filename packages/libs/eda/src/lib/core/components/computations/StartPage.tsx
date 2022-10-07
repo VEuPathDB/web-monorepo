@@ -12,6 +12,7 @@ import { createComputation } from '../../../core/components/computations/Utils';
 import { v4 as uuid } from 'uuid';
 import { useStudyMetadata } from '../../';
 import PlaceholderIcon from '../visualizations/PlaceholderIcon';
+import { useVizIconColors } from '../visualizations/implementations/selectorIcons/types';
 
 interface Props {
   analysisState: AnalysisState;
@@ -25,6 +26,7 @@ export function StartPage(props: Props) {
   const cx = makeClassNameHelper('VisualizationsContainer');
   const studyMetadata = useStudyMetadata();
   const history = useHistory();
+  const colors = useVizIconColors();
 
   return (
     apps &&
@@ -171,11 +173,7 @@ export function StartPage(props: Props) {
                             }}
                           >
                             {vizPlugin ? (
-                              <img
-                                src={vizPlugin.selectorIcon}
-                                alt={viz.displayName}
-                                style={{ height: '100%', width: '100%' }}
-                              />
+                              <vizPlugin.selectorIcon {...colors} />
                             ) : (
                               <PlaceholderIcon name={viz.name} />
                             )}
