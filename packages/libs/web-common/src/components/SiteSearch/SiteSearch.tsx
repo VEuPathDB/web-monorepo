@@ -1,7 +1,7 @@
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { DataGrid } from '@veupathdb/coreui';
 import { CheckboxList, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
-import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import { AnchoredTooltip, PaginationMenu } from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
@@ -321,7 +321,44 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         isSelectable
         selectedList={selection}
         onSelectionChange={setSelection}
-        linksPosition={CheckboxTree.LinkPlacement.Top}
+        linksPosition={LinksPosition.Top}
+        styleOverrides={{
+          searchBox: {
+            container: {
+              margin: '0 0.25em',
+            },
+            input: {
+              padding: '0.2em 2em 0.2em 1em',
+              width: 'calc(100% - 3em)',
+            },
+            optionalIcon: {
+              top: '2px',
+            }
+          },
+          treeSection: {
+            container: {
+              marginTop: '0.5em',
+            },
+            ul: {
+              margin: 0,
+              padding: 0,
+            }
+          },
+          treeNode: {
+            topLevelNode: {
+              height: '1.5em',
+              alignItems: 'center',
+              overflow: 'hidden',
+            },
+            leafNodeLabel: {
+              padding: filterTerm ? 0 : '0.125em 0',
+              marginLeft: filterTerm ? 0 : '2em',
+            },
+            checkboxLabel: {
+              margin: filterTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+            },
+          }
+        }}
       />
     </React.Fragment>
   )
