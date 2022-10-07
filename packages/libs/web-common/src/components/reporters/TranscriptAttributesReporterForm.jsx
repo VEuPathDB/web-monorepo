@@ -5,6 +5,7 @@ import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/rep
 import * as CategoryUtils from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import TabularReporterFormSubmitButtons from './TabularReporterFormSubmitButtons';
 import ExcelNote from './ExcelNote';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
@@ -31,62 +32,67 @@ let TranscriptAttributesReporterForm = props => {
   return (
     <div>
       <ReporterSortMessage scope={scope}/>
-      <div className="eupathdb-ReporterForm">
+      <div className="eupathdb-ReporterFormWrapper">
+        <div className="eupathdb-ReporterForm">
 
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__columns">
-          <CategoriesCheckboxTree
-              // title and layout of the tree
-              title="Choose Columns"
-              searchBoxPlaceholder="Search Columns..."
-              tree={util.getAttributeTree(ontology, recordClass.fullName, question)}
+          <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__columns">
+            <CategoriesCheckboxTree
+                // title and layout of the tree
+                title="Choose Columns"
+                searchBoxPlaceholder="Search Columns..."
+                tree={util.getAttributeTree(ontology, recordClass.fullName, question)}
 
-              // state of the tree
-              selectedLeaves={formState.attributes}
-              expandedBranches={formUiState.expandedAttributeNodes}
-              searchTerm={formUiState.attributeSearchText}
+                // state of the tree
+                selectedLeaves={formState.attributes}
+                expandedBranches={formUiState.expandedAttributeNodes}
+                searchTerm={formUiState.attributeSearchText}
 
-              // change handlers for each state element controlled by the tree
-              onChange={transcriptAttribChangeHandler}
-              onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
-              onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
-          />
+                // change handlers for each state element controlled by the tree
+                onChange={transcriptAttribChangeHandler}
+                onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
+                onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+                
+                linksPosition={LinksPosition.Top}
+                styleOverrides={createReporterFormStyleOverrides(formUiState.attributeSearchText)}
+            />
+          </div>
+
+          <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
+            <div>
+              <h3>Choose Rows</h3>
+              <div>
+                <label>
+                  <Checkbox value={formState.applyFilter} onChange={transcriptPerGeneChangeHandler}/>
+                  <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <h3>Download Type</h3>
+              <div>
+                <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
+                  onChange={getUpdateHandler('attachmentType')}/>
+              </div>
+            </div>
+            <div>
+              <h3>Additional Options</h3>
+              <div>
+                <label>
+                  <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
+                  <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
-          <div>
-            <h3>Choose Rows</h3>
-            <div>
-              <label>
-                <Checkbox value={formState.applyFilter} onChange={transcriptPerGeneChangeHandler}/>
-                <span style={{marginLeft:'0.5em'}}>Include only one transcript per gene (the longest)</span>
-              </label>
-            </div>
+        { includeSubmit &&
+          <div className="eupathdb-ReporterFormSubmit">
+            <TabularReporterFormSubmitButtons onSubmit={onSubmit} recordClass={recordClass}/>
           </div>
-          <div>
-            <h3>Download Type</h3>
-            <div>
-              <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
-                onChange={getUpdateHandler('attachmentType')}/>
-            </div>
-          </div>
-          <div>
-            <h3>Additional Options</h3>
-            <div>
-              <label>
-                <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
-                <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
+        }
       </div>
-
-      { includeSubmit &&
-        <div className="eupathdb-ReporterFormSubmit">
-          <TabularReporterFormSubmitButtons onSubmit={onSubmit} recordClass={recordClass}/>
-        </div>
-      }
       <hr/>
       <div style={{margin:'0.5em 2em'}}>
         <ExcelNote/>
@@ -130,6 +136,47 @@ TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
       attributeSearchText: ""
     }
   };
+}
+
+export function createReporterFormStyleOverrides(searchTerm) {
+  return (
+    {
+      searchBox: {
+        container: {
+          margin: '0 0.5em',
+        },
+        input: {
+          padding: '0.2em 1em 0.2em 2em',
+          width: 'calc(100% - 3em)',
+        },
+        optionalIcon: {
+          top: '2px',
+        }
+      },
+      treeSection: {
+        container: {
+          marginTop: '0.5em',
+        },
+        ul: {
+          margin: 0,
+        }
+      },
+      treeNode: {
+        topLevelNode: {
+          height: '1.5em',
+          alignItems: 'center',
+          overflow: 'hidden',
+        },
+        leafNodeLabel: {
+          padding: searchTerm ? 0 : '0.125em 0',
+          marginLeft: searchTerm ? 0 : '2em',
+        },
+        checkboxLabel: {
+          margin: searchTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+        },
+      }
+    }
+  )
 }
 
 export default TranscriptAttributesReporterForm;

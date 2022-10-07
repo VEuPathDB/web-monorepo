@@ -4,6 +4,8 @@ import * as CategoryUtils from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as OntologyUtils from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { createReporterFormStyleOverrides } from './TranscriptAttributesReporterForm';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, OntologyUtils, CategoryUtils);
 
@@ -35,6 +37,8 @@ let SharedReporterForm = props => {
               onChange={util.getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
               onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+              linksPosition={LinksPosition.Top}
+              styleOverrides={createReporterFormStyleOverrides(formUiState.attributeSearchText)}
           />
         </div>
 
@@ -54,6 +58,8 @@ let SharedReporterForm = props => {
             onChange={getUpdateHandler('tables')}
             onUiChange={getUiUpdateHandler('expandedTableNodes')}
             onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+            linksPosition={LinksPosition.Top}
+            styleOverrides={createReporterFormStyleOverrides(formUiState.tableSearchText)}
           />
         </div>
 
