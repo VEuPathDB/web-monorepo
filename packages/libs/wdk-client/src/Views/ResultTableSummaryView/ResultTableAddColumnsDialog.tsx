@@ -77,7 +77,9 @@ function ResultTableAddColumnsDialog({
     ...styleOverrides,
     treeNode: {
       topLevelNode: {
-        margin: isActiveSearch ? 0: '-0.5em 0',
+        height: '1.5em',
+        alignItems: 'center',
+        overflow: 'hidden',
       },
       leafNodeLabel: {
         marginLeft: isActiveSearch ? 0 : '2em',
