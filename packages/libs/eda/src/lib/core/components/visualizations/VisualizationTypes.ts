@@ -1,4 +1,3 @@
-import { string } from 'fp-ts';
 import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { Filter } from '../../types/filter';
@@ -21,7 +20,7 @@ export interface VisualizationProps<Options = undefined> {
   dataElementConstraints?: Record<string, DataElementConstraint>[];
   dataElementDependencyOrder?: string[];
   updateConfiguration: (configuration: unknown) => void;
-  updateThumbnail: (source: string) => void;
+  updateThumbnail?: (source: string) => void;
   computation: Computation;
   filters?: Filter[];
   starredVariables: VariableDescriptor[];
@@ -31,6 +30,7 @@ export interface VisualizationProps<Options = undefined> {
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
 }
+
 export interface IsEnabledInPickerParams {
   geoConfigs?: GeoConfig[];
   studyMetadata?: StudyMetadata; // not used yet, but you could imagine it being used to determine

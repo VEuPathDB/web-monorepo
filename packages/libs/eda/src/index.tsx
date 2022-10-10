@@ -53,7 +53,6 @@ import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
 import { colors, H3 } from '@veupathdb/coreui';
 
 import './index.css';
-import { StoreModule } from '@veupathdb/wdk-client/lib/Core/Store';
 
 // snackbar
 import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
@@ -66,6 +65,12 @@ const downloadServiceUrl = '/eda-user-service';
 // Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
 // Otherwise, let singleAppMode remain undefined or set it to '' to allow multiple app instances.
 const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
+
+const showUnreleasedData =
+  process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
+
+const enableFullScreenApps =
+  process.env.REACT_APP_ENABLE_FULL_SCREEN_APPS === 'true';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
@@ -175,6 +180,8 @@ initialize({
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}
             singleAppMode={singleAppMode}
+            showUnreleasedData={showUnreleasedData}
+            enableFullScreenApps={enableFullScreenApps}
           />
         );
       },

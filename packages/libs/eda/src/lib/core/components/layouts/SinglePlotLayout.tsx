@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { RequiredInputsPrompt } from './RequiredInputPrompts';
 
 import { LayoutProps } from './types';
 
@@ -25,32 +26,12 @@ const defaultTableGroupStyles: CSSProperties = {
   gap: '1.5em',
 };
 
-const requiredInputsContainerStyles: CSSProperties = {
-  position: 'relative',
-  height: '0',
-  width: '0',
-};
-
-const requiredInputsHeaderStyles: CSSProperties = {
-  position: 'absolute',
-  width: 'max-content',
-  left: '4.25em',
-  zIndex: '1000',
-  fontWeight: '500',
-  fontStyle: 'normal',
-  backgroundColor: '#fff',
-  padding: '0.5em',
-};
-
-const requiredTextStyles: CSSProperties = {
-  color: '#dd314e',
-};
-
 export function SinglePlotLayout({
   containerStyles,
   legendNode,
   legendStyles,
   plotNode,
+  controlsNode,
   plotStyles,
   tableGroupNode,
   tableGroupStyles,
@@ -64,34 +45,12 @@ export function SinglePlotLayout({
           <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
         )}
         {plotNode}
+        {controlsNode}
       </div>
       <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
         {legendNode && <div style={{ ...legendStyles }}>{legendNode}</div>}
         {tableGroupNode}
       </div>
-    </div>
-  );
-}
-
-interface RequiredPromptProps {
-  isMosaicPlot: boolean | undefined;
-}
-
-function RequiredInputsPrompt({ isMosaicPlot }: RequiredPromptProps) {
-  return (
-    <div style={requiredInputsContainerStyles}>
-      <h3
-        style={{
-          ...requiredInputsHeaderStyles,
-          top: isMosaicPlot ? '4em' : '0.5em',
-        }}
-      >
-        Please select all{' '}
-        <span style={requiredTextStyles}>
-          required<sup>*</sup>
-        </span>{' '}
-        parameters.
-      </h3>
     </div>
   );
 }
