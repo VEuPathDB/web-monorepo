@@ -78,7 +78,7 @@
     "@types/uuid": "^8.3.4",
     "@veupathdb/browserslist-config": "^1.1.0",
     "@veupathdb/components": "^0.19.1",
-    "@veupathdb/coreui": "^0.18.6",
+    "@veupathdb/coreui": "^0.18.7",
     "@veupathdb/eslint-config": "^2.0.0",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/prettier-config": "^1.0.0",
