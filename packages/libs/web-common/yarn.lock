@@ -1034,16 +1034,18 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.6":
-  version "0.18.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.6.tgz#7af21de423548758615c0d861c6a4f398d64fe29"
-  integrity sha512-Sh2y+zkLwwOvBCxyTkxlVM6v+iPONeXB1zdSWaZt941j/CvjnKhDtuA1xzvqwzvgP68bCRzyBz+PgqJm0SLLMg==
+"@veupathdb/coreui@^0.18.7":
+  version "0.18.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.7.tgz#2b114845618847cdb8ef49080c9637ba2f2e6408"
+  integrity sha512-HNmVwtY8hYbdUC1qtvFLhtjbargTdRgqlsDYFDszdGzERlX38pkwjtHjWOUtJxFdSd/LTFRoefE/c0YqfkrBYA==
   dependencies:
     "@react-hook/size" "^2.1.2"
+    core-js "^3.25.3"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
+    regenerator-runtime "^0.13.9"
 
 "@veupathdb/eda@^3.9.3":
   version "3.9.3"
@@ -1081,10 +1083,10 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.3.0":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.1.tgz#319d2c4bcc6e101bc48647b7a2011b1c0d346de3"
-  integrity sha512-buohdGAVNDMJa5S2p+Ob4dn6GeKBO13UAsyJTSztcAH2jfws/+dVGTbPj5TFvmt4PrT4A4CpktyYkYnLtv6KZg==
+"@veupathdb/study-data-access@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.6.tgz#e9c1bcbe909b5f2ff78b5c76c203c0374158b031"
+  integrity sha512-E9HWKifUoak3gHV4dprUfHnb3r6tYHjG7LFqNAIOCPRD0ZJW8FHtwvT9v9ctEMqrzrLAYtkFPxq4i5MUPbW2qg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -2052,6 +2054,11 @@ convert-source-map@^1.5.0:
   integrity sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==
   dependencies:
     safe-buffer "~5.1.1"
+
+core-js@^3.25.3:
+  version "3.25.4"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.25.4.tgz#76f6bc330a79aafbaf77e9645293351ea5d09b5b"
+  integrity sha512-JDLxg61lFPFYQ7U0HKoyKwVUV63VbbVTb/K73Yf+k4Mf4ZBZxCjfyrWZjTk1ZM7ZrgFSqhSIOmuzYAxG2f/reQ==
 
 core-util-is@1.0.2:
   version "1.0.2"
@@ -5187,7 +5194,7 @@ regenerate@^1.4.0:
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
 
-regenerator-runtime@^0.13.4:
+regenerator-runtime@^0.13.4, regenerator-runtime@^0.13.9:
   version "0.13.9"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
   integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==
