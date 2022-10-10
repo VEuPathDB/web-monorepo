@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { uniq } from 'lodash';
 import React, {
   useCallback,
@@ -7,6 +8,7 @@ import React, {
   useRef,
   useState,
   useContext,
+  ReactNode,
 } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -20,7 +22,8 @@ import {
   preorderSeq,
   pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import SelectTree from '@veupathdb/coreui/dist/components/inputs/SelectTree/SelectTree';
+import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   isFilterField,
@@ -39,9 +42,9 @@ import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Toolti
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 // import ShowHideVariableContext
 import { VariableDescriptor } from '../../types/variable';
+import { VariableScope } from '../../types/study';
 import { ShowHideVariableContext } from '../../utils/show-hide-variable-context';
 
-import { cx } from '../../../workspace/Utils';
 import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
@@ -80,6 +83,7 @@ interface FieldNodeProps {
   starredVariablesLoading: boolean;
   onClickStar: () => void;
   scrollIntoView: boolean;
+  asDropdown?: boolean;
 }
 
 interface getNodeSearchStringType {
@@ -129,6 +133,10 @@ interface VariableListProps {
   singleChildPromotionEntityIds?: string[];
   customCheckboxes?: CustomCheckboxes<VariableFieldTreeNode>;
   startExpanded?: boolean;
+  asDropdown?: boolean;
+  dropdownLabel?: string;
+  scope?: VariableScope;
+  clearSelectionButton?: ReactNode;
 }
 
 // TODO: Needs documentation of general component purpose.
@@ -153,6 +161,10 @@ export default function VariableList({
   singleChildPromotionEntityIds,
   customCheckboxes,
   startExpanded,
+  asDropdown,
+  dropdownLabel,
+  scope,
+  clearSelectionButton,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
   const {
@@ -346,6 +358,7 @@ export default function VariableList({
           starredVariablesLoading={starredVariablesLoading}
           onClickStar={() => toggleStarredVariable({ entityId, variableId })}
           scrollIntoView
+          asDropdown={asDropdown}
         />
       );
     },
@@ -382,7 +395,16 @@ export default function VariableList({
       >
         <div>
           <button
-            className={`${cx('-StarredVariablesFilter')} btn`}
+            className="btn"
+            style={{
+              display: 'grid',
+              padding: '0.5em',
+              gridAutoFlow: 'column',
+              gap: '0.4em',
+              cursor: starredVariableToggleDisabled ? 'not-allowed' : 'default',
+              opacity: starredVariableToggleDisabled ? '0.5' : '1',
+              color: '#f8cb6a',
+            }}
             type="button"
             onClick={toggleShowOnlyStarredVariables}
             disabled={starredVariableToggleDisabled}
@@ -489,7 +511,11 @@ export default function VariableList({
   /** Render info on disabled fields, if appropriate. */
   const renderDisabledFields = () =>
     disabledFields.size > 0 && (
-      <div className={cx('-DisabledVariablesToggle')}>
+      <div
+        style={{
+          margin: '0.75em',
+        }}
+      >
         <HtmlTooltip
           css={{
             zIndex: 1,
@@ -508,6 +534,9 @@ export default function VariableList({
         >
           <button
             className="link"
+            style={{
+              color: '#666',
+            }}
             type="button"
             onClick={() => {
               // useContext
@@ -534,17 +563,50 @@ export default function VariableList({
    */
   const renderFeaturedFields = () => {
     return featuredFields.length && allowedFeaturedFields.length ? (
-      <div className="FeaturedVariables">
+      <div
+        style={{
+          padding: '0.5em 1em',
+          borderTop: '1px solid #ccc',
+          borderBottom: '1px solid #ccc',
+          borderLeft: asDropdown ? 'none' : '1px solid #ccc',
+          borderRight: asDropdown ? 'none' : '1px solid #ccc',
+        }}
+      >
         <details
           open={Options.featuredVariablesOpen}
           onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
             Options.featuredVariablesOpen = event.currentTarget.open;
           }}
         >
-          <summary>
-            <h3>Featured variables</h3>
+          <summary
+            css={{
+              cursor: 'pointer',
+              '&::marker': {
+                color: '#888',
+              },
+            }}
+          >
+            <h3
+              style={{
+                fontSize: '1.05em',
+                display: 'inline-block',
+                padding: '0.25em',
+                margin: 0,
+                color: '#222',
+                fontWeight: 500,
+              }}
+            >
+              Featured variables
+            </h3>
           </summary>
-          <ul>
+          <ul
+            style={{
+              listStyle: 'none',
+              margin: 0,
+              marginTop: '0.25em',
+              padding: 0,
+            }}
+          >
             {allowedFeaturedFields.map((field) => {
               const isActive = field.term === activeField?.term;
               const isDisabled = disabledFields.has(field.term);
@@ -566,9 +628,18 @@ export default function VariableList({
               return (
                 <li
                   key={field.term}
-                  className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
+                  style={{
+                    lineHeight: '15px',
+                  }}
                 >
-                  <div className="wdk-CheckboxTreeNodeContent">
+                  <div
+                    style={{
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginLeft: '1em',
+                    }}
+                  >
                     {isMultiPick &&
                       (CustomCheckbox ? (
                         <CustomCheckbox
@@ -600,6 +671,7 @@ export default function VariableList({
                         toggleStarredVariable({ entityId, variableId })
                       }
                       scrollIntoView={false}
+                      asDropdown={asDropdown}
                     />
                   </div>
                 </li>
@@ -611,38 +683,84 @@ export default function VariableList({
     ) : null;
   };
 
-  return (
-    <div className={cx('-VariableList')}>
+  const sharedProps = {
+    ...(isMultiPick && {
+      selectedList: selectedFields.map((field) => field.term),
+      isSelectable: true,
+      isMultiPick: true,
+      onSelectionChange: onSelectedFieldsChange,
+    }),
+    linksPosition: CheckboxTree.LinkPlacement.Top,
+    autoFocusSearchBox: autoFocus,
+    tree: tree,
+    expandedList: expandedNodes,
+    getNodeId: getNodeId,
+    getNodeChildren: getNodeChildren,
+    onExpansionChange: setExpandedNodes,
+    isSearchable: true,
+    searchBoxPlaceholder: 'Find a variable',
+    searchBoxHelp: makeSearchHelpText(
+      'variables by name, description, or values'
+    ),
+    searchTerm: searchTerm,
+    onSearchTermChange: setSearchTerm,
+    searchPredicate: searchPredicate,
+    renderNode: renderNode,
+    customCheckboxes: customCheckboxes,
+    additionalFilters: additionalFilters,
+    isAdditionalFilterApplied: isAdditionalFilterApplied,
+  };
+
+  return asDropdown ? (
+    <div
+      style={{
+        position: 'relative',
+        display: 'flex',
+        columnGap: '0.5em',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
+      }}
+    >
+      <SelectTree
+        key={dropdownLabel}
+        {...sharedProps}
+        buttonDisplayContent={dropdownLabel}
+        wrapPopover={(treeSection) => (
+          <div
+            style={{
+              position: 'relative',
+              borderRadius: '0.25em',
+              padding: '0.5em 0.5em 0.5em 0',
+              height: '60vh',
+              width: '30em',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {renderDisabledFields()}
+            {renderFeaturedFields()}
+            {treeSection}
+          </div>
+        )}
+      />
+      {clearSelectionButton}
+    </div>
+  ) : (
+    <div
+      style={{
+        position: 'relative',
+        borderRadius: '0.25em',
+        padding: '0.5em 0.5em 0.5em 0',
+        height: scope === 'download' ? 'auto' : '100%',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {renderDisabledFields()}
       {renderFeaturedFields()}
-
-      <CheckboxTree
-        {...(isMultiPick && {
-          selectedList: selectedFields.map((field) => field.term),
-          isSelectable: true,
-          isMultiPick: true,
-          onSelectionChange: onSelectedFieldsChange,
-        })}
-        linksPosition={CheckboxTree.LinkPlacement.Top}
-        autoFocusSearchBox={autoFocus}
-        tree={tree}
-        expandedList={expandedNodes}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        onExpansionChange={setExpandedNodes}
-        isSearchable={true}
-        searchBoxPlaceholder="Find a variable"
-        searchBoxHelp={makeSearchHelpText(
-          'variables by name, description, or values'
-        )}
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        searchPredicate={searchPredicate}
-        renderNode={renderNode}
-        customCheckboxes={customCheckboxes}
-        additionalFilters={additionalFilters}
-        isAdditionalFilterApplied={isAdditionalFilterApplied}
-      />
+      <CheckboxTree {...sharedProps} />
     </div>
   );
 }
@@ -660,6 +778,32 @@ const getNodeSearchString = (valuesMap: ValuesMap) => {
   };
 };
 
+const baseFieldNodeLinkStyle = {
+  padding: '0.25em 0.5em',
+  borderRadius: '0.5em',
+  display: 'inline-block',
+  cursor: 'pointer',
+};
+
+const activeFieldNodeLinkStyle = {
+  background: '#e6e6e6',
+};
+
+const disabledFieldNodeLinkStyle = {
+  cursor: 'not-allowed',
+  opacity: '0.5',
+};
+
+const starStyleOff = {
+  color: '#767676',
+  fontSize: '1.1em',
+};
+
+const starStyleOn = {
+  color: '#f8cb6a',
+  fontSize: '1.1em',
+};
+
 const FieldNode = ({
   field,
   searchTerm,
@@ -675,8 +819,11 @@ const FieldNode = ({
   scrollIntoView,
   isMultiFilterDescendant,
   showMultiFilterDescendants,
+  asDropdown,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
+
+  const nodeColor = { color: asDropdown ? '#2f2f2f' : '#069' };
 
   useLayoutEffect(() => {
     // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
@@ -708,10 +855,20 @@ const FieldNode = ({
     >
       <a
         ref={nodeRef}
-        className={
-          'wdk-AttributeFilterFieldItem' +
-          (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
-          (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
+        style={
+          isActive
+            ? {
+                ...baseFieldNodeLinkStyle,
+                ...activeFieldNodeLinkStyle,
+                ...nodeColor,
+              }
+            : isDisabled
+            ? {
+                ...baseFieldNodeLinkStyle,
+                ...disabledFieldNodeLinkStyle,
+                ...nodeColor,
+              }
+            : { ...baseFieldNodeLinkStyle, ...nodeColor }
         }
         href={'#' + field.term}
         onClick={(e) => {
@@ -726,15 +883,16 @@ const FieldNode = ({
   ) : (
     //add condition for identifying entity parent and entity parent of activeField
     <div
-      className={
-        'wdk-Link wdk-AttributeFilterFieldParent' +
-        (field.term.includes('entity:')
-          ? ' wdk-AttributeFilterFieldEntityParent'
-          : '') +
-        (activeFieldEntity != null &&
-        field.term.split(':')[1] === activeFieldEntity
-          ? ' wdk-AttributeFilterFieldParent__active'
-          : '')
+      style={
+        field.term.includes('entity')
+          ? {
+              fontWeight: 'bold',
+              fontSize: '1.05em',
+              cursor: 'pointer',
+              marginLeft: '0.5em',
+              ...nodeColor,
+            }
+          : { ...baseFieldNodeLinkStyle, ...nodeColor }
       }
     >
       {safeHtml(field.display)}
@@ -744,11 +902,24 @@ const FieldNode = ({
   const canBeStarred = isFilterField(field) && !isMultiFilterDescendant;
 
   return (
-    <div className={canBeStarred ? cx('-StarContainer') : ''}>
+    <div
+      style={
+        canBeStarred
+          ? {
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '100%',
+              paddingLeft: isMultiPick ? 0 : '1em',
+            }
+          : {}
+      }
+    >
+      {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
         <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
           <button
-            className={`${cx('-StarButton')} link`}
+            className={`link`}
+            style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
             onClick={(e) => {
               // prevent click from toggling expansion state
               e.stopPropagation();
@@ -760,7 +931,6 @@ const FieldNode = ({
           </button>
         </Tooltip>
       )}
-      {fieldContents}
     </div>
   );
 };

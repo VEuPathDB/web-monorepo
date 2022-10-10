@@ -116,6 +116,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
 import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
@@ -1487,51 +1488,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
           <div className={classes.label}>
             Function<sup>*</sup>
           </div>
-          <select
-            onChange={(e) => onValueSpecChange(e.target.value)}
-            // hacky temporary styling until CoreUI select components are production-ready
-            css={{
-              backgroundColor: '#e0e0e0',
-              cursor: 'pointer',
-              border: 0,
-              padding: '6px 16px',
-              fontSize: '0.8125rem',
-              minWidth: '64px',
-              boxSizing: 'border-box',
-              transition:
-                'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-              fontFamily:
-                'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
-              fontWeight: 500,
-              height: '32px',
-              borderRadius: '4px',
-              textTransform: 'none',
-              boxShadow:
-                '0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)',
-              '&:hover': {
-                boxShadow: `0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)`,
-                backgroundColor: `#d5d5d5`,
-              },
-            }}
-          >
-            {keys(valueSpecLookup)
+          <SingleSelect
+            onSelect={onValueSpecChange}
+            value={vizConfig.valueSpecConfig}
+            buttonDisplayContent={vizConfig.valueSpecConfig}
+            items={keys(valueSpecLookup)
               .filter((option) => option !== 'Proportion')
-              .map((option) => (
-                <option
-                  value={option}
-                  selected={option === vizConfig.valueSpecConfig}
-                >
-                  {option}
-                </option>
-              ))}
-          </select>
-          <i
-            // hacky temporary styling until CoreUI select components are production-ready
-            className="material-icons MuiIcon-root fa fa-caret-down"
-            style={{
-              position: 'relative',
-              left: '-15px',
-            }}
+              .map((option) => ({ value: option, display: option }))}
           />
         </div>
       ) : (
