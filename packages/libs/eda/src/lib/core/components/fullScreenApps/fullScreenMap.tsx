@@ -16,7 +16,7 @@ import { FilledButton, FloatingButton } from '@veupathdb/coreui';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { PromiseResult } from '../..';
-import { useCheckedLegendItemsStatus } from '../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../hooks/checkedLegendItemsStatus';
 import { useEntityCounts } from '../../hooks/entityCounts';
 import { useGeoConfig } from '../../hooks/geoConfig';
 import { useMapMarkers } from '../../hooks/mapMarkers';
@@ -49,10 +49,7 @@ import { barplotVisualization } from '../visualizations/implementations/BarplotV
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import { lineplotVisualization } from '../visualizations/implementations/LineplotVisualization';
-import {
-  defaultAnimation,
-  mapVisualization,
-} from '../visualizations/implementations/MapVisualization';
+import { defaultAnimation } from '../visualizations/implementations/MapVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,
@@ -193,8 +190,9 @@ function FullScreenMap(props: FullScreenComponentProps) {
     (selectedVariables: VariablesByInputName) => {
       setAppState({
         overlayVariable: selectedVariables.overlay,
-        ...// reset marker type to pie if no overlay var
-        (selectedVariables.overlay == null ? { markerType: 'pie' } : {}),
+        checkedLegendItems: undefined,
+        // reset marker type to pie if no overlay var
+        ...(selectedVariables.overlay == null ? { markerType: 'pie' } : {}),
       });
     },
     [setAppState]
@@ -242,33 +240,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
     [appState.computation, setAppState]
   );
 
-  /**
-   * Reset checkedLegendItems to all-checked (actually none checked)
-   * if ANY of the checked items are NOT in the vocabulary
-   * OR if ALL of the checked items ARE in the vocabulary
-   *
-   * TO DO: generalise this for use in other visualizations
-   */
-  useEffect(() => {
-    if (appState.checkedLegendItems == null || vocabulary == null) return;
-
-    if (
-      appState.checkedLegendItems.some(
-        (label) => vocabulary.findIndex((vocab) => vocab === label) === -1
-      ) ||
-      appState.checkedLegendItems.length === vocabulary.length
-    )
-      setAppState({ checkedLegendItems: undefined });
-  }, [vocabulary, appState.checkedLegendItems, setAppState]);
-
-  const handleCheckedLegendItemsChange = useCallback(
-    (newCheckedItems) => {
-      if (newCheckedItems != null)
-        setAppState({ checkedLegendItems: newCheckedItems });
-    },
-    [setAppState]
-  );
-
   const filters = useMemo(() => {
     const viewportFilters = boundsZoomLevel
       ? filtersFromBoundingBox(
@@ -309,24 +280,14 @@ function FullScreenMap(props: FullScreenComponentProps) {
     if (filteredCounts.pending) setFiltersForViz(filters);
   }, [filters, filteredCounts.pending]);
 
-  // set checkedLegendItems
-  const checkedLegendItems = useCheckedLegendItemsStatus(
-    legendItems,
-    appState.checkedLegendItems
-  );
-
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
-  // WIP hook--see checkedLegendItemsStatus.ts
-  // const [
-  //   checkedLegendItems,
-  //   setCheckedLegendItems,
-  // ] = useCheckedLegendItemsStatus(
-  //   legendItems,
-  //   appState.checkedLegendItems,
-  //   vocabulary,
-  //   setAppState
-  // );
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
+    legendItems,
+    appState.checkedLegendItems,
+    setAppState,
+    vocabulary
+  );
 
   const fullScreenActions = (
     <>
@@ -453,7 +414,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
           <PlotLegend
             legendItems={legendItems}
             checkedLegendItems={checkedLegendItems}
-            onCheckedLegendItemsChange={handleCheckedLegendItemsChange}
+            onCheckedLegendItemsChange={setCheckedLegendItems}
             showOverlayLegend={true}
             containerStyles={{
               border: 'none',
@@ -543,6 +504,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
                 isSingleAppMode
+                disableThumbnailCreation
                 id={activeViz.visualizationId}
                 actions={fullScreenActions}
               />

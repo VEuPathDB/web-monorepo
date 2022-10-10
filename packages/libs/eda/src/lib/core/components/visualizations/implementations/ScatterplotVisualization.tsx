@@ -33,7 +33,7 @@ import {
   VisualizationProps,
 } from '../VisualizationTypes';
 
-import scatter from './selectorIcons/scatter.svg';
+import ScatterSVG from './selectorIcons/ScatterSVG';
 
 // use lodash instead of Math.min/max
 import {
@@ -95,7 +95,7 @@ import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
 // a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
 // concerning axis range control
 import { NumberOrDateRange } from '../../../types/general';
@@ -168,7 +168,7 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
 type ScatterPlotDataResponse = ScatterplotResponse;
 
 export const scatterplotVisualization = createVisualizationPlugin({
-  selectorIcon: scatter,
+  selectorIcon: ScatterSVG,
   fullscreenComponent: ScatterplotViz,
   createDefaultConfig: createDefaultConfig,
 });
@@ -178,6 +178,8 @@ function createDefaultConfig(): ScatterplotConfig {
     valueSpecConfig: 'Raw',
     independentAxisLogScale: false,
     dependentAxisLogScale: false,
+    independentAxisValueSpec: 'Full',
+    dependentAxisValueSpec: 'Full',
   };
 }
 
@@ -197,6 +199,8 @@ export const ScatterplotConfig = t.partial({
   dependentAxisRange: NumberOrDateRange,
   independentAxisLogScale: t.boolean,
   dependentAxisLogScale: t.boolean,
+  independentAxisValueSpec: t.string,
+  dependentAxisValueSpec: t.string,
 });
 
 interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
@@ -356,6 +360,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         dependentAxisRange: undefined,
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
+        independentAxisValueSpec: 'Full',
+        dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -396,15 +402,22 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     true, // reset both axisLogScale to false
     false
   );
+
+  const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'independentAxisValueSpec',
+    false,
+    true
+  );
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
+    false,
+    true
+  );
+
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
     true,
     true
-  );
-
-  // for vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
@@ -592,7 +605,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     data.value?.xMin,
     data.value?.xMinPos,
     data.value?.xMax,
-    vizConfig.independentAxisLogScale
+    vizConfig.independentAxisLogScale,
+    vizConfig.independentAxisValueSpec
   );
 
   // use custom hook
@@ -601,7 +615,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     data.value?.yMin,
     data.value?.yMinPos,
     data.value?.yMax,
-    vizConfig.dependentAxisLogScale
+    vizConfig.dependentAxisLogScale,
+    vizConfig.dependentAxisValueSpec
   );
 
   // yMinMaxDataRange will be used for truncation to judge whether data has negative value
@@ -859,14 +874,16 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     neutralPaletteProps,
   ]);
 
-  // set checkedLegendItems to either the config-stored items, or all items if nothing stored (or if no overlay locally configured)
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  // set checkedLegendItems to either the config-stored items, or all items if
+  // nothing stored (or if no overlay locally configured)
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     vizConfig.overlayVariable
       ? options?.getCheckedLegendItems?.(
           computation.descriptor.configuration
         ) ?? vizConfig.checkedLegendItems
-      : undefined
+      : undefined,
+    updateVizConfig
   );
 
   const legendTitle = useMemo(() => {
@@ -939,6 +956,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisRange,
       vizConfig.independentAxisLogScale,
       vizConfig.dependentAxisLogScale,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
     ]
   );
 
@@ -1104,6 +1123,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       independentAxisRange: undefined,
       independentAxisLogScale: false,
+      independentAxisValueSpec: 'Full',
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
@@ -1133,6 +1153,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
+      dependentAxisValueSpec: 'Full',
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1193,106 +1214,132 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {/* make switch and radiobutton single line with space
                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
-        <LabelledGroup
-          label="X-axis controls"
-          containerStyles={{
-            marginRight: '1em',
-          }}
-        >
-          {/* X-Axis range control */}
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup
+            label="X-axis controls"
+            containerStyles={{
+              marginRight: '1em',
             }}
           >
-            <Toggle
-              label="Log scale (will exclude values &le; 0):"
-              value={vizConfig.independentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedIndependentAllNegativeWarning(false);
-                onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
-                  enqueueSnackbar(
-                    'Log scale is only available for Raw plot mode'
-                  );
+            {/* X-Axis range control */}
+            <div
+              style={{
+                display: 'flex',
+                marginTop: '0.8em',
               }}
-              // disable log scale for date variable
-              disabled={scatterplotProps.independentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
-            <Notification
-              title={''}
-              text={
-                'Nothing can be plotted with log scale because all values are zero or negative'
-              }
-              color={'#5586BE'}
-              onAcknowledgement={() =>
-                setDismissedIndependentAllNegativeWarning(true)
-              }
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <AxisRangeControl
-            label="Range"
-            range={
-              vizConfig.independentAxisRange ?? defaultIndependentAxisRange
-            }
-            onRangeChange={handleIndependentAxisRangeChange}
-            valueType={
-              scatterplotProps.independentValueType === 'date'
-                ? 'date'
-                : 'number'
-            }
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-            logScale={vizConfig.independentAxisLogScale}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning && !independentAllNegative ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{
-                maxWidth:
-                  scatterplotProps.independentValueType === 'date'
-                    ? '350px'
-                    : '350px',
-              }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            // change text
-            text={'Reset to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
+            >
+              <Toggle
+                label="Log scale (will exclude values &le; 0):"
+                value={vizConfig.independentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedIndependentAllNegativeWarning(false);
+                  onIndependentAxisLogScaleChange(newValue);
+                  if (newValue && vizConfig.valueSpecConfig !== 'Raw')
+                    enqueueSnackbar(
+                      'Log scale is only available for Raw plot mode'
+                    );
+                }}
+                // disable log scale for date variable
+                disabled={scatterplotProps.independentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+            {independentAllNegative &&
+            !dismissedIndependentAllNegativeWarning ? (
+              <Notification
+                title={''}
+                text={
+                  'Nothing can be plotted with log scale because all values are zero or negative'
+                }
+                color={'#5586BE'}
+                onAcknowledgement={() =>
+                  setDismissedIndependentAllNegativeWarning(true)
+                }
+                showWarningIcon={true}
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+          </LabelledGroup>
+          <LabelledGroup
+            label="X-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight:
-                scatterplotProps.independentValueType === 'date' ? '-1em' : '',
+              fontSize: '0.9em',
+              // width: '350px',
             }}
-          />
-        </LabelledGroup>
-
+          >
+            <RadioButtonGroup
+              options={['Full', 'Auto-zoom', 'Custom']}
+              selectedOption={vizConfig.independentAxisValueSpec ?? 'Full'}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onIndependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            <AxisRangeControl
+              range={
+                vizConfig.independentAxisRange ?? defaultIndependentAxisRange
+              }
+              onRangeChange={handleIndependentAxisRangeChange}
+              valueType={
+                scatterplotProps.independentValueType === 'date'
+                  ? 'date'
+                  : 'number'
+              }
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              logScale={vizConfig.independentAxisLogScale}
+              disabled={
+                vizConfig.independentAxisValueSpec === 'Full' ||
+                vizConfig.independentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedIndependentAxisWarning && !independentAllNegative ? (
+              <Notification
+                title={''}
+                text={truncatedIndependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedIndependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                containerStyles={{
+                  maxWidth:
+                    scatterplotProps.independentValueType === 'date'
+                      ? '350px'
+                      : '350px',
+                }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              // change text
+              text={'Reset to defaults'}
+              onClick={handleIndependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+                // to match reset button with date range form
+                marginRight:
+                  scatterplotProps.independentValueType === 'date'
+                    ? '-1em'
+                    : '',
+              }}
+            />
+          </LabelledGroup>
+        </div>
         {/* add vertical line in btw Y- and X- controls */}
         <div
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '13.5em',
+            height: '17.25em',
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
@@ -1301,93 +1348,125 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           {' '}
         </div>
 
-        <LabelledGroup
-          label="Y-axis controls"
-          containerStyles={{
-            marginRight: '0em',
-          }}
-        >
-          {/* Y-axis range control */}
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '0.8em',
-              marginBottom: '0.8em',
+        {/* Y-axis controls   */}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <LabelledGroup
+            label="Y-axis controls"
+            containerStyles={{
+              marginRight: '0em',
             }}
           >
-            <Toggle
-              label="Log scale (will exclude values &le; 0):"
-              value={vizConfig.dependentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedDependentAllNegativeWarning(false);
-                onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
-                  enqueueSnackbar(
-                    'Log scale is only available for Raw plot mode'
-                  );
+            {/* Y-axis range control */}
+            <div
+              style={{
+                display: 'flex',
+                marginTop: '0.8em',
+                // marginBottom: '0.8em',
               }}
-              // disable log scale for date variable
-              disabled={scatterplotProps.dependentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
-            <Notification
-              title={''}
-              text={
-                'Nothing can be plotted with log scale because all values are zero or negative'
-              }
-              color={'#5586BE'}
-              onAcknowledgement={() =>
-                setDismissedDependentAllNegativeWarning(true)
-              }
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <AxisRangeControl
-            label="Range"
-            range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
-            valueType={
-              scatterplotProps.dependentValueType === 'date' ? 'date' : 'number'
-            }
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange);
-            }}
-            // set maxWidth
-            containerStyles={{ maxWidth: '350px' }}
-            logScale={vizConfig.dependentAxisLogScale}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning && !dependentAllNegative ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              // change maxWidth
-              containerStyles={{ maxWidth: '350px' }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            // change text
-            text={'Reset to defaults'}
-            onClick={handleDependentAxisSettingsReset}
+            >
+              <Toggle
+                label="Log scale (will exclude values &le; 0):"
+                value={vizConfig.dependentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedDependentAllNegativeWarning(false);
+                  onDependentAxisLogScaleChange(newValue);
+                  if (newValue && vizConfig.valueSpecConfig !== 'Raw')
+                    enqueueSnackbar(
+                      'Log scale is only available for Raw plot mode'
+                    );
+                }}
+                // disable log scale for date variable
+                disabled={scatterplotProps.dependentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+            {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+              <Notification
+                title={''}
+                text={
+                  'Nothing can be plotted with log scale because all values are zero or negative'
+                }
+                color={'#5586BE'}
+                onAcknowledgement={() =>
+                  setDismissedDependentAllNegativeWarning(true)
+                }
+                showWarningIcon={true}
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+          </LabelledGroup>
+          <LabelledGroup
+            label="Y-axis range"
             containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-              // to match reset button with date range form
-              marginRight:
-                scatterplotProps.dependentValueType === 'date' ? '-1em' : '',
+              fontSize: '0.9em',
+              // width: '350px',
             }}
-          />
-        </LabelledGroup>
+          >
+            <RadioButtonGroup
+              options={['Full', 'Auto-zoom', 'Custom']}
+              selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            <AxisRangeControl
+              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+              valueType={
+                scatterplotProps.dependentValueType === 'date'
+                  ? 'date'
+                  : 'number'
+              }
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange);
+              }}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              logScale={vizConfig.dependentAxisLogScale}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning && !dependentAllNegative ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                containerStyles={{
+                  maxWidth:
+                    scatterplotProps.independentValueType === 'date'
+                      ? '350px'
+                      : '350px',
+                }}
+              />
+            ) : null}
+            <Button
+              type={'outlined'}
+              // change text
+              text={'Reset to defaults'}
+              onClick={handleDependentAxisSettingsReset}
+              containerStyles={{
+                paddingTop: '1.0em',
+                width: '50%',
+                float: 'right',
+                // to match reset button with date range form
+                marginRight:
+                  scatterplotProps.dependentValueType === 'date' ? '-1em' : '',
+              }}
+            />
+          </LabelledGroup>
+        </div>
       </div>
     </>
   );
@@ -1401,8 +1480,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
       legendTitle={legendTitle}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
       showOverlayLegend={showOverlayLegend}
     />
   );

@@ -39,6 +39,7 @@ import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
+import { useVizIconColors } from './implementations/selectorIcons/types';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -61,6 +62,7 @@ interface Props {
   geoConfigs: GeoConfig[];
   baseUrl?: string;
   isSingleAppMode: boolean;
+  disableThumbnailCreation?: boolean;
 }
 
 /**
@@ -303,8 +305,10 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
     },
     includeHeader = true,
   } = props;
+  const colors = useVizIconColors();
   const history = useHistory();
   const { computationId } = computation;
+
   return (
     <div className={cx('-PickerContainer')}>
       {includeHeader && (
@@ -360,11 +364,7 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                     }}
                   >
                     {vizPlugin ? (
-                      <img
-                        alt={vizOverview.displayName}
-                        style={{ height: '100%', width: '100%' }}
-                        src={vizPlugin.selectorIcon}
-                      />
+                      <vizPlugin.selectorIcon {...colors} />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}
@@ -428,7 +428,8 @@ type FullScreenVisualizationPropKeys =
   | 'filteredCounts'
   | 'geoConfigs'
   | 'baseUrl'
-  | 'isSingleAppMode';
+  | 'isSingleAppMode'
+  | 'disableThumbnailCreation';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -454,6 +455,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     geoConfigs,
     baseUrl,
     isSingleAppMode,
+    disableThumbnailCreation,
     actions,
   } = props;
   const history = useHistory();
@@ -651,7 +653,9 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             updateConfiguration={updateConfiguration}
-            updateThumbnail={updateThumbnail}
+            updateThumbnail={
+              disableThumbnailCreation ? undefined : updateThumbnail
+            }
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
             geoConfigs={geoConfigs}
