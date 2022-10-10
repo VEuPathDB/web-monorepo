@@ -12,6 +12,35 @@ import { Variable } from '../types/study';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
 
+// calculate min/max of default independent axis range
+export function histogramDefaultIndependentAxisMinMax(
+  data: PromiseHookState<HistogramDataWithCoverageStatistics | undefined>
+) {
+  if (isFaceted(data.value)) {
+    const facetMinMaxes =
+      data?.value?.facets != null
+        ? data.value.facets
+            .map((facet) => facet.data)
+            .filter(
+              (data): data is HistogramData =>
+                data != null && data.series != null
+            )
+            .map((data) => findIndependentAxisMinMax(data.series))
+        : undefined;
+
+    return (
+      facetMinMaxes && {
+        min: min(map(facetMinMaxes, 'min')),
+        max: max(map(facetMinMaxes, 'max')),
+      }
+    );
+  } else {
+    return data.value && data.value.series.length > 0
+      ? findIndependentAxisMinMax(data.value.series)
+      : undefined;
+  }
+}
+
 /**
  * Calculate min (actually minPos, nonzero) and max of histogram counts,
  * taking into account that they may be stacked (when there's an overlay)
@@ -208,5 +237,21 @@ function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
       Object.values(firstCountByLabel).filter((value) => value > 0)
     ) as number,
     max: max(Object.values(sumsByLabel)) as number,
+  };
+}
+
+// find min/max of independent axis range
+function findIndependentAxisMinMax(data: HistogramDataSeries[]) {
+  const binStartArray = data.flatMap((series) =>
+    series.bins.map((bin) => bin.binStart)
+  );
+  const binEndArray = data.flatMap(
+    // make an array of [ [ label, count ], [ label, count ], ... ] from all series
+    (series) => series.bins.map((bin) => bin.binEnd)
+  );
+
+  return {
+    min: min(binStartArray),
+    max: max(binEndArray),
   };
 }
