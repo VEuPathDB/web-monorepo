@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react';
 import { VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
-import './VariableTree.scss';
 import { useStudyEntities } from '../../hooks/workspace';
 import {
   useValuesMap,
@@ -12,6 +11,8 @@ import {
   useFlattenFieldsByTerm,
   useFeaturedFieldsFromTree,
 } from './hooks';
+
+import { ClearSelectionButton } from './VariableTreeDropdown';
 
 export interface VariableTreeProps {
   starredVariables?: VariableDescriptor[];
@@ -26,6 +27,7 @@ export interface VariableTreeProps {
   showMultiFilterDescendants?: boolean;
   /** The "scope" of variables which should be offered. */
   scope: VariableScope;
+  asDropdown?: boolean;
 }
 
 export default function VariableTree({
@@ -38,6 +40,7 @@ export default function VariableTree({
   onChange,
   showMultiFilterDescendants = false,
   scope,
+  asDropdown,
 }: VariableTreeProps) {
   const entities = useStudyEntities();
   const valuesMap = useValuesMap(entities);
@@ -69,6 +72,15 @@ export default function VariableTree({
       ? fieldsByTerm[`${entityId}/${variableId}`]
       : undefined;
 
+  const variable = entities
+    .find((e) => e.id === entityId)
+    ?.variables.find((v) => v.id === variableId);
+  const label = variable?.displayName ?? 'Select a variable';
+
+  const clearSelectionButton = (
+    <ClearSelectionButton onClick={() => onChange()} disabled={!variable} />
+  );
+
   return (
     <VariableList
       mode="singleSelection"
@@ -83,6 +95,9 @@ export default function VariableTree({
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      asDropdown={asDropdown}
+      dropdownLabel={label}
+      clearSelectionButton={clearSelectionButton}
     />
   );
 }

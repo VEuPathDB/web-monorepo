@@ -803,7 +803,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 type PlotProps = Omit<BoxplotProps, 'data'> & {
   data?: BoxplotDataWithCoverage;
   vizConfig: BoxplotConfig;
-  updateThumbnail: (src: string) => void;
+  updateThumbnail?: (src: string) => void;
   checkedLegendItems: string[] | undefined;
   dependentAxisMinMax: NumberRange | undefined;
   defaultDependentAxisRange: NumberRange | undefined;
