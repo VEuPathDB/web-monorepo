@@ -49,10 +49,7 @@ import { barplotVisualization } from '../visualizations/implementations/BarplotV
 import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import { lineplotVisualization } from '../visualizations/implementations/LineplotVisualization';
-import {
-  defaultAnimation,
-  mapVisualization,
-} from '../visualizations/implementations/MapVisualization';
+import { defaultAnimation } from '../visualizations/implementations/MapVisualization';
 import {
   contTableVisualization,
   twoByTwoVisualization,
@@ -507,6 +504,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
                 isSingleAppMode
+                disableThumbnailCreation
                 id={activeViz.visualizationId}
                 actions={fullScreenActions}
               />

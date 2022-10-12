@@ -5,7 +5,6 @@ import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Type
 import { StudyEntity, VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList, { VariableFieldTreeNode } from './VariableList';
-import './VariableTree.scss';
 import { useStudyEntities } from '../../hooks/workspace';
 import {
   useFieldTree,
@@ -97,6 +96,7 @@ export default function MultiSelectVariableTree({
       toggleStarredVariable={toggleStarredVariable}
       customCheckboxes={customCheckboxes}
       startExpanded={startExpanded}
+      scope={scope}
     />
   );
 }

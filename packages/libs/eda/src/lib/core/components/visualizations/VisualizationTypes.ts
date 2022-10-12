@@ -20,7 +20,7 @@ export interface VisualizationProps<Options = undefined> {
   dataElementConstraints?: Record<string, DataElementConstraint>[];
   dataElementDependencyOrder?: string[];
   updateConfiguration: (configuration: unknown) => void;
-  updateThumbnail: (source: string) => void;
+  updateThumbnail?: (source: string) => void;
   computation: Computation;
   filters?: Filter[];
   starredVariables: VariableDescriptor[];
