@@ -88,8 +88,12 @@ import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
-import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
-import { Tooltip } from '@material-ui/core';
+// testing button style
+import {
+  ResetButtonCoreUI,
+  ResetButtonMUI,
+  ResetButtonOriginal,
+} from '../../ResetButton';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -972,10 +976,6 @@ function Controls({
     setTruncatedDependentAxisWarning('');
   }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
-  // set Undo icon props
-  const undoSize = 20;
-  const undoColor = '#006699';
-
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
     <>
@@ -991,21 +991,51 @@ function Controls({
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.3em' }}>
-              <Tooltip title={'Reset to defaults'}>
-                <button
-                  onClick={handleDependentAxisSettingsReset}
-                  style={{
-                    width: undoSize,
-                    height: undoSize,
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                  }}
-                >
-                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
-                </button>
-              </Tooltip>
+            {/* testing button style */}
+            {/* using CoreUI: icon only */}
+            <div style={{ marginLeft: '-2.6em' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
+            </div>
+
+            {/* using CoreUI: icon with text */}
+            <div style={{ marginLeft: '1em' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={'Reset to defaults'}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
+            </div>
+
+            {/* using Material-UI (MUI) */}
+            <div style={{ marginLeft: '1em' }}>
+              <ResetButtonMUI
+                size={'small'}
+                // color={'#006699'}
+                tooltipText={'Reset to defaults'}
+                disabled={false}
+                onClick={handleDependentAxisSettingsReset}
+              />
+            </div>
+
+            {/* using pure button */}
+            <div style={{ marginLeft: '1em' }}>
+              <ResetButtonOriginal
+                size={20}
+                color={'#006699'}
+                tooltipText={'Reset to defaults'}
+                disabled={false}
+                onClick={handleDependentAxisSettingsReset}
+              />
             </div>
           </div>
 
