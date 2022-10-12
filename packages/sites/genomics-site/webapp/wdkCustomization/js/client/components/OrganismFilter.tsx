@@ -292,11 +292,10 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
               styleOverrides={{
                 treeLinks: {
                   container: {
-                    height: 'auto',
                     flexWrap: 'wrap',
                     justifyContent: 'flex-start',
                     padding: 0,
-                    margin: '1em 0 1em 1.4em',
+                    margin: '0.75em 0 0.75em 1.4em',
                     rowGap: '0.5em',
                   },
                   actionsContainerStyle: {
@@ -307,15 +306,13 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                   container: {margin: '0 0.5em'},
                   optionalIcon: {top: '3px'},
                   input: {
-                    borderColor: '#888',
                     padding: '0.2em 1em 0.2em 0.75em',
-                    backgroundColor: '#fff',
                     width: 'calc(100% - 1.75em)',
                   },
                 },
                 treeSection: {
                   container: {
-                    margin: searchTerm ? '0.5em 0 0 1em' : 0,
+                    margin: searchTerm ? '0.75em 0 0 1em' : '0.75em 0',
                   },
                   ul: {
                     padding: '0',
