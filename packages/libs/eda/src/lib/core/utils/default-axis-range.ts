@@ -65,9 +65,9 @@ export function numberDateDefaultAxisRange(
             min: logScale
               ? (observedMinPos as number)
               : observedMin != null
-              ? Math.min(0, observedMin as number)
+              ? Math.min(observedMin as number)
               : // just leave this or set to be undefined
-                Math.min(0, defaults.rangeMin),
+                Math.min(defaults.rangeMin),
             max:
               observedMax != null
                 ? (observedMax as number)
