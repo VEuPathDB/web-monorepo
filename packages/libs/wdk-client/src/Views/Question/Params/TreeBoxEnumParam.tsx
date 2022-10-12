@@ -3,8 +3,7 @@ import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 import { intersection } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
-// import CheckboxTree, { Props as CheckboxTreeProps } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import CheckboxTree, { CheckboxTreeProps } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import CheckboxTree, { CheckboxTreeProps, LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
@@ -160,7 +159,37 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   return (
     <div className="wdk-TreeBoxParam">
       <SelectionInfo parameter={props.parameter} {...selectionCounts} alwaysShowCount />
-      <CheckboxTree {...wrappedCheckboxTreeProps} />
+      <CheckboxTree 
+        {...wrappedCheckboxTreeProps}
+        styleOverrides= {{
+          searchBox: {
+            container: {
+              margin: '0 0.5em',
+            },
+            input: {
+              padding: '0.2em 1em 0.2em 2em',
+              width: 'calc(100% - 3em)',
+            },
+            optionalIcon: {
+              top: '2px',
+            }
+          },
+          treeNode: {
+            topLevelNode: {
+              height: '1.5em',
+              alignItems: 'center',
+              overflow: 'hidden',
+            },
+            leafNodeLabel: {
+              padding: wrappedCheckboxTreeProps.searchTerm ? 0 : '0.125em 0',
+              marginLeft: wrappedCheckboxTreeProps.searchTerm ? 0 : '2em',
+            },
+            checkboxLabel: {
+              margin: wrappedCheckboxTreeProps.searchTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+            },
+          }
+        }} 
+      />
     </div>
   );
 }
@@ -236,7 +265,7 @@ export function useDefaultCheckboxTreeProps(
   return {
     isSelectable: true,
     isMultiPick: isMultiPick(props.parameter),
-    linksPosition: CheckboxTree.LinkPlacement.Both,
+    linksPosition: LinksPosition.Top,
     showRoot: false,
     shouldExpandDescendantsWithOneChild: false,
     tree,
