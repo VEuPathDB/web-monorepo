@@ -6,6 +6,7 @@ import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import { ComputedVariableMetadata } from '../api/DataClient/types';
 import { numberSignificantFigures } from '../utils/number-significant-figures';
+import { DateTime } from 'luxon';
 
 /**
  * A custom hook to compute default axis range from annotated and observed min/max values
@@ -25,15 +26,17 @@ export function useDefaultAxisRange(
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
     // Check here to make sure number ranges (min, minPos, max) came with number variables
-    // (and date ranges came with date variables)
     // Originally from https://github.com/VEuPathDB/web-eda/pull/1004
     // Only checking min for brevity.
+    // use luxon library to check the validity of date string
     if (
       (Variable.is(variable) &&
         (min == null ||
           ((variable.type === 'number' || variable.type === 'integer') &&
             typeof min === 'number') ||
-          (variable.type === 'date' && typeof min === 'string'))) ||
+          (variable.type === 'date' &&
+            typeof min === 'string' &&
+            isValidDateString(min)))) ||
       ComputedVariableMetadata.is(variable)
     ) {
       const defaultRange = numberDateDefaultAxisRange(
@@ -85,4 +88,8 @@ export function useDefaultAxisRange(
     }
   }, [variable, min, minPos, max, logScale, axisRangeSpec]);
   return defaultAxisRange;
+}
+
+function isValidDateString(value: string) {
+  return DateTime.fromISO(value).isValid;
 }
