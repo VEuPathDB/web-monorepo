@@ -100,15 +100,8 @@ class RecordNavigationSection extends React.PureComponent {
             />
           }
           linksPosition={LinksPosition.Top}
+          defaultStyleOverridesToApply='genomics'
           styleOverrides={{
-            searchBox: {
-              container: {margin: '0 0.5em'},
-              optionalIcon: {top: '2px'},
-              input: {
-                padding: '0.2em 1em 0.2em 2em',
-                width: 'calc(100% - 3em)',
-              },
-            },
             treeSection: {
               container: {
                 margin: navigationQuery ? '0.5em 0 0 1em' : 0,

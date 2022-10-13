@@ -52,6 +52,7 @@ type Props = {
   containerClassName?: string;
   styleOverrides?: CheckboxTreeStyleSpec;
   type?: string;
+  defaultStyleOverridesToApply?: 'genomics' | 'eda';
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
@@ -81,7 +82,8 @@ let {
   showSearchBox,
   containerClassName = '',
   styleOverrides = {},
-  type
+  type,
+  defaultStyleOverridesToApply = 'genomics'
 } = props;
 
   if (tree.children.length == 0) {
@@ -136,6 +138,7 @@ let {
           onExpansionChange={onUiChange}
           onSearchTermChange={onSearchTermChange}
           styleOverrides={styleOverrides}
+          defaultStyleOverridesToApply={defaultStyleOverridesToApply}
         /> 
       </div>
     </div>

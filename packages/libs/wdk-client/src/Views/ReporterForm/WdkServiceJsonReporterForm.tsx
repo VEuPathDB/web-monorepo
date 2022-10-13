@@ -52,39 +52,13 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
 
         linksPosition={LinksPosition.Top}
+        defaultStyleOverridesToApply='genomics'
         styleOverrides={{
-          searchBox: {
-            container: {
-              margin: '0 0.5em',
-            },
-            input: {
-              padding: '0.2em 1em 0.2em 2em',
-              width: 'calc(100% - 3em)',
-            },
-            optionalIcon: {
-              top: '2px',
-            }
-          },
-          treeSection: {
-            container: {
-              marginTop: '0.5em',
-            },
-            ul: {
-              margin: 0,
-            }
-          },
           treeNode: {
             topLevelNode: {
               height: '1.5em',
               alignItems: 'center',
               overflow: 'hidden',
-            },
-            leafNodeLabel: {
-              padding: formUiState.attributeSearchText ? 0 : '0.125em 0',
-              marginLeft: formUiState.attributeSearchText ? 0 : '2em',
-            },
-            checkboxLabel: {
-              margin: formUiState.attributeSearchText ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
             },
           }
         }}
@@ -105,37 +79,13 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onSearchTermChange={getUiUpdateHandler('tableSearchText')}
 
         linksPosition={LinksPosition.Top}
+        defaultStyleOverridesToApply='genomics'
         styleOverrides={{
-          searchBox: {
-            container: {
-              margin: '0 0.5em',
-            },
-            input: {
-              padding: '0.2em 1em 0.2em 2em',
-              width: 'calc(100% - 3em)',
-            },
-            optionalIcon: {
-              top: '2px',
-            }
-          },
-          treeSection: {
-            container: {
-              marginTop: '0.5em',
-            },
-            ul: {
-              margin: 0,
-            }
-          },
           treeNode: {
             topLevelNode: {
-              margin: formUiState.tableSearchText ? 0: '-0.5em 0',
-            },
-            leafNodeLabel: {
-              padding: formUiState.tableSearchText ? 0 : '0.125em 0',
-              marginLeft: formUiState.tableSearchText ? 0 : '2em',
-            },
-            checkboxLabel: {
-              margin: formUiState.tableSearchText ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
+              height: '1.5em',
+              alignItems: 'center',
+              overflow: 'hidden',
             },
           }
         }}

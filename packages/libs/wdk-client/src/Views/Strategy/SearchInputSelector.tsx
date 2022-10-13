@@ -9,7 +9,6 @@ import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Toolti
 
 import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
 import { CategoriesCheckboxTree, Icon, Link, Loading, Tabs, IconAlt } from 'wdk-client/Components';
-// import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -171,6 +170,7 @@ export const SearchInputSelectorView = ({
                         onSearchTermChange={setSearchTerm}
                         linksPosition={linksPosition}
                         showSearchBox={showSearchBox}
+                        defaultStyleOverridesToApply='genomics'
                       />
                     </div>
                   </div>
@@ -352,18 +352,20 @@ function SearchInputNode({ node, onCombineWithNewSearchSelected }: SearchInputNo
     : { isSearch: false };
 
   const displayElement = nodeMetadata.isSearch
-    ? <Link
-        onClick={(e: Event) => {
-          e.preventDefault();
-          setOfferTooltip(false);
-          onCombineWithNewSearchSelected(nodeMetadata.searchName);
-        }}
-        to={`/search/${getRecordClassUrlSegment(node)}/${nodeMetadata.searchName}`}
-      >
-        <IconAlt fa="search" />
-        {displayName}
-      </Link>
-    : <span>{displayName}</span>
+    ? <div style={{margin: '0.125em 0 0.125em 1em'}}>
+        <Link
+          onClick={(e: Event) => {
+            e.preventDefault();
+            setOfferTooltip(false);
+            onCombineWithNewSearchSelected(nodeMetadata.searchName);
+          }}
+          to={`/search/${getRecordClassUrlSegment(node)}/${nodeMetadata.searchName}`}
+        >
+          <IconAlt fa="search" />
+          <span style={{marginLeft: '0.25em'}}>{displayName}</span>
+        </Link>
+      </div>
+    : <span style={{cursor: 'pointer'}}>{displayName}</span>
 
   const tooltipContent = getFormattedTooltipContent(node);
 

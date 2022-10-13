@@ -161,31 +161,13 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
       <SelectionInfo parameter={props.parameter} {...selectionCounts} alwaysShowCount />
       <CheckboxTree 
         {...wrappedCheckboxTreeProps}
+        defaultStyleOverridesToApply='genomics'
         styleOverrides= {{
-          searchBox: {
-            container: {
-              margin: '0 0.5em',
-            },
-            input: {
-              padding: '0.2em 1em 0.2em 2em',
-              width: 'calc(100% - 3em)',
-            },
-            optionalIcon: {
-              top: '2px',
-            }
-          },
           treeNode: {
             topLevelNode: {
               height: '1.5em',
               alignItems: 'center',
               overflow: 'hidden',
-            },
-            leafNodeLabel: {
-              padding: wrappedCheckboxTreeProps.searchTerm ? 0 : '0.125em 0',
-              marginLeft: wrappedCheckboxTreeProps.searchTerm ? 0 : '2em',
-            },
-            checkboxLabel: {
-              margin: wrappedCheckboxTreeProps.searchTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
             },
           }
         }} 

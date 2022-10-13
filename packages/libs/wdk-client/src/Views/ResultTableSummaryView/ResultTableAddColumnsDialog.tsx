@@ -12,33 +12,9 @@ import {
   UpdateColumnsDialogExpandedNodes,
   RequestColumnsChoiceUpdate
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
-import { LinksPosition, CheckboxTreeStyleSpec } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-
-const styleOverrides: CheckboxTreeStyleSpec = {
-  treeLinks: {
-    container: {
-      textAlign: 'center',
-      height: 'auto',
-      margin: '0 1em',
-    }
-  },
-  searchBox: {
-    container: {
-      margin: '0 1em',
-    },
-    input: {
-      padding: '0.2em 0.5em 0.2em 2em',
-    },
-    optionalIcon: {
-      top: '2px'
-    }
-  },
-  treeSection: {
-    ul: {
-      padding: 0,
-    }
-  },
-}
+import { 
+  LinksPosition,
+} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 export interface Props {
   answer: Answer;
@@ -71,31 +47,6 @@ function ResultTableAddColumnsDialog({
   requestColumnsChoiceUpdate,
 }: Props) {
   if (!columnsDialogIsOpen) return null;
-
-  const isActiveSearch = !!columnsDialogSearchString.length
-  const conditionalStyleOverrides: CheckboxTreeStyleSpec = {
-    ...styleOverrides,
-    treeNode: {
-      topLevelNode: {
-        height: '1.5em',
-        alignItems: 'center',
-        overflow: 'hidden',
-      },
-      leafNodeLabel: {
-        marginLeft: isActiveSearch ? 0 : '2em',
-        padding: isActiveSearch ? 0 : '0.125em 0',
-      },
-      checkboxLabel: {
-        margin: isActiveSearch ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
-      },
-    },
-    treeSection: {
-      ...styleOverrides.treeSection,
-      container: {
-        margin: isActiveSearch ? '0.5em 0 1em 1em' : '0.5em 0 1em 0.25em',
-      }
-    }
-  }
 
   const button = (
     <div style={{ textAlign: 'center' }}>
@@ -145,7 +96,36 @@ function ResultTableAddColumnsDialog({
           onUiChange={updateColumnsDialogExpandedNodes}
           onSearchTermChange={updateColumnsDialogSearchString}
           linksPosition={LinksPosition.Top}
-          styleOverrides={conditionalStyleOverrides}
+          defaultStyleOverridesToApply='genomics'
+          styleOverrides={{
+            treeLinks: {
+              container: {
+                textAlign: 'center',
+                height: 'auto',
+                margin: '0 1em',
+              }
+            },
+            searchBox: {
+              container: {
+                margin: '0 1em',
+              },
+            },
+            treeSection: {
+              container: {
+                margin: columnsDialogSearchString ? '0.5em 0 1em 1em' : '0.5em 0 1em 0.25em',
+              },
+              ul: {
+                padding: 0,
+              }
+            },
+            treeNode: {
+              topLevelNode: {
+                height: '1.5em',
+                alignItems: 'center',
+                overflow: 'hidden',
+              },
+            }
+          }}
         />
       </>
     </Dialog>
