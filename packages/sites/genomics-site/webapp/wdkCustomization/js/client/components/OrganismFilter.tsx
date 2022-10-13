@@ -289,6 +289,7 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                   Hide zero counts
                 </label>
               ]}
+              defaultStyleOverridesToApply='genomics'
               styleOverrides={{
                 treeLinks: {
                   container: {
@@ -303,11 +304,9 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                   }
                 },
                 searchBox: {
-                  container: {margin: '0 0.5em'},
                   optionalIcon: {top: '3px'},
                   input: {
-                    padding: '0.2em 1em 0.2em 0.75em',
-                    width: 'calc(100% - 1.75em)',
+                    padding: '0.2em 2em 0.2em 1em',
                   },
                 },
                 treeSection: {
@@ -318,15 +317,6 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                     padding: '0',
                   }
                 },
-                treeNode: {
-                  leafNodeLabel: {
-                    padding: searchTerm ? 0 : '0.125em 0',
-                    marginLeft: searchTerm ? 0 : '2em',
-                  },
-                  checkboxLabel: {
-                    margin: searchTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
-                  },
-                }
               }}
             />
             )
