@@ -311,7 +311,7 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                 },
                 treeSection: {
                   container: {
-                    margin: searchTerm ? '0.75em 0 0 1em' : '0.75em 0',
+                    margin: '0.75em 0',
                   },
                   ul: {
                     padding: '0',
@@ -447,7 +447,7 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
 
 function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
   return (
-    <div style={{display: 'flex', width: 'calc(100% - 2em)', marginLeft: '0.25em'}}>
+    <div style={{display: 'flex', marginLeft: '0.25em'}}>
       <div>{node.display}</div>
       <div style={{marginLeft: 'auto'}}>{node.count.toLocaleString()}</div>
     </div>
