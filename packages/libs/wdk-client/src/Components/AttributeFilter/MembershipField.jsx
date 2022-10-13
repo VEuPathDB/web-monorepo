@@ -323,7 +323,7 @@ class MembershipTable extends React.PureComponent {
 
   handleSelectAll() {
     const allRows = this.getRows();
-    const searchTerm = this.props.activeFieldState.searchTerm;
+    const searchTerm = this.isSearchEnabled() && this.props.activeFieldState.searchTerm;
 
     if (!searchTerm) {
       if (allRows.some(row => row.filteredCount > 0 && !this.isItemSelected(row))) {
