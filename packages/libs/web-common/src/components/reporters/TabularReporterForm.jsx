@@ -6,7 +6,6 @@ import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/rep
 import TabularReporterFormSubmitButtons from './TabularReporterFormSubmitButtons';
 import ExcelNote from './ExcelNote';
 import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { createReporterFormStyleOverrides } from './TranscriptAttributesReporterForm';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
@@ -40,7 +39,16 @@ let TabularReporterForm = props => {
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
 
               linksPosition={LinksPosition.Top}
-              styleOverrides={createReporterFormStyleOverrides(formUiState.attributeSearchText)}
+              defaultStyleOverridesToApply='genomics'
+              styleOverrides={{
+                treeNode: {
+                  topLevelNode: {
+                    height: '1.5em',
+                    alignItems: 'center',
+                    overflow: 'hidden',
+                  },
+                }
+              }}
           />
         </div>
         <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">

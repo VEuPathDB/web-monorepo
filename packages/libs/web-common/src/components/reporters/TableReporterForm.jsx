@@ -5,7 +5,6 @@ import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/rep
 import * as CategoryUtils from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import ExcelNote from './ExcelNote';
 import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { createReporterFormStyleOverrides } from './TranscriptAttributesReporterForm';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
@@ -15,8 +14,6 @@ let TableReporterForm = props => {
   let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, ontology, includeSubmit } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   let getUiUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormUiState, formUiState);
-
-  const baseStyleOverrides = createReporterFormStyleOverrides(formUiState.tableSearchText);
 
   return (
     <div>
@@ -42,18 +39,19 @@ let TableReporterForm = props => {
                 onSearchTermChange={getUiUpdateHandler('tableSearchText')}
 
                 linksPosition={LinksPosition.Top}
+                defaultStyleOverridesToApply='genomics'
                 styleOverrides={{
-                  ...baseStyleOverrides,
-                  treeNode: {
-                    ...baseStyleOverrides.treeNode,
-                    topLevelNode: {
-                      ...baseStyleOverrides.treeNode.topLevelNode,
-                      cursor: 'pointer',
-                    },
-                    leafNodeLabel: {
-                      ...baseStyleOverrides.treeNode.leafNodeLabel,
-                      marginLeft: formUiState.tableSearchText ? 0 : '1em',
+                  treeSection: {
+                    ul: {
+                      padding: 0,
                     }
+                  },
+                  treeNode: {
+                    topLevelNode: {
+                      height: '1.5em',
+                      alignItems: 'center',
+                      overflow: 'hidden',
+                    },
                   }
                 }}
             />

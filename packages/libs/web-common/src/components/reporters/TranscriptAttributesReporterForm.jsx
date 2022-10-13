@@ -53,7 +53,16 @@ let TranscriptAttributesReporterForm = props => {
                 onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
                 
                 linksPosition={LinksPosition.Top}
-                styleOverrides={createReporterFormStyleOverrides(formUiState.attributeSearchText)}
+                defaultStyleOverridesToApply='genomics'
+                styleOverrides={{
+                  treeNode: {
+                    topLevelNode: {
+                      height: '1.5em',
+                      alignItems: 'center',
+                      overflow: 'hidden',
+                    },
+                  }
+                }}
             />
           </div>
 
@@ -136,47 +145,6 @@ TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
       attributeSearchText: ""
     }
   };
-}
-
-export function createReporterFormStyleOverrides(searchTerm) {
-  return (
-    {
-      searchBox: {
-        container: {
-          margin: '0 0.5em',
-        },
-        input: {
-          padding: '0.2em 1em 0.2em 2em',
-          width: 'calc(100% - 3em)',
-        },
-        optionalIcon: {
-          top: '2px',
-        }
-      },
-      treeSection: {
-        container: {
-          marginTop: '0.5em',
-        },
-        ul: {
-          margin: 0,
-        }
-      },
-      treeNode: {
-        topLevelNode: {
-          height: '1.5em',
-          alignItems: 'center',
-          overflow: 'hidden',
-        },
-        leafNodeLabel: {
-          padding: searchTerm ? 0 : '0.125em 0',
-          marginLeft: searchTerm ? 0 : '2em',
-        },
-        checkboxLabel: {
-          margin: searchTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
-        },
-      }
-    }
-  )
 }
 
 export default TranscriptAttributesReporterForm;

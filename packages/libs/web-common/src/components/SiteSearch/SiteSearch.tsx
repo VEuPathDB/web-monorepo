@@ -322,25 +322,15 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         selectedList={selection}
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
+        defaultStyleOverridesToApply='genomics'
         styleOverrides={{
           searchBox: {
-            container: {
-              margin: '0 0.25em',
-            },
             input: {
               padding: '0.2em 2em 0.2em 1em',
-              width: 'calc(100% - 3em)',
             },
-            optionalIcon: {
-              top: '2px',
-            }
           },
           treeSection: {
-            container: {
-              marginTop: '0.5em',
-            },
             ul: {
-              margin: 0,
               padding: 0,
             }
           },
@@ -349,13 +339,6 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
               height: '1.5em',
               alignItems: 'center',
               overflow: 'hidden',
-            },
-            leafNodeLabel: {
-              padding: filterTerm ? 0 : '0.125em 0',
-              marginLeft: filterTerm ? 0 : '2em',
-            },
-            checkboxLabel: {
-              margin: filterTerm ? '0.125em 0 0.125em 0.25em' : 'auto 0 auto 0.25em',
             },
           }
         }}

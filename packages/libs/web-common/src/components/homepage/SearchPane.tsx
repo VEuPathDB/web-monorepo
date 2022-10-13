@@ -25,15 +25,12 @@ const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-left-panel-expanded-branch-ids';
 
 const searchPaneStyleOverrides: CheckboxTreeStyleSpec = {
   searchBox: {
-    container: {margin: '0 0.5em'},
     clearSearchButton: {top: '3px'},
     input: {
       borderRadius: '0.5em',
       fontSize: '0.9em',
       borderColor: '#999',
-      padding: '0.2em 1.5em 0.2em 2.5em',
-      backgroundColor: '#dfdfdf',
-      width: 'calc(100% - 4em)',
+      background: '#dfdfdf',
     },
     optionalIcon: {
       cursor: 'text',
@@ -61,14 +58,11 @@ const headerMenuItemStyleOverrides: CheckboxTreeStyleSpec = {
     ...searchPaneStyleOverrides.searchBox,
     input: {
       ...searchPaneStyleOverrides.searchBox?.input,
-      backgroundColor: '#fff',
-      padding: '0.2em 1.75em',
-      width: 'calc(100% - 3.5em)',
+      background: '#fff',
     },
     optionalIcon: {
       fontSize: '1.25em',
       cursor: 'text',
-      top: '2px',
     }
   },
   treeSection: {
@@ -186,6 +180,7 @@ export const SearchCheckboxTree = wrappable((
           linksPosition={linksPosition != null ? linksPosition : LinksPosition.Top}
           styleOverrides={styleOverrides}
           type={type}
+          defaultStyleOverridesToApply='genomics'
         />
     );
 });
