@@ -1,5 +1,9 @@
-import React from 'react';
-import { CategoryTreeNode, getId } from 'wdk-client/Utils/CategoryUtils';
+import React, { useMemo } from 'react';
+import { 
+  CategoryTreeNode, 
+  getId,
+  getChildren as getNodeChildren 
+} from 'wdk-client/Utils/CategoryUtils';
 import { pure } from 'wdk-client/Utils/ComponentUtils';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
@@ -12,6 +16,11 @@ import {
   UpdateColumnsDialogExpandedNodes,
   RequestColumnsChoiceUpdate
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import { getLeaves } from 'wdk-client/Utils/TreeUtils';
+import { differenceWith } from 'lodash';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+
+const MAX_COLUMNS_ALLOWED = 80;
 
 export interface Props {
   answer: Answer;
@@ -45,20 +54,60 @@ function ResultTableAddColumnsDialog({
 }: Props) {
   if (!columnsDialogIsOpen) return null;
 
-  const button = (
-    <div style={{ textAlign: 'center' }}>
-      <button
-        type="button"
-        className="btn"
-        onClick={() => {
-          if (columnsDialogSelection) {
-            requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
-          }
-          showHideAddColumnsDialog(false);
+  /**
+   * This logic returns an accurate count of the checkboxes selected in the Dialog component.
+   * Since columnsDialogSelection includes ids for non-selectable columns, the ids in columnsDialogSelection 
+   * that do not correspond with a checkbox are filtered out.
+   */
+  const numberOfColumnsSelected = useMemo(() => {
+    const checkboxIds = getLeaves(columnsTree, getNodeChildren).map(node => getId(node));
+    const filteredCheckboxIds = differenceWith(checkboxIds, columnsDialogSelection ?? []);
+    return Math.abs(checkboxIds.length - filteredCheckboxIds.length)
+  }, [columnsDialogSelection, columnsTree])
+
+  const areMaxColumnsExceeded = columnsDialogSelection && columnsDialogSelection?.length > MAX_COLUMNS_ALLOWED;
+
+  const selectedColumnsMessage = (
+    <div style={{
+      fontStyle: 'italic',
+      textAlign: 'center',
+      fontSize: '1.1em'
+    }}>
+      <span 
+        style={{ 
+          color: '#c00',
         }}
       >
-        Update Columns
-      </button>
+        {numberOfColumnsSelected} columns selected
+      </span>
+      ,  out of {MAX_COLUMNS_ALLOWED} columns allowed
+    </div>
+  )
+
+  const updateButton = (
+    <button
+      type="button"
+      className="btn"
+      disabled={areMaxColumnsExceeded ? true : false}
+      onClick={() => {
+        if (columnsDialogSelection) {
+          requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
+        }
+        showHideAddColumnsDialog(false);
+      }}
+    >
+      Update Columns
+    </button>
+  );
+  
+  const buttonWithTooltip = (
+    <div style={{ textAlign: 'center' }}>
+      {areMaxColumnsExceeded ?
+        <Tooltip css={{}} title={'Please select no more than ' + MAX_COLUMNS_ALLOWED + ' columns'}>
+          {updateButton}
+        </Tooltip> :
+        updateButton
+      } 
     </div>
   );
 
@@ -79,7 +128,8 @@ function ResultTableAddColumnsDialog({
       }}
     >
       <>
-        {button}
+        {selectedColumnsMessage}
+        {buttonWithTooltip}
         <CategoriesCheckboxTree
           tree={columnsTree}
           searchBoxPlaceholder="Search Columns"
@@ -93,7 +143,7 @@ function ResultTableAddColumnsDialog({
           onUiChange={updateColumnsDialogExpandedNodes}
           onSearchTermChange={updateColumnsDialogSearchString}
         />
-        {button}
+        {buttonWithTooltip}
       </>
     </Dialog>
   );
