@@ -86,18 +86,18 @@ function ResultTableAddColumnsDialog({
 
   const updateButton = (
     <button
-          type="button"
-          className="btn"
-          disabled={areMaxColumnsExceeded ? true : false}
-          onClick={() => {
-            if (columnsDialogSelection) {
-              requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
-            }
-            showHideAddColumnsDialog(false);
-          }}
-        >
-          Update Columns
-        </button>
+      type="button"
+      className="btn"
+      disabled={areMaxColumnsExceeded ? true : false}
+      onClick={() => {
+        if (columnsDialogSelection) {
+          requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
+        }
+        showHideAddColumnsDialog(false);
+      }}
+    >
+      Update Columns
+    </button>
   );
   
   const buttonWithTooltip = (
