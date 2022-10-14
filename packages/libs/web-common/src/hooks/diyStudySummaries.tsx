@@ -6,6 +6,7 @@ import { keyBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { assertIsUserDatasetCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
 
 import { useDiyDatasets } from './diyDatasets';
 
@@ -67,6 +68,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
 
   const currentUserDatasets = useWdkService(
     async wdkService => {
+      assertIsUserDatasetCompatibleWdkService(wdkService);
       if (currentUser == null) {
         return undefined;
       }

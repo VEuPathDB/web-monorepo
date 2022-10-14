@@ -1002,10 +1002,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.14.4":
-  version "0.14.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.14.4.tgz#cdb293c265487182878f9757935845cf476332d4"
-  integrity sha512-Rayyxbv2qDJvahD9VX1SBvk1z2M79SCP/B71GDTAYHF9OSd3bV/MCsnVKPbSEbmQCDEonn+klKZ5trMPeVF+9A==
+"@veupathdb/components@^0.19.2":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.2.tgz#2436de84e901f7da22c8ac8e2add6ebda99d6c1e"
+  integrity sha512-nJjM2e85uP8DNEliDP8dtM2kKtKEZJ2wysU/Nr4DiKR/ToCCK6xFgsuQcjgGVNxl0cC4oo1vnDLCaUJX/xg2zw==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -1019,10 +1019,10 @@
     d3 "^7.1.1"
     date-arithmetic "^4.1.0"
     debounce-promise "^3.1.2"
+    dom-to-image "^2.6.0"
     latlon-geohash "^2.0.0"
     leaflet "^1.6.0"
     leaflet-drift-marker "^1.0.3"
-    leaflet-simple-map-screenshoter "^0.4.5"
     luxon "^1.25.0"
     plotly.js "^2.6.0"
     re-resizable "^6.9.0"
@@ -1034,21 +1034,23 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.16.0.tgz#bb0e549d854f57a2dd784f1a3f8532d9685196ef"
-  integrity sha512-B6twkOliirk980Fau1a7r5F6yPMvKltkrqLMCnGHw6VRnw0TCtU+O334z1gznprPcn17rU0TiVPOB2SgJYTgjg==
+"@veupathdb/coreui@^0.18.7":
+  version "0.18.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.7.tgz#2b114845618847cdb8ef49080c9637ba2f2e6408"
+  integrity sha512-HNmVwtY8hYbdUC1qtvFLhtjbargTdRgqlsDYFDszdGzERlX38pkwjtHjWOUtJxFdSd/LTFRoefE/c0YqfkrBYA==
   dependencies:
     "@react-hook/size" "^2.1.2"
+    core-js "^3.25.3"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
+    regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.0.1.tgz#3db487b55f773eeeceadb7b9722c2dc2284db176"
-  integrity sha512-ASzUMz/nOWcw03Mq5bCzurwG4QT7wXB6Rc6YCFg5jipnDeKgBPDn/4t1QjKT52cloSZOYwm5nt8Sx0+ZJkE9cw==
+"@veupathdb/eda@^3.10.6":
+  version "3.10.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.10.6.tgz#9236cdc31cd24da00b75698fe5068e7a5fd1d1ee"
+  integrity sha512-5zfTjpYft+wPtMvzf2yLP/Ygp2Kwxr4IbBGRaP7m0BGIShHFteNSP3K9ZgQjvw8SgPKI0v9MoBnIbd34eHTSRA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -1058,7 +1060,6 @@
     react-cool-dimensions "^2.0.7"
     react-draggable "^4.4.3"
     react-resizable "^3.0.4"
-    react-table "^7.7.0"
     uuid "^8.3.2"
 
 "@veupathdb/http-utils@^1.1.0":
@@ -1070,10 +1071,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/react-scripts@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-1.3.0.tgz#1923e4515e3ea8aecc3691cadb87a7c5ccade3df"
-  integrity sha512-ytj5G4FOJPZsax8B9JUWckvNcdc/2AaTNUkqvxyOzBDxAsVYO0Jc0h2TKNM2mnRwr2S/GIlxAEGUqhEBjH/16A==
+"@veupathdb/react-scripts@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-2.0.0.tgz#9b6601b389c7ec25175be31c9d4f11b260289d85"
+  integrity sha512-NUwUccMGay5GpYyKyHiAwinK7zIZJQF41D+0st2pwNklUoYmhdGh1PPra2DNO/fKW33H5H0I6RRJOfXHVVcpxw==
   dependencies:
     dotenv "^10.0.0"
     dotenv-expand "^5.1.0"
@@ -1082,19 +1083,27 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.3.0":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.1.tgz#319d2c4bcc6e101bc48647b7a2011b1c0d346de3"
-  integrity sha512-buohdGAVNDMJa5S2p+Ob4dn6GeKBO13UAsyJTSztcAH2jfws/+dVGTbPj5TFvmt4PrT4A4CpktyYkYnLtv6KZg==
+"@veupathdb/study-data-access@^0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.6.tgz#e9c1bcbe909b5f2ff78b5c76c203c0374158b031"
+  integrity sha512-E9HWKifUoak3gHV4dprUfHnb3r6tYHjG7LFqNAIOCPRD0ZJW8FHtwvT9v9ctEMqrzrLAYtkFPxq4i5MUPbW2qg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.7.0.tgz#4879365244a7935081b4527b2e6d73b20fb8c02e"
-  integrity sha512-pe5GGNNcKHRA+v8mdVZaZwmjJyeyQ4fOTLbwFm+rPNMNtrZpsekwxBI/LKg/DF8SzrYOJUBW6NI1rvXA3OSRlw==
+"@veupathdb/user-datasets@^0.1.12":
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.12.tgz#4b238f1365f6e6aedfafc55d451b5f4709b2be7f"
+  integrity sha512-9Rauia1uHRfCtNJOzbvs6Isna7zaXPRGHNjw0N0v2supTMZX+KuNT8z1+9ZqxLEFQx23eZ0mR4rfMPqdFop+ag==
+  dependencies:
+    date-fns "^2.29.1"
+    lodash "^4.17.21"
+
+"@veupathdb/wdk-client@^0.9.13":
+  version "0.9.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.13.tgz#126e45bb4604c3b537986f2e72604e1d1a4db1a7"
+  integrity sha512-DrjvMnwOqZQkkRyGJRi3pWinb/3nnpkZZhbXdCkI7HjXnuuDDgM+hU8SOqz9p0VOeOE/DHsbHoAYF3vT7ZQGfQ==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -1102,10 +1111,8 @@
     localforage "^1.5.0"
     lodash "^4.17.5"
     mansion-ui "2.5"
-    moment "^2.21.0"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
-    react-autocomplete "^1.8.1"
     react-redux "^7.1.3"
     react-select "^3.0.4"
     react-transition-group "^2.2.1"
@@ -1849,6 +1856,11 @@ clsx@^1.0.4, clsx@^1.1.1:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
 
+clsx@^1.1.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
+
 code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
@@ -2042,6 +2054,11 @@ convert-source-map@^1.5.0:
   integrity sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==
   dependencies:
     safe-buffer "~5.1.1"
+
+core-js@^3.25.3:
+  version "3.25.5"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.25.5.tgz#e86f651a2ca8a0237a5f064c2fe56cef89646e27"
+  integrity sha512-nbm6eZSjm+ZuBQxCUPQKQCoUEfFOXjUZ8dTTyikyKaWrTYmAVbykQfwsKE5dBK88u3QCkCrzsx/PPlKfhsvgpw==
 
 core-util-is@1.0.2:
   version "1.0.2"
@@ -2606,6 +2623,11 @@ date-arithmetic@^4.1.0:
   resolved "https://registry.yarnpkg.com/date-arithmetic/-/date-arithmetic-4.1.0.tgz#e5d6434e9deb71f79760a37b729e4a515e730ddf"
   integrity sha512-QWxYLR5P/6GStZcdem+V1xoto6DMadYWpMXU82ES3/RfR3Wdwr3D0+be7mgOJ+Ov0G9D5Dmb9T17sNLQYj9XOg==
 
+date-fns@^2.29.1:
+  version "2.29.3"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
+  integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
+
 debounce-promise@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/debounce-promise/-/debounce-promise-3.1.2.tgz#320fb8c7d15a344455cd33cee5ab63530b6dc7c5"
@@ -2706,11 +2728,6 @@ dom-helpers@^5.0.1, dom-helpers@^5.2.0, dom-helpers@^5.2.1:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
 
-dom-scroll-into-view@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/dom-scroll-into-view/-/dom-scroll-into-view-1.0.1.tgz#32abb92f0d8feca6215162aef43e4b449ab8d99c"
-  integrity sha1-Mqu5Lw2P7KYhUWKu9D5LRJq42Zw=
-
 dom-serializer@0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/dom-serializer/-/dom-serializer-0.2.2.tgz#1afb81f533717175d478655debc5e332d9f9bb51"
@@ -2719,10 +2736,10 @@ dom-serializer@0:
     domelementtype "^2.0.1"
     entities "^2.0.0"
 
-dom-to-image-more@^2.8.0:
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/dom-to-image-more/-/dom-to-image-more-2.9.5.tgz#a5dd5a30480e01b795fde9e99278096143b3ece7"
-  integrity sha512-7pr43ZY/Nk0k2z3NXDKN4GvnZqP/3iZvddLeIuGfNTyFJuzzr0UeLl+poZ1ewYt3YIK+WHCEZUkz+RNuocN3/Q==
+dom-to-image@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/dom-to-image/-/dom-to-image-2.6.0.tgz#8a503608088c87b1c22f9034ae032e1898955867"
+  integrity sha512-Dt0QdaHmLpjURjU7Tnu3AgYSF2LuOmksSGsUcE6ItvJoCWTBEmiMXcqBdNSAm9+QbbwD7JMoVsuuKX6ZVQv1qA==
 
 domelementtype@1, domelementtype@^1.3.1:
   version "1.3.1"
@@ -3014,11 +3031,6 @@ fast-memoize@^2.5.1:
   version "2.5.2"
   resolved "https://registry.yarnpkg.com/fast-memoize/-/fast-memoize-2.5.2.tgz#79e3bb6a4ec867ea40ba0e7146816f6cdce9b57e"
   integrity sha512-Ue0LwpDYErFbmNnZSF0UH6eImUwDmogUO1jyE+JbN2gsQz/jICm1Ve7t9QT0rNSsfJt+Hs4/S3GnsDVjL4HVrw==
-
-file-saver@^2.0.2:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
-  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -4025,14 +4037,6 @@ leaflet-drift-marker@^1.0.3:
   resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-1.0.3.tgz#4b178dc22b918b4713570302461ca636241fac3f"
   integrity sha512-2b5EqL11+reMqS+RTZAwW9oglWk05V02LQzMSe3D8cPPSvz42RpoqjRI8aGvD8Yjsc31ZwLZMeJ0s3waaj3VEQ==
 
-leaflet-simple-map-screenshoter@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/leaflet-simple-map-screenshoter/-/leaflet-simple-map-screenshoter-0.4.5.tgz#d4f093077663577e7879c0488ebc54292c34314d"
-  integrity sha512-bvd++mQstpgb7F7c2v5jCLlUitQ6CcYLZ56do7PVyyVpGvnlhIEk5S6dLXqpe3itSr2D/re5yUAOf8zBt95ViQ==
-  dependencies:
-    dom-to-image-more "^2.8.0"
-    file-saver "^2.0.2"
-
 leaflet@^1.6.0:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
@@ -4233,11 +4237,6 @@ mitt@^2.1.0:
   dependencies:
     minimist "^1.2.5"
 
-moment@^2.21.0:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
-  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
-
 monocle-ts@^2.3.11:
   version "2.3.12"
   resolved "https://registry.yarnpkg.com/monocle-ts/-/monocle-ts-2.3.12.tgz#73e7d59841b3843bf76eb840735a9641fdd3bd93"
@@ -4400,6 +4399,14 @@ normalize-svg-path@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/normalize-svg-path/-/normalize-svg-path-0.1.0.tgz#456360e60ece75fbef7b5d7e160480e7ffd16fe5"
   integrity sha1-RWNg5g7Odfvve11+FgSA5//Rb+U=
+
+notistack@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-1.0.10.tgz#8db90830034383467a04184f1fa8ff77f4fc58a5"
+  integrity sha512-z0y4jJaVtOoH3kc3GtNUlhNTY+5LE04QDeLVujX3VPhhzg67zw055mZjrBF+nzpv3V9aiPNph1EgRU4+t8kQTQ==
+  dependencies:
+    clsx "^1.1.0"
+    hoist-non-react-statics "^3.3.0"
 
 npm-normalize-package-bin@^1.0.0:
   version "1.0.1"
@@ -4836,14 +4843,6 @@ react-app-rewired@^2.1.8:
   dependencies:
     semver "^5.6.0"
 
-react-autocomplete@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/react-autocomplete/-/react-autocomplete-1.8.1.tgz#ebbbc400006aa91ad538b2d14727b9e7e5d06310"
-  integrity sha1-67vEAABqqRrVOLLRRye55+XQYxA=
-  dependencies:
-    dom-scroll-into-view "1.0.1"
-    prop-types "^15.5.10"
-
 react-bootstrap@^1.3.0:
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-1.6.4.tgz#94d5d2422e26bba277656d3529128e14f838b7ca"
@@ -5195,7 +5194,7 @@ regenerate@^1.4.0:
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.2.tgz#b9346d8827e8f5a32f7ba29637d398b69014848a"
   integrity sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==
 
-regenerator-runtime@^0.13.4:
+regenerator-runtime@^0.13.4, regenerator-runtime@^0.13.9:
   version "0.13.9"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.9.tgz#8925742a98ffd90814988d7566ad30ca3b263b52"
   integrity sha512-p3VT+cOEgxFsRRA9X4lkI1E+k2/CtnKtU4gcxyaCUreilL/vqI6CdZ3wxVUx3UOUg+gnUOQQcRI7BmSI656MYA==
