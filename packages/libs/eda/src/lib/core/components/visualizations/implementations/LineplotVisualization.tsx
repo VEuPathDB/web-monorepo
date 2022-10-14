@@ -420,23 +420,28 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const onChangeHandlerFactory = useCallback(
     < ValueType,>(key: keyof LineplotConfig,
 		  resetCheckedLegendItems?: boolean,
-		  resetAxisRanges?: boolean,
       resetIndependentAxisLogScale?: boolean,
       resetDependentAxisLogScale?: boolean,
       resetBinningControl?: boolean,
-      resetErrorBarControl?: boolean) => (newValue?: ValueType) => {
+      resetErrorBarControl?: boolean,
+      resetIndependentAxisRanges?: boolean,
+      resetDependentAxisRanges?: boolean,
+      ) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
         ...(resetIndependentAxisLogScale ? { independentAxisLogScale: false } : {}),
         ...(resetDependentAxisLogScale ? { dependentAxisLogScale: false } : {}),
         ...(resetBinningControl ? { useBinning: false } : {}),
         ...(resetErrorBarControl ? { showErrorBars: false } : {}),
+        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
+        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
       };
       updateVizConfig(newPartialConfig);
-      if (resetAxisRanges) {
+      if (resetIndependentAxisRanges) {
         setTruncatedIndependentAxisWarning('');
+      }
+      if (resetDependentAxisRanges) {
         setTruncatedDependentAxisWarning('');
       }
     },
@@ -447,17 +452,31 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
     true,
-    // axis range control: resetAxisRange
+    false,
+    false,
+    false,
+    false,
+    true,
     true
   );
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
     false,
-    true
+    false,
+    false,
+    false,
+    false,
+    true,
+    false
   );
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
+    false,
+    false,
+    false,
+    false,
+    false,
     false,
     true
   );
@@ -465,17 +484,21 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
     true,
-    // axis range control: resetAxisRange
+    false,
+    false,
+    false,
+    false,
+    true,
     true
   );
 
   const onShowErrorBarsChange = onChangeHandlerFactory<boolean>(
     'showErrorBars',
     true,
-    // need to consider axis range control: resetAxisRange? seems not
-    false,
     false,
     true, // reset dependentAxisLogScale
+    false,
+    false,
     false,
     false
   );
@@ -483,8 +506,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const onUseBinningChange = onChangeHandlerFactory<boolean>(
     'useBinning',
     false,
-    false,
     true, // reset independentAxisLogScale
+    false,
+    false,
     false,
     false,
     false
@@ -500,21 +524,23 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
     false,
-    true,
     false,
     false,
     true, // reset useBinning
+    false,
+    true,
     false
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
     false,
-    true,
     false,
     false,
     false,
-    true // reset showErrorBars
+    true, // reset showErrorBars
+    false,
+    true
   );
 
   const outputEntity = useFindOutputEntity(
@@ -1591,12 +1617,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
             {
               title: (
                 <>
-                  Y-axis aggregation{' '}
-                  {vizConfig.yAxisVariable
-                    ? categoricalMode
-                      ? '(categorical Y)'
-                      : '(continuous Y)'
-                    : ''}
+                  <span style={{ marginRight: '0.5em' }}>
+                    Y-axis aggregation{' '}
+                    {vizConfig.yAxisVariable
+                      ? categoricalMode
+                        ? '(categorical Y)'
+                        : '(continuous Y)'
+                      : ''}
+                  </span>
                   <HelpIcon children={aggregationHelp} />
                 </>
               ),
