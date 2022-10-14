@@ -33,7 +33,7 @@
   "peerDependencies": {
     "@veupathdb/components": "^0.19.2",
     "@veupathdb/eda": ">=3.10.6",
-    "@veupathdb/wdk-client": ">=0.9.13",
+    "@veupathdb/wdk-client": "^0.9.14",
     "notistack": "^1.0.10",
     "react": ">=16.14",
     "react-dom": ">=16.14"
@@ -60,7 +60,7 @@
     "@veupathdb/react-scripts": "^2.0.0",
     "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/user-datasets": "^0.1.12",
-    "@veupathdb/wdk-client": "^0.9.13",
+    "@veupathdb/wdk-client": "^0.9.14",
     "bubleify": "^2.0.0",
     "icon-font-generator": "^2.1.11",
     "ify-loader": "^1.1.0",
