@@ -2,7 +2,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { Props as CheckboxTreeProps } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { CheckboxTreeProps } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
