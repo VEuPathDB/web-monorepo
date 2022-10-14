@@ -74,7 +74,8 @@ function ResultTableAddColumnsDialog({
     <div style={{
       fontStyle: 'italic',
       textAlign: 'center',
-      fontSize: '1.1em'
+      fontSize: '1.1em',
+      margin: '0.5em',
     }}>
       <span 
         style={{ 
