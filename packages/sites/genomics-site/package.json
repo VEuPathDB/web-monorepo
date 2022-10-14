@@ -21,7 +21,7 @@
     "@veupathdb/eda": "^3.10.6",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/multi-blast": "^3.0.2",
-    "@veupathdb/preferred-organisms": "^1.1.11",
+    "@veupathdb/preferred-organisms": "file:local_modules/@veupathdb/preferred-organisms",
     "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/user-datasets": "^0.1.12",
     "@veupathdb/wdk-client": "^0.9.14",

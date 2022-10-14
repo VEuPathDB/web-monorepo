@@ -2164,10 +2164,8 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.7":
+"@veupathdb/coreui@file:local_modules/@veupathdb/coreui":
   version "0.18.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.7.tgz#2b114845618847cdb8ef49080c9637ba2f2e6408"
-  integrity sha512-HNmVwtY8hYbdUC1qtvFLhtjbargTdRgqlsDYFDszdGzERlX38pkwjtHjWOUtJxFdSd/LTFRoefE/c0YqfkrBYA==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -2219,10 +2217,8 @@
     lodash "^4.17.20"
     react-select "^3.0.4"
 
-"@veupathdb/preferred-organisms@^1.1.11":
+"@veupathdb/preferred-organisms@file:local_modules/@veupathdb/preferred-organisms":
   version "1.1.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.11.tgz#e37545170eb9453490e224e38463a72dfda22058"
-  integrity sha512-7yzW4AlkDDc1qgX16zEH9QHdFwvPr9Kn5SZaw9qQEyt0GQ6RuWa+ZMQpRh04sUwq5OAOOzYAHREmUCqnjTAezQ==
   dependencies:
     lodash "^4.17.21"
     recoil "^0.2.0"
@@ -2271,10 +2267,15 @@
     date-fns "^2.29.1"
     lodash "^4.17.21"
 
+<<<<<<< Updated upstream
 "@veupathdb/wdk-client@^0.9.14":
   version "0.9.14"
   resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.14.tgz#c7741d0e7394dae45d45f6d9879d529dab963f0f"
   integrity sha512-8EES5+wnzYi/bvRHfZ7bBFhb3fIC72sSBxtEfdkRm7wfF3YKGTBxHUZErzuNzMeBl32hQj2FUMSg1kc5k7R+LQ==
+=======
+"@veupathdb/wdk-client@file:local_modules/@veupathdb/wdk-client":
+  version "0.9.13"
+>>>>>>> Stashed changes
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2294,10 +2295,8 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.24":
+"@veupathdb/web-common@file:local_modules/@veupathdb/web-common":
   version "0.6.24"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.24.tgz#6432cc7bd22163123ab299318c7cf79059a44071"
-  integrity sha512-hWUREwXhtpwQ47hD8j+T6WoIaCEDXz3Pw9LliGTbYsGhpA/lmVCbJb3PjBR9JPZiew2i4t0uGXhmqLk7qfVhmw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
