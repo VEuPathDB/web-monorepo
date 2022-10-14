@@ -1,13 +1,16 @@
 import { ReactNode, useEffect, useState, useRef } from "react";
 import PopoverButton from "../buttons/PopoverButton/PopoverButton";
-import { Item } from "./checkboxes/CheckboxList";
 import { css } from '@emotion/react';
 import { uniqueId } from "lodash";
-  
+
+export type SingleSelectItem = {
+    display: ReactNode
+    value: any
+  }
 export interface SingleSelectProps {
-    items: Item[];
-    value: string;
-    onSelect: (value: string) => void;
+    items: SingleSelectItem[];
+    value: any;
+    onSelect: (value: any) => void;
     buttonDisplayContent: ReactNode;
 }
 
@@ -29,7 +32,7 @@ export default function SingleSelect({
 
     const [ key, setKey ] = useState<string>('');
 
-    const handleSelection = (newValue: string) => {
+    const handleSelection = (newValue: any) => {
         onSelect(newValue);
         setKey(uniqueId());
     }
@@ -39,7 +42,7 @@ export default function SingleSelect({
         setIndexOfFocusedElement(defaultOrSelectedValueIndex)
     }, [defaultOrSelectedValueIndex])
 
-    const onKeyDown = (key: string, newValue: string) => {
+    const onKeyDown = (key: string, newValue: any) => {
         if (!isPopoverOpen) return;
         if (key === 'Enter') {
             handleSelection(newValue)
@@ -68,7 +71,7 @@ export default function SingleSelect({
             >
                 {items.map((item, index) => (
                     <Option 
-                        key={item.value}
+                        key={JSON.stringify(item.value)}
                         item={item} 
                         onSelect={handleSelection} 
                         onKeyDown={onKeyDown} 
@@ -84,9 +87,9 @@ export default function SingleSelect({
 }
 
 interface OptionProps {
-    item: Item;
-    onSelect: (value: string) => void;
-    onKeyDown: (key: string, value: string) => void;
+    item: SingleSelectItem;
+    onSelect: (value: any) => void;
+    onKeyDown: (key: string, value: any) => void;
     shouldFocus: boolean;
     isSelected: boolean;
 }
@@ -109,7 +112,6 @@ function Option({
             role="option"
             aria-selected={isSelected}
             ref={optionRef}
-            key={item.value}
             css={css`
                 padding: 0.5em;
                 line-height: 1.25;
