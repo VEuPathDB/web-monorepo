@@ -67,7 +67,16 @@ let SharedReporterForm = props => {
             onUiChange={getUiUpdateHandler('expandedTableNodes')}
             onSearchTermChange={getUiUpdateHandler('tableSearchText')}
             linksPosition={LinksPosition.Top}
-            styleOverrides={createReporterFormStyleOverrides(formUiState.tableSearchText)}
+            defaultStyleOverridesToApply='genomics'
+            styleOverrides={{
+              treeNode: {
+                topLevelNode: {
+                  height: '1.5em',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                },
+              }
+            }}
           />
         </div>
 
