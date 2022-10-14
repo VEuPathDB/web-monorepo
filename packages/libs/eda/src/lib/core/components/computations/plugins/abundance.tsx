@@ -13,7 +13,6 @@ import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
-import { useState, useEffect } from 'react';
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -126,12 +125,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
 // Include available methods in this array.
 const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
 
-function variableDescriptorToString(
-  variableDescriptor: VariableDescriptor
-): string {
-  return JSON.stringify(variableDescriptor);
-}
-
 export function AbundanceConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
@@ -165,13 +158,6 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     ' > ' +
     selectedDataConfig?.displayName;
 
-  const [selectedDataValue, setSelectedDataValue] = useState('');
-
-  useEffect(() => {
-    if (!selectedDataValue.length) return;
-    changeConfigHandler('collectionVariable', JSON.parse(selectedDataValue));
-  }, [selectedDataValue]);
-
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
       <H6 additionalStyles={{ margin: 0 }}>
@@ -191,22 +177,22 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       >
         <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
         <SingleSelect
-          value={variableDescriptorToString({
+          value={{
             variableId: collectionVariable.variableId,
             entityId: collectionVariable.entityId,
-          })}
+          }}
           buttonDisplayContent={dataConfigButtonDisplay}
           items={collections.map((collectionVar) => ({
-            value: variableDescriptorToString({
+            value: {
               variableId: collectionVar.id,
               entityId: collectionVar.entityId,
-            }),
+            },
             display:
               collectionVar.entityDisplayName +
               ' > ' +
               collectionVar.displayName,
           }))}
-          onSelect={setSelectedDataValue}
+          onSelect={partial(changeConfigHandler, 'collectionVariable')}
         />
         <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
         <SingleSelect
