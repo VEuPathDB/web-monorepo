@@ -126,8 +126,8 @@ import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
-import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
-import { Tooltip } from '@material-ui/core';
+// reset to defaults button
+import { ResetButtonCoreUI } from '../../ResetButton';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -1200,10 +1200,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  // set Undo icon props
-  const undoSize = 20;
-  const undoColor = '#006699';
-
   const controlsNode = (
     <>
       {!options?.hideTrendlines && (
@@ -1250,21 +1246,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <LabelledGroup label="X-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.3em' }}>
-              <Tooltip title={'Reset to defaults'}>
-                <button
-                  onClick={handleIndependentAxisSettingsReset}
-                  style={{
-                    width: undoSize,
-                    height: undoSize,
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                  }}
-                >
-                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
-                </button>
-              </Tooltip>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleIndependentAxisSettingsReset}
+              />
             </div>
           </div>
 
@@ -1389,21 +1379,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.3em' }}>
-              <Tooltip title={'Reset to defaults'}>
-                <button
-                  onClick={handleDependentAxisSettingsReset}
-                  style={{
-                    width: undoSize,
-                    height: undoSize,
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                  }}
-                >
-                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
-                </button>
-              </Tooltip>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
             </div>
           </div>
 

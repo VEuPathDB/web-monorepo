@@ -88,12 +88,8 @@ import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
-// testing button style
-import {
-  ResetButtonCoreUI,
-  ResetButtonMUI,
-  ResetButtonOriginal,
-} from '../../ResetButton';
+// reset to defaults button
+import { ResetButtonCoreUI } from '../../ResetButton';
 
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -991,9 +987,8 @@ function Controls({
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            {/* testing button style */}
             {/* using CoreUI: icon only */}
-            <div style={{ marginLeft: '-2.6em' }}>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
               <ResetButtonCoreUI
                 size={'medium'}
                 text={''}
@@ -1001,40 +996,6 @@ function Controls({
                 tooltip={'Reset to defaults'}
                 disabled={false}
                 onPress={handleDependentAxisSettingsReset}
-              />
-            </div>
-
-            {/* using CoreUI: icon with text */}
-            <div style={{ marginLeft: '1em' }}>
-              <ResetButtonCoreUI
-                size={'medium'}
-                text={'Reset to defaults'}
-                themeRole={'primary'}
-                tooltip={'Reset to defaults'}
-                disabled={false}
-                onPress={handleDependentAxisSettingsReset}
-              />
-            </div>
-
-            {/* using Material-UI (MUI) */}
-            <div style={{ marginLeft: '1em' }}>
-              <ResetButtonMUI
-                size={'small'}
-                // color={'#006699'}
-                tooltipText={'Reset to defaults'}
-                disabled={false}
-                onClick={handleDependentAxisSettingsReset}
-              />
-            </div>
-
-            {/* using pure button */}
-            <div style={{ marginLeft: '1em' }}>
-              <ResetButtonOriginal
-                size={20}
-                color={'#006699'}
-                tooltipText={'Reset to defaults'}
-                disabled={false}
-                onClick={handleDependentAxisSettingsReset}
               />
             </div>
           </div>

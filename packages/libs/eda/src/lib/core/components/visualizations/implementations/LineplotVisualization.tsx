@@ -122,8 +122,8 @@ import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
-import Undo from '@veupathdb/coreui/dist/components/icons/Undo';
-import { Tooltip } from '@material-ui/core';
+// reset to defaults button
+import { ResetButtonCoreUI } from '../../ResetButton';
 
 const plotContainerStyles = {
   width: 750,
@@ -1086,10 +1086,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
-  // set Undo icon props
-  const undoSize = 20;
-  const undoColor = '#006699';
-
   const controlsNode = (
     <>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -1104,47 +1100,17 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <LabelledGroup label="X-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.3em' }}>
-              <Tooltip
-                title={
-                  lineplotProps.independentValueType === 'string'
-                    ? 'Reset to defaults (not available)'
-                    : 'Reset to defaults'
-                }
-              >
-                <button
-                  onClick={handleIndependentAxisSettingsReset}
-                  style={{
-                    width: undoSize,
-                    height: undoSize,
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                  }}
-                  // reset button is diabled for categorical X
-                  disabled={lineplotProps.independentValueType === 'string'}
-                >
-                  <Undo
-                    width={undoSize}
-                    height={undoSize}
-                    // reset button color is set to be lightgray for categorical X
-                    fill={
-                      lineplotProps.independentValueType === 'string'
-                        ? 'lightgray'
-                        : undoColor
-                    }
-                  />
-                </button>
-              </Tooltip>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={lineplotProps.independentValueType === 'string'}
+                onPress={handleIndependentAxisSettingsReset}
+              />
             </div>
           </div>
-
-          {/* <LabelledGroup
-            label="X-axis controls"
-            containerStyles={{
-              marginRight: '1em',
-            }}
-          > </LabelledGroup> */}
 
           <div
             style={{
@@ -1339,21 +1305,15 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
-            <div style={{ marginLeft: '-2.3em' }}>
-              <Tooltip title={'Reset to defaults'}>
-                <button
-                  onClick={handleDependentAxisSettingsReset}
-                  style={{
-                    width: undoSize,
-                    height: undoSize,
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                  }}
-                >
-                  <Undo width={undoSize} height={undoSize} fill={undoColor} />
-                </button>
-              </Tooltip>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
             </div>
           </div>
 
