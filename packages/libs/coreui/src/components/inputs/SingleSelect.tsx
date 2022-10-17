@@ -3,23 +3,23 @@ import PopoverButton from "../buttons/PopoverButton/PopoverButton";
 import { css } from '@emotion/react';
 import { uniqueId } from "lodash";
 
-export type SingleSelectItem = {
-    display: ReactNode
-    value: any
+export type SingleSelectItem<T> = {
+    display: ReactNode,
+    value: T,
   }
-export interface SingleSelectProps {
-    items: SingleSelectItem[];
-    value: any;
-    onSelect: (value: any) => void;
+export interface SingleSelectProps<T> {
+    items: SingleSelectItem<T>[];
+    value: T;
+    onSelect: (value: T) => void;
     buttonDisplayContent: ReactNode;
 }
 
-export default function SingleSelect({
+export default function SingleSelect<T>({
     items,
     value,
     onSelect,
     buttonDisplayContent,
-}: SingleSelectProps) {
+}: SingleSelectProps<T>) {
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
 
     /** 
@@ -32,7 +32,7 @@ export default function SingleSelect({
 
     const [ key, setKey ] = useState<string>('');
 
-    const handleSelection = (newValue: any) => {
+    const handleSelection = (newValue: T) => {
         onSelect(newValue);
         setKey(uniqueId());
     }
@@ -42,7 +42,7 @@ export default function SingleSelect({
         setIndexOfFocusedElement(defaultOrSelectedValueIndex)
     }, [defaultOrSelectedValueIndex])
 
-    const onKeyDown = (key: string, newValue: any) => {
+    const onKeyDown = (key: string, newValue: T) => {
         if (!isPopoverOpen) return;
         if (key === 'Enter') {
             handleSelection(newValue)
@@ -70,7 +70,7 @@ export default function SingleSelect({
                 }}
             >
                 {items.map((item, index) => (
-                    <Option 
+                    <Option<T> 
                         key={JSON.stringify(item.value)}
                         item={item} 
                         onSelect={handleSelection} 
@@ -86,21 +86,21 @@ export default function SingleSelect({
     )
 }
 
-interface OptionProps {
-    item: SingleSelectItem;
-    onSelect: (value: any) => void;
-    onKeyDown: (key: string, value: any) => void;
+interface OptionProps<T> {
+    item: SingleSelectItem<T>;
+    onSelect: (value: T) => void;
+    onKeyDown: (key: string, value: T) => void;
     shouldFocus: boolean;
     isSelected: boolean;
 }
 
-function Option({
+function Option<T>({
     item, 
     onSelect, 
     onKeyDown,
     shouldFocus,
     isSelected
-}: OptionProps) {
+}: OptionProps<T>) {
     const optionRef = useRef<HTMLLIElement>(null);
 
     if (shouldFocus && optionRef.current) {
