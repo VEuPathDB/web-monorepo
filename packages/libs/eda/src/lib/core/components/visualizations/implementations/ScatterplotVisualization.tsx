@@ -378,19 +378,24 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const onChangeHandlerFactory = useCallback(
     < ValueType,>(key: keyof ScatterplotConfig,
       resetCheckedLegendItems?: boolean,
-      resetAxisRanges?: boolean,
       resetAxisLogScale?: boolean,
-      resetValueSpecConfig?: boolean) => (newValue?: ValueType) => {
+      resetValueSpecConfig?: boolean,
+      resetIndependentAxisRanges?: boolean,
+      resetDependentAxisRanges?: boolean,
+      ) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
         ...(resetAxisLogScale ? { independentAxisLogScale: false, dependentAxisLogScale: false } : {}),
         ...(resetValueSpecConfig ? { valueSpecConfig: 'Raw' } : {}),
+        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
+        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
       };
       updateVizConfig(newPartialConfig);
-      if (resetAxisRanges) {
+      if (resetIndependentAxisRanges) {
         setTruncatedIndependentAxisWarning('');
+      }
+      if (resetDependentAxisRanges) {
         setTruncatedDependentAxisWarning('');
       }
     },
@@ -401,18 +406,26 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
     true,
-    true,
     true, // reset both axisLogScale to false
-    false
+    false,
+    true,
+    true
   );
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
     false,
-    true
+    false,
+    false,
+    true,
+    false
   );
+
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
+    false,
+    false,
+    false,
     false,
     true
   );
@@ -420,23 +433,28 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
     true,
+    true,
+    false,
+    true,
     true
   );
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
     true,
-    true,
     false,
-    true // reset valueSpec to Raw
+    true, // reset valueSpec to Raw
+    true,
+    false
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
     true,
-    true,
     false,
-    true // reset valueSpec to Raw
+    true, // reset valueSpec to Raw
+    false,
+    true
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams

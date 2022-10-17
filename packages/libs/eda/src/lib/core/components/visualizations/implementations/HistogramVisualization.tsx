@@ -264,16 +264,24 @@ function HistogramViz(props: VisualizationProps<Options>) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+    < ValueType,>(key: keyof HistogramConfig,
+      resetCheckedLegendItems?: boolean,
+      resetIndependentAxisRanges?: boolean,
+      resetDependentAxisRanges?: boolean,
+      ) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
         ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-      	...(resetAxisRanges ? { independentAxisRange: undefined, dependentAxisRange: undefined } : {}),
+        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
+        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
       };
       updateVizConfig(newPartialConfig);
-      if (resetAxisRanges)
+      if (resetIndependentAxisRanges) {
         setTruncatedIndependentAxisWarning('');
-	      setTruncatedDependentAxisWarning('');
+      }
+      if (resetDependentAxisRanges) {
+        setTruncatedDependentAxisWarning('');
+      }
     },
     [updateVizConfig]
   );
@@ -281,22 +289,26 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'dependentAxisLogScale',
     false,
+    false,
     true
   );
 
   const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
     'valueSpec',
     false,
+    true,
     true
   );
 
   const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'independentAxisValueSpec',
     false,
-    true
+    true,
+    false
   );
   const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
     'dependentAxisValueSpec',
+    false,
     false,
     true
   );
@@ -304,6 +316,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true,
     true
   );
