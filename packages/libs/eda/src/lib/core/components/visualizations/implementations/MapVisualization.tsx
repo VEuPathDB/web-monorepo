@@ -42,6 +42,7 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { Toggle } from '@veupathdb/coreui';
 import { LayoutOptions } from '../../layouts/types';
 import { useMapMarkers } from '../../../hooks/mapMarkers';
+import { temporaryHack } from '../../../utils/visualization';
 
 export const mapVisualization = createVisualizationPlugin({
   selectorIcon: MapSVG,
@@ -338,7 +339,10 @@ function MapViz(props: VisualizationProps<Options>) {
   if (pieOverview == null)
     throw new Error('Map visualization cannot find map-markers-overlay helper');
   const pieConstraints = pieOverview.dataElementConstraints;
-  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
+  const pieDependencyOrder = temporaryHack(
+    pieOverview.dataElementDependencyOrder,
+    pieOverview.name
+  );
 
   const tableGroupNode = (
     <>

@@ -12,7 +12,7 @@ import { useFindEntityAndVariable, useStudyEntities } from './workspace';
  * @returns
  */
 export function useFindOutputEntity(
-  dataElementDependencyOrder: string[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined,
   vizConfig: Record<string, unknown>,
   fallbackVariableName: string,
   providedEntityId?: string
@@ -23,7 +23,7 @@ export function useFindOutputEntity(
     if (providedEntityId)
       return entities.find((e) => e.id === providedEntityId);
     const variableName =
-      dataElementDependencyOrder?.[0] ?? fallbackVariableName;
+      dataElementDependencyOrder?.[0][0] ?? fallbackVariableName;
     const variable = vizConfig[variableName];
     // This could be more defensive and throw an error if variable is defined
     // but is not a VariableDescriptor.

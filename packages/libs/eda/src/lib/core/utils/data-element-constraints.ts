@@ -18,7 +18,7 @@ export function disabledVariablesForInput<ConfigType>(
   inputName: keyof ConfigType,
   entities: StudyEntity[],
   flattenedConstraints: DataElementConstraintRecord | undefined,
-  dataElementDependencyOrder: string[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName
 ): VariableDescriptor[] {
   const disabledVariables = excludedVariables(
@@ -28,33 +28,72 @@ export function disabledVariablesForInput<ConfigType>(
   if (dataElementDependencyOrder == null) {
     return disabledVariables;
   }
-  const index = dataElementDependencyOrder.indexOf(inputName as string); // ditto
+  const index = dataElementDependencyOrder.findIndex((el) =>
+    el.includes(inputName as string)
+  ); // ditto
   // no change if dependencyOrder is not declared
   if (index === -1) {
     return disabledVariables;
   }
 
-  const prevSelectedVariable = dataElementDependencyOrder
-    .slice(0, index)
-    .map((n) => selectedVariables[n])
-    .reverse()
-    .find((v) => v != null);
-  const nextSelectedVariable = dataElementDependencyOrder
-    .slice(index + 1)
-    .map((n) => selectedVariables[n])
-    .find((v) => v != null);
+  // find the *other* currently user-selected variables at the same/current
+  // level in the dependency array of arrays
+  const currSelectedVariables = dataElementDependencyOrder[index]
+    .filter((i) => i !== (inputName as string)) // not this input!
+    .map((i) => selectedVariables[i])
+    .filter((v): v is VariableDescriptor => v != null);
 
-  // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevSelectedVariable`
-  if (prevSelectedVariable) {
-    const ancestors = entities.reduceRight((ancestors, entity) => {
-      if (
-        entity.id === prevSelectedVariable.entityId ||
-        entity.children?.includes(ancestors[0])
-      ) {
-        ancestors.unshift(entity);
-      }
-      return ancestors;
-    }, [] as StudyEntity[]);
+  // find user-selected variable(s) at first position to the left in the dependency array
+  const prevSelectedVariables = dataElementDependencyOrder
+    .slice(0, index)
+    .map((n) =>
+      n
+        .map((i) => selectedVariables[i])
+        .filter((v): v is VariableDescriptor => v != null)
+    )
+    .reverse()
+    .find((vs) => vs.length > 0);
+
+  // find user-selected variable(s) at first position to the right in the dependency array
+  const nextSelectedVariables = dataElementDependencyOrder
+    .slice(index + 1)
+    .map((n) =>
+      n
+        .map((i) => selectedVariables[i])
+        .filter((v): v is VariableDescriptor => v != null)
+    )
+    .find((vs) => vs.length > 0);
+
+  // Remove variables for entities which are not on either the ancestor or descendent path (or the same entity)
+  // as any of the `currSelectedVariables`
+  currSelectedVariables.forEach((currSelectedVariable) => {
+    const ancestors = ancestorEntitiesForVariable(
+      currSelectedVariable,
+      entities
+    );
+    const descendants = descendantEntitiesForVariable(
+      currSelectedVariable,
+      entities
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !ancestors.includes(entity) && !descendants.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  });
+
+  // Remove variables for entities which are not part of the ancestor path of, or equal to, of each `prevSelectedVariables`
+  // (not quite the same thing as "remove descendants", because of branching in entity tree)
+  prevSelectedVariables?.forEach((prevSelectedVariable) => {
+    const ancestors = ancestorEntitiesForVariable(
+      prevSelectedVariable,
+      entities
+    );
     const excludedEntities = entities.filter(
       (entity) => !ancestors.includes(entity)
     );
@@ -65,17 +104,13 @@ export function disabledVariablesForInput<ConfigType>(
       }))
     );
     disabledVariables.push(...excludedVariables);
-  }
+  });
 
-  // Remove variables for entities which are not descendants of, or equal to, `nextSelectedVariable`
-  if (nextSelectedVariable) {
-    const entity = entities.find(
-      (entity) => entity.id === nextSelectedVariable.entityId
-    );
-    if (entity == null)
-      throw new Error('Unkonwn entity: ' + nextSelectedVariable.entityId);
-    const descendants = Array.from(
-      preorder(entity, (entity) => entity.children ?? [])
+  // Remove variables for entities which are not descendants of, or equal to, each of `nextSelectedVariables`
+  nextSelectedVariables?.forEach((nextSelectedVariable) => {
+    const descendants = descendantEntitiesForVariable(
+      nextSelectedVariable,
+      entities
     );
     const excludedEntities = entities.filter(
       (entity) => !descendants.includes(entity)
@@ -87,7 +122,120 @@ export function disabledVariablesForInput<ConfigType>(
       }))
     );
     disabledVariables.push(...excludedVariables);
+  });
+
+  return disabledVariables;
+}
+
+function disabledVariablesForInputVERSION<ConfigType>(
+  inputName: keyof ConfigType,
+  entities: StudyEntity[],
+  flattenedConstraints: DataElementConstraintRecord | undefined,
+  dataElementDependencyOrder: string[][] | undefined,
+  selectedVariables: VariablesByInputName
+): VariableDescriptor[] {
+  const disabledVariables = excludedVariables(
+    entities[0],
+    flattenedConstraints && flattenedConstraints[inputName as string] // not ideal...
+  );
+  if (dataElementDependencyOrder == null) {
+    return disabledVariables;
   }
+  const index = dataElementDependencyOrder.findIndex((el) =>
+    el.includes(inputName as string)
+  ); // ditto
+
+  // no change if dependencyOrder is not declared
+  if (index === -1) {
+    return disabledVariables;
+  }
+
+  const subIndex = dataElementDependencyOrder[index].indexOf(
+    inputName as string
+  );
+
+  // if dataElementDependencyOrder[index].length > 1
+  // then prevSelectedVariables could come from
+  // dataElementDependencyOrder[index][i < subIndex]
+  // and nextSelectedVariables could come from
+  // dataElementDependencyOrder[index][i > subIndex]
+
+  const peerPrevSelectedVariable =
+    dataElementDependencyOrder[index].length > 1
+      ? dataElementDependencyOrder[index]
+          .slice(0, subIndex)
+          .map((i) => selectedVariables[i])
+          .reverse()
+          .find((v) => v != null)
+      : undefined;
+
+  const peerNextSelectedVariable =
+    dataElementDependencyOrder[index].length > 1
+      ? dataElementDependencyOrder[index]
+          .slice(subIndex + 1)
+          .map((i) => selectedVariables[i])
+          .find((v) => v != null)
+      : undefined;
+
+  const prevSelectedVariables = peerPrevSelectedVariable
+    ? [peerPrevSelectedVariable]
+    : dataElementDependencyOrder
+        .slice(0, index)
+        .map((n) =>
+          n
+            .map((i) => selectedVariables[i])
+            .filter((v): v is VariableDescriptor => v != null)
+        )
+        .reverse()
+        .find((vs) => vs.length > 0);
+
+  const nextSelectedVariables = peerNextSelectedVariable
+    ? [peerNextSelectedVariable]
+    : dataElementDependencyOrder
+        .slice(index + 1)
+        .map((n) =>
+          n
+            .map((i) => selectedVariables[i])
+            .filter((v): v is VariableDescriptor => v != null)
+        )
+        .find((vs) => vs.length > 0);
+
+  // Remove variables for entities which are not part of the ancestor path of, or equal to, of each `prevSelectedVariables`
+  // (not quite the same thing as "remove descendants", because of branching in entity tree)
+  prevSelectedVariables?.forEach((prevSelectedVariable) => {
+    const ancestors = ancestorEntitiesForVariable(
+      prevSelectedVariable,
+      entities
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !ancestors.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  });
+
+  // Remove variables for entities which are not descendants of, or equal to, each of `nextSelectedVariables`
+  nextSelectedVariables?.forEach((nextSelectedVariable) => {
+    const descendants = descendantEntitiesForVariable(
+      nextSelectedVariable,
+      entities
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !descendants.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  });
 
   return disabledVariables;
 }
@@ -318,4 +466,39 @@ export function mergeMaxNumValues(
     constraintB.maxNumValues === undefined ? Infinity : constraintB.maxNumValues
   );
   return mergedMaxNumValues === Infinity ? undefined : mergedMaxNumValues;
+}
+
+/**
+ * returns an array of entities that are either the same entity as the provided variable, or its ancestors
+ */
+function ancestorEntitiesForVariable(
+  variable: VariableDescriptor,
+  entities: StudyEntity[]
+): StudyEntity[] {
+  const ancestors = entities.reduceRight((ancestors, entity) => {
+    if (
+      entity.id === variable.entityId ||
+      entity.children?.includes(ancestors[0])
+    ) {
+      ancestors.unshift(entity);
+    }
+    return ancestors;
+  }, [] as StudyEntity[]);
+
+  return ancestors;
+}
+
+/**
+ * returns an array of entities that are either the same entity as the provided variable, or its descendants
+ */
+function descendantEntitiesForVariable(
+  variable: VariableDescriptor,
+  entities: StudyEntity[]
+): StudyEntity[] {
+  const entity = entities.find((entity) => entity.id === variable.entityId);
+  if (entity == null) throw new Error('Unkonwn entity: ' + variable.entityId);
+  const descendants = Array.from(
+    preorder(entity, (entity) => entity.children ?? [])
+  );
+  return descendants;
 }
