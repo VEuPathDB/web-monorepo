@@ -1,14 +1,11 @@
 import { ReactNode, useEffect, useState, useRef } from "react";
 import PopoverButton from "../buttons/PopoverButton/PopoverButton";
+import { Item } from "./checkboxes/CheckboxList";
 import { css } from '@emotion/react';
 import { uniqueId } from "lodash";
 
-export type SingleSelectItem<T> = {
-    display: ReactNode,
-    value: T,
-  }
 export interface SingleSelectProps<T> {
-    items: SingleSelectItem<T>[];
+    items: Item<T>[];
     value: T;
     onSelect: (value: T) => void;
     buttonDisplayContent: ReactNode;
@@ -87,7 +84,7 @@ export default function SingleSelect<T>({
 }
 
 interface OptionProps<T> {
-    item: SingleSelectItem<T>;
+    item: Item<T>;
     onSelect: (value: T) => void;
     onKeyDown: (key: string, value: T) => void;
     shouldFocus: boolean;

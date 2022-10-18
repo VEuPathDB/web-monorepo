@@ -69,22 +69,22 @@ enum LinksPosition {
   Both = Top | Bottom
 }
 
-export type Item = {
-  display: ReactNode
-  value: string
+export type Item<T> = {
+  display: ReactNode,
+  value: T,
 }
 
-export type CheckboxListProps = {
+export type CheckboxListProps<T> = {
   /** Optional name attribute for the native input element */
   name?: string;
 
   /** The items available for selection in the checkbox list */
-  items: Item[];
+  items: Item<T>[];
 
   /** An array of item values currently selected */
-  value: string[];
+  value: T[];
 
-  onChange: (value: string[]) => void;
+  onChange: (value: T[]) => void;
   
   /**  Controls location of the "select all" and "clear all" buttons */
   linksPosition?: LinksPosition;
@@ -93,7 +93,7 @@ export type CheckboxListProps = {
   styleOverrides?: Partial<CheckboxListStyleSpec>;
 }
 
-export default function CheckboxList({
+export default function CheckboxList<T>({
     name,
     items,
     value,
@@ -101,7 +101,7 @@ export default function CheckboxList({
     linksPosition = LinksPosition.Bottom,
     themeRole,
     styleOverrides
-}: CheckboxListProps) {
+}: CheckboxListProps<T>) {
 
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<CheckboxListStyleSpec>>(
@@ -142,7 +142,7 @@ export default function CheckboxList({
     </div>
   );
 
-  const onChangeHandler = (valueChanged: string) => {
+  const onChangeHandler = (valueChanged: T) => {
     const availableSelections = items.map(item => item.value);
     onChange(
       value.indexOf(valueChanged) == -1 ?
@@ -168,7 +168,7 @@ export default function CheckboxList({
         {items.map(item => {
           return (
             <div 
-              key={item.value}
+              key={JSON.stringify(item.value)}
               css={{
                 margin: finalStyle.options.margin,
                 color: finalStyle.options.color,
@@ -179,7 +179,7 @@ export default function CheckboxList({
                 <input
                   type="checkbox"
                   name={name}
-                  value={item.value}
+                  value={JSON.stringify(item.value)}
                   checked={value.includes(item.value)}
                   onChange={() => onChangeHandler(item.value)}
                 />
