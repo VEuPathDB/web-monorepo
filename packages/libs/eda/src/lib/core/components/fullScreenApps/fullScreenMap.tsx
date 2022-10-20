@@ -87,7 +87,7 @@ const MapState = t.type({
 const defaultMapState: t.TypeOf<typeof MapState> = {
   viewport: {
     center: [0, 0],
-    zoom: 4,
+    zoom: 1,
   },
   mouseMode: 'default',
   overlayVariable: undefined,
