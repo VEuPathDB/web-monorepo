@@ -40,7 +40,6 @@ import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
-import { temporaryHack } from '../../utils/visualization';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -471,11 +470,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   );
   const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
-  const dataElementDependencyOrder = temporaryHack(
-    overview?.dataElementDependencyOrder,
-    overview?.name
-  );
-  console.log(JSON.stringify(dataElementDependencyOrder)); // <<<< REMOVE ME TOO
+  const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
+
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
       updateVisualizations((visualizations) =>

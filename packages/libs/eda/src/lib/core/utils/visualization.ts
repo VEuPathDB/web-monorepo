@@ -13,7 +13,6 @@ import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
-import { updateColumnsDialogSelection } from '@veupathdb/wdk-client/lib/Actions/SummaryView/ResultTableSummaryViewActions';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -271,29 +270,4 @@ export function geohashLevelToVariableId(geohashLevel: number): string {
     default:
       return 'EUPATH_0043208'; // geohash_6
   }
-}
-
-/**
- * TEMPORARY HACK UNTIL BACK END IS RUNNABLE IN DOCKER
- *
- */
-export function temporaryHack(
-  dataElementDependencyOrder: string[] | undefined,
-  vizName: string | undefined
-): string[][] | undefined {
-  if (dataElementDependencyOrder == null) return undefined;
-
-  if (vizName === 'twobytwo' || vizName === 'conttable')
-    return [['yAxisVariable', 'xAxisVariable'], ['facetVariable']];
-
-  return dataElementDependencyOrder.reduce((result, curr, index, input) => {
-    if (
-      curr === 'overlayVariable' &&
-      index < input.length - 1 &&
-      input[index + 1] === 'facetVariable'
-    )
-      result.push(['overlayVariable', 'facetVariable']);
-    else if (!result.flat().includes(curr)) result.push([curr]);
-    return result;
-  }, [] as string[][]);
 }
