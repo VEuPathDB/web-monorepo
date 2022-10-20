@@ -16,6 +16,9 @@ import { findEntityAndVariable } from './study-metadata';
  */
 export function disabledVariablesForInput<ConfigType>(
   inputName: keyof ConfigType,
+  /**
+   * entities must be in root-first order (pre-order)
+   */
   entities: StudyEntity[],
   flattenedConstraints: DataElementConstraintRecord | undefined,
   dataElementDependencyOrder: string[][] | undefined,
@@ -358,7 +361,7 @@ export function mergeMaxNumValues(
 /**
  * returns an array of entities that are either the same entity as the provided variable, or its ancestors
  */
-function ancestorEntitiesForVariable(
+export function ancestorEntitiesForVariable(
   variable: VariableDescriptor,
   entities: StudyEntity[]
 ): StudyEntity[] {
