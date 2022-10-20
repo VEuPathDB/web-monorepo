@@ -2166,10 +2166,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.10.6":
-  version "3.10.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.10.6.tgz#9236cdc31cd24da00b75698fe5068e7a5fd1d1ee"
-  integrity sha512-5zfTjpYft+wPtMvzf2yLP/Ygp2Kwxr4IbBGRaP7m0BGIShHFteNSP3K9ZgQjvw8SgPKI0v9MoBnIbd34eHTSRA==
+"@veupathdb/eda@^3.10.8":
+  version "3.10.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.10.8.tgz#24d5b5e73a3c63b88604d49cb21535d00450f85f"
+  integrity sha512-+jn5asu78bcHyHkDaXpqsfrkP4RNvRCoMUdXJx35kqWxpT8Xdm7dBMOW8KL7s1u936uLiQ7e3+yXbn4Vz0bhpw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
