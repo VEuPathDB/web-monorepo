@@ -63,6 +63,7 @@ import {
   NewVisualizationPickerModal,
 } from '../visualizations/VisualizationsContainer';
 import { MiniMap } from './MiniMap';
+import PluginError from '../visualizations/PluginError';
 
 const MapState = t.type({
   viewport: t.type({
@@ -169,7 +170,15 @@ function FullScreenMap(props: FullScreenComponentProps) {
   if (geoConfig == null)
     throw new Error('Something is wrong with the geo config');
 
-  const { markers = [], pending, legendItems, vocabulary } = useMapMarkers({
+  const {
+    markers = [],
+    pending,
+    legendItems,
+    vocabulary,
+    basicMarkerError,
+    overlayError,
+    totalEntityCount,
+  } = useMapMarkers({
     requireOverlay: false,
     boundsZoomLevel,
     geoConfig: geoConfig,
@@ -364,6 +373,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
           );
         }}
       </PromiseResult>
+      <PluginError error={basicMarkerError} outputSize={totalEntityCount} />
+      <PluginError error={overlayError} outputSize={totalEntityCount} />
       {/* <div style={{ position: 'relative', zIndex: 1 }}> */}
       <MapVEuMap
         height="100%"
