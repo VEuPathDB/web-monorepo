@@ -1,3 +1,5 @@
+export { default as ArrowDown } from "./ArrowDown";
+export { default as ArrowRight } from "./ArrowRight";
 export { default as CheckIcon } from "./CheckIcon";
 export { default as CheckCircle } from "./CheckCircle";
 export { default as ChevronRight } from "./ChevronRight";
