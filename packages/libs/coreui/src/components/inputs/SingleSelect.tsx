@@ -5,8 +5,15 @@ import { css } from '@emotion/react';
 import { uniqueId } from "lodash";
 
 export interface SingleSelectProps<T> {
+    /** An array of options to be used in the dropdown container */
     items: Item<T>[];
+
+    /** 
+      * Warning: `value` represents the currently-selected value; for non-primitive types, `value` must be
+      * pointing to the same object reference as what's used in the `items` prop
+    */
     value: T;
+
     onSelect: (value: T) => void;
     buttonDisplayContent: ReactNode;
 }

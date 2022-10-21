@@ -81,7 +81,10 @@ export type CheckboxListProps<T> = {
   /** The items available for selection in the checkbox list */
   items: Item<T>[];
 
-  /** An array of item values currently selected */
+  /** 
+    * Warning: An array of item values currently selected; for non-primitive types, the values must be
+    * pointing to the same object reference as what's used in the `items` prop
+  */
   value: T[];
 
   onChange: (value: T[]) => void;
