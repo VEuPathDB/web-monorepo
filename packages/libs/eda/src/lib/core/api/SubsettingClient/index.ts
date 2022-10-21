@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/http-utils';
 
 import { Filter } from '../../types/filter';
-import { StudyMetadata, StudyOverview } from '../../types/study';
+import { StudyEntity, StudyMetadata, StudyOverview } from '../../types/study';
 
 import {
   DistributionRequestParams,
@@ -38,10 +38,12 @@ export default class SubsettingClient extends FetchClientWithCredentials {
       createJsonRequest({
         method: 'GET',
         path: `/studies/${studyId}`,
-        transformResponse: (res) =>
-          ioTransformer(StudyResponse)(res).then((r) =>
-            orderVariables(r.study)
-          ),
+        transformResponse: async (res) => {
+          const { study } = await ioTransformer(StudyResponse)(res);
+          assertValidStudy(study);
+          orderVariables(study);
+          return study;
+        },
       })
     );
   }
@@ -134,6 +136,24 @@ function orderVariables(study: StudyMetadata) {
         : 0;
     });
   return study;
+}
+
+function assertValidStudy(study: StudyMetadata) {
+  const entitiesWithoutVariables: StudyEntity[] = [];
+  for (const entity of preorder(
+    study.rootEntity,
+    (entity) => entity.children ?? []
+  )) {
+    if (entity.variables.length === 0) entitiesWithoutVariables.push(entity);
+  }
+  if (entitiesWithoutVariables.length > 0) {
+    const entityDescriptors = entitiesWithoutVariables.map(
+      (entity) => `${entity.displayName} (${entity.id})`
+    );
+    throw new Error(
+      `Found entities without variables: ${entityDescriptors.join(', ')}.`
+    );
+  }
 }
 
 export * from './types';
