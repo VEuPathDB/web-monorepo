@@ -2,13 +2,13 @@ import { ReactNode, useEffect, useState } from "react";
 import PopoverButton from "../buttons/PopoverButton/PopoverButton";
 import CheckboxList, { CheckboxListProps } from "./checkboxes/CheckboxList";
   
-export interface SelectListProps extends CheckboxListProps {
+export interface SelectListProps<T> extends CheckboxListProps<T> {
     children?: ReactNode;
     /** A button's content if/when no values are currently selected */
     defaultButtonDisplayContent: ReactNode;
 }
 
-export default function SelectList({
+export default function SelectList<T>({
     name,
     items,
     value,
@@ -16,8 +16,8 @@ export default function SelectList({
     linksPosition,
     children,
     defaultButtonDisplayContent,
-}: SelectListProps) {
-    const [selected, setSelected] = useState<SelectListProps['value']>(value);
+}: SelectListProps<T>) {
+    const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
 
     const onClose = () => {
