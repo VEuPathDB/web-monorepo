@@ -13,6 +13,7 @@ import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import { useMemo } from 'react';
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -148,15 +149,26 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     visualizationId
   );
 
-  const selectedDataConfig = collections.find(
-    (collectionVar) =>
-      collectionVar.id === collectionVariable.variableId &&
-      collectionVar.entityId === collectionVariable.entityId
-  );
-  const dataConfigButtonDisplay =
-    selectedDataConfig?.entityDisplayName +
-    ' > ' +
-    selectedDataConfig?.displayName;
+  const collectionVarItems = useMemo(() => {
+    return collections.map((collectionVar) => ({
+      value: {
+        variableId: collectionVar.id,
+        entityId: collectionVar.entityId,
+      },
+      display:
+        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+    }));
+  }, [collections]);
+
+  const selectedCollectionVar = useMemo(() => {
+    const selectedItem = collectionVarItems.find((item) =>
+      isEqual(item.value, {
+        variableId: collectionVariable.variableId,
+        entityId: collectionVariable.entityId,
+      })
+    );
+    return selectedItem ?? collectionVarItems[0];
+  }, [collectionVarItems, collectionVariable]);
 
   return (
     <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
@@ -177,21 +189,9 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       >
         <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
         <SingleSelect
-          value={{
-            variableId: collectionVariable.variableId,
-            entityId: collectionVariable.entityId,
-          }}
-          buttonDisplayContent={dataConfigButtonDisplay}
-          items={collections.map((collectionVar) => ({
-            value: {
-              variableId: collectionVar.id,
-              entityId: collectionVar.entityId,
-            },
-            display:
-              collectionVar.entityDisplayName +
-              ' > ' +
-              collectionVar.displayName,
-          }))}
+          value={selectedCollectionVar.value}
+          buttonDisplayContent={selectedCollectionVar.display}
+          items={collectionVarItems}
           onSelect={partial(changeConfigHandler, 'collectionVariable')}
         />
         <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
