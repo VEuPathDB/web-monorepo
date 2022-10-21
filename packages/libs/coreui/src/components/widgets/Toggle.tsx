@@ -85,7 +85,7 @@ export default function Toggle({
         : { hue: blue, level: 400 });
     const mainHue = mainColor.hue;
     const mainLevel = mainColor.level;
-    const labelColor = gray[600];
+    const enabledLabelColor = gray[900];
     const disabledColor = gray[300];
 
     const defaultStyleSpec: ToggleStyleSpec = {
@@ -95,13 +95,13 @@ export default function Toggle({
           backgroundColor: "none",
           knobColor: mainHue[mainLevel],
           borderColor: mainHue[mainLevel],
-          labelColor,
+          labelColor: enabledLabelColor,
         },
         on: {
           backgroundColor: mainHue[mainLevel],
           knobColor: "white",
           borderColor: mainHue[mainLevel],
-          labelColor,
+          labelColor: enabledLabelColor,
         },
       },
       hover: {
@@ -109,13 +109,13 @@ export default function Toggle({
           backgroundColor: mainHue[100],
           knobColor: mainHue[mainLevel],
           borderColor: mainHue[mainLevel],
-          labelColor,
+          labelColor: enabledLabelColor,
         },
         on: {
           backgroundColor: mainHue[Math.min(mainLevel + 200, 900)],
           knobColor: "white",
           borderColor: mainHue[Math.min(mainLevel + 200, 900)],
-          labelColor,
+          labelColor: enabledLabelColor,
         },
       },
       disabled: {
@@ -123,15 +123,18 @@ export default function Toggle({
           backgroundColor: "none",
           knobColor: disabledColor,
           borderColor: disabledColor,
-          labelColor,
+          labelColor: disabledColor,
         },
         on: {
           backgroundColor: disabledColor,
           knobColor: "white",
           borderColor: disabledColor,
-          labelColor,
+          labelColor: disabledColor,
         },
       },
+      label: {
+        fontFamily: `'Roboto', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica'`,
+      }
     };
 
     return merge({}, defaultStyleSpec, styleOverrides);
@@ -184,7 +187,7 @@ export default function Toggle({
           css={{
             marginRight: size === "medium" ? 10 : 5,
             color: currentStyles.labelColor,
-            ...styleOverrides?.label,
+            ...styleSpec.label,
           }}
           id={labelId}
         >
@@ -247,7 +250,7 @@ export default function Toggle({
           css={{
             marginLeft: size === "medium" ? 10 : 5,
             color: currentStyles.labelColor,
-            ...styleOverrides?.label,
+            ...styleSpec.label,
           }}
           id={labelId}
         >
