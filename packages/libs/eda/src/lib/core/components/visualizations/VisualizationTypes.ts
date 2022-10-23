@@ -18,7 +18,7 @@ export interface VisualizationProps<Options = undefined> {
   options?: Options;
   visualization: Visualization;
   dataElementConstraints?: Record<string, DataElementConstraint>[];
-  dataElementDependencyOrder?: string[];
+  dataElementDependencyOrder?: string[][];
   updateConfiguration: (configuration: unknown) => void;
   updateThumbnail?: (source: string) => void;
   computation: Computation;
