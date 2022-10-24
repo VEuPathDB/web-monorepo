@@ -903,7 +903,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? options?.getCheckedLegendItems?.(
           computation.descriptor.configuration
         ) ?? vizConfig.checkedLegendItems
-      : undefined,
+      : vizConfig.checkedLegendItems,
     updateVizConfig
   );
 
