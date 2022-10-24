@@ -722,7 +722,7 @@ export default function VariableList({
       }}
     >
       <SelectTree
-        key={dropdownLabel}
+        key={activeField?.term}
         {...sharedProps}
         buttonDisplayContent={dropdownLabel}
         wrapPopover={(treeSection) => (

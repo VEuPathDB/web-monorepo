@@ -9,7 +9,6 @@ import {
 } from '../../utils/data-element-constraints';
 
 import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
 import { useInputStyles } from './inputStyles';
@@ -104,7 +103,7 @@ export interface Props {
    * The entity of a given element in the array must be of the same entity, or
    * lower in the tree, of the element to its right.
    */
-  dataElementDependencyOrder?: string[];
+  dataElementDependencyOrder?: string[][];
   /**
    * An array of VariableDescriptors for the user's "My Variables"
    */

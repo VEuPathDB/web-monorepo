@@ -471,6 +471,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
+
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
       updateVisualizations((visualizations) =>

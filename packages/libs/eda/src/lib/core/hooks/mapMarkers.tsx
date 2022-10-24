@@ -297,7 +297,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       // TO DO: date variables when we have testable data (UMSP has them but difficult to test, and back end was giving 500s)
       // date variables need special date maths for calculating the width, and probably rounding aggressively to whole months/years etc - not trivial.
       const binSpec: BinSpec | undefined =
-        NumberVariable.is(xAxisVariable) &&
+        NumberVariable.is(xAxisVariableAndEntity?.variable) &&
         defaultOverlayRange != null &&
         NumberRange.is(defaultOverlayRange)
           ? {
@@ -351,6 +351,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       geoAggregateVariable,
       outputEntity,
       filters,
+      xAxisVariableAndEntity,
     ])
   );
 

@@ -90,6 +90,9 @@ import { LayoutOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
+// reset to defaults button
+import { ResetButtonCoreUI } from '../../ResetButton';
+
 // export
 export type BarplotDataWithStatistics = (
   | BarplotData
@@ -635,6 +638,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         label="Plot mode"
         selectedOption={vizConfig.valueSpec}
         options={['count', 'proportion']}
+        optionLabels={['Count', 'Proportion']}
         buttonColor={'primary'}
         margins={['1em', '0', '0', '1em']}
         onOptionSelected={(newOption) => {
@@ -649,16 +653,36 @@ function BarplotViz(props: VisualizationProps<Options>) {
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <LabelledGroup label="Y-axis controls">
-            <div style={{ display: 'flex' }}>
-              <Toggle
-                label="Log scale:"
-                value={vizConfig.dependentAxisLogScale}
-                onChange={onDependentAxisLogScaleChange}
-                themeRole="primary"
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
               />
             </div>
-          </LabelledGroup>
+          </div>
+
+          <div style={{ marginLeft: '1em', marginTop: '-0.5em' }}>
+            <Toggle
+              label="Log scale:"
+              value={vizConfig.dependentAxisLogScale}
+              onChange={onDependentAxisLogScaleChange}
+              themeRole="primary"
+            />
+          </div>
+
           <LabelledGroup
             label="Y-axis range"
             containerStyles={{
@@ -710,16 +734,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
                 containerStyles={{ maxWidth: '350px' }}
               />
             ) : null}
-            <Button
-              type={'outlined'}
-              text={'Reset to defaults'}
-              onClick={handleDependentAxisSettingsReset}
-              containerStyles={{
-                paddingTop: '1.0em',
-                width: '50%',
-                float: 'right',
-              }}
-            />
           </LabelledGroup>
         </div>
       </div>

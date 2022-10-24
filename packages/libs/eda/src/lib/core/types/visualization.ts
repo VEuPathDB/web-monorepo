@@ -112,7 +112,7 @@ export const VisualizationOverview = intersection([
   Thing,
   partial({
     dataElementConstraints: array(record(string, DataElementConstraint)),
-    dataElementDependencyOrder: array(string),
+    dataElementDependencyOrder: array(array(string)),
   }),
 ]);
 
