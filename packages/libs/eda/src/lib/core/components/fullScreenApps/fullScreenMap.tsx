@@ -63,6 +63,7 @@ import {
   NewVisualizationPickerModal,
 } from '../visualizations/VisualizationsContainer';
 import { MiniMap } from './MiniMap';
+import PluginError from '../visualizations/PluginError';
 
 const MapState = t.type({
   viewport: t.type({
@@ -86,7 +87,7 @@ const MapState = t.type({
 const defaultMapState: t.TypeOf<typeof MapState> = {
   viewport: {
     center: [0, 0],
-    zoom: 4,
+    zoom: 1,
   },
   mouseMode: 'default',
   overlayVariable: undefined,
@@ -169,7 +170,15 @@ function FullScreenMap(props: FullScreenComponentProps) {
   if (geoConfig == null)
     throw new Error('Something is wrong with the geo config');
 
-  const { markers = [], pending, legendItems, vocabulary } = useMapMarkers({
+  const {
+    markers = [],
+    pending,
+    legendItems,
+    vocabulary,
+    basicMarkerError,
+    overlayError,
+    totalEntityCount,
+  } = useMapMarkers({
     requireOverlay: false,
     boundsZoomLevel,
     geoConfig: geoConfig,
@@ -364,7 +373,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
           );
         }}
       </PromiseResult>
-      {/* <div style={{ position: 'relative', zIndex: 1 }}> */}
       <MapVEuMap
         height="100%"
         width="100%"
@@ -386,7 +394,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
         showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
         zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
       />
-      {/* </div> */}
       <div
         style={{
           position: 'fixed',
@@ -512,6 +519,21 @@ function FullScreenMap(props: FullScreenComponentProps) {
           </PromiseResult>
         </div>
       )}
+      {/* Position error messages at the bottom of the screen and above other elements. */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 100,
+          right: 100,
+          bottom: 10,
+          zIndex: 3000,
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <PluginError error={basicMarkerError} outputSize={totalEntityCount} />
+        <PluginError error={overlayError} outputSize={totalEntityCount} />
+      </div>
     </>
   );
 }
