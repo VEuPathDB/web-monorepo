@@ -2153,10 +2153,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.7":
-  version "0.18.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.7.tgz#2b114845618847cdb8ef49080c9637ba2f2e6408"
-  integrity sha512-HNmVwtY8hYbdUC1qtvFLhtjbargTdRgqlsDYFDszdGzERlX38pkwjtHjWOUtJxFdSd/LTFRoefE/c0YqfkrBYA==
+"@veupathdb/coreui@^0.18.10":
+  version "0.18.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.10.tgz#6838d5b1fea770ea86d473e64d288754abf1f793"
+  integrity sha512-q94mPRrGoj/xnT8WH14IWbEqe3iR0mL8wi+rWZG+2jkOl97FOqcvXPVfiVrSiun2fZWdVY0iOSQPkwbfBhfIHw==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -2166,10 +2166,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.10.8":
-  version "3.10.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.10.8.tgz#24d5b5e73a3c63b88604d49cb21535d00450f85f"
-  integrity sha512-+jn5asu78bcHyHkDaXpqsfrkP4RNvRCoMUdXJx35kqWxpT8Xdm7dBMOW8KL7s1u936uLiQ7e3+yXbn4Vz0bhpw==
+"@veupathdb/eda@^3.11.0":
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.0.tgz#aff712c3e9c89f94e5bd597ddcc537baf0118718"
+  integrity sha512-MbjnyIc3/LheL84ym4iIGFjWBEqJi7okFDQpsQtWhZPJVfxRetgvftqvQj6xs+Is9j0d4+kVYMvkl2hLSmZD0A==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
