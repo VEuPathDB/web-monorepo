@@ -58,7 +58,7 @@ export function JbrowseIframe(props: Props) {
     const JBrowse = event.currentTarget.contentWindow?.JBrowse
     if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
     JBrowse.afterMilestone('completely initialized', function() {
-      jbrowseViewContainer.current = window.JBrowse.view;
+      jbrowseViewContainer.current = JBrowse.view;
       updateBehaviors();
     });
   }
