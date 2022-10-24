@@ -5,6 +5,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Typography } from '@material-ui/core';
+import { DARKEST_GRAY } from '../../constants/colors';
 
 export type RadioButtonGroupProps = {
   /** Label for the widget. Optional. */
@@ -76,9 +77,7 @@ export default function RadioButtonGroup({
       {label && (
         <Typography
           variant="button"
-          // perhaps not using focused?
-          // style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-          style={{ color: '#222', fontWeight: 500, fontSize: '1.2em' }}
+          style={{ color: DARKEST_GRAY, fontWeight: 500, fontSize: '1.2em' }}
         >
           {label}
         </Typography>
@@ -95,23 +94,26 @@ export default function RadioButtonGroup({
               key={index}
               value={option}
               label={
-                optionLabels != null && optionLabels.length === options.length
-                  ? optionLabels[index]
-                  : option
+                optionLabels != null &&
+                optionLabels.length === options.length ? (
+                  <span style={{ color: DARKEST_GRAY, fontSize: '0.9em' }}>
+                    {optionLabels[index]}
+                  </span>
+                ) : (
+                  <span style={{ color: DARKEST_GRAY, fontSize: '0.9em' }}>
+                    {option}
+                  </span>
+                )
               }
               disabled={disabledList?.includes(option)}
               labelPlacement={labelPlacement}
               // primary: blue; secondary: red
               control={<Radio color={buttonColor} />}
               style={{
-                // padding: 5,
-                // paddingLeft: 7.5,
-                // paddingRight: 7.5,
                 marginRight: itemMarginRight,
                 fontSize: '0.75em',
                 fontWeight: 400,
                 textTransform: 'capitalize',
-                // justifyContent: 'start',
                 minWidth: minWidth,
               }}
             />

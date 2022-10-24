@@ -1,3 +1,5 @@
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+
 /**
  * Some basic color definitions that can be used to bring consistency to UI components.
  */
@@ -49,6 +51,7 @@ export const PAIRED_COLORS = [
   DARK_PURPLE,
 ];
 
-export const DARK_GRAY = 'rgb(100, 100, 100)';
-export const MEDIUM_GRAY = 'rgb(150, 150, 150)';
-export const LIGHT_GRAY = 'rgb(240, 240, 240)';
+export const DARKEST_GRAY = gray[900];
+export const DARK_GRAY = gray[600];
+export const MEDIUM_GRAY = gray[300]; // gray used in disabled state
+export const LIGHT_GRAY = gray[100];

@@ -277,7 +277,7 @@ export default function HistogramControls({
       <LabelledGroup label="Y-axis" containerStyles={{}}>
         {toggleDependentAxisLogScale && dependentAxisLogScale != null && (
           <Toggle
-            label="Log Scale:"
+            label={`Log scale ${dependentAxisLogScale ? 'on' : 'off'}`}
             value={dependentAxisLogScale}
             onChange={toggleDependentAxisLogScale}
             styleOverrides={{

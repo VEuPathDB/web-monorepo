@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { every } from 'lodash';
 import { Typography } from '@material-ui/core';
+import { DARKEST_GRAY } from '../../constants/colors';
 
 export interface LabelledGroupProps {
   /** Contents of the menu when opened */
@@ -43,7 +44,7 @@ export default function LabelledGroup(props: LabelledGroupProps) {
         {label && (
           <Typography
             variant="button"
-            style={{ color: '#222', fontWeight: 500, fontSize: '1.2em' }}
+            style={{ color: DARKEST_GRAY, fontWeight: 500, fontSize: '1.2em' }}
           >
             {label}
           </Typography>
