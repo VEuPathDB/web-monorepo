@@ -479,7 +479,7 @@ const useHeaderMenuItems = (
           display: 'MapVEu Alpha',
           tooltip: 'Population Biology map',
           type: 'reactRoute',
-          url: '/workspace/analyses',
+          url: '/workspace/analyses/studies',
           metadata: {
             include: [ VectorBase ]
          }
