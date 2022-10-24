@@ -78,7 +78,7 @@ export function useProvidedOptionalVariable<ConfigType>(
   storedVariableDescriptor: VariableDescriptor | undefined,
   entities: StudyEntity[],
   flattenedConstraints: DataElementConstraintRecord | undefined,
-  dataElementDependencyOrder: string[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName,
   updateVizConfig: (newConfig: VariablesByInputName) => void,
   /* optional message to display in snackbar: ReactNode | string */

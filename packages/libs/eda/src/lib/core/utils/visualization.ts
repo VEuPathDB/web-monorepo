@@ -13,7 +13,6 @@ import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
-import { updateColumnsDialogSelection } from '@veupathdb/wdk-client/lib/Actions/SummaryView/ResultTableSummaryViewActions';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
