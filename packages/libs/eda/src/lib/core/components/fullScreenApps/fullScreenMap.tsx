@@ -527,6 +527,8 @@ function FullScreenMap(props: FullScreenComponentProps) {
           right: 100,
           bottom: 10,
           zIndex: 3000,
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
         <PluginError error={basicMarkerError} outputSize={totalEntityCount} />
