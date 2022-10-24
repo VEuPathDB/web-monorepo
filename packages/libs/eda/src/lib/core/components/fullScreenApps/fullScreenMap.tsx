@@ -373,9 +373,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
           );
         }}
       </PromiseResult>
-      <PluginError error={basicMarkerError} outputSize={totalEntityCount} />
-      <PluginError error={overlayError} outputSize={totalEntityCount} />
-      {/* <div style={{ position: 'relative', zIndex: 1 }}> */}
       <MapVEuMap
         height="100%"
         width="100%"
@@ -397,7 +394,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
         showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
         zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
       />
-      {/* </div> */}
       <div
         style={{
           position: 'fixed',
@@ -523,6 +519,19 @@ function FullScreenMap(props: FullScreenComponentProps) {
           </PromiseResult>
         </div>
       )}
+      {/* Position error messages at the bottom of the screen and above other elements. */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 100,
+          right: 100,
+          bottom: 10,
+          zIndex: 3000,
+        }}
+      >
+        <PluginError error={basicMarkerError} outputSize={totalEntityCount} />
+        <PluginError error={overlayError} outputSize={totalEntityCount} />
+      </div>
     </>
   );
 }
