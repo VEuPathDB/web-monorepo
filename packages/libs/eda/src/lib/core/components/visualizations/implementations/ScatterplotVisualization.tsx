@@ -896,7 +896,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   ]);
 
   // set checkedLegendItems to either the config-stored items, or all items if
-  // nothing stored (or if no overlay locally configured)
+  // nothing stored
   const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
     vizConfig.overlayVariable
