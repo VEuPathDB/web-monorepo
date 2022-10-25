@@ -115,7 +115,7 @@ export const ShowMore = (args) => {
             // activate showMore feature
             showMore: isShowMore,
             // text for showMore link
-            showMoreLinkText: 'Why ?',
+            showMoreLinkText: 'Why?',
             // text for showless link
             showLessLinkText: 'Read less',
             // additionalMessage is shown next to message when clicking showMoreLinkText.
