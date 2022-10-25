@@ -5,7 +5,7 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Typography } from '@material-ui/core';
-import { DARKEST_GRAY } from '../../constants/colors';
+import { DARKEST_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 
 export type RadioButtonGroupProps = {
   /** Label for the widget. Optional. */
@@ -96,11 +96,25 @@ export default function RadioButtonGroup({
               label={
                 optionLabels != null &&
                 optionLabels.length === options.length ? (
-                  <span style={{ color: DARKEST_GRAY, fontSize: '0.9em' }}>
+                  <span
+                    style={{
+                      color: disabledList?.includes(option)
+                        ? MEDIUM_GRAY
+                        : DARKEST_GRAY,
+                      fontSize: '0.9em',
+                    }}
+                  >
                     {optionLabels[index]}
                   </span>
                 ) : (
-                  <span style={{ color: DARKEST_GRAY, fontSize: '0.9em' }}>
+                  <span
+                    style={{
+                      color: disabledList?.includes(option)
+                        ? MEDIUM_GRAY
+                        : DARKEST_GRAY,
+                      fontSize: '0.9em',
+                    }}
+                  >
                     {option}
                   </span>
                 )
