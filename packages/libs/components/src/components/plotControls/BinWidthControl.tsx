@@ -6,7 +6,7 @@ import {
   TimeDelta,
 } from '../../types/general';
 import { Select, Typography } from '@material-ui/core';
-import { MEDIUM_GRAY } from '../../constants/colors';
+import { MEDIUM_GRAY, DARKEST_GRAY } from '../../constants/colors';
 import { MenuItem } from '@material-ui/core';
 
 export interface BinWidthControlProps
@@ -60,7 +60,8 @@ export default function BinWidthControl({
       <Typography
         variant="button"
         style={{
-          color: disabled ? MEDIUM_GRAY : 'rgb(0, 0, 0)',
+          color: disabled ? MEDIUM_GRAY : DARKEST_GRAY,
+          fontWeight: 400,
           paddingRight: 15,
           whiteSpace: 'nowrap',
         }}

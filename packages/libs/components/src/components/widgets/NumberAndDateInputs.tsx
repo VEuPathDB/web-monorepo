@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { Typography, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
+import { DARKEST_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberOrDate } from '../../types/general';
 import { debounce } from 'lodash';
 
@@ -190,7 +190,7 @@ function BaseInput({
       {label && (
         <Typography
           variant="button"
-          style={{ color: disabled ? MEDIUM_GRAY : '#222' }}
+          style={{ color: disabled ? MEDIUM_GRAY : DARKEST_GRAY }}
         >
           {label}
         </Typography>
