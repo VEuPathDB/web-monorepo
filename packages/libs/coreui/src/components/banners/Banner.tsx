@@ -18,12 +18,12 @@ export type BannerProps = {
   // activate showMore feature
   showMore?: boolean;
   // text for showMore link
-  showMoreLinkText?: string;
+  showMoreLinkText?: ReactNode;
   // text for showless link
-  showLessLinkText?: string;
+  showLessLinkText?: ReactNode;
   // additionalMessage is shown next to message when clicking showMoreLinkText
   // disappears when clicking showLess link
-  additionalMessage?: string;
+  additionalMessage?: ReactNode;
 }
 
 export type BannerComponentProps = {
