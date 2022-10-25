@@ -676,7 +676,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
           <div style={{ marginLeft: '1em', marginTop: '-0.5em' }}>
             <Toggle
-              label="Log scale:"
+              label={`Log scale ${
+                vizConfig.dependentAxisLogScale ? 'on' : 'off'
+              }`}
               value={vizConfig.dependentAxisLogScale}
               onChange={onDependentAxisLogScaleChange}
               themeRole="primary"
