@@ -328,7 +328,7 @@ class MembershipTable extends React.PureComponent {
     if (!searchTerm) {
       if (allRows.some(row => row.filteredCount > 0 && !this.isItemSelected(row))) {
         // At least one row isn't selected. Select all rows.
-        this.setSelections(allRows.map(row => row.value));
+        this.setSelections(allRows.filter(row => row.filteredCount > 0).map(row => row.value));
       } else {
         // All rows are selected. Deselect all rows.
         this.setSelections([]);
@@ -555,8 +555,7 @@ class MembershipTable extends React.PureComponent {
       {
         // onRowSelect: this.handleRowSelect,
         // onRowDeselect: this.handleRowDeselect,
-        // onMultipleRowSelect: this.handleToggleSelectAll,
-        // onMultipleRowDeselect: this.handleRemoveAll,
+        // onMultipleRowSelect: this.handleSelectAll,
         onSort: this.handleSort
       },
       usePagination ? {
