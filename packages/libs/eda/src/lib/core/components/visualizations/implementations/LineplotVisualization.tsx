@@ -1124,7 +1124,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             <Toggle
               label={`Log scale ${
                 vizConfig.independentAxisLogScale
-                  ? 'on (will exclude values \u{2264} 0)'
+                  ? 'on (excludes values \u{2264} 0)'
                   : 'off'
               }`}
               value={vizConfig.independentAxisLogScale ?? false}
@@ -1333,7 +1333,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             <Toggle
               label={`Log scale ${
                 vizConfig.dependentAxisLogScale
-                  ? 'on (will exclude values \u{2264} 0)'
+                  ? 'on (excludes values \u{2264} 0)'
                   : 'off'
               }`}
               value={vizConfig.dependentAxisLogScale ?? false}
@@ -1373,7 +1373,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               />
             ) : null}
             <Toggle
-              label={`Show error bars ${
+              label={`Error bars ${
                 vizConfig.showErrorBars ? 'on' : 'off'
               } (95% C.I.)`}
               value={vizConfig.showErrorBars ?? false}

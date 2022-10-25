@@ -1268,7 +1268,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             <Toggle
               label={`Log scale ${
                 vizConfig.independentAxisLogScale
-                  ? 'on (will exclude values \u{2264} 0)'
+                  ? 'on (excludes values \u{2264} 0)'
                   : 'off'
               }`}
               value={vizConfig.independentAxisLogScale ?? false}
@@ -1405,7 +1405,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             <Toggle
               label={`Log scale ${
                 vizConfig.dependentAxisLogScale
-                  ? 'on (will exclude values \u{2264} 0)'
+                  ? 'on (excludes values \u{2264} 0)'
                   : 'off'
               }`}
               value={vizConfig.dependentAxisLogScale ?? false}
