@@ -3466,10 +3466,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.1":
-  version "0.19.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.1.tgz#20c03a1156afb9af35af2ecc0a389d47fd95031a"
-  integrity sha512-jlLWjIRgd4wVDtp4/WMeHSrDn598+qI1qlOGm0sYOSaZFj3a3/1GhCgYAAwXJxUgtwth2lQ/eHQaqMUPy4xE5A==
+"@veupathdb/components@^0.19.2":
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.2.tgz#2436de84e901f7da22c8ac8e2add6ebda99d6c1e"
+  integrity sha512-nJjM2e85uP8DNEliDP8dtM2kKtKEZJ2wysU/Nr4DiKR/ToCCK6xFgsuQcjgGVNxl0cC4oo1vnDLCaUJX/xg2zw==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -3498,10 +3498,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.10":
-  version "0.18.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.10.tgz#6838d5b1fea770ea86d473e64d288754abf1f793"
-  integrity sha512-q94mPRrGoj/xnT8WH14IWbEqe3iR0mL8wi+rWZG+2jkOl97FOqcvXPVfiVrSiun2fZWdVY0iOSQPkwbfBhfIHw==
+"@veupathdb/coreui@^0.18.11":
+  version "0.18.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.11.tgz#2c038668017cbfb3cad561201e358d9351046ef7"
+  integrity sha512-WNMKvNiZFh72D9Q0gnRkn2y2t0ZWJbithLR5K8BDVzKV+ZiUaQx5aUw9DW4cRvDxLySPiQ1EbgzHK91i4TFV+Q==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -3556,10 +3556,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-2.0.0.tgz#bfbf9cd60a5e284d14728412a625d3df2f55a91e"
   integrity sha512-NiGLeoxOZQEIUsgyQ5Lxj0r7C+rfad6mF394wBL95r9BzpLjFEoEfVhLf6Owv2ybPrK+AaUjG4QN5QD0/55MPw==
 
-"@veupathdb/wdk-client@^0.9.6":
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.6.tgz#fe292b3ebef8e0dcc1539af181e77ac2dfe69571"
-  integrity sha512-3P/+zAC1jYuv80yP1oUiaLZ7p7ATKlzkIq59yjUfF9XDB1cdIj03D1nCSdCmRiUVgUEjOGi0vaQttjr4wB8WpQ==
+"@veupathdb/wdk-client@^0.9.14":
+  version "0.9.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.14.tgz#c7741d0e7394dae45d45f6d9879d529dab963f0f"
+  integrity sha512-8EES5+wnzYi/bvRHfZ7bBFhb3fIC72sSBxtEfdkRm7wfF3YKGTBxHUZErzuNzMeBl32hQj2FUMSg1kc5k7R+LQ==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -3569,7 +3569,6 @@
     mansion-ui "2.5"
     natural-sort "^1.0.0"
     prop-types "^15.7.2"
-    react-autocomplete "^1.8.1"
     react-redux "^7.1.3"
     react-select "^3.0.4"
     react-transition-group "^2.2.1"
@@ -6426,11 +6425,6 @@ dom-helpers@^5.0.1, dom-helpers@^5.2.0, dom-helpers@^5.2.1:
   dependencies:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
-
-dom-scroll-into-view@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/dom-scroll-into-view/-/dom-scroll-into-view-1.0.1.tgz#32abb92f0d8feca6215162aef43e4b449ab8d99c"
-  integrity sha1-Mqu5Lw2P7KYhUWKu9D5LRJq42Zw=
 
 dom-serializer@0:
   version "0.2.2"
@@ -11569,14 +11563,6 @@ react-app-rewired@^2.1.8:
   integrity sha512-wjXPdKPLscA7mn0I1de1NHrbfWdXz4S1ladaGgHVKdn1hTgKK5N6EdGIJM0KrS6bKnJBj7WuqJroDTsPKKr66Q==
   dependencies:
     semver "^5.6.0"
-
-react-autocomplete@^1.8.1:
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/react-autocomplete/-/react-autocomplete-1.8.1.tgz#ebbbc400006aa91ad538b2d14727b9e7e5d06310"
-  integrity sha1-67vEAABqqRrVOLLRRye55+XQYxA=
-  dependencies:
-    dom-scroll-into-view "1.0.1"
-    prop-types "^15.5.10"
 
 react-bootstrap@^1.3.0:
   version "1.6.4"
