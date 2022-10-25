@@ -13,7 +13,12 @@ import {
   DependentAxisLogScaleDefault,
   AxisTruncationAddon,
 } from '../types/plots';
-import { NumberOrDateRange, NumberRange, Bin } from '../types/general';
+import {
+  NumberOrDateRange,
+  NumberRange,
+  DateRange,
+  Bin,
+} from '../types/general';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
@@ -127,12 +132,10 @@ const Histogram = makePlotlyPlotComponent(
     const plotlyFriendlyData: PlotParams['data'] = useMemo(
       () =>
         data.series.map((series) => {
-          const seriesHasWhiteBars =
-            series.color === 'white' || series.color === '#ffffff';
           const binStarts = series.bins.map((bin) => bin.binStart);
           const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
           const binCounts = series.bins.map((bin) => bin.value);
-          const binWidths = series.bins.map((bin, index) => {
+          const binWidths = series.bins.map((bin) => {
             // Final bar needs to be a tiny bit narrower, especially
             // if you are using white bars with borderColor,
             // so that the right hand border is visible.
@@ -384,6 +387,40 @@ const Histogram = makePlotlyPlotComponent(
       extendedIndependentAxisRange?.max,
     ];
 
+    // somewhat elaborate calculation of the number of bins that would span
+    // the independent axis (we can't count the number of binSummaries because it doesn't
+    // include empty (zero count) bins)
+    const numBins = useMemo(() => {
+      if (standardIndependentAxisRange == null || binSummaries.length === 0)
+        return undefined;
+
+      // take the first bin as a representative
+      const bin = binSummaries[0];
+      if (data.binWidthSlider?.valueType === 'date') {
+        const range = standardIndependentAxisRange as DateRange;
+        return Math.ceil(
+          DateMath.diff(
+            new Date(range.min),
+            new Date(range.max),
+            'seconds',
+            false
+          ) /
+            DateMath.diff(
+              new Date(bin.binStart as string),
+              new Date(bin.binEnd as string),
+              'seconds',
+              false
+            )
+        );
+      } else {
+        const range = standardIndependentAxisRange as NumberRange;
+        return Math.ceil(
+          (range.max - range.min) /
+            ((bin.binEnd as number) - (bin.binStart as number))
+        );
+      }
+    }, [binSummaries, standardIndependentAxisRange]);
+
     const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
       type: data?.binWidthSlider?.valueType === 'date' ? 'date' : 'linear',
       automargin: true,
@@ -396,6 +433,9 @@ const Histogram = makePlotlyPlotComponent(
       range: plotlyIndependentAxisRange,
       tickfont: data.series.length ? {} : { color: 'transparent' },
       linecolor: '#dddddd',
+      // if there is a tiny number of bins, make sure we don't
+      // provide more tick labels than bins (e.g. 0, 0.5, 1, 1.5, 2 when there are just two bins, 0-1, 1-2)
+      nticks: numBins != null && numBins < 5 ? numBins + 1 : undefined,
     };
 
     // if at least one bin.count is 0 < x < 1 then these are probably fractions/proportions
