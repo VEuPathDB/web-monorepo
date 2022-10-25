@@ -205,7 +205,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<LinePlotProps, 'data'>> = (
       />
       <Toggle
         label={`Log scale ${
-          dependentAxisLogScale ? 'on (will exclude values \u{2264} 0)' : 'off'
+          dependentAxisLogScale ? 'on (excludes values \u{2264} 0)' : 'off'
         }`}
         value={dependentAxisLogScale ?? false}
         onChange={onDependentAxisLogScaleChange}
