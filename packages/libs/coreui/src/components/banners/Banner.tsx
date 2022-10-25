@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -15,6 +15,15 @@ export type BannerProps = {
   message: ReactNode;
   pinned?: boolean;
   intense?: boolean;
+  // activate showMore feature
+  showMore?: boolean;
+  // text for showMore link
+  showMoreLinkText?: string;
+  // text for showless link
+  showLessLinkText?: string;
+  // additionalMessage is shown next to message when clicking showMoreLinkText
+  // disappears when clicking showLess link
+  additionalMessage?: string;
 }
 
 export type BannerComponentProps = {
@@ -60,9 +69,14 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
 
 export default function Banner(props: BannerComponentProps) {
   const { banner, onClose } = props;
-  const { type, message, pinned, intense } = banner;
+  const { type, message, pinned, intense, showMore, showMoreLinkText, showLessLinkText, additionalMessage } = banner;
+
+  const [isShowMore, setIsShowMore] = useState(false);
 
   const IconComponent = getIconComponentFromType(type);
+
+  // define showMore link texts
+  const showMoreLink = isShowMore ? showLessLinkText : showMoreLinkText;
 
   return (
     <div
@@ -94,7 +108,30 @@ export default function Banner(props: BannerComponentProps) {
       <span css={css`
         margin-right: auto;
       `}>
-        {message}
+        {/* showMore implementation */}
+        {message}&nbsp;
+        {showMore && (
+          <>
+            {isShowMore && additionalMessage}
+            <button
+              css={css`
+                background-color: transparent;
+                // border: 0px solid #ffffff;
+                border: none;
+                text-align: center;
+                text-decoration: underline;
+                display: inline-block;
+                cursor: pointer;
+              `}
+              onClick={() => {
+                setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
+              }}
+            >
+              {showMoreLink}
+            </button>
+          </>
+        )}
+
       </span>
       {pinned || !onClose ? null : (
         <a
