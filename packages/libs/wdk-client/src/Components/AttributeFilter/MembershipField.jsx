@@ -1,4 +1,14 @@
-import { bindAll, debounce, difference, escapeRegExp, get, has, isFunction, memoize, uniq } from 'lodash';
+import {
+  bindAll,
+  debounce,
+  difference,
+  escapeRegExp,
+  get,
+  has,
+  isFunction,
+  memoize,
+  partition
+} from 'lodash';
 import React from 'react';
 import Toggle from 'wdk-client/Components/Icon/Toggle';
 import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
@@ -6,7 +16,6 @@ import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { findAncestorNode } from 'wdk-client/Utils/DomUtils';
-import FilterLegend from 'wdk-client/Components/AttributeFilter/FilterLegend';
 import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
 import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
 import { toPercentage } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
@@ -164,7 +173,6 @@ class MembershipTable extends React.PureComponent {
     super(props);
     bindAll(this,
       'deriveRowClassName',
-      'handleRemoveAll',
       'handleRowClick',
       'handleRowDeselect',
       'handleRowSelect',
@@ -291,7 +299,7 @@ class MembershipTable extends React.PureComponent {
         ? currentFilterValue.concat(value)
         : currentFilterValue.filter(v => v !== value);
 
-      this.emitChange(filterValue.length === this.getKnownValues().length
+      this.setSelections(filterValue.length === this.getKnownValues().length
         ? undefined
         : filterValue);
     }
@@ -310,36 +318,39 @@ class MembershipTable extends React.PureComponent {
   }
 
   handleUnknownChange(addUnknown) {
-    this.emitChange(this.getValuesForFilter(), addUnknown);
+    this.setSelections(this.getValuesForFilter(), addUnknown);
   }
 
   handleSelectAll() {
-    const allValues = this.getKnownValues();
+    const allRows = this.getRows();
+    const searchTerm = this.isSearchEnabled() && this.props.activeFieldState.searchTerm;
 
-    const disabledValues = this.props.activeFieldState.summary.valueCounts
-      .filter(entry => entry.filteredCount === 0)
-      .map(entry => entry.value);
-
-    const filterValues = this.getValuesForFilter();
-
-    if (disabledValues.length === 0 && filterValues == null) {
-      this.emitChange(undefined);
+    if (!searchTerm) {
+      if (allRows.some(row => row.filteredCount > 0 && !this.isItemSelected(row))) {
+        // At least one row isn't selected. Select all rows.
+        this.setSelections(allRows.filter(row => row.filteredCount > 0).map(row => row.value));
+      } else {
+        // All rows are selected. Deselect all rows.
+        this.setSelections([]);
+      }
     } else {
-      let rows = this.getRows();
-      if (this.isSearchEnabled()){
-        rows = filterBySearchTerm(rows, this.props.activeFieldState.searchTerm);
-      }
-      if (this.isPaginationEnabled()){
-        rows = selectPage(rows, this.props.activeFieldState.currentPage, this.props.activeFieldState.rowsPerPage);
-      }
-      const currentValues = rows.map(entry => entry.value);
+      const selectableRows = allRows.filter(row => row.filteredCount > 0);
+      const selectedValues = selectableRows.filter(row => this.isItemSelected(row)).map(row => row.value);
+      // Values in the search results that are selectable
+      const selectableResultValues = filterBySearchTerm(selectableRows, searchTerm).map(row => row.value);
+      const [
+        selectedResultValues,
+        unselectedResultValues
+      ] = partition(selectableResultValues, value => selectedValues.includes(value));
 
-      this.emitChange(uniq(difference(currentValues, disabledValues).concat(filterValues || [])));
+      if (unselectedResultValues.length > 0) {
+        // Select all search result values, preserving selections outside the search results
+        this.setSelections([...selectedValues, ...unselectedResultValues]);
+      } else {
+        // Deselect all search result values, preserving selections outside the search results
+        this.setSelections(difference(selectedValues, selectedResultValues));
+      }
     }
-  }
-
-  handleRemoveAll() {
-    this.emitChange([]);
   }
 
   handleSort({ key: columnKey }, direction) {
@@ -360,7 +371,7 @@ class MembershipTable extends React.PureComponent {
     this.props.onMemberChangeRowsPerPage(this.props.activeField, newRowsPerPage);
   }
 
-  emitChange(value, includeUnknown = get(this.props, 'filter.includeUnknown', false)) {
+  setSelections(value, includeUnknown = get(this.props, 'filter.includeUnknown', false)) {
     this.props.onChange(this.props.activeField, value, includeUnknown,
       this.getRows());
   }
@@ -376,15 +387,13 @@ class MembershipTable extends React.PureComponent {
     const showChecked = availableItems.length > 0 && allAvailableChecked;
     const showIndeterminate = availableItems.length > 0 && someAvailableChecked && ! allAvailableChecked;
 
-     const onClick = () =>
-      allAvailableChecked ? this.handleRemoveAll() : this.handleSelectAll();
     return (
       <input
         type="checkbox"
         disabled={availableItems.length === 0}
         checked={showChecked}
         ref={el => el && (el.indeterminate = showIndeterminate)}
-        onChange={onClick} />
+        onChange={this.handleSelectAll} />
     );
   }
 
@@ -546,8 +555,7 @@ class MembershipTable extends React.PureComponent {
       {
         // onRowSelect: this.handleRowSelect,
         // onRowDeselect: this.handleRowDeselect,
-        // onMultipleRowSelect: this.handleToggleSelectAll,
-        // onMultipleRowDeselect: this.handleRemoveAll,
+        // onMultipleRowSelect: this.handleSelectAll,
         onSort: this.handleSort
       },
       usePagination ? {
