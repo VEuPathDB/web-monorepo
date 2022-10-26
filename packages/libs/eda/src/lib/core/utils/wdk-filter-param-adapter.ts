@@ -210,9 +210,6 @@ export function entitiesToFields(
   scope: VariableScope
 ): Array<FieldWithMetadata> {
   return entities.flatMap((entity) => {
-    console.log('in entitiesToFields');
-    console.log({ entity });
-
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
 
