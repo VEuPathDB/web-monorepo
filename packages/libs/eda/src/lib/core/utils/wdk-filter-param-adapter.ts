@@ -210,6 +210,9 @@ export function entitiesToFields(
   scope: VariableScope
 ): Array<FieldWithMetadata> {
   return entities.flatMap((entity) => {
+    console.log('in entitiesToFields');
+    console.log({ entity });
+
     // Create a Set of variableId so we can lookup parentIds
     const variableIds = new Set(entity.variables.map((v) => v.id));
 
@@ -263,11 +266,7 @@ export function makeHiddenVariablesInScope(
 ): Set<string> {
   const hiddenVariablesInScope = new Set<string>();
 
-  const variablesByParentId = groupBy(
-    entity.variables,
-    (variable) => variable.parentId ?? entity.id
-  );
-
+  // Define recursive function to be called later
   function _traverseDescendantVariables(
     variable: VariableTreeNode,
     parentIsHidden: boolean
@@ -286,8 +285,20 @@ export function makeHiddenVariablesInScope(
     });
   }
 
-  variablesByParentId[entity.id]?.forEach((variable) => {
-    _traverseDescendantVariables(variable, false);
+  const variableIds = new Set(entity.variables.map((variable) => variable.id));
+  const variablesByParentId = groupBy(
+    entity.variables,
+    (variable) => variable.parentId ?? entity.id
+  );
+  const rootParentIds = Object.keys(variablesByParentId).filter(
+    (parentId) => !variableIds.has(parentId)
+  );
+
+  rootParentIds.forEach((rootParentId) => {
+    variablesByParentId[rootParentId].forEach((variable) => {
+      // Call recursive function
+      _traverseDescendantVariables(variable, false);
+    });
   });
 
   return hiddenVariablesInScope;
