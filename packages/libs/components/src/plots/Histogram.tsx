@@ -49,6 +49,7 @@ interface BinSummary {
 }
 
 const EmptyHistogramData: HistogramData = { series: [] };
+const SMALL_NUMBER_OF_BINS = 4;
 
 export interface HistogramProps
   extends PlotProps<HistogramData>,
@@ -388,10 +389,17 @@ const Histogram = makePlotlyPlotComponent(
     ];
 
     // somewhat elaborate calculation of the number of bins that would span
-    // the independent axis (we can't count the number of binSummaries because it doesn't
-    // include empty (zero count) bins)
+    // the independent axis. Used for plotly `nticks` customisation.
+    // `binSummaries.length` isn't appropriate
+    // because it doesn't include zero count bins, however, we only need to calculate `numBins`
+    // if `binSummaries.length` is less than the threshold we're using for nticks
+    // so that cuts down a bit on calculations
     const numBins = useMemo(() => {
-      if (standardIndependentAxisRange == null || binSummaries.length === 0)
+      if (
+        standardIndependentAxisRange == null ||
+        binSummaries.length === 0 ||
+        binSummaries.length > SMALL_NUMBER_OF_BINS
+      )
         return undefined;
 
       // take the first bin as a representative
@@ -435,7 +443,10 @@ const Histogram = makePlotlyPlotComponent(
       linecolor: '#dddddd',
       // if there is a tiny number of bins, make sure we don't
       // provide more tick labels than bins (e.g. 0, 0.5, 1, 1.5, 2 when there are just two bins, 0-1, 1-2)
-      nticks: numBins != null && numBins < 5 ? numBins + 1 : undefined,
+      nticks:
+        numBins != null && numBins <= SMALL_NUMBER_OF_BINS
+          ? numBins + 1
+          : undefined,
     };
 
     // if at least one bin.count is 0 < x < 1 then these are probably fractions/proportions
