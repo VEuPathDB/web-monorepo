@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -15,6 +15,17 @@ export type BannerProps = {
   message: ReactNode;
   pinned?: boolean;
   intense?: boolean;
+  // additionalMessage is shown next to message when clicking showMoreLinkText.
+  // disappears when clicking showLess link
+  // note that this additionalMessage prop is used to determine show more/less behavior or not
+  // if undefined, then just show normal banner with message
+  additionalMessage?: ReactNode;
+  // text for showMore link
+  showMoreLinkText?: ReactNode;
+  // text for showless link
+  showLessLinkText?: ReactNode;
+  // color for show more links
+  showMoreLinkColor?: string;
 }
 
 export type BannerComponentProps = {
@@ -60,9 +71,20 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
 
 export default function Banner(props: BannerComponentProps) {
   const { banner, onClose } = props;
-  const { type, message, pinned, intense } = banner;
+  // set default values of showMoreLinkText and showLessLinkText
+  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, additionalMessage } = banner;
+
+  const [isShowMore, setIsShowMore] = useState(false);
 
   const IconComponent = getIconComponentFromType(type);
+
+  // define showMore link texts
+  const showMoreLink = isShowMore ? showLessLinkText : showMoreLinkText;
+
+  // hover effect
+  const [isHover, setIsHover] = useState(false);
+  const onMouseEnter = () => { setIsHover(true); };
+  const onMouseLeave = () => { setIsHover(false); };
 
   return (
     <div
@@ -94,7 +116,32 @@ export default function Banner(props: BannerComponentProps) {
       <span css={css`
         margin-right: auto;
       `}>
-        {message}
+        {/* showMore implementation */}
+        {message}&nbsp;
+        {additionalMessage != null && (
+          <>
+            {isShowMore && additionalMessage}
+            <button
+              css={css`
+                background-color: transparent;
+                border: none;
+                text-align: center;
+                text-decoration: ${isHover ? 'underline' : 'none' };
+                color: ${showMoreLinkColor};
+                display: inline-block;
+                cursor: pointer;
+              `}
+              onClick={() => {
+                setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
+              }}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
+            >
+              {showMoreLink}
+            </button>
+          </>
+        )}
+
       </span>
       {pinned || !onClose ? null : (
         <a

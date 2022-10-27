@@ -1,8 +1,10 @@
+import React, { useState } from 'react'
 import { Story, Meta } from '@storybook/react/types-6-0';
 import UIThemeProvider from '../../components/theming/UIThemeProvider';
 import { gray } from '../../definitions/colors'
 
 import Banner, { BannerComponentProps } from '../../components/banners/Banner'
+import Toggle from '../../components/widgets/Toggle';
 
 export default {
     title: 'Notifications/Banners',
@@ -89,3 +91,52 @@ Normal.args = {
     },
     onClose: () => null
 } as BannerComponentProps;
+
+// testing showMore
+export const ShowMore = (args) => {
+  // set showMore state to provide a toggle for easy test
+  const [isShowMore, setIsShowMore] = useState(false);
+  // set useState to close Banner
+  const [shouldShowWarning, setShouldShowWarning] = useState<boolean>(true);
+  const handleCloseWarning = () => {
+    setShouldShowWarning(false);
+  };
+
+  return (
+    <div style={{width: '750px'}}>
+      {shouldShowWarning && (
+        <Banner
+          banner={{
+            type: 'warning',
+            // message is used as a basic text
+            message: 'Smoothed mean(s) were not calculated for one or more data series.',
+            pinned: false,
+            intense: false,
+            // additionalMessage is shown next to message when clicking showMoreLinkText.
+            // disappears when clicking showLess link
+            // note that this additionalMessage prop is used to determine show more/less behavior or not
+            // if undefined, then just show normal banner with message
+            additionalMessage: isShowMore
+              ? 'The sample size might be too small or the data too skewed.'
+              : undefined,
+            // text for showMore link
+            showMoreLinkText: 'Why?',
+            // text for showless link
+            showLessLinkText: 'Read less',
+            // color for show more links
+            showMoreLinkColor: '#006699',
+          }}
+          onClose={handleCloseWarning}
+        />
+      )}
+      {/* showMore toggle for easily testing */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Toggle
+          label="showMore option:"
+          value={isShowMore}
+          onChange={setIsShowMore}
+        />
+      </div>
+    </div>
+  );
+};
