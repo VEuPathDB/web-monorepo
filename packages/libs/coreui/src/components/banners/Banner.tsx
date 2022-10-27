@@ -15,17 +15,17 @@ export type BannerProps = {
   message: ReactNode;
   pinned?: boolean;
   intense?: boolean;
+  // additionalMessage is shown next to message when clicking showMoreLinkText.
+  // disappears when clicking showLess link
+  // note that this additionalMessage prop is used to determine show more/less behavior or not
+  // if undefined, then just show normal banner with message
+  additionalMessage?: ReactNode;
   // text for showMore link
   showMoreLinkText?: ReactNode;
   // text for showless link
   showLessLinkText?: ReactNode;
   // color for show more links
   showMoreLinkColor?: string;
-  // additionalMessage is shown next to message when clicking showMoreLinkText.
-  // disappears when clicking showLess link
-  // note that this additionalMessage prop is used to determine show more/less behavior or not
-  // if undefined, then just show normal banner with message
-  additionalMessage?: ReactNode;
 }
 
 export type BannerComponentProps = {
