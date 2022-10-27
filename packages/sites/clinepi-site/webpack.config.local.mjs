@@ -29,6 +29,7 @@ export default configure({
   plugins: [
     new webpack.DefinePlugin({
       'window.__SITE_CONFIG__': JSON.stringify({
+        requireLogin: process.env.REQUIRE_LOGIN === 'true',
         rootElement: process.env.ROOT_ELEMENT,
         rootUrl: process.env.ROOT_URL,
         endpoint: process.env.WDK_SERVICE_ENDPOINT,
