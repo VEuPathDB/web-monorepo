@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.2.tgz#2436de84e901f7da22c8ac8e2add6ebda99d6c1e"
-  integrity sha512-nJjM2e85uP8DNEliDP8dtM2kKtKEZJ2wysU/Nr4DiKR/ToCCK6xFgsuQcjgGVNxl0cC4oo1vnDLCaUJX/xg2zw==
+"@veupathdb/components@^0.19.3":
+  version "0.19.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.3.tgz#a2587bf5d0d3edf99a27e86154f527c7019643b9"
+  integrity sha512-/8YIUYhRz0lNPObnvqWSScT1Ys9v6R+KtXwTzuKjAgdK9uWfgXntA7jSDzWajPLGRA+wPCuzH33mV1oG6chfWQ==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2153,10 +2153,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.10":
-  version "0.18.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.10.tgz#6838d5b1fea770ea86d473e64d288754abf1f793"
-  integrity sha512-q94mPRrGoj/xnT8WH14IWbEqe3iR0mL8wi+rWZG+2jkOl97FOqcvXPVfiVrSiun2fZWdVY0iOSQPkwbfBhfIHw==
+"@veupathdb/coreui@^0.18.11":
+  version "0.18.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.11.tgz#2c038668017cbfb3cad561201e358d9351046ef7"
+  integrity sha512-WNMKvNiZFh72D9Q0gnRkn2y2t0ZWJbithLR5K8BDVzKV+ZiUaQx5aUw9DW4cRvDxLySPiQ1EbgzHK91i4TFV+Q==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -2166,10 +2166,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.11.0":
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.0.tgz#aff712c3e9c89f94e5bd597ddcc537baf0118718"
-  integrity sha512-MbjnyIc3/LheL84ym4iIGFjWBEqJi7okFDQpsQtWhZPJVfxRetgvftqvQj6xs+Is9j0d4+kVYMvkl2hLSmZD0A==
+"@veupathdb/eda@^3.11.5":
+  version "3.11.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.5.tgz#7d76d9530737d2db168466feee1d0e9054c18b7f"
+  integrity sha512-3/N8nAx42dAqQIPndp84huXCfWRQNgBXQZlnzo15mB2QrBPlRorliHy+RVLNrjHnGV/z3+0/6SSitabeu3dDHw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2234,10 +2234,10 @@
     date-fns "^2.29.1"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.9.14":
-  version "0.9.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.14.tgz#c7741d0e7394dae45d45f6d9879d529dab963f0f"
-  integrity sha512-8EES5+wnzYi/bvRHfZ7bBFhb3fIC72sSBxtEfdkRm7wfF3YKGTBxHUZErzuNzMeBl32hQj2FUMSg1kc5k7R+LQ==
+"@veupathdb/wdk-client@^0.9.15":
+  version "0.9.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.15.tgz#1a37f5b13b4a02733f216f851afd3ecd7d003bd5"
+  integrity sha512-cRhFBVNqSAalfDzBBSw3cBI44/C550PvVAqvzmkaJPLK7fcSJ3vI4TOdM0bOg0NTxHNTi4kbmlfsTHncWwUyTg==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2257,10 +2257,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.0.tgz#121c2af7cd1694c877b9b0d32d2af5246e3ed833"
-  integrity sha512-PjVZF8X18/Y8iGJHkvxO580ofe2QcAz1IJfS0ssn7ToofiobHv//GwYS0qsSrOnB4qdYDgHAVug0AmiHGG3qZQ==
+"@veupathdb/web-common@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.1.tgz#4f8cdced2ed47de9ac0c53641db342cd74b79eaf"
+  integrity sha512-Vc/7CSlZcsyRPLrFjhjMn7Bk13oxsSKk4ugW4cy8D+xKG+g+t/GM5BlZhV+U5r4Gr0U1LrhWgEXKbcKapmiWJQ==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
