@@ -586,6 +586,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   // axis range control
   // get as much default axis range from variable annotations as possible
+
+  // NOTE: tech debt - defaultUIState is not really used in its entirity
+  // for example, the binWidth isn't used anywhere any more - we should remove
+  // unused data from it, or remove it entirely (other viz's manage without it)
   const defaultUIState: UIState = useMemo(() => {
     if (xAxisVariable != null) {
       const otherDefaults = {
@@ -712,12 +716,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [
-    defaultUIState.binWidth,
-    defaultUIState.binWidthTimeUnit,
-    updateVizConfig,
-    setTruncatedIndependentAxisWarning,
-  ]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
