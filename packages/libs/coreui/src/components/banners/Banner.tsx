@@ -15,14 +15,14 @@ export type BannerProps = {
   message: ReactNode;
   pinned?: boolean;
   intense?: boolean;
-  // activate showMore feature
-  showMore?: boolean;
   // text for showMore link
   showMoreLinkText?: ReactNode;
   // text for showless link
   showLessLinkText?: ReactNode;
-  // additionalMessage is shown next to message when clicking showMoreLinkText
+  // additionalMessage is shown next to message when clicking showMoreLinkText.
   // disappears when clicking showLess link
+  // note that this additionalMessage prop is used to determine show more/less behavior or not
+  // if undefined, then just show normal banner with message
   additionalMessage?: ReactNode;
 }
 
@@ -69,7 +69,8 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
 
 export default function Banner(props: BannerComponentProps) {
   const { banner, onClose } = props;
-  const { type, message, pinned, intense, showMore, showMoreLinkText, showLessLinkText, additionalMessage } = banner;
+  // set default values of showMoreLinkText and showLessLinkText
+  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', additionalMessage } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
 
@@ -110,7 +111,7 @@ export default function Banner(props: BannerComponentProps) {
       `}>
         {/* showMore implementation */}
         {message}&nbsp;
-        {showMore && (
+        {additionalMessage != null && (
           <>
             {isShowMore && additionalMessage}
             <button

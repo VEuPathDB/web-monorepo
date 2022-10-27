@@ -112,15 +112,17 @@ export const ShowMore = (args) => {
             message: 'Smoothed mean(s) were not calculated for one or more data series.',
             pinned: false,
             intense: false,
-            // activate showMore feature
-            showMore: isShowMore,
             // text for showMore link
             showMoreLinkText: 'Why?',
             // text for showless link
             showLessLinkText: 'Read less',
             // additionalMessage is shown next to message when clicking showMoreLinkText.
             // disappears when clicking showLess link
-            additionalMessage: 'The sample size might be too small or the data too skewed.',
+            // note that this additionalMessage prop is used to determine show more/less behavior or not
+            // if undefined, then just show normal banner with message
+            additionalMessage: isShowMore
+              ? 'The sample size might be too small or the data too skewed.'
+              : undefined,
           }}
           onClose={handleCloseWarning}
         />
