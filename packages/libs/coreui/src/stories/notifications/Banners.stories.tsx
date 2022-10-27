@@ -116,6 +116,8 @@ export const ShowMore = (args) => {
             showMoreLinkText: 'Why?',
             // text for showless link
             showLessLinkText: 'Read less',
+            // color for show more links
+            showMoreLinkColor: '#006699',
             // additionalMessage is shown next to message when clicking showMoreLinkText.
             // disappears when clicking showLess link
             // note that this additionalMessage prop is used to determine show more/less behavior or not
