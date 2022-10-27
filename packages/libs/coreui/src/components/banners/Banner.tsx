@@ -81,6 +81,11 @@ export default function Banner(props: BannerComponentProps) {
   // define showMore link texts
   const showMoreLink = isShowMore ? showLessLinkText : showMoreLinkText;
 
+  //DKDK hover effect
+  const [isHover, setIsHover] = useState(false);
+  const onMouseEnter = () => { setIsHover(true); };
+  const onMouseLeave = () => { setIsHover(false); };
+
   return (
     <div
       css={css`
@@ -119,11 +124,9 @@ export default function Banner(props: BannerComponentProps) {
             <button
               css={css`
                 background-color: transparent;
-                // border: 0px solid #ffffff;
                 border: none;
                 text-align: center;
-                //text-decoration: underline;
-                // color: ${showMoreLinkColor != null ? showMoreLinkColor : undefined};
+                text-decoration: ${isHover ? 'underline' : 'none' };
                 color: ${showMoreLinkColor};
                 display: inline-block;
                 cursor: pointer;
@@ -131,6 +134,8 @@ export default function Banner(props: BannerComponentProps) {
               onClick={() => {
                 setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
               }}
+              onMouseEnter={onMouseEnter}
+              onMouseLeave={onMouseLeave}
             >
               {showMoreLink}
             </button>
