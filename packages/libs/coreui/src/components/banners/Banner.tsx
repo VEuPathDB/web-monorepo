@@ -81,7 +81,7 @@ export default function Banner(props: BannerComponentProps) {
   // define showMore link texts
   const showMoreLink = isShowMore ? showLessLinkText : showMoreLinkText;
 
-  //DKDK hover effect
+  // hover effect
   const [isHover, setIsHover] = useState(false);
   const onMouseEnter = () => { setIsHover(true); };
   const onMouseLeave = () => { setIsHover(false); };
