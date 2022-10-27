@@ -471,6 +471,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       vizConfig.valueSpec,
       vizConfig.showMissingness,
       vizConfig.independentAxisRange,
+      vizConfig.independentAxisValueSpec === 'Full',
       studyId,
       filters,
       filteredCounts,
@@ -705,8 +706,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
-      binWidth: defaultUIState.binWidth,
-      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
+      binWidth: undefined,
+      binWidthTimeUnit: undefined,
       independentAxisValueSpec: 'Full',
     });
     // add reset for truncation message: including dependent axis warning as well
@@ -1324,8 +1325,10 @@ function getRequestParams(
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? variable.distributionDefaults.binWidthOverride ??
-        variable.distributionDefaults.binWidth
+      ? vizConfig.independentAxisValueSpec === 'Full'
+        ? variable.distributionDefaults.binWidthOverride ??
+          variable.distributionDefaults.binWidth
+        : undefined
       : undefined,
     binWidthTimeUnit = variable?.type === 'date'
       ? variable.distributionDefaults.binUnits
