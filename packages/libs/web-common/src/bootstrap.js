@@ -20,7 +20,7 @@ import * as WdkComponents from '@veupathdb/wdk-client/lib/Components';
 import * as WdkControllers from '@veupathdb/wdk-client/lib/Controllers';
 
 import * as siteConfig from './config';
-import { rootUrl, rootElement, endpoint, retainContainerContent } from './config';
+import { rootUrl, rootElement, endpoint, retainContainerContent, requireLogin } from './config';
 import pluginConfig from './pluginConfig';
 import { loadSiteConfig } from './actioncreators/GlobalActionCreators';
 import * as EbrcComponentWrappers from './component-wrappers';
@@ -73,6 +73,7 @@ export function initialize(options = {}) {
     wrapStoreModules: flow(ebrcWrapStoreModules, wrapStoreModules),
     wrapWdkDependencies: flow(ebrcWrapWdkDependencies, wrapWdkDependencies),
     wrapWdkService: flow(ebrcWrapWdkService, wrapWdkService),
+    requireLogin,
     rootUrl,
     rootElement,
     retainContainerContent,
