@@ -287,6 +287,8 @@ export function makeHiddenVariablesInScope(
     entity.variables,
     (variable) => variable.parentId ?? entity.id
   );
+  // The parent IDs of root variables, where a root variable is a variable
+  // whose parent is not in this entity's variable list
   const rootParentIds = Object.keys(variablesByParentId).filter(
     (parentId) => !variableIds.has(parentId)
   );
