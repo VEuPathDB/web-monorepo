@@ -470,6 +470,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       vizConfig.facetVariable,
       vizConfig.valueSpec,
       vizConfig.showMissingness,
+      vizConfig.independentAxisRange,
       studyId,
       filters,
       filteredCounts,
