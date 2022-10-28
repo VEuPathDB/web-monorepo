@@ -3,7 +3,7 @@ import {
   mapStructure,
   preorder,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { isEmpty, union } from 'lodash';
+import { isEmpty, union, sortBy } from 'lodash';
 import { StudyEntity, VariableTreeNode } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { DataElementConstraint } from '../types/visualization';
@@ -90,9 +90,14 @@ export function disabledVariablesForInput<ConfigType>(
     disabledVariables.push(...excludedVariables);
   });
 
-  // Remove variables for entities which are not part of the ancestor path of, or equal to, of each `prevSelectedVariables`
+  // Remove variables for entities which are not part of the ancestor path of, or equal to, the least ancestral of `prevSelectedVariables`
   // (not quite the same thing as "remove descendants", because of branching in entity tree)
-  prevSelectedVariables?.forEach((prevSelectedVariable) => {
+  const prevSelectedVariable = leastAncestralVariable(
+    prevSelectedVariables,
+    entities
+  );
+
+  if (prevSelectedVariable != null) {
     const ancestors = ancestorEntitiesForVariable(
       prevSelectedVariable,
       entities
@@ -107,9 +112,11 @@ export function disabledVariablesForInput<ConfigType>(
       }))
     );
     disabledVariables.push(...excludedVariables);
-  });
+  }
 
   // Remove variables for entities which are not descendants of, or equal to, each of `nextSelectedVariables`
+  // (note: we could take the least ancestral variable from this list and do the same as above,
+  // but applying this operation to all the variables has the same effect)
   nextSelectedVariables?.forEach((nextSelectedVariable) => {
     const descendants = descendantEntitiesForVariable(
       nextSelectedVariable,
@@ -391,4 +398,30 @@ function descendantEntitiesForVariable(
     preorder(entity, (entity) => entity.children ?? [])
   );
   return descendants;
+}
+
+/**
+ * given a list of variable descriptors and list of study entities
+ * return the variable descriptor which is least ancestral (leaf-most)
+ */
+
+export function leastAncestralVariable(
+  variables: VariableDescriptor[] | undefined,
+  entities: StudyEntity[]
+): VariableDescriptor | undefined {
+  if (variables == null || variables.length === 0) return undefined;
+
+  // The least ancestral node has the most ancestors, so let's count them.
+  // And sort by the counts, most-first
+  const leastAncestralFirst = sortBy(variables, (variable) => {
+    const ancestorCount = ancestorEntitiesForVariable(variable, entities)
+      .length;
+    return -ancestorCount;
+  });
+
+  // we don't care about ties, because the same-branch constraint means that
+  // the two variables will be from the same entity if they have the same number of ancestors
+  const variable = leastAncestralFirst[0];
+  if (VariableDescriptor.is(variable)) return variable;
+  else return undefined;
 }
