@@ -29,7 +29,7 @@ export function useFindOutputEntity(
       fallbackVariableName,
     ];
 
-    const variable = mostAncestralVariable(vizConfig, entities, variableNames);
+    const variable = leastAncestralVariable(vizConfig, entities, variableNames);
 
     // This could be more defensive and throw an error if variable is defined
     // but is not a VariableDescriptor.
@@ -54,14 +54,15 @@ export function useFindOutputEntity(
  * Does not check that the two variables are on the same branch.
  * The variable constraints logic should already have checked that.
  */
-function mostAncestralVariable(
+function leastAncestralVariable(
   vizConfig: Record<string, unknown>,
   entities: StudyEntity[],
   variableNames: string[]
 ): VariableDescriptor | undefined {
   // the least ancestral variable has the most ancestors, so let's count them
   // and store in a record
-  const ancestorCounts = variableNames.reduce((counts, variableName) => { // variableName -> number
+  const ancestorCounts = variableNames.reduce((counts, variableName) => {
+    // variableName -> number
     const variable = vizConfig[variableName];
     if (VariableDescriptor.is(variable))
       counts[variableName] = ancestorEntitiesForVariable(
@@ -73,14 +74,14 @@ function mostAncestralVariable(
   }, {} as Record<string, number>);
 
   // sort by the counts, most-first
-  const mostAncestralFirst = sortBy(
+  const leastAncestralFirst = sortBy(
     variableNames,
     (name) => -ancestorCounts[name]
   );
 
   // we don't care about ties, because the same-branch constraint means that
   // the two variables will be from the same entity if they have the same number of ancestors
-  const variable = vizConfig[mostAncestralFirst[0]];
+  const variable = vizConfig[leastAncestralFirst[0]];
   if (VariableDescriptor.is(variable)) return variable;
   else return undefined;
 }
