@@ -115,7 +115,7 @@ export function disabledVariablesForInput<ConfigType>(
   }
 
   // Remove variables for entities which are not descendants of, or equal to, each of `nextSelectedVariables`
-  // (note: we could take the least ancestral variable from this list and do the same as above,
+  // (note: we could operate on just the least ancestral variable from this list (as we did above),
   // but applying this operation to all the variables has the same effect)
   nextSelectedVariables?.forEach((nextSelectedVariable) => {
     const descendants = descendantEntitiesForVariable(
