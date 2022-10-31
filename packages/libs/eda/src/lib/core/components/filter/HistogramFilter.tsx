@@ -731,7 +731,7 @@ function HistogramPlotWithControls({
 
         <LabelledGroup label="Y-axis controls">
           <Toggle
-            label="Log scale"
+            label={`Log scale ${uiState.dependentAxisLogScale ? 'on' : 'off'}`}
             value={uiState.dependentAxisLogScale}
             onChange={handleDependentAxisLogScale}
             styleOverrides={{
