@@ -32,5 +32,9 @@ export const useInputStyles = makeStyles({
   fullRow: {
     flexBasis: '100%',
   },
-  showMissingness: {},
+  showMissingness: {
+    height: '32px', // this is the height of the neighbouring input variable selector (20 + 2*6px padding)
+    display: 'flex',
+    alignItems: 'center',
+  },
 });
