@@ -156,7 +156,7 @@ export function RecordHeading(props) {
           </div>
         ) : null}
 
-        {study_access && projectId.includes('ClinEpiDB') ? (
+        {study_access ? (
           <StudyAccessOverviewItem study_access={study_access} record={record} />
         ) : null}
 
