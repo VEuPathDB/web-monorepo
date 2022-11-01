@@ -224,8 +224,11 @@ export default class MultiFieldFilter extends React.Component {
     const leafFilters = get(this.props.filters.find(filter => filter.field === this.props.activeField.term), 'value.filters', []);
     const filtersByField = keyBy(leafFilters, 'field');
 
-    const hasRowWithRemaining = Seq.from(this.props.activeFieldState.leafSummaries)
+    const hasRowWithRemaining = this.props.activeFieldState.leafSummaries
       .some(summary => summary.internalsFilteredCount > 0);
+
+    const hasNoData = this.props.activeFieldState.leafSummaries
+      .every(summary => summary.internalsCount === 0);
 
     const rows = Seq.from(this.props.activeFieldState.leafSummaries)
       .flatMap(summary => [
@@ -251,10 +254,13 @@ export default class MultiFieldFilter extends React.Component {
 
     return (
       <div className={cx()}>
-        {!hasRowWithRemaining && (
+        {(!hasRowWithRemaining || hasNoData) && (
           <Banner banner={{
             type: 'warning',
-            message: 'Given prior selections, there is no remaining data available for this variable.',
+            message: (hasNoData
+              ? 'There is no data available for this variable.'
+              : 'Given prior selections, there is no remaining data available for this variable.'
+            ),
             pinned: true
           }} />
         )}
