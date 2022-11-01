@@ -241,7 +241,6 @@ export function PreferredOrganismsConfig({
             linksPosition={LinksPosition.Top}
             additionalFilters={configTreeFilters}
             isAdditionalFilterApplied={showOnlyReferenceOrganisms}
-            defaultStyleOverridesToApply="genomics"
             styleOverrides={{
               searchAndFilterWrapper: {
                 justifyContent: 'flex-start',
@@ -251,6 +250,11 @@ export function PreferredOrganismsConfig({
                 container: {
                   justifyContent: 'flex-start',
                   marginLeft: '2em',
+                },
+              },
+              searchBox: {
+                optionalIcon: {
+                  top: '3px',
                 },
               },
             }}
@@ -298,29 +302,6 @@ export function PreferredOrganismsConfig({
                 onExpansionChange={noop}
                 shouldExpandDescendantsWithOneChild
                 linksPosition={LinksPosition.None}
-                defaultStyleOverridesToApply="genomics"
-                styleOverrides={{
-                  treeSection: {
-                    ul: {
-                      padding: 0,
-                    },
-                  },
-                  treeNode: {
-                    topLevelNode: {
-                      height: '1.5em',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                    },
-                    nonTopLevelNodeContainer: {
-                      height: '1.5em',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                    },
-                    children: {
-                      padding: '0 0 0 3em',
-                    },
-                  },
-                }}
               />
             )}
           </div>
