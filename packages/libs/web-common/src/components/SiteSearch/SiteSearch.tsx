@@ -322,24 +322,16 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         selectedList={selection}
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
-        defaultStyleOverridesToApply='genomics'
         styleOverrides={{
-          searchBox: {
-            input: {
-              padding: '0.2em 2em 0.2em 1em',
-            },
-          },
           treeSection: {
             ul: {
               padding: 0,
             }
           },
-          treeNode: {
-            topLevelNode: {
-              height: '1.5em',
-              alignItems: 'center',
-              overflow: 'hidden',
-            },
+          searchBox: {
+            optionalIcon: {
+              top: '3px',
+            }
           }
         }}
       />

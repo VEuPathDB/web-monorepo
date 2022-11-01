@@ -25,6 +25,7 @@ let SharedReporterForm = props => {
               // title and layout of the tree
               title="Choose Attributes"
               searchBoxPlaceholder="Search Attributes..."
+              searchIconPosition="right"
               tree={util.getAttributeTree(ontology, recordClass.fullName, question)}
 
               // state of the tree
@@ -37,16 +38,6 @@ let SharedReporterForm = props => {
               onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
               linksPosition={LinksPosition.Top}
-              defaultStyleOverridesToApply='genomics'
-              styleOverrides={{
-                treeNode: {
-                  topLevelNode: {
-                    height: '1.5em',
-                    alignItems: 'center',
-                    overflow: 'hidden',
-                  },
-                }
-              }}
           />
         </div>
 
@@ -55,6 +46,7 @@ let SharedReporterForm = props => {
             // title and layout of the tree
             title="Choose Tables"
             searchBoxPlaceholder="Search Tables..."
+            searchIconPosition='right'
             tree={util.getTableTree(ontology, recordClass.fullName)}
 
             // state of the tree
@@ -67,16 +59,6 @@ let SharedReporterForm = props => {
             onUiChange={getUiUpdateHandler('expandedTableNodes')}
             onSearchTermChange={getUiUpdateHandler('tableSearchText')}
             linksPosition={LinksPosition.Top}
-            defaultStyleOverridesToApply='genomics'
-            styleOverrides={{
-              treeNode: {
-                topLevelNode: {
-                  height: '1.5em',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                },
-              }
-            }}
           />
         </div>
 

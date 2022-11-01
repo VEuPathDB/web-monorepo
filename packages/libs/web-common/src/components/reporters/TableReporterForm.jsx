@@ -25,6 +25,7 @@ let TableReporterForm = props => {
                 // title and layout of the tree
                 title="Choose a Table"
                 searchBoxPlaceholder="Search Tables..."
+                searchIconPosition="right"
                 tree={util.getTableTree(ontology, recordClass.fullName, question)}
 
                 // state of the tree
@@ -39,20 +40,12 @@ let TableReporterForm = props => {
                 onSearchTermChange={getUiUpdateHandler('tableSearchText')}
 
                 linksPosition={LinksPosition.Top}
-                defaultStyleOverridesToApply='genomics'
                 styleOverrides={{
                   treeSection: {
                     ul: {
                       padding: 0,
                     }
                   },
-                  treeNode: {
-                    topLevelNode: {
-                      height: '1.5em',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                    },
-                  }
                 }}
             />
           </div>

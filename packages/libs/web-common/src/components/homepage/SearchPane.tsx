@@ -33,11 +33,12 @@ const searchPaneStyleOverrides: CheckboxTreeStyleSpec = {
       background: '#dfdfdf',
     },
     optionalIcon: {
+      top: 0,
       cursor: 'text',
     }
   },
   treeNode: {
-    topLevelNode: {
+    topLevelNodeWrapper: {
       backgroundColor: '#dfdfdf',
       margin: '.25em 0',
       border: '.0625rem solid #ddd',
@@ -63,6 +64,7 @@ const headerMenuItemStyleOverrides: CheckboxTreeStyleSpec = {
     optionalIcon: {
       fontSize: '1.25em',
       cursor: 'text',
+      top: '3px',
     }
   },
   treeSection: {
@@ -180,7 +182,7 @@ export const SearchCheckboxTree = wrappable((
           linksPosition={linksPosition != null ? linksPosition : LinksPosition.Top}
           styleOverrides={styleOverrides}
           type={type}
-          defaultStyleOverridesToApply='genomics'
+          searchIconPosition='left'
         />
     );
 });
@@ -202,13 +204,6 @@ const renderNoResults = (searchTerm: string) =>
     </p>
   </div>;
 
-const searchPaneNodeStyleSpec = {
-
-};
-
-const headerMenuNodeStyleSpec = {
-
-};
 interface SearchPaneNodeProps {
   questionsByUrlSegment: Record<string, Question>;
   node: CategoryTreeNode;
@@ -249,7 +244,10 @@ function SearchPaneNode({
         }}
         to={`/search/${getRecordClassUrlSegment(node)}/${urlSegment}`}
       >
-        <div style={{display: 'flex', alignItems: 'center', margin: type === 'searchPane' ? '0.25em 0' : '0.125em 0 0.25em 0.125em'}}>
+        <div style={{
+          display: 'flex', 
+          alignItems: 'center', 
+        }}>
           <span style={{marginRight: '0.25em', color: 'gray', fontSize: '0.7em'}}>
             <IconAlt fa="search" />
           </span>

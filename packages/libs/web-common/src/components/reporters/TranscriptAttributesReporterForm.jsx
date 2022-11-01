@@ -40,6 +40,7 @@ let TranscriptAttributesReporterForm = props => {
                 // title and layout of the tree
                 title="Choose Columns"
                 searchBoxPlaceholder="Search Columns..."
+                searchIconPosition="right"
                 tree={util.getAttributeTree(ontology, recordClass.fullName, question)}
 
                 // state of the tree
@@ -53,16 +54,6 @@ let TranscriptAttributesReporterForm = props => {
                 onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
                 
                 linksPosition={LinksPosition.Top}
-                defaultStyleOverridesToApply='genomics'
-                styleOverrides={{
-                  treeNode: {
-                    topLevelNode: {
-                      height: '1.5em',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                    },
-                  }
-                }}
             />
           </div>
 

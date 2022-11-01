@@ -43,7 +43,6 @@ class TreeDataViewer extends Component {
           onSearchTermChange={this.onSearchTermChange}
           searchPredicate={isNodeInSearch}
           linksPosition={LinksPosition.Top}
-          defaultStyleOverridesToApply='genomics'
           />
       }
       catch (e) {
