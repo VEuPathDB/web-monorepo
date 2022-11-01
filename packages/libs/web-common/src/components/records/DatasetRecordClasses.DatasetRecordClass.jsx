@@ -1,9 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 import {pure} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DatasetGraph from 'ebrc-client/components/DatasetGraph';
 import { projectId } from 'ebrc-client/config';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { isUserApprovedForAction } from '@veupathdb/study-data-access/lib/study-access/permission';
 
 // Use Element.innerText to strip XML
 function stripXML(str) {
@@ -37,20 +40,22 @@ function renderSourceVersion(version, newcategory) {
     return (
       <span>
         {version}&nbsp;
-        <i className="fa fa-question-circle" style={{ color: 'blue' }}
-        title={'The source versions for the assembly, ' +
-               'structural annotation and functional annotation.  ' + 
-               'See the Data Set Release History table for more details.'}/>
+        <HelpIcon>
+          {'The source versions for the assembly, ' +
+          'structural annotation and functional annotation.  ' + 
+          'See the Data Set Release History table for more details.'}
+        </HelpIcon>
       </span>
     );
   } else {
     return (
       <span>
         {version.version}&nbsp;
-        <i className="fa fa-question-circle" style={{ color: 'blue' }}
-          title={'The data provider\'s version number or publication date, from' +
+        <HelpIcon>
+          {'The data provider\'s version number or publication date, from' +
           ' the site the data was acquired. In the rare case neither is available,' +
-          ' the download date.'}/>
+          ' the download date.'}
+        </HelpIcon>
       </span>
     );
   }
@@ -83,7 +88,8 @@ export function RecordHeading(props) {
     institution,
     organism_prefix,
     newcategory,
-    megabase_pairs
+    megabase_pairs,
+    study_access,
   } = attributes;
 
   let version = getSourceVersion(attributes, tables);
@@ -148,7 +154,11 @@ export function RecordHeading(props) {
             <strong>Megabase Pairs: </strong>
             <span>{megabase_pairs}</span>
           </div>
-        ) : null} 
+        ) : null}
+
+        {study_access ? (
+          <StudyAccessOverviewItem study_access={study_access} record={record} />
+        ) : null}
 
      </div>
     </div>
@@ -266,4 +276,53 @@ function JsonLinkedData(props) {
 function getPrimaryPublication(record) {
   const { tables } = record;
   return tables.Publications && tables.Publications[0];
+}
+
+function StudyAccessOverviewItem(props) {
+  const { study_access, record } = props;
+  const { loading, permissions } = usePermissions();
+  const isUserApproved = !loading && isUserApprovedForAction(
+    permissions,
+    record.attributes.dataset_id,
+    'download'
+  );
+
+  const attemptAction = useAttemptActionCallback();
+
+  const requestAccessButton = (
+    <button type="button" className="link" onClick={() => attemptAction('download', {
+      studyId: record.attributes.dataset_id
+    })}
+    >request access</button>
+  )
+
+  function makeMessage() {
+    switch(study_access) {
+      case 'Public':
+        return 'Data downloads for this study are public. Data is available without logging in.';
+      case 'Controlled':
+        return isUserApproved
+          ? 'You have been granted access to download the data.'
+          : <>To download data please register or log in and {requestAccessButton}. Data will be available immediately following request submission.</>;
+      case 'Protected':
+      default:
+        return isUserApproved
+          ? 'You have been granted access to download the data.'
+          : <>To download data please register or log in and {requestAccessButton}. Data will be available upon study team review and approval.</>;
+    }
+  }
+
+  return (
+    <>
+      <div className="eupathdb-RecordOverviewItem">
+        <strong>Data accesibility: </strong>
+        <span>{study_access}</span>
+      </div>
+      {loading ? null : (
+        <div style={{ color: '#666', fontSize: '1.2em' }}>
+          {makeMessage()}
+        </div>
+      )}
+    </>
+  );
 }
