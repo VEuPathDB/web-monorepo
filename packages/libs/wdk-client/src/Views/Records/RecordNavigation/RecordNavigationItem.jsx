@@ -2,7 +2,7 @@ import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { getId, getDisplayName, isIndividual } from 'wdk-client/Utils/CategoryUtils';
 
-let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSectionToggle, isActiveSearch}) => {
+let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSectionToggle}) => {
   let id = getId(category);
   let activeId = activeCategory && getId(activeCategory);
   let displayName = getDisplayName(category)
@@ -17,7 +17,7 @@ let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSe
     <div 
       className="wdk-RecordNavigationItem"
       style={{
-        margin: isIndividual(category) && !isActiveSearch ? '0.25em 0 0.25em 2em' : '0.25em 0',
+        margin: isIndividual(category) ? '0.25em 0 0.25em 0.5em' : '0.25em 0',
         display: 'flex',
         position: 'relative',
       }}
@@ -26,7 +26,7 @@ let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSe
         <i 
           className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"
           style={{
-            left: isActiveSearch ? '-1.5em' : '-3em',
+            left: '-2.25em',
             cursor: 'pointer',
           }}  
         />

@@ -163,6 +163,7 @@ export const SearchInputSelectorView = ({
                         searchTerm={searchTerm}
                         isSelectable={false}
                         searchBoxPlaceholder="Filter the searches below..."
+                        searchIconPosition="right"
                         leafType="search"
                         renderNode={renderNode}
                         renderNoResults={renderNoResults}
@@ -170,7 +171,6 @@ export const SearchInputSelectorView = ({
                         onSearchTermChange={setSearchTerm}
                         linksPosition={linksPosition}
                         showSearchBox={showSearchBox}
-                        defaultStyleOverridesToApply='genomics'
                       />
                     </div>
                   </div>
@@ -352,19 +352,17 @@ function SearchInputNode({ node, onCombineWithNewSearchSelected }: SearchInputNo
     : { isSearch: false };
 
   const displayElement = nodeMetadata.isSearch
-    ? <div style={{margin: '0.125em 0 0.125em 1em'}}>
-        <Link
-          onClick={(e: Event) => {
-            e.preventDefault();
-            setOfferTooltip(false);
-            onCombineWithNewSearchSelected(nodeMetadata.searchName);
-          }}
-          to={`/search/${getRecordClassUrlSegment(node)}/${nodeMetadata.searchName}`}
-        >
-          <IconAlt fa="search" />
-          <span style={{marginLeft: '0.25em'}}>{displayName}</span>
-        </Link>
-      </div>
+    ? <Link
+        onClick={(e: Event) => {
+          e.preventDefault();
+          setOfferTooltip(false);
+          onCombineWithNewSearchSelected(nodeMetadata.searchName);
+        }}
+        to={`/search/${getRecordClassUrlSegment(node)}/${nodeMetadata.searchName}`}
+      >
+        <IconAlt fa="search" />
+        <span style={{marginLeft: '0.25em'}}>{displayName}</span>
+      </Link>
     : <span style={{cursor: 'pointer'}}>{displayName}</span>
 
   const tooltipContent = getFormattedTooltipContent(node);

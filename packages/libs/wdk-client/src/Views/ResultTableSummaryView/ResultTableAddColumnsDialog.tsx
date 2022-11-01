@@ -133,10 +133,10 @@ function ResultTableAddColumnsDialog({
     >
       <>
         {selectedColumnsMessage}
-        {buttonWithTooltip}
         <CategoriesCheckboxTree
           tree={columnsTree}
           searchBoxPlaceholder="Search Columns"
+          searchIconPosition="right"
           leafType="column"
           selectedLeaves={columnsDialogSelection || answer.meta.attributes}
           currentSelection={answer.meta.attributes}
@@ -147,13 +147,11 @@ function ResultTableAddColumnsDialog({
           onUiChange={updateColumnsDialogExpandedNodes}
           onSearchTermChange={updateColumnsDialogSearchString}
           linksPosition={LinksPosition.Top}
-          defaultStyleOverridesToApply='genomics'
           styleOverrides={{
             treeLinks: {
               container: {
-                textAlign: 'center',
-                height: 'auto',
                 margin: '0 1em',
+                textAlign: 'center',
               }
             },
             searchBox: {
@@ -163,19 +161,12 @@ function ResultTableAddColumnsDialog({
             },
             treeSection: {
               container: {
-                margin: columnsDialogSearchString ? '0.5em 0 1em 1em' : '0.5em 0 1em 0.25em',
+                margin: '0.5em 0 0.5em 1em'
               },
               ul: {
                 padding: 0,
               }
             },
-            treeNode: {
-              topLevelNode: {
-                height: '1.5em',
-                alignItems: 'center',
-                overflow: 'hidden',
-              },
-            }
           }}
         />
         {buttonWithTooltip}

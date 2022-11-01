@@ -128,12 +128,11 @@ export default class FieldList extends React.Component { // eslint-disable-line 
             />
           )}
           linksPosition={LinksPosition.Top}
-          defaultStyleOverridesToApply={'eda'}
           styleOverrides={{
-            searchBox: {
-              container: {
-                margin: '0 0.25em',
-              },
+            treeNode: {
+              nodeWrapper: {
+                padding: 0,
+              }
             }
           }}
         />

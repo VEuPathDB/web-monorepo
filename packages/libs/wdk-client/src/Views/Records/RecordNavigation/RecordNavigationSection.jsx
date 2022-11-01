@@ -96,19 +96,13 @@ class RecordNavigationSection extends React.PureComponent {
               onSectionToggle={onSectionToggle}
               activeCategory={this.state.activeCategory}
               checked={!includes(collapsedSections, getId(node))}
-              isActiveSearch={!!navigationQuery}
             />
           }
           linksPosition={LinksPosition.Top}
-          defaultStyleOverridesToApply='genomics'
           styleOverrides={{
             treeSection: {
-              container: {
-                margin: navigationQuery ? '0.5em 0 0 1em' : 0,
-                overflowY: navigationQuery ? 'visible' : 'auto',
-              },
               ul: {
-                paddingRight: '0',
+                padding: '0 0 0 1.5em',
               }
             },
           }}

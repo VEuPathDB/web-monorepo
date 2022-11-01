@@ -91,7 +91,6 @@ let SiteMap = props => {
       <CheckboxTree 
         {...treeProps} 
         linksPosition={LinksPosition.Top}
-        defaultStyleOverridesToApply='genomics'
       />
     </div>
   );

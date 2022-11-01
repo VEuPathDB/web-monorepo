@@ -41,6 +41,7 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         title="Choose Columns:"
         leafType="columns"
         searchBoxPlaceholder="Search Columns..."
+        searchIconPosition="right"
         tree={getAttributeTree(ontology, recordClass.fullName, question)}
 
         selectedLeaves={formState.attributes}
@@ -52,22 +53,13 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
 
         linksPosition={LinksPosition.Top}
-        defaultStyleOverridesToApply='genomics'
-        styleOverrides={{
-          treeNode: {
-            topLevelNode: {
-              height: '1.5em',
-              alignItems: 'center',
-              overflow: 'hidden',
-            },
-          }
-        }}
       />
 
       <CategoriesCheckboxTree
         title="Choose Tables:"
         leafType="columns"
         searchBoxPlaceholder="Search Tables..."
+        searchIconPosition="right"
         tree={getTableTree(ontology, recordClass.fullName)}
 
         selectedLeaves={formState.tables}
@@ -79,16 +71,6 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onSearchTermChange={getUiUpdateHandler('tableSearchText')}
 
         linksPosition={LinksPosition.Top}
-        defaultStyleOverridesToApply='genomics'
-        styleOverrides={{
-          treeNode: {
-            topLevelNode: {
-              height: '1.5em',
-              alignItems: 'center',
-              overflow: 'hidden',
-            },
-          }
-        }}
       />
 
       { includeSubmit &&

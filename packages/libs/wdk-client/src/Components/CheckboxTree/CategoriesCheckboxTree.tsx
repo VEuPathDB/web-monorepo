@@ -39,6 +39,8 @@ type Props = {
   defaultSelection?: string[];
   expandedBranches: string[];
   searchTerm: string;
+  searchIconName?: 'search' | 'filter';
+  searchIconPosition?: 'left' | 'right';
   renderNode?: (node: CategoryTreeNode, path?: number[]) => React.ReactNode;
   isMultiPick?: boolean;
   onChange: ChangeHandler;
@@ -51,8 +53,11 @@ type Props = {
   showSearchBox?: boolean;
   containerClassName?: string;
   styleOverrides?: CheckboxTreeStyleSpec;
-  type?: string;
-  defaultStyleOverridesToApply?: 'genomics' | 'eda';
+  /** 
+   * Used to apply styling to a container that wraps the CheckboxTree
+   * If omitted, the container uses the sharedCheckboxTreeContainerStyleSpec default styles
+   */
+  type?: 'headerMenu' | 'searchPane';
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
@@ -73,6 +78,8 @@ let {
   renderNode,
   searchBoxPlaceholder,
   searchTerm,
+  searchIconName = 'filter',
+  searchIconPosition = 'left',
   selectedLeaves,
   currentSelection,
   defaultSelection,
@@ -83,7 +90,6 @@ let {
   containerClassName = '',
   styleOverrides = {},
   type,
-  defaultStyleOverridesToApply = 'genomics'
 } = props;
 
   if (tree.children.length == 0) {
@@ -119,7 +125,8 @@ let {
           autoFocusSearchBox={autoFocusSearchBox}
           name={name}
           renderNoResults={renderNoResults}
-          searchIconName="filter"
+          searchIconName={searchIconName}
+          searchIconPosition={searchIconPosition}
           linksPosition={linksPosition}
           showSearchBox={showSearchBox}
           getNodeId={getNodeId}
@@ -138,7 +145,6 @@ let {
           onExpansionChange={onUiChange}
           onSearchTermChange={onSearchTermChange}
           styleOverrides={styleOverrides}
-          defaultStyleOverridesToApply={defaultStyleOverridesToApply}
         /> 
       </div>
     </div>

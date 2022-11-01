@@ -160,17 +160,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
     <div className="wdk-TreeBoxParam">
       <SelectionInfo parameter={props.parameter} {...selectionCounts} alwaysShowCount />
       <CheckboxTree 
-        {...wrappedCheckboxTreeProps}
-        defaultStyleOverridesToApply='genomics'
-        styleOverrides= {{
-          treeNode: {
-            topLevelNode: {
-              height: '1.5em',
-              alignItems: 'center',
-              overflow: 'hidden',
-            },
-          }
-        }} 
+        {...wrappedCheckboxTreeProps} 
       />
     </div>
   );
@@ -232,7 +222,7 @@ export function useDefaultCheckboxTreeProps(
   props: TreeBoxProps,
   tree: TreeBoxVocabNode,
   selectedLeaves: string[]
-) {
+): CheckboxTreeProps<TreeBoxVocabNode> {
   const handleExpansionChange = useCallback((expandedList: string[]) => {
     props.dispatch(setExpandedList({ ...props.context, expandedList }));
   }, [props.dispatch, props.context])
@@ -262,6 +252,7 @@ export function useDefaultCheckboxTreeProps(
     searchBoxPlaceholder: 'Filter list below...',
     searchBoxHelp: makeSearchHelpText('the list below'),
     searchIconName: 'filter',
+    searchIconPosition: 'right',
     renderNoResults,
     searchTerm: props.uiState.searchTerm,
     searchPredicate,
