@@ -1,12 +1,9 @@
-import { createContext, useCallback, useMemo } from 'react';
+import { createContext } from 'react';
 import {
   useWdkService,
   useWdkServiceWithRefresh,
 } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import {
-  preorder,
-  preorderSeq,
-} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   getTargetType,
   getScopes,
@@ -23,16 +20,10 @@ import {
   StudyMetadata,
   StudyRecordClass,
   StudyRecord,
-  Variable,
 } from '../types/study';
-import { VariableDescriptor } from '../types/variable';
 
 // Helpers and Utilities
 import SubsettingClient from '../api/SubsettingClient';
-import {
-  findEntityAndVariable,
-  findCollections,
-} from '../utils/study-metadata';
 
 // Hooks
 import { useStudyRecord } from '..';
@@ -68,7 +59,8 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         )
         .map(getNodeId)
         .toArray()
-        .concat(['bulk_download_url', 'request_needs_approval', 'is_public']);
+        .concat(['bulk_download_url', 'request_needs_approval', 'is_public'])
+        .filter((attribute) => attribute in studyRecordClass.attributesMap);
       const studyRecord = await wdkService
         .getRecord(
           STUDY_RECORD_CLASS_NAME,
@@ -114,8 +106,15 @@ export function useWdkStudyRecords(
   tables: AnswerJsonFormatConfig['tables'] = EMPTY_ARRAY
 ): StudyRecord[] | undefined {
   return useWdkService(
-    (wdkService) =>
-      wdkService.getAnswerJson(
+    async (wdkService) => {
+      const recordClass = await wdkService.findRecordClass('dataset');
+      const finalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(
+        attributes
+      ).filter((attribute) => attribute in recordClass.attributesMap);
+      const finalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
+        (table) => table in recordClass.tablesMap
+      );
+      return wdkService.getAnswerJson(
         {
           searchName: 'Studies',
           searchConfig: {
@@ -123,8 +122,8 @@ export function useWdkStudyRecords(
           },
         },
         {
-          attributes: DEFAULT_STUDY_ATTRIBUTES.concat(attributes),
-          tables: DEFAULT_STUDY_TABLES.concat(tables),
+          attributes: finalAttributes,
+          tables: finalTables,
           sorting: [
             {
               attributeName: 'display_name',
@@ -132,7 +131,8 @@ export function useWdkStudyRecords(
             },
           ],
         }
-      ),
+      );
+    },
     [attributes, tables]
   )?.records;
 }
@@ -190,7 +190,10 @@ export function isStubEntity(entity: StudyEntity) {
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
-      const attributes = ['dataset_id', 'eda_study_id', 'study_access'];
+      const recordClass = await wdkService.findRecordClass('dataset');
+      const attributes = ['dataset_id', 'eda_study_id', 'study_access'].filter(
+        (attribute) => attribute in recordClass.attributesMap
+      );
       const studyRecord = await wdkService
         .getRecord(
           STUDY_RECORD_CLASS_NAME,
