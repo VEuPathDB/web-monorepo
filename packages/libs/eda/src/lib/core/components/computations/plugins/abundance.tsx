@@ -113,6 +113,8 @@ function AbundanceConfigDescriptionComponent({
 
 function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
   const collections = findCollections(rootEntity);
+  if (collections.length === 0)
+    throw new Error('Could not find any collections for this app.');
   return {
     name: 'RankedAbundanceComputation',
     collectionVariable: {
