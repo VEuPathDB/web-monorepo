@@ -660,7 +660,6 @@ class MercatorTable extends React.Component {
             expandedBranches={this.state.expandedBranches}
             onSearchTermChange={this.handleSearchTermChange}
             linksPosition={LinksPosition.Top}
-            defaultStyleOverridesToApply='genomics'
           />
         </div>
 

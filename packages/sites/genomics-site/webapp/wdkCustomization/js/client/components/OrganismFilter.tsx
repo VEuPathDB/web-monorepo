@@ -289,30 +289,18 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
                   Hide zero counts
                 </label>
               ]}
-              defaultStyleOverridesToApply='genomics'
               styleOverrides={{
                 treeLinks: {
                   container: {
-                    flexWrap: 'wrap',
                     justifyContent: 'flex-start',
                     padding: 0,
                     margin: '0.75em 0 0.75em 1.4em',
-                    rowGap: '0.5em',
                   },
-                  actionsContainerStyle: {
-                    flexGrow: 1,
-                  }
                 },
                 searchBox: {
                   optionalIcon: {top: '3px'},
-                  input: {
-                    padding: '0.2em 2em 0.2em 1em',
-                  },
                 },
                 treeSection: {
-                  container: {
-                    margin: '0.75em 0',
-                  },
                   ul: {
                     padding: '0',
                   }

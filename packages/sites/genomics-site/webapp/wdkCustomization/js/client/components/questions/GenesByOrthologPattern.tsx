@@ -209,7 +209,6 @@ function ProfileParameter({
         renderNode={renderNode}
         expandedList={expandedList}
         showRoot
-        defaultStyleOverridesToApply='genomics'
         linksPosition={LinksPosition.Top}
       />
     </div>

@@ -1514,7 +1514,6 @@ class GraphSelector extends React.Component {
           onUiChange={this.handleUiChange}
           onSearchTermChange={this.handleSearchTermChange}
           linksPosition={LinksPosition.Top}
-          defaultStyleOverridesToApply='genomics'
         />
         <div style={{ textAlign: 'center', margin: '10px 0' }}>
           <button
