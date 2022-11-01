@@ -10,6 +10,128 @@ import { DataElementConstraint } from '../types/visualization';
 import { findEntityAndVariable } from './study-metadata';
 
 /**
+ * Returns a list of VariableDescriptors that are not compatible with the
+ * current selectedVariables
+ *
+ */
+export function disabledVariablesForInput(
+  inputName: string,
+  /**
+   * entities must be in root-first order (pre-order)
+   */
+  entities: StudyEntity[],
+  constraints: DataElementConstraintRecord[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined,
+  selectedVariables: VariablesByInputName
+): VariableDescriptor[] {
+  const disabledVariables = excludedVariables(
+    entities[0],
+    inputName,
+    constraints
+  );
+  if (dataElementDependencyOrder == null) {
+    return disabledVariables;
+  }
+  const index = dataElementDependencyOrder.findIndex((el) =>
+    el.includes(inputName as string)
+  ); // ditto
+  // no change if dependencyOrder is not declared
+  if (index === -1) {
+    return disabledVariables;
+  }
+
+  // find the *other* currently user-selected variables at the same/current
+  // level in the dependency array of arrays
+  const currSelectedVariables = dataElementDependencyOrder[index]
+    .filter((i) => i !== (inputName as string)) // not this input!
+    .map((i) => selectedVariables[i])
+    .filter((v): v is VariableDescriptor => v != null);
+
+  // find user-selected variable(s) at first position to the left in the dependency array
+  const prevSelectedVariables = dataElementDependencyOrder
+    .slice(0, index)
+    .map((n) =>
+      n
+        .map((i) => selectedVariables[i])
+        .filter((v): v is VariableDescriptor => v != null)
+    )
+    .reverse()
+    .find((vs) => vs.length > 0);
+
+  // find user-selected variable(s) at first position to the right in the dependency array
+  const nextSelectedVariables = dataElementDependencyOrder
+    .slice(index + 1)
+    .map((n) =>
+      n
+        .map((i) => selectedVariables[i])
+        .filter((v): v is VariableDescriptor => v != null)
+    )
+    .find((vs) => vs.length > 0);
+
+  // Remove variables for entities which are not on either the ancestor or descendent path (or the same entity)
+  // as any of the `currSelectedVariables`
+  currSelectedVariables.forEach((currSelectedVariable) => {
+    const ancestors = ancestorEntitiesForVariable(
+      currSelectedVariable,
+      entities
+    );
+    const descendants = descendantEntitiesForVariable(
+      currSelectedVariable,
+      entities
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !ancestors.includes(entity) && !descendants.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  });
+
+  // Remove variables for entities which are not part of the ancestor path of, or equal to, of each `prevSelectedVariables`
+  // (not quite the same thing as "remove descendants", because of branching in entity tree)
+  prevSelectedVariables?.forEach((prevSelectedVariable) => {
+    const ancestors = ancestorEntitiesForVariable(
+      prevSelectedVariable,
+      entities
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !ancestors.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  });
+
+  // Remove variables for entities which are not descendants of, or equal to, each of `nextSelectedVariables`
+  nextSelectedVariables?.forEach((nextSelectedVariable) => {
+    const descendants = descendantEntitiesForVariable(
+      nextSelectedVariable,
+      entities
+    );
+    const excludedEntities = entities.filter(
+      (entity) => !descendants.includes(entity)
+    );
+    const excludedVariables = excludedEntities.flatMap((entity) =>
+      entity.variables.map((variable) => ({
+        variableId: variable.id,
+        entityId: entity.id,
+      }))
+    );
+    disabledVariables.push(...excludedVariables);
+  });
+
+  return disabledVariables;
+}
+
+/**
  * Returns a new study entity tree with variables and entities removed that do
  * not satisfy the provided constraint.
  */
@@ -22,6 +144,7 @@ export function filterVariablesByConstraint(
     (constraint.allowedShapes == null &&
       constraint.allowedTypes == null &&
       constraint.maxNumValues == null &&
+      constraint.isTemporal == null &&
       constraint.allowMultiValued)
   )
     return rootEntity;
@@ -78,6 +201,8 @@ function variableConstraintPredicate(
         constraint.allowedTypes.includes(variable.type)) &&
       (constraint.maxNumValues == null ||
         constraint.maxNumValues >= variable.distinctValuesCount) &&
+      (constraint.isTemporal == null ||
+        constraint.isTemporal === variable.isTemporal) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
   );
 }
@@ -122,71 +247,67 @@ export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
  */
 
 export function filterConstraints(
-  inputVariables: VariablesByInputName,
+  variables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[],
   selectedVarReference: string // variable reference for which to determine constraints. Ex. xAxisVariable.
 ): DataElementConstraintRecord[] {
-  // Collect applicable constraints based on all variables except the selected one selectedVarReference).
-  const applicableConstraints = constraints.filter((constraintRecord) =>
-    Object.entries(constraintRecord).every(
-      ([variableReference, constraint]) => {
-        const inputVariable = inputVariables[variableReference];
-        // If the inputVariable has not been user-selected, then it is considered to be "in-play"
-        if (inputVariable == null) return true;
-        // Ignore constraints that are on this selectedVarReference
-        if (selectedVarReference === variableReference) return true;
-        // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
-        if (
-          isEmpty(constraint.allowedShapes) &&
-          isEmpty(constraint.allowedTypes) &&
-          constraint.maxNumValues === undefined &&
-          constraint.allowMultiValued
-        )
-          return true;
-
-        // Check that the value's associated variable has compatible characteristics
-        const entityAndVariable = findEntityAndVariable(
-          entities,
-          inputVariable
+  // Find all compatible constraints
+  const compatibleConstraints = constraints.filter((constraintRecord) =>
+    Object.entries(constraintRecord).every(([variableName, constraint]) => {
+      const value = variables[variableName];
+      // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
+      if (value == null) return true;
+      // Ignore constraints that are on this selectedVarReference
+      if (selectedVarReference === variableName) return true;
+      // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
+      if (
+        isEmpty(constraint.allowedShapes) &&
+        isEmpty(constraint.allowedTypes) &&
+        isEmpty(constraint.isTemporal) &&
+        constraint.maxNumValues === undefined &&
+        constraint.allowMultiValued
+      )
+        return true;
+      // Check that the value's associated variable has compatible characteristics
+      const entityAndVariable = findEntityAndVariable(entities, value);
+      if (entityAndVariable == null)
+        throw new Error(
+          `Could not find selected entity and variable: entityId = ${value.entityId}; variableId = ${value.variableId}.`
         );
-        if (entityAndVariable == null)
-          throw new Error(
-            `Could not find selected entity and variable: entityId = ${inputVariable.entityId}; variableId = ${inputVariable.variableId}.`
-          );
-        const { variable } = entityAndVariable;
-        if (variable.type === 'category')
-          throw new Error(
-            'Categories are not allowed for variable constraints.'
-          );
-        const typeIsValid =
-          isEmpty(constraint.allowedTypes) ||
-          constraint.allowedTypes?.includes(variable.type);
-        const shapeIsValid =
-          isEmpty(constraint.allowedShapes) ||
-          constraint.allowedShapes?.includes(variable.dataShape!);
-        const passesMaxValuesConstraint =
-          constraint.maxNumValues === undefined ||
-          constraint.maxNumValues >= variable.distinctValuesCount;
-        const passesMultivalueConstraint =
-          constraint.allowMultiValued || !variable.isMultiValued;
-
-        return (
-          typeIsValid &&
-          shapeIsValid &&
-          passesMaxValuesConstraint &&
-          passesMultivalueConstraint
-        );
-      }
-    )
+      const { variable } = entityAndVariable;
+      if (variable.type === 'category')
+        throw new Error('Categories are not allowed for variable constraints.');
+      const typeIsValid =
+        isEmpty(constraint.allowedTypes) ||
+        constraint.allowedTypes?.includes(variable.type);
+      const shapeIsValid =
+        isEmpty(constraint.allowedShapes) ||
+        constraint.allowedShapes?.includes(variable.dataShape!);
+      const passesMaxValuesConstraint =
+        constraint.maxNumValues === undefined ||
+        constraint.maxNumValues >= variable.distinctValuesCount;
+      const passesTemporalConstraint =
+        isEmpty(constraint.isTemporal) ||
+        constraint.isTemporal === variable.isTemporal;
+      const passesMultivalueConstraint =
+        constraint.allowMultiValued || !variable.isMultiValued;
+      return (
+        typeIsValid &&
+        shapeIsValid &&
+        passesMaxValuesConstraint &&
+        passesTemporalConstraint &&
+        passesMultivalueConstraint
+      );
+    })
   );
 
-  if (applicableConstraints.length === 0)
+  if (compatibleConstraints.length === 0)
     throw new Error(
       'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
     );
 
-  return applicableConstraints;
+  return compatibleConstraints;
 }
 
 export function mergeConstraints(
@@ -198,6 +319,14 @@ export function mergeConstraints(
     keys.map((key): [string, DataElementConstraint] => {
       const constraintA = constraintMapA[key];
       const constraintB = constraintMapB[key];
+      const mergedIsTemporal =
+        constraintA == null || constraintB == null
+          ? undefined
+          : constraintA.isTemporal && constraintB.isTemporal
+          ? true
+          : !constraintA.isTemporal && !constraintB.isTemporal
+          ? false
+          : undefined;
       return [
         key,
         constraintA == null
@@ -214,6 +343,7 @@ export function mergeConstraints(
                 constraintA.minNumVars,
                 constraintB.minNumVars
               ),
+
               allowedShapes: union(
                 constraintA.allowedShapes,
                 constraintB.allowedShapes
@@ -223,6 +353,7 @@ export function mergeConstraints(
                 constraintB.allowedTypes
               ),
               maxNumValues: mergeMaxNumValues(constraintA, constraintB),
+              isTemporal: mergedIsTemporal,
               allowMultiValued:
                 constraintA.allowMultiValued && constraintB.allowMultiValued,
               // Since constraintA and constraintB are for the same variable slot
@@ -245,4 +376,39 @@ export function mergeMaxNumValues(
     constraintB.maxNumValues === undefined ? Infinity : constraintB.maxNumValues
   );
   return mergedMaxNumValues === Infinity ? undefined : mergedMaxNumValues;
+}
+
+/**
+ * returns an array of entities that are either the same entity as the provided variable, or its ancestors
+ */
+export function ancestorEntitiesForVariable(
+  variable: VariableDescriptor,
+  entities: StudyEntity[]
+): StudyEntity[] {
+  const ancestors = entities.reduceRight((ancestors, entity) => {
+    if (
+      entity.id === variable.entityId ||
+      entity.children?.includes(ancestors[0])
+    ) {
+      ancestors.unshift(entity);
+    }
+    return ancestors;
+  }, [] as StudyEntity[]);
+
+  return ancestors;
+}
+
+/**
+ * returns an array of entities that are either the same entity as the provided variable, or its descendants
+ */
+function descendantEntitiesForVariable(
+  variable: VariableDescriptor,
+  entities: StudyEntity[]
+): StudyEntity[] {
+  const entity = entities.find((entity) => entity.id === variable.entityId);
+  if (entity == null) throw new Error('Unkonwn entity: ' + variable.entityId);
+  const descendants = Array.from(
+    preorder(entity, (entity) => entity.children ?? [])
+  );
+  return descendants;
 }

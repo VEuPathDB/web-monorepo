@@ -107,6 +107,10 @@
 
   &-AnalysisNameEditBox {
     font-style: italic;
+
+    i.wdk-Icon.edit {
+      color: #338899 !important;
+    }
   }
 
   &-SeeAllFiltersButton {
@@ -139,7 +143,7 @@
   .WorkspaceNavigation {
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 1050;
     background: white;
 
     h1 {
@@ -155,10 +159,15 @@
     display: flex;
     overflow-x: auto;
     max-width: 97vw;
+    align-items: center;
+    justify-content: space-evenly;
   }
 
   .expanded-diagram {
-    margin: auto;
+  }
+
+  .MiniMapContainer {
+    box-shadow: 2px 2px 7px #00000050;
   }
 
   &-Variables {
@@ -197,6 +206,7 @@
     padding-top: 1em;
     .Variables {
       grid-area: variables;
+      max-height: 100vh;
     }
     .FilterChips {
       height: 2em;
@@ -205,7 +215,6 @@
     .TabularDownload {
       grid-area: tabular-download;
       font-size: 3em;
-      // margin-right: 1em;
     }
     .Filter {
       grid-area: filter;

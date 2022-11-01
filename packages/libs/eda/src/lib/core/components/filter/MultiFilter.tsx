@@ -31,6 +31,8 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { gray, red } from './colors';
 import { debounce } from 'lodash';
+import { isTableVariable } from './guards';
+import { useDeepValue } from '../../hooks/immutability';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -74,7 +76,7 @@ export function MultiFilter(props: Props) {
       // This function uses {entity.id}/{variable.id} to generate a field's term
       // and parent property value. That is not desired here, so we have to do
       // some post-processing to use {variable.id} for those properties.
-      entitiesToFields([entity])
+      entitiesToFields([entity], 'variableTree')
         .filter((field) => !field.term.startsWith('entity:'))
         .map((field) => ({
           ...field,
@@ -84,6 +86,12 @@ export function MultiFilter(props: Props) {
             : field.parent?.split('/')[1],
         })),
     [entity]
+  );
+
+  // Used to look up a variable and grab its vocabulary property in leafSummariesPromise
+  const variablesById = useMemo(
+    () => Object.fromEntries(entity.variables.map((v) => [v.id, v])),
+    [entity.variables]
   );
 
   // Create a WDK FieldTree
@@ -162,21 +170,10 @@ export function MultiFilter(props: Props) {
   ]);
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
-  // Use a JSON string here so that we don't udpate counts for every render.
-  // array.filter will always return a _new_ array, but strings are immutable,
-  // so this trick will cause same-valued arrays to be referentially equal.
-  const otherFiltersJson = useMemo(
-    () =>
-      JSON.stringify(
-        filters?.filter(
-          (filter) =>
-            !(
-              filter.entityId === entity.id && filter.variableId === variable.id
-            )
-        )
-      ),
-    [filters, entity.id, variable.id]
+  const otherFilters = useDeepValue(
+    filters?.filter(
+      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+    )
   );
 
   // State used to control if the "Update counts" button is disabled.
@@ -189,7 +186,6 @@ export function MultiFilter(props: Props) {
   // Counts retrieved from the backend, used for the table display.
   const leafSummariesPromise = usePromise(
     useCallback(() => {
-      const otherFilters = JSON.parse(otherFiltersJson);
       return Promise.all(
         leaves.map((leaf) => {
           const thisFilterWithoutLeaf = thisFilter && {
@@ -232,10 +228,15 @@ export function MultiFilter(props: Props) {
                 value ?? 0,
               ])
             );
+            const variable = variablesById[leaf.term];
+            if (variable == null || !isTableVariable(variable))
+              throw new Error(
+                `Could not find a categorical EDA variable associated with the leaf field "${leaf.term}".`
+              );
             return {
               term: leaf.term,
               display: leaf.display,
-              valueCounts: Object.keys(bgValueByLabel).map((label) => ({
+              valueCounts: variable.vocabulary?.map((label) => ({
                 value: label,
                 count: bgValueByLabel[label],
                 filteredCount: fgValueByLabel[label] ?? 0,
@@ -250,11 +251,12 @@ export function MultiFilter(props: Props) {
       );
     }, [
       thisFilter,
-      otherFiltersJson,
+      otherFilters,
       leaves,
       entity.id,
       subsettingClient,
       studyMetadata.id,
+      variablesById,
     ])
   );
 

@@ -1,20 +1,20 @@
 import { useCallback, useMemo } from 'react';
 
-import { StudyEntity } from '../../types/study';
+import { VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
-import './VariableTree.scss';
-import { useStudyEntities } from '../../hooks/study';
+import { useStudyEntities } from '../../hooks/workspace';
 import {
   useValuesMap,
   useFlattenedFields,
-  useFeaturedFields,
   useFieldTree,
   useFlattenFieldsByTerm,
+  useFeaturedFieldsFromTree,
 } from './hooks';
 
+import { ClearSelectionButton } from './VariableTreeDropdown';
+
 export interface VariableTreeProps {
-  rootEntity: StudyEntity;
   starredVariables?: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   entityId?: string;
@@ -25,11 +25,13 @@ export interface VariableTreeProps {
   onChange: (variable?: VariableDescriptor) => void;
   /** Indicate whether or not variables with children   */
   showMultiFilterDescendants?: boolean;
+  /** The "scope" of variables which should be offered. */
+  scope: VariableScope;
+  asDropdown?: boolean;
 }
 
 export default function VariableTree({
   customDisabledVariableMessage,
-  rootEntity,
   disabledVariables,
   starredVariables,
   toggleStarredVariable,
@@ -37,13 +39,15 @@ export default function VariableTree({
   variableId,
   onChange,
   showMultiFilterDescendants = false,
+  scope,
+  asDropdown,
 }: VariableTreeProps) {
-  const entities = useStudyEntities(rootEntity);
+  const entities = useStudyEntities();
   const valuesMap = useValuesMap(entities);
-  const flattenedFields = useFlattenedFields(entities);
+  const flattenedFields = useFlattenedFields(entities, scope);
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
-  const featuredFields = useFeaturedFields(entities);
   const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
@@ -68,6 +72,15 @@ export default function VariableTree({
       ? fieldsByTerm[`${entityId}/${variableId}`]
       : undefined;
 
+  const variable = entities
+    .find((e) => e.id === entityId)
+    ?.variables.find((v) => v.id === variableId);
+  const label = variable?.displayName ?? 'Select a variable';
+
+  const clearSelectionButton = (
+    <ClearSelectionButton onClick={() => onChange()} disabled={!variable} />
+  );
+
   return (
     <VariableList
       mode="singleSelection"
@@ -82,6 +95,9 @@ export default function VariableTree({
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      asDropdown={asDropdown}
+      dropdownLabel={label}
+      clearSelectionButton={clearSelectionButton}
     />
   );
 }

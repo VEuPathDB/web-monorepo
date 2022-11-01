@@ -1,9 +1,9 @@
 /*
  * Link to the page for a variable
  */
-import React from 'react';
+import { useMemo } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
-import { useStudyMetadata, useMakeVariableLink } from '../hooks/workspace';
+import { useMakeVariableLink } from '../hooks/workspace';
 
 export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
   entityId?: string;
@@ -12,13 +12,21 @@ export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
 
 export function VariableLink(props: Props) {
   const { entityId, variableId, ...rest } = props;
-  const studyMetadata = useStudyMetadata();
   const makeVariableLink = useMakeVariableLink();
+  const variableLink = useMemo(
+    () =>
+      makeVariableLink({
+        entityId,
+        variableId,
+      }),
+    [makeVariableLink, entityId, variableId]
+  );
+
   return (
     <Link
-      {...rest}
       replace
-      to={makeVariableLink({ entityId, variableId }, studyMetadata)}
+      {...rest}
+      to={{ pathname: variableLink, state: { scrollToTop: false } }}
     />
   );
 }

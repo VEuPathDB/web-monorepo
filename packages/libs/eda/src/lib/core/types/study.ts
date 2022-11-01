@@ -5,12 +5,50 @@ import {
   RecordInstance,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { TimeUnit } from './general';
+import { Field } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 // Aliases
 // -------
 
 export type StudyRecordClass = RecordClass;
 export type StudyRecord = RecordInstance;
+
+// DistributionDefaults
+// --------------------
+
+export type DateDistributionDefaults = t.TypeOf<
+  typeof DateDistributionDefaults
+>;
+export const DateDistributionDefaults = t.intersection([
+  t.type({
+    rangeMin: t.string,
+    rangeMax: t.string,
+  }),
+  t.partial({
+    displayRangeMin: t.string,
+    displayRangeMax: t.string,
+    binWidth: t.number,
+    binUnits: TimeUnit,
+    binWidthOverride: t.number,
+  }),
+]);
+
+export type NumberDistributionDefaults = t.TypeOf<
+  typeof NumberDistributionDefaults
+>;
+export const NumberDistributionDefaults = t.intersection([
+  t.type({
+    rangeMin: t.number,
+    rangeMax: t.number,
+  }),
+  t.partial({
+    // TODO This is supposed to be required, but the backend isn't populating it.
+    displayRangeMin: t.number,
+    displayRangeMax: t.number,
+    binWidth: t.number,
+    binWidthOverride: t.number,
+  }),
+]);
 
 // StudyVariable
 // -------------
@@ -43,7 +81,16 @@ export const VariableDataShape = t.union([
 const VariableDisplayType = t.keyof({
   default: null,
   multifilter: null,
-  hidden: null,
+  hidden: null, // to be deprecated
+  geoaggregator: null,
+  latitude: null,
+  longitude: null,
+});
+
+export type VariableScope = t.TypeOf<typeof VariableScope>;
+export const VariableScope = t.keyof({
+  download: null,
+  variableTree: null,
 });
 
 export const VariableTreeNode_Base = t.intersection([
@@ -51,6 +98,7 @@ export const VariableTreeNode_Base = t.intersection([
     id: t.string,
     providerLabel: t.string,
     displayName: t.string,
+    hideFrom: t.array(t.union([VariableScope, t.literal('everywhere')])),
   }),
   t.partial({
     parentId: t.string,
@@ -99,15 +147,7 @@ export const NumberVariable = t.intersection([
   ]),
   t.type({
     dataShape: VariableDataShape,
-    rangeMin: t.number,
-    rangeMax: t.number,
-  }),
-  t.partial({
-    // TODO This is supposed to be required, but the backend isn't populating it.
-    displayRangeMin: t.number,
-    displayRangeMax: t.number,
-    binWidth: t.number,
-    binWidthOverride: t.number,
+    distributionDefaults: NumberDistributionDefaults,
   }),
 ]);
 
@@ -119,15 +159,7 @@ export const DateVariable = t.intersection([
   }),
   t.type({
     dataShape: VariableDataShape,
-    rangeMin: t.string,
-    rangeMax: t.string,
-  }),
-  t.partial({
-    displayRangeMin: t.string,
-    displayRangeMax: t.string,
-    binWidth: t.number,
-    binUnits: TimeUnit,
-    binWidthOverride: t.number,
+    distributionDefaults: DateDistributionDefaults,
   }),
 ]);
 
@@ -169,6 +201,27 @@ export const Variable = t.union([
 export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
 export const VariableTreeNode = t.union([Variable, VariableCategory]);
 
+export type CollectionVariableTreeNode = t.TypeOf<
+  typeof CollectionVariableTreeNode
+>;
+export const CollectionVariableTreeNode = t.intersection([
+  t.type({
+    dataShape: t.string,
+    distributionDefaults: NumberDistributionDefaults,
+    id: t.string,
+    memberVariableIds: t.array(t.string),
+    type: t.string,
+  }),
+  t.partial({
+    displayName: t.string,
+    imputeZero: t.boolean,
+    precision: t.number,
+    units: t.string,
+    entityId: t.string,
+    entityDisplayName: t.string,
+  }),
+]);
+
 // StudyEntity
 // -----------
 
@@ -191,6 +244,7 @@ const _StudyEntityBase = t.intersection([
   }),
   t.partial({
     displayNamePlural: t.string,
+    collections: t.array(CollectionVariableTreeNode),
   }),
 ]);
 
@@ -224,3 +278,9 @@ export const StudyMetadata = t.intersection([
     rootEntity: StudyEntity,
   }),
 ]);
+
+export type FieldWithMetadata = Field & {
+  precision?: number;
+  variableName?: string;
+  isFeatured?: boolean;
+};

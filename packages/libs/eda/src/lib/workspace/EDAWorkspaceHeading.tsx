@@ -3,26 +3,23 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import Path from 'path';
 
 // Components
-import {
-  // Download,
-  Table,
-} from '@veupathdb/core-components/dist/components/icons';
+import { H3, Table, FloatingButton } from '@veupathdb/coreui';
 
-import FloatingButton from '@veupathdb/core-components/dist/components/buttons/FloatingButton';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisNameDialog } from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
-import { useStudyRecord } from '../core/hooks/workspace';
-// import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
+import { useStudyMetadata, useStudyRecord } from '../core/hooks/workspace';
 
 // Definitions & Utilities
 import { cx } from './Utils';
 import { AnalysisState, DEFAULT_ANALYSIS_NAME } from '../core';
-// import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-// import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
+import { isStubEntity } from '../core/hooks/study';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */
@@ -34,7 +31,7 @@ export function EDAWorkspaceHeading({
   analysisState,
 }: EDAWorkspaceHeadingProps) {
   const studyRecord = useStudyRecord();
-  // const attemptAction = useAttemptActionCallback();
+  const studyMetadata = useStudyMetadata();
   const analysis = analysisState?.analysis;
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const { url } = useRouteMatch();
@@ -46,6 +43,15 @@ export function EDAWorkspaceHeading({
 
   const analysisId = getAnalysisId(analysis);
 
+  const permissionsValue = usePermissions();
+  const showButtons =
+    !permissionsValue.loading &&
+    Boolean(
+      permissionsValue.permissions.perDataset[
+        studyRecord.attributes.dataset_id as string
+      ]?.actionAuthorization.subsetting
+    );
+
   useEffect(() => {
     setDialogIsOpen(false);
   }, [analysisId]);
@@ -53,71 +59,76 @@ export function EDAWorkspaceHeading({
   return (
     <>
       <div className={cx('-Heading')}>
-        <h1>{safeHtml(studyRecord.displayName)}</h1>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          {/* {studyRecord.attributes.bulk_download_url && (
+        <H3 additionalStyles={{ padding: 0 }}>
+          {safeHtml(studyRecord.displayName)}
+        </H3>
+        {showButtons && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+            }}
+          >
             <div>
               <FloatingButton
-                text="Download"
-                tooltip="Download study files"
-                icon={Download}
-                onPress={() => {
-                  attemptAction(Action.download, {
-                    studyId: studyRecord.id[0].value,
-                    onAllow: () => {
-                      window.location.href = (studyRecord.attributes
-                        .bulk_download_url as LinkAttributeValue).url;
-                    },
-                  });
-                }}
+                themeRole="primary"
+                text="New analysis"
+                tooltip="Create a new analysis"
+                textTransform="capitalize"
+                size="medium"
+                // @ts-ignore
+                icon={AddIcon}
+                onPress={
+                  /** If (1) there is no analysis, (2) we're in an unsaved new
+                   * analysis (here `analysis` is still undefined in this case),
+                   * or (3) we're in a renamed analysis, just go straight to the
+                   * new analysis. Otherwise, show the renaming dialog. */
+                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                    ? () => setDialogIsOpen(true)
+                    : redirectToNewAnalysis
+                }
               />
             </div>
-          )} */}
-          <div>
-            <FloatingButton
-              themeRole="primary"
-              text="New Analysis"
-              tooltip="Create a new analysis"
-              size="medium"
-              // @ts-ignore
-              icon={AddIcon}
-              onPress={
-                /** If (1) there is no analysis, (2) we're in an unsaved new
-                 * analysis (here `analysis` is still undefined in this case),
-                 * or (3) we're in a renamed analysis, just go straight to the
-                 * new analysis. Otherwise, show the renaming dialog. */
-                analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
-                  ? () => setDialogIsOpen(true)
-                  : redirectToNewAnalysis
-              }
-            />
+            <div>
+              <FloatingButton
+                themeRole="primary"
+                text="My analyses"
+                textTransform="capitalize"
+                tooltip="View all of your analyses for this study"
+                icon={Table}
+                onPress={() =>
+                  history.push(
+                    '/eda?s=' + encodeURIComponent(studyRecord.displayName)
+                  )
+                }
+              />
+            </div>
           </div>
-          <div>
-            <FloatingButton
-              themeRole="primary"
-              text="My analyses"
-              tooltip="View all your analyses of this study"
-              icon={Table}
-              onPress={() =>
-                history.push(
-                  '/eda?s=' + encodeURIComponent(studyRecord.displayName)
-                )
-              }
-            />
-          </div>
-        </div>
+        )}
+        {analysisState && isSavedAnalysis(analysis) && (
+          <AnalysisNameDialog
+            isOpen={dialogIsOpen}
+            setIsOpen={setDialogIsOpen}
+            initialAnalysisName={analysis.displayName}
+            setAnalysisName={(newName) =>
+              newName &&
+              analysis.displayName !== newName &&
+              analysisState.setName(newName)
+            }
+            redirectToNewAnalysis={redirectToNewAnalysis}
+          />
+        )}
       </div>
-      {analysisState && isSavedAnalysis(analysis) && (
-        <AnalysisNameDialog
-          isOpen={dialogIsOpen}
-          setIsOpen={setDialogIsOpen}
-          initialAnalysisName={analysis.displayName}
-          setAnalysisName={(newName) =>
-            newName && analysisState.setName(newName)
-          }
-          redirectToNewAnalysis={redirectToNewAnalysis}
-        />
-      )}
+      {getStudyAccess(studyRecord) !== 'prerelease' &&
+        isStubEntity(studyMetadata.rootEntity) && (
+          <Banner
+            banner={{
+              type: 'error',
+              message: 'Data for this study is not currently available.',
+            }}
+          />
+        )}
     </>
   );
 }

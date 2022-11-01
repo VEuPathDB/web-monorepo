@@ -12,8 +12,12 @@ import {
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { AnswerJsonFormatConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  AnswerJsonFormatConfig,
+  RecordInstance,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
+// Definitions
 import {
   StudyEntity,
   StudyMetadata,
@@ -21,9 +25,17 @@ import {
   StudyRecord,
   Variable,
 } from '../types/study';
-import SubsettingClient from '../api/SubsettingClient';
 import { VariableDescriptor } from '../types/variable';
-import { findEntityAndVariable } from '../utils/study-metadata';
+
+// Helpers and Utilities
+import SubsettingClient from '../api/SubsettingClient';
+import {
+  findEntityAndVariable,
+  findCollections,
+} from '../utils/study-metadata';
+
+// Hooks
+import { useStudyRecord } from '..';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -35,7 +47,7 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-interface HookValue {
+export interface HookValue {
   studyRecordClass: StudyRecordClass;
   studyRecord: StudyRecord;
 }
@@ -56,7 +68,129 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         )
         .map(getNodeId)
         .toArray()
-        .concat(['bulk_download_url']);
+        .concat(['bulk_download_url', 'request_needs_approval', 'is_public']);
+      const studyRecord = await wdkService
+        .getRecord(
+          STUDY_RECORD_CLASS_NAME,
+          [{ name: 'dataset_id', value: datasetId }],
+          { attributes }
+        )
+        .catch((error) => {
+          console.warn(
+            'Unable to load study dataset record. See error below. Using stub record.'
+          );
+          console.error(error);
+          const attrs = attributes.reduce(
+            (attrs, name) =>
+              Object.assign(attrs, {
+                [name]: '######',
+              }),
+            { dataset_id: datasetId }
+          );
+          return {
+            displayName: 'Fake Study',
+            id: [{ name: 'dataset_id', value: datasetId }],
+            recordClassName: STUDY_RECORD_CLASS_NAME,
+            attributes: attrs,
+            tables: {},
+            tableErrors: [],
+          };
+        });
+      return {
+        studyRecord,
+        studyRecordClass,
+      };
+    },
+    [datasetId]
+  );
+}
+
+const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'eda_study_id'];
+const DEFAULT_STUDY_TABLES: string[] = [];
+const EMPTY_ARRAY: string[] = [];
+
+export function useWdkStudyRecords(
+  attributes: AnswerJsonFormatConfig['attributes'] = EMPTY_ARRAY,
+  tables: AnswerJsonFormatConfig['tables'] = EMPTY_ARRAY
+): StudyRecord[] | undefined {
+  return useWdkService(
+    (wdkService) =>
+      wdkService.getAnswerJson(
+        {
+          searchName: 'Studies',
+          searchConfig: {
+            parameters: {},
+          },
+        },
+        {
+          attributes: DEFAULT_STUDY_ATTRIBUTES.concat(attributes),
+          tables: DEFAULT_STUDY_TABLES.concat(tables),
+          sorting: [
+            {
+              attributeName: 'display_name',
+              direction: 'ASC',
+            },
+          ],
+        }
+      ),
+    [attributes, tables]
+  )?.records;
+}
+
+/**
+ * Get a list of all the releases for the current study.
+ *
+ * The information obtained from the WDK service isn't all that
+ * user friendly so we massage the response a bit so that it is
+ * easier to interact with.
+ *
+ * To simplify the use of this data elsewhere, a type definition
+ * is included.
+ *
+ * */
+export function useWdkStudyReleases(): Array<WdkStudyRelease> {
+  const studyRecord = useStudyRecord();
+
+  return (
+    useWdkService((wdkService) => {
+      return wdkService.getRecord(STUDY_RECORD_CLASS_NAME, studyRecord.id, {
+        tables: ['DownloadVersion'],
+      });
+    })?.tables['DownloadVersion'].map(
+      (release) => ({
+        // DAVE/JAMIE: I was sure if I could tell TS that these values
+        // would always be present.
+        releaseNumber: release.build_number?.toString(),
+        description: release.note?.toString(),
+        date: release.release_date?.toString(),
+      }),
+      [studyRecord.id]
+    ) ?? []
+  );
+}
+
+export type WdkStudyRelease = {
+  releaseNumber: string | undefined;
+  description: string | undefined;
+  date: string | undefined;
+};
+
+export const STUB_ENTITY: StudyEntity = {
+  id: '__STUB__',
+  idColumnName: 'stub',
+  displayName: 'stub',
+  description: 'This is a stub entity. It does not exist in the database.',
+  variables: [],
+};
+
+export function isStubEntity(entity: StudyEntity) {
+  return entity === STUB_ENTITY;
+}
+
+export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
+  return useWdkServiceWithRefresh(
+    async (wdkService) => {
+      const attributes = ['dataset_id', 'eda_study_id', 'study_access'];
       const studyRecord = await wdkService
         .getRecord(
           STUDY_RECORD_CLASS_NAME,
@@ -82,86 +216,24 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
             attributes: attrs,
             tables: {},
             tableErrors: [],
-          };
+          } as RecordInstance;
         });
-      return {
-        studyRecord,
-        studyRecordClass,
-      };
-    },
-    [datasetId]
-  );
-}
-
-const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'eda_study_id'];
-const DEFAULT_STUDY_TABLES: string[] = [];
-
-export function useWdkStudyRecords(
-  attributes: AnswerJsonFormatConfig['attributes'] = DEFAULT_STUDY_ATTRIBUTES,
-  tables: AnswerJsonFormatConfig['tables'] = DEFAULT_STUDY_TABLES
-): StudyRecord[] | undefined {
-  return useWdkService(
-    (wdkService) =>
-      wdkService.getAnswerJson(
-        {
-          searchName: 'Studies',
-          searchConfig: {
-            parameters: {},
-          },
-        },
-        {
-          attributes,
-          tables,
-          sorting: [
-            {
-              attributeName: 'display_name',
-              direction: 'ASC',
-            },
-          ],
-        }
-      ),
-    [attributes, tables]
-  )?.records;
-}
-
-export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
-  return useWdkServiceWithRefresh(
-    async (wdkService) => {
-      const studyRecord = await wdkService.getRecord(
-        STUDY_RECORD_CLASS_NAME,
-        [{ name: 'dataset_id', value: datasetId }],
-        { attributes: ['dataset_id', 'eda_study_id'] }
-      );
       if (typeof studyRecord.attributes.eda_study_id !== 'string')
         throw new Error(
           'Could not find study with associated dataset id `' + datasetId + '`.'
         );
-      return client.getStudyMetadata(studyRecord.attributes.eda_study_id);
+      try {
+        return await client.getStudyMetadata(
+          studyRecord.attributes.eda_study_id
+        );
+      } catch (error) {
+        console.error(error);
+        return {
+          id: studyRecord.attributes.eda_study_id,
+          rootEntity: STUB_ENTITY,
+        };
+      }
     },
     [datasetId, client]
-  );
-}
-
-export function useFindEntityAndVariable(entities: StudyEntity[]) {
-  return useCallback(
-    (variable?: VariableDescriptor) => {
-      const entAndVar = findEntityAndVariable(entities, variable);
-      if (entAndVar == null || entAndVar.variable.type === 'category') return;
-      return entAndVar as {
-        entity: StudyEntity;
-        variable: Variable;
-      };
-    },
-    [entities]
-  );
-}
-
-export function useStudyEntities(rootEntity: StudyEntity) {
-  return useMemo(
-    () =>
-      Array.from(
-        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
-      ),
-    [rootEntity]
   );
 }

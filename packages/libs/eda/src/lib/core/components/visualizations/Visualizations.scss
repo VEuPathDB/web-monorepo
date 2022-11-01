@@ -131,6 +131,7 @@
       }
       &:disabled {
         background: #eee;
+        color: #aaa;
       }
     }
     &Name {
@@ -207,7 +208,6 @@ $data-table-inner-border: 1px solid #888;
 .VariableCoverageTable {
   @include data-table;
   width: 400px;
-
   .percentage {
     color: #333;
     font-size: 0.85em;
@@ -281,6 +281,12 @@ $data-table-inner-border: 1px solid #888;
   &-EntityName__unselected {
     visibility: hidden;
   }
+}
+
+.OutputEntitySubtitle {
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: -10px;
 }
 
 // R-square table for Scatter plot's Best fit option

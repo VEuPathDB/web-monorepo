@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Path from 'path';
 import { v4 as uuid } from 'uuid';
+import { orderBy } from 'lodash';
 import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
@@ -19,32 +20,49 @@ import {
   VisualizationDescriptor,
 } from '../../types/visualization';
 import { Grid } from '../Grid';
-import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
-import { isEqual } from 'lodash';
+import { isEqual, groupBy } from 'lodash';
 import { EntityCounts } from '../../hooks/entityCounts';
+import { useStudyRecord } from '../../hooks/workspace';
 import { PromiseHookState } from '../../hooks/promise';
+import { GeoConfig } from '../../types/geoConfig';
+import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import AddIcon from '@material-ui/icons/Add';
+import { plugins } from '../computations/plugins';
+import { AnalysisState } from '../../hooks/analysis';
+import { ComputationAppOverview } from '../../types/visualization';
+import { VisualizationPlugin } from './VisualizationPlugin';
+import { Modal } from '@veupathdb/coreui';
+import { useVizIconColors } from './implementations/selectorIcons/types';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
+  analysisState: AnalysisState;
+  computationAppOverview: ComputationAppOverview;
   computation: Computation;
   updateVisualizations: (
     visualizations:
       | Visualization[]
       | ((visualizations: Visualization[]) => Visualization[])
   ) => void;
-  visualizationTypes: Partial<Record<string, VisualizationType>>;
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariable: VariableDescriptor) => void;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  geoConfigs: GeoConfig[];
+  baseUrl?: string;
+  isSingleAppMode: boolean;
+  disableThumbnailCreation?: boolean;
 }
 
 /**
@@ -55,18 +73,54 @@ interface Props {
  * @param props Props
  */
 export function VisualizationsContainer(props: Props) {
+  const { baseUrl } = { ...props };
   const { url } = useRouteMatch();
+
+  const currentStudyRecordId = useStudyRecord().id[0].value;
+  const studiesForPerformanceWarning = [
+    'DS_a885240fc4',
+    'DS_5c41b87221',
+    'DS_81ef25b6ac',
+  ];
+  const SHOULD_SHOW_WARNING_KEY = `shouldShowWarning-${currentStudyRecordId}`;
+  const [
+    shouldShowWarning,
+    setShouldShowWarning,
+  ] = useLocalBackedState<boolean>(
+    true,
+    SHOULD_SHOW_WARNING_KEY,
+    (boolean) => String(boolean),
+    (string) => string !== 'false'
+  );
+
+  const handleCloseWarning = () => {
+    setShouldShowWarning(false);
+  };
+
   return (
     <div className={cx()}>
+      {studiesForPerformanceWarning.includes(currentStudyRecordId) &&
+      shouldShowWarning ? (
+        <Banner
+          banner={{
+            type: 'warning',
+            message:
+              'Visualizations might take up to a minute to load because this study has a large amount of data.',
+            pinned: false,
+            intense: false,
+          }}
+          onClose={handleCloseWarning}
+        ></Banner>
+      ) : null}
       <Switch>
         <Route exact path={url}>
           <ConfiguredVisualizations {...props} />
         </Route>
-        <Route exact path={`${url}/new`}>
+        <Route exact path={`${baseUrl || url}/new`}>
           <NewVisualizationPicker {...props} />
         </Route>
         <Route
-          path={`${url}/:id`}
+          path={`${baseUrl || url}/:id`}
           render={(routeProps: RouteComponentProps<{ id: string }>) => (
             <FullScreenVisualization
               id={routeProps.match.params.id}
@@ -80,132 +134,220 @@ export function VisualizationsContainer(props: Props) {
 }
 
 function ConfiguredVisualizations(props: Props) {
-  const { computation, updateVisualizations, visualizationsOverview } = props;
+  const {
+    analysisState,
+    computation,
+    updateVisualizations,
+    visualizationsOverview,
+    baseUrl,
+    isSingleAppMode,
+  } = props;
   const { url } = useRouteMatch();
 
   return (
-    <Grid>
-      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
-        <i className="fa fa-plus"></i>
-        New visualization
-      </Link>
-      {computation.visualizations
-        .map((viz) => {
-          const meta = visualizationsOverview.find(
-            (v) => v.name === viz.descriptor.type
-          );
-          return (
-            <div key={viz.visualizationId}>
-              <div className={cx('-ConfiguredVisualization')}>
-                <div className={cx('-ConfiguredVisualizationActions')}>
-                  <div>
-                    <Tooltip title="Delete visualization">
-                      <button
-                        type="button"
-                        className="link"
-                        onClick={() =>
-                          updateVisualizations((visualizations) =>
-                            visualizations.filter(
-                              (v) => v.visualizationId !== viz.visualizationId
+    <>
+      {isSingleAppMode ? (
+        <Link
+          to={{
+            pathname: `${baseUrl || url}/new`,
+            state: { scrollToTop: false },
+          }}
+          style={{
+            display: 'block',
+            width: 'fit-content',
+          }}
+        >
+          <FilledButton
+            text="New visualization"
+            onPress={() => null}
+            textTransform="none"
+            themeRole="primary"
+            icon={AddIcon}
+            styleOverrides={{
+              container: { marginTop: 15 },
+            }}
+          />
+        </Link>
+      ) : null}
+      <Grid>
+        {computation.visualizations
+          .map((viz) => {
+            const meta = visualizationsOverview.find(
+              (v) => v.name === viz.descriptor.type
+            );
+            return (
+              <div key={viz.visualizationId}>
+                <div className={cx('-ConfiguredVisualization')}>
+                  <div className={cx('-ConfiguredVisualizationActions')}>
+                    <div>
+                      <Tooltip title="Delete visualization">
+                        <button
+                          type="button"
+                          className="link"
+                          onClick={() => {
+                            updateVisualizations((visualizations) =>
+                              visualizations.filter(
+                                (v) => v.visualizationId !== viz.visualizationId
+                              )
+                            );
+                            /* 
+                              Here we're deleting the computation in the event we delete
+                              the computation's last remaining visualization.
+                            */
+                            if (
+                              !isSingleAppMode &&
+                              computation.visualizations.length === 1
+                            ) {
+                              deleteComputationWithNoVisualizations(
+                                analysisState,
+                                computation.computationId
+                              );
+                            }
+                          }}
+                        >
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <Tooltip title="Copy visualization">
+                        <button
+                          type="button"
+                          className="link"
+                          onClick={() =>
+                            updateVisualizations((visualizations) =>
+                              visualizations.concat({
+                                ...viz,
+                                displayName: `Copy of ${
+                                  viz.displayName ?? 'visualization'
+                                }`,
+                                visualizationId: uuid(),
+                              })
                             )
-                          )
-                        }
-                      >
-                        <i className="fa fa-trash"></i>
-                      </button>
-                    </Tooltip>
+                          }
+                        >
+                          <i className="fa fa-clone"></i>
+                        </button>
+                      </Tooltip>
+                    </div>
                   </div>
-                  <div>
-                    <Tooltip title="Copy visualization">
-                      <button
-                        type="button"
-                        className="link"
-                        onClick={() =>
-                          updateVisualizations((visualizations) =>
-                            visualizations.concat({
-                              ...viz,
-                              displayName: `Copy of ${
-                                viz.displayName ?? 'visualization'
-                              }`,
-                              visualizationId: uuid(),
-                            })
-                          )
+                  {/* add the Link of thumbnail box here to avoid click conflict with icons */}
+                  <>
+                    <Link
+                      to={{
+                        pathname: `${baseUrl || url}/${viz.visualizationId}`,
+                        state: { scrollToTop: false },
+                      }}
+                    >
+                      {viz.descriptor.thumbnail ? (
+                        <img
+                          alt={viz.displayName}
+                          src={viz.descriptor.thumbnail}
+                        />
+                      ) : (
+                        <div
+                          className={cx('-ConfiguredVisualizationNoPreview')}
+                        >
+                          Preview unavailable
+                        </div>
+                      )}
+                      {/* make gray-out box on top of thumbnail */}
+                      <ConfiguredVisualizationGrayOut
+                        filters={props.filters}
+                        currentPlotFilters={
+                          (viz.descriptor as VisualizationDescriptor)
+                            .currentPlotFilters as Filter[]
                         }
-                      >
-                        <i className="fa fa-clone"></i>
-                      </button>
-                    </Tooltip>
-                  </div>
-                </div>
-                {/* add the Link of thumbnail box here to avoid click conflict with icons */}
-                <>
-                  <Link replace to={`${url}/${viz.visualizationId}`}>
-                    {viz.descriptor.thumbnail ? (
-                      <img
-                        alt={viz.displayName}
-                        src={viz.descriptor.thumbnail}
                       />
-                    ) : (
-                      <div className={cx('-ConfiguredVisualizationNoPreview')}>
-                        Preview unavailable
-                      </div>
-                    )}
-                    {/* make gray-out box on top of thumbnail */}
-                    <ConfiguredVisualizationGrayOut
-                      filters={props.filters}
-                      currentPlotFilters={
-                        (viz.descriptor as VisualizationDescriptor)
-                          .currentPlotFilters as Filter[]
-                      }
-                    />
-                  </Link>
-                </>
+                    </Link>
+                  </>
+                </div>
+                <div className={cx('-ConfiguredVisualizationTitle')}>
+                  {viz.displayName ?? 'Unnamed visualization'}
+                </div>
+                <div className={cx('-ConfiguredVisualizationSubtitle')}>
+                  {meta?.displayName}
+                </div>
               </div>
-              <div className={cx('-ConfiguredVisualizationTitle')}>
-                {viz.displayName ?? 'Unnamed visualization'}
-              </div>
-              <div className={cx('-ConfiguredVisualizationSubtitle')}>
-                {meta?.displayName}
-              </div>
-            </div>
-          );
-        })
-        .reverse()}
-    </Grid>
+            );
+          })
+          .reverse()}
+      </Grid>
+    </>
   );
 }
 
-function NewVisualizationPicker(props: Props) {
+type NewVisualizationPickerPropKeys =
+  | 'visualizationPlugins'
+  | 'visualizationsOverview'
+  | 'updateVisualizations'
+  | 'computation'
+  | 'geoConfigs';
+
+interface NewVisualizationPickerProps
+  extends Pick<Props, NewVisualizationPickerPropKeys> {
+  onVisualizationCreated?: (
+    VisualizationId: string,
+    computationId: string
+  ) => void;
+  includeHeader?: boolean;
+}
+
+export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
   const {
-    visualizationTypes,
+    visualizationPlugins,
     visualizationsOverview,
     updateVisualizations,
     computation,
+    geoConfigs,
+    onVisualizationCreated = function (visualizationId, computationId) {
+      history.replace(`../${computationId}/${visualizationId}`);
+    },
+    includeHeader = true,
   } = props;
+  const colors = useVizIconColors();
   const history = useHistory();
   const { computationId } = computation;
+
   return (
     <div className={cx('-PickerContainer')}>
-      <div className={cx('-PickerActions')}>
-        <Link replace to={`../${computationId}`}>
-          <i className="fa fa-close"></i>
-        </Link>
-      </div>
-      <h3>Select a visualization</h3>
+      {includeHeader && (
+        <>
+          <div className={cx('-PickerActions')}>
+            <Link replace to={`../${computationId}`}>
+              <i className="fa fa-close"></i>
+            </Link>
+          </div>
+          <h3>Select a visualization</h3>
+        </>
+      )}
       <Grid>
-        {visualizationsOverview.map((vizOverview, index) => {
-          const vizType = visualizationTypes[vizOverview.name!];
+        {/* orderBy ensures that available visualizations render ahead of those in development */}
+        {orderBy(
+          visualizationsOverview,
+          [(viz) => (viz.name && visualizationPlugins[viz.name] ? 1 : 0)],
+          ['desc']
+        ).map((vizOverview, index) => {
+          const vizPlugin = visualizationPlugins[vizOverview.name!];
+          const disabled =
+            vizPlugin == null ||
+            (vizPlugin.isEnabledInPicker != null &&
+              vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
+          // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
           return (
             <div
-              className={cx('-PickerEntry', vizType == null && 'disabled')}
+              className={cx('-PickerEntry', disabled && 'disabled')}
               key={`vizType${index}`}
             >
               {/* add viz description tooltip for viz picker */}
               <Tooltip title={<>{vizOverview.description}</>}>
                 <span>
                   <button
+                    style={{
+                      cursor: disabled ? 'not-allowed' : 'cursor',
+                    }}
                     type="button"
-                    disabled={vizType == null}
+                    disabled={disabled}
                     onClick={async () => {
                       const visualizationId = uuid();
                       updateVisualizations((visualizations) =>
@@ -214,15 +356,15 @@ function NewVisualizationPicker(props: Props) {
                           displayName: 'Unnamed visualization',
                           descriptor: {
                             type: vizOverview.name!,
-                            configuration: vizType?.createDefaultConfig(),
+                            configuration: vizPlugin?.createDefaultConfig(),
                           },
                         })
                       );
-                      history.replace(`../${computationId}/${visualizationId}`);
+                      onVisualizationCreated(visualizationId, computationId);
                     }}
                   >
-                    {vizType ? (
-                      <vizType.selectorComponent {...vizOverview} />
+                    {vizPlugin ? (
+                      <vizPlugin.selectorIcon {...colors} />
                     ) : (
                       <PlaceholderIcon name={vizOverview.name} />
                     )}
@@ -230,15 +372,15 @@ function NewVisualizationPicker(props: Props) {
                 </span>
               </Tooltip>
               <div className={cx('-PickerEntryName')}>
-                {vizOverview.displayName?.includes(', ') ? (
-                  <div>
-                    {vizOverview.displayName.split(', ')[0]} <br />
-                    {vizOverview.displayName.split(', ')[1]}
-                  </div>
-                ) : (
-                  <div>{vizOverview.displayName}</div>
+                <div>
+                  {vizOverview.displayName
+                    ?.split(/(, )/g)
+                    .map((str) => (str === ', ' ? <br /> : str))}
+                </div>
+                {vizPlugin == null && <i>(Coming soon!)</i>}
+                {vizPlugin != null && disabled && (
+                  <i>(Not applicable to this study)</i>
                 )}
-                {vizType == null && <i>(Coming soon!)</i>}
               </div>
             </div>
           );
@@ -248,9 +390,59 @@ function NewVisualizationPicker(props: Props) {
   );
 }
 
-function FullScreenVisualization(props: Props & { id: string }) {
+interface NewVisualizationPickerModalProps extends NewVisualizationPickerProps {
+  visible: boolean;
+  onVisibleChange: (visible: boolean) => void;
+}
+
+export function NewVisualizationPickerModal(
+  props: NewVisualizationPickerModalProps
+) {
+  const { visible, onVisibleChange, ...pickerProps } = props;
+  return (
+    <Modal
+      includeCloseButton
+      toggleVisible={onVisibleChange}
+      visible={visible}
+      title="Select a visualization"
+      themeRole="primary"
+    >
+      <div style={{ fontSize: '80%' }}>
+        <NewVisualizationPicker {...pickerProps} includeHeader={false} />
+      </div>
+    </Modal>
+  );
+}
+
+type FullScreenVisualizationPropKeys =
+  | 'analysisState'
+  | 'computationAppOverview'
+  | 'visualizationPlugins'
+  | 'visualizationsOverview'
+  | 'updateVisualizations'
+  | 'computation'
+  | 'filters'
+  | 'starredVariables'
+  | 'toggleStarredVariable'
+  | 'totalCounts'
+  | 'filteredCounts'
+  | 'geoConfigs'
+  | 'baseUrl'
+  | 'isSingleAppMode'
+  | 'disableThumbnailCreation';
+
+interface FullScreenVisualizationProps
+  extends Pick<Props, FullScreenVisualizationPropKeys> {
+  id: string;
+  /** Optionally override the action icons */
+  actions?: React.ReactNode;
+}
+
+export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   const {
-    visualizationTypes,
+    analysisState,
+    computationAppOverview,
+    visualizationPlugins,
     visualizationsOverview,
     id,
     updateVisualizations,
@@ -260,15 +452,26 @@ function FullScreenVisualization(props: Props & { id: string }) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    geoConfigs,
+    baseUrl,
+    isSingleAppMode,
+    disableThumbnailCreation,
+    actions,
   } = props;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
-  const vizType = viz && visualizationTypes[viz.descriptor.type];
-  const overview = visualizationsOverview.find(
-    (v) => v.name === viz?.descriptor.type
+  const vizPlugin = viz && visualizationPlugins[viz.descriptor.type];
+  const overviews = useMemo(
+    () =>
+      groupBy(visualizationsOverview, (v) =>
+        v.name === viz?.descriptor.type ? 'mine' : 'others'
+      ),
+    [visualizationsOverview, viz]
   );
+  const overview = overviews.mine != null ? overviews.mine[0] : undefined;
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
+
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
       updateVisualizations((visualizations) =>
@@ -304,6 +507,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
     );
   }, [filters, id]);
 
+  // Function to update the thumbnail on the configured viz selection page
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
       updateVisualizations((visualizations) =>
@@ -317,66 +521,95 @@ function FullScreenVisualization(props: Props & { id: string }) {
     [updateVisualizations, id]
   );
   if (viz == null) return <div>Visualization not found.</div>;
-  if (vizType == null) return <div>Visualization type not implemented.</div>;
+  if (vizPlugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
+  const plugin = plugins[computation.descriptor.type] ?? undefined;
 
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
-        <div>
-          <Tooltip title="Delete visualization">
-            <button
-              type="button"
-              className="link"
-              onClick={() => {
-                if (viz == null) return;
-                updateVisualizations((visualizations) =>
-                  visualizations.filter((v) => v.visualizationId !== id)
-                );
-                history.replace(Path.resolve(history.location.pathname, '..'));
-              }}
-            >
-              <i className="fa fa-trash"></i>
-            </button>
-          </Tooltip>
-        </div>
-        <div>
-          <Tooltip title="Copy visualization">
-            <button
-              type="button"
-              className="link"
-              onClick={() => {
-                if (viz == null) return;
-                const vizCopyId = uuid();
-                updateVisualizations((visualizations) =>
-                  visualizations.concat({
-                    ...viz,
-                    visualizationId: vizCopyId,
-                    displayName:
-                      'Copy of ' + (viz.displayName || 'unnamed visualization'),
-                  })
-                );
-                history.replace(
-                  Path.resolve(history.location.pathname, '..', vizCopyId)
-                );
-              }}
-            >
-              <i className="fa fa-clone"></i>
-            </button>
-          </Tooltip>
-        </div>
-        <Tooltip title="Minimize visualization">
-          <Link replace to={`../${computationId}`}>
-            <i className="fa fa-window-minimize"></i>
-          </Link>
-        </Tooltip>
+        {actions ?? (
+          <>
+            <div>
+              <Tooltip title="Delete visualization">
+                <button
+                  type="button"
+                  className="link"
+                  onClick={() => {
+                    if (viz == null) return;
+                    updateVisualizations((visualizations) =>
+                      visualizations.filter((v) => v.visualizationId !== id)
+                    );
+                    /* 
+                      Here we're deleting the computation in the event we delete
+                      the computation's last remaining visualization.
+                    */
+                    if (
+                      !isSingleAppMode &&
+                      computation.visualizations.length === 1
+                    ) {
+                      deleteComputationWithNoVisualizations(
+                        analysisState,
+                        computationId
+                      );
+                    }
+                    history.replace(
+                      Path.resolve(
+                        history.location.pathname,
+                        isSingleAppMode ? '..' : '../..'
+                      )
+                    );
+                  }}
+                >
+                  <i className="fa fa-trash"></i>
+                </button>
+              </Tooltip>
+            </div>
+            <div>
+              <Tooltip title="Copy visualization">
+                <button
+                  type="button"
+                  className="link"
+                  onClick={() => {
+                    if (viz == null) return;
+                    const vizCopyId = uuid();
+                    updateVisualizations((visualizations) =>
+                      visualizations.concat({
+                        ...viz,
+                        visualizationId: vizCopyId,
+                        displayName:
+                          'Copy of ' +
+                          (viz.displayName || 'unnamed visualization'),
+                      })
+                    );
+                    history.replace(
+                      Path.resolve(history.location.pathname, '..', vizCopyId)
+                    );
+                  }}
+                >
+                  <i className="fa fa-clone"></i>
+                </button>
+              </Tooltip>
+            </div>
+            <Tooltip title="Minimize visualization">
+              <Link
+                to={{
+                  pathname: `../${baseUrl ? '' : computationId}`, // Should go to ../visualizations unless in single app mode
+                  state: { scrollToTop: false },
+                }}
+              >
+                <i className="fa fa-window-minimize"></i>
+              </Link>
+            </Tooltip>
+          </>
+        )}
       </div>
       {viz == null ? (
         <ContentError>Visualization not found.</ContentError>
       ) : computation == null ? (
         <ContentError>Computation not found.</ContentError>
-      ) : vizType == null ? (
+      ) : vizPlugin == null ? (
         <ContentError>
           <>Visualization type not implemented: {viz.descriptor.type}</>
         </ContentError>
@@ -399,7 +632,20 @@ function FullScreenVisualization(props: Props & { id: string }) {
             />
           </h3>
           <div className="Subtitle">{overview?.displayName}</div>
-          <vizType.fullscreenComponent
+          {plugin && (
+            <plugin.configurationComponent
+              analysisState={analysisState}
+              computation={computation}
+              visualizationId={viz.visualizationId}
+              computationAppOverview={computationAppOverview}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              geoConfigs={geoConfigs}
+              addNewComputation={() => null}
+            />
+          )}
+          <vizPlugin.fullscreenComponent
+            options={vizPlugin.options}
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
             visualization={viz}
@@ -408,9 +654,13 @@ function FullScreenVisualization(props: Props & { id: string }) {
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             updateConfiguration={updateConfiguration}
-            updateThumbnail={updateThumbnail}
+            updateThumbnail={
+              disableThumbnailCreation ? undefined : updateThumbnail
+            }
             totalCounts={totalCounts}
             filteredCounts={filteredCounts}
+            geoConfigs={geoConfigs}
+            otherVizOverviews={overviews.others}
           />
         </div>
       )}
@@ -442,4 +692,16 @@ function ConfiguredVisualizationGrayOut({
   ) : (
     <></>
   );
+}
+
+function deleteComputationWithNoVisualizations(
+  analysisState: AnalysisState,
+  computationId: string
+) {
+  const computations = analysisState.analysis?.descriptor.computations;
+  if (computations) {
+    analysisState.setComputations([
+      ...computations.filter((c) => c.computationId !== computationId),
+    ]);
+  }
 }

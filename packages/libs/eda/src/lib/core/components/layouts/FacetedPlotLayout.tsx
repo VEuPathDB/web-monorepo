@@ -11,7 +11,7 @@ const defaultContainerStyles: CSSProperties = {
 };
 
 const defaultLegendStyles: CSSProperties = {
-  marginLeft: '5em',
+  order: -1,
 };
 
 const defaultPlotStyles: CSSProperties = {
@@ -34,6 +34,7 @@ export function FacetedPlotLayout({
   legendNode,
   legendStyles,
   plotNode,
+  controlsNode,
   plotStyles,
   tableGroupNode,
   tableGroupStyles,
@@ -46,14 +47,17 @@ export function FacetedPlotLayout({
       }}
     >
       <div style={{ ...defaultTableGroupStyles, ...tableGroupStyles }}>
-        {tableGroupNode}
         {legendNode && (
           <div style={{ ...defaultLegendStyles, ...legendStyles }}>
             {legendNode}
           </div>
         )}
+        {tableGroupNode}
       </div>
-      <div style={{ ...defaultPlotStyles, ...plotStyles }}>{plotNode}</div>
+      <div style={{ ...defaultPlotStyles, ...plotStyles }}>
+        {plotNode}
+        {controlsNode}
+      </div>
     </div>
   );
 }

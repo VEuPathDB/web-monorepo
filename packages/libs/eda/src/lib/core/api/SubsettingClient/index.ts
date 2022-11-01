@@ -1,9 +1,6 @@
 import { array, number, type } from 'io-ts';
-import { memoize } from 'lodash';
-import { saveAs } from 'file-saver';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import {
   createJsonRequest,
   FetchClientWithCredentials,
@@ -11,7 +8,7 @@ import {
 } from '@veupathdb/http-utils';
 
 import { Filter } from '../../types/filter';
-import { StudyMetadata, StudyOverview } from '../../types/study';
+import { StudyEntity, StudyMetadata, StudyOverview } from '../../types/study';
 
 import {
   DistributionRequestParams,
@@ -20,13 +17,9 @@ import {
   TabularDataRequestParams,
   TabularDataResponse,
 } from './types';
+import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 export default class SubsettingClient extends FetchClientWithCredentials {
-  static getClient = memoize(
-    (baseUrl: string, wdkService: WdkService): SubsettingClient =>
-      new SubsettingClient({ baseUrl }, wdkService)
-  );
-
   getStudies(): Promise<StudyOverview[]> {
     return this.fetch(
       createJsonRequest({
@@ -45,10 +38,12 @@ export default class SubsettingClient extends FetchClientWithCredentials {
       createJsonRequest({
         method: 'GET',
         path: `/studies/${studyId}`,
-        transformResponse: (res) =>
-          ioTransformer(StudyResponse)(res).then((r) =>
-            orderVariables(r.study)
-          ),
+        transformResponse: async (res) => {
+          const { study } = await ioTransformer(StudyResponse)(res);
+          assertValidStudy(study);
+          orderVariables(study);
+          return study;
+        },
       })
     );
   }
@@ -105,26 +100,21 @@ export default class SubsettingClient extends FetchClientWithCredentials {
    * of the customized fetch call in `DataClient` because there would need to
    * be some underlying changes that would need to be made to it.
    */
-  tabularDataDownload(
+  async tabularDataDownload(
     studyId: string,
     entityId: string,
     params: TabularDataRequestParams
-  ): void {
-    fetch(
-      `/eda-subsetting-service/studies/${studyId}/entities/${entityId}/tabular`,
-      {
-        ...this.init,
-        method: 'POST',
-        body: JSON.stringify(params),
-        headers: {
-          accept: 'text/tab-separated-values',
-          'content-type': 'application/json',
-          ...this.init.headers,
-        },
-      }
-    )
-      .then((response) => response.blob())
-      .then((blob) => saveAs(blob, 'dataset.tsv'));
+  ): Promise<void> {
+    submitAsForm({
+      action: `${
+        this.baseUrl
+      }/studies/${studyId}/entities/${entityId}/tabular?Auth-Key=${encodeURIComponent(
+        await this.findUserRequestAuthKey()
+      )}`,
+      inputs: {
+        data: JSON.stringify(params),
+      },
+    });
   }
 }
 
@@ -146,6 +136,24 @@ function orderVariables(study: StudyMetadata) {
         : 0;
     });
   return study;
+}
+
+function assertValidStudy(study: StudyMetadata) {
+  const entitiesWithoutVariables: StudyEntity[] = [];
+  for (const entity of preorder(
+    study.rootEntity,
+    (entity) => entity.children ?? []
+  )) {
+    if (entity.variables.length === 0) entitiesWithoutVariables.push(entity);
+  }
+  if (entitiesWithoutVariables.length > 0) {
+    const entityDescriptors = entitiesWithoutVariables.map(
+      (entity) => `${entity.displayName} (${entity.id})`
+    );
+    throw new Error(
+      `Found entities without variables: ${entityDescriptors.join(', ')}.`
+    );
+  }
 }
 
 export * from './types';

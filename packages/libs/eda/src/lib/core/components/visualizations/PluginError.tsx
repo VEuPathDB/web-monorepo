@@ -16,7 +16,7 @@ const defaultCases: Case[] = [
 ];
 
 const emptyCaseMessage =
-  'The visualization cannot be made because there is no plottable data for currently selected variable(s) in the current subset.';
+  'The visualization cannot be made because there is no plottable data for selected variable(s) in the current subset.';
 
 export default function PluginError({ error, customCases, outputSize }: Props) {
   // TO DO: errors from back end should arrive with a separate response code property

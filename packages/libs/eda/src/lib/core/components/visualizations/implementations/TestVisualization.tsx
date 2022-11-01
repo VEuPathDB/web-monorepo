@@ -1,15 +1,12 @@
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import selectorIcon from './selectorIcons/BoxSVG';
 
-export const testVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const testVisualization = createVisualizationPlugin({
+  selectorIcon,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: () => undefined,
-};
+});
 
-function SelectorComponent() {
-  return <div>Test in selector</div>;
-}
-
-function FullscreenComponent(props: VisualizationProps) {
+function FullscreenComponent() {
   return <div>Test in fullscreen</div>;
 }

@@ -1,16 +1,12 @@
 // import MosaicControls from '@veupathdb/components/lib/components/plotControls/MosaicControls';
 import Mosaic, {
-  MosaicPlotProps as MosaicProps,
+  MosaicPlotProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
 import {
   FacetedData,
   MosaicPlotData,
 } from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
-// import { ErrorManagement } from '@veupathdb/components/lib/types/general';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import DataClient, {
@@ -18,11 +14,15 @@ import DataClient, {
   MosaicRequestParams,
   TwoByTwoResponse,
 } from '../../../api/DataClient';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
@@ -32,13 +32,13 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
-import rxc from './selectorIcons/RxC.svg';
-import twoxtwo from './selectorIcons/2x2.svg';
-import { TabbedDisplay } from '@veupathdb/core-components';
+import { VisualizationProps } from '../VisualizationTypes';
+import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
+import RxCSVG from './selectorIcons/RxCSVG';
+import { TabbedDisplay } from '@veupathdb/coreui';
 
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -52,6 +52,9 @@ import { Variable } from '../../../types/study';
 import PluginError from '../PluginError';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedMosaicPlot';
+import { useVizConfig } from '../../../hooks/visualizations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { LayoutOptions } from '../../layouts/types';
 
 const plotContainerStyles = {
   width: 750,
@@ -106,43 +109,25 @@ type ContTableDataWithCoverage = (ContTableData | FacetedData<ContTableData>) &
 type TwoByTwoDataWithCoverage = (TwoByTwoData | FacetedData<TwoByTwoData>) &
   CoverageStatistics;
 
-export const contTableVisualization: VisualizationType = {
-  selectorComponent: ContTableSelectorComponent,
+export const contTableVisualization = createVisualizationPlugin({
+  selectorIcon: RxCSVG,
   fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
-export const twoByTwoVisualization: VisualizationType = {
-  selectorComponent: TwoByTwoSelectorComponent,
+export const twoByTwoVisualization = createVisualizationPlugin({
+  selectorIcon: TwoByTwoSVG,
   fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
-function ContTableSelectorComponent() {
-  return (
-    <img
-      alt="RxC contingency table"
-      style={{ height: '100%', width: '100%' }}
-      src={rxc}
-    />
-  );
-}
+interface Options extends LayoutOptions {}
 
-function ContTableFullscreenComponent(props: VisualizationProps) {
+function ContTableFullscreenComponent(props: VisualizationProps<Options>) {
   return <MosaicViz {...props} />;
 }
 
-function TwoByTwoSelectorComponent() {
-  return (
-    <img
-      alt="2x2 contingency table"
-      style={{ height: '100%', width: '100%' }}
-      src={twoxtwo}
-    />
-  );
-}
-
-function TwoByTwoFullscreenComponent(props: VisualizationProps) {
+function TwoByTwoFullscreenComponent(props: VisualizationProps<Options>) {
   return <MosaicViz {...props} isTwoByTwo />;
 }
 
@@ -159,12 +144,13 @@ const MosaicConfig = t.partial({
   showMissingness: t.boolean,
 });
 
-type Props = VisualizationProps & {
+type Props<T> = VisualizationProps<T> & {
   isTwoByTwo?: boolean;
 };
 
-function MosaicViz(props: Props) {
+function MosaicViz(props: Props<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateThumbnail,
@@ -180,25 +166,17 @@ function MosaicViz(props: Props) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      MosaicConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof MosaicConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
+  // set default tab to Mosaic in TabbedDisplay component
+  const [activeTab, setActiveTab] = useState('Mosaic');
 
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<MosaicConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    MosaicConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
 
   const handleInputVariableChange = useCallback(
@@ -235,7 +213,7 @@ function MosaicViz(props: Props) {
     'showMissingness'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const { xAxisVariable, yAxisVariable, facetVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -258,13 +236,12 @@ function MosaicViz(props: Props) {
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
     vizConfig,
-    'xAxisVariable',
-    entities
+    'xAxisVariable'
   );
 
   const data = usePromise(
     useCallback(async (): Promise<
-      ContTableDataWithCoverage | TwoByTwoDataWithCoverage | undefined
+      TwoByTwoDataWithCoverage | ContTableDataWithCoverage | undefined
     > => {
       if (
         vizConfig.xAxisVariable == null ||
@@ -349,8 +326,8 @@ function MosaicViz(props: Props) {
     ])
   );
 
-  const xAxisLabel = axisLabelWithUnit(xAxisVariable);
-  const yAxisLabel = axisLabelWithUnit(yAxisVariable);
+  const xAxisLabel = variableDisplayWithUnit(xAxisVariable);
+  const yAxisLabel = variableDisplayWithUnit(yAxisVariable);
 
   const tableGroupNode = (
     <>
@@ -377,18 +354,18 @@ function MosaicViz(props: Props) {
           {
             role: 'X-axis',
             required: true,
-            display: axisLabelWithUnit(xAxisVariable),
+            display: variableDisplayWithUnit(xAxisVariable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
             required: true,
-            display: axisLabelWithUnit(yAxisVariable),
+            display: variableDisplayWithUnit(yAxisVariable),
             variable: vizConfig.yAxisVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
@@ -396,30 +373,54 @@ function MosaicViz(props: Props) {
     </>
   );
 
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data]
+  );
+
+  const mosaicProps: MosaicPlotProps = {
+    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
+    independentAxisLabel: xAxisLabel ?? 'X-axis',
+    dependentAxisLabel: yAxisLabel ?? 'Y-axis',
+    displayLegend: false,
+    interactive: !isFaceted(data.value) ? true : false,
+    showSpinner: data.pending,
+    displayLibraryControls: false,
+  };
+
   const plotNode = (
     <TabbedDisplay
+      themeRole="primary"
+      onTabSelected={(selectedTabKey: string) => {
+        if (activeTab !== selectedTabKey) setActiveTab(selectedTabKey);
+      }}
+      activeTab={activeTab}
       tabs={[
         {
+          key: 'Mosaic',
           displayName: 'Mosaic',
           content: (
-            <MosaicPlotWithControls
-              updateThumbnail={updateThumbnail}
-              data={data.value}
-              containerStyles={
-                !isFaceted(data.value) ? plotContainerStyles : undefined
-              }
-              spacingOptions={
-                !isFaceted(data.value) ? plotSpacingOptions : undefined
-              }
-              independentAxisLabel={xAxisLabel ?? 'X-axis'}
-              dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
-              displayLegend={false}
-              interactive={!isFaceted(data.value) ? true : false}
-              showSpinner={data.pending}
-            />
+            <div style={{ marginTop: 15 }}>
+              {isFaceted<ContTableData | TwoByTwoData>(data.value) ? (
+                <FacetedMosaicPlot
+                  facetedPlotRef={plotRef}
+                  data={data.value}
+                  componentProps={mosaicProps}
+                  modalComponentProps={{
+                    ...mosaicProps,
+                    containerStyles: modalPlotContainerStyles,
+                  }}
+                />
+              ) : (
+                <Mosaic {...mosaicProps} ref={plotRef} data={data.value} />
+              )}
+            </div>
           ),
         },
         {
+          key: 'Table',
           displayName: 'Table',
           content: (
             <ContingencyTable
@@ -440,12 +441,18 @@ function MosaicViz(props: Props) {
           ),
         },
         {
+          key: 'Statistics',
           displayName: 'Statistics',
           content: isFaceted(data.value)
             ? vizConfig.showMissingness
               ? 'Statistics are not calculated when the "include no data" option is selected'
               : facetVariable != null && (
-                  <div style={facetedStatsTableContainerStyles}>
+                  <div
+                    style={{
+                      ...facetedStatsTableContainerStyles,
+                      marginTop: 15,
+                    }}
+                  >
                     {data.value.facets.map(({ label, data }, index) => (
                       <table key={index}>
                         <tbody>
@@ -483,10 +490,25 @@ function MosaicViz(props: Props) {
     />
   );
 
+  const controlsNode = <>{/* controls would go here */}</>;
+
   const outputSize =
     facetVariable != null && !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
+
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [
+    dataElementConstraints,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+  ]);
+
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -496,18 +518,22 @@ function MosaicViz(props: Props) {
             {
               name: 'xAxisVariable',
               label: 'X-axis',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'yAxisVariable',
               label: 'Y-axis',
-              role: 'primary',
+              role: 'axis',
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as const,
+                ]),
           ]}
           entities={entities}
           selectedVariables={{
@@ -526,17 +552,25 @@ function MosaicViz(props: Props) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           outputEntity={outputEntity}
         />
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
+        controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
+        isMosaicPlot={true}
       />
     </div>
   );
@@ -612,55 +646,6 @@ function ContTableStats(props?: {
       </table>
     </div>
   ) : null;
-}
-
-interface MosaicPlotWithControlsProps extends Omit<MosaicProps, 'data'> {
-  data?:
-    | TwoByTwoDataWithCoverage
-    | TwoByTwoData
-    | ContTableDataWithCoverage
-    | ContTableData;
-  updateThumbnail: (src: string) => void;
-}
-
-function MosaicPlotWithControls({
-  data,
-  updateThumbnail,
-  ...mosaicProps
-}: MosaicPlotWithControlsProps) {
-  const displayLibraryControls = false;
-
-  const plotRef = useUpdateThumbnailEffect(
-    updateThumbnail,
-    plotContainerStyles,
-    [data]
-  );
-
-  return (
-    <>
-      {isFaceted(data) ? (
-        <FacetedMosaicPlot
-          facetedPlotRef={plotRef}
-          data={data}
-          componentProps={mosaicProps}
-          modalComponentProps={{
-            independentAxisLabel: mosaicProps.independentAxisLabel,
-            dependentAxisLabel: mosaicProps.dependentAxisLabel,
-            displayLegend: mosaicProps.displayLegend,
-            containerStyles: modalPlotContainerStyles,
-          }}
-        />
-      ) : (
-        <Mosaic
-          {...mosaicProps}
-          ref={plotRef}
-          data={data}
-          displayLibraryControls={displayLibraryControls}
-        />
-      )}
-      {/* controls go here as needed */}
-    </>
-  );
 }
 
 /**
@@ -862,6 +847,8 @@ function reorderData(
   | ContTableDataWithCoverage
   | ContTableData {
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);

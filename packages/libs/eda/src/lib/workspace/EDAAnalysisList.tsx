@@ -10,6 +10,7 @@ import {
   useConfiguredAnalysisClient,
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
+  useConfiguredDownloadClient,
 } from '../core/hooks/client';
 
 // Data and Utilities
@@ -19,6 +20,7 @@ export interface Props {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
   userServiceUrl: string;
+  downloadServiceUrl: string;
 }
 
 /**
@@ -30,8 +32,8 @@ export function EDAAnalysisList(props: Props) {
   );
 
   const dataClient = useConfiguredDataClient(props.dataServiceUrl);
-
   const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(props.downloadServiceUrl);
 
   const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
 
@@ -43,6 +45,7 @@ export function EDAAnalysisList(props: Props) {
         dataClient={dataClient}
         className={cx()}
         analysisClient={analysisClient}
+        downloadClient={downloadClient}
       >
         <EDAWorkspaceHeading />
         <AnalysisList analysisStore={analysisClient} />

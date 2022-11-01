@@ -1,10 +1,11 @@
 .EDAWorkspace-VariableList {
+  height: 100%;
   display: flex;
   flex-flow: column;
 
   .FeaturedVariables {
     padding: 0.5em 1em;
-    border: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
     summary {
       outline: none;
       cursor: pointer;
@@ -65,9 +66,9 @@
   }
 
   .wdk-CheckboxTree {
-    height: 60vh;
     display: flex;
     flex-flow: column;
+    overflow: auto;
   }
 
   /* configuring scrolling for CheckboxTree list only: anchoring search bar */
@@ -78,7 +79,7 @@
     flex-grow: 2;
   }
 
-  .wdk-CheckboxTreeNodeContent {
+  .wdk-CheckboxTreeList__not-selectable .wdk-CheckboxTreeNodeContent {
     margin-left: 1ex;
   }
 
@@ -142,6 +143,8 @@
 
 .EDAWorkspace-VariableTreeDropdown {
   position: relative;
+  display: flex;
+  align-items: center;
 
   &TreeContainer {
     // border: 1px solid;
@@ -162,4 +165,9 @@
       border-bottom: 1px solid #ccc;
     }
   }
+}
+
+// variant
+.Variables .FeaturedVariables {
+  border: 1px solid #ccc;
 }

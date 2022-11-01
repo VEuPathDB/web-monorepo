@@ -5,7 +5,7 @@ import FacetedHistogram from '@veupathdb/components/lib/plots/facetedPlots/Facet
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
@@ -17,14 +17,9 @@ import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import {
   isEqual,
-  min,
-  max,
   groupBy,
   mapValues,
   size,
@@ -33,21 +28,21 @@ import {
   map,
   keys,
 } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import {
   HistogramRequestParams,
   HistogramResponse,
 } from '../../../api/DataClient';
 import DataClient from '../../../api/DataClient';
-import { PromiseHookState, usePromise } from '../../../hooks/promise';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { Filter } from '../../../types/filter';
+import { usePromise } from '../../../hooks/promise';
 import {
-  DateVariable,
-  NumberVariable,
-  StudyEntity,
-  Variable,
-} from '../../../types/study';
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
+import { Filter } from '../../../types/filter';
+import { DateVariable, NumberVariable, Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -55,10 +50,10 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
-import histogram from './selectorIcons/histogram.svg';
+import { VisualizationProps } from '../VisualizationTypes';
+import HistogramSVG from './selectorIcons/HistogramSVG';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   vocabularyWithMissingData,
   grayOutLastSeries,
@@ -68,10 +63,8 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
 } from '../../../utils/visualization';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
-import { defaultIndependentAxisRange } from '../../../utils/default-independent-axis-range';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 // for custom legend
@@ -79,11 +72,45 @@ import PlotLegend, {
   LegendItemsProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
-import { EntityCounts } from '../../../hooks/entityCounts';
-//DKDK a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+// a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
-type HistogramDataWithCoverageStatistics = (
+// concerning axis range control
+import {
+  NumberOrDateRange,
+  NumberRange,
+  DateRange,
+} from '../../../types/general';
+import { padISODateTime } from '../../../utils/date-conversion';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+// use variant
+import { truncationConfig } from '../../../utils/truncation-config-utils';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { UIState } from '../../filter/HistogramFilter';
+// change defaultIndependentAxisRange to hook
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
+import {
+  useFilteredConstraints,
+  useNeutralPaletteProps,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import {
+  histogramDefaultIndependentAxisMinMax,
+  histogramDefaultDependentAxisMinMax,
+} from '../../../utils/axis-range-calculations';
+import { LayoutOptions } from '../../layouts/types';
+import { OverlayOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
+
+// reset to defaults button
+import { ResetButtonCoreUI } from '../../ResetButton';
+
+export type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
 ) &
@@ -107,26 +134,18 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const histogramVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const histogramVisualization = createVisualizationPlugin({
+  selectorIcon: HistogramSVG,
   fullscreenComponent: HistogramViz,
   createDefaultConfig: createDefaultConfig,
-};
-
-function SelectorComponent() {
-  return (
-    <img
-      alt="Histogram"
-      style={{ height: '100%', width: '100%' }}
-      src={histogram}
-    />
-  );
-}
+});
 
 function createDefaultConfig(): HistogramConfig {
   return {
     dependentAxisLogScale: false,
     valueSpec: 'count',
+    independentAxisValueSpec: 'Full',
+    dependentAxisValueSpec: 'Full',
   };
 }
 
@@ -134,9 +153,9 @@ type ValueSpec = t.TypeOf<typeof ValueSpec>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
-type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
+export type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const HistogramConfig = t.intersection([
+export const HistogramConfig = t.intersection([
   t.type({
     dependentAxisLogScale: t.boolean,
     valueSpec: ValueSpec,
@@ -150,11 +169,19 @@ const HistogramConfig = t.intersection([
     showMissingness: t.boolean,
     // for custom legend: vizconfig.checkedLegendItems
     checkedLegendItems: t.array(t.string),
+    // axis range control
+    independentAxisRange: NumberOrDateRange,
+    dependentAxisRange: NumberRange,
+    independentAxisValueSpec: t.string,
+    dependentAxisValueSpec: t.string,
   }),
 ]);
 
-function HistogramViz(props: VisualizationProps) {
+interface Options extends LayoutOptions, OverlayOptions {}
+
+function HistogramViz(props: VisualizationProps<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateConfiguration,
@@ -169,26 +196,25 @@ function HistogramViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      HistogramConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<HistogramConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    HistogramConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
+
+  // set the state of truncation warning message here
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
@@ -207,7 +233,16 @@ function HistogramViz(props: VisualizationProps) {
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        // set independentAxisRange undefined
+        independentAxisRange: undefined,
+        dependentAxisRange: undefined,
+        dependentAxisLogScale: false,
+        independentAxisValueSpec: 'Full',
+        dependentAxisValueSpec: 'Full',
       });
+      // close truncation warnings if exists
+      setTruncatedIndependentAxisWarning('');
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig, vizConfig]
   );
@@ -229,37 +264,64 @@ function HistogramViz(props: VisualizationProps) {
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof HistogramConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof HistogramConfig,
+      resetCheckedLegendItems?: boolean,
+      resetIndependentAxisRanges?: boolean,
+      resetDependentAxisRanges?: boolean,
+      ) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
+        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetIndependentAxisRanges) {
+        setTruncatedIndependentAxisWarning('');
+      }
+      if (resetDependentAxisRanges) {
+        setTruncatedDependentAxisWarning('');
+      }
     },
     [updateVizConfig]
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    false,
+    true
   );
-  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
+    'valueSpec',
+    false,
+    true,
+    true
+  );
+
+  const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'independentAxisValueSpec',
+    false,
+    true,
+    false
+  );
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
+    false,
+    false,
+    true
+  );
 
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
+    true,
     true
   );
 
-  // for custom legend: vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
-  );
-
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
     const { entity, variable } =
@@ -273,18 +335,54 @@ function HistogramViz(props: VisualizationProps) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
+  const providedOverlayVariableDescriptor = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
+  );
+
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const filteredConstraints = useFilteredConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities,
+    'overlayVariable'
+  );
+
+  useProvidedOptionalVariable<HistogramConfig>(
+    options?.getOverlayVariable,
+    'overlayVariable',
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    entities,
+    filteredConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    updateVizConfig,
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
+  );
+
   const {
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
   } = useMemo(() => {
     const { variable: overlayVariable, entity: overlayEntity } =
       findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+    const { variable: providedOverlayVariable } =
+      findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
     const { variable: facetVariable, entity: facetEntity } =
       findEntityAndVariable(vizConfig.facetVariable) ?? {};
     return {
       overlayVariable,
+      providedOverlayVariable,
       overlayEntity,
       facetVariable,
       facetEntity,
@@ -293,6 +391,7 @@ function HistogramViz(props: VisualizationProps) {
     findEntityAndVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   const data = usePromise(
@@ -380,61 +479,57 @@ function HistogramViz(props: VisualizationProps) {
       computation.descriptor.type,
       xAxisVariable,
       overlayVariable,
+      overlayEntity,
       facetVariable,
+      facetEntity,
       valueType,
     ])
   );
 
-  // variable's metadata-based independent axis range with margin
-  const defaultIndependentRange = useMemo(
-    () => defaultIndependentAxisRange(xAxisVariable, 'histogram'),
-    [xAxisVariable]
+  const independentAxisMinMax = useMemo(
+    () => histogramDefaultIndependentAxisMinMax(data),
+    [data]
   );
 
-  // find max of stacked array, especially with overlayVariable
-  const defaultDependentAxisMinMax = useMemo(() => {
-    if (isFaceted(data.value)) {
-      const facetMinMaxes =
-        data?.value?.facets != null
-          ? data.value.facets
-              .map((facet) => facet.data)
-              .filter(
-                (data): data is HistogramData =>
-                  data != null && data.series != null
-              )
-              .map((data) => findMinMaxOfStackedArray(data.series))
-          : undefined;
-      return (
-        facetMinMaxes && {
-          min: min(map(facetMinMaxes, 'min')),
-          max: max(map(facetMinMaxes, 'max')),
-        }
-      );
-    } else {
-      return data.value && data.value.series.length > 0
-        ? findMinMaxOfStackedArray(data.value.series)
-        : undefined;
-    }
-  }, [data]);
+  const defaultIndependentRange = useDefaultAxisRange(
+    xAxisVariable,
+    vizConfig.independentAxisValueSpec === 'Full'
+      ? undefined
+      : independentAxisMinMax?.min,
+    undefined,
+    vizConfig.independentAxisValueSpec === 'Full'
+      ? undefined
+      : independentAxisMinMax?.max,
+    undefined,
+    vizConfig.independentAxisValueSpec
+  );
 
-  // set default dependent axis range for better displaying tick labels in log-scale
-  const defaultDependentAxisRange =
-    defaultDependentAxisMinMax?.min != null &&
-    defaultDependentAxisMinMax?.max != null
+  // separate minPosMax from dependentMinPosMax
+  const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
+    data,
+  ]);
+  const dependentMinPosMax = useMemo(() => {
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
-          // set min as 0 (count, proportion) for non-logscale
-          min:
-            vizConfig.valueSpec === 'count'
-              ? 0
-              : vizConfig.dependentAxisLogScale
-              ? // determine min based on data for log-scale at proportion
-                defaultDependentAxisMinMax.min < 0.001
-                ? defaultDependentAxisMinMax.min * 0.8
-                : 0.001
-              : 0,
-          max: defaultDependentAxisMinMax.max * 1.05,
+          min: minPosMax.min,
+          // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
+          max:
+            vizConfig.valueSpec === 'proportion' &&
+            vizConfig.dependentAxisValueSpec === 'Full'
+              ? 1
+              : minPosMax.max,
         }
       : undefined;
+  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
+
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    dependentMinPosMax?.min,
+    dependentMinPosMax?.max,
+    vizConfig.dependentAxisLogScale,
+    vizConfig.dependentAxisValueSpec
+  ) as NumberRange;
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -476,11 +571,576 @@ function HistogramViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  // set checkedLegendItems to either the config-stored items, or all items if
+  // nothing stored (or if no overlay locally configured)
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
-    vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined,
+    updateVizConfig
   );
+
+  // axis range control
+  // get as much default axis range from variable annotations as possible
+  const defaultUIState: UIState = useMemo(() => {
+    if (xAxisVariable != null) {
+      const otherDefaults = {
+        dependentAxisLogScale: false,
+      };
+
+      if (NumberVariable.is(xAxisVariable)) {
+        return {
+          binWidth:
+            xAxisVariable.distributionDefaults.binWidthOverride ??
+            xAxisVariable.distributionDefaults.binWidth ??
+            0.1,
+          binWidthTimeUnit: undefined,
+          independentAxisRange: defaultIndependentRange as NumberRange,
+          ...otherDefaults,
+        };
+      }
+      // else date variable
+      const binWidth =
+        (xAxisVariable as DateVariable)?.distributionDefaults
+          .binWidthOverride ??
+        (xAxisVariable as DateVariable)?.distributionDefaults.binWidth;
+      const binUnits = (xAxisVariable as DateVariable)?.distributionDefaults
+        .binUnits;
+
+      return {
+        binWidth: binWidth ?? 1,
+        binWidthTimeUnit:
+          binUnits ??
+          (xAxisVariable as DateVariable).distributionDefaults.binUnits!, // bit nasty!
+        independentAxisRange: defaultIndependentRange as DateRange,
+        ...otherDefaults,
+      };
+    } else {
+      return {
+        binWidth: 0,
+        binWidthTimeUnit: undefined,
+        independentAxisRange: { min: 0, max: 0 },
+        dependentAxisLogScale: false,
+      };
+    }
+  }, [xAxisVariable, defaultIndependentRange]);
+
+  const outputSize =
+    (overlayVariable != null || facetVariable != null) &&
+    !vizConfig.showMissingness
+      ? data.value?.completeCasesAllVars
+      : data.value?.completeCasesAxesVars;
+
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [dataElementConstraints, vizConfig.xAxisVariable]);
+
+  const widgetHeight = '4em';
+
+  // controls need the bin info from just one facet (not an empty one)
+  const data0 = isFaceted(data.value)
+    ? data.value.facets.find(
+        ({ data }) => data != null && data.series.length > 0
+      )?.data
+    : data.value;
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      truncationConfig(
+        {
+          ...defaultUIState, // using annotated range, NOT the actual data
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
+            : {}),
+        },
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
+      ),
+    [
+      defaultUIState,
+      dependentMinPosMax,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
+    ]
+  );
+
+  // axis range control
+  const handleIndependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      updateVizConfig({
+        independentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleIndependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      independentAxisRange: undefined,
+      binWidth: defaultUIState.binWidth,
+      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
+      independentAxisValueSpec: 'Full',
+    });
+    // add reset for truncation message: including dependent axis warning as well
+    setTruncatedIndependentAxisWarning('');
+  }, [
+    defaultUIState.binWidth,
+    defaultUIState.binWidthTimeUnit,
+    updateVizConfig,
+    setTruncatedIndependentAxisWarning,
+  ]);
+
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      updateVizConfig({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
+      dependentAxisValueSpec: 'Full',
+    });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
+
+  // set useEffect for changing truncation warning message
+  useEffect(() => {
+    if (
+      truncationConfigIndependentAxisMin ||
+      truncationConfigIndependentAxisMax
+    ) {
+      setTruncatedIndependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    setTruncatedIndependentAxisWarning,
+  ]);
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+    setTruncatedDependentAxisWarning,
+  ]);
+
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [
+      data,
+      vizConfig.checkedLegendItems,
+      vizConfig.dependentAxisLogScale,
+      vizConfig.dependentAxisRange,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
+    ]
+  );
+
+  const overlayLabel = variableDisplayWithUnit(overlayVariable);
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
+  );
+
+  const histogramProps: HistogramProps = {
+    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    dependentAxisLogScale: vizConfig.dependentAxisLogScale,
+    independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'Main',
+    dependentAxisLabel:
+      vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
+    showSpinner: data.pending || filteredCounts.pending,
+    displayLegend: false,
+    displayLibraryControls: false,
+    legendTitle: overlayLabel,
+    spacingOptions: !isFaceted(data.value) ? spacingOptions : undefined,
+    interactive: !isFaceted(data.value) ? true : false,
+    opacity: 100,
+    showValues: false,
+    barLayout: 'stack',
+    orientation: 'vertical',
+    independentAxisRange:
+      vizConfig.independentAxisRange ?? defaultIndependentRange,
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
+    ...neutralPaletteProps,
+  };
+
+  const plotNode = (
+    <>
+      {isFaceted(data.value) ? (
+        <FacetedHistogram
+          data={data.value}
+          componentProps={histogramProps}
+          modalComponentProps={{
+            ...histogramProps,
+            containerStyles: modalPlotContainerStyles,
+          }}
+          facetedPlotRef={plotRef}
+          checkedLegendItems={checkedLegendItems}
+        />
+      ) : (
+        <Histogram
+          {...histogramProps}
+          ref={plotRef}
+          data={data.value}
+          checkedLegendItems={checkedLegendItems}
+        />
+      )}
+    </>
+  );
+
+  const controlsNode = (
+    <>
+      {/* Plot mode */}
+      <RadioButtonGroup
+        label="Plot mode"
+        selectedOption={vizConfig.valueSpec}
+        options={['count', 'proportion']}
+        optionLabels={['Count', 'Proportion']}
+        buttonColor={'primary'}
+        margins={['1em', '0', '0', '1em']}
+        onOptionSelected={(newOption) => {
+          if (newOption === 'proportion') {
+            onValueSpecChange('proportion');
+          } else {
+            onValueSpecChange('count');
+          }
+        }}
+      />
+
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* make switch and radiobutton single line with space
+                  also marginRight at LabelledGroup is set to 0.5625em: default - 1.5625em*/}
+
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup label="X-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleIndependentAxisSettingsReset}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginLeft: '1em',
+              marginTop: '-0.5em',
+            }}
+          >
+            <BinWidthControl
+              binWidth={data0?.binWidthSlider?.binWidth}
+              onBinWidthChange={onBinWidthChange}
+              binWidthRange={data0?.binWidthSlider?.binWidthRange}
+              binWidthStep={data0?.binWidthSlider?.binWidthStep}
+              valueType={data0?.binWidthSlider?.valueType}
+              binUnit={
+                data0?.binWidthSlider?.valueType === 'date'
+                  ? (data0?.binWidthSlider?.binWidth as TimeDelta).unit
+                  : undefined
+              }
+              binUnitOptions={
+                data0?.binWidthSlider?.valueType === 'date'
+                  ? ['day', 'week', 'month', 'year']
+                  : undefined
+              }
+              containerStyles={{
+                minHeight: widgetHeight,
+                // set maxWidth
+                maxWidth: valueType === 'date' ? '215px' : '315px',
+              }}
+            />
+          </div>
+
+          <LabelledGroup
+            label="X-axis range"
+            containerStyles={{
+              fontSize: '0.9em',
+              // width: '350px',
+              marginTop: '-0.8em',
+            }}
+          >
+            <RadioButtonGroup
+              options={['Full', 'Auto-zoom', 'Custom']}
+              selectedOption={vizConfig.independentAxisValueSpec ?? 'Full'}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onIndependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            {/* X-Axis range control */}
+            <AxisRangeControl
+              label="Range"
+              range={vizConfig.independentAxisRange ?? defaultIndependentRange}
+              onRangeChange={handleIndependentAxisRangeChange}
+              valueType={valueType}
+              // set maxWidth
+              containerStyles={{
+                maxWidth: '350px',
+              }}
+              disabled={
+                vizConfig.independentAxisValueSpec === 'Full' ||
+                vizConfig.independentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedIndependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedIndependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedIndependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // set maxWidth per type
+                containerStyles={{
+                  // maxWidth: valueType === 'date' ? '362px': '350px',
+                  maxWidth: '350px',
+                }}
+              />
+            ) : null}
+          </LabelledGroup>
+        </div>
+
+        {/* add vertical line in btw Y- and X- controls */}
+        <div
+          style={{
+            display: 'inline-flex',
+            borderLeft: '2px solid lightgray',
+            height: '16em',
+            position: 'relative',
+            marginLeft: '-1px',
+            top: '1.5em',
+          }}
+        >
+          {' '}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginLeft: '1em', marginTop: '-0.6em' }}>
+            <Toggle
+              label={`Log scale ${
+                histogramProps.dependentAxisLogScale ? 'on' : 'off'
+              }`}
+              value={histogramProps.dependentAxisLogScale ?? false}
+              onChange={onDependentAxisLogScaleChange}
+              styleOverrides={{
+                container: {
+                  minHeight: widgetHeight,
+                },
+              }}
+              themeRole="primary"
+            />
+          </div>
+
+          <LabelledGroup
+            label="Y-axis range"
+            containerStyles={{
+              fontSize: '0.9em',
+              // width: '350px',
+              marginTop: '-0.8em',
+            }}
+          >
+            <RadioButtonGroup
+              options={['Full', 'Auto-zoom', 'Custom']}
+              selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+            {/* Y-axis range control */}
+            <NumberRangeInput
+              label="Range"
+              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // change maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+          </LabelledGroup>
+        </div>
+      </div>
+    </>
+  );
+
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
+  const legendNode = legendItems != null &&
+    !histogramProps.showSpinner &&
+    data != null && (
+      <PlotLegend
+        legendItems={legendItems}
+        checkedLegendItems={checkedLegendItems}
+        onCheckedLegendItemsChange={setCheckedLegendItems}
+        legendTitle={histogramProps.legendTitle}
+        // add a condition to show legend even for single overlay data and check legendItems exist
+        showOverlayLegend={showOverlayLegend}
+      />
+    );
+
+  const tableGroupNode = (
+    <>
+      <BirdsEyeView
+        completeCasesAllVars={
+          data.pending ? undefined : data.value?.completeCasesAllVars
+        }
+        completeCasesAxesVars={
+          data.pending ? undefined : data.value?.completeCasesAxesVars
+        }
+        outputEntity={outputEntity}
+        stratificationIsActive={
+          overlayVariable != null || facetVariable != null
+        }
+        enableSpinner={vizConfig.xAxisVariable != null && !data.error}
+        totalCounts={totalCounts.value}
+        filteredCounts={filteredCounts.value}
+      />
+      <VariableCoverageTable
+        completeCases={data.pending ? undefined : data.value?.completeCases}
+        filteredCounts={filteredCounts}
+        outputEntityId={outputEntity?.id}
+        variableSpecs={[
+          {
+            role: 'Main',
+            required: true,
+            display: histogramProps.independentAxisLabel,
+            variable: vizConfig.xAxisVariable,
+          },
+          {
+            role: 'Overlay',
+            display: overlayLabel,
+            variable: vizConfig.overlayVariable,
+          },
+          {
+            role: 'Facet',
+            display: variableDisplayWithUnit(facetVariable),
+            variable: vizConfig.facetVariable,
+          },
+        ]}
+      />
+    </>
+  );
+
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -490,25 +1150,32 @@ function HistogramViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'Main',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              providedOptionalVariable: providedOverlayVariableDescriptor,
+              readonlyValue:
+                options?.getOverlayVariable != null
+                  ? providedOverlayVariableDescriptor
+                    ? variableDisplayWithUnit(providedOverlayVariable)
+                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+                  : undefined,
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as const,
+                ]),
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -520,274 +1187,29 @@ function HistogramViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           outputEntity={outputEntity}
         />
       </div>
 
-      <PluginError error={data.error} />
-      <HistogramPlotWithControls
-        data={data.value}
-        error={data.error}
-        onBinWidthChange={onBinWidthChange}
-        dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-        onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
-        valueSpec={vizConfig.valueSpec}
-        onValueSpecChange={onValueSpecChange}
-        updateThumbnail={updateThumbnail}
-        containerStyles={
-          !isFaceted(data.value) ? plotContainerStyles : undefined
-        }
-        spacingOptions={!isFaceted(data.value) ? spacingOptions : undefined}
-        orientation={'vertical'}
-        barLayout={'stack'}
-        displayLegend={false}
-        outputEntity={outputEntity}
-        independentAxisVariable={vizConfig.xAxisVariable}
-        independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
-        // variable's metadata-based independent axis range
-        independentAxisRange={defaultIndependentRange}
-        // add dependent axis range for better displaying tick labels in log-scale
-        dependentAxisRange={defaultDependentAxisRange}
-        interactive={!isFaceted(data.value) ? true : false}
-        showSpinner={data.pending || filteredCounts.pending}
-        filters={filters}
-        completeCases={data.pending ? undefined : data.value?.completeCases}
-        completeCasesAllVars={
-          data.pending ? undefined : data.value?.completeCasesAllVars
-        }
-        completeCasesAxesVars={
-          data.pending ? undefined : data.value?.completeCasesAxesVars
-        }
-        showMissingness={vizConfig.showMissingness ?? false}
-        overlayVariable={vizConfig.overlayVariable}
-        overlayLabel={axisLabelWithUnit(overlayVariable)}
-        facetVariable={vizConfig.facetVariable}
-        facetLabel={axisLabelWithUnit(facetVariable)}
-        legendTitle={axisLabelWithUnit(overlayVariable)}
-        dependentAxisLabel={
-          vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
-        }
-        // for custom legend passing checked state in the  checkbox to PlotlyPlot
-        legendItems={legendItems}
-        checkedLegendItems={checkedLegendItems}
-        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-        totalCounts={totalCounts}
-        filteredCounts={filteredCounts}
-      />
-    </div>
-  );
-}
+      <PluginError error={data.error} outputSize={outputSize} />
 
-type HistogramPlotWithControlsProps = Omit<HistogramProps, 'data'> & {
-  data?: HistogramData | FacetedData<HistogramData>;
-  onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
-  onDependentAxisLogScaleChange: (newState?: boolean) => void;
-  filters?: Filter[];
-  outputEntity?: StudyEntity;
-  independentAxisVariable?: VariableDescriptor;
-  overlayVariable?: VariableDescriptor;
-  overlayLabel?: string;
-  facetVariable?: VariableDescriptor;
-  facetLabel?: string;
-  valueSpec: ValueSpec;
-  onValueSpecChange: (newValueSpec: ValueSpec) => void;
-  showMissingness: boolean;
-  updateThumbnail: (src: string) => void;
-  error: unknown;
-  // add props for custom legend
-  legendItems: LegendItemsProps[];
-  checkedLegendItems: string[] | undefined;
-  onCheckedLegendItemsChange: (checkedLegendItems: string[]) => void;
-  totalCounts: PromiseHookState<EntityCounts>;
-  filteredCounts: PromiseHookState<EntityCounts>;
-} & Partial<CoverageStatistics>;
-
-function HistogramPlotWithControls({
-  data,
-  error,
-  onBinWidthChange,
-  onDependentAxisLogScaleChange,
-  filters,
-  completeCases,
-  completeCasesAllVars,
-  completeCasesAxesVars,
-  outputEntity,
-  independentAxisVariable,
-  overlayVariable,
-  overlayLabel,
-  facetVariable,
-  facetLabel,
-  valueSpec,
-  onValueSpecChange,
-  showMissingness,
-  updateThumbnail,
-  // add props for custom legend
-  legendItems,
-  checkedLegendItems,
-  onCheckedLegendItemsChange,
-  totalCounts,
-  filteredCounts,
-  ...histogramProps
-}: HistogramPlotWithControlsProps) {
-  const displayLibraryControls = false;
-  const opacity = 100;
-
-  const outputSize =
-    (overlayVariable != null || facetVariable != null) && !showMissingness
-      ? completeCasesAllVars
-      : completeCasesAxesVars;
-
-  const plotRef = useUpdateThumbnailEffect(
-    updateThumbnail,
-    plotContainerStyles,
-    [data, checkedLegendItems, histogramProps.dependentAxisLogScale]
-  );
-
-  const widgetHeight = '4em';
-
-  // controls need the bin info from just one facet (not an empty one)
-  const data0 = isFaceted(data)
-    ? data.facets.find(({ data }) => data != null && data.series.length > 0)
-        ?.data
-    : data;
-
-  const plotNode = (
-    <>
-      {isFaceted(data) ? (
-        <FacetedHistogram
-          data={data}
-          componentProps={histogramProps}
-          modalComponentProps={{
-            independentAxisLabel: histogramProps.independentAxisLabel,
-            dependentAxisLabel: histogramProps.dependentAxisLabel,
-            displayLegend: histogramProps.displayLegend,
-            containerStyles: modalPlotContainerStyles,
-          }}
-          facetedPlotRef={plotRef}
-          // for custom legend: pass checkedLegendItems to PlotlyPlot
-          checkedLegendItems={checkedLegendItems}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        <LayoutComponent
+          isFaceted={isFaceted(data.value)}
+          plotNode={plotNode}
+          controlsNode={controlsNode}
+          legendNode={showOverlayLegend ? legendNode : null}
+          tableGroupNode={tableGroupNode}
+          showRequiredInputsPrompt={!areRequiredInputsSelected}
         />
-      ) : (
-        <Histogram
-          {...histogramProps}
-          ref={plotRef}
-          data={data}
-          opacity={opacity}
-          displayLibraryControls={displayLibraryControls}
-          showValues={false}
-          // for custom legend: pass checkedLegendItems to PlotlyPlot
-          checkedLegendItems={checkedLegendItems}
-        />
-      )}
-
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log scale"
-            state={histogramProps.dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-            containerStyles={{
-              minHeight: widgetHeight,
-            }}
-          />
-          <RadioButtonGroup
-            selectedOption={valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
-            }}
-          />
-        </LabelledGroup>
-        <LabelledGroup label="X-axis">
-          <BinWidthControl
-            binWidth={data0?.binWidth}
-            onBinWidthChange={onBinWidthChange}
-            binWidthRange={data0?.binWidthRange}
-            binWidthStep={data0?.binWidthStep}
-            valueType={data0?.valueType}
-            binUnit={
-              data0?.valueType === 'date'
-                ? (data0?.binWidth as TimeDelta).unit
-                : undefined
-            }
-            binUnitOptions={
-              data0?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
-            containerStyles={{
-              minHeight: widgetHeight,
-            }}
-          />
-        </LabelledGroup>
       </div>
-    </>
-  );
-
-  const legendNode = legendItems != null &&
-    !histogramProps.showSpinner &&
-    data != null && (
-      <PlotLegend
-        legendItems={legendItems}
-        checkedLegendItems={checkedLegendItems}
-        legendTitle={histogramProps.legendTitle}
-        onCheckedLegendItemsChange={onCheckedLegendItemsChange}
-      />
-    );
-
-  const tableGroupNode = (
-    <>
-      <BirdsEyeView
-        completeCasesAllVars={completeCasesAllVars}
-        completeCasesAxesVars={completeCasesAxesVars}
-        outputEntity={outputEntity}
-        stratificationIsActive={
-          overlayVariable != null || facetVariable != null
-        }
-        enableSpinner={independentAxisVariable != null && !error}
-        totalCounts={totalCounts.value}
-        filteredCounts={filteredCounts.value}
-      />
-      <VariableCoverageTable
-        completeCases={completeCases}
-        filteredCounts={filteredCounts}
-        outputEntityId={independentAxisVariable?.entityId}
-        variableSpecs={[
-          {
-            role: 'Main',
-            required: true,
-            display: histogramProps.independentAxisLabel,
-            variable: independentAxisVariable,
-          },
-          {
-            role: 'Overlay',
-            display: overlayLabel,
-            variable: overlayVariable,
-          },
-          {
-            role: 'Facet',
-            display: facetLabel,
-            variable: facetVariable,
-          },
-        ]}
-      />
-    </>
-  );
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <PlotLayout
-        isFaceted={isFaceted(data)}
-        plotNode={plotNode}
-        legendNode={legendNode}
-        tableGroupNode={tableGroupNode}
-      />
     </div>
   );
 }
@@ -828,7 +1250,7 @@ export function histogramResponseToData(
     ? { min, max }
     : {
         min,
-        max: max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+        max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
         unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
@@ -839,7 +1261,7 @@ export function histogramResponseToData(
       (data) => data.binStart.length === 0 && data.value.length === 0
     );
     return facetIsEmpty
-      ? undefined
+      ? { series: [] }
       : {
           series: group.map((data) => ({
             name:
@@ -859,15 +1281,16 @@ export function histogramResponseToData(
                   ? Number(data.binEnd[index])
                   : String(data.binEnd[index]),
               binLabel: data.binLabel[index],
-              count: data.value[index],
+              value: data.value[index],
             })),
           })),
-
-          valueType:
-            type === 'integer' || type === 'number' ? 'number' : 'date',
-          binWidth,
-          binWidthRange,
-          binWidthStep,
+          binWidthSlider: {
+            valueType:
+              type === 'integer' || type === 'number' ? 'number' : 'date',
+            binWidth,
+            binWidthRange,
+            binWidthStep,
+          },
         };
   });
 
@@ -901,10 +1324,11 @@ function getRequestParams(
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? variable.binWidthOverride ?? variable.binWidth
+      ? variable.distributionDefaults.binWidthOverride ??
+        variable.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = variable?.type === 'date'
-      ? variable.binUnits
+      ? variable.distributionDefaults.binUnits
       : undefined,
     valueSpec,
     overlayVariable,
@@ -922,6 +1346,16 @@ function getRequestParams(
       }
     : { binSpec: { type: 'binWidth' } };
 
+  // define viewport based on independent axis range: need to check undefined case
+  const viewport =
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: vizConfig?.independentAxisRange?.min,
+          xMax: vizConfig?.independentAxisRange?.max,
+        }
+      : undefined;
+
   return {
     studyId,
     filters,
@@ -929,11 +1363,13 @@ function getRequestParams(
       outputEntityId: xAxisVariable!.entityId,
       xAxisVariable,
       barMode: 'stack',
-      overlayVariable,
+      overlayVariable: overlayVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       valueSpec,
       ...binSpec,
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      // pass viewport to get appropriate display range
+      viewport: viewport,
     },
   } as HistogramRequestParams;
 }
@@ -944,6 +1380,8 @@ function reorderData(
   facetVocabulary: string[] = []
 ): HistogramDataWithCoverageStatistics | HistogramData {
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);
@@ -989,36 +1427,4 @@ function reorderData(
   } else {
     return data;
   }
-}
-
-/**
- * find min and max of the sum of multiple arrays
- * it is because histogram viz uses "stack" option for display
- * Also, each data with overlayVariable has different bins
- * For this purpose, binStart is used as array index to map corresponding count
- * Need to make stacked count array and then max
- */
-
-function findMinMaxOfStackedArray(data: HistogramDataSeries[]) {
-  // calculate the sum of all the counts from bins with the same label
-  const sumsByLabel = data
-    .flatMap(
-      // make an array of [ [ label, count ], [ label, count ], ... ] from all series
-      (series) => series.bins.map((bin) => [bin.binLabel, bin.count])
-    )
-    // then do a sum of counts per label
-    .reduce<Record<string, number>>(
-      (map, [label, count]) => {
-        if (map[label] == null) map[label] = 0;
-        map[label] = map[label] + (count as number);
-        return map;
-      },
-      // empty map for reduce to start with
-      {}
-    );
-
-  return {
-    min: min(Object.values(sumsByLabel)),
-    max: max(Object.values(sumsByLabel)),
-  };
 }

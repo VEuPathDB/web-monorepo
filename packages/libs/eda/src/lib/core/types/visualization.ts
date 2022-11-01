@@ -10,11 +10,14 @@ import {
   number,
   array,
   record,
+  NullType,
 } from 'io-ts';
+import * as t from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
 import { CompleteCasesTable } from '../api/DataClient';
 import { Filter } from './filter';
+import { VariableDescriptor } from './variable';
 
 /**
  * Metadata for the visualization object stored in user's analysis
@@ -46,35 +49,45 @@ export const Visualization = intersection([
   }),
 ]);
 
-/**
- * Type and configuration of the app object stored in user's analysis
- */
+// alphadiv abundance
 export type ComputationDescriptor = TypeOf<typeof ComputationDescriptor>;
 export const ComputationDescriptor = type({
   type: string,
+  // handle configuration=null for ZeroConfiguration
+  // configuration: union([ComputationConfiguration, nullType]),
   configuration: unknown,
 });
 
 /**
  * App object stored in user's analysis
  */
-export type Computation = TypeOf<typeof Computation>;
-export const Computation = intersection([
-  type({
-    computationId: string,
-    descriptor: ComputationDescriptor,
-    visualizations: array(Visualization),
+export interface Computation<ConfigType = unknown> {
+  computationId: string;
+  displayName?: string;
+  descriptor: {
+    type: string;
+    configuration: ConfigType;
+  };
+  visualizations: Visualization[];
+}
+export const Computation: t.Type<Computation> = t.interface({
+  computationId: string,
+  descriptor: type({
+    type: string,
+    configuration: unknown,
   }),
-  partial({
+  visualizations: array(Visualization),
+});
+
+const Thing = intersection([
+  type({
+    name: string,
     displayName: string,
   }),
+  partial({
+    description: string,
+  }),
 ]);
-
-const Thing = partial({
-  name: string,
-  displayName: string,
-  description: string,
-});
 
 export type DataElementConstraint = TypeOf<typeof DataElementConstraint>;
 export const DataElementConstraint = intersection([
@@ -84,6 +97,7 @@ export const DataElementConstraint = intersection([
     maxNumVars: number,
   }),
   partial({
+    isTemporal: boolean,
     allowedTypes: array(VariableType),
     allowedShapes: array(VariableDataShape),
     maxNumValues: number,
@@ -98,7 +112,7 @@ export const VisualizationOverview = intersection([
   Thing,
   partial({
     dataElementConstraints: array(record(string, DataElementConstraint)),
-    dataElementDependencyOrder: array(string),
+    dataElementDependencyOrder: array(array(string)),
   }),
 ]);
 
@@ -107,6 +121,7 @@ export const ComputationAppOverview = intersection([
   Thing,
   partial({
     visualizations: array(VisualizationOverview),
+    projects: array(string),
   }),
 ]);
 

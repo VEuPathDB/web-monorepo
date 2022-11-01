@@ -11,11 +11,11 @@ import {
   IconButton,
   InputAdornment,
   makeStyles,
-  Switch,
   TextField,
   Tooltip,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import InfoIcon from '@material-ui/icons/Info';
 import {
   Loading,
   Mesa,
@@ -49,7 +49,7 @@ import {
 } from '../core/utils/analysis';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
-import { Checkbox } from '@veupathdb/core-components';
+import { Checkbox, Toggle, colors } from '@veupathdb/coreui';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -66,6 +66,10 @@ interface Props {
   analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
   exampleAnalysesAuthor?: number;
+  /**
+   * A callback to open a login form.
+   * This is passed down through several component layers. */
+  showLoginForm: () => void;
 }
 
 const useStyles = makeStyles({
@@ -81,16 +85,21 @@ const useStyles = makeStyles({
 });
 
 const UNKNOWN_DATASET_NAME = 'Unknown study';
+const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 
 export function AllAnalyses(props: Props) {
-  const { analysisClient, exampleAnalysesAuthor } = props;
+  const { analysisClient, exampleAnalysesAuthor, showLoginForm } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
 
-  const queryParams = new URLSearchParams(location.search);
-  const searchText = queryParams.get('s') ?? '';
+  const searchText = useMemo(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const searchParam = queryParams.get('s') ?? '';
+    return stripHTML(searchParam); // matches stripHTML(dataset.displayName) below
+  }, [location.search]);
+
   const debouncedSearchText = useDebounce(searchText, 250);
 
   const setSearchText = useCallback(
@@ -132,7 +141,7 @@ export function AllAnalyses(props: Props) {
     removePinnedAnalysis,
   } = usePinnedAnalyses(analysisClient);
 
-  const datasets = useWdkStudyRecords();
+  const datasets = useWdkStudyRecords(WDK_STUDY_RECORD_ATTRIBUTES);
 
   const {
     analyses,
@@ -295,6 +304,7 @@ export function AllAnalyses(props: Props) {
                 );
                 if (answer) {
                   deleteAnalyses(selectedAnalyses);
+                  setSelectedAnalyses(new Set());
                 }
               }}
               disabled={selectedAnalyses.size === 0}
@@ -325,20 +335,14 @@ export function AllAnalyses(props: Props) {
         },
         {
           element: (
-            <FormControlLabel
-              control={
-                <Switch
-                  color="primary"
-                  size="small"
-                  checked={sortPinned}
-                  onChange={(e) => setSortPinned(e.target.checked)}
-                />
-              }
+            <Toggle
               label="Sort pinned to top"
-              style={{
-                padding: '1em',
-              }}
+              labelPosition="right"
+              value={sortPinned}
+              onChange={setSortPinned}
               disabled={pinnedAnalyses.length === 0}
+              styleOverrides={{ container: { marginLeft: '1em' } }}
+              themeRole="primary"
             />
           ),
         },
@@ -509,19 +513,51 @@ export function AllAnalyses(props: Props) {
           width: 100,
           sortable: true,
           renderCell: (data: { row: AnalysisAndDataset }) => {
+            const isPublic = data.row.analysis.isPublic;
+            const studyAccessAttribute =
+              data.row.dataset?.attributes['study_access'];
+            const studyAccessLevel =
+              typeof studyAccessAttribute === 'string'
+                ? studyAccessAttribute.toLowerCase()
+                : null;
+            const offerPublicityToggle =
+              studyAccessLevel === 'public' ||
+              studyAccessLevel === 'protected' ||
+              studyAccessLevel === 'controlled';
+
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Checkbox
-                  selected={data.row.analysis.isPublic}
-                  themeRole="primary"
-                  onToggle={(selected) => {
-                    if (selected) {
-                      setSelectedAnalysisId(data.row.analysis.analysisId);
-                      setSharingModalVisible(true);
-                    }
-                  }}
-                  styleOverrides={{ size: 16 }}
-                />
+                <Tooltip
+                  title={
+                    !offerPublicityToggle
+                      ? 'This study cannot be added to Public Analyses'
+                      : isPublic
+                      ? 'Remove this analysis from Public Analyses'
+                      : 'Add this analysis to Public Analyses'
+                  }
+                >
+                  <span>
+                    {!offerPublicityToggle ? (
+                      <InfoIcon htmlColor={colors.gray['300']} />
+                    ) : (
+                      <Checkbox
+                        selected={isPublic}
+                        themeRole="primary"
+                        onToggle={(selected) => {
+                          if (selected) {
+                            setSelectedAnalysisId(data.row.analysis.analysisId);
+                            setSharingModalVisible(true);
+                          } else {
+                            updateAnalysis(data.row.analysis.analysisId, {
+                              isPublic: false,
+                            });
+                          }
+                        }}
+                        styleOverrides={{ size: 16 }}
+                      />
+                    )}
+                  </span>
+                </Tooltip>
               </div>
             );
           },
@@ -578,9 +614,13 @@ export function AllAnalyses(props: Props) {
         updateAnalysis={updateAnalysis}
         visible={sharingModalVisible}
         toggleVisible={setSharingModalVisible}
+        showLoginForm={showLoginForm}
       />
 
       <h1>My Analyses</h1>
+      {(loading || datasets == null) && (
+        <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
+      )}
       {error && <ContentError>{error}</ContentError>}
       {analyses && datasets && user ? (
         <Mesa.Mesa state={tableState}>
@@ -622,7 +662,6 @@ export function AllAnalyses(props: Props) {
               analyses
             </span>
           </div>
-          {(loading || datasets == null) && <Loading />}
         </Mesa.Mesa>
       ) : (
         <Loading />

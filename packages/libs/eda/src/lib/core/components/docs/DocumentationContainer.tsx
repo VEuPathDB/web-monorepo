@@ -1,5 +1,5 @@
-import { Modal } from '@veupathdb/core-components';
-import { Close } from '@veupathdb/core-components/dist/components/icons';
+import { Modal } from '@material-ui/core';
+import { Close } from '@veupathdb/coreui';
 import { Launch } from '@material-ui/icons';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import React, { useState, PropsWithChildren, useMemo } from 'react';
@@ -24,58 +24,60 @@ export function DocumentationContainer(props: PropsWithChildren<{}>) {
   const { url } = useRouteMatch();
   const modal = activeDocument ? (
     <Modal
-      zIndex={10000}
-      visible={activeDocument != null}
+      style={{ margin: '2em', zIndex: 2000 }}
+      open={activeDocument != null}
       onClose={() => setActiveDocument(undefined)}
-      styleOverrides={{
-        content: {
-          paddingTop: 0,
-          paddingRight: 50,
-          paddingBottom: 25,
-          paddingLeft: 25,
-        },
-      }}
     >
       <div
         style={{
-          display: 'flex',
-          flexWrap: 'nowrap',
-          alignItems: 'flex-start',
+          height: '100%',
+          borderRadius: '1em',
+          overflow: 'hidden',
         }}
       >
-        <div style={{ marginRight: 'auto' }}>
-          <Documentation documentName={activeDocument} />
-        </div>
-        <button
+        <div
           style={{
-            fontSize: '2em',
-            border: 'none',
-            background: 'none',
-            padding: 0,
+            background: 'white',
+            height: '100%',
+            overflow: 'auto',
+            padding: '2em',
           }}
-          type="button"
-          onClick={() => setActiveDocument(undefined)}
-          title="Close"
         >
-          <Close />
-        </button>
-      </div>
-      <div
-        style={{
-          position: 'sticky',
-          bottom: 0,
-          padding: '.5em 0',
-          background: 'white',
-        }}
-      >
-        <Link to={`${url}/documentation/${activeDocument}`} target="_blank">
-          <Launch fontSize="inherit" /> Open in new window
-        </Link>
+          <button
+            style={{
+              position: 'absolute',
+              right: '1em',
+              fontSize: '2em',
+              border: 'none',
+              background: 'none',
+              padding: 0,
+            }}
+            type="button"
+            onClick={() => setActiveDocument(undefined)}
+            title="Close"
+          >
+            <Close />
+          </button>
+          <div>
+            <Documentation documentName={activeDocument} />
+          </div>
+        </div>
+        <div
+          style={{
+            position: 'sticky',
+            bottom: 0,
+            padding: '.5em 2em',
+            marginRight: '2em',
+            background: 'white',
+          }}
+        >
+          <Link to={`${url}/documentation/${activeDocument}`} target="_blank">
+            <Launch fontSize="inherit" /> Open in new window
+          </Link>
+        </div>
       </div>
     </Modal>
-  ) : (
-    <></>
-  );
+  ) : null;
   return (
     <DocumentationContext.Provider value={value}>
       {modal}

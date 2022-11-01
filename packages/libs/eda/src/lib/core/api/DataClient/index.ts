@@ -21,6 +21,10 @@ import {
   TwoByTwoResponse,
   BoxplotRequestParams,
   BoxplotResponse,
+  MapMarkersResponse,
+  MapMarkersRequestParams,
+  MapMarkersOverlayRequestParams,
+  MapMarkersOverlayResponse,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -136,6 +140,32 @@ export default class DataClient extends FetchClientWithCredentials {
       'boxplot',
       params,
       BoxplotResponse
+    );
+  }
+
+  // map-markers
+  getMapMarkers(
+    computationName: string,
+    params: MapMarkersRequestParams
+  ): Promise<MapMarkersResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers',
+      params,
+      MapMarkersResponse
+    );
+  }
+
+  // map-markers-overlay (previously pieplot)
+  getMapMarkersOverlay(
+    computationName: string,
+    params: MapMarkersOverlayRequestParams
+  ): Promise<MapMarkersOverlayResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers-overlay',
+      params,
+      MapMarkersOverlayResponse
     );
   }
 }

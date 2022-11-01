@@ -1,7 +1,4 @@
 import { useMemo } from 'react';
-
-import { noop } from 'lodash';
-
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -17,11 +14,10 @@ interface Props {
   studyId: string;
 }
 export function MapVeuAnalysis(props: Props) {
-  const { analysisId, studyId } = props;
+  const { analysisId } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
-  const defaultAnalysis = useMemo(() => makeNewAnalysis(studyId), [studyId]);
-  const { analysis } = useAnalysis(defaultAnalysis, noop, analysisId);
+  const { analysis } = useAnalysis(analysisId);
   if (analysis == null) return <div>No analysis found</div>;
   const entities = Array.from(
     preorder(studyMetadata.rootEntity, (e) => e.children ?? [])

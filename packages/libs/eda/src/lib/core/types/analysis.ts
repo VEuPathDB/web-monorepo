@@ -5,9 +5,12 @@ import { VariableDescriptor } from './variable';
 import { Computation } from './visualization';
 
 export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
-export const AnalysisPreferences = t.partial({
-  pinnedAnalyses: t.array(t.string),
-});
+export const AnalysisPreferences = t.intersection([
+  t.partial({
+    pinnedAnalyses: t.array(t.string),
+  }),
+  t.record(t.string, t.unknown),
+]);
 
 export type AnalysisProvenance = t.TypeOf<typeof AnalysisProvenance>;
 export const AnalysisProvenance = t.type({
@@ -130,7 +133,10 @@ export const Analysis = t.intersection([
 
 export const DEFAULT_ANALYSIS_NAME = 'Unnamed Analysis';
 
-export function makeNewAnalysis(studyId: string): NewAnalysis {
+export function makeNewAnalysis(
+  studyId: string,
+  computation?: Computation
+): NewAnalysis {
   return {
     displayName: DEFAULT_ANALYSIS_NAME,
     studyId,
@@ -145,17 +151,7 @@ export function makeNewAnalysis(studyId: string): NewAnalysis {
       starredVariables: [],
       dataTableConfig: {},
       derivedVariables: [],
-      computations: [
-        {
-          computationId: 'pass-through',
-          displayName: 'Passthrough',
-          descriptor: {
-            type: 'pass',
-            configuration: undefined,
-          },
-          visualizations: [],
-        },
-      ],
+      computations: computation ? [computation] : [],
     },
   };
 }

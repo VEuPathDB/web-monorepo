@@ -1,18 +1,18 @@
 import React from 'react';
 import {
-  XYPlotDataSeries,
-  XYPlotData,
+  ScatterPlotDataSeries,
+  ScatterPlotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
 import { VariableTreeNode } from '../types/study';
 
-type FacetDataProps = FacetedData<XYPlotData>['facets'];
+type FacetDataProps = FacetedData<ScatterPlotData>['facets'];
 
 // introduce discriminated union
 type TypedScatterplotRsquareData =
   | {
       isFaceted: false;
-      data?: XYPlotDataSeries[];
+      data?: ScatterPlotDataSeries[];
     }
   | {
       isFaceted: true;
@@ -56,7 +56,7 @@ export function ScatterplotRsquareTable({
               <th>
                 {overlayVariable != null ? overlayVariable.displayName : 'Name'}
               </th>
-              <th className="numeric">
+              <th className="">
                 R<sup>2</sup> (Best fit)
               </th>
             </tr>
@@ -83,7 +83,7 @@ export function ScatterplotRsquareTable({
               {overlayVariable != null && (
                 <th>{overlayVariable.displayName}</th>
               )}
-              <th className="numeric">
+              <th className="">
                 R<sup>2</sup> (Best fit)
               </th>
             </tr>

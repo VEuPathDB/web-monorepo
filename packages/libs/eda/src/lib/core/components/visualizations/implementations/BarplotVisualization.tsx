@@ -8,13 +8,10 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import PluginError from '../PluginError';
 
 // need to set for Barplot
@@ -24,9 +21,13 @@ import DataClient, {
 } from '../../../api/DataClient';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import {
+  useDataClient,
+  useStudyMetadata,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
@@ -38,11 +39,11 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import { VisualizationProps } from '../VisualizationTypes';
 
-import bar from './selectorIcons/bar.svg';
+import BarSVG from './selectorIcons/BarSVG';
 // import axis label unit util
-import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
   fixLabelForNumberVariables,
   fixLabelsForNumberVariables,
@@ -54,7 +55,7 @@ import {
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { max, groupBy, mapValues, size, map, head, values, keys } from 'lodash';
+import { groupBy, mapValues, size, map, head, values, keys } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend, {
@@ -62,10 +63,41 @@ import PlotLegend, {
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 // import { gray } from '../colors';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
-//DKDK a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItemsStatus } from '../../../hooks/checkedLegendItemsStatus';
+// a custom hook to preserve the status of checked legend items
+import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
-type BarplotDataWithStatistics = (BarplotData | FacetedData<BarplotData>) &
+// concerning axis range control
+import { NumberOrDateRange, NumberRange } from '../../../types/general';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+// reusable util for computing truncationConfig
+import { truncationConfig } from '../../../utils/truncation-config-utils';
+// use Notification for truncation warning message
+import Notification from '@veupathdb/components/lib/components/widgets//Notification';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
+import {
+  useFilteredConstraints,
+  useNeutralPaletteProps,
+  useProvidedOptionalVariable,
+  useVizConfig,
+} from '../../../hooks/visualizations';
+import {
+  barplotDefaultDependentAxisMax,
+  barplotDefaultDependentAxisMinPos,
+} from '../../../utils/axis-range-calculations';
+import { createVisualizationPlugin } from '../VisualizationPlugin';
+import { LayoutOptions } from '../../layouts/types';
+import { OverlayOptions } from '../options/types';
+import { useDeepValue } from '../../../hooks/immutability';
+
+// reset to defaults button
+import { ResetButtonCoreUI } from '../../ResetButton';
+
+// export
+export type BarplotDataWithStatistics = (
+  | BarplotData
+  | FacetedData<BarplotData>
+) &
   CoverageStatistics;
 
 const plotContainerStyles = {
@@ -84,19 +116,15 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const barplotVisualization: VisualizationType = {
-  selectorComponent: SelectorComponent,
+export const barplotVisualization = createVisualizationPlugin({
+  selectorIcon: BarSVG,
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
-};
+});
 
-function SelectorComponent() {
-  return (
-    <img alt="Bar plot" style={{ height: '100%', width: '100%' }} src={bar} />
-  );
-}
+interface Options extends LayoutOptions, OverlayOptions {}
 
-function FullscreenComponent(props: VisualizationProps) {
+function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BarplotViz {...props} />;
 }
 
@@ -104,6 +132,7 @@ function createDefaultConfig(): BarplotConfig {
   return {
     dependentAxisLogScale: false,
     valueSpec: 'count',
+    dependentAxisValueSpec: 'Full',
   };
 }
 
@@ -111,9 +140,10 @@ type ValueSpec = t.TypeOf<typeof ValueSpec>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const ValueSpec = t.keyof({ count: null, proportion: null });
 
-type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
+// export
+export type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BarplotConfig = t.intersection([
+export const BarplotConfig = t.intersection([
   t.type({
     dependentAxisLogScale: t.boolean,
     valueSpec: ValueSpec,
@@ -125,11 +155,15 @@ const BarplotConfig = t.intersection([
     showMissingness: t.boolean,
     // for custom legend: vizconfig.checkedLegendItems
     checkedLegendItems: t.array(t.string),
+    // dependent axis range control
+    dependentAxisRange: NumberRange,
+    dependentAxisValueSpec: t.string,
   }),
 ]);
 
-function BarplotViz(props: VisualizationProps) {
+function BarplotViz(props: VisualizationProps<Options>) {
   const {
+    options,
     computation,
     visualization,
     updateConfiguration,
@@ -144,26 +178,22 @@ function BarplotViz(props: VisualizationProps) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useMemo(
-    () =>
-      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
-    [studyMetadata]
-  );
+  const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
 
-  const vizConfig = useMemo(() => {
-    return pipe(
-      BarplotConfig.decode(visualization.descriptor.configuration),
-      getOrElse((): t.TypeOf<typeof BarplotConfig> => createDefaultConfig())
-    );
-  }, [visualization.descriptor.configuration]);
-
-  const updateVizConfig = useCallback(
-    (newConfig: Partial<BarplotConfig>) => {
-      updateConfiguration({ ...vizConfig, ...newConfig });
-    },
-    [updateConfiguration, vizConfig]
+  // use useVizConfig hook
+  const [vizConfig, updateVizConfig] = useVizConfig(
+    visualization.descriptor.configuration,
+    BarplotConfig,
+    createDefaultConfig,
+    updateConfiguration
   );
+
+  // set the state of truncation warning message here
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
@@ -179,36 +209,52 @@ function BarplotViz(props: VisualizationProps) {
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
+        dependentAxisRange: undefined,
+        dependentAxisLogScale: false,
+        dependentAxisValueSpec: 'Full',
       });
+      // close truncation warnings
+      setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
 
   // prettier-ignore
-  // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
-        : {
-          [key]: newValue
-        };
-       updateVizConfig(newPartialConfig);
+    < ValueType,>(key: keyof BarplotConfig, resetCheckedLegendItems?: boolean, resetAxisRanges?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = {
+        [key]: newValue,
+        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+	      ...(resetAxisRanges ? { dependentAxisRange: undefined } : {}),
+      };
+      updateVizConfig(newPartialConfig);
+      if (resetAxisRanges)
+	setTruncatedDependentAxisWarning('');
     },
     [updateVizConfig]
   );
 
   const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale'
+    'dependentAxisLogScale',
+    false,
+    true
   );
-  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>(
+    'valueSpec',
+    false,
+    true
+  );
+
+  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
+    'dependentAxisValueSpec',
+    false,
+    true
+  );
 
   // set checkedLegendItems: undefined for the change of showMissingness
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness',
+    true,
     true
   );
 
@@ -217,22 +263,59 @@ function BarplotViz(props: VisualizationProps) {
     'checkedLegendItems'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const providedOverlayVariableDescriptor = useMemo(
+    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
+    [options?.getOverlayVariable, computation.descriptor.configuration]
+  );
+
+  const selectedVariables = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  const filteredConstraints = useFilteredConstraints(
+    dataElementConstraints,
+    selectedVariables,
+    entities,
+    'overlayVariable'
+  );
+
+  useProvidedOptionalVariable<BarplotConfig>(
+    options?.getOverlayVariable,
+    'overlayVariable',
+    providedOverlayVariableDescriptor,
+    vizConfig.overlayVariable,
+    entities,
+    filteredConstraints,
+    dataElementDependencyOrder,
+    selectedVariables,
+    updateVizConfig,
+    /** snackbar message */
+    'The new overlay variable is not compatible with this visualization and has been disabled.'
+  );
+
+  const findEntityAndVariable = useFindEntityAndVariable();
   const {
     variable,
     entity,
     overlayVariable,
+    providedOverlayVariable,
     overlayEntity,
     facetVariable,
     facetEntity,
   } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
     const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+    const providedOverlayVariable = findEntityAndVariable(
+      providedOverlayVariableDescriptor
+    );
     const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
     return {
       variable: xAxisVariable?.variable,
       entity: xAxisVariable?.entity,
       overlayVariable: overlayVariable?.variable,
+      providedOverlayVariable: providedOverlayVariable?.variable,
       overlayEntity: overlayVariable?.entity,
       facetVariable: facetVariable?.variable,
       facetEntity: facetVariable?.entity,
@@ -242,6 +325,7 @@ function BarplotViz(props: VisualizationProps) {
     vizConfig.xAxisVariable,
     vizConfig.overlayVariable,
     vizConfig.facetVariable,
+    providedOverlayVariableDescriptor,
   ]);
 
   const data = usePromise(
@@ -261,7 +345,7 @@ function BarplotViz(props: VisualizationProps) {
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
-        params as BarplotRequestParams
+        params
       );
 
       // figure out if we need to show the missing data for the stratification variables
@@ -326,8 +410,10 @@ function BarplotViz(props: VisualizationProps) {
       variable,
       entity,
       overlayVariable,
+      overlayEntity,
       facetVariable,
       computation.descriptor.type,
+      facetEntity,
     ])
   );
 
@@ -336,41 +422,6 @@ function BarplotViz(props: VisualizationProps) {
     !vizConfig.showMissingness
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
-
-  // find dependent axis max value
-  const defaultDependentMaxValue = useMemo(() => {
-    if (isFaceted(data?.value)) {
-      return data?.value?.facets != null
-        ? max(
-            data.value.facets
-              .filter((facet) => facet.data != null)
-              .flatMap((facet) => facet.data?.series.flatMap((o) => o.value))
-          )
-        : undefined;
-    } else {
-      return data?.value?.series != null
-        ? max(data.value.series.flatMap((o) => o.value))
-        : undefined;
-    }
-  }, [data]);
-
-  // set min/max
-  const dependentAxisRange =
-    defaultDependentMaxValue != null
-      ? {
-          // set min as 0 (count, proportion) or 0.001 (proportion log scale)
-          min:
-            vizConfig.valueSpec === 'count'
-              ? vizConfig.dependentAxisLogScale
-                ? 0.1
-                : 0
-              : vizConfig.dependentAxisLogScale
-              ? 0.001
-              : 0,
-          // add 5 % margin
-          max: defaultDependentMaxValue * 1.05,
-        }
-      : undefined;
 
   // custom legend items for checkbox
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -398,7 +449,8 @@ function BarplotViz(props: VisualizationProps) {
               : data.value?.facets
                   .map((el: { label: string; data?: BarplotData }) => {
                     // faceted plot: here data.value is full data
-                    return el.data?.series[index].value.some(
+                    // need to check whether el.data.series[index] exists
+                    return el.data?.series[index]?.value.some(
                       (el: number) => el != null
                     );
                   })
@@ -412,16 +464,110 @@ function BarplotViz(props: VisualizationProps) {
       : [];
   }, [data]);
 
-  // set checkedLegendItems
-  const checkedLegendItems = useCheckedLegendItemsStatus(
+  // set checkedLegendItems to either the config-stored items, or all items if
+  // nothing stored (or if no overlay locally configured)
+  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
     legendItems,
-    vizConfig.checkedLegendItems
+    vizConfig.overlayVariable
+      ? options?.getCheckedLegendItems?.(
+          computation.descriptor.configuration
+        ) ?? vizConfig.checkedLegendItems
+      : undefined,
+    updateVizConfig
   );
+
+  const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
+  const max = useMemo(() => barplotDefaultDependentAxisMax(data), [data]);
+  const minPosMax =
+    minPos != null && max != null ? { min: minPos, max: max } : undefined;
+  const dependentMinPosMax = useMemo(() => {
+    return minPosMax != null && minPosMax.min != null && minPosMax.max != null
+      ? {
+          min: minPosMax.min,
+          // override max to be exactly 1 in proportion mode (rounding errors can make it slightly greater than 1)
+          max:
+            vizConfig.valueSpec === 'proportion' &&
+            vizConfig.dependentAxisValueSpec === 'Full'
+              ? 1
+              : minPosMax.max,
+        }
+      : undefined;
+  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
+
+  // using custom hook
+  const defaultDependentAxisRange = useDefaultAxisRange(
+    null,
+    0,
+    dependentMinPosMax?.min,
+    dependentMinPosMax?.max,
+    vizConfig.dependentAxisLogScale,
+    vizConfig.dependentAxisValueSpec
+  ) as NumberRange;
+
+  // axis range control
+  const handleDependentAxisRangeChange = onChangeHandlerFactory<NumberRange>(
+    'dependentAxisRange'
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateVizConfig({
+      dependentAxisRange: undefined,
+      dependentAxisLogScale: false,
+      dependentAxisValueSpec: 'Full',
+    });
+    // add reset for truncation message as well
+    setTruncatedDependentAxisWarning('');
+  }, [updateVizConfig]);
+
+  // set truncation flags: will see if this is reusable with other application
+  const {
+    truncationConfigIndependentAxisMin,
+    truncationConfigIndependentAxisMax,
+    truncationConfigDependentAxisMin,
+    truncationConfigDependentAxisMax,
+  } = useMemo(
+    () =>
+      // barplot does not have independent axis range control so send undefined for defaultUIState
+      truncationConfig(
+        {
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
+            : {}),
+        },
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
+      ),
+    [vizConfig.dependentAxisRange, minPosMax]
+  );
+
+  useEffect(() => {
+    if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {
+      setTruncatedDependentAxisWarning(
+        'Data may have been truncated by range selection, as indicated by the yellow shading'
+      );
+    }
+  }, [truncationConfigDependentAxisMin, truncationConfigDependentAxisMax]);
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data, vizConfig.checkedLegendItems]
+    // The dependencies for needing to generate a new thumbnail
+    [
+      data,
+      vizConfig.checkedLegendItems,
+      vizConfig.dependentAxisRange,
+      vizConfig.dependentAxisLogScale,
+      vizConfig.dependentAxisValueSpec,
+    ]
+  );
+
+  const overlayLabel = variableDisplayWithUnit(overlayVariable);
+  const neutralPaletteProps = useNeutralPaletteProps(
+    vizConfig.overlayVariable,
+    providedOverlayVariableDescriptor
   );
 
   // these props are passed to either a single plot
@@ -432,16 +578,30 @@ function BarplotViz(props: VisualizationProps) {
     orientation: 'vertical',
     barLayout: 'group',
     displayLegend: false,
-    independentAxisLabel: axisLabelWithUnit(variable) ?? 'Main',
+    independentAxisLabel: variableDisplayWithUnit(variable) ?? 'Main',
     dependentAxisLabel:
       vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion',
-    legendTitle: overlayVariable?.displayName,
+    legendTitle: overlayLabel,
     interactive: !isFaceted(data.value) ? true : false,
     showSpinner: data.pending || filteredCounts.pending,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     // set dependent axis range for log scale
-    dependentAxisRange: dependentAxisRange,
+    // truncation axis range control
+    dependentAxisRange:
+      vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
     displayLibraryControls: false,
+    // for faceted plot, add axisTruncationConfig props here
+    axisTruncationConfig: {
+      independentAxis: {
+        min: truncationConfigIndependentAxisMin,
+        max: truncationConfigIndependentAxisMax,
+      },
+      dependentAxis: {
+        min: truncationConfigDependentAxisMin,
+        max: truncationConfigDependentAxisMax,
+      },
+    },
+    ...neutralPaletteProps,
   };
 
   const plotNode = (
@@ -469,36 +629,130 @@ function BarplotViz(props: VisualizationProps) {
           {...plotProps}
         />
       )}
+    </>
+  );
 
+  const controlsNode = (
+    <>
+      {/* Plot mode */}
+      <RadioButtonGroup
+        label="Plot mode"
+        selectedOption={vizConfig.valueSpec}
+        options={['count', 'proportion']}
+        optionLabels={['Count', 'Proportion']}
+        buttonColor={'primary'}
+        margins={['1em', '0', '0', '1em']}
+        onOptionSelected={(newOption) => {
+          if (newOption === 'proportion') {
+            onValueSpecChange('proportion');
+          } else {
+            onValueSpecChange('count');
+          }
+        }}
+      />
+
+      {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log Scale:"
-            state={vizConfig.dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-          />
-          <RadioButtonGroup
-            selectedOption={vizConfig.valueSpec}
-            options={['count', 'proportion']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportion') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-          />
-        </LabelledGroup>
+          >
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
+            </div>
+          </div>
+
+          <div style={{ marginLeft: '1em', marginTop: '-0.5em' }}>
+            <Toggle
+              label={`Log scale ${
+                vizConfig.dependentAxisLogScale ? 'on' : 'off'
+              }`}
+              value={vizConfig.dependentAxisLogScale}
+              onChange={onDependentAxisLogScaleChange}
+              themeRole="primary"
+            />
+          </div>
+
+          <LabelledGroup
+            label="Y-axis range"
+            containerStyles={{
+              fontSize: '0.9em',
+              // width: '350px',
+            }}
+          >
+            <RadioButtonGroup
+              options={['Full', 'Auto-zoom', 'Custom']}
+              selectedOption={vizConfig.dependentAxisValueSpec ?? 'Full'}
+              onOptionSelected={(newAxisRangeOption: string) => {
+                onDependentAxisValueSpecChange(newAxisRangeOption);
+              }}
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              buttonColor={'primary'}
+              margins={['0em', '0', '0', '0em']}
+              itemMarginRight={25}
+            />
+
+            {/* Y-axis range control */}
+            <NumberRangeInput
+              label="Range"
+              // add range
+              range={vizConfig.dependentAxisRange ?? defaultDependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              // set maxWidth
+              containerStyles={{ maxWidth: '350px' }}
+              disabled={
+                vizConfig.dependentAxisValueSpec === 'Full' ||
+                vizConfig.dependentAxisValueSpec === 'Auto-zoom'
+              }
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                // change maxWidth
+                containerStyles={{ maxWidth: '350px' }}
+              />
+            ) : null}
+          </LabelledGroup>
+        </div>
       </div>
     </>
   );
 
+  const showOverlayLegend =
+    vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
-      legendTitle={axisLabelWithUnit(overlayVariable)}
-      onCheckedLegendItemsChange={onCheckedLegendItemsChange}
+      onCheckedLegendItemsChange={setCheckedLegendItems}
+      legendTitle={overlayLabel}
+      // add a condition to show legend even for single overlay data and check legendItems exist
+      showOverlayLegend={showOverlayLegend}
     />
   );
 
@@ -525,23 +779,32 @@ function BarplotViz(props: VisualizationProps) {
           {
             role: 'Main',
             required: true,
-            display: axisLabelWithUnit(variable),
+            display: variableDisplayWithUnit(variable),
             variable: vizConfig.xAxisVariable,
           },
           {
             role: 'Overlay',
-            display: axisLabelWithUnit(overlayVariable),
+            display: overlayLabel,
             variable: vizConfig.overlayVariable,
           },
           {
             role: 'Facet',
-            display: axisLabelWithUnit(facetVariable),
+            display: variableDisplayWithUnit(facetVariable),
             variable: vizConfig.facetVariable,
           },
         ]}
       />
     </>
   );
+
+  const areRequiredInputsSelected = useMemo(() => {
+    if (!dataElementConstraints) return false;
+    return Object.entries(dataElementConstraints[0])
+      .filter((variable) => variable[1].isRequired)
+      .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+  }, [dataElementConstraints, vizConfig.xAxisVariable]);
+
+  const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -551,25 +814,32 @@ function BarplotViz(props: VisualizationProps) {
             {
               name: 'xAxisVariable',
               label: 'Main',
-              role: 'primary',
+              role: 'axis',
             },
             {
               name: 'overlayVariable',
               label: 'Overlay',
               role: 'stratification',
+              providedOptionalVariable: providedOverlayVariableDescriptor,
+              readonlyValue:
+                options?.getOverlayVariable != null
+                  ? providedOverlayVariableDescriptor
+                    ? variableDisplayWithUnit(providedOverlayVariable)
+                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+                  : undefined,
             },
-            {
-              name: 'facetVariable',
-              label: 'Facet',
-              role: 'stratification',
-            },
+            ...(options?.hideFacetInputs
+              ? []
+              : [
+                  {
+                    name: 'facetVariable',
+                    label: 'Facet',
+                    role: 'stratification',
+                  } as const,
+                ]),
           ]}
           entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            overlayVariable: vizConfig.overlayVariable,
-            facetVariable: vizConfig.facetVariable,
-          }}
+          selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -580,7 +850,12 @@ function BarplotViz(props: VisualizationProps) {
               data.value?.completeCasesAxesVars
           }
           toggleStarredVariable={toggleStarredVariable}
-          onShowMissingnessChange={onShowMissingnessChange}
+          // this can be used to show and hide no data control
+          onShowMissingnessChange={
+            computation.descriptor.type === 'pass'
+              ? onShowMissingnessChange
+              : undefined
+          }
           showMissingness={vizConfig.showMissingness}
           outputEntity={entity}
         />
@@ -588,11 +863,13 @@ function BarplotViz(props: VisualizationProps) {
 
       <PluginError error={data.error} outputSize={outputSize} />
       <OutputEntityTitle entity={entity} outputSize={outputSize} />
-      <PlotLayout
+      <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
-        legendNode={legendNode}
+        controlsNode={controlsNode}
+        legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
       />
     </div>
   );
@@ -683,7 +960,7 @@ function getRequestParams(
       barMode: 'group', // or 'stack'
       showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
     },
-  } as BarplotRequestParams;
+  };
 }
 
 /**
@@ -702,6 +979,8 @@ function reorderData(
 ): BarplotDataWithStatistics | BarplotData {
   // If faceted, reorder the facets and within the facets
   if (isFaceted(data)) {
+    if (facetVocabulary.length === 0) return data; // FIX-ME stop-gap for vocabulary-less numeric variables
+
     // for each value in the facet vocabulary's correct order
     // find the index in the series where series.name equals that value
     const facetValues = data.facets.map((facet) => facet.label);

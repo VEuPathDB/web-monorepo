@@ -1,23 +1,73 @@
-import { useMemo } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { ReactNode, useMemo } from 'react';
 import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
   excludedVariables,
   filterConstraints,
+  disabledVariablesForInput,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
 
 import VariableTreeDropdown from '../variableTrees/VariableTreeDropdown';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
+import { useInputStyles } from './inputStyles';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { isEqual } from 'lodash';
 
-interface InputSpec {
+export interface InputSpec {
   name: string;
   label: string;
-  role: 'primary' | 'stratification';
+  /** Provide a string here to indicate that the input is readonly.
+   * The string will be displayed instead of a variable selector.
+   */
+  readonlyValue?: string;
+  role?: 'axis' | 'stratification';
+  /**
+   * Instead of just providing a string, as above, provide a variable that the
+   * user will be able to choose with a radio button group (the other option is "no variable").
+   *
+   * However, you should additionaly use the `readonlyValue` prop as a label to display
+   * when the provided variable is null.
+   *
+   * The variable will only be selected/selectable if the constraints are met.
+   * (Meaning that if you pass a new provided variable that isn't compatible, the radio button
+   * will switch to "no variable")
+   */
+  providedOptionalVariable?: VariableDescriptor;
+}
+
+interface SectionSpec {
+  order: number;
+  title: ReactNode;
+}
+
+// order is used to sort the inputGroups
+// (customInput ordering will use the same coordinate system, so you can slot
+// one in where you need it)
+const sectionInfo: Record<string, SectionSpec> = {
+  default: {
+    order: 0,
+    title: 'Variables',
+  },
+  axis: {
+    order: 50,
+    title: 'Axis variables',
+  },
+  stratification: {
+    order: 100,
+    title: 'Stratification variables',
+  },
+};
+
+const requiredInputStyle = {
+  color: '#dd314e',
+};
+
+interface CustomSectionSpec extends SectionSpec {
+  content: ReactNode;
 }
 
 export interface Props {
@@ -27,6 +77,11 @@ export interface Props {
    * associated constraint will be applied.
    */
   inputs: InputSpec[];
+  /**
+   * If you need additional controls or sections in the input variable area
+     you can add them here.
+   */
+  customSections?: CustomSectionSpec[];
   /**
    * Study entities used to look up entity and variable details.
    */
@@ -49,7 +104,7 @@ export interface Props {
    * The entity of a given element in the array must be of the same entity, or
    * lower in the tree, of the element to its right.
    */
-  dataElementDependencyOrder?: string[];
+  dataElementDependencyOrder?: string[][];
   /**
    * An array of VariableDescriptors for the user's "My Variables"
    */
@@ -68,42 +123,6 @@ export interface Props {
   outputEntity?: StudyEntity;
 }
 
-const useStyles = makeStyles({
-  inputs: {
-    display: 'flex',
-    flexWrap: 'nowrap', // if it didn't wrap so aggressively, it would be good to allow wrapping
-    // perhaps after the Material UI capitalization is removed.
-    marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
-    alignItems: 'flex-start',
-  },
-  inputGroup: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  input: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '0.5em', // in case they end up stacked vertically on a narrow screen
-    marginRight: '2em',
-  },
-  label: {
-    marginRight: '1ex',
-    fontWeight: 500,
-  },
-  dataLabel: {
-    textAlign: 'right',
-    marginTop: '2em',
-    fontSize: '1.35em',
-    fontWeight: 500,
-  },
-  fullRow: {
-    flexBasis: '100%',
-  },
-  primary: {},
-  stratification: {},
-  showMissingness: {},
-});
-
 export function InputVariables(props: Props) {
   const {
     inputs,
@@ -115,11 +134,12 @@ export function InputVariables(props: Props) {
     starredVariables,
     toggleStarredVariable,
     enableShowMissingnessToggle = false,
-    showMissingness,
+    showMissingness = false,
     onShowMissingnessChange,
     outputEntity,
+    customSections,
   } = props;
-  const classes = useStyles();
+  const classes = useInputStyles();
   const handleChange = (
     inputName: string,
     selectedVariable?: VariableDescriptor
@@ -145,78 +165,14 @@ export function InputVariables(props: Props) {
             input.name
           );
 
-        // Use the input-specific filtered constraints to create an array of disabled variables.
-        const disabledVariables = filteredConstraints
-          ? excludedVariables(entities[0], input.name, filteredConstraints)
-          : [];
+        map[input.name] = disabledVariablesForInput(
+          input.name,
+          entities,
+          filteredConstraints,
+          dataElementDependencyOrder,
+          selectedVariables
+        );
 
-        if (dataElementDependencyOrder == null) {
-          map[input.name] = disabledVariables;
-          return map;
-        }
-        const index = dataElementDependencyOrder.indexOf(input.name);
-        // no change if dependencyOrder is not declared
-        if (index === -1) {
-          map[input.name] = disabledVariables;
-          return map;
-        }
-
-        const prevSelectedVariable = dataElementDependencyOrder
-          .slice(0, index)
-          .map((n) => selectedVariables[n])
-          .reverse()
-          .find((v) => v != null);
-        const nextSelectedVariable = dataElementDependencyOrder
-          .slice(index + 1)
-          .map((n) => selectedVariables[n])
-          .find((v) => v != null);
-
-        // Remove variables for entities which are not part of the ancestor path of, or equal to, `prevSelectedVariable`
-        if (prevSelectedVariable) {
-          const ancestors = entities.reduceRight((ancestors, entity) => {
-            if (
-              entity.id === prevSelectedVariable.entityId ||
-              entity.children?.includes(ancestors[0])
-            ) {
-              ancestors.unshift(entity);
-            }
-            return ancestors;
-          }, [] as StudyEntity[]);
-          const excludedEntities = entities.filter(
-            (entity) => !ancestors.includes(entity)
-          );
-          const excludedVariables = excludedEntities.flatMap((entity) =>
-            entity.variables.map((variable) => ({
-              variableId: variable.id,
-              entityId: entity.id,
-            }))
-          );
-          disabledVariables.push(...excludedVariables);
-        }
-
-        // Remove variables for entities which are not descendants of, or equal to, `nextSelectedVariable`
-        if (nextSelectedVariable) {
-          const entity = entities.find(
-            (entity) => entity.id === nextSelectedVariable.entityId
-          );
-          if (entity == null)
-            throw new Error('Unkonwn entity: ' + nextSelectedVariable.entityId);
-          const descendants = Array.from(
-            preorder(entity, (entity) => entity.children ?? [])
-          );
-          const excludedEntities = entities.filter(
-            (entity) => !descendants.includes(entity)
-          );
-          const excludedVariables = excludedEntities.flatMap((entity) =>
-            entity.variables.map((variable) => ({
-              variableId: variable.id,
-              entityId: entity.id,
-            }))
-          );
-          disabledVariables.push(...excludedVariables);
-        }
-
-        map[input.name] = disabledVariables;
         return map;
       }, {} as Record<string, VariableDescriptor[]>),
     [
@@ -229,87 +185,152 @@ export function InputVariables(props: Props) {
   );
 
   return (
-    <div>
-      <div className={classes.inputs}>
-        <div className={classes.inputGroup}>
-          <div className={classes.fullRow}>
-            <h4>Axis variables</h4>
-          </div>
-          {inputs
-            .filter((input) => input.role === 'primary')
-            .map((input) => (
-              <div
-                key={input.name}
-                className={[classes.input, 'primary'].join(' ')}
-              >
-                <div className={classes.label}>{input.label}</div>
-                <VariableTreeDropdown
-                  showMultiFilterDescendants
-                  rootEntity={entities[0]}
-                  disabledVariables={disabledVariablesByInputName[input.name]}
-                  customDisabledVariableMessage={
-                    constraints?.[0][input.name].description // just take first description for now
-                  }
-                  starredVariables={starredVariables}
-                  toggleStarredVariable={toggleStarredVariable}
-                  entityId={selectedVariables[input.name]?.entityId}
-                  variableId={selectedVariables[input.name]?.variableId}
-                  onChange={(variable) => {
-                    handleChange(input.name, variable);
-                  }}
-                />
+    <div className={classes.inputs}>
+      {[undefined, 'axis', 'stratification'].map(
+        (inputRole) =>
+          inputs.filter((input) => input.role === inputRole).length > 0 && (
+            <div
+              className={classes.inputGroup}
+              style={{ order: sectionInfo[inputRole ?? 'default'].order }}
+            >
+              <div className={classes.fullRow}>
+                <h4>{sectionInfo[inputRole ?? 'default'].title}</h4>
               </div>
-            ))}
-        </div>
-        {inputs.filter((input) => input.role === 'stratification').length >
-          0 && (
-          <div className={classes.inputGroup}>
-            <div className={classes.fullRow}>
-              <h4>Stratification variables (optional)</h4>
-            </div>
-            {inputs
-              .filter((input) => input.role === 'stratification')
-              .map((input) => (
-                <div
-                  key={input.name}
-                  className={[classes.input, 'stratification'].join(' ')}
-                >
-                  <div className={classes.label}>{input.label}</div>
-                  <VariableTreeDropdown
-                    showMultiFilterDescendants
-                    rootEntity={entities[0]}
-                    disabledVariables={disabledVariablesByInputName[input.name]}
-                    customDisabledVariableMessage={
-                      constraints?.[0][input.name].description // just take first description for now
+              {inputs
+                .filter((input) => input.role === inputRole)
+                .map((input) => (
+                  <div
+                    key={input.name}
+                    className={classes.input}
+                    style={
+                      input.readonlyValue
+                        ? {}
+                        : !selectedVariables[input.name] &&
+                          constraints?.[0][input.name].isRequired
+                        ? requiredInputStyle
+                        : {}
                     }
-                    starredVariables={starredVariables}
-                    toggleStarredVariable={toggleStarredVariable}
-                    entityId={selectedVariables[input.name]?.entityId}
-                    variableId={selectedVariables[input.name]?.variableId}
-                    onChange={(variable) => {
-                      handleChange(input.name, variable);
-                    }}
-                  />
-                </div>
-              ))}
-            {onShowMissingnessChange && (
-              <div className={classes.showMissingness}>
-                <Switch
-                  label={`Include ${
-                    outputEntity
-                      ? makeEntityDisplayName(outputEntity, true)
-                      : 'points'
-                  } with no data for selected stratification variable(s)`}
-                  state={showMissingness}
-                  onStateChange={onShowMissingnessChange}
-                  disabled={!enableShowMissingnessToggle}
-                  labelPosition="after"
-                />
-              </div>
-            )}
+                  >
+                    <Tooltip
+                      css={{}}
+                      title={
+                        !input.readonlyValue &&
+                        constraints?.[0][input.name].isRequired
+                          ? 'Required parameter'
+                          : ''
+                      }
+                    >
+                      <div
+                        className={classes.label}
+                        style={{ cursor: 'default' }}
+                      >
+                        {input.label +
+                          (input.readonlyValue &&
+                          !input.providedOptionalVariable
+                            ? ' (fixed)'
+                            : '')}
+                        {!input.readonlyValue &&
+                        constraints?.[0][input.name].isRequired ? (
+                          <sup>*</sup>
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                    </Tooltip>
+                    {input.providedOptionalVariable ? (
+                      // render a radio button to choose between provided and nothing
+                      // check if provided var is in disabledVariablesByInputName[input.name]
+                      // and disable radio input if needed
+                      <RadioButtonGroup
+                        disabledList={
+                          disabledVariablesByInputName[
+                            input.name
+                          ].find((variable) =>
+                            isEqual(variable, input.providedOptionalVariable)
+                          )
+                            ? ['provided']
+                            : []
+                        }
+                        options={['none', 'provided']}
+                        optionLabels={[
+                          'None',
+                          input.readonlyValue ?? 'Provided',
+                        ]}
+                        selectedOption={
+                          selectedVariables[input.name] ? 'provided' : 'none'
+                        }
+                        onOptionSelected={(selection) =>
+                          handleChange(
+                            input.name,
+                            selection === 'none'
+                              ? undefined
+                              : input.providedOptionalVariable
+                          )
+                        }
+                        //                        onSelectedOptionDisabled={(_) => {
+                        //                          handleChange(input.name, undefined);
+                        //                          enqueueSnackbar(
+                        //                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
+                        //                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
+                        //                          );
+                        //                        }}
+                      />
+                    ) : input.readonlyValue ? (
+                      <span style={{ height: '32px', lineHeight: '32px' }}>
+                        {input.readonlyValue}
+                      </span>
+                    ) : (
+                      <VariableTreeDropdown
+                        scope="variableTree"
+                        showMultiFilterDescendants
+                        disabledVariables={
+                          disabledVariablesByInputName[input.name]
+                        }
+                        customDisabledVariableMessage={
+                          constraints?.[0][input.name].description
+                        }
+                        starredVariables={starredVariables}
+                        toggleStarredVariable={toggleStarredVariable}
+                        entityId={selectedVariables[input.name]?.entityId}
+                        variableId={selectedVariables[input.name]?.variableId}
+                        onChange={(variable) => {
+                          handleChange(input.name, variable);
+                        }}
+                      />
+                    )}
+                  </div>
+                ))}
+              {
+                // slightly hacky add-on for the stratification section
+                // it could possibly be done using a custom section?
+                inputRole === 'stratification' && onShowMissingnessChange && (
+                  <div className={classes.showMissingness}>
+                    <Toggle
+                      label={`Include ${
+                        outputEntity
+                          ? makeEntityDisplayName(outputEntity, true)
+                          : 'points'
+                      } with no data for selected stratification variable(s)`}
+                      value={showMissingness ?? false}
+                      onChange={onShowMissingnessChange}
+                      disabled={!enableShowMissingnessToggle}
+                      labelPosition="right"
+                      themeRole="primary"
+                    />
+                  </div>
+                )
+              }
+            </div>
+          )
+      )}
+      {customSections?.map(({ order, title, content }) => (
+        <div className={classes.inputGroup} style={{ order }}>
+          <div className={classes.fullRow}>
+            <h4>{title}</h4>
           </div>
-        )}
-      </div>
+          {content}
+        </div>
+      ))}
     </div>
   );
 }

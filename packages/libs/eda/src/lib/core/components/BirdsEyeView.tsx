@@ -3,7 +3,7 @@ import { CoverageStatistics } from '../types/visualization';
 import BirdsEyePlot from '@veupathdb/components/lib/plots/BirdsEyePlot';
 import { red, gray } from './filter/colors';
 import { StudyEntity } from '../types/study';
-import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
+import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
 interface Props extends Partial<CoverageStatistics> {
   /** The output entity */
@@ -59,7 +59,7 @@ export function BirdsEyeView(props: Props) {
           bars: [
             // total comes first, or the subset is hidden
             {
-              label: 'Total',
+              label: 'All',
               value: totalSize,
               color: gray,
             },
@@ -110,23 +110,22 @@ export function BirdsEyeView(props: Props) {
     </div>
   );
 
-  return (
-    <Tooltip
-      content={tooltipContent}
-      position={{
-        my: 'middle middle',
-        at: 'middle middle',
+  return birdsEyeData ? (
+    <div
+      style={{
+        display: 'flex',
       }}
-      showDelay={50}
-      showTip={false}
     >
       <BirdsEyePlot
         data={birdsEyeData}
         containerClass="birds-eye-plot"
         containerStyles={{
           width: '400px',
-          height: '110px',
-          marginBottom: '1.5em',
+          height: '115px',
+          border: '1px solid #bfbfbf',
+          backgroundColor: 'rgb(250, 250, 250)',
+          paddingBottom: 5,
+          paddingRight: 5,
         }}
         spacingOptions={{
           marginTop: 5,
@@ -137,7 +136,18 @@ export function BirdsEyeView(props: Props) {
         interactive={true}
         dependentAxisLabel={entityPluralString}
         showSpinner={enableSpinner && !birdsEyeData}
+        plotBgColor={'rgb(250,250,250)'}
+        paperBgColor={'rgb(250,250,250)'}
       />
-    </Tooltip>
-  );
+      <span
+        style={{
+          position: 'relative',
+          right: '1.75em',
+          top: '0.25em',
+        }}
+      >
+        <HelpIcon children={tooltipContent} />
+      </span>
+    </div>
+  ) : null;
 }
