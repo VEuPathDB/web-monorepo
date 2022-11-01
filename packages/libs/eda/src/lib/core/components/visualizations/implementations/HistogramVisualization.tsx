@@ -471,6 +471,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
       vizConfig.facetVariable,
       vizConfig.valueSpec,
       vizConfig.showMissingness,
+      vizConfig.independentAxisRange,
+      vizConfig.independentAxisValueSpec === 'Full',
       studyId,
       filters,
       filteredCounts,
@@ -585,6 +587,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   // axis range control
   // get as much default axis range from variable annotations as possible
+
+  // NOTE: tech debt - defaultUIState is not really used in its entirity
+  // for example, the binWidth isn't used anywhere any more - we should remove
+  // unused data from it, or remove it entirely (other viz's manage without it)
   const defaultUIState: UIState = useMemo(() => {
     if (xAxisVariable != null) {
       const otherDefaults = {
@@ -705,18 +711,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
-      binWidth: defaultUIState.binWidth,
-      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
+      binWidth: undefined,
+      binWidthTimeUnit: undefined,
       independentAxisValueSpec: 'Full',
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [
-    defaultUIState.binWidth,
-    defaultUIState.binWidthTimeUnit,
-    updateVizConfig,
-    setTruncatedIndependentAxisWarning,
-  ]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
@@ -1324,8 +1325,10 @@ function getRequestParams(
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? variable.distributionDefaults.binWidthOverride ??
-        variable.distributionDefaults.binWidth
+      ? vizConfig.independentAxisValueSpec === 'Full'
+        ? variable.distributionDefaults.binWidthOverride ??
+          variable.distributionDefaults.binWidth
+        : undefined
       : undefined,
     binWidthTimeUnit = variable?.type === 'date'
       ? variable.distributionDefaults.binUnits

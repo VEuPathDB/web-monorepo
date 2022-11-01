@@ -689,6 +689,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
       // the back end only makes use of the x-axis viewport (aka independentAxisRange)
       // when binning is in force, so no need to trigger a new request unless binning
       vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
+      // same goes for changing from full to auto-zoom/custom
+      vizConfig.useBinning
+        ? vizConfig.independentAxisValueSpec === 'Full'
+        : undefined,
       valuesAreSpecified,
       providedOverlayVariable,
     ])
@@ -1949,8 +1953,10 @@ function getRequestParams(
     showMissingness,
     binWidth = NumberVariable.is(xAxisVariableMetadata) ||
     DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-        xAxisVariableMetadata.distributionDefaults.binWidth
+      ? vizConfig.independentAxisValueSpec === 'Full' // only use 'annotated' binwidth when fully zoomed out
+        ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
+          xAxisVariableMetadata.distributionDefaults.binWidth
+        : undefined
       : undefined,
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
       ? xAxisVariableMetadata.distributionDefaults.binUnits
