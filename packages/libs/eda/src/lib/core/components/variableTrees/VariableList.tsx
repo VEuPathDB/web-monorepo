@@ -709,6 +709,13 @@ export default function VariableList({
     customCheckboxes: customCheckboxes,
     additionalFilters: additionalFilters,
     isAdditionalFilterApplied: isAdditionalFilterApplied,
+    styleOverrides: {
+      treeNode: {
+        nodeWrapper: {
+          padding: 0,
+        },
+      },
+    },
   };
 
   return asDropdown ? (
@@ -724,6 +731,14 @@ export default function VariableList({
       <SelectTree
         key={activeField?.term}
         {...sharedProps}
+        styleOverrides={{
+          ...sharedProps.styleOverrides,
+          searchBox: {
+            container: {
+              margin: '0 0.5em 0 2em',
+            },
+          },
+        }}
         buttonDisplayContent={dropdownLabel}
         wrapPopover={(treeSection) => (
           <div
@@ -783,6 +798,7 @@ const baseFieldNodeLinkStyle = {
   borderRadius: '0.5em',
   display: 'inline-block',
   cursor: 'pointer',
+  fontSize: '0.9em',
 };
 
 const activeFieldNodeLinkStyle = {
@@ -824,6 +840,7 @@ const FieldNode = ({
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
   const nodeColor = { color: asDropdown ? '#2f2f2f' : '#069' };
+  const anchorNodeLinkStyle = isMultiPick ? {} : { marginLeft: '0.5em' };
 
   useLayoutEffect(() => {
     // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
@@ -860,15 +877,21 @@ const FieldNode = ({
             ? {
                 ...baseFieldNodeLinkStyle,
                 ...activeFieldNodeLinkStyle,
+                ...anchorNodeLinkStyle,
                 ...nodeColor,
               }
             : isDisabled
             ? {
                 ...baseFieldNodeLinkStyle,
+                ...anchorNodeLinkStyle,
                 ...disabledFieldNodeLinkStyle,
                 ...nodeColor,
               }
-            : { ...baseFieldNodeLinkStyle, ...nodeColor }
+            : {
+                ...baseFieldNodeLinkStyle,
+                ...anchorNodeLinkStyle,
+                ...nodeColor,
+              }
         }
         href={'#' + field.term}
         onClick={(e) => {
@@ -887,9 +910,8 @@ const FieldNode = ({
         field.term.includes('entity')
           ? {
               fontWeight: 'bold',
-              fontSize: '1.05em',
               cursor: 'pointer',
-              marginLeft: '0.5em',
+              padding: '0.25em 0.5em',
               ...nodeColor,
             }
           : { ...baseFieldNodeLinkStyle, ...nodeColor }
@@ -909,7 +931,6 @@ const FieldNode = ({
               display: 'flex',
               justifyContent: 'space-between',
               width: '100%',
-              paddingLeft: isMultiPick ? 0 : '1em',
             }
           : {}
       }
