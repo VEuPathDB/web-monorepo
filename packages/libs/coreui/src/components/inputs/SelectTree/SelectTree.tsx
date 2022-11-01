@@ -59,6 +59,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
             additionalFilters={props.additionalFilters}
             isAdditionalFilterApplied={props.isAdditionalFilterApplied}
             wrapTreeSection={props.wrapTreeSection}
+            styleOverrides={props.styleOverrides}
         />
     )
 

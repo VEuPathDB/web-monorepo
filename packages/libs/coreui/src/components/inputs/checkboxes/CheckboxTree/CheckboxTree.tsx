@@ -31,8 +31,10 @@ const defaultTreeLinksStyleSpec: TreeLinksStyleSpec = {
     container: {
       display: 'flex',
       justifyContent: 'center',
-      height: '2em',
+      height: 'auto',
+      flexWrap: 'wrap',
       padding: '0.5em 0',
+      rowGap: '0.5em',
     },
     links: {
       fontSize: '0.9em',
@@ -43,7 +45,9 @@ const defaultTreeLinksStyleSpec: TreeLinksStyleSpec = {
       padding: 0,
       margin: 0,
     },
-    actionsContainerStyle: {}
+    actionsContainerStyle: {
+      flexGrow: 1,
+    }
 };
 
 const linksHoverDecoration = css({
@@ -54,7 +58,11 @@ const linksHoverDecoration = css({
 
 export type CheckboxTreeStyleSpec = {
   treeLinks?: TreeLinksStyleSpec;
+  searchAndFilterWrapper?: React.CSSProperties;
   searchBox?: SearchBoxStyleSpec;
+  additionalFilters?: {
+    container?: React.CSSProperties;
+  };
   treeNode?: CheckboxTreeNodeStyleSpec;
   treeSection?: {
     container?: React.CSSProperties;
@@ -64,19 +72,30 @@ export type CheckboxTreeStyleSpec = {
 
 const defaultCheckboxTreeStyleSpec: CheckboxTreeStyleSpec = {
   treeLinks: defaultTreeLinksStyleSpec,
-  treeNode: {},
+  searchAndFilterWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   searchBox: {},
+  additionalFilters: {
+    container: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+  },
   treeSection: {
     container: {
       flexGrow: 2, 
-      overflowY: 'auto'
+      overflowY: 'auto',
+      margin: '0.5em 0', 
     },
     ul: {
-      width: '100%', 
-      margin: '0.5em 0', 
+      width: '100%',
+      margin: 0,
       padding: '0 1em', 
     }
-  }
+  },
+  treeNode: {},
 }
 
 type StatefulNode<T> = T & {
@@ -166,7 +185,10 @@ export type CheckboxTreeProps<T> = {
   searchBoxPlaceholder: string;
 
   /** Name of icon to show in search box */
-  searchIconName?: string;
+  searchIconName?: 'search' | 'filter';
+
+  /** Position of icon in search box */
+  searchIconPosition?: 'left' | 'right';
 
   /** Search box help text: if present, a help icon will appear; mouseover the icon and a tooltip will appear with this text */
   searchBoxHelp?: string;
@@ -332,17 +354,18 @@ function getInitialNodeState<T>(node: T, getNodeChildren: (t: T) => T[]) {
 
 interface AdditionalFiltersProps {
   filters?: React.ReactNode[];
+  filtersStyleSpec?: React.CSSProperties;
 }
 
 /**
  * Renders additional filters to supplement the default searchbox
  */
-function AdditionalFilters({ filters }: AdditionalFiltersProps) {
+function AdditionalFilters({ filters, filtersStyleSpec }: AdditionalFiltersProps) {
   return (
     <>
       {
         filters != null && filters.length > 0 &&
-        <div>
+        <div css={{...filtersStyleSpec}}>
           {
             filters.map((filter, index) => (
               <span key={index}>
@@ -600,6 +623,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         onSearchTermChange,
         searchBoxPlaceholder,
         searchIconName,
+        searchIconPosition,
         searchBoxHelp,
         additionalFilters,
         wrapTreeSection,
@@ -622,7 +646,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
             isLeafVisible,
             generated: generatedTreeState,
         }
-    }, [tree, isSearchable, searchTerm, searchPredicate, isAdditionalFilterApplied, name, getNodeId, getNodeChildren, props.renderNode, expandedList]);
+    }, [tree, isSearchable, searchTerm, searchPredicate, isAdditionalFilterApplied, name, getNodeId, getNodeChildren, props.renderNode, expandedList, selectedList]);
 
 
     /**
@@ -838,21 +862,20 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
       <>
         {linksPosition && linksPosition == LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
-          <div css={{
-            display: 'flex',
-            justifyContent: 'center',
-          }}>
+          <div css={{...styleSpec.searchAndFilterWrapper}}>
             <SearchBox
               autoFocus={autoFocusSearchBox}
               searchTerm={searchTerm}
               onSearchTermChange={onSearchTermChange}
               placeholderText={searchBoxPlaceholder}
               iconName={searchIconName}
+              iconPosition={searchIconPosition}
               helpText={searchBoxHelp}
               styleOverrides={styleSpec.searchBox}
             />
             <AdditionalFilters
               filters={additionalFilters}
+              filtersStyleSpec={styleSpec.additionalFilters?.container}
             />
           </div>
         )}

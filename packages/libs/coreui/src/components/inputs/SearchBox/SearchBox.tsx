@@ -32,7 +32,7 @@ type Props = {
   placeholderText?: string;
 
   /** Icon name to show in input box. Defaults to "search". */
-  iconName?: string;
+  iconName?: 'search' | 'filter';
 
   /** Specifies where icon should be placed within input box. Defaults to "right". */
   iconPosition?: 'left' | 'right';
@@ -64,7 +64,7 @@ const searchIconStyleSpec = {
 const filterIconStyleSpec = {
   fill: '#999999',
   position: 'relative',
-  left: '5px',
+  top: '2px',
   fontSize: '1.5em',
 }
 
@@ -94,8 +94,6 @@ const defaultStyleSpec: SearchBoxStyleSpec = {
   input: {
     border: '1px solid #888',
     borderRadius: '16px',
-    // default is for a right-positioned icon
-    padding: '0.2em 2em 0.2em 1em',
     width: 'calc(100% - 3em)',
     textOverflow: 'ellipsis',
     background: '#fff',
@@ -105,7 +103,7 @@ const defaultStyleSpec: SearchBoxStyleSpec = {
     alignItems: 'center',
     whiteSpace: 'nowrap',
     width: '100%',
-    margin: '0 0.5em 0 2em',
+    margin: '0 0.5em',
   }
 }
 
@@ -126,12 +124,18 @@ export default function SearchBox({
 }: Props) {
 
   const styleSpec: SearchBoxStyleSpec = useMemo(() => {
-    const defaultStyleWithIcon = {
+    const defaultStyleWithIconSpecs = {
       ...defaultStyleSpec,
-      optionalIcon: iconName === 'search' ? {...searchIconStyleSpec} : {...filterIconStyleSpec}
+      input: {
+        ...defaultStyleSpec.input,
+        padding: iconPosition === 'right' ? '0.2em 2em 0.2em 1em' : '0.2em 1em 0.2em 2em',
+      },
+      optionalIcon: 
+        iconName === 'search' ? {...searchIconStyleSpec} : 
+          iconPosition === 'right' ? {...filterIconStyleSpec, right: '25px'} : {...filterIconStyleSpec, left: '5px'}
     }
-    return merge({}, defaultStyleWithIcon, styleOverrides)
-  }, [styleOverrides])
+    return merge({}, defaultStyleWithIconSpecs, styleOverrides)
+  }, [styleOverrides, iconName, iconPosition])
 
   function handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
     let searchTerm = e.currentTarget.value;
