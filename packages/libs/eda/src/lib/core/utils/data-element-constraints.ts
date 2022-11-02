@@ -365,7 +365,7 @@ export function mergeMinNumValues(
   constraintA: DataElementConstraint,
   constraintB: DataElementConstraint
 ) {
-  const mergedMinNumValues = Math.min(
+  const mergedMinNumValues = Math.max(
     constraintA.minNumValues === undefined
       ? -Infinity
       : constraintA.minNumValues,
