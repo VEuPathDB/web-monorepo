@@ -303,7 +303,7 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
             <Toggle
-              label="Log Scale:"
+              label={`Log scale ${dependentAxisLogScale ? 'on' : 'off'}`}
               value={dependentAxisLogScale}
               onChange={setDependentAxisLogScale}
             />

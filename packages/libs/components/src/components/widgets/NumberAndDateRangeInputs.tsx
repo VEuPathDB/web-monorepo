@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 import { Typography } from '@material-ui/core';
-import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
+import { DARKEST_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput, DateInput } from './NumberAndDateInputs';
 import Button from './Button';
 import Notification from './Notification';
@@ -167,7 +167,7 @@ function BaseInput({
       {label && (
         <Typography
           variant="button"
-          style={{ color: disabled ? MEDIUM_GRAY : '#222' }}
+          style={{ color: disabled ? MEDIUM_GRAY : DARKEST_GRAY }}
         >
           {label}
         </Typography>
@@ -215,7 +215,7 @@ function BaseInput({
           >
             <Typography
               variant="button"
-              style={{ color: disabled ? MEDIUM_GRAY : '#222' }}
+              style={{ color: disabled ? MEDIUM_GRAY : DARKEST_GRAY }}
             >
               to
             </Typography>
