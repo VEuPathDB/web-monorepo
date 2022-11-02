@@ -2138,10 +2138,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.2.tgz#2436de84e901f7da22c8ac8e2add6ebda99d6c1e"
-  integrity sha512-nJjM2e85uP8DNEliDP8dtM2kKtKEZJ2wysU/Nr4DiKR/ToCCK6xFgsuQcjgGVNxl0cC4oo1vnDLCaUJX/xg2zw==
+"@veupathdb/components@^0.19.3":
+  version "0.19.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.3.tgz#a2587bf5d0d3edf99a27e86154f527c7019643b9"
+  integrity sha512-/8YIUYhRz0lNPObnvqWSScT1Ys9v6R+KtXwTzuKjAgdK9uWfgXntA7jSDzWajPLGRA+wPCuzH33mV1oG6chfWQ==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2170,21 +2170,23 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.6":
-  version "0.18.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.6.tgz#7af21de423548758615c0d861c6a4f398d64fe29"
-  integrity sha512-Sh2y+zkLwwOvBCxyTkxlVM6v+iPONeXB1zdSWaZt941j/CvjnKhDtuA1xzvqwzvgP68bCRzyBz+PgqJm0SLLMg==
+"@veupathdb/coreui@^0.18.12":
+  version "0.18.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.12.tgz#42b6405cc87a9225010cee422b37ecf87dfc0ce6"
+  integrity sha512-Ys6BPnlnKpWYg/Uq0u7ehLlfo1xGpbQSfb3MczWHeRZmI2ZhQJHauVIjc0nmgzMdVI5g9f/+ju/KkbP343SsAQ==
   dependencies:
     "@react-hook/size" "^2.1.2"
+    core-js "^3.25.3"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
+    regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.10.2.tgz#095ce460de1fabc5cbfc8e05cd851cec59453e66"
-  integrity sha512-afoj1Im+bNT6eiPsmoIpkP6YpODV1s3WBQstx+Kz/0cENOcvx5X/YOrszEenZkhJHex4kMYo7P5bYTMQK0dDkg==
+"@veupathdb/eda@^3.11.10":
+  version "3.11.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.10.tgz#4b94d498d9a0eb3df47518a3ab9ba9e157cd8ea9"
+  integrity sha512-U2tKyqq+M+cbRPJXek27Plnj3xxfYGdDvkDMQjz8xAB1IqPKhTAF44oi5p45rjZTYejGyeSRs0zPIH2VVCib8w==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2241,10 +2243,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.9.13":
-  version "0.9.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.13.tgz#126e45bb4604c3b537986f2e72604e1d1a4db1a7"
-  integrity sha512-DrjvMnwOqZQkkRyGJRi3pWinb/3nnpkZZhbXdCkI7HjXnuuDDgM+hU8SOqz9p0VOeOE/DHsbHoAYF3vT7ZQGfQ==
+"@veupathdb/wdk-client@^0.9.16":
+  version "0.9.16"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.16.tgz#40b3c71b36d5dc0c8999870724b27a088b41f39f"
+  integrity sha512-/M6z6q81H+2WgBK37jfkyIhNXKNmMDZeIlpKSd5wjBhieMiib8mSnL8DOJHhYP1uDiNIidbhf42oL9h/asU96Q==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2264,10 +2266,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.6.24":
-  version "0.6.24"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.6.24.tgz#6432cc7bd22163123ab299318c7cf79059a44071"
-  integrity sha512-hWUREwXhtpwQ47hD8j+T6WoIaCEDXz3Pw9LliGTbYsGhpA/lmVCbJb3PjBR9JPZiew2i4t0uGXhmqLk7qfVhmw==
+"@veupathdb/web-common@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.2.tgz#d95447f6aa2c86c360a6dff4c26a5023377abe78"
+  integrity sha512-aiQyaYJHCv9Jp7yDrQA8cj9TeQ7dZSd5YfQPzGPl4tENCZUk0crmHWDt5zVlpVQP0JjKyi2KUpvD2fvlG6ZSPQ==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -3914,6 +3916,11 @@ core-js@^3.21.1:
   version "3.21.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.21.1.tgz#f2e0ddc1fc43da6f904706e8e955bc19d06a0d94"
   integrity sha512-FRq5b/VMrWlrmCzwRrpDYNxyHP9BcAZC+xHJaqTgIE5091ZV1NTmyh0sGOg5XqpnHvR0svdy0sv1gWA1zmhxig==
+
+core-js@^3.25.3:
+  version "3.26.0"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.26.0.tgz#a516db0ed0811be10eac5d94f3b8463d03faccfe"
+  integrity sha512-+DkDrhoR4Y0PxDz6rurahuB+I45OsEUv8E1maPTB6OuHRohMMcznBq9TMpdpDMm/hUPob/mJJS3PqgbHpMTQgw==
 
 core-util-is@~1.0.0:
   version "1.0.3"
@@ -8644,6 +8651,11 @@ regenerator-runtime@^0.13.4:
   version "0.13.7"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.7.tgz#cac2dacc8a1ea675feaabaeb8ae833898ae46f55"
   integrity sha512-a54FxoJDIr27pgf7IgeQGxmqUNYrcV338lf/6gH456HZ/PhX+5BcwHXG9ajESmwe6WRO0tAzRUrRmNONWgkrew==
+
+regenerator-runtime@^0.13.9:
+  version "0.13.10"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.10.tgz#ed07b19616bcbec5da6274ebc75ae95634bfc2ee"
+  integrity sha512-KepLsg4dU12hryUO7bp/axHAKvwGOCV0sGloQtpagJ12ai+ojVDqkeGSiRX1zlq+kjIMZ1t7gpze+26QqtdGqw==
 
 regenerator-transform@^0.15.0:
   version "0.15.0"
