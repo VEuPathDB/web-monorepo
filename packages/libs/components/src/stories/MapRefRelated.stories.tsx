@@ -89,7 +89,10 @@ export const MapFlyTo: Story<MapVEuMapProps> = (args) => {
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
   // starting from world map to check FlyTo functionality
-  const [viewport] = useState<Viewport>({ center: [0, 0], zoom: 2 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [0, 0],
+    zoom: 2,
+  });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -108,6 +111,7 @@ export const MapFlyTo: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
@@ -141,7 +145,10 @@ export const MapThumbnail: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -173,6 +180,7 @@ export const MapThumbnail: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}

@@ -210,12 +210,16 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
     },
     [setMarkerElements, args.animationDuration]
   );
-  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [20, -3],
+    zoom: 5,
+  });
 
   return (
     <MapVEuMap
       {...args}
       viewport={viewport}
+      onViewportChanged={setViewport}
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={{
@@ -244,12 +248,16 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
-  const [viewport] = useState<Viewport>({ center: [20, -3], zoom: 5 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [20, -3],
+    zoom: 5,
+  });
 
   return (
     <MapVEuMap
       {...args}
       viewport={viewport}
+      onViewportChanged={setViewport}
       onBoundsChanged={handleViewportChanged}
       markers={markerElements}
       animation={null}

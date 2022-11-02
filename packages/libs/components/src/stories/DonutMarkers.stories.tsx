@@ -85,7 +85,10 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -106,6 +109,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
@@ -137,7 +141,10 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
 
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
@@ -159,6 +166,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
@@ -196,7 +204,10 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
 
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
@@ -242,6 +253,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}

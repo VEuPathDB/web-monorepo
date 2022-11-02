@@ -69,7 +69,10 @@ const getDatelineArgs = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
-  const [viewport] = useState<Viewport>({ center: [0, 0], zoom: 2 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [0, 0],
+    zoom: 2,
+  });
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback(
@@ -83,6 +86,7 @@ const getDatelineArgs = () => {
     viewport: viewport,
     height: '100vh',
     width: '100vw',
+    onViewportChanged: setViewport,
     onBoundsChanged: handleViewportChanged,
     markers: markerElements,
     animation: {

@@ -22,7 +22,7 @@ import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
 
 import LabelledGroup from '../components/widgets/LabelledGroup';
-import Switch from '../components/widgets/Switch';
+import { Toggle } from '@veupathdb/coreui';
 
 export default {
   title: 'Map/Chart Markers',
@@ -60,7 +60,10 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
-  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 0],
+    zoom: 6,
+  });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -99,6 +102,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
@@ -136,7 +140,10 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
-  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 0],
+    zoom: 6,
+  });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -197,6 +204,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
@@ -235,7 +243,10 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
-  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 0],
+    zoom: 6,
+  });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -249,6 +260,8 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
 
   const duration = defaultAnimationDuration;
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
   const [dependentAxisLogScale, setDependentAxisLogScale] = useState(false);
 
   // send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
@@ -275,21 +288,24 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
         showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        onMouseModeChange={setMouseMode}
       />
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis controls">
           <div style={{ display: 'flex' }}>
-            <Switch
+            <Toggle
               label="Log Scale:"
-              state={dependentAxisLogScale}
-              onStateChange={setDependentAxisLogScale}
+              value={dependentAxisLogScale}
+              onChange={setDependentAxisLogScale}
             />
           </div>
         </LabelledGroup>

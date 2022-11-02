@@ -37,6 +37,7 @@ import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
 // define Viewport type
 export type Viewport = {
@@ -143,20 +144,29 @@ export interface MapVEuMapProps {
    * Optional, but required for grid functionality if showGrid is true
    **/
   zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
+  /** What's the minimum leaflet zoom level allowed? Default = 1 */
+  minZoom?: number;
   /**
    * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
    **/
   showMouseToolbar?: boolean;
   /** mouseMode control */
-  mouseMode: MouseMode;
+  mouseMode?: MouseMode;
   /** a function for changing mouseMode */
-  onMouseModeChange: (value: MouseMode) => void;
+  onMouseModeChange?: (value: MouseMode) => void;
   /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
   baseLayer?: BaseLayerChoice;
   /** Callback for when the base layer has changed */
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  /** Show layers control, default true */
+  showLayerSelector?: boolean;
+  /** Show attribution, default true */
+  showAttribution?: boolean;
+  /** Show zoom control, default true */
+  showZoomControl?: boolean;
+
   /** Whether to zoom and pan map to center on markers */
   flyToMarkers?: boolean;
   /** How long (in ms) after rendering to wait before flying to markers */
@@ -167,6 +177,10 @@ export interface MapVEuMapProps {
   showNoDataOverlay?: boolean;
   /** Whether to show the Scale in the map */
   showScale?: boolean;
+  /** Whether to allow any interactive control of map location (default: true) */
+  interactive?: boolean;
+  /** is map scroll and zoom allowed? default true; will be overridden by `interactive: false` */
+  scrollingEnabled?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -182,6 +196,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     recenterMarkers = true,
     showGrid,
     zoomLevelToGeohashLevel,
+    minZoom = 1,
     showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
@@ -190,8 +205,13 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showSpinner,
     showNoDataOverlay,
     showScale = true,
+    showLayerSelector = true,
+    showAttribution = true,
+    showZoomControl = true,
+    scrollingEnabled = true,
     mouseMode,
     onMouseModeChange,
+    interactive = true,
   } = props;
 
   // Whether the user is currently dragging the map
@@ -236,6 +256,15 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     return markers;
   }, [markers, isDragging, mouseMode]);
 
+  const disabledInteractiveProps = {
+    dragging: false,
+    keyboard: false,
+    doubleClickZoom: false,
+    tap: false,
+    touchZoom: false,
+    boxZoom: false,
+  };
+
   return (
     <MapContainer
       center={viewport.center}
@@ -245,6 +274,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       minZoom={1}
       worldCopyJump={false}
       whenCreated={onCreated}
+      attributionControl={showAttribution}
+      zoomControl={showZoomControl}
+      {...(interactive ? {} : disabledInteractiveProps)}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -269,17 +301,19 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
       ) : null}
 
-      <LayersControl position="topright">
-        {Object.entries(baseLayers).map(([name, layerProps], i) => (
-          <LayersControl.BaseLayer
-            name={name}
-            key={name}
-            checked={baseLayer ? name === baseLayer : i === 0}
-          >
-            <TileLayer {...layerProps} />
-          </LayersControl.BaseLayer>
-        ))}
-      </LayersControl>
+      {showLayerSelector && (
+        <LayersControl position="topleft">
+          {Object.entries(baseLayers).map(([name, layerProps], i) => (
+            <LayersControl.BaseLayer
+              name={name}
+              key={name}
+              checked={baseLayer ? name === baseLayer : i === 0}
+            >
+              <TileLayer {...layerProps} />
+            </LayersControl.BaseLayer>
+          ))}
+        </LayersControl>
+      )}
 
       {showSpinner && <Spinner />}
       {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
@@ -299,6 +333,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
       />
+      {/* set ScrollWheelZoom */}
+      <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
     </MapContainer>
   );
 }
@@ -409,6 +445,22 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
     },
   });
+
+  return null;
+}
+
+interface MapScrollWheelZoomProps {
+  scrollingEnabled: boolean;
+}
+
+function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
+  const map = useMap();
+
+  if (props.scrollingEnabled) {
+    map.scrollWheelZoom.enable();
+  } else {
+    map.scrollWheelZoom.disable();
+  }
 
   return null;
 }

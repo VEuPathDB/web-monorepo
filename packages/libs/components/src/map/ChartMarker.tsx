@@ -3,12 +3,19 @@ import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import Barplot from '../plots/Barplot';
+//import Histogram from '../plots/Histogram';
+// import NumberRange type def
 import { NumberRange } from '../types/general';
 
-import { DependentAxisLogScaleAddon } from '../types/plots';
+import {
+  DependentAxisLogScaleAddon,
+  MarkerScaleAddon,
+  MarkerScaleDefault,
+} from '../types/plots';
 
 interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
+    MarkerScaleAddon,
     DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
@@ -33,22 +40,35 @@ interface ChartMarkerProps
  */
 export default function ChartMarker(props: ChartMarkerProps) {
   let fullStat = [];
+  // set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
+  let defaultColor: string = '';
+  let defaultLineColor: string = '';
   // need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
   for (let i = 0; i < props.data.length; i++) {
+    if (props.data[i].color != null) {
+      defaultColor = props.data[i].color as string;
+      // defaultLineColor = 'grey'       // this is outline of histogram
+      defaultLineColor = '#00000088'; // this is outline of histogram
+    } else {
+      defaultColor = '#7cb5ec';
+      defaultLineColor = '#7cb5ec';
+    }
     fullStat.push({
-      color: props.data[i].color ? props.data[i].color : '#7cb5ec',
+      // color: props.colors[i],
+      color: defaultColor,
       label: props.data[i].label,
       value: props.data[i].value,
     });
   }
 
-  const defaultLineColor = props.borderColor || '#AAAAAA';
+  defaultLineColor = props.borderColor || defaultLineColor;
   const borderWidth = props.borderWidth || 1;
 
   // construct histogram marker icon
-  const size = 40; // histogram marker icon size: note that popbio/mapveu donut marker icons = 40
-  const xSize = 50; // make the histogram width a bit larger considering the total number space in the bottom of histogram
-  const ySize = 50; // set height differently to host total number at the bottom side
+  const scale = props.markerScale ?? MarkerScaleDefault;
+  const size = 40 * scale; // histogram marker icon size: note that popbio/mapveu donut marker icons = 40
+  const xSize = 50 * scale; // make the histogram width a bit larger considering the total number space in the bottom of histogram
+  const ySize = 50 * scale; // set height differently to host total number at the bottom side
   let svgHTML: string = ''; // divIcon HTML contents
 
   // set drawing area: without shadow, they are (xSize x ySize)
@@ -59,9 +79,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
     (ySize + 2 * borderWidth) +
     '">'; // initiate svg marker icon
 
-  const count = fullStat.length;
-  // summation of fullStat.value per marker icon
-  const sumValues: number = fullStat
+  let count = fullStat.length;
+  let sumValues: number = fullStat
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
@@ -87,12 +106,12 @@ export default function ChartMarker(props: ChartMarkerProps) {
           max: Math.max(...fullStat.map((o) => o.value).filter((a) => a > 0)),
         };
 
-  const roundX = 10; // round corner in pixel: 0 = right angle
-  const roundY = 10; // round corner in pixel: 0 = right angle
-  const marginX = 5; // margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
-  const marginY = 5; // margin to start drawing bars in Y
+  const roundX = 10 * scale; // round corner in pixel: 0 = right angle
+  const roundY = 10 * scale; // round corner in pixel: 0 = right angle
+  const marginX = 5 * scale; // margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
+  const marginY = 5 * scale; // margin to start drawing bars in Y
 
-  // // thin line: drawing outer box with round corners: changed border color (stroke)
+  // thin line: drawing outer box with round corners: changed border color (stroke)
   svgHTML +=
     '<rect x="0" y="0" rx=' +
     roundX +
@@ -127,8 +146,8 @@ export default function ChartMarker(props: ChartMarkerProps) {
 
   // drawing bars per marker
   fullStat.forEach(function (
-    el: { color: string | undefined; label: string; value: number },
-    index: number
+    el: { color: string; label: string; value: number },
+    index
   ) {
     // for the case of y-axis range input: a global approach that take global max = icon height
     barWidth = (xSize - 2 * marginX) / count; // bar width
@@ -157,7 +176,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       barHeight +
       ' fill=' +
       // rgb strings with spaces in them don't work in SVG?
-      el.color?.replace(/\s/g, '') +
+      el.color.replace(/\s/g, '') +
       ' />';
   });
 
@@ -185,10 +204,9 @@ export default function ChartMarker(props: ChartMarkerProps) {
 
   // check isAtomic: draw pushpin if true
   if (props.isAtomic) {
-    const pushPinCode = '&#128392;'; // this does not work for me
-    // const pushPinCode = '&#128204;';  // red push pin works. idk why but black-color based one does not work here
+    let pushPinCode = '&#128392;';
     svgHTML +=
-      '<text x="89%" y="11%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-color="black" font-size="1.2em">' +
+      '<text x="89%" y="11%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' +
       pushPinCode +
       '</text>';
   }
@@ -199,7 +217,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const totalSize = xSize + marginX + borderWidth;
 
   // set icon
-  const HistogramIcon: any = L.divIcon({
+  let HistogramIcon: any = L.divIcon({
     className: 'leaflet-canvas-icon', // need to change this className but just leave it as it for now
     iconSize: new L.Point(totalSize, totalSize), //set iconSize = 0
     iconAnchor: new L.Point(totalSize / 2, totalSize / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
@@ -207,7 +225,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   });
 
   // anim check duration exists or not
-  const duration: number = props.duration ? props.duration : 300;
+  let duration: number = props.duration ? props.duration : 300;
 
   const plotSize = 200;
   const marginSize = 5;
@@ -250,6 +268,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   );
 
   return (
+    // anim
     <BoundsDriftMarker
       id={props.id}
       position={props.position}
