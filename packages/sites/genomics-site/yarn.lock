@@ -2177,10 +2177,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.11.10":
-  version "3.11.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.10.tgz#4b94d498d9a0eb3df47518a3ab9ba9e157cd8ea9"
-  integrity sha512-U2tKyqq+M+cbRPJXek27Plnj3xxfYGdDvkDMQjz8xAB1IqPKhTAF44oi5p45rjZTYejGyeSRs0zPIH2VVCib8w==
+"@veupathdb/eda@^3.11.12":
+  version "3.11.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.12.tgz#5ca896f9e9d8dc81ae04f3a06f1ffebe1146f73a"
+  integrity sha512-cLrm6QM/H8RRA9o8PCvAcEZdhQT7FJs7cL1OEGJXhdDd74C01u0MvoqjzeI2IhI1hw1QevWD++T92Gmm/fytWw==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2212,10 +2212,10 @@
     lodash "^4.17.20"
     react-select "^3.0.4"
 
-"@veupathdb/preferred-organisms@^1.1.11":
-  version "1.1.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.11.tgz#e37545170eb9453490e224e38463a72dfda22058"
-  integrity sha512-7yzW4AlkDDc1qgX16zEH9QHdFwvPr9Kn5SZaw9qQEyt0GQ6RuWa+ZMQpRh04sUwq5OAOOzYAHREmUCqnjTAezQ==
+"@veupathdb/preferred-organisms@^1.1.12":
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.12.tgz#b9212379a6fffe12aec4d8b78bb0f7443896a2b5"
+  integrity sha512-e89iT+nUvpG4oj3TsO2LVYwdSeFBZKJgsotKgEuVNHoprBWLjJMAvZ5K0nEDmJ7WHeAGrdcy3PYRQKbN1lJiPQ==
   dependencies:
     lodash "^4.17.21"
     recoil "^0.2.0"
