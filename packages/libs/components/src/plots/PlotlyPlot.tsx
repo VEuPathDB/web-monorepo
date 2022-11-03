@@ -293,7 +293,13 @@ function PlotlyPlot<T>(
           // need this attribute for tooltip of dependent axis title!
           .attr('pointer-events', 'all')
           .append('svg:title')
-          .text(originalDependentAxisTitle as string);
+          // remove html tags
+          .text(
+            (originalDependentAxisTitle as string).replace(
+              /[<b></b><i></i><br>]/g,
+              ''
+            ) as string
+          );
       }
     },
     [

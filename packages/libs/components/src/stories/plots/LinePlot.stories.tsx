@@ -164,7 +164,7 @@ Faceted.args = {
   },
 };
 
-//DKDK testing log scale
+// testing log scale
 const dataSetLog = {
   series: [
     {
@@ -224,6 +224,28 @@ const TemplateWithSelectedRangeControls: Story<Omit<LinePlotProps, 'data'>> = (
 
 export const LogScale = TemplateWithSelectedRangeControls.bind({});
 LogScale.args = {
+  containerStyles: {
+    height: '450px',
+    width: '750px',
+  },
+};
+
+// testing svg text (tooltip) for a dependent axis label with html tags
+export const YAxisLabelWithHtml: Story<Omit<LinePlotProps, 'data'>> = (
+  args
+) => {
+  return (
+    <LinePlot
+      data={undefined}
+      {...args}
+      dependentAxisLabel={
+        '<b><i>Arithmetic mean:</i></b><br> Plasmodium asexual stages, by microscopy result'
+      }
+    />
+  );
+};
+
+YAxisLabelWithHtml.args = {
   containerStyles: {
     height: '450px',
     width: '750px',
