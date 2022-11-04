@@ -1,5 +1,5 @@
 import { partial } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {
   getNodeId,
@@ -99,12 +99,9 @@ let {
   // set help
   let searchBoxHelp = disableHelp ? '' : makeSearchHelpText(`each ${leafType} below`);
 
-  return (
-    <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>
-      {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
-      <div
-        style={
-          type === 'searchPane' ? 
+  const containerStyleSpec = useMemo(() => {
+    return (
+      type === 'searchPane' ? 
           {
             ...sharedCheckboxTreeContainerStyleSpec,
             borderBottom: '0.0625rem solid #694b66',
@@ -116,7 +113,14 @@ let {
           {
             ...sharedCheckboxTreeContainerStyleSpec,
           }
-        }
+    )
+  }, [type])
+
+  return (
+    <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>
+      {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
+      <div
+        style={containerStyleSpec}
       >
         <CheckboxTree<CategoryTreeNode>
           searchBoxHelp={searchBoxHelp}
