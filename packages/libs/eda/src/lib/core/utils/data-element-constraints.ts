@@ -150,6 +150,7 @@ export function filterVariablesByConstraint(
     constraint == null ||
     (constraint.allowedShapes == null &&
       constraint.allowedTypes == null &&
+      constraint.minNumValues == null &&
       constraint.maxNumValues == null &&
       constraint.isTemporal == null &&
       constraint.allowMultiValued)
@@ -206,6 +207,8 @@ function variableConstraintPredicate(
       constraint.allowedShapes.includes(variable.dataShape)) &&
       (constraint.allowedTypes == null ||
         constraint.allowedTypes.includes(variable.type)) &&
+      (constraint.minNumValues == null ||
+        constraint.minNumValues <= variable.distinctValuesCount) &&
       (constraint.maxNumValues == null ||
         constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.isTemporal == null ||
@@ -272,6 +275,7 @@ export function filterConstraints(
         isEmpty(constraint.allowedShapes) &&
         isEmpty(constraint.allowedTypes) &&
         isEmpty(constraint.isTemporal) &&
+        constraint.minNumValues === undefined &&
         constraint.maxNumValues === undefined &&
         constraint.allowMultiValued
       )
@@ -291,6 +295,9 @@ export function filterConstraints(
       const shapeIsValid =
         isEmpty(constraint.allowedShapes) ||
         constraint.allowedShapes?.includes(variable.dataShape!);
+      const passesMinValuesConstraint =
+        constraint.minNumValues === undefined ||
+        constraint.minNumValues <= variable.distinctValuesCount;
       const passesMaxValuesConstraint =
         constraint.maxNumValues === undefined ||
         constraint.maxNumValues >= variable.distinctValuesCount;
@@ -302,6 +309,7 @@ export function filterConstraints(
       return (
         typeIsValid &&
         shapeIsValid &&
+        passesMinValuesConstraint &&
         passesMaxValuesConstraint &&
         passesTemporalConstraint &&
         passesMultivalueConstraint
@@ -359,6 +367,7 @@ export function mergeConstraints(
                 constraintA.allowedTypes,
                 constraintB.allowedTypes
               ),
+              minNumValues: mergeMinNumValues(constraintA, constraintB),
               maxNumValues: mergeMaxNumValues(constraintA, constraintB),
               isTemporal: mergedIsTemporal,
               allowMultiValued:
@@ -370,6 +379,21 @@ export function mergeConstraints(
       ];
     })
   );
+}
+
+export function mergeMinNumValues(
+  constraintA: DataElementConstraint,
+  constraintB: DataElementConstraint
+) {
+  const mergedMinNumValues = Math.max(
+    constraintA.minNumValues === undefined
+      ? -Infinity
+      : constraintA.minNumValues,
+    constraintB.minNumValues === undefined
+      ? -Infinity
+      : constraintB.minNumValues
+  );
+  return mergedMinNumValues === -Infinity ? undefined : mergedMinNumValues;
 }
 
 export function mergeMaxNumValues(

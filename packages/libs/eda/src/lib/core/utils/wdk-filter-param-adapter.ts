@@ -263,11 +263,7 @@ export function makeHiddenVariablesInScope(
 ): Set<string> {
   const hiddenVariablesInScope = new Set<string>();
 
-  const variablesByParentId = groupBy(
-    entity.variables,
-    (variable) => variable.parentId ?? entity.id
-  );
-
+  // Define recursive function to be called later
   function _traverseDescendantVariables(
     variable: VariableTreeNode,
     parentIsHidden: boolean
@@ -286,8 +282,22 @@ export function makeHiddenVariablesInScope(
     });
   }
 
-  variablesByParentId[entity.id]?.forEach((variable) => {
-    _traverseDescendantVariables(variable, false);
+  const variableIds = new Set(entity.variables.map((variable) => variable.id));
+  const variablesByParentId = groupBy(
+    entity.variables,
+    (variable) => variable.parentId ?? entity.id
+  );
+  // The parent IDs of root variables, where a root variable is a variable
+  // whose parent is not in this entity's variable list
+  const rootParentIds = Object.keys(variablesByParentId).filter(
+    (parentId) => !variableIds.has(parentId)
+  );
+
+  rootParentIds.forEach((rootParentId) => {
+    variablesByParentId[rootParentId].forEach((variable) => {
+      // Call recursive function
+      _traverseDescendantVariables(variable, false);
+    });
   });
 
   return hiddenVariablesInScope;
