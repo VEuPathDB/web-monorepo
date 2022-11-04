@@ -28,7 +28,7 @@ import { Main } from '@veupathdb/web-common/lib/components/homepage/Main';
 import { NewsPane } from '@veupathdb/web-common/lib/components/homepage/NewsPane';
 import { SearchPane, SearchCheckboxTree } from '@veupathdb/web-common/lib/components/homepage/SearchPane';
 import { combineClassNames, useAlphabetizedSearchTree } from '@veupathdb/web-common/lib/components/homepage/Utils';
-import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
+import { useUserDatasetsWorkspace, useEda } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
@@ -481,7 +481,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/workspace/analyses/studies',
           metadata: {
-            include: [ VectorBase ]
+            include: useEda ? [ VectorBase ] : []
          }
         },
         { 
