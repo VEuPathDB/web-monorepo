@@ -10,51 +10,32 @@ import {
 export interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
-  gradientColorscaleType?: string;
+  gradientColorscaleType?: 'sequential' | 'divergent';
   nTicks?: number; // MUST be odd!
-  legendTitle?: string;
   showMissingness?: boolean;
 }
 export default function PlotGradientLegend({
   legendMax,
   legendMin,
   gradientColorscaleType,
-  legendTitle,
   nTicks,
   showMissingness,
 }: PlotLegendGradientProps) {
   // Declare constants
-  const legendTextSize = '1.0em';
+  // const legendTextSize = '1.0em';
 
   /** Most of below identical to the current custom legend. Hoping that eventually the GradientColorscaleLegend can work within
    * the nice custom legend that DK created.  */
   return (
     <>
       {
-        <div
-          style={{
-            border: '1px solid #dedede',
-            boxShadow: '1px 1px 4px #00000066',
-            padding: '1em',
-          }}
-        >
-          <div
-            title={legendTitle}
-            style={{ cursor: 'pointer', fontSize: legendTextSize }}
-          >
-            {legendTitle != null
-              ? legendEllipsis(legendTitle, 23)
-              : legendTitle}
-          </div>
-
-          <GradientColorscaleLegend
-            legendMax={legendMax}
-            legendMin={legendMin}
-            gradientColorscaleType={gradientColorscaleType}
-            nTicks={nTicks}
-            showMissingness={showMissingness}
-          />
-        </div>
+        <GradientColorscaleLegend
+          legendMax={legendMax}
+          legendMin={legendMin}
+          gradientColorscaleType={gradientColorscaleType}
+          nTicks={nTicks}
+          showMissingness={showMissingness}
+        />
       }
     </>
   );

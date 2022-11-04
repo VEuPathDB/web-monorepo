@@ -427,6 +427,7 @@ export const HistogramPlotLegend = () => {
         checkedLegendItems={checkedLegendItems}
       />
       <PlotLegend
+        type="list"
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={setCheckedLegendItems}
@@ -447,7 +448,6 @@ export const GradientPlotLegend = () => {
         // Options are 'sequential' and 'divergent'
         gradientColorscaleType={'divergent'}
         // pass legend title
-        legendTitle={'Very very very long name'}
         nTicks={5}
       />
     </div>
@@ -466,6 +466,7 @@ export const TestLongLegendItems = () => {
       {/* testing long legend items: taken from a Scatter plot with smoothed mean */}
       <h5># Testing long legend items</h5>
       <PlotLegend
+        type="list"
         legendItems={longLegendItems}
         checkedLegendItems={checkedLongLegendItems}
         onCheckedLegendItemsChange={setCheckedLongLegendItems}
