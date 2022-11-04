@@ -88,19 +88,15 @@ import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 // for custom legend
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import PlotGradientLegend, {
-  PlotLegendGradientProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotGradientLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
+import { PlotLegendGradientProps } from '@veupathdb/components/lib/components/plotControls/PlotGradientLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedScatterPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedScatterPlot';
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
 // R-square table component
 import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
-import { string } from 'fp-ts';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -111,7 +107,6 @@ import { padISODateTime } from '../../../utils/date-conversion';
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -172,7 +167,7 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   yMax: number | string | undefined;
   overlayMin: number | undefined;
   overlayMax: number | undefined;
-  gradientColorscaleType: string | undefined;
+  gradientColorscaleType: 'sequential' | 'divergent' | undefined;
   // add computedVariableMetadata for computation apps such as alphadiv and abundance
   computedVariableMetadata?: ComputedVariableMetadata;
 }
@@ -717,8 +712,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const { url } = useRouteMatch();
 
+  const legendTitle = useMemo(() => {
+    if (computedOverlayVariableDescriptor) {
+      return findCollectionVariableEntityAndVariable(
+        entities,
+        computedOverlayVariableDescriptor
+      )?.variable.displayName;
+    }
+    return variableDisplayWithUnit(overlayVariable);
+  }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
+
   // gradient colorscale legend
-  const gradientLegendItems: PlotLegendGradientProps = useMemo(() => {
+  const gradientLegendProps: PlotLegendGradientProps = useMemo(() => {
     if (
       data.value?.overlayMax &&
       (data.value?.overlayMin || data.value?.overlayMin === 0) &&
@@ -729,7 +734,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         legendMin: data.value?.overlayMin,
         gradientColorscaleType: data.value?.gradientColorscaleType,
         nTicks: 5, // MUST be odd! Probably should be a clever function of the box size and font or something...
-        legendTitle,
         showMissingness: vizConfig.showMissingness,
       };
     } else {
@@ -993,16 +997,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       : vizConfig.checkedLegendItems,
     updateVizConfig
   );
-
-  const legendTitle = useMemo(() => {
-    if (computedOverlayVariableDescriptor) {
-      return findCollectionVariableEntityAndVariable(
-        entities,
-        computedOverlayVariableDescriptor
-      )?.variable.displayName;
-    }
-    return variableDisplayWithUnit(overlayVariable);
-  }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
 
   const dependentAxisLabel =
     data?.value?.computedVariableMetadata?.displayName?.[0] ??
@@ -1594,10 +1588,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const legendNode =
     !data.pending &&
     data.value != null &&
-    (gradientLegendItems.gradientColorscaleType ? (
-      <PlotGradientLegend {...gradientLegendItems} />
+    (gradientLegendProps.gradientColorscaleType ? (
+      <PlotLegend type="colorscale" {...gradientLegendProps} />
     ) : (
       <PlotLegend
+        type="list"
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={setCheckedLegendItems}

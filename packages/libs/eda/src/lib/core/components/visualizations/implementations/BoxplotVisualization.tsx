@@ -53,9 +53,8 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // custom legend
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
@@ -615,6 +614,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = legendItems != null && !data.pending && data != null && (
     <PlotLegend
+      type="list"
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={setCheckedLegendItems}

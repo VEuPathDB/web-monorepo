@@ -419,6 +419,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         />
         {legendItems.length > 0 && appState.overlayVariable && (
           <PlotLegend
+            type="list"
             legendItems={legendItems}
             checkedLegendItems={checkedLegendItems}
             onCheckedLegendItemsChange={setCheckedLegendItems}
