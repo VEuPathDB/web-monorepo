@@ -31,7 +31,7 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
   },
   active: {
     backgroundColor: blue[100],
-    textColor: gray[600],
+    textColor: gray[900],
     indicatorColor: blue[500],
   },
   inactive: {
