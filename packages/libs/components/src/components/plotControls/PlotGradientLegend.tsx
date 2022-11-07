@@ -57,11 +57,11 @@ function GradientColorscaleLegend({
   showMissingness,
 }: PlotLegendGradientProps) {
   // Declare constants
-  const tickFontSize = '0.8em';
   const gradientBoxHeight = 150;
   const gradientBoxWidth = 20;
   const tickLength = 4;
   const defaultNTicks = 5;
+  const tickFontSize = '0.8em';
   const legendTextSize = '1.0em';
 
   nTicks = nTicks || defaultNTicks;
@@ -90,18 +90,19 @@ function GradientColorscaleLegend({
     return (
       <g className="axisTick" overflow="visible" key={'gradientTick' + a}>
         <line
-          x1={gradientBoxWidth}
-          x2={gradientBoxWidth + tickLength}
+          x1={gradientBoxWidth + 1}
+          x2={gradientBoxWidth + tickLength + 1}
           y1={location}
           y2={location}
           stroke="black"
           strokeWidth="1px"
         ></line>
         <text
-          x={gradientBoxWidth + 3 + tickLength}
+          x={gradientBoxWidth + 4 + tickLength}
           y={location}
-          alignmentBaseline="middle"
+          dominantBaseline="middle"
           fontSize={tickFontSize}
+          fontWeight="bold"
         >
           {(a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin}
         </text>
@@ -111,17 +112,19 @@ function GradientColorscaleLegend({
 
   return (
     <div>
-      <svg id="gradientLegend" height={gradientBoxHeight + 40} width={150}>
+      <svg id="gradientLegend" height={gradientBoxHeight + 20} width={150}>
         <defs>
           <linearGradient id="linearGradient" x1="0" x2="0" y1="1" y2="0">
             {stopPoints}
           </linearGradient>
         </defs>
-        <g style={{ transform: 'translate(0, 10px)' }}>
+        <g style={{ transform: 'translate(5px, 10px)' }}>
           <rect
             width={gradientBoxWidth}
             height={gradientBoxHeight}
             fill="url(#linearGradient)"
+            stroke="black"
+            strokeWidth={1}
           ></rect>
           {ticks}
         </g>
@@ -140,7 +143,6 @@ function GradientColorscaleLegend({
               &times;
             </div>
           </div>
-          &nbsp;&nbsp;
           <label
             title={'No data'}
             style={{
@@ -149,6 +151,7 @@ function GradientColorscaleLegend({
               alignItems: 'center',
               fontSize: legendTextSize,
               color: '#999',
+              margin: '0 0 0 0',
             }}
           >
             <i>{legendEllipsis('No data', 20)}</i>

@@ -449,6 +449,7 @@ export const GradientPlotLegend = () => {
         gradientColorscaleType={'divergent'}
         // pass legend title
         nTicks={5}
+        showMissingness
       />
     </div>
   );
