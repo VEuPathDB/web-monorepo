@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Meta } from '@storybook/react/types-6-0';
 import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';

@@ -14,32 +14,6 @@ export interface PlotLegendGradientProps {
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
 }
-export default function PlotGradientLegend({
-  legendMax,
-  legendMin,
-  gradientColorscaleType,
-  nTicks,
-  showMissingness,
-}: PlotLegendGradientProps) {
-  // Declare constants
-  // const legendTextSize = '1.0em';
-
-  /** Most of below identical to the current custom legend. Hoping that eventually the GradientColorscaleLegend can work within
-   * the nice custom legend that DK created.  */
-  return (
-    <>
-      {
-        <GradientColorscaleLegend
-          legendMax={legendMax}
-          legendMin={legendMin}
-          gradientColorscaleType={gradientColorscaleType}
-          nTicks={nTicks}
-          showMissingness={showMissingness}
-        />
-      }
-    </>
-  );
-}
 
 // legend ellipsis function for legend title and legend items (from custom legend work)
 const legendEllipsis = (label: string, ellipsisLength: number) => {
@@ -49,7 +23,7 @@ const legendEllipsis = (label: string, ellipsisLength: number) => {
 };
 
 // make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend if we need
-function GradientColorscaleLegend({
+export default function PlotGradientLegend({
   legendMax,
   legendMin,
   gradientColorscaleType,
@@ -102,7 +76,6 @@ function GradientColorscaleLegend({
           y={location}
           dominantBaseline="middle"
           fontSize={tickFontSize}
-          fontWeight="bold"
         >
           {(a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin}
         </text>

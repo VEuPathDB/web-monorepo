@@ -1,54 +1,19 @@
 import React from 'react';
-import { Checkbox } from '@material-ui/core';
-import * as ColorMath from 'color-math';
 import { ContainerStylesAddon } from '../../types/plots';
 import PlotListLegend, { PlotListLegendProps } from './PlotListLegend';
 import PlotGradientLegend, {
   PlotLegendGradientProps,
 } from './PlotGradientLegend';
 
-// define legendItems props
-// export interface LegendItemsProps {
-//   label: string;
-//   marker: string;
-//   markerColor?: string;
-//   hasData: boolean;
-//   group?: number;
-//   rank?: number;
-// }
-
 interface PlotLegendBaseProps extends ContainerStylesAddon {
   legendTitle?: string;
 }
-
-// interface PlotLegendGradientProps extends PlotLegendBaseProps {
-//   legendType: 'colorscale';
-//   legendMax: number;
-//   legendMin: number;
-//   gradientColorscaleType?: string;
-//   nTicks?: number; // MUST be odd!
-//   showMissingness?: boolean;
-// }
-
-// interface PlotLegendListProps extends PlotLegendBaseProps {
-//   legendType: 'list';
-//   legendItems: LegendItemsProps[];
-//   checkedLegendItems: string[] | undefined;
-//   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
-//   // add a condition to show legend for single overlay data
-//   showOverlayLegend?: boolean;
-// }
 
 type PlotLegendProps = PlotLegendBaseProps &
   (
     | ({ type: 'list' } & PlotListLegendProps)
     | ({ type: 'colorscale' } & PlotLegendGradientProps)
   );
-
-// set props for custom legend function
-// interface PlotLegendProps extends ContainerStylesAddon, PlotLegendPropsUnion {
-//   legendTitle?: string;
-// }
 
 export default function PlotLegend({
   type,
