@@ -100,6 +100,7 @@ export const DataElementConstraint = intersection([
     isTemporal: boolean,
     allowedTypes: array(VariableType),
     allowedShapes: array(VariableDataShape),
+    minNumValues: number,
     maxNumValues: number,
     allowMultiValued: boolean,
     // description isn't yet present for the records visualization
