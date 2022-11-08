@@ -106,7 +106,7 @@ export const transformAttributeFieldsUsingSpecs = curry((
 });
 
 export function makeDomainAccessionLink(accession: string) {
-  return { url: `http://pfam.xfam.org/family/${accession}`, displayText: accession };
+  return { url: `https://www.ebi.ac.uk/interpro/entry/pfam/${accession}`, displayText: accession };
 }
 
 export function makeSourceAccessionLink(accession: string): LinkAttributeValue {
