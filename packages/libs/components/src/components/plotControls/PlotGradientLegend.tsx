@@ -124,7 +124,7 @@ export default function PlotGradientLegend({
               alignItems: 'center',
               fontSize: legendTextSize,
               color: '#999',
-              margin: '0 0 0 0',
+              margin: 0,
             }}
           >
             <i>{legendEllipsis('No data', 20)}</i>

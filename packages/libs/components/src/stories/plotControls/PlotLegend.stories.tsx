@@ -441,8 +441,9 @@ export const HistogramPlotLegend = () => {
 // custom legend with scatterplot gradient colorscale
 export const GradientPlotLegend = () => {
   return (
-    <div>
-      <PlotGradientLegend
+    <div style={{ padding: 15 }}>
+      <PlotLegend
+        type="colorscale"
         legendMax={100}
         legendMin={5}
         // Options are 'sequential' and 'divergent'
