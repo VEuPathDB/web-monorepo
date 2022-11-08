@@ -31,17 +31,17 @@ const DEFAULT_STYLE: TabbedDisplayStyleSpec = {
   },
   active: {
     backgroundColor: blue[100],
-    textColor: gray[600],
+    textColor: gray[900],
     indicatorColor: blue[500],
   },
   inactive: {
     backgroundColor: 'transparent',
-    textColor: gray[400],
+    textColor: gray[900],
     indicatorColor: 'transparent',
   },
   hover: {
     backgroundColor: 'transparent',
-    textColor: gray[400],
+    textColor: gray[900],
     indicatorColor: tan[300],
   },
   tabFontSize: '1em',
@@ -110,7 +110,7 @@ export default function TabbedDisplay<T extends string = string>({
     () => merge({}, DEFAULT_STYLE, themeStyle, styleOverrides),
     [themeStyle, styleOverrides]
   );
-  
+
   return (
     <div css={{ ...finalStyle.container }}>
       <div
