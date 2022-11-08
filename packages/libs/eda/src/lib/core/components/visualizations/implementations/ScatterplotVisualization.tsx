@@ -123,7 +123,6 @@ import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { OverlayOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
@@ -414,7 +413,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const onValueSpecChange = onChangeHandlerFactory<string>(
     'valueSpecConfig',
     true,
-    true, // reset both axisLogScale to false
+    false, // reset both axisLogScale to false if true
     false,
     true,
     true
@@ -451,7 +450,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'independentAxisLogScale',
     true,
     false,
-    true, // reset valueSpec to Raw
+    false, // reset valueSpec to Raw if true
     true,
     false
   );
@@ -460,7 +459,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'dependentAxisLogScale',
     true,
     false,
-    true, // reset valueSpec to Raw
+    false, // reset valueSpec to Raw if true
     false,
     true
   );
@@ -472,6 +471,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'yAxisVariable',
     computedYAxisDetails?.entityId
   );
+
+  // set a condition to show log scale/plot mode related banner
+  const showLogScaleBanner: boolean =
+    vizConfig.valueSpecConfig !== 'Raw' &&
+    (vizConfig.independentAxisLogScale || vizConfig.dependentAxisLogScale)
+      ? true
+      : false;
 
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
@@ -491,6 +497,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ])
       )
         throw new Error(nonUniqueWarning);
+
+      // check log scale and plot mode option for retrieving data
+      if (
+        (vizConfig.independentAxisLogScale ||
+          vizConfig.dependentAxisLogScale) &&
+        vizConfig.valueSpecConfig != 'Raw'
+      )
+        return undefined;
 
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
@@ -664,6 +678,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       computation.descriptor.configuration,
       computation.descriptor.type,
       providedOverlayVariable,
+      showLogScaleBanner,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])
@@ -1279,10 +1294,63 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max < 0;
 
-  const { enqueueSnackbar } = useSnackbar();
-
   const controlsNode = (
     <>
+      {/* show Banner message if no smoothed mean exists */}
+      {!data.pending &&
+        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
+        dataWithoutSmoothedMean != null &&
+        dataWithoutSmoothedMean?.length > 0 && (
+          <div style={{ width: 750, marginLeft: '1em' }}>
+            <Banner
+              banner={{
+                type: 'warning',
+                message:
+                  'Smoothed mean(s) were not calculated for one or more data series.',
+                pinned: true,
+                intense: false,
+                // additionalMessage is shown next to message when clicking showMoreLinkText.
+                // disappears when clicking showLess link
+                // note that this additionalMessage prop is used to determine show more/less behavior or not
+                // if undefined, then just show normal banner with message
+                additionalMessage:
+                  'The sample size might be too small or the data too skewed.',
+                // text for showMore link
+                showMoreLinkText: 'Why?',
+                // text for showless link
+                showLessLinkText: 'Read less',
+                // color for show more links
+                showMoreLinkColor: '#006699',
+              }}
+            />
+          </div>
+        )}
+      {/* show log scale related Banner message unless plot mode of 'Raw' */}
+      {showLogScaleBanner && (
+        <div style={{ width: 750, marginLeft: '1em' }}>
+          <Banner
+            banner={{
+              type: 'warning',
+              message:
+                'Log scale is not available for plot modes with fitted lines.',
+              pinned: true,
+              intense: false,
+              // additionalMessage is shown next to message when clicking showMoreLinkText.
+              // disappears when clicking showLess link
+              // note that this additionalMessage prop is used to determine show more/less behavior or not
+              // if undefined, then just show normal banner with message
+              additionalMessage:
+                'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
+            }}
+          />
+        </div>
+      )}
       {!options?.hideTrendlines && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
@@ -1291,12 +1359,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           selectedOption={vizConfig.valueSpecConfig ?? 'Raw'}
           onOptionSelected={(newValue: string) => {
             onValueSpecChange(newValue);
-            if (
-              newValue !== 'Raw' &&
-              (vizConfig.independentAxisLogScale ||
-                vizConfig.dependentAxisLogScale)
-            )
-              enqueueSnackbar('Log scale is not available for this plot mode');
           }}
           // disabledList prop is used to disable radio options (grayed out)
           disabledList={
@@ -1356,10 +1418,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
-                  enqueueSnackbar(
-                    'Log scale is only available for Raw plot mode'
-                  );
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.independentValueType === 'date'}
@@ -1493,10 +1551,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.valueSpecConfig !== 'Raw')
-                  enqueueSnackbar(
-                    'Log scale is only available for Raw plot mode'
-                  );
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.dependentValueType === 'date'}
@@ -1775,22 +1829,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ) : undefined,
         ]}
       />
-
-      {/* show Banner message if no smoothed mean exists */}
-      {!data.pending &&
-        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
-        dataWithoutSmoothedMean != null &&
-        dataWithoutSmoothedMean?.length > 0 && (
-          <Banner
-            banner={{
-              type: 'info',
-              message:
-                'A smoothed mean could not be calculated for one or more data series. Likely the sample is too small or the data too highly skewed. Smoothed mean and confidence interval items for these traces have been disabled in the legend and marked with light gray checkboxes.',
-              pinned: true,
-              intense: false,
-            }}
-          />
-        )}
 
       <OutputEntityTitle
         entity={outputEntity}
