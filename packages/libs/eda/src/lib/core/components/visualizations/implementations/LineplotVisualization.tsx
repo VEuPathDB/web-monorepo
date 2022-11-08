@@ -405,7 +405,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
       findEntityAndVariable,
-      categoricalMode,
     ]
   );
 
