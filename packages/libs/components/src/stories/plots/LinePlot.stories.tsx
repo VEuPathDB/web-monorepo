@@ -239,7 +239,7 @@ export const YAxisLabelWithHtml: Story<Omit<LinePlotProps, 'data'>> = (
       data={undefined}
       {...args}
       dependentAxisLabel={
-        '<b><i>Arithmetic mean:</i></b><br> Plasmodium asexual stages, by microscopy result'
+        '<b><i>Arithmetic mean:</i></b><br /> Plasmodium asexual stages, by microscopy result'
       }
     />
   );
