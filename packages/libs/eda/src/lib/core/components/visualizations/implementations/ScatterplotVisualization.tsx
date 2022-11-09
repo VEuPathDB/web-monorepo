@@ -750,6 +750,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         gradientColorscaleType: data.value?.gradientColorscaleType,
         nTicks: 5, // MUST be odd! Probably should be a clever function of the box size and font or something...
         showMissingness: vizConfig.showMissingness,
+        legendTitle,
       };
     } else {
       return {
