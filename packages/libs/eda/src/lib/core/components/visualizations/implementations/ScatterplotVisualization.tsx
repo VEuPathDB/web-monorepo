@@ -51,6 +51,7 @@ import {
   keys,
   uniqBy,
   filter,
+  isEqual,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -340,6 +341,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
+      // check xAxisVariable is changed
+      const keepIndependentAxisRange = isEqual(
+        selectedVariables.xAxisVariable,
+        vizConfig.xAxisVariable
+      );
+
       const {
         xAxisVariable,
         yAxisVariable,
@@ -358,12 +365,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             : vizConfig.valueSpecConfig,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        // set independentAxisRange undefined
-        independentAxisRange: undefined,
+        independentAxisRange: keepIndependentAxisRange
+          ? vizConfig.independentAxisRange
+          : undefined,
         dependentAxisRange: undefined,
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: 'Full',
+        independentAxisValueSpec: keepIndependentAxisRange
+          ? vizConfig.independentAxisValueSpec
+          : 'Full',
         dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings here

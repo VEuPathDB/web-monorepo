@@ -216,6 +216,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ] = useState<string>('');
 
+  // set a useState to check whether keepBin is true or not
+  const [keepIndependentAxisRange, setKeepIndependentAxisRange] = useState(
+    false
+  );
+
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -225,6 +230,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         facetVariable,
       } = selectedVariables;
       const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+
+      // save keepBin state
+      setKeepIndependentAxisRange(keepBin);
+
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
@@ -233,11 +242,14 @@ function HistogramViz(props: VisualizationProps<Options>) {
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        // set independentAxisRange undefined
-        independentAxisRange: undefined,
+        independentAxisRange: keepBin
+          ? vizConfig.independentAxisRange
+          : undefined,
         dependentAxisRange: undefined,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: 'Full',
+        independentAxisValueSpec: keepBin
+          ? vizConfig.independentAxisValueSpec
+          : 'Full',
         dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings if exists
@@ -414,7 +426,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filters ?? [],
         valueType,
         vizConfig,
-        xAxisVariable
+        xAxisVariable,
+        keepIndependentAxisRange
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
@@ -1320,7 +1333,8 @@ function getRequestParams(
   filters: Filter[],
   valueType: 'number' | 'date',
   vizConfig: HistogramConfig,
-  variable?: Variable
+  variable?: Variable,
+  keepIndependentAxisRange?: boolean
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
@@ -1349,14 +1363,16 @@ function getRequestParams(
     : { binSpec: { type: 'binWidth' } };
 
   // define viewport based on independent axis range: need to check undefined case
-  const viewport =
-    vizConfig?.independentAxisRange?.min != null &&
-    vizConfig?.independentAxisRange?.max != null
-      ? {
-          xMin: vizConfig?.independentAxisRange?.min,
-          xMax: vizConfig?.independentAxisRange?.max,
-        }
-      : undefined;
+  // also no viewport change regardless of the change of overlayVariable
+  const viewport = keepIndependentAxisRange
+    ? undefined
+    : vizConfig?.independentAxisRange?.min != null &&
+      vizConfig?.independentAxisRange?.max != null
+    ? {
+        xMin: vizConfig?.independentAxisRange?.min,
+        xMax: vizConfig?.independentAxisRange?.max,
+      }
+    : undefined;
 
   return {
     studyId,
