@@ -398,7 +398,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
         independentAxisValueSpec: keepBin
           ? vizConfig.independentAxisValueSpec
           : 'Full',
-        dependentAxisValueSpec: 'Full',
+        dependentAxisValueSpec:
+          yAxisVar != null
+            ? isSuitableCategoricalVariable(yAxisVar)
+              ? 'Full'
+              : 'Auto-zoom'
+            : 'Full',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -901,11 +906,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
         ? 'Proportion'
         : variableDisplayWithUnit(yAxisVariable)
         ? vizConfig.valueSpecConfig === 'Arithmetic mean'
-          ? 'Arithmetic mean: ' + variableDisplayWithUnit(yAxisVariable)
+          ? '<b>Arithmetic mean:</b><br> ' +
+            variableDisplayWithUnit(yAxisVariable)
           : vizConfig.valueSpecConfig === 'Median'
-          ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+          ? '<b>Median:</b><br> ' + variableDisplayWithUnit(yAxisVariable)
           : vizConfig.valueSpecConfig === 'Geometric mean'
-          ? 'Geometric mean: ' + variableDisplayWithUnit(yAxisVariable)
+          ? '<b>Geometric mean:</b><br> ' +
+            variableDisplayWithUnit(yAxisVariable)
           : 'Y-axis'
         : 'Y-axis',
     displayLegend: false,
@@ -1063,7 +1070,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
-      dependentAxisValueSpec: 'Full',
+      dependentAxisValueSpec: categoricalMode ? 'Full' : 'Auto-zoom',
       showErrorBars: false,
     });
     // add reset for truncation message as well
@@ -1427,6 +1434,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
               buttonColor={'primary'}
               margins={['0em', '0', '0', '0em']}
               itemMarginRight={25}
+              disabledList={
+                !categoricalMode && vizConfig.yAxisVariable != null
+                  ? ['Full']
+                  : []
+              }
             />
             <AxisRangeControl
               label="Range"

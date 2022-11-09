@@ -3466,10 +3466,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.3":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.3.tgz#a2587bf5d0d3edf99a27e86154f527c7019643b9"
-  integrity sha512-/8YIUYhRz0lNPObnvqWSScT1Ys9v6R+KtXwTzuKjAgdK9uWfgXntA7jSDzWajPLGRA+wPCuzH33mV1oG6chfWQ==
+"@veupathdb/components@^0.19.4":
+  version "0.19.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.4.tgz#4ade231e53c42ad54f8dd3d7ccfa2f052f0e7e0d"
+  integrity sha512-P2AfAhARJgh9MoX9KlY9A3XkDqaLgQdryfOlur25qy5pISE81eUv5tfSi7G8M1IIM2azFTqAxvdXIO8AmGeD3Q==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -3498,10 +3498,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.11":
-  version "0.18.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.11.tgz#2c038668017cbfb3cad561201e358d9351046ef7"
-  integrity sha512-WNMKvNiZFh72D9Q0gnRkn2y2t0ZWJbithLR5K8BDVzKV+ZiUaQx5aUw9DW4cRvDxLySPiQ1EbgzHK91i4TFV+Q==
+"@veupathdb/coreui@^0.18.13":
+  version "0.18.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.13.tgz#33cedb7114e49aa0ec66e6a476e10cc6ae1fcd30"
+  integrity sha512-Cl3xTBZFDB+dJ5Faskp6auE1ez5QeH4+p+XY30uwp6p9Us0Kf5MQrtheeT/PZTAZ2P65Ng3yDkGpp31834/Akg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
