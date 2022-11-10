@@ -127,7 +127,7 @@ export type SearchCheckboxTreeProps = {
   setExpandedBranches: (newExpandedBranches: string[]) => void,
   linksPosition?: LinksPosition,
   showSearchBox?: boolean,
-  type?: string,
+  type?: 'searchPane' | 'headerMenu',
 };
 
 export const SearchCheckboxTree = wrappable((
@@ -208,7 +208,7 @@ interface SearchPaneNodeProps {
   questionsByUrlSegment: Record<string, Question>;
   node: CategoryTreeNode;
   path: number[] | undefined;
-  type?: string,
+  type?: 'searchPane' | 'headerMenu',
 }
 
 function SearchPaneNode({
