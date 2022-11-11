@@ -169,6 +169,7 @@
 }
 
 $data-table-inner-border: 1px solid #888;
+$data-table-thick-border: 2px solid #262626;
 
 @mixin data-table {
   z-index: 1;
@@ -231,8 +232,14 @@ $data-table-inner-border: 1px solid #888;
     white-space: normal;
   }
 
+  th,
+  td {
+    text-align: right;
+    padding-right: 10px;
+  }
+
   .contingency-table_column-label {
-    border-bottom: $data-table-inner-border !important;
+    border-bottom: $data-table-thick-border !important;
   }
 
   .contingency-table_column-label:first-of-type {
@@ -241,35 +248,45 @@ $data-table-inner-border: 1px solid #888;
 
   .contingency-table_row-label {
     border-bottom: 0;
-    border-right: $data-table-inner-border;
+    border-right: $data-table-thick-border;
+    border-left: $data-table-thick-border;
   }
 
-  .contingency-table_row-header {
-    border-bottom: $data-table-inner-border !important;
-    border-right: $data-table-inner-border;
-  }
-
-  .contingency-table_totals-row-header {
-    text-align: end;
-    border-top: $data-table-inner-border;
-    border-right: $data-table-inner-border;
+  .contingency-table_row-header,
+  .contingency-table_column-header {
+    font-size: 1.2em;
+    border: $data-table-thick-border !important;
   }
 
   .contingency-table_totals-column-header {
+    border: $data-table-thick-border;
     border-left: $data-table-inner-border;
+  }
+
+  .contingency-table_column-header {
+    text-align: center;
+  }
+
+  .contingency-table_totals-row-header {
+    border: $data-table-thick-border !important;
+    border-top: $data-table-inner-border !important;
   }
 
   .contingency-table_totals-row-value {
     border-top: $data-table-inner-border;
+    border-bottom: $data-table-thick-border;
   }
 
   .contingency-table_totals-column-value {
     border-left: $data-table-inner-border;
+    border-right: $data-table-thick-border;
   }
 
   .contingency-table_grand-total {
     border-top: $data-table-inner-border;
     border-left: $data-table-inner-border;
+    border-right: $data-table-thick-border;
+    border-bottom: $data-table-thick-border;
   }
 }
 
