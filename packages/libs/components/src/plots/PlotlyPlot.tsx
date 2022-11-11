@@ -27,6 +27,7 @@ import { ToImgopts, toImage } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
+import { removeHtmlTags } from '../utils/removeHtmlTags';
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -223,7 +224,7 @@ function PlotlyPlot<T>(
         .selectAll('g.traces')
         .append('svg:title')
         .text((d: any) => {
-          return storedLegendList[d[0].trace.index];
+          return removeHtmlTags(storedLegendList[d[0].trace.index]);
         });
 
       // legend title tooltip
@@ -240,7 +241,7 @@ function PlotlyPlot<T>(
         select(graphDiv)
           .select('g.legend g.scrollbox text.legendtitletext')
           .append('svg:title')
-          .text(legendTitle);
+          .text(removeHtmlTags(legendTitle));
       }
 
       // independent axis tick label for barplot and boxplot
@@ -268,7 +269,7 @@ function PlotlyPlot<T>(
           .append('svg:title')
           .text((d, i) => {
             return storedIndependentAxisTickLabel != null
-              ? (storedIndependentAxisTickLabel[i] as string)
+              ? removeHtmlTags(storedIndependentAxisTickLabel[i] as string)
               : '';
           });
       }
@@ -293,7 +294,7 @@ function PlotlyPlot<T>(
           // need this attribute for tooltip of dependent axis title!
           .attr('pointer-events', 'all')
           .append('svg:title')
-          .text(originalDependentAxisTitle as string);
+          .text(removeHtmlTags(originalDependentAxisTitle as string) as string);
       }
     },
     [
