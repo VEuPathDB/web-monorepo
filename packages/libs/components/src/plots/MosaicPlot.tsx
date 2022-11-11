@@ -11,7 +11,7 @@ import _ from 'lodash';
 // util functions for handling long tick labels with ellipsis
 import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
-import { PlotSpacingDefault } from '../types/plots/addOns';
+import { PlotSpacingDefault, ColorPaletteDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
 
 export interface MosaicPlotProps extends PlotProps<MosaicPlotData> {
@@ -219,7 +219,7 @@ const MosaicPlot = makePlotlyPlotComponent(
                 width: 1,
                 color: 'white',
               },
-              color: colors ? colors[i] : undefined,
+              color: colors ? colors[i] : ColorPaletteDefault[i],
             },
             legendgroup: data.dependentLabels[i],
             legendrank: i,
