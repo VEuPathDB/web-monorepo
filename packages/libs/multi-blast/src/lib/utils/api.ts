@@ -66,6 +66,7 @@ const newReportJobFilePath = (jobID: string, fileName: string) =>
 const JOBS_PATH = '/jobs';
 const REPORTS_PATH = '/reports';
 
+/** @deprecated */
 export class BlastApi extends FetchClientWithCredentials {
   public static getBlastClient = memoize(
     (
