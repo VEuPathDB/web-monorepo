@@ -575,9 +575,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         );
 
       const overlayVocabulary = computedOverlayVariableDescriptor
-        ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
-            (variableDetails) => variableDetails.variableId
-          )
+        ? response.scatterplot.config.variables.find(
+            (v) => v.plotReference === 'overlay' && v.vocabulary != null
+          )?.vocabulary
         : fixLabelsForNumberVariables(
             overlayVariable?.vocabulary,
             overlayVariable
@@ -1824,7 +1824,7 @@ export function scatterplotResponseToData(
       facetVariable,
       // pass computation here to add conditions for apps
       computation,
-      response.scatterplot.config.computedVariableMetadata,
+      undefined, // TO DO: FIX ME !! response.scatterplot.config.computedVariableMetadata,
       entities,
       colorPaletteOverride
     );
@@ -1876,8 +1876,7 @@ export function scatterplotResponseToData(
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
     // config.computedVariableMetadata should also be returned
-    computedVariableMetadata:
-      response.scatterplot.config.computedVariableMetadata,
+    computedVariableMetadata: undefined, // TO DO FIX ME!      response.scatterplot.config.computedVariableMetadata,
   } as ScatterPlotDataWithCoverage;
 }
 

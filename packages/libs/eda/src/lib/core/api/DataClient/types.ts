@@ -345,24 +345,7 @@ export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
     data: ScatterplotResponseData,
-    // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-        yVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        computedVariableMetadata: ComputedVariableMetadata,
-      }),
-    ]),
+    config: plotConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
