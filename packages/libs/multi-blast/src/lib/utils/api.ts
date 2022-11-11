@@ -30,6 +30,38 @@ import {
   shortReportResponse,
 } from './ServiceTypes';
 import { BlastCompatibleWdkService } from './wdkServiceIntegration';
+import { ioQueryJobDetails } from './api/query/api/ep-jobs-by-id';
+import {
+  IOQueryJobCreateRequest,
+  ioQueryJobCreateResponse,
+} from './api/query/api/ep-jobs';
+
+// // //
+//
+//  Report Service Paths
+//
+// // //
+
+const REPORT_SVC_PATH_BASE = '/report';
+const REPORT_SVC_JOBS_PATH = `${REPORT_SVC_PATH_BASE}/jobs`;
+
+const newReportJobPath = (jobID: string, saveJob: boolean = true) =>
+  `${REPORT_SVC_JOBS_PATH}/${jobID}?save_job=${saveJob}`;
+
+const newReportJobErrorPath = (jobID: string, download: boolean = true) =>
+  `${REPORT_SVC_JOBS_PATH}/${jobID}/stderr?download=${download}`;
+
+const newReportJobFileListPath = (jobID: string) =>
+  `${REPORT_SVC_JOBS_PATH}/${jobID}/files`;
+
+const newReportJobFilePath = (jobID: string, fileName: string) =>
+  `${REPORT_SVC_JOBS_PATH}/${jobID}/files/${fileName}`;
+
+// // //
+//
+//  Constant Values
+//
+// // //
 
 const JOBS_PATH = '/jobs';
 const REPORTS_PATH = '/reports';
@@ -121,6 +153,7 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
+  /** @deprecated */
   createJob(
     site: string,
     targets: { organism: string; target: string }[],
@@ -168,6 +201,7 @@ export class BlastApi extends FetchClientWithCredentials {
     }
   }
 
+  /** @deprecated */
   fetchJob(jobId: string) {
     return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}`,
@@ -176,9 +210,26 @@ export class BlastApi extends FetchClientWithCredentials {
     });
   }
 
+  fetchReportJob(jobID: string, saveJob: boolean = true) {
+    return this.taggedFetch({
+      path: newReportJobPath(jobID, saveJob),
+      method: 'GET',
+      transformResponse: ioTransformer,
+    });
+  }
+
+  /** @deprecated */
   rerunJob(jobId: string) {
     return this.taggedFetch({
       path: `${JOBS_PATH}/${jobId}`,
+      method: 'POST',
+      transformResponse: identity,
+    });
+  }
+
+  rerunReportJob(jobID: string) {
+    return this.taggedFetch({
+      path: newReportJobPath(jobID),
       method: 'POST',
       transformResponse: identity,
     });

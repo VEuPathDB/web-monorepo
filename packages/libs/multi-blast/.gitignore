@@ -27,3 +27,6 @@ yarn-error.log*
 .env.*.local
 .vscode
 .eslintcache
+.envrc
+
+.idea/
