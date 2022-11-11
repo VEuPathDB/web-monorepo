@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.19.3",
+  "version": "0.19.5",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
@@ -43,6 +43,7 @@
   "scripts": {
     "start": "yarn storybook",
     "storybook": "start-storybook -s public",
+    "build": "npm-run-all build-npm-modules",
     "build-storybook": "build-storybook -s public",
     "build-npm-modules": "tsc -p tsconfig.build.json"
   },
@@ -104,6 +105,7 @@
     "lint-staged": "^10.5.3",
     "lodash": "^4.17.19",
     "md5": "^2.3.0",
+    "npm-run-all": "^4.1.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "stats-lite": "^2.2.0",
