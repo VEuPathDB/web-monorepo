@@ -20,7 +20,7 @@ import './BlastWorkspaceAll.scss';
 
 export interface JobRow {
   jobId: string;
-  description: string | null;
+  summary: string | null;
   created: string;
   status: 'queued' | 'running' | 'finished' | 'expired' | 'errored';
 }

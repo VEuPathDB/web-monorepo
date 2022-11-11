@@ -1,13 +1,21 @@
-import { FetchApiOptions, ioTransformer } from '@veupathdb/http-utils';
+import {
+  createJsonRequest,
+  FetchApiOptions,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 import { BlastCompatibleWdkService } from '../wdkServiceIntegration';
 import { BlastSubClient } from './BlastSubClient';
-import { string } from 'io-ts';
+import { array, string } from 'io-ts';
 import { identity } from 'lodash';
 import {
   IOQueryJobCreateRequest,
   ioQueryJobCreateResponse,
+  ioQueryJobListEntry,
 } from './query/api/ep-jobs';
-import { ioQueryJobDetails } from './query/api/ep-jobs-by-id';
+import {
+  ioQueryJobDetails,
+  IOQueryJobPatchRequest,
+} from './query/api/ep-jobs-by-id';
 import { ioBulkStatusResponse } from './query/api/ep-statuses';
 import { ioBlastTargetIndex } from './query/api/ep-targets';
 import { IOGuestJobTransferRequest } from './query/api/ep-link-guest';
@@ -23,6 +31,11 @@ const QUERY_SVC_JOBS_PATH = `${QUERY_SVC_PATH_BASE}/jobs`;
 const QUERY_SVC_STATUSES_PATH = `${QUERY_SVC_PATH_BASE}/statuses`;
 const QUERY_SVC_TARGETS_PATH = `${QUERY_SVC_PATH_BASE}/targets`;
 const QUERY_SVC_LINK_GUEST_PATH = `${QUERY_SVC_PATH_BASE}/link-guest`;
+
+const newQueryJobsPath = (site?: string) =>
+  site === undefined
+    ? QUERY_SVC_JOBS_PATH
+    : `${QUERY_SVC_JOBS_PATH}?site=${site}`;
 
 const newQueryJobPath = (jobID: string, saveJob?: boolean) =>
   saveJob === undefined
@@ -44,6 +57,11 @@ const newQueryJobResultPath = (jobID: string, download: boolean = false) =>
 //
 // // //
 
+/**
+ * Multi-Blast Query Service REST API Client
+ *
+ * Provides functions for interacting with the Multi-Blast query service API.
+ */
 export class BlastQueryClient extends BlastSubClient {
   constructor(
     options: FetchApiOptions,
@@ -52,16 +70,45 @@ export class BlastQueryClient extends BlastSubClient {
   ) {
     super(options, wdkService, reportError);
   }
+
+  //  /jobs
+
+  /**
+   * Creates a new Multi-Blast query job.
+   *
+   * @param request Details about the job to create.
+   *
+   * @param query Query text or file.
+   *
+   * @return An API response of either an error or the job creation result.
+   */
   createJob(request: IOQueryJobCreateRequest, query: string | File) {
     const reqBody = new FormData();
     reqBody.append('config', JSON.stringify(request));
     reqBody.append('query', query);
 
     return this.taggedFetch({
-      path: QUERY_SVC_JOBS_PATH,
+      path: newQueryJobsPath(),
       method: 'POST',
       body: reqBody,
       transformResponse: ioTransformer(ioQueryJobCreateResponse),
+    });
+  }
+
+  /**
+   * Lists the jobs linked to the current client user.
+   *
+   * Optionally the list of jobs may be filtered by the target site.
+   *
+   * @param site Optional site name to filter the results by.
+   *
+   * @return An API response of either an error or the job list result.
+   */
+  listJobs(site?: string) {
+    return this.taggedFetch({
+      path: newQueryJobsPath(site),
+      method: 'GET',
+      transformResponse: ioTransformer(array(ioQueryJobListEntry)),
     });
   }
 
@@ -89,6 +136,17 @@ export class BlastQueryClient extends BlastSubClient {
       method: 'DELETE',
       transformResponse: identity,
     });
+  }
+
+  updateJob(jobID: string, request: IOQueryJobPatchRequest) {
+    return this.taggedFetch(
+      createJsonRequest({
+        path: newQueryJobPath(jobID),
+        method: 'PATCH',
+        body: request,
+        transformResponse: identity,
+      })
+    );
   }
 
   //  /jobs/{job-id}/query
@@ -148,12 +206,14 @@ export class BlastQueryClient extends BlastSubClient {
   //  /statuses
 
   fetchJobStatuses(jobIDs: string[]) {
-    return this.taggedFetch({
-      path: QUERY_SVC_STATUSES_PATH,
-      method: 'POST',
-      body: JSON.stringify(jobIDs),
-      transformResponse: ioTransformer(ioBulkStatusResponse),
-    });
+    return this.taggedFetch(
+      createJsonRequest({
+        path: QUERY_SVC_STATUSES_PATH,
+        method: 'POST',
+        body: JSON.stringify(jobIDs),
+        transformResponse: ioTransformer(ioBulkStatusResponse),
+      })
+    );
   }
 
   //  /targets
@@ -169,11 +229,13 @@ export class BlastQueryClient extends BlastSubClient {
   //  /link-guest
 
   linkGuest(request: IOGuestJobTransferRequest) {
-    return this.taggedFetch({
-      path: QUERY_SVC_LINK_GUEST_PATH,
-      method: 'POST',
-      body: JSON.stringify(request),
-      transformResponse: identity,
-    });
+    return this.taggedFetch(
+      createJsonRequest({
+        path: QUERY_SVC_LINK_GUEST_PATH,
+        method: 'POST',
+        body: JSON.stringify(request),
+        transformResponse: identity,
+      })
+    );
   }
 }

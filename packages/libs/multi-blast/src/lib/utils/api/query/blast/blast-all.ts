@@ -7,11 +7,13 @@ import { ioRPSTBlastNConfig } from './blast-config-rpstn';
 import { ioTBlastNConfig } from './blast-config-tn';
 import { ioTBlastXConfig } from './blast-config-tx';
 import { ioBlastXConfig } from './blast-config-x';
+import { ioDeltaBlastConfig } from './blast-config-delta';
 
 export const ioBlastConfig = union([
   ioBlastNConfig,
   ioBlastPConfig,
   ioBlastXConfig,
+  ioDeltaBlastConfig,
   ioPSIBlastConfig,
   ioRPSBlastConfig,
   ioRPSTBlastNConfig,

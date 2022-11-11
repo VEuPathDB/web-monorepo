@@ -50,11 +50,8 @@ const newReportJobFileListPath = (jobID: string) =>
 const newReportJobFilePath = (
   jobID: string,
   fileName: string,
-  download?: boolean
-) =>
-  download === undefined
-    ? `${REPORT_SVC_JOBS_PATH}/${jobID}/files/${fileName}`
-    : `${REPORT_SVC_JOBS_PATH}/${jobID}/files/${fileName}?download=${download}`;
+  download: boolean
+) => `${REPORT_SVC_JOBS_PATH}/${jobID}/files/${fileName}?download=${download}`;
 
 // // //
 //

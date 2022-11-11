@@ -7,6 +7,7 @@ export const ioQueryJobListEntry = intersection([
     queryJobID: string,
     status: ioJobStatus,
     site: string,
+    createdOn: string,
   }),
   partial({
     userMeta: ioQueryJobUserMeta,

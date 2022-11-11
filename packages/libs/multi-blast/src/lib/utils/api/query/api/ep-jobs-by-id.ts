@@ -8,6 +8,7 @@ export const ioQueryJobDetails = intersection([
     status: ioJobStatus,
     jobConfig: ioQueryJobConfig,
     blastConfig: ioBlastConfig,
+    createdOn: string,
   }),
   partial({
     userMeta: ioQueryJobUserMeta,
@@ -15,4 +16,7 @@ export const ioQueryJobDetails = intersection([
   }),
 ]);
 
+export const ioQueryJobPatchRequest = partial({ userMeta: ioQueryJobUserMeta });
+
 export type IOQueryJobDetails = TypeOf<typeof ioQueryJobDetails>;
+export type IOQueryJobPatchRequest = TypeOf<typeof ioQueryJobPatchRequest>;

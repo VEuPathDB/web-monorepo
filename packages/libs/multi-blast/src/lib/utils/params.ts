@@ -26,6 +26,7 @@ import {
   LongJobResponse,
   Target,
 } from './ServiceTypes';
+import { IOBlastQueryConfig } from './api/query/blast/blast-common';
 
 export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'BlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
@@ -56,6 +57,28 @@ export const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
 export const OMIT_PARAM_TERM = 'none';
 
+export const ParamNames = {
+  BlastDatabaseOrganism: BLAST_DATABASE_ORGANISM_PARAM_NAME,
+  BlastDatabaseType: BLAST_DATABASE_TYPE_PARAM_NAME,
+  BlastQuerySequence: BLAST_QUERY_SEQUENCE_PARAM_NAME,
+  BlastAlgorithm: BLAST_ALGORITHM_PARAM_NAME,
+  JobDescription: JOB_DESCRIPTION_PARAM_NAME,
+
+  ExpectValue: EXPECTATION_VALUE_PARAM_NAME,
+  NumQueryResults: NUM_QUERY_RESULTS_PARAM_NAME,
+  MaxMatchesQueryRange: MAX_MATCHES_QUERY_RANGE_PARAM_NAME,
+
+  WordSize: WORD_SIZE_PARAM_NAME,
+  ScoringMatrix: SCORING_MATRIX_PARAM_NAME,
+  CompAdjust: COMP_ADJUST_PARAM_NAME,
+
+  FilterLowComplexity: FILTER_LOW_COMPLEX_PARAM_NAME,
+  SoftMask: SOFT_MASK_PARAM_NAME,
+  LowercaseMask: LOWER_CASE_MASK_PARAM_NAME,
+  GapCosts: GAP_COSTS_PARAM_NAME,
+  MatchMismatch: MATCH_MISMATCH_SCORE,
+} as const;
+
 export function isOmittedParam(param?: Parameter) {
   return param == null || !isEnumParam(param) || param.displayType === 'treeBox'
     ? false
@@ -78,115 +101,28 @@ export function isOmittedParam(param?: Parameter) {
  */
 export function paramValuesToBlastConfig(
   paramValues: ParameterValues
-): IoBlastConfig {
+): IOBlastQueryConfig {
   const {
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
     [BLAST_ALGORITHM_PARAM_NAME]: selectedTool,
-    [EXPECTATION_VALUE_PARAM_NAME]: eValue,
-    [NUM_QUERY_RESULTS_PARAM_NAME]: numQueryResultsStr,
-    [MAX_MATCHES_QUERY_RANGE_PARAM_NAME]: maxMatchesStr,
-    [WORD_SIZE_PARAM_NAME]: wordSizeStr,
     [SCORING_MATRIX_PARAM_NAME]: scoringMatrixStr,
     [COMP_ADJUST_PARAM_NAME]: compBasedStats,
     [FILTER_LOW_COMPLEX_PARAM_NAME]: filterLowComplexityRegionsStr,
-    [SOFT_MASK_PARAM_NAME]: softMaskStr,
-    [LOWER_CASE_MASK_PARAM_NAME]: lowerCaseMaskStr,
-    [GAP_COSTS_PARAM_NAME]: gapCostsStr,
-    [MATCH_MISMATCH_SCORE]: matchMismatchStr,
   } = paramValues;
-
-  const maxHSPsConfig =
-    Number(maxMatchesStr) >= 1 ? { maxHSPs: Number(maxMatchesStr) } : {};
 
   const baseConfig = {
     query,
-    eValue,
-    maxTargetSeqs: Number(numQueryResultsStr),
-    wordSize: Number(wordSizeStr),
-    softMasking: stringToBoolean(softMaskStr),
-    lcaseMasking: stringToBoolean(lowerCaseMaskStr),
     outFormat: {
       format: 'single-file-json',
     },
-    ...maxHSPsConfig,
   } as const;
 
   const filterLowComplexityRegions =
     filterLowComplexityRegionsStr !== 'no filter';
 
-  const dustConfig: { dust: IoBlastNDust } = {
-    dust: filterLowComplexityRegions ? 'yes' : 'no',
-  };
-
   const segConfig: { seg: IoBlastSegMask } = {
     seg: filterLowComplexityRegions ? 'yes' : 'no',
   };
-
-  const [reward, penalty] = (matchMismatchStr ?? '').split(',').map(Number);
-  const [gapOpen, gapExtend] = (gapCostsStr ?? '').split(',').map(Number);
-
-  if (selectedTool === 'blastn') {
-    return {
-      tool: selectedTool,
-      task: selectedTool,
-      ...baseConfig,
-      ...dustConfig,
-      reward,
-      penalty,
-      gapOpen,
-      gapExtend,
-    };
-  }
-
-  if (selectedTool === 'blastp') {
-    return {
-      tool: selectedTool,
-      task: selectedTool,
-      ...baseConfig,
-      ...segConfig,
-      gapOpen,
-      gapExtend,
-      matrix: scoringMatrixStr as IOBlastPScoringMatrix,
-      compBasedStats: compBasedStats as IoBlastCompBasedStats,
-    };
-  }
-
-  if (selectedTool === 'blastx') {
-    return {
-      tool: selectedTool,
-      queryGeneticCode: 1,
-      task: selectedTool,
-      ...baseConfig,
-      ...segConfig,
-      gapOpen,
-      gapExtend,
-      matrix: scoringMatrixStr as IOBlastXScoringMatrix,
-      compBasedStats: compBasedStats as IoBlastCompBasedStats,
-    };
-  }
-
-  if (selectedTool === 'tblastn') {
-    return {
-      tool: selectedTool,
-      task: selectedTool,
-      ...baseConfig,
-      ...segConfig,
-      gapOpen,
-      gapExtend,
-      matrix: scoringMatrixStr as IOTBlastNScoringMatrix,
-      compBasedStats: compBasedStats as IoBlastCompBasedStats,
-    };
-  }
-
-  if (selectedTool === 'tblastx') {
-    return {
-      tool: selectedTool,
-      queryGeneticCode: 1,
-      ...baseConfig,
-      ...segConfig,
-      matrix: scoringMatrixStr as IOTBlastXScoringMatrix,
-    };
-  }
 
   throw new Error(`The BLAST tool '${selectedTool}' is not supported.`);
 }

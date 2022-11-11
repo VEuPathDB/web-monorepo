@@ -27,6 +27,7 @@ export type IOBlastLocation = TypeOf<typeof ioBlastLocation>;
 //
 
 export const ioBlastSeg = partial({
+  enabled: boolean,
   window: number,
   locut: number,
   hicut: number,

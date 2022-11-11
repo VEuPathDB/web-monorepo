@@ -42,6 +42,7 @@ export const ioTBlastXConfig = intersection([
     queryGenCode: number,
     wordSize: number,
     maxIntronLength: number,
+    matrix: ioTBlastXMatrix,
     threshold: number,
     dbGenCode: number,
     seg: ioBlastSeg,

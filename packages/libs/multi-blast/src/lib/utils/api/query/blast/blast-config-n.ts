@@ -31,6 +31,7 @@ export type IOBlastNTask = TypeOf<typeof ioBlastNTask>;
 //
 
 export const ioBlastNDust = partial({
+  enabled: boolean,
   level: number,
   window: number,
   linker: number,

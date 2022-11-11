@@ -39,6 +39,9 @@ import { BlastRequestError } from './BlastRequestError';
 import { ResultContainer } from './ResultContainer';
 
 import './BlastWorkspaceResult.scss';
+import { BlastReportClient } from '../utils/api/BlastReportClient';
+import { IOBlastFormatConfig } from '../utils/api/report/blast/blast-config-format';
+import { IOReportJobDetails } from '../utils/api/report/api/ep-job-by-id';
 
 interface Props {
   jobId: string;
@@ -100,7 +103,9 @@ export function BlastWorkspaceResult(props: Props) {
     }
 
     return Task.fromPromise(() =>
-      makeReportPollingPromise(blastApi, props.jobId, 'single-file-json')
+      makeReportPollingPromise(blastApi.reportAPI, props.jobId, {
+        formatType: 'single-file-blast-json',
+      })
     ).run(setReportResultState);
   }, [blastApi, props.jobId, jobResultState, reportResultState]);
 
@@ -545,7 +550,7 @@ interface ReportPollingInProgress extends ReportPollingBase {
 
 interface ReportPollingSuccess extends ReportPollingBase {
   status: 'report-completed' | 'queueing-error';
-  report: LongReportResponse;
+  report: IOReportJobDetails;
 }
 
 interface ReportPollingError extends ReportPollingBase {
@@ -554,61 +559,63 @@ interface ReportPollingError extends ReportPollingBase {
 }
 
 export async function makeReportPollingPromise(
-  blastApi: BlastApi,
-  jobId: string,
-  format: IoBlastFormat,
+  blastApi: BlastReportClient,
+  queryJobID: string,
+  format: IOBlastFormatConfig,
   reportId?: string
 ): Promise<ReportPollingState> {
   if (reportId == null) {
-    const reportRequest = await blastApi.createReport(jobId, {
-      format,
+    const reportRequest = await blastApi.createJob({
+      queryJobID,
+      blastConfig: format,
+      addToUserCollection: true,
     });
 
     if (reportRequest.status === 'ok') {
       return makeReportPollingPromise(
         blastApi,
-        jobId,
+        queryJobID,
         format,
-        reportRequest.value.reportID
+        reportRequest.value.reportJobID
       );
     } else {
       return {
         ...reportRequest,
-        jobId,
+        jobId: queryJobID,
         status: 'request-error',
       };
     }
   }
 
-  const reportRequest = await blastApi.fetchReport(reportId);
+  const reportRequest = await blastApi.fetchJob(reportId);
 
   if (reportRequest.status === 'ok') {
     const report = reportRequest.value;
 
-    if (report.status === 'completed' || report.status === 'errored') {
+    if (report.status === 'complete' || report.status === 'failed') {
       return {
         status:
-          report.status === 'completed' ? 'report-completed' : 'queueing-error',
-        jobId,
+          report.status === 'complete' ? 'report-completed' : 'queueing-error',
+        jobId: queryJobID,
         report,
       };
     }
 
     if (report.status === 'expired') {
-      await blastApi.rerunReport(report.reportID);
+      await blastApi.rerunJob(report.reportJobID);
     }
 
     await waitForNextPoll();
 
     return {
       status: 'report-pending',
-      jobId,
+      jobId: queryJobID,
       reportId,
     };
   } else {
     return {
       ...reportRequest,
-      jobId,
+      jobId: queryJobID,
       reportId,
       status: 'request-error',
     };
