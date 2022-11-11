@@ -253,14 +253,7 @@ export interface BarplotRequestParams {
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
   barplot: type({
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-    }),
+    config: plotConfig,
     data: array(
       intersection([
         type({
