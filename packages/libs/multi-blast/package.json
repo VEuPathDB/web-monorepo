@@ -91,9 +91,11 @@
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^27.1.5",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.20.3",
     "eslint-plugin-react-hooks": "^4.0.8",
+    "eslint-plugin-testing-library": "^5.9.1",
     "http-proxy-middleware": "^1.0.6",
     "husky": "4",
     "lint-staged": ">=10",
@@ -127,7 +129,7 @@
     "@veupathdb/**/react-dom": "^17.0.1"
   },
   "volta": {
-    "node": "14.15.5",
+    "node": "14.21.1",
     "yarn": "1.22.11"
   }
 }
