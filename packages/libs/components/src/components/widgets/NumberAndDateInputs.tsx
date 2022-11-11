@@ -131,8 +131,10 @@ function BaseInput({
             message: `Sorry, value can't go above ${maxValue}!`,
           };
         } else if (
-          (minValue != null && newValue === minValue) ||
-          (maxValue != null && newValue === maxValue)
+          minValue != null &&
+          newValue === minValue &&
+          maxValue != null &&
+          newValue === maxValue
         ) {
           return {
             validity: false,
