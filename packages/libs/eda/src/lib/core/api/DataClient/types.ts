@@ -12,6 +12,8 @@ import {
   partial,
   unknown,
   nullType,
+  keyof,
+  boolean,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -71,6 +73,89 @@ const completeCases = partial({
 export type CompleteCasesTable = TypeOf<typeof completeCasesTableArray>;
 const completeCasesTableArray = array(completeCases);
 
+export type VariableClass = TypeOf<typeof variableClass>;
+const variableClass = keyof({
+  native: null,
+  derived: null,
+  computed: null,
+});
+
+export type VariableSpec = TypeOf<typeof variableSpec>;
+const variableSpec = type({
+  entityId: string,
+  variableId: string,
+});
+
+export type PlotReferenceValue = TypeOf<typeof plotReferenceValue>;
+const plotReferenceValue = keyof({
+  xAxis: null,
+  yAxis: null,
+  zAxis: null,
+  overlay: null,
+  facet1: null,
+  facet2: null,
+  geo: null,
+  latitude: null,
+  longitude: null,
+});
+
+export type API_VariableType = TypeOf<typeof API_VariableType>;
+const API_VariableType = keyof({
+  category: null,
+  string: null,
+  number: null,
+  date: null,
+  longitude: null,
+  integer: null,
+  // TO DO: REMOVE THIS TEMPORARY WORKAROUND
+  CATEGORY: null,
+  STRING: null,
+  NUMBER: null,
+  DATE: null,
+  LONGITUDE: null,
+  INTEGER: null,
+});
+
+export type API_VariableDataShape = TypeOf<typeof API_VariableDataShape>;
+const API_VariableDataShape = keyof({
+  continuous: null,
+  categorical: null,
+  ordinal: null,
+  binary: null,
+  // TO DO: REMOVE THIS TEMPORARY WORKAROUND
+  CONTINUOUS: null,
+  CATEGORICAL: null,
+  ORDINAL: null,
+  BINARY: null,
+});
+
+export type VariableMapping = TypeOf<typeof variableMapping>;
+const variableMapping = intersection([
+  type({
+    variableClass,
+    variableSpec,
+    plotReference: plotReferenceValue,
+    dataType: API_VariableType,
+    dataShape: API_VariableDataShape,
+    isCollection: boolean,
+    imputeZero: boolean,
+  }),
+  partial({
+    displayName: string,
+    displayRangeMin: union([string, number]),
+    displayRangeMax: union([string, number]),
+    vocabulary: array(string),
+    members: array(variableSpec),
+  }),
+]);
+
+export type PlotConfig = TypeOf<typeof plotConfig>;
+const plotConfig = type({
+  completeCasesAllVars: number,
+  completeCasesAxesVars: number,
+  variables: array(variableMapping),
+});
+
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -95,6 +180,34 @@ export interface HistogramRequestParams {
   };
 }
 
+export type HistogramSummary = TypeOf<typeof histogramSummary>;
+const histogramSummary = type({
+  min: string,
+  q1: string,
+  median: string,
+  mean: string,
+  q3: string,
+  max: string,
+});
+
+// to be distinguised from geo-viewports
+export type NumericViewport = TypeOf<typeof numericViewport>;
+const numericViewport = type({
+  xMin: string,
+  xMax: string,
+});
+
+export type HistogramConfig = TypeOf<typeof histogramConfig>;
+const histogramConfig = intersection([
+  plotConfig,
+  type({
+    binSlider: BinWidthSlider,
+    binSpec: BinSpec,
+    summary: histogramSummary,
+    viewport: numericViewport,
+  }),
+]);
+
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 export const HistogramResponse = type({
   histogram: type({
@@ -115,25 +228,7 @@ export const HistogramResponse = type({
         }),
       ])
     ),
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      binSlider: BinWidthSlider,
-      xVariableDetails: VariableDescriptor,
-      binSpec: BinSpec,
-      summary: type({
-        min: string,
-        q1: string,
-        median: string,
-        mean: string,
-        q3: string,
-        max: string,
-      }),
-      viewport: type({
-        xMin: string,
-        xMax: string,
-      }),
-    }),
+    config: histogramConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
