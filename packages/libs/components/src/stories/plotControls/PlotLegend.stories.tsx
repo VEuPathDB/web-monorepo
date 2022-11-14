@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Meta } from '@storybook/react/types-6-0';
 import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
@@ -427,6 +427,7 @@ export const HistogramPlotLegend = () => {
         checkedLegendItems={checkedLegendItems}
       />
       <PlotLegend
+        type="list"
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={setCheckedLegendItems}
@@ -440,15 +441,16 @@ export const HistogramPlotLegend = () => {
 // custom legend with scatterplot gradient colorscale
 export const GradientPlotLegend = () => {
   return (
-    <div>
-      <PlotGradientLegend
+    <div style={{ padding: 15 }}>
+      <PlotLegend
+        type="colorscale"
         legendMax={100}
         legendMin={5}
         // Options are 'sequential' and 'divergent'
         gradientColorscaleType={'divergent'}
         // pass legend title
-        legendTitle={'Very very very long name'}
         nTicks={5}
+        showMissingness
       />
     </div>
   );
@@ -466,6 +468,7 @@ export const TestLongLegendItems = () => {
       {/* testing long legend items: taken from a Scatter plot with smoothed mean */}
       <h5># Testing long legend items</h5>
       <PlotLegend
+        type="list"
         legendItems={longLegendItems}
         checkedLegendItems={checkedLongLegendItems}
         onCheckedLegendItemsChange={setCheckedLongLegendItems}
