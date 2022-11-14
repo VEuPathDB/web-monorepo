@@ -15,7 +15,7 @@ import {areTermsInString} from 'wdk-client/Utils/SearchUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import {preorderSeq, getBranches} from 'wdk-client/Utils/TreeUtils';
 import {Question, RecordClass} from 'wdk-client/Utils/WdkModel';
-import {Tooltip} from '@veupathdb/components/lib/components/widgets/Tooltip';
+// import {Tooltip} from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 export type Dict<T> = {
   [key: string]: T;
@@ -225,10 +225,11 @@ export function isIndividual(node: CategoryTreeNode): node is IndividualNode {
  * @returns {React.Element} - React element
  */
 export function BasicNodeComponent(props: {node: CategoryTreeNode}) {
-  return ( 
-      <Tooltip title={getDescription(props.node) ?? ''} css={{}}>
+  return (
+      /** Remove Tooltip for now as performance improvements are underway */ 
+      // <Tooltip title={getDescription(props.node) ?? ''} css={{}}>
         <span>{getDisplayName(props.node)}</span>
-      </Tooltip>
+      // </Tooltip>
     );
 }
 

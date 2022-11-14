@@ -233,6 +233,9 @@ export function safeHtml<P>(str: string, props?: P, Component?: React.ComponentC
 export function safeHtml<P>(str: string, props?: P, Component?: React.StatelessComponent<P>): JSX.Element;
 export function safeHtml<P>(str: string, props?: P, Component?: string): JSX.Element;
 export function safeHtml<P>(str = '', props?: P, Component: any = 'span'): JSX.Element {
+  if (str.indexOf('<') === -1) {
+    return <Component {...props}>{str}</Component>
+  }
   // Use innerHTML to auto close tags
   let container = document.createElement('div');
   container.innerHTML = str;
