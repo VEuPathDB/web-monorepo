@@ -860,50 +860,54 @@ const FieldNode = ({
   const fieldContents = (
     isMulti(field) ? !showMultiFilterDescendants : isFilterField(field)
   ) ? (
-    <Tooltip
-      title={
-        isMultiPick
-          ? ''
+    /**
+     * Temporarily removing Tooltip renderings to alleviate performance issue with new CheckboxTree.
+     * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
+     */
+    // <Tooltip
+    //   title={
+    //     isMultiPick
+    //       ? ''
+    //       : isDisabled
+    //       ? customDisabledVariableMessage ??
+    //         'This variable cannot be used with this plot and other variable selections.'
+    //       : 'Select this variable.'
+    //   }
+    // >
+    <a
+      ref={nodeRef}
+      style={
+        isActive
+          ? {
+              ...baseFieldNodeLinkStyle,
+              ...activeFieldNodeLinkStyle,
+              ...anchorNodeLinkStyle,
+              ...nodeColor,
+            }
           : isDisabled
-          ? customDisabledVariableMessage ??
-            'This variable cannot be used with this plot and other variable selections.'
-          : 'Select this variable.'
+          ? {
+              ...baseFieldNodeLinkStyle,
+              ...anchorNodeLinkStyle,
+              ...disabledFieldNodeLinkStyle,
+              ...nodeColor,
+            }
+          : {
+              ...baseFieldNodeLinkStyle,
+              ...anchorNodeLinkStyle,
+              ...nodeColor,
+            }
       }
+      href={'#' + field.term}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isDisabled) handleFieldSelect(field);
+      }}
     >
-      <a
-        ref={nodeRef}
-        style={
-          isActive
-            ? {
-                ...baseFieldNodeLinkStyle,
-                ...activeFieldNodeLinkStyle,
-                ...anchorNodeLinkStyle,
-                ...nodeColor,
-              }
-            : isDisabled
-            ? {
-                ...baseFieldNodeLinkStyle,
-                ...anchorNodeLinkStyle,
-                ...disabledFieldNodeLinkStyle,
-                ...nodeColor,
-              }
-            : {
-                ...baseFieldNodeLinkStyle,
-                ...anchorNodeLinkStyle,
-                ...nodeColor,
-              }
-        }
-        href={'#' + field.term}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (!isDisabled) handleFieldSelect(field);
-        }}
-      >
-        <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
-      </a>
-    </Tooltip>
+      <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
+    </a>
   ) : (
+    // </Tooltip>
     //add condition for identifying entity parent and entity parent of activeField
     <div
       style={
@@ -937,20 +941,24 @@ const FieldNode = ({
     >
       {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
-        <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
-          <button
-            className={`link`}
-            style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
-            onClick={(e) => {
-              // prevent click from toggling expansion state
-              e.stopPropagation();
-              onClickStar();
-            }}
-            disabled={starredVariablesLoading}
-          >
-            <Icon fa={isStarred ? 'star' : 'star-o'} />
-          </button>
-        </Tooltip>
+        /**
+         * Temporarily removing Tooltip renderings to alleviate performance issue with new CheckboxTree.
+         * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
+         */
+        // <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
+        <button
+          className={`link`}
+          style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
+          onClick={(e) => {
+            // prevent click from toggling expansion state
+            e.stopPropagation();
+            onClickStar();
+          }}
+          disabled={starredVariablesLoading}
+        >
+          <Icon fa={isStarred ? 'star' : 'star-o'} />
+        </button>
+        // </Tooltip>
       )}
     </div>
   );
