@@ -20,55 +20,35 @@ import { IOBlastConfig } from './api/query/blast/blast-all';
 import { IOBlastNDust } from './api/query/blast/blast-config-n';
 import { IOJobTarget } from './api/query/api/common';
 
-export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'BlastDatabaseOrganism';
-export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
-export const BLAST_QUERY_SEQUENCE_PARAM_NAME = 'BlastQuerySequence';
-export const BLAST_ALGORITHM_PARAM_NAME = 'BlastAlgorithm';
-export const JOB_DESCRIPTION_PARAM_NAME = 'BlastJobDescription';
-
-// General config for all BLAST applications
-export const EXPECTATION_VALUE_PARAM_NAME = 'ExpectationValue';
-export const NUM_QUERY_RESULTS_PARAM_NAME = 'NumQueryResults';
-export const MAX_MATCHES_QUERY_RANGE_PARAM_NAME = 'MaxMatchesQueryRange';
-
-// General config specific to each BLAST application
-export const WORD_SIZE_PARAM_NAME = 'WordSize';
-export const SCORING_MATRIX_PARAM_NAME = 'ScoringMatrix';
-export const COMP_ADJUST_PARAM_NAME = 'CompAdjust';
-
-// Filter and masking config
-export const FILTER_LOW_COMPLEX_PARAM_NAME = 'FilterLowComplex';
-export const SOFT_MASK_PARAM_NAME = 'SoftMask';
-export const LOWER_CASE_MASK_PARAM_NAME = 'LowerCaseMask';
-
-// Scoring config
-export const GAP_COSTS_PARAM_NAME = 'GapCosts';
-export const MATCH_MISMATCH_SCORE = 'MatchMismatchScore';
-
 export const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
 export const OMIT_PARAM_TERM = 'none';
 
 export const ParamNames = {
-  BlastDatabaseOrganism: BLAST_DATABASE_ORGANISM_PARAM_NAME,
-  BlastDatabaseType: BLAST_DATABASE_TYPE_PARAM_NAME,
-  BlastQuerySequence: BLAST_QUERY_SEQUENCE_PARAM_NAME,
-  BlastAlgorithm: BLAST_ALGORITHM_PARAM_NAME,
-  JobDescription: JOB_DESCRIPTION_PARAM_NAME,
+  BlastDatabaseOrganism: 'BlastDatabaseOrganism',
+  BlastDatabaseType: 'MultiBlastDatabaseType',
+  BlastQuerySequence: 'BlastQuerySequence',
+  BlastAlgorithm: 'BlastAlgorithm',
+  JobDescription: 'BlastJobDescription',
 
-  ExpectValue: EXPECTATION_VALUE_PARAM_NAME,
-  NumQueryResults: NUM_QUERY_RESULTS_PARAM_NAME,
-  MaxMatchesQueryRange: MAX_MATCHES_QUERY_RANGE_PARAM_NAME,
+  // General config for all BLAST applications
+  ExpectValue: 'ExpectationValue',
+  NumQueryResults: 'NumQueryResults',
+  MaxMatchesQueryRange: 'MaxMatchesQueryRange',
 
-  WordSize: WORD_SIZE_PARAM_NAME,
-  ScoringMatrix: SCORING_MATRIX_PARAM_NAME,
-  CompAdjust: COMP_ADJUST_PARAM_NAME,
+  // General config specific to each BLAST application
+  WordSize: 'WordSize',
+  ScoringMatrix: 'ScoringMatrix',
+  CompAdjust: 'CompAdjust',
 
-  FilterLowComplexity: FILTER_LOW_COMPLEX_PARAM_NAME,
-  SoftMask: SOFT_MASK_PARAM_NAME,
-  LowercaseMask: LOWER_CASE_MASK_PARAM_NAME,
-  GapCosts: GAP_COSTS_PARAM_NAME,
-  MatchMismatch: MATCH_MISMATCH_SCORE,
+  // Filter and masking config
+  FilterLowComplexity: 'FilterLowComplex',
+  SoftMask: 'SoftMask',
+  LowercaseMask: 'LowerCaseMask',
+
+  // Scoring config
+  GapCosts: 'GapCosts',
+  MatchMismatch: 'MatchMismatchScore',
 } as const;
 
 export function isOmittedParam(param?: Parameter) {
@@ -204,10 +184,10 @@ export function reportToParamValues(
 
   return {
     ...configParamValues,
-    [JOB_DESCRIPTION_PARAM_NAME]: jobDetails.userMeta?.summary ?? '',
-    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
-    [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamValue,
-    [BLAST_DATABASE_TYPE_PARAM_NAME]: targetTypeTerm,
+    [ParamNames.JobDescription]: jobDetails.userMeta?.summary ?? '',
+    [ParamNames.BlastQuerySequence]: query,
+    [ParamNames.BlastDatabaseOrganism]: organismParamValue,
+    [ParamNames.BlastDatabaseType]: targetTypeTerm,
   };
 }
 

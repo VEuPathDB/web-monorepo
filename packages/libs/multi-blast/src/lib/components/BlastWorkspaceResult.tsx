@@ -41,6 +41,8 @@ import { IOReportJobDetails } from '../utils/api/report/api/ep-job-by-id';
 import { BlastQueryClient } from '../utils/api/BlastQueryClient';
 import { IOQueryJobDetails } from '../utils/api/query/api/ep-jobs-by-id';
 import { IOJobTarget } from '../utils/api/query/api/common';
+import { ioTransformer } from '@veupathdb/http-utils';
+import { Decoder } from 'io-ts';
 
 interface Props {
   jobId: string;
@@ -122,7 +124,8 @@ export function BlastWorkspaceResult(props: Props) {
           : blastApi.reportAPI.fetchJobFileAs(
               reportResultState.report.reportJobID,
               'report.json',
-              multiQueryReportJson
+              (res) =>
+                ioTransformer(multiQueryReportJson)(JSON.parse(res as any))
             )
       ).run(setMultiQueryReportState),
     [blastApi, reportResultState]

@@ -43,6 +43,17 @@ import { IOBlastConfig } from './api/query/blast/blast-all';
 
 const LOW_COMPLEXITY_NONE_VALUE = 'no filter';
 
+/**
+ * This function transforms the parameter values of a multi-blast WDK question
+ * into a valid job configuration for the multi-blast service.
+ *
+ * NOTE: This logic is mirrored in
+ *
+ *   EbrcWebSvcCommon/WSFPlugin/src/main/java/org/apidb/apicomplexa/wsfplugin/blast/MultiblastServiceParams.java
+ *
+ * The two must be kept in sync so unexpected results are not shown in the
+ * multi-blast UI and so users get the same result when they export to WDK.
+ */
 export function paramValuesToBlastQueryConfig(
   paramValues: ParameterValues
 ): IOBlastConfig {
