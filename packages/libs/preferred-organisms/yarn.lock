@@ -3288,10 +3288,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.7":
-  version "0.18.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.7.tgz#2b114845618847cdb8ef49080c9637ba2f2e6408"
-  integrity sha512-HNmVwtY8hYbdUC1qtvFLhtjbargTdRgqlsDYFDszdGzERlX38pkwjtHjWOUtJxFdSd/LTFRoefE/c0YqfkrBYA==
+"@veupathdb/coreui@^0.18.14":
+  version "0.18.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.14.tgz#ea524dc02401d87c7a4ffe76d6b60ed3301f51c2"
+  integrity sha512-aa13Xugh1/ngybkIUvanOqHwpsqd850iTTFH2MHAxX5pMgZKLe4iNmlsw0o0YJ4PK/yT14Apq58zdip+RSpIXQ==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -3361,10 +3361,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.9.14":
-  version "0.9.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.14.tgz#c7741d0e7394dae45d45f6d9879d529dab963f0f"
-  integrity sha512-8EES5+wnzYi/bvRHfZ7bBFhb3fIC72sSBxtEfdkRm7wfF3YKGTBxHUZErzuNzMeBl32hQj2FUMSg1kc5k7R+LQ==
+"@veupathdb/wdk-client@^0.9.17":
+  version "0.9.17"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.17.tgz#eccc39202623e98c31070cc0f1331e04cbd56bf7"
+  integrity sha512-umYc1Xshv+YxWT5FQHf9h6IhvqrdxXoT9utARXrjQtTNrAKk6fzRe4PaTYFc0/eotoVCDZ/WvjON22dpTEewbA==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
