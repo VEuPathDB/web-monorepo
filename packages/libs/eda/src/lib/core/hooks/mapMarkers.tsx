@@ -28,7 +28,7 @@ import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
 import { kFormatter, mFormatter } from '../utils/big-number-formatters';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../types/variable';
 
 // TO DO: move to configuration somewhere?
