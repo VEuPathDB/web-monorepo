@@ -2,7 +2,10 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { noop } from 'lodash';
 
-import { CheckboxTree, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree, {
+  LinksPosition,
+} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
@@ -235,9 +238,26 @@ export function PreferredOrganismsConfig({
             isSelectable
             selectedList={configSelection}
             onSelectionChange={setConfigSelection}
-            linksPosition={CheckboxTree.LinkPlacement.Both}
+            linksPosition={LinksPosition.Top}
             additionalFilters={configTreeFilters}
             isAdditionalFilterApplied={showOnlyReferenceOrganisms}
+            styleOverrides={{
+              searchAndFilterWrapper: {
+                justifyContent: 'flex-start',
+                maxWidth: '600px',
+              },
+              treeLinks: {
+                container: {
+                  justifyContent: 'flex-start',
+                  marginLeft: '2em',
+                },
+              },
+              searchBox: {
+                optionalIcon: {
+                  top: '3px',
+                },
+              },
+            }}
           />
         </div>
         <div className={cx('--Preview')}>
@@ -281,7 +301,7 @@ export function PreferredOrganismsConfig({
                 expandedList={previewExpansion}
                 onExpansionChange={noop}
                 shouldExpandDescendantsWithOneChild
-                linksPosition={CheckboxTree.LinkPlacement.None}
+                linksPosition={LinksPosition.None}
               />
             )}
           </div>
