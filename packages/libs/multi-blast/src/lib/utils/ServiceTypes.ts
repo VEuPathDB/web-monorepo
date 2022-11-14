@@ -9,6 +9,7 @@ import {
   string,
   type,
   union,
+  unknown,
 } from 'io-ts';
 
 export const target = type({
@@ -55,13 +56,13 @@ export const reportHitJson = type({
 });
 
 export const reportStatJson = type({
-  db_num: number,
   db_len: number,
-  hsp_len: number,
+  db_num: number,
   eff_space: number,
+  entropy: number,
+  hsp_len: number,
   kappa: number,
   lambda: number,
-  entropy: number,
 });
 
 export const reportSearchJson = intersection([
@@ -86,6 +87,7 @@ export const reportSearchTargetJson = type({
 });
 
 export const singleQueryReportJson = type({
+  params: unknown,
   program: string,
   version: string,
   reference: string,

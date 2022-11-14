@@ -150,7 +150,7 @@ export class BlastReportClient extends BlastSubClient {
     return this.taggedFetch({
       path: newReportJobFilePath(jobID, fileName, false),
       method: 'GET',
-      transformResponse: ioTransformer(decoder),
+      transformResponse: (res: any) => ioTransformer(decoder)(JSON.parse(res)),
     });
   }
 
