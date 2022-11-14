@@ -1296,10 +1296,10 @@
     "@typescript-eslint/types" "4.8.1"
     eslint-visitor-keys "^2.0.0"
 
-"@veupathdb/components@^0.19.2":
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.2.tgz#2436de84e901f7da22c8ac8e2add6ebda99d6c1e"
-  integrity sha512-nJjM2e85uP8DNEliDP8dtM2kKtKEZJ2wysU/Nr4DiKR/ToCCK6xFgsuQcjgGVNxl0cC4oo1vnDLCaUJX/xg2zw==
+"@veupathdb/components@^0.19.7":
+  version "0.19.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.7.tgz#9fda8f3c2e4ec9e0e90bba9146600e039f00d1eb"
+  integrity sha512-tlYV2YARBIWvM5y0o2aBmEtirMNKCJvYZaG6Wk18t1zNF5dDR/mfE/0UBsn1JTlht9l4WySICF/YoGEEac8w8Q==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -1328,10 +1328,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.7":
-  version "0.18.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.7.tgz#2b114845618847cdb8ef49080c9637ba2f2e6408"
-  integrity sha512-HNmVwtY8hYbdUC1qtvFLhtjbargTdRgqlsDYFDszdGzERlX38pkwjtHjWOUtJxFdSd/LTFRoefE/c0YqfkrBYA==
+"@veupathdb/coreui@^0.18.14":
+  version "0.18.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.14.tgz#ea524dc02401d87c7a4ffe76d6b60ed3301f51c2"
+  integrity sha512-aa13Xugh1/ngybkIUvanOqHwpsqd850iTTFH2MHAxX5pMgZKLe4iNmlsw0o0YJ4PK/yT14Apq58zdip+RSpIXQ==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
