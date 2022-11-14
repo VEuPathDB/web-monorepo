@@ -68,9 +68,8 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 // for custom legend
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
@@ -93,7 +92,7 @@ import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
-  useFlattenedConstraints,
+  useFilteredConstraints,
   useNeutralPaletteProps,
   useProvidedOptionalVariable,
   useVizConfig,
@@ -346,10 +345,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const flattenedConstraints = useFlattenedConstraints(
+  const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
     selectedVariables,
-    entities
+    entities,
+    'overlayVariable'
   );
 
   useProvidedOptionalVariable<HistogramConfig>(
@@ -358,7 +358,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
-    flattenedConstraints,
+    filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
     updateVizConfig,
@@ -1088,6 +1088,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     !histogramProps.showSpinner &&
     data != null && (
       <PlotLegend
+        type="list"
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={setCheckedLegendItems}

@@ -325,6 +325,7 @@ function MapViz(props: VisualizationProps<Options>) {
 
   const legendNode = legendItems != null && xAxisVariable != null && (
     <PlotLegend
+      type="list"
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={setCheckedLegendItems}

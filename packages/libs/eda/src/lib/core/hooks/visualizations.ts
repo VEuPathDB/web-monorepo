@@ -8,7 +8,7 @@ import { StudyEntity } from '../types/study';
 import {
   DataElementConstraintRecord,
   disabledVariablesForInput,
-  flattenConstraints,
+  filterConstraints,
   VariablesByInputName,
 } from '../utils/data-element-constraints';
 import { isEqual } from 'lodash';
@@ -77,7 +77,7 @@ export function useProvidedOptionalVariable<ConfigType>(
   /* storedVariableDescriptor is basically vizConfig.overlayVariable */
   storedVariableDescriptor: VariableDescriptor | undefined,
   entities: StudyEntity[],
-  flattenedConstraints: DataElementConstraintRecord | undefined,
+  constraints: DataElementConstraintRecord[] | undefined,
   dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName,
   updateVizConfig: (newConfig: VariablesByInputName) => void,
@@ -101,7 +101,7 @@ export function useProvidedOptionalVariable<ConfigType>(
       disabledVariablesForInput(
         inputName as string,
         entities,
-        flattenedConstraints,
+        constraints,
         dataElementDependencyOrder,
         selectedVariables
       ).find((variable) => isEqual(variable, providedVariableDescriptor))
@@ -118,7 +118,7 @@ export function useProvidedOptionalVariable<ConfigType>(
     providedVariableDescriptor,
     storedVariableDescriptor,
     entities,
-    flattenedConstraints,
+    constraints,
     dataElementDependencyOrder,
     selectedVariables,
     enqueueSnackbar,
@@ -130,16 +130,22 @@ export function useProvidedOptionalVariable<ConfigType>(
  * simple memo hook for flattenedConstraints, used in several places
  */
 
-export function useFlattenedConstraints(
+export function useFilteredConstraints(
   dataElementConstraints: DataElementConstraintRecord[] | undefined,
   selectedVariables: VariablesByInputName,
-  entities: StudyEntity[]
+  entities: StudyEntity[],
+  selectedVarReference: string
 ) {
   return useMemo(
     () =>
       dataElementConstraints &&
-      flattenConstraints(selectedVariables, entities, dataElementConstraints),
-    [dataElementConstraints, selectedVariables, entities]
+      filterConstraints(
+        selectedVariables,
+        entities,
+        dataElementConstraints,
+        selectedVarReference
+      ),
+    [dataElementConstraints, selectedVariables, entities, selectedVarReference]
   );
 }
 

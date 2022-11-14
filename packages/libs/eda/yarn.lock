@@ -3466,10 +3466,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.4":
-  version "0.19.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.4.tgz#4ade231e53c42ad54f8dd3d7ccfa2f052f0e7e0d"
-  integrity sha512-P2AfAhARJgh9MoX9KlY9A3XkDqaLgQdryfOlur25qy5pISE81eUv5tfSi7G8M1IIM2azFTqAxvdXIO8AmGeD3Q==
+"@veupathdb/components@^0.19.5":
+  version "0.19.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.5.tgz#7109ceb4fa293938bbda77c8ef6b11a4be7a5a5c"
+  integrity sha512-z+GytIHIgFFcshD1ZTVmjpJsO9pWWAawllbiREO0uztx5WJGVQMPb0D5ZKp+LF8xZOJhrRe5ieKnDikFqpqsrw==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
