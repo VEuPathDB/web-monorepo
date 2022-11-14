@@ -1,5 +1,5 @@
 import { partial } from 'lodash';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import {
   getNodeId,
@@ -9,8 +9,16 @@ import {
   CategoryTreeNode
 } from 'wdk-client/Utils/CategoryUtils';
 import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
-import CheckboxTree, { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition, CheckboxTreeStyleSpec } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getFilteredNodeChildren, nodeSearchPredicateWithHiddenNodes } from 'wdk-client/Utils/CheckboxTreeUtils';
+
+const sharedCheckboxTreeContainerStyleSpec: React.CSSProperties = {
+  position: 'relative',
+  maxHeight: '75vh',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+};
 
 type ChangeHandler = (ids: string[]) => void;
 
@@ -31,6 +39,8 @@ type Props = {
   defaultSelection?: string[];
   expandedBranches: string[];
   searchTerm: string;
+  searchIconName?: 'search' | 'filter';
+  searchIconPosition?: 'left' | 'right';
   renderNode?: (node: CategoryTreeNode, path?: number[]) => React.ReactNode;
   isMultiPick?: boolean;
   onChange: ChangeHandler;
@@ -42,6 +52,12 @@ type Props = {
   linksPosition?: LinksPosition;
   showSearchBox?: boolean;
   containerClassName?: string;
+  styleOverrides?: CheckboxTreeStyleSpec;
+  /** 
+   * Used to apply styling to a container that wraps the CheckboxTree
+   * If omitted, the container uses the sharedCheckboxTreeContainerStyleSpec default styles
+   */
+  type?: 'headerMenu' | 'searchPane';
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
@@ -62,6 +78,8 @@ let {
   renderNode,
   searchBoxPlaceholder,
   searchTerm,
+  searchIconName = 'filter',
+  searchIconPosition = 'left',
   selectedLeaves,
   currentSelection,
   defaultSelection,
@@ -69,7 +87,9 @@ let {
   tree,
   linksPosition,
   showSearchBox,
-  containerClassName = ''
+  containerClassName = '',
+  styleOverrides = {},
+  type,
 } = props;
 
   if (tree.children.length == 0) {
@@ -79,10 +99,29 @@ let {
   // set help
   let searchBoxHelp = disableHelp ? '' : makeSearchHelpText(`each ${leafType} below`);
 
+  const containerStyleSpec = useMemo(() => {
+    return (
+      type === 'searchPane' ? 
+          {
+            ...sharedCheckboxTreeContainerStyleSpec,
+            borderBottom: '0.0625rem solid #694b66',
+          } : type === 'headerMenu' ? 
+          {
+            ...sharedCheckboxTreeContainerStyleSpec,
+            minWidth: '18.75em',
+          } : 
+          {
+            ...sharedCheckboxTreeContainerStyleSpec,
+          }
+    )
+  }, [type])
+
   return (
     <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>
       {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
-      <div className="wdk-CategoriesCheckboxTreeWrapper">
+      <div
+        style={containerStyleSpec}
+      >
         <CheckboxTree<CategoryTreeNode>
           searchBoxHelp={searchBoxHelp}
           isSearchable={true}
@@ -90,7 +129,8 @@ let {
           autoFocusSearchBox={autoFocusSearchBox}
           name={name}
           renderNoResults={renderNoResults}
-          searchIconName="filter"
+          searchIconName={searchIconName}
+          searchIconPosition={searchIconPosition}
           linksPosition={linksPosition}
           showSearchBox={showSearchBox}
           getNodeId={getNodeId}
@@ -108,6 +148,7 @@ let {
           onSelectionChange={onChange}
           onExpansionChange={onUiChange}
           onSearchTermChange={onSearchTermChange}
+          styleOverrides={styleOverrides}
         /> 
       </div>
     </div>

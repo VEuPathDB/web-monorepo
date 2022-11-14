@@ -14,9 +14,22 @@ let RecordNavigationItem = ({node: category, path, activeCategory, checked, onSe
   let offerCheckbox = path.length === 1;
 
   return (
-    <div className="wdk-RecordNavigationItem">
+    <div 
+      className="wdk-RecordNavigationItem"
+      style={{
+        margin: isIndividual(category) ? '0.25em 0 0.25em 0.5em' : '0.25em 0',
+        display: 'flex',
+        position: 'relative',
+      }}
+    >
       {activeId === id ? (
-        <i className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"/>
+        <i 
+          className="fa fa-circle wdk-Link wdk-RecordNavigationIndicator"
+          style={{
+            left: '-2.25em',
+            cursor: 'pointer',
+          }}  
+        />
       ) : null}
       {offerCheckbox &&
         <input

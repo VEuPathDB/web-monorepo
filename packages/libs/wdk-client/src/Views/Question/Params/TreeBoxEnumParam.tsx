@@ -3,7 +3,7 @@ import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 import { intersection } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
-import CheckboxTree, { Props as CheckboxTreeProps } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { CheckboxTreeProps, LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
@@ -159,7 +159,9 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   return (
     <div className="wdk-TreeBoxParam">
       <SelectionInfo parameter={props.parameter} {...selectionCounts} alwaysShowCount />
-      <CheckboxTree {...wrappedCheckboxTreeProps} />
+      <CheckboxTree 
+        {...wrappedCheckboxTreeProps} 
+      />
     </div>
   );
 }
@@ -220,7 +222,7 @@ export function useDefaultCheckboxTreeProps(
   props: TreeBoxProps,
   tree: TreeBoxVocabNode,
   selectedLeaves: string[]
-) {
+): CheckboxTreeProps<TreeBoxVocabNode> {
   const handleExpansionChange = useCallback((expandedList: string[]) => {
     props.dispatch(setExpandedList({ ...props.context, expandedList }));
   }, [props.dispatch, props.context])
@@ -235,7 +237,7 @@ export function useDefaultCheckboxTreeProps(
   return {
     isSelectable: true,
     isMultiPick: isMultiPick(props.parameter),
-    linksPosition: CheckboxTree.LinkPlacement.Both,
+    linksPosition: LinksPosition.Top,
     showRoot: false,
     shouldExpandDescendantsWithOneChild: false,
     tree,
@@ -250,6 +252,7 @@ export function useDefaultCheckboxTreeProps(
     searchBoxPlaceholder: 'Filter list below...',
     searchBoxHelp: makeSearchHelpText('the list below'),
     searchIconName: 'filter',
+    searchIconPosition: 'right',
     renderNoResults,
     searchTerm: props.uiState.searchTerm,
     searchPredicate,

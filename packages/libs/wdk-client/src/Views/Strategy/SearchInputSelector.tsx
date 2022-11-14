@@ -9,7 +9,7 @@ import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Toolti
 
 import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
 import { CategoriesCheckboxTree, Icon, Link, Loading, Tabs, IconAlt } from 'wdk-client/Components';
-import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getFormattedTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying, CategoryOntology, isIndividual } from 'wdk-client/Utils/CategoryUtils';
@@ -163,6 +163,7 @@ export const SearchInputSelectorView = ({
                         searchTerm={searchTerm}
                         isSelectable={false}
                         searchBoxPlaceholder="Filter the searches below..."
+                        searchIconPosition="right"
                         leafType="search"
                         renderNode={renderNode}
                         renderNoResults={renderNoResults}
@@ -360,9 +361,9 @@ function SearchInputNode({ node, onCombineWithNewSearchSelected }: SearchInputNo
         to={`/search/${getRecordClassUrlSegment(node)}/${nodeMetadata.searchName}`}
       >
         <IconAlt fa="search" />
-        {displayName}
+        <span style={{marginLeft: '0.25em'}}>{displayName}</span>
       </Link>
-    : <span>{displayName}</span>
+    : <span style={{cursor: 'pointer'}}>{displayName}</span>
 
   const tooltipContent = getFormattedTooltipContent(node);
 

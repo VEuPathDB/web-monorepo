@@ -55,7 +55,7 @@
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import Link from 'wdk-client/Components/Link/Link';
-import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getNodeChildren, getPropertyValue } from 'wdk-client/Utils/OntologyUtils';
 import { getTargetType, getRefName, getDisplayName, getDescription, getNodeId, getId } from 'wdk-client/Utils/CategoryUtils';
 import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
@@ -88,7 +88,10 @@ let SiteMap = props => {
         Use this tool to find searches, tracks and data pages that might
         contain data you are interested in.
       </p>
-      <CheckboxTree {...treeProps} />
+      <CheckboxTree 
+        {...treeProps} 
+        linksPosition={LinksPosition.Top}
+      />
     </div>
   );
 };

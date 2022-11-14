@@ -1,3 +1,4 @@
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { includes, memoize, throttle, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -97,6 +98,14 @@ class RecordNavigationSection extends React.PureComponent {
               checked={!includes(collapsedSections, getId(node))}
             />
           }
+          linksPosition={LinksPosition.Top}
+          styleOverrides={{
+            treeSection: {
+              ul: {
+                padding: '0 0 0 1.5em',
+              }
+            },
+          }}
         />
       </div>
     );

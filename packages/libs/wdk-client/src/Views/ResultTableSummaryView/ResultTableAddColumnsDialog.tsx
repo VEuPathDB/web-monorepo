@@ -16,6 +16,9 @@ import {
   UpdateColumnsDialogExpandedNodes,
   RequestColumnsChoiceUpdate
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import { 
+  LinksPosition,
+} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getLeaves } from 'wdk-client/Utils/TreeUtils';
 import { differenceWith } from 'lodash';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
@@ -71,7 +74,8 @@ function ResultTableAddColumnsDialog({
     <div style={{
       fontStyle: 'italic',
       textAlign: 'center',
-      fontSize: '1.1em'
+      fontSize: '1.1em',
+      margin: '0.5em',
     }}>
       <span 
         style={{ 
@@ -129,10 +133,10 @@ function ResultTableAddColumnsDialog({
     >
       <>
         {selectedColumnsMessage}
-        {buttonWithTooltip}
         <CategoriesCheckboxTree
           tree={columnsTree}
           searchBoxPlaceholder="Search Columns"
+          searchIconPosition="right"
           leafType="column"
           selectedLeaves={columnsDialogSelection || answer.meta.attributes}
           currentSelection={answer.meta.attributes}
@@ -142,6 +146,28 @@ function ResultTableAddColumnsDialog({
           onChange={updateColumnsDialogSelection}
           onUiChange={updateColumnsDialogExpandedNodes}
           onSearchTermChange={updateColumnsDialogSearchString}
+          linksPosition={LinksPosition.Top}
+          styleOverrides={{
+            treeLinks: {
+              container: {
+                margin: '0 1em',
+                textAlign: 'center',
+              }
+            },
+            searchBox: {
+              container: {
+                margin: '0 1em',
+              },
+            },
+            treeSection: {
+              container: {
+                margin: '0.5em 0 0.5em 1em'
+              },
+              ul: {
+                padding: 0,
+              }
+            },
+          }}
         />
         {buttonWithTooltip}
       </>

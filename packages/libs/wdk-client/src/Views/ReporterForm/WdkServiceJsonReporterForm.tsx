@@ -14,6 +14,7 @@ import {
   getAttributesChangeHandler,
   getTableTree,
 } from 'wdk-client/Views/ReporterForm/reporterUtils';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 type Props<T, U> = {
   scope: string;
@@ -34,12 +35,13 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
   let getUpdateHandler = (fieldName: string) => getChangeHandler(fieldName, updateFormState, formState);
   let getUiUpdateHandler = (fieldName: string) => getChangeHandler(fieldName, updateFormUiState, formUiState);
   return (
-    <div>
+    <div style={{maxWidth:'800px'}}>
       <ReporterSortMessage scope={scope}/>
       <CategoriesCheckboxTree
         title="Choose Columns:"
         leafType="columns"
         searchBoxPlaceholder="Search Columns..."
+        searchIconPosition="right"
         tree={getAttributeTree(ontology, recordClass.fullName, question)}
 
         selectedLeaves={formState.attributes}
@@ -49,12 +51,15 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onChange={getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
         onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
         onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+
+        linksPosition={LinksPosition.Top}
       />
 
       <CategoriesCheckboxTree
         title="Choose Tables:"
         leafType="columns"
         searchBoxPlaceholder="Search Tables..."
+        searchIconPosition="right"
         tree={getTableTree(ontology, recordClass.fullName)}
 
         selectedLeaves={formState.tables}
@@ -64,10 +69,12 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onChange={getUpdateHandler('tables')}
         onUiChange={getUiUpdateHandler('expandedTableNodes')}
         onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+
+        linksPosition={LinksPosition.Top}
       />
 
       { includeSubmit &&
-        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
+        <div style={{maxWidth:'800px',textAlign:'center', margin:'0.6em 0'}}>
           <button className="btn" type="submit" onClick={onSubmit}>Get {recordClass.displayNamePlural}</button>
         </div>
       }
