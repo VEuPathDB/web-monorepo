@@ -6,7 +6,8 @@ import { QuestionWithParameters, SearchConfig, TreeBoxVocabNode } from '@veupath
 import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
-import { Loading, CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { mapStructure, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -281,12 +282,30 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
               searchTerm={searchTerm}
               onSearchTermChange={term => setSearchTerm(term)}
               searchPredicate={nodeMeetsSearchCriteria}
+              linksPosition={LinksPosition.Top}
               additionalActions={[
-                <label className={cx('--HideZeroes')}>
-                  <input className={cx('--HideZeroes-Input')} type="checkbox" checked={hideZeroes} onChange={() => setHideZeroes(!hideZeroes)}/>
+                <label style={{fontSize: '0.9em'}}>
+                  <input style={{marginRight: '0.25em'}} type="checkbox" checked={hideZeroes} onChange={() => setHideZeroes(!hideZeroes)}/>
                   Hide zero counts
                 </label>
               ]}
+              styleOverrides={{
+                treeLinks: {
+                  container: {
+                    justifyContent: 'flex-start',
+                    padding: 0,
+                    margin: '0.75em 0 0.75em 1.4em',
+                  },
+                },
+                searchBox: {
+                  optionalIcon: {top: '3px'},
+                },
+                treeSection: {
+                  ul: {
+                    padding: '0',
+                  }
+                },
+              }}
             />
             )
         : filterSummary?.available === false
@@ -416,9 +435,9 @@ function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
 
 function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
   return (
-    <div className={cx('--Node')}>
+    <div style={{display: 'flex', marginLeft: '0.25em'}}>
       <div>{node.display}</div>
-      <div className={cx('--NodeCount')}>{node.count.toLocaleString()}</div>
+      <div style={{marginLeft: 'auto'}}>{node.count.toLocaleString()}</div>
     </div>
   );
 }

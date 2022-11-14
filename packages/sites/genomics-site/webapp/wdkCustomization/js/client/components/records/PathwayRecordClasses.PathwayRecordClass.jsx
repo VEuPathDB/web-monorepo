@@ -30,6 +30,7 @@ import { renderNodeLabelMarkup } from './utils';
 import 'site/wdkCustomization/css/pathway.css';
 
 import * as QueryString from 'querystring';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
@@ -1512,6 +1513,7 @@ class GraphSelector extends React.Component {
           onChange={this.handleChange}
           onUiChange={this.handleUiChange}
           onSearchTermChange={this.handleSearchTermChange}
+          linksPosition={LinksPosition.Top}
         />
         <div style={{ textAlign: 'center', margin: '10px 0' }}>
           <button

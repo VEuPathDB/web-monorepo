@@ -25,6 +25,7 @@ import { withRequestFields } from './utils';
 import { usePreferredOrganismsEnabledState, usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -658,6 +659,7 @@ class MercatorTable extends React.Component {
             selectedLeaves={this.state.selectedLeaves}
             expandedBranches={this.state.expandedBranches}
             onSearchTermChange={this.handleSearchTermChange}
+            linksPosition={LinksPosition.Top}
           />
         </div>
 
