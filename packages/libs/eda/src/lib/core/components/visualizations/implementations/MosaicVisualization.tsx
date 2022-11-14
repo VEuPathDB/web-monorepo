@@ -423,21 +423,23 @@ function MosaicViz(props: Props<Options>) {
           key: 'Table',
           displayName: 'Table',
           content: (
-            <ContingencyTable
-              data={data.pending ? undefined : data.value}
-              tableContainerStyles={
-                isFaceted(data.value)
-                  ? facetedStatsTableStyles
-                  : statsTableStyles
-              }
-              facetedContainerStyles={facetedStatsTableContainerStyles}
-              independentVariable={xAxisLabel ?? 'X-axis'}
-              dependentVariable={yAxisLabel ?? 'Y-axis'}
-              facetVariable={
-                facetVariable ? facetVariable.displayName : 'Facet'
-              }
-              enableSpinner={data.pending}
-            />
+            <div style={{ marginTop: 15 }}>
+              <ContingencyTable
+                data={data.pending ? undefined : data.value}
+                tableContainerStyles={
+                  isFaceted(data.value)
+                    ? facetedStatsTableStyles
+                    : statsTableStyles
+                }
+                facetedContainerStyles={facetedStatsTableContainerStyles}
+                independentVariable={xAxisLabel ?? 'X-axis'}
+                dependentVariable={yAxisLabel ?? 'Y-axis'}
+                facetVariable={
+                  facetVariable ? facetVariable.displayName : 'Facet'
+                }
+                enableSpinner={data.pending}
+              />
+            </div>
           ),
         },
         {
@@ -587,7 +589,7 @@ function TwoByTwoStats(props?: {
   if (1) return <i>Stats table coming soon!</i>;
 
   return props != null ? (
-    <div className="MosaicVisualization-StatsTable">
+    <div className="MosaicVisualization-StatsTable" style={{ marginTop: 15 }}>
       <table>
         {' '}
         <tbody>
@@ -625,7 +627,7 @@ function ContTableStats(props?: {
   chisq?: number | string;
 }) {
   return props != null ? (
-    <div className="MosaicVisualization-StatsTable">
+    <div className="MosaicVisualization-StatsTable" style={{ marginTop: 15 }}>
       <table>
         <tbody>
           <tr>

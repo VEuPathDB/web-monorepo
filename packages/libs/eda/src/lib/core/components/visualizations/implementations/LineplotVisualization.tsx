@@ -86,15 +86,14 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 // import variable's metadata-based independent axis range utils
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import {
-  useFlattenedConstraints,
+  useFilteredConstraints,
   useNeutralPaletteProps,
   useProvidedOptionalVariable,
   useVizConfig,
@@ -262,10 +261,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const flattenedConstraints = useFlattenedConstraints(
+  const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
     selectedVariables,
-    entities
+    entities,
+    'overlayVariable'
   );
 
   useProvidedOptionalVariable<LineplotConfig>(
@@ -274,7 +274,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
-    flattenedConstraints,
+    filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
     updateVizConfig,
@@ -386,7 +386,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
         independentAxisValueSpec: 'Full',
-        dependentAxisValueSpec: 'Full',
+        dependentAxisValueSpec:
+          yAxisVar != null
+            ? isSuitableCategoricalVariable(yAxisVar)
+              ? 'Full'
+              : 'Auto-zoom'
+            : 'Full',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -688,6 +693,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
       // the back end only makes use of the x-axis viewport (aka independentAxisRange)
       // when binning is in force, so no need to trigger a new request unless binning
       vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
+      // same goes for changing from full to auto-zoom/custom
+      vizConfig.useBinning
+        ? vizConfig.independentAxisValueSpec === 'Full'
+        : undefined,
       valuesAreSpecified,
       providedOverlayVariable,
     ])
@@ -884,11 +893,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
         ? 'Proportion'
         : variableDisplayWithUnit(yAxisVariable)
         ? vizConfig.valueSpecConfig === 'Arithmetic mean'
-          ? 'Arithmetic mean: ' + variableDisplayWithUnit(yAxisVariable)
+          ? '<b>Arithmetic mean:</b><br> ' +
+            variableDisplayWithUnit(yAxisVariable)
           : vizConfig.valueSpecConfig === 'Median'
-          ? 'Median: ' + variableDisplayWithUnit(yAxisVariable)
+          ? '<b>Median:</b><br> ' + variableDisplayWithUnit(yAxisVariable)
           : vizConfig.valueSpecConfig === 'Geometric mean'
-          ? 'Geometric mean: ' + variableDisplayWithUnit(yAxisVariable)
+          ? '<b>Geometric mean:</b><br> ' +
+            variableDisplayWithUnit(yAxisVariable)
           : 'Y-axis'
         : 'Y-axis',
     displayLegend: false,
@@ -1046,7 +1057,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     updateVizConfig({
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
-      dependentAxisValueSpec: 'Full',
+      dependentAxisValueSpec: categoricalMode ? 'Full' : 'Auto-zoom',
       showErrorBars: false,
     });
     // add reset for truncation message as well
@@ -1410,6 +1421,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
               buttonColor={'primary'}
               margins={['0em', '0', '0', '0em']}
               itemMarginRight={25}
+              disabledList={
+                !categoricalMode && vizConfig.yAxisVariable != null
+                  ? ['Full']
+                  : []
+              }
             />
             <AxisRangeControl
               label="Range"
@@ -1454,6 +1470,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
+      type="list"
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={setCheckedLegendItems}
@@ -1948,8 +1965,10 @@ function getRequestParams(
     showMissingness,
     binWidth = NumberVariable.is(xAxisVariableMetadata) ||
     DateVariable.is(xAxisVariableMetadata)
-      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-        xAxisVariableMetadata.distributionDefaults.binWidth
+      ? vizConfig.independentAxisValueSpec === 'Full' // only use 'annotated' binwidth when fully zoomed out
+        ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
+          xAxisVariableMetadata.distributionDefaults.binWidth
+        : undefined
       : undefined,
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
       ? xAxisVariableMetadata.distributionDefaults.binUnits

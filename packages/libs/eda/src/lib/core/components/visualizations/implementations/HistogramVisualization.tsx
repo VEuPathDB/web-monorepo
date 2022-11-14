@@ -68,9 +68,8 @@ import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 // for custom legend
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
@@ -93,7 +92,7 @@ import { UIState } from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
-  useFlattenedConstraints,
+  useFilteredConstraints,
   useNeutralPaletteProps,
   useProvidedOptionalVariable,
   useVizConfig,
@@ -346,10 +345,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const flattenedConstraints = useFlattenedConstraints(
+  const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
     selectedVariables,
-    entities
+    entities,
+    'overlayVariable'
   );
 
   useProvidedOptionalVariable<HistogramConfig>(
@@ -358,7 +358,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
-    flattenedConstraints,
+    filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
     updateVizConfig,
@@ -470,6 +470,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
       vizConfig.facetVariable,
       vizConfig.valueSpec,
       vizConfig.showMissingness,
+      vizConfig.independentAxisRange,
+      vizConfig.independentAxisValueSpec === 'Full',
       studyId,
       filters,
       filteredCounts,
@@ -584,6 +586,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   // axis range control
   // get as much default axis range from variable annotations as possible
+
+  // NOTE: tech debt - defaultUIState is not really used in its entirity
+  // for example, the binWidth isn't used anywhere any more - we should remove
+  // unused data from it, or remove it entirely (other viz's manage without it)
   const defaultUIState: UIState = useMemo(() => {
     if (xAxisVariable != null) {
       const otherDefaults = {
@@ -704,18 +710,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({
       independentAxisRange: undefined,
-      binWidth: defaultUIState.binWidth,
-      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
+      binWidth: undefined,
+      binWidthTimeUnit: undefined,
       independentAxisValueSpec: 'Full',
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [
-    defaultUIState.binWidth,
-    defaultUIState.binWidthTimeUnit,
-    updateVizConfig,
-    setTruncatedIndependentAxisWarning,
-  ]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
@@ -1087,6 +1088,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     !histogramProps.showSpinner &&
     data != null && (
       <PlotLegend
+        type="list"
         legendItems={legendItems}
         checkedLegendItems={checkedLegendItems}
         onCheckedLegendItemsChange={setCheckedLegendItems}
@@ -1323,8 +1325,10 @@ function getRequestParams(
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? variable.distributionDefaults.binWidthOverride ??
-        variable.distributionDefaults.binWidth
+      ? vizConfig.independentAxisValueSpec === 'Full'
+        ? variable.distributionDefaults.binWidthOverride ??
+          variable.distributionDefaults.binWidth
+        : undefined
       : undefined,
     binWidthTimeUnit = variable?.type === 'date'
       ? variable.distributionDefaults.binUnits
