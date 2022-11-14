@@ -243,7 +243,7 @@ export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
  * squeeze the xAxisVariables, with no variables chosen, to only allow vars that are strings or dates *and* 
  * have fewer than five values.
  *
- * More exampels:
+ * More examples:
  * If no variable has been selected by the user, then all constraints will be used for
  * both the x and y variables.
  *

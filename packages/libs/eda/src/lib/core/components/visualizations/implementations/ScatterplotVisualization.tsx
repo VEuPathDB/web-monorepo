@@ -502,7 +502,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       if (
         (vizConfig.independentAxisLogScale ||
           vizConfig.dependentAxisLogScale) &&
-        vizConfig.valueSpecConfig != 'Raw'
+        vizConfig.valueSpecConfig !== 'Raw'
       )
         return undefined;
 
@@ -738,32 +738,28 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
 
   // gradient colorscale legend
-  const gradientLegendProps: PlotLegendGradientProps = useMemo(() => {
+  const gradientLegendProps:
+    | PlotLegendGradientProps
+    | undefined = useMemo(() => {
     if (
-      data.value?.overlayMax &&
-      (data.value?.overlayMin || data.value?.overlayMin === 0) &&
+      data.value?.overlayMax !== undefined &&
+      data.value?.overlayMin !== undefined &&
       data.value?.gradientColorscaleType
     ) {
       return {
         legendMax: data.value?.overlayMax,
         legendMin: data.value?.overlayMin,
         gradientColorscaleType: data.value?.gradientColorscaleType,
-        nTicks: 5, // MUST be odd! Probably should be a clever function of the box size and font or something...
+        // MUST be odd! Probably should be a clever function of the box size
+        // and font or something...
+        nTicks: 5,
         showMissingness: vizConfig.showMissingness,
         legendTitle,
       };
     } else {
-      return {
-        legendMax: 0,
-        legendMin: 0,
-      };
+      return undefined;
     }
-  }, [
-    data,
-    vizConfig.overlayVariable,
-    vizConfig.showMissingness,
-    vizConfig.valueSpecConfig,
-  ]);
+  }, [data, vizConfig.showMissingness, legendTitle]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -1643,7 +1639,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const legendNode =
     !data.pending &&
     data.value != null &&
-    (gradientLegendProps.gradientColorscaleType ? (
+    (gradientLegendProps ? (
       <PlotLegend type="colorscale" {...gradientLegendProps} />
     ) : (
       <PlotLegend

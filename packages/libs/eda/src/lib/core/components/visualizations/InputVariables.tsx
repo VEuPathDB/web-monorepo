@@ -3,7 +3,6 @@ import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
-  excludedVariables,
   filterConstraints,
   disabledVariablesForInput,
   VariablesByInputName,
@@ -206,7 +205,9 @@ export function InputVariables(props: Props) {
                       input.readonlyValue
                         ? {}
                         : !selectedVariables[input.name] &&
-                          constraints?.[0][input.name].isRequired
+                          constraints &&
+                          constraints.length &&
+                          constraints[0][input.name].isRequired
                         ? requiredInputStyle
                         : {}
                     }
@@ -215,7 +216,9 @@ export function InputVariables(props: Props) {
                       css={{}}
                       title={
                         !input.readonlyValue &&
-                        constraints?.[0][input.name].isRequired
+                        constraints &&
+                        constraints.length &&
+                        constraints[0][input.name].isRequired
                           ? 'Required parameter'
                           : ''
                       }
@@ -230,7 +233,9 @@ export function InputVariables(props: Props) {
                             ? ' (fixed)'
                             : '')}
                         {!input.readonlyValue &&
-                        constraints?.[0][input.name].isRequired ? (
+                        constraints &&
+                        constraints.length &&
+                        constraints[0][input.name].isRequired ? (
                           <sup>*</sup>
                         ) : (
                           ''
@@ -287,7 +292,10 @@ export function InputVariables(props: Props) {
                           disabledVariablesByInputName[input.name]
                         }
                         customDisabledVariableMessage={
-                          constraints?.[0][input.name].description
+                          (constraints &&
+                            constraints.length &&
+                            constraints[0][input.name].description) ||
+                          undefined
                         }
                         starredVariables={starredVariables}
                         toggleStarredVariable={toggleStarredVariable}
