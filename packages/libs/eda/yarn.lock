@@ -3466,10 +3466,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.5":
-  version "0.19.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.5.tgz#7109ceb4fa293938bbda77c8ef6b11a4be7a5a5c"
-  integrity sha512-z+GytIHIgFFcshD1ZTVmjpJsO9pWWAawllbiREO0uztx5WJGVQMPb0D5ZKp+LF8xZOJhrRe5ieKnDikFqpqsrw==
+"@veupathdb/components@^0.19.8":
+  version "0.19.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.8.tgz#64a7d63c18abb73dca92b9249a2189d172b08523"
+  integrity sha512-Za8PghE82pAPOOVvyP+vF7qg+SQZNAnMsFHjpRppsxYDm908xgd3Sp9tkwunzZEjGIvkR8CN9s6jmUPfDDmpsA==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -3498,10 +3498,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.13":
-  version "0.18.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.13.tgz#33cedb7114e49aa0ec66e6a476e10cc6ae1fcd30"
-  integrity sha512-Cl3xTBZFDB+dJ5Faskp6auE1ez5QeH4+p+XY30uwp6p9Us0Kf5MQrtheeT/PZTAZ2P65Ng3yDkGpp31834/Akg==
+"@veupathdb/coreui@^0.18.14":
+  version "0.18.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.14.tgz#ea524dc02401d87c7a4ffe76d6b60ed3301f51c2"
+  integrity sha512-aa13Xugh1/ngybkIUvanOqHwpsqd850iTTFH2MHAxX5pMgZKLe4iNmlsw0o0YJ4PK/yT14Apq58zdip+RSpIXQ==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -3556,10 +3556,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-2.0.0.tgz#bfbf9cd60a5e284d14728412a625d3df2f55a91e"
   integrity sha512-NiGLeoxOZQEIUsgyQ5Lxj0r7C+rfad6mF394wBL95r9BzpLjFEoEfVhLf6Owv2ybPrK+AaUjG4QN5QD0/55MPw==
 
-"@veupathdb/wdk-client@^0.9.15":
-  version "0.9.15"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.15.tgz#1a37f5b13b4a02733f216f851afd3ecd7d003bd5"
-  integrity sha512-cRhFBVNqSAalfDzBBSw3cBI44/C550PvVAqvzmkaJPLK7fcSJ3vI4TOdM0bOg0NTxHNTi4kbmlfsTHncWwUyTg==
+"@veupathdb/wdk-client@^0.9.17":
+  version "0.9.17"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.17.tgz#eccc39202623e98c31070cc0f1331e04cbd56bf7"
+  integrity sha512-umYc1Xshv+YxWT5FQHf9h6IhvqrdxXoT9utARXrjQtTNrAKk6fzRe4PaTYFc0/eotoVCDZ/WvjON22dpTEewbA==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
