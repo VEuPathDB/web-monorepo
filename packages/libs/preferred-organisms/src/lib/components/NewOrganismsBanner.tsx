@@ -59,6 +59,6 @@ function makeNewOrganismDescription(
   displayName: string
 ) {
   return newOrganismCount === 1
-    ? `There is 1 new organism in ${displayName}.`
-    : `There are ${newOrganismCount} new organisms in ${displayName}.`;
+    ? `${displayName} recently added 1 new organism.`
+    : `${displayName} recently added ${newOrganismCount} new organisms.`;
 }
