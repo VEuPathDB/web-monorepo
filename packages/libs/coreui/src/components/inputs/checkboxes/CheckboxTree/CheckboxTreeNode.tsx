@@ -2,21 +2,21 @@ import React, { useMemo } from 'react';
 import { merge } from 'lodash';
 import { isLeaf } from '../../SelectTree/Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from '../IndeterminateCheckbox';
-import { ArrowRight, ArrowDropDown } from '@material-ui/icons';
-import { CSSProperties } from '@emotion/serialize';
+import { ArrowRight, ArrowDown } from '../../../icons';
 
 export type CheckboxTreeNodeStyleSpec = {
   list?: {
-    listStyle: CSSProperties['listStyle'],
+    listStyle: React.CSSProperties['listStyle'],
   },
   children?: {
-    padding: CSSProperties['padding']
-    margin: CSSProperties['margin']
+    padding: React.CSSProperties['padding']
+    margin: React.CSSProperties['margin']
   },
-  topLevelNode?: React.CSSProperties;
+  nodeWrapper?: React.CSSProperties;
+  topLevelNodeWrapper?: React.CSSProperties;
   leafNodeLabel?: React.CSSProperties;
   nodeLabel?: React.CSSProperties;
-  checkboxLabel?: React.CSSProperties;
+  labelTextWrapper?: React.CSSProperties;
 };
 
 const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
@@ -27,20 +27,26 @@ const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
     padding: '0 0 0 1.5em',
     margin: 0,
   },
-  topLevelNode: {},
+  nodeWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '1px 0',
+  },
+  topLevelNodeWrapper: {},
   leafNodeLabel: {
     display: 'flex',
     width: '100%',
-    marginLeft: '1em',
+    marginLeft: '1.25em',
   },
   nodeLabel: {
     display: 'flex',
     width: '100%',
-    marginLeft: 0,
+    marginLeft: '0.5em',
   },
-  checkboxLabel: {
+  labelTextWrapper: {
     width: '100%', 
-    margin: 'auto 0'
+    margin: 'auto 0',
+    paddingLeft: '0.25em',
   }
 }
 
@@ -154,15 +160,17 @@ export default function CheckboxTreeNode<T>({
       }}>
         <div 
           css={
-            isTopLevelNode ? { display: 'flex', ...styleSpec.topLevelNode} : {display: 'flex'}
+            isTopLevelNode ? { ...styleSpec.nodeWrapper, ...styleSpec.topLevelNodeWrapper} : {...styleSpec.nodeWrapper}
           }
         >
-          {isLeafNode || isActiveSearch ? (
-            null
+          {isLeafNode ? null 
+            : isActiveSearch ? (
+              // this retains the space of the expansion toggle icons for easier formatting
+              <div style={{width: '0.75em'}}></div>
           ) : (
             isExpanded ? 
-              <ArrowDropDown 
-                style={{color: '#aaa', lineHeight: '1em'}} 
+              <ArrowDown 
+                style={{fill: '#aaa', fontSize: '0.75em', cursor: 'pointer'}} 
                 tabIndex={0} 
                 onClick={(e) => {
                   e.stopPropagation();
@@ -171,7 +179,7 @@ export default function CheckboxTreeNode<T>({
                 onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
               /> :
               <ArrowRight 
-                style={{color: '#aaa', lineHeight: '1em'}}
+                style={{fill: '#aaa', fontSize: '0.75em', cursor: 'pointer'}}
                 tabIndex={0} 
                 onClick={(e) => {
                   e.stopPropagation();
@@ -182,7 +190,7 @@ export default function CheckboxTreeNode<T>({
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
-              css={{width: '100%', margin: 'auto 0'}}
+              css={{...styleSpec.labelTextWrapper}}
               onClick={shouldExpandOnClick ? () => toggleExpansion(node) : undefined}
               >
               {nodeElement}
@@ -199,7 +207,7 @@ export default function CheckboxTreeNode<T>({
                     />
               } 
               <div
-                css={{...styleSpec.checkboxLabel}}
+                css={{...styleSpec.labelTextWrapper}}
               >
                 {nodeElement}
               </div>
