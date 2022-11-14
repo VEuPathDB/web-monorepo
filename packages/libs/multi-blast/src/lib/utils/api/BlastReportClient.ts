@@ -10,7 +10,7 @@ import {
   ioReportJobCreateResponse,
   ioReportJobListEntry,
 } from './report/api/ep-jobs';
-import { array, string } from 'io-ts';
+import { array, Decoder, string } from 'io-ts';
 import { identity } from 'lodash';
 import {
   ioReportJobDetails,
@@ -139,10 +139,18 @@ export class BlastReportClient extends BlastSubClient {
   //  /jobs/{job-id}/files/{filename}
 
   fetchJobFile(jobID: string, fileName: string) {
+    return this.fetchJobFileAs(jobID, fileName, string);
+  }
+
+  fetchJobFileAs<A>(
+    jobID: string,
+    fileName: string,
+    decoder: Decoder<unknown, A>
+  ) {
     return this.taggedFetch({
       path: newReportJobFilePath(jobID, fileName, false),
       method: 'GET',
-      transformResponse: ioTransformer(string),
+      transformResponse: ioTransformer(decoder),
     });
   }
 

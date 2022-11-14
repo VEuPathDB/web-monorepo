@@ -14,19 +14,11 @@ import {
   SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
-import {
-  IoBlastCompBasedStats,
-  IoBlastConfig,
-  IoBlastNDust,
-  IOBlastPScoringMatrix,
-  IoBlastSegMask,
-  IOBlastXScoringMatrix,
-  IOTBlastNScoringMatrix,
-  IOTBlastXScoringMatrix,
-  LongJobResponse,
-  Target,
-} from './ServiceTypes';
-import { IOBlastQueryConfig } from './api/query/blast/blast-common';
+import { IOBlastSeg } from './api/query/blast/blast-common';
+import { IOQueryJobDetails } from './api/query/api/ep-jobs-by-id';
+import { IOBlastConfig } from './api/query/blast/blast-all';
+import { IOBlastNDust } from './api/query/blast/blast-config-n';
+import { IOJobTarget } from './api/query/api/common';
 
 export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'BlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
@@ -85,163 +77,125 @@ export function isOmittedParam(param?: Parameter) {
     : param.vocabulary.length === 1 &&
         param.vocabulary[0][0] === OMIT_PARAM_TERM;
 }
-
-/**
- * This function transforms the parameter values of a multi-blast WDK question
- * into a valid job configuration for the multi-blast service.
- *
- * NOTE: This logic is mirrored in
- *
- *   EbrcWebSvcCommon/WSFPlugin/src/main/java/org/apidb/apicomplexa/wsfplugin/blast/MultiblastServiceParams.java
- *
- * The two must be kept in sync so unexpected results are not shown in the
- * multi-blast UI and so users get the same result when they export to WDK.
- *
- * @author jtlong
- */
-export function paramValuesToBlastConfig(
-  paramValues: ParameterValues
-): IOBlastQueryConfig {
-  const {
-    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
-    [BLAST_ALGORITHM_PARAM_NAME]: selectedTool,
-    [SCORING_MATRIX_PARAM_NAME]: scoringMatrixStr,
-    [COMP_ADJUST_PARAM_NAME]: compBasedStats,
-    [FILTER_LOW_COMPLEX_PARAM_NAME]: filterLowComplexityRegionsStr,
-  } = paramValues;
-
-  const baseConfig = {
-    query,
-    outFormat: {
-      format: 'single-file-json',
-    },
-  } as const;
-
-  const filterLowComplexityRegions =
-    filterLowComplexityRegionsStr !== 'no filter';
-
-  const segConfig: { seg: IoBlastSegMask } = {
-    seg: filterLowComplexityRegions ? 'yes' : 'no',
-  };
-
-  throw new Error(`The BLAST tool '${selectedTool}' is not supported.`);
-}
-
 export function blastConfigToParamValues(
-  blastConfig: IoBlastConfig
+  blastConfig: IOBlastConfig
 ): ParameterValues {
   const parameterValues: ParameterValues = {
-    [BLAST_ALGORITHM_PARAM_NAME]: blastConfig.tool,
+    [ParamNames.BlastAlgorithm]: blastConfig.tool,
   };
 
   if (blastConfig.eValue != null) {
-    parameterValues[EXPECTATION_VALUE_PARAM_NAME] = blastConfig.eValue;
+    parameterValues[ParamNames.ExpectValue] = blastConfig.eValue;
   }
 
-  if (
-    blastConfig.maxTargetSeqs != null ||
-    blastConfig.numDescriptions != null ||
-    blastConfig.numAlignments != null
-  ) {
-    const resultSetBound = Math.min(
-      blastConfig.maxTargetSeqs ?? Infinity,
-      Math.max(
-        blastConfig.numDescriptions ?? Infinity,
-        blastConfig.numAlignments ?? Infinity
-      )
-    );
-
-    parameterValues[NUM_QUERY_RESULTS_PARAM_NAME] = String(resultSetBound);
-  }
+  parameterValues[ParamNames.NumQueryResults] = String(
+    blastConfig.maxTargetSequences ?? Infinity
+  );
 
   if (blastConfig.maxHSPs != null) {
-    parameterValues[MAX_MATCHES_QUERY_RANGE_PARAM_NAME] = String(
+    parameterValues[ParamNames.MaxMatchesQueryRange] = String(
       blastConfig.maxHSPs
     );
   }
 
-  if (blastConfig.wordSize != null) {
-    parameterValues[WORD_SIZE_PARAM_NAME] = String(blastConfig.wordSize);
-  }
-
-  if (blastConfig.tool !== 'blastn' && blastConfig.matrix != null) {
-    parameterValues[SCORING_MATRIX_PARAM_NAME] = blastConfig.matrix;
-  }
-
-  if (
-    blastConfig.tool !== 'blastn' &&
-    blastConfig.tool !== 'tblastx' &&
-    blastConfig.compBasedStats != null
-  ) {
-    parameterValues[COMP_ADJUST_PARAM_NAME] = blastConfig.compBasedStats;
-  }
-
-  if (blastConfig.tool === 'blastn') {
-    parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] =
-      blastConfig.dust === 'yes' || typeof blastConfig.dust === 'object'
-        ? 'dust'
-        : 'no filter';
-  }
-
-  if (blastConfig.tool !== 'blastn') {
-    parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] =
-      blastConfig.seg === 'yes' || typeof blastConfig.seg === 'object'
-        ? 'seg'
-        : 'no filter';
-  }
-
   if (blastConfig.softMasking != null) {
-    parameterValues[SOFT_MASK_PARAM_NAME] = String(blastConfig.softMasking);
+    parameterValues[ParamNames.SoftMask] = String(blastConfig.softMasking);
   }
 
-  if (blastConfig.lcaseMasking != null) {
-    parameterValues[LOWER_CASE_MASK_PARAM_NAME] = String(
-      blastConfig.lcaseMasking
+  if (blastConfig.lowercaseMasking != null) {
+    parameterValues[ParamNames.LowercaseMask] = String(
+      blastConfig.lowercaseMasking
     );
   }
 
-  if (
-    blastConfig.tool !== 'tblastx' &&
-    blastConfig.gapOpen != null &&
-    blastConfig.gapExtend != null
-  ) {
-    parameterValues[
-      GAP_COSTS_PARAM_NAME
-    ] = `${blastConfig.gapOpen},${blastConfig.gapExtend}`;
-  }
-
-  if (
-    blastConfig.tool === 'blastn' &&
-    blastConfig.reward != null &&
-    blastConfig.penalty != null
-  ) {
-    parameterValues[
-      MATCH_MISMATCH_SCORE
-    ] = `${blastConfig.reward},${blastConfig.penalty}`;
+  switch (blastConfig.tool) {
+    case 'blastn':
+      parameterValues[ParamNames.WordSize] = String(blastConfig.wordSize);
+      parameterValues[ParamNames.FilterLowComplexity] = dustToParamValue(
+        blastConfig.dust
+      );
+      if (blastConfig.gapOpen != null && blastConfig.gapExtend != null) {
+        parameterValues[
+          ParamNames.GapCosts
+        ] = `${blastConfig.gapOpen},${blastConfig.gapExtend}`;
+      }
+      if (blastConfig.reward != null && blastConfig.penalty != null) {
+        parameterValues[
+          ParamNames.MatchMismatch
+        ] = `${blastConfig.reward},${blastConfig.penalty}`;
+      }
+      break;
+    case 'blastp':
+    case 'blastx':
+    case 'deltablast':
+    case 'psiblast':
+    case 'tblastn':
+      parameterValues[ParamNames.WordSize] = String(blastConfig.wordSize);
+      parameterValues[ParamNames.ScoringMatrix] = blastConfig.matrix as string;
+      parameterValues[
+        ParamNames.CompAdjust
+      ] = blastConfig.compBasedStats as string;
+      parameterValues[ParamNames.FilterLowComplexity] = segToParamValue(
+        blastConfig.seg
+      );
+      if (blastConfig.gapOpen != null && blastConfig.gapExtend != null) {
+        parameterValues[
+          ParamNames.GapCosts
+        ] = `${blastConfig.gapOpen},${blastConfig.gapExtend}`;
+      }
+      break;
+    case 'rpsblast':
+    case 'rpstblastn':
+      parameterValues[
+        ParamNames.CompAdjust
+      ] = blastConfig.compBasedStats as string;
+      parameterValues[ParamNames.FilterLowComplexity] = segToParamValue(
+        blastConfig.seg
+      );
+      break;
+    case 'tblastx':
+      parameterValues[ParamNames.WordSize] = String(blastConfig.wordSize);
+      parameterValues[ParamNames.ScoringMatrix] = blastConfig.matrix as string;
+      parameterValues[ParamNames.FilterLowComplexity] = segToParamValue(
+        blastConfig.seg
+      );
+      break;
   }
 
   return parameterValues;
 }
 
+function dustToParamValue(dust: IOBlastNDust | null | undefined): string {
+  return dust === null || dust === undefined || !dust.enabled
+    ? 'no filter'
+    : 'dust';
+}
+
+function segToParamValue(seg: IOBlastSeg | null | undefined): string {
+  return seg === null || seg === undefined || !seg.enabled
+    ? 'no filter'
+    : 'seg';
+}
+
 export function targetsToOrganismParamValue(
-  targets: Target[],
+  targets: IOJobTarget[],
   dirsToOrganisms: Record<string, string>
 ) {
   const selectedOrganisms = targets
-    .map((target) => dirsToOrganisms[target.organism])
+    .map((target) => dirsToOrganisms[target.targetDisplayName])
     .filter((organism): organism is string => organism != null);
 
   return toMultiValueString(selectedOrganisms);
 }
 
 export function reportToParamValues(
-  jobDetails: LongJobResponse,
+  jobDetails: IOQueryJobDetails,
   query: string,
   targetTypeTerm: string,
-  targets: Target[],
+  targets: IOJobTarget[],
   dirsToOrganisms: Record<string, string>
 ): ParameterValues {
-  const configParamValues = blastConfigToParamValues(jobDetails.config);
+  const configParamValues = blastConfigToParamValues(jobDetails.blastConfig);
 
   const organismParamValue = targetsToOrganismParamValue(
     targets,
@@ -250,7 +204,7 @@ export function reportToParamValues(
 
   return {
     ...configParamValues,
-    [JOB_DESCRIPTION_PARAM_NAME]: jobDetails.description ?? '',
+    [JOB_DESCRIPTION_PARAM_NAME]: jobDetails.userMeta?.summary ?? '',
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
     [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamValue,
     [BLAST_DATABASE_TYPE_PARAM_NAME]: targetTypeTerm,
@@ -266,10 +220,6 @@ export function organismParamValueToFilenames(
   return Object.entries(organismFilesMap)
     .filter(([organismName]) => selectedOrganisms.has(organismName))
     .map(([, organismFile]) => organismFile);
-}
-
-function stringToBoolean(str: string) {
-  return str === 'true';
 }
 
 export function transformOrganismParameter(

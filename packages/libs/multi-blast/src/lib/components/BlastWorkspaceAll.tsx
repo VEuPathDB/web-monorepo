@@ -27,7 +27,7 @@ export interface JobRow {
 
 export function BlastWorkspaceAll() {
   const blastApi = useBlastApi();
-  const jobRows = useRawJobRows(blastApi);
+  const jobRows = useRawJobRows(blastApi.queryAPI);
 
   return (
     <div className="BlastWorkspaceAll">

@@ -67,7 +67,6 @@ function CombinedResultContainer(
   }
 ) {
   return props.multiQueryReportResult == null ||
-    props.multiQueryReportResult == null ||
     props.projectUrls == null ||
     props.organismToProject == null ? (
     <Loading>

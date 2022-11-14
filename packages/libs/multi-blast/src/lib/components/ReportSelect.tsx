@@ -8,15 +8,15 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import { Props as CombinedResultProps } from '../components/CombinedResult';
 import { BlastServiceUrl, useBlastApi } from '../hooks/api';
-import { IoBlastFormat } from '../utils/ServiceTypes';
 import { downloadJobContent } from '../utils/api';
 
 import {
-  ReportPollingState,
+  ReportJobPollingState,
   makeReportPollingPromise,
 } from './BlastWorkspaceResult';
 
 import './ReportSelect.scss';
+import { IOBlastOutFormat } from '../utils/api/report/blast/blast-config-format';
 
 interface Props {
   combinedResultTableDownloadConfig?: CombinedResultProps['downloadTableOptions'];
@@ -27,7 +27,7 @@ interface Props {
 interface ReportOption {
   value:
     | 'combined-result-table'
-    | { format: IoBlastFormat; shouldZip: boolean };
+    | { format: IOBlastOutFormat; shouldZip: boolean };
   label: string;
 }
 
@@ -41,7 +41,7 @@ const baseReportOptions: ReportOption[] = [
     label: 'XML',
   },
   {
-    value: { format: 'archive-asn-1', shouldZip: false },
+    value: { format: 'asn1', shouldZip: false },
     label: 'ASN.1',
   },
   {
@@ -57,19 +57,19 @@ const baseReportOptions: ReportOption[] = [
     label: 'Hit Table (csv)',
   },
   {
-    value: { format: 'multi-file-xml2', shouldZip: true },
+    value: { format: 'multi-file-blast-xml2', shouldZip: true },
     label: 'Multiple-file XML2',
   },
   {
-    value: { format: 'single-file-xml2', shouldZip: false },
+    value: { format: 'single-file-blast-xml2', shouldZip: false },
     label: 'Single-file XML2',
   },
   {
-    value: { format: 'multi-file-json', shouldZip: true },
+    value: { format: 'multi-file-blast-json', shouldZip: true },
     label: 'Multiple-file JSON',
   },
   {
-    value: { format: 'single-file-json', shouldZip: false },
+    value: { format: 'single-file-blast-json', shouldZip: false },
     label: 'Single-file JSON',
   },
 ];
@@ -86,7 +86,7 @@ export function ReportSelect({
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
-  const [reportState, setReportState] = useState<ReportPollingState>({
+  const [reportState, setReportState] = useState<ReportJobPollingState>({
     status: 'report-pending',
     jobId,
   });
@@ -120,7 +120,7 @@ export function ReportSelect({
     const format = selectedReportOption.value.format;
 
     return Task.fromPromise(() =>
-      makeReportPollingPromise(blastApi, jobId, format)
+      makeReportPollingPromise(blastApi.reportAPI, jobId, format)
     ).run(setReportState);
   }, [blastApi, jobId, selectedReportOption, reportState]);
 
@@ -133,16 +133,10 @@ export function ReportSelect({
       return;
     }
 
-    const { format, shouldZip } = selectedReportOption.value;
+    const { shouldZip } = selectedReportOption.value;
 
     return Task.fromPromise(async () =>
-      downloadJobContent(
-        blastServiceUrl,
-        await wdkService.getCurrentUser(),
-        reportState,
-        shouldZip,
-        `${jobId}-${format}-report`
-      )
+      downloadJobContent(blastApi.reportAPI, reportState, shouldZip)
     ).run(resetSelectedReport, resetSelectedReport);
   }, [
     blastServiceUrl,
