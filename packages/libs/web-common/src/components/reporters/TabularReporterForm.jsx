@@ -5,6 +5,7 @@ import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils'
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import TabularReporterFormSubmitButtons from './TabularReporterFormSubmitButtons';
 import ExcelNote from './ExcelNote';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
@@ -25,6 +26,7 @@ let TabularReporterForm = props => {
               // title and layout of the tree
               title="Choose Columns"
               searchBoxPlaceholder="Search Columns..."
+              searchIconPosition="right"
               tree={util.getAttributeTree(ontology, recordClass.fullName, question)}
 
               // state of the tree
@@ -36,6 +38,8 @@ let TabularReporterForm = props => {
               onChange={util.getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
               onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+
+              linksPosition={LinksPosition.Top}
           />
         </div>
         <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__left">

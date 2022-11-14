@@ -31,7 +31,7 @@ let Gff3ReporterForm = props => {
   let { formState, recordClass, updateFormState, onSubmit, includeSubmit  } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   return (
-    <div>
+    <div className='eupathdb-ReporterFormWrapper'>
       <h3>Generate a report of your query result in GFF3 format</h3>
       <GffInputs formState={formState} recordClass={recordClass} getUpdateHandler={getUpdateHandler}/>
       <div>

@@ -4,6 +4,7 @@ import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils'
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import * as CategoryUtils from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import ExcelNote from './ExcelNote';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
@@ -17,52 +18,63 @@ let TableReporterForm = props => {
   return (
     <div>
       <ReporterSortMessage scope={scope}/>
+      <div className='eupathdb-ReporterFormWrapper'>
+        <div className="eupathdb-ReporterForm">
+          <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__tables">
+            <CategoriesCheckboxTree
+                // title and layout of the tree
+                title="Choose a Table"
+                searchBoxPlaceholder="Search Tables..."
+                searchIconPosition="right"
+                tree={util.getTableTree(ontology, recordClass.fullName, question)}
 
-      <div className="eupathdb-ReporterForm">
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__tables">
-          <CategoriesCheckboxTree
-              // title and layout of the tree
-              title="Choose a Table"
-              searchBoxPlaceholder="Search Tables..."
-              tree={util.getTableTree(ontology, recordClass.fullName, question)}
+                // state of the tree
+                selectedLeaves={formState.tables}
+                expandedBranches={formUiState.expandedTableNodes}
+                searchTerm={formUiState.tableSearchText}
+                isMultiPick={false}
 
-              // state of the tree
-              selectedLeaves={formState.tables}
-              expandedBranches={formUiState.expandedTableNodes}
-              searchTerm={formUiState.tableSearchText}
-              isMultiPick={false}
+                // change handlers for each state element controlled by the tree
+                onChange={getUpdateHandler('tables')}
+                onUiChange={getUiUpdateHandler('expandedTableNodes')}
+                onSearchTermChange={getUiUpdateHandler('tableSearchText')}
 
-              // change handlers for each state element controlled by the tree
-              onChange={getUpdateHandler('tables')}
-              onUiChange={getUiUpdateHandler('expandedTableNodes')}
-              onSearchTermChange={getUiUpdateHandler('tableSearchText')}
-          />
-        </div>
-        <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
-          <div>
-            <h3>Download Type</h3>
+                linksPosition={LinksPosition.Top}
+                styleOverrides={{
+                  treeSection: {
+                    ul: {
+                      padding: 0,
+                    }
+                  },
+                }}
+            />
+          </div>
+          <div className="eupathdb-ReporterFormGroup eupathdb-ReporterFormGroup__otherOptions">
             <div>
-              <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
-                onChange={getUpdateHandler('attachmentType')}/>
+              <h3>Download Type</h3>
+              <div>
+                <RadioList value={formState.attachmentType} items={util.tabularAttachmentTypes}
+                  onChange={getUpdateHandler('attachmentType')}/>
+              </div>
+            </div>
+            <div>
+              <h3>Additional Options</h3>
+              <div>
+                <label>
+                  <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
+                  <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
+                </label>
+              </div>
             </div>
           </div>
-          <div>
-            <h3>Additional Options</h3>
-            <div>
-              <label>
-                <Checkbox value={formState.includeHeader} onChange={getUpdateHandler('includeHeader')}/>
-                <span style={{marginLeft:'0.5em'}}>Include header row (column names)</span>
-              </label>
-            </div>
-          </div>
         </div>
+
+        { includeSubmit &&
+          <div className="eupathdb-ReporterFormSubmit">
+            <button className="btn" type="submit" onClick={onSubmit}>Get {recordClass.displayNamePlural}</button>
+          </div>
+        }
       </div>
-
-      { includeSubmit &&
-        <div className="eupathdb-ReporterFormSubmit">
-          <button className="btn" type="submit" onClick={onSubmit}>Get {recordClass.displayNamePlural}</button>
-        </div>
-      }
       <hr/>
       <div style={{margin:'0.5em 2em'}}>
         <ExcelNote/>

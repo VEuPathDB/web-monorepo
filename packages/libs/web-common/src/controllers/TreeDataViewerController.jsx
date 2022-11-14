@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindAll } from 'lodash';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
-import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 class TreeDataViewer extends Component {
@@ -41,7 +41,9 @@ class TreeDataViewer extends Component {
           searchBoxHelp={makeSearchHelpText("the structure below")}
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.onSearchTermChange}
-          searchPredicate={isNodeInSearch}/>
+          searchPredicate={isNodeInSearch}
+          linksPosition={LinksPosition.Top}
+          />
       }
       catch (e) {
         display = <span>{e.message}</span>;

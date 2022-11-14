@@ -4,6 +4,7 @@ import * as CategoryUtils from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as OntologyUtils from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, OntologyUtils, CategoryUtils);
 
@@ -24,6 +25,7 @@ let SharedReporterForm = props => {
               // title and layout of the tree
               title="Choose Attributes"
               searchBoxPlaceholder="Search Attributes..."
+              searchIconPosition="right"
               tree={util.getAttributeTree(ontology, recordClass.fullName, question)}
 
               // state of the tree
@@ -35,6 +37,7 @@ let SharedReporterForm = props => {
               onChange={util.getAttributesChangeHandler('attributes', updateFormState, formState, recordClass)}
               onUiChange={getUiUpdateHandler('expandedAttributeNodes')}
               onSearchTermChange={getUiUpdateHandler('attributeSearchText')}
+              linksPosition={LinksPosition.Top}
           />
         </div>
 
@@ -43,6 +46,7 @@ let SharedReporterForm = props => {
             // title and layout of the tree
             title="Choose Tables"
             searchBoxPlaceholder="Search Tables..."
+            searchIconPosition='right'
             tree={util.getTableTree(ontology, recordClass.fullName)}
 
             // state of the tree
@@ -54,6 +58,7 @@ let SharedReporterForm = props => {
             onChange={getUpdateHandler('tables')}
             onUiChange={getUiUpdateHandler('expandedTableNodes')}
             onSearchTermChange={getUiUpdateHandler('tableSearchText')}
+            linksPosition={LinksPosition.Top}
           />
         </div>
 

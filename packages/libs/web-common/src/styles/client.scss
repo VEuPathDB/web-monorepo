@@ -142,16 +142,22 @@ td.wdk-DataTableCell__thumbnail {
 
 .eupathdb-ReporterFormSubmit {
   text-align: center;
-  width: 90vw;
+  margin: 1em 0;
 }
 
 @media all and (min-width: 800px) {
+  .eupathdb-ReporterFormWrapper {
+    width: fit-content;
+  }
+
   .eupathdb-ReporterForm {
     display: flex;
     flex-wrap: wrap;
+    column-gap: 2em;
+    margin: 0;
   }
 
-  .eupathdb-ReporterFormGroup { width: 350px; }
+  .eupathdb-ReporterFormGroup { width: 400px; }
 
   .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
   .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 2; }
@@ -160,7 +166,7 @@ td.wdk-DataTableCell__thumbnail {
 
 /* break point based on combined width of all ReporterFormGroup elemens */
 @media all and (min-width: 1024px) {
-  .eupathdb-ReporterFormGroup { margin: 0 auto 0 2em; }
+  .eupathdb-ReporterForm { margin: 0 2em; column-gap: 4em; }
   .eupathdb-ReporterFormGroup__otherOptions { width: auto; }
   .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
   .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 2; }

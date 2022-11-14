@@ -1,13 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react';
+/** @jsx jsx */
+import { jsx, css } from '@emotion/react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { memoize, noop, keyBy } from 'lodash';
 
 import { CategoriesCheckboxTree, Link, Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
-import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { LinksPosition, CheckboxTreeStyleSpec } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
-import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent, isIndividual, getFormattedTooltipContent } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, isIndividual, getFormattedTooltipContent } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { makeClassNameHelper, wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -20,6 +22,61 @@ import './SearchPane.scss';
 
 const cx = makeClassNameHelper('ebrc-SearchPane');
 const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-left-panel-expanded-branch-ids';
+
+const searchPaneStyleOverrides: CheckboxTreeStyleSpec = {
+  searchBox: {
+    clearSearchButton: {top: '3px'},
+    input: {
+      borderRadius: '0.5em',
+      fontSize: '0.9em',
+      borderColor: '#999',
+      background: '#dfdfdf',
+    },
+    optionalIcon: {
+      top: 0,
+      cursor: 'text',
+    }
+  },
+  treeNode: {
+    topLevelNodeWrapper: {
+      backgroundColor: '#dfdfdf',
+      margin: '.25em 0',
+      border: '.0625rem solid #ddd',
+      borderRadius: '.5em',
+      padding: '.35em',
+      cursor: 'pointer',
+    },
+  },
+  treeSection: {
+    ul: {
+      padding: '0 1em 0 0.5em',
+    }
+  }
+};
+
+const headerMenuItemStyleOverrides: CheckboxTreeStyleSpec = {
+  searchBox: {
+    ...searchPaneStyleOverrides.searchBox,
+    input: {
+      ...searchPaneStyleOverrides.searchBox?.input,
+      background: '#fff',
+    },
+    optionalIcon: {
+      fontSize: '1.25em',
+      cursor: 'text',
+      top: '3px',
+    }
+  },
+  treeSection: {
+    container: {
+      whiteSpace: 'normal',
+      width: 'max-content',
+    },
+    ul: {
+      padding: 0,
+    }
+  }
+};
 
 export type Props = {
   containerClassName?: string,
@@ -38,11 +95,18 @@ export const SearchPane = (props: Props) => {
   const alphabetizedSearchTree = useAlphabetizedSearchTree(props.searchTree);
 
   return (
-    <nav className={combineClassNames(cx(), props.containerClassName)}>
+    <nav 
+      className={combineClassNames(cx(), props.containerClassName)}
+      style={{fontSize: '14px'}}  
+    >
       <h2>
         Search for...
       </h2> 
-      <div className={cx('CheckboxTreeContainer')}>
+      <div 
+        style={{
+          fontSize: '1.2em',
+        }}
+      >
         <SearchCheckboxTree 
           searchTree={alphabetizedSearchTree}
           searchTerm={searchTerm}
@@ -61,15 +125,28 @@ export type SearchCheckboxTreeProps = {
   expandedBranches: string[],
   setSearchTerm: (newSearchTerm: string) => void,
   setExpandedBranches: (newExpandedBranches: string[]) => void,
-  linksPosition?: LinksPosition
-  showSearchBox?: boolean
+  linksPosition?: LinksPosition,
+  showSearchBox?: boolean,
+  type?: 'searchPane' | 'headerMenu',
 };
 
-export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => {
+export const SearchCheckboxTree = wrappable((
+  {
+    searchTree,
+    searchTerm,
+    expandedBranches,
+    setSearchTerm,
+    setExpandedBranches,
+    linksPosition,
+    showSearchBox,
+    type = 'searchPane'
+  }: SearchCheckboxTreeProps
+  ) => {
   const noSelectedLeaves = useMemo(
     () => [] as string[],
     []
   );
+  const styleOverrides = type === 'searchPane' ? searchPaneStyleOverrides : headerMenuItemStyleOverrides;
 
   const questionsByUrlSegment = useSelector((state: RootState) => keyBy(state.globalData.questions, 'urlSegment'));
 
@@ -79,30 +156,35 @@ export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => 
         node={node}
         questionsByUrlSegment={questionsByUrlSegment}
         path={path}
+        type={type}
       />
     ),
     [questionsByUrlSegment]
   );
 
-  return !props.searchTree 
+  return !searchTree 
     ? <Loading />
-    : <CategoriesCheckboxTree
-        containerClassName="wdk-SearchTree"
-        selectedLeaves={noSelectedLeaves}
-        onChange={noop}
-        tree={props.searchTree}
-        expandedBranches={props.expandedBranches}
-        searchTerm={props.searchTerm}
-        isSelectable={false}
-        searchBoxPlaceholder="Filter the searches below..."
-        leafType="search"
-        renderNode={renderNode}
-        renderNoResults={renderNoResults}
-        onUiChange={props.setExpandedBranches}
-        onSearchTermChange={props.setSearchTerm}
-        showSearchBox={props.showSearchBox != null ? props.showSearchBox : true}
-        linksPosition={props.linksPosition != null ? props.linksPosition : LinksPosition.Top}
-      />;
+    : (
+        <CategoriesCheckboxTree
+          selectedLeaves={noSelectedLeaves}
+          onChange={noop}
+          tree={searchTree}
+          expandedBranches={expandedBranches}
+          searchTerm={searchTerm}
+          isSelectable={false}
+          searchBoxPlaceholder="Filter the searches below..."
+          leafType="search"
+          renderNode={renderNode}
+          renderNoResults={renderNoResults}
+          onUiChange={setExpandedBranches}
+          onSearchTermChange={setSearchTerm}
+          showSearchBox={showSearchBox != null ? showSearchBox : true}
+          linksPosition={linksPosition != null ? linksPosition : LinksPosition.Top}
+          styleOverrides={styleOverrides}
+          type={type}
+          searchIconPosition='left'
+        />
+    );
 });
 
 const renderNoResults = (searchTerm: string) =>
@@ -126,12 +208,14 @@ interface SearchPaneNodeProps {
   questionsByUrlSegment: Record<string, Question>;
   node: CategoryTreeNode;
   path: number[] | undefined;
+  type?: 'searchPane' | 'headerMenu',
 }
 
 function SearchPaneNode({
   questionsByUrlSegment = {},
   node,
-  path
+  path,
+  type = 'searchPane'
 }: SearchPaneNodeProps) {
   const [ offerTooltip, setOfferTooltip ] = useState(true);
 
@@ -160,10 +244,29 @@ function SearchPaneNode({
         }}
         to={`/search/${getRecordClassUrlSegment(node)}/${urlSegment}`}
       >
-        <IconAlt fa="search" />
-        {displayName}
+        <div style={{
+          display: 'flex', 
+          alignItems: 'center', 
+        }}>
+          <span style={{marginRight: '0.25em', color: 'gray', fontSize: '0.7em'}}>
+            <IconAlt fa="search" />
+          </span>
+          <span style={{color: '#069'}}>
+            {displayName}
+          </span>
+        </div>
       </Link>
-    : <span className={path?.length === 2 ? 'SubcategoryText' : undefined}>{displayName}</span>
+    : <span 
+        css={{
+          cursor: 'pointer',
+          fontWeight: path?.length === 1 && type === 'searchPane' ? 'bold' : 'normal',
+          '&:hover': {
+            textDecoration: 'underline',
+          }
+        }}
+      >
+        {displayName}
+      </span>
 
   const tooltipContent = getFormattedTooltipContent(node);
 
