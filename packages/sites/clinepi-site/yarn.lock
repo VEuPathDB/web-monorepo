@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.3":
-  version "0.19.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.3.tgz#a2587bf5d0d3edf99a27e86154f527c7019643b9"
-  integrity sha512-/8YIUYhRz0lNPObnvqWSScT1Ys9v6R+KtXwTzuKjAgdK9uWfgXntA7jSDzWajPLGRA+wPCuzH33mV1oG6chfWQ==
+"@veupathdb/components@^0.19.7":
+  version "0.19.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.7.tgz#9fda8f3c2e4ec9e0e90bba9146600e039f00d1eb"
+  integrity sha512-tlYV2YARBIWvM5y0o2aBmEtirMNKCJvYZaG6Wk18t1zNF5dDR/mfE/0UBsn1JTlht9l4WySICF/YoGEEac8w8Q==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2153,10 +2153,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.12":
-  version "0.18.12"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.12.tgz#42b6405cc87a9225010cee422b37ecf87dfc0ce6"
-  integrity sha512-Ys6BPnlnKpWYg/Uq0u7ehLlfo1xGpbQSfb3MczWHeRZmI2ZhQJHauVIjc0nmgzMdVI5g9f/+ju/KkbP343SsAQ==
+"@veupathdb/coreui@^0.18.13":
+  version "0.18.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.13.tgz#33cedb7114e49aa0ec66e6a476e10cc6ae1fcd30"
+  integrity sha512-Cl3xTBZFDB+dJ5Faskp6auE1ez5QeH4+p+XY30uwp6p9Us0Kf5MQrtheeT/PZTAZ2P65Ng3yDkGpp31834/Akg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -2166,10 +2166,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.11.12":
-  version "3.11.12"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.12.tgz#5ca896f9e9d8dc81ae04f3a06f1ffebe1146f73a"
-  integrity sha512-cLrm6QM/H8RRA9o8PCvAcEZdhQT7FJs7cL1OEGJXhdDd74C01u0MvoqjzeI2IhI1hw1QevWD++T92Gmm/fytWw==
+"@veupathdb/eda@^3.11.16":
+  version "3.11.16"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.11.16.tgz#87f153a97ba8f47e33effd6ef9ecffe845e7231a"
+  integrity sha512-cfEXlwNoYmU9ugqb4j06+fEzYsK4f6Eq84rPOFQx497pO7rXfVXw11cODTKUTz7dajEyb6idMiH1xhiqjSo5tA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
