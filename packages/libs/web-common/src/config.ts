@@ -27,6 +27,7 @@ export const {
   retainContainerContent = false,
   useEda = false,
   edaServiceUrl = '',
+  edaEnableFullScreenApps = true,
   edaSingleAppMode = undefined,
   useUserDatasetsWorkspace = false,
   datasetImportUrl = '',

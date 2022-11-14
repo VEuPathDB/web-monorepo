@@ -3,7 +3,7 @@ import React, { Suspense, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { communitySite } from 'ebrc-client/config';
+import { communitySite, edaEnableFullScreenApps } from 'ebrc-client/config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import ContactUsController from './controllers/ContactUsController';
@@ -62,6 +62,7 @@ export const wrapRoutes = wdkRoutes => [
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
             singleAppMode={edaSingleAppMode}
+            enableFullScreenApps={edaEnableFullScreenApps}
           />
         </Suspense>
       );
