@@ -3,15 +3,14 @@ import { merge } from 'lodash';
 import { isLeaf } from '../../SelectTree/Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from '../IndeterminateCheckbox';
 import { ArrowRight, ArrowDown } from '../../../icons';
-import { CSSProperties } from '@emotion/serialize';
 
 export type CheckboxTreeNodeStyleSpec = {
   list?: {
-    listStyle: CSSProperties['listStyle'],
+    listStyle: React.CSSProperties['listStyle'],
   },
   children?: {
-    padding: CSSProperties['padding']
-    margin: CSSProperties['margin']
+    padding: React.CSSProperties['padding']
+    margin: React.CSSProperties['margin']
   },
   nodeWrapper?: React.CSSProperties;
   topLevelNodeWrapper?: React.CSSProperties;
