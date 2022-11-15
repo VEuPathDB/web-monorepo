@@ -52,6 +52,56 @@ import { useActiveDocument } from '../docs/DocumentationContainer';
 import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
 import { Toggle } from '@veupathdb/coreui';
 
+const baseFieldNodeLinkStyle = {
+  padding: '0.25em 0.5em',
+  borderRadius: '0.5em',
+  display: 'inline-block',
+  cursor: 'pointer',
+  fontSize: '0.9em',
+};
+
+const activeFieldNodeLinkStyle = {
+  background: '#e6e6e6',
+};
+
+const disabledFieldNodeLinkStyle = {
+  cursor: 'not-allowed',
+  opacity: '0.5',
+};
+
+const fieldNodeCssSelectors = {
+  '.base-field-node': { ...baseFieldNodeLinkStyle },
+  '.active-field-node': {
+    ...baseFieldNodeLinkStyle,
+    ...activeFieldNodeLinkStyle,
+  },
+  '.disabled-field-node': {
+    ...baseFieldNodeLinkStyle,
+    ...disabledFieldNodeLinkStyle,
+  },
+  '.single-select-anchor-node': { marginLeft: '0.5em' },
+  '.dropdown-node-color': { color: '#2f2f2f' },
+  '.base-node-color': { color: '#069' },
+  '.entity-node': {
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    padding: '0.25em 0.5em',
+  },
+  '.starred-var-container': {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  '.star-selected': {
+    color: '#f8cb6a',
+    fontSize: '1.1em',
+  },
+  '.star-unselected': {
+    color: '#767676',
+    fontSize: '1.1em',
+  },
+};
+
 interface VariableField {
   type?: string;
   term: string;
@@ -716,6 +766,7 @@ export default function VariableList({
         },
       },
     },
+    customTreeNodeCssSelectors: fieldNodeCssSelectors,
   };
 
   return asDropdown ? (
@@ -793,33 +844,6 @@ const getNodeSearchString = (valuesMap: ValuesMap) => {
   };
 };
 
-const baseFieldNodeLinkStyle = {
-  padding: '0.25em 0.5em',
-  borderRadius: '0.5em',
-  display: 'inline-block',
-  cursor: 'pointer',
-  fontSize: '0.9em',
-};
-
-const activeFieldNodeLinkStyle = {
-  background: '#e6e6e6',
-};
-
-const disabledFieldNodeLinkStyle = {
-  cursor: 'not-allowed',
-  opacity: '0.5',
-};
-
-const starStyleOff = {
-  color: '#767676',
-  fontSize: '1.1em',
-};
-
-const starStyleOn = {
-  color: '#f8cb6a',
-  fontSize: '1.1em',
-};
-
 const FieldNode = ({
   field,
   searchTerm,
@@ -839,8 +863,10 @@ const FieldNode = ({
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
-  const nodeColor = { color: asDropdown ? '#2f2f2f' : '#069' };
-  const anchorNodeLinkStyle = isMultiPick ? {} : { marginLeft: '0.5em' };
+  const nodeColorSelector = asDropdown
+    ? 'dropdown-node-color'
+    : 'base-node-color';
+  const anchorNodeLinkSelector = isMultiPick ? '' : 'single-select-anchor-node';
 
   useLayoutEffect(() => {
     // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
@@ -876,26 +902,12 @@ const FieldNode = ({
     // >
     <a
       ref={nodeRef}
-      style={
+      className={
         isActive
-          ? {
-              ...baseFieldNodeLinkStyle,
-              ...activeFieldNodeLinkStyle,
-              ...anchorNodeLinkStyle,
-              ...nodeColor,
-            }
+          ? `active-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
           : isDisabled
-          ? {
-              ...baseFieldNodeLinkStyle,
-              ...anchorNodeLinkStyle,
-              ...disabledFieldNodeLinkStyle,
-              ...nodeColor,
-            }
-          : {
-              ...baseFieldNodeLinkStyle,
-              ...anchorNodeLinkStyle,
-              ...nodeColor,
-            }
+          ? `disabled-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
+          : `base-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
       }
       href={'#' + field.term}
       onClick={(e) => {
@@ -910,15 +922,10 @@ const FieldNode = ({
     // </Tooltip>
     //add condition for identifying entity parent and entity parent of activeField
     <div
-      style={
+      className={
         field.term.includes('entity')
-          ? {
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              padding: '0.25em 0.5em',
-              ...nodeColor,
-            }
-          : { ...baseFieldNodeLinkStyle, ...nodeColor }
+          ? `entity-node ${nodeColorSelector}`
+          : `base-field-node ${nodeColorSelector}`
       }
     >
       {safeHtml(field.display)}
@@ -928,17 +935,7 @@ const FieldNode = ({
   const canBeStarred = isFilterField(field) && !isMultiFilterDescendant;
 
   return (
-    <div
-      style={
-        canBeStarred
-          ? {
-              display: 'flex',
-              justifyContent: 'space-between',
-              width: '100%',
-            }
-          : {}
-      }
-    >
+    <div className={canBeStarred ? 'starred-var-container' : ''}>
       {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
         /**
@@ -947,8 +944,7 @@ const FieldNode = ({
          */
         // <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
         <button
-          className={`link`}
-          style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
+          className={isStarred ? 'link star-selected' : 'link star-unselected'}
           onClick={(e) => {
             // prevent click from toggling expansion state
             e.stopPropagation();
