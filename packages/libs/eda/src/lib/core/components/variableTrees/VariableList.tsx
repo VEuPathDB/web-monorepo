@@ -861,7 +861,7 @@ const FieldNode = ({
     isMulti(field) ? !showMultiFilterDescendants : isFilterField(field)
   ) ? (
     /**
-     * Temporarily removing Tooltip renderings to alleviate performance issue with new CheckboxTree.
+     * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
      * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
      */
     // <Tooltip
@@ -876,6 +876,14 @@ const FieldNode = ({
     // >
     <a
       ref={nodeRef}
+      title={
+        isMultiPick
+          ? ''
+          : isDisabled
+          ? customDisabledVariableMessage ??
+            'This variable cannot be used with this plot and other variable selections.'
+          : 'Select this variable.'
+      }
       style={
         isActive
           ? {
@@ -942,12 +950,13 @@ const FieldNode = ({
       {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
         /**
-         * Temporarily removing Tooltip renderings to alleviate performance issue with new CheckboxTree.
+         * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
          * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
          */
         // <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
         <button
           className={`link`}
+          title={`Click to ${isStarred ? 'unstar' : 'star'}`}
           style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
           onClick={(e) => {
             // prevent click from toggling expansion state
