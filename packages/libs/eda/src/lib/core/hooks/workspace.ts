@@ -15,7 +15,6 @@ import {
 } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { useCallback, useMemo } from 'react';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   entityTreeToArray,
   findCollections,
