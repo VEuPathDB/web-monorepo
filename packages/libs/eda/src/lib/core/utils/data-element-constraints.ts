@@ -198,9 +198,10 @@ export function excludedVariables(
  * Tests if a variable satisfies a constraint
  */
 function variableConstraintPredicate(
-  constraint: DataElementConstraint,
+  constraint: DataElementConstraint | undefined,
   variable: VariableTreeNode
 ) {
+  if (constraint == null) return true;
   return (
     variable.type === 'category' ||
     ((constraint.allowedShapes == null ||
@@ -218,7 +219,9 @@ function variableConstraintPredicate(
 }
 
 export type VariablesByInputName = Partial<Record<string, VariableDescriptor>>;
-export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
+export type DataElementConstraintRecord = Partial<
+  Record<string, DataElementConstraint>
+>;
 
 /**
  * Given an array of DataElementConstraint objects, user-selected variables, and a variable reference of interest
@@ -265,6 +268,7 @@ export function filterConstraints(
   // Find all compatible constraints
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
+      if (constraint == null) return true;
       const value = variables[variableName];
       // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
@@ -331,7 +335,7 @@ export function mergeConstraints(
 ): DataElementConstraintRecord {
   const keys = union(Object.keys(constraintMapA), Object.keys(constraintMapB));
   return Object.fromEntries(
-    keys.map((key): [string, DataElementConstraint] => {
+    keys.map((key): [string, DataElementConstraint | undefined] => {
       const constraintA = constraintMapA[key];
       const constraintB = constraintMapB[key];
       const mergedIsTemporal =
