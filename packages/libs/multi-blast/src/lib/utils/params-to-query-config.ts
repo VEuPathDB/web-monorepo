@@ -63,10 +63,12 @@ export function paramValuesToBlastQueryConfig(
     eValue: paramValues[ParamNames.ExpectValue],
     softMasking: booleanOrUndefined(paramValues[ParamNames.SoftMask]),
     lowercaseMasking: booleanOrUndefined(paramValues[ParamNames.LowercaseMask]),
-    maxTargetSequences: numberOrUndefined(
-      paramValues[ParamNames.NumQueryResults]
+    maxTargetSequences: zeroToUndefined(
+      numberOrUndefined(paramValues[ParamNames.NumQueryResults])
     ),
-    maxHSPs: numberOrUndefined(paramValues[ParamNames.MaxMatchesQueryRange]),
+    maxHSPs: zeroToUndefined(
+      numberOrUndefined(paramValues[ParamNames.MaxMatchesQueryRange])
+    ),
   };
 
   switch (tool) {
@@ -257,6 +259,10 @@ function mismatch(
   const [reward, penalty] = value.split(',').map(Number);
 
   return { reward, penalty };
+}
+
+function zeroToUndefined(value: number | undefined): number | undefined {
+  return value === undefined || value === 0 ? undefined : value;
 }
 
 function booleanOrUndefined(value: string | undefined) {

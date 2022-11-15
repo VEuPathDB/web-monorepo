@@ -14,11 +14,9 @@ import {
   SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
-import { IOBlastSeg } from './api/query/blast/blast-common';
 import { IOQueryJobDetails } from './api/query/api/ep-jobs-by-id';
-import { IOBlastConfig } from './api/query/blast/blast-all';
-import { IOBlastNDust } from './api/query/blast/blast-config-n';
 import { IOJobTarget } from './api/query/api/common';
+import { blastConfigToParamValues } from './params-from-query-config';
 
 export const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
@@ -56,105 +54,6 @@ export function isOmittedParam(param?: Parameter) {
     ? false
     : param.vocabulary.length === 1 &&
         param.vocabulary[0][0] === OMIT_PARAM_TERM;
-}
-export function blastConfigToParamValues(
-  blastConfig: IOBlastConfig
-): ParameterValues {
-  const parameterValues: ParameterValues = {
-    [ParamNames.BlastAlgorithm]: blastConfig.tool,
-  };
-
-  if (blastConfig.eValue != null) {
-    parameterValues[ParamNames.ExpectValue] = blastConfig.eValue;
-  }
-
-  parameterValues[ParamNames.NumQueryResults] = String(
-    blastConfig.maxTargetSequences ?? Infinity
-  );
-
-  if (blastConfig.maxHSPs != null) {
-    parameterValues[ParamNames.MaxMatchesQueryRange] = String(
-      blastConfig.maxHSPs
-    );
-  }
-
-  if (blastConfig.softMasking != null) {
-    parameterValues[ParamNames.SoftMask] = String(blastConfig.softMasking);
-  }
-
-  if (blastConfig.lowercaseMasking != null) {
-    parameterValues[ParamNames.LowercaseMask] = String(
-      blastConfig.lowercaseMasking
-    );
-  }
-
-  switch (blastConfig.tool) {
-    case 'blastn':
-      parameterValues[ParamNames.WordSize] = String(blastConfig.wordSize);
-      parameterValues[ParamNames.FilterLowComplexity] = dustToParamValue(
-        blastConfig.dust
-      );
-      if (blastConfig.gapOpen != null && blastConfig.gapExtend != null) {
-        parameterValues[
-          ParamNames.GapCosts
-        ] = `${blastConfig.gapOpen},${blastConfig.gapExtend}`;
-      }
-      if (blastConfig.reward != null && blastConfig.penalty != null) {
-        parameterValues[
-          ParamNames.MatchMismatch
-        ] = `${blastConfig.reward},${blastConfig.penalty}`;
-      }
-      break;
-    case 'blastp':
-    case 'blastx':
-    case 'deltablast':
-    case 'psiblast':
-    case 'tblastn':
-      parameterValues[ParamNames.WordSize] = String(blastConfig.wordSize);
-      parameterValues[ParamNames.ScoringMatrix] = blastConfig.matrix as string;
-      parameterValues[
-        ParamNames.CompAdjust
-      ] = blastConfig.compBasedStats as string;
-      parameterValues[ParamNames.FilterLowComplexity] = segToParamValue(
-        blastConfig.seg
-      );
-      if (blastConfig.gapOpen != null && blastConfig.gapExtend != null) {
-        parameterValues[
-          ParamNames.GapCosts
-        ] = `${blastConfig.gapOpen},${blastConfig.gapExtend}`;
-      }
-      break;
-    case 'rpsblast':
-    case 'rpstblastn':
-      parameterValues[
-        ParamNames.CompAdjust
-      ] = blastConfig.compBasedStats as string;
-      parameterValues[ParamNames.FilterLowComplexity] = segToParamValue(
-        blastConfig.seg
-      );
-      break;
-    case 'tblastx':
-      parameterValues[ParamNames.WordSize] = String(blastConfig.wordSize);
-      parameterValues[ParamNames.ScoringMatrix] = blastConfig.matrix as string;
-      parameterValues[ParamNames.FilterLowComplexity] = segToParamValue(
-        blastConfig.seg
-      );
-      break;
-  }
-
-  return parameterValues;
-}
-
-function dustToParamValue(dust: IOBlastNDust | null | undefined): string {
-  return dust === null || dust === undefined || !dust.enabled
-    ? 'no filter'
-    : 'dust';
-}
-
-function segToParamValue(seg: IOBlastSeg | null | undefined): string {
-  return seg === null || seg === undefined || !seg.enabled
-    ? 'no filter'
-    : 'seg';
 }
 
 export function targetsToOrganismParamValue(

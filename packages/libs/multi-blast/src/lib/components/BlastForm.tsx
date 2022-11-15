@@ -69,7 +69,7 @@ import { AdvancedParamGroup } from './AdvancedParamGroup';
 import { BlastFormValidationInfo } from './BlastFormValidationInfo';
 
 import './BlastForm.scss';
-import { paramValuesToBlastQueryConfig } from '../utils/params-query';
+import { paramValuesToBlastQueryConfig } from '../utils/params-to-query-config';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
