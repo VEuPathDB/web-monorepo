@@ -3,7 +3,7 @@ import React from 'react';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
-import { AnalysisClient } from '../api/analysis-api';
+import { AnalysisClient } from '../api/AnalysisClient';
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
 import { WorkspaceContext } from '../context/WorkspaceContext';

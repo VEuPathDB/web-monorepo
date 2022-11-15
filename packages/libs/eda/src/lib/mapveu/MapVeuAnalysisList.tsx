@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { makeNewAnalysis, useStudyRecord } from '../core';
 import { useRouteMatch, Link, useHistory } from 'react-router-dom';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { AnalysisClient } from '../core/api/analysis-api';
+import { AnalysisClient } from '../core/api/AnalysisClient';
 import { usePromise } from '../core/hooks/promise';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 

@@ -5,7 +5,7 @@ import { PromiseHookState, usePromise } from './promise';
 import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
-} from '../api/analysis-api';
+} from '../api/AnalysisClient';
 import { PublicAnalysisSummary } from '../types/analysis';
 
 export function usePublicAnalysisList(

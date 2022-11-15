@@ -6,7 +6,7 @@ import { Analysis, NewAnalysis, makeNewAnalysis } from '../../types/analysis';
 import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
-} from '../../api/analysis-api';
+} from '../../api/AnalysisClient';
 import DataClient from '../../api/DataClient';
 import {
   StudyMetadata,

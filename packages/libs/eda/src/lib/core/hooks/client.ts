@@ -1,7 +1,7 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useMemo } from 'react';
-import { AnalysisClient } from '../api/analysis-api';
+import { AnalysisClient } from '../api/AnalysisClient';
 import DataClient from '../api/DataClient';
 import { DownloadClient } from '../api/DownloadClient';
 import SubsettingClient from '../api/SubsettingClient';

@@ -7,7 +7,7 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
-} from '../api/analysis-api';
+} from '../api/AnalysisClient';
 import {
   Analysis,
   AnalysisSummary,

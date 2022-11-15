@@ -5,7 +5,7 @@ import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/T
 
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
-import { AnalysisClient } from '../api/analysis-api';
+import { AnalysisClient } from '../api/AnalysisClient';
 import {
   MakeVariableLink,
   WorkspaceContext,

@@ -8,7 +8,7 @@ export * from './hooks/publicAnalyses';
 export * from './hooks/workspace';
 export * from './api/SubsettingClient';
 export * from './api/DataClient';
-export * from './api/analysis-api';
+export * from './api/AnalysisClient';
 export * from './context/WorkspaceContext';
 export { EDAWorkspaceContainer } from './components/EDAWorkspaceContainer';
 export { EDAAnalysisListContainer } from './components/EDAAnalysisListContainer';
