@@ -4,7 +4,7 @@ import { Variable } from '../types/study';
 import { numberDateDefaultAxisRange } from '../utils/default-axis-range';
 import { NumberOrDateRange } from '../types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { ComputedVariableMetadata } from '../api/DataClient/types';
+import { VariableMapping } from '../api/DataClient/types';
 import { numberSignificantFigures } from '../utils/number-significant-figures';
 import { DateTime } from 'luxon';
 
@@ -15,7 +15,7 @@ import { DateTime } from 'luxon';
 
 export function useDefaultAxisRange(
   /** the variable (or computed variable) or null/undefined if no variable (e.g. histogram/barplot y) */
-  variable: Variable | ComputedVariableMetadata | undefined | null,
+  variable: Variable | VariableMapping | undefined | null,
   /** the min/minPos/max values observed in the data response */
   min?: number | string,
   minPos?: number | string,
@@ -37,7 +37,7 @@ export function useDefaultAxisRange(
           (variable.type === 'date' &&
             typeof min === 'string' &&
             isValidDateString(min)))) ||
-      ComputedVariableMetadata.is(variable)
+      VariableMapping.is(variable)
     ) {
       const defaultRange = numberDateDefaultAxisRange(
         variable,
@@ -55,7 +55,7 @@ export function useDefaultAxisRange(
           (variable.type === 'number' || variable.type === 'integer') &&
           typeof defaultRange?.min === 'number' &&
           typeof defaultRange?.max === 'number') ||
-        (ComputedVariableMetadata.is(variable) &&
+        (VariableMapping.is(variable) &&
           typeof defaultRange?.min === 'number' &&
           typeof defaultRange?.max === 'number')
       )

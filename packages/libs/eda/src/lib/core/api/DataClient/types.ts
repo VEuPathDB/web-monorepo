@@ -107,13 +107,6 @@ const API_VariableType = keyof({
   date: null,
   longitude: null,
   integer: null,
-  // TO DO: REMOVE THIS TEMPORARY WORKAROUND
-  CATEGORY: null,
-  STRING: null,
-  NUMBER: null,
-  DATE: null,
-  LONGITUDE: null,
-  INTEGER: null,
 });
 
 export type API_VariableDataShape = TypeOf<typeof API_VariableDataShape>;
@@ -122,15 +115,10 @@ const API_VariableDataShape = keyof({
   categorical: null,
   ordinal: null,
   binary: null,
-  // TO DO: REMOVE THIS TEMPORARY WORKAROUND
-  CONTINUOUS: null,
-  CATEGORICAL: null,
-  ORDINAL: null,
-  BINARY: null,
 });
 
-export type VariableMapping = TypeOf<typeof variableMapping>;
-const variableMapping = intersection([
+export type VariableMapping = TypeOf<typeof VariableMapping>;
+export const VariableMapping = intersection([
   type({
     variableClass,
     variableSpec,
@@ -153,7 +141,7 @@ export type PlotConfig = TypeOf<typeof plotConfig>;
 const plotConfig = type({
   completeCasesAllVars: number,
   completeCasesAxesVars: number,
-  variables: array(variableMapping),
+  variables: array(VariableMapping),
 });
 
 export interface HistogramRequestParams {
@@ -606,24 +594,7 @@ export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
 export const BoxplotResponse = type({
   boxplot: type({
     data: BoxplotResponseData,
-    // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-        yVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        computedVariableMetadata: ComputedVariableMetadata,
-      }),
-    ]),
+    config: plotConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
