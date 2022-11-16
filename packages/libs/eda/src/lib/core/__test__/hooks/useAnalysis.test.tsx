@@ -16,6 +16,7 @@ import {
 } from '../..';
 import SubsettingClient from '../../api/SubsettingClient';
 import { DownloadClient } from '../../api/DownloadClient';
+import { ComputeClient } from '../../api/ComputeClient';
 
 const analysisId = '123';
 
@@ -78,6 +79,7 @@ const wrapper: React.ComponentType = ({ children }) => (
       subsettingClient: {} as SubsettingClient,
       dataClient: {} as DataClient,
       downloadClient: {} as DownloadClient,
+      computeClient: {} as ComputeClient,
     }}
   >
     {children}

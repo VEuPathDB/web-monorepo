@@ -16,11 +16,13 @@ import {
   useWdkStudyRecord,
 } from '../hooks/study';
 
-import { FieldWithMetadata, StudyMetadata, useStudyEntities } from '..';
+import { FieldWithMetadata, StudyMetadata } from '..';
 
 import { useFieldTree, useFlattenedFields } from './variableTrees/hooks';
 import { DownloadClient } from '../api/DownloadClient';
 import { entityTreeToArray } from '../utils/study-metadata';
+import { ComputeClient } from '../api/ComputeClient';
+import { useDeepValue } from '../hooks/immutability';
 
 export interface Props {
   studyId: string;
@@ -30,6 +32,7 @@ export interface Props {
   subsettingClient: SubsettingClient;
   downloadClient: DownloadClient;
   dataClient: DataClient;
+  computeClient: ComputeClient;
   initializeMakeVariableLink?: (
     fieldTree: TreeNode<FieldWithMetadata>
   ) => MakeVariableLink;
@@ -63,6 +66,7 @@ function EDAWorkspaceContainerWithLoadedData({
   subsettingClient,
   dataClient,
   downloadClient,
+  computeClient,
   initializeMakeVariableLink,
   wdkStudyRecord,
   studyMetadata,
@@ -78,18 +82,19 @@ function EDAWorkspaceContainerWithLoadedData({
     [initializeMakeVariableLink, variableTree]
   );
 
+  const contextValue = useDeepValue({
+    ...wdkStudyRecord,
+    studyMetadata,
+    analysisClient,
+    subsettingClient,
+    dataClient,
+    downloadClient,
+    computeClient,
+    makeVariableLink,
+  });
+
   return (
-    <WorkspaceContext.Provider
-      value={{
-        ...wdkStudyRecord,
-        studyMetadata,
-        analysisClient,
-        subsettingClient,
-        dataClient,
-        downloadClient,
-        makeVariableLink,
-      }}
-    >
+    <WorkspaceContext.Provider value={contextValue}>
       <div className={className}>{children}</div>
     </WorkspaceContext.Provider>
   );

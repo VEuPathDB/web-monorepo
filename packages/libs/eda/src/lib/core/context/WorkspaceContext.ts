@@ -5,6 +5,7 @@ import { AnalysisClient } from '../api/AnalysisClient';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { DownloadClient } from '../api/DownloadClient';
+import { ComputeClient } from '../api/ComputeClient';
 
 export interface MakeVariableLink {
   (variableDescriptor: Partial<VariableDescriptor>): string;
@@ -17,6 +18,7 @@ export interface WorkspaceContextValue {
   subsettingClient: SubsettingClient;
   downloadClient: DownloadClient;
   dataClient: DataClient;
+  computeClient: ComputeClient;
   makeVariableLink?: MakeVariableLink;
 }
 
