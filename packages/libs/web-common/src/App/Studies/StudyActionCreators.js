@@ -1,5 +1,6 @@
 import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
 import { isPrereleaseStudyTemp } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
@@ -9,7 +10,7 @@ import { isDiyWdkRecordId } from 'ebrc-client/util/diyDatasets';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';
-export const STUDIES_ERROR = 'studies/studies-error'
+export const STUDIES_ERROR = 'studies/studies-error';
 
 /**
  * Load studies
@@ -169,7 +170,10 @@ function formatStudies(questions, recordClasses, answer) {
       ({ disabled }) => disabled,
       ({ id }) => records.appearFirst.has(id),
       ({ access }) => isPrereleaseStudyTemp(access),
-      ({ name }) => name
+      /**
+      * To normalize sorting behavior, strip HTML as needed and compare strings as lowercase
+      **/ 
+      ({ name }) => name.indexOf('<') === -1 ? name.toLowerCase() : stripHTML(name).toLowerCase()
     ],
     [
       'asc',
