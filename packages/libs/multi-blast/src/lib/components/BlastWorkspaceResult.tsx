@@ -42,7 +42,6 @@ import { BlastQueryClient } from '../utils/api/BlastQueryClient';
 import { IOQueryJobDetails } from '../utils/api/query/api/ep-jobs-by-id';
 import { IOJobTarget } from '../utils/api/query/api/common';
 import { ioTransformer } from '@veupathdb/http-utils';
-import { Decoder } from 'io-ts';
 
 interface Props {
   jobId: string;
