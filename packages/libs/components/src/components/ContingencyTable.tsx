@@ -126,14 +126,15 @@ export function ContingencyTable(props: ContingencyTableProps) {
                   key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
                   className="contingency-table_value"
                 >
-                  {value.toLocaleString()}
+                  {value.toLocaleString()} {makePercentString(value, rowSums)}
                 </td>
               ))}
               <td
                 className="contingency-table_totals-column-value"
                 style={{ color: MEDIUM_DARK_GRAY }}
               >
-                {rowSums[i].toLocaleString()}
+                {rowSums[i].toLocaleString()}{' '}
+                {makePercentString(rowSums[i], rowSums)}
               </td>
             </tr>
           ))}
@@ -150,14 +151,16 @@ export function ContingencyTable(props: ContingencyTableProps) {
                 className="contingency-table_totals-row-value"
                 style={{ color: MEDIUM_DARK_GRAY }}
               >
-                {_.sum(col).toLocaleString()}
+                {_.sum(col).toLocaleString()}{' '}
+                {makePercentString(_.sum(col), rowSums)}
               </td>
             ))}
             <td
               className="contingency-table_grand-total"
               style={{ color: MEDIUM_DARK_GRAY }}
             >
-              {_.sum(rowSums).toLocaleString()}
+              {_.sum(rowSums).toLocaleString()}{' '}
+              {makePercentString(_.sum(rowSums), rowSums)}
             </td>
           </tr>
         </tbody>
@@ -165,3 +168,10 @@ export function ContingencyTable(props: ContingencyTableProps) {
     </div>
   );
 }
+
+const makePercentString = (value: number, sumsArray: number[]) => {
+  return `(${_.round(
+    _.divide(value, _.sum(sumsArray)) * 100,
+    1
+  ).toLocaleString()}%)`;
+};
