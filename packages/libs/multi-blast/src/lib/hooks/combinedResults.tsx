@@ -55,7 +55,7 @@ import {
   mergeIntervals,
   orderHitsBySignificance,
 } from '../utils/combinedResults';
-import { IOJobTarget } from '../utils/api/query/api/common';
+import { IOJobTarget } from '../utils/api/query/types/common';
 
 const MAX_ROWS = 5000;
 

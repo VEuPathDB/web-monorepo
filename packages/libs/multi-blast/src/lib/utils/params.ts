@@ -14,8 +14,8 @@ import {
   SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 
-import { IOQueryJobDetails } from './api/query/api/ep-jobs-by-id';
-import { IOJobTarget } from './api/query/api/common';
+import { IOQueryJobDetails } from './api/query/types/ep-jobs-by-id';
+import { IOJobTarget } from './api/query/types/common';
 import { blastConfigToParamValues } from './params-from-query-config';
 
 export const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';

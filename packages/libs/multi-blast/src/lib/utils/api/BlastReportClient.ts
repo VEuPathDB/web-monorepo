@@ -9,16 +9,16 @@ import {
   IOReportJobCreateRequest,
   ioReportJobCreateResponse,
   ioReportJobListEntry,
-} from './report/api/ep-jobs';
+} from './report/types/ep-jobs';
 import { array, string } from 'io-ts';
 import { identity } from 'lodash';
 import {
   ioReportJobDetails,
   IOReportJobPatchRequest,
-} from './report/api/ep-job-by-id';
-import { ioFileEntry } from './report/api/ep-job-file-list';
-import { ioBulkStatusResponse } from './report/api/ep-statuses';
-import { IOGuestJobTransferRequest } from './report/api/ep-link-guest';
+} from './report/types/ep-job-by-id';
+import { ioFileEntry } from './report/types/ep-job-file-list';
+import { ioBulkStatusResponse } from './report/types/ep-statuses';
+import { IOGuestJobTransferRequest } from './report/types/ep-link-guest';
 
 // // //
 //

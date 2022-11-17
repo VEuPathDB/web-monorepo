@@ -37,10 +37,10 @@ import { ResultContainer } from './ResultContainer';
 import './BlastWorkspaceResult.scss';
 import { BlastReportClient } from '../utils/api/BlastReportClient';
 import { IOBlastOutFormat } from '../utils/api/report/blast/blast-config-format';
-import { IOReportJobDetails } from '../utils/api/report/api/ep-job-by-id';
+import { IOReportJobDetails } from '../utils/api/report/types/ep-job-by-id';
 import { BlastQueryClient } from '../utils/api/BlastQueryClient';
-import { IOQueryJobDetails } from '../utils/api/query/api/ep-jobs-by-id';
-import { IOJobTarget } from '../utils/api/query/api/common';
+import { IOQueryJobDetails } from '../utils/api/query/types/ep-jobs-by-id';
+import { IOJobTarget } from '../utils/api/query/types/common';
 import { ioTransformer } from '@veupathdb/http-utils';
 
 interface Props {

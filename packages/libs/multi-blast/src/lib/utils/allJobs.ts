@@ -1,6 +1,6 @@
 import { JobRow } from '../components/BlastWorkspaceAll';
 
-import { IOJobStatus } from './api/query/api/common';
+import { IOJobStatus } from './api/query/types/common';
 
 export function entityStatusToReadableStatus(
   entityStatus: IOJobStatus

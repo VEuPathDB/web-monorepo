@@ -11,14 +11,14 @@ import {
   IOQueryJobCreateRequest,
   ioQueryJobCreateResponse,
   ioQueryJobListEntry,
-} from './query/api/ep-jobs';
+} from './query/types/ep-jobs';
 import {
   ioQueryJobDetails,
   IOQueryJobPatchRequest,
-} from './query/api/ep-jobs-by-id';
-import { ioBulkStatusResponse } from './query/api/ep-statuses';
-import { ioBlastTargetIndex } from './query/api/ep-targets';
-import { IOGuestJobTransferRequest } from './query/api/ep-link-guest';
+} from './query/types/ep-jobs-by-id';
+import { ioBulkStatusResponse } from './query/types/ep-statuses';
+import { ioBlastTargetIndex } from './query/types/ep-targets';
+import { IOGuestJobTransferRequest } from './query/types/ep-link-guest';
 
 // // //
 //
