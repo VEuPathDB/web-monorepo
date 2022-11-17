@@ -74,7 +74,6 @@ import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/N
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';

@@ -421,28 +421,21 @@ const LineplotResponseData = array(
   ])
 );
 
+export type LineplotConfig = TypeOf<typeof lineplotConfig>;
+const lineplotConfig = intersection([
+  plotConfig,
+  type({
+    binSlider: BinWidthSlider,
+    binSpec: BinSpec,
+    viewport: numericViewport,
+  }),
+]);
+
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
   lineplot: type({
     data: LineplotResponseData,
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-        yVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        binSlider: BinWidthSlider,
-        binSpec: BinSpec,
-      }),
-    ]),
+    config: lineplotConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
