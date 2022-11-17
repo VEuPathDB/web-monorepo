@@ -471,18 +471,7 @@ export const MosaicResponse = type({
         }),
       ])
     ),
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-    }),
+    config: plotConfig,
   }),
   sampleSizeTable: array(
     type({
