@@ -85,7 +85,7 @@ function Message(props: Props) {
 
 function PolicyNotice(props: Props) {
   const { study, user, permissions, action } = props;
-  const message = getRestrictionMessage({ action, permissions, study, user });
+  const message = action === 'download' ? 'This study requires you to submit an access request' : getRestrictionMessage({ action, permissions, study, user });
   const policyUrl = getPolicyUrl(study);
   return isPrereleaseStudy(
     getStudyAccess(study),
@@ -93,7 +93,7 @@ function PolicyNotice(props: Props) {
     permissions
   ) ? null : !policyUrl ? null : getRequestNeedsApproval(study) == '0' ? (
     <p>
-      {message} Data access will be granted immediately upon request submission.
+      {message}. Data access will be granted immediately upon request submission.
       <br />
       <br />
       Please read the{' '}
@@ -104,8 +104,7 @@ function PolicyNotice(props: Props) {
     </p>
   ) : (
     <p>
-      {message} The data from this study requires approval to download and use
-      in research projects.
+      {message} and get approval from the study team before downloading data.
       <br />
       <br />
       Please read the{' '}
@@ -157,33 +156,31 @@ function Buttons(props: Props) {
     </div>
   ) : (
     <div className="DataRestrictionModal-Buttons">
-      {!user.isGuest ? null : (
-        <button
-          onClick={() => showLoginForm(window.location.href)}
-          className="btn"
-        >
-          Log In
-          <Icon fa="sign-in right-side" />
-        </button>
-      )}
-      {!approvalRequired ? null : (
-        <button
-          onClick={() => {
-            const loggedInRoute = `/request-access/${getStudyId(
-              study
-            )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
+      {!approvalRequired ? null : 
+        user.isGuest ? ( 
+          <button
+            onClick={() => showLoginForm(window.location.href)}
+            className="btn"
+          >
+            Log In or Submit Data Access Request
+          </button> 
+        ) : (
+          <button
+            onClick={() => {
+              const loggedInRoute = `/request-access/${getStudyId(
+                study
+              )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
 
-            if (user.isGuest) {
-              showLoginForm(window.location.origin + history.createHref(parsePath(loggedInRoute)));
-            } else {
-              history.push(loggedInRoute);
-            }
-          }}
-          className="btn"
-        >
-          Submit Data Access Request
-          <Icon fa="envelope-open-o right-side" />
-        </button>
+              if (user.isGuest) {
+                showLoginForm(window.location.origin + history.createHref(parsePath(loggedInRoute)));
+              } else {
+                history.push(loggedInRoute);
+              }
+            }}
+            className="btn"
+          >
+            Log In or Submit Data Access Request
+          </button>
       )}
       {!strict ? (
         <button className="btn" onClick={onClose}>
