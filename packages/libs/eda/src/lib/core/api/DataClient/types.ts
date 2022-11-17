@@ -657,6 +657,29 @@ export interface MapMarkersOverlayRequestParams {
   };
 }
 
+export type MapMarkersOverlayConfig = TypeOf<typeof mapMarkersOverlayConfig>;
+const mapMarkersOverlayConfig = intersection([
+  plotConfig,
+  type({
+    rankedValues: array(string),
+    overlayValues: array(string),
+    viewport: type({
+      latitude: type({
+        xMin: number,
+        xMax: number,
+      }),
+      longitude: type({
+        left: number,
+        right: number,
+      }),
+    }),
+  }),
+  partial({
+    binSpec: BinSpec,
+    binSlider: BinWidthSlider,
+  }),
+]);
+
 export type MapMarkersOverlayResponse = TypeOf<
   typeof MapMarkersOverlayResponse
 >;
@@ -669,32 +692,7 @@ export const MapMarkersOverlayResponse = type({
         geoAggregateVariableDetails: StringVariableValue,
       })
     ),
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        rankedValues: array(string),
-        overlayValues: array(string),
-        viewport: type({
-          latitude: type({
-            xMin: number,
-            xMax: number,
-          }),
-          longitude: type({
-            left: number,
-            right: number,
-          }),
-        }),
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        binSpec: BinSpec,
-        binSlider: BinWidthSlider,
-      }),
-    ]),
+    config: mapMarkersOverlayConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
