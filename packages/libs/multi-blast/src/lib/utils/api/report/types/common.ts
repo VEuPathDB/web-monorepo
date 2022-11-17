@@ -1,12 +1,12 @@
-import { literal, partial, string, TypeOf, union } from 'io-ts';
+import { keyof, partial, string, TypeOf } from 'io-ts';
 
-export const ioJobStatus = union([
-  literal('queued'),
-  literal('in-progress'),
-  literal('complete'),
-  literal('failed'),
-  literal('expired'),
-]);
+export const ioJobStatus = keyof({
+  queued: null,
+  'in-progress': null,
+  complete: null,
+  failed: null,
+  expired: null,
+});
 
 export const ioReportJobUserMeta = partial({
   summary: string,

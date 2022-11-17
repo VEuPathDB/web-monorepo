@@ -1,12 +1,12 @@
 import {
   boolean,
   intersection,
+  keyof,
   literal,
   number,
   partial,
   type,
   TypeOf,
-  union,
 } from 'io-ts';
 import { ioBlastQueryConfig, ioBlastSeg } from './blast-common';
 
@@ -16,10 +16,10 @@ import { ioBlastQueryConfig, ioBlastSeg } from './blast-common';
 //
 // // //
 
-export const ioRPSBlastCompBasedStats = union([
-  literal('simplified'),
-  literal('comp-based-stats'),
-]);
+export const ioRPSBlastCompBasedStats = keyof({
+  simplified: null,
+  'comp-based-stats': null,
+});
 
 export type IORPSBlastCompBasedStats = TypeOf<typeof ioRPSBlastCompBasedStats>;
 

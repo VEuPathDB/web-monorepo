@@ -1,6 +1,7 @@
 import {
   boolean,
   intersection,
+  keyof,
   literal,
   number,
   partial,
@@ -18,13 +19,13 @@ import { ioBlastQueryConfig, ioBlastStrand } from './blast-common';
 //
 // // //
 
-export const ioBlastNTask = union([
-  literal('blastn'),
-  literal('blastn-short'),
-  literal('dc-megablast'),
-  literal('megablast'),
-  literal('rmblastn'),
-]);
+export const ioBlastNTask = keyof({
+  blastn: null,
+  'blastn-short': null,
+  'dc-megablast': null,
+  megablast: null,
+  rmblastn: null,
+});
 
 export type IOBlastNTask = TypeOf<typeof ioBlastNTask>;
 
@@ -41,11 +42,11 @@ export type IOBlastNDust = TypeOf<typeof ioBlastNDust>;
 
 //
 
-export const ioBlastNTemplateType = union([
-  literal('coding'),
-  literal('coding-and-optimal'),
-  literal('optimal'),
-]);
+export const ioBlastNTemplateType = keyof({
+  coding: null,
+  'coding-and-optimal': null,
+  optimal: null,
+});
 
 export type IOBlastNTemplateType = TypeOf<typeof ioBlastNTemplateType>;
 

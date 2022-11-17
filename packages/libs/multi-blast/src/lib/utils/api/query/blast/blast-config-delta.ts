@@ -1,12 +1,12 @@
 import {
   boolean,
   intersection,
+  keyof,
   literal,
   number,
   partial,
   type,
   TypeOf,
-  union,
 } from 'io-ts';
 import { ioBlastQueryConfig, ioBlastSeg } from './blast-common';
 
@@ -16,25 +16,25 @@ import { ioBlastQueryConfig, ioBlastSeg } from './blast-common';
 //
 // // //
 
-export const ioDeltaBlastMatrix = union([
-  literal('BLOSUM45'),
-  literal('BLOSUM50'),
-  literal('BLOSUM62'),
-  literal('BLOSUM80'),
-  literal('BLOSUM90'),
-  literal('PAM30'),
-  literal('PAM70'),
-  literal('PAM250'),
-]);
+export const ioDeltaBlastMatrix = keyof({
+  BLOSUM45: null,
+  BLOSUM50: null,
+  BLOSUM62: null,
+  BLOSUM80: null,
+  BLOSUM90: null,
+  PAM30: null,
+  PAM70: null,
+  PAM250: null,
+});
 
 export type IODeltaBlastMatrix = TypeOf<typeof ioDeltaBlastMatrix>;
 
 //
 
-export const ioDeltaBlastCompBasedStats = union([
-  literal('none'),
-  literal('comp-based-stats'),
-]);
+export const ioDeltaBlastCompBasedStats = keyof({
+  none: null,
+  'comp-based-stats': null,
+});
 
 export type IODeltaBlastCompBasedStats = TypeOf<
   typeof ioDeltaBlastCompBasedStats

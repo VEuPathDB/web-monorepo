@@ -1,13 +1,4 @@
-import {
-  boolean,
-  literal,
-  number,
-  partial,
-  string,
-  type,
-  TypeOf,
-  union,
-} from 'io-ts';
+import { boolean, keyof, number, partial, string, type, TypeOf } from 'io-ts';
 
 // // //
 //
@@ -37,11 +28,11 @@ export type IOBlastSeg = TypeOf<typeof ioBlastSeg>;
 
 //
 
-export const ioBlastStrand = union([
-  literal('plus'),
-  literal('minus'),
-  literal('both'),
-]);
+export const ioBlastStrand = keyof({
+  plus: null,
+  minus: null,
+  both: null,
+});
 
 export type IOBlastStrand = TypeOf<typeof ioBlastStrand>;
 

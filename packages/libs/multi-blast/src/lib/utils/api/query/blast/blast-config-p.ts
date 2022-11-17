@@ -1,13 +1,13 @@
 import {
   boolean,
   intersection,
+  keyof,
   literal,
   number,
   partial,
   string,
   type,
   TypeOf,
-  union,
 } from 'io-ts';
 
 import { ioBlastQueryConfig, ioBlastSeg } from './blast-common';
@@ -18,38 +18,38 @@ import { ioBlastQueryConfig, ioBlastSeg } from './blast-common';
 //
 // // //
 
-export const ioBlastPTask = union([
-  literal('blastp'),
-  literal('blastp-fast'),
-  literal('blastp-short'),
-]);
+export const ioBlastPTask = keyof({
+  blastp: null,
+  'blastp-fast': null,
+  'blastp-short': null,
+});
 
 export type IOBlastPTask = TypeOf<typeof ioBlastPTask>;
 
 //
 
-export const ioBlastPMatrix = union([
-  literal('BLOSUM45'),
-  literal('BLOSUM50'),
-  literal('BLOSUM62'),
-  literal('BLOSUM80'),
-  literal('BLOSUM90'),
-  literal('PAM30'),
-  literal('PAM70'),
-  literal('PAM250'),
-  literal('IDENTITY'),
-]);
+export const ioBlastPMatrix = keyof({
+  BLOSUM45: null,
+  BLOSUM50: null,
+  BLOSUM62: null,
+  BLOSUM80: null,
+  BLOSUM90: null,
+  PAM30: null,
+  PAM70: null,
+  PAM250: null,
+  IDENTITY: null,
+});
 
 export type IOBlastPMatrix = TypeOf<typeof ioBlastPMatrix>;
 
 //
 
-export const ioBlastPCompBasedStats = union([
-  literal('none'),
-  literal('comp-based-stats'),
-  literal('comp-based-score-adjustment-conditional'),
-  literal('comp-based-score-adjustment-unconditional'),
-]);
+export const ioBlastPCompBasedStats = keyof({
+  none: null,
+  'comp-based-stats': null,
+  'comp-based-score-adjustment-conditional': null,
+  'comp-based-score-adjustment-unconditional': null,
+});
 
 export type IOBlastPCompBasedStats = TypeOf<typeof ioBlastPCompBasedStats>;
 

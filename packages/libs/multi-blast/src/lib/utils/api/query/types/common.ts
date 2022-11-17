@@ -2,21 +2,20 @@ import {
   array,
   boolean,
   intersection,
-  literal,
+  keyof,
   partial,
   string,
   type,
   TypeOf,
-  union,
 } from 'io-ts';
 
-export const ioJobStatus = union([
-  literal('queued'),
-  literal('in-progress'),
-  literal('complete'),
-  literal('failed'),
-  literal('expired'),
-]);
+export const ioJobStatus = keyof({
+  queued: null,
+  'in-progress': null,
+  complete: null,
+  failed: null,
+  expired: null,
+});
 
 export const ioJobTarget = type({
   targetDisplayName: string,

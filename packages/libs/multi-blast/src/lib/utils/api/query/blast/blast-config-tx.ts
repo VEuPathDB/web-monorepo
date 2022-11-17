@@ -1,13 +1,13 @@
 import {
   boolean,
   intersection,
+  keyof,
   literal,
   number,
   partial,
   string,
   type,
   TypeOf,
-  union,
 } from 'io-ts';
 import { ioBlastQueryConfig, ioBlastSeg, ioBlastStrand } from './blast-common';
 
@@ -17,16 +17,16 @@ import { ioBlastQueryConfig, ioBlastSeg, ioBlastStrand } from './blast-common';
 //
 // // //
 
-export const ioTBlastXMatrix = union([
-  literal('BLOSUM45'),
-  literal('BLOSUM50'),
-  literal('BLOSUM62'),
-  literal('BLOSUM80'),
-  literal('BLOSUM90'),
-  literal('PAM30'),
-  literal('PAM70'),
-  literal('PAM250'),
-]);
+export const ioTBlastXMatrix = keyof({
+  BLOSUM45: null,
+  BLOSUM50: null,
+  BLOSUM62: null,
+  BLOSUM80: null,
+  BLOSUM90: null,
+  PAM30: null,
+  PAM70: null,
+  PAM250: null,
+});
 
 export type IOTBlastXMatrix = TypeOf<typeof ioTBlastXMatrix>;
 
