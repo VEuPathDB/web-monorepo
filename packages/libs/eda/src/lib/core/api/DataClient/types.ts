@@ -509,7 +509,7 @@ export const TwoByTwoResponse = intersection([
         pvalue: union([number, string]),
         orInterval: string,
         rrInterval: string,
-        relativerisk: number,
+        relativerisk: NumberOrNull,
         facetVariableDetails: union([
           tuple([StringVariableValue]),
           tuple([StringVariableValue, StringVariableValue]),
