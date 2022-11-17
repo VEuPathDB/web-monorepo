@@ -208,7 +208,163 @@ export const Collapsible = (args) => {
     )
   };
 
+  const mosaicStatsTable = () => {
+
+    const tableThinBorder = '1px solid black';
+    const tableThickBorder = '2px solid black';
+    const tablePaddingDefault = '0.3em 0.5em 0.3em 0em';
+
+    const tableColumnHeaderStyle = {
+      borderRight: tableThickBorder,
+      borderBottom: tableThinBorder,
+      borderLeft: tableThickBorder,
+      width: '20em',
+      padding: tablePaddingDefault,
+    };
+
+    const tableRowHeaderStyle = {
+      borderTop: tableThickBorder,
+      width: '10em',
+      padding: tablePaddingDefault,
+    };
+
+    const tableRowBorder = {
+      borderLeft: tableThickBorder,
+      borderRight: tableThickBorder,
+    };
+
+    const tableCellStyle = {
+      borderBottom: tableThinBorder,
+      width: '10em',
+      padding: tablePaddingDefault,
+    };
+
+    return (
+      <>
+        <table style={{ borderCollapse: 'collapse', marginTop: '1em', textAlign: 'right' }}>
+          <tr style={{ borderBottom: tableThickBorder, borderRight: tableThickBorder }}>
+            <td style={{ borderRight: tableThickBorder }}>&nbsp;</td>
+            <td style={tableRowHeaderStyle}><b>value</b></td>
+            <td style={tableRowHeaderStyle}><b>95% CI</b></td>
+            <td style={tableRowHeaderStyle}><b>P-value</b></td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableColumnHeaderStyle}><b>Cohort or RCT: Odds ratio</b></td>
+            <td style={tableCellStyle}>5</td>
+            <td style={tableCellStyle}>92</td>
+            <td style={tableCellStyle}>97</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableColumnHeaderStyle}><b>Case control or Cross-sectional: Risk ratio</b></td>
+            <td style={tableCellStyle}>13</td>
+            <td style={tableCellStyle}>126</td>
+            <td style={tableCellStyle}>139</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableColumnHeaderStyle}><b>Chi-squared (df=1)</b></td>
+            <td style={tableCellStyle}>18</td>
+            <td style={tableCellStyle}>n/a</td>
+            <td style={tableCellStyle}>236</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableColumnHeaderStyle}><b>Sensitivity</b></td>
+            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableCellStyle}>n/a</td>
+          </tr>
+          <tr style={{ borderRight: tableThickBorder, borderBottom: tableThickBorder, borderLeft: tableThickBorder }}>
+            <td style={tableColumnHeaderStyle}><b>Specificity</b></td>
+            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableCellStyle}>n/a</td>
+          </tr>
+        </table>
+      </>
+    )
+  };
+
+  const CollapsibleStatsContent = () => {
+
   return (
+    <div>
+      Which measure of association to choose depends on whether you are working with incidence or prevalence data, which in turn depends on the type of study design used.
+
+      Studies that collect incidence data: cohort studies and randomized controlled trials
+
+      <ul>
+      <li> Look for new cases of disease.</li>
+      <li> There is some longitudinal follow-up that must occur to allow for these new cases to develop.</li>
+      <li> Must start with those who were at risk (i.e., without the disease or health outcome) as our baseline.</li>
+      <li> Calculate Risk ratio over the length of time of follow-up</li>
+      <ul>
+      <li> If the RR is greater than 1, it means that we observed less disease in the exposed group than in the unexposed group. Likewise, if the RR is less than 1, it means that we observed less disease in the exposed group than in the unexposed group. If we assume causality, an exposure with an RR &lt; 1 is preventing disease, and an exposure with an RR &gt; 1 is causing disease.</li>
+      <li> "The risk of [disease] was [RR] times as high in [exposed] compared to [unexposed] over [x] days/months/years."</li>
+      </ul>
+      <li> Rate ratio if person time at risk.</li>
+      <li> Both the risk ratio and the rate ratio are abbreviated RR. This abbreviation (and the risk ratio and/or rate ratio) is often referred to by epidemiologists as relative risk. This is an example of inconsistent lexicon in the field of epidemiology; in this book, I use risk ratio and rate ratio separately (rather than relative risk as an umbrella term) because it is helpful, in my opinion, to distinguish between studies using the population at risk vs. those using a person-time at risk approach. Regardless, a measure of association called RR always calculated as incidence in the exposed divided by incidence in the unexposed.</li>
+      </ul>
+
+      Studies that look at prevalence data: Cross sectional studies and case-control studies. For both of these, since we are not using incidence cases, we cannot calculate the RR, because we have no data on incidence. We instead calculate the odds ratio (OR).
+  </div>
+  )};
+
+  return (
+    <>
+      <h3> Mosaic 2x2 more informatio box</h3>
+      <div style={{width: '960px'}}>
+        {shouldShowWarning && (
+          <Banner
+            banner={{
+              type: 'info',
+              // message is used as a basic text
+              message: 'The 2x2 contingency table must be properly constructed to correctly calculate statistics and interpret your results.',
+              pinned: true,
+              intense: false,
+              additionalMessage: undefined,
+              // text for showMore link
+              showMoreLinkText: 'Read more...',
+              // text for showless link
+              showLessLinkText: 'Read less...',
+              // color for show more links
+              showMoreLinkColor: '#000000',
+              // is showMoreLink bold?
+              isShowMoreLinkBold: true,
+            }}
+            onClose={handleCloseWarning}
+            // collapsible content: React.FC
+            CollapsibleContent={CollapsibleContent}
+          />
+        )}
+      </div>
+      <br />
+      <h3> Mosaic 2x2 Statistics tab box </h3>
+      <div style={{width: '960px'}}>
+      {shouldShowWarning && (
+        <Banner
+          banner={{
+            type: 'info',
+            // message is used as a basic text
+            message: 'The 2x2 contingency table must be properly constructed to correctly calculate statistics and interpret your results.',
+            pinned: true,
+            intense: false,
+            additionalMessage: undefined,
+            // text for showMore link
+            showMoreLinkText: 'Read more...',
+            // text for showless link
+            showLessLinkText: 'Read less...',
+            // color for show more links
+            showMoreLinkColor: '#000000',
+            // is showMoreLink bold?
+            isShowMoreLinkBold: true,
+          }}
+          onClose={handleCloseWarning}
+          // collapsible content: React.FC
+          CollapsibleContent={CollapsibleStatsContent}
+        />
+      )}
+    </div>
+    <br />
+    <h3> Mosaic 2x2 Statistics table </h3>
     <div style={{width: '960px'}}>
       {shouldShowWarning && (
         <Banner
@@ -230,9 +386,10 @@ export const Collapsible = (args) => {
           }}
           onClose={handleCloseWarning}
           // collapsible content: React.FC
-          CollapsibleContent={CollapsibleContent}
+          CollapsibleContent={mosaicStatsTable}
         />
       )}
     </div>
+    </>
   );
 };
