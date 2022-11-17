@@ -407,14 +407,20 @@ function BlastSummary({
           )}
           <span className="InlineHeader">Program:</span>
           <span>
-            {jobDetails.blastConfig.tool === 'deltablast' ||
-            jobDetails.blastConfig.tool === 'psiblast' ||
-            jobDetails.blastConfig.tool === 'rpsblast' ||
-            jobDetails.blastConfig.tool === 'rpstblastn' ||
-            jobDetails.blastConfig.tool === 'tblastx' ||
-            jobDetails.blastConfig.task == null
-              ? jobDetails.blastConfig.tool
-              : jobDetails.blastConfig.task}
+            {
+              /* Try and show the specific task that was selected, if possible.
+                If not possible, fall back to just showing the tool.
+                (Big or block as Most blastConfig types don't have a 'task'
+                property) */
+              jobDetails.blastConfig.tool === 'deltablast' ||
+              jobDetails.blastConfig.tool === 'psiblast' ||
+              jobDetails.blastConfig.tool === 'rpsblast' ||
+              jobDetails.blastConfig.tool === 'rpstblastn' ||
+              jobDetails.blastConfig.tool === 'tblastx' ||
+              jobDetails.blastConfig.task == null
+                ? jobDetails.blastConfig.tool
+                : jobDetails.blastConfig.task
+            }
           </span>
           <span className="InlineHeader">Target Type:</span>
           <span>{hitTypeDisplayName}</span>
