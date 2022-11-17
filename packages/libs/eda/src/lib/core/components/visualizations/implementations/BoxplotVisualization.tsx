@@ -634,11 +634,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // like any other continuous variable.
   const computedYAxisDescriptor =
     !providedXAxisVariable && computedYAxisDetails
-      ? ({
-          entityId: computedYAxisDetails?.entityId,
-          variableId: computedYAxisDetails?.variableId,
-          displayName: 'foo', // data.value?.computedVariableMetadata?.displayName?.[0],
-        } as VariableDescriptor)
+      ? {
+          entityId: computedYAxisDetails.entityId,
+          variableId:
+            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+        }
       : null;
 
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
