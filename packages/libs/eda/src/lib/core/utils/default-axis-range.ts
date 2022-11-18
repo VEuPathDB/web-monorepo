@@ -1,11 +1,11 @@
 import { Variable } from '../types/study';
 import { NumberOrDateRange } from '@veupathdb/components/lib/types/general';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { ComputedVariableMetadata } from '../api/DataClient/types';
+import { VariableMapping } from '../api/DataClient/types';
 import { min, max } from 'lodash';
 
 export function numberDateDefaultAxisRange(
-  variable: Variable | ComputedVariableMetadata,
+  variable: Variable | VariableMapping,
   /** the min/minPos/max values observed in the data response */
   observedMin: number | string | undefined,
   observedMinPos: number | string | undefined,
@@ -143,7 +143,7 @@ export function numberDateDefaultAxisRange(
     }
     // for the case of computation apps such as alphadiv and abundance
   } else if (
-    ComputedVariableMetadata.is(variable) &&
+    VariableMapping.is(variable) &&
     variable.displayRangeMin != null &&
     variable.displayRangeMax != null
   ) {
