@@ -14,9 +14,9 @@ interface ComputeSpec {
   config: unknown;
 }
 
-type JobStatusReponse = t.TypeOf<typeof JobStatusReponse>;
+export type JobStatusReponse = t.TypeOf<typeof JobStatusReponse>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const JobStatusReponse = t.type({
+export const JobStatusReponse = t.type({
   jobID: t.string,
   status: t.keyof({
     queued: null,
