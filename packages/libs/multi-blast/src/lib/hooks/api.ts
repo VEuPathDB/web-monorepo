@@ -9,11 +9,11 @@ import { notifyUnhandledError } from '@veupathdb/wdk-client/lib/Actions/Unhandle
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 
-import { BlastApi } from '../utils/api';
 import {
   BlastCompatibleWdkService,
   isBlastCompatibleWdkService,
 } from '../utils/wdkServiceIntegration';
+import { BlastAPIClient } from '../utils/api/BlastAPIClient';
 
 export const BlastServiceUrl = createContext('/multi-blast');
 
@@ -30,7 +30,7 @@ export function useBlastApi() {
 
   const reportError = makeErrorReporter(wdkDependencies.wdkService, dispatch);
 
-  return BlastApi.getBlastClient(
+  return BlastAPIClient.create(
     blastServiceUrl,
     wdkDependencies.wdkService,
     reportError
