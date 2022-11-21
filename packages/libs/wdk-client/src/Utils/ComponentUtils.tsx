@@ -232,7 +232,8 @@ function logShallowComparison<P extends AnyObject>(obj1: P, obj2: P, label: stri
 export function safeHtml<P>(str: string, props?: P, Component?: React.ComponentClass<P>): JSX.Element;
 export function safeHtml<P>(str: string, props?: P, Component?: React.StatelessComponent<P>): JSX.Element;
 export function safeHtml<P>(str: string, props?: P, Component?: string): JSX.Element;
-export function safeHtml<P>(str = '', props?: P, Component: any = 'span'): JSX.Element {
+export function safeHtml<P>(str: string | null, props?: P, Component: any = 'span'): JSX.Element {
+  str = str ?? '';
   if (str.indexOf('<') === -1) {
     return <Component {...props}>{str}</Component>
   }
