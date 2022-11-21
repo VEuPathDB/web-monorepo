@@ -136,14 +136,16 @@ export function fixLabelForNumberVariables(
  * In the abundance app, var ids show up like normal variable values. This function
  * takes these ids (labels) and returns that variable's display name, if it exists.
  *
+ * Assumes that they all belong to the same entity!
+ *
  * If no variable is found with that id, the original label is returned.
  */
 export function fixVarIdLabels(
   labels: string[] = [],
-  variableList: VariableDescriptor[],
+  entityId: string,
   entities: StudyEntity[]
 ): string[] {
-  return labels.map((label) => fixVarIdLabel(label, variableList, entities));
+  return labels.map((label) => fixVarIdLabel(label, entityId, entities));
 }
 
 /**
@@ -154,14 +156,10 @@ export function fixVarIdLabels(
  */
 export function fixVarIdLabel(
   label: string,
-  variableList: VariableDescriptor[],
+  entityId: string,
   entities: StudyEntity[]
 ): string {
-  // Label is a variable id. Get entity and var id from variable list.
-  const variableDescriptors = variableList.filter(
-    (varItem) => varItem.variableId === label
-  );
-  const variableDescriptor = variableDescriptors && variableDescriptors[0];
+  const variableDescriptor = { entityId, variableId: label };
   const retrievedVariable = findEntityAndVariable(entities, variableDescriptor);
   const displayName: string = retrievedVariable?.variable.displayName || label;
   return displayName;

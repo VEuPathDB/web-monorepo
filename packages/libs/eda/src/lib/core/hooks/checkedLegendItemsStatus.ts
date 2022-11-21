@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
 /**
  * A custom hook to preserve the status of checked legend items

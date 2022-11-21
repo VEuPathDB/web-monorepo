@@ -709,6 +709,13 @@ export default function VariableList({
     customCheckboxes: customCheckboxes,
     additionalFilters: additionalFilters,
     isAdditionalFilterApplied: isAdditionalFilterApplied,
+    styleOverrides: {
+      treeNode: {
+        nodeWrapper: {
+          padding: 0,
+        },
+      },
+    },
   };
 
   return asDropdown ? (
@@ -724,6 +731,14 @@ export default function VariableList({
       <SelectTree
         key={activeField?.term}
         {...sharedProps}
+        styleOverrides={{
+          ...sharedProps.styleOverrides,
+          searchBox: {
+            container: {
+              margin: '0 0.5em 0 2em',
+            },
+          },
+        }}
         buttonDisplayContent={dropdownLabel}
         wrapPopover={(treeSection) => (
           <div
@@ -783,6 +798,7 @@ const baseFieldNodeLinkStyle = {
   borderRadius: '0.5em',
   display: 'inline-block',
   cursor: 'pointer',
+  fontSize: '0.9em',
 };
 
 const activeFieldNodeLinkStyle = {
@@ -824,6 +840,7 @@ const FieldNode = ({
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
   const nodeColor = { color: asDropdown ? '#2f2f2f' : '#069' };
+  const anchorNodeLinkStyle = isMultiPick ? {} : { marginLeft: '0.5em' };
 
   useLayoutEffect(() => {
     // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
@@ -843,7 +860,22 @@ const FieldNode = ({
   const fieldContents = (
     isMulti(field) ? !showMultiFilterDescendants : isFilterField(field)
   ) ? (
-    <Tooltip
+    /**
+     * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
+     * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
+     */
+    // <Tooltip
+    //   title={
+    //     isMultiPick
+    //       ? ''
+    //       : isDisabled
+    //       ? customDisabledVariableMessage ??
+    //         'This variable cannot be used with this plot and other variable selections.'
+    //       : 'Select this variable.'
+    //   }
+    // >
+    <a
+      ref={nodeRef}
       title={
         isMultiPick
           ? ''
@@ -852,44 +884,46 @@ const FieldNode = ({
             'This variable cannot be used with this plot and other variable selections.'
           : 'Select this variable.'
       }
+      style={
+        isActive
+          ? {
+              ...baseFieldNodeLinkStyle,
+              ...activeFieldNodeLinkStyle,
+              ...anchorNodeLinkStyle,
+              ...nodeColor,
+            }
+          : isDisabled
+          ? {
+              ...baseFieldNodeLinkStyle,
+              ...anchorNodeLinkStyle,
+              ...disabledFieldNodeLinkStyle,
+              ...nodeColor,
+            }
+          : {
+              ...baseFieldNodeLinkStyle,
+              ...anchorNodeLinkStyle,
+              ...nodeColor,
+            }
+      }
+      href={'#' + field.term}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isDisabled) handleFieldSelect(field);
+      }}
     >
-      <a
-        ref={nodeRef}
-        style={
-          isActive
-            ? {
-                ...baseFieldNodeLinkStyle,
-                ...activeFieldNodeLinkStyle,
-                ...nodeColor,
-              }
-            : isDisabled
-            ? {
-                ...baseFieldNodeLinkStyle,
-                ...disabledFieldNodeLinkStyle,
-                ...nodeColor,
-              }
-            : { ...baseFieldNodeLinkStyle, ...nodeColor }
-        }
-        href={'#' + field.term}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          if (!isDisabled) handleFieldSelect(field);
-        }}
-      >
-        <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
-      </a>
-    </Tooltip>
+      <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
+    </a>
   ) : (
+    // </Tooltip>
     //add condition for identifying entity parent and entity parent of activeField
     <div
       style={
         field.term.includes('entity')
           ? {
               fontWeight: 'bold',
-              fontSize: '1.05em',
               cursor: 'pointer',
-              marginLeft: '0.5em',
+              padding: '0.25em 0.5em',
               ...nodeColor,
             }
           : { ...baseFieldNodeLinkStyle, ...nodeColor }
@@ -909,27 +943,31 @@ const FieldNode = ({
               display: 'flex',
               justifyContent: 'space-between',
               width: '100%',
-              paddingLeft: isMultiPick ? 0 : '1em',
             }
           : {}
       }
     >
       {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
-        <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
-          <button
-            className={`link`}
-            style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
-            onClick={(e) => {
-              // prevent click from toggling expansion state
-              e.stopPropagation();
-              onClickStar();
-            }}
-            disabled={starredVariablesLoading}
-          >
-            <Icon fa={isStarred ? 'star' : 'star-o'} />
-          </button>
-        </Tooltip>
+        /**
+         * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
+         * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
+         */
+        // <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
+        <button
+          className={`link`}
+          title={`Click to ${isStarred ? 'unstar' : 'star'}`}
+          style={isStarred ? { ...starStyleOn } : { ...starStyleOff }}
+          onClick={(e) => {
+            // prevent click from toggling expansion state
+            e.stopPropagation();
+            onClickStar();
+          }}
+          disabled={starredVariablesLoading}
+        >
+          <Icon fa={isStarred ? 'star' : 'star-o'} />
+        </button>
+        // </Tooltip>
       )}
     </div>
   );

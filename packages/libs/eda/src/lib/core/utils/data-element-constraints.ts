@@ -14,19 +14,20 @@ import { findEntityAndVariable } from './study-metadata';
  * current selectedVariables
  *
  */
-export function disabledVariablesForInput<ConfigType>(
-  inputName: keyof ConfigType,
+export function disabledVariablesForInput(
+  inputName: string,
   /**
    * entities must be in root-first order (pre-order)
    */
   entities: StudyEntity[],
-  flattenedConstraints: DataElementConstraintRecord | undefined,
+  constraints: DataElementConstraintRecord[] | undefined,
   dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName
 ): VariableDescriptor[] {
   const disabledVariables = excludedVariables(
     entities[0],
-    flattenedConstraints && flattenedConstraints[inputName as string] // not ideal...
+    inputName,
+    constraints
   );
   if (dataElementDependencyOrder == null) {
     return disabledVariables;
@@ -174,14 +175,19 @@ export function filterVariablesByConstraint(
  */
 export function excludedVariables(
   rootEntity: StudyEntity,
-  constraint?: DataElementConstraint
+  inputName: string,
+  constraints?: DataElementConstraintRecord[]
 ): VariableDescriptor[] {
-  if (constraint == null) return [];
+  if (constraints == null) return [];
+
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
       e.variables
-        .filter(
-          (variable) => !variableConstraintPredicate(constraint, variable)
+        .filter((variable) =>
+          constraints.every(
+            (constraint) =>
+              !variableConstraintPredicate(constraint[inputName], variable)
+          )
         )
         .map((v) => ({ entityId: e.id, variableId: v.id }))
     )
@@ -192,9 +198,10 @@ export function excludedVariables(
  * Tests if a variable satisfies a constraint
  */
 function variableConstraintPredicate(
-  constraint: DataElementConstraint,
+  constraint: DataElementConstraint | undefined,
   variable: VariableTreeNode
 ) {
+  if (constraint == null) return true;
   return (
     variable.type === 'category' ||
     ((constraint.allowedShapes == null ||
@@ -212,41 +219,61 @@ function variableConstraintPredicate(
 }
 
 export type VariablesByInputName = Partial<Record<string, VariableDescriptor>>;
-export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
+export type DataElementConstraintRecord = Partial<
+  Record<string, DataElementConstraint>
+>;
 
 /**
- * Given an array of DataElementConstraint objects and a set of values, return
- * a unioned DataElementConstraint object that includes all of the rules for
- * which the provided values satisfy.
+ * Given an array of DataElementConstraint objects, user-selected variables, and a variable reference of interest
+ * (ex. xAxisVariable), return an array of DataElementConstraint objects that contains all of the rules 
+ * that should constrain the variable reference of interest.
  *
- * example: one contraint allows string x number, the other date x string
+ * example: one contraint allows string x number, the other date x string, the other vars with < 5 values.
  *
  * constraints = [ { xAxisVariable: { allowedTypes: ['string'] }, yAxisVariable: { allowedTypes: ['number'] } },
-                   { xAxisVariable: { allowedTypes: ['date'] }, yAxisVariable: { allowedTypes: ['string'] } } ]
+                   { xAxisVariable: { allowedTypes: ['date'] }, yAxisVariable: { allowedTypes: ['string'] } },
+                   { xAxisVariable: { maxNumVars: 5 }, yAxisVariable: { allowedTypes: ['string'] } }]
  *
- * If the user has already chosen a string-type xAxisVariable, the
- * constraints.filter() below will allow constraints[0] to pass but
- * will exclude constraints[1] because the already chosen string
- * x-variable is not a date. It won't even check the yAxisVariable of
- * constraint[1] because of the all-or-nothing nature of constraints.
+ * If the user has already chosen a string-type xAxisVariable with 7 values, the
+ * constraints.filter() below will allow only constraints[0] to pass for the yAxisVariable. 
+ * The xAxisVariable is already chosen and so restricts the yAxisVariable to constraints that satisfy
+ * the xAxisVariable choice. It won't even check the yAxisVariable of
+ * constraint[1] because of the all-or-nothing nature of constraints. However, we should still be 
+ * able to switch the xAxisVariable to a date or var with < 5 values, so for the xAxisVariable we 
+ * will pass constraints[0:2]. 
+ * 
+ * Additionally, we do not want to merge constraints because, for example, that would
+ * squeeze the xAxisVariables, with no variables chosen, to only allow vars that are strings or dates *and* 
+ * have fewer than five values.
  *
- * The constraints passed by the filter are merged into one.
+ * More examples:
+ * If no variable has been selected by the user, then all constraints will be used for
+ * both the x and y variables.
  *
- * If no variable has been selected by the user, then the final merged constraint would be
- * { xAxisVariable: { allowedTypes: ['string','date'] }, yAxisVariable: { allowedTypes: ['number', 'string'] } }
- *
+ * If the yAxisVariable has been set to a string, the xAxisVariable will be restricted to 
+ * constraints[1:2], while the yAxisVariable will use all three constraints, since it is
+ * the only variable chosen
+ * 
+ * If the xAxisVariable is a date with 4 unique values, the xAxisVariable will use all three constraint patterns
+ * while the yAxisVariable will only use constraints[1:2].
+ * 
  */
-export function flattenConstraints(
+
+export function filterConstraints(
   variables: VariablesByInputName,
   entities: StudyEntity[],
-  constraints: DataElementConstraintRecord[]
-): DataElementConstraintRecord {
+  constraints: DataElementConstraintRecord[],
+  selectedVarReference: string // variable reference for which to determine constraints. Ex. xAxisVariable.
+): DataElementConstraintRecord[] {
   // Find all compatible constraints
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
+      if (constraint == null) return true;
       const value = variables[variableName];
       // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
+      // Ignore constraints that are on this selectedVarReference
+      if (selectedVarReference === variableName) return true;
       // If a constraint does not declare shapes or types and it allows multivalued variables, then any value is allowed, thus the constraint is "in-play"
       if (
         isEmpty(constraint.allowedShapes) &&
@@ -293,16 +320,13 @@ export function flattenConstraints(
       );
     })
   );
+
   if (compatibleConstraints.length === 0)
     throw new Error(
-      'flattenConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
+      'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
     );
-  // Combine compatible constraints into a single constraint, concatenating
-  // allowed shapes and types.
-  return compatibleConstraints.reduce(
-    mergeConstraints,
-    {} as DataElementConstraintRecord
-  );
+
+  return compatibleConstraints;
 }
 
 export function mergeConstraints(
@@ -311,7 +335,7 @@ export function mergeConstraints(
 ): DataElementConstraintRecord {
   const keys = union(Object.keys(constraintMapA), Object.keys(constraintMapB));
   return Object.fromEntries(
-    keys.map((key): [string, DataElementConstraint] => {
+    keys.map((key): [string, DataElementConstraint | undefined] => {
       const constraintA = constraintMapA[key];
       const constraintB = constraintMapB[key];
       const mergedIsTemporal =
