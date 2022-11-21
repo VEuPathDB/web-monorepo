@@ -27,6 +27,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { getStudyRequestNeedsApproval } from '@veupathdb/study-data-access/lib/shared/studies';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
+import { H5, Paragraph } from '@veupathdb/coreui';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -121,7 +122,7 @@ export default function DownloadTab({
         ?.actionAuthorization['resultsAll'];
     const requestElement = (
       <button className="link" style={{ padding: 0 }} onClick={handleClick}>
-        Click here to request access.
+        request access
       </button>
     );
 
@@ -146,17 +147,13 @@ export default function DownloadTab({
           ></Banner>
         )}
         {/* End temporary solution section */}
-        <em>
-          {getDataAccessDeclaration(
-            studyAccess,
-            requestNeedsApproval,
-            user.isGuest,
-            hasPermission ?? false
-          )}
-          {studyAccess !== 'Public' &&
-            (user.isGuest || !hasPermission) &&
-            requestElement}
-        </em>
+        {getDataAccessDeclaration(
+          studyAccess,
+          requestNeedsApproval,
+          user.isGuest,
+          hasPermission ?? false,
+          requestElement
+        )}
       </span>
     );
   }, [
@@ -282,32 +279,44 @@ function getDataAccessDeclaration(
   studyAccess: string,
   requestNeedsApproval: boolean,
   isGuest: boolean,
-  hasPermission: boolean = false
-): string {
-  const DATA_ACCESS_STUB = `Data downloads for this study are ${studyAccess.toLowerCase()}. `;
-  const PUBLIC_ACCESS_STUB = 'You can download the data without logging in.';
-  const LOGIN_REQUEST_STUB =
-    'You must register or log in and request access to download data;';
+  hasPermission: boolean = false,
+  requestElement: JSX.Element
+): JSX.Element {
+  const PUBLIC_ACCESS_STUB =
+    'Data downloads for this study are public. Data is available without logging in.';
+  const LOGIN_REQUEST_STUB = (
+    <span>
+      To download data please register or log in and {requestElement}.
+    </span>
+  );
   const CONTROLLED_ACCESS_STUB =
-    ' data can be downloaded immediately following request submission. ';
+    ' Data will be available immediately following request submission.';
   const PROTECTED_ACCESS_STUB =
-    ' data can be downloaded after the study team reviews your request and grants you access. ';
+    ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
-    'You have been granted access to download the data.';
+    ' You have been granted access to download the data.';
   // const ACCESS_PENDING_STUB = 'Your data access request is pending.';
 
-  let dataAccessDeclaration = DATA_ACCESS_STUB;
-  if (studyAccess === 'Public') {
-    return (dataAccessDeclaration += PUBLIC_ACCESS_STUB);
-  } else if (isGuest || !hasPermission) {
-    dataAccessDeclaration += LOGIN_REQUEST_STUB;
-    return (dataAccessDeclaration += !requestNeedsApproval
-      ? CONTROLLED_ACCESS_STUB
-      : PROTECTED_ACCESS_STUB);
-  } else if (!isGuest && hasPermission) {
-    return (dataAccessDeclaration += ACCESS_GRANTED_STUB);
-  } else {
-    // dataAccessDeclaration += ACCESS_PENDING_STUB;
-    return dataAccessDeclaration;
-  }
+  return (
+    <div>
+      <H5 additionalStyles={{ margin: 0 }}>
+        Data Accessibility:{' '}
+        <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
+      </H5>
+      <Paragraph styleOverrides={{ margin: 0 }}>
+        {studyAccess === 'Public' ? (
+          <span>{PUBLIC_ACCESS_STUB}</span>
+        ) : isGuest || !hasPermission ? (
+          <span>
+            {LOGIN_REQUEST_STUB}
+            {requestNeedsApproval
+              ? PROTECTED_ACCESS_STUB
+              : CONTROLLED_ACCESS_STUB}
+          </span>
+        ) : (
+          <span>{ACCESS_GRANTED_STUB}</span>
+        )}
+      </Paragraph>
+    </div>
+  );
 }

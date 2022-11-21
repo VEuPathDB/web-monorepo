@@ -3,8 +3,8 @@ import { StudyEntity } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
+  filterConstraints,
   disabledVariablesForInput,
-  flattenConstraints,
   VariablesByInputName,
 } from '../../utils/data-element-constraints';
 
@@ -145,8 +145,6 @@ export function InputVariables(props: Props) {
   ) => {
     onChange({ ...selectedVariables, [inputName]: selectedVariable });
   };
-  const flattenedConstraints =
-    constraints && flattenConstraints(selectedVariables, entities, constraints);
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
@@ -156,19 +154,30 @@ export function InputVariables(props: Props) {
   > = useMemo(
     () =>
       inputs.reduce((map, input) => {
+        // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
+        const filteredConstraints =
+          constraints &&
+          filterConstraints(
+            selectedVariables,
+            entities,
+            constraints,
+            input.name
+          );
+
         map[input.name] = disabledVariablesForInput(
           input.name,
           entities,
-          flattenedConstraints,
+          filteredConstraints,
           dataElementDependencyOrder,
           selectedVariables
         );
+
         return map;
       }, {} as Record<string, VariableDescriptor[]>),
     [
       dataElementDependencyOrder,
       entities,
-      flattenedConstraints,
+      constraints,
       inputs,
       selectedVariables,
     ]
@@ -195,9 +204,10 @@ export function InputVariables(props: Props) {
                     style={
                       input.readonlyValue
                         ? {}
-                        : flattenedConstraints &&
-                          !selectedVariables[input.name] &&
-                          flattenedConstraints[input.name].isRequired
+                        : !selectedVariables[input.name] &&
+                          constraints &&
+                          constraints.length &&
+                          constraints[0][input.name]?.isRequired
                         ? requiredInputStyle
                         : {}
                     }
@@ -206,8 +216,9 @@ export function InputVariables(props: Props) {
                       css={{}}
                       title={
                         !input.readonlyValue &&
-                        flattenedConstraints &&
-                        flattenedConstraints[input.name].isRequired
+                        constraints &&
+                        constraints.length &&
+                        constraints[0][input.name]?.isRequired
                           ? 'Required parameter'
                           : ''
                       }
@@ -222,8 +233,9 @@ export function InputVariables(props: Props) {
                             ? ' (fixed)'
                             : '')}
                         {!input.readonlyValue &&
-                        flattenedConstraints &&
-                        flattenedConstraints[input.name].isRequired ? (
+                        constraints &&
+                        constraints.length &&
+                        constraints[0][input.name]?.isRequired ? (
                           <sup>*</sup>
                         ) : (
                           ''
@@ -280,7 +292,10 @@ export function InputVariables(props: Props) {
                           disabledVariablesByInputName[input.name]
                         }
                         customDisabledVariableMessage={
-                          flattenedConstraints?.[input.name].description
+                          (constraints &&
+                            constraints.length &&
+                            constraints[0][input.name]?.description) ||
+                          undefined
                         }
                         starredVariables={starredVariables}
                         toggleStarredVariable={toggleStarredVariable}

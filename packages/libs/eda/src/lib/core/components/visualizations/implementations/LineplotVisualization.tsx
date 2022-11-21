@@ -86,15 +86,14 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOn
 // import variable's metadata-based independent axis range utils
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { isFaceted, isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedLinePlot';
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import {
-  useFlattenedConstraints,
+  useFilteredConstraints,
   useNeutralPaletteProps,
   useProvidedOptionalVariable,
   useVizConfig,
@@ -110,7 +109,6 @@ import { padISODateTime } from '../../../utils/date-conversion';
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
@@ -262,10 +260,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const flattenedConstraints = useFlattenedConstraints(
+  const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
     selectedVariables,
-    entities
+    entities,
+    'overlayVariable'
   );
 
   useProvidedOptionalVariable<LineplotConfig>(
@@ -274,7 +273,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
-    flattenedConstraints,
+    filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
     updateVizConfig,
@@ -1470,6 +1469,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable != null && legendItems.length > 0;
   const legendNode = !data.pending && data.value != null && (
     <PlotLegend
+      type="list"
       legendItems={legendItems}
       checkedLegendItems={checkedLegendItems}
       onCheckedLegendItemsChange={setCheckedLegendItems}

@@ -5,6 +5,7 @@ import ScatterPlot, {
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import * as t from 'io-ts';
+import { scaleLinear } from 'd3-scale';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
@@ -79,15 +80,17 @@ import { gray } from '../colors';
 import {
   ColorPaletteDefault,
   ColorPaletteDark,
+  gradientSequentialColorscaleMap,
+  gradientDivergingColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 // for custom legend
-import PlotLegend, {
-  LegendItemsProps,
-} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
+import { PlotLegendGradientProps } from '@veupathdb/components/lib/components/plotControls/PlotGradientLegend';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import FacetedScatterPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedScatterPlot';
 // for converting rgb() to rgba()
@@ -104,18 +107,17 @@ import { padISODateTime } from '../../../utils/date-conversion';
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import {
-  useFlattenedConstraints,
+  useFilteredConstraints,
   useNeutralPaletteProps,
   useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-import { ComputedVariableMetadata } from '../../../api/DataClient/types';
+import { VariableMapping } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
@@ -162,8 +164,11 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   yMin: number | string | undefined;
   yMinPos: number | string | undefined;
   yMax: number | string | undefined;
+  overlayMin: number | undefined;
+  overlayMax: number | undefined;
+  gradientColorscaleType: 'sequential' | 'divergent' | undefined;
   // add computedVariableMetadata for computation apps such as alphadiv and abundance
-  computedVariableMetadata?: ComputedVariableMetadata;
+  computedVariableMetadata?: VariableMapping[];
 }
 
 // define ScatterPlotDataResponse
@@ -263,10 +268,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const flattenedConstraints = useFlattenedConstraints(
+  const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
     selectedVariables,
-    entities
+    entities,
+    'overlayVariable'
   );
 
   useProvidedOptionalVariable<ScatterplotConfig>(
@@ -275,7 +281,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
-    flattenedConstraints,
+    filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
     updateVizConfig,
@@ -352,7 +358,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         facetVariable,
         // set valueSpec as Raw when yAxisVariable = date
         valueSpecConfig:
-          findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
+          findEntityAndVariable(yAxisVariable)?.variable.type === 'date' ||
+          findEntityAndVariable(overlayVariable)?.variable.type === 'number' ||
+          findEntityAndVariable(overlayVariable)?.variable.type === 'integer'
             ? 'Raw'
             : vizConfig.valueSpecConfig,
         // set undefined for variable change
@@ -494,7 +502,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       if (
         (vizConfig.independentAxisLogScale ||
           vizConfig.dependentAxisLogScale) &&
-        vizConfig.valueSpecConfig != 'Raw'
+        vizConfig.valueSpecConfig !== 'Raw'
       )
         return undefined;
 
@@ -574,10 +582,53 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
+      // If numeric overlay, record the min and max
+      let overlayMin: number | undefined;
+      let overlayMax: number | undefined;
+      let gradientColorscaleType: string | undefined;
+
+      if (
+        overlayVariable?.type === 'integer' ||
+        overlayVariable?.type === 'number'
+      ) {
+        const defaultOverlayMin: number =
+          overlayVariable.distributionDefaults.displayRangeMin ||
+          overlayVariable.distributionDefaults.displayRangeMin === 0
+            ? overlayVariable.distributionDefaults.displayRangeMin
+            : overlayVariable.distributionDefaults.rangeMin;
+
+        const defaultOverlayMax: number = overlayVariable.distributionDefaults
+          .displayRangeMax
+          ? overlayVariable.distributionDefaults.displayRangeMax
+          : overlayVariable.distributionDefaults.rangeMax;
+
+        // Note overlayMin and/or overlayMax could be intentionally 0.
+        gradientColorscaleType =
+          defaultOverlayMin >= 0 && defaultOverlayMax >= 0
+            ? 'sequential'
+            : defaultOverlayMin <= 0 && defaultOverlayMax <= 0
+            ? 'sequential reversed'
+            : 'divergent';
+
+        // Update overlay min and max
+        if (gradientColorscaleType === 'divergent') {
+          overlayMin = -Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
+          );
+          overlayMax = Math.max(
+            Math.abs(defaultOverlayMin),
+            Math.abs(defaultOverlayMax)
+          );
+        } else {
+          overlayMin = defaultOverlayMin;
+          overlayMax = defaultOverlayMax;
+        }
+      }
       const overlayVocabulary = computedOverlayVariableDescriptor
-        ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
-            (variableDetails) => variableDetails.variableId
-          )
+        ? response.scatterplot.config.variables.find(
+            (v) => v.plotReference === 'overlay' && v.vocabulary != null
+          )?.vocabulary
         : fixLabelsForNumberVariables(
             overlayVariable?.vocabulary,
             overlayVariable
@@ -594,6 +645,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         showMissingOverlay,
         overlayVocabulary,
         overlayVariable,
+        overlayMin,
+        overlayMax,
+        gradientColorscaleType,
         showMissingFacet,
         facetVocabulary,
         facetVariable,
@@ -647,7 +701,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
-    yAxisVariable ?? data?.value?.computedVariableMetadata,
+    yAxisVariable ??
+      data?.value?.computedVariableMetadata?.find(
+        (v) => v.plotReference === 'yAxis'
+      ),
     data.value?.yMin,
     data.value?.yMinPos,
     data.value?.yMax,
@@ -672,6 +729,40 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   const { url } = useRouteMatch();
+
+  const legendTitle = useMemo(() => {
+    if (computedOverlayVariableDescriptor) {
+      return findCollectionVariableEntityAndVariable(
+        entities,
+        computedOverlayVariableDescriptor
+      )?.variable.displayName;
+    }
+    return variableDisplayWithUnit(overlayVariable);
+  }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
+
+  // gradient colorscale legend
+  const gradientLegendProps:
+    | PlotLegendGradientProps
+    | undefined = useMemo(() => {
+    if (
+      data.value?.overlayMax !== undefined &&
+      data.value?.overlayMin !== undefined &&
+      data.value?.gradientColorscaleType
+    ) {
+      return {
+        legendMax: data.value?.overlayMax,
+        legendMin: data.value?.overlayMin,
+        gradientColorscaleType: data.value?.gradientColorscaleType,
+        // MUST be odd! Probably should be a clever function of the box size
+        // and font or something...
+        nTicks: 5,
+        showMissingness: vizConfig.showMissingness,
+        legendTitle,
+      };
+    } else {
+      return undefined;
+    }
+  }, [data, vizConfig.showMissingness, legendTitle]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -922,18 +1013,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateVizConfig
   );
 
-  const legendTitle = useMemo(() => {
-    if (computedOverlayVariableDescriptor) {
-      return findCollectionVariableEntityAndVariable(
-        entities,
-        computedOverlayVariableDescriptor
-      )?.variable.displayName;
-    }
-    return variableDisplayWithUnit(overlayVariable);
-  }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
-
   const dependentAxisLabel =
-    data?.value?.computedVariableMetadata?.displayName?.[0] ??
     computedYAxisDetails?.placeholderDisplayName ??
     variableDisplayWithUnit(yAxisVariable) ??
     'Y-axis';
@@ -962,25 +1042,29 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // like any other continuous variable.
   const computedYAxisDescriptor =
     !computedOverlayVariableDescriptor && computedYAxisDetails
-      ? ({
-          entityId: computedYAxisDetails?.entityId,
-          variableId: computedYAxisDetails?.variableId,
-          displayName: data.value?.computedVariableMetadata?.displayName?.[0],
-        } as VariableDescriptor)
+      ? {
+          entityId: computedYAxisDetails.entityId,
+          variableId:
+            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+        }
       : null;
 
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
-  const additionalVariableCoverageTableRows = data.value
-    ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
-    ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
-        (varDetails) => ({
+  const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
+    (v) => v.plotReference === 'overlay'
+  );
+  const collectionVariableEntityId =
+    collectionVariableMetadata?.variableSpec.entityId;
+  const additionalVariableCoverageTableRows =
+    collectionVariableEntityId && collectionVariableMetadata?.vocabulary
+      ? collectionVariableMetadata.vocabulary.map((label) => ({
           role: '',
-          display: findEntityAndVariable(varDetails)?.variable.displayName,
-          variable: varDetails,
-        })
-      )
-    : [];
+          required: true,
+          display: fixVarIdLabel(label, collectionVariableEntityId, entities),
+          variable: { variableId: label, entityId: collectionVariableEntityId },
+        }))
+      : [];
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -1558,15 +1642,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.overlayVariable != null ||
       vizConfig.valueSpecConfig !== 'Raw') &&
     legendItems.length > 0;
-  const legendNode = !data.pending && data.value != null && (
-    <PlotLegend
-      legendItems={legendItems}
-      checkedLegendItems={checkedLegendItems}
-      onCheckedLegendItemsChange={setCheckedLegendItems}
-      legendTitle={legendTitle}
-      showOverlayLegend={showOverlayLegend}
-    />
-  );
+  const legendNode =
+    !data.pending &&
+    data.value != null &&
+    (gradientLegendProps ? (
+      <PlotLegend type="colorscale" {...gradientLegendProps} />
+    ) : (
+      <PlotLegend
+        type="list"
+        legendItems={legendItems}
+        checkedLegendItems={checkedLegendItems}
+        onCheckedLegendItemsChange={setCheckedLegendItems}
+        legendTitle={legendTitle}
+        showOverlayLegend={showOverlayLegend}
+      />
+    ));
 
   const tableGroupNode = (
     <>
@@ -1772,6 +1862,9 @@ export function scatterplotResponseToData(
   showMissingOverlay: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
+  overlayMin?: number,
+  overlayMax?: number,
+  gradientColorscaleType?: string,
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
@@ -1820,17 +1913,22 @@ export function scatterplotResponseToData(
       showMissingOverlay,
       hasMissingData,
       overlayVariable,
+      overlayMin,
+      overlayMax,
+      gradientColorscaleType,
       // pass facetVariable to determine either scatter or scattergl
       facetVariable,
       // pass computation here to add conditions for apps
       computation,
-      response.scatterplot.config.computedVariableMetadata,
       entities,
       colorPaletteOverride
     );
 
     return {
       dataSetProcess: dataSetProcess,
+      overlayMin,
+      overlayMax,
+      gradientColorscaleType,
       xMin,
       xMinPos,
       xMax,
@@ -1871,13 +1969,16 @@ export function scatterplotResponseToData(
     yMin,
     yMinPos,
     yMax,
+    // calculated overlay axis limits
+    overlayMin,
+    overlayMax,
+    gradientColorscaleType,
     // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
     // config.computedVariableMetadata should also be returned
-    computedVariableMetadata:
-      response.scatterplot.config.computedVariableMetadata,
+    computedVariableMetadata: response.scatterplot.config.variables,
   } as ScatterPlotDataWithCoverage;
 }
 
@@ -1892,10 +1993,12 @@ function processInputData<T extends number | string>(
   showMissingness: boolean,
   hasMissingData: boolean,
   overlayVariable?: Variable,
+  overlayMin?: number,
+  overlayMax?: number,
+  gradientColorscaleType?: string,
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable,
   computation?: Computation,
-  computedVariableMetadata?: ComputedVariableMetadata,
   entities?: StudyEntity[],
   colorPaletteOverride?: string[]
 ) {
@@ -1973,17 +2076,19 @@ function processInputData<T extends number | string>(
     let seriesX = [];
     let seriesY = [];
 
+    // initialize gradient colorscale arrays
+    let seriesGradientColorscale = [];
+    let markerColorsGradient = [];
+    let markerSymbolGradient: string = 'x';
+
     // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
-    // is from the abundance app, it is a var id that needs to be swapped for it's display name (fixVarIdLabel)
+    // is from the abundance app, it is a var id that needs to be swapped for its display name (fixVarIdLabel)
     const fixedOverlayLabel =
       el.overlayVariableDetails &&
-      (computation?.descriptor.type === 'abundance' &&
-      entities &&
-      computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+      (computation?.descriptor.type === 'abundance' && entities
         ? fixVarIdLabel(
             el.overlayVariableDetails.value,
-            computedVariableMetadata.collectionVariable
-              .collectionVariableDetails,
+            el.overlayVariableDetails.entityId,
             entities
           )
         : fixLabelForNumberVariables(
@@ -2061,6 +2166,62 @@ function processInputData<T extends number | string>(
             : max(seriesY);
       }
 
+      // If seriesGradientColorscale column exists, need to use gradient colorscales
+      if (el.seriesGradientColorscale) {
+        // Assuming only allowing numbers for now - later will add dates
+        seriesGradientColorscale = el.seriesGradientColorscale.map(Number);
+
+        // Determin marker colors
+        if (
+          gradientColorscaleType &&
+          (overlayMin || overlayMin === 0) &&
+          overlayMax
+        ) {
+          // If we have data, use a gradient colorscale. No data series will have all NaN values in seriesGradientColorscale
+          if (
+            !seriesGradientColorscale.some((element: number) =>
+              Number.isNaN(element)
+            )
+          ) {
+            // Initialize normalization function.
+            const normalize = scaleLinear();
+
+            if (gradientColorscaleType === 'divergent') {
+              // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+              const maxAbsOverlay =
+                Math.abs(overlayMin) > overlayMax
+                  ? Math.abs(overlayMin)
+                  : overlayMax;
+
+              // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
+              normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+              markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+                gradientDivergingColorscaleMap(normalize(a))
+              );
+            } else if (gradientColorscaleType === 'sequntial reverse') {
+              // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
+              normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+              markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+                gradientSequentialColorscaleMap(normalize(a))
+              );
+              gradientColorscaleType = 'sequential';
+            } else {
+              // Then we use the sequential (from 0 to inf) colorscale.
+              // For each point, normalize the data to [0, 1], then retrieve the corresponding color
+              normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+              markerColorsGradient = seriesGradientColorscale.map((a: number) =>
+                gradientSequentialColorscaleMap(normalize(a))
+              );
+              gradientColorscaleType = 'sequential';
+            }
+            markerSymbolGradient = 'circle';
+          } else {
+            // Then this is the no data series. Set marker colors to gray
+            markerColorsGradient = [gray];
+          }
+        }
+      }
+
       // add scatter data considering input options
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
@@ -2071,8 +2232,15 @@ function processInputData<T extends number | string>(
         type: scatterPlotType, // for the raw data of the scatterplot
         opacity: 0.7,
         marker: {
-          color: markerColor(index),
-          symbol: markerSymbol(index),
+          color:
+            seriesGradientColorscale?.length > 0 &&
+            markerSymbolGradient === 'circle'
+              ? markerColorsGradient
+              : markerColor(index),
+          symbol:
+            seriesGradientColorscale?.length > 0
+              ? markerSymbolGradient
+              : markerSymbol(index),
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
@@ -2097,16 +2265,13 @@ function processInputData<T extends number | string>(
     let bestFitLineX = [];
 
     // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
-    // is from the abundance app, it is a var id that needs to be swapped for it's display name (fixVarIdLabel)
+    // is from the abundance app, it is a var id that needs to be swapped for its display name (fixVarIdLabel)
     const fixedOverlayLabel =
       el.overlayVariableDetails &&
-      (computation?.descriptor.type === 'abundance' &&
-      entities &&
-      computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+      (computation?.descriptor.type === 'abundance' && entities
         ? fixVarIdLabel(
             el.overlayVariableDetails.value,
-            computedVariableMetadata.collectionVariable
-              .collectionVariableDetails,
+            el.overlayVariableDetails.entityId,
             entities
           )
         : fixLabelForNumberVariables(
@@ -2312,6 +2477,9 @@ function processInputData<T extends number | string>(
 
   return {
     dataSetProcess: { series: dataSetProcess },
+    overlayMin,
+    overlayMax,
+    gradientColorscaleType,
     xMin,
     xMinPos,
     xMax,
