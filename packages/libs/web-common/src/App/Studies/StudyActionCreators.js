@@ -140,7 +140,7 @@ function formatStudies(questions, recordClasses, answer) {
 
   }, { valid: [], invalid: [], appearFirst: new Set() });
 
-  const unsortedValidRecords = records.valid
+  const partiallySortedValidRecords = records.valid
     // remove unreleased studies, unless `showUnreleasedData = true`
     // also, remove DIY studies
     .filter(
@@ -165,21 +165,14 @@ function formatStudies(questions, recordClasses, answer) {
     }));
 
   const sortedValidRecords = orderBy(
-    unsortedValidRecords,
+    partiallySortedValidRecords,
     [
-      ({ disabled }) => disabled,
       ({ id }) => records.appearFirst.has(id),
       ({ access }) => isPrereleaseStudyTemp(access),
-      /**
-      * To normalize sorting behavior, strip HTML as needed and compare strings as lowercase
-      **/ 
-      ({ name }) => name.indexOf('<') === -1 ? name.toLowerCase() : stripHTML(name).toLowerCase()
     ],
     [
-      'asc',
       'desc',
       'asc', 
-      'asc'
     ]
   );
 
