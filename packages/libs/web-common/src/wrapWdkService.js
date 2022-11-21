@@ -11,7 +11,12 @@ export default wdkService => ({
       path: wdkService.getStandardSearchReportEndpoint('dataset', 'AllDatasets'),
       body: JSON.stringify({
         searchConfig: { parameters: {} },
-        reportConfig: { attributes, tables, sorting: [{attributeName: 'primary_key', direction: 'ASC'}] }
+        reportConfig: {
+          attributes, tables, sorting: [
+            { attributeName: 'is_prerelease', direction: 'ASC' },
+            { attributeName: 'primary_key', direction: 'ASC' },
+          ]
+        }
       })
     });
 
