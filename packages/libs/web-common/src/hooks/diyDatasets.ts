@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { makeEdaRoute } from '../routes';
 import { isDiyWdkRecordId, wdkRecordIdToDiyUserDatasetId } from '../util/diyDatasets';
@@ -14,7 +14,7 @@ export function useDiyDatasets() {
     setRequestTimestamp(() => Date.now());
   }, []);
 
-  const diyDatasets = useWdkServiceWithRefresh(async (wdkService) => {
+  const diyDatasets = useWdkService(async (wdkService) => {
     const { records: datasetRecords } = await wdkService.getAnswerJson(
       {
         searchName: 'AllDatasets',
