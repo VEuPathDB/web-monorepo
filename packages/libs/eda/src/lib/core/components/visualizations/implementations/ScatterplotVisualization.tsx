@@ -588,7 +588,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       let gradientColorscaleType: string | undefined;
 
       if (
-        'seriesGradientColorscale' in response.scatterplot.data[0] &&
+        response.scatterplot.data.every(
+          (series) => 'seriesGradientColorscale' in series
+        ) &&
         (overlayVariable?.type === 'integer' ||
           overlayVariable?.type === 'number')
       ) {
@@ -626,6 +628,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           overlayMax = defaultOverlayMax;
         }
       }
+
       const overlayVocabulary = computedOverlayVariableDescriptor
         ? response.scatterplot.config.variables.find(
             (v) => v.plotReference === 'overlay' && v.vocabulary != null
