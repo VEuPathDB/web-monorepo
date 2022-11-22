@@ -1,14 +1,19 @@
 import React from 'react';
-import { RadioList, SingleSelect, TextBox, Checkbox } from '@veupathdb/wdk-client/lib/Components';
+import { RadioList, CheckboxList, SingleSelect, TextBox, Checkbox } from '@veupathdb/wdk-client/lib/Components';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import SrtHelp from '../SrtHelp';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
-let deflineTypes = [
-  {  value: "short", display: 'ID Only' },
-  {  value: "full", display: 'Full Fasta Header' }
+
+let deflineFieldOptions = [
+  { value: 'organism', display: 'Organism' },
+  { value: 'description', display: 'Description' },
+  { value: 'position', display: 'Position' },
+  { value: 'ui_choice', display: 'Query' },
+  { value: 'segment_length', display: 'Length' },
+
 ];
 
 let proteinFeatureOptions = [
@@ -16,6 +21,13 @@ let proteinFeatureOptions = [
   { value: 'signalp', display: 'SignalP' },
   { value: 'tmhmm', display: 'Transmembrane Domains' },
   { value: 'low_complexity', display: 'Low Complexity Regions' }
+];
+
+let geneComponentOptions = [
+  { value: 'five_prime_utr', display: '5\' UTR' },
+  { value: 'three_prime_utr', display: '3\' UTR' },
+  { value: 'exon', display: 'exon' },
+  { value: 'intron', display: 'intron' },
 ];
 
 let genomicAnchorValues = [
@@ -127,6 +139,21 @@ let FeaturesList = props => {
   );
 }
 
+// RadioList -> multiple choice
+let ComponentsList = props => {
+  let { features, field, formState, getUpdateHandler} = props;
+  return (
+    <div>
+      <div
+        style={{
+          marginLeft: '0.75em'
+        }}>
+        <CheckboxList name={field} value={formState[field]} onChange={getUpdateHandler(field)} items={features} linksPosition={null}/>
+      </div>
+    </div>
+  );
+}
+
 /** @type import('./Types').ReporterFormComponent */
 let FastaGeneReporterForm = props => {
   let { formState, updateFormState, onSubmit, includeSubmit } = props;
@@ -146,6 +173,7 @@ let FastaGeneReporterForm = props => {
             { value: 'protein_features', display: 'Protein Features', body: (<FeaturesList field="proteinFeature" features={proteinFeatureOptions} formState={formState} getUpdateHandler={getUpdateHandler} />) },
             { value: 'cds', display: 'CDS'},
             { value: 'transcript', display: 'Transcript'},
+            { value: 'gene_components', display: 'Gene Components', body: (<ComponentsList field="geneComponents" features={geneComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />) },
           ]  
           
           }/>
@@ -158,7 +186,10 @@ let FastaGeneReporterForm = props => {
       <h3>Fasta defline:</h3>
       <div style={{marginLeft:"2em"}}>
         <RadioList name="deflineType" value={formState.deflineType}
-          onChange={getUpdateHandler('deflineType')} items={deflineTypes}/>
+          onChange={getUpdateHandler('deflineType')} items={[
+              {  value: "short", display: 'ID Only' },
+            {  value: "full", display: 'Full Fasta Header', body: (<RadioList name="deflineFields" value={formState.deflineType} onChange={getUpdateHandler('deflineType')}/> items={deflineFieldOptions}) }
+            ]}/>
       </div>
       { includeSubmit &&
         <div style={{margin:'0.8em'}}>
@@ -187,6 +218,7 @@ FastaGeneReporterForm.getInitialState = () => ({
     type: 'genomic',
     reverseAndComplement: false,
     deflineType: deflineTypes[0].value,
+    deflineFields: deflineFieldOptions.map((x) => x.value),
 
     // sequence region inputs for 'genomic'
     upstreamAnchor: 'Start',
@@ -201,7 +233,7 @@ FastaGeneReporterForm.getInitialState = () => ({
     startOffset3: 0,
     endAnchor3: 'End',
     endOffset3: 0,
-
+    geneComponents: geneComponentOptions.map((x) => x.value),
     proteinFeature: proteinFeatureOptions[0].value,
   },
   formUiState: {}
