@@ -72,13 +72,6 @@ export function isAllowedAccess ({ permissions, action, study }) {
   return false;
 }
 
-// this function should be called isPrereleaseStudy (it is user independent)
-// and the function below should be called canAccessPrereleaseStudy (result is user dependent)
-// (changing the function name below involves updates in several files.)
-export function isPrereleaseStudyTemp (access) {
-  return ( access === 'prerelease' );
-}
-
 // the UI in (1) home page study card, (2) study menu, (3) study record page is different when
 // - the study.access is prerelease
 // - the user doesnt have access
