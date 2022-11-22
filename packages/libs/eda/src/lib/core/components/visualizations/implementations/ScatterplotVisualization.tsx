@@ -117,7 +117,7 @@ import {
   useVizConfig,
 } from '../../../hooks/visualizations';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-import { ComputedVariableMetadata } from '../../../api/DataClient/types';
+import { VariableMapping } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
@@ -168,7 +168,7 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   overlayMax: number | undefined;
   gradientColorscaleType: 'sequential' | 'divergent' | undefined;
   // add computedVariableMetadata for computation apps such as alphadiv and abundance
-  computedVariableMetadata?: ComputedVariableMetadata;
+  computedVariableMetadata?: VariableMapping[];
 }
 
 // define ScatterPlotDataResponse
@@ -627,9 +627,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         }
       }
       const overlayVocabulary = computedOverlayVariableDescriptor
-        ? response.scatterplot.config.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
-            (variableDetails) => variableDetails.variableId
-          )
+        ? response.scatterplot.config.variables.find(
+            (v) => v.plotReference === 'overlay' && v.vocabulary != null
+          )?.vocabulary
         : fixLabelsForNumberVariables(
             overlayVariable?.vocabulary,
             overlayVariable
@@ -702,7 +702,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // use custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
-    yAxisVariable ?? data?.value?.computedVariableMetadata,
+    yAxisVariable ??
+      data?.value?.computedVariableMetadata?.find(
+        (v) => v.plotReference === 'yAxis'
+      ),
     data.value?.yMin,
     data.value?.yMinPos,
     data.value?.yMax,
@@ -1012,7 +1015,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   );
 
   const dependentAxisLabel =
-    data?.value?.computedVariableMetadata?.displayName?.[0] ??
     computedYAxisDetails?.placeholderDisplayName ??
     variableDisplayWithUnit(yAxisVariable) ??
     'Y-axis';
@@ -1041,25 +1043,29 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // like any other continuous variable.
   const computedYAxisDescriptor =
     !computedOverlayVariableDescriptor && computedYAxisDetails
-      ? ({
-          entityId: computedYAxisDetails?.entityId,
-          variableId: computedYAxisDetails?.variableId,
-          displayName: data.value?.computedVariableMetadata?.displayName?.[0],
-        } as VariableDescriptor)
+      ? {
+          entityId: computedYAxisDetails.entityId,
+          variableId:
+            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+        }
       : null;
 
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
-  const additionalVariableCoverageTableRows = data.value
-    ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
-    ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
-        (varDetails) => ({
+  const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
+    (v) => v.plotReference === 'overlay'
+  );
+  const collectionVariableEntityId =
+    collectionVariableMetadata?.variableSpec.entityId;
+  const additionalVariableCoverageTableRows =
+    collectionVariableEntityId && collectionVariableMetadata?.vocabulary
+      ? collectionVariableMetadata.vocabulary.map((label) => ({
           role: '',
-          display: findEntityAndVariable(varDetails)?.variable.displayName,
-          variable: varDetails,
-        })
-      )
-    : [];
+          required: true,
+          display: fixVarIdLabel(label, collectionVariableEntityId, entities),
+          variable: { variableId: label, entityId: collectionVariableEntityId },
+        }))
+      : [];
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -1915,7 +1921,6 @@ export function scatterplotResponseToData(
       facetVariable,
       // pass computation here to add conditions for apps
       computation,
-      response.scatterplot.config.computedVariableMetadata,
       entities,
       colorPaletteOverride
     );
@@ -1974,8 +1979,7 @@ export function scatterplotResponseToData(
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.scatterplot.config.completeCasesAxesVars,
     // config.computedVariableMetadata should also be returned
-    computedVariableMetadata:
-      response.scatterplot.config.computedVariableMetadata,
+    computedVariableMetadata: response.scatterplot.config.variables,
   } as ScatterPlotDataWithCoverage;
 }
 
@@ -1996,7 +2000,6 @@ function processInputData<T extends number | string>(
   // pass facetVariable to determine either scatter or scattergl
   facetVariable?: Variable,
   computation?: Computation,
-  computedVariableMetadata?: ComputedVariableMetadata,
   entities?: StudyEntity[],
   colorPaletteOverride?: string[]
 ) {
@@ -2081,16 +2084,13 @@ function processInputData<T extends number | string>(
     let markerSymbolGradient: string = 'x';
 
     // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
-    // is from the abundance app, it is a var id that needs to be swapped for it's display name (fixVarIdLabel)
+    // is from the abundance app, it is a var id that needs to be swapped for its display name (fixVarIdLabel)
     const fixedOverlayLabel =
       el.overlayVariableDetails &&
-      (computation?.descriptor.type === 'abundance' &&
-      entities &&
-      computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+      (computation?.descriptor.type === 'abundance' && entities
         ? fixVarIdLabel(
             el.overlayVariableDetails.value,
-            computedVariableMetadata.collectionVariable
-              .collectionVariableDetails,
+            el.overlayVariableDetails.entityId,
             entities
           )
         : fixLabelForNumberVariables(
@@ -2267,16 +2267,13 @@ function processInputData<T extends number | string>(
     let bestFitLineX = [];
 
     // Fix overlay variable label. If a numeric var, fix with fixLabelForNumberVariables. If the overlay variable
-    // is from the abundance app, it is a var id that needs to be swapped for it's display name (fixVarIdLabel)
+    // is from the abundance app, it is a var id that needs to be swapped for its display name (fixVarIdLabel)
     const fixedOverlayLabel =
       el.overlayVariableDetails &&
-      (computation?.descriptor.type === 'abundance' &&
-      entities &&
-      computedVariableMetadata?.collectionVariable?.collectionVariableDetails
+      (computation?.descriptor.type === 'abundance' && entities
         ? fixVarIdLabel(
             el.overlayVariableDetails.value,
-            computedVariableMetadata.collectionVariable
-              .collectionVariableDetails,
+            el.overlayVariableDetails.entityId,
             entities
           )
         : fixLabelForNumberVariables(

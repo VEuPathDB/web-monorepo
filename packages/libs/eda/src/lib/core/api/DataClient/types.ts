@@ -12,6 +12,8 @@ import {
   partial,
   unknown,
   nullType,
+  keyof,
+  boolean,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -71,6 +73,77 @@ const completeCases = partial({
 export type CompleteCasesTable = TypeOf<typeof completeCasesTableArray>;
 const completeCasesTableArray = array(completeCases);
 
+export type VariableClass = TypeOf<typeof variableClass>;
+const variableClass = keyof({
+  native: null,
+  derived: null,
+  computed: null,
+});
+
+export type VariableSpec = TypeOf<typeof variableSpec>;
+const variableSpec = type({
+  entityId: string,
+  variableId: string,
+});
+
+export type PlotReferenceValue = TypeOf<typeof plotReferenceValue>;
+const plotReferenceValue = keyof({
+  xAxis: null,
+  yAxis: null,
+  zAxis: null,
+  overlay: null,
+  facet1: null,
+  facet2: null,
+  geo: null,
+  latitude: null,
+  longitude: null,
+});
+
+export type API_VariableType = TypeOf<typeof API_VariableType>;
+const API_VariableType = keyof({
+  category: null,
+  string: null,
+  number: null,
+  date: null,
+  longitude: null,
+  integer: null,
+});
+
+export type API_VariableDataShape = TypeOf<typeof API_VariableDataShape>;
+const API_VariableDataShape = keyof({
+  continuous: null,
+  categorical: null,
+  ordinal: null,
+  binary: null,
+});
+
+export type VariableMapping = TypeOf<typeof VariableMapping>;
+export const VariableMapping = intersection([
+  type({
+    variableClass,
+    variableSpec,
+    plotReference: plotReferenceValue,
+    dataType: API_VariableType,
+    dataShape: API_VariableDataShape,
+    isCollection: boolean,
+    imputeZero: boolean,
+  }),
+  partial({
+    displayName: string,
+    displayRangeMin: union([string, number]),
+    displayRangeMax: union([string, number]),
+    vocabulary: array(string),
+    members: array(variableSpec),
+  }),
+]);
+
+export type PlotConfig = TypeOf<typeof plotConfig>;
+const plotConfig = type({
+  completeCasesAllVars: number,
+  completeCasesAxesVars: number,
+  variables: array(VariableMapping),
+});
+
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -95,6 +168,34 @@ export interface HistogramRequestParams {
   };
 }
 
+export type HistogramSummary = TypeOf<typeof histogramSummary>;
+const histogramSummary = type({
+  min: string,
+  q1: string,
+  median: string,
+  mean: string,
+  q3: string,
+  max: string,
+});
+
+// to be distinguised from geo-viewports
+export type NumericViewport = TypeOf<typeof numericViewport>;
+const numericViewport = type({
+  xMin: string,
+  xMax: string,
+});
+
+export type HistogramConfig = TypeOf<typeof histogramConfig>;
+const histogramConfig = intersection([
+  plotConfig,
+  type({
+    binSlider: BinWidthSlider,
+    binSpec: BinSpec,
+    summary: histogramSummary,
+    viewport: numericViewport,
+  }),
+]);
+
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 export const HistogramResponse = type({
   histogram: type({
@@ -115,25 +216,7 @@ export const HistogramResponse = type({
         }),
       ])
     ),
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      binSlider: BinWidthSlider,
-      xVariableDetails: VariableDescriptor,
-      binSpec: BinSpec,
-      summary: type({
-        min: string,
-        q1: string,
-        median: string,
-        mean: string,
-        q3: string,
-        max: string,
-      }),
-      viewport: type({
-        xMin: string,
-        xMax: string,
-      }),
-    }),
+    config: histogramConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
@@ -158,14 +241,7 @@ export interface BarplotRequestParams {
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
   barplot: type({
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-    }),
+    config: plotConfig,
     data: array(
       intersection([
         type({
@@ -257,24 +333,7 @@ export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
     data: ScatterplotResponseData,
-    // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-        yVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        computedVariableMetadata: ComputedVariableMetadata,
-      }),
-    ]),
+    config: plotConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
@@ -362,28 +421,21 @@ const LineplotResponseData = array(
   ])
 );
 
+export type LineplotConfig = TypeOf<typeof lineplotConfig>;
+const lineplotConfig = intersection([
+  plotConfig,
+  type({
+    binSlider: BinWidthSlider,
+    binSpec: BinSpec,
+    viewport: numericViewport,
+  }),
+]);
+
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
   lineplot: type({
     data: LineplotResponseData,
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-        yVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        binSlider: BinWidthSlider,
-        binSpec: BinSpec,
-      }),
-    ]),
+    config: lineplotConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
@@ -419,18 +471,7 @@ export const MosaicResponse = type({
         }),
       ])
     ),
-    config: type({
-      completeCasesAllVars: number,
-      completeCasesAxesVars: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-    }),
+    config: plotConfig,
   }),
   sampleSizeTable: array(
     type({
@@ -535,24 +576,7 @@ export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
 export const BoxplotResponse = type({
   boxplot: type({
     data: BoxplotResponseData,
-    // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-        yVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        computedVariableMetadata: ComputedVariableMetadata,
-      }),
-    ]),
+    config: plotConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
@@ -633,6 +657,29 @@ export interface MapMarkersOverlayRequestParams {
   };
 }
 
+export type MapMarkersOverlayConfig = TypeOf<typeof mapMarkersOverlayConfig>;
+const mapMarkersOverlayConfig = intersection([
+  plotConfig,
+  type({
+    rankedValues: array(string),
+    overlayValues: array(string),
+    viewport: type({
+      latitude: type({
+        xMin: number,
+        xMax: number,
+      }),
+      longitude: type({
+        left: number,
+        right: number,
+      }),
+    }),
+  }),
+  partial({
+    binSpec: BinSpec,
+    binSlider: BinWidthSlider,
+  }),
+]);
+
 export type MapMarkersOverlayResponse = TypeOf<
   typeof MapMarkersOverlayResponse
 >;
@@ -645,32 +692,7 @@ export const MapMarkersOverlayResponse = type({
         geoAggregateVariableDetails: StringVariableValue,
       })
     ),
-    config: intersection([
-      type({
-        completeCasesAllVars: number,
-        completeCasesAxesVars: number,
-        rankedValues: array(string),
-        overlayValues: array(string),
-        viewport: type({
-          latitude: type({
-            xMin: number,
-            xMax: number,
-          }),
-          longitude: type({
-            left: number,
-            right: number,
-          }),
-        }),
-        xVariableDetails: type({
-          variableId: string,
-          entityId: string,
-        }),
-      }),
-      partial({
-        binSpec: BinSpec,
-        binSlider: BinWidthSlider,
-      }),
-    ]),
+    config: mapMarkersOverlayConfig,
   }),
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
