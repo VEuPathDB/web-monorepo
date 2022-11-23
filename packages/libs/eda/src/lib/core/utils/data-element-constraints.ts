@@ -473,3 +473,33 @@ export function leastAncestralVariable(
   if (VariableDescriptor.is(variable)) return variable;
   else return undefined;
 }
+
+/**
+ * given a list of query entities and full list of study entities
+ * return the variable descriptor which is least ancestral (leaf-most)
+ */
+
+export function leastAncestralEntity(
+  query: StudyEntity[],
+  entities: StudyEntity[]
+): StudyEntity | undefined {
+  if (query.length === 0)
+    throw 'Error: empty array passed to leastAncestralEntity';
+
+  // The least ancestral node has the most ancestors, so let's count them.
+  // And sort by the counts, most-first
+  const leastAncestralFirst = sortBy(query, (queryEntity) => {
+    const ancestorCount = entities.reduceRight((ancestors, entity) => {
+      if (
+        entity.id === queryEntity.id ||
+        entity.children?.includes(ancestors[0])
+      ) {
+        ancestors.unshift(entity);
+      }
+      return ancestors;
+    }, [] as StudyEntity[]).length;
+    return -ancestorCount;
+  });
+
+  return leastAncestralFirst[0];
+}
