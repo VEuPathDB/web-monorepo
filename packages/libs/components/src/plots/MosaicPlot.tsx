@@ -129,16 +129,9 @@ const MosaicPlot = makePlotlyPlotComponent(
       // Estimate the plot proper height
       const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
       const marginBottom = spacingOptions?.marginBottom ?? defaultMargin;
-      const longestIndependentTickLabelLength = getLongestTruncatedStringLength(
-        data.independentLabels,
-        maxIndependentTickLabelLength
-      );
+
       // Subtraction at end is due to x-axis automargin shrinking the plot
-      plotHeight =
-        containerHeight -
-        marginTop -
-        marginBottom -
-        8 * longestIndependentTickLabelLength;
+      plotHeight = containerHeight - marginTop - marginBottom;
       if (independentAxisLabel) plotHeight -= 20;
       if (showColumnLabels !== false)
         plotHeight -= elbowPointerGap * data.independentLabels.length;
