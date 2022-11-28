@@ -205,41 +205,46 @@ const MosaicPlot = makePlotlyPlotComponent(
       },
       hovermode: 'x',
       shapes: showColumnLabels !== false && [
-        ...column_centers.flatMap((column_center, i) => [
-          {
-            type: 'line',
-            line: {
-              width: 1,
+        ...column_centers.flatMap((column_center, index) => {
+          const elbowY = getElbowPointerY(index);
+
+          return [
+            {
+              type: 'line',
+              line: {
+                width: 1,
+              },
+              xref: 'x',
+              yref: 'paper',
+              ysizemode: 'pixel',
+              yanchor: 0,
+              x0: column_center,
+              y0: -5,
+              x1: column_center,
+              y1: elbowY,
             },
-            xref: 'x',
-            yref: 'paper',
-            ysizemode: 'pixel',
-            yanchor: 0,
-            x0: column_center,
-            y0: -5,
-            x1: column_center,
-            y1: getElbowPointerY(i),
-          },
-          {
-            type: 'line',
-            line: {
-              width: 1,
+            {
+              type: 'line',
+              line: {
+                width: 1,
+              },
+              xref: 'x',
+              yref: 'paper',
+              ysizemode: 'pixel',
+              yanchor: 0,
+              x0: column_center,
+              y0: elbowY,
+              x1: 0,
+              y1: elbowY,
             },
-            xref: 'x',
-            yref: 'paper',
-            ysizemode: 'pixel',
-            yanchor: 0,
-            x0: column_center,
-            y0: getElbowPointerY(i),
-            x1: 0,
-            y1: getElbowPointerY(i),
-          },
-        ]),
+          ];
+        }),
       ],
       annotations: showColumnLabels !== false && [
-        ...column_centers.map((column_center, i) => {
+        ...column_centers.map((column_center, index) => {
           const width = 150;
           const height = 20;
+          const elbowY = getElbowPointerY(index);
 
           return {
             width,
@@ -252,8 +257,8 @@ const MosaicPlot = makePlotlyPlotComponent(
             xshift: -width / 2 + 8,
             y: 0,
             ayref: 'pixel',
-            ay: -getElbowPointerY(i),
-            text: independentLabelsEllipsis[i],
+            ay: -elbowY,
+            text: independentLabelsEllipsis[index],
             // Make arrow invisible (we need the arrow for correct positioning,
             // but don't want to actually see it)
             arrowcolor: 'rgba(255, 255, 255, 0)',
