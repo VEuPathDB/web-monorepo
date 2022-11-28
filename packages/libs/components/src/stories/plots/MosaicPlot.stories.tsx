@@ -69,6 +69,61 @@ FourByThree.args = {
   interactive: true,
 };
 
+const tenByTwelveData = {
+  values: [
+    [84, 97, 78, 24, 100, 55, 74, 62, 4, 5],
+    [90, 45, 72, 48, 7, 56, 70, 88, 1, 68],
+    [23, 42, 15, 39, 33, 16, 15, 90, 5, 51],
+    [7, 87, 30, 61, 32, 73, 48, 100, 6, 53],
+    [99, 92, 61, 97, 9, 85, 2, 45, 77, 16],
+    [26, 41, 20, 39, 11, 34, 32, 4, 72, 67],
+    [77, 71, 93, 45, 10, 20, 62, 93, 90, 79],
+    [60, 82, 93, 27, 8, 23, 75, 15, 84, 57],
+    [21, 36, 3, 89, 78, 98, 64, 31, 59, 57],
+    [4, 41, 71, 97, 84, 46, 40, 96, 1, 9],
+    [44, 40, 99, 87, 19, 70, 67, 65, 27, 84],
+    [70, 28, 2, 83, 43, 83, 43, 19, 55, 50],
+  ],
+  independentLabels: [
+    '2010',
+    '2011',
+    '2012',
+    '2013',
+    '2014',
+    '2015',
+    '2016',
+    '2017',
+    '2018',
+    '2019',
+  ],
+  dependentLabels: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+};
+
+export const TenByTwelve = Template.bind({});
+TenByTwelve.args = {
+  ...defaults,
+  data: tenByTwelveData,
+  independentAxisLabel: 'Year',
+  dependentAxisLabel: 'Month',
+  interactive: true,
+  containerStyles: {
+    height: 700,
+  },
+};
+
 export const EmptyData = Template.bind({});
 EmptyData.args = {};
 

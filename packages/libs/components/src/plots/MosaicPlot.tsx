@@ -73,7 +73,10 @@ const MosaicPlot = makePlotlyPlotComponent(
     );
 
     // set tick label Length for ellipsis
-    const maxIndependentTickLabelLength = 20;
+    // this doesn't include percentage text length
+    const maxIndependentTickLabelLength = 8;
+    // The distance from one elbow pointer to the next
+    const elbowPointerGap = 20;
 
     // change data.independentLabels to have ellipsis
     const independentLabelsEllipsis = useMemo(
@@ -137,6 +140,8 @@ const MosaicPlot = makePlotlyPlotComponent(
         marginBottom -
         8 * longestIndependentTickLabelLength;
       if (independentAxisLabel) plotHeight -= 20;
+      if (showColumnLabels !== false)
+        plotHeight -= elbowPointerGap * data.independentLabels.length;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
@@ -165,16 +170,19 @@ const MosaicPlot = makePlotlyPlotComponent(
       marginLeft: marginLeft + marginLeftExtra,
     };
 
-    const getElbowPointerY = (nthLabel: number) => -0.1 * (nthLabel + 1);
+    const gapToFirstXLabel = 20;
+    const xAxisTitleStandoff =
+      plotHeight && !showColumnLabels === false
+        ? gapToFirstXLabel + elbowPointerGap * data.independentLabels.length
+        : undefined;
+    const getElbowPointerY = (nthLabel: number) =>
+      -gapToFirstXLabel - nthLabel * elbowPointerGap;
 
     const layout: Partial<Layout> = {
       xaxis: {
         title: {
           text: independentAxisLabel,
-          standoff:
-            showColumnLabels !== false && plotHeight
-              ? 0.1 * plotHeight * data.independentLabels.length * 1.8
-              : undefined,
+          standoff: xAxisTitleStandoff,
         },
         tickvals: column_centers,
         tickangle: 90,
@@ -212,8 +220,10 @@ const MosaicPlot = makePlotlyPlotComponent(
             },
             xref: 'x',
             yref: 'paper',
+            ysizemode: 'pixel',
+            yanchor: 0,
             x0: column_center,
-            y0: -0.05,
+            y0: -5,
             x1: column_center,
             y1: getElbowPointerY(i),
           },
@@ -224,6 +234,8 @@ const MosaicPlot = makePlotlyPlotComponent(
             },
             xref: 'x',
             yref: 'paper',
+            ysizemode: 'pixel',
+            yanchor: 0,
             x0: column_center,
             y0: getElbowPointerY(i),
             x1: 0,
@@ -233,7 +245,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       ],
       annotations: showColumnLabels !== false && [
         ...column_centers.map((column_center, i) => {
-          const width = 100;
+          const width = 150;
           const height = 20;
 
           return {
@@ -244,11 +256,14 @@ const MosaicPlot = makePlotlyPlotComponent(
             xref: 'paper',
             yref: 'paper',
             x: 0,
-            xshift: -width - 3,
-            y: getElbowPointerY(i),
-            yshift: -height / 2,
+            xshift: -width / 2 + 8,
+            y: 0,
+            ayref: 'pixel',
+            ay: -getElbowPointerY(i),
             text: independentLabelsEllipsis[i],
-            showarrow: false,
+            // Make arrow invisible (we need the arrow for correct positioning,
+            // but don't want to actually see it)
+            arrowcolor: 'rgba(255, 255, 255, 0)',
           };
         }),
       ],
