@@ -6,8 +6,9 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { ComputationProps } from './Types';
 import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
-import { useStudyMetadata } from '../../hooks/workspace';
 import { AnalysisState } from '../../hooks/analysis';
+import { RunComputeButton } from './RunComputeButton';
+import { useStudyMetadata } from '../../hooks/workspace';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -66,17 +67,29 @@ export function ComputationInstance(props: Props) {
   )
     return null;
 
+  const showTitle =
+    url.replace(/\/+$/, '').split('/').pop() === 'visualizations';
+
   // If we can have multiple app instances, add a title. Otherwise, use
   // the normal VisualizationsContainer.
   return (
     <div>
-      {baseUrl && (
-        <AppTitle
-          computation={computation}
-          condensed={
-            url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
-          }
-        />
+      {baseUrl && showTitle && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-end',
+            gap: '1em',
+          }}
+        >
+          <AppTitle computation={computation} />
+          <RunComputeButton
+            analysis={analysis}
+            computation={computation}
+            computationAppOverview={computationAppOverview}
+          />
+        </div>
       )}
       <VisualizationsContainer
         analysisState={analysisState}
@@ -101,24 +114,23 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  condensed: boolean;
 }
 
 function AppTitle(props: AppTitleProps) {
-  const { computation, condensed } = props;
+  const { computation } = props;
   const plugin = plugins[computation.descriptor?.type];
   const ConfigDescription = plugin
     ? plugin.configurationDescriptionComponent
     : undefined;
   const { configuration } = computation.descriptor;
 
-  return condensed ? (
+  return (
     <div style={{ lineHeight: 1.5 }}>
       {plugin && configuration
         ? ConfigDescription && <ConfigDescription computation={computation} />
         : null}
     </div>
-  ) : null;
+  );
 }
 
 function useComputation(

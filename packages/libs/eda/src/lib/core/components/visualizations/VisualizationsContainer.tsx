@@ -42,6 +42,7 @@ import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
+import { RunComputeButton } from '../computations/RunComputeButton';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -644,17 +645,31 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             />
           </h3>
           <div className="Subtitle">{overview?.displayName}</div>
-          {plugin && (
-            <plugin.configurationComponent
-              analysisState={analysisState}
-              computation={computation}
-              visualizationId={viz.visualizationId}
-              computationAppOverview={computationAppOverview}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              geoConfigs={geoConfigs}
-              addNewComputation={() => null}
-            />
+          {plugin && analysisState.analysis && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                gap: '2em',
+              }}
+            >
+              <plugin.configurationComponent
+                analysisState={analysisState}
+                computation={computation}
+                visualizationId={viz.visualizationId}
+                computationAppOverview={computationAppOverview}
+                totalCounts={totalCounts}
+                filteredCounts={filteredCounts}
+                geoConfigs={geoConfigs}
+                addNewComputation={() => null}
+              />
+              <RunComputeButton
+                analysis={analysisState.analysis}
+                computation={computation}
+                computationAppOverview={computationAppOverview}
+              />
+            </div>
           )}
           <vizPlugin.fullscreenComponent
             options={vizPlugin.options}
