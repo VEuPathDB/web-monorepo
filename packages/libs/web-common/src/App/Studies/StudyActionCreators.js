@@ -2,14 +2,13 @@ import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
-import { isPrereleaseStudyTemp } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 
 import { showUnreleasedData } from 'ebrc-client/config';
 import { isDiyWdkRecordId } from 'ebrc-client/util/diyDatasets';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';
-export const STUDIES_ERROR = 'studies/studies-error'
+export const STUDIES_ERROR = 'studies/studies-error';
 
 /**
  * Load studies
@@ -29,9 +28,9 @@ function studiesRequested() {
   return { type: STUDIES_REQUESTED };
 }
 
-function studiesReceived([ studies, invalidRecords ]) {
+function studiesReceived([studies, invalidRecords]) {
   return [
-    { type: STUDIES_RECEIVED, payload: { studies }},
+    { type: STUDIES_RECEIVED, payload: { studies } },
     invalidRecords.length === 0
       ? emptyAction
       : ({ wdkService }) =>
@@ -42,7 +41,7 @@ function studiesReceived([ studies, invalidRecords ]) {
 }
 
 function studiesError(error) {
-  return { type: STUDIES_ERROR, payload: { error: error.message }};
+  return { type: STUDIES_ERROR, payload: { error: error.message } };
 }
 
 
@@ -99,7 +98,6 @@ const parseStudy = mapProps({
   points: ['attributes.card_points', JSON.parse],
   searches: ['attributes.card_questions', JSON.parse]
 });
-  
 
 function formatStudies(questions, recordClasses, answer) {
   const questionsByName = keyBy(questions, 'fullName');
@@ -132,14 +130,14 @@ function formatStudies(questions, recordClasses, answer) {
       return records;
     }
 
-    catch(error) {
+    catch (error) {
       records.invalid.push({ record, error });
       return records;
     }
 
   }, { valid: [], invalid: [], appearFirst: new Set() });
 
-  const unsortedValidRecords = records.valid
+  const validRecords = records.valid
     // remove unreleased studies, unless `showUnreleasedData = true`
     // also, remove DIY studies
     .filter(
@@ -153,33 +151,17 @@ function formatStudies(questions, recordClasses, answer) {
         .map(questionName => questionsByName[questionName])
         .filter(question => question != null)
         .map(question => {
-        const recordClass = recordClassesByName[question.outputRecordClassName];
-        return {
-          icon: question.iconName || recordClass.iconName || 'fa fa-database',
-          name: question.fullName,
-          path: `${recordClass.urlSegment}/${question.urlSegment}`,
-          displayName: recordClass.shortDisplayNamePlural,
-        };
-      })
+          const recordClass = recordClassesByName[question.outputRecordClassName];
+          return {
+            icon: question.iconName || recordClass.iconName || 'fa fa-database',
+            name: question.fullName,
+            path: `${recordClass.urlSegment}/${question.urlSegment}`,
+            displayName: recordClass.shortDisplayNamePlural,
+          };
+        })
     }));
 
-  const sortedValidRecords = orderBy(
-    unsortedValidRecords,
-    [
-      ({ disabled }) => disabled,
-      ({ id }) => records.appearFirst.has(id),
-      ({ access }) => isPrereleaseStudyTemp(access),
-      ({ name }) => name
-    ],
-    [
-      'asc',
-      'desc',
-      'asc', 
-      'asc'
-    ]
-  );
-
-  return [ sortedValidRecords, records.invalid ];
+  return [validRecords, records.invalid];
 }
 
 /**
@@ -192,12 +174,12 @@ function formatStudies(questions, recordClasses, answer) {
  */
 function mapProps(propMap) {
   return function mapper(source) {
-    return mapValues(propMap, ([ sourcePath, valueMapper = identity ]) => {
+    return mapValues(propMap, ([sourcePath, valueMapper = identity]) => {
       try {
         if (typeof sourcePath === 'function') return valueMapper(sourcePath(source));
         return valueMapper(get(source, sourcePath))
       }
-      catch(error) {
+      catch (error) {
         throw new Error(`Parsing error at ${sourcePath}: ${error.message}`);
       }
     });
