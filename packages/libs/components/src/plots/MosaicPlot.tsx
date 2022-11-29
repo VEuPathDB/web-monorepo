@@ -154,7 +154,10 @@ const MosaicPlot = makePlotlyPlotComponent(
     // Extra left margin and y-axis title standoff calculations are weird due
     // to y-axis automargin
     const marginLeftExtra = 5.357 * longestLegendLabelLength + 37.5;
-    const yAxisTitleStandoff = marginLeftExtra + 25;
+    const yAxisTitleStandoff = Math.max(
+      marginLeftExtra + 25,
+      showColumnLabels ? 125 : 0
+    );
 
     const marginLeft =
       spacingOptions?.marginLeft ?? PlotSpacingDefault.marginLeft;
