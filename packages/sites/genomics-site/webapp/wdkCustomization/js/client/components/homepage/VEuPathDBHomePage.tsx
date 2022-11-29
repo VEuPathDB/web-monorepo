@@ -350,21 +350,10 @@ const useHeaderMenuItems = (
           display: 'Companion',
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'http://companion.gla.ac.uk/',
+          url: 'https://companion.ac.uk/',
           target: '_blank',
           metadata: {
-            exclude: [ FungiDB,VectorBase ]
-          }
-        },
-        { 
-          key: 'companion--fungi',
-          display: 'Companion Fungi',
-          type: 'externalLink',
-          tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'http://fungicompanion.gla.ac.uk/',
-          target: '_blank',
-          metadata: {
-            include: [ FungiDB ]
+            exclude: [ VectorBase ]
           }
         },
         {

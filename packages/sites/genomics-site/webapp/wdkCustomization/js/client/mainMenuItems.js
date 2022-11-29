@@ -65,19 +65,11 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         //   url: 'http://rnaseq.pathogenportal.org'
         // },
         {
-          id: 'companion_fungi',
+          id: 'companion',
           text: 'Companion',
-          exclude: [FungiDB],
+          exclude: [HostDB],
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'http://companion.gla.ac.uk/',
-          target: '_blank'
-        },
-        {
-          id: 'companion--fungidb',
-          text: 'Companion',
-          include: [FungiDB],
-          tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'http://fungicompanion.gla.ac.uk/',
+          url: 'https://companion.ac.uk/',
           target: '_blank'
         },
         {
