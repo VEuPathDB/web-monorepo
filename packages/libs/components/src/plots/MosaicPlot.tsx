@@ -133,7 +133,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       // Subtraction at end is due to x-axis automargin shrinking the plot
       plotHeight = containerHeight - marginTop - marginBottom;
       if (independentAxisLabel) plotHeight -= 20;
-      if (showColumnLabels !== false)
+      if (showColumnLabels != false)
         plotHeight -= elbowPointerGap * data.independentLabels.length;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
@@ -165,7 +165,7 @@ const MosaicPlot = makePlotlyPlotComponent(
 
     const gapToFirstXLabel = 20;
     const xAxisTitleStandoff =
-      plotHeight && !showColumnLabels === false
+      plotHeight && showColumnLabels != false
         ? gapToFirstXLabel + elbowPointerGap * data.independentLabels.length
         : undefined;
     const getElbowPointerY = (nthLabel: number) =>
@@ -204,7 +204,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         itemdoubleclick: false,
       },
       hovermode: 'x',
-      shapes: showColumnLabels !== false && [
+      shapes: showColumnLabels != false && [
         ...column_centers.flatMap((column_center, index) => {
           const elbowY = getElbowPointerY(index);
 
@@ -240,7 +240,7 @@ const MosaicPlot = makePlotlyPlotComponent(
           ];
         }),
       ],
-      annotations: showColumnLabels !== false && [
+      annotations: showColumnLabels != false && [
         ...column_centers.map((column_center, index) => {
           const width = 150;
           const height = 20;
