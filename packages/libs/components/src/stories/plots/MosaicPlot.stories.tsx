@@ -120,8 +120,66 @@ TenByTwelve.args = {
   dependentAxisLabel: 'Month',
   interactive: true,
   containerStyles: {
-    height: 700,
+    height: 750,
+    width: 750,
   },
+};
+
+const realData = {
+  values: [
+    [771, 794, 635, 820, 411, 589, 517],
+    [769, 587, 726, 818, 376, 605, 522],
+    [759, 795, 826, 820, 385, 722, 520],
+    [787, 714, 496, 820, 402, 560, 521],
+    [773, 692, 676, 819, 395, 620, 518],
+  ],
+  independentLabels: [
+    'Bangladesh',
+    'India',
+    'Kenya',
+    'Mali',
+    'Mozambique',
+    'Pakistan',
+    'The Gambia',
+  ],
+  dependentLabels: ['0', '1', '2', '3', '4'],
+  pValue: 5.5703e-15,
+  degreesFreedom: 24,
+  chisq: 121.3516,
+  completeCases: [
+    {
+      variableDetails: { variableId: 'ENVO_00000009', entityId: 'PCO_0000024' },
+      completeCases: 22567,
+    },
+    {
+      variableDetails: {
+        variableId: 'EUPATH_0000143',
+        entityId: 'PCO_0000024',
+      },
+      completeCases: 22560,
+    },
+  ],
+  completeCasesAllVars: 22560,
+  completeCasesAxesVars: 22560,
+};
+
+export const RealData = Template.bind({});
+RealData.args = {
+  ...defaults,
+  data: realData,
+  independentAxisLabel: 'Country',
+  dependentAxisLabel: 'Household wealth index, categorical',
+  interactive: true,
+  containerStyles: {
+    width: 750,
+    height: 450,
+    marginLeft: '0.75rem',
+    border: '1px solid #dedede',
+    boxShadow: '1px 1px 4px #00000066',
+  },
+  displayLibraryControls: false,
+  showSpinner: false,
+  displayLegend: false,
 };
 
 export const EmptyData = Template.bind({});
