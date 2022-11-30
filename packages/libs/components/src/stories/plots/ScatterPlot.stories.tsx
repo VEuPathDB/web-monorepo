@@ -13,6 +13,7 @@ import { scaleLinear } from 'd3-scale';
 import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
 import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
+import SliderWidget from '../../components/widgets/Slider';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -1411,19 +1412,18 @@ function processInputData<T extends number | string>(
         fill: fillAreaValue,
         marker: {
           color: defineColors
-            ? 'rgba(' + markerColors[index] + ',0.7)'
+            ? 'rgb(' + markerColors[index] + ')'
             : seriesGradientColorscale?.length > 0
             ? markerColorsGradient
             : undefined,
-          // size: 6,
-          // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
+          size: 12,
+          line: { color: 'rgb(' + markerColors[index] + ')', width: 2 },
+          symbol: 'circle',
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
         line: {
-          color: defineColors
-            ? 'rgba(' + markerColors[index] + ',1)'
-            : undefined,
+          color: defineColors ? 'rgb(' + markerColors[index] + ')' : undefined,
           shape: 'spline',
         },
       });
@@ -1711,4 +1711,87 @@ Faceted.args = {
       margin: 'auto',
     },
   },
+};
+
+export const opacitySlider = () => {
+  const disabled = false;
+  const [markerColorOpacity, setMarkerColorOpacity] = useState(0);
+  const containerStyles = {
+    height: 100,
+    width: 425,
+    marginLeft: 75,
+  };
+
+  return (
+    <>
+      <ScatterPlot
+        data={dataSetProcess}
+        independentAxisLabel={independentAxisLabel}
+        dependentAxisLabel={dependentAxisLabel}
+        // not to use independentAxisRange
+        // independentAxisRange={[xMin, xMax]}
+        dependentAxisRange={{ min: yMin, max: yMax }}
+        title={'General color'}
+        // width height is replaced with containerStyles
+        containerStyles={{
+          width: plotWidth,
+          height: plotHeight,
+        }}
+        // staticPlot is changed to interactive
+        interactive={true}
+        // check enable/disable legend and built-in controls
+        displayLegend={true}
+        displayLibraryControls={true}
+        // margin={{l: 50, r: 10, b: 20, t: 10}}
+        // add legend title
+        legendTitle={'legend title example'}
+        independentValueType={independentValueType}
+        dependentValueType={dependentValueType}
+        markerColorOpacity={markerColorOpacity}
+      />
+
+      {/* Sequential gradient color   */}
+      <ScatterPlot
+        data={dataSetProcessSequentialGradient}
+        independentAxisLabel={independentAxisLabel}
+        dependentAxisLabel={dependentAxisLabel}
+        // not to use independentAxisRange
+        // independentAxisRange={[xMin, xMax]}
+        dependentAxisRange={{ min: yMin, max: yMax }}
+        title={'Sequential gradient color'}
+        // width height is replaced with containerStyles
+        containerStyles={{
+          width: plotWidth,
+          height: plotHeight,
+        }}
+        // staticPlot is changed to interactive
+        interactive={true}
+        // check enable/disable legend and built-in controls
+        displayLegend={true}
+        displayLibraryControls={true}
+        // margin={{l: 50, r: 10, b: 20, t: 10}}
+        // add legend title
+        legendTitle={'legend title example'}
+        independentValueType={independentValueType}
+        dependentValueType={dependentValueType}
+        markerColorOpacity={markerColorOpacity}
+      />
+
+      <SliderWidget
+        minimum={0}
+        maximum={1}
+        showTextInput={true}
+        step={0.1}
+        value={0}
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          setMarkerColorOpacity(newValue);
+        }}
+        containerStyles={containerStyles}
+        showLimits={true}
+        label={'Marker opacity'}
+        disabled={disabled}
+      />
+    </>
+  );
 };
