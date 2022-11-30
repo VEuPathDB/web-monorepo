@@ -64,7 +64,11 @@ export function ComputationInstance(props: Props) {
 
   const { url } = useRouteMatch();
 
-  const { jobStatus, createJob } = useComputeJobStatus(analysis, computation);
+  const { jobStatus, createJob } = useComputeJobStatus(
+    analysis,
+    computation,
+    computationAppOverview.computeName
+  );
 
   if (
     analysis == null ||

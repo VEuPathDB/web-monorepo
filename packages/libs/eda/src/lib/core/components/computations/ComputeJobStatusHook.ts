@@ -11,7 +11,8 @@ type JobStatus = JobStatusReponse['status'];
  */
 export function useComputeJobStatus(
   analysis: Analysis | NewAnalysis,
-  computation: Computation
+  computation: Computation,
+  computeName?: string
 ) {
   const [jobStatus, setJobStatus] = useState<JobStatus>();
   const computeClient = useComputeClient();
@@ -24,19 +25,17 @@ export function useComputeJobStatus(
     setJobStatus((sharedStatusRef.current = undefined));
 
     async function getJobStatus() {
+      if (computeName == null) return;
       if (
         sharedStatusRef.current == null ||
         !isTerminalStatus(sharedStatusRef.current)
       ) {
-        const { status } = await computeClient.getJobStatus(
-          computation.descriptor.type,
-          {
-            config: fixConfig(computation.descriptor.configuration),
-            derivedVariables: analysis.descriptor.derivedVariables,
-            filters: analysis.descriptor.subset.descriptor,
-            studyId: studyMetadata.id,
-          }
-        );
+        const { status } = await computeClient.getJobStatus(computeName, {
+          config: fixConfig(computation.descriptor.configuration),
+          derivedVariables: analysis.descriptor.derivedVariables,
+          filters: analysis.descriptor.subset.descriptor,
+          studyId: studyMetadata.id,
+        });
         if (!cancelled) setJobStatus((sharedStatusRef.current = status));
       }
       if (!cancelled) setTimeout(getJobStatus, 1000);
@@ -52,27 +51,25 @@ export function useComputeJobStatus(
     analysis.descriptor.derivedVariables,
     analysis.descriptor.subset.descriptor,
     computation.descriptor.configuration,
-    computation.descriptor.type,
     computeClient,
+    computeName,
     studyMetadata.id,
   ]);
 
   const createJob = useCallback(async () => {
-    const { status } = await computeClient.createJob(
-      computation.descriptor.type,
-      {
-        config: fixConfig(computation.descriptor.configuration),
-        derivedVariables: analysis.descriptor.derivedVariables,
-        filters: analysis.descriptor.subset.descriptor,
-        studyId: studyMetadata.id,
-      }
-    );
+    if (computeName == null) return;
+    const { status } = await computeClient.createJob(computeName, {
+      config: fixConfig(computation.descriptor.configuration),
+      derivedVariables: analysis.descriptor.derivedVariables,
+      filters: analysis.descriptor.subset.descriptor,
+      studyId: studyMetadata.id,
+    });
     setJobStatus((sharedStatusRef.current = status));
   }, [
     analysis.descriptor.derivedVariables,
     analysis.descriptor.subset.descriptor,
     computation.descriptor.configuration,
-    computation.descriptor.type,
+    computeName,
     computeClient,
     studyMetadata.id,
   ]);
