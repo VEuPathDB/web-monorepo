@@ -172,7 +172,8 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
     standardDependentAxisRange,
     axisTruncationConfig?.dependentAxis,
     // for now, handle number only
-    'number'
+    'number',
+    true // addPadding
   ) as NumberRange | undefined;
 
   // make rectangular layout shapes for truncated axis/missing data
