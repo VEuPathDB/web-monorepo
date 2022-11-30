@@ -85,7 +85,7 @@ function Message(props: Props) {
 
 function PolicyNotice(props: Props) {
   const { study, user, permissions, action } = props;
-  const message = getRestrictionMessage({ action, permissions, study, user });
+  const message = action === 'download' ? 'This study requires you to submit an access request' : getRestrictionMessage({ action, permissions, study, user });
   const policyUrl = getPolicyUrl(study);
   return isPrereleaseStudy(
     getStudyAccess(study),
@@ -93,7 +93,7 @@ function PolicyNotice(props: Props) {
     permissions
   ) ? null : !policyUrl ? null : getRequestNeedsApproval(study) == '0' ? (
     <p>
-      {message} Data access will be granted immediately upon request submission.
+      {message}. Data access will be granted immediately upon request submission.
       <br />
       <br />
       Please read the{' '}
@@ -104,8 +104,7 @@ function PolicyNotice(props: Props) {
     </p>
   ) : (
     <p>
-      {message} The data from this study requires approval to download and use
-      in research projects.
+      {message} and get approval from the study team before downloading data.
       <br />
       <br />
       Please read the{' '}
