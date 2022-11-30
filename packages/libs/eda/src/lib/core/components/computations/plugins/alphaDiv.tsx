@@ -17,7 +17,6 @@ import { useMemo } from 'react';
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlphaDivConfig = t.type({
-  name: t.string,
   collectionVariable: VariableDescriptor,
   alphaDivMethod: t.string,
 });
@@ -97,7 +96,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
   return {
-    name: 'AlphaDivComputation',
     collectionVariable: {
       variableId: collections[0].id,
       entityId: collections[0].entityId,

@@ -18,7 +18,6 @@ import { useMemo } from 'react';
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AbundanceConfig = t.type({
-  name: t.string,
   collectionVariable: VariableDescriptor,
   rankingMethod: t.string,
 });
@@ -116,7 +115,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
   return {
-    name: 'RankedAbundanceComputation',
     collectionVariable: {
       variableId: collections[0].id,
       entityId: collections[0].entityId ?? '',
