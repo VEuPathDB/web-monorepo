@@ -4,6 +4,8 @@ import _ from 'lodash';
 import { FacetedData } from '../types/plots';
 import { isFaceted } from '../types/guards';
 import Spinner from '../components/Spinner';
+import { MEDIUM_DARK_GRAY, MEDIUM_GRAY } from '../constants/colors';
+import { Table } from '@veupathdb/coreui';
 
 interface ContingencyTableProps {
   data?: MosaicPlotData | FacetedData<MosaicPlotData>;
@@ -61,10 +63,16 @@ export function ContingencyTable(props: ContingencyTableProps) {
       <div
         style={{
           position: 'relative',
-          height: '200px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '350px',
+          width: '750px',
+          border: '1px solid rgb(191, 191, 191)',
         }}
       >
         {props.enableSpinner && <Spinner />}
+        <Table width={150} height={150} fill={MEDIUM_GRAY} />
       </div>
     );
   }
@@ -74,8 +82,6 @@ export function ContingencyTable(props: ContingencyTableProps) {
   }
 
   const rowSums = data.values.map((row) => _.sum(row));
-  const numericHeaderStyles = { textAlign: 'center' } as const;
-  const numericValueStyles = { textAlign: 'right' } as const;
 
   return (
     <div className="contingency-table" style={props.tableContainerStyles}>
@@ -85,8 +91,8 @@ export function ContingencyTable(props: ContingencyTableProps) {
             <td className="contingency-table_top-left-corner" colSpan={1}></td>
             <th
               className="contingency-table_column-header"
-              colSpan={data.independentLabels.length}
-              style={{ textAlign: 'center' }}
+              colSpan={data.independentLabels.length + 1}
+              style={{ background: MEDIUM_GRAY }}
             >
               {props.independentVariable}
             </th>
@@ -94,22 +100,18 @@ export function ContingencyTable(props: ContingencyTableProps) {
           <tr>
             <th
               className="contingency-table_row-header"
-              style={{ textAlign: 'center' }}
+              style={{ background: MEDIUM_GRAY }}
             >
               {props.dependentVariable}
             </th>
             {data.independentLabels.map((label) => (
-              <th
-                key={label}
-                className="contingency-table_column-label"
-                style={numericHeaderStyles}
-              >
+              <th key={label} className="contingency-table_column-label">
                 {label}
               </th>
             ))}
             <th
               className="contingency-table_totals-column-header"
-              style={numericHeaderStyles}
+              style={{ color: MEDIUM_DARK_GRAY }}
             >
               Total
             </th>
@@ -123,35 +125,52 @@ export function ContingencyTable(props: ContingencyTableProps) {
                 <td
                   key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
                   className="contingency-table_value"
-                  style={numericValueStyles}
+                  style={
+                    i < data.values.length - 1
+                      ? { paddingBottom: '0.75em' }
+                      : {}
+                  }
                 >
                   {value.toLocaleString()}
+                  <br />
+                  {makePercentString(value, rowSums)}
                 </td>
               ))}
               <td
                 className="contingency-table_totals-column-value"
-                style={numericValueStyles}
+                style={{ color: MEDIUM_DARK_GRAY }}
               >
                 {rowSums[i].toLocaleString()}
+                <br />
+                {makePercentString(rowSums[i], rowSums)}
               </td>
             </tr>
           ))}
           <tr>
-            <th className="contingency-table_totals-row-header">Total</th>
+            <th
+              className="contingency-table_totals-row-header"
+              style={{ color: MEDIUM_DARK_GRAY }}
+            >
+              Total
+            </th>
             {_.unzip(data.values).map((col, i) => (
               <td
                 key={data.independentLabels[i]}
                 className="contingency-table_totals-row-value"
-                style={numericValueStyles}
+                style={{ color: MEDIUM_DARK_GRAY }}
               >
                 {_.sum(col).toLocaleString()}
+                <br />
+                {makePercentString(_.sum(col), rowSums)}
               </td>
             ))}
             <td
               className="contingency-table_grand-total"
-              style={numericValueStyles}
+              style={{ color: MEDIUM_DARK_GRAY }}
             >
               {_.sum(rowSums).toLocaleString()}
+              <br />
+              {makePercentString(_.sum(rowSums), rowSums)}
             </td>
           </tr>
         </tbody>
@@ -159,3 +178,11 @@ export function ContingencyTable(props: ContingencyTableProps) {
     </div>
   );
 }
+
+const makePercentString = (value: number, sumsArray: number[]) => {
+  return (
+    <span>
+      ({_.round(_.divide(value, _.sum(sumsArray)) * 100, 1).toLocaleString()}%)
+    </span>
+  );
+};

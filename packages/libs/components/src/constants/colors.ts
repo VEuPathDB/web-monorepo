@@ -53,5 +53,6 @@ export const PAIRED_COLORS = [
 
 export const DARKEST_GRAY = gray[900];
 export const DARK_GRAY = gray[600];
+export const MEDIUM_DARK_GRAY = gray[400];
 export const MEDIUM_GRAY = gray[300]; // gray used in disabled state
 export const LIGHT_GRAY = gray[100];
