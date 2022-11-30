@@ -11,7 +11,7 @@ import {
   actionRequiresApproval,
 } from './DataRestrictionUtils';
 import Modal from '@veupathdb/wdk-client/lib/Components/Overlays/Modal';
-import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt as Icon, Link, Tooltip } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { getStudyAccess, getStudyId, getStudyName } from '../shared/studies';
 
@@ -127,6 +127,28 @@ function Buttons(props: Props) {
     study,
     user,
   });
+
+  const submitDataAccessButton = (
+    <button
+      onClick={() => {
+        const loggedInRoute = `/request-access/${getStudyId(
+          study
+        )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
+
+        if (user.isGuest) {
+          showLoginForm(window.location.origin + history.createHref(parsePath(loggedInRoute)));
+        } else {
+          history.push(loggedInRoute);
+        }
+      }}
+      className="btn"
+      disabled={user.isGuest}
+    >
+      Submit Data Access Request
+      <Icon fa="envelope-open-o right-side" />
+    </button>
+)
+
   return isPrereleaseStudy(
     getStudyAccess(study),
     getStudyId(study),
@@ -167,23 +189,12 @@ function Buttons(props: Props) {
         </button>
       )}
       {!approvalRequired ? null : (
-        <button
-          onClick={() => {
-            const loggedInRoute = `/request-access/${getStudyId(
-              study
-            )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
-
-            if (user.isGuest) {
-              showLoginForm(window.location.origin + history.createHref(parsePath(loggedInRoute)));
-            } else {
-              history.push(loggedInRoute);
-            }
-          }}
-          className="btn"
-        >
-          Submit Data Access Request
-          <Icon fa="envelope-open-o right-side" />
-        </button>
+        user.isGuest ? (
+          <Tooltip content={'You must be logged in to request data access'} showDelay={0}>
+            {submitDataAccessButton}
+          </Tooltip> 
+        ) : 
+        submitDataAccessButton
       )}
       {!strict ? (
         <button className="btn" onClick={onClose}>
