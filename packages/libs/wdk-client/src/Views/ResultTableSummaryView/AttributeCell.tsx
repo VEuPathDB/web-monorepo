@@ -1,39 +1,41 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { truncate } from 'lodash';
+import { isEqual, truncate } from 'lodash';
 import { RecordInstance, AttributeField } from 'wdk-client/Utils/WdkModel';
 import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { useIsRefOverflowingHorizontally } from 'wdk-client/Hooks/Overflow';
 
 interface AttributeCellProps {
   attribute: AttributeField;
   recordInstance: RecordInstance;
 }
 
-const defaultStyleSpec: React.CSSProperties = {
-  whiteSpace: 'nowrap',
-};
-
 function AttributeCell({
   attribute,
   recordInstance,
 }: AttributeCellProps) {
   const value = recordInstance.attributes[attribute.name];
+  const defaultStyleSpec: React.CSSProperties = {
+    whiteSpace: 'nowrap',
+    maxWidth: `${attribute.truncateTo}ch`,
+  };
   const ref = useRef<HTMLDivElement>(null);
   const [ styleSpec, setStyleSpec ] = useState<React.CSSProperties>(defaultStyleSpec);
+  const isOverflowing = useIsRefOverflowingHorizontally(ref);
   
   useLayoutEffect(() => {
     if (!ref.current) return;
     if (
       ref.current.innerText.length > attribute.truncateTo &&
-      styleSpec === defaultStyleSpec
-    ) {
-      setStyleSpec({
-        maxWidth: `${attribute.truncateTo}ch`,
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      })
-    }
+      isEqual(styleSpec, defaultStyleSpec) &&
+      isOverflowing
+      ) {
+        setStyleSpec({
+          ...defaultStyleSpec,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        })
+      }
   });
 
   useEffect(() => {
@@ -48,7 +50,7 @@ function AttributeCell({
         style: styleSpec,
         ref,
       }, 'div');
-    return styleSpec === defaultStyleSpec ? cellContent : <Tooltip title={ref.current?.innerText ?? ''} css={{}} interactive>{cellContent}</Tooltip>
+    return !('overflow' in styleSpec) ? cellContent : <Tooltip title={ref.current?.innerText ?? ''} css={{}} interactive>{cellContent}</Tooltip>
   }
 
   const { url, displayText } = value;
