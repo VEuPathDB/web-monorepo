@@ -134,6 +134,7 @@ interface FieldNodeProps {
   onClickStar: () => void;
   scrollIntoView: boolean;
   asDropdown?: boolean;
+  isFeaturedField?: boolean;
 }
 
 interface getNodeSearchStringType {
@@ -722,6 +723,7 @@ export default function VariableList({
                       }
                       scrollIntoView={false}
                       asDropdown={asDropdown}
+                      isFeaturedField={true}
                     />
                   </div>
                 </li>
@@ -860,6 +862,7 @@ const FieldNode = ({
   isMultiFilterDescendant,
   showMultiFilterDescendants,
   asDropdown,
+  isFeaturedField,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
@@ -942,7 +945,35 @@ const FieldNode = ({
 
   const canBeStarred = isFilterField(field) && !isMultiFilterDescendant;
 
-  return (
+  return isFeaturedField ? (
+    <div css={{ ...fieldNodeCssSelectors, width: '100%' }}>
+      <div className={canBeStarred ? 'starred-var-container' : ''}>
+        {fieldContents}
+        {isFilterField(field) && !isMultiFilterDescendant && (
+          /**
+           * Temporarily replace Tooltip components with title attribute to alleviate performance issues in new CheckboxTree.
+           * We are currently rendering 2 Tooltips per variable, which in Microbiome equates to several thousand Tooltips
+           */
+          // <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
+          <button
+            className={
+              isStarred ? 'link star-selected' : 'link star-unselected'
+            }
+            title={`Click to ${isStarred ? 'unstar' : 'star'}`}
+            onClick={(e) => {
+              // prevent click from toggling expansion state
+              e.stopPropagation();
+              onClickStar();
+            }}
+            disabled={starredVariablesLoading}
+          >
+            <Icon fa={isStarred ? 'star' : 'star-o'} />
+          </button>
+          // </Tooltip>
+        )}
+      </div>
+    </div>
+  ) : (
     <div className={canBeStarred ? 'starred-var-container' : ''}>
       {fieldContents}
       {isFilterField(field) && !isMultiFilterDescendant && (
