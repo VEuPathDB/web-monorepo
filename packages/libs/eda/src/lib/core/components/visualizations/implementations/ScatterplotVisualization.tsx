@@ -130,6 +130,8 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 
+import SliderWidget from '@veupathdb/components/lib/components/widgets/Slider';
+
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
 const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
@@ -1158,6 +1160,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  // slider settings
+  const [markerColorOpacity, setMarkerColorOpacity] = useState(0);
+  const markerOpacityContainerStyles = {
+    height: '4em',
+    width: '27em',
+    marginLeft: '1em',
+    marginBottom: '0.5em',
+  };
+
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
@@ -1196,6 +1207,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
       : undefined,
+    // need to define markerColorOpacity for faceted plot
+    markerColorOpacity: markerColorOpacity,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
@@ -1218,6 +1231,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ref={plotRef}
           data={data.value?.dataSetProcess}
           checkedLegendItems={checkedLegendItems}
+          markerColorOpacity={markerColorOpacity}
         />
       )}
     </>
@@ -1380,6 +1394,22 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           itemMarginRight={50}
         />
       )}
+
+      {/* make a plot slide after plot mode for now */}
+      <SliderWidget
+        minimum={0}
+        maximum={1}
+        showTextInput={true}
+        step={0.1}
+        value={0}
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          setMarkerColorOpacity(newValue);
+        }}
+        containerStyles={markerOpacityContainerStyles}
+        showLimits={true}
+        label={'Marker opacity'}
+      />
 
       {/* axis range control UIs */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -2066,7 +2096,7 @@ function processInputData<T extends number | string>(
   const markerSymbol = (index: number) =>
     showMissingness && index === responseScatterplotData.length - 1
       ? 'x'
-      : 'circle-open';
+      : 'circle';
 
   // use type: scatter for faceted plot, otherwise scattergl
   const scatterPlotType = facetVariable != null ? 'scatter' : 'scattergl';
@@ -2246,6 +2276,15 @@ function processInputData<T extends number | string>(
             seriesGradientColorscale?.length > 0
               ? markerSymbolGradient
               : markerSymbol(index),
+          // need to set marker.line for a transparent case (opacity != 1)
+          line: {
+            color:
+              seriesGradientColorscale?.length > 0 &&
+              markerSymbolGradient === 'circle'
+                ? markerColorsGradient
+                : markerColor(index),
+            width: 1,
+          },
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
