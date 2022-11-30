@@ -19,6 +19,7 @@ export type JobStatusReponse = t.TypeOf<typeof JobStatusReponse>;
 export const JobStatusReponse = t.type({
   jobID: t.string,
   status: t.keyof({
+    'no-such-job': null,
     queued: null,
     'in-progress': null,
     complete: null,
@@ -40,10 +41,23 @@ export class ComputeClient extends FetchClientWithCredentials {
     computeName: string,
     computeSpec: ComputeSpec
   ): Promise<JobStatusReponse> {
+    return this.postJobStatus(computeName, computeSpec, false);
+  }
+  createJob(
+    computeName: string,
+    computeSpec: ComputeSpec
+  ): Promise<JobStatusReponse> {
+    return this.postJobStatus(computeName, computeSpec, true);
+  }
+  private postJobStatus(
+    computeName: string,
+    computeSpec: ComputeSpec,
+    autostart: boolean
+  ): Promise<JobStatusReponse> {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: `/computes/${computeName}`,
+        path: `/computes/${computeName}?autostart=${autostart}`,
         body: computeSpec,
         transformResponse: ioTransformer(JobStatusReponse),
       })

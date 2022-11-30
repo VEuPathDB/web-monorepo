@@ -42,7 +42,8 @@ import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
-import { RunComputeButton } from '../computations/RunComputeButton';
+import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
+import { JobStatusReponse } from '../../api/ComputeClient';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -66,6 +67,8 @@ interface Props {
   baseUrl?: string;
   isSingleAppMode: boolean;
   disableThumbnailCreation?: boolean;
+  computeJobStatus?: JobStatusReponse['status'];
+  createComputeJob?: () => void;
 }
 
 /**
@@ -144,6 +147,7 @@ function ConfiguredVisualizations(props: Props) {
     visualizationsOverview,
     baseUrl,
     isSingleAppMode,
+    computeJobStatus,
   } = props;
   const { url } = useRouteMatch();
 
@@ -267,6 +271,8 @@ function ConfiguredVisualizations(props: Props) {
                 </div>
                 <div className={cx('-ConfiguredVisualizationTitle')}>
                   {viz.displayName ?? 'Unnamed visualization'}
+                  &nbsp;
+                  {computeJobStatus && <StatusIcon status={computeJobStatus} />}
                 </div>
                 <div className={cx('-ConfiguredVisualizationSubtitle')}>
                   {meta?.displayName}
@@ -432,7 +438,9 @@ type FullScreenVisualizationPropKeys =
   | 'geoConfigs'
   | 'baseUrl'
   | 'isSingleAppMode'
-  | 'disableThumbnailCreation';
+  | 'disableThumbnailCreation'
+  | 'computeJobStatus'
+  | 'createComputeJob';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -460,6 +468,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     isSingleAppMode,
     disableThumbnailCreation,
     actions,
+    computeJobStatus,
+    createComputeJob,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -651,7 +661,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                 display: 'flex',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                gap: '2em',
+                gap: '5em',
               }}
             >
               <plugin.configurationComponent
@@ -664,11 +674,13 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                 geoConfigs={geoConfigs}
                 addNewComputation={() => null}
               />
-              <RunComputeButton
-                analysis={analysisState.analysis}
-                computation={computation}
-                computationAppOverview={computationAppOverview}
-              />
+              {createComputeJob && (
+                <RunComputeButton
+                  computationAppOverview={computationAppOverview}
+                  status={computeJobStatus}
+                  createJob={createComputeJob}
+                />
+              )}
             </div>
           )}
           <vizPlugin.fullscreenComponent

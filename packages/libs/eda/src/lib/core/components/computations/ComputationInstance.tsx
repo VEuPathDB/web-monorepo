@@ -7,8 +7,8 @@ import { ComputationProps } from './Types';
 import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { AnalysisState } from '../../hooks/analysis';
-import { RunComputeButton } from './RunComputeButton';
 import { useStudyMetadata } from '../../hooks/workspace';
+import { useComputeJobStatus } from './ComputeJobStatusHook';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -33,6 +33,10 @@ export function ComputationInstance(props: Props) {
   const { analysis, setComputations } = analysisState;
 
   const computation = useComputation(analysis, computationId);
+
+  if (analysis == null) throw new Error('Cannot find analysis.');
+
+  if (computation == null) throw new Error('Cannot find computation.');
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
@@ -60,6 +64,8 @@ export function ComputationInstance(props: Props) {
 
   const { url } = useRouteMatch();
 
+  const { jobStatus, createJob } = useComputeJobStatus(analysis, computation);
+
   if (
     analysis == null ||
     computation == null ||
@@ -84,11 +90,6 @@ export function ComputationInstance(props: Props) {
           }}
         >
           <AppTitle computation={computation} />
-          <RunComputeButton
-            analysis={analysis}
-            computation={computation}
-            computationAppOverview={computationAppOverview}
-          />
         </div>
       )}
       <VisualizationsContainer
@@ -106,6 +107,8 @@ export function ComputationInstance(props: Props) {
         filteredCounts={filteredCounts}
         baseUrl={baseUrl}
         isSingleAppMode={isSingleAppMode}
+        computeJobStatus={jobStatus}
+        createComputeJob={createJob}
       />
     </div>
   );
