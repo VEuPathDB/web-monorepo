@@ -1,14 +1,10 @@
 import React from 'react';
 import { RadioList, Checkbox, TextBox } from '@veupathdb/wdk-client/lib/Components';
+import { deflineFieldOptions, ComponentsList } from './BedFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
-
-let deflineTypes = [
-  {  value: "short", display: 'ID Only' },
-  {  value: "full", display: 'Full Fasta Header' }
-];
 
 let strands = [
   {  value: "forward", display: 'Forward' },
@@ -46,8 +42,14 @@ const BedGenomicSequenceReporterForm = props => {
       </div>
       <h3>Fasta defline:</h3>
       <div style={{marginLeft:"2em"}}>
-        <RadioList name="deflineType" value={formState.deflineType} items={deflineTypes}
-          onChange={getUpdateHandler('deflineType')} />
+        <RadioList name="deflineType" value={formState.deflineType}
+          onChange={getUpdateHandler('deflineType')} items={[
+            {  value: "short", display: 'ID Only' },
+            { 
+              value: "full", display: 'Full Fasta Header',
+              body: (<ComponentsList field="deflineFields" features={deflineFieldOptions} formState={formState} getUpdateHandler={getUpdateHandler} />),
+            }
+            ]}/>
       </div>
       { includeSubmit &&
         <div style={{margin:'0.8em'}}>
@@ -78,7 +80,8 @@ BedGenomicSequenceReporterForm.getInitialState = () => ({
   formState: {
     attachmentType: 'plain',
     strand: strands[0].value,
-    deflineType: deflineTypes[0].value,
+    deflineType: "short",
+    deflineFields: deflineFieldOptions.map((x) => x.value),
     sequenceFeature: sequenceFeatureOptions[0]
   },
   formUiState: {}
