@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.9":
-  version "0.19.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.9.tgz#649957163efcc0ad293da1aaea40762958c8b871"
-  integrity sha512-F9W2kOsXQ2IfFT3xqnkaRxtfaGP/VdiTERDtABfd/CNMq5sBXobn3ydEfTCzifM9VzswqNPTYdrUgmuSE2lrzg==
+"@veupathdb/components@^0.19.10":
+  version "0.19.10"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.10.tgz#da4c2ff6784411610585ade5f818e56c8618e94f"
+  integrity sha512-lcXU+Bh1T9GTSrsXVlwh/qpF7bzsuLGoEZB3vysnWxMJCShbInt8IHyeHB6Ry7WboYbj6B1aqyK+eR6koOXXig==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2166,10 +2166,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.13.3":
-  version "3.13.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.13.3.tgz#f3e7fcaeb660b0c2994173b416e9f7273f191602"
-  integrity sha512-XKHHFhmB4FBRwr5EsVL/NrGgu51imnp+wCjqMZIUGj1FGW7SbJuTm6IA8l42kWxb4bNzN2VUbodpo6dW5La8hg==
+"@veupathdb/eda@^3.13.4":
+  version "3.13.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.13.4.tgz#578a48634d331a075fce45b6c7fd15faf62b55f0"
+  integrity sha512-sKwL1jP391iEQ9dv2IeZdOE+OmPATSHBLcUnEnIB5lrc5qmd/lNcp16LFs2++ugt0CE1hwhDqTy5Hk6EDhArUg==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2257,10 +2257,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.7.4":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.4.tgz#b0725f681024328081f74c5982ad00560e56ca25"
-  integrity sha512-U5jzQCOsE7M91q0ktW03AKREMDFWjPzUTDz0Lvuu1huNyPD3eWoVAFwmwzp0fWxMO6IMniCD5sdASpT3N5U6GA==
+"@veupathdb/web-common@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.5.tgz#3617358b6e3fc796d6ca96cc93f8c432d3648ec5"
+  integrity sha512-dIuaOOLyMegpFelIGEo6tiZoSxYxAVSZ1DXaXAt2bFhXspON4DXg0ml/4b9ItaoamPo4lWJH8J22N+ojOmCFHw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"

@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs --port 3000"
+    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs"
   },
   "keywords": [],
   "author": "",
@@ -19,14 +19,14 @@
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
-    "@veupathdb/components": "^0.19.9",
+    "@veupathdb/components": "^0.19.10",
     "@veupathdb/coreui": "^0.18.14",
-    "@veupathdb/eda": "^3.13.3",
+    "@veupathdb/eda": "^3.13.4",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/user-datasets": "^0.1.12",
     "@veupathdb/wdk-client": "^0.9.18",
-    "@veupathdb/web-common": "^0.7.4",
+    "@veupathdb/web-common": "^0.7.5",
     "core-js": "^3.21.1",
     "notistack": "^1.0.10",
     "react": "16",
