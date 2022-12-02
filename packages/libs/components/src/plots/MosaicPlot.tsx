@@ -13,6 +13,8 @@ import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlotSpacingDefault, ColorPaletteDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
+import { select } from 'd3';
+import { removeHtmlTags } from '../utils/removeHtmlTags';
 
 export interface MosaicPlotProps extends PlotProps<MosaicPlotData> {
   /** label for independent axis */
@@ -302,6 +304,22 @@ const MosaicPlot = makePlotlyPlotComponent(
 
     const classes = useStyles();
 
+    const onPlotlyRender: PlotProps<MosaicPlotData>['onPlotlyRender'] = (
+      figure,
+      graphDiv
+    ) => {
+      const annotationGroups = select(graphDiv).selectAll('.annotation-text');
+      annotationGroups.selectAll('title').remove();
+      annotationGroups
+        .attr('pointer-events', 'all')
+        .attr('cursor', 'default')
+        .append('svg:title')
+        .text((d, i) => {
+          const label = data.independentLabels[i];
+          return label.length > maxIndependentTickLabelLength ? label : null;
+        });
+    };
+
     return {
       data: plotlyReadyData,
       layout,
@@ -310,6 +328,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       spacingOptions: newSpacingOptions,
       containerClass: classes.root,
       displayLegend: true,
+      onPlotlyRender,
       ...restProps,
     };
   }
