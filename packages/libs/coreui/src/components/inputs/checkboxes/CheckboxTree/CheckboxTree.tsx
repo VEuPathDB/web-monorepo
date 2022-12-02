@@ -2,7 +2,7 @@ import React, { useCallback, MouseEventHandler, useMemo } from 'react';
 import { css } from '@emotion/react';
 import { merge } from 'lodash';
 
-import CheckboxTreeNode, { CustomCheckboxes, CheckboxTreeNodeStyleSpec } from './CheckboxTreeNode';
+import CheckboxTreeNode, { CustomCheckboxes, CheckboxTreeNodeStyleSpec, defaultTreeNodeStyleSpec } from './CheckboxTreeNode';
 import SearchBox, { SearchBoxStyleSpec } from '../../SearchBox/SearchBox';
 import { Warning } from '../../../icons';
 
@@ -95,7 +95,7 @@ const defaultCheckboxTreeStyleSpec: CheckboxTreeStyleSpec = {
       padding: '0 1em', 
     }
   },
-  treeNode: {},
+  treeNode: defaultTreeNodeStyleSpec,
 }
 
 type StatefulNode<T> = T & {
@@ -222,6 +222,8 @@ export type CheckboxTreeProps<T> = {
   wrapTreeSection?: (treeSection: React.ReactNode) => React.ReactNode;
 
   styleOverrides?: CheckboxTreeStyleSpec;
+
+  customTreeNodeCssSelectors?: object;
 };
 
 type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
@@ -632,6 +634,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         expandedList,
         renderNoResults,
         styleOverrides = {},
+        customTreeNodeCssSelectors = {},
     } = props;
 
     const styleSpec: CheckboxTreeStyleSpec = useMemo(() => {
@@ -825,9 +828,29 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
       />
     );
 
+    const treeNodeCssSelectors = useMemo(() => {
+      return ({
+        '.list': styleSpec.treeNode?.list,
+        '.visible-element': { display: '' },
+        '.hidden-element': { display: 'none' },
+        '.node-wrapper': {...styleSpec.treeNode?.nodeWrapper},
+        '.top-level-node-wrapper': {...styleSpec.treeNode?.nodeWrapper, ...styleSpec.treeNode?.topLevelNodeWrapper},
+        '.arrow-icon': { fill: '#aaa', fontSize: '0.75em', cursor: 'pointer' },
+        '.label-text-wrapper': { ...styleSpec.treeNode?.labelTextWrapper },
+        '.leaf-node-label': { ...styleSpec.treeNode?.leafNodeLabel },
+        '.node-label': { ...styleSpec.treeNode?.nodeLabel },
+        '.children': styleSpec.treeNode?.children,
+        '.active-search-buffer': { width: '0.75em' },
+        ...customTreeNodeCssSelectors
+      })
+    }, [styleSpec.treeNode, customTreeNodeCssSelectors])
+
     let treeSection = (
       <div style={styleSpec.treeSection?.container}>
-        <ul style={styleSpec.treeSection?.ul}>
+        <ul 
+          style={styleSpec.treeSection?.ul}
+          css={treeNodeCssSelectors}
+        >
           {topLevelNodes.map((node, index) => {
             const nodeId = getNodeId(node);
 
@@ -848,7 +871,6 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
                 getNodeChildren={getStatefulChildren}
                 renderNode={renderNode}
                 customCheckboxes={customCheckboxes as unknown as CustomCheckboxes<StatefulNode<T>>}
-                styleOverrides={styleSpec.treeNode}
                 isTopLevelNode={true}
               />
             )

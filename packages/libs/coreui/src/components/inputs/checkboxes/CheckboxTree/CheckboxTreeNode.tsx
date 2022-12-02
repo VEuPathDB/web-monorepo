@@ -1,5 +1,4 @@
-import React, { useMemo } from 'react';
-import { merge } from 'lodash';
+import React from 'react';
 import { isLeaf } from '../../SelectTree/Utils';
 import IndeterminateCheckbox, { IndeterminateCheckboxProps } from '../IndeterminateCheckbox';
 import { ArrowRight, ArrowDown } from '../../../icons';
@@ -19,7 +18,7 @@ export type CheckboxTreeNodeStyleSpec = {
   labelTextWrapper?: React.CSSProperties;
 };
 
-const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
+export const defaultTreeNodeStyleSpec: CheckboxTreeNodeStyleSpec = {
   list: {
     listStyle: 'none',
   },
@@ -49,9 +48,6 @@ const defaultStyleSpec: CheckboxTreeNodeStyleSpec = {
     paddingLeft: '0.25em',
   }
 }
-
-const visibleElement = { display: '' };
-const hiddenElement = { display: 'none' };
 
 type TreeRadioProps<T> = {
   name: string;
@@ -110,7 +106,6 @@ type Props<T> = {
   renderNode: (node: T, path?: number[]) => React.ReactNode;
   customCheckboxes?: CustomCheckboxes<T>;
   shouldExpandOnClick: boolean;
-  styleOverrides?: CheckboxTreeNodeStyleSpec;
   isTopLevelNode?: boolean;
 }
 
@@ -129,18 +124,12 @@ export default function CheckboxTreeNode<T>({
     renderNode,
     customCheckboxes,
     shouldExpandOnClick,
-    styleOverrides = {},
     isTopLevelNode = false,
   }: Props<T>
 ) {
-  const styleSpec: CheckboxTreeNodeStyleSpec = useMemo(() => {
-    return merge({}, defaultStyleSpec, styleOverrides)
-  }, [styleOverrides])
 
     let { isSelected, isIndeterminate, isVisible, isExpanded } = getNodeState(node);
     let isLeafNode = isLeaf(node, getNodeChildren);
-    let nodeVisibilityCss = isVisible ? visibleElement : hiddenElement;
-    let childrenVisibilityCss = isExpanded ? visibleElement : hiddenElement;
     let inputName = isLeafNode ? name : '';
     let nodeId = getNodeId(node);
     const nodeElement = renderNode(node, path);
@@ -154,23 +143,22 @@ export default function CheckboxTreeNode<T>({
     const CustomCheckbox = (customCheckboxes && (nodeId in customCheckboxes)) ? customCheckboxes[nodeId] : undefined;
 
     return (
-      <li css={{
-          ...nodeVisibilityCss, 
-          ...styleSpec.list,
-      }}>
+      <li
+        className={`list ${isVisible ? 'visible-element' : 'hidden-element'}`}
+      >
         <div 
-          css={
-            isTopLevelNode ? { ...styleSpec.nodeWrapper, ...styleSpec.topLevelNodeWrapper} : {...styleSpec.nodeWrapper}
+          className={
+            isTopLevelNode ? 'top-level-node-wrapper' : 'node-wrapper'
           }
         >
           {isLeafNode ? null 
             : isActiveSearch ? (
               // this retains the space of the expansion toggle icons for easier formatting
-              <div style={{width: '0.75em'}}></div>
+              <div className='active-search-buffer'></div>
           ) : (
             isExpanded ? 
               <ArrowDown 
-                style={{fill: '#aaa', fontSize: '0.75em', cursor: 'pointer'}} 
+                className='arrow-icon'
                 tabIndex={0} 
                 onClick={(e) => {
                   e.stopPropagation();
@@ -179,7 +167,7 @@ export default function CheckboxTreeNode<T>({
                 onKeyDown={(e) => e.key === 'Enter' ? toggleExpansion(node) : null} 
               /> :
               <ArrowRight 
-                style={{fill: '#aaa', fontSize: '0.75em', cursor: 'pointer'}}
+                className='arrow-icon'
                 tabIndex={0} 
                 onClick={(e) => {
                   e.stopPropagation();
@@ -190,15 +178,15 @@ export default function CheckboxTreeNode<T>({
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
             <div
-              css={{...styleSpec.labelTextWrapper}}
+              className='label-text-wrapper'
               onClick={shouldExpandOnClick ? () => toggleExpansion(node) : undefined}
               >
               {nodeElement}
             </div>
           ) : (
-            <label css={
-              isLeafNode ? {...styleSpec.leafNodeLabel} : {...styleSpec.nodeLabel}
-            }>
+            <label
+              className={isLeafNode ? 'leaf-node-label' : 'node-label'}
+            >
               {CustomCheckbox ? <CustomCheckbox {...checkboxProps} /> : isMultiPick
                   ? <IndeterminateCheckbox {...checkboxProps} />
                   : <TreeRadio
@@ -207,7 +195,7 @@ export default function CheckboxTreeNode<T>({
                     />
               } 
               <div
-                css={{...styleSpec.labelTextWrapper}}
+                className='label-text-wrapper'
               >
                 {nodeElement}
               </div>
@@ -215,7 +203,9 @@ export default function CheckboxTreeNode<T>({
           )}
         </div>
         { !isLeafNode && isVisible && isExpanded &&
-          <ul css={{...childrenVisibilityCss, ...styleSpec.children}}>
+          <ul 
+            className={`children ${isExpanded ? 'visible-element' : 'hidden-element'}`}
+          >
             {getNodeChildren(node).map((child, index) =>
               <CheckboxTreeNode
                 key={"node_" + getNodeId(child)}
@@ -233,7 +223,7 @@ export default function CheckboxTreeNode<T>({
                 getNodeChildren={getNodeChildren}
                 renderNode={renderNode}
                 customCheckboxes={customCheckboxes} 
-                styleOverrides={styleOverrides} />
+              />
             )}
           </ul>
         }
