@@ -299,7 +299,7 @@ function getDataAccessDeclaration(
 
   return (
     <div>
-      <H5>
+      <H5 additionalStyles={{ margin: 0 }}>
         Data Accessibility:{' '}
         <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
       </H5>

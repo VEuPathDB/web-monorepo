@@ -109,7 +109,6 @@ import { padISODateTime } from '../../../utils/date-conversion';
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
@@ -183,7 +182,7 @@ function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Arithmetic mean',
     useBinning: false,
-    showErrorBars: false,
+    showErrorBars: true,
     independentAxisLogScale: false,
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
@@ -1058,7 +1057,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
       dependentAxisValueSpec: categoricalMode ? 'Full' : 'Auto-zoom',
-      showErrorBars: false,
+      showErrorBars: true,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1387,7 +1386,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               label={`Error bars ${
                 vizConfig.showErrorBars ? 'on' : 'off'
               } (95% C.I.)`}
-              value={vizConfig.showErrorBars ?? false}
+              value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
                 if (newValue && vizConfig.dependentAxisLogScale)

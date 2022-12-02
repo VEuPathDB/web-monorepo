@@ -10,7 +10,7 @@ import { BoxplotDataWithCoverage } from '../components/visualizations/implementa
 import { min, max, map } from 'lodash';
 import { Variable } from '../types/study';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { ComputedVariableMetadata } from '../api/DataClient/types';
+import { VariableMapping } from '../api/DataClient/types';
 
 // calculate min/max of default independent axis range
 export function histogramDefaultIndependentAxisMinMax(
@@ -115,7 +115,7 @@ export function boxplotDefaultDependentAxisMinMax(
   data: PromiseHookState<BoxplotDataWithCoverage | undefined>,
   yAxisVariable: Variable | undefined,
   // use computedVariableMetadata for computation apps
-  computedVariableMetadata?: ComputedVariableMetadata
+  computedVariableMetadata?: VariableMapping
 ) {
   if (isFaceted(data?.value)) {
     // may not need to check yAxisVariable?.type but just in case

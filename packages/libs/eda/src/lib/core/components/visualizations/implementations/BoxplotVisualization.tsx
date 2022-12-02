@@ -48,6 +48,7 @@ import {
   variablesAreUnique,
   vocabularyWithMissingData,
   fixVarIdLabels,
+  fixVarIdLabel,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -73,12 +74,11 @@ import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/N
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { ComputedVariableMetadata } from '../../../api/DataClient/types';
+import { VariableMapping } from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
@@ -93,7 +93,7 @@ import { ResetButtonCoreUI } from '../../ResetButton';
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 type BoxplotComputedVariableMetadata = {
-  computedVariableMetadata?: ComputedVariableMetadata;
+  computedVariableMetadata?: VariableMapping[];
 };
 
 // add type of computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -426,7 +426,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             xAxisVariable,
             overlayVariable,
             facetVariable,
-            computedYAxisDetails,
             entities
           ),
           vocabulary,
@@ -470,11 +469,16 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const dependentAxisMinMax = boxplotDefaultDependentAxisMinMax(
     data,
     yAxisVariable,
-    data?.value?.computedVariableMetadata
+    data?.value?.computedVariableMetadata?.find(
+      (v) => v.plotReference === 'yAxis'
+    )
   );
 
   const defaultDependentAxisRange = useDefaultAxisRange(
-    yAxisVariable ?? data?.value?.computedVariableMetadata,
+    yAxisVariable ??
+      data?.value?.computedVariableMetadata?.find(
+        (v) => v.plotReference === 'yAxis'
+      ),
     dependentAxisMinMax?.min,
     undefined, // no minPos needed if no logscale option offered
     dependentAxisMinMax?.max,
@@ -547,10 +551,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     variableDisplayWithUnit(xAxisVariable) ??
     'X-axis';
 
-  const dependentAxisLabel = computedYAxisDetails
-    ? data.value?.computedVariableMetadata?.displayName?.[0] ??
-      computedYAxisDetails?.placeholderDisplayName
-    : variableDisplayWithUnit(yAxisVariable) ?? 'Y-axis';
+  const dependentAxisLabel =
+    computedYAxisDetails?.placeholderDisplayName ??
+    variableDisplayWithUnit(yAxisVariable) ??
+    'Y-axis';
 
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
   const neutralPaletteProps = useNeutralPaletteProps(
@@ -629,26 +633,29 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   // like any other continuous variable.
   const computedYAxisDescriptor =
     !providedXAxisVariable && computedYAxisDetails
-      ? ({
-          entityId: computedYAxisDetails?.entityId,
-          variableId: computedYAxisDetails?.variableId,
-          displayName: data.value?.computedVariableMetadata?.displayName?.[0],
-        } as VariableDescriptor)
+      ? {
+          entityId: computedYAxisDetails.entityId,
+          variableId:
+            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+        }
       : null;
 
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
-  const additionalVariableCoverageTableRows = data.value
-    ?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails
-    ? data.value?.computedVariableMetadata?.collectionVariable?.collectionVariableDetails.map(
-        (varDetails) => ({
+  const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
+    (v) => v.plotReference === 'xAxis'
+  );
+  const collectionVariableEntityId =
+    collectionVariableMetadata?.variableSpec.entityId;
+  const additionalVariableCoverageTableRows =
+    collectionVariableEntityId && collectionVariableMetadata?.vocabulary
+      ? collectionVariableMetadata.vocabulary.map((label) => ({
           role: '',
           required: true,
-          display: findEntityAndVariable(varDetails)?.variable.displayName,
-          variable: varDetails,
-        })
-      )
-    : [];
+          display: fixVarIdLabel(label, collectionVariableEntityId, entities),
+          variable: { variableId: label, entityId: collectionVariableEntityId },
+        }))
+      : [];
 
   const tableGroupNode = (
     <>
@@ -1073,7 +1080,6 @@ export function boxplotResponseToData(
   variable?: Variable,
   overlayVariable?: Variable,
   facetVariable?: Variable,
-  computedVariableDetails?: ComputedVariableDetails,
   entities?: StudyEntity[]
 ): BoxplotDataWithCoverage {
   // group by facet variable value (if only one facet variable in response - there may be up to two in future)
@@ -1085,6 +1091,10 @@ export function boxplotResponseToData(
         )
       : '__NO_FACET__'
   );
+
+  const computedXAxisVariableEntityId = response.boxplot.config.variables.find(
+    (v) => v.plotReference === 'xAxis'
+  )?.variableSpec.entityId;
 
   // process data and overlay value within each facet grouping
   const processedData = mapValues(facetGroupedResponseData, (group) => {
@@ -1119,15 +1129,11 @@ export function boxplotResponseToData(
                   )
                 : '',
             label:
-              computedVariableDetails &&
-              entities &&
-              response.boxplot.config.computedVariableMetadata
-                ?.collectionVariable?.collectionVariableDetails
+              computedXAxisVariableEntityId && entities
                 ? // abundance box labels are variableIds. Need to replace with that variable's display name
                   fixVarIdLabels(
                     data.label,
-                    response.boxplot.config.computedVariableMetadata
-                      ?.collectionVariable?.collectionVariableDetails,
+                    computedXAxisVariableEntityId,
                     entities
                   )
                 : fixLabelsForNumberVariables(data.label, variable),
@@ -1154,7 +1160,7 @@ export function boxplotResponseToData(
     completeCasesAllVars: response.boxplot.config.completeCasesAllVars,
     completeCasesAxesVars: response.boxplot.config.completeCasesAxesVars,
     // config.computedVariableMetadata should also be returned
-    computedVariableMetadata: response.boxplot.config.computedVariableMetadata,
+    computedVariableMetadata: response.boxplot.config.variables,
   } as BoxplotDataWithCoverage;
 }
 
@@ -1173,20 +1179,21 @@ function reorderData(
   facetVocabulary: string[] = [],
   entities?: StudyEntity[]
 ): BoxplotDataWithCoverage | BoxplotData {
+  // If we're returning a list of vars within computedVariableMetadata, then we need to respect that ordering
   if ('computedVariableMetadata' in data) {
-    // If we're returning a list of vars within computedVariableMetadata, then we need to respect that ordering
+    const collectionVariableMetadata = data.computedVariableMetadata?.find(
+      (v) => v.plotReference === 'xAxis'
+    );
+    const collectionVariableEntityId =
+      collectionVariableMetadata?.variableSpec.entityId;
     if (
-      data.computedVariableMetadata?.collectionVariable
-        ?.collectionVariableDetails &&
-      entities
+      entities &&
+      collectionVariableEntityId &&
+      collectionVariableMetadata?.vocabulary
     ) {
-      const rawLabels = data.computedVariableMetadata?.collectionVariable?.collectionVariableDetails?.map(
-        (variable) => variable.variableId
-      );
       labelVocabulary = fixVarIdLabels(
-        rawLabels,
-        data.computedVariableMetadata?.collectionVariable
-          ?.collectionVariableDetails,
+        collectionVariableMetadata?.vocabulary,
+        collectionVariableEntityId,
         entities
       );
     }

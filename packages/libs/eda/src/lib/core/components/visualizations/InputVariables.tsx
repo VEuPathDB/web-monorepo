@@ -207,7 +207,7 @@ export function InputVariables(props: Props) {
                         : !selectedVariables[input.name] &&
                           constraints &&
                           constraints.length &&
-                          constraints[0][input.name].isRequired
+                          constraints[0][input.name]?.isRequired
                         ? requiredInputStyle
                         : {}
                     }
@@ -218,7 +218,7 @@ export function InputVariables(props: Props) {
                         !input.readonlyValue &&
                         constraints &&
                         constraints.length &&
-                        constraints[0][input.name].isRequired
+                        constraints[0][input.name]?.isRequired
                           ? 'Required parameter'
                           : ''
                       }
@@ -235,7 +235,7 @@ export function InputVariables(props: Props) {
                         {!input.readonlyValue &&
                         constraints &&
                         constraints.length &&
-                        constraints[0][input.name].isRequired ? (
+                        constraints[0][input.name]?.isRequired ? (
                           <sup>*</sup>
                         ) : (
                           ''
@@ -294,7 +294,7 @@ export function InputVariables(props: Props) {
                         customDisabledVariableMessage={
                           (constraints &&
                             constraints.length &&
-                            constraints[0][input.name].description) ||
+                            constraints[0][input.name]?.description) ||
                           undefined
                         }
                         starredVariables={starredVariables}
