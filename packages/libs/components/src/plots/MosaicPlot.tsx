@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { PlotSpacingDefault, ColorPaletteDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
 import { select } from 'd3';
+// need to use this?
 import { removeHtmlTags } from '../utils/removeHtmlTags';
 
 export interface MosaicPlotProps extends PlotProps<MosaicPlotData> {
@@ -75,10 +76,9 @@ const MosaicPlot = makePlotlyPlotComponent(
     );
 
     // set tick label Length for ellipsis
-    // this doesn't include percentage text length
-    const maxIndependentTickLabelLength = 8;
+    const maxIndependentTickLabelLength = 10;
     // The distance from one elbow pointer to the next
-    const elbowPointerGap = 20;
+    const elbowPointerGap = 15;
 
     // change data.independentLabels to have ellipsis
     const independentLabelsEllipsis = useMemo(
@@ -86,14 +86,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         axisTickLableEllipsis(
           data.independentLabels,
           maxIndependentTickLabelLength
-        )
-          // now replace labels for any all-zero 'series' with a white space
-          // (tried an empty string but it causes major weirdness)
-          .map((label, index) =>
-            _.unzip(data.values)[index].every((v) => v === 0)
-              ? ' '
-              : `${label} (${_.round(percent_widths[index], 1)}%)`
-          ),
+        ),
       [data]
     );
 
@@ -282,9 +275,10 @@ const MosaicPlot = makePlotlyPlotComponent(
             hoverinfo: 'text',
             hovertext: counts.map(
               (count, j) =>
-                `<b>${data.dependentLabels[i]}</b> ${count.toLocaleString(
-                  'en-US'
-                )} (${((count / raw_widths[j]) * 100).toFixed(1)}%)`
+                `<b>${data.dependentLabels[i]}</b> (${(
+                  (count / raw_widths[j]) *
+                  100
+                ).toFixed(1)}%)`
             ),
             width: percent_widths,
             type: 'bar',
@@ -315,8 +309,10 @@ const MosaicPlot = makePlotlyPlotComponent(
         .attr('cursor', 'default')
         .append('svg:title')
         .text((d, i) => {
-          const label = data.independentLabels[i];
-          return label.length > maxIndependentTickLabelLength ? label : null;
+          return `${data.independentLabels[i]} (${_.round(
+            percent_widths[i],
+            1
+          )}%)`;
         });
     };
 
