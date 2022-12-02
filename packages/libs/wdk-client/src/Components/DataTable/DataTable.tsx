@@ -1,15 +1,18 @@
 import $ from 'jquery';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import { isEqual, once, uniqueId, uniqBy } from 'lodash';
-import React, { Component, PureComponent, ReactElement } from 'react';
+import React, { Component, PureComponent, ReactElement, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { containsAncestorNode } from 'wdk-client/Utils/DomUtils';
 import { areTermsInStringRegexString, parseSearchQueryString } from 'wdk-client/Utils/SearchUtils';
+import CheckboxList from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxList';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import 'wdk-client/Components/DataTable/DataTable.css';
 import { ErrorBoundary } from 'wdk-client/Controllers';
-import { ContentError } from '../PageStatus/ContentError';
-import LoadError from '../PageStatus/LoadError';
+import HelpIcon from '../Icon/HelpIcon';
+import Tooltip from '../Overlays/Tooltip';
+import TabbableContainer from '../Display/TabbableContainer';
 
 
 const expandColumn = {
@@ -108,6 +111,8 @@ type Props = {
 
 interface State {
   childRows: [ HTMLElement, ChildRowProps ][];
+  selectedColumnFilters: string[];
+  showFieldSelector: boolean;
 }
 
 /**
@@ -116,6 +121,13 @@ interface State {
  * This uses DataTables jQuery plugin
  */
 class DataTable extends PureComponent<Props, State> {
+
+  constructor(props: Props) {
+    super(props);
+
+    this.onColumnFilterChange = this.onColumnFilterChange.bind(this);
+    this.toggleFilterFieldSelector = this.toggleFilterFieldSelector.bind(this);
+  }
 
   /** Default DataTables jQuery plugin options. */
   static defaultDataTableOpts = {
@@ -133,7 +145,9 @@ class DataTable extends PureComponent<Props, State> {
   };
 
   state: State = {
-    childRows: []
+    childRows: [],
+    selectedColumnFilters: [],
+    showFieldSelector: false,
   }
 
   _childRowContainers: Map<HTMLTableRowElement, HTMLElement> = new Map();
@@ -350,7 +364,7 @@ class DataTable extends PureComponent<Props, State> {
     .DataTable(tableOpts as any);
 
     if (searchable && initialSearchTerm) {
-      this._updateSearch(dataTable, initialSearchTerm);
+      this._updateSearch(dataTable, initialSearchTerm, []);
     }
 
     if (childRow != null) {
@@ -359,10 +373,15 @@ class DataTable extends PureComponent<Props, State> {
     }
   }
 
-  _updateSearch(dataTable: DataTables.Api, searchTerm: string) {
+  _updateSearch(dataTable: DataTables.Api, searchTerm: string, indexesOfSelectedFilters: number[]) {
     const queryTerms = parseSearchQueryString(searchTerm);
     const searchTermRegex = areTermsInStringRegexString(queryTerms);
-    dataTable.search(searchTermRegex, true, false, true).draw();
+    console.log({dataTable, searchTerm, indexesOfSelectedFilters})
+    if (!this.state.selectedColumnFilters.length) {
+      dataTable.search(searchTermRegex, true, false, true).draw();
+    } else {
+      dataTable.columns(indexesOfSelectedFilters).search(searchTermRegex, true, false, true).draw();
+    }
   }
 
   _updateSorting(dataTable: DataTables.Api) {
@@ -423,7 +442,8 @@ class DataTable extends PureComponent<Props, State> {
     else {
       let props = { rowIndex: row.index(), rowData: row.data() };
       this.setState(state => ({
-        childRows: uniqBy([ ...state.childRows, [ childRowContainer, props ] ], ([node]) => node)
+        childRows: uniqBy([ ...state.childRows, [ childRowContainer, props ] ], ([node]) => node),
+        selectedColumnFilters: [...state.selectedColumnFilters]
       }));
     }
   }
@@ -467,31 +487,84 @@ class DataTable extends PureComponent<Props, State> {
     this._childRowContainers.clear();
   }
 
+  onColumnFilterChange(value: string[]) {
+    this.setState(state => ({
+      ...state,
+      selectedColumnFilters: value,
+    }))
+    // const indexesOfSelectedFilters = this.props.columns.map((attr, index) => this.state.selectedColumnFilters.includes(attr.name) ? index : -1).filter(index => index >= 0);
+    // this._dataTable && this._updateSearch(this._dataTable, this.props.searchTerm ?? this._searchTerm, indexesOfSelectedFilters)
+  }
+
+  toggleFilterFieldSelector() {
+    this.setState(state => ({
+      ...state,
+      showFieldSelector: !state.showFieldSelector
+    }))
+  }
+
   render() {
-    let { searchable = true, childRow: ChildRow } = this.props;
+    let { searchable = true, childRow: ChildRow, columns } = this.props;
+    const filterAttributes = columns.filter(col => col.isDisplayable).map(col => ({display: col.displayName, value: col.name}));
+    const indexesOfSelectedFilters = columns.map((attr, index) => this.state.selectedColumnFilters.includes(attr.name) ? index : -1).filter(index => index >= 0);
     return (
       <div className="MesaComponent">
         {searchable && (
-          <RealTimeSearchBox
-            searchTerm={
-              this.props.searchTerm ??
-              this._searchTerm
+          <>
+            <div style={{display: 'flex'}}>
+              <RealTimeSearchBox
+                searchTerm={
+                  this.props.searchTerm ??
+                  this._searchTerm
+                }
+                className="wdk-DataTableSearchBox"
+                placeholderText="Search this table..."
+                onSearchTermChange={(searchTerm: string) => {
+                  this.props.onSearchTermChange?.(searchTerm);
+
+                  if (this.props.searchTerm != null) {
+                    this._searchTerm = '';
+                  } else {
+                    this._searchTerm = searchTerm;
+                  }
+
+                  this._dataTable && this._updateSearch(this._dataTable, searchTerm, indexesOfSelectedFilters);
+                }}
+                delayMs={0}
+                iconName=''
+              />
+              <div style={{position: 'relative', width: 0, right: '2.75em', top: '0.25em'}}>
+              <Tooltip content="Show search fields">
+                <button 
+                  className="fa fa-caret-down"
+                  style={{background: 'none', border: 'none'}}
+                  onClick={this.toggleFilterFieldSelector}
+                />
+              </Tooltip>
+              </div>
+              <HelpIcon>
+                <div>
+                  <ul>
+                  <li>The data sets in your refined list will contain ALL your terms (or phrases, when using double quotes), in ANY of the selected fields.</li>
+                  <li>Click on the arrow inside the box to select/unselect fields. </li>
+                  <li>Your terms are matched at the start; 
+                      for example, the term <i>typ</i> will match <i><u>typ</u>ically</i> and <i><u>typ</u>e</i>, but <strong>not</strong> <i><u>atyp</u>ical</i>.</li>
+                  <li>Your terms may include * wildcards;
+                      for example, the term <i>*typ</i> will match <i><u>typ</u>ically</i>, <i><u>typ</u>e</i>, and <i>a<u>typ</u>ical</i>.</li>
+                  </ul>
+                </div>
+              </HelpIcon>
+            </div>
+            {this.state.showFieldSelector &&
+              <DataTableFilterSelector 
+                filterAttributes={filterAttributes}
+                selectedColumnFilters={this.state.selectedColumnFilters}
+                onColumnFilterChange={this.onColumnFilterChange}
+                toggleFilterFieldSelector={this.toggleFilterFieldSelector}
+                containerClassName='wdk-Answer-filterFieldSelector'
+              />
             }
-            className="wdk-DataTableSearchBox"
-            placeholderText="Search this table..."
-            onSearchTermChange={(searchTerm: string) => {
-              this.props.onSearchTermChange?.(searchTerm);
-
-              if (this.props.searchTerm != null) {
-                this._searchTerm = '';
-              } else {
-                this._searchTerm = searchTerm;
-              }
-
-              this._dataTable && this._updateSearch(this._dataTable, searchTerm);
-            }}
-            delayMs={0}
-          />
+          </>
         )}
         <div ref={node => this.node = node} className="wdk-DataTableContainer"/>
         {this.state.childRows.map(([ node, childRowProps ]) =>
@@ -561,4 +634,62 @@ function formatSorting(columns: DataTables.ColumnSettings[], sorting: SortingDef
 /** Return boolean indicating if a prop's value has changed. */
 function didPropChange(component: Component<Props, any>, prevProps: Props, propName: keyof Props) {
   return !isEqual(component.props[propName], prevProps[propName]);
+}
+
+type DataFilterAttribute = {
+  value: string;
+  display: string;
+}
+
+type DataTableProps = {
+  filterAttributes: DataFilterAttribute[];
+  selectedColumnFilters: DataFilterAttribute['value'][];
+  onColumnFilterChange: (value: DataFilterAttribute['value'][]) => void;
+  toggleFilterFieldSelector: () => void;
+  containerClassName: string;
+}
+
+function DataTableFilterSelector({filterAttributes, selectedColumnFilters, onColumnFilterChange, toggleFilterFieldSelector, containerClassName}: DataTableProps) {
+
+  useEffect(() => {
+    document.addEventListener('click', handleDocumentClick)
+    return () => document.removeEventListener('click', handleDocumentClick)
+  }, [])
+  
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      toggleFilterFieldSelector()
+    }
+  }
+
+  const handleDocumentClick = (e: MouseEvent) => {
+    const clickedElement = e.target as HTMLElement
+    if (!clickedElement.closest(`.${containerClassName}`)) {
+      toggleFilterFieldSelector()
+    }
+  }
+
+  return (
+    <TabbableContainer
+      autoFocus
+      onKeyDown={handleKeyPress}
+      className={containerClassName}
+    >
+      <CheckboxList 
+        items={filterAttributes}
+        // must ensure referential equality, thus unable to simply pass in selectedColumnFilters as the value prop
+        value={filterAttributes.filter(attr => selectedColumnFilters.includes(attr.value)).map(attr => attr.value)}
+        onChange={onColumnFilterChange}
+        linksPosition={LinksPosition.Top}
+      />
+
+      <div className="wdk-Answer-filterFieldSelectorCloseIconWrapper">
+        <button
+          className="fa fa-close wdk-Answer-filterFieldSelectorCloseIcon"
+          onClick={toggleFilterFieldSelector}
+        />
+      </div>
+    
+    </TabbableContainer>
+  )
 }
