@@ -46,7 +46,7 @@ import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
-import { JobStatusReponse } from '../../api/ComputeClient';
+import { JobStatus } from '../computations/ComputeJobStatusHook';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -70,7 +70,7 @@ interface Props {
   baseUrl?: string;
   isSingleAppMode: boolean;
   disableThumbnailCreation?: boolean;
-  computeJobStatus?: JobStatusReponse['status'];
+  computeJobStatus?: JobStatus;
   createComputeJob?: () => void;
 }
 
@@ -146,6 +146,7 @@ function ConfiguredVisualizations(props: Props) {
   const {
     analysisState,
     computation,
+    computationAppOverview,
     updateVisualizations,
     visualizationsOverview,
     baseUrl,
@@ -277,7 +278,9 @@ function ConfiguredVisualizations(props: Props) {
                 <div className={cx('-ConfiguredVisualizationTitle')}>
                   {viz.displayName ?? 'Unnamed visualization'}
                   &nbsp;
-                  {computeJobStatus && <StatusIcon status={computeJobStatus} />}
+                  {computationAppOverview.computeName && computeJobStatus && (
+                    <StatusIcon status={computeJobStatus} />
+                  )}
                 </div>
                 <div className={cx('-ConfiguredVisualizationSubtitle')}>
                   {meta?.displayName}
@@ -688,13 +691,33 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               )}
             </div>
           )}
-          {/* TODO Use skeleton */}
-          <ConfiguredVisualizationGrayOut
-            filters={props.filters}
-            currentPlotFilters={viz.descriptor.currentPlotFilters}
-            hasCompute={props.computationAppOverview.computeName != null}
-            computeJobStatus={computeJobStatus}
-          >
+          {computationAppOverview.computeName &&
+          computeJobStatus !== 'complete' ? (
+            computeJobStatus == null ? (
+              <Loading />
+            ) : (
+              <div
+                style={{
+                  margin: '2em 0',
+                  fontSize: '1.2em',
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  gap: '.5ex',
+                }}
+              >
+                {computeJobStatus === 'requesting'
+                  ? 'Requesting computation status.'
+                  : computeJobStatus === 'no-such-job'
+                  ? 'Configure and run a computation to use this visualization.'
+                  : computeJobStatus === 'expired'
+                  ? 'Computation has expired. You will need to run it again.'
+                  : computeJobStatus === 'failed'
+                  ? 'Computation has failed. Please contact us for support.'
+                  : 'Computation is in progress. This visualization will be available when it is complete.'}
+              </div>
+            )
+          ) : (
             <vizPlugin.fullscreenComponent
               options={vizPlugin.options}
               dataElementConstraints={constraints}
@@ -713,7 +736,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               geoConfigs={geoConfigs}
               otherVizOverviews={overviews.others}
             />
-          </ConfiguredVisualizationGrayOut>
+          )}
         </div>
       )}
     </div>
@@ -725,7 +748,7 @@ type ConfiguredVisualizationGrayOutProps = {
   filters: Filter[];
   currentPlotFilters?: Filter[];
   hasCompute: boolean;
-  computeJobStatus?: JobStatusReponse['status'];
+  computeJobStatus?: JobStatus;
   children: JSX.Element;
 };
 

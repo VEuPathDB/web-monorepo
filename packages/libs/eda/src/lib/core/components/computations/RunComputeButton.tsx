@@ -1,13 +1,13 @@
 import React from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 import { capitalize } from 'lodash';
-import { JobStatusReponse } from '../../api/ComputeClient';
 import { ComputationAppOverview } from '../../types/visualization';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { JobStatus } from './ComputeJobStatusHook';
 
 interface Props {
   computationAppOverview: ComputationAppOverview;
-  status?: JobStatusReponse['status'];
+  status?: JobStatus;
   createJob: () => void;
 }
 
@@ -44,17 +44,18 @@ export function RunComputeButton(props: Props) {
   ) : null;
 }
 
-const colorMap: Record<JobStatusReponse['status'], string> = {
+const colorMap: Record<JobStatus, string> = {
+  'no-such-job': 'gray',
+  requesting: 'orange',
+  queued: 'orange',
+  'in-progress': 'orange',
   complete: 'green',
   expired: 'red',
   failed: 'red',
-  'in-progress': 'orange',
-  queued: 'orange',
-  'no-such-job': 'gray',
 };
 
 interface StatusIconProps {
-  status: JobStatusReponse['status'];
+  status: JobStatus;
   showLabel?: boolean;
 }
 

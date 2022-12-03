@@ -4,7 +4,7 @@ import { useComputeClient, useStudyMetadata } from '../../hooks/workspace';
 import { Analysis, NewAnalysis } from '../../types/analysis';
 import { Computation } from '../../types/visualization';
 
-type JobStatus = JobStatusReponse['status'];
+export type JobStatus = JobStatusReponse['status'] | 'requesting';
 
 /**
  * Polls the compute service for the status of a compute's job
@@ -58,6 +58,7 @@ export function useComputeJobStatus(
 
   const createJob = useCallback(async () => {
     if (computeName == null) return;
+    setJobStatus((sharedStatusRef.current = 'requesting'));
     const { status } = await computeClient.createJob(computeName, {
       config: fixConfig(computation.descriptor.configuration),
       derivedVariables: analysis.descriptor.derivedVariables,
@@ -89,10 +90,12 @@ function fixConfig(config: any) {
  */
 function isTerminalStatus(status: JobStatus) {
   switch (status) {
-    // case 'no-such-job':
-    case 'in-progress':
-    case 'queued':
+    case 'complete':
+    case 'expired':
+    case 'failed':
+    case 'no-such-job':
+      return true;
+    default:
       return false;
   }
-  return true;
 }
