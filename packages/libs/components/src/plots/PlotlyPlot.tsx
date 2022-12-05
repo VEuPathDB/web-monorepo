@@ -110,6 +110,8 @@ function PlotlyPlot<T>(
 
   // set max legend title length for ellipsis
   const maxLegendTitleTextLength = maxLegendTextLength + 5;
+  // set max independent axis title length for ellipsis
+  const maxIndependentAxisTitleTextLength = 80;
   // set max dependent axis title length for ellipsis
   const maxDependentAxisTitleTextLength = 50;
 
@@ -138,6 +140,29 @@ function PlotlyPlot<T>(
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
+        // xAxis also have standoff
+        title:
+          // xAxis Mosaic case
+          typeof plotlyProps?.layout?.xaxis?.title === 'object' &&
+          plotlyProps?.layout?.xaxis?.title != null
+            ? ((plotlyProps?.layout?.xaxis?.title.text as string) || '')
+                .length > maxIndependentAxisTitleTextLength
+              ? {
+                  text:
+                    (
+                      (plotlyProps?.layout?.xaxis?.title.text as string) || ''
+                    ).substring(0, maxIndependentAxisTitleTextLength) + '...',
+                  standoff: plotlyProps?.layout?.xaxis?.title.standoff,
+                }
+              : plotlyProps?.layout?.xaxis?.title
+            : // general case
+            ((plotlyProps?.layout?.xaxis?.title as string) || '').length >
+              maxIndependentAxisTitleTextLength
+            ? ((plotlyProps?.layout?.xaxis?.title as string) || '').substring(
+                0,
+                maxIndependentAxisTitleTextLength
+              ) + '...'
+            : plotlyProps?.layout?.xaxis?.title,
       },
       yaxis: {
         linecolor: 'black',
@@ -146,8 +171,22 @@ function PlotlyPlot<T>(
         linewidth: 1,
         // change long delendent axis title with ellipsis
         title:
-          ((plotlyProps?.layout?.yaxis?.title as string) || '').length >
-          maxDependentAxisTitleTextLength
+          // Mosaic case
+          typeof plotlyProps?.layout?.yaxis?.title === 'object' &&
+          plotlyProps?.layout?.yaxis?.title != null
+            ? ((plotlyProps?.layout?.yaxis?.title.text as string) || '')
+                .length > maxDependentAxisTitleTextLength
+              ? {
+                  text:
+                    (
+                      (plotlyProps?.layout?.yaxis?.title.text as string) || ''
+                    ).substring(0, maxDependentAxisTitleTextLength) + '...',
+                  standoff: plotlyProps?.layout?.yaxis?.title.standoff,
+                }
+              : plotlyProps?.layout?.yaxis?.title
+            : // general case
+            ((plotlyProps?.layout?.yaxis?.title as string) || '').length >
+              maxDependentAxisTitleTextLength
             ? ((plotlyProps?.layout?.yaxis?.title as string) || '').substring(
                 0,
                 maxDependentAxisTitleTextLength
@@ -201,11 +240,24 @@ function PlotlyPlot<T>(
     }
   }, [data]);
 
-  // keep dependent axis title for tooltip text
-  const originalDependentAxisTitle = useMemo(
-    () => plotlyProps?.layout?.yaxis?.title,
-    [plotlyProps?.layout?.yaxis?.title]
-  );
+  // keep independent axis title for tooltip text
+  const originalIndependentAxisTitle = useMemo(() => {
+    if (
+      typeof plotlyProps?.layout?.xaxis?.title === 'object' &&
+      plotlyProps?.layout?.xaxis?.title != null
+    )
+      return plotlyProps?.layout?.xaxis?.title?.text;
+    else return plotlyProps?.layout?.xaxis?.title;
+  }, [plotlyProps?.layout?.xaxis?.title]);
+
+  const originalDependentAxisTitle = useMemo(() => {
+    if (
+      typeof plotlyProps?.layout?.yaxis?.title === 'object' &&
+      plotlyProps?.layout?.yaxis?.title != null
+    )
+      return plotlyProps?.layout?.yaxis?.title?.text;
+    else return plotlyProps?.layout?.yaxis?.title;
+  }, [plotlyProps?.layout?.yaxis?.title]);
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onRender = useCallback(
@@ -272,6 +324,31 @@ function PlotlyPlot<T>(
               ? removeHtmlTags(storedIndependentAxisTickLabel[i] as string)
               : '';
           });
+      }
+
+      // handling independent axis title with ellipsis & tooltip
+      if (
+        originalIndependentAxisTitle != null &&
+        (originalIndependentAxisTitle as string).length >
+          maxIndependentAxisTitleTextLength
+      ) {
+        // remove duplicate svg:title
+        select(graphDiv)
+          .select('.plot-container svg.main-svg g.infolayer g.g-xtitle')
+          .selectAll('title')
+          .remove();
+
+        // add tooltip
+        select(graphDiv)
+          .select(
+            '.plot-container svg.main-svg g.infolayer g.g-xtitle text.xtitle'
+          )
+          // need this attribute for tooltip of dependent axis title!
+          .attr('pointer-events', 'all')
+          .append('svg:title')
+          .text(
+            removeHtmlTags(originalIndependentAxisTitle as string) as string
+          );
       }
 
       // handling dependent axis title with ellipsis & tooltip
