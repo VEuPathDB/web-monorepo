@@ -27,6 +27,9 @@ export interface DonutMarkerProps
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** center title/number for marker (defaults to sum of data[].value) */
   markerLabel?: string;
+  /** cumulative mode: values are expected in order small to large where the final value
+   * is "100%" of the donut */
+  cumulative?: boolean;
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))

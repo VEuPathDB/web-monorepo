@@ -23,6 +23,7 @@ import MapVEuLegendSampleList, {
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
+import DonutMarker, { DonutMarkerProps } from '../../lib/map/DonutMarker';
 
 export default {
   title: 'Map/Donut Markers',
@@ -265,6 +266,60 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
 };
 
 TwoRequests.args = {
+  height: '100vh',
+  width: '100vw',
+  showGrid: true,
+  showMouseToolbar: true,
+};
+
+export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
+
+  const markerElements: ReactElement<DonutMarkerProps>[] = [
+    <DonutMarker
+      id={'abc'}
+      key={'abc'}
+      position={{ lat: 13, lng: 16 }}
+      bounds={{
+        southWest: { lat: 12.5, lng: 15.5 },
+        northEast: { lat: 13.5, lng: 16.5 },
+      }}
+      data={[
+        {
+          value: 85,
+          label: 'subset',
+          color: 'pink',
+        },
+        {
+          value: 100,
+          label: 'total',
+          color: '#ccc',
+        },
+      ]}
+      cumulative={true}
+      isAtomic={false}
+      onClick={handleMarkerClick}
+      duration={300}
+      markerScale={1}
+      markerLabel={'666'}
+    />,
+  ];
+  return (
+    <MapVEuMap
+      {...args}
+      viewport={viewport}
+      markers={markerElements}
+      onBoundsChanged={() => {}}
+      animation={defaultAnimation}
+      zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      mouseMode={mouseMode}
+      onMouseModeChange={setMouseMode}
+    />
+  );
+};
+
+CumulativeMarkers.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
