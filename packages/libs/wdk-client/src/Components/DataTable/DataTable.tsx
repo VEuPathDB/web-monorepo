@@ -167,7 +167,7 @@ class DataTable extends PureComponent<Props, State> {
     this._setup();
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     if (this._dataTable == null) return;
 
     let columnsChanged = didPropChange(this, prevProps, 'columns')
@@ -176,6 +176,8 @@ class DataTable extends PureComponent<Props, State> {
     let widthChanged = didPropChange(this, prevProps, 'width');
     let heightChanged = didPropChange(this, prevProps, 'height');
     let expandedRowsChanged = didPropChange(this, prevProps, 'expandedRows');
+    let searchTermChanged = didPropChange(this, prevProps, 'searchTerm');
+    let columnFiltersChanged = didStateChange(this, prevState, 'selectedColumnFilters');
 
     this._isRedrawing = true;
 
@@ -199,7 +201,11 @@ class DataTable extends PureComponent<Props, State> {
 
       if (expandedRowsChanged) {
         this._updateExpandedRows(this._dataTable);
-        // needsRedraw = true;
+      }
+      
+      if (columnFiltersChanged || searchTermChanged) {
+        const indexesOfSelectedFilters = this.state.selectedColumnFilters.map(colFilter => this.props.columns.findIndex(col => col.name === colFilter));
+        this._updateSearch(this._dataTable, this.props.searchTerm ?? this._searchTerm, indexesOfSelectedFilters);
       }
 
       if (needsRedraw && this._dataTable) {
@@ -374,10 +380,11 @@ class DataTable extends PureComponent<Props, State> {
   }
 
   _updateSearch(dataTable: DataTables.Api, searchTerm: string, indexesOfSelectedFilters: number[]) {
+    // reset search criteria to sync state/props with the jquery table render
+    dataTable.columns().search('')
     const queryTerms = parseSearchQueryString(searchTerm);
     const searchTermRegex = areTermsInStringRegexString(queryTerms);
-    console.log({dataTable, searchTerm, indexesOfSelectedFilters})
-    if (!this.state.selectedColumnFilters.length) {
+    if (!indexesOfSelectedFilters.length) {
       dataTable.search(searchTermRegex, true, false, true).draw();
     } else {
       dataTable.columns(indexesOfSelectedFilters).search(searchTermRegex, true, false, true).draw();
@@ -506,7 +513,6 @@ class DataTable extends PureComponent<Props, State> {
   render() {
     let { searchable = true, childRow: ChildRow, columns } = this.props;
     const filterAttributes = columns.filter(col => col.isDisplayable).map(col => ({display: col.displayName, value: col.name}));
-    const indexesOfSelectedFilters = columns.map((attr, index) => this.state.selectedColumnFilters.includes(attr.name) ? index : -1).filter(index => index >= 0);
     return (
       <div className="MesaComponent">
         {searchable && (
@@ -520,25 +526,37 @@ class DataTable extends PureComponent<Props, State> {
                 className="wdk-DataTableSearchBox"
                 placeholderText="Search this table..."
                 onSearchTermChange={(searchTerm: string) => {
+                  // _updateSearch is called in componentDidUpdate when props.searchTerm changes
                   this.props.onSearchTermChange?.(searchTerm);
 
                   if (this.props.searchTerm != null) {
                     this._searchTerm = '';
                   } else {
                     this._searchTerm = searchTerm;
+                    // JM: unclear if this is used, but _updateSearch will be called when props.searchTerm does not exist
+                    this._dataTable && 
+                      this._updateSearch(
+                          this._dataTable,
+                          searchTerm,
+                          this.state.selectedColumnFilters.map(colFilter => this.props.columns.findIndex(col => col.name === colFilter))
+                        );
                   }
 
-                  this._dataTable && this._updateSearch(this._dataTable, searchTerm, indexesOfSelectedFilters);
                 }}
                 delayMs={0}
                 iconName=''
+                cancelBtnRightMargin='3em'
               />
               <div style={{position: 'relative', width: 0, right: '2.75em', top: '0.25em'}}>
               <Tooltip content="Show search fields">
                 <button 
                   className="fa fa-caret-down"
                   style={{background: 'none', border: 'none'}}
-                  onClick={this.toggleFilterFieldSelector}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.toggleFilterFieldSelector();
+                    }
+                  }
                 />
               </Tooltip>
               </div>
@@ -636,6 +654,11 @@ function didPropChange(component: Component<Props, any>, prevProps: Props, propN
   return !isEqual(component.props[propName], prevProps[propName]);
 }
 
+/** Return boolean indicating if a state's value has changed. */
+function didStateChange(component: Component<Props, State>, prevState: State, stateName: keyof State) {
+  return !isEqual(component.state[stateName], prevState[stateName]);
+}
+
 type DataFilterAttribute = {
   value: string;
   display: string;
@@ -682,14 +705,12 @@ function DataTableFilterSelector({filterAttributes, selectedColumnFilters, onCol
         onChange={onColumnFilterChange}
         linksPosition={LinksPosition.Top}
       />
-
       <div className="wdk-Answer-filterFieldSelectorCloseIconWrapper">
         <button
           className="fa fa-close wdk-Answer-filterFieldSelectorCloseIcon"
           onClick={toggleFilterFieldSelector}
         />
-      </div>
-    
+      </div>    
     </TabbableContainer>
   )
 }
