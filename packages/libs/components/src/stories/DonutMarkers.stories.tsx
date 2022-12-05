@@ -23,7 +23,7 @@ import MapVEuLegendSampleList, {
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
-import DonutMarker, { DonutMarkerProps } from '../../lib/map/DonutMarker';
+import DonutMarker, { DonutMarkerProps } from '../map/DonutMarker';
 
 export default {
   title: 'Map/Donut Markers',
@@ -302,7 +302,37 @@ export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
       onClick={handleMarkerClick}
       duration={300}
       markerScale={1}
-      markerLabel={'666'}
+    />,
+    <DonutMarker
+      id={'abc2'}
+      key={'abc2'}
+      position={{ lat: 13, lng: 20 }}
+      bounds={{
+        southWest: { lat: 12.5, lng: 19.5 },
+        northEast: { lat: 13.5, lng: 20.5 },
+      }}
+      data={[
+        {
+          value: 10,
+          label: 'special',
+          color: 'yellow',
+        },
+        {
+          value: 85,
+          label: 'subset',
+          color: 'pink',
+        },
+        {
+          value: 100,
+          label: 'total',
+          color: '#ccc',
+        },
+      ]}
+      cumulative={true}
+      isAtomic={false}
+      onClick={handleMarkerClick}
+      duration={300}
+      markerScale={1}
     />,
   ];
   return (

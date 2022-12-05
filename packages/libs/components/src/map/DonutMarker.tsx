@@ -14,6 +14,8 @@ import {
   PiePlotDatum,
 } from '../types/plots';
 
+import { last } from 'lodash';
+
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps
   extends BoundsDriftMarkerProps,
@@ -132,15 +134,19 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK set drawing area
   svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
 
-  // summation of fullStat.value per marker icon
-  const sumValues: number = fullStat.slices
-    .map((o) => o.value)
-    .reduce((a, c) => {
-      return a + c;
-    });
+  // what value corresponds to 360 degrees of the circle?
+  // regular mode: summation of fullStat.value per marker icon
+  // cumulative mode: take the last value
+  const fullPieValue: number = props.cumulative
+    ? last(fullStat.slices)?.value ?? 0
+    : fullStat.slices
+        .map((o) => o.value)
+        .reduce((a, c) => {
+          return a + c;
+        });
 
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  const sumLabel = props.markerLabel ?? String(sumValues);
+  const sumLabel = props.markerLabel ?? String(fullPieValue);
 
   //DKDK draw white circle
   svgHTML +=
@@ -153,13 +159,26 @@ export default function DonutMarker(props: DonutMarkerProps) {
     '" stroke="green" stroke-width="0" fill="white" />';
 
   //DKDK set start point of arc = 0
-  let startValue: number = 0;
+  let startValue = 0;
+  let cumulativeSum = 0;
+  const sliceTextOverrides: string[] = [];
+
   //DKDK create arcs for data
   fullStat.slices.forEach(function (el: PiePlotDatum) {
-    //DKDK if sumValues = 0, do not draw arc
-    if (sumValues > 0) {
+    //DKDK if fullPieValue = 0, do not draw arc
+    if (fullPieValue > 0) {
       //DKDK compute the ratio of each data to the total number
-      let arcValue: number = el.value / sumValues;
+      const thisValue = el.value - cumulativeSum; // subtracts nothing if not in cumulative mode, see below
+
+      let arcValue: number = thisValue / fullPieValue;
+
+      // for the magnified mouse-over pieplot
+      sliceTextOverrides.push(arcValue >= 0.015 ? el.value.toString() : '');
+
+      if (props.cumulative)
+        // only sum up in cumulative mode
+        cumulativeSum += thisValue;
+
       //DKDK draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
       svgHTML +=
         '<path fill="none" stroke="' +
@@ -233,10 +252,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
       displayLibraryControls={false}
       textOptions={{
         displayPosition: 'inside',
-        sliceTextOverrides: fullStat.slices.map((datum) =>
-          datum.value / sumValues >= 0.015 ? datum.value.toString() : ''
-        ),
+        sliceTextOverrides,
       }}
+      cumulative={props.cumulative}
     />
   );
 
