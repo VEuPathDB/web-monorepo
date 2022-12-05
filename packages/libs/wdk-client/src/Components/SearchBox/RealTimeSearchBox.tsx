@@ -41,6 +41,8 @@ type Props = {
   /** Delay in milliseconds after last character typed until onSearchTermChange is called.  Defaults to 250. */
   delayMs?: number;
 
+  /** Additional right positioning for the "cancel" button when used in DataTable's column filters */
+  cancelBtnRightMargin?: React.CSSProperties['right'];
 }
 
 type State = {
@@ -127,7 +129,7 @@ export default class RealTimeSearchBox extends Component<Props, State> {
   }
 
   render() {
-    let { className, helpText, placeholderText, autoFocus, iconName } = this.props;
+    let { className, helpText, placeholderText, autoFocus, iconName, cancelBtnRightMargin } = this.props;
     let searchTerm = this.state.searchTerm;
     let isActiveSearch = searchTerm.length > 0;
     let activeModifier = isActiveSearch ? 'active' : 'inactive';
@@ -146,7 +148,7 @@ export default class RealTimeSearchBox extends Component<Props, State> {
             value={searchTerm}
           />
           <i className={`fa fa-${iconName} ${searchIconClassName}`}/>
-          <button className={cancelBtnClassName}
+          <button className={cancelBtnClassName} style={cancelBtnRightMargin ? {right: cancelBtnRightMargin} : undefined}
             type="button" onClick={this.handleResetClick}>
             <i className={"fa fa-close " + cancelIconClassName}/>
           </button>
