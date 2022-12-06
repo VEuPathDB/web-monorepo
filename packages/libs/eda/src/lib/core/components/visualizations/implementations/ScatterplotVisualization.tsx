@@ -76,6 +76,7 @@ import {
   vocabularyWithMissingData,
   hasIncompleteCases,
   fixVarIdLabel,
+  getVariableLabel,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -219,6 +220,9 @@ export const ScatterplotConfig = t.partial({
 });
 
 interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
+  getComputedXAxisDetails?(
+    config: unknown
+  ): ComputedVariableDetails | undefined;
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
@@ -257,16 +261,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
-  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
-    computation.descriptor.configuration
-  );
-  const computedOverlayVariableDescriptor = options?.getComputedOverlayVariable?.(
-    computation.descriptor.configuration
-  );
-
-  const providedOverlayVariableDescriptor = useMemo(
-    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
-    [options?.getOverlayVariable, computation.descriptor.configuration]
+  const [
+    computedXAxisDetails,
+    computedYAxisDetails,
+    computedOverlayVariableDescriptor,
+    providedOverlayVariableDescriptor,
+  ] = useMemo(
+    () => [
+      options?.getComputedXAxisDetails?.(computation.descriptor.configuration),
+      options?.getComputedYAxisDetails?.(computation.descriptor.configuration),
+      options?.getComputedOverlayVariable?.(
+        computation.descriptor.configuration
+      ),
+      options?.getOverlayVariable?.(computation.descriptor.configuration),
+    ],
+    [computation.descriptor.configuration, options]
   );
 
   const selectedVariables = useDeepValue({
@@ -535,29 +544,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
-      // check independentValueType/dependentValueType
-      const independentValueType = xAxisVariable?.type
-        ? xAxisVariable.type
-        : '';
-      const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
-
       // check variable inputs: this is necessary to prevent from data post
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
+      if (
+        computedXAxisDetails == null &&
+        (vizConfig.xAxisVariable == null || xAxisVariable == null)
+      )
         return undefined;
       else if (
         computedYAxisDetails == null &&
         (vizConfig.yAxisVariable == null || yAxisVariable == null)
       )
         return undefined;
-
-      const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) =>
-        item == null ? true : ar.indexOf(item) === i
-      );
-      if (vars.length !== unique.length)
-        throw new Error(
-          'Variables must be unique. Please choose different variables.'
-        );
 
       // Convert valueSpecConfig to valueSpecValue for the data client request.
       let valueSpecValue = 'raw';
@@ -573,13 +570,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         filters,
         config: {
           outputEntityId: outputEntity.id,
-          valueSpec: valueSpecValue,
+          valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
-            : [],
+            : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
         computeConfig: computation.descriptor.configuration,
@@ -673,8 +670,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       );
       return scatterplotResponseToData(
         response,
-        independentValueType,
-        dependentValueType,
         showMissingOverlay,
         overlayVocabulary,
         overlayVariable,
@@ -1046,10 +1041,19 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateVizConfig
   );
 
-  const dependentAxisLabel =
-    computedYAxisDetails?.placeholderDisplayName ??
-    variableDisplayWithUnit(yAxisVariable) ??
-    'Y-axis';
+  const independentAxisLabel = getVariableLabel(
+    'xAxis',
+    data.value?.computedVariableMetadata,
+    entities,
+    'X-axis'
+  );
+
+  const dependentAxisLabel = getVariableLabel(
+    'yAxis',
+    data.value?.computedVariableMetadata,
+    entities,
+    'Y-axis'
+  );
 
   // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
   // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
@@ -1208,7 +1212,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
-    independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'X-axis',
+    independentAxisLabel: independentAxisLabel,
     dependentAxisLabel: dependentAxisLabel,
     displayLegend: false,
     independentValueType:
@@ -1791,7 +1795,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           {
             role: 'X-axis',
             required: true,
-            display: variableDisplayWithUnit(xAxisVariable),
+            display: independentAxisLabel,
             variable: vizConfig.xAxisVariable,
           },
           {
@@ -1862,6 +1866,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               name: 'xAxisVariable',
               label: 'X-axis',
               role: 'axis',
+              readonlyValue: computedXAxisDetails
+                ? independentAxisLabel
+                : undefined,
             },
             {
               name: 'yAxisVariable',
@@ -1963,8 +1970,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
  */
 export function scatterplotResponseToData(
   response: ScatterPlotDataResponse,
-  independentValueType: string,
-  dependentValueType: string,
   showMissingOverlay: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
@@ -2014,8 +2019,12 @@ export function scatterplotResponseToData(
         overlayVariable
       ),
       modeValue,
-      independentValueType,
-      dependentValueType,
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'xAxis'
+      )?.dataType ?? '',
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'yAxis'
+      )?.dataType ?? '',
       showMissingOverlay,
       hasMissingData,
       overlayVariable,
