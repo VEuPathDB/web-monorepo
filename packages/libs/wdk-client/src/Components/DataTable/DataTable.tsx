@@ -7,6 +7,9 @@ import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/Componen
 import { containsAncestorNode } from 'wdk-client/Utils/DomUtils';
 import { areTermsInStringRegexString, parseSearchQueryString } from 'wdk-client/Utils/SearchUtils';
 import 'wdk-client/Components/DataTable/DataTable.css';
+import { ErrorBoundary } from 'wdk-client/Controllers';
+import { ContentError } from '../PageStatus/ContentError';
+import LoadError from '../PageStatus/LoadError';
 
 
 const expandColumn = {
@@ -465,7 +468,7 @@ class DataTable extends PureComponent<Props, State> {
   }
 
   render() {
-    let { searchable = true, childRow } = this.props;
+    let { searchable = true, childRow: ChildRow } = this.props;
     return (
       <div className="MesaComponent">
         {searchable && (
@@ -492,7 +495,12 @@ class DataTable extends PureComponent<Props, State> {
         )}
         <div ref={node => this.node = node} className="wdk-DataTableContainer"/>
         {this.state.childRows.map(([ node, childRowProps ]) =>
-          childRow && createPortal(React.createElement(childRow, childRowProps), node))}
+          ChildRow && createPortal(
+            <ErrorBoundary renderError={() => <h3>We're sorry, something went wrong.</h3>} >
+              <ChildRow {...childRowProps} />
+            </ErrorBoundary>,
+            node
+          ))}
       </div>
     );
   }
