@@ -130,7 +130,10 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 
-import SliderWidget from '@veupathdb/components/lib/components/widgets/Slider';
+// add Slider and SliderWidgetProps
+import SliderWidget, {
+  SliderWidgetProps,
+} from '@veupathdb/components/lib/components/widgets/Slider';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -1164,9 +1167,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const [markerColorOpacity, setMarkerColorOpacity] = useState(0);
   const markerOpacityContainerStyles = {
     height: '4em',
-    width: '27em',
+    width: '20em',
     marginLeft: '1em',
     marginBottom: '0.5em',
+  };
+
+  // implement gradient color for slider opacity
+  const colorSpecProps: SliderWidgetProps['colorSpec'] = {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
   };
 
   const scatterplotProps: ScatterPlotProps = {
@@ -1399,7 +1411,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       <SliderWidget
         minimum={0}
         maximum={1}
-        showTextInput={true}
         step={0.1}
         value={0}
         debounceRateMs={250}
@@ -1409,6 +1420,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         containerStyles={markerOpacityContainerStyles}
         showLimits={true}
         label={'Marker opacity'}
+        colorSpec={colorSpecProps}
       />
 
       {/* axis range control UIs */}
@@ -2265,7 +2277,6 @@ function processInputData<T extends number | string>(
         name: fixedOverlayLabel ?? 'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
-        opacity: 0.7,
         marker: {
           color:
             seriesGradientColorscale?.length > 0 &&
