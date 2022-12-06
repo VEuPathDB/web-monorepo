@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/wdk-client",
-  "version": "0.9.19",
+  "version": "0.9.20",
   "license": "Apache-2.0",
   "scripts": {
     "test": "jest",
@@ -71,7 +71,7 @@
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "@veupathdb/components": "^0.19.7",
-    "@veupathdb/coreui": "^0.18.14",
+    "@veupathdb/coreui": "^0.18.16",
     "@veupathdb/react-scripts": "^2.0.0",
     "babel-eslint": "^8.0.1",
     "babel-jest": "^23.1.2",
@@ -94,7 +94,7 @@
   },
   "peerDependencies": {
     "@veupathdb/components": "^0.19.7",
-    "@veupathdb/coreui": "^0.18.14",
+    "@veupathdb/coreui": "^0.18.16",
     "notistack": "^1.0.10",
     "react": ">=16.14",
     "react-dom": ">=16.14",
