@@ -10,10 +10,11 @@ import {
   gradientDivergingColorscaleMap,
 } from '../../types/plots/addOns';
 import { scaleLinear } from 'd3-scale';
-import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { FacetedData, ScatterPlotData } from '../../types/plots';
 import FacetedScatterPlot from '../../plots/facetedPlots/FacetedScatterPlot';
-import SliderWidget from '../../components/widgets/Slider';
+import SliderWidget, {
+  SliderWidgetProps,
+} from '../../components/widgets/Slider';
 
 export default {
   title: 'Plots/ScatterPlot',
@@ -1722,6 +1723,15 @@ export const opacitySlider = () => {
     marginLeft: 75,
   };
 
+  // gradient color
+  const colorSpecProps: SliderWidgetProps['colorSpec'] = {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
+  };
+
   return (
     <>
       <ScatterPlot
@@ -1780,7 +1790,8 @@ export const opacitySlider = () => {
       <SliderWidget
         minimum={0}
         maximum={1}
-        showTextInput={true}
+        // hide text form
+        // showTextInput={true}
         step={0.1}
         value={0}
         debounceRateMs={250}
@@ -1791,6 +1802,8 @@ export const opacitySlider = () => {
         showLimits={true}
         label={'Marker opacity'}
         disabled={disabled}
+        // test gradient color
+        colorSpec={colorSpecProps}
       />
     </>
   );

@@ -20,6 +20,7 @@ import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-trun
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { logScaleDtick } from '../utils/logscale-dtick';
 import { tickSettings } from '../utils/tick-settings';
+import * as ColorMath from 'color-math';
 
 export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
@@ -45,8 +46,8 @@ export interface ScatterPlotProps
     | 'category';
   /** dependentValueType */
   dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
-  // TO DO
-  // opacity?
+  /** marker color opacity: range from 0 to 1 */
+  markerColorOpacity?: number;
 }
 
 const EmptyScatterPlotData: ScatterPlotData = {
@@ -73,6 +74,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       axisTruncationConfig,
       independentAxisLogScale = independentAxisLogScaleDefault,
       dependentAxisLogScale = DependentAxisLogScaleDefault,
+      markerColorOpacity,
       ...restProps
     } = props;
 
@@ -189,8 +191,46 @@ const ScatterPlot = makePlotlyPlotComponent(
       shapes: truncatedAxisHighlighting,
     };
 
+    // change data here for marker opacity
+    const finalData = useMemo(() => {
+      return data.series.map((d: any) => ({
+        ...d,
+        marker: {
+          ...d.marker,
+          color:
+            d.marker == null
+              ? undefined
+              : markerColorOpacity != null
+              ? Array.isArray(d.marker.color)
+                ? d.marker.color.map((color: string) =>
+                    ColorMath.evaluate(
+                      color +
+                        ' @a ' +
+                        (markerColorOpacity * 100).toString() +
+                        '%'
+                    ).result.css()
+                  )
+                : ColorMath.evaluate(
+                    d.marker.color +
+                      ' @a ' +
+                      (markerColorOpacity * 100).toString() +
+                      '%'
+                  ).result.css()
+              : d.marker.color,
+          // need to set marker.line for a transparent case (opacity != 1)
+          line:
+            d.marker == null
+              ? undefined
+              : {
+                  ...d.marker.line,
+                  width: markerColorOpacity === 0 ? 1 : 0,
+                },
+        },
+      }));
+    }, [data, markerColorOpacity]);
+
     return {
-      data: data.series,
+      data: finalData,
       layout,
       ...restProps,
     };

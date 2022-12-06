@@ -64,8 +64,6 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   checkedLegendItems?: string[];
   /** A function to call each time after plotly renders the plot */
   onPlotlyRender?: PlotParams['onUpdate'];
-  /** marker color opacity: range from 0 to 1 */
-  markerColorOpacity?: number;
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -105,7 +103,6 @@ function PlotlyPlot<T>(
     // original independent axis tick labels for tooltip text
     storedIndependentAxisTickLabel,
     checkedLegendItems,
-    markerColorOpacity,
     colorPalette = ColorPaletteDefault,
     onPlotlyRender,
     ...plotlyProps
@@ -334,25 +331,8 @@ function PlotlyPlot<T>(
         (d.name || '').length > maxLegendTextLength
           ? (d.name || '').substring(0, maxLegendTextLength) + '...'
           : d.name,
-      marker: {
-        ...d.marker,
-        color:
-          d.marker == null
-            ? undefined
-            : markerColorOpacity != null
-            ? Array.isArray(d.marker.color)
-              ? d.marker.color.map((color: string) =>
-                  color
-                    .replace(')', ', ' + markerColorOpacity + ')')
-                    .replace('rgb', 'rgba')
-                )
-              : d.marker.color
-                  .replace(')', ', ' + markerColorOpacity + ')')
-                  .replace('rgb', 'rgba')
-            : d.marker.color,
-      },
     }));
-  }, [data, checkedLegendItems, markerColorOpacity]);
+  }, [data, checkedLegendItems]);
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 
