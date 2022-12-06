@@ -448,8 +448,8 @@ class DataTable extends PureComponent<Props, State> {
     else {
       let props = { rowIndex: row.index(), rowData: row.data() };
       this.setState(state => ({
+        ...state,
         childRows: uniqBy([ ...state.childRows, [ childRowContainer, props ] ], ([node]) => node),
-        selectedColumnFilters: [...state.selectedColumnFilters]
       }));
     }
   }
@@ -498,8 +498,6 @@ class DataTable extends PureComponent<Props, State> {
       ...state,
       selectedColumnFilters: value,
     }))
-    // const indexesOfSelectedFilters = this.props.columns.map((attr, index) => this.state.selectedColumnFilters.includes(attr.name) ? index : -1).filter(index => index >= 0);
-    // this._dataTable && this._updateSearch(this._dataTable, this.props.searchTerm ?? this._searchTerm, indexesOfSelectedFilters)
   }
 
   toggleFilterFieldSelector() {
@@ -540,7 +538,6 @@ class DataTable extends PureComponent<Props, State> {
                           this.state.selectedColumnFilters.map(colFilter => this.props.columns.findIndex(col => col.name === colFilter))
                         );
                   }
-
                 }}
                 delayMs={0}
                 iconName=''
