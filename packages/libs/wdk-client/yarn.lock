@@ -1328,10 +1328,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.14":
-  version "0.18.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.14.tgz#ea524dc02401d87c7a4ffe76d6b60ed3301f51c2"
-  integrity sha512-aa13Xugh1/ngybkIUvanOqHwpsqd850iTTFH2MHAxX5pMgZKLe4iNmlsw0o0YJ4PK/yT14Apq58zdip+RSpIXQ==
+"@veupathdb/coreui@^0.18.16":
+  version "0.18.16"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.16.tgz#9d7ebdc54e5a0ccaaf00a24a2a52fedd4b369fed"
+  integrity sha512-+wBEE2nakVh2cySdjhIaoKKYjWE8rdP1j43weYUvlq4nvFBnfv7ElKf2HhXow6q/AskoTaNqMG+0+B+e1xFvcA==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
