@@ -11,10 +11,10 @@ import {
   MarkerScaleAddon,
   MarkerScaleDefault,
   PiePlotDatum,
+  ContainerStylesAddon,
 } from '../types/plots';
 
 import { last } from 'lodash';
-import { ContainerStylesAddon } from '../types/plots';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps
