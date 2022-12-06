@@ -249,7 +249,9 @@ function UploadForm({
       required={dataUploadMode === 'file'}
       disabled={dataUploadMode !== 'file' || useFixedUploadMethod}
       onChange={(file) => {
-        setFile(file ?? undefined);
+        const fileWithSpacedRemovedFromName =
+          file && new File([file], file?.name.replace(/\s+/g, '_'), file);
+        setFile(fileWithSpacedRemovedFromName ?? undefined);
       }}
     />
   );
