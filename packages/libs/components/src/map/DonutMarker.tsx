@@ -10,11 +10,11 @@ import PiePlot from '../plots/PiePlot';
 import {
   MarkerScaleAddon,
   MarkerScaleDefault,
-  PiePlotData,
   PiePlotDatum,
 } from '../types/plots';
 
 import { last } from 'lodash';
+import { ContainerStylesAddon } from '../types/plots';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps
@@ -106,114 +106,12 @@ function makeArc(
  * DKDK this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
-  let fullStat: PiePlotData = { slices: [] };
-  let defaultColor: string = '';
-  for (let i = 0; i < props.data.length; i++) {
-    // Currently this only serves to initialize missing colors as 'silver'
-    let datum = props.data[i];
-
-    if (datum.color) {
-      defaultColor = datum.color;
-    } else {
-      defaultColor = 'silver';
-    }
-
-    fullStat.slices.push({
-      // color: props.colors[i],
-      color: defaultColor,
-      label: datum.label,
-      value: datum.value,
-    });
-  }
-
-  //DKDK construct histogram marker icon
-  const scale = props.markerScale ?? MarkerScaleDefault;
-  const size = 40 * scale;
-  let svgHTML: string = ''; //DKDK divIcon HTML contents
-
-  //DKDK set drawing area
-  svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
-
-  // what value corresponds to 360 degrees of the circle?
-  // regular mode: summation of fullStat.value per marker icon
-  // cumulative mode: take the last value
-  const fullPieValue: number = props.cumulative
-    ? last(fullStat.slices)?.value ?? 0
-    : fullStat.slices
-        .map((o) => o.value)
-        .reduce((a, c) => {
-          return a + c;
-        });
-
-  // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
-  const sumLabel = props.markerLabel ?? String(fullPieValue);
-
-  //DKDK draw white circle
-  svgHTML +=
-    '<circle cx="' +
-    size / 2 +
-    '" cy="' +
-    size / 2 +
-    '" r="' +
-    size / 2 +
-    '" stroke="green" stroke-width="0" fill="white" />';
-
-  //DKDK set start point of arc = 0
-  let startValue = 0;
-  let cumulativeSum = 0;
-  const sliceTextOverrides: string[] = [];
-
-  //DKDK create arcs for data
-  fullStat.slices.forEach(function (el: PiePlotDatum) {
-    //DKDK if fullPieValue = 0, do not draw arc
-    if (fullPieValue > 0) {
-      //DKDK compute the ratio of each data to the total number
-      const thisValue = el.value - cumulativeSum; // subtracts nothing if not in cumulative mode, see below
-
-      let arcValue: number = thisValue / fullPieValue;
-
-      // for the magnified mouse-over pieplot
-      sliceTextOverrides.push(arcValue >= 0.015 ? el.value.toString() : '');
-
-      if (props.cumulative)
-        // only sum up in cumulative mode
-        cumulativeSum += thisValue;
-
-      //DKDK draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
-      svgHTML +=
-        '<path fill="none" stroke="' +
-        el.color +
-        '" stroke-width="4" d="' +
-        makeArc(
-          size / 2,
-          size / 2,
-          size / 2 - 2,
-          startValue,
-          startValue + arcValue * 2 * Math.PI
-        ) +
-        '" />';
-      //DKDK set next startValue to be previous arcValue
-      startValue = startValue + arcValue * 2 * Math.PI;
-    }
-  });
-
-  //DKDK adding total number text/label and centering it
-  svgHTML +=
-    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
-    sumLabel +
-    '</text>';
-
-  //DKDK check isAtomic: draw pushpin if true
-  if (props.isAtomic) {
-    let pushPinCode = '&#128392;';
-    svgHTML +=
-      '<text x="86%" y="14%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' +
-      pushPinCode +
-      '</text>';
-  }
-
-  // DKDK closing svg tag
-  svgHTML += '</svg>';
+  const {
+    html: svgHTML,
+    size,
+    markerLabel,
+    sliceTextOverrides,
+  } = donutMarkerSVGIcon(props);
 
   //DKDK set icon
   let SVGDonutIcon: any = L.divIcon({
@@ -231,10 +129,10 @@ export default function DonutMarker(props: DonutMarkerProps) {
 
   const popupPlot = (
     <PiePlot
-      data={fullStat}
+      data={{ slices: props.data }}
       donutOptions={{
         size: 0.5,
-        text: String(sumLabel),
+        text: markerLabel,
         fontSize: 18,
       }}
       containerStyles={{
@@ -276,4 +174,134 @@ export default function DonutMarker(props: DonutMarkerProps) {
       popupClass="donut-popup"
     />
   );
+}
+
+type DonutMarkerStandaloneProps = Omit<
+  DonutMarkerProps,
+  | 'id'
+  | 'position'
+  | 'bounds'
+  | 'onClick'
+  | 'duration'
+  | 'showPopup'
+  | 'popupClass'
+  | 'popupContent'
+> &
+  ContainerStylesAddon;
+
+export function DonutMarkerStandalone(props: DonutMarkerStandaloneProps) {
+  const { html, size } = donutMarkerSVGIcon(props);
+  // NOTE: the font size and line height would normally come from the .leaflet-container class
+  // but we won't be using that. You can override these with `containerStyles` if you like.
+  return (
+    <div
+      style={{
+        fontSize: '12px',
+        lineHeight: 1.5,
+        width: size,
+        height: size,
+        ...props.containerStyles,
+      }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+function donutMarkerSVGIcon(
+  props: DonutMarkerStandaloneProps
+): {
+  html: string;
+  size: number;
+  sliceTextOverrides: string[];
+  markerLabel: string;
+} {
+  const scale = props.markerScale ?? MarkerScaleDefault;
+  const size = 40 * scale;
+
+  let svgHTML: string = '';
+
+  //DKDK set drawing area
+  svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
+
+  // what value corresponds to 360 degrees of the circle?
+  // regular mode: summation of fullStat.value per marker icon
+  // cumulative mode: take the last value
+  const fullPieValue: number = props.cumulative
+    ? last(props.data)?.value ?? 0
+    : props.data
+        .map((o) => o.value)
+        .reduce((a, c) => {
+          return a + c;
+        });
+
+  // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
+  const sumLabel = props.markerLabel ?? String(fullPieValue);
+
+  //DKDK draw white circle
+  svgHTML +=
+    '<circle cx="' +
+    size / 2 +
+    '" cy="' +
+    size / 2 +
+    '" r="' +
+    size / 2 +
+    '" stroke="green" stroke-width="0" fill="white" />';
+
+  //DKDK set start point of arc = 0
+  let startValue = 0;
+  let cumulativeSum = 0;
+  const sliceTextOverrides: string[] = [];
+
+  //DKDK create arcs for data
+  props.data.forEach(function (el: PiePlotDatum) {
+    //DKDK if fullPieValue = 0, do not draw arc
+    if (fullPieValue > 0) {
+      //DKDK compute the ratio of each data to the total number
+      const thisValue = el.value - cumulativeSum; // subtracts nothing if not in cumulative mode, see below
+
+      let arcValue: number = thisValue / fullPieValue;
+
+      // for the magnified mouse-over pieplot
+      sliceTextOverrides.push(arcValue >= 0.015 ? el.value.toString() : '');
+
+      if (props.cumulative)
+        // only sum up in cumulative mode
+        cumulativeSum += thisValue;
+
+      //DKDK draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
+      svgHTML +=
+        '<path fill="none" stroke="' +
+        (el.color ?? 'silver') +
+        '" stroke-width="4" d="' +
+        makeArc(
+          size / 2,
+          size / 2,
+          size / 2 - 2,
+          startValue,
+          startValue + arcValue * 2 * Math.PI
+        ) +
+        '" />';
+      //DKDK set next startValue to be previous arcValue
+      startValue = startValue + arcValue * 2 * Math.PI;
+    }
+  });
+
+  //DKDK adding total number text/label and centering it
+  svgHTML +=
+    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
+    sumLabel +
+    '</text>';
+
+  //DKDK check isAtomic: draw pushpin if true
+  if (props.isAtomic) {
+    let pushPinCode = '&#128392;';
+    svgHTML +=
+      '<text x="86%" y="14%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' +
+      pushPinCode +
+      '</text>';
+  }
+
+  // DKDK closing svg tag
+  svgHTML += '</svg>';
+  return { html: svgHTML, size, sliceTextOverrides, markerLabel: sumLabel };
 }
