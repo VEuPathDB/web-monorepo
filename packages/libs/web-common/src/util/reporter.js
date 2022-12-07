@@ -9,6 +9,7 @@ import JsonReporterForm from '../components/reporters/JsonReporterForm';
 import Gff3ReporterForm from '../components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from '../components/reporters/FastaGeneReporterForm';
 import BedGeneReporterForm from '../components/reporters/BedGeneReporterForm';
+import BedSimpleReporterForm from '../components/reporters/BedSimpleReporterForm';
 import BedDynSpanReporterForm from '../components/reporters/BedDynSpanReporterForm';
 import BedGenomicSequenceReporterForm from '../components/reporters/BedGenomicSequenceReporterForm';
 import BedSequenceReporterForm from '../components/reporters/BedSequenceReporterForm';
@@ -62,10 +63,9 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'SequenceRecordClasses.SequenceRecordClass':
           return BedGenomicSequenceReporterForm;
         case 'DynSpanRecordClasses.DynSpanRecordClass':
-          return BedDynSpanReporterForm;
         case 'PopsetRecordClasses.PopsetRecordClass':
         case 'EstRecordClasses.EstRecordClass':
-          return BedSequenceReporterForm;
+          return BedSimpleReporterForm;
         default:
           console.error("Unsupported BED recordClass: " + recordClassFullName);
           return EmptyReporter;

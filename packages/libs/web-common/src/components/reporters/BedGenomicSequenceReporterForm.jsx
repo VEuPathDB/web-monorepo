@@ -1,8 +1,9 @@
 import React from 'react';
 import { RadioList, Checkbox, TextBox } from '@veupathdb/wdk-client/lib/Components';
-import { deflineFieldOptions, ComponentsList } from './BedFormElements';
+import { FeaturesList, ComponentsList } from './BedFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
+import createBedForm from './BedFormFactory';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
@@ -20,11 +21,11 @@ let sequenceFeatureOptions = [
 ];
 
 /** @type import('./Types').ReporterFormComponent */
-const BedGenomicSequenceReporterForm = props => {
+const formBeforeCommonOptions = (props) => {
   let { formState, updateFormState, onSubmit, includeSubmit } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
   return (
-    <div>
+    <React.Fragment>
       <h3>Type of result:</h3>
       <div style={{marginLeft: '2em'}}>
         <RadioList name={"sequenceFeature"} value={formState["sequenceFeature"]} items={sequenceFeatureOptions}
@@ -35,27 +36,13 @@ const BedGenomicSequenceReporterForm = props => {
         <RadioList name="strand" value={formState.strand} items={strands}
             onChange={getUpdateHandler('strand')}/>
       </div>
-      <h3>Download Type:</h3>
-      <div style={{marginLeft:"2em"}}>
-        <RadioList name="attachmentType" value={formState.attachmentType} items={util.attachmentTypes}
-            onChange={getUpdateHandler('attachmentType')}/>
-      </div>
-      <h3>Fasta defline:</h3>
-      <div style={{marginLeft:"2em"}}>
-        <RadioList name="deflineType" value={formState.deflineType}
-          onChange={getUpdateHandler('deflineType')} items={[
-            {  value: "short", display: 'ID Only' },
-            { 
-              value: "full", display: 'Full Fasta Header',
-              body: (<ComponentsList field="deflineFields" features={deflineFieldOptions} formState={formState} getUpdateHandler={getUpdateHandler} />),
-            }
-            ]}/>
-      </div>
-      { includeSubmit &&
-        <div style={{margin:'0.8em'}}>
-          <button className="btn" type="submit" onClick={onSubmit}>Get Sequences</button>
-        </div>
-      }
+    </React.Fragment>
+  );
+};
+
+let formAfterSubmitButton = (props) => {
+  return (
+    <React.Fragment>
       <div>
         <hr/>
         <h3>Options:</h3>
@@ -72,22 +59,14 @@ const BedGenomicSequenceReporterForm = props => {
         </ul>
         <hr/>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
-
-BedGenomicSequenceReporterForm.getInitialState = () => ({
-  formState: {
-    attachmentType: 'plain',
-    strand: strands[0].value,
-    deflineType: "short",
-    deflineFields: deflineFieldOptions.map((x) => x.value),
-    sequenceFeature: sequenceFeatureOptions[0]
-  },
-  formUiState: {}
+let getFormInitialState = () => ({
+  strand: strands[0].value,
+  sequenceFeature: sequenceFeatureOptions[0].value,
 });
 
-export default BedGenomicSequenceReporterForm;
-
+export default createBedForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
 
 
