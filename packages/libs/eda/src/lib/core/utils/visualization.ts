@@ -4,7 +4,7 @@ import {
   BoxplotData,
   FacetedData,
 } from '@veupathdb/components/lib/types/plots';
-import { StudyEntity, StudyMetadata, Variable } from '../types/study';
+import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import { EntityCounts } from '../hooks/entityCounts';
