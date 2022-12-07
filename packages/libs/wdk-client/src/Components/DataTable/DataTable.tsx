@@ -12,6 +12,7 @@ import 'wdk-client/Components/DataTable/DataTable.css';
 import HelpIcon from '../Icon/HelpIcon';
 import Tooltip from '../Overlays/Tooltip';
 import TabbableContainer from '../Display/TabbableContainer';
+import { ErrorBoundary } from 'wdk-client/Controllers';
 
 
 const expandColumn = {
