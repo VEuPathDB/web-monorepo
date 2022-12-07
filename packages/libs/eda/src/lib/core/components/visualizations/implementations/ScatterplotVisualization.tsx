@@ -1303,17 +1303,51 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const controlsNode = (
     <>
-      {/* show Banner message if no smoothed mean exists */}
-      {!data.pending &&
-        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
-        dataWithoutSmoothedMean != null &&
-        dataWithoutSmoothedMean?.length > 0 && (
-          <div style={{ width: 750, marginLeft: '1em' }}>
+      {/* pre-occupied space for banner */}
+      <div style={{ width: 750, marginLeft: '1em', height: '3.5em' }}>
+        {/* show Banner message if no smoothed mean exists */}
+        {!data.pending &&
+          vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
+          dataWithoutSmoothedMean != null &&
+          dataWithoutSmoothedMean?.length > 0 && (
+            <div>
+              <Banner
+                banner={{
+                  type: 'warning',
+                  message:
+                    'Smoothed mean(s) were not calculated for one or more data series.',
+                  pinned: true,
+                  intense: false,
+                  // additionalMessage is shown next to message when clicking showMoreLinkText.
+                  // disappears when clicking showLess link
+                  // note that this additionalMessage prop is used to determine show more/less behavior or not
+                  // if undefined, then just show normal banner with message
+                  additionalMessage:
+                    'The sample size might be too small or the data too skewed.',
+                  // text for showMore link
+                  showMoreLinkText: 'Why?',
+                  // text for showless link
+                  showLessLinkText: 'Read less',
+                  // color for show more links
+                  showMoreLinkColor: '#006699',
+                  spacing: {
+                    margin: '0.3125em 0',
+                    padding: '0.3125em 0.625em',
+                  },
+                  fontSize: '1em',
+                }}
+              />
+            </div>
+          )}
+        {/* show log scale related Banner message unless plot mode of 'Raw' */}
+        {showLogScaleBanner && (
+          // <div style={{ width: 750, marginLeft: '1em', height: '2.8em' }}>
+          <div>
             <Banner
               banner={{
                 type: 'warning',
                 message:
-                  'Smoothed mean(s) were not calculated for one or more data series.',
+                  'Log scale is not available for plot modes with fitted lines.',
                 pinned: true,
                 intense: false,
                 // additionalMessage is shown next to message when clicking showMoreLinkText.
@@ -1321,43 +1355,24 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 // note that this additionalMessage prop is used to determine show more/less behavior or not
                 // if undefined, then just show normal banner with message
                 additionalMessage:
-                  'The sample size might be too small or the data too skewed.',
+                  'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
                 // text for showMore link
                 showMoreLinkText: 'Why?',
                 // text for showless link
                 showLessLinkText: 'Read less',
                 // color for show more links
                 showMoreLinkColor: '#006699',
+                spacing: {
+                  margin: '0.3125em 0',
+                  padding: '0.3125em 0.625em',
+                },
+                fontSize: '1em',
               }}
             />
           </div>
         )}
-      {/* show log scale related Banner message unless plot mode of 'Raw' */}
-      {showLogScaleBanner && (
-        <div style={{ width: 750, marginLeft: '1em' }}>
-          <Banner
-            banner={{
-              type: 'warning',
-              message:
-                'Log scale is not available for plot modes with fitted lines.',
-              pinned: true,
-              intense: false,
-              // additionalMessage is shown next to message when clicking showMoreLinkText.
-              // disappears when clicking showLess link
-              // note that this additionalMessage prop is used to determine show more/less behavior or not
-              // if undefined, then just show normal banner with message
-              additionalMessage:
-                'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
-              // text for showMore link
-              showMoreLinkText: 'Why?',
-              // text for showless link
-              showLessLinkText: 'Read less',
-              // color for show more links
-              showMoreLinkColor: '#006699',
-            }}
-          />
-        </div>
-      )}
+      </div>
+
       {!options?.hideTrendlines && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
@@ -1376,7 +1391,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           orientation={'horizontal'}
           labelPlacement={'end'}
           buttonColor={'primary'}
-          margins={['1em', '0', '0', '1em']}
+          margins={['0em', '0', '0', '1em']}
           itemMarginRight={50}
         />
       )}

@@ -983,6 +983,8 @@ function Controls({
   // TO DO: standardise web-components/BoxplotData to have `series` key
   return (
     <>
+      {/* pre-occupied space for banner */}
+      <div style={{ width: 750, marginLeft: '1em', height: '2.5em' }} />
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
