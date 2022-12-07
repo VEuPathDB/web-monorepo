@@ -9,7 +9,6 @@ import { areTermsInStringRegexString, parseSearchQueryString } from 'wdk-client/
 import CheckboxList from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxList';
 import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import 'wdk-client/Components/DataTable/DataTable.css';
-import { ErrorBoundary } from 'wdk-client/Controllers';
 import HelpIcon from '../Icon/HelpIcon';
 import Tooltip from '../Overlays/Tooltip';
 import TabbableContainer from '../Display/TabbableContainer';
