@@ -12,6 +12,7 @@ import 'wdk-client/Components/DataTable/DataTable.css';
 import HelpIcon from '../Icon/HelpIcon';
 import Tooltip from '../Overlays/Tooltip';
 import TabbableContainer from '../Display/TabbableContainer';
+import { ErrorBoundary } from 'wdk-client/Controllers';
 
 
 const expandColumn = {
@@ -508,7 +509,7 @@ class DataTable extends PureComponent<Props, State> {
   }
 
   render() {
-    let { searchable = true, childRow, columns } = this.props;
+    let { searchable = true, childRow: ChildRow, columns } = this.props;
     const filterAttributes = columns.filter(col => col.isDisplayable).map(col => ({display: col.displayName, value: col.name}));
     return (
       <div className="MesaComponent">
@@ -582,7 +583,12 @@ class DataTable extends PureComponent<Props, State> {
         )}
         <div ref={node => this.node = node} className="wdk-DataTableContainer"/>
         {this.state.childRows.map(([ node, childRowProps ]) =>
-          childRow && createPortal(React.createElement(childRow, childRowProps), node))}
+          ChildRow && createPortal(
+            <ErrorBoundary renderError={() => <h3>We're sorry, something went wrong.</h3>} >
+              <ChildRow {...childRowProps} />
+            </ErrorBoundary>,
+            node
+          ))}
       </div>
     );
   }
