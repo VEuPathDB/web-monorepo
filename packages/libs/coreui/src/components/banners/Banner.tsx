@@ -26,6 +26,12 @@ export type BannerProps = {
   showLessLinkText?: ReactNode;
   // color for show more links
   showMoreLinkColor?: string;
+  // banner margin, padding, text font size
+  spacing?: {
+    margin?: string,
+    padding?: string,
+  };
+  fontSize?: string;
 }
 
 export type BannerComponentProps = {
@@ -72,7 +78,7 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
 export default function Banner(props: BannerComponentProps) {
   const { banner, onClose } = props;
   // set default values of showMoreLinkText and showLessLinkText
-  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, additionalMessage } = banner;
+  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, additionalMessage, spacing, fontSize } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
 
@@ -95,12 +101,12 @@ export default function Banner(props: BannerComponentProps) {
         border: ${intense ? 'none' : `1px solid ${getColorTheme(type, 600)}`};
         box-sizing: border-box;
         border-radius: 7px;
-        margin: 10px 0;
+        margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
         width: 100%;
-        padding: 10px;
+        padding: ${spacing?.padding != null ? spacing.padding : '10px'};
         align-items: center;
         font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
-        font-size: 13px;
+        font-size: ${fontSize != null ? fontSize : '13px'};
       `}
     >
       <IconComponent
