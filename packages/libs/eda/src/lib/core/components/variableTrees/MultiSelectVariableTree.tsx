@@ -12,7 +12,7 @@ import {
   useFlattenFieldsByTerm,
   useValuesMap,
 } from './hooks';
-import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
+import { CustomCheckboxes } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
 
 export interface MultiSelectVariableTreeProps {
   /** The "scope" of variables which should be offered. */
