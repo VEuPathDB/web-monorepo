@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, CSSProperties } from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -28,10 +28,10 @@ export type BannerProps = {
   showMoreLinkColor?: string;
   // banner margin, padding, text font size
   spacing?: {
-    margin?: string,
-    padding?: string,
+    margin?: CSSProperties['margin'],
+    padding?: CSSProperties['padding'],
   };
-  fontSize?: string;
+  fontSize?: CSSProperties['fontSize'];
 }
 
 export type BannerComponentProps = {
