@@ -16,8 +16,6 @@ import ApplicationSpecificProperties from 'wdk-client/Views/User/ApplicationSpec
 import ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
 import AccordionButton from 'wdk-client/Components/CheckboxTree/AccordionButton';
 import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
-import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import CheckboxTreeNode from 'wdk-client/Components/CheckboxTree/CheckboxTreeNode';
 import DataTable from 'wdk-client/Components/DataTable/DataTable';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
 import Sticky from 'wdk-client/Components/Display/Sticky';
@@ -80,8 +78,6 @@ export {
   CategoriesCheckboxTree,
   Checkbox,
   CheckboxList,
-  CheckboxTree,
-  CheckboxTreeNode,
   CollapsibleSection,
   CommonModal,
   DataTable,
