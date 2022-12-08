@@ -14,10 +14,9 @@ interface LegendListProps {
 }
 
 // truncate any string longer than *max* and append *add* at the end (three ellipses by default)
-//DKDK to avoid type error on this custom function, truncate, it needs to be defined at custom.d.ts
-String.prototype.truncate = function (max: number, add: string) {
+const truncate = function (string: string, max: number, add?: string) {
   add = add || '...';
-  return this.length > max ? this.substring(0, max) + add : this;
+  return string.length > max ? string.substring(0, max) + add : string;
 };
 
 //DKDK add commas
@@ -63,7 +62,7 @@ export default function LegendListSquare({
             <div className="active-legend" title={data.label}>
               <i style={{ background: data.color }}></i>
               {/** 23 characters is max */}
-              <em>{data.label.truncate(22)}</em>
+              <em>{truncate(data.label, 22)}</em>
             </div>
           </div>
           <div className="legend-count">{numberWithCommas(data.value)}</div>
