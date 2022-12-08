@@ -1,18 +1,6 @@
-//DKDK sample legend
-import React from 'react';
-// import ReactDOM from 'react-dom';
-// import { useLeaflet } from "react-leaflet";
-// import L from "leaflet";
-// import { useEffect } from "react";
-//DKDK use react-html-parser
-import ReactHtmlParser from 'react-html-parser';
-//DKDK define prototype truncate function
-import './custom.d.ts';
-
 //DKDK type def for legend: some are set to optional for now
 //perhaps this goes to Types.ts to avoid duplicate and legendProps can be an extension
-interface legendListProps {
-  // className: string
+interface LegendListProps {
   data: {
     label: string; // categorical e.g. "Anopheles gambiae"
     // numeric e.g. "10-20"
@@ -37,82 +25,51 @@ function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export default function LegendListSquare(props: legendListProps) {
-  let labels = [];
-  let maxList: number = 10; //DKDK maximum number of list = 10
+// maximum items to display in legend
+const MAXIMUM_LEGEND_LIST_ITEMS = 10;
 
-  //DKDK add a class to handle circle or square in the list
-  let legendIconClass = '';
-  if (props.legendType === 'numeric') {
-    legendIconClass = ' legend-square-icon';
-  }
+export default function LegendListSquare({
+  data,
+  legendType,
+  legendInfoNumberText,
+}: LegendListProps) {
+  const legendIconClass = legendType === 'numeric' ? 'legend-square-icon' : '';
 
-  //DKDK check if number of data is larger than maxList
-  if (props.data.length <= maxList) {
-    maxList = props.data.length;
-  }
+  /**
+   * If data exceeds maximum items:
+   *  1. slice 1 less than the maximum allowed
+   *  2. combine the values of the data that were "cut off" into a LegendListProps['data'] object whose label is "Others"
+   */
+  const displayableData =
+    data.length <= MAXIMUM_LEGEND_LIST_ITEMS
+      ? data
+      : data.slice(0, MAXIMUM_LEGEND_LIST_ITEMS - 1).concat([
+          {
+            label: 'Others',
+            color: 'silver',
+            value: data
+              .slice(MAXIMUM_LEGEND_LIST_ITEMS - 1)
+              .reduce((prev, curr) => prev + curr.value, 0),
+          },
+        ]);
 
-  //DKDDK # text from props.legendInfoNumberText
-  labels.push(
-    '<div class="legend-field-text"># of ' +
-      props.legendInfoNumberText +
-      '</div>'
-  );
-
-  //DKDK i = 0 - 9 at best
-  for (let i = 0; i < maxList; i++) {
-    labels.push(
-      '<div class="active-legend-area' +
-      legendIconClass +
-      '"><div class="active-legend" title="' +
-      props.data[i].label +
-      '">' + //DKDK add tooltip
-      // '<div class="">' +
-      '<i style="background:' +
-      props.data[i].color +
-      '"></i> ' +
-      '<em>' +
-      props.data[i].label.truncate(22) +
-      '</em>' + //DKDK 23 characters in max
-        '</div></div>' +
-        '<div class="legend-count">' +
-        numberWithCommas(props.data[i].value) +
-        '</div>'
-    );
-  }
-
-  //DKDK calculate total number of Others and add Others in the end of the list
-  if (props.data.length > maxList) {
-    //DKDK compute total number of others
-    let othersSum = 0;
-    for (let i = 10; i < props.data.length; i++) {
-      othersSum = othersSum + props.data[i].value;
-    }
-    //DKDK add Others in the list
-    labels.push(
-      '<div class="active-legend-area"><div class="active-legend" title="' +
-        'Others' +
-        '">' +
-        '<i style="background:' +
-        'silver' +
-        '"></i> ' +
-        '<em>' +
-        'Others' +
-        '</em>' +
-        '</div></div>' +
-        '<div class="legend-count">' +
-        numberWithCommas(othersSum) +
-        '</div>'
-    );
-  } //DKDK add Others list
-
-  //DKDK let's join labels array
-  let SingleLabels = labels.join('<br>');
-
-  //DKDK use react-html-parser for converting html string to element
-  //Do we need to use DOMPurify before using react-html-parser?
   return (
-    <>{ReactHtmlParser(SingleLabels)}</>
-    // SingleLabels
+    <>
+      <div className="legend-field-text"># of {legendInfoNumberText}</div>
+      <br />
+      {displayableData.map((data, index) => (
+        <div key={data.label}>
+          <div className={'active-legend-area ' + legendIconClass}>
+            <div className="active-legend" title={data.label}>
+              <i style={{ background: data.color }}></i>
+              {/** 23 characters is max */}
+              <em>{data.label.truncate(22)}</em>
+            </div>
+          </div>
+          <div className="legend-count">{numberWithCommas(data.value)}</div>
+          {index < displayableData.length - 1 && <br />}
+        </div>
+      ))}
+    </>
   );
 }
