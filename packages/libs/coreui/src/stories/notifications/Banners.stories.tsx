@@ -125,6 +125,11 @@ export const ShowMore = (args) => {
             showLessLinkText: 'Read less',
             // color for show more links
             showMoreLinkColor: '#006699',
+            spacing: {
+              margin: '0.3125em 0',
+              padding: '0.3125em 0.625em',
+            },
+            fontSize: '0.8125em',
           }}
           onClose={handleCloseWarning}
         />
