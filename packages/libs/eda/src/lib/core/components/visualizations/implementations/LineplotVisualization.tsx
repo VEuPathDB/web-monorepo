@@ -122,6 +122,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const plotContainerStyles = {
   width: 750,
@@ -983,7 +984,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max <= 0;
 
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
 
   const widgetHeight = '4em';
 
@@ -1096,8 +1097,48 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  // set four useState to handle Banner
+  const [
+    showIndependentLogScaleBanner,
+    onShowIndependentLogScaleBanner,
+  ] = useState(false);
+  const [showBinningBanner, onShowBinningBanner] = useState(false);
+  const [showDependentLogScaleBanner, onShowDependentLogScaleBanner] = useState(
+    false
+  );
+  const [showErrorBarBanner, onShowErrorBarBanner] = useState(false);
+
   const controlsNode = (
     <>
+      {/* pre-occupied space for Banner */}
+      <div style={{ width: 750, marginLeft: '1em', height: '3.5em' }}>
+        {(showIndependentLogScaleBanner ||
+          showBinningBanner ||
+          showDependentLogScaleBanner ||
+          showErrorBarBanner) && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message: showIndependentLogScaleBanner
+                ? 'Binning is no longer appropriate and has been disabled'
+                : showBinningBanner
+                ? 'Log scale is no longer appropriate and has been disabled'
+                : showDependentLogScaleBanner
+                ? 'Error bars are no longer appropriate and have been disabled'
+                : showErrorBarBanner
+                ? 'Log scale is no longer appropriate and has been disabled'
+                : '',
+              pinned: true,
+              intense: false,
+              spacing: {
+                margin: '0.3125em 0',
+                padding: '0.3125em 0.625em',
+              },
+              fontSize: '1em',
+            }}
+          />
+        )}
+      </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* X-axis controls   */}
@@ -1107,6 +1148,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              marginTop: '-1em',
             }}
           >
             <LabelledGroup label="X-axis controls"> </LabelledGroup>
@@ -1141,10 +1183,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.useBinning)
-                  enqueueSnackbar(
-                    'Binning is no longer appropriate and has been disabled'
-                  );
+                if (newValue && vizConfig.useBinning) {
+                  onShowIndependentLogScaleBanner(true);
+                  onShowBinningBanner(false);
+                  onShowErrorBarBanner(false);
+                  onShowDependentLogScaleBanner(false);
+                } else {
+                  onShowIndependentLogScaleBanner(false);
+                }
               }}
               disabled={
                 lineplotProps.independentValueType === 'date' ||
@@ -1182,10 +1228,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                if (newValue && vizConfig.independentAxisLogScale)
-                  enqueueSnackbar(
-                    'Log scale is no longer appropriate and has been disabled'
-                  );
+                if (newValue && vizConfig.independentAxisLogScale) {
+                  onShowBinningBanner(true);
+                  onShowIndependentLogScaleBanner(false);
+                  onShowErrorBarBanner(false);
+                  onShowDependentLogScaleBanner(false);
+                } else {
+                  onShowBinningBanner(false);
+                }
               }}
               disabled={neverUseBinning}
               themeRole="primary"
@@ -1304,6 +1354,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
+            marginTop: '-1em',
           }}
         >
           {' '}
@@ -1316,6 +1367,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              marginTop: '-1em',
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
@@ -1350,10 +1402,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.showErrorBars)
-                  enqueueSnackbar(
-                    'Error bars are no longer appropriate and have been disabled'
-                  );
+                if (newValue && vizConfig.showErrorBars) {
+                  onShowDependentLogScaleBanner(true);
+                  onShowErrorBarBanner(false);
+                  onShowIndependentLogScaleBanner(false);
+                  onShowBinningBanner(false);
+                } else {
+                  onShowDependentLogScaleBanner(false);
+                }
               }}
               disabled={lineplotProps.dependentValueType === 'date'}
               themeRole="primary"
@@ -1389,10 +1445,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                if (newValue && vizConfig.dependentAxisLogScale)
-                  enqueueSnackbar(
-                    'Log scale is no longer appropriate and has been disabled'
-                  );
+                if (newValue && vizConfig.dependentAxisLogScale) {
+                  onShowErrorBarBanner(true);
+                  onShowDependentLogScaleBanner(false);
+                  onShowIndependentLogScaleBanner(false);
+                  onShowBinningBanner(false);
+                } else {
+                  onShowErrorBarBanner(false);
+                }
               }}
               disabled={neverShowErrorBars}
               themeRole="primary"
