@@ -8,11 +8,11 @@ import XmlReporterForm from '../components/reporters/XmlReporterForm';
 import JsonReporterForm from '../components/reporters/JsonReporterForm';
 import Gff3ReporterForm from '../components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from '../components/reporters/FastaGeneReporterForm';
-import BedGeneReporterForm from '../components/reporters/BedGeneReporterForm';
-import BedSimpleReporterForm from '../components/reporters/BedSimpleReporterForm';
-import BedDynSpanReporterForm from '../components/reporters/BedDynSpanReporterForm';
-import BedGenomicSequenceReporterForm from '../components/reporters/BedGenomicSequenceReporterForm';
-import BedSequenceReporterForm from '../components/reporters/BedSequenceReporterForm';
+import SequenceGeneReporterForm from '../components/reporters/SequenceGeneReporterForm';
+import SequenceSimpleReporterForm from '../components/reporters/SequenceSimpleReporterForm';
+import SequenceDynSpanReporterForm from '../components/reporters/SequenceDynSpanReporterForm';
+import SequenceGenomicSequenceReporterForm from '../components/reporters/SequenceGenomicSequenceReporterForm';
+import SequenceSequenceReporterForm from '../components/reporters/SequenceSequenceReporterForm';
 import FastaGenomicSequenceReporterForm from '../components/reporters/FastaGenomicSequenceReporterForm';
 import FastaOrthoSequenceReporterForm from '../components/reporters/FastaOrthoSequenceReporterForm';
 import TableReporterForm from '../components/reporters/TableReporterForm';
@@ -59,13 +59,13 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         // both gene and transcript use the same reporter
         case 'GeneRecordClasses.GeneRecordClass':
         case 'TranscriptRecordClasses.TranscriptRecordClass':
-          return BedGeneReporterForm;
+          return SequenceGeneReporterForm;
         case 'SequenceRecordClasses.SequenceRecordClass':
-          return BedGenomicSequenceReporterForm;
+          return SequenceGenomicSequenceReporterForm;
         case 'DynSpanRecordClasses.DynSpanRecordClass':
         case 'PopsetRecordClasses.PopsetRecordClass':
         case 'EstRecordClasses.EstRecordClass':
-          return BedSimpleReporterForm;
+          return SequenceSimpleReporterForm;
         default:
           console.error("Unsupported BED recordClass: " + recordClassFullName);
           return EmptyReporter;

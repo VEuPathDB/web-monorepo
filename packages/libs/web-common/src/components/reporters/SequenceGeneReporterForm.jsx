@@ -1,10 +1,10 @@
 import React from 'react';
 import { RadioList, CheckboxList, SingleSelect, TextBox, Checkbox, NumberSelector } from '@veupathdb/wdk-client/lib/Components';
-import { FeaturesList, ComponentsList } from './BedFormElements';
+import { FeaturesList, ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import SrtHelp from '../SrtHelp';
-import createBedForm from './BedFormFactory';
+import createSequenceForm from './SequenceFormFactory';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
@@ -199,4 +199,4 @@ let getFormInitialState = () => ({
   splicedGenomic: splicedGenomicOptions[0].value,
 });
 
-export default createBedForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
+export default createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);

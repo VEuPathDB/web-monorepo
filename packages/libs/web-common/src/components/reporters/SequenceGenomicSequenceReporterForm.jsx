@@ -1,9 +1,9 @@
 import React from 'react';
 import { RadioList, Checkbox, TextBox } from '@veupathdb/wdk-client/lib/Components';
-import { FeaturesList, ComponentsList } from './BedFormElements';
+import { FeaturesList, ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
-import createBedForm from './BedFormFactory';
+import createSequenceForm from './SequenceFormFactory';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
@@ -67,6 +67,6 @@ let getFormInitialState = () => ({
   sequenceFeature: sequenceFeatureOptions[0].value,
 });
 
-export default createBedForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
+export default createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
 
 

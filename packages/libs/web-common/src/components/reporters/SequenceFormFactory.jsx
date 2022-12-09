@@ -1,6 +1,6 @@
 import React from 'react';
 import { RadioList, CheckboxList, SingleSelect, TextBox, Checkbox, NumberSelector } from '@veupathdb/wdk-client/lib/Components';
-import { FeaturesList, ComponentsList } from './BedFormElements';
+import { FeaturesList, ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 
@@ -14,7 +14,7 @@ let deflineFieldOptions = [
   { value: 'segment_length', display: 'Segment Length' },
 ];
 
-let createBedForm = (formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState) => {
+let createSequenceForm = (formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState) => {
   let Form = (props) => {
     let { formState, updateFormState, onSubmit, includeSubmit } = props;
     let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
@@ -80,4 +80,4 @@ let createBedForm = (formBeforeCommonOptions, formAfterSubmitButton, getFormInit
   });
   return Form;
 }
-export default createBedForm;
+export default createSequenceForm;

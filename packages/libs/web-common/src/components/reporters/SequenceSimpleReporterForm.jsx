@@ -1,5 +1,5 @@
 import React from 'react';
-import createBedForm from './BedFormFactory';
+import createSequenceForm from './SequenceFormFactory';
 
 const formBeforeCommonOptions = (props) => {
   return (
@@ -15,4 +15,4 @@ const formAfterSubmitButton = (props) => {
 };
 const getFormInitialState = () => ({});
 
-export default createBedForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
+export default createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
