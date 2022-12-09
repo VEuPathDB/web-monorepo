@@ -14,7 +14,7 @@ let strands = [
 
 let sequenceFeatureOptions = [
   { value: 'whole_sequence', display: 'Whole Sequence' },
-  { value: 'low_complexity', display: 'Low Complexity' },
+  { value: 'low_complexity', display: 'Low Complexity Regions' },
   { value: 'repeats', display: 'Repeats' },
   { value: 'tandem', display: 'Tandem Repeats' },
   { value: 'centromere', display: 'Centromere' }
@@ -43,22 +43,6 @@ const formBeforeCommonOptions = (props) => {
 let formAfterSubmitButton = (props) => {
   return (
     <React.Fragment>
-      <div>
-        <hr/>
-        <h3>Options:</h3>
-        <ul style={{marginBottom:"2em"}}>
-          <li>
-            <i><b>complete sequence</b></i> to retrieve the complete sequence
-            for the requested genomic regions, use "Nucleotide positions 1 to 0"
-          </li>
-          <li>
-            <i><b>specific sequence region</b></i> to retrieve a specific region
-            for the requested genomic regions, use "Nucleotide positions
-            <i>x</i> to <i>y</i>", where <i>y</i> is greater than <i>x</i>
-          </li>
-        </ul>
-        <hr/>
-      </div>
     </React.Fragment>
   );
 };
