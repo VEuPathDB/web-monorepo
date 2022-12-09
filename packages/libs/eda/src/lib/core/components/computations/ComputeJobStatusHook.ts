@@ -38,13 +38,15 @@ export function useComputeJobStatus(
         });
         if (!cancelled) setJobStatus((sharedStatusRef.current = status));
       }
-      if (!cancelled) setTimeout(getJobStatus, 1000);
+      if (!cancelled) {
+        timerId = window.setTimeout(getJobStatus, 1000);
+      }
     }
 
     getJobStatus();
 
     return () => {
-      clearTimeout(timerId);
+      window.clearTimeout(timerId);
       cancelled = true;
     };
   }, [
