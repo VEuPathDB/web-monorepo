@@ -1,3 +1,4 @@
+import { delay } from '@veupathdb/wdk-client/lib/Utils/PromiseUtils';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { JobStatusReponse } from '../../api/ComputeClient';
 import { useComputeClient, useStudyMetadata } from '../../hooks/workspace';
@@ -7,48 +8,74 @@ import { Computation } from '../../types/visualization';
 export type JobStatus = JobStatusReponse['status'] | 'requesting';
 
 /**
- * Polls the compute service for the status of a compute's job
+ * Polls the compute service for the status of a compute's job.
  */
 export function useComputeJobStatus(
   analysis: Analysis | NewAnalysis,
   computation: Computation,
   computeName?: string
 ) {
-  const [jobStatus, setJobStatus] = useState<JobStatus>();
   const computeClient = useComputeClient();
   const studyMetadata = useStudyMetadata();
+
+  // Status that is exposed to hook consumer
+  const [jobStatus, _setJobStatus] = useState<JobStatus>();
+
+  // Mutable ref used to shadow jobStatus state value.
+  // This is used in the loop function below, to avoid
+  // using it as a useEffect dependency
   const sharedStatusRef = useRef<JobStatus>();
 
+  // Update jobStatus state and ref
+  function setJobStatus(status?: JobStatus) {
+    _setJobStatus((sharedStatusRef.current = status));
+  }
+
+  // The callback passed to this useEffect will start a loop that will request
+  // the status of a compute job. The loop will continue to run until either
+  // its dependencies change, or the consuming component is unmounted.
+  //
+  // A new job status is requested only if the current job status is not a
+  // terminal status (see `isTerminalStatus` function).
+  //
+  // A mutable ref is used for checking the job status so that the `useState`
+  // `jobStatus` variable does not need to be included as a dependency.
   useEffect(() => {
-    let timerId: number;
+    // Track if effect has been "cancelled"
     let cancelled = false;
-    setJobStatus((sharedStatusRef.current = undefined));
+    // Clear existing job status
+    setJobStatus(undefined);
+    // start the loop
+    loop();
 
-    async function getJobStatus() {
-      if (computeName == null) return;
-      if (
-        sharedStatusRef.current == null ||
-        !isTerminalStatus(sharedStatusRef.current)
-      ) {
-        const { status } = await computeClient.getJobStatus(computeName, {
-          config: fixConfig(computation.descriptor.configuration),
-          derivedVariables: analysis.descriptor.derivedVariables,
-          filters: analysis.descriptor.subset.descriptor,
-          studyId: studyMetadata.id,
-        });
-        if (!cancelled) setJobStatus((sharedStatusRef.current = status));
-      }
-      if (!cancelled) {
-        timerId = window.setTimeout(getJobStatus, 1000);
-      }
-    }
-
-    getJobStatus();
-
-    return () => {
-      window.clearTimeout(timerId);
+    return function cleanup() {
       cancelled = true;
     };
+
+    // Fetch the job status and update state
+    async function updateJobStatus() {
+      if (computeName == null) return;
+      const { status } = await computeClient.getJobStatus(computeName, {
+        config: fixConfig(computation.descriptor.configuration),
+        derivedVariables: analysis.descriptor.derivedVariables,
+        filters: analysis.descriptor.subset.descriptor,
+        studyId: studyMetadata.id,
+      });
+      if (!cancelled) setJobStatus(status);
+    }
+
+    // Start a loop to check if a job status should be requested every second
+    async function loop() {
+      while (!cancelled) {
+        if (
+          sharedStatusRef.current == null ||
+          !isTerminalStatus(sharedStatusRef.current)
+        ) {
+          await updateJobStatus();
+        }
+        await delay(1000);
+      }
+    }
   }, [
     analysis.descriptor.derivedVariables,
     analysis.descriptor.subset.descriptor,
@@ -60,14 +87,14 @@ export function useComputeJobStatus(
 
   const createJob = useCallback(async () => {
     if (computeName == null) return;
-    setJobStatus((sharedStatusRef.current = 'requesting'));
+    setJobStatus('requesting');
     const { status } = await computeClient.createJob(computeName, {
       config: fixConfig(computation.descriptor.configuration),
       derivedVariables: analysis.descriptor.derivedVariables,
       filters: analysis.descriptor.subset.descriptor,
       studyId: studyMetadata.id,
     });
-    setJobStatus((sharedStatusRef.current = status));
+    setJobStatus(status);
   }, [
     analysis.descriptor.derivedVariables,
     analysis.descriptor.subset.descriptor,
@@ -87,8 +114,6 @@ function fixConfig(config: any) {
 
 /**
  * Check if a status terminal
- * @param status
- * @returns
  */
 function isTerminalStatus(status: JobStatus) {
   switch (status) {
@@ -96,6 +121,7 @@ function isTerminalStatus(status: JobStatus) {
     case 'expired':
     case 'failed':
     case 'no-such-job':
+    case 'requesting':
       return true;
     default:
       return false;
