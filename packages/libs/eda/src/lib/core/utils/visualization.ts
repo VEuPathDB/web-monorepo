@@ -287,6 +287,7 @@ export function getVariableLabel(
 
   if (mapping == null) return fallbackLabel;
 
+  // TODO Will derived variables have a displayName?
   if (mapping.variableClass === 'native') {
     const nativeVariable = findEntityAndVariable(
       entities,
