@@ -32,7 +32,8 @@ interface ChartMarkerProps
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** x-axis title for marker (defaults to sum of data[].value) */
   markerLabel?: string;
-  /** cumulative mode: when true, the total count shown will be the last value, not the sum of the values  */
+  /** cumulative mode: when true, the total count shown will be the last value, not the sum of the values.
+   * See cumulative prop in DonutMarker.tsx for context. */
   cumulative?: boolean;
 }
 

@@ -29,8 +29,10 @@ export interface DonutMarkerProps
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** center title/number for marker (defaults to sum of data[].value) */
   markerLabel?: string;
-  /** cumulative mode: values are expected in order small to large where the final value
-   * is "100%" of the donut */
+  /** cumulative mode: values are expected in order and to **already** be cumulative in nature.
+   * That is, values 20, 40, 60, 80, 100 would generate five equal-sized segments.  The final
+   * value does not have to be 100.  2,4,6,8,10 would produce the same donut
+   * (but with different mouse-overs in the enlarged version.) */
   cumulative?: boolean;
 }
 
