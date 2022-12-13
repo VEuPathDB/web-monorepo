@@ -424,7 +424,7 @@ const LineplotResponseData = array(
 export type LineplotConfig = TypeOf<typeof lineplotConfig>;
 const lineplotConfig = intersection([
   plotConfig,
-  type({
+  partial({
     binSlider: BinWidthSlider,
     binSpec: BinSpec,
     viewport: numericViewport,
