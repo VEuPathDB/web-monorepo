@@ -35,8 +35,8 @@ let genomicAnchorValues = [
 ];
 
 let proteinAnchorValues = [
-  { value: 'Start', display: 'Downstream from Start' },
-  { value: 'End', display: 'Upstream from End' }
+  { value: 'DownstreamFromStart', display: 'Downstream from Start' },
+  { value: 'UpstreamFromEnd', display: 'Upstream from End' }
 ];
 
 let signs = [
@@ -181,17 +181,17 @@ let getFormInitialState = () => ({
 
   // sequence region inputs for 'genomic'
   reverseAndComplement: false,
-  upstreamAnchor: 'Start',
-  upstreamSign: 'plus',
+  upstreamAnchor: genomicAnchorValues[0].value,
+  upstreamSign: signs[0].value,
   upstreamOffset: 0,
-  downstreamAnchor: 'End',
-  downstreamSign: 'plus',
+  downstreamAnchor: genomicAnchorValues[3].value,
+  downstreamSign: signs[0].value,
   downstreamOffset: 0,
 
   // sequence region inputs for 'protein'
-  startAnchor3: 'Start',
+  startAnchor3: proteinAnchorValues[0].value,
   startOffset3: 0,
-  endAnchor3: 'End',
+  endAnchor3: proteinAnchorValues[1].value,
   endOffset3: 0,
 
   geneComponents: geneComponentOptions.map((x) => x.value),
