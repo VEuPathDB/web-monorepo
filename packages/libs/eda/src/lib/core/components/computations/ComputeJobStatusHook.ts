@@ -56,7 +56,7 @@ export function useComputeJobStatus(
     async function updateJobStatus() {
       if (computeName == null) return;
       const { status } = await computeClient.getJobStatus(computeName, {
-        config: fixConfig(computation.descriptor.configuration),
+        config: computation.descriptor.configuration,
         derivedVariables: analysis.descriptor.derivedVariables,
         filters: analysis.descriptor.subset.descriptor,
         studyId: studyMetadata.id,
@@ -89,7 +89,7 @@ export function useComputeJobStatus(
     if (computeName == null) return;
     setJobStatus('requesting');
     const { status } = await computeClient.createJob(computeName, {
-      config: fixConfig(computation.descriptor.configuration),
+      config: computation.descriptor.configuration,
       derivedVariables: analysis.descriptor.derivedVariables,
       filters: analysis.descriptor.subset.descriptor,
       studyId: studyMetadata.id,
@@ -105,11 +105,6 @@ export function useComputeJobStatus(
   ]);
 
   return { jobStatus, createJob };
-}
-
-function fixConfig(config: any) {
-  const { name, ...rest } = config;
-  return rest;
 }
 
 /**
