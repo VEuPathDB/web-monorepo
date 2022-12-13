@@ -315,7 +315,6 @@ function PlotlyPlot<T>(
     [onRender, sharedPlotCreation.run]
   );
 
-  // with opacity
   const finalData = useMemo(() => {
     return data.map((d: any) => ({
       ...d,
