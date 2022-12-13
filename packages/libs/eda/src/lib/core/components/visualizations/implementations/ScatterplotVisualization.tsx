@@ -1301,10 +1301,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max < 0;
 
+  // add showBanner prop in this Viz
+  const [showBanner, setShowBanner] = useState(true);
+
   const controlsNode = (
     <>
       {/* pre-occupied space for banner */}
-      <div style={{ width: 750, marginLeft: '1em', height: '3.5em' }}>
+      <div style={{ width: 750, marginLeft: '1em', minHeight: '2.5em' }}>
         {/* show Banner message if no smoothed mean exists */}
         {!data.pending &&
           vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
@@ -1331,10 +1334,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                   // color for show more links
                   showMoreLinkColor: '#006699',
                   spacing: {
-                    margin: '0.3125em 0',
+                    margin: '0.3125em 0 0 0',
                     padding: '0.3125em 0.625em',
                   },
                   fontSize: '1em',
+                  // Banner timeout props
+                  showBanner: showBanner,
+                  setShowBanner: setShowBanner,
+                  // autoHideDuration: 5000,
                 }}
               />
             </div>
@@ -1363,10 +1370,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 // color for show more links
                 showMoreLinkColor: '#006699',
                 spacing: {
-                  margin: '0.3125em 0',
+                  margin: '0.3125em 0 0 0',
                   padding: '0.3125em 0.625em',
                 },
                 fontSize: '1em',
+                // Banner timeout props
+                showBanner: showBanner,
+                setShowBanner: setShowBanner,
+                autoHideDuration: 5000,
               }}
             />
           </div>
@@ -1381,6 +1392,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           selectedOption={vizConfig.valueSpecConfig ?? 'Raw'}
           onOptionSelected={(newValue: string) => {
             onValueSpecChange(newValue);
+            // to reuse Banner
+            setShowBanner(true);
           }}
           // disabledList prop is used to disable radio options (grayed out)
           disabledList={
@@ -1440,6 +1453,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
+                // to reuse Banner
+                setShowBanner(true);
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.independentValueType === 'date'}
@@ -1573,6 +1588,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
+                // to reuse Banner
+                setShowBanner(true);
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.dependentValueType === 'date'}

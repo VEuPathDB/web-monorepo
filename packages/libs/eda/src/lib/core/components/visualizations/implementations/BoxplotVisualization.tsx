@@ -984,7 +984,7 @@ function Controls({
   return (
     <>
       {/* pre-occupied space for banner */}
-      <div style={{ width: 750, marginLeft: '1em', height: '2.5em' }} />
+      <div style={{ width: 750, marginLeft: '1em', height: '1.5em' }} />
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
