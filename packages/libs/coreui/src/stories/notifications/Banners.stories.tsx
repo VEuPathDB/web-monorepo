@@ -110,7 +110,7 @@ export const ShowMore = (args) => {
             type: 'warning',
             // message is used as a basic text
             message: 'Smoothed mean(s) were not calculated for one or more data series.',
-            pinned: false,
+            pinned: true,
             intense: false,
             // additionalMessage is shown next to message when clicking showMoreLinkText.
             // disappears when clicking showLess link
@@ -145,3 +145,48 @@ export const ShowMore = (args) => {
     </div>
   );
 };
+
+// testing Banner timeout
+export const BannerTimeout = (args) => {
+
+  // Banner timeout related useState
+  const [showBanner, setShowBanner] = useState(true);
+  // hiding duration (unit in milli-second)
+  const autoHideDuration = 5000;
+
+  // just for testing Banner timeout - no need for actual implementation
+  const [isAutoHide, setAutoHide] = useState(false);
+
+  return (
+    <>
+      <div style={{ width: '750px', height: '4em' }}>
+        <Banner
+          banner={{
+            type: 'warning',
+            // message is used as a basic text
+            message: 'Smoothed mean(s) were not calculated for one or more data series.',
+            pinned: true,
+            intense: false,
+            // Banner timeout props
+            showBanner: showBanner,
+            setShowBanner: setShowBanner,
+            autoHideDuration: autoHideDuration,
+          }}
+        />
+      </div>
+      {/* test timeout with toggle: Banner will show up whenever toggling and then disappear */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Toggle
+          label="showMore option:"
+          value={isAutoHide}
+          onChange={(newValue: boolean) => {
+            setAutoHide(newValue);
+            setShowBanner(true);
+          }}
+        />
+      </div>
+      <p> auto hide duration: {autoHideDuration} ms</p>
+  </>
+  );
+};
+
