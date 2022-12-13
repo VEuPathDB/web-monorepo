@@ -26,7 +26,6 @@ export function RunComputeButton(props: Props) {
         themeRole="primary"
         text="Run computation"
         textTransform="none"
-        size="small"
         onPress={createJob}
         disabled={status !== 'no-such-job'}
       />
