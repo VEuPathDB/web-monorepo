@@ -19,5 +19,8 @@
   },
   "peerDependencies": {
     "eslint-config-react-app": "^7.0.0"
+  },
+  "dependencies": {
+    "eslint-config-react-app": "^7.0.0"
   }
 }
