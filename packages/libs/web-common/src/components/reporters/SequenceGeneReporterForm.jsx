@@ -141,17 +141,17 @@ let formBeforeCommonOptions = props => {
             { value: 'genomic', display: 'Unspliced Genomic Sequence', body:  (
               <GenomicSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
             )},
-            { value: 'protein', display: 'Protein Sequence', body: (
-              <ProteinSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
-            )},
-            { value: 'protein_features', display: 'Protein Features', body: (
-              <FeaturesList field="proteinFeature" features={proteinFeatureOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
-            )},
             { value: 'spliced_genomic', display: 'Spliced Genomic Sequence', body: (
               <FeaturesList field="splicedGenomic" features={splicedGenomicOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
             )},
             { value: 'gene_components', display: 'Gene Components', body: (
               <ComponentsList field="geneComponents" features={geneComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
+            )},
+            { value: 'protein', display: 'Protein Sequence', body: (
+              <ProteinSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
+            )},
+            { value: 'protein_features', display: 'Protein Features', body: (
+              <FeaturesList field="proteinFeature" features={proteinFeatureOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
             )},
           ]  
           }/>
