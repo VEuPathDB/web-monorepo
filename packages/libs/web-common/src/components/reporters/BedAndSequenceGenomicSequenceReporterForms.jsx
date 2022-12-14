@@ -50,7 +50,9 @@ let getFormInitialState = () => ({
   strand: strands[0].value,
   sequenceFeature: sequenceFeatureOptions[0].value,
 });
+let SequenceGenomicSequenceReporterForm = createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, 'Sequences');
+let BedGenomicSequenceReporterForm = createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, 'Coordinates');
+export {SequenceGenomicSequenceReporterForm, BedGenomicSequenceReporterForm};
 
-export default createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState);
 
 

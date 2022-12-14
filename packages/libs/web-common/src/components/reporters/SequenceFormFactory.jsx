@@ -14,13 +14,47 @@ let deflineFieldOptions = [
   { value: 'segment_length', display: 'Segment Length' },
 ];
 
-let createSequenceForm = (formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState) => {
+let sequenceOptions = (props) => {
+  let { formState, updateFormState, onSubmit, includeSubmit } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+  return (
+    <React.Fragment>
+      <h3>Fasta defline:</h3>
+       <div style={{marginLeft:"2em"}}>
+         <RadioList name="deflineType" value={formState.deflineType}
+           onChange={getUpdateHandler('deflineType')} items={[
+             {  value: "short", display: 'ID Only' },
+             { 
+               value: "full", display: 'Full Fasta Header',
+               body: (<ComponentsList field="deflineFields" features={deflineFieldOptions} formState={formState} getUpdateHandler={getUpdateHandler} />),
+             }
+             ]}/>
+       </div>
+       <h3>Sequence format:</h3>
+       <div style={{marginLeft:"2em"}}>
+         <RadioList name="sequenceFormat" value={formState.sequenceFormat}
+           onChange={getUpdateHandler('sequenceFormat')} items={[
+             {  value: "single_line", display: 'Single Line' },
+             { 
+               value: "fixed_width", display: 'Fixed Width',
+               body: (
+                 <React.Fragment>
+                   <span>Bases Per Line: </span>
+                   <NumberSelector name={"basesPerLine"} start={0} end={10000} value={formState["basesPerLine"]} step={1}
+                       onChange={getUpdateHandler("basesPerLine")} size="6"/>
+                 </React.Fragment>
+               ),
+             }
+             ]}/>
+      </div>
+    </React.Fragment>
+  );
+};
+
+let createSequenceForm = (formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, reportType) => {
   let Form = (props) => {
     let { formState, updateFormState, onSubmit, includeSubmit } = props;
     let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
-    let typeUpdateHandler = function(newTypeValue) {
-      updateFormState(Object.assign({}, formState, { type: newTypeValue }));
-    };
     return (
       <div>
         {formBeforeCommonOptions(props)}
@@ -29,37 +63,10 @@ let createSequenceForm = (formBeforeCommonOptions, formAfterSubmitButton, getFor
           <RadioList name="attachmentType" value={formState.attachmentType}
             onChange={getUpdateHandler('attachmentType')} items={util.attachmentTypes}/>
         </div>
-        <h3>Fasta defline:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <RadioList name="deflineType" value={formState.deflineType}
-            onChange={getUpdateHandler('deflineType')} items={[
-              {  value: "short", display: 'ID Only' },
-              { 
-                value: "full", display: 'Full Fasta Header',
-                body: (<ComponentsList field="deflineFields" features={deflineFieldOptions} formState={formState} getUpdateHandler={getUpdateHandler} />),
-              }
-              ]}/>
-        </div>
-        <h3>Sequence format:</h3>
-        <div style={{marginLeft:"2em"}}>
-          <RadioList name="sequenceFormat" value={formState.sequenceFormat}
-            onChange={getUpdateHandler('sequenceFormat')} items={[
-              {  value: "single_line", display: 'Single Line' },
-              { 
-                value: "fixed_width", display: 'Fixed Width',
-                body: (
-                  <React.Fragment>
-                    <span>Bases Per Line: </span>
-                    <NumberSelector name={"basesPerLine"} start={0} end={10000} value={formState["basesPerLine"]} step={1}
-                        onChange={getUpdateHandler("basesPerLine")} size="6"/>
-                  </React.Fragment>
-                ),
-              }
-              ]}/>
-        </div>
+        { reportType === "Sequences" && sequenceOptions(props) }
         { includeSubmit &&
           <div style={{margin:'0.8em'}}>
-            <button className="btn" type="submit" onClick={onSubmit}>Get Sequences</button>
+            <button className="btn" type="submit" onClick={onSubmit}>Get {reportType}</button>
           </div>
         }
         {formAfterSubmitButton(props)}
