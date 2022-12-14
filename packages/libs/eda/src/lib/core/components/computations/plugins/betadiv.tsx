@@ -12,6 +12,7 @@ import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useMemo } from 'react';
+import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
 
 export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -27,29 +28,31 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration,
   isConfigurationValid: BetaDivConfig.is,
   visualizationPlugins: {
-    scatterplot: scatterplotVisualization.withOptions({
-      getComputedXAxisDetails(config) {
-        if (BetaDivConfig.is(config)) {
-          return {
-            entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: config.collectionVariable.variableId,
-            variableId: config.collectionVariable.variableId,
-          };
-        }
-      },
-      getComputedYAxisDetails(config) {
-        if (BetaDivConfig.is(config)) {
-          return {
-            entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Beta Diversity',
-            variableId: 'betaDiversity',
-          };
-        }
-      },
-      hideShowMissingnessToggle: true,
-      hideTrendlines: true,
-      hideFacetInputs: true,
-    }),
+    scatterplot: scatterplotVisualization
+      .withOptions({
+        getComputedXAxisDetails(config) {
+          if (BetaDivConfig.is(config)) {
+            return {
+              entityId: config.collectionVariable.entityId,
+              placeholderDisplayName: config.collectionVariable.variableId,
+              variableId: config.collectionVariable.variableId,
+            };
+          }
+        },
+        getComputedYAxisDetails(config) {
+          if (BetaDivConfig.is(config)) {
+            return {
+              entityId: config.collectionVariable.entityId,
+              placeholderDisplayName: 'Beta Diversity',
+              variableId: 'betaDiversity',
+            };
+          }
+        },
+        hideShowMissingnessToggle: true,
+        hideTrendlines: true,
+        hideFacetInputs: true,
+      })
+      .withSelectorIcon(ScatterBetadivSVG),
   },
 };
 
