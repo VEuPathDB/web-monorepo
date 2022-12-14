@@ -137,7 +137,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
           0.95) /
-        (data.dependentLabels.length - 1);
+        data.dependentLabels.length;
     } else {
       // If we can't determine the container height, don't add any gaps to be safe
       legendTraceGroupGap = 0;
