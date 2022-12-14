@@ -125,6 +125,19 @@ TenByTwelve.args = {
   },
 };
 
+export const DynamicSize = Template.bind({});
+DynamicSize.args = {
+  ...defaults,
+  data: tenByTwelveData,
+  independentAxisLabel: 'Year',
+  dependentAxisLabel: 'Month',
+  interactive: true,
+  containerStyles: {
+    height: '80%',
+    width: '80%',
+  },
+};
+
 const realData = {
   values: [
     [771, 794, 635, 820, 411, 589, 517],
@@ -173,6 +186,7 @@ RealData.args = {
   containerStyles: {
     width: 750,
     height: 450,
+    marginTop: '0.75rem',
     marginLeft: '0.75rem',
     border: '1px solid #dedede',
     boxShadow: '1px 1px 4px #00000066',

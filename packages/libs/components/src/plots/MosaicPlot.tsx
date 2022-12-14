@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   DEFAULT_CONTAINER_HEIGHT,
   DEFAULT_MAX_LEGEND_TEXT_LENGTH,
@@ -14,7 +14,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { PlotSpacingDefault, ColorPaletteDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
 import { select } from 'd3';
-// need to use this?
 import { removeHtmlTags } from '../utils/removeHtmlTags';
 
 export interface MosaicPlotProps extends PlotProps<MosaicPlotData> {
@@ -52,6 +51,11 @@ const getLongestTruncatedStringLength = (
   return longestStringLength > maxLength ? maxLength + 2 : longestStringLength;
 };
 
+function useForceUpdate() {
+  const [value, setValue] = useState({});
+  return () => setValue({}); // update state to force render
+}
+
 const MosaicPlot = makePlotlyPlotComponent(
   'MosaicPlot',
   ({
@@ -68,6 +72,8 @@ const MosaicPlot = makePlotlyPlotComponent(
     legendOptions,
     ...restProps
   }: MosaicPlotProps) => {
+    const forceUpdate = useForceUpdate();
+
     // Column widths
     const raw_widths = _.unzip(data.values).map((arr) => _.sum(arr));
     const sum_raw_widths = _.sum(raw_widths);
@@ -104,11 +110,36 @@ const MosaicPlot = makePlotlyPlotComponent(
     // Might need to be calculated or adjusted if more flexibility is needed
     const defaultLegendItemHeight = 20;
 
+    console.log('rendered');
+
+    // if (displayLegend) {
+    //   useEffect(() => {console.log('hi')});
+    // }
+
+    // const containerHeight = useMemo(() => {
+    //   // Try to get the container height in pixels
+    //   const containerHeightProp = restProps.containerStyles
+    //     ? restProps.containerStyles.height
+    //     : DEFAULT_CONTAINER_HEIGHT;
+    //   let containerHeight = containerHeightProp
+    //     ? typeof containerHeightProp === 'number'
+    //       ? containerHeightProp
+    //       : containerHeightProp.endsWith('px')
+    //       ? parseInt(containerHeightProp)
+    //       : undefined
+    //     : undefined;
+
+    //   if (containerHeight === undefined) {
+    //   }
+
+    //   return containerHeight;
+    // }, []);
+
     // Try to get the container height in pixels
     const containerHeightProp = restProps.containerStyles
       ? restProps.containerStyles.height
       : DEFAULT_CONTAINER_HEIGHT;
-    const containerHeight = containerHeightProp
+    const containerHeightInitial = containerHeightProp
       ? typeof containerHeightProp === 'number'
         ? containerHeightProp
         : containerHeightProp.endsWith('px')
@@ -116,9 +147,39 @@ const MosaicPlot = makePlotlyPlotComponent(
         : undefined
       : undefined;
 
+    const [containerHeight, setContainerHeight] = useState(
+      containerHeightInitial
+    );
+
+    console.log({ containerHeightInitial, containerHeight });
+
+    // useEffect(() => {
+    //   console.log('in useEffect');
+
+    //   if (containerHeightInitial === undefined) {
+    //     const containerNode = select('.react-responsive-modal-modal')
+    //       .select('.mosaic-container')
+    //       .node();
+
+    //     if (containerNode && 'getBoundingClientRect' in containerNode) {
+    //       const size = containerNode.getBoundingClientRect();
+    //       // const size = containerNode.clientHeight;
+    //       console.log({ size });
+
+    //       if (size.height === 0) forceUpdate();
+    //       // if (containerHeight === undefined) setContainerHeight(0);
+    //       // else if (size.height > 0 && containerHeight !== size.height)
+    //       else if (containerHeight !== size.height)
+    //         setContainerHeight(size.height);
+    //     }
+    //   }
+    // });
+
     // The gap between each legend item
     let legendTraceGroupGap: number | undefined;
     let plotHeight: number | undefined;
+
+    const gapToFirstXLabel = 20;
 
     if (containerHeight) {
       // Estimate the plot proper height
@@ -129,7 +190,9 @@ const MosaicPlot = makePlotlyPlotComponent(
       plotHeight = containerHeight - marginTop - marginBottom;
       if (independentAxisLabel) plotHeight -= 20;
       if (showColumnLabels != false)
-        plotHeight -= elbowPointerGap * data.independentLabels.length;
+        plotHeight -=
+          gapToFirstXLabel +
+          elbowPointerGap * (data.independentLabels.length + 1);
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
@@ -161,18 +224,23 @@ const MosaicPlot = makePlotlyPlotComponent(
       marginLeft: marginLeft + marginLeftExtra,
     };
 
-    const gapToFirstXLabel = 20;
     const xAxisTitleStandoff =
-      plotHeight && showColumnLabels != false
+      showColumnLabels != false
         ? gapToFirstXLabel + elbowPointerGap * data.independentLabels.length
         : undefined;
     const getElbowPointerY = (nthLabel: number) =>
       -gapToFirstXLabel - nthLabel * elbowPointerGap;
 
+    console.log({ xAxisTitleStandoff });
+    console.log({ independentAxisLabel });
+
     const layout: Partial<Layout> = {
       xaxis: {
         title: {
-          text: independentAxisLabel,
+          text:
+            independentAxisLabel === undefined && showColumnLabels != false
+              ? ''
+              : independentAxisLabel,
           standoff: xAxisTitleStandoff,
         },
         tickvals: column_centers,
@@ -204,9 +272,11 @@ const MosaicPlot = makePlotlyPlotComponent(
       hovermode: 'x',
       shapes: showColumnLabels != false && [
         ...column_centers.flatMap((column_center, index) => {
+          // Make elbow pointer
           const elbowY = getElbowPointerY(index);
 
           return [
+            // Vertical line
             {
               type: 'line',
               line: {
@@ -221,6 +291,7 @@ const MosaicPlot = makePlotlyPlotComponent(
               x1: column_center,
               y1: elbowY,
             },
+            // Horizontal line
             {
               type: 'line',
               line: {
@@ -240,6 +311,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       ],
       annotations: showColumnLabels != false && [
         ...column_centers.map((column_center, index) => {
+          // Make text at end of elbow pointer
           const width = 150;
           const height = 20;
           const elbowY = getElbowPointerY(index);
@@ -302,18 +374,67 @@ const MosaicPlot = makePlotlyPlotComponent(
       figure,
       graphDiv
     ) => {
+      console.log('in onPlotlyRender');
+
+      // if (containerHeightInitial === undefined) {
+      //   const containerNode = select('.react-responsive-modal-modal')
+      //     .select('.mosaic-container')
+      //     .node();
+      //   console.log({ containerNode });
+
+      //   if (containerNode && 'getBoundingClientRect' in containerNode) {
+      //     const size = containerNode.getBoundingClientRect();
+      //     console.log({ size });
+
+      //     // if (containerHeight !== size.height) setContainerHeight(size.height);
+      //   }
+      // }
+
+      // const containerNode = select('.react-responsive-modal-modal')
+      //   .select('.mosaic-container')
+      //   .node();
+      // if (containerNode && 'getBoundingClientRect' in containerNode) {
+      //   const size = containerNode.getBoundingClientRect();
+      //   console.log({ size });
+      // }
+
+      // if (containerHeightInitial === undefined) {
+      //   const container = select('.react-responsive-modal-modal').select(
+      //     '.mosaic-container'
+      //   );
+      //   const containerNode = container.node();
+      //   const plotlyNode = container.select('.plot-container.plotly').node();
+
+      //   if (
+      //     containerNode &&
+      //     plotlyNode &&
+      //     'getBoundingClientRect' in containerNode
+      //   ) {
+      //     const size = containerNode.getBoundingClientRect();
+      //     // const size = containerNode.clientHeight;
+      //     console.log({ size });
+
+      //     if (size.height === 0) forceUpdate();
+      //     // if (containerHeight === undefined) setContainerHeight(0);
+      //     // else if (size.height > 0 && containerHeight !== size.height)
+      //     else if (containerHeight !== size.height)
+      //       setContainerHeight(size.height);
+      //   }
+      // }
+
       const annotationGroups = select(graphDiv).selectAll('.annotation-text');
       annotationGroups.selectAll('title').remove();
       annotationGroups
         .attr('pointer-events', 'all')
         .attr('cursor', 'default')
         .append('svg:title')
-        .text((d, i) => {
-          return `${data.independentLabels[i]} (${_.round(
-            percent_widths[i],
-            1
-          )}%)`;
-        });
+        .text(
+          (d, i) =>
+            `${removeHtmlTags(data.independentLabels[i])} (${_.round(
+              percent_widths[i],
+              1
+            )}%)`
+        );
     };
 
     return {
@@ -322,7 +443,9 @@ const MosaicPlot = makePlotlyPlotComponent(
       // original independent axis tick labels for tooltip
       storedIndependentAxisTickLabel: data.independentLabels,
       spacingOptions: newSpacingOptions,
-      containerClass: classes.root,
+      containerClass: `${classes.root} ${
+        containerClass ?? ''
+      } mosaic-container`,
       displayLegend: true,
       onPlotlyRender,
       ...restProps,
