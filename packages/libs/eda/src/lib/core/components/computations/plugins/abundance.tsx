@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';

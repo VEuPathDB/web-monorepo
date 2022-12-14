@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 // load plot component
 import LinePlot, {
   LinePlotProps,

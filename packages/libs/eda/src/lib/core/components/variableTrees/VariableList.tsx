@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { uniq } from 'lodash';
 import React, {
   useCallback,

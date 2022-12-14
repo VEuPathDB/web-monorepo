@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ceil } from 'lodash';
 

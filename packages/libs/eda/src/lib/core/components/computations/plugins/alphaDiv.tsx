@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
