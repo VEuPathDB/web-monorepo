@@ -155,7 +155,8 @@ export const BannerTimeout = (args) => {
   const autoHideDuration = 5000;
 
   // just for testing Banner timeout - no need for actual implementation
-  const [isAutoHide, setAutoHide] = useState(false);
+  // it is just to show banner again by toggling after disappearance, regardless of true/false
+  const [showAgain, setShowagain] = useState(false);
 
   return (
     <>
@@ -177,10 +178,10 @@ export const BannerTimeout = (args) => {
       {/* test timeout with toggle: Banner will show up whenever toggling and then disappear */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <Toggle
-          label="showMore option:"
-          value={isAutoHide}
+          label="Toggle to show banner again:"
+          value={showAgain}
           onChange={(newValue: boolean) => {
-            setAutoHide(newValue);
+            setShowagain(newValue);
             setShowBanner(true);
           }}
         />
