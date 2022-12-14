@@ -719,7 +719,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // use hook
   const defaultIndependentAxisRange = useDefaultAxisRange(
-    xAxisVariable,
+    xAxisVariable ??
+      data?.value?.computedVariableMetadata?.find(
+        (v) => v.plotReference === 'xAxis'
+      ),
     data.value?.xMin,
     data.value?.xMinPos,
     data.value?.xMax,
