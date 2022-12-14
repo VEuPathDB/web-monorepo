@@ -15,7 +15,6 @@ export async function main({
   spawn(
     'npx',
     [
-      'yarn',
       'webpack',
       'serve',
       '--mode=development',
