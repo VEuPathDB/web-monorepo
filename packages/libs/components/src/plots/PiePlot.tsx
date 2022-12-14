@@ -5,6 +5,7 @@ import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 
 import { PiePlotData, PiePlotDatum } from '../types/plots';
+import { sum } from 'lodash';
 
 // Plotly PlotData['hoverinfo'] definition lacks options that work
 // for pie traces. These can be found in PlotData['textinfo']
@@ -46,6 +47,8 @@ export interface PiePlotProps extends PlotProps<PiePlotData> {
      * */
     displayTemplate?: string | string[];
   };
+  /** If true, treat data as cumulative totals and adjust pie sizes appropriately */
+  cumulative?: boolean;
 }
 
 const EmptyPieData: PiePlotData = { slices: [] };
@@ -57,6 +60,7 @@ const PiePlot = makePlotlyPlotComponent(
     data = EmptyPieData,
     donutOptions,
     textOptions,
+    cumulative,
     ...restProps
   }: PiePlotProps) => {
     let newData: Partial<PlotData>[] = [];
@@ -110,10 +114,13 @@ const PiePlot = makePlotlyPlotComponent(
         values: number[];
         labels: string[];
         marker: { colors: string[] };
+        cumulativeSum: number; // only used in cumulative mode
       },
       currentData: PiePlotDatum
     ) => {
-      reducedData.values.push(currentData.value);
+      reducedData.values.push(
+        currentData.value - (cumulative ? sum(reducedData.values) : 0)
+      );
       reducedData.labels.push(currentData.label);
 
       // Use the provided color or the next default plotly color if none is provided
@@ -134,6 +141,7 @@ const PiePlot = makePlotlyPlotComponent(
         values: [],
         labels: [],
         marker: { colors: [] },
+        cumulativeSum: 0,
       }),
       hole: donutOptions?.size,
       direction: 'clockwise',

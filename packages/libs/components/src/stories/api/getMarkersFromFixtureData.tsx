@@ -349,8 +349,7 @@ export const getCollectionDateChartMarkers = async (
     // anim key
     const key = bucket.val;
 
-    // need to check the presence of props.type and props.colorMethod
-    const yAxisRangeValue = yAxisRange ? yAxisRange : null;
+    const yAxisRangeValue = yAxisRange.length ? yAxisRange : null;
 
     // BM: important to provide the key 'prop' (which is not a true prop) at
     // this outermost level
