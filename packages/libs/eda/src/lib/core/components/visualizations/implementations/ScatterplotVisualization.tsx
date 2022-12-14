@@ -192,6 +192,7 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
+    markerOpacity: 0,
   };
 }
 
@@ -213,6 +214,7 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
+  markerOpacity: t.number,
 });
 
 interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
@@ -377,6 +379,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         dependentAxisLogScale: false,
         independentAxisValueSpec: 'Full',
         dependentAxisValueSpec: 'Full',
+        markerOpacity: 0,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -467,6 +470,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     false, // reset valueSpec to Raw if true
     false,
     true
+  );
+
+  const onMarkerOpacityChange = onChangeHandlerFactory<number>(
+    'markerOpacity',
+    false,
+    false,
+    false, // reset valueSpec to Raw if true
+    false,
+    false
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -1087,6 +1099,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisLogScale,
       vizConfig.independentAxisValueSpec,
       vizConfig.dependentAxisValueSpec,
+      vizConfig.markerOpacity,
     ]
   );
 
@@ -1164,7 +1177,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   ]);
 
   // slider settings
-  const [markerColorOpacity, setMarkerColorOpacity] = useState(0);
   const markerOpacityContainerStyles = {
     height: '4em',
     width: '20em',
@@ -1220,7 +1232,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? plotSpacingOptions
       : undefined,
     // need to define markerColorOpacity for faceted plot
-    markerColorOpacity: markerColorOpacity,
+    markerColorOpacity: vizConfig.markerOpacity,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
@@ -1243,7 +1255,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ref={plotRef}
           data={data.value?.dataSetProcess}
           checkedLegendItems={checkedLegendItems}
-          markerColorOpacity={markerColorOpacity}
+          markerColorOpacity={vizConfig.markerOpacity}
         />
       )}
     </>
@@ -1412,10 +1424,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         minimum={0}
         maximum={1}
         step={0.1}
-        value={0}
+        value={vizConfig.markerOpacity ?? 0}
         debounceRateMs={250}
         onChange={(newValue: number) => {
-          setMarkerColorOpacity(newValue);
+          onMarkerOpacityChange(newValue);
         }}
         containerStyles={markerOpacityContainerStyles}
         showLimits={true}
