@@ -15,4 +15,6 @@ const formAfterSubmitButton = (props) => {
 };
 const getFormInitialState = () => ({});
 
-export default { SequenceSimpleReporterForm: createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, 'Sequences'), BedSimpleReporterForm: createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, 'Coordinates')} ;
+let SequenceSimpleReporterForm =  createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, 'Sequences');
+let BedSimpleReporterForm = createSequenceForm(formBeforeCommonOptions, formAfterSubmitButton, getFormInitialState, 'Coordinates') ;
+export {SequenceSimpleReporterForm, BedSimpleReporterForm};
