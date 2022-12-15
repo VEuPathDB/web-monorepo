@@ -1077,9 +1077,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [data]
   );
 
-  // When we only have a computed y axis (and no provided x axis) then the y axis var
-  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
-  // like any other continuous variable.
+  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
+  // just like native vars (for example, in the variable coverage table).
+  const computedXAxisDescriptor = computedXAxisDetails
+    ? {
+        entityId: computedXAxisDetails.entityId,
+        variableId:
+          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
+
+  // When we only have a computed y axis (and no provided overlay) then the y axis var
+  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
   const computedYAxisDescriptor =
     !computedOverlayVariableDescriptor && computedYAxisDetails
       ? {
@@ -1799,7 +1808,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             role: 'X-axis',
             required: true,
             display: independentAxisLabel,
-            variable: vizConfig.xAxisVariable,
+            variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',

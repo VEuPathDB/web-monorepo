@@ -34,8 +34,8 @@ export const plugin: ComputationPlugin = {
           if (BetaDivConfig.is(config)) {
             return {
               entityId: config.collectionVariable.entityId,
-              placeholderDisplayName: config.collectionVariable.variableId,
-              variableId: config.collectionVariable.variableId,
+              placeholderDisplayName: 'Beta Diversity Axis 1',
+              variableId: 'Axis1',
             };
           }
         },
@@ -43,8 +43,8 @@ export const plugin: ComputationPlugin = {
           if (BetaDivConfig.is(config)) {
             return {
               entityId: config.collectionVariable.entityId,
-              placeholderDisplayName: 'Beta Diversity',
-              variableId: 'betaDiversity',
+              placeholderDisplayName: 'Beta Diversity Axis 2',
+              variableId: 'Axis2',
             };
           }
         },
