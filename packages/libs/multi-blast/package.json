@@ -15,6 +15,7 @@
     "*.scss"
   ],
   "dependencies": {
+    "@veupathdb/preferred-organisms": "^1.1.13",
     "file-saver": "^2.0.5",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
@@ -22,11 +23,10 @@
     "react-select": "^3.0.4"
   },
   "peerDependencies": {
-    "@veupathdb/coreui": "^0.17.10",
+    "@veupathdb/coreui": "^0.18.17",
     "@veupathdb/http-utils": "^1.1.0",
-    "@veupathdb/preferred-organisms": ">=1.1.6",
-    "@veupathdb/wdk-client": ">=0.6.8",
-    "@veupathdb/web-common": ">=0.4.3",
+    "@veupathdb/wdk-client": ">=0.9.21",
+    "@veupathdb/web-common": ">=0.7.5",
     "react": ">=16.14.0",
     "react-dom": ">=16.14.0",
     "react-redux": "^7.2.6",
@@ -73,19 +73,19 @@
     "@types/react-select": "^3.1.2",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
+    "@veupathdb/blast-summary-view": "^0.1.0",
     "@veupathdb/browserslist-config": "^1.0.0",
-    "@veupathdb/components": "^0.13.0",
-    "@veupathdb/coreui": "^0.17.10",
-    "@veupathdb/eda": "^2.0.0",
+    "@veupathdb/components": "^0.19.12",
+    "@veupathdb/coreui": "^0.18.17",
+    "@veupathdb/eda": "^3.13.7",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/http-utils": "^1.1.0",
-    "@veupathdb/preferred-organisms": "^1.1.10",
     "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/react-scripts": "^1.2.0",
-    "@veupathdb/study-data-access": "^0.3.0",
+    "@veupathdb/react-scripts": "^2.0.0",
+    "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/tsconfig": "^1.0.0",
-    "@veupathdb/wdk-client": "^0.6.8",
-    "@veupathdb/web-common": "^0.4.3",
+    "@veupathdb/wdk-client": "^0.9.21",
+    "@veupathdb/web-common": "^0.7.5",
     "babel-eslint": "^10.0.0",
     "eslint": "^7.5.0",
     "eslint-config-react-app": "^6.0.0",
@@ -125,10 +125,6 @@
     "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
   },
   "prettier": "@veupathdb/prettier-config",
-  "resolutions": {
-    "@veupathdb/**/react": "^17.0.1",
-    "@veupathdb/**/react-dom": "^17.0.1"
-  },
   "volta": {
     "node": "14.21.1",
     "yarn": "1.22.11"
