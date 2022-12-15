@@ -23,10 +23,10 @@
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
-    "@veupathdb/browserslist-config": "^1.0.0",
-    "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/browserslist-config": "^1.1.0",
+    "@veupathdb/eslint-config": "^2.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/tsconfig": "^1.0.1",
+    "@veupathdb/tsconfig": "^2.0.0",
     "@veupathdb/wdk-client": "*",
     "husky": ">=4",
     "lint-staged": ">=10",
