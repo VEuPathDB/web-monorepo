@@ -2118,10 +2118,17 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
+<<<<<<< Updated upstream
 "@veupathdb/components@^0.19.10":
   version "0.19.10"
   resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.10.tgz#da4c2ff6784411610585ade5f818e56c8618e94f"
   integrity sha512-lcXU+Bh1T9GTSrsXVlwh/qpF7bzsuLGoEZB3vysnWxMJCShbInt8IHyeHB6Ry7WboYbj6B1aqyK+eR6koOXXig==
+=======
+"@veupathdb/components@^0.19.12":
+  version "0.19.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.12.tgz#de2e11e915d91d49c94d32c385bba4aaf4cee735"
+  integrity sha512-NqSfVLFIduB5/dVufSVIqg5u2RvygQ2RgY7L+r/DyuLDl6/S/g0SJc8BaLT8OjBvnSFdyCgnj36TZaNrwTGMqg==
+>>>>>>> Stashed changes
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2163,10 +2170,17 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
+<<<<<<< Updated upstream
 "@veupathdb/eda@^3.13.6":
   version "3.13.6"
   resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.13.6.tgz#b4d201c617541e6914d428796dfa49f052570c2c"
   integrity sha512-dWLQrfeutpt137KsZg9N3PDNOwkq/iwg47JDwnkegfzt16OhEdKd45v13wd6VWOSnACtUZmWDlqA4IVu+I0Rvw==
+=======
+"@veupathdb/eda@^3.13.7":
+  version "3.13.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.13.7.tgz#8009da2c918f44b3c64299dabd5a7dc8da90014c"
+  integrity sha512-XMj3kacwmxM7M4XiBH5gfk7uCcBjS0tPAoLYdSnmc+OcSXAjCxjn/T7WAM27xvTwLw2ixZyucVkzgwl3d7zoHg==
+>>>>>>> Stashed changes
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -3963,9 +3977,15 @@ core-js@^3.21.1:
   integrity sha512-FRq5b/VMrWlrmCzwRrpDYNxyHP9BcAZC+xHJaqTgIE5091ZV1NTmyh0sGOg5XqpnHvR0svdy0sv1gWA1zmhxig==
 
 core-js@^3.25.3:
+<<<<<<< Updated upstream
   version "3.25.5"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.25.5.tgz#e86f651a2ca8a0237a5f064c2fe56cef89646e27"
   integrity sha512-nbm6eZSjm+ZuBQxCUPQKQCoUEfFOXjUZ8dTTyikyKaWrTYmAVbykQfwsKE5dBK88u3QCkCrzsx/PPlKfhsvgpw==
+=======
+  version "3.26.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.26.1.tgz#7a9816dabd9ee846c1c0fe0e8fcad68f3709134e"
+  integrity sha512-21491RRQVzUn0GGM9Z1Jrpr6PNPxPi+Za8OM9q4tksTSnlbXXGKK1nXNg/QvwFYettXvSX6zWKCtHHfjN4puyA==
+>>>>>>> Stashed changes
 
 core-util-is@~1.0.0:
   version "1.0.3"
@@ -8810,9 +8830,15 @@ regenerator-runtime@^0.13.4:
   integrity sha512-a54FxoJDIr27pgf7IgeQGxmqUNYrcV338lf/6gH456HZ/PhX+5BcwHXG9ajESmwe6WRO0tAzRUrRmNONWgkrew==
 
 regenerator-runtime@^0.13.9:
+<<<<<<< Updated upstream
   version "0.13.10"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.10.tgz#ed07b19616bcbec5da6274ebc75ae95634bfc2ee"
   integrity sha512-KepLsg4dU12hryUO7bp/axHAKvwGOCV0sGloQtpagJ12ai+ojVDqkeGSiRX1zlq+kjIMZ1t7gpze+26QqtdGqw==
+=======
+  version "0.13.11"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
+  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
+>>>>>>> Stashed changes
 
 regenerator-transform@^0.15.0:
   version "0.15.0"
