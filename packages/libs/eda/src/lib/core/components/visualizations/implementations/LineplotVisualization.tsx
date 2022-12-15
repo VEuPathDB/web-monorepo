@@ -2127,7 +2127,16 @@ function processInputData(
         }
       : {};
 
-  let dataSetProcess: LinePlotDataSeries[] = [];
+  // please note that this is temporarily set to avoid using npm-pack-here for test
+  // This type definition is actually implemented at web-components
+  // https://github.com/VEuPathDB/web-components/pull/431
+  // thus, this will be removed after approval
+  // let dataSetProcess: LinePlotDataSeries[] = [];
+  interface LinePlotDataSeriesProps extends LinePlotDataSeries {
+    connectgaps?: boolean;
+  }
+  let dataSetProcess: LinePlotDataSeriesProps[] = [];
+
   responseLineplotData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
       if (el.seriesX.length !== el.seriesY.length) {
@@ -2200,6 +2209,8 @@ function processInputData(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        // for connecting points regardless of missing data
+        connectgaps: true,
       });
 
       return breakAfterThisSeries(index);
