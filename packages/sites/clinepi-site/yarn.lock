@@ -2121,10 +2121,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.10":
-  version "0.19.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.10.tgz#da4c2ff6784411610585ade5f818e56c8618e94f"
-  integrity sha512-lcXU+Bh1T9GTSrsXVlwh/qpF7bzsuLGoEZB3vysnWxMJCShbInt8IHyeHB6Ry7WboYbj6B1aqyK+eR6koOXXig==
+"@veupathdb/components@^0.19.12":
+  version "0.19.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.12.tgz#de2e11e915d91d49c94d32c385bba4aaf4cee735"
+  integrity sha512-NqSfVLFIduB5/dVufSVIqg5u2RvygQ2RgY7L+r/DyuLDl6/S/g0SJc8BaLT8OjBvnSFdyCgnj36TZaNrwTGMqg==
   dependencies:
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
@@ -2166,10 +2166,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.13.6":
-  version "3.13.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.13.6.tgz#b4d201c617541e6914d428796dfa49f052570c2c"
-  integrity sha512-dWLQrfeutpt137KsZg9N3PDNOwkq/iwg47JDwnkegfzt16OhEdKd45v13wd6VWOSnACtUZmWDlqA4IVu+I0Rvw==
+"@veupathdb/eda@^3.13.7":
+  version "3.13.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.13.7.tgz#8009da2c918f44b3c64299dabd5a7dc8da90014c"
+  integrity sha512-XMj3kacwmxM7M4XiBH5gfk7uCcBjS0tPAoLYdSnmc+OcSXAjCxjn/T7WAM27xvTwLw2ixZyucVkzgwl3d7zoHg==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
