@@ -153,6 +153,8 @@ export const BannerTimeout = (args) => {
   const [showBanner, setShowBanner] = useState(true);
   // hiding duration (unit in milli-second)
   const autoHideDuration = 5000;
+  // fadeout effect when timeout
+  const [fadeoutEffect, setFadeoutEffect] = useState(false);
 
   // just for testing Banner timeout - no need for actual implementation
   // it is just to show banner again by toggling after disappearance, regardless of true/false
@@ -172,6 +174,9 @@ export const BannerTimeout = (args) => {
             showBanner: showBanner,
             setShowBanner: setShowBanner,
             autoHideDuration: autoHideDuration,
+            // fadeout effect when timeout
+            fadeoutEffect: fadeoutEffect,
+            setFadeoutEffect: setFadeoutEffect,
           }}
         />
       </div>
@@ -183,6 +188,7 @@ export const BannerTimeout = (args) => {
           onChange={(newValue: boolean) => {
             setShowagain(newValue);
             setShowBanner(true);
+            setFadeoutEffect(false);
           }}
         />
       </div>
