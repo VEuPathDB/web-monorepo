@@ -47,6 +47,7 @@ import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import { JobStatus } from '../computations/ComputeJobStatusHook';
+import EmptyPlotSVG from '../visualizations/emptyPlot';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -704,6 +705,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   justifyContent: 'flex-start',
                   alignItems: 'center',
                   gap: '.5ex',
+                  flexDirection: 'column',
                 }}
               >
                 {computeJobStatus === 'requesting'
@@ -715,6 +717,16 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   : computeJobStatus === 'failed'
                   ? 'Computation has failed. Please contact us for support.'
                   : 'Computation is in progress. This visualization will be available when it is complete.'}
+                {computeJobStatus == 'no-such-job' && (
+                  <div
+                    style={{
+                      width: '100%',
+                      margin: '2em',
+                    }}
+                  >
+                    <EmptyPlotSVG />
+                  </div>
+                )}
               </div>
             )
           ) : (
