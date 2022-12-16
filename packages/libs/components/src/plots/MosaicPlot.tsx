@@ -132,12 +132,14 @@ const MosaicPlot = makePlotlyPlotComponent(
       if (showColumnLabels != false)
         plotHeight -=
           verticalGapToFirstXLabel +
-          elbowPointerGap * (data.independentLabels.length + 1);
+          elbowPointerGap * data.independentLabels.length;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
           0.95) /
-        data.dependentLabels.length;
+        (data.dependentLabels.length - 1);
+
+      legendTraceGroupGap = Math.max(legendTraceGroupGap, 0);
     } else {
       // If we can't determine the container height, don't add any gaps to be safe
       legendTraceGroupGap = 0;
@@ -212,18 +214,21 @@ const MosaicPlot = makePlotlyPlotComponent(
         ...column_centers.flatMap((column_center, index) => {
           // Make elbow pointer
           const elbowY = getElbowPointerY(index);
+          const sharedProps = {
+            type: 'line',
+            line: {
+              width: 1,
+            },
+            xref: 'x',
+            yref: 'paper',
+            ysizemode: 'pixel',
+            yanchor: 0,
+          };
 
           return [
             // Vertical line
             {
-              type: 'line',
-              line: {
-                width: 1,
-              },
-              xref: 'x',
-              yref: 'paper',
-              ysizemode: 'pixel',
-              yanchor: 0,
+              ...sharedProps,
               x0: column_center,
               y0: -5,
               x1: column_center,
@@ -231,14 +236,7 @@ const MosaicPlot = makePlotlyPlotComponent(
             },
             // Horizontal line
             {
-              type: 'line',
-              line: {
-                width: 1,
-              },
-              xref: 'x',
-              yref: 'paper',
-              ysizemode: 'pixel',
-              yanchor: 0,
+              ...sharedProps,
               x0: column_center,
               y0: elbowY,
               x1: 0,

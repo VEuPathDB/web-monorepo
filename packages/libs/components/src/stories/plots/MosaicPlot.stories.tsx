@@ -192,7 +192,75 @@ RealData.args = {
     boxShadow: '1px 1px 4px #00000066',
   },
   displayLibraryControls: false,
-  showSpinner: false,
+  displayLegend: false,
+};
+
+const realData2 = {
+  values: [
+    [0, 707, 15, 1, 1, 3135, 0, 0, 0],
+    [0, 3384, 18, 1, 0, 159, 14, 2, 4],
+    [7, 623, 1, 1, 1698, 1029, 0, 0, 0],
+    [36, 3700, 290, 9, 0, 59, 1, 1, 1],
+    [1, 1335, 1, 0, 328, 309, 2, 0, 0],
+    [5, 2177, 69, 0, 54, 785, 2, 1, 3],
+    [78, 1901, 113, 89, 113, 301, 1, 2, 0],
+  ],
+  independentLabels: [
+    'Finished floor; carpet',
+    'Finished floor; cement',
+    'Finished floor; ceramic tile',
+    'Finished floor; vinyl of asphalt strips',
+    'Natural floor; dung',
+    'Natural floor; earth/sand',
+    'Other, specify',
+    'Rudimentary floor; palm/bamboo',
+    'Rudimentary floor; wood planks',
+  ],
+  dependentLabels: [
+    'Bangladesh',
+    'India',
+    'Kenya',
+    'Mali',
+    'Mozambique',
+    'Pakistan',
+    'The Gambia',
+  ],
+  pValue: 0,
+  degreesFreedom: 48,
+  chisq: 18977.3082,
+  completeCases: [
+    {
+      variableDetails: {
+        variableId: 'EUPATH_0000006',
+        entityId: 'PCO_0000024',
+      },
+      completeCases: 22567,
+    },
+    {
+      variableDetails: { variableId: 'ENVO_00000009', entityId: 'PCO_0000024' },
+      completeCases: 22567,
+    },
+  ],
+  completeCasesAllVars: 22567,
+  completeCasesAxesVars: 22567,
+};
+
+export const RealData2 = Template.bind({});
+RealData2.args = {
+  ...defaults,
+  data: realData2,
+  independentAxisLabel: 'Floor material',
+  dependentAxisLabel: 'Country',
+  interactive: true,
+  containerStyles: {
+    width: 750,
+    height: 450,
+    marginTop: '0.75rem',
+    marginLeft: '0.75rem',
+    border: '1px solid #dedede',
+    boxShadow: '1px 1px 4px #00000066',
+  },
+  displayLibraryControls: false,
   displayLegend: false,
 };
 
