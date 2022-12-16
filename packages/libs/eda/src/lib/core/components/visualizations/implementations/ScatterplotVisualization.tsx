@@ -228,6 +228,7 @@ interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
   ): ComputedVariableDetails | undefined;
   getComputedOverlayVariable?(config: unknown): VariableDescriptor | undefined;
   hideTrendlines?: boolean;
+  hideLogScale?: boolean;
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -1528,28 +1529,36 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             </div>
           </div>
 
-          <div
-            style={{
-              marginLeft: '1em',
-              marginTop: '-0.3em',
-              marginBottom: '0.8em',
-            }}
-          >
-            <Toggle
-              label={'Log scale (excludes values \u{2264} 0)'}
-              value={vizConfig.independentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedIndependentAllNegativeWarning(false);
-                onIndependentAxisLogScaleChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
+          {!options?.hideLogScale && (
+            <div
+              style={{
+                marginLeft: '1em',
+                marginTop: '-0.3em',
+                marginBottom: '0.8em',
               }}
-              // disable log scale for date variable
-              disabled={scatterplotProps.independentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
+            >
+              <Toggle
+                label={`Log scale ${
+                  vizConfig.independentAxisLogScale
+                    ? 'on (excludes values \u{2264} 0)'
+                    : 'off'
+                }`}
+                value={vizConfig.independentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedIndependentAllNegativeWarning(false);
+                  onIndependentAxisLogScaleChange(newValue);
+                  // to reuse Banner
+                  setShowBanner(true);
+                }}
+                // disable log scale for date variable
+                disabled={scatterplotProps.independentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+          )}
+          {independentAllNegative &&
+          !dismissedIndependentAllNegativeWarning &&
+          !options?.hideLogScale ? (
             <Notification
               title={''}
               text={
@@ -1661,28 +1670,36 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             </div>
           </div>
 
-          <div
-            style={{
-              marginLeft: '1em',
-              marginTop: '-0.3em',
-              marginBottom: '0.8em',
-            }}
-          >
-            <Toggle
-              label={'Log scale (excludes values \u{2264} 0)'}
-              value={vizConfig.dependentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedDependentAllNegativeWarning(false);
-                onDependentAxisLogScaleChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
+          {!options?.hideLogScale && (
+            <div
+              style={{
+                marginLeft: '1em',
+                marginTop: '-0.3em',
+                marginBottom: '0.8em',
               }}
-              // disable log scale for date variable
-              disabled={scatterplotProps.dependentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            >
+              <Toggle
+                label={`Log scale ${
+                  vizConfig.dependentAxisLogScale
+                    ? 'on (excludes values \u{2264} 0)'
+                    : 'off'
+                }`}
+                value={vizConfig.dependentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedDependentAllNegativeWarning(false);
+                  onDependentAxisLogScaleChange(newValue);
+                  // to reuse Banner
+                  setShowBanner(true);
+                }}
+                // disable log scale for date variable
+                disabled={scatterplotProps.dependentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+          )}
+          {dependentAllNegative &&
+          !dismissedDependentAllNegativeWarning &&
+          !options?.hideLogScale ? (
             <Notification
               title={''}
               text={
