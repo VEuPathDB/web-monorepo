@@ -45,9 +45,9 @@
   },
   "devDependencies": {
     "@emotion/react": "^11.10.0",
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
     "@testing-library/react-hooks": "^3.4.2",
     "@types/datatables.net": "^1.10.5",
     "@types/flot": "^0.0.31",
