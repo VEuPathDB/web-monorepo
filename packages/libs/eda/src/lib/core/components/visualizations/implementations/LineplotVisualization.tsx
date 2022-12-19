@@ -1132,11 +1132,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <Toggle
-              label={`Log scale ${
-                vizConfig.independentAxisLogScale
-                  ? 'on (excludes values \u{2264} 0)'
-                  : 'off'
-              }`}
+              label={'Log scale (excludes values \u{2264} 0)'}
               value={vizConfig.independentAxisLogScale ?? false}
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
@@ -1178,7 +1174,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               />
             ) : null}
             <Toggle
-              label={`Binning ${vizConfig.useBinning ? 'on' : 'off'}`}
+              label={'Binning'}
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
@@ -1341,11 +1337,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <Toggle
-              label={`Log scale ${
-                vizConfig.dependentAxisLogScale
-                  ? 'on (excludes values \u{2264} 0)'
-                  : 'off'
-              }`}
+              label={'Log scale (excludes values \u{2264} 0)'}
               value={vizConfig.dependentAxisLogScale ?? false}
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
@@ -1383,9 +1375,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               />
             ) : null}
             <Toggle
-              label={`Error bars ${
-                vizConfig.showErrorBars ? 'on' : 'off'
-              } (95% C.I.)`}
+              label={'Error bars (95% C.I.)'}
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
