@@ -110,7 +110,7 @@ export function useComputeJobStatus(
 /**
  * Check if a status terminal
  */
-function isTerminalStatus(status: JobStatus) {
+export function isTerminalStatus(status: JobStatus) {
   switch (status) {
     case 'complete':
     case 'expired':

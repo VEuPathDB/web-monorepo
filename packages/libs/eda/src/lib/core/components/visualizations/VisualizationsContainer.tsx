@@ -47,7 +47,10 @@ import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import { JobStatus } from '../computations/ComputeJobStatusHook';
-import EmptyPlotSVG from '../visualizations/emptyPlot';
+import { isTerminalStatus } from '../computations/ComputeJobStatusHook';
+import { H5 } from '@veupathdb/coreui';
+import EmptyPlotSVG from './emptyPlot';
+import RelaxMicrobeSVG from './relaxMicrobe';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -703,29 +706,27 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   fontSize: '1.2em',
                   display: 'flex',
                   justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  gap: '.5ex',
+                  // alignItems: 'center',
+                  gap: '2ex',
                   flexDirection: 'column',
                 }}
               >
-                {computeJobStatus === 'requesting'
-                  ? 'Requesting computation status.'
-                  : computeJobStatus === 'no-such-job'
-                  ? 'Configure and run a computation to use this visualization.'
-                  : computeJobStatus === 'expired'
-                  ? 'Computation has expired. You will need to run it again.'
-                  : computeJobStatus === 'failed'
-                  ? 'Computation has failed. Please contact us for support.'
-                  : 'Computation is in progress. This visualization will be available when it is complete.'}
-                {computeJobStatus == 'no-such-job' && (
-                  <div
-                    style={{
-                      width: '100%',
-                      margin: '2em',
-                    }}
-                  >
-                    <EmptyPlotSVG />
-                  </div>
+                <H5>
+                  {computeJobStatus === 'requesting'
+                    ? 'Requesting computation status.'
+                    : computeJobStatus === 'no-such-job'
+                    ? 'Configure and run a computation to use this visualization.'
+                    : computeJobStatus === 'expired'
+                    ? 'Computation has expired. You will need to run it again.'
+                    : computeJobStatus === 'failed'
+                    ? 'Computation has failed. Please contact us for support.'
+                    : 'Computation is in progress. This visualization will be available when it is complete.'}
+                </H5>
+                {/* Add image for some compute statuses} */}
+                {computeJobStatus == 'no-such-job' && <EmptyPlotSVG />}
+                {!isTerminalStatus(computeJobStatus) && (
+                  // <img style={{width:600}} src={relaxMicrobe}/>
+                  <RelaxMicrobeSVG />
                 )}
               </div>
             )

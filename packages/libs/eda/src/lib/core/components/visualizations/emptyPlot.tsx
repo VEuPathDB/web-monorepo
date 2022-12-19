@@ -8,7 +8,7 @@ export default function EmptyPlotSVG() {
       xmlnsXlink="http://www.w3.org/1999/xlink"
       x="0px"
       y="0px"
-      viewBox="0 0 400 400"
+      viewBox="0 0 600 600"
       // style={{ enableBackground: "new 0 0 228.848 148.39" }}
       xmlSpace="preserve"
     >
