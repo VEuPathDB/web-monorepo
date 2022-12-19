@@ -2242,7 +2242,8 @@ function processInputData(
 
   return {
     dataSetProcess: {
-      series: nullZeroHack(dataSetProcess, dependentValueType),
+      // Let's not show no data: nullZeroHack is not used
+      series: dataSetProcess,
       ...binWidthSliderData,
     },
     xMin: min(xValues),

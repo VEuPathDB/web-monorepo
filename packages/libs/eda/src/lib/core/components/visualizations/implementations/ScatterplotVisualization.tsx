@@ -598,8 +598,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       let gradientColorscaleType: string | undefined;
 
       if (
-        overlayVariable?.type === 'integer' ||
-        overlayVariable?.type === 'number'
+        response.scatterplot.data.every(
+          (series) => 'seriesGradientColorscale' in series
+        ) &&
+        (overlayVariable?.type === 'integer' ||
+          overlayVariable?.type === 'number')
       ) {
         const defaultOverlayMin: number =
           overlayVariable.distributionDefaults.displayRangeMin ||
@@ -635,6 +638,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           overlayMax = defaultOverlayMax;
         }
       }
+
       const overlayVocabulary = computedOverlayVariableDescriptor
         ? response.scatterplot.config.variables.find(
             (v) => v.plotReference === 'overlay' && v.vocabulary != null
@@ -2081,6 +2085,7 @@ function processInputData<T extends number | string>(
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
+  // Nasty 'any' type here...
   responseScatterplotData.some(function (el: any, index: number) {
     // initialize seriesX/Y
     let seriesX = [];
