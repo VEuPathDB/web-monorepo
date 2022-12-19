@@ -144,6 +144,7 @@ function createDefaultConfig(): HistogramConfig {
     valueSpec: 'count',
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
+    keepIndependentAxisRange: false,
   };
 }
 
@@ -172,6 +173,7 @@ export const HistogramConfig = t.intersection([
     dependentAxisRange: NumberRange,
     independentAxisValueSpec: t.string,
     dependentAxisValueSpec: t.string,
+    keepIndependentAxisRange: t.boolean,
   }),
 ]);
 
@@ -214,11 +216,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ] = useState<string>('');
 
-  // set a useState to check whether keepBin is true or not
-  const [keepIndependentAxisRange, setKeepIndependentAxisRange] = useState(
-    false
-  );
-
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -228,9 +225,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
         facetVariable,
       } = selectedVariables;
       const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
-
-      // save keepBin state
-      setKeepIndependentAxisRange(keepBin);
 
       updateVizConfig({
         xAxisVariable,
@@ -249,6 +243,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
+        keepIndependentAxisRange: keepBin,
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
@@ -425,8 +420,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filters ?? [],
         valueType,
         vizConfig,
-        xAxisVariable,
-        keepIndependentAxisRange
+        xAxisVariable
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
@@ -1333,8 +1327,7 @@ function getRequestParams(
   filters: Filter[],
   valueType: 'number' | 'date',
   vizConfig: HistogramConfig,
-  variable?: Variable,
-  keepIndependentAxisRange?: boolean
+  variable?: Variable
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
@@ -1364,7 +1357,7 @@ function getRequestParams(
 
   // define viewport based on independent axis range: need to check undefined case
   // also no viewport change regardless of the change of overlayVariable
-  const viewport = keepIndependentAxisRange
+  const viewport = vizConfig.keepIndependentAxisRange
     ? undefined
     : vizConfig?.independentAxisRange?.min != null &&
       vizConfig?.independentAxisRange?.max != null

@@ -188,6 +188,7 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
+    keepIndependentAxisRange: false,
   };
 }
 
@@ -209,6 +210,7 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
+  keepIndependentAxisRange: t.boolean,
 });
 
 interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
@@ -382,6 +384,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
+        keepIndependentAxisRange: keepIndependentAxisRange,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');

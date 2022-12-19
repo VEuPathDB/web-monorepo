@@ -187,6 +187,7 @@ function createDefaultConfig(): LineplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
+    keepIndependentAxisRange: false,
   };
 }
 
@@ -216,6 +217,7 @@ export const LineplotConfig = t.intersection([
     dependentAxisLogScale: t.boolean,
     independentAxisValueSpec: t.string,
     dependentAxisValueSpec: t.string,
+    keepIndependentAxisRange: t.boolean,
   }),
 ]);
 
@@ -342,11 +344,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ] = useState<string>('');
 
-  // set a useState to check whether keepBin is true or not
-  const [keepIndependentAxisRange, setKeepIndependentAxisRange] = useState(
-    false
-  );
-
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const keepBin = isEqual(
@@ -357,9 +354,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
         selectedVariables.yAxisVariable,
         vizConfig.yAxisVariable
       );
-
-      // save keepBin state
-      setKeepIndependentAxisRange(keepBin);
 
       // need to get the yAxisVariable metadata right here, right now
       // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
@@ -403,6 +397,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               ? 'Full'
               : 'Auto-zoom'
             : 'Full',
+        keepIndependentAxisRange: keepBin,
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -616,8 +611,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         vizConfig,
         xAxisVariable,
         yAxisVariable,
-        outputEntity,
-        keepIndependentAxisRange
+        outputEntity
       );
 
       const response = await dataClient.getLineplot(
@@ -1966,8 +1960,7 @@ function getRequestParams(
   vizConfig: Omit<LineplotConfig, 'dependentAxisRange' | 'checkedLegendItems'>,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
-  outputEntity: StudyEntity,
-  keepIndependentAxisRange: boolean
+  outputEntity: StudyEntity
 ): LineplotRequestParams {
   const {
     xAxisVariable,
@@ -2013,7 +2006,7 @@ function getRequestParams(
 
   // define viewport based on independent axis range: need to check undefined case
   // also no viewport change regardless of the change of overlayVariable
-  const viewport = keepIndependentAxisRange
+  const viewport = vizConfig.keepIndependentAxisRange
     ? undefined
     : vizConfig?.independentAxisRange?.min != null &&
       vizConfig?.independentAxisRange?.max != null
