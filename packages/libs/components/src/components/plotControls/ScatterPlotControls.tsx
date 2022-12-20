@@ -68,7 +68,7 @@ export default function ScatterPlotControls({
   plotOptions,
   label,
 }: ScatterPlotControlsProps) {
-  const { ref, width } = useDimensions<HTMLDivElement>();
+  const { observe, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
     return errorManagement.errors.reduce<
@@ -89,7 +89,7 @@ export default function ScatterPlotControls({
 
   return (
     <div
-      ref={ref}
+      ref={observe}
       style={{
         borderStyle: 'solid',
         borderWidth: '0em',
