@@ -9,7 +9,7 @@ export const axisTickLableEllipsis = (
   // make array for tick label with ellipsis
   const categoryOrderEllipsis = categoryOrder.map((element) => {
     return (element || '').length > maxIndependentTickLabelLength
-      ? (element || '').substring(0, maxIndependentTickLabelLength) + '...'
+      ? (element || '').substring(0, maxIndependentTickLabelLength - 2) + '...'
       : element;
   });
 
