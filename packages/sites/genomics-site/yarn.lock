@@ -1994,10 +1994,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cytoscape@3.2.9":
-  version "3.2.9"
-  resolved "https://registry.yarnpkg.com/@types/cytoscape/-/cytoscape-3.2.9.tgz#2d1f2c1faf440690a4805856561604f30cfb7517"
-  integrity sha512-ycpsM1JN7DdeL0tX4tXGPL5LCekfDpE736WDZKBUPlR1MlIaPrPK6APqjEtBuMRg0f1TM9rzaN+MghJLp0f04w==
+"@types/cytoscape@^3.14.7":
+  version "3.19.9"
+  resolved "https://registry.yarnpkg.com/@types/cytoscape/-/cytoscape-3.19.9.tgz#d697971d4a33eacc6ae7a7a158035b5c60c064a2"
+  integrity sha512-oqCx0ZGiBO0UESbjgq052vjDAy2X53lZpMrWqiweMpvVwKw/2IiYDdzPFK6+f4tMfdv9YKEM9raO5bAZc3UYBg==
 
 "@types/d3-color@^1":
   version "1.4.2"
@@ -4514,13 +4514,13 @@ cytoscape-panzoom@^2.5.2:
   dependencies:
     jquery "^1.4 || ^2.0 || ^3.0"
 
-cytoscape@3.2.9:
-  version "3.2.9"
-  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.2.9.tgz#383fa975b04e0c05926ff27fa58550ddf0681494"
-  integrity sha512-BqYJsq1Q3Bm5A/fk9nRAcF6bOdQOyo5ko+NEvh8ufAylCG6Vx3jtZu3G4CXr14b+7VlpSC8a3kA6+rd6LX+EBQ==
+cytoscape@^3.15.2:
+  version "3.23.0"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.23.0.tgz#054ee05a6d0aa3b4f139382bbf2f4e5226df3c6d"
+  integrity sha512-gRZqJj/1kiAVPkrVFvz/GccxsXhF3Qwpptl32gKKypO4IlqnKBjTOu+HbXtEggSGzC5KCaHp3/F7GgENrtsFkA==
   dependencies:
     heap "^0.2.6"
-    lodash.debounce "^4.0.8"
+    lodash "^4.17.21"
 
 d3-array@1, d3-array@^1.2.1:
   version "1.2.4"
