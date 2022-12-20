@@ -13,6 +13,8 @@ import { axisTickLableEllipsis } from '../utils/axis-tick-label-ellipsis';
 import { makeStyles } from '@material-ui/core/styles';
 import { PlotSpacingDefault, ColorPaletteDefault } from '../types/plots/addOns';
 import { Layout } from 'plotly.js';
+import { select } from 'd3';
+import { removeHtmlTags } from '../utils/removeHtmlTags';
 
 export interface MosaicPlotProps extends PlotProps<MosaicPlotData> {
   /** label for independent axis */
@@ -73,10 +75,9 @@ const MosaicPlot = makePlotlyPlotComponent(
     );
 
     // set tick label Length for ellipsis
-    // this doesn't include percentage text length
-    const maxIndependentTickLabelLength = 8;
+    const maxIndependentTickLabelLength = 10;
     // The distance from one elbow pointer to the next
-    const elbowPointerGap = 20;
+    const elbowPointerGap = 15;
 
     // change data.independentLabels to have ellipsis
     const independentLabelsEllipsis = useMemo(
@@ -84,14 +85,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         axisTickLableEllipsis(
           data.independentLabels,
           maxIndependentTickLabelLength
-        )
-          // now replace labels for any all-zero 'series' with a white space
-          // (tried an empty string but it causes major weirdness)
-          .map((label, index) =>
-            _.unzip(data.values)[index].every((v) => v === 0)
-              ? ' '
-              : `${label} (${_.round(percent_widths[index], 1)}%)`
-          ),
+        ),
       [data]
     );
 
@@ -125,6 +119,8 @@ const MosaicPlot = makePlotlyPlotComponent(
     let legendTraceGroupGap: number | undefined;
     let plotHeight: number | undefined;
 
+    const verticalGapToFirstXLabel = 20;
+
     if (containerHeight) {
       // Estimate the plot proper height
       const marginTop = spacingOptions?.marginTop ?? defaultMarginTop;
@@ -134,12 +130,16 @@ const MosaicPlot = makePlotlyPlotComponent(
       plotHeight = containerHeight - marginTop - marginBottom;
       if (independentAxisLabel) plotHeight -= 20;
       if (showColumnLabels != false)
-        plotHeight -= elbowPointerGap * data.independentLabels.length;
+        plotHeight -=
+          verticalGapToFirstXLabel +
+          elbowPointerGap * data.independentLabels.length;
       // Calculate the legend trace group gap accordingly
       legendTraceGroupGap =
         ((plotHeight - defaultLegendItemHeight * data.dependentLabels.length) *
           0.95) /
         (data.dependentLabels.length - 1);
+
+      legendTraceGroupGap = Math.max(legendTraceGroupGap, 0);
     } else {
       // If we can't determine the container height, don't add any gaps to be safe
       legendTraceGroupGap = 0;
@@ -166,18 +166,21 @@ const MosaicPlot = makePlotlyPlotComponent(
       marginLeft: marginLeft + marginLeftExtra,
     };
 
-    const gapToFirstXLabel = 20;
     const xAxisTitleStandoff =
-      plotHeight && showColumnLabels != false
-        ? gapToFirstXLabel + elbowPointerGap * data.independentLabels.length
+      showColumnLabels != false
+        ? verticalGapToFirstXLabel +
+          elbowPointerGap * data.independentLabels.length
         : undefined;
     const getElbowPointerY = (nthLabel: number) =>
-      -gapToFirstXLabel - nthLabel * elbowPointerGap;
+      -verticalGapToFirstXLabel - nthLabel * elbowPointerGap;
 
     const layout: Partial<Layout> = {
       xaxis: {
         title: {
-          text: independentAxisLabel,
+          text:
+            independentAxisLabel === undefined && showColumnLabels != false
+              ? ''
+              : independentAxisLabel,
           standoff: xAxisTitleStandoff,
         },
         tickvals: column_centers,
@@ -209,32 +212,31 @@ const MosaicPlot = makePlotlyPlotComponent(
       hovermode: 'x',
       shapes: showColumnLabels != false && [
         ...column_centers.flatMap((column_center, index) => {
+          // Make elbow pointer
           const elbowY = getElbowPointerY(index);
+          const sharedProps = {
+            type: 'line',
+            line: {
+              width: 1,
+            },
+            xref: 'x',
+            yref: 'paper',
+            ysizemode: 'pixel',
+            yanchor: 0,
+          };
 
           return [
+            // Vertical line
             {
-              type: 'line',
-              line: {
-                width: 1,
-              },
-              xref: 'x',
-              yref: 'paper',
-              ysizemode: 'pixel',
-              yanchor: 0,
+              ...sharedProps,
               x0: column_center,
               y0: -5,
               x1: column_center,
               y1: elbowY,
             },
+            // Horizontal line
             {
-              type: 'line',
-              line: {
-                width: 1,
-              },
-              xref: 'x',
-              yref: 'paper',
-              ysizemode: 'pixel',
-              yanchor: 0,
+              ...sharedProps,
               x0: column_center,
               y0: elbowY,
               x1: 0,
@@ -245,6 +247,7 @@ const MosaicPlot = makePlotlyPlotComponent(
       ],
       annotations: showColumnLabels != false && [
         ...column_centers.map((column_center, index) => {
+          // Make text at end of elbow pointer
           const width = 150;
           const height = 20;
           const elbowY = getElbowPointerY(index);
@@ -280,9 +283,10 @@ const MosaicPlot = makePlotlyPlotComponent(
             hoverinfo: 'text',
             hovertext: counts.map(
               (count, j) =>
-                `<b>${data.dependentLabels[i]}</b> ${count.toLocaleString(
-                  'en-US'
-                )} (${((count / raw_widths[j]) * 100).toFixed(1)}%)`
+                `<b>${data.dependentLabels[i]}</b> (${(
+                  (count / raw_widths[j]) *
+                  100
+                ).toFixed(1)}%)`
             ),
             width: percent_widths,
             type: 'bar',
@@ -302,14 +306,36 @@ const MosaicPlot = makePlotlyPlotComponent(
 
     const classes = useStyles();
 
+    const onPlotlyRender: PlotProps<MosaicPlotData>['onPlotlyRender'] = (
+      figure,
+      graphDiv
+    ) => {
+      const annotationGroups = select(graphDiv).selectAll('.annotation-text');
+      annotationGroups.selectAll('title').remove();
+      annotationGroups
+        .attr('pointer-events', 'all')
+        .attr('cursor', 'default')
+        .append('svg:title')
+        .text(
+          (d, i) =>
+            `${removeHtmlTags(data.independentLabels[i])} (${_.round(
+              percent_widths[i],
+              1
+            )}%)`
+        );
+    };
+
     return {
       data: plotlyReadyData,
       layout,
       // original independent axis tick labels for tooltip
       storedIndependentAxisTickLabel: data.independentLabels,
       spacingOptions: newSpacingOptions,
-      containerClass: classes.root,
+      containerClass: `${classes.root} ${
+        containerClass ?? ''
+      } mosaic-container`,
       displayLegend: true,
+      onPlotlyRender,
       ...restProps,
     };
   }

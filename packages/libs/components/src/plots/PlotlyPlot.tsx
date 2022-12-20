@@ -393,7 +393,7 @@ function PlotlyPlot<T>(
   );
 
   const finalData = useMemo(() => {
-    return data.map((d) => ({
+    return data.map((d: any) => ({
       ...d,
       // set to 'legendonly' as 'true' changes plot colors and condition for no custom legend case
       visible:
