@@ -5296,10 +5296,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/coreui@^0.18.17":
-  version "0.18.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.17.tgz#9f37147439427d0f9d1f1f382aa959547c069b3e"
-  integrity sha512-LcNPANxQx3sCaGBvQ0aD9CyDyj78QYMEHthcibAE1C6zETy34XH651R9Mgj18MwWGxyB/zpRnkpfEWXvuviZ2g==
+"@veupathdb/coreui@^0.18.18":
+  version "0.18.18"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.18.tgz#eaadca0170fb90ed69569b58bb594799ec2117af"
+  integrity sha512-GrkSIhxyfvlkxatcGvk7Gs4gyRiNRsqtXm3cx3FAijQN4vn9gn8PY/ufyHPFndQk3HoTzvPDNS3ox+nnjCsKOw==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
