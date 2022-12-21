@@ -19,9 +19,9 @@
     "recoil": "^0.2.0"
   },
   "peerDependencies": {
-    "@veupathdb/coreui": "^0.18.17",
+    "@veupathdb/coreui": "^0.18.18",
     "@veupathdb/wdk-client": ">=0.9.21",
-    "@veupathdb/web-common": ">=0.7.5",
+    "@veupathdb/web-common": ">=0.7.6",
     "react": ">=16.14.0",
     "react-dom": ">=16.14.0"
   },
@@ -64,8 +64,8 @@
     "@typescript-eslint/parser": "^4.0.0",
     "@veupathdb/browserslist-config": "^1.1.0",
     "@veupathdb/components": "^0.19.12",
-    "@veupathdb/coreui": "^0.18.17",
-    "@veupathdb/eda": "^3.13.7",
+    "@veupathdb/coreui": "^0.18.18",
+    "@veupathdb/eda": "^3.14.1",
     "@veupathdb/eslint-config": "^2.0.0",
     "@veupathdb/http-utils": "^1.1.0",
     "@veupathdb/prettier-config": "^1.0.0",
@@ -73,7 +73,7 @@
     "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/tsconfig": "^2.0.0",
     "@veupathdb/wdk-client": "^0.9.21",
-    "@veupathdb/web-common": "^0.7.5",
+    "@veupathdb/web-common": "^0.7.6",
     "babel-eslint": "^10.0.0",
     "eslint": "^7.5.0",
     "eslint-config-react-app": "^6.0.0",
