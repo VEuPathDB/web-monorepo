@@ -75,7 +75,7 @@ export function StartPage(props: Props) {
                     rowGap: '2em',
                   }}
                 >
-                  {app.visualizations?.map((viz, index) => {
+                  {app.visualizations.map((viz, index) => {
                     const plugin = plugins[app.name];
                     const vizPlugin =
                       plugin && plugin.visualizationPlugins[viz.name];

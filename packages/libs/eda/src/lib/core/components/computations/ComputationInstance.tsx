@@ -70,12 +70,7 @@ export function ComputationInstance(props: Props) {
     computationAppOverview.computeName
   );
 
-  if (
-    analysis == null ||
-    computation == null ||
-    computationAppOverview.visualizations == null
-  )
-    return null;
+  if (analysis == null || computation == null) return null;
 
   const showTitle =
     url.replace(/\/+$/, '').split('/').pop() === 'visualizations';

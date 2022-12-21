@@ -39,7 +39,7 @@ export function ComputationRoute(props: Props) {
       let { apps } = await dataClient.getApps();
 
       const { projectId } = await wdkService.getConfig();
-      apps = apps.filter((app) => app.projects?.includes(projectId));
+      apps = apps.filter((app) => app.projects.includes(projectId));
 
       if (singleAppMode) {
         apps = apps.filter((app) => app.name === singleAppMode);

@@ -14,7 +14,7 @@ export function ComputationOverview(props: ComputationProps) {
       <p>{computationAppOverview.description}</p>
       <h2>Available visualizations</h2>
       <ul>
-        {computationAppOverview.visualizations?.map((viz) => (
+        {computationAppOverview.visualizations.map((viz) => (
           <li>
             {viz.displayName} &mdash; {viz.description}
           </li>
