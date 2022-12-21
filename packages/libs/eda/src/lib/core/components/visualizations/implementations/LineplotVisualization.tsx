@@ -1114,35 +1114,68 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const controlsNode = (
     <>
-      {/* pre-occupied space for Banner */}
-      <div style={{ width: 750, marginLeft: '1em', minHeight: '2.5em' }}>
-        {(showIndependentLogScaleBanner ||
-          showBinningBanner ||
-          showDependentLogScaleBanner ||
-          showErrorBarBanner) && (
+      {/* pre-occupied space for Banner: 1 line = 2.5em */}
+      {/* <div style={{ width: 750, marginLeft: '1em', minHeight: '5em' }}> */}
+      <div
+        style={{
+          width: 750,
+          marginLeft: '1em',
+          minHeight: '5em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        {/* independent axis banner */}
+        {(showIndependentLogScaleBanner || showBinningBanner) && (
           <Banner
             banner={{
               type: 'warning',
-              message: showIndependentLogScaleBanner
-                ? 'Binning is no longer appropriate and has been disabled'
-                : showBinningBanner
-                ? 'Log scale is no longer appropriate and has been disabled'
-                : showDependentLogScaleBanner
-                ? 'Error bars are no longer appropriate and have been disabled'
-                : showErrorBarBanner
-                ? 'Log scale is no longer appropriate and has been disabled'
-                : '',
+              message: 'Log scale and binning are not available concurrently.',
               pinned: true,
               intense: false,
+              additionalMessage:
+                'Binning of non-log transformed raw data cannot be accurately plotted on log scale axes.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
               spacing: {
                 margin: '0.3125em 0 0 0',
                 padding: '0.3125em 0.625em',
               },
               fontSize: '1em',
-              // Banner timeout props
               showBanner: showBanner,
               setShowBanner: setShowBanner,
-              autoHideDuration: 5000,
+            }}
+          />
+        )}
+        {/* dependent axis banner */}
+        {(showDependentLogScaleBanner || showErrorBarBanner) && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message:
+                'Y-axis log scale and error bars are not available concurrently.',
+              pinned: true,
+              intense: false,
+              additionalMessage:
+                'Error bars for non-log transformed raw data cannot be accurately plotted on log scale y-axis.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
+              spacing: {
+                margin: '0.3125em 0 0 0',
+                padding: '0.3125em 0.625em',
+              },
+              fontSize: '1em',
+              showBanner: showBanner,
+              setShowBanner: setShowBanner,
             }}
           />
         )}
@@ -1196,8 +1229,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 if (newValue && vizConfig.useBinning) {
                   setShowIndependentLogScaleBanner(true);
                   setShowBinningBanner(false);
-                  setShowErrorBarBanner(false);
-                  setShowDependentLogScaleBanner(false);
                 } else {
                   setShowIndependentLogScaleBanner(false);
                 }
@@ -1243,8 +1274,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 if (newValue && vizConfig.independentAxisLogScale) {
                   setShowBinningBanner(true);
                   setShowIndependentLogScaleBanner(false);
-                  setShowErrorBarBanner(false);
-                  setShowDependentLogScaleBanner(false);
                 } else {
                   setShowBinningBanner(false);
                 }
@@ -1419,8 +1448,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 if (newValue && vizConfig.showErrorBars) {
                   setShowDependentLogScaleBanner(true);
                   setShowErrorBarBanner(false);
-                  setShowIndependentLogScaleBanner(false);
-                  setShowBinningBanner(false);
                 } else {
                   setShowDependentLogScaleBanner(false);
                 }
@@ -1464,8 +1491,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 if (newValue && vizConfig.dependentAxisLogScale) {
                   setShowErrorBarBanner(true);
                   setShowDependentLogScaleBanner(false);
-                  setShowIndependentLogScaleBanner(false);
-                  setShowBinningBanner(false);
                 } else {
                   setShowErrorBarBanner(false);
                 }

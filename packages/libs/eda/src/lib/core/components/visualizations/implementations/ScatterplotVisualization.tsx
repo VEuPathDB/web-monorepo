@@ -1306,8 +1306,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const controlsNode = (
     <>
-      {/* pre-occupied space for banner */}
-      <div style={{ width: 750, marginLeft: '1em', minHeight: '2.5em' }}>
+      {/* pre-occupied space for banner:  1 line = 2.5em */}
+      {/* <div style={{ width: 750, marginLeft: '1em', minHeight: '2.5em' }}> */}
+      <div
+        style={{
+          width: 750,
+          marginLeft: '1em',
+          minHeight: '5em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
         {/* show Banner message if no smoothed mean exists */}
         {!data.pending &&
           vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
@@ -1338,10 +1348,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                     padding: '0.3125em 0.625em',
                   },
                   fontSize: '1em',
-                  // Banner timeout props
                   showBanner: showBanner,
                   setShowBanner: setShowBanner,
-                  // autoHideDuration: 5000,
                 }}
               />
             </div>
@@ -1374,10 +1382,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                   padding: '0.3125em 0.625em',
                 },
                 fontSize: '1em',
-                // Banner timeout props
                 showBanner: showBanner,
                 setShowBanner: setShowBanner,
-                autoHideDuration: 5000,
               }}
             />
           </div>

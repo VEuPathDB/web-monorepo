@@ -843,7 +843,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   const controlsNode = (
     <>
       {/* pre-occupied space for banner */}
-      <div style={{ width: 750, marginLeft: '1em', height: '2.5em' }} />
+      <div style={{ width: 750, marginLeft: '1em', height: '5em' }} />
       {/* Plot mode */}
       <RadioButtonGroup
         label="Plot mode"
