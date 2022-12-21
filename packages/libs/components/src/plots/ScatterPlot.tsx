@@ -223,7 +223,12 @@ const ScatterPlot = makePlotlyPlotComponent(
               ? undefined
               : {
                   ...d.marker.line,
-                  width: markerBodyOpacity === 0 ? 1 : 0,
+                  width:
+                    markerBodyOpacity != null
+                      ? markerBodyOpacity === 0
+                        ? 1
+                        : 0
+                      : 1,
                 },
         },
       }));
