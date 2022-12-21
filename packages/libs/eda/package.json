@@ -6,6 +6,7 @@
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.21",
+    "luxon": "^3.1.1",
     "monocle-ts": "^2.3.11",
     "react-cool-dimensions": "^2.0.7",
     "react-draggable": "^4.4.3",
