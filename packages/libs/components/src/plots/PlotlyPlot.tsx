@@ -23,7 +23,7 @@ import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
-import { ToImgopts, toImage } from 'plotly.js';
+import { ToImgopts, toImage, DataTitle } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
@@ -111,7 +111,7 @@ function PlotlyPlot<T>(
   // set max legend title length for ellipsis
   const maxLegendTitleTextLength = maxLegendTextLength + 5;
   // set max independent axis title length for ellipsis
-  const maxIndependentAxisTitleTextLength = 80;
+  const maxIndependentAxisTitleTextLength = 60;
   // set max dependent axis title length for ellipsis
   const maxDependentAxisTitleTextLength = 50;
 
@@ -140,58 +140,20 @@ function PlotlyPlot<T>(
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
-        // xAxis also have standoff
-        title:
-          // xAxis Mosaic case
-          typeof plotlyProps?.layout?.xaxis?.title === 'object' &&
-          plotlyProps?.layout?.xaxis?.title != null
-            ? ((plotlyProps?.layout?.xaxis?.title.text as string) || '')
-                .length > maxIndependentAxisTitleTextLength
-              ? {
-                  text:
-                    (
-                      (plotlyProps?.layout?.xaxis?.title.text as string) || ''
-                    ).substring(0, maxIndependentAxisTitleTextLength) + '...',
-                  standoff: plotlyProps?.layout?.xaxis?.title.standoff,
-                }
-              : plotlyProps?.layout?.xaxis?.title
-            : // general case
-            ((plotlyProps?.layout?.xaxis?.title as string) || '').length >
-              maxIndependentAxisTitleTextLength
-            ? ((plotlyProps?.layout?.xaxis?.title as string) || '').substring(
-                0,
-                maxIndependentAxisTitleTextLength
-              ) + '...'
-            : plotlyProps?.layout?.xaxis?.title,
+        title: axisTitleEllipsis(
+          plotlyProps?.layout?.xaxis?.title,
+          maxIndependentAxisTitleTextLength
+        ),
       },
       yaxis: {
         linecolor: 'black',
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
         linewidth: 1,
-        // change long delendent axis title with ellipsis
-        title:
-          // Mosaic case
-          typeof plotlyProps?.layout?.yaxis?.title === 'object' &&
-          plotlyProps?.layout?.yaxis?.title != null
-            ? ((plotlyProps?.layout?.yaxis?.title.text as string) || '')
-                .length > maxDependentAxisTitleTextLength
-              ? {
-                  text:
-                    (
-                      (plotlyProps?.layout?.yaxis?.title.text as string) || ''
-                    ).substring(0, maxDependentAxisTitleTextLength) + '...',
-                  standoff: plotlyProps?.layout?.yaxis?.title.standoff,
-                }
-              : plotlyProps?.layout?.yaxis?.title
-            : // general case
-            ((plotlyProps?.layout?.yaxis?.title as string) || '').length >
-              maxDependentAxisTitleTextLength
-            ? ((plotlyProps?.layout?.yaxis?.title as string) || '').substring(
-                0,
-                maxDependentAxisTitleTextLength
-              ) + '...'
-            : plotlyProps?.layout?.yaxis?.title,
+        title: axisTitleEllipsis(
+          plotlyProps?.layout?.yaxis?.title,
+          maxDependentAxisTitleTextLength
+        ),
       },
       showlegend: displayLegend ?? true,
       margin: {
@@ -488,6 +450,29 @@ export function makePlotlyPlotComponent<S extends { data?: T }, T>(
   }
   PlotlyPlotComponent.displayName = displayName;
   return forwardRef(PlotlyPlotComponent);
+}
+
+// A function for implementing the ellipsis of the axis title
+function axisTitleEllipsis(
+  axisTitle: string | Partial<DataTitle> | undefined,
+  axisTitleTextLength: number
+) {
+  return typeof axisTitle === 'object' && axisTitle != null
+    ? // Mosaic case
+      ((axisTitle.text as string) || '').length > axisTitleTextLength
+      ? {
+          text:
+            ((axisTitle.text as string) || '').substring(
+              0,
+              axisTitleTextLength
+            ) + '...',
+          standoff: axisTitle.standoff,
+        }
+      : axisTitle
+    : // general case
+    ((axisTitle as string) || '').length > axisTitleTextLength
+    ? ((axisTitle as string) || '').substring(0, axisTitleTextLength) + '...'
+    : axisTitle;
 }
 
 export default PlotlyPlotWithRef;
