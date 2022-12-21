@@ -1018,9 +1018,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
           <div style={{ marginLeft: '1em', marginTop: '-0.6em' }}>
             <Toggle
-              label={`Log scale ${
-                histogramProps.dependentAxisLogScale ? 'on' : 'off'
-              }`}
+              label={'Log scale'}
               value={histogramProps.dependentAxisLogScale ?? false}
               onChange={onDependentAxisLogScaleChange}
               styleOverrides={{
