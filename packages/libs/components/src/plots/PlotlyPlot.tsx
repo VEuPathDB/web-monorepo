@@ -132,6 +132,9 @@ function PlotlyPlot<T>(
     [displayLibraryControls, interactive]
   );
 
+  const xAxisTitle = plotlyProps?.layout?.xaxis?.title;
+  const yAxisTitle = plotlyProps?.layout?.yaxis?.title;
+
   const finalLayout = useMemo(
     (): PlotParams['layout'] & LayoutLegendTitle => ({
       ...plotlyProps.layout,
@@ -140,20 +143,14 @@ function PlotlyPlot<T>(
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
-        title: axisTitleEllipsis(
-          plotlyProps?.layout?.xaxis?.title,
-          maxIndependentAxisTitleTextLength
-        ),
+        title: axisTitleEllipsis(xAxisTitle, maxIndependentAxisTitleTextLength),
       },
       yaxis: {
         linecolor: 'black',
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
         linewidth: 1,
-        title: axisTitleEllipsis(
-          plotlyProps?.layout?.yaxis?.title,
-          maxDependentAxisTitleTextLength
-        ),
+        title: axisTitleEllipsis(yAxisTitle, maxDependentAxisTitleTextLength),
       },
       showlegend: displayLegend ?? true,
       margin: {
@@ -204,22 +201,16 @@ function PlotlyPlot<T>(
 
   // keep independent axis title for tooltip text
   const originalIndependentAxisTitle = useMemo(() => {
-    if (
-      typeof plotlyProps?.layout?.xaxis?.title === 'object' &&
-      plotlyProps?.layout?.xaxis?.title != null
-    )
-      return plotlyProps?.layout?.xaxis?.title?.text;
-    else return plotlyProps?.layout?.xaxis?.title;
-  }, [plotlyProps?.layout?.xaxis?.title]);
+    if (typeof xAxisTitle === 'object' && xAxisTitle != null)
+      return xAxisTitle.text;
+    else return xAxisTitle;
+  }, [xAxisTitle]);
 
   const originalDependentAxisTitle = useMemo(() => {
-    if (
-      typeof plotlyProps?.layout?.yaxis?.title === 'object' &&
-      plotlyProps?.layout?.yaxis?.title != null
-    )
-      return plotlyProps?.layout?.yaxis?.title?.text;
-    else return plotlyProps?.layout?.yaxis?.title;
-  }, [plotlyProps?.layout?.yaxis?.title]);
+    if (typeof yAxisTitle === 'object' && yAxisTitle != null)
+      return yAxisTitle.text;
+    else return yAxisTitle;
+  }, [yAxisTitle]);
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onRender = useCallback(
