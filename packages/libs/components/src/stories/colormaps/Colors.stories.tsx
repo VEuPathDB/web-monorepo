@@ -8,8 +8,13 @@ import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
 import { min, max, lte, gte } from 'lodash';
 import {
   dataSetSequentialGradient,
+  dataSetSequentialDiscrete,
   processInputData,
 } from '../plots/ScatterPlot.storyData';
+import {
+  gradientSequentialColorscaleMap,
+  gradientDivergingColorscaleMap,
+} from '../../types/plots/addOns';
 
 export default {
   title: 'Colors/Gradient Sequential',
@@ -17,29 +22,6 @@ export default {
 } as Meta;
 
 // Data
-interface VEuPathDBScatterPlotData {
-  scatterplot: {
-    data: Array<{
-      seriesX?: number[] | string[]; // perhaps string[] is better despite Date format, e.g., ISO format?
-      seriesY?: number[] | string[]; // will y data have a Date?
-      smoothedMeanX?: number[] | string[]; // perhaps string[] is better despite Date format, e.g., ISO format?
-      smoothedMeanY?: number[]; // will y data have a date string? Nope, number only
-      smoothedMeanSE?: number[];
-      bestFitLineX?: number[] | string[];
-      bestFitLineY?: number[];
-      seriesGradientColorscale?: number[] | string[];
-    }>;
-  };
-}
-
-let seriesX = [];
-for (let index = 0; index < 50; index++) {
-  seriesX.push(index.toString());
-}
-let seriesY = [];
-for (let index = 0; index < 50; index++) {
-  seriesY.push(Math.random().toString());
-}
 
 const { dataSetProcess: dataSetProcessSequentialGradient } = processInputData(
   dataSetSequentialGradient,
@@ -112,15 +94,41 @@ export const SequentialContinuous = () => {
 };
 
 // discretized version of sequential colormap
+const vocabulary = ['1,', '2', '3', '4', '5', '6', '7'];
+const { dataSetProcess: dataSetProcessSequentialDiscrete } = processInputData(
+  dataSetSequentialDiscrete,
+  'scatterplot',
+  'markers',
+  'number',
+  'number',
+  false
+);
+console.log(dataSetSequentialDiscrete);
 export const SequentialDiscrete = () => {
+  const legendItems = vocabulary.map((label) => {
+    return {
+      label,
+      marker: 'square',
+      markerColor: gradientSequentialColorscaleMap(
+        vocabulary.indexOf(label) / (vocabulary.length - 1)
+      ),
+      hasData: true,
+      group: 1,
+      rank: 1,
+    };
+  });
   return (
     <div style={{ padding: 15 }}>
       <PlotLegend
-        type="colorscale"
-        {...(gradientLegendProps as PlotLegendGradientProps)}
+        type="list"
+        legendItems={legendItems}
+        checkedLegendItems={vocabulary}
+        // onCheckedLegendItemsChange={setCheckedLegendItems}
+        // legendTitle={variableDisplayWithUnit(xAxisVariable)}
+        showOverlayLegend={true}
       />
       <ScatterPlot
-        data={dataSetProcessSequentialGradient}
+        data={dataSetProcessSequentialDiscrete}
         independentAxisLabel={independentAxisLabel}
         dependentAxisLabel={dependentAxisLabel}
         // not to use independentAxisRange
@@ -146,3 +154,11 @@ export const SequentialDiscrete = () => {
     </div>
   );
 };
+
+/**
+ * To Dos
+ * 1. 7 is arbitrary. Link the numbers better between here and scatterplotstorydata or something
+ * 2. Add another plot to discrete version. Maybe line or box
+ * 3. Improve documentation.
+ * 4. Add nice titles and things
+ */
