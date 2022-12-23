@@ -153,6 +153,19 @@ export const ColorPaletteDark: string[] = [
   'rgb(13, 96, 41)',
 ];
 
+/** Based on [Tol's muted colormap](https://personal.sron.nl/~pault/) */
+/** Needs work - this is a draft for purposes of discussion and choosing a new colormap */
+export const ColorPaletteOrdinal: string[] = [
+  'rgb(136,34,85)',
+  'rgb(204,102,119)',
+  'rgb(153,153,51)',
+  'rgb(221,204,119)',
+  'rgb(68,170,153)',
+  'rgb(17,119,51)',
+  'rgb(136,204,238)',
+  'rgb(51,34,136)',
+];
+
 /** Sequential gradient colorscale. Useful for coloring based on a continuous variable that is always positive, for example. */
 /** Using oslo from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
 export const SequentialGradientColorscale: string[] = [

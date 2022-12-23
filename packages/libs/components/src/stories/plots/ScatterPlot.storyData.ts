@@ -79,6 +79,63 @@ export const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
   },
 };
 
+// Dataset with 8 series so we can use the eight colors of the categorical colormap.
+// Use only a small number of points (suggest nPoins/2) so that the plot doesn't get too crazy crowded.
+export const dataSetCategoricalOverlay: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+      {
+        seriesX: sequentialIntegers.slice(nPoints / 2),
+        seriesY: sequentialIntegers
+          .slice(nPoints / 2)
+          .map((i) => Math.random()),
+      },
+    ],
+  },
+};
+
 // use actual data response format (number/string) following scatter plot data API
 export const dataSet: VEuPathDBScatterPlotData = {
   scatterplot: {
