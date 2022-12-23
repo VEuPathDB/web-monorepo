@@ -24,57 +24,55 @@ export interface VEuPathDBScatterPlotData {
   };
 }
 
-// Define arrays that will make up scatterplot data
+// Many example scatter plots can be made with toy data. Define some toy data here.
+
+const nPoints = 50;
 let sequentialIntegers = [];
-for (let index = 0; index < 47; index++) {
+for (let index = 0; index < nPoints; index++) {
   sequentialIntegers.push(index);
 }
-const randomIntegers = sequentialIntegers.map((i) =>
-  Math.ceil(Math.random() * 7)
+// Random integers of low cardinality
+const randomIntegers = sequentialIntegers.map(
+  (i) => Math.ceil(Math.random() * 7) // 7 is arbitrary. Matches value in Colors.stories.
 );
 const randomPosValues = sequentialIntegers.map((i) => Math.random());
 const randPosNegvalues = randomPosValues.map((i) => i - 0.5);
 
-// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Sequential (all positive)
+// Positive y-value data with random positive overlay values
 export const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        // scatter plot with gradient colorscale
         seriesX: sequentialIntegers,
         seriesY: randomPosValues,
-        // variable mapped to color (same as seriesX for easier checking the colorscale)
-        seriesGradientColorscale: sequentialIntegers,
+        // variable mapped to color (same as seriesY for easier verification of the colorscale)
+        seriesGradientColorscale: randomPosValues,
       },
     ],
   },
 };
 
-// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Sequential (all positive)
-
+// Positive y-value data with random, discrete integers in 1:7 for the overlay values.
 export const dataSetSequentialDiscrete: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        // scatter plot with gradient colorscale
         seriesX: sequentialIntegers,
         seriesY: randomPosValues,
-        // variable mapped to color (same as seriesX for easier checking the colorscale)
         seriesGradientColorscale: randomIntegers,
       },
     ],
   },
 };
 
-// data with 'seriesGradientColorscale' column (for Gradient Colorscale). Diverging (some negative and some positive)
+// Positive and negative y-value data and the same for overlay values.
 export const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        // scatter plot with gradient colorscale
         seriesX: sequentialIntegers,
         seriesY: randPosNegvalues,
-        // variable mapped to color (same as seriesX for easier checking the colorscale)
+        // variable mapped to color (same as seriesY for easier verification of the colorscale)
         seriesGradientColorscale: randPosNegvalues,
       },
     ],

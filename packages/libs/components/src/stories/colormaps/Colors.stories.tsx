@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import PlotGradientLegend, {
   PlotLegendGradientProps,
 } from '../../components/plotControls/PlotGradientLegend';
-import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
-import { min, max, lte, gte } from 'lodash';
+import ScatterPlot from '../../plots/ScatterPlot';
+import { min, max } from 'lodash';
 import {
   dataSetSequentialGradient,
   dataSetSequentialDiscrete,
@@ -16,6 +15,7 @@ import {
   gradientDivergingColorscaleMap,
 } from '../../types/plots/addOns';
 
+// A collection of stories for viewing our Sequential Gradient Colormap
 export default {
   title: 'Colors/Gradient Sequential',
   component: PlotLegend,
@@ -24,8 +24,6 @@ export default {
 // set some default props
 const plotWidth = 500;
 const plotHeight = 400;
-// let plotWidth = 350;
-// let plotHeight = 250;
 const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
 const plotTitle = '';
@@ -51,14 +49,13 @@ const gradientLegendProps = {
   legendMax: max(dataSetProcessSequentialGradient.series[0].x),
   legendMin: min(dataSetProcessSequentialGradient.series[0].x),
   gradientColorscaleType: 'sequential',
-  // MUST be odd! Probably should be a clever function of the box size
-  // and font or something...
+  // MUST be odd!
   nTicks: 5,
   showMissingness: false,
   legendTitle: 'legend',
 };
 
-// custom legend with scatterplot gradient colorscale
+// Showcase sequential gradient colormap.
 export const SequentialContinuous = () => {
   return (
     <div style={{ padding: 15 }}>
@@ -91,7 +88,8 @@ export const SequentialContinuous = () => {
   );
 };
 
-// discretized version of sequential colormap
+// Showcase discretized version of the sequential gradient colormap. For this story,
+// the overlay var is a low cardinality, equidistant set of integers.
 const vocabularyEquidistant = ['1', '2', '3', '4', '5', '6', '7'];
 const { dataSetProcess: dataSetProcessSequentialDiscrete } = processInputData(
   dataSetSequentialDiscrete,
@@ -122,7 +120,6 @@ export const SequentialDiscrete = () => {
         type="list"
         legendItems={legendItems}
         checkedLegendItems={vocabularyEquidistant}
-        // onCheckedLegendItemsChange={setCheckedLegendItems}
         // legendTitle={variableDisplayWithUnit(xAxisVariable)}
         showOverlayLegend={true}
       />
@@ -154,11 +151,12 @@ export const SequentialDiscrete = () => {
   );
 };
 
-// discretized version of sequential colormap
+// Showcase discretized version of the sequential gradient colormap. For this story,
+// the overlay var is a low cardinality variable with non-uniform spacing between neighboring values.
 const vocabularyNonUniform = ['1', '2', '5', '6', '7', '18', '20'];
-let dataSetSequentialDiscreteNonUniform = dataSetSequentialDiscrete;
 
-// Replace a few values in the original data so that we have non-equidistant values.
+// Replace a few values in the original data so that we have values that are not equidistant from their neighbors.
+let dataSetSequentialDiscreteNonUniform = dataSetSequentialDiscrete;
 dataSetSequentialDiscreteNonUniform.scatterplot.data[0].seriesGradientColorscale?.forEach(
   (val, index, arr) => {
     val === 3 ? (arr[index] = 18) : val === 4 ? (arr[index] = 20) : val;
@@ -195,7 +193,6 @@ export const SequentialDiscreteNonUniformSpacing = () => {
         type="list"
         legendItems={legendItems}
         checkedLegendItems={vocabularyNonUniform}
-        // onCheckedLegendItemsChange={setCheckedLegendItems}
         // legendTitle={variableDisplayWithUnit(xAxisVariable)}
         showOverlayLegend={true}
       />
@@ -226,11 +223,3 @@ export const SequentialDiscreteNonUniformSpacing = () => {
     </div>
   );
 };
-
-/**
- * To Dos
- * 1. 7 is arbitrary. Link the numbers better between here and scatterplotstorydata or something
- * 2. Add another plot to discrete version. Maybe line or box
- * 3. Improve documentation.
- * 4. Add nice titles and things
- */
