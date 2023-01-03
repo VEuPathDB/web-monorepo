@@ -51,6 +51,7 @@ import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
 import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
 import { Toggle } from '@veupathdb/coreui';
+import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
 
 const baseFieldNodeLinkStyle = {
   padding: '0.25em 0.5em',
@@ -69,37 +70,54 @@ const disabledFieldNodeLinkStyle = {
   opacity: '0.5',
 };
 
-const fieldNodeCssSelectors = {
-  '.base-field-node': { ...baseFieldNodeLinkStyle },
-  '.active-field-node': {
-    ...baseFieldNodeLinkStyle,
-    ...activeFieldNodeLinkStyle,
-  },
-  '.disabled-field-node': {
-    ...baseFieldNodeLinkStyle,
-    ...disabledFieldNodeLinkStyle,
-  },
-  '.single-select-anchor-node': { marginLeft: '0.5em' },
-  '.dropdown-node-color': { color: '#2f2f2f' },
-  '.base-node-color': { color: '#069' },
-  '.entity-node': {
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    padding: '0.25em 0.5em',
-  },
-  '.starred-var-container': {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  '.star-selected': {
-    color: '#f8cb6a',
-    fontSize: '1.1em',
-  },
-  '.star-unselected': {
-    color: '#767676',
-    fontSize: '1.1em',
-  },
+const usePrimaryColorString = () => {
+  const themePrimaryColor = useUITheme()?.palette.primary;
+
+  return useMemo(
+    () => themePrimaryColor && themePrimaryColor.hue[themePrimaryColor?.level],
+    [themePrimaryColor]
+  );
+};
+
+const useFieldNodeCssSelectors = () => {
+  const themePrimaryColor = usePrimaryColorString();
+
+  return useMemo(() => {
+    return {
+      '.base-field-node': { ...baseFieldNodeLinkStyle },
+      '.active-field-node': {
+        ...baseFieldNodeLinkStyle,
+        ...activeFieldNodeLinkStyle,
+      },
+      '.disabled-field-node': {
+        ...baseFieldNodeLinkStyle,
+        ...disabledFieldNodeLinkStyle,
+      },
+      '.single-select-anchor-node': { marginLeft: '0.5em' },
+      '.dropdown-node-color': { color: '#2f2f2f' },
+      '.base-node-color': {
+        color: themePrimaryColor ?? '#069',
+      },
+      '.entity-node': {
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        padding: '0.25em 0.5em',
+      },
+      '.starred-var-container': {
+        display: 'flex',
+        justifyContent: 'space-between',
+        width: '100%',
+      },
+      '.star-selected': {
+        color: '#f8cb6a',
+        fontSize: '1.1em',
+      },
+      '.star-unselected': {
+        color: '#767676',
+        fontSize: '1.1em',
+      },
+    };
+  }, [themePrimaryColor]);
 };
 
 interface VariableField {
@@ -767,8 +785,13 @@ export default function VariableList({
           padding: 0,
         },
       },
+      treeLinks: {
+        links: {
+          color: usePrimaryColorString(),
+        },
+      },
     },
-    customTreeNodeCssSelectors: fieldNodeCssSelectors,
+    customTreeNodeCssSelectors: useFieldNodeCssSelectors(),
   };
 
   return asDropdown ? (
@@ -944,6 +967,7 @@ const FieldNode = ({
   );
 
   const canBeStarred = isFilterField(field) && !isMultiFilterDescendant;
+  const fieldNodeCssSelectors = useFieldNodeCssSelectors();
 
   return isFeaturedField ? (
     <div css={{ ...fieldNodeCssSelectors, width: '100%' }}>
