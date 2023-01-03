@@ -23,10 +23,11 @@ import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
-import { ToImgopts, toImage } from 'plotly.js';
+import { ToImgopts, toImage, DataTitle } from 'plotly.js';
 import { uniqueId } from 'lodash';
 import { makeSharedPromise } from '../utils/promise-utils';
 import NoDataOverlay from '../components/NoDataOverlay';
+import { removeHtmlTags } from '../utils/removeHtmlTags';
 
 export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
@@ -109,6 +110,8 @@ function PlotlyPlot<T>(
 
   // set max legend title length for ellipsis
   const maxLegendTitleTextLength = maxLegendTextLength + 5;
+  // set max independent axis title length for ellipsis
+  const maxIndependentAxisTitleTextLength = 60;
   // set max dependent axis title length for ellipsis
   const maxDependentAxisTitleTextLength = 50;
 
@@ -129,6 +132,9 @@ function PlotlyPlot<T>(
     [displayLibraryControls, interactive]
   );
 
+  const xAxisTitle = plotlyProps?.layout?.xaxis?.title;
+  const yAxisTitle = plotlyProps?.layout?.yaxis?.title;
+
   const finalLayout = useMemo(
     (): PlotParams['layout'] & LayoutLegendTitle => ({
       ...plotlyProps.layout,
@@ -137,21 +143,14 @@ function PlotlyPlot<T>(
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
         linewidth: 1,
+        title: axisTitleEllipsis(xAxisTitle, maxIndependentAxisTitleTextLength),
       },
       yaxis: {
         linecolor: 'black',
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
         linewidth: 1,
-        // change long delendent axis title with ellipsis
-        title:
-          ((plotlyProps?.layout?.yaxis?.title as string) || '').length >
-          maxDependentAxisTitleTextLength
-            ? ((plotlyProps?.layout?.yaxis?.title as string) || '').substring(
-                0,
-                maxDependentAxisTitleTextLength
-              ) + '...'
-            : plotlyProps?.layout?.yaxis?.title,
+        title: axisTitleEllipsis(yAxisTitle, maxDependentAxisTitleTextLength),
       },
       showlegend: displayLegend ?? true,
       margin: {
@@ -200,11 +199,18 @@ function PlotlyPlot<T>(
     }
   }, [data]);
 
-  // keep dependent axis title for tooltip text
-  const originalDependentAxisTitle = useMemo(
-    () => plotlyProps?.layout?.yaxis?.title,
-    [plotlyProps?.layout?.yaxis?.title]
-  );
+  // keep independent axis title for tooltip text
+  const originalIndependentAxisTitle = useMemo(() => {
+    if (typeof xAxisTitle === 'object' && xAxisTitle != null)
+      return xAxisTitle.text;
+    else return xAxisTitle;
+  }, [xAxisTitle]);
+
+  const originalDependentAxisTitle = useMemo(() => {
+    if (typeof yAxisTitle === 'object' && yAxisTitle != null)
+      return yAxisTitle.text;
+    else return yAxisTitle;
+  }, [yAxisTitle]);
 
   // ellipsis with tooltip for legend, legend title, and independent axis tick labels
   const onRender = useCallback(
@@ -223,7 +229,7 @@ function PlotlyPlot<T>(
         .selectAll('g.traces')
         .append('svg:title')
         .text((d: any) => {
-          return storedLegendList[d[0].trace.index];
+          return removeHtmlTags(storedLegendList[d[0].trace.index]);
         });
 
       // legend title tooltip
@@ -240,7 +246,7 @@ function PlotlyPlot<T>(
         select(graphDiv)
           .select('g.legend g.scrollbox text.legendtitletext')
           .append('svg:title')
-          .text(legendTitle);
+          .text(removeHtmlTags(legendTitle));
       }
 
       // independent axis tick label for barplot and boxplot
@@ -268,9 +274,34 @@ function PlotlyPlot<T>(
           .append('svg:title')
           .text((d, i) => {
             return storedIndependentAxisTickLabel != null
-              ? (storedIndependentAxisTickLabel[i] as string)
+              ? removeHtmlTags(storedIndependentAxisTickLabel[i] as string)
               : '';
           });
+      }
+
+      // handling independent axis title with ellipsis & tooltip
+      if (
+        originalIndependentAxisTitle != null &&
+        (originalIndependentAxisTitle as string).length >
+          maxIndependentAxisTitleTextLength
+      ) {
+        // remove duplicate svg:title
+        select(graphDiv)
+          .select('.plot-container svg.main-svg g.infolayer g.g-xtitle')
+          .selectAll('title')
+          .remove();
+
+        // add tooltip
+        select(graphDiv)
+          .select(
+            '.plot-container svg.main-svg g.infolayer g.g-xtitle text.xtitle'
+          )
+          // need this attribute for tooltip of dependent axis title!
+          .attr('pointer-events', 'all')
+          .append('svg:title')
+          .text(
+            removeHtmlTags(originalIndependentAxisTitle as string) as string
+          );
       }
 
       // handling dependent axis title with ellipsis & tooltip
@@ -293,7 +324,7 @@ function PlotlyPlot<T>(
           // need this attribute for tooltip of dependent axis title!
           .attr('pointer-events', 'all')
           .append('svg:title')
-          .text(originalDependentAxisTitle as string);
+          .text(removeHtmlTags(originalDependentAxisTitle as string) as string);
       }
     },
     [
@@ -315,7 +346,7 @@ function PlotlyPlot<T>(
   );
 
   const finalData = useMemo(() => {
-    return data.map((d) => ({
+    return data.map((d: any) => ({
       ...d,
       // set to 'legendonly' as 'true' changes plot colors and condition for no custom legend case
       visible:
@@ -410,6 +441,29 @@ export function makePlotlyPlotComponent<S extends { data?: T }, T>(
   }
   PlotlyPlotComponent.displayName = displayName;
   return forwardRef(PlotlyPlotComponent);
+}
+
+// A function for implementing the ellipsis of the axis title
+function axisTitleEllipsis(
+  axisTitle: string | Partial<DataTitle> | undefined,
+  axisTitleTextLength: number
+) {
+  return typeof axisTitle === 'object' && axisTitle != null
+    ? // Mosaic case
+      ((axisTitle.text as string) || '').length > axisTitleTextLength
+      ? {
+          text:
+            ((axisTitle.text as string) || '').substring(
+              0,
+              axisTitleTextLength
+            ) + '...',
+          standoff: axisTitle.standoff,
+        }
+      : axisTitle
+    : // general case
+    ((axisTitle as string) || '').length > axisTitleTextLength
+    ? ((axisTitle as string) || '').substring(0, axisTitleTextLength) + '...'
+    : axisTitle;
 }
 
 export default PlotlyPlotWithRef;

@@ -23,6 +23,10 @@ import MapVEuLegendSampleList, {
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
+import DonutMarker, {
+  DonutMarkerProps,
+  DonutMarkerStandalone,
+} from '../map/DonutMarker';
 
 export default {
   title: 'Map/Donut Markers',
@@ -278,4 +282,116 @@ TwoRequests.args = {
   width: '100vw',
   showGrid: true,
   showMouseToolbar: true,
+};
+
+export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
+  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
+
+  const markerElements: ReactElement<DonutMarkerProps>[] = [
+    <DonutMarker
+      id={'abc'}
+      key={'abc'}
+      position={{ lat: 13, lng: 16 }}
+      bounds={{
+        southWest: { lat: 12.5, lng: 15.5 },
+        northEast: { lat: 13.5, lng: 16.5 },
+      }}
+      data={[
+        {
+          value: 85,
+          label: 'subset',
+          color: 'pink',
+        },
+        {
+          value: 100,
+          label: 'total',
+          color: '#ccc',
+        },
+      ]}
+      cumulative={true}
+      isAtomic={false}
+      onClick={handleMarkerClick}
+      duration={300}
+      markerScale={1}
+    />,
+    <DonutMarker
+      id={'abc2'}
+      key={'abc2'}
+      position={{ lat: 13, lng: 20 }}
+      bounds={{
+        southWest: { lat: 12.5, lng: 19.5 },
+        northEast: { lat: 13.5, lng: 20.5 },
+      }}
+      data={[
+        {
+          value: 10,
+          label: 'special',
+          color: 'yellow',
+        },
+        {
+          value: 85,
+          label: 'subset',
+          color: 'pink',
+        },
+        {
+          value: 100,
+          label: 'total',
+          color: '#ccc',
+        },
+      ]}
+      cumulative={true}
+      isAtomic={false}
+      onClick={handleMarkerClick}
+      duration={300}
+      markerScale={1}
+    />,
+  ];
+  return (
+    <MapVEuMap
+      {...args}
+      viewport={viewport}
+      markers={markerElements}
+      onBoundsChanged={() => {}}
+      animation={defaultAnimation}
+      zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      mouseMode={mouseMode}
+      onMouseModeChange={setMouseMode}
+    />
+  );
+};
+
+CumulativeMarkers.args = {
+  height: '100vh',
+  width: '100vw',
+  showGrid: true,
+  showMouseToolbar: true,
+};
+
+export const Standalone: Story<MapVEuMapProps> = () => {
+  return (
+    <DonutMarkerStandalone
+      data={[
+        {
+          value: 10,
+          label: 'special',
+          color: 'yellow',
+        },
+        {
+          value: 85,
+          label: 'subset',
+          color: 'pink',
+        },
+        {
+          value: 100,
+          label: 'total',
+          color: '#ccc',
+        },
+      ]}
+      cumulative={true}
+      isAtomic={false}
+      markerScale={1}
+      containerStyles={{ margin: '10px' }}
+    />
+  );
 };

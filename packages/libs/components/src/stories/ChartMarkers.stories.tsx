@@ -17,6 +17,8 @@ import MapVEuLegendSampleList, {
   LegendProps,
 } from '../map/MapVEuLegendSampleList';
 
+import { ChartMarkerStandalone } from '../map/ChartMarker';
+
 // anim
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
@@ -319,4 +321,34 @@ LogScale.args = {
   width: '50vw',
   showGrid: true,
   showMouseToolbar: false, // not yet implemented
+};
+
+export const Standalone: Story<MapVEuMapProps> = () => {
+  return (
+    <ChartMarkerStandalone
+      data={[
+        {
+          value: 10,
+          label: 'special',
+          color: 'yellow',
+        },
+        {
+          value: 85,
+          label: 'subset',
+          color: 'pink',
+        },
+        {
+          value: 100,
+          label: 'total',
+          color: '#ccc',
+        },
+      ]}
+      cumulative={true}
+      isAtomic={false}
+      markerScale={1}
+      borderColor={'#AAAAAA'}
+      borderWidth={3.5}
+      containerStyles={{ margin: '10px' }}
+    />
+  );
 };

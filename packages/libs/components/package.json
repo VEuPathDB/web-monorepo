@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.19.3",
+  "version": "0.19.15",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
@@ -8,6 +8,8 @@
     "url": "https://github.com/veupathdb/web-components.git"
   },
   "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
     "@visx/gradient": "^1.0.0",
     "@visx/group": "^1.0.0",
     "@visx/hierarchy": "^1.0.0",
@@ -21,6 +23,7 @@
     "date-arithmetic": "^4.1.0",
     "debounce-promise": "^3.1.2",
     "dom-to-image": "^2.6.0",
+    "eslint-plugin-react": "^7.31.11",
     "latlon-geohash": "^2.0.0",
     "leaflet": "^1.7.1",
     "leaflet-simple-map-screenshoter": "^0.4.5",
@@ -49,7 +52,10 @@
     "build-npm-modules": "tsc -p tsconfig.build.json"
   },
   "eslintConfig": {
-    "extends": "@veupathdb"
+    "extends": [
+      "plugin:react-hooks/recommended",
+      "@veupathdb"
+    ]
   },
   "browserslist": [
     ">0.2%",
@@ -106,6 +112,8 @@
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/tsconfig": "^1.0.1",
     "babel-loader": "^8.1.0",
+    "eslint": "^8.29.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^4.3.8",
     "lint-staged": "^10.5.3",
     "lodash": "^4.17.19",
@@ -126,7 +134,7 @@
     "react": ">=16.14"
   },
   "volta": {
-    "node": "14.15.5",
+    "node": "14.17.0",
     "yarn": "1.22.10"
   }
 }
