@@ -1,9 +1,7 @@
-import { Meta } from '@storybook/react/types-6-0';
+import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
-import PlotGradientLegend, {
-  PlotLegendGradientProps,
-} from '../../components/plotControls/PlotGradientLegend';
-import ScatterPlot from '../../plots/ScatterPlot';
+import { PlotLegendGradientProps } from '../../components/plotControls/PlotGradientLegend';
+import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
 import { min, max } from 'lodash';
 import {
   dataSetSequentialGradient,
@@ -12,11 +10,12 @@ import {
 } from '../plots/ScatterPlot.storyData';
 import { gradientSequentialColorscaleMap } from '../../types/plots/addOns';
 import { VEuPathDBScatterPlotData } from '../plots/ScatterPlot.storyData';
+import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
 
 // A collection of stories for viewing our Sequential Gradient Colormap
 export default {
   title: 'Colors/Gradient Sequential',
-  component: PlotLegend,
+  component: ScatterPlot,
 } as Meta;
 
 // set some default props
@@ -53,16 +52,34 @@ const gradientLegendProps = {
   legendTitle: 'legend',
 };
 
-// Showcase sequential gradient colormap.
-export const SequentialContinuous = () => {
+// TODO ann make StoryProps
+
+interface TemplateProps {
+  data: VEuPathDBScatterPlotData;
+  plotLegendProps: PlotLegendProps;
+}
+
+// Template for these colormap stories. Show a scatterplot with overlay, as well as legend so we can see the colormap.
+const Template: Story<TemplateProps> = (args) => {
+  const { dataSetProcess: dataSetProcessGradient } = processInputData(
+    args.data,
+    'scatterplot',
+    'markers',
+    'number',
+    'number',
+    false
+  );
+
+  const [yMin, yMax] = [
+    min(dataSetProcessGradient.series[0].y),
+    max(dataSetProcessGradient.series[0].y),
+  ];
+
   return (
     <div style={{ padding: 15 }}>
-      <PlotLegend
-        type="colorscale"
-        {...(gradientLegendProps as PlotLegendGradientProps)}
-      />
+      <PlotLegend {...args.plotLegendProps} />
       <ScatterPlot
-        data={dataSetProcessSequentialGradient}
+        data={dataSetProcessGradient}
         independentAxisLabel={independentAxisLabel}
         dependentAxisLabel={dependentAxisLabel}
         // not to use independentAxisRange
@@ -84,76 +101,63 @@ export const SequentialContinuous = () => {
       />
     </div>
   );
+};
+
+// Showcase the continuous version of the sequential gradient colormap. Overlay values are drawn from
+// a continuous distribution
+export const Continuous = Template.bind({});
+Continuous.args = {
+  data: dataSetSequentialGradient,
+  plotLegendProps: {
+    type: 'colorscale',
+    ...(gradientLegendProps as PlotLegendGradientProps),
+  },
 };
 
 // Showcase discretized version of the sequential gradient colormap. For this story,
 // the overlay var is a low cardinality, equidistant set of integers.
 const vocabularyEquidistant = ['1', '2', '3', '4', '5', '6', '7'];
-const { dataSetProcess: dataSetProcessSequentialDiscrete } = processInputData(
-  dataSetSequentialDiscrete,
-  'scatterplot',
-  'markers',
-  'number',
-  'number',
-  false
-);
+let legendItems = vocabularyEquidistant.map((label) => {
+  return {
+    label,
+    marker: 'square',
+    markerColor: gradientSequentialColorscaleMap(
+      vocabularyEquidistant.indexOf(label) / (vocabularyEquidistant.length - 1)
+    ),
+    hasData: true,
+    group: 1,
+    rank: 1,
+  };
+});
 
-export const SequentialDiscrete = () => {
-  const legendItems = vocabularyEquidistant.map((label) => {
-    return {
-      label,
-      marker: 'square',
-      markerColor: gradientSequentialColorscaleMap(
-        vocabularyEquidistant.indexOf(label) /
-          (vocabularyEquidistant.length - 1)
-      ),
-      hasData: true,
-      group: 1,
-      rank: 1,
-    };
-  });
-  return (
-    <div style={{ padding: 15 }}>
-      <PlotLegend
-        type="list"
-        legendItems={legendItems}
-        checkedLegendItems={vocabularyEquidistant}
-        // legendTitle={variableDisplayWithUnit(xAxisVariable)}
-        showOverlayLegend={true}
-      />
-      <ScatterPlot
-        data={dataSetProcessSequentialDiscrete}
-        independentAxisLabel={independentAxisLabel}
-        dependentAxisLabel={dependentAxisLabel}
-        // not to use independentAxisRange
-        // independentAxisRange={[xMin, xMax]}
-        dependentAxisRange={{ min: yMin as string, max: yMax as string }}
-        // title={Scatter with Colormap}
-        // width height is replaced with containerStyles
-        containerStyles={{
-          width: plotWidth,
-          height: plotHeight,
-        }}
-        // staticPlot is changed to interactive
-        interactive={true}
-        // check enable/disable legend and built-in controls
-        displayLegend={false}
-        displayLibraryControls={true}
-        // margin={{l: 50, r: 10, b: 20, t: 10}}
-        // add legend title
-        legendTitle={'legend title example'}
-        independentValueType={'number'}
-        dependentValueType={'number'}
-      />
-    </div>
-  );
+export const Discrete = Template.bind({});
+Discrete.args = {
+  data: dataSetSequentialDiscrete,
+  plotLegendProps: {
+    type: 'list',
+    legendItems: legendItems,
+    checkedLegendItems: vocabularyEquidistant,
+    showOverlayLegend: true,
+  },
 };
 
 // Showcase discretized version of the sequential gradient colormap. For this story,
 // the overlay var is a low cardinality variable with non-uniform spacing between neighboring values.
 const vocabularyNonUniform = ['1', '2', '5', '6', '7', '18', '20'];
+legendItems = vocabularyNonUniform.map((label) => {
+  return {
+    label,
+    marker: 'square',
+    markerColor: gradientSequentialColorscaleMap(
+      +label / (max(vocabularyNonUniform.map(Number))! - 1)
+    ),
+    hasData: true,
+    group: 1,
+    rank: 1,
+  };
+});
 
-// Replace a few values in the original data so that we have values that are not equidistant from their neighbors.
+// Replace a few values in the original data so that we have values that are not uniform from their neighbors.
 let dataSetSequentialDiscreteNonUniform: VEuPathDBScatterPlotData = JSON.parse(
   JSON.stringify(dataSetSequentialDiscrete)
 );
@@ -163,63 +167,13 @@ dataSetSequentialDiscreteNonUniform.scatterplot.data[0].seriesGradientColorscale
   }
 );
 
-const {
-  dataSetProcess: dataSetProcessSequentialDiscreteNonUniform,
-} = processInputData(
-  dataSetSequentialDiscreteNonUniform,
-  'scatterplot',
-  'markers',
-  'number',
-  'number',
-  false
-);
-
-export const SequentialDiscreteNonUniformSpacing = () => {
-  const legendItems = vocabularyNonUniform.map((label) => {
-    return {
-      label,
-      marker: 'square',
-      markerColor: gradientSequentialColorscaleMap(
-        +label / (max(vocabularyNonUniform.map(Number))! - 1)
-      ),
-      hasData: true,
-      group: 1,
-      rank: 1,
-    };
-  });
-  return (
-    <div style={{ padding: 15 }}>
-      <PlotLegend
-        type="list"
-        legendItems={legendItems}
-        checkedLegendItems={vocabularyNonUniform}
-        // legendTitle={variableDisplayWithUnit(xAxisVariable)}
-        showOverlayLegend={true}
-      />
-      <ScatterPlot
-        data={dataSetProcessSequentialDiscreteNonUniform}
-        independentAxisLabel={independentAxisLabel}
-        dependentAxisLabel={dependentAxisLabel}
-        // not to use independentAxisRange
-        // independentAxisRange={[xMin, xMax]}
-        dependentAxisRange={{ min: yMin as string, max: yMax as string }}
-        // title={Scatter with Colormap}
-        // width height is replaced with containerStyles
-        containerStyles={{
-          width: plotWidth,
-          height: plotHeight,
-        }}
-        // staticPlot is changed to interactive
-        interactive={true}
-        // check enable/disable legend and built-in controls
-        displayLegend={false}
-        displayLibraryControls={true}
-        // margin={{l: 50, r: 10, b: 20, t: 10}}
-        // add legend title
-        legendTitle={'legend title example'}
-        independentValueType={'number'}
-        dependentValueType={'number'}
-      />
-    </div>
-  );
+export const DiscreteNonUniform = Template.bind({});
+DiscreteNonUniform.args = {
+  data: dataSetSequentialDiscreteNonUniform,
+  plotLegendProps: {
+    type: 'list',
+    legendItems: legendItems,
+    checkedLegendItems: vocabularyNonUniform,
+    showOverlayLegend: true,
+  },
 };

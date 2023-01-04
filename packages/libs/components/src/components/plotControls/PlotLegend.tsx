@@ -9,7 +9,7 @@ interface PlotLegendBaseProps extends ContainerStylesAddon {
   legendTitle?: string;
 }
 
-type PlotLegendProps = PlotLegendBaseProps &
+export type PlotLegendProps = PlotLegendBaseProps &
   (
     | ({ type: 'list' } & PlotListLegendProps)
     | ({ type: 'colorscale' } & PlotLegendGradientProps)
