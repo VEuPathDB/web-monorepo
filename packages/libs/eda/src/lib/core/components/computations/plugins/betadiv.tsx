@@ -19,7 +19,6 @@ export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 export const BetaDivConfig = t.type({
   collectionVariable: VariableDescriptor,
   betaDivDistanceMethod: t.string,
-  outputEntityId: t.string,
 });
 
 export const plugin: ComputationPlugin = {
@@ -107,7 +106,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): BetaDivConfig {
       entityId: collections[0].entityId,
     },
     betaDivDistanceMethod: BETA_DIV_DISTANCE_METHODS[0],
-    outputEntityId: collections[0].entityId,
   };
 }
 

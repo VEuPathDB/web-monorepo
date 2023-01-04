@@ -19,7 +19,6 @@ export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 export const AlphaDivConfig = t.type({
   collectionVariable: VariableDescriptor,
   alphaDivMethod: t.string,
-  outputEntityId: t.string,
 });
 
 export const plugin: ComputationPlugin = {
@@ -102,7 +101,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
       entityId: collections[0].entityId,
     },
     alphaDivMethod: 'shannon',
-    outputEntityId: collections[0].entityId,
   };
 }
 

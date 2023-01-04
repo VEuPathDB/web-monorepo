@@ -20,7 +20,6 @@ export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 export const AbundanceConfig = t.type({
   collectionVariable: VariableDescriptor,
   rankingMethod: t.string,
-  outputEntityId: t.string,
 });
 
 export const plugin: ComputationPlugin = {
@@ -121,7 +120,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
       entityId: collections[0].entityId,
     },
     rankingMethod: 'median',
-    outputEntityId: collections[0].entityId,
   };
 }
 
