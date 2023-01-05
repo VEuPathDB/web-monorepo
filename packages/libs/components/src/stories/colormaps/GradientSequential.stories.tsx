@@ -18,7 +18,7 @@ export default {
   component: ScatterPlot,
   argTypes: {
     nPoints: {
-      control: { type: 'range', min: 1, max: 300, step: 5 },
+      control: { type: 'range', min: 5, max: 300, step: 5 },
     },
   },
 } as Meta;

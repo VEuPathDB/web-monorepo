@@ -698,7 +698,8 @@ export function processInputData<T extends number | string>(
   // send independentValueType & dependentValueType
   independentValueType: string,
   dependentValueType: string,
-  defineColors: boolean
+  defineColors: boolean,
+  colorPaletteOverride?: string[]
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
@@ -719,7 +720,7 @@ export function processInputData<T extends number | string>(
   let yMax: number | string | undefined = 0;
 
   // coloring: using plotly.js default colors instead of web-components default palette
-  const markerColors = [
+  const markerColors = colorPaletteOverride ?? [
     '31, 119, 180', //'#1f77b4',  // muted blue
     '255, 127, 14', //'#ff7f0e',  // safety orange
     '44, 160, 44', //'#2ca02c',  // cooked asparagus green
@@ -891,7 +892,14 @@ export function processInputData<T extends number | string>(
             ? markerColorsGradient
             : undefined,
           size: 12,
-          line: { color: 'rgb(' + markerColors[index] + ')', width: 2 },
+          line: {
+            color: defineColors
+              ? 'rgb(' + markerColors[index] + ')'
+              : seriesGradientColorscale?.length > 0
+              ? markerColorsGradient
+              : undefined,
+            width: 2,
+          },
           symbol: 'circle',
         },
         // this needs to be here for the case of markers with line or lineplot.
