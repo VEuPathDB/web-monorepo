@@ -20,8 +20,9 @@ let splicedGenomicOptions = [
 let geneComponentOptions = [
   { value: 'five_prime_utr', display: '5\' UTR' },
   { value: 'three_prime_utr', display: '3\' UTR' },
-  { value: 'exon', display: 'exon' },
-  { value: 'intron', display: 'intron' },
+  { value: 'exon', display: 'Exon' },
+  { value: 'cds', display: 'CDS' },
+  { value: 'intron', display: 'Intron' },
 ];
 
 let genomicAnchorValues = [

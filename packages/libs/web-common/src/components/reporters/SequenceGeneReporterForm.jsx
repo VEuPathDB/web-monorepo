@@ -6,6 +6,10 @@ import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/rep
 import SrtHelp from '../SrtHelp';
 import createSequenceForm from './SequenceFormFactory';
 
+/*
+ * Similar to SequenceGeneReporterForm
+ * (but with protein options)
+ */
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
 let splicedGenomicOptions = [
@@ -23,8 +27,9 @@ let proteinFeatureOptions = [
 let geneComponentOptions = [
   { value: 'five_prime_utr', display: '5\' UTR' },
   { value: 'three_prime_utr', display: '3\' UTR' },
-  { value: 'exon', display: 'exon' },
-  { value: 'intron', display: 'intron' },
+  { value: 'exon', display: 'Exon' },
+  { value: 'cds', display: 'CDS' },
+  { value: 'intron', display: 'Intron' },
 ];
 
 let genomicAnchorValues = [
