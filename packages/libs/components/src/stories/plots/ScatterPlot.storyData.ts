@@ -26,7 +26,7 @@ export interface VEuPathDBScatterPlotData {
 
 // Many example scatter plots can be made with toy data. Define some toy data here.
 
-const nPoints = 50;
+const nPoints = 300;
 let sequentialIntegers = [];
 for (let index = 0; index < nPoints; index++) {
   sequentialIntegers.push(index);
@@ -35,15 +35,19 @@ for (let index = 0; index < nPoints; index++) {
 const randomIntegers = sequentialIntegers.map(
   (i) => Math.ceil(Math.random() * 7) // 7 is arbitrary. Matches value in Colors.stories.
 );
-const randomPosValues = sequentialIntegers.map((i) => Math.random());
-const randPosNegvalues = randomPosValues.map((i) => i - 0.5);
+const randomPosValues = sequentialIntegers.map((i) =>
+  Math.abs(getNormallyDistributedRandomNumber(0, 1))
+);
+const randPosNegvalues = sequentialIntegers.map(() =>
+  getNormallyDistributedRandomNumber(0, 1)
+);
 
 // Positive y-value data with random positive overlay values
 export const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        seriesX: sequentialIntegers,
+        seriesX: randPosNegvalues,
         seriesY: randomPosValues,
         // variable mapped to color (same as seriesY for easier verification of the colorscale)
         seriesGradientColorscale: randomPosValues,
@@ -57,8 +61,8 @@ export const dataSetSequentialDiscrete: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        seriesX: sequentialIntegers,
-        seriesY: randomPosValues,
+        seriesX: randomPosValues,
+        seriesY: randPosNegvalues,
         seriesGradientColorscale: randomIntegers,
       },
     ],
@@ -70,7 +74,7 @@ export const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
-        seriesX: sequentialIntegers,
+        seriesX: randomPosValues,
         seriesY: randPosNegvalues,
         // variable mapped to color (same as seriesY for easier verification of the colorscale)
         seriesGradientColorscale: randPosNegvalues,
@@ -1116,4 +1120,21 @@ function getBounds<T extends number | Date>(
   });
 
   return { yUpperValues, yLowerValues };
+}
+
+// Copied from https://mika-s.github.io/javascript/random/normal-distributed/2019/05/15/generating-normally-distributed-random-numbers-in-javascript.html
+function boxMullerTransform() {
+  const u1 = Math.random();
+  const u2 = Math.random();
+
+  const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+  const z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(2.0 * Math.PI * u2);
+
+  return { z0, z1 };
+}
+
+function getNormallyDistributedRandomNumber(mean: number, stddev: number) {
+  const { z0, z1 } = boxMullerTransform();
+
+  return z0 * stddev + mean;
 }

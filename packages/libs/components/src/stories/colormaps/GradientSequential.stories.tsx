@@ -1,7 +1,7 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import { PlotLegendGradientProps } from '../../components/plotControls/PlotGradientLegend';
-import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
+import ScatterPlot from '../../plots/ScatterPlot';
 import { min, max } from 'lodash';
 import {
   dataSetSequentialGradient,
@@ -16,6 +16,11 @@ import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
 export default {
   title: 'Colors/Gradient Sequential',
   component: ScatterPlot,
+  argTypes: {
+    nPoints: {
+      control: { type: 'range', min: 1, max: 300, step: 5 },
+    },
+  },
 } as Meta;
 
 // set some default props
@@ -23,40 +28,11 @@ const plotWidth = 500;
 const plotHeight = 400;
 const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
-const plotTitle = '';
-const independentValueType = 'number';
-const dependentValueType = 'number';
-
-const { dataSetProcess: dataSetProcessSequentialGradient } = processInputData(
-  dataSetSequentialGradient,
-  'scatterplot',
-  'markers',
-  'number',
-  'number',
-  false
-);
-
-const [yMin, yMax] = [
-  min(dataSetProcessSequentialGradient.series[0].y),
-  max(dataSetProcessSequentialGradient.series[0].y),
-];
-
-// gradient colorscale legend
-const gradientLegendProps = {
-  legendMax: max(dataSetProcessSequentialGradient.series[0].x),
-  legendMin: min(dataSetProcessSequentialGradient.series[0].x),
-  gradientColorscaleType: 'sequential',
-  // MUST be odd!
-  nTicks: 5,
-  showMissingness: false,
-  legendTitle: 'legend',
-};
-
-// TODO ann make StoryProps
 
 interface TemplateProps {
   data: VEuPathDBScatterPlotData;
   plotLegendProps: PlotLegendProps;
+  nPoints?: number;
 }
 
 // Template for these colormap stories. Show a scatterplot with overlay, as well as legend so we can see the colormap.
@@ -68,6 +44,15 @@ const Template: Story<TemplateProps> = (args) => {
     'number',
     'number',
     false
+  );
+
+  dataSetProcessGradient.series[0].x = dataSetProcessGradient.series[0].x.slice(
+    0,
+    args.nPoints
+  );
+  dataSetProcessGradient.series[0].y = dataSetProcessGradient.series[0].y.slice(
+    0,
+    args.nPoints
   );
 
   const [yMin, yMax] = [
@@ -105,6 +90,24 @@ const Template: Story<TemplateProps> = (args) => {
 
 // Showcase the continuous version of the sequential gradient colormap. Overlay values are drawn from
 // a continuous distribution
+
+// Setup gradient colorscale legend
+const gradientLegendProps = {
+  legendMax: max(
+    dataSetSequentialGradient.scatterplot.data[0]
+      .seriesGradientColorscale as number[]
+  ),
+  legendMin: min(
+    dataSetSequentialGradient.scatterplot.data[0]
+      .seriesGradientColorscale as number[]
+  ),
+  gradientColorscaleType: 'sequential',
+  // MUST be odd!
+  nTicks: 5,
+  showMissingness: false,
+  legendTitle: 'legend',
+};
+
 export const Continuous = Template.bind({});
 Continuous.args = {
   data: dataSetSequentialGradient,
@@ -112,6 +115,7 @@ Continuous.args = {
     type: 'colorscale',
     ...(gradientLegendProps as PlotLegendGradientProps),
   },
+  nPoints: 120,
 };
 
 // Showcase discretized version of the sequential gradient colormap. For this story,
@@ -139,6 +143,7 @@ Discrete.args = {
     checkedLegendItems: vocabularyEquidistant,
     showOverlayLegend: true,
   },
+  nPoints: 120,
 };
 
 // Showcase discretized version of the sequential gradient colormap. For this story,
@@ -176,4 +181,5 @@ DiscreteNonUniform.args = {
     checkedLegendItems: vocabularyNonUniform,
     showOverlayLegend: true,
   },
+  nPoints: 120,
 };
