@@ -524,7 +524,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
     false,
     false,
     false,
-    false,
+    // reset independentAxisRanges whenever toggling Binning
+    true,
     false
   );
 
@@ -696,9 +697,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
       categoricalMode,
       // the following looks nasty but it seems to work
-      // the back end only makes use of the x-axis viewport (aka independentAxisRange)
-      // when binning is in force, so no need to trigger a new request unless binning
-      vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
       // same goes for changing from full to auto-zoom/custom
       vizConfig.useBinning
         ? vizConfig.independentAxisValueSpec === 'Full'
@@ -1996,15 +1994,16 @@ function getRequestParams(
 
   // define viewport based on independent axis range: need to check undefined case
   // also no viewport change regardless of the change of overlayVariable
-  const viewport = vizConfig.keepIndependentAxisRange
-    ? undefined
-    : vizConfig?.independentAxisRange?.min != null &&
-      vizConfig?.independentAxisRange?.max != null
-    ? {
-        xMin: String(vizConfig?.independentAxisRange?.min),
-        xMax: String(vizConfig?.independentAxisRange?.max),
-      }
-    : undefined;
+  const viewport =
+    vizConfig.keepIndependentAxisRange || vizConfig.useBinning
+      ? undefined
+      : vizConfig?.independentAxisRange?.min != null &&
+        vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: String(vizConfig?.independentAxisRange?.min),
+          xMax: String(vizConfig?.independentAxisRange?.max),
+        }
+      : undefined;
 
   return {
     studyId,
