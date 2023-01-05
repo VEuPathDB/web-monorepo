@@ -30,6 +30,6 @@ export const wrapRoutes = ebrcRoutes => {
         : []
     ),
 
-    ...ebrcRoutes
+    ...ebrcRoutes.filter(route => !route.path.startsWith('/downloads'))
   ];
 };
