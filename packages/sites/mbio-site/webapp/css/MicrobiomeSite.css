@@ -119,3 +119,7 @@ div#ce-static-content h1#news ~ h2 {
 .eupathdb-Announcement button.link {
   display: none
 }
+
+.EDAWorkspace .WorkspaceNavigation {
+  top: 40px !important;
+}
