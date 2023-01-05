@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Route,
@@ -24,6 +25,7 @@ import { Grid } from '../Grid';
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import PlaceholderIcon from './PlaceholderIcon';
 import { Tooltip } from '@material-ui/core';
@@ -458,6 +460,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     disableThumbnailCreation,
     actions,
   } = props;
+  const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
   const viz = computation.visualizations.find((v) => v.visualizationId === id);
   const vizPlugin = viz && visualizationPlugins[viz.descriptor.type];
@@ -528,7 +531,16 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
 
   return (
     <div className={cx('-FullScreenContainer')}>
-      <div className={cx('-FullScreenActions')}>
+      <div
+        className={cx('-FullScreenActions')}
+        css={{
+          '& i.fa': {
+            color:
+              themePrimaryColor &&
+              themePrimaryColor.hue[themePrimaryColor.level],
+          },
+        }}
+      >
         {actions ?? (
           <>
             <div>
