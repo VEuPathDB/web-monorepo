@@ -98,39 +98,6 @@ const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
 const plotTitle = '';
 
-/**
- * width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
- * Opacity control (slider) is manually set at ScatterAndLinePlotCIReal (layout)
- */
-export const MultipleData = () => {
-  return (
-    <ScatterPlot
-      data={dataSetProcess}
-      independentAxisLabel={independentAxisLabel}
-      dependentAxisLabel={dependentAxisLabel}
-      // not to use independentAxisRange
-      // independentAxisRange={[xMin, xMax]}
-      dependentAxisRange={{ min: yMin, max: yMax }}
-      title={plotTitle}
-      // width height is replaced with containerStyles
-      containerStyles={{
-        width: plotWidth,
-        height: plotHeight,
-      }}
-      // staticPlot is changed to interactive
-      interactive={true}
-      // check enable/disable legend and built-in controls
-      displayLegend={true}
-      displayLibraryControls={true}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
-      // add legend title
-      legendTitle={'legend title example'}
-      independentValueType={independentValueType}
-      dependentValueType={dependentValueType}
-    />
-  );
-};
-
 export const MultipleDataDefaultColors = () => {
   return (
     <ScatterPlot

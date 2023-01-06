@@ -721,16 +721,16 @@ export function processInputData<T extends number | string>(
 
   // coloring: using plotly.js default colors instead of web-components default palette
   const markerColors = colorPaletteOverride ?? [
-    '31, 119, 180', //'#1f77b4',  // muted blue
-    '255, 127, 14', //'#ff7f0e',  // safety orange
-    '44, 160, 44', //'#2ca02c',  // cooked asparagus green
-    '214, 39, 40', //'#d62728',  // brick red
-    '148, 103, 189', //'#9467bd',  // muted purple
-    '140, 86, 75', //'#8c564b',  // chestnut brown
-    '227, 119, 194', //'#e377c2',  // raspberry yogurt pink
-    '127, 127, 127', //'#7f7f7f',  // middle gray
-    '188, 189, 34', //'#bcbd22',  // curry yellow-green
-    '23, 190, 207', //'#17becf'   // blue-teal
+    'rgb(31, 119, 180)', //'#1f77b4',  // muted blue
+    'rgb(255, 127, 14)', //'#ff7f0e',  // safety orange
+    'rgb(44, 160, 44)', //'#2ca02c',  // cooked asparagus green
+    'rgb(214, 39, 40)', //'#d62728',  // brick red
+    'rgb(148, 103, 189)', //'#9467bd',  // muted purple
+    'rgb(140, 86, 75)', //'#8c564b',  // chestnut brown
+    'rgb(227, 119, 194)', //'#e377c2',  // raspberry yogurt pink
+    'rgb(127, 127, 127)', //'#7f7f7f',  // middle gray
+    'rgb(188, 189, 34)', //'#bcbd22',  // curry yellow-green
+    'rgb(23, 190, 207)', //'#17becf'   // blue-teal
   ];
 
   // set dataSetProcess as any
@@ -886,18 +886,20 @@ export function processInputData<T extends number | string>(
             : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
         marker: {
-          color: defineColors
-            ? 'rgb(' + markerColors[index] + ')'
-            : seriesGradientColorscale?.length > 0
-            ? markerColorsGradient
-            : undefined,
-          size: 12,
-          line: {
-            color: defineColors
-              ? 'rgb(' + markerColors[index] + ')'
+          color:
+            defineColors || colorPaletteOverride
+              ? markerColors[index]
               : seriesGradientColorscale?.length > 0
               ? markerColorsGradient
               : undefined,
+          size: 12,
+          line: {
+            color:
+              defineColors || colorPaletteOverride
+                ? markerColors[index]
+                : seriesGradientColorscale?.length > 0
+                ? markerColorsGradient
+                : undefined,
             width: 2,
           },
           symbol: 'circle',

@@ -44,7 +44,8 @@ const Template: Story<TemplateProps> = (args) => {
     'markers',
     'number',
     'number',
-    false
+    false,
+    ColorPaletteDefault
   );
 
   // Reduce the input data to only approximately nPoints points. There will be multiple series so we have to
