@@ -34,7 +34,7 @@
     "@veupathdb/components": "^0.19.7",
     "@veupathdb/coreui": "^0.18.14",
     "@veupathdb/eda": ">=3.11.16",
-    "@veupathdb/wdk-client": "^0.9.17",
+    "@veupathdb/wdk-client": "^0.9.22",
     "notistack": "^1.0.10",
     "react": ">=16.14",
     "react-dom": ">=16.14"
@@ -61,7 +61,7 @@
     "@veupathdb/react-scripts": "^2.0.0",
     "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/user-datasets": "^0.1.12",
-    "@veupathdb/wdk-client": "^0.9.17",
+    "@veupathdb/wdk-client": "^0.9.22",
     "bubleify": "^2.0.0",
     "icon-font-generator": "^2.1.11",
     "ify-loader": "^1.1.0",
