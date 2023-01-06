@@ -11,6 +11,7 @@ if (window.__SITE_CONFIG__ == null) {
 }
 
 export const {
+  requireLogin = false,
   rootUrl = '',
   rootElement = '',
   endpoint = '',
