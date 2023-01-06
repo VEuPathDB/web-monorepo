@@ -82,8 +82,9 @@ const siteAnnouncements = [
     if ( (props.projectId == 'MicrobiomeDB') && (props.location.pathname === '/') ) {
         return (
           <div>
-           Welcome to MicrobiomeDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
-           &nbsp;&nbsp;Access the original version of our website, including your saved strategies, at <a href="https://microbiomedb.org">microbiomedbdb.org</a>.
+           Welcome to the BETA version of MicrobiomeDB with the new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
+           &nbsp;&nbsp;While we resolve bugs on the BETA site, you can access the original version of our website, 
+           including your saved strategies, at <a href="https://microbiomedb.org">microbiomedbdb.org</a>.
           </div>
         );
       }
