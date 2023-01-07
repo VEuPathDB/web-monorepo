@@ -21,7 +21,7 @@ const EmptyHeatmapData: HeatmapData = {
   values: [[]],
 };
 
-const Heatmap = makePlotlyPlotComponent('Heatmap', (props: HeatmapProps) => {
+const Heatmap = makePlotlyPlotComponent('Heatmap', (props: any) => {
   const {
     data = EmptyHeatmapData,
     xAxisLabel,
