@@ -48,7 +48,7 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
-import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
+import { CustomCheckboxes } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
 import { Toggle } from '@veupathdb/coreui';
 import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
 
@@ -585,13 +585,6 @@ export default function VariableList({
         }}
       >
         <HtmlTooltip
-          css={{
-            zIndex: 1,
-            /*
-             * This is needed to address a compiler error.
-             * Not sure why it's complaining, but here we are...
-             */
-          }}
           title={tooltipContent}
           interactive
           enterDelay={500}
@@ -712,7 +705,7 @@ export default function VariableList({
                       (CustomCheckbox ? (
                         <CustomCheckbox
                           checked={checked}
-                          toggleCheckbox={onChange}
+                          onChange={() => onChange(null, checked)}
                         />
                       ) : (
                         <input
