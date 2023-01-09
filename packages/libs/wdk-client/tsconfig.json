@@ -23,7 +23,8 @@
     "declarationMap": true,
     "paths": {
       "wdk-client/*": [ "src/*" ]
-    }
+    },
+    "skipLibCheck": true
   },
   "include": [ "src/**/*" ]
 }
