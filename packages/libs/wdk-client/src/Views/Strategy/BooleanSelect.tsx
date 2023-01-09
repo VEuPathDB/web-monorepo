@@ -47,7 +47,7 @@ export const BooleanSelect = ({ addType, value, onChange: onChangeValue }: Props
   const options = addType.type === 'append' ? appendOptions : insertBeforeOptions;
   const valueOption = options.find(option => option.value === value);
 
-  const onChange = useCallback((option: ValueType<BooleanOption>) => {
+  const onChange = useCallback((option: ValueType<BooleanOption, false>) => {
     onChangeValue((option as BooleanOption).value);
   }, [ onChangeValue ]);
 

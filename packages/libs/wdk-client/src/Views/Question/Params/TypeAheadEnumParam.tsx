@@ -51,7 +51,7 @@ export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
     }
   }, []);
 
-  const onChange = useCallback((newSelection: ValueType<Option>) => {
+  const onChange = useCallback((newSelection: ValueType<Option, any>) => {
     const newSelectionArray = newSelection == null
       ? []
       : Array.isArray(newSelection)
@@ -82,7 +82,7 @@ export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
   );
 
   return (
-    <Select<Option>
+    <Select<Option, any>
       isMulti={isMultiPick(props.parameter)}
       isSearchable
       options={options}

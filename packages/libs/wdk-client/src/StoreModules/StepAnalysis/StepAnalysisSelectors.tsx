@@ -28,7 +28,7 @@ type Props = {
 };
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
-export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
+export const wdkModelBuildNumber = (state: RootState): number => +get(state, 'globalData.config.buildNumber', 0);
 export const resultTypeDetails = (state: RootState, props: Props) => {
   const viewState = state.resultPanel[props.viewId];
   return viewState && viewState.resultTypeDetails;

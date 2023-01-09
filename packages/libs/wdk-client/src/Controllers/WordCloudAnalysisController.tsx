@@ -69,7 +69,7 @@ class WordCloudAnalysisController extends React.PureComponent<Props> {
 
     if (report.resource == null) return <Loading />;
 
-    const tags: Tag[] = get(report.resource, 'tags');
+    const tags: Tag[] = get(report.resource, 'tags', []);
 
     const {
       rankRange = {
