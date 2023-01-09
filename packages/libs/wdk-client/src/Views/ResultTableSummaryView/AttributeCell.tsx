@@ -50,7 +50,7 @@ function AttributeCell({
         style: styleSpec,
         ref,
       }, 'div');
-    return !('overflow' in styleSpec) ? cellContent : <Tooltip title={ref.current?.innerText ?? ''} css={{}} interactive>{cellContent}</Tooltip>
+    return !('overflow' in styleSpec) ? cellContent : <Tooltip title={ref.current?.innerText ?? ''} interactive>{cellContent}</Tooltip>
   }
 
   const { url, displayText } = value;

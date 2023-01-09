@@ -107,7 +107,7 @@ function ResultTableAddColumnsDialog({
   const buttonWithTooltip = (
     <div style={{ textAlign: 'center' }}>
       {areMaxColumnsExceeded ?
-        <Tooltip css={{}} title={'Please select no more than ' + MAX_COLUMNS_ALLOWED + ' columns'}>
+        <Tooltip title={'Please select no more than ' + MAX_COLUMNS_ALLOWED + ' columns'}>
           {updateButton}
         </Tooltip> :
         updateButton

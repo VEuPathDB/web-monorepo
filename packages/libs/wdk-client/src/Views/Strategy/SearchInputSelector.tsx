@@ -368,7 +368,7 @@ function SearchInputNode({ node, onCombineWithNewSearchSelected }: SearchInputNo
   const tooltipContent = getFormattedTooltipContent(node);
 
   return tooltipContent && offerTooltip
-    ? <HtmlTooltip css={{}} title={tooltipContent}>
+    ? <HtmlTooltip title={tooltipContent}>
         {displayElement}
       </HtmlTooltip>
     : displayElement;
