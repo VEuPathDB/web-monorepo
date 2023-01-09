@@ -47,7 +47,7 @@ export interface ScatterPlotProps
   /** dependentValueType */
   dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
   /** marker color opacity: range from 0 to 1 */
-  markerColorOpacity?: number;
+  markerBodyOpacity?: number;
 }
 
 const EmptyScatterPlotData: ScatterPlotData = {
@@ -74,7 +74,7 @@ const ScatterPlot = makePlotlyPlotComponent(
       axisTruncationConfig,
       independentAxisLogScale = independentAxisLogScaleDefault,
       dependentAxisLogScale = DependentAxisLogScaleDefault,
-      markerColorOpacity,
+      markerBodyOpacity,
       ...restProps
     } = props;
 
@@ -99,30 +99,29 @@ const ScatterPlot = makePlotlyPlotComponent(
     );
 
     // make rectangular layout shapes for truncated axis/missing data
-    const truncatedAxisHighlighting:
-      | Partial<Shape>[]
-      | undefined = useMemo(() => {
-      if (data.series.length > 0) {
-        const filteredTruncationLayoutShapes = truncationLayoutShapes(
-          orientation,
-          standardIndependentAxisRange, // send undefined for independentAxisRange
-          standardDependentAxisRange,
-          extendedIndependentAxisRange, // send undefined for independentAxisRange
-          extendedDependentAxisRange,
-          axisTruncationConfig
-        );
+    const truncatedAxisHighlighting: Partial<Shape>[] | undefined =
+      useMemo(() => {
+        if (data.series.length > 0) {
+          const filteredTruncationLayoutShapes = truncationLayoutShapes(
+            orientation,
+            standardIndependentAxisRange, // send undefined for independentAxisRange
+            standardDependentAxisRange,
+            extendedIndependentAxisRange, // send undefined for independentAxisRange
+            extendedDependentAxisRange,
+            axisTruncationConfig
+          );
 
-        return filteredTruncationLayoutShapes;
-      } else {
-        return [];
-      }
-    }, [
-      standardDependentAxisRange,
-      extendedDependentAxisRange,
-      orientation,
-      data,
-      axisTruncationConfig,
-    ]);
+          return filteredTruncationLayoutShapes;
+        } else {
+          return [];
+        }
+      }, [
+        standardDependentAxisRange,
+        extendedDependentAxisRange,
+        orientation,
+        data,
+        axisTruncationConfig,
+      ]);
 
     const layout: Partial<Layout> = {
       hovermode: 'closest',
@@ -200,20 +199,20 @@ const ScatterPlot = makePlotlyPlotComponent(
           color:
             d.marker == null
               ? undefined
-              : markerColorOpacity != null
+              : markerBodyOpacity != null
               ? Array.isArray(d.marker.color)
                 ? d.marker.color.map((color: string) =>
                     ColorMath.evaluate(
                       color +
                         ' @a ' +
-                        (markerColorOpacity * 100).toString() +
+                        (markerBodyOpacity * 100).toString() +
                         '%'
                     ).result.css()
                   )
                 : ColorMath.evaluate(
                     d.marker.color +
                       ' @a ' +
-                      (markerColorOpacity * 100).toString() +
+                      (markerBodyOpacity * 100).toString() +
                       '%'
                   ).result.css()
               : d.marker.color,
@@ -223,11 +222,16 @@ const ScatterPlot = makePlotlyPlotComponent(
               ? undefined
               : {
                   ...d.marker.line,
-                  width: markerColorOpacity === 0 ? 1 : 0,
+                  width:
+                    markerBodyOpacity != null
+                      ? markerBodyOpacity === 0
+                        ? 1
+                        : 0
+                      : 1,
                 },
         },
       }));
-    }, [data, markerColorOpacity]);
+    }, [data, markerBodyOpacity]);
 
     return {
       data: finalData,
