@@ -35,7 +35,7 @@
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^2.0.0",
     "@veupathdb/tsconfig": "^2.0.0",
-    "@veupathdb/wdk-client": "^0.9.21",
+    "@veupathdb/wdk-client": "^0.9.22",
     "husky": ">=4",
     "lint-staged": ">=10",
     "prettier": "2.2.1",
@@ -61,6 +61,6 @@
   },
   "peerDependencies": {
     "@veupathdb/http-utils": "^1.1.0",
-    "@veupathdb/wdk-client": ">=0.9.21"
+    "@veupathdb/wdk-client": ">=0.9.22"
   }
 }
