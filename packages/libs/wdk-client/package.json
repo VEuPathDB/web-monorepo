@@ -69,7 +69,7 @@
     "@types/uuid": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
-    "@veupathdb/components": "^0.19.14",
+    "@veupathdb/components": "^0.19.15",
     "@veupathdb/coreui": "^0.18.18",
     "@veupathdb/react-scripts": "^2.0.0",
     "babel-eslint": "^8.0.1",
@@ -92,7 +92,7 @@
     "typescript": "~4.3.5"
   },
   "peerDependencies": {
-    "@veupathdb/components": "^0.19.14",
+    "@veupathdb/components": "^0.19.15",
     "@veupathdb/coreui": "^0.18.18",
     "notistack": "^1.0.10",
     "react": ">=16.14",
@@ -125,7 +125,7 @@
     ]
   },
   "volta": {
-    "node": "14.15.5",
+    "node": "16.15.0",
     "yarn": "1.22.10"
   }
 }
