@@ -48,7 +48,7 @@ export const NewsPane = ({ containerClassName, isNewsExpanded, toggleNews }: Pro
     let cancelLoading = false;
 
     if (communitySiteUrl != null) {
-      setNewsSidebarState({ status: 'loading', ...newsSidebarState });
+      setNewsSidebarState({ ...newsSidebarState, status: 'loading' });
 
       fetch(`https://${communitySiteUrl}${NEWS_URL_SEGMENT}`, { mode: 'cors' }).then(res=> res.json()).then(
         news => {

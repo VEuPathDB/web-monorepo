@@ -22,7 +22,7 @@ interface HighlightRegion {
 function Sequence(props: Props) {
   const { accession, highlightRegions = [], sequence } = props;
   const ref = useRef<HTMLPreElement>(null);
-  const [ isExpanded, setIsExpanded ] = useState();
+  const [ isExpanded, setIsExpanded ] = useState<boolean>();
   const isOverflowing = useIsRefOverflowingVertically(ref);
 
   const onClickCopyButton = useCallback(
@@ -89,7 +89,7 @@ function Sequence(props: Props) {
           bottom: 0,
           width: '100%',
           paddingTop: '2em',
-          paddingBottom: isExpanded && '2em',
+          paddingBottom: isExpanded ? '2em' : undefined,
           background: 'linear-gradient(to bottom, transparent, white 50%)',
           fontWeight: 500
         }}>

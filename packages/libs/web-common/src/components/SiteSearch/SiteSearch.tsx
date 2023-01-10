@@ -618,7 +618,7 @@ function WdkRecordFields(props: Props & { onlyShowMatches: boolean }) {
             );
             return {
               display: documentType === 'variable' && field.name === 'MULTITEXT__variable_StudyInfo' ? (
-                <Tooltip title="Searches the study name, entity, original variable name, and definition of the variable." interactive css={{}}>
+                <Tooltip title="Searches the study name, entity, original variable name, and definition of the variable." interactive>
                   {display}
                 </Tooltip>
               ) : display,
@@ -793,7 +793,7 @@ function VariableStudyTable(props: { document: SiteSearchDocument, summaryField:
           accessor: "_",
           header: <div><Icon fa="external-link" /> View</div>,
           render: ({ row }) => (
-            <Tooltip css={{}} title="View variable in a new analysis">
+            <Tooltip title="View variable in a new analysis">
               <Link
                 to={`${makeEdaRoute(useDatasetId(row.studyId))}/new/variables/${
                   row.entityId
@@ -858,7 +858,7 @@ function VariableValueStudyTable(props: { document: SiteSearchDocument, summaryF
           accessor: '_',
           header: <div><Icon fa="external-link"/> View</div>,
           render: ({ row }) => (
-            <Tooltip css={null} title="View variable in a new analysis">
+            <Tooltip title="View variable in a new analysis">
               <Link to={makeLink(row.studyId, row.entityId, row.variableId)}>
                 <Icon fa="external-link"/> View
               </Link>

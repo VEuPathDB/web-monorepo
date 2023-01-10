@@ -12,7 +12,7 @@ type ProjectLinkProps = {
 };
 
 export const ProjectLink = ({ projectId }: ProjectLinkProps) =>
-  <Tooltip css={{}} title={`${projectId}.org`}>
+  <Tooltip title={`${projectId}.org`}>
     <div className={cx()}>
       <a target="_blank" href={`https://${projectId.toLowerCase()}.org`} className={projectId}>
         https://{projectId.toLowerCase()}.org

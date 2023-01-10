@@ -117,7 +117,7 @@ export default function CardList(props) {
     ? `Hide expanded view and list all ${contentNamePlural} horizontally`
     : `Show expanded view and search for specific ${contentNamePlural}`
   const expandButton = isExpandable &&
-    <Tooltip css={{}} title={buttonTitle}>
+    <Tooltip title={buttonTitle}>
       <button type="button" className={EXPAND_BUTTON_CLASS_NAME} onClick={() => setIsExpanded(!isExpanded)}>
         {isExpanded
           ? <React.Fragment><i className="fa fa-ellipsis-h" aria-hidden="true"></i> Row view</React.Fragment>
@@ -151,7 +151,7 @@ export default function CardList(props) {
       onChange={option => setCategoryFilter(option && option.value)}
     />
   const tableLink = tableViewLink &&
-    <Tooltip css={{}} title={"View content as a table"}>
+    <Tooltip title={"View content as a table"}>
       <Link to={tableViewLink} className={ALLSTUDIES_LINK_CLASS_NAME}><i className="ebrc-icon-table" aria-hidden="true"></i> {tableViewLinkText}</Link>
     </Tooltip>
 
