@@ -2,8 +2,8 @@ import React, { useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { Checkbox, CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
-import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { Checkbox } from '@veupathdb/wdk-client/lib/Components';
+import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
