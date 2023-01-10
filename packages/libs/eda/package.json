@@ -10,6 +10,7 @@
     "monocle-ts": "^2.3.11",
     "react-cool-dimensions": "^2.0.7",
     "react-draggable": "^4.4.3",
+    "react-leaflet": "^2.7.0",
     "react-resizable": "^3.0.4",
     "uuid": "^8.3.2"
   },
@@ -74,6 +75,7 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
+    "@types/react-leaflet": "^2.5.2",
     "@types/react-resizable": "^1.7.2",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-table": "^7.7.12",
