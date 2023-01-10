@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { createTheme, ThemeProvider } from '@material-ui/core';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import React, { useEffect, useRef, useState } from 'react';

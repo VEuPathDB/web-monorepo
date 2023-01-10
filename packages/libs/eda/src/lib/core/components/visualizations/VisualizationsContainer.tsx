@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   Route,
