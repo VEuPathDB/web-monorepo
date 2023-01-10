@@ -634,7 +634,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   const controlsNode = (
     <>
       {/* pre-occupied space for banner */}
-      <div style={{ width: 750, marginLeft: '1em', height: '5em' }} />
+      <div style={{ width: 750, marginLeft: '1em', height: '5.1em' }} />
       {/* Plot mode */}
       <RadioButtonGroup
         label="Plot mode"

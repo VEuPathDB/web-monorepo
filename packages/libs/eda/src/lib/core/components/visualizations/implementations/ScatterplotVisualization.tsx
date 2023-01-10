@@ -1304,6 +1304,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   // add showBanner prop in this Viz
   const [showBanner, setShowBanner] = useState(true);
 
+  //DKDK
+  console.log('data =', data);
+  console.log('!showLogScaleBanner =', !showLogScaleBanner);
+
   const controlsNode = (
     <>
       {/* pre-occupied space for banner:  1 line = 2.5em */}
@@ -1312,7 +1316,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         style={{
           width: 750,
           marginLeft: '1em',
-          minHeight: '5em',
+          minHeight: '5.1em',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -1516,7 +1520,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               }
             />
             {/* truncation notification */}
-            {truncatedIndependentAxisWarning && !independentAllNegative ? (
+            {truncatedIndependentAxisWarning &&
+            !independentAllNegative &&
+            data.value != null ? (
               <Notification
                 title={''}
                 text={truncatedIndependentAxisWarning}

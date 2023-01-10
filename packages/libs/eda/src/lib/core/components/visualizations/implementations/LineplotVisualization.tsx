@@ -1120,7 +1120,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         style={{
           width: 750,
           marginLeft: '1em',
-          minHeight: '5em',
+          minHeight: '5.1em',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
