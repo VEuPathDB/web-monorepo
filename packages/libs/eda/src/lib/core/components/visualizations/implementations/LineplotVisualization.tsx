@@ -187,7 +187,6 @@ function createDefaultConfig(): LineplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
-    keepIndependentAxisRange: false,
   };
 }
 
@@ -217,7 +216,6 @@ export const LineplotConfig = t.intersection([
     dependentAxisLogScale: t.boolean,
     independentAxisValueSpec: t.string,
     dependentAxisValueSpec: t.string,
-    keepIndependentAxisRange: t.boolean,
   }),
 ]);
 
@@ -346,7 +344,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const keepBin = isEqual(
+      const keepIndependentAxisSettings = isEqual(
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -368,14 +366,16 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       updateVizConfig({
         ...selectedVariables,
-        binWidth: keepBin ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepIndependentAxisSettings
+          ? vizConfig.binWidthTimeUnit
+          : undefined,
         // set valueSpec as Raw when yAxisVariable = date
         valueSpecConfig: valueSpec,
         // set undefined for variable change
         checkedLegendItems: undefined,
         // axis range control: set independentAxisRange undefined
-        independentAxisRange: keepBin
+        independentAxisRange: keepIndependentAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
         dependentAxisRange: undefined,
@@ -388,7 +388,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }),
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: keepBin
+        independentAxisValueSpec: keepIndependentAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec:
@@ -397,7 +397,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               ? 'Full'
               : 'Auto-zoom'
             : 'Full',
-        keepIndependentAxisRange: keepBin,
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -524,8 +523,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     false,
     false,
     false,
-    // reset independentAxisRanges whenever toggling Binning
-    true,
+    false,
     false
   );
 
@@ -697,6 +695,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
       categoricalMode,
       // the following looks nasty but it seems to work
+      // the back end only makes use of the x-axis viewport (aka independentAxisRange)
+      // when binning is in force, so no need to trigger a new request unless binning
+      vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
       // same goes for changing from full to auto-zoom/custom
       vizConfig.useBinning
         ? vizConfig.independentAxisValueSpec === 'Full'
@@ -1995,10 +1996,8 @@ function getRequestParams(
   // define viewport based on independent axis range: need to check undefined case
   // also no viewport change regardless of the change of overlayVariable
   const viewport =
-    vizConfig.keepIndependentAxisRange || vizConfig.useBinning
-      ? undefined
-      : vizConfig?.independentAxisRange?.min != null &&
-        vizConfig?.independentAxisRange?.max != null
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
       ? {
           xMin: String(vizConfig?.independentAxisRange?.min),
           xMax: String(vizConfig?.independentAxisRange?.max),

@@ -144,7 +144,6 @@ function createDefaultConfig(): HistogramConfig {
     valueSpec: 'count',
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
-    keepIndependentAxisRange: false,
   };
 }
 
@@ -173,7 +172,6 @@ export const HistogramConfig = t.intersection([
     dependentAxisRange: NumberRange,
     independentAxisValueSpec: t.string,
     dependentAxisValueSpec: t.string,
-    keepIndependentAxisRange: t.boolean,
   }),
 ]);
 
@@ -224,26 +222,30 @@ function HistogramViz(props: VisualizationProps<Options>) {
         overlayVariable,
         facetVariable,
       } = selectedVariables;
-      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+      const keepIndependentAxisSettings = isEqual(
+        xAxisVariable,
+        vizConfig.xAxisVariable
+      );
 
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
         facetVariable,
-        binWidth: keepBin ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepIndependentAxisSettings
+          ? vizConfig.binWidthTimeUnit
+          : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        independentAxisRange: keepBin
+        independentAxisRange: keepIndependentAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
         dependentAxisRange: undefined,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: keepBin
+        independentAxisValueSpec: keepIndependentAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
-        keepIndependentAxisRange: keepBin,
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
@@ -1355,15 +1357,14 @@ function getRequestParams(
 
   // define viewport based on independent axis range: need to check undefined case
   // also no viewport change regardless of the change of overlayVariable
-  const viewport = vizConfig.keepIndependentAxisRange
-    ? undefined
-    : vizConfig?.independentAxisRange?.min != null &&
-      vizConfig?.independentAxisRange?.max != null
-    ? {
-        xMin: vizConfig?.independentAxisRange?.min,
-        xMax: vizConfig?.independentAxisRange?.max,
-      }
-    : undefined;
+  const viewport =
+    vizConfig?.independentAxisRange?.min != null &&
+    vizConfig?.independentAxisRange?.max != null
+      ? {
+          xMin: vizConfig?.independentAxisRange?.min,
+          xMax: vizConfig?.independentAxisRange?.max,
+        }
+      : undefined;
 
   return {
     studyId,
