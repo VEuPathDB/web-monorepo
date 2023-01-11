@@ -8,11 +8,16 @@ import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 import { EntityCounts } from '../hooks/entityCounts';
-import { CompleteCasesTable } from '../api/DataClient';
+import {
+  CompleteCasesTable,
+  PlotReferenceValue,
+  VariableMapping,
+} from '../api/DataClient';
 import { Bounds } from '@veupathdb/components/lib/map/Types';
 import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
+import { variableDisplayWithUnit } from './variable-display';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -268,4 +273,28 @@ export function geohashLevelToVariableId(geohashLevel: number): string {
     default:
       return 'EUPATH_0043208'; // geohash_6
   }
+}
+
+export function getVariableLabel(
+  plotReference: PlotReferenceValue,
+  variableMappings: VariableMapping[] | undefined,
+  entities: StudyEntity[],
+  fallbackLabel: string
+): string | undefined {
+  const mapping = variableMappings?.find(
+    (mapping) => mapping.plotReference === plotReference
+  );
+
+  if (mapping == null) return fallbackLabel;
+
+  // TODO Will derived variables have a displayName?
+  if (mapping.variableClass === 'native') {
+    const nativeVariable = findEntityAndVariable(
+      entities,
+      mapping.variableSpec
+    );
+    return variableDisplayWithUnit(nativeVariable?.variable) ?? fallbackLabel;
+  }
+
+  return mapping.displayName ?? fallbackLabel;
 }

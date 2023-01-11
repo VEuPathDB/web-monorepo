@@ -1,7 +1,7 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
-import { AnalysisClient } from '../api/analysis-api';
+import { AnalysisClient } from '../api/AnalysisClient';
 import {
   MakeVariableLink,
   WorkspaceContext,
@@ -15,12 +15,12 @@ import {
 } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { useCallback, useMemo } from 'react';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   entityTreeToArray,
   findCollections,
   findEntityAndVariable,
 } from '../utils/study-metadata';
+import { ComputeClient } from '../api/ComputeClient';
 
 /** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
@@ -40,6 +40,9 @@ export function useDataClient(): DataClient {
 }
 export function useAnalysisClient(): AnalysisClient {
   return useNonNullableContext(WorkspaceContext).analysisClient;
+}
+export function useComputeClient(): ComputeClient {
+  return useNonNullableContext(WorkspaceContext).computeClient;
 }
 export function useMakeVariableLink(): MakeVariableLink {
   return (

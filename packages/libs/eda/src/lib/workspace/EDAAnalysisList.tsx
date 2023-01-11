@@ -11,6 +11,7 @@ import {
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
   useConfiguredDownloadClient,
+  useConfiguredComputeClient,
 } from '../core/hooks/client';
 
 // Data and Utilities
@@ -32,6 +33,7 @@ export function EDAAnalysisList(props: Props) {
   );
 
   const dataClient = useConfiguredDataClient(props.dataServiceUrl);
+  const computeClient = useConfiguredComputeClient(props.dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(props.userServiceUrl);
   const downloadClient = useConfiguredDownloadClient(props.downloadServiceUrl);
 
@@ -46,6 +48,7 @@ export function EDAAnalysisList(props: Props) {
         className={cx()}
         analysisClient={analysisClient}
         downloadClient={downloadClient}
+        computeClient={computeClient}
       >
         <EDAWorkspaceHeading />
         <AnalysisList analysisStore={analysisClient} />

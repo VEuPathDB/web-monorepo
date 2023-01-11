@@ -1,86 +1,69 @@
 /** @jsxImportSource @emotion/react */
-import { useStudyMetadata } from '../../..';
-import { useCollectionVariables } from '../../../hooks/workspace';
-import { VariableDescriptor } from '../../../types/variable';
+import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { StudyEntity } from '../../../types/study';
-import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
+import { VariableDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { H6 } from '@veupathdb/coreui';
 import { isEqual, partial } from 'lodash';
-import { assertComputationWithConfig, useConfigChangeHandler } from '../Utils';
+import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useMemo } from 'react';
+import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
 
-export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
+export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AbundanceConfig = t.type({
+export const BetaDivConfig = t.type({
   collectionVariable: VariableDescriptor,
-  rankingMethod: t.string,
+  betaDivDistanceMethod: t.string,
 });
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: AbundanceConfiguration,
-  configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
+  configurationComponent: BetaDivConfiguration,
+  configurationDescriptionComponent: BetaDivConfigDescriptionComponent,
   createDefaultConfiguration,
-  isConfigurationValid: AbundanceConfig.is,
+  isConfigurationValid: BetaDivConfig.is,
   visualizationPlugins: {
-    boxplot: boxplotVisualization.withOptions({
-      getXAxisVariable(config) {
-        if (AbundanceConfig.is(config)) {
-          return config.collectionVariable;
-        }
-      },
-      getComputedYAxisDetails(config) {
-        if (AbundanceConfig.is(config)) {
-          return {
-            entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Relative abundance',
-          };
-        }
-      },
-      getPlotSubtitle(config) {
-        if (AbundanceConfig.is(config)) {
-          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
-        }
-      },
-      hideShowMissingnessToggle: true,
-    }),
-    scatterplot: scatterplotVisualization.withOptions({
-      getComputedYAxisDetails(config) {
-        if (AbundanceConfig.is(config)) {
-          return {
-            entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Relative abundance',
-          };
-        }
-      },
-      getComputedOverlayVariable(config) {
-        if (AbundanceConfig.is(config)) {
-          return config.collectionVariable;
-        }
-      },
-      getPlotSubtitle(config) {
-        if (AbundanceConfig.is(config)) {
-          return `Ranked abundance: Variables with ${config.rankingMethod} = 0 removed. Showing up to the top ten variables.`;
-        }
-      },
-      hideShowMissingnessToggle: true,
-    }),
+    scatterplot: scatterplotVisualization
+      .withOptions({
+        getComputedXAxisDetails(config) {
+          if (BetaDivConfig.is(config)) {
+            return {
+              entityId: config.collectionVariable.entityId,
+              placeholderDisplayName: 'Beta Diversity Axis 1',
+              variableId: 'Axis1',
+            };
+          }
+        },
+        getComputedYAxisDetails(config) {
+          if (BetaDivConfig.is(config)) {
+            return {
+              entityId: config.collectionVariable.entityId,
+              placeholderDisplayName: 'Beta Diversity Axis 2',
+              variableId: 'Axis2',
+            };
+          }
+        },
+        hideShowMissingnessToggle: true,
+        hideTrendlines: true,
+        hideFacetInputs: true,
+        hideLogScale: true,
+      })
+      .withSelectorIcon(ScatterBetadivSVG),
   },
 };
 
-function AbundanceConfigDescriptionComponent({
+function BetaDivConfigDescriptionComponent({
   computation,
 }: {
   computation: Computation;
 }) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
-  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  assertComputationWithConfig<BetaDivConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -100,17 +83,20 @@ function AbundanceConfigDescriptionComponent({
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
-        Method:{' '}
+        Distance method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {configuration.rankingMethod[0].toUpperCase() +
-            configuration.rankingMethod.slice(1)}
+          {configuration.betaDivDistanceMethod[0].toUpperCase() +
+            configuration.betaDivDistanceMethod.slice(1)}
         </span>
       </h4>
     </>
   );
 }
 
-function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
+// Include available methods in this array.
+const BETA_DIV_DISTANCE_METHODS = ['bray', 'jaccard', 'jsd'];
+
+function createDefaultConfiguration(rootEntity: StudyEntity): BetaDivConfig {
   const collections = findCollections(rootEntity);
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
@@ -119,14 +105,11 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
       variableId: collections[0].id,
       entityId: collections[0].entityId,
     },
-    rankingMethod: 'median',
+    betaDivDistanceMethod: BETA_DIV_DISTANCE_METHODS[0],
   };
 }
 
-// Include available methods in this array.
-const ABUNDANCE_METHODS = ['median', 'q3', 'variance', 'max'];
-
-export function AbundanceConfiguration(props: ComputationConfigProps) {
+export function BetaDivConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
     computation,
@@ -139,11 +122,11 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertComputationWithConfig<AbundanceConfig>(computation, Computation);
+  assertComputationWithConfig<BetaDivConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  const { rankingMethod, collectionVariable } = configuration;
+  const { betaDivDistanceMethod, collectionVariable } = configuration;
 
-  const changeConfigHandler = useConfigChangeHandler<AbundanceConfig>(
+  const changeConfigHandler = useConfigChangeHandler<BetaDivConfig>(
     analysisState,
     computation,
     visualizationId
@@ -192,22 +175,24 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
           alignItems: 'center',
         }}
       >
-        <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
+        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
         <SingleSelect
           value={selectedCollectionVar.value}
           buttonDisplayContent={selectedCollectionVar.display}
           items={collectionVarItems}
           onSelect={partial(changeConfigHandler, 'collectionVariable')}
         />
-        <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
+        <div style={{ justifySelf: 'end', fontWeight: 500 }}>
+          Distance method
+        </div>
         <SingleSelect
-          value={rankingMethod}
-          buttonDisplayContent={rankingMethod}
-          onSelect={partial(changeConfigHandler, 'rankingMethod')}
-          items={ABUNDANCE_METHODS.map((method) => ({
+          value={betaDivDistanceMethod}
+          buttonDisplayContent={betaDivDistanceMethod}
+          items={BETA_DIV_DISTANCE_METHODS.map((method) => ({
             value: method,
             display: method,
           }))}
+          onSelect={partial(changeConfigHandler, 'betaDivDistanceMethod')}
         />
       </div>
     </div>

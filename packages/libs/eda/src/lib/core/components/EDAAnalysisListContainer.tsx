@@ -3,11 +3,16 @@ import React from 'react';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
-import { AnalysisClient } from '../api/analysis-api';
+import { AnalysisClient } from '../api/AnalysisClient';
 import SubsettingClient from '../api/SubsettingClient';
 import DataClient from '../api/DataClient';
-import { WorkspaceContext } from '../context/WorkspaceContext';
+import {
+  WorkspaceContext,
+  WorkspaceContextValue,
+} from '../context/WorkspaceContext';
 import { DownloadClient } from '../api/DownloadClient';
+import { ComputeClient } from '../api/ComputeClient';
+import { useDeepValue } from '../hooks/immutability';
 
 interface Props {
   studyId: string;
@@ -17,6 +22,7 @@ interface Props {
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
   downloadClient: DownloadClient;
+  computeClient: ComputeClient;
 }
 
 export function EDAAnalysisListContainer(props: Props) {
@@ -26,24 +32,32 @@ export function EDAAnalysisListContainer(props: Props) {
     dataClient,
     analysisClient,
     downloadClient,
+    computeClient,
     className = 'EDAWorkspace',
     children,
   } = props;
   const studyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
-  if (studyRecordState == null || studyMetadata == null) return <Loading />;
+  const contextValue = useDeepValue({
+    ...studyRecordState,
+    studyMetadata,
+    analysisClient,
+    subsettingClient,
+    dataClient,
+    downloadClient,
+    computeClient,
+  });
+
+  if (
+    contextValue.studyRecord == null ||
+    contextValue.studyRecordClass == null ||
+    contextValue.studyMetadata == null
+  )
+    return <Loading />;
+
   return (
     <div className={className}>
-      <WorkspaceContext.Provider
-        value={{
-          ...studyRecordState,
-          studyMetadata,
-          analysisClient,
-          subsettingClient,
-          dataClient,
-          downloadClient,
-        }}
-      >
+      <WorkspaceContext.Provider value={contextValue as WorkspaceContextValue}>
         {children}
       </WorkspaceContext.Provider>
     </div>

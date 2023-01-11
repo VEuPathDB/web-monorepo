@@ -10,7 +10,11 @@ import {
 import Path from 'path';
 import { v4 as uuid } from 'uuid';
 import { orderBy } from 'lodash';
-import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Link,
+  Loading,
+  SaveableTextEditor,
+} from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
 import { VariableDescriptor } from '../../types/variable';
@@ -18,7 +22,6 @@ import {
   Computation,
   Visualization,
   VisualizationOverview,
-  VisualizationDescriptor,
 } from '../../types/visualization';
 import { Grid } from '../Grid';
 
@@ -42,6 +45,12 @@ import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
+import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
+import { JobStatus } from '../computations/ComputeJobStatusHook';
+import { isTerminalStatus } from '../computations/ComputeJobStatusHook';
+import { H5 } from '@veupathdb/coreui';
+import EmptyPlotSVG from './emptyPlot';
+import RelaxMicrobeSVG from './relaxMicrobe';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -65,6 +74,8 @@ interface Props {
   baseUrl?: string;
   isSingleAppMode: boolean;
   disableThumbnailCreation?: boolean;
+  computeJobStatus?: JobStatus;
+  createComputeJob?: () => void;
 }
 
 /**
@@ -139,10 +150,12 @@ function ConfiguredVisualizations(props: Props) {
   const {
     analysisState,
     computation,
+    computationAppOverview,
     updateVisualizations,
     visualizationsOverview,
     baseUrl,
     isSingleAppMode,
+    computeJobStatus,
   } = props;
   const { url } = useRouteMatch();
 
@@ -241,31 +254,37 @@ function ConfiguredVisualizations(props: Props) {
                         state: { scrollToTop: false },
                       }}
                     >
-                      {viz.descriptor.thumbnail ? (
-                        <img
-                          alt={viz.displayName}
-                          src={viz.descriptor.thumbnail}
-                        />
-                      ) : (
-                        <div
-                          className={cx('-ConfiguredVisualizationNoPreview')}
-                        >
-                          Preview unavailable
-                        </div>
-                      )}
-                      {/* make gray-out box on top of thumbnail */}
                       <ConfiguredVisualizationGrayOut
                         filters={props.filters}
-                        currentPlotFilters={
-                          (viz.descriptor as VisualizationDescriptor)
-                            .currentPlotFilters as Filter[]
+                        currentPlotFilters={viz.descriptor.currentPlotFilters}
+                        hasCompute={
+                          props.computationAppOverview.computeName != null
                         }
-                      />
+                        computeJobStatus={computeJobStatus}
+                      >
+                        {/* make gray-out box on top of thumbnail */}
+                        {viz.descriptor.thumbnail ? (
+                          <img
+                            alt={viz.displayName}
+                            src={viz.descriptor.thumbnail}
+                          />
+                        ) : (
+                          <div
+                            className={cx('-ConfiguredVisualizationNoPreview')}
+                          >
+                            Preview unavailable
+                          </div>
+                        )}
+                      </ConfiguredVisualizationGrayOut>
                     </Link>
                   </>
                 </div>
                 <div className={cx('-ConfiguredVisualizationTitle')}>
                   {viz.displayName ?? 'Unnamed visualization'}
+                  &nbsp;
+                  {computationAppOverview.computeName && computeJobStatus && (
+                    <StatusIcon status={computeJobStatus} />
+                  )}
                 </div>
                 <div className={cx('-ConfiguredVisualizationSubtitle')}>
                   {meta?.displayName}
@@ -431,7 +450,9 @@ type FullScreenVisualizationPropKeys =
   | 'geoConfigs'
   | 'baseUrl'
   | 'isSingleAppMode'
-  | 'disableThumbnailCreation';
+  | 'disableThumbnailCreation'
+  | 'computeJobStatus'
+  | 'createComputeJob';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -459,6 +480,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     isSingleAppMode,
     disableThumbnailCreation,
     actions,
+    computeJobStatus,
+    createComputeJob,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -644,36 +667,89 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             />
           </h3>
           <div className="Subtitle">{overview?.displayName}</div>
-          {plugin && (
-            <plugin.configurationComponent
-              analysisState={analysisState}
+          {plugin && analysisState.analysis && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                gap: '5em',
+              }}
+            >
+              <plugin.configurationComponent
+                analysisState={analysisState}
+                computation={computation}
+                visualizationId={viz.visualizationId}
+                computationAppOverview={computationAppOverview}
+                totalCounts={totalCounts}
+                filteredCounts={filteredCounts}
+                geoConfigs={geoConfigs}
+                addNewComputation={() => null}
+              />
+              {createComputeJob && (
+                <RunComputeButton
+                  computationAppOverview={computationAppOverview}
+                  status={computeJobStatus}
+                  createJob={createComputeJob}
+                />
+              )}
+            </div>
+          )}
+          {computationAppOverview.computeName &&
+          computeJobStatus !== 'complete' ? (
+            computeJobStatus == null ? (
+              <Loading />
+            ) : (
+              <div
+                style={{
+                  margin: '2em 0',
+                  fontSize: '1.2em',
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  // alignItems: 'center',
+                  gap: '2ex',
+                  flexDirection: 'column',
+                }}
+              >
+                <H5>
+                  {computeJobStatus === 'requesting'
+                    ? 'Requesting computation status.'
+                    : computeJobStatus === 'no-such-job'
+                    ? 'Configure and run a computation to use this visualization.'
+                    : computeJobStatus === 'expired'
+                    ? 'Computation has expired. You will need to run it again.'
+                    : computeJobStatus === 'failed'
+                    ? 'Computation has failed. Please contact us for support.'
+                    : 'Computation is in progress. This visualization will be available when it is complete.'}
+                </H5>
+                {/* Add image for some compute statuses} */}
+                {computeJobStatus == 'no-such-job' && <EmptyPlotSVG />}
+                {!isTerminalStatus(computeJobStatus) && (
+                  // <img style={{width:600}} src={relaxMicrobe}/>
+                  <RelaxMicrobeSVG />
+                )}
+              </div>
+            )
+          ) : (
+            <vizPlugin.fullscreenComponent
+              options={vizPlugin.options}
+              dataElementConstraints={constraints}
+              dataElementDependencyOrder={dataElementDependencyOrder}
+              visualization={viz}
               computation={computation}
-              visualizationId={viz.visualizationId}
-              computationAppOverview={computationAppOverview}
+              filters={filters}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              updateConfiguration={updateConfiguration}
+              updateThumbnail={
+                disableThumbnailCreation ? undefined : updateThumbnail
+              }
               totalCounts={totalCounts}
               filteredCounts={filteredCounts}
               geoConfigs={geoConfigs}
-              addNewComputation={() => null}
+              otherVizOverviews={overviews.others}
             />
           )}
-          <vizPlugin.fullscreenComponent
-            options={vizPlugin.options}
-            dataElementConstraints={constraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            visualization={viz}
-            computation={computation}
-            filters={filters}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            updateConfiguration={updateConfiguration}
-            updateThumbnail={
-              disableThumbnailCreation ? undefined : updateThumbnail
-            }
-            totalCounts={totalCounts}
-            filteredCounts={filteredCounts}
-            geoConfigs={geoConfigs}
-            otherVizOverviews={overviews.others}
-          />
         </div>
       )}
     </div>
@@ -683,26 +759,78 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
 // define type and ConfiguredVisualizationGrayOut component for gray-out thumbnail
 type ConfiguredVisualizationGrayOutProps = {
   filters: Filter[];
-  currentPlotFilters: Filter[];
+  currentPlotFilters?: Filter[];
+  hasCompute: boolean;
+  computeJobStatus?: JobStatus;
+  children: JSX.Element;
 };
 
 function ConfiguredVisualizationGrayOut({
   filters,
   currentPlotFilters,
+  hasCompute,
+  computeJobStatus,
+  children,
 }: ConfiguredVisualizationGrayOutProps) {
-  // using lodash isEqual to compare two objects
-  const thumbnailGrayOut = useMemo(() => isEqual(filters, currentPlotFilters), [
-    filters,
-    currentPlotFilters,
-  ]);
+  const message = useMemo(() => {
+    if (hasCompute && computeJobStatus !== 'complete') {
+      if (computeJobStatus == null) return <Loading />;
 
-  return !thumbnailGrayOut ? (
-    <div className={cx('-ConfiguredVisualizationGrayOut')}>
-      Open to sync with
-      <br /> current subset
+      const message =
+        computeJobStatus === 'failed'
+          ? {
+              primary: 'Computation failed',
+              secondary: 'Please contact us for support.',
+            }
+          : computeJobStatus === 'no-such-job'
+          ? {
+              primary: 'Computation not started',
+              secondary:
+                'Configure and run a computation to use this visualization.',
+            }
+          : {
+              primary: 'Computation in progress',
+              secondary:
+                'This visualization will be available when the computation in complete.',
+            };
+      return (
+        <>
+          <div>{message.primary}</div>
+          <div style={{ fontSize: '.6em', marginTop: '1em' }}>
+            {message.secondary}
+          </div>
+        </>
+      );
+    }
+
+    // using lodash isEqual to compare two objects
+    if (!isEqual(filters, currentPlotFilters)) {
+      return (
+        <>
+          Open to sync with
+          <br /> current subset
+        </>
+      );
+    }
+
+    return null;
+  }, [computeJobStatus, currentPlotFilters, filters, hasCompute]);
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          filter: message ? 'blur(5px)' : undefined,
+        }}
+      >
+        {children}
+      </div>
+      {message && (
+        <div className={cx('-ConfiguredVisualizationGrayOut')}>{message}</div>
+      )}
     </div>
-  ) : (
-    <></>
   );
 }
 

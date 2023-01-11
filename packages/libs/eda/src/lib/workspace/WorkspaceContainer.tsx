@@ -9,6 +9,7 @@ import {
   useConfiguredDataClient,
   useConfiguredSubsettingClient,
   useConfiguredDownloadClient,
+  useConfiguredComputeClient,
 } from '../core/hooks/client';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
@@ -47,6 +48,7 @@ export function WorkspaceContainer({
   const dataClient = useConfiguredDataClient(dataServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
   const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
+  const computeClient = useConfiguredComputeClient(dataServiceUrl);
 
   const initializeMakeVariableLink = useCallback(
     (fieldTree: TreeNode<FieldWithMetadata>) => ({
@@ -78,6 +80,7 @@ export function WorkspaceContainer({
       dataClient={dataClient}
       subsettingClient={subsettingClient}
       downloadClient={downloadClient}
+      computeClient={computeClient}
       initializeMakeVariableLink={initializeMakeVariableLink}
     >
       {children}

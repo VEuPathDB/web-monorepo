@@ -16,11 +16,13 @@ import {
   useConfiguredDataClient,
   useConfiguredAnalysisClient,
   useConfiguredDownloadClient,
+  useConfiguredComputeClient,
 } from '../core/hooks/client';
 
 export function MapVeuContainer() {
   const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
   const dataClient = useConfiguredDataClient('/eda-data-service');
+  const computeClient = useConfiguredComputeClient('/eda-data-service');
   const analysisClient = useConfiguredAnalysisClient('/eda-user-service');
   const downloadClient = useConfiguredDownloadClient('/eda-user-service');
 
@@ -42,6 +44,7 @@ export function MapVeuContainer() {
               analysisClient={analysisClient}
               dataClient={dataClient}
               downloadClient={downloadClient}
+              computeClient={computeClient}
             >
               <MapVeuAnalysis
                 analysisId={props.match.params.analysisId}
@@ -59,6 +62,7 @@ export function MapVeuContainer() {
               subsettingClient={edaClient}
               dataClient={dataClient}
               downloadClient={downloadClient}
+              computeClient={computeClient}
             >
               <AnalysisList
                 studyId={props.match.params.studyId}

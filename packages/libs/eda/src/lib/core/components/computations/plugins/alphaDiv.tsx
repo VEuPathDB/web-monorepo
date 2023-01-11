@@ -17,7 +17,6 @@ import { useMemo } from 'react';
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlphaDivConfig = t.type({
-  name: t.string,
   collectionVariable: VariableDescriptor,
   alphaDivMethod: t.string,
 });
@@ -97,7 +96,6 @@ function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
   return {
-    name: 'AlphaDivComputation',
     collectionVariable: {
       variableId: collections[0].id,
       entityId: collections[0].entityId,
@@ -154,7 +152,14 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   }, [collectionVarItems, collectionVariable]);
 
   return (
-    <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
+    <div
+      style={{
+        display: 'flex',
+        gap: '0 2em',
+        padding: '1em 0',
+        alignItems: 'center',
+      }}
+    >
       <H6 additionalStyles={{ margin: 0 }}>
         {computationAppOverview.displayName[0].toUpperCase() +
           computationAppOverview.displayName.substring(1).toLowerCase() +
@@ -162,10 +167,8 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
       </H6>
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto 1fr',
-          gap: '.5em 1em',
-          width: '800px',
+          display: 'flex',
+          gap: '1em',
           justifyItems: 'start',
           alignItems: 'center',
         }}
