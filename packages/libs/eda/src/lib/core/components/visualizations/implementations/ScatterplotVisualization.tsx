@@ -347,7 +347,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       // check xAxisVariable is changed
-      const keepIndependentAxisRange = isEqual(
+      const keepIndependentAxisSettings = isEqual(
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -372,13 +372,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             : vizConfig.valueSpecConfig,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        independentAxisRange: keepIndependentAxisRange
+        independentAxisRange: keepIndependentAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
         dependentAxisRange: undefined,
-        independentAxisLogScale: false,
+        independentAxisLogScale: keepIndependentAxisSettings
+          ? vizConfig.independentAxisLogScale
+          : false,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: keepIndependentAxisRange
+        independentAxisValueSpec: keepIndependentAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
