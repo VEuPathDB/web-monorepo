@@ -122,6 +122,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const plotContainerStyles = {
   width: 750,
@@ -989,7 +990,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max <= 0;
 
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
 
   const widgetHeight = '4em';
 
@@ -1102,8 +1103,89 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  // set four useState to handle Banner
+  const [
+    showIndependentLogScaleBanner,
+    setShowIndependentLogScaleBanner,
+  ] = useState(false);
+  const [showBinningBanner, setShowBinningBanner] = useState(false);
+  const [
+    showDependentLogScaleBanner,
+    setShowDependentLogScaleBanner,
+  ] = useState(false);
+  const [showErrorBarBanner, setShowErrorBarBanner] = useState(false);
+
+  // add showBanner prop in this Viz
+  const [showBanner, setShowBanner] = useState(true);
+
   const controlsNode = (
     <>
+      {/* pre-occupied space for Banner: 1 line = 2.5em */}
+      {/* <div style={{ width: 750, marginLeft: '1em', minHeight: '5em' }}> */}
+      <div
+        style={{
+          width: 750,
+          marginLeft: '1em',
+          minHeight: '5.1em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        {/* independent axis banner */}
+        {(showIndependentLogScaleBanner || showBinningBanner) && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message: 'Log scale and binning are not available concurrently.',
+              pinned: true,
+              intense: false,
+              additionalMessage:
+                'Binning of non-log transformed raw data cannot be accurately plotted on log scale axes.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
+              spacing: {
+                margin: '0.3125em 0 0 0',
+                padding: '0.3125em 0.625em',
+              },
+              fontSize: '1em',
+              showBanner: showBanner,
+              setShowBanner: setShowBanner,
+            }}
+          />
+        )}
+        {/* dependent axis banner */}
+        {(showDependentLogScaleBanner || showErrorBarBanner) && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message:
+                'Y-axis log scale and error bars are not available concurrently.',
+              pinned: true,
+              intense: false,
+              additionalMessage:
+                'Error bars for non-log transformed raw data cannot be accurately plotted on log scale y-axis.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
+              spacing: {
+                margin: '0.3125em 0 0 0',
+                padding: '0.3125em 0.625em',
+              },
+              fontSize: '1em',
+              showBanner: showBanner,
+              setShowBanner: setShowBanner,
+            }}
+          />
+        )}
+      </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* X-axis controls   */}
@@ -1113,6 +1195,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              marginTop: '-1em',
             }}
           >
             <LabelledGroup label="X-axis controls"> </LabelledGroup>
@@ -1143,10 +1226,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.useBinning)
-                  enqueueSnackbar(
-                    'Binning is no longer appropriate and has been disabled'
-                  );
+                // to reuse Banner
+                setShowBanner(true);
+                if (newValue && vizConfig.useBinning) {
+                  setShowIndependentLogScaleBanner(true);
+                  setShowBinningBanner(false);
+                } else {
+                  setShowIndependentLogScaleBanner(false);
+                }
               }}
               disabled={
                 lineplotProps.independentValueType === 'date' ||
@@ -1184,10 +1271,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                if (newValue && vizConfig.independentAxisLogScale)
-                  enqueueSnackbar(
-                    'Log scale is no longer appropriate and has been disabled'
-                  );
+                // to reuse Banner
+                setShowBanner(true);
+                if (newValue && vizConfig.independentAxisLogScale) {
+                  setShowBinningBanner(true);
+                  setShowIndependentLogScaleBanner(false);
+                } else {
+                  setShowBinningBanner(false);
+                }
               }}
               disabled={neverUseBinning}
               themeRole="primary"
@@ -1306,6 +1397,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
+            marginTop: '-1em',
           }}
         >
           {' '}
@@ -1318,6 +1410,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              marginTop: '-1em',
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
@@ -1348,10 +1441,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.showErrorBars)
-                  enqueueSnackbar(
-                    'Error bars are no longer appropriate and have been disabled'
-                  );
+                // to reuse Banner
+                setShowBanner(true);
+                if (newValue && vizConfig.showErrorBars) {
+                  setShowDependentLogScaleBanner(true);
+                  setShowErrorBarBanner(false);
+                } else {
+                  setShowDependentLogScaleBanner(false);
+                }
               }}
               disabled={lineplotProps.dependentValueType === 'date'}
               themeRole="primary"
@@ -1385,10 +1482,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                if (newValue && vizConfig.dependentAxisLogScale)
-                  enqueueSnackbar(
-                    'Log scale is no longer appropriate and has been disabled'
-                  );
+                // to reuse Banner
+                setShowBanner(true);
+                if (newValue && vizConfig.dependentAxisLogScale) {
+                  setShowErrorBarBanner(true);
+                  setShowDependentLogScaleBanner(false);
+                } else {
+                  setShowErrorBarBanner(false);
+                }
               }}
               disabled={neverShowErrorBars}
               themeRole="primary"

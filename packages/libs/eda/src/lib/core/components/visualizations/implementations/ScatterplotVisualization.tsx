@@ -131,6 +131,11 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 
+// add Slider and SliderWidgetProps
+import SliderWidget, {
+  SliderWidgetProps,
+} from '@veupathdb/components/lib/components/widgets/Slider';
+
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
 const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
@@ -188,6 +193,7 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
+    markerBodyOpacity: 0,
   };
 }
 
@@ -209,6 +215,7 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
+  markerBodyOpacity: t.number,
 });
 
 interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
@@ -384,6 +391,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
+        markerBodyOpacity: 0,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -474,6 +482,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     false, // reset valueSpec to Raw if true
     false,
     true
+  );
+
+  const onMarkerBodyOpacityChange = onChangeHandlerFactory<number>(
+    'markerBodyOpacity',
+    false,
+    false,
+    false, // reset valueSpec to Raw if true
+    false,
+    false
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -1094,6 +1111,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisLogScale,
       vizConfig.independentAxisValueSpec,
       vizConfig.dependentAxisValueSpec,
+      vizConfig.markerBodyOpacity,
     ]
   );
 
@@ -1170,6 +1188,23 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  // slider settings
+  const markerBodyOpacityContainerStyles = {
+    height: '4em',
+    width: '20em',
+    marginLeft: '1em',
+    marginBottom: '0.5em',
+  };
+
+  // implement gradient color for slider opacity
+  const colorSpecProps: SliderWidgetProps['colorSpec'] = {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
+  };
+
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
@@ -1208,6 +1243,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
       : undefined,
+    // need to define markerColorOpacity for faceted plot
+    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
@@ -1230,6 +1267,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ref={plotRef}
           data={data.value?.dataSetProcess}
           checkedLegendItems={checkedLegendItems}
+          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0}
         />
       )}
     </>
@@ -1313,19 +1351,72 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max < 0;
 
+  // add showBanner prop in this Viz
+  const [showBanner, setShowBanner] = useState(true);
+
+  //DKDK
+  console.log('data =', data);
+  console.log('!showLogScaleBanner =', !showLogScaleBanner);
+
   const controlsNode = (
     <>
-      {/* show Banner message if no smoothed mean exists */}
-      {!data.pending &&
-        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
-        dataWithoutSmoothedMean != null &&
-        dataWithoutSmoothedMean?.length > 0 && (
-          <div style={{ width: 750, marginLeft: '1em' }}>
+      {/* pre-occupied space for banner:  1 line = 2.5em */}
+      {/* <div style={{ width: 750, marginLeft: '1em', minHeight: '2.5em' }}> */}
+      <div
+        style={{
+          width: 750,
+          marginLeft: '1em',
+          minHeight: '5.1em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        {/* show Banner message if no smoothed mean exists */}
+        {!data.pending &&
+          vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
+          dataWithoutSmoothedMean != null &&
+          dataWithoutSmoothedMean?.length > 0 && (
+            <div>
+              <Banner
+                banner={{
+                  type: 'warning',
+                  message:
+                    'Smoothed mean(s) were not calculated for one or more data series.',
+                  pinned: true,
+                  intense: false,
+                  // additionalMessage is shown next to message when clicking showMoreLinkText.
+                  // disappears when clicking showLess link
+                  // note that this additionalMessage prop is used to determine show more/less behavior or not
+                  // if undefined, then just show normal banner with message
+                  additionalMessage:
+                    'The sample size might be too small or the data too skewed.',
+                  // text for showMore link
+                  showMoreLinkText: 'Why?',
+                  // text for showless link
+                  showLessLinkText: 'Read less',
+                  // color for show more links
+                  showMoreLinkColor: '#006699',
+                  spacing: {
+                    margin: '0.3125em 0 0 0',
+                    padding: '0.3125em 0.625em',
+                  },
+                  fontSize: '1em',
+                  showBanner: showBanner,
+                  setShowBanner: setShowBanner,
+                }}
+              />
+            </div>
+          )}
+        {/* show log scale related Banner message unless plot mode of 'Raw' */}
+        {showLogScaleBanner && (
+          // <div style={{ width: 750, marginLeft: '1em', height: '2.8em' }}>
+          <div>
             <Banner
               banner={{
                 type: 'warning',
                 message:
-                  'Smoothed mean(s) were not calculated for one or more data series.',
+                  'Log scale is not available for plot modes with fitted lines.',
                 pinned: true,
                 intense: false,
                 // additionalMessage is shown next to message when clicking showMoreLinkText.
@@ -1333,43 +1424,26 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 // note that this additionalMessage prop is used to determine show more/less behavior or not
                 // if undefined, then just show normal banner with message
                 additionalMessage:
-                  'The sample size might be too small or the data too skewed.',
+                  'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
                 // text for showMore link
                 showMoreLinkText: 'Why?',
                 // text for showless link
                 showLessLinkText: 'Read less',
                 // color for show more links
                 showMoreLinkColor: '#006699',
+                spacing: {
+                  margin: '0.3125em 0 0 0',
+                  padding: '0.3125em 0.625em',
+                },
+                fontSize: '1em',
+                showBanner: showBanner,
+                setShowBanner: setShowBanner,
               }}
             />
           </div>
         )}
-      {/* show log scale related Banner message unless plot mode of 'Raw' */}
-      {showLogScaleBanner && (
-        <div style={{ width: 750, marginLeft: '1em' }}>
-          <Banner
-            banner={{
-              type: 'warning',
-              message:
-                'Log scale is not available for plot modes with fitted lines.',
-              pinned: true,
-              intense: false,
-              // additionalMessage is shown next to message when clicking showMoreLinkText.
-              // disappears when clicking showLess link
-              // note that this additionalMessage prop is used to determine show more/less behavior or not
-              // if undefined, then just show normal banner with message
-              additionalMessage:
-                'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
-              // text for showMore link
-              showMoreLinkText: 'Why?',
-              // text for showless link
-              showLessLinkText: 'Read less',
-              // color for show more links
-              showMoreLinkColor: '#006699',
-            }}
-          />
-        </div>
-      )}
+      </div>
+
       {!options?.hideTrendlines && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
@@ -1378,6 +1452,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           selectedOption={vizConfig.valueSpecConfig ?? 'Raw'}
           onOptionSelected={(newValue: string) => {
             onValueSpecChange(newValue);
+            // to reuse Banner
+            setShowBanner(true);
           }}
           // disabledList prop is used to disable radio options (grayed out)
           disabledList={
@@ -1388,10 +1464,26 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           orientation={'horizontal'}
           labelPlacement={'end'}
           buttonColor={'primary'}
-          margins={['1em', '0', '0', '1em']}
+          margins={['0em', '0', '0', '1em']}
           itemMarginRight={50}
         />
       )}
+
+      {/* make a plot slide after plot mode for now */}
+      <SliderWidget
+        minimum={0}
+        maximum={1}
+        step={0.1}
+        value={vizConfig.markerBodyOpacity ?? 0}
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          onMarkerBodyOpacityChange(newValue);
+        }}
+        containerStyles={markerBodyOpacityContainerStyles}
+        showLimits={true}
+        label={'Marker opacity'}
+        colorSpec={colorSpecProps}
+      />
 
       {/* axis range control UIs */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -1433,6 +1525,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
+                // to reuse Banner
+                setShowBanner(true);
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.independentValueType === 'date'}
@@ -1492,7 +1586,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               }
             />
             {/* truncation notification */}
-            {truncatedIndependentAxisWarning && !independentAllNegative ? (
+            {truncatedIndependentAxisWarning &&
+            !independentAllNegative &&
+            data.value != null ? (
               <Notification
                 title={''}
                 text={truncatedIndependentAxisWarning}
@@ -1562,6 +1658,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
+                // to reuse Banner
+                setShowBanner(true);
               }}
               // disable log scale for date variable
               disabled={scatterplotProps.dependentValueType === 'date'}
@@ -2070,7 +2168,7 @@ function processInputData<T extends number | string>(
   const markerSymbol = (index: number) =>
     showMissingness && index === responseScatterplotData.length - 1
       ? 'x'
-      : 'circle-open';
+      : 'circle';
 
   // use type: scatter for faceted plot, otherwise scattergl
   const scatterPlotType = facetVariable != null ? 'scatter' : 'scattergl';
@@ -2239,7 +2337,6 @@ function processInputData<T extends number | string>(
         name: fixedOverlayLabel ?? 'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
-        opacity: 0.7,
         marker: {
           color:
             seriesGradientColorscale?.length > 0 &&
@@ -2250,6 +2347,15 @@ function processInputData<T extends number | string>(
             seriesGradientColorscale?.length > 0
               ? markerSymbolGradient
               : markerSymbol(index),
+          // need to set marker.line for a transparent case (opacity != 1)
+          line: {
+            color:
+              seriesGradientColorscale?.length > 0 &&
+              markerSymbolGradient === 'circle'
+                ? markerColorsGradient
+                : markerColor(index),
+            width: 1,
+          },
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
