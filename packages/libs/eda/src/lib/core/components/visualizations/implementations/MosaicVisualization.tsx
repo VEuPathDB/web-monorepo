@@ -36,6 +36,8 @@ import { VisualizationProps } from '../VisualizationTypes';
 import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
 import RxCSVG from './selectorIcons/RxCSVG';
 import { TabbedDisplay } from '@veupathdb/coreui';
+import { Table } from '@veupathdb/coreui';
+import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
@@ -402,7 +404,7 @@ function MosaicViz(props: Props<Options>) {
           key: 'Mosaic',
           displayName: 'Mosaic',
           content: (
-            <div style={{ marginTop: 15 }}>
+            <div style={{ margin: '15px 0' }}>
               {isFaceted<ContTableData | TwoByTwoData>(data.value) ? (
                 <FacetedMosaicPlot
                   facetedPlotRef={plotRef}
@@ -423,7 +425,7 @@ function MosaicViz(props: Props<Options>) {
           key: 'Table',
           displayName: 'Table',
           content: (
-            <div style={{ marginTop: 15 }}>
+            <div style={{ margin: '15px 0' }}>
               <ContingencyTable
                 data={data.pending ? undefined : data.value}
                 tableContainerStyles={
@@ -452,7 +454,7 @@ function MosaicViz(props: Props<Options>) {
                   <div
                     style={{
                       ...facetedStatsTableContainerStyles,
-                      marginTop: 15,
+                      margin: '15px 0',
                     }}
                   >
                     {data.value.facets.map(({ label, data }, index) => (
@@ -571,7 +573,11 @@ function MosaicViz(props: Props<Options>) {
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
-        showRequiredInputsPrompt={!areRequiredInputsSelected}
+        // statistics tab is disabled in 2x2, so no need to prompt for required inputs
+        showRequiredInputsPrompt={
+          !areRequiredInputsSelected &&
+          !(isTwoByTwo && activeTab === 'Statistics')
+        }
         isMosaicPlot={true}
       />
     </div>
@@ -586,10 +592,24 @@ function TwoByTwoStats(props?: {
   rrInterval?: number | string;
 }) {
   // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
-  if (1) return <i>Stats table coming soon!</i>;
+  if (1)
+    return (
+      <div
+        style={{
+          margin: '15px 0',
+          height: '2em',
+          width: '750px',
+        }}
+      >
+        <i>Stats table coming soon!</i>
+      </div>
+    );
 
   return props != null ? (
-    <div className="MosaicVisualization-StatsTable" style={{ marginTop: 15 }}>
+    <div
+      className="MosaicVisualization-StatsTable"
+      style={{ margin: '15px 0' }}
+    >
       <table>
         {' '}
         <tbody>
@@ -618,7 +638,22 @@ function TwoByTwoStats(props?: {
         </tbody>
       </table>
     </div>
-  ) : null;
+  ) : (
+    <div
+      style={{
+        position: 'relative',
+        margin: '15px 0',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '350px',
+        width: '750px',
+        border: '1px solid rgb(191, 191, 191)',
+      }}
+    >
+      <Table width={150} height={150} fill={gray[300]} />
+    </div>
+  );
 }
 
 function ContTableStats(props?: {
@@ -627,7 +662,10 @@ function ContTableStats(props?: {
   chisq?: number | string;
 }) {
   return props != null ? (
-    <div className="MosaicVisualization-StatsTable" style={{ marginTop: 15 }}>
+    <div
+      className="MosaicVisualization-StatsTable"
+      style={{ margin: '15px 0' }}
+    >
       <table>
         <tbody>
           <tr>
@@ -647,7 +685,22 @@ function ContTableStats(props?: {
         </tbody>
       </table>
     </div>
-  ) : null;
+  ) : (
+    <div
+      style={{
+        position: 'relative',
+        margin: '15px 0',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '350px',
+        width: '750px',
+        border: '1px solid rgb(191, 191, 191)',
+      }}
+    >
+      <Table width={150} height={150} fill={gray[300]} />
+    </div>
+  );
 }
 
 /**

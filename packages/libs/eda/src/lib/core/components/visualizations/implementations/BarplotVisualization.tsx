@@ -73,7 +73,6 @@ import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/N
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
   useFilteredConstraints,
@@ -677,9 +676,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
           <div style={{ marginLeft: '1em', marginTop: '-0.5em' }}>
             <Toggle
-              label={`Log scale ${
-                vizConfig.dependentAxisLogScale ? 'on' : 'off'
-              }`}
+              label={'Log scale'}
               value={vizConfig.dependentAxisLogScale}
               onChange={onDependentAxisLogScaleChange}
               themeRole="primary"

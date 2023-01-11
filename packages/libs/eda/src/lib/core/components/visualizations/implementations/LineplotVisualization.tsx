@@ -109,7 +109,6 @@ import { padISODateTime } from '../../../utils/date-conversion';
 import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import Button from '@veupathdb/components/lib/components/widgets/Button';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
@@ -183,7 +182,7 @@ function createDefaultConfig(): LineplotConfig {
   return {
     valueSpecConfig: 'Arithmetic mean',
     useBinning: false,
-    showErrorBars: false,
+    showErrorBars: true,
     independentAxisLogScale: false,
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
@@ -1058,7 +1057,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       dependentAxisRange: undefined,
       dependentAxisLogScale: false,
       dependentAxisValueSpec: categoricalMode ? 'Full' : 'Auto-zoom',
-      showErrorBars: false,
+      showErrorBars: true,
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
@@ -1133,11 +1132,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <Toggle
-              label={`Log scale ${
-                vizConfig.independentAxisLogScale
-                  ? 'on (excludes values \u{2264} 0)'
-                  : 'off'
-              }`}
+              label={'Log scale (excludes values \u{2264} 0)'}
               value={vizConfig.independentAxisLogScale ?? false}
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
@@ -1179,7 +1174,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               />
             ) : null}
             <Toggle
-              label={`Binning ${vizConfig.useBinning ? 'on' : 'off'}`}
+              label={'Binning'}
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
@@ -1342,11 +1337,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             <Toggle
-              label={`Log scale ${
-                vizConfig.dependentAxisLogScale
-                  ? 'on (excludes values \u{2264} 0)'
-                  : 'off'
-              }`}
+              label={'Log scale (excludes values \u{2264} 0)'}
               value={vizConfig.dependentAxisLogScale ?? false}
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
@@ -1384,10 +1375,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
               />
             ) : null}
             <Toggle
-              label={`Error bars ${
-                vizConfig.showErrorBars ? 'on' : 'off'
-              } (95% C.I.)`}
-              value={vizConfig.showErrorBars ?? false}
+              label={'Error bars (95% C.I.)'}
+              value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
                 if (newValue && vizConfig.dependentAxisLogScale)
@@ -2227,7 +2216,8 @@ function processInputData(
 
   return {
     dataSetProcess: {
-      series: nullZeroHack(dataSetProcess, dependentValueType),
+      // Let's not show no data: nullZeroHack is not used
+      series: dataSetProcess,
       ...binWidthSliderData,
     },
     xMin: min(xValues),
