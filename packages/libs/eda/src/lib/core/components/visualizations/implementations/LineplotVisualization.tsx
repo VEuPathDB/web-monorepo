@@ -345,7 +345,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const keepBin = isEqual(
+      const keepIndependentAxisSettings = isEqual(
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -367,14 +367,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       updateVizConfig({
         ...selectedVariables,
-        binWidth: keepBin ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepIndependentAxisSettings
+          ? vizConfig.binWidthTimeUnit
+          : undefined,
         // set valueSpec as Raw when yAxisVariable = date
         valueSpecConfig: valueSpec,
         // set undefined for variable change
         checkedLegendItems: undefined,
         // axis range control: set independentAxisRange undefined
-        independentAxisRange: undefined,
+        independentAxisRange: keepIndependentAxisSettings
+          ? vizConfig.independentAxisRange
+          : undefined,
         dependentAxisRange: undefined,
         ...(keepValues
           ? {}
@@ -385,7 +389,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }),
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: 'Full',
+        independentAxisValueSpec: keepIndependentAxisSettings
+          ? vizConfig.independentAxisValueSpec
+          : 'Full',
         dependentAxisValueSpec:
           yAxisVar != null
             ? isSuitableCategoricalVariable(yAxisVar)
@@ -2089,6 +2095,7 @@ function getRequestParams(
   const valueSpec = valueSpecLookup[valueSpecConfig];
 
   // define viewport based on independent axis range: need to check undefined case
+  // also no viewport change regardless of the change of overlayVariable
   const viewport =
     vizConfig?.independentAxisRange?.min != null &&
     vizConfig?.independentAxisRange?.max != null

@@ -222,20 +222,29 @@ function HistogramViz(props: VisualizationProps<Options>) {
         overlayVariable,
         facetVariable,
       } = selectedVariables;
-      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+      const keepIndependentAxisSettings = isEqual(
+        xAxisVariable,
+        vizConfig.xAxisVariable
+      );
+
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
         facetVariable,
-        binWidth: keepBin ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepIndependentAxisSettings
+          ? vizConfig.binWidthTimeUnit
+          : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        // set independentAxisRange undefined
-        independentAxisRange: undefined,
+        independentAxisRange: keepIndependentAxisSettings
+          ? vizConfig.independentAxisRange
+          : undefined,
         dependentAxisRange: undefined,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: 'Full',
+        independentAxisValueSpec: keepIndependentAxisSettings
+          ? vizConfig.independentAxisValueSpec
+          : 'Full',
         dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings if exists
@@ -1349,6 +1358,7 @@ function getRequestParams(
     : { binSpec: { type: 'binWidth' } };
 
   // define viewport based on independent axis range: need to check undefined case
+  // also no viewport change regardless of the change of overlayVariable
   const viewport =
     vizConfig?.independentAxisRange?.min != null &&
     vizConfig?.independentAxisRange?.max != null
