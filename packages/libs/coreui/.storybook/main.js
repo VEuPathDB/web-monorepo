@@ -19,7 +19,7 @@ module.exports = {
       ...options,
       presets: [ ...options.presets, '@emotion/babel-preset-css-prop' ],
       // See https://stackoverflow.com/questions/70406632/typescript-parameter-properties-not-working-with-storybook-rollup-in-developm
-      plugins: options.plugins.filter(x => !(typeof x === 'string' && x.includes('plugin-transform-classes'))).concat('@babel/plugin-proposal-class-properties'),
+      plugins: options.plugins.filter(x => !(typeof x === 'string' && x.includes('plugin-transform-classes'))),
     })
   },
   webpackFinal: async (config) => {
