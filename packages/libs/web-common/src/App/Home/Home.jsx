@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { useAnalysisList } from '@veupathdb/eda/lib/core/hooks/analysis';
-import { AnalysisClient } from '@veupathdb/eda/lib/core/api/analysis-api';
+import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
 import { Showcase } from 'ebrc-client/App/Showcase';
 import { News } from 'ebrc-client/App/NewsSidebar';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
