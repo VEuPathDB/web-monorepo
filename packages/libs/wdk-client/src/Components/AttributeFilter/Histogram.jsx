@@ -13,7 +13,6 @@ import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 
 const DAY = 1000 * 60 * 60 * 24;
-
 const IGNORED_UI_STATE_PROPERTIES = ['loading', 'valid', 'errorMessage'];
 
 var distributionEntryPropType = PropTypes.shape({
@@ -138,6 +137,12 @@ var Histogram = (function() {
       }), { min: Infinity, max: -Infinity });
     }
 
+    isEveryValueAnInteger(distribution) {
+      return distribution.every(
+        ({ value }) => Number.isInteger(value)
+      );
+    }
+
     getDefaultBinSize(props) {
       if (props.chartType === 'date') return 1;
       const { min, max } = this.getRange(props.distribution);
@@ -146,8 +151,9 @@ var Histogram = (function() {
       const padding = (max - min) / 100;
       // Compute number of bins using Sturge's rule
       const numBins = Math.ceil(Math.log2(numVals)) + 1;
-      const binSize = (padding + max - min) / numBins;
-      return binSize || (max - Math.min(0, min)) / 10;
+      const binSize = (padding + max - min) / numBins || (max - Math.min(0, min)) / 10;
+      if (!this.isEveryValueAnInteger(props.distribution)) return binSize;
+      return Math.ceil(binSize);
     }
 
     getXAxisMinMax(props) {
@@ -566,7 +572,7 @@ var Histogram = (function() {
                   <tr>
                     <th>Bin width:</th>
                     <td>
-                      <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
+                      <input type="number" min={1} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
                       <em> When bin size = 0, the count of discrete values is shown</em>
                     </td>
                   </tr>
@@ -711,4 +717,13 @@ function eventToNumber(event) {
 
 function autoSelectOnFocus(event) {
   event.target.select();
+}
+
+function formatBinWidth(binSize, allValuesAreIntegers) {
+  if (!allValuesAreIntegers) return binSize;
+  if (binSize < 1) return 1;
+  return Math.ceil(binSize);
+}
+function name(params) {
+  
 }
