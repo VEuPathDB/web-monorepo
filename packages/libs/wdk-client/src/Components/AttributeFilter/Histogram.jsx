@@ -13,6 +13,7 @@ import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 
 const DAY = 1000 * 60 * 60 * 24;
+
 const IGNORED_UI_STATE_PROPERTIES = ['loading', 'valid', 'errorMessage'];
 
 var distributionEntryPropType = PropTypes.shape({
