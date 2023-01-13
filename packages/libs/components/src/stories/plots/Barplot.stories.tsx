@@ -112,7 +112,9 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'indoor and outdoor pets',
+    title: 'Indoor and outdoor pets',
+    independentAxisLabel: 'Pet',
+    dependentAxisLabel: 'Count',
     containerStyles: {
       width: 300,
       height: 300,

@@ -51,6 +51,7 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
   const plotRefs = useRef<FacetedPlotRef>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalPlot, setModalPlot] = useState<React.ReactNode | null>(null);
+  const contentPadding = 20;
 
   useImperativeHandle<FacetedPlotRef, FacetedPlotRef>(
     ref,
@@ -130,6 +131,17 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
           visible={modalIsOpen}
           includeCloseButton
           toggleVisible={setModalIsOpen}
+          styleOverrides={{
+            content: {
+              padding: {
+                top: contentPadding,
+                bottom: contentPadding,
+                left: contentPadding,
+                right: contentPadding,
+              },
+              size: { width: '100%', height: '100%' },
+            },
+          }}
         >
           {modalPlot}
         </Modal>
