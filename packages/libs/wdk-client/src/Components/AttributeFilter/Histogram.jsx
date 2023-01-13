@@ -572,7 +572,7 @@ var Histogram = (function() {
                   <tr>
                     <th>Bin width:</th>
                     <td>
-                      <input type="number" min={1} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
+                      <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
                       <em> When bin size = 0, the count of discrete values is shown</em>
                     </td>
                   </tr>
@@ -717,13 +717,4 @@ function eventToNumber(event) {
 
 function autoSelectOnFocus(event) {
   event.target.select();
-}
-
-function formatBinWidth(binSize, allValuesAreIntegers) {
-  if (!allValuesAreIntegers) return binSize;
-  if (binSize < 1) return 1;
-  return Math.ceil(binSize);
-}
-function name(params) {
-  
 }
