@@ -53,6 +53,18 @@ const colorMap: Record<JobStatus, string> = {
   failed: 'red',
 };
 
+// Replace internal job status with user-friendly status messages
+const jobStatusDisplay: Record<JobStatus, string> = {
+  'no-such-job': 'Not started.',
+  requesting: 'Requesting.',
+  queued: 'Queued.',
+  'in-progress':
+    'In progress. You may return later to use results in the visualization.',
+  complete: 'Complete, results saved in the system.',
+  expired: 'Results expired.',
+  failed: 'Failed. Contact the VEuPathDB team for support.',
+};
+
 interface StatusIconProps {
   status: JobStatus;
   showLabel?: boolean;
@@ -60,7 +72,7 @@ interface StatusIconProps {
 
 export function StatusIcon({ status, showLabel = false }: StatusIconProps) {
   const color = status ? colorMap[status] : '#808080cc';
-  const label = status ? capitalize(status?.replaceAll('-', ' ')) : 'Unknown';
+  const label = status ? jobStatusDisplay[status] : 'Unknown';
   return <Dot color={color} label={label} showLabel={showLabel} />;
 }
 
