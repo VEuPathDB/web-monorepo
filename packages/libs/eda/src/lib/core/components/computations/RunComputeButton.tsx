@@ -54,7 +54,7 @@ const colorMap: Record<JobStatus, string> = {
 };
 
 // Replace internal job status with user-friendly status messages
-const jobStatusDisplay: Record<JobStatus, string> = {
+const jobStatusDisplay = {
   'no-such-job': 'Not started.',
   requesting: 'Requesting.',
   queued: 'Queued.',
@@ -63,7 +63,7 @@ const jobStatusDisplay: Record<JobStatus, string> = {
   complete: 'Complete, results saved in the system.',
   expired: 'Results expired.',
   failed: 'Failed. Contact the VEuPathDB team for support.',
-};
+} as const;
 
 interface StatusIconProps {
   status: JobStatus;
