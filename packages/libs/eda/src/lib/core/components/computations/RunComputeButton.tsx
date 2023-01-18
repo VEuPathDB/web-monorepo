@@ -60,7 +60,7 @@ const jobStatusDisplay = {
   queued: 'Queued.',
   'in-progress':
     'In progress. You may return later to use results in the visualization.',
-  complete: 'Complete, results saved in the system.',
+  complete: 'Complete. Results saved in the system.',
   expired: 'Results expired.',
   failed: 'Failed. Contact the VEuPathDB team for support.',
 } as const;
