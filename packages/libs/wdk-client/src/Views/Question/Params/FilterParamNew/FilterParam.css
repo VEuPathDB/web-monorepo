@@ -187,6 +187,9 @@
   position: relative;
   min-height: 36em;
 }
+.filters {
+  display: flex;
+}
 .filter-param .filters-server-side {
   border: 1px solid #999;
 }
@@ -194,20 +197,6 @@
   width: 25%;
   padding-left: 8px;
   padding-right: 8px;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-}
-.filter-param .wdk-CheckboxTree {
-  height: calc(100% - 7em);
-}
-.filter-param .wdk-CheckboxTree > .wdk-CheckboxTreeList {
-  padding-top: .5em;
-  padding-bottom: 1.5em;
-  border-bottom: 1px solid #ccc;
-  position: relative;
-  height: 100%;
-  overflow: auto;
 }
 .filter-param .wdk-AttributeFilterFieldParent,
 .filter-param .wdk-AttributeFilterFieldItem {
@@ -226,9 +215,7 @@
 }
 .filter-param .field-detail {
   width: 75%;
-  margin-left: 25%;
   padding: 0 1rem;
-  position: relative;
 }
 .filter-param .unknown-count {
   font-size: 1.1em;
@@ -241,9 +228,6 @@
   width: 100%;
   margin: 0;
   padding: 0;
-}
-.filter-param .field-description {
- /* margin-bottom: 1em; */
 }
 .filter-param .field-detail h4 {
   margin-top: 4em;

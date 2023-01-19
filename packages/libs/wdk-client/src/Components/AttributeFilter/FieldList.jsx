@@ -1,7 +1,8 @@
 import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
+import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
@@ -155,13 +156,21 @@ function getNodeSearchString(valuesMap) {
 }
 
 
-function FieldNode({node, isActive, handleFieldSelect }) {
+function FieldNode({node, isActive, searchTerm, handleFieldSelect }) {
+  const nodeRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (isActive && nodeRef.current && nodeRef.current.offsetParent) {
+      scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
+    }
+  }, [ isActive, nodeRef.current, searchTerm ])
 
   return (
     <Tooltip content={node.field.description} hideDelay={0}>
       {isFilterField(node.field)
       ? (
         <a
+          ref={nodeRef}
           className={'wdk-AttributeFilterFieldItem' +
             (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')}
           href={'#' + node.field.term}
