@@ -68,8 +68,15 @@ export default (base: ServiceBase) => {
     const question = await base.findQuestion(answerSpec.searchName);
     const recordClass = await base.findRecordClass(question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
-    let searchConfig: SearchConfig = answerSpec.searchConfig
-    let body: StandardSearchReportRequest = { searchConfig, reportConfig };
+    let searchConfig: SearchConfig = answerSpec.searchConfig;
+    const reportConfigWithResponseBufferingSet: StandardReportConfig = {
+      ...reportConfig,
+      bufferEntireResponse: reportConfig.bufferEntireResponse ?? false,
+    };
+    let body: StandardSearchReportRequest = {
+      searchConfig,
+      reportConfig: reportConfigWithResponseBufferingSet,
+    };
     return base._fetchJson<Answer>('post', url, stringify(body));
   }
 
