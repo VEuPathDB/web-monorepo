@@ -65,7 +65,6 @@ export default (base: ServiceBase) => {
    * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
   async function getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig, viewFilters?: FilterValueArray): Promise<Answer> {
-    debugger;
     const question = await base.findQuestion(answerSpec.searchName);
     const recordClass = await base.findRecordClass(question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
