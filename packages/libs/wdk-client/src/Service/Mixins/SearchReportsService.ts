@@ -71,7 +71,8 @@ export default (base: ServiceBase) => {
     let searchConfig: SearchConfig = answerSpec.searchConfig;
     const reportConfigWithResponseBufferingSet: StandardReportConfig = {
       ...reportConfig,
-      bufferEntireResponse: reportConfig.bufferEntireResponse ?? false,
+      bufferEntireResponse: reportConfig.bufferEntireResponse ?? true,
+      // bufferEntireResponse: reportConfig.bufferEntireResponse ?? false,
     };
     let body: StandardSearchReportRequest = {
       searchConfig,
