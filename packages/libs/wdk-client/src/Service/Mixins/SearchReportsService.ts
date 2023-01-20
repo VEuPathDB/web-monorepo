@@ -65,13 +65,14 @@ export default (base: ServiceBase) => {
    * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
   async function getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig, viewFilters?: FilterValueArray): Promise<Answer> {
+    debugger;
     const question = await base.findQuestion(answerSpec.searchName);
     const recordClass = await base.findRecordClass(question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
     let searchConfig: SearchConfig = answerSpec.searchConfig;
     const reportConfigWithResponseBufferingSet: StandardReportConfig = {
       ...reportConfig,
-      bufferEntireResponse: reportConfig.bufferEntireResponse ?? false,
+      bufferEntireResponse: reportConfig.bufferEntireResponse ?? true,
     };
     let body: StandardSearchReportRequest = {
       searchConfig,
@@ -81,7 +82,6 @@ export default (base: ServiceBase) => {
   }
 
   async function downloadAnswer(answerRequest: AnswerRequest, target = '_blank') {
-
     let info = await getCustomSearchReportRequestInfo(answerRequest.answerSpec, answerRequest.formatting);
 
     // a submission must trigger a form download, meaning we must POST the form
