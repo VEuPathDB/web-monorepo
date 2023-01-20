@@ -33,10 +33,14 @@ export default (base: ServiceBase) => {
   // get step's answer in wdk default json output format
   // TODO:  use a proper decoder to ensure correct decoding of the Answer
   function getStepStandardReport(stepId: number, reportConfig: StandardReportConfig, viewFilters: FilterValueArray | undefined, userId: string = 'current'): Promise<Answer> {
+    const reportConfigWithResponseBufferingSet: StandardReportConfig = {
+      ...reportConfig,
+      bufferEntireResponse: reportConfig.bufferEntireResponse ?? false,
+    };
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/standard`,
-      body: JSON.stringify({ reportConfig, viewFilters })
+      body: JSON.stringify({ reportConfig: reportConfigWithResponseBufferingSet, viewFilters })
     });
   }
 
