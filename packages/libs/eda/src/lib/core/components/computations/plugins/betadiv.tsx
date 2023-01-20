@@ -4,7 +4,6 @@ import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { H6 } from '@veupathdb/coreui';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
@@ -13,6 +12,8 @@ import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
+import { ComputationStepContainer } from '../ComputationStepContainer';
+import { sharedConfigCssStyles } from './abundance';
 
 export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -154,47 +155,42 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
   }, [collectionVarItems, collectionVariable]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '0 2em',
-        padding: '1em 0',
-        alignItems: 'center',
+    <ComputationStepContainer
+      computationStepInfo={{
+        stepNumber: 1,
+        stepTitle: `Configure ${computationAppOverview.displayName} data`,
       }}
     >
-      <H6 additionalStyles={{ margin: 0 }}>
-        {computationAppOverview.displayName[0].toUpperCase() +
-          computationAppOverview.displayName.substring(1).toLowerCase() +
-          ' parameters:'}
-      </H6>
-      <div
-        style={{
-          display: 'flex',
-          gap: '1em',
-          justifyItems: 'start',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
-        <SingleSelect
-          value={selectedCollectionVar.value}
-          buttonDisplayContent={selectedCollectionVar.display}
-          items={collectionVarItems}
-          onSelect={partial(changeConfigHandler, 'collectionVariable')}
-        />
-        <div style={{ justifySelf: 'end', fontWeight: 500 }}>
-          Distance method
+      <div style={sharedConfigCssStyles}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1em',
+            justifyItems: 'start',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
+          <SingleSelect
+            value={selectedCollectionVar.value}
+            buttonDisplayContent={selectedCollectionVar.display}
+            items={collectionVarItems}
+            onSelect={partial(changeConfigHandler, 'collectionVariable')}
+          />
+          <div style={{ justifySelf: 'end', fontWeight: 500 }}>
+            Distance method
+          </div>
+          <SingleSelect
+            value={betaDivDistanceMethod}
+            buttonDisplayContent={betaDivDistanceMethod}
+            items={BETA_DIV_DISTANCE_METHODS.map((method) => ({
+              value: method,
+              display: method,
+            }))}
+            onSelect={partial(changeConfigHandler, 'betaDivDistanceMethod')}
+          />
         </div>
-        <SingleSelect
-          value={betaDivDistanceMethod}
-          buttonDisplayContent={betaDivDistanceMethod}
-          items={BETA_DIV_DISTANCE_METHODS.map((method) => ({
-            value: method,
-            display: method,
-          }))}
-          onSelect={partial(changeConfigHandler, 'betaDivDistanceMethod')}
-        />
       </div>
-    </div>
+    </ComputationStepContainer>
   );
 }

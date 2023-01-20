@@ -51,6 +51,7 @@ import { isTerminalStatus } from '../computations/ComputeJobStatusHook';
 import { H5 } from '@veupathdb/coreui';
 import EmptyPlotSVG from './emptyPlot';
 import RelaxMicrobeSVG from './relaxMicrobe';
+import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -671,9 +672,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                gap: '5em',
+                flexDirection: 'column',
+                gap: '2em',
               }}
             >
               <plugin.configurationComponent
@@ -686,50 +686,87 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                 geoConfigs={geoConfigs}
                 addNewComputation={() => null}
               />
-              {createComputeJob && (
-                <RunComputeButton
-                  computationAppOverview={computationAppOverview}
-                  status={computeJobStatus}
-                  createJob={createComputeJob}
-                />
+              {createComputeJob && computationAppOverview.computeName && (
+                <ComputationStepContainer
+                  computationStepInfo={{
+                    stepNumber: 2,
+                    stepTitle: `Generate ${computationAppOverview.displayName} data`,
+                  }}
+                >
+                  <RunComputeButton
+                    computationAppOverview={computationAppOverview}
+                    status={computeJobStatus}
+                    createJob={createComputeJob}
+                  />
+                </ComputationStepContainer>
               )}
             </div>
           )}
-          {computationAppOverview.computeName &&
-          computeJobStatus !== 'complete' ? (
-            computeJobStatus == null ? (
-              <Loading />
-            ) : (
-              <div
-                style={{
-                  margin: '2em 0',
-                  fontSize: '1.2em',
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  // alignItems: 'center',
-                  gap: '2ex',
-                  flexDirection: 'column',
-                }}
-              >
-                <H5>
-                  {computeJobStatus === 'requesting'
-                    ? 'Requesting computation status.'
-                    : computeJobStatus === 'no-such-job'
-                    ? 'Configure and run a computation to use this visualization.'
-                    : computeJobStatus === 'expired'
-                    ? 'Computation has expired. You will need to run it again.'
-                    : computeJobStatus === 'failed'
-                    ? 'Computation has failed. Please contact us for support.'
-                    : 'Computation is in progress. This visualization will be available when it is complete.'}
-                </H5>
-                {/* Add image for some compute statuses} */}
-                {computeJobStatus == 'no-such-job' && <EmptyPlotSVG />}
-                {!isTerminalStatus(computeJobStatus) && (
-                  // <img style={{width:600}} src={relaxMicrobe}/>
-                  <RelaxMicrobeSVG />
+          {computationAppOverview.computeName ? (
+            <ComputationStepContainer
+              computationStepInfo={{
+                stepNumber: 3,
+                stepTitle: `Use ${computationAppOverview.displayName} data in visualization`,
+              }}
+            >
+              <div style={{ marginLeft: '3em' }}>
+                {computationAppOverview.computeName &&
+                computeJobStatus !== 'complete' ? (
+                  computeJobStatus == null ? (
+                    <Loading />
+                  ) : (
+                    <div
+                      style={{
+                        margin: '2em 0',
+                        fontSize: '1.2em',
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        // alignItems: 'center',
+                        gap: '2ex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <H5>
+                        {computeJobStatus === 'requesting'
+                          ? 'Requesting computation status.'
+                          : computeJobStatus === 'no-such-job'
+                          ? 'Configure and run a computation to use this visualization.'
+                          : computeJobStatus === 'expired'
+                          ? 'Computation has expired. You will need to run it again.'
+                          : computeJobStatus === 'failed'
+                          ? 'Computation has failed. Please contact us for support.'
+                          : 'Computation is in progress. This visualization will be available when it is complete.'}
+                      </H5>
+                      {/* Add image for some compute statuses} */}
+                      {computeJobStatus == 'no-such-job' && <EmptyPlotSVG />}
+                      {!isTerminalStatus(computeJobStatus) && (
+                        // <img style={{width:600}} src={relaxMicrobe}/>
+                        <RelaxMicrobeSVG />
+                      )}
+                    </div>
+                  )
+                ) : (
+                  <vizPlugin.fullscreenComponent
+                    options={vizPlugin.options}
+                    dataElementConstraints={constraints}
+                    dataElementDependencyOrder={dataElementDependencyOrder}
+                    visualization={viz}
+                    computation={computation}
+                    filters={filters}
+                    starredVariables={starredVariables}
+                    toggleStarredVariable={toggleStarredVariable}
+                    updateConfiguration={updateConfiguration}
+                    updateThumbnail={
+                      disableThumbnailCreation ? undefined : updateThumbnail
+                    }
+                    totalCounts={totalCounts}
+                    filteredCounts={filteredCounts}
+                    geoConfigs={geoConfigs}
+                    otherVizOverviews={overviews.others}
+                  />
                 )}
               </div>
-            )
+            </ComputationStepContainer>
           ) : (
             <vizPlugin.fullscreenComponent
               options={vizPlugin.options}

@@ -6,7 +6,6 @@ import { StudyEntity } from '../../../types/study';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { H6 } from '@veupathdb/coreui';
 import { isEqual, partial } from 'lodash';
 import { assertComputationWithConfig, useConfigChangeHandler } from '../Utils';
 import { findCollections } from '../../../utils/study-metadata';
@@ -14,6 +13,15 @@ import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useMemo } from 'react';
+import { ComputationStepContainer } from '../ComputationStepContainer';
+
+export const sharedConfigCssStyles = {
+  display: 'flex',
+  gap: '0 2em',
+  padding: '1em 0',
+  alignItems: 'center',
+  marginLeft: '3em',
+};
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -171,45 +179,40 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   }, [collectionVarItems, collectionVariable]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '0 2em',
-        padding: '1em 0',
-        alignItems: 'center',
+    <ComputationStepContainer
+      computationStepInfo={{
+        stepNumber: 1,
+        stepTitle: `Configure ${computationAppOverview.displayName} data`,
       }}
     >
-      <H6 additionalStyles={{ margin: 0 }}>
-        {computationAppOverview.displayName[0].toUpperCase() +
-          computationAppOverview.displayName.substring(1).toLowerCase() +
-          ' parameters:'}
-      </H6>
-      <div
-        style={{
-          display: 'flex',
-          gap: '1em',
-          justifyItems: 'start',
-          alignItems: 'center',
-        }}
-      >
-        <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
-        <SingleSelect
-          value={selectedCollectionVar.value}
-          buttonDisplayContent={selectedCollectionVar.display}
-          items={collectionVarItems}
-          onSelect={partial(changeConfigHandler, 'collectionVariable')}
-        />
-        <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
-        <SingleSelect
-          value={rankingMethod}
-          buttonDisplayContent={rankingMethod}
-          onSelect={partial(changeConfigHandler, 'rankingMethod')}
-          items={ABUNDANCE_METHODS.map((method) => ({
-            value: method,
-            display: method,
-          }))}
-        />
+      <div style={sharedConfigCssStyles}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1em',
+            justifyItems: 'start',
+            alignItems: 'center',
+          }}
+        >
+          <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
+          <SingleSelect
+            value={selectedCollectionVar.value}
+            buttonDisplayContent={selectedCollectionVar.display}
+            items={collectionVarItems}
+            onSelect={partial(changeConfigHandler, 'collectionVariable')}
+          />
+          <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
+          <SingleSelect
+            value={rankingMethod}
+            buttonDisplayContent={rankingMethod}
+            onSelect={partial(changeConfigHandler, 'rankingMethod')}
+            items={ABUNDANCE_METHODS.map((method) => ({
+              value: method,
+              display: method,
+            }))}
+          />
+        </div>
       </div>
-    </div>
+    </ComputationStepContainer>
   );
 }
