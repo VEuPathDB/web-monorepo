@@ -1,6 +1,5 @@
 import React from 'react';
 import { FilledButton } from '@veupathdb/coreui';
-import { capitalize } from 'lodash';
 import { ComputationAppOverview } from '../../types/visualization';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { JobStatus } from './ComputeJobStatusHook';
@@ -20,11 +19,14 @@ export function RunComputeButton(props: Props) {
         display: 'flex',
         gap: '1em',
         alignItems: 'center',
+        padding: '1em 0',
+        marginLeft: '3em',
+        marginBottom: '2em',
       }}
     >
       <FilledButton
         themeRole="primary"
-        text="Run computation"
+        text={`Generate ${computationAppOverview.displayName} results`}
         textTransform="none"
         onPress={createJob}
         disabled={status !== 'no-such-job'}
