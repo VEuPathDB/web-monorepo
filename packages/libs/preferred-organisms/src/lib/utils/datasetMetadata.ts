@@ -55,6 +55,7 @@ export const makeDatasetMetadataRecoilState = memoize(
           searchConfig: { parameters: {} },
           reportConfig: {
             attributes: [DATASET_ID_ATTRIBUTE],
+            bufferEntireResponse: true,
             tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
           },
         }),
