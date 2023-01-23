@@ -26,7 +26,7 @@ export function RunComputeButton(props: Props) {
     >
       <FilledButton
         themeRole="primary"
-        text={`Generate ${computationAppOverview.displayName} data`}
+        text={`Generate ${computationAppOverview.displayName} results`}
         textTransform="none"
         onPress={createJob}
         disabled={status !== 'no-such-job'}

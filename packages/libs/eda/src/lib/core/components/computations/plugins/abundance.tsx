@@ -182,7 +182,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     <ComputationStepContainer
       computationStepInfo={{
         stepNumber: 1,
-        stepTitle: `Configure ${computationAppOverview.displayName} data`,
+        stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
       <div style={sharedConfigCssStyles}>

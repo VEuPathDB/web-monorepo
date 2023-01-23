@@ -690,7 +690,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                 <ComputationStepContainer
                   computationStepInfo={{
                     stepNumber: 2,
-                    stepTitle: `Generate ${computationAppOverview.displayName} data`,
+                    stepTitle: `Generate ${computationAppOverview.displayName} results`,
                   }}
                 >
                   <RunComputeButton
@@ -706,7 +706,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <ComputationStepContainer
               computationStepInfo={{
                 stepNumber: 3,
-                stepTitle: `Use ${computationAppOverview.displayName} data in visualization`,
+                stepTitle: `Use ${computationAppOverview.displayName} results in visualization`,
               }}
             >
               <div style={{ marginLeft: '3em' }}>
