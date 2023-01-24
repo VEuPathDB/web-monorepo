@@ -7,11 +7,12 @@ import { JobStatus } from './ComputeJobStatusHook';
 interface Props {
   computationAppOverview: ComputationAppOverview;
   status?: JobStatus;
+  showStatus: boolean;
   createJob: () => void;
 }
 
 export function RunComputeButton(props: Props) {
-  const { computationAppOverview, status, createJob } = props;
+  const { computationAppOverview, status, showStatus, createJob } = props;
 
   return computationAppOverview.computeName ? (
     <div
@@ -31,16 +32,18 @@ export function RunComputeButton(props: Props) {
         onPress={createJob}
         disabled={status !== 'no-such-job'}
       />
-      <div
-        style={{
-          display: 'inline-flex',
-          gap: '.5em',
-          fontWeight: 'bold',
-        }}
-      >
-        Status:{' '}
-        {status ? <StatusIcon status={status} showLabel /> : 'Loading...'}
-      </div>
+      {showStatus && (
+        <div
+          style={{
+            display: 'inline-flex',
+            gap: '.5em',
+            fontWeight: 'bold',
+          }}
+        >
+          Status:{' '}
+          {status ? <StatusIcon status={status} showLabel /> : 'Loading...'}
+        </div>
+      )}
     </div>
   ) : null;
 }
