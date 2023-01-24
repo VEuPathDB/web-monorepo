@@ -43,7 +43,7 @@ export const makeDatasetMetadataRecoilState = memoize(
 
     const reportConfig: StandardReportConfig = {
       attributes: [DATASET_ID_ATTRIBUTE],
-      // bufferEntireResponse: true, // Depends on: https://github.com/VEuPathDB/WDKClient/pull/273
+      bufferEntireResponse: true,
       tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
     };
     // FIXME: Add an "answer" decoder to WDKClient to make this

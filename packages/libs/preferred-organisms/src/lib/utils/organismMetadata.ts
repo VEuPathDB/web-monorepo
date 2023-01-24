@@ -51,7 +51,7 @@ async function fetchOrganismMetadata(wdkService: WdkService) {
         BUILD_INTRODUCED_ATTR,
         IS_REFERENCE_STRAIN_ATTR,
       ],
-      // bufferEntireResponse: true, // Depends on: https://github.com/VEuPathDB/WDKClient/pull/273
+      bufferEntireResponse: true,
     };
     // FIXME: Add an "answer" decoder to WDKClient to make this
     // request type-safe
