@@ -25,7 +25,8 @@ export const AlphaDivConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
-  createDefaultConfiguration,
+  createDefaultConfiguration: () => undefined,
+  // createDefaultConfiguration,
   isConfigurationValid: AlphaDivConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
@@ -123,7 +124,6 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
 
   assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  const { alphaDivMethod, collectionVariable } = configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
     analysisState,
@@ -143,14 +143,22 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
-    const selectedItem = collectionVarItems.find((item) =>
-      isEqual(item.value, {
-        variableId: collectionVariable.variableId,
-        entityId: collectionVariable.entityId,
-      })
-    );
-    return selectedItem ?? collectionVarItems[0];
-  }, [collectionVarItems, collectionVariable]);
+    if (configuration && 'collectionVariable' in configuration) {
+      const selectedItem = collectionVarItems.find((item) =>
+        isEqual(item.value, {
+          variableId: configuration.collectionVariable.variableId,
+          entityId: configuration.collectionVariable.entityId,
+        })
+      );
+      return selectedItem;
+    }
+  }, [collectionVarItems, configuration]);
+
+  const alphaDivMethod = useMemo(() => {
+    if (configuration && 'alphaDivMethod' in configuration) {
+      return configuration.alphaDivMethod;
+    }
+  }, [configuration]);
 
   return (
     <ComputationStepContainer
@@ -170,15 +178,23 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
         >
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
           <SingleSelect
-            value={selectedCollectionVar.value}
-            buttonDisplayContent={selectedCollectionVar.display}
+            value={
+              selectedCollectionVar
+                ? selectedCollectionVar.value
+                : 'Select the data'
+            }
+            buttonDisplayContent={
+              selectedCollectionVar
+                ? selectedCollectionVar.display
+                : 'Select the data'
+            }
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>Method</div>
           <SingleSelect
-            value={alphaDivMethod}
-            buttonDisplayContent={alphaDivMethod}
+            value={alphaDivMethod ?? 'Select a method'}
+            buttonDisplayContent={alphaDivMethod ?? 'Select a method'}
             items={ALPHA_DIV_METHODS.map((method) => ({
               value: method,
               display: method,

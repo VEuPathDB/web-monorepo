@@ -151,20 +151,19 @@ function useComputation(
         `Unknown computation type: ${computation.descriptor.type}.`
       );
     }
-
-    if (
-      !computePlugin.isConfigurationValid(computation.descriptor.configuration)
-    ) {
-      return {
-        ...computation,
-        descriptor: {
-          ...computation.descriptor,
-          configuration: computePlugin.createDefaultConfiguration(
-            studyMetadata.rootEntity
-          ),
-        },
-      };
-    }
+    // if (
+    //   !computePlugin.isConfigurationValid(computation.descriptor.configuration)
+    // ) {
+    //   return {
+    //     ...computation,
+    //     descriptor: {
+    //       ...computation.descriptor,
+    //       configuration: computePlugin.createDefaultConfiguration(
+    //         studyMetadata.rootEntity
+    //       ),
+    //     },
+    //   };
+    // }
     return computation;
   }, [
     analysis?.descriptor.computations,

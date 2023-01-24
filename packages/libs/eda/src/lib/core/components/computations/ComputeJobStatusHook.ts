@@ -4,6 +4,7 @@ import { JobStatusReponse } from '../../api/ComputeClient';
 import { useComputeClient, useStudyMetadata } from '../../hooks/workspace';
 import { Analysis, NewAnalysis } from '../../types/analysis';
 import { Computation } from '../../types/visualization';
+import { plugins } from './plugins';
 
 export type JobStatus = JobStatusReponse['status'] | 'requesting';
 
@@ -17,6 +18,7 @@ export function useComputeJobStatus(
 ) {
   const computeClient = useComputeClient();
   const studyMetadata = useStudyMetadata();
+  const computePlugin = plugins[computation.descriptor.type];
 
   // Status that is exposed to hook consumer
   const [jobStatus, _setJobStatus] = useState<JobStatus>();
@@ -54,7 +56,13 @@ export function useComputeJobStatus(
 
     // Fetch the job status and update state
     async function updateJobStatus() {
-      if (computeName == null) return;
+      if (
+        computeName == null ||
+        !computePlugin.isConfigurationValid(
+          computation.descriptor.configuration
+        )
+      )
+        return;
       const { status } = await computeClient.getJobStatus(computeName, {
         config: computation.descriptor.configuration,
         derivedVariables: analysis.descriptor.derivedVariables,
@@ -86,7 +94,11 @@ export function useComputeJobStatus(
   ]);
 
   const createJob = useCallback(async () => {
-    if (computeName == null) return;
+    if (
+      computeName == null ||
+      !computePlugin.isConfigurationValid(computation.descriptor.configuration)
+    )
+      return;
     setJobStatus('requesting');
     const { status } = await computeClient.createJob(computeName, {
       config: computation.descriptor.configuration,
