@@ -7,6 +7,7 @@ import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   Question,
   RecordInstance,
+  StandardReportConfig,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const ALL_DATASETS_SEARCH_NAME = 'AllDatasets';
@@ -40,6 +41,11 @@ export const makeDatasetMetadataRecoilState = memoize(
       get: () => questions$,
     });
 
+    const reportConfig: StandardReportConfig = {
+      attributes: [DATASET_ID_ATTRIBUTE],
+      // bufferEntireResponse: true, // Depends on: https://github.com/VEuPathDB/WDKClient/pull/273
+      tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
+    };
     // FIXME: Add an "answer" decoder to WDKClient to make this
     // request type-safe
     const datasetRecords$: Promise<RecordInstance[]> = wdkService
@@ -53,10 +59,7 @@ export const makeDatasetMetadataRecoilState = memoize(
         ),
         body: JSON.stringify({
           searchConfig: { parameters: {} },
-          reportConfig: {
-            attributes: [DATASET_ID_ATTRIBUTE],
-            tables: [ORGANISMS_TABLE, WDK_REFERENCES_TABLE],
-          },
+          reportConfig,
         }),
       })
       .then((answer) => answer.records)
