@@ -60,7 +60,6 @@ async function fetchOrganismMetadata(wdkService: WdkService) {
             BUILD_INTRODUCED_ATTR,
             IS_REFERENCE_STRAIN_ATTR,
           ],
-          bufferEntireResponse: true,
         },
       }),
     });
