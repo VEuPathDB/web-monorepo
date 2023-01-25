@@ -1,6 +1,6 @@
 import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React, {useLayoutEffect, useRef} from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
@@ -156,7 +156,7 @@ function getNodeSearchString(valuesMap) {
 }
 
 
-function FieldNode({node, searchTerm, isActive, handleFieldSelect }) {
+function FieldNode({node, isActive, searchTerm, handleFieldSelect }) {
   const nodeRef = useRef(null);
 
   useLayoutEffect(() => {
