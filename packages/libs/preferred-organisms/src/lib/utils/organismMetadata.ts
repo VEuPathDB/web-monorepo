@@ -5,7 +5,10 @@ import { memoize } from 'lodash';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
-import { Answer } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Answer,
+  StandardReportConfig,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const ALL_ORGANISMS_SEARCH_NAME = 'GenomeDataTypes';
 const ORGANISM_NAME_ATTR = 'organism_name';
@@ -42,6 +45,14 @@ export interface OrganismMetadata {
 
 async function fetchOrganismMetadata(wdkService: WdkService) {
   try {
+    const reportConfig: StandardReportConfig = {
+      attributes: [
+        ORGANISM_NAME_ATTR,
+        BUILD_INTRODUCED_ATTR,
+        IS_REFERENCE_STRAIN_ATTR,
+      ],
+      bufferEntireResponse: true,
+    };
     // FIXME: Add an "answer" decoder to WDKClient to make this
     // request type-safe
     const organismRecords: Answer = await wdkService.sendRequest(ok, {
@@ -54,13 +65,7 @@ async function fetchOrganismMetadata(wdkService: WdkService) {
       ),
       body: JSON.stringify({
         searchConfig: { parameters: {} },
-        reportConfig: {
-          attributes: [
-            ORGANISM_NAME_ATTR,
-            BUILD_INTRODUCED_ATTR,
-            IS_REFERENCE_STRAIN_ATTR,
-          ],
-        },
+        reportConfig,
       }),
     });
 
