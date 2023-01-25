@@ -1,13 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
-import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
@@ -26,7 +24,6 @@ export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
   createDefaultConfiguration: () => undefined,
-  // createDefaultConfiguration,
   isConfigurationValid: AlphaDivConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
@@ -65,13 +62,21 @@ function AlphaDivConfigDescriptionComponent({
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
+  const collectionVariable =
+    'collectionVariable' in configuration
+      ? configuration.collectionVariable
+      : undefined;
+  const alphaDivMethod =
+    'alphaDivMethod' in configuration
+      ? configuration.alphaDivMethod
+      : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
         variableId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
-      configuration.collectionVariable
+      collectionVariable
     )
   );
   return (
@@ -79,31 +84,25 @@ function AlphaDivConfigDescriptionComponent({
       <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
         Data:{' '}
         <span style={{ fontWeight: 300 }}>
-          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+          {updatedCollectionVariable ? (
+            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {configuration.alphaDivMethod[0].toUpperCase() +
-            configuration.alphaDivMethod.slice(1)}
+          {alphaDivMethod ? (
+            alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
     </>
   );
-}
-
-function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
-  const collections = findCollections(rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-  return {
-    collectionVariable: {
-      variableId: collections[0].id,
-      entityId: collections[0].entityId,
-    },
-    alphaDivMethod: 'shannon',
-  };
 }
 
 // Include available methods in this array.
