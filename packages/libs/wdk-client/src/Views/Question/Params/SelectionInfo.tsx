@@ -15,6 +15,7 @@ export default function SelectionInfo(props: Props) {
   const { minSelectedCount, maxSelectedCount } = props.parameter;
   const hasMin = minSelectedCount > 0;
   const hasMax = maxSelectedCount > 0;
+  const isSingleSelect = maxSelectedCount === 1;
 
   const message = hasMin && hasMax
     ? `between ${minSelectedCount} and ${maxSelectedCount} values required`
@@ -33,7 +34,7 @@ export default function SelectionInfo(props: Props) {
 
   return (
     <div className="treeCount">
-      <span className={countColor}>{props.selectedCount} selected</span>, out of {props.allCount}
+      <span className={countColor}>{props.selectedCount} selected</span>{!isSingleSelect && <>, out of {props.allCount}</>}
       {
         !isCountInBounds && message &&
         <>
