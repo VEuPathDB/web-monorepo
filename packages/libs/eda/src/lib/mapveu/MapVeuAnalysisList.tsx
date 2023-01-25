@@ -16,8 +16,8 @@ export function AnalysisList(props: Props) {
   const studyRecord = useStudyRecord();
   const list = usePromise(
     useCallback(async () => {
-      const studies = await analysisStore.getAnalyses();
-      return studies.filter((study) => study.analysisId === studyId);
+      const analyses = await analysisStore.getAnalyses();
+      return analyses.filter((analysis) => analysis.studyId === studyId);
     }, [studyId, analysisStore])
   );
   const { url } = useRouteMatch();
@@ -30,7 +30,7 @@ export function AnalysisList(props: Props) {
   }, [analysisStore, history, studyId, url]);
   return (
     <>
-      <h2>Study: {studyRecord.displayName}</h2>
+      <h2>Study: {safeHtml(studyRecord.displayName)}</h2>
       <h3>Saved Analyses</h3>
       <div>
         <button className="btn" type="button" onClick={createAnalysis}>

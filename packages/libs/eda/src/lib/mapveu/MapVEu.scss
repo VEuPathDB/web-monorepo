@@ -1,0 +1,14 @@
+.wdk-RootContainer__MapVEu {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .wdk-PageContent {
+    flex-grow: 2;
+    padding: 0;
+  }
+
+  .MapVEu {
+    height: 100%;
+  }
+}

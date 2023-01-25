@@ -19,6 +19,8 @@ import {
   useConfiguredComputeClient,
 } from '../core/hooks/client';
 
+import './MapVEu.scss';
+
 export function MapVeuContainer() {
   const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
   const dataClient = useConfiguredDataClient('/eda-data-service');
@@ -31,7 +33,6 @@ export function MapVeuContainer() {
   const { path } = useRouteMatch();
   return (
     <>
-      <h1>MapVEu</h1>
       <Switch>
         <Route
           path={`${path}/:studyId/:analysisId`}
@@ -45,6 +46,7 @@ export function MapVeuContainer() {
               dataClient={dataClient}
               downloadClient={downloadClient}
               computeClient={computeClient}
+              className="MapVEu"
             >
               <MapVeuAnalysis
                 analysisId={props.match.params.analysisId}
@@ -63,6 +65,7 @@ export function MapVeuContainer() {
               dataClient={dataClient}
               downloadClient={downloadClient}
               computeClient={computeClient}
+              className="MapVEu"
             >
               <AnalysisList
                 studyId={props.match.params.studyId}

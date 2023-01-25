@@ -157,6 +157,12 @@ initialize({
               <Link to="/eda/studies">All studies</Link>
             </li>
           </ul>
+          <H3>MapVEu Links</H3>
+          <ul>
+            <li>
+              <Link to="/mapveu">Mapveu</Link>
+            </li>
+          </ul>
         </div>
       ),
     },
@@ -190,6 +196,7 @@ initialize({
       path: '/mapveu',
       component: MapVeuContainer,
       exact: false,
+      rootClassNameModifier: 'MapVEu',
     },
     ...routes,
   ],
