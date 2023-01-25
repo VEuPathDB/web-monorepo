@@ -128,8 +128,22 @@ function AppTitle(props: AppTitleProps) {
 
   return (
     <div style={{ lineHeight: 1.5 }}>
-      {plugin && configuration
-        ? ConfigDescription && <ConfigDescription computation={computation} />
+      {plugin
+        ? ConfigDescription && (
+            <ConfigDescription
+              computation={
+                configuration
+                  ? computation
+                  : {
+                      ...computation,
+                      descriptor: {
+                        ...computation.descriptor,
+                        configuration: {},
+                      },
+                    }
+              }
+            />
+          )
         : null}
     </div>
   );
@@ -151,19 +165,6 @@ function useComputation(
         `Unknown computation type: ${computation.descriptor.type}.`
       );
     }
-    // if (
-    //   !computePlugin.isConfigurationValid(computation.descriptor.configuration)
-    // ) {
-    //   return {
-    //     ...computation,
-    //     descriptor: {
-    //       ...computation.descriptor,
-    //       configuration: computePlugin.createDefaultConfiguration(
-    //         studyMetadata.rootEntity
-    //       ),
-    //     },
-    //   };
-    // }
     return computation;
   }, [
     analysis?.descriptor.computations,
