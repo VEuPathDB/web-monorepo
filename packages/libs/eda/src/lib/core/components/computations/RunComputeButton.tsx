@@ -7,12 +7,12 @@ import { JobStatus } from './ComputeJobStatusHook';
 interface Props {
   computationAppOverview: ComputationAppOverview;
   status?: JobStatus;
-  showStatus: boolean;
+  isConfigured: boolean;
   createJob: () => void;
 }
 
 export function RunComputeButton(props: Props) {
-  const { computationAppOverview, status, showStatus, createJob } = props;
+  const { computationAppOverview, status, isConfigured, createJob } = props;
 
   return computationAppOverview.computeName ? (
     <div
@@ -32,18 +32,22 @@ export function RunComputeButton(props: Props) {
         onPress={createJob}
         disabled={status !== 'no-such-job'}
       />
-      {showStatus && (
-        <div
-          style={{
-            display: 'inline-flex',
-            gap: '.5em',
-            fontWeight: 'bold',
-          }}
-        >
-          Status:{' '}
-          {status ? <StatusIcon status={status} showLabel /> : 'Loading...'}
-        </div>
-      )}
+      <div
+        style={{
+          display: 'inline-flex',
+          gap: '.5em',
+          fontWeight: 'bold',
+        }}
+      >
+        Status:{' '}
+        {status ? (
+          <StatusIcon status={status} showLabel />
+        ) : isConfigured ? (
+          'Loading...'
+        ) : (
+          'Not configured'
+        )}
+      </div>
     </div>
   ) : null;
 }
@@ -97,7 +101,6 @@ function Dot(props: { color: string; label: string; showLabel: boolean }) {
             width: '.75em',
             borderRadius: '50%',
             backgroundColor: props.color,
-            // boxShadow: '0 0 2px black',
           }}
         />
         {props.showLabel && props.label}

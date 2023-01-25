@@ -47,10 +47,6 @@ import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import { JobStatus } from '../computations/ComputeJobStatusHook';
-import { isTerminalStatus } from '../computations/ComputeJobStatusHook';
-import { H5 } from '@veupathdb/coreui';
-import EmptyPlotSVG from './emptyPlot';
-import RelaxMicrobeSVG from './relaxMicrobe';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
@@ -159,6 +155,10 @@ function ConfiguredVisualizations(props: Props) {
     computeJobStatus,
   } = props;
   const { url } = useRouteMatch();
+  const plugin = computation && plugins[computation.descriptor.type];
+  const isComputationConfigurationValid =
+    computation &&
+    !!plugin.isConfigurationValid(computation.descriptor.configuration);
 
   return (
     <>
@@ -262,6 +262,9 @@ function ConfiguredVisualizations(props: Props) {
                           props.computationAppOverview.computeName != null
                         }
                         computeJobStatus={computeJobStatus}
+                        isComputationConfigurationValid={
+                          isComputationConfigurationValid
+                        }
                       >
                         {/* make gray-out box on top of thumbnail */}
                         {viz.descriptor.thumbnail ? (
@@ -701,7 +704,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   <RunComputeButton
                     computationAppOverview={computationAppOverview}
                     status={computeJobStatus}
-                    showStatus={
+                    isConfigured={
                       !!plugin.isConfigurationValid(
                         computation.descriptor.configuration
                       )
@@ -776,6 +779,7 @@ type ConfiguredVisualizationGrayOutProps = {
   hasCompute: boolean;
   computeJobStatus?: JobStatus;
   children: JSX.Element;
+  isComputationConfigurationValid: boolean;
 };
 
 function ConfiguredVisualizationGrayOut({
@@ -784,10 +788,12 @@ function ConfiguredVisualizationGrayOut({
   hasCompute,
   computeJobStatus,
   children,
+  isComputationConfigurationValid,
 }: ConfiguredVisualizationGrayOutProps) {
   const message = useMemo(() => {
     if (hasCompute && computeJobStatus !== 'complete') {
-      if (computeJobStatus == null) return <Loading />;
+      if (computeJobStatus == null && isComputationConfigurationValid)
+        return <Loading />;
 
       const message =
         computeJobStatus === 'failed'
@@ -795,9 +801,12 @@ function ConfiguredVisualizationGrayOut({
               primary: 'Computation failed',
               secondary: 'Please contact us for support.',
             }
-          : computeJobStatus === 'no-such-job'
+          : computeJobStatus === 'no-such-job' ||
+            !isComputationConfigurationValid
           ? {
-              primary: 'Computation not started',
+              primary: `Computation not ${
+                isComputationConfigurationValid ? 'started' : 'configured'
+              }`,
               secondary:
                 'Configure and run a computation to use this visualization.',
             }
