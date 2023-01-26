@@ -43,11 +43,16 @@ import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
-import { Modal } from '@veupathdb/coreui';
+import { Modal, H5 } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
-import { JobStatus } from '../computations/ComputeJobStatusHook';
+import {
+  JobStatus,
+  isTerminalStatus,
+} from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
+import RelaxMicrobeSVG from './relaxMicrobe';
+import EmptyPlotSVG from './emptyPlot';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -555,6 +560,9 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
 
   const { computationId } = computation;
   const plugin = plugins[computation.descriptor.type] ?? undefined;
+  const isComputationConfigurationValid = !!plugin.isConfigurationValid(
+    computation.descriptor.configuration
+  );
 
   return (
     <div className={cx('-FullScreenContainer')}>
@@ -695,20 +703,12 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                     stepNumber: 2,
                     stepTitle: `Generate ${computationAppOverview.displayName} results`,
                   }}
-                  isStepDisabled={
-                    !plugin.isConfigurationValid(
-                      computation.descriptor.configuration
-                    )
-                  }
+                  isStepDisabled={!isComputationConfigurationValid}
                 >
                   <RunComputeButton
                     computationAppOverview={computationAppOverview}
                     status={computeJobStatus}
-                    isConfigured={
-                      !!plugin.isConfigurationValid(
-                        computation.descriptor.configuration
-                      )
-                    }
+                    isConfigured={isComputationConfigurationValid}
                     createJob={createComputeJob}
                   />
                 </ComputationStepContainer>
@@ -724,7 +724,43 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               isStepDisabled={computeJobStatus !== 'complete'}
             >
               <div style={{ marginLeft: '3em' }}>
-                {computationAppOverview.computeName && (
+                {computeJobStatus !== 'complete' ? (
+                  computeJobStatus == null &&
+                  isComputationConfigurationValid ? (
+                    <Loading />
+                  ) : (
+                    <div
+                      style={{
+                        margin: '2em 0',
+                        fontSize: '1.2em',
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        gap: '2ex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <H5>
+                        {computeJobStatus === 'requesting'
+                          ? 'Requesting computation status.'
+                          : computeJobStatus === 'no-such-job' ||
+                            !computeJobStatus
+                          ? 'Configure and run a computation to use this visualization.'
+                          : computeJobStatus === 'expired'
+                          ? 'Computation has expired. You will need to run it again.'
+                          : computeJobStatus === 'failed'
+                          ? 'Computation has failed. Please contact us for support.'
+                          : 'Computation is in progress. This visualization will be available when it is complete.'}
+                      </H5>
+                      {/* Add image for some compute statuses} */}
+                      {(computeJobStatus == 'no-such-job' ||
+                        !computeJobStatus) && <EmptyPlotSVG />}
+                      {computeJobStatus &&
+                        !isTerminalStatus(computeJobStatus) && (
+                          <RelaxMicrobeSVG />
+                        )}
+                    </div>
+                  )
+                ) : (
                   <vizPlugin.fullscreenComponent
                     options={vizPlugin.options}
                     dataElementConstraints={constraints}
