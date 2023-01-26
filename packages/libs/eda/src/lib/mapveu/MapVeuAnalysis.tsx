@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
@@ -18,10 +18,19 @@ import { InputVariables } from '../core/components/visualizations/InputVariables
 import { VariablesByInputName } from '../core/utils/data-element-constraints';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
+import { VariableDescriptor } from '../core/types/variable';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
 };
+
+interface AppState {
+  viewport: Viewport;
+  boundsZoomLevel?: BoundsViewport;
+  mouseMode: MouseMode;
+  selectedOverlayVariable?: VariableDescriptor;
+}
 
 interface Props {
   analysisId: string;
@@ -34,24 +43,27 @@ export function MapVeuAnalysis(props: Props) {
   const studyEntities = useStudyEntities();
   const geoConfigs = useGeoConfig(studyEntities);
   const analysisState = useAnalysis(analysisId);
-  const [viewport, setViewport] = useState<Viewport>(() => ({
-    center: [0, 0],
-    zoom: 4,
-  }));
-  const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
-  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
+
+  const {
+    appState,
+    setBoundsZoomLevel,
+    setMouseMode,
+    setSelectedVariables,
+    setViewport,
+  } = useAppState();
+
   const geoConfig = geoConfigs[0];
 
-  const [
-    selectedVariables,
-    setSelectedVariables,
-  ] = useState<VariablesByInputName>({
-    overlay: undefined,
-  });
+  const selectedVariables = useMemo(
+    () => ({
+      overlay: appState.selectedOverlayVariable,
+    }),
+    [appState.selectedOverlayVariable]
+  );
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { entity, variable } =
-    findEntityAndVariable(selectedVariables.overlayVariable) ?? {};
+    findEntityAndVariable(selectedVariables.overlay) ?? {};
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -65,11 +77,10 @@ export function MapVeuAnalysis(props: Props) {
     totalEntityCount,
   } = useMapMarkers({
     requireOverlay: false,
-    boundsZoomLevel,
+    boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters: analysisState.analysis?.descriptor.subset.descriptor,
-    // xAxisVariable: appState.overlayVariable,
     xAxisVariable: selectedVariables.overlay,
     computationType: 'pass',
     markerType: 'pie',
@@ -94,9 +105,9 @@ export function MapVeuAnalysis(props: Props) {
           showMouseToolbar
           showSpinner={pending}
           animation={null}
-          viewport={viewport}
+          viewport={appState.viewport}
           markers={finalMarkers}
-          mouseMode={mouseMode}
+          mouseMode={appState.mouseMode}
           flyToMarkers={false}
           flyToMarkersDelay={500}
           onBoundsChanged={setBoundsZoomLevel}
@@ -105,6 +116,30 @@ export function MapVeuAnalysis(props: Props) {
           showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
           zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
         />
+        {legendItems.length > 0 && (
+          <FloatingDiv
+            style={{
+              top: 50,
+              right: 50,
+            }}
+          >
+            <div>
+              <strong>{variable?.displayName}</strong>
+            </div>
+            <PlotLegend
+              type="list"
+              legendItems={legendItems}
+              showOverlayLegend
+              checkedLegendItems={legendItems.map((item) => item.label)}
+              containerStyles={{
+                border: 'none',
+                boxShadow: 'none',
+                padding: 0,
+                width: 'auto',
+              }}
+            />
+          </FloatingDiv>
+        )}
         <FloatingDiv
           style={{
             top: 10,
@@ -151,8 +186,6 @@ function FloatingDiv(props: {
     <div
       style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
         zIndex: 1,
         padding: '1em',
         backgroundColor: 'white',
@@ -163,4 +196,44 @@ function FloatingDiv(props: {
       {props.children}
     </div>
   );
+}
+
+function useAppState() {
+  const [appState, setAppState] = useState<AppState>(() => ({
+    viewport: {
+      center: [0, 0],
+      zoom: 4,
+    },
+    mouseMode: 'default',
+  }));
+
+  const setViewport = useCallback((viewport: Viewport) => {
+    setAppState((prevState) => ({ ...prevState, viewport }));
+  }, []);
+
+  const setMouseMode = useCallback((mouseMode: MouseMode) => {
+    setAppState((prevState) => ({ ...prevState, mouseMode }));
+  }, []);
+
+  const setBoundsZoomLevel = useCallback((boundsZoomLevel: BoundsViewport) => {
+    setAppState((prevState) => ({ ...prevState, boundsZoomLevel }));
+  }, []);
+
+  const setSelectedVariables = useCallback(
+    (selectedVariables: VariablesByInputName<'overlay'>) => {
+      setAppState((prevState) => ({
+        ...prevState,
+        selectedOverlayVariable: selectedVariables.overlay,
+      }));
+    },
+    []
+  );
+
+  return {
+    appState,
+    setViewport,
+    setMouseMode,
+    setBoundsZoomLevel,
+    setSelectedVariables,
+  };
 }
