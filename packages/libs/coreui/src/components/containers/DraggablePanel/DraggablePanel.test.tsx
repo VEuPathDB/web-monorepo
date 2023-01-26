@@ -28,7 +28,7 @@ describe("Draggable Panels", () => {
     expect(location.y).toEqual(destinationCoordinates.y);
   });
 
-  test("you can open and close panels by", () => {
+  test("you can open and close panels", () => {
     const defaultPosition = { x: 50, y: 50 };
 
     function ToggleButtonAndDraggablePanel() {
