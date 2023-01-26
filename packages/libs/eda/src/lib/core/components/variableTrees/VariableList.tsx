@@ -887,7 +887,7 @@ const FieldNode = ({
   asDropdown,
   isFeaturedField,
 }: FieldNodeProps) => {
-  const nodeRef = useRef<HTMLAnchorElement>(null);
+  const nodeRef = useRef<HTMLButtonElement>(null);
 
   const nodeColorSelector = asDropdown
     ? 'dropdown-node-color'
@@ -926,7 +926,7 @@ const FieldNode = ({
     //       : 'Select this variable.'
     //   }
     // >
-    <a
+    <button
       ref={nodeRef}
       title={
         isMultiPick
@@ -937,13 +937,13 @@ const FieldNode = ({
           : 'Select this variable.'
       }
       className={
-        isActive
+        'link ' +
+        (isActive
           ? `active-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
           : isDisabled
           ? `disabled-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
-          : `base-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
+          : `base-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`)
       }
-      href={'#' + field.term}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -951,7 +951,7 @@ const FieldNode = ({
       }}
     >
       <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
-    </a>
+    </button>
   ) : (
     // </Tooltip>
     //add condition for identifying entity parent and entity parent of activeField
