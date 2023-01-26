@@ -18,14 +18,14 @@ export default function SelectionInfo(props: Props) {
   const isSingleSelect = maxSelectedCount === 1;
 
   const message = hasMin && hasMax
-    ? `between ${minSelectedCount} and ${maxSelectedCount} values required`
+    ? `${isSingleSelect ? '' : 'between ' + minSelectedCount + ' and '}${maxSelectedCount} ${valueDescription(maxSelectedCount)} required`
     : (hasMin && selectedCount > 0) ? `at least ${minSelectedCount} ${valueDescription(minSelectedCount)} required`
     : hasMax ? `at most ${maxSelectedCount} ${valueDescription(maxSelectedCount)} required`
     : null;
 
   const isCountInBounds = countInBounds(selectedCount, Math.max(minSelectedCount,1), maxSelectedCount);
 
-  // This is usd in TreeBoxParam (eg organism): red if 0 selected
+  // This is used in TreeBoxParam (eg organism): red if 0 selected
   const countColor = isCountInBounds
     ? 'black'
     : 'red';
