@@ -30,7 +30,7 @@ describe("Draggable Panels", () => {
     expect(location.y).toEqual(destinationCoordinates.y);
   });
 
-  test("you can close opened panels", () => {
+  test("you can open and close panels", () => {
     const defaultPosition = { x: 50, y: 50 };
 
     function ToggleButtonAndPanel() {
@@ -66,43 +66,14 @@ describe("Draggable Panels", () => {
       </>
     );
 
-    const panelOfInterest = screen.getByText("This is extraordinary data");
-    expect(panelOfInterest).toBeInTheDocument();
+    expect(screen.getByText("This is extraordinary data")).toBeVisible();
 
     fireEvent.click(screen.getByText("Close My Extraordinary Data"));
+    expect(screen.getByText("This is extraordinary data")).not.toBeVisible();
+    expect(screen.getByText("This is extra ordinary data")).toBeVisible();
 
-    expect(
-      screen.getByText("This is extraordinary data")
-    ).not.toBeInTheDocument();
-
-    expect(screen.getByText("This is extra ordinary data")).toBeInTheDocument();
-  });
-
-  test("you can open closed panels.", () => {
-    const defaultPosition = { x: 50, y: 50 };
-    render(
-      <DraggablePanel
-        isOpen={false}
-        onClose={() => {}}
-        panelTitle="Filters"
-        defaultPosition={defaultPosition}
-      >
-        <p>I am closed</p>
-      </DraggablePanel>
-    );
-
-    expect(screen.getByText("I am closed")).not.toBeInTheDocument();
-    render(
-      <DraggablePanel
-        defaultPosition={defaultPosition}
-        isOpen={true}
-        onClose={() => {}}
-        panelTitle="Filters"
-      >
-        <p>I am closed</p>
-      </DraggablePanel>
-    );
-    expect(screen.getByText("I am closed")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Toggle Button"));
+    expect(screen.getByText("This is extraordinary data")).toBeVisible();
   });
 });
 
