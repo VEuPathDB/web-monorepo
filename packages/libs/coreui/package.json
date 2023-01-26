@@ -35,6 +35,7 @@
     "core-js": "^3.25.3",
     "lodash": "^4.17.21",
     "react-cool-dimensions": "^2.0.7",
+    "react-draggable": "^4.4.5",
     "react-responsive-modal": "^6.2.0",
     "react-table": "^7.7.0",
     "regenerator-runtime": "^0.13.9"
