@@ -2273,9 +2273,7 @@ function processInputData(
               extraTooltipText: categoricalMode
                 ? el.binSampleSize.map(
                     (bss) =>
-                      `n: ${(bss as { numeratorN: number }).numeratorN}/${
-                        (bss as { denominatorN: number }).denominatorN
-                      }`
+                      `n: ${(bss as { denominatorN: number }).denominatorN}`
                   )
                 : el.binSampleSize.map(
                     (bss) => `n: ${(bss as { N: number }).N}`
