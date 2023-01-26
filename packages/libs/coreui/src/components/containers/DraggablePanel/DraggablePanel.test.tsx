@@ -73,6 +73,28 @@ describe("Draggable Panels", () => {
     fireEvent.click(screen.getByText("Toggle Filters Panel"));
     expect(screen.getByText("Look at all these filters")).toBeVisible();
   });
+
+  test("provides developers with data after a user's drag has completed", () => {
+    const handleOnDragComplete = jest.fn();
+
+    const defaultPosition = { x: 50, y: 50 };
+    render(
+      <DraggablePanel
+        defaultPosition={defaultPosition}
+        panelTitle="Panel Title"
+        isOpen
+        onClose={() => {}}
+        onDragComplete={handleOnDragComplete}
+      >
+        <p>Panel contents</p>
+      </DraggablePanel>
+    );
+    const dragHandle = screen.getByText("Panel Title");
+    const destinationCoordinates = { x: 51, y: 51 };
+    drag(dragHandle, destinationCoordinates);
+
+    expect(handleOnDragComplete).toHaveBeenCalledWith({ x: 51, y: 51 });
+  });
 });
 
 function drag(element, destinationCoordinates) {}
