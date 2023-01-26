@@ -2,13 +2,11 @@
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/workspace';
 import { VariableDescriptor } from '../../../types/variable';
-import { StudyEntity } from '../../../types/study';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import { assertComputationWithConfig, useConfigChangeHandler } from '../Utils';
-import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
@@ -33,7 +31,7 @@ export const AbundanceConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AbundanceConfiguration,
   configurationDescriptionComponent: AbundanceConfigDescriptionComponent,
-  createDefaultConfiguration,
+  createDefaultConfiguration: () => undefined,
   isConfigurationValid: AbundanceConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
@@ -90,13 +88,19 @@ function AbundanceConfigDescriptionComponent({
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   assertComputationWithConfig<AbundanceConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
+  const collectionVariable =
+    'collectionVariable' in configuration
+      ? configuration.collectionVariable
+      : undefined;
+  const rankingMethod =
+    'rankingMethod' in configuration ? configuration.rankingMethod : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
         variableId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
-      configuration.collectionVariable
+      collectionVariable
     )
   );
   return (
@@ -104,31 +108,25 @@ function AbundanceConfigDescriptionComponent({
       <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
         Data:{' '}
         <span style={{ fontWeight: 300 }}>
-          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+          {updatedCollectionVariable ? (
+            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {configuration.rankingMethod[0].toUpperCase() +
-            configuration.rankingMethod.slice(1)}
+          {rankingMethod ? (
+            rankingMethod[0].toUpperCase() + rankingMethod.slice(1)
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
     </>
   );
-}
-
-function createDefaultConfiguration(rootEntity: StudyEntity): AbundanceConfig {
-  const collections = findCollections(rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-  return {
-    collectionVariable: {
-      variableId: collections[0].id,
-      entityId: collections[0].entityId,
-    },
-    rankingMethod: 'median',
-  };
 }
 
 // Include available methods in this array.
@@ -149,7 +147,6 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
 
   assertComputationWithConfig<AbundanceConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  const { rankingMethod, collectionVariable } = configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AbundanceConfig>(
     analysisState,
@@ -169,15 +166,22 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
-    const selectedItem = collectionVarItems.find((item) =>
-      isEqual(item.value, {
-        variableId: collectionVariable.variableId,
-        entityId: collectionVariable.entityId,
-      })
-    );
-    return selectedItem ?? collectionVarItems[0];
-  }, [collectionVarItems, collectionVariable]);
+    if (configuration && 'collectionVariable' in configuration) {
+      const selectedItem = collectionVarItems.find((item) =>
+        isEqual(item.value, {
+          variableId: configuration.collectionVariable.variableId,
+          entityId: configuration.collectionVariable.entityId,
+        })
+      );
+      return selectedItem;
+    }
+  }, [collectionVarItems, configuration]);
 
+  const rankingMethod = useMemo(() => {
+    if (configuration && 'rankingMethod' in configuration) {
+      return configuration.rankingMethod;
+    }
+  }, [configuration]);
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -196,15 +200,23 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         >
           <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
           <SingleSelect
-            value={selectedCollectionVar.value}
-            buttonDisplayContent={selectedCollectionVar.display}
+            value={
+              selectedCollectionVar
+                ? selectedCollectionVar.value
+                : 'Select the data'
+            }
+            buttonDisplayContent={
+              selectedCollectionVar
+                ? selectedCollectionVar.display
+                : 'Select the data'
+            }
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
           <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
           <SingleSelect
-            value={rankingMethod}
-            buttonDisplayContent={rankingMethod}
+            value={rankingMethod ?? 'Select a method'}
+            buttonDisplayContent={rankingMethod ?? 'Select a method'}
             onSelect={partial(changeConfigHandler, 'rankingMethod')}
             items={ABUNDANCE_METHODS.map((method) => ({
               value: method,
