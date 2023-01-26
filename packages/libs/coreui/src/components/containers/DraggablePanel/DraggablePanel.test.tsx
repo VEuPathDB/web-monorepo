@@ -11,12 +11,10 @@ describe("Draggable Panels", () => {
         isOpen
         onClose={() => {}}
       >
-        <p>Guard bees that stand watch at the entrance of the hive</p>
+        <p>Panel contents</p>
       </DraggablePanel>
     );
-    const panel = screen.getByText(
-      "Guard bees that stand watch at the entrance of the hive"
-    );
+    const panel = screen.getByText("Panel contents");
     const location: DOMRect = panel.getBoundingClientRect();
 
     expect(location.x).toEqual(defaultPosition.x);
@@ -30,23 +28,23 @@ describe("Draggable Panels", () => {
     expect(location.y).toEqual(destinationCoordinates.y);
   });
 
-  test("you can open and close panels", () => {
+  test("you can open and close panels by", () => {
     const defaultPosition = { x: 50, y: 50 };
 
-    function ToggleButtonAndPanel() {
+    function ToggleButtonAndDraggablePanel() {
       const [isOpen, setIsOpen] = useState(true);
       return (
         <>
           <button onClick={() => setIsOpen((isOpen) => !isOpen)}>
-            Toggle panel
+            Toggle Filters Panel
           </button>
           <DraggablePanel
             defaultPosition={defaultPosition}
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
-            panelTitle="My Extraordinary Data"
+            panelTitle="My Filters"
           >
-            <p>This is extraordinary data</p>
+            <p>Look at all these filters</p>
           </DraggablePanel>
         </>
       );
@@ -54,7 +52,7 @@ describe("Draggable Panels", () => {
 
     render(
       <>
-        <ToggleButtonAndPanel />
+        <ToggleButtonAndDraggablePanel />
         <DraggablePanel
           defaultPosition={defaultPosition}
           isOpen
@@ -66,14 +64,14 @@ describe("Draggable Panels", () => {
       </>
     );
 
-    expect(screen.getByText("This is extraordinary data")).toBeVisible();
+    expect(screen.getByText("Look at all these filters")).toBeVisible();
 
     fireEvent.click(screen.getByText("Close My Extraordinary Data"));
-    expect(screen.getByText("This is extraordinary data")).not.toBeVisible();
+    expect(screen.getByText("Look at all these filters")).not.toBeVisible();
     expect(screen.getByText("This is extra ordinary data")).toBeVisible();
 
-    fireEvent.click(screen.getByText("Toggle Button"));
-    expect(screen.getByText("This is extraordinary data")).toBeVisible();
+    fireEvent.click(screen.getByText("Toggle Filters Panel"));
+    expect(screen.getByText("Look at all these filters")).toBeVisible();
   });
 });
 
