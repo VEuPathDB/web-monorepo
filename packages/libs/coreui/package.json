@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "build": "rm -rf dist && NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir dist --extensions \".ts,.tsx\" ",
