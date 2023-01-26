@@ -104,6 +104,8 @@ function TreeBoxOrganismEnumParam(
     props.isSearchPage
   );
 
+  const { maxSelectedCount } = paramWithPrunedVocab;
+
   const referenceStrains = useReferenceStrains();
 
   const shouldHighlightReferenceOrganisms =
@@ -120,6 +122,7 @@ function TreeBoxOrganismEnumParam(
   const wrapCheckboxTreeProps = useCallback(
     (props: CheckboxTreeProps<TreeBoxVocabNode>) => ({
       ...props,
+      isMultiPick: maxSelectedCount !== 1,
       renderNode,
       searchPredicate,
     }),
