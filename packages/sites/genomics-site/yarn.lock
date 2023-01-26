@@ -2324,10 +2324,10 @@
     lodash "^4.17.20"
     react-select "^3.0.4"
 
-"@veupathdb/preferred-organisms@^1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.13.tgz#bb746b9b66d14a28444942040b71bfe2519d4295"
-  integrity sha512-3umzB06ZgmBB0pIKxo6eWlbB09Xc30JZZME8REJnUtrRz+V26o+vl5q9kHN8Ab/uTDvhKDCQI+RkYBeIMoAmtQ==
+"@veupathdb/preferred-organisms@^1.1.16":
+  version "1.1.16"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-1.1.16.tgz#9aae644d981b65859ede06345cc356efda496db5"
+  integrity sha512-TZzz7zVPmRPNwIKomOD4x1PpQPlpKypSv1VU1md8w8qKfn55IAodSlMcdLkl21FPrjdSePvkE7YBgptn7wscHA==
   dependencies:
     lodash "^4.17.21"
     recoil "^0.2.0"
@@ -2376,10 +2376,10 @@
     date-fns "^2.29.1"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.9.23":
-  version "0.9.23"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.23.tgz#aa3e1526bbd045234407e59265b8ae9296d41166"
-  integrity sha512-o3HWRzDddqDws3pYQ6NcVnTYJIkLPIVieKdALJ02trkOQRYPfPrxblIqbONslD1O4VuMoAxOO8hdEmZp9q6bGQ==
+"@veupathdb/wdk-client@^0.9.26":
+  version "0.9.26"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.26.tgz#9e75fc2d5828545b4d645f5a97b22226974c8a0b"
+  integrity sha512-t7+Dvzkof14T6SBPzzgNtSgP9NWFJ7FcgwXq+nOGQI6jZTwUyApUXIa7AnNPrypigKvErtX5WcdrfqNpwUljBA==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
