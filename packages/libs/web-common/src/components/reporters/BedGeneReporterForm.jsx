@@ -105,7 +105,7 @@ let formBeforeCommonOptions = props => {
             { value: 'gene_components', display: 'Gene Components' },
           ]}
         />
-        <h2>Type-specific Params</h2>
+        <h3>Type-specific Params</h3>
         {getTypeSpecificParams()}
       </div>
     </React.Fragment>
