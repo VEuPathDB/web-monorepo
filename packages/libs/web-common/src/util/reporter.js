@@ -80,7 +80,7 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'EstRecordClasses.EstRecordClass':
           return SequenceSimpleReporterForm;
         default:
-          console.error("Unsupported BED recordClass: " + recordClassFullName);
+          console.error("Unsupported sequence recordClass: " + recordClassFullName);
           return EmptyReporter;
       }
     case 'fasta':
