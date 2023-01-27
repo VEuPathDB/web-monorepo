@@ -84,6 +84,16 @@ let formBeforeCommonOptions = props => {
   let typeUpdateHandler = function(newTypeValue) {
     updateFormState(Object.assign({}, formState, { type: newTypeValue }));
   };
+  let getTypeSpecificParams = () => {
+    switch(formState.type) {
+      case 'genomic':
+        return <GenomicSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>;
+      case 'spliced_genomic':
+        return <FeaturesList field="splicedGenomic" features={splicedGenomicOptions} formState={formState} getUpdateHandler={getUpdateHandler} />;
+      case 'gene_components':
+        return <ComponentsList field="geneComponents" features={geneComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />;
+    }
+  };
   return (
     <React.Fragment>
       <h3>Choose the type of result:</h3>
@@ -101,7 +111,9 @@ let formBeforeCommonOptions = props => {
               <ComponentsList field="geneComponents" features={geneComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
             )},
           ]  
-          }/>
+          }
+        />
+        {getTypeSpecificParams()}
       </div>
     </React.Fragment>
   );

@@ -20,32 +20,30 @@ let sequenceOptions = (props) => {
   return (
     <React.Fragment>
       <h3>Fasta defline:</h3>
-       <div style={{marginLeft:"2em"}}>
-         <RadioList name="deflineType" value={formState.deflineType}
-           onChange={getUpdateHandler('deflineType')} items={[
-             {  value: "short", display: 'ID Only' },
-             { 
-               value: "full", display: 'Full Fasta Header',
-               body: (<ComponentsList field="deflineFields" features={deflineFieldOptions} formState={formState} getUpdateHandler={getUpdateHandler} />),
-             }
-             ]}/>
-       </div>
-       <h3>Sequence format:</h3>
-       <div style={{marginLeft:"2em"}}>
-         <RadioList name="sequenceFormat" value={formState.sequenceFormat}
-           onChange={getUpdateHandler('sequenceFormat')} items={[
-             {  value: "single_line", display: 'Single Line' },
-             { 
-               value: "fixed_width", display: 'Fixed Width',
-               body: (
-                 <React.Fragment>
-                   <span>Bases Per Line: </span>
-                   <NumberSelector name={"basesPerLine"} start={0} end={10000} value={formState["basesPerLine"]} step={1}
-                       onChange={getUpdateHandler("basesPerLine")} size="6"/>
-                 </React.Fragment>
-               ),
-             }
-             ]}/>
+      <div style={{marginLeft:"2em"}}>
+        <RadioList name="deflineType" value={formState.deflineType}
+          onChange={getUpdateHandler('deflineType')} items={[
+            { value: "short", display: 'ID Only' },
+            { value: "full", display: 'Full Fasta Header' },
+          ]}
+        />
+        { formState.deflineType === 'short' ? null :
+          <ComponentsList field="deflineFields" features={deflineFieldOptions} formState={formState} getUpdateHandler={getUpdateHandler} /> }
+      </div>
+      <h3>Sequence format:</h3>
+      <div style={{marginLeft:"2em"}}>
+        <RadioList name="sequenceFormat" value={formState.sequenceFormat}
+          onChange={getUpdateHandler('sequenceFormat')} items={[
+            { value: "single_line", display: 'Single Line' },
+            { value: "fixed_width", display: 'Fixed Width' },
+          ]
+        }/>
+        { formState.sequenceFormat === 'single_line' ? null :
+          <React.Fragment>
+            <span>Bases Per Line: </span>
+            <NumberSelector name={"basesPerLine"} start={0} end={10000} value={formState["basesPerLine"]} step={1}
+              onChange={getUpdateHandler("basesPerLine")} size="6"/>
+          </React.Fragment> }
       </div>
     </React.Fragment>
   );
