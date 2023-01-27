@@ -32,16 +32,16 @@ describe("Draggable Panels", () => {
     const defaultPosition = { x: 50, y: 50 };
 
     function ToggleButtonAndDraggablePanel() {
-      const [isOpen, setIsOpen] = useState(true);
+      const [panelIsOpen, setPanelIsOpen] = useState(true);
       return (
         <>
-          <button onClick={() => setIsOpen((isOpen) => !isOpen)}>
+          <button onClick={() => setPanelIsOpen((isOpen) => !isOpen)}>
             Toggle Filters Panel
           </button>
           <DraggablePanel
             defaultPosition={defaultPosition}
-            isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
+            isOpen={panelIsOpen}
+            onClose={() => setPanelIsOpen(false)}
             panelTitle="My Filters"
           >
             <p>Look at all these filters</p>
