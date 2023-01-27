@@ -1,12 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
-import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
@@ -25,7 +23,7 @@ export const BetaDivConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: BetaDivConfiguration,
   configurationDescriptionComponent: BetaDivConfigDescriptionComponent,
-  createDefaultConfiguration,
+  createDefaultConfiguration: () => undefined,
   isConfigurationValid: BetaDivConfig.is,
   visualizationPlugins: {
     scatterplot: scatterplotVisualization
@@ -66,13 +64,21 @@ function BetaDivConfigDescriptionComponent({
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   assertComputationWithConfig<BetaDivConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
+  const collectionVariable =
+    'collectionVariable' in configuration
+      ? configuration.collectionVariable
+      : undefined;
+  const betaDivDistanceMethod =
+    'betaDivDistanceMethod' in configuration
+      ? configuration.betaDivDistanceMethod
+      : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
         variableId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
-      configuration.collectionVariable
+      collectionVariable
     )
   );
   return (
@@ -80,14 +86,22 @@ function BetaDivConfigDescriptionComponent({
       <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
         Data:{' '}
         <span style={{ fontWeight: 300 }}>
-          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+          {updatedCollectionVariable ? (
+            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Distance method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {configuration.betaDivDistanceMethod[0].toUpperCase() +
-            configuration.betaDivDistanceMethod.slice(1)}
+          {betaDivDistanceMethod ? (
+            betaDivDistanceMethod[0].toUpperCase() +
+            betaDivDistanceMethod.slice(1)
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
     </>
@@ -96,19 +110,6 @@ function BetaDivConfigDescriptionComponent({
 
 // Include available methods in this array.
 const BETA_DIV_DISTANCE_METHODS = ['bray', 'jaccard', 'jsd'];
-
-function createDefaultConfiguration(rootEntity: StudyEntity): BetaDivConfig {
-  const collections = findCollections(rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-  return {
-    collectionVariable: {
-      variableId: collections[0].id,
-      entityId: collections[0].entityId,
-    },
-    betaDivDistanceMethod: BETA_DIV_DISTANCE_METHODS[0],
-  };
-}
 
 export function BetaDivConfiguration(props: ComputationConfigProps) {
   const {
@@ -125,7 +126,6 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
 
   assertComputationWithConfig<BetaDivConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  const { betaDivDistanceMethod, collectionVariable } = configuration;
 
   const changeConfigHandler = useConfigChangeHandler<BetaDivConfig>(
     analysisState,
@@ -145,14 +145,22 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
-    const selectedItem = collectionVarItems.find((item) =>
-      isEqual(item.value, {
-        variableId: collectionVariable.variableId,
-        entityId: collectionVariable.entityId,
-      })
-    );
-    return selectedItem ?? collectionVarItems[0];
-  }, [collectionVarItems, collectionVariable]);
+    if (configuration && 'collectionVariable' in configuration) {
+      const selectedItem = collectionVarItems.find((item) =>
+        isEqual(item.value, {
+          variableId: configuration.collectionVariable.variableId,
+          entityId: configuration.collectionVariable.entityId,
+        })
+      );
+      return selectedItem;
+    }
+  }, [collectionVarItems, configuration]);
+
+  const betaDivDistanceMethod = useMemo(() => {
+    if (configuration && 'betaDivDistanceMethod' in configuration) {
+      return configuration.betaDivDistanceMethod;
+    }
+  }, [configuration]);
 
   return (
     <ComputationStepContainer
@@ -172,8 +180,16 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
         >
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
           <SingleSelect
-            value={selectedCollectionVar.value}
-            buttonDisplayContent={selectedCollectionVar.display}
+            value={
+              selectedCollectionVar
+                ? selectedCollectionVar.value
+                : 'Select the data'
+            }
+            buttonDisplayContent={
+              selectedCollectionVar
+                ? selectedCollectionVar.display
+                : 'Select the data'
+            }
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
@@ -181,8 +197,8 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
             Distance method
           </div>
           <SingleSelect
-            value={betaDivDistanceMethod}
-            buttonDisplayContent={betaDivDistanceMethod}
+            value={betaDivDistanceMethod ?? 'Select a method'}
+            buttonDisplayContent={betaDivDistanceMethod ?? 'Select a method'}
             items={BETA_DIV_DISTANCE_METHODS.map((method) => ({
               value: method,
               display: method,

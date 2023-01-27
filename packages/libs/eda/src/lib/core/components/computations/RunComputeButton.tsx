@@ -7,11 +7,12 @@ import { JobStatus } from './ComputeJobStatusHook';
 interface Props {
   computationAppOverview: ComputationAppOverview;
   status?: JobStatus;
+  isConfigured: boolean;
   createJob: () => void;
 }
 
 export function RunComputeButton(props: Props) {
-  const { computationAppOverview, status, createJob } = props;
+  const { computationAppOverview, status, isConfigured, createJob } = props;
 
   return computationAppOverview.computeName ? (
     <div
@@ -39,7 +40,13 @@ export function RunComputeButton(props: Props) {
         }}
       >
         Status:{' '}
-        {status ? <StatusIcon status={status} showLabel /> : 'Loading...'}
+        {status ? (
+          <StatusIcon status={status} showLabel />
+        ) : isConfigured ? (
+          'Loading...'
+        ) : (
+          'Not configured'
+        )}
       </div>
     </div>
   ) : null;
@@ -94,7 +101,6 @@ function Dot(props: { color: string; label: string; showLabel: boolean }) {
             width: '.75em',
             borderRadius: '50%',
             backgroundColor: props.color,
-            // boxShadow: '0 0 2px black',
           }}
         />
         {props.showLabel && props.label}
