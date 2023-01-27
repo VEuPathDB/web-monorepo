@@ -9,6 +9,7 @@ describe("Draggable Panels", () => {
         defaultPosition={defaultPosition}
         panelTitle="Panel Title"
         isOpen
+        onDragComplete={() => {}}
         onPanelDismiss={() => {}}
       >
         <p>Panel contents</p>
@@ -41,8 +42,9 @@ describe("Draggable Panels", () => {
           <DraggablePanel
             defaultPosition={defaultPosition}
             isOpen={panelIsOpen}
-            onPanelDismiss={() => setPanelIsOpen(false)}
             panelTitle="My Filters"
+            onDragComplete={() => {}}
+            onPanelDismiss={() => setPanelIsOpen(false)}
           >
             <p>Look at all these filters</p>
           </DraggablePanel>
@@ -56,8 +58,9 @@ describe("Draggable Panels", () => {
         <DraggablePanel
           defaultPosition={defaultPosition}
           isOpen
-          onPanelDismiss={() => {}}
           panelTitle="My Extra Ordinary Data"
+          onDragComplete={() => {}}
+          onPanelDismiss={() => {}}
         >
           <p>This is extra ordinary data</p>
         </DraggablePanel>
@@ -83,8 +86,8 @@ describe("Draggable Panels", () => {
         defaultPosition={defaultPosition}
         panelTitle="Panel Title"
         isOpen
-        onPanelDismiss={() => {}}
         onDragComplete={handleOnDragComplete}
+        onPanelDismiss={() => {}}
       >
         <p>Panel contents</p>
       </DraggablePanel>
