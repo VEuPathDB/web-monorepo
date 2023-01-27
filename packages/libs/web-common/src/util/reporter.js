@@ -8,8 +8,12 @@ import XmlReporterForm from '../components/reporters/XmlReporterForm';
 import JsonReporterForm from '../components/reporters/JsonReporterForm';
 import Gff3ReporterForm from '../components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from '../components/reporters/FastaGeneReporterForm';
+import SequenceGeneReporterForm from '../components/reporters/SequenceGeneReporterForm';
+import BedGeneReporterForm from '../components/reporters/BedGeneReporterForm';
+import {SequenceSimpleReporterForm, BedSimpleReporterForm} from '../components/reporters/BedAndSequenceSimpleReporterForms';
+import {SequenceGenomicSequenceReporterForm, BedGenomicSequenceReporterForm} from '../components/reporters/BedAndSequenceGenomicSequenceReporterForms';
+import SequenceSequenceReporterForm from '../components/reporters/SequenceSequenceReporterForm';
 import FastaGenomicSequenceReporterForm from '../components/reporters/FastaGenomicSequenceReporterForm';
-import FastaOrfReporterForm from '../components/reporters/FastaOrfReporterForm';
 import FastaOrthoSequenceReporterForm from '../components/reporters/FastaOrthoSequenceReporterForm';
 import TableReporterForm from '../components/reporters/TableReporterForm';
 import TranscriptTableReporterForm from '../components/reporters/TranscriptTableReporterForm';
@@ -45,10 +49,38 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
           return FastaGeneReporterForm;
         case 'SequenceRecordClasses.SequenceRecordClass':
           return FastaGenomicSequenceReporterForm;
-        case 'OrfRecordClasses.OrfRecordClass':
-          return FastaOrfReporterForm;
         default:
-          console.error("Unsupported FASTA recordClass: " + recordClassName);
+          console.error("Unsupported FASTA recordClass: " + recordClassFullName);
+          return EmptyReporter;
+      }
+    case 'bed':
+      switch (recordClassFullName) {
+        case 'GeneRecordClasses.GeneRecordClass':
+        case 'TranscriptRecordClasses.TranscriptRecordClass':
+          return BedGeneReporterForm;
+        case 'SequenceRecordClasses.SequenceRecordClass':
+          return BedGenomicSequenceReporterForm;
+        case 'DynSpanRecordClasses.DynSpanRecordClass':
+        case 'PopsetRecordClasses.PopsetRecordClass':
+        case 'EstRecordClasses.EstRecordClass':
+          return BedSimpleReporterForm;
+        default:
+          console.error("Unsupported BED recordClass: " + recordClassFullName);
+          return EmptyReporter;
+      }
+    case 'sequence':
+      switch (recordClassFullName) {
+        case 'GeneRecordClasses.GeneRecordClass':
+        case 'TranscriptRecordClasses.TranscriptRecordClass':
+          return SequenceGeneReporterForm;
+        case 'SequenceRecordClasses.SequenceRecordClass':
+          return SequenceGenomicSequenceReporterForm;
+        case 'DynSpanRecordClasses.DynSpanRecordClass':
+        case 'PopsetRecordClasses.PopsetRecordClass':
+        case 'EstRecordClasses.EstRecordClass':
+          return SequenceSimpleReporterForm;
+        default:
+          console.error("Unsupported sequence recordClass: " + recordClassFullName);
           return EmptyReporter;
       }
     case 'fasta':
