@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+import { act } from "@testing-library/react";
+import { CSSProperties, ReactNode, useState } from "react";
+import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -15,9 +17,52 @@ export type DraggablePanelProps = {
   /** This controls weather the panel is visible or not. */
   isOpen: boolean;
   /** This event fires when the user's drag completes. */
-  onDragComplete: () => DraggablePanelCoordinatePair;
+  onDragComplete?: (
+    destinationCoordinates: DraggablePanelCoordinatePair
+  ) => void;
   /** This event fires when the user dismisses a visible panel. */
-  onPanelDismiss: () => void;
+  onPanelDismiss?: () => void;
 };
 
-export function DraggablePanel({ children }: DraggablePanelProps) {}
+export function DraggablePanel({
+  children,
+  defaultPosition,
+  isOpen,
+  onDragComplete,
+  onPanelDismiss,
+  panelTitleForAccessibilityOnly,
+}: DraggablePanelProps) {
+  const [didDrag, setDidDrag] = useState<boolean>(false);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      data-testid={`${panelTitleForAccessibilityOnly} ${
+        didDrag ? "dragged" : "not dragged"
+      }`}
+    >
+      {onPanelDismiss && (
+        <button onClick={onPanelDismiss}>
+          Close {panelTitleForAccessibilityOnly}
+        </button>
+      )}
+      <Draggable
+        onDrag={(event: DraggableEvent, data: DraggableData) => {
+          !didDrag && setDidDrag(true);
+        }}
+        onStop={(event: DraggableEvent, data: DraggableData) => {
+          if (!onDragComplete) return;
+
+          onDragComplete({
+            x: data.lastX,
+            y: data.lastY,
+          });
+        }}
+        defaultPosition={defaultPosition}
+      >
+        {children}
+      </Draggable>
+    </div>
+  );
+}

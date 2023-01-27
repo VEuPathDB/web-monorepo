@@ -1,13 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
+import { DraggablePanel, DraggablePanelCoordinatePair } from "./DraggablePanel";
 
 describe("Draggable Panels", () => {
   test("dragging a panel changes where it lives.", () => {
-    const defaultPosition = { x: 50, y: 50 };
+    const defaultPosition: DraggablePanelCoordinatePair = { x: 0, y: 0 };
+    const panelTitleForAccessibilityOnly = "Study Filters Panel";
     render(
       <DraggablePanel
         defaultPosition={defaultPosition}
-        panelTitle="Panel Title"
+        panelTitleForAccessibilityOnly={panelTitleForAccessibilityOnly}
         isOpen
         onDragComplete={() => {}}
         onPanelDismiss={() => {}}
@@ -16,20 +18,21 @@ describe("Draggable Panels", () => {
       </DraggablePanel>
     );
     const panel = screen.getByText("Panel contents");
-    const location: DOMRect = panel.getBoundingClientRect();
+    const initialLocation: DOMRect = panel.getBoundingClientRect();
 
-    expect(location.x).toEqual(defaultPosition.x);
-    expect(location.y).toEqual(defaultPosition.y);
+    expect(initialLocation.x).toEqual(defaultPosition.x);
+    expect(initialLocation.y).toEqual(defaultPosition.y);
 
-    const destinationCoordinates = { x: 200, y: 200 };
-    const dragHandle = screen.getByText("Panel Title");
-    drag(dragHandle, destinationCoordinates);
+    const destinationCoordinates = { x: 73, y: 22 };
 
-    expect(location.x).toEqual(destinationCoordinates.x);
-    expect(location.y).toEqual(destinationCoordinates.y);
+    drag(panel, destinationCoordinates);
+
+    expect(
+      screen.getByTestId(`${panelTitleForAccessibilityOnly} dragged`)
+    ).toBeTruthy();
   });
 
-  test("you can open and close panels", () => {
+  test("you can open and close panels", async () => {
     const defaultPosition = { x: 50, y: 50 };
 
     function ToggleButtonAndDraggablePanel() {
@@ -42,11 +45,11 @@ describe("Draggable Panels", () => {
           <DraggablePanel
             defaultPosition={defaultPosition}
             isOpen={panelIsOpen}
-            panelTitle="My Filters"
+            panelTitleForAccessibilityOnly="My Filters"
             onDragComplete={() => {}}
             onPanelDismiss={() => setPanelIsOpen(false)}
           >
-            <p>Look at all these filters</p>
+            <p>I might be here or I might be gone</p>
           </DraggablePanel>
         </>
       );
@@ -58,33 +61,43 @@ describe("Draggable Panels", () => {
         <DraggablePanel
           defaultPosition={defaultPosition}
           isOpen
-          panelTitle="My Extra Ordinary Data"
+          panelTitleForAccessibilityOnly="My Extra Ordinary Data"
           onDragComplete={() => {}}
           onPanelDismiss={() => {}}
         >
-          <p>This is extra ordinary data</p>
+          <p>I will be with you forever.</p>
         </DraggablePanel>
       </>
     );
 
-    expect(screen.getByText("Look at all these filters")).toBeVisible();
+    expect(
+      screen.getByText("I might be here or I might be gone")
+    ).toBeVisible();
 
-    fireEvent.click(screen.getByText("Close My Extraordinary Data"));
-    expect(screen.getByText("Look at all these filters")).not.toBeVisible();
-    expect(screen.getByText("This is extra ordinary data")).toBeVisible();
+    const closePanel = screen.getByText("Close My Filters");
+    fireEvent.click(closePanel);
+
+    expect(
+      screen.queryByText("I might be here or I might be gone")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("I will be with you forever.")
+    ).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Toggle Filters Panel"));
-    expect(screen.getByText("Look at all these filters")).toBeVisible();
+    expect(
+      screen.getByText("I might be here or I might be gone")
+    ).toBeInTheDocument();
   });
 
   test("provides developers with data after a user's drag has completed", () => {
     const handleOnDragComplete = jest.fn();
 
-    const defaultPosition = { x: 50, y: 50 };
+    const defaultPosition = { x: 0, y: 0 };
     render(
       <DraggablePanel
         defaultPosition={defaultPosition}
-        panelTitle="Panel Title"
+        panelTitleForAccessibilityOnly="Panel Title"
         isOpen
         onDragComplete={handleOnDragComplete}
         onPanelDismiss={() => {}}
@@ -92,12 +105,19 @@ describe("Draggable Panels", () => {
         <p>Panel contents</p>
       </DraggablePanel>
     );
-    const dragHandle = screen.getByText("Panel Title");
-    const destinationCoordinates = { x: 51, y: 51 };
+    const dragHandle = screen.getByText("Panel contents");
+    const destinationCoordinates = { x: 0, y: 0 };
     drag(dragHandle, destinationCoordinates);
 
-    expect(handleOnDragComplete).toHaveBeenCalledWith({ x: 51, y: 51 });
+    expect(handleOnDragComplete).toHaveBeenCalledWith({ x: 0, y: 0 });
   });
 });
 
-function drag(element, destinationCoordinates) {}
+function drag(
+  element: HTMLElement,
+  destinationCoordinates: DraggablePanelCoordinatePair
+): void {
+  fireEvent.mouseDown(element);
+  fireEvent.mouseMove(element, destinationCoordinates);
+  fireEvent.mouseUp(element);
+}
