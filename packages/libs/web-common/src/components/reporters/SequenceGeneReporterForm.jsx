@@ -163,6 +163,7 @@ let formBeforeCommonOptions = props => {
             { value: 'protein_features', display: 'Protein Features' },
           ]}
         />
+        <h2>Type-specific Params</h2>
         {getTypeSpecificParams()}
       </div>
     </React.Fragment>
