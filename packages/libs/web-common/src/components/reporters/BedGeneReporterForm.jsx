@@ -99,19 +99,11 @@ let formBeforeCommonOptions = props => {
       <h3>Choose the type of result:</h3>
       <div style={{marginLeft:"2em"}}>
         <RadioList name="type" value={formState.type}
-          onChange={typeUpdateHandler} items={
-          [
-            { value: 'genomic', display: 'Unspliced Genomic Region', body:  (
-              <GenomicSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>
-            )},
-            { value: 'spliced_genomic', display: 'Spliced Genomic Region', body: (
-              <FeaturesList field="splicedGenomic" features={splicedGenomicOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
-            )},
-            { value: 'gene_components', display: 'Gene Components', body: (
-              <ComponentsList field="geneComponents" features={geneComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />
-            )},
-          ]  
-          }
+          onChange={typeUpdateHandler} items={[
+            { value: 'genomic', display: 'Unspliced Genomic Region' },
+            { value: 'spliced_genomic', display: 'Spliced Genomic Region' },
+            { value: 'gene_components', display: 'Gene Components' },
+          ]}
         />
         {getTypeSpecificParams()}
       </div>
