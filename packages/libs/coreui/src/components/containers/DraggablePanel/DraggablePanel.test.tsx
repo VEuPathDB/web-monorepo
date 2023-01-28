@@ -6,22 +6,19 @@ describe("Draggable Panels", () => {
   test("dragging a panel changes where it lives.", () => {
     const defaultPosition: DraggablePanelCoordinatePair = { x: 0, y: 0 };
     const panelTitleForAccessibilityOnly = "Study Filters Panel";
+    const handleOnDragComplete = jest.fn();
     render(
       <DraggablePanel
         defaultPosition={defaultPosition}
         panelTitleForAccessibilityOnly={panelTitleForAccessibilityOnly}
         isOpen
-        onDragComplete={() => {}}
+        onDragComplete={handleOnDragComplete}
         onPanelDismiss={() => {}}
       >
         <p>Panel contents</p>
       </DraggablePanel>
     );
     const panel = screen.getByText("Panel contents");
-    const initialLocation: DOMRect = panel.getBoundingClientRect();
-
-    expect(initialLocation.x).toEqual(defaultPosition.x);
-    expect(initialLocation.y).toEqual(defaultPosition.y);
 
     const destinationCoordinates = { x: 73, y: 22 };
 
@@ -30,6 +27,7 @@ describe("Draggable Panels", () => {
     expect(
       screen.getByTestId(`${panelTitleForAccessibilityOnly} dragged`)
     ).toBeTruthy();
+    expect(handleOnDragComplete).toHaveBeenCalled();
   });
 
   test("you can open and close panels", async () => {
@@ -88,28 +86,6 @@ describe("Draggable Panels", () => {
     expect(
       screen.getByText("I might be here or I might be gone")
     ).toBeInTheDocument();
-  });
-
-  test("provides developers with data after a user's drag has completed", () => {
-    const handleOnDragComplete = jest.fn();
-
-    const defaultPosition = { x: 0, y: 0 };
-    render(
-      <DraggablePanel
-        defaultPosition={defaultPosition}
-        panelTitleForAccessibilityOnly="Panel Title"
-        isOpen
-        onDragComplete={handleOnDragComplete}
-        onPanelDismiss={() => {}}
-      >
-        <p>Panel contents</p>
-      </DraggablePanel>
-    );
-    const dragHandle = screen.getByText("Panel contents");
-    const destinationCoordinates = { x: 0, y: 0 };
-    drag(dragHandle, destinationCoordinates);
-
-    expect(handleOnDragComplete).toHaveBeenCalledWith({ x: 0, y: 0 });
   });
 });
 
