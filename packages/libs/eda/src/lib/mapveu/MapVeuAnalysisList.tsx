@@ -5,14 +5,16 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { AnalysisClient } from '../core/api/AnalysisClient';
 import { usePromise } from '../core/hooks/promise';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { createComputation } from '../core/components/computations/Utils';
 
 interface Props {
   studyId: string;
   analysisStore: AnalysisClient;
+  singleAppMode?: string;
 }
 
 export function AnalysisList(props: Props) {
-  const { analysisStore, studyId } = props;
+  const { analysisStore, studyId, singleAppMode } = props;
   const studyRecord = useStudyRecord();
   const list = usePromise(
     useCallback(async () => {
@@ -23,11 +25,23 @@ export function AnalysisList(props: Props) {
   const { url } = useRouteMatch();
   const history = useHistory();
   const createAnalysis = useCallback(async () => {
+    // FIXME Only create computation if singleAppMode is defined
+    // If using singleAppMode, create a computation object that will be used in our default analysis.
+    const computation = singleAppMode
+      ? createComputation(
+          singleAppMode,
+          undefined,
+          [],
+          [],
+          undefined,
+          'Unnamed computation'
+        )
+      : undefined;
     const { analysisId } = await analysisStore.createAnalysis(
-      makeNewAnalysis(studyId)
+      makeNewAnalysis(studyId, computation)
     );
     history.push(`${url}/${analysisId}`);
-  }, [analysisStore, history, studyId, url]);
+  }, [analysisStore, history, singleAppMode, studyId, url]);
   return (
     <>
       <h2>Study: {safeHtml(studyRecord.displayName)}</h2>

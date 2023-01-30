@@ -194,7 +194,7 @@ initialize({
     },
     {
       path: '/mapveu',
-      component: MapVeuContainer,
+      component: () => <MapVeuContainer singleAppMode={singleAppMode} />,
       exact: false,
       rootClassNameModifier: 'MapVEu',
     },

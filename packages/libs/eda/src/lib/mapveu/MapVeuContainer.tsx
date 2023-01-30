@@ -21,7 +21,12 @@ import {
 
 import './MapVEu.scss';
 
-export function MapVeuContainer() {
+interface Props {
+  singleAppMode?: string;
+}
+
+export function MapVeuContainer(props: Props) {
+  const { singleAppMode } = props;
   const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
   const dataClient = useConfiguredDataClient('/eda-data-service');
   const computeClient = useConfiguredComputeClient('/eda-data-service');
@@ -70,6 +75,7 @@ export function MapVeuContainer() {
               <AnalysisList
                 studyId={props.match.params.studyId}
                 analysisStore={analysisClient}
+                singleAppMode={singleAppMode}
               />
             </EDAAnalysisListContainer>
           )}
