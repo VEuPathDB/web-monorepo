@@ -20,9 +20,20 @@ describe("Draggable Panels", () => {
     );
     const panel = screen.getByText("Panel contents");
 
-    const destinationCoordinates = { x: 73, y: 22 };
+    const destinationCoordinates = { clientX: 73, clientY: 22 };
 
     drag(panel, destinationCoordinates);
+
+    /**
+     * I really don't like assert on implementation details. If we change React dragging librbaries,
+     * this assertion could break and raise a false positive. That said, jsdom doesn't render layouts
+     * like a legit browser so we're left with this and data-testids. The data-testid is nice because
+     * at least we're in control of that so we can make sure that doesn't change if we swap dragging
+     * providers. See conversations like: https://softwareengineering.stackexchange.com/questions/234024/unit-testing-behaviours-without-coupling-to-implementation-details
+     */
+    expect(panel.style.transform).toEqual(
+      `translate(${destinationCoordinates.clientX}px,${destinationCoordinates.clientY}px)`
+    );
 
     expect(
       screen.getByTestId(`${panelTitleForAccessibilityOnly} dragged`)
@@ -105,7 +116,7 @@ describe("Draggable Panels", () => {
  */
 function drag(
   element: HTMLElement,
-  destinationCoordinates: DraggablePanelCoordinatePair
+  destinationCoordinates: { clientX: number; clientY: number }
 ): void {
   fireEvent.mouseDown(element);
   fireEvent.mouseMove(element, destinationCoordinates);

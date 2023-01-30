@@ -59,7 +59,7 @@ export function DraggablePanel({
             y: data.lastY,
           });
         }}
-        defaultPosition={defaultPosition}
+        defaultPosition={defaultPosition || { x: 0, y: 0 }}
       >
         {children}
       </Draggable>
