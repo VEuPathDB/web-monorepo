@@ -18,11 +18,13 @@ describe("Draggable Panels", () => {
         <p>Panel contents</p>
       </DraggablePanel>
     );
-    const panel = screen.getByText("Panel contents");
+    const panelDragHandle = screen.getByText(
+      `Close ${panelTitleForAccessibilityOnly}`
+    );
 
     const destinationCoordinates = { clientX: 73, clientY: 22 };
 
-    drag(panel, destinationCoordinates);
+    drag(panelDragHandle, destinationCoordinates);
 
     /**
      * I really don't like assert on implementation details. If we change React dragging librbaries,
@@ -31,13 +33,15 @@ describe("Draggable Panels", () => {
      * at least we're in control of that so we can make sure that doesn't change if we swap dragging
      * providers. See conversations like: https://softwareengineering.stackexchange.com/questions/234024/unit-testing-behaviours-without-coupling-to-implementation-details
      */
-    expect(panel.style.transform).toEqual(
+
+    const panelFromDataTestId = screen.getByTestId(
+      `${panelTitleForAccessibilityOnly} dragged`
+    );
+    expect(panelFromDataTestId.style.transform).toEqual(
       `translate(${destinationCoordinates.clientX}px,${destinationCoordinates.clientY}px)`
     );
 
-    expect(
-      screen.getByTestId(`${panelTitleForAccessibilityOnly} dragged`)
-    ).toBeTruthy();
+    expect(panelFromDataTestId).toBeTruthy();
     expect(handleOnDragComplete).toHaveBeenCalled();
   });
 

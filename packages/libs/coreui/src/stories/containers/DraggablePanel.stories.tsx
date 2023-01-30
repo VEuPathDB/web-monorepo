@@ -1,6 +1,8 @@
+import { css } from "@emotion/react";
 import { AccessAlarm } from "@material-ui/icons";
 import { Story, Meta } from "@storybook/react/types-6-0";
 import React from "react";
+import { useState } from "react";
 import {
   DraggablePanel,
   DraggablePanelProps,
@@ -23,25 +25,36 @@ const Template: Story<DraggablePanelProps> = (args) => {
         },
       }}
     >
-      <DraggablePanel
-        isOpen
-        onPanelDismiss={() => {}}
-        panelTitleForAccessibilityOnly="tt"
-        onDragComplete={() => {}}
-      >
-        <div
-          style={{
-            border: "1px solid pink",
-            width: 200,
-            height: 200,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "scroll",
-          }}
-        >
-          <DummyContent />
-        </div>
-      </DraggablePanel>
+      <h1>Some notable things</h1>
+      <p>
+        Because the parent component never specifies where this panel should
+        live, its last location is forgotten whenever its closed. If we don't
+        want this behavior, then the parent component will keep track of where
+        the component was dragged to. The panel's job is to get dragged.
+      </p>
+      <KeepTrackOfOpenedAndClosedState>
+        {(isOpen, setIsOpen) => {
+          return (
+            <DraggablePanel
+              isOpen={isOpen}
+              onPanelDismiss={() => setIsOpen(false)}
+              panelTitleForAccessibilityOnly="Optional Panel Name"
+              onDragComplete={() => {}}
+            >
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: column;
+                  overflow: scroll;
+                  padding: 0.25rem 0.5rem;
+                `}
+              >
+                <DummyContent />
+              </div>
+            </DraggablePanel>
+          );
+        }}
+      </KeepTrackOfOpenedAndClosedState>
     </UIThemeProvider>
   );
 };
@@ -50,13 +63,33 @@ export const Default = Template.bind({});
 
 function DummyContent() {
   return (
-    <div>
+    <div
+      css={css`
+        background: white;
+      `}
+    >
       <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur
-        exercitationem eaque cumque impedit nisi. Tempora, maiores temporibus
-        quibusdam nostrum dignissimos voluptatem non quo harum reprehenderit
-        aliquam corporis nobis veritatis numquam.
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil ipsum
+        consequatur alias laudantium pariatur aspernatur tempora doloremque
+        possimus, facere autem maxime blanditiis eos ullam nostrum odio ratione
+        ducimus! Eum, provident?
       </p>
+    </div>
+  );
+}
+
+function KeepTrackOfOpenedAndClosedState({ children }) {
+  const [isOpen, setIsOpened] = useState(true);
+
+  return (
+    <div style={{ position: "relative", width: 500 }}>
+      <button
+        style={{ position: "absolute", right: 0 }}
+        onClick={() => setIsOpened(!isOpen)}
+      >
+        <span>{isOpen ? "Close" : "Open"} the panel from over here!</span>
+      </button>
+      <div style={{ paddingTop: "2rem" }}>{children(isOpen, setIsOpened)}</div>
     </div>
   );
 }
