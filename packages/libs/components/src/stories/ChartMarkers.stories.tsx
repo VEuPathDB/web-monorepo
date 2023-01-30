@@ -352,3 +352,29 @@ export const Standalone: Story<MapVEuMapProps> = () => {
     />
   );
 };
+
+// test no data.color
+export const TestNoDataColor: Story<MapVEuMapProps> = () => {
+  return (
+    <ChartMarkerStandalone
+      data={[
+        {
+          label: 'Gaining control study',
+          value: 0,
+          // "color": "rgb(136,34,85)"
+        },
+        {
+          label: 'Sustaining control study',
+          value: 75,
+          color: 'rgb(136,204,238)',
+        },
+      ]}
+      cumulative={false}
+      isAtomic={false}
+      markerScale={1}
+      borderColor={'#AAAAAA'}
+      borderWidth={3.5}
+      containerStyles={{ margin: '10px' }}
+    />
+  );
+};

@@ -25,7 +25,7 @@
     "dom-to-image": "^2.6.0",
     "eslint-plugin-react": "^7.31.11",
     "latlon-geohash": "^2.0.0",
-    "leaflet": "^1.7.1",
+    "leaflet": "^1.9.3",
     "leaflet-simple-map-screenshoter": "^0.4.5",
     "luxon": "^1.25.0",
     "plotly.js": "^2.6.0",

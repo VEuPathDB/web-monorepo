@@ -269,8 +269,8 @@ function chartMarkerSVGIcon(
       ' height=' +
       barHeight +
       ' fill=' +
-      // rgb strings with spaces in them don't work in SVG?
-      (el.color ?? '').replace(/\s/g, '') +
+      // empty string does not work: filled with white rgb
+      (el.color ?? 'rgb(255,255,255)').replace(/\s/g, '') +
       ' />';
   });
 
