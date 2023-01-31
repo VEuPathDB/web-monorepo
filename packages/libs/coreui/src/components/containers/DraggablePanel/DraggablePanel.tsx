@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { css, SerializedStyles } from "@emotion/react";
 import { DragHandle } from "@material-ui/icons";
-import { H6 } from "../../typography";
 import { gray } from "../../../definitions/colors";
 import { CloseCircle } from "../../icons";
 import { primaryFont } from "../../../styleDefinitions/typography";
@@ -15,20 +14,20 @@ export type DraggablePanelCoordinatePair = {
 export type DraggablePanelProps = {
   /** The contents of the Draggable Panel. */
   children: ReactNode;
+  /** If set this element will only be able to move within the confines of it's parent elenent. If unset or false, the element will go wherever the user drags it. */
+  confineToParentContainer?: boolean;
   /** If provided, the panel will live here instead of where they originally live, as defined in the CSS & HTML. */
   defaultPosition?: DraggablePanelCoordinatePair;
   /** This meaningful text is used to both render a title and ensure a more WAI-compliant experience.  */
   panelTitle: string;
-  /** This allows developers to show or hide the panel title. */
-  showPanelTitle: boolean;
   /** This allows you to specify how tall your panel should be. */
   initialPanelHeight?: string;
   /** This allows you to specify how wide your panel should be. */
   initialPanelWidth?: string;
-  /** If set this element will only be able to move within the confines of it's parent elenent. If unset or false, the element will go wherever the user drags it. */
-  confineToParentContainer?: boolean;
   /** This controls weather the panel is visible or not. */
   isOpen: boolean;
+  /** This allows developers to show or hide the panel title. */
+  showPanelTitle: boolean;
   /** This event fires when the user's drag completes. */
   onDragComplete?: (
     destinationCoordinates: DraggablePanelCoordinatePair
@@ -60,57 +59,6 @@ export function DraggablePanel({
 }: DraggablePanelProps) {
   const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-
-  const panelHeader = css`
-    font-size: 15px;
-    font-weight: bold;
-    font-family: ${primaryFont};
-  `;
-
-  const dragHandle: SerializedStyles = css`
-    align-items: center;
-    border-radius: 7px 7px 0 0;
-    background: ${gray[100]};
-    cursor: ${isDragging ? "grabbing" : "grab"};
-    display: flex;
-    height: 2rem;
-    justify-content: space-between;
-    position: relative;
-    width: 100%;
-  `;
-
-  const panel = css`
-    border-radius: 7px;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-    min-width: 250px;
-    background: white;
-    width: ${initialPanelWidth || "unset"};
-    ${isOpen === false &&
-    `
-    visibility: hidden;
-    `}
-  `;
-
-  const panelContents = css`
-    border-radius: 7px;
-    height: ${initialPanelHeight || "unset"};
-    overflow: scroll;
-    width: ${initialPanelWidth || "unset"};
-  `;
-
-  const dismissButton = css`
-    all: unset;
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    padding: 0 1rem;
-    &:hover {
-      opacity: 0.3;
-    }
-  `;
 
   function handleDrag() {
     !wasDragged && setWasDragged(true);
@@ -144,9 +92,33 @@ export function DraggablePanel({
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
         data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
-        css={panel}
+        css={css`
+          border-radius: 7px;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+          min-width: 250px;
+          background: white;
+          width: ${initialPanelWidth || "unset"};
+          ${isOpen === false &&
+          `
+        visibility: hidden;
+        `}
+        `}
       >
-        <div className="dragHandle" css={dragHandle}>
+        <div
+          className="dragHandle"
+          css={css`
+            align-items: center;
+            border-radius: 7px 7px 0 0;
+            background: ${gray[100]};
+            cursor: ${isDragging ? "grabbing" : "grab"};
+            display: flex;
+            height: 2rem;
+            justify-content: space-between;
+            position: relative;
+            width: 100%;
+          `}
+        >
           <div
             aria-hidden
             css={css`
@@ -155,7 +127,13 @@ export function DraggablePanel({
           >
             <DragHandle />
           </div>
-          <h2 css={panelHeader}>
+          <h2
+            css={css`
+              font-size: 15px;
+              font-weight: bold;
+              font-family: ${primaryFont};
+            `}
+          >
             <span css={showPanelTitle ? null : screenReaderOnly}>
               {panelTitle}
             </span>
@@ -166,14 +144,37 @@ export function DraggablePanel({
                 height: 100%;
               `}
             >
-              <button css={dismissButton} onClick={onPanelDismiss}>
+              <button
+                css={css`
+                  all: unset;
+                  align-items: center;
+                  cursor: pointer;
+                  display: flex;
+                  height: 100%;
+                  justify-content: center;
+                  padding: 0 1rem;
+                  &:hover {
+                    opacity: 0.3;
+                  }
+                `}
+                onClick={onPanelDismiss}
+              >
                 <span css={screenReaderOnly}>Close {panelTitle}</span>
                 <CloseCircle fontSize="1.5rem" fill={gray[600]} aria-hidden />
               </button>
             </div>
           )}
         </div>
-        <div css={panelContents}>{children}</div>
+        <div
+          css={css`
+            border-radius: 7px;
+            height: ${initialPanelHeight || "unset"};
+            overflow: scroll;
+            width: ${initialPanelWidth || "unset"};
+          `}
+        >
+          {children}
+        </div>
       </div>
     </Draggable>
   );
