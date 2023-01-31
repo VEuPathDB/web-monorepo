@@ -5,7 +5,7 @@ import { DraggablePanel, DraggablePanelCoordinatePair } from "./DraggablePanel";
 describe("Draggable Panels", () => {
   test("dragging a panel changes where it lives.", () => {
     const defaultPosition: DraggablePanelCoordinatePair = { x: 0, y: 0 };
-    const panelTitleForAccessibilityOnly = "Study Filters Panel";
+    const panelTitle = "Study Filters Panel";
     const handleOnDragComplete = jest.fn();
     render(
       <DraggablePanel
@@ -13,15 +13,13 @@ describe("Draggable Panels", () => {
         isOpen
         onDragComplete={handleOnDragComplete}
         onPanelDismiss={() => {}}
-        panelTitle={panelTitleForAccessibilityOnly}
+        panelTitle={panelTitle}
         showPanelTitle
       >
         <p>Panel contents</p>
       </DraggablePanel>
     );
-    const panelDragHandle = screen.getByText(
-      `Close ${panelTitleForAccessibilityOnly}`
-    );
+    const panelDragHandle = screen.getByText(`Close ${panelTitle}`);
 
     const destinationCoordinates = { clientX: 73, clientY: 22 };
 
@@ -34,9 +32,7 @@ describe("Draggable Panels", () => {
      * at least we're in control of that so we can make sure that doesn't change if we swap dragging
      * providers. See conversations like: https://softwareengineering.stackexchange.com/questions/234024/unit-testing-behaviours-without-coupling-to-implementation-details
      */
-    const panelFromDataTestId = screen.getByTestId(
-      `${panelTitleForAccessibilityOnly} dragged`
-    );
+    const panelFromDataTestId = screen.getByTestId(`${panelTitle} dragged`);
     expect(panelFromDataTestId.style.transform).toEqual(
       `translate(${destinationCoordinates.clientX}px,${destinationCoordinates.clientY}px)`
     );
