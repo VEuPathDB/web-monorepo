@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import * as t from 'io-ts';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
+  AnalysisState,
   makeNewAnalysis,
   PromiseResult,
   useAnalysis,
@@ -50,6 +51,8 @@ import { lineplotVisualization } from '../core/components/visualizations/impleme
 import { barplotVisualization } from '../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../core/components/visualizations/implementations/BoxplotVisualization';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
+import { getOrElse } from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -97,18 +100,18 @@ export function MapVeuAnalysis(props: Props) {
   const studyEntities = useStudyEntities();
   const geoConfigs = useGeoConfig(studyEntities);
   const analysisState = useAnalysis(analysisId, 'pass-through');
+  const geoConfig = geoConfigs[0];
 
   const {
     appState,
-    setBoundsZoomLevel,
     setMouseMode,
-    setSelectedVariables,
+    setSelectedOverlayVariable,
     setViewport,
     setIsVizSelectorVisible,
     setActiveVisualizationId,
-  } = useAppState();
+  } = useAppState('@@mapApp@@', analysisState);
 
-  const geoConfig = geoConfigs[0];
+  const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
   const selectedVariables = useMemo(
     () => ({
@@ -133,7 +136,7 @@ export function MapVeuAnalysis(props: Props) {
     totalEntityCount,
   } = useMapMarkers({
     requireOverlay: false,
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters: analysisState.analysis?.descriptor.subset.descriptor,
@@ -184,8 +187,8 @@ export function MapVeuAnalysis(props: Props) {
 
   const onVisualizationCreated = useCallback(
     (visualizationId: string) => {
-      setActiveVisualizationId(visualizationId);
       setIsVizSelectorVisible(false);
+      setActiveVisualizationId(visualizationId);
     },
     [setActiveVisualizationId, setIsVizSelectorVisible]
   );
@@ -326,7 +329,9 @@ export function MapVeuAnalysis(props: Props) {
                 inputs={[{ name: 'overlay', label: 'Overlay' }]}
                 entities={studyEntities}
                 selectedVariables={selectedVariables}
-                onChange={setSelectedVariables}
+                onChange={(selectedVariables) =>
+                  setSelectedOverlayVariable(selectedVariables.overlay)
+                }
                 starredVariables={
                   analysisState.analysis?.descriptor.starredVariables ?? []
                 }
@@ -466,67 +471,76 @@ function FloatingDiv(props: {
   );
 }
 
-interface AppState {
-  viewport: Viewport;
-  boundsZoomLevel?: BoundsViewport;
-  mouseMode: MouseMode;
-  selectedOverlayVariable?: VariableDescriptor;
-  isVizSelectorVisible: boolean;
-  activeVisualizationId?: string;
-}
+const AppState = t.intersection([
+  t.type({
+    viewport: t.type({
+      center: t.tuple([t.number, t.number]),
+      zoom: t.number,
+    }),
+    mouseMode: t.keyof({
+      default: null,
+      magnification: null,
+    }),
+    isVizSelectorVisible: t.boolean,
+  }),
+  t.partial({
+    selectedOverlayVariable: VariableDescriptor,
+    activeVisualizationId: t.string,
+  }),
+]);
 
-function useAppState() {
-  const [appState, setAppState] = useState<AppState>(() => ({
-    viewport: {
-      center: [0, 0],
-      zoom: 4,
-    },
-    mouseMode: 'default',
-    isVizSelectorVisible: false,
-  }));
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+type AppState = t.TypeOf<typeof AppState>;
 
-  const setViewport = useCallback((viewport: Viewport) => {
-    setAppState((prevState) => ({ ...prevState, viewport }));
-  }, []);
+const defaultAppState: AppState = {
+  viewport: {
+    center: [0, 0],
+    zoom: 4,
+  },
+  mouseMode: 'default',
+  isVizSelectorVisible: false,
+};
 
-  const setMouseMode = useCallback((mouseMode: MouseMode) => {
-    setAppState((prevState) => ({ ...prevState, mouseMode }));
-  }, []);
-
-  const setBoundsZoomLevel = useCallback((boundsZoomLevel: BoundsViewport) => {
-    setAppState((prevState) => ({ ...prevState, boundsZoomLevel }));
-  }, []);
-
-  const setSelectedVariables = useCallback(
-    (selectedVariables: VariablesByInputName<'overlay'>) => {
-      setAppState((prevState) => ({
-        ...prevState,
-        selectedOverlayVariable: selectedVariables.overlay,
-      }));
-    },
-    []
+function useAppState(uiStateKey: string, analysisState: AnalysisState) {
+  const { setVariableUISettings } = analysisState;
+  const savedState = pipe(
+    AppState.decode(
+      analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey]
+    ),
+    getOrElse(() => defaultAppState)
   );
+  const [appState, setAppState] = useState<AppState>(savedState);
 
-  const setIsVizSelectorVisible = useCallback(
-    (isVizSelectorVisible: boolean) => {
-      setAppState((prevState) => ({ ...prevState, isVizSelectorVisible }));
-    },
-    []
-  );
+  useEffect(() => {
+    setAppState(savedState);
+  }, [savedState]);
 
-  const setActiveVisualizationId = useCallback(
-    (activeVisualizationId?: string) => {
-      setAppState((prevState) => ({ ...prevState, activeVisualizationId }));
-    },
-    []
-  );
+  function useStateUpdater<T extends keyof AppState>(key: T) {
+    return useCallback(
+      (value: AppState[T]) => {
+        setVariableUISettings((prev) => ({
+          ...prev,
+          [uiStateKey]: {
+            ...appState,
+            [key]: value,
+          },
+        }));
+      },
+      [key]
+    );
+  }
+
+  const setViewport = useStateUpdater('viewport');
+  const setMouseMode = useStateUpdater('mouseMode');
+  const setSelectedOverlayVariable = useStateUpdater('selectedOverlayVariable');
+  const setIsVizSelectorVisible = useStateUpdater('isVizSelectorVisible');
+  const setActiveVisualizationId = useStateUpdater('activeVisualizationId');
 
   return {
     appState,
     setViewport,
     setMouseMode,
-    setBoundsZoomLevel,
-    setSelectedVariables,
+    setSelectedOverlayVariable,
     setIsVizSelectorVisible,
     setActiveVisualizationId,
   };
