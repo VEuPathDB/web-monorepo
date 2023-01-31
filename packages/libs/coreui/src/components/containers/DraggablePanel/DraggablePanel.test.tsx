@@ -10,10 +10,10 @@ describe("Draggable Panels", () => {
     render(
       <DraggablePanel
         defaultPosition={defaultPosition}
-        panelTitle={panelTitleForAccessibilityOnly}
         isOpen
         onDragComplete={handleOnDragComplete}
         onPanelDismiss={() => {}}
+        panelTitle={panelTitleForAccessibilityOnly}
         showPanelTitle
       >
         <p>Panel contents</p>
@@ -34,7 +34,6 @@ describe("Draggable Panels", () => {
      * at least we're in control of that so we can make sure that doesn't change if we swap dragging
      * providers. See conversations like: https://softwareengineering.stackexchange.com/questions/234024/unit-testing-behaviours-without-coupling-to-implementation-details
      */
-
     const panelFromDataTestId = screen.getByTestId(
       `${panelTitleForAccessibilityOnly} dragged`
     );
