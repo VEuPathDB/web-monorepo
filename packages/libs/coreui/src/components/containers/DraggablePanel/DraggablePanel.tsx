@@ -69,14 +69,14 @@ export function DraggablePanel({
   }
 
   function handleOnDragStop(_: DraggableEvent, data: DraggableData) {
-    if (!onDragComplete) return;
-
     setIsDragging(false);
 
-    onDragComplete({
-      x: data.lastX,
-      y: data.lastY,
-    });
+    if (onDragComplete) {
+      onDragComplete({
+        x: data.lastX,
+        y: data.lastY,
+      });
+    }
   }
 
   return (
