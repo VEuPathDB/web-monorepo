@@ -34,7 +34,7 @@ const Template: Story<DraggablePanelProps> = (args) => {
         css={css`
           display: flex;
           flex-direction: column;
-          height: 100vh;
+          height: 95vh;
         `}
       >
         <div
@@ -52,9 +52,10 @@ const Template: Story<DraggablePanelProps> = (args) => {
           </button>
         </div>
         <DraggablePanel
+          confineToParentContainer
           isOpen={panelOneIsOpen}
           onPanelDismiss={() => setPanelOneIsOpen(false)}
-          panelTitleForAccessibilityOnly="Estimated water requirements for various foods"
+          panelTitleForAccessibilityOnly="Panel 1"
           showPanelTitle
           initialPanelWidth="700px"
           initialPanelHeight="200px"
@@ -70,10 +71,12 @@ const Template: Story<DraggablePanelProps> = (args) => {
             {getHtmlData()}
           </div>
         </DraggablePanel>
+        <br />
         <DraggablePanel
+          confineToParentContainer
           isOpen={panelTwoIsOpen}
           onPanelDismiss={() => setPanelTwoIsOpen(false)}
-          panelTitleForAccessibilityOnly="Something Else"
+          panelTitleForAccessibilityOnly="Panel 2"
           showPanelTitle
           onDragComplete={() => {}}
           initialPanelWidth="200px"

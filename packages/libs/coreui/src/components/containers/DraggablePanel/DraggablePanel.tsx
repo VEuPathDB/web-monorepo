@@ -1,7 +1,5 @@
 import { CSSProperties, ReactNode, useState } from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
-import CloseIcon from "@material-ui/icons/Close";
-import { FloatingButton } from "../../buttons";
 import { css, SerializedStyles } from "@emotion/react";
 import { DragHandle } from "@material-ui/icons";
 import { H6 } from "../../typography";
@@ -26,6 +24,8 @@ export type DraggablePanelProps = {
   initialPanelHeight?: string;
   /** This allows you to specify how wide your panel should be. */
   initialPanelWidth?: string;
+  /** If set this element will only be able to move within the confines of it's parent elenent. If unset or false, the element will go wherever the user drags it. */
+  confineToParentContainer?: boolean;
   /** This controls weather the panel is visible or not. */
   isOpen: boolean;
   /** This event fires when the user's drag completes. */
@@ -59,6 +59,7 @@ const closeButtonStyles = css`
 `;
 
 export function DraggablePanel({
+  confineToParentContainer,
   children,
   defaultPosition,
   initialPanelHeight,
@@ -83,11 +84,9 @@ export function DraggablePanel({
     position: relative;
   `;
 
-  // if (!isOpen) return null;
-
   return (
     <Draggable
-      bounds="parent"
+      bounds={confineToParentContainer ? "parent" : false}
       handle=".dragHandle"
       onDrag={(event: DraggableEvent, data: DraggableData) => {
         !didDrag && setDidDrag(true);
@@ -144,8 +143,9 @@ export function DraggablePanel({
           </strong>
           {onPanelDismiss && (
             <div
-              css={{ height: "100%" }}
-              className="no-cursor" // Prevent this from initiating a drag
+              css={css`
+                height: 100%;
+              `}
             >
               <button css={closeButtonStyles} onClick={onPanelDismiss}>
                 <span style={screenReaderOnly}>
