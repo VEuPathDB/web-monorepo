@@ -4,8 +4,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import { FloatingButton } from "../../buttons";
 import { css, SerializedStyles } from "@emotion/react";
 import { DragHandle } from "@material-ui/icons";
-import { p } from "../../../styleDefinitions/typography";
 import { H6 } from "../../typography";
+import { gray } from "../../../definitions/colors";
+import { CloseCircle } from "../../icons";
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -19,6 +20,12 @@ export type DraggablePanelProps = {
   defaultPosition?: DraggablePanelCoordinatePair;
   /** This meaningful text is used to ensure WAI-compliant experience.  */
   panelTitleForAccessibilityOnly: string;
+  /** This allows developers to show or hide the panel title. */
+  showPanelTitle: boolean;
+  /** This allows you to specify how tall your panel should be. */
+  initialPanelHeight?: string;
+  /** This allows you to specify how wide your panel should be. */
+  initialPanelWidth?: string;
   /** This controls weather the panel is visible or not. */
   isOpen: boolean;
   /** This event fires when the user's drag completes. */
@@ -27,16 +34,6 @@ export type DraggablePanelProps = {
   ) => void;
   /** This event fires when the user dismisses a visible panel. */
   onPanelDismiss?: () => void;
-};
-
-const visuallyHidden = {
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: "1px",
-  overflow: "hidden",
-  position: "absolute",
-  whiteSpace: "nowrap",
-  width: "1px",
 };
 
 const screenReaderOnly: CSSProperties = {
@@ -50,27 +47,34 @@ const screenReaderOnly: CSSProperties = {
 
 const closeButtonStyles = css`
   all: unset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
   padding: 0 1rem;
   &:hover {
     opacity: 0.3;
   }
+  height: 100%;
 `;
 
 export function DraggablePanel({
   children,
   defaultPosition,
+  initialPanelHeight,
+  initialPanelWidth,
   isOpen,
   onDragComplete,
   onPanelDismiss,
   panelTitleForAccessibilityOnly,
+  showPanelTitle,
 }: DraggablePanelProps) {
   const [didDrag, setDidDrag] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const dragHandleStyles: SerializedStyles = css`
     cursor: ${isDragging ? "grabbing" : "grab"};
-    background: rgb(242, 242, 242);
+    background: ${gray[200]};
     height: 2rem;
     width: 100%;
     display: flex;
@@ -107,30 +111,43 @@ export function DraggablePanel({
         css={css`
           box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
             rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+          resize: both;
+          overflow: scroll;
+          min-width: 250px;
+          background: white;
+          width: ${initialPanelWidth || "unset"};
+          height: ${initialPanelHeight || "unset"};
         `}
       >
         <div className="dragHandle" css={dragHandleStyles}>
-          <div aria-hidden style={{ marginLeft: "1rem" }}>
+          <div
+            aria-hidden
+            css={css`
+              margin-left: 1rem;
+            `}
+          >
             <DragHandle />
           </div>
           <strong>
             <H6
               additionalStyles={{
                 fontWeight: "bold",
+                color: "black",
               }}
             >
-              {panelTitleForAccessibilityOnly}
+              {showPanelTitle && panelTitleForAccessibilityOnly}
             </H6>
           </strong>
           {onPanelDismiss && (
             <div
-              className="no-cursor" // Prevent this from initiating
+              css={{ height: "100%" }}
+              className="no-cursor" // Prevent this from initiating a drag
             >
               <button css={closeButtonStyles} onClick={onPanelDismiss}>
                 <span style={screenReaderOnly}>
                   Close {panelTitleForAccessibilityOnly}
                 </span>
-                <CloseIcon aria-hidden="true" />
+                <CloseCircle fontSize="1.5rem" fill={gray[600]} aria-hidden />
               </button>
             </div>
           )}
