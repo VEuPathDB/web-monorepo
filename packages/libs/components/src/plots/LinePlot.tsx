@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
@@ -14,6 +14,7 @@ import {
   independentAxisLogScaleDefault,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  LinePlotDataSeries,
 } from '../types/plots';
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
@@ -76,6 +77,22 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     ...restProps
   } = props;
 
+  // const [markerHoverMode, setMarkerHoverMode] = useState<'closest' | 'x'>('closest');
+  const [markerHoverMode, setMarkerHoverMode] = useState<'closest' | 'x'>('x');
+
+  const onHoverHandler = (
+    event: Plotly.PlotMouseEvent
+  ): LinePlotDataSeries[] => {
+    const hoveredMarkerIndex = event.points[0].pointIndex;
+    const hoveredData = event.points[0];
+    const overlappingDataMarkers = data.series.filter(
+      (d) =>
+        d.x[hoveredMarkerIndex] === hoveredData.x &&
+        d.y[hoveredMarkerIndex] === hoveredData.y
+    );
+    return overlappingDataMarkers;
+  };
+
   // add axis range control truncation axis range
   const standardIndependentAxisRange = independentAxisRange;
   const extendedIndependentAxisRange = extendAxisRangeForTruncations(
@@ -123,7 +140,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   ]);
 
   const layout: Partial<Layout> = {
-    hovermode: 'closest',
+    // hovermode: 'closest',
+    hovermode: markerHoverMode,
     xaxis: {
       title: independentAxisLabel,
       // add axis range control truncation
@@ -276,6 +294,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     data: plotlyData,
     layout,
     ...restProps,
+    onHoverHandler,
   };
 });
 
