@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useState } from "react";
+import { ReactNode, useState } from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { css, SerializedStyles } from "@emotion/react";
 import { DragHandle } from "@material-ui/icons";
@@ -16,8 +16,8 @@ export type DraggablePanelProps = {
   children: ReactNode;
   /** If provided, the panel will live here instead of where they originally live, as defined in the CSS & HTML. */
   defaultPosition?: DraggablePanelCoordinatePair;
-  /** This meaningful text is used to ensure WAI-compliant experience.  */
-  panelTitleForAccessibilityOnly: string;
+  /** This meaningful text is used to both render a title and ensure a more WAI-compliant experience.  */
+  panelTitle: string;
   /** This allows developers to show or hide the panel title. */
   showPanelTitle: boolean;
   /** This allows you to specify how tall your panel should be. */
@@ -36,26 +36,13 @@ export type DraggablePanelProps = {
   onPanelDismiss?: () => void;
 };
 
-const screenReaderOnly: CSSProperties = {
-  position: "absolute",
-  left: "-10000px",
-  top: "auto",
-  width: "1px",
-  height: "1px",
-  overflow: "hidden",
-};
-
-const closeButtonStyles = css`
-  all: unset;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  padding: 0 1rem;
-  &:hover {
-    opacity: 0.3;
-  }
-  height: 100%;
+const screenReaderOnly = css`
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  top: auto;
+  width: 1px;
 `;
 
 export function DraggablePanel({
@@ -67,61 +54,90 @@ export function DraggablePanel({
   isOpen,
   onDragComplete,
   onPanelDismiss,
-  panelTitleForAccessibilityOnly,
+  panelTitle,
   showPanelTitle,
 }: DraggablePanelProps) {
-  const [didDrag, setDidDrag] = useState<boolean>(false);
+  const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const dragHandleStyles: SerializedStyles = css`
-    cursor: ${isDragging ? "grabbing" : "grab"};
-    background: ${gray[200]};
-    height: 2rem;
-    width: 100%;
-    display: flex;
+  const dragHandle: SerializedStyles = css`
     align-items: center;
+    border-radius: 7px 7px 0 0;
+    background: ${gray[100]};
+    cursor: ${isDragging ? "grabbing" : "grab"};
+    display: flex;
+    height: 2rem;
     justify-content: space-between;
     position: relative;
+    width: 100%;
   `;
+
+  const panel = css`
+    border-radius: 7px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    min-width: 250px;
+    background: white;
+    width: ${initialPanelWidth || "unset"};
+    ${isOpen === false &&
+    `
+    visibility: hidden;
+    `}
+  `;
+
+  const panelContents = css`
+    border-radius: 7px;
+    height: ${initialPanelHeight || "unset"};
+    overflow: scroll;
+    width: ${initialPanelWidth || "unset"};
+  `;
+
+  const dismissButton = css`
+    all: unset;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    padding: 0 1rem;
+    &:hover {
+      opacity: 0.3;
+    }
+  `;
+
+  function handleDrag() {
+    !wasDragged && setWasDragged(true);
+  }
+
+  function handleDragStart() {
+    setIsDragging(true);
+  }
+
+  function handleOnDragStop(_: DraggableEvent, data: DraggableData) {
+    if (!onDragComplete) return;
+
+    setIsDragging(false);
+
+    onDragComplete({
+      x: data.lastX,
+      y: data.lastY,
+    });
+  }
 
   return (
     <Draggable
       bounds={confineToParentContainer ? "parent" : false}
-      handle=".dragHandle"
-      onDrag={(event: DraggableEvent, data: DraggableData) => {
-        !didDrag && setDidDrag(true);
-      }}
-      onStart={() => setIsDragging(true)}
-      onStop={(event: DraggableEvent, data: DraggableData) => {
-        if (!onDragComplete) return;
-
-        setIsDragging(false);
-
-        onDragComplete({
-          x: data.lastX,
-          y: data.lastY,
-        });
-      }}
       defaultPosition={defaultPosition || { x: 0, y: 0 }}
+      handle=".dragHandle"
+      onDrag={handleDrag}
+      onStart={handleDragStart}
+      onStop={handleOnDragStop}
     >
       <div
-        data-testid={`${panelTitleForAccessibilityOnly} ${
-          didDrag ? "dragged" : "not dragged"
-        }`}
-        css={css`
-          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-          min-width: 250px;
-          background: white;
-
-          width: ${initialPanelWidth || "unset"};
-          ${isOpen === false &&
-          `
-          visibility: hidden;
-          `}
-        `}
+        data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
+        css={panel}
       >
-        <div className="dragHandle" css={dragHandleStyles}>
+        <div className="dragHandle" css={dragHandle}>
           <div
             aria-hidden
             css={css`
@@ -138,7 +154,7 @@ export function DraggablePanel({
                 margin: 0,
               }}
             >
-              {showPanelTitle && panelTitleForAccessibilityOnly}
+              {showPanelTitle && panelTitle}
             </H6>
           </strong>
           {onPanelDismiss && (
@@ -147,24 +163,14 @@ export function DraggablePanel({
                 height: 100%;
               `}
             >
-              <button css={closeButtonStyles} onClick={onPanelDismiss}>
-                <span style={screenReaderOnly}>
-                  Close {panelTitleForAccessibilityOnly}
-                </span>
+              <button css={dismissButton} onClick={onPanelDismiss}>
+                <span css={screenReaderOnly}>Close {panelTitle}</span>
                 <CloseCircle fontSize="1.5rem" fill={gray[600]} aria-hidden />
               </button>
             </div>
           )}
         </div>
-        <div
-          css={css`
-            width: ${initialPanelWidth || "unset"};
-            height: ${initialPanelHeight || "unset"};
-            overflow: scroll;
-          `}
-        >
-          {children}
-        </div>
+        <div css={panelContents}>{children}</div>
       </div>
     </Draggable>
   );

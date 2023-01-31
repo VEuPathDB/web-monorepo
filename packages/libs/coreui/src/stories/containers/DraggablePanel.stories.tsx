@@ -1,16 +1,14 @@
+import React from "react";
 import { css } from "@emotion/react";
 import { Story, Meta } from "@storybook/react/types-6-0";
-import React from "react";
 import { useState } from "react";
-import { FilledButton } from "../../components/buttons";
 import {
   DraggablePanel,
+  DraggablePanelCoordinatePair,
   DraggablePanelProps,
 } from "../../components/containers/DraggablePanel/DraggablePanel";
 import UIThemeProvider from "../../components/theming/UIThemeProvider";
-import { H1, H4 } from "../../components/typography";
 import { orange, green } from "../../definitions/colors";
-import { p } from "../../styleDefinitions/typography";
 
 export default {
   title: "Containers/DraggablePanel",
@@ -19,6 +17,12 @@ export default {
 
 const Template: Story<DraggablePanelProps> = (args) => {
   const [panelOneIsOpen, setPanelOneIsOpen] = useState<boolean>(true);
+  const [panelOneCoordinates, setPanelOneCoordinates] =
+    useState<DraggablePanelCoordinatePair>({
+      x: 0,
+      y: 0,
+    });
+
   const [panelTwoIsOpen, setPanelTwoIsOpen] = useState<boolean>(true);
 
   return (
@@ -45,21 +49,23 @@ const Template: Story<DraggablePanelProps> = (args) => {
           `}
         >
           <button onClick={() => setPanelOneIsOpen((isOpen) => !isOpen)}>
-            {panelOneIsOpen ? "Close" : "Open"} panel 1 from up here!
+            {panelOneIsOpen ? "Close" : "Open"} <strong>Panel 1</strong> from up
+            here!
           </button>
           <button onClick={() => setPanelTwoIsOpen((isOpen) => !isOpen)}>
-            {panelTwoIsOpen ? "Close" : "Open"} panel 2 from up here!
+            {panelTwoIsOpen ? "Close" : "Open"} <strong>Panel 2</strong> from up
+            here!
           </button>
         </div>
         <DraggablePanel
           confineToParentContainer
           isOpen={panelOneIsOpen}
           onPanelDismiss={() => setPanelOneIsOpen(false)}
-          panelTitleForAccessibilityOnly="Panel 1"
+          panelTitle="Panel 1"
           showPanelTitle
           initialPanelWidth="700px"
           initialPanelHeight="200px"
-          onDragComplete={() => {}}
+          onDragComplete={setPanelOneCoordinates}
         >
           <div
             css={css`
@@ -68,7 +74,15 @@ const Template: Story<DraggablePanelProps> = (args) => {
               justify-content: space-between;
             `}
           >
-            {getHtmlData()}
+            <pre
+              css={css`
+                padding-left: 1rem;
+              `}
+            >
+              Coordinates (updates when you complete your dragging):{" "}
+              {JSON.stringify(panelOneCoordinates)}
+            </pre>
+            {getHtmlTable()}
           </div>
         </DraggablePanel>
         <br />
@@ -76,7 +90,7 @@ const Template: Story<DraggablePanelProps> = (args) => {
           confineToParentContainer
           isOpen={panelTwoIsOpen}
           onPanelDismiss={() => setPanelTwoIsOpen(false)}
-          panelTitleForAccessibilityOnly="Panel 2"
+          panelTitle="Panel 2"
           showPanelTitle
           onDragComplete={() => {}}
           initialPanelWidth="200px"
@@ -89,7 +103,7 @@ const Template: Story<DraggablePanelProps> = (args) => {
               padding: 0rem 0.5rem;
             `}
           >
-            {getMenu()}
+            {getMenuHtml()}
           </div>
         </DraggablePanel>
       </div>
@@ -99,36 +113,7 @@ const Template: Story<DraggablePanelProps> = (args) => {
 
 export const Default = Template.bind({});
 
-function KeepTrackOfOpenedAndClosedState({ children }) {
-  const [isOpen, setIsOpened] = useState(true);
-
-  return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          margin: "2rem 0",
-        }}
-      >
-        <FilledButton
-          onPress={() => setIsOpened(!isOpen)}
-          text={`${isOpen ? "Close" : "Open"} the panel from over here!`}
-        ></FilledButton>
-      </div>
-      <div
-        css={css`
-          margin-top: 1rem;
-          z-index: 100000;
-        `}
-      >
-        {children(isOpen, setIsOpened)}
-      </div>
-    </>
-  );
-}
-
-function getMenu() {
+function getMenuHtml() {
   return (
     <div
       css={css`
@@ -183,7 +168,7 @@ function getMenu() {
   );
 }
 
-function getHtmlData() {
+function getHtmlTable() {
   return (
     <div
       css={css`

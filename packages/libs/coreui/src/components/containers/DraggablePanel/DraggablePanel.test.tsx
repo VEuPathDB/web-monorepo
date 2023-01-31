@@ -10,7 +10,7 @@ describe("Draggable Panels", () => {
     render(
       <DraggablePanel
         defaultPosition={defaultPosition}
-        panelTitleForAccessibilityOnly={panelTitleForAccessibilityOnly}
+        panelTitle={panelTitleForAccessibilityOnly}
         isOpen
         onDragComplete={handleOnDragComplete}
         onPanelDismiss={() => {}}
@@ -59,7 +59,7 @@ describe("Draggable Panels", () => {
           <DraggablePanel
             defaultPosition={defaultPosition}
             isOpen={panelIsOpen}
-            panelTitleForAccessibilityOnly="My Filters"
+            panelTitle="My Filters"
             onDragComplete={() => {}}
             onPanelDismiss={() => setPanelIsOpen(false)}
             showPanelTitle
@@ -76,7 +76,7 @@ describe("Draggable Panels", () => {
         <DraggablePanel
           defaultPosition={defaultPosition}
           isOpen
-          panelTitleForAccessibilityOnly="My Extra Ordinary Data"
+          panelTitle="My Extra Ordinary Data"
           onDragComplete={() => {}}
           onPanelDismiss={() => {}}
           showPanelTitle
