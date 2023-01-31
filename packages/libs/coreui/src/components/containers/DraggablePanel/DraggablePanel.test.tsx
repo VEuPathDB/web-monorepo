@@ -14,6 +14,7 @@ describe("Draggable Panels", () => {
         isOpen
         onDragComplete={handleOnDragComplete}
         onPanelDismiss={() => {}}
+        showPanelTitle
       >
         <p>Panel contents</p>
       </DraggablePanel>
@@ -61,6 +62,7 @@ describe("Draggable Panels", () => {
             panelTitleForAccessibilityOnly="My Filters"
             onDragComplete={() => {}}
             onPanelDismiss={() => setPanelIsOpen(false)}
+            showPanelTitle
           >
             <p>I might be here or I might be gone</p>
           </DraggablePanel>
@@ -77,6 +79,7 @@ describe("Draggable Panels", () => {
           panelTitleForAccessibilityOnly="My Extra Ordinary Data"
           onDragComplete={() => {}}
           onPanelDismiss={() => {}}
+          showPanelTitle
         >
           <p>I will be with you forever.</p>
         </DraggablePanel>
@@ -92,15 +95,13 @@ describe("Draggable Panels", () => {
 
     expect(
       screen.queryByText("I might be here or I might be gone")
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByText("I will be with you forever.")
-    ).toBeInTheDocument();
+    ).not.toBeVisible();
+    expect(screen.queryByText("I will be with you forever.")).toBeVisible();
 
     fireEvent.click(screen.getByText("Toggle Filters Panel"));
     expect(
       screen.getByText("I might be here or I might be gone")
-    ).toBeInTheDocument();
+    ).toBeVisible();
   });
 });
 
