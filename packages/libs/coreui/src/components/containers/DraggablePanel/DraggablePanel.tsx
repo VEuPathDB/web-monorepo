@@ -5,6 +5,7 @@ import { DragHandle } from "@material-ui/icons";
 import { H6 } from "../../typography";
 import { gray } from "../../../definitions/colors";
 import { CloseCircle } from "../../icons";
+import { primaryFont } from "../../../styleDefinitions/typography";
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -59,6 +60,12 @@ export function DraggablePanel({
 }: DraggablePanelProps) {
   const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const panelHeader = css`
+    font-size: 15px;
+    font-weight: bold;
+    font-family: ${primaryFont};
+  `;
 
   const dragHandle: SerializedStyles = css`
     align-items: center;
@@ -134,6 +141,8 @@ export function DraggablePanel({
       onStop={handleOnDragStop}
     >
       <div
+        // As the attribute's name suggests, this helps with automated testing.
+        // At the moment, jsdom and dragging is a bad combo for testing.
         data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
         css={panel}
       >
@@ -146,17 +155,11 @@ export function DraggablePanel({
           >
             <DragHandle />
           </div>
-          <strong>
-            <H6
-              additionalStyles={{
-                fontWeight: "bold",
-                color: "black",
-                margin: 0,
-              }}
-            >
-              {showPanelTitle && panelTitle}
-            </H6>
-          </strong>
+          <h2 css={panelHeader}>
+            <span css={showPanelTitle ? null : screenReaderOnly}>
+              {panelTitle}
+            </span>
+          </h2>
           {onPanelDismiss && (
             <div
               css={css`
