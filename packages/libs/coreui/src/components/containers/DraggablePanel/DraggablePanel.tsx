@@ -83,10 +83,11 @@ export function DraggablePanel({
     position: relative;
   `;
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   return (
     <Draggable
+      bounds="parent"
       handle=".dragHandle"
       onDrag={(event: DraggableEvent, data: DraggableData) => {
         !didDrag && setDidDrag(true);
@@ -111,12 +112,14 @@ export function DraggablePanel({
         css={css`
           box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
             rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-          resize: both;
-          overflow: scroll;
           min-width: 250px;
           background: white;
+
           width: ${initialPanelWidth || "unset"};
-          height: ${initialPanelHeight || "unset"};
+          ${isOpen === false &&
+          `
+          visibility: hidden;
+          `}
         `}
       >
         <div className="dragHandle" css={dragHandleStyles}>
@@ -133,6 +136,7 @@ export function DraggablePanel({
               additionalStyles={{
                 fontWeight: "bold",
                 color: "black",
+                margin: 0,
               }}
             >
               {showPanelTitle && panelTitleForAccessibilityOnly}
@@ -152,7 +156,15 @@ export function DraggablePanel({
             </div>
           )}
         </div>
-        {children}
+        <div
+          css={css`
+            width: ${initialPanelWidth || "unset"};
+            height: ${initialPanelHeight || "unset"};
+            overflow: scroll;
+          `}
+        >
+          {children}
+        </div>
       </div>
     </Draggable>
   );

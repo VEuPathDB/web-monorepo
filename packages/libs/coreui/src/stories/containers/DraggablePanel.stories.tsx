@@ -18,6 +18,9 @@ export default {
 } as Meta;
 
 const Template: Story<DraggablePanelProps> = (args) => {
+  const [panelOneIsOpen, setPanelOneIsOpen] = useState<boolean>(true);
+  const [panelTwoIsOpen, setPanelTwoIsOpen] = useState<boolean>(true);
+
   return (
     <UIThemeProvider
       theme={{
@@ -31,68 +34,61 @@ const Template: Story<DraggablePanelProps> = (args) => {
         css={css`
           display: flex;
           flex-direction: column;
+          height: 100vh;
         `}
       >
-        <div>
-          <H4 additionalStyles={{ margin: 0 }}>Some notable things</H4>
-          <p css={p}>
-            Because the parent component never specifies where this panel should
-            live, its last location is forgotten whenever its closed. If we
-            don't want this behavior, then the parent component will keep track
-            of where the component was dragged to. The panel's job is to get
-            dragged.
-          </p>
+        <div
+          css={css`
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+          `}
+        >
+          <button onClick={() => setPanelOneIsOpen((isOpen) => !isOpen)}>
+            {panelOneIsOpen ? "Close" : "Open"} panel 1 from up here!
+          </button>
+          <button onClick={() => setPanelTwoIsOpen((isOpen) => !isOpen)}>
+            {panelTwoIsOpen ? "Close" : "Open"} panel 2 from up here!
+          </button>
         </div>
-        <KeepTrackOfOpenedAndClosedState>
-          {(isOpen, setIsOpen) => {
-            return (
-              <DraggablePanel
-                isOpen={isOpen}
-                onPanelDismiss={() => setIsOpen(false)}
-                panelTitleForAccessibilityOnly="Estimated water requirements for various foods"
-                showPanelTitle
-                initialPanelWidth="700px"
-                initialPanelHeight="200px"
-                onDragComplete={() => {}}
-              >
-                <div
-                  css={css`
-                    display: flex;
-                    flex-direction: column;
-                    overflow: scroll;
-                  `}
-                >
-                  {getHtmlData()}
-                </div>
-              </DraggablePanel>
-            );
-          }}
-        </KeepTrackOfOpenedAndClosedState>
-        <KeepTrackOfOpenedAndClosedState>
-          {(isOpen, setIsOpen) => {
-            return (
-              <DraggablePanel
-                isOpen={isOpen}
-                onPanelDismiss={() => setIsOpen(false)}
-                panelTitleForAccessibilityOnly="Something Else"
-                showPanelTitle
-                onDragComplete={() => {}}
-                initialPanelWidth="200px"
-              >
-                <div
-                  css={css`
-                    background: white;
-                    display: flex;
-                    flex-direction: column;
-                    padding: 0rem 0.5rem;
-                  `}
-                >
-                  {getMenu()}
-                </div>
-              </DraggablePanel>
-            );
-          }}
-        </KeepTrackOfOpenedAndClosedState>
+        <DraggablePanel
+          isOpen={panelOneIsOpen}
+          onPanelDismiss={() => setPanelOneIsOpen(false)}
+          panelTitleForAccessibilityOnly="Estimated water requirements for various foods"
+          showPanelTitle
+          initialPanelWidth="700px"
+          initialPanelHeight="200px"
+          onDragComplete={() => {}}
+        >
+          <div
+            css={css`
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+            `}
+          >
+            {getHtmlData()}
+          </div>
+        </DraggablePanel>
+        <DraggablePanel
+          isOpen={panelTwoIsOpen}
+          onPanelDismiss={() => setPanelTwoIsOpen(false)}
+          panelTitleForAccessibilityOnly="Something Else"
+          showPanelTitle
+          onDragComplete={() => {}}
+          initialPanelWidth="200px"
+        >
+          <div
+            css={css`
+              background: white;
+              display: flex;
+              flex-direction: column;
+              padding: 0rem 0.5rem;
+            `}
+          >
+            {getMenu()}
+          </div>
+        </DraggablePanel>
       </div>
     </UIThemeProvider>
   );
@@ -104,17 +100,19 @@ function KeepTrackOfOpenedAndClosedState({ children }) {
   const [isOpen, setIsOpened] = useState(true);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        margin: "2rem 0",
-      }}
-    >
-      <FilledButton
-        onPress={() => setIsOpened(!isOpen)}
-        text={`${isOpen ? "Close" : "Open"} the panel from over here!`}
-      ></FilledButton>
+    <>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          margin: "2rem 0",
+        }}
+      >
+        <FilledButton
+          onPress={() => setIsOpened(!isOpen)}
+          text={`${isOpen ? "Close" : "Open"} the panel from over here!`}
+        ></FilledButton>
+      </div>
       <div
         css={css`
           margin-top: 1rem;
@@ -123,7 +121,7 @@ function KeepTrackOfOpenedAndClosedState({ children }) {
       >
         {children(isOpen, setIsOpened)}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -187,7 +185,6 @@ function getHtmlData() {
     <div
       css={css`
         background: white;
-        overflow: scroll;
         padding: 1rem;
 
         caption {
