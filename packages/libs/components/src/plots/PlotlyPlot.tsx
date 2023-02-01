@@ -11,7 +11,7 @@ import React, {
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
-import { LinePlotDataSeries, PlotRef } from '../types/plots';
+import { PlotRef } from '../types/plots';
 import {
   PlotLegendAddon,
   PlotSpacingAddon,
@@ -64,7 +64,6 @@ export interface PlotProps<T> extends ColorPaletteAddon {
   checkedLegendItems?: string[];
   /** A function to call each time after plotly renders the plot */
   onPlotlyRender?: PlotParams['onUpdate'];
-  onHoverHandler?: (event: Plotly.PlotMouseEvent) => LinePlotDataSeries[];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -366,25 +365,6 @@ function PlotlyPlot<T>(
 
   const plotId = useMemo(() => uniqueId('plotly_plot_div_'), []);
 
-  const onHoverWrapper = (event: Plotly.PlotMouseEvent) => {
-    console.log(event);
-    console.log(
-      select(`div#${plotId}.js-plotly-plot`)
-        .select('.plot-container svg.main-svg .hoverlayer')
-        .select('g.axistext')
-    );
-    select(`div#${plotId}.js-plotly-plot`)
-      .select('.plot-container svg.main-svg .hoverlayer')
-      .select('g.axistext')
-      .remove();
-    if (props.onHoverHandler) {
-      const test = props.onHoverHandler(event);
-      if (test.length > 1) {
-        console.log('overlapping', test);
-      }
-    }
-  };
-
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({
@@ -422,7 +402,6 @@ function PlotlyPlot<T>(
           // use onUpdate event handler for legend tooltip
           onUpdate={onRender}
           onInitialized={onInitialized}
-          onHover={onHoverWrapper}
         />
         {showNoDataOverlay && (
           <NoDataOverlay plotTitle={title} opacity={0.85} />
