@@ -25,9 +25,16 @@ import { usePermissions } from '@veupathdb/study-data-access/lib/data-restrictio
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
-import { getStudyRequestNeedsApproval } from '@veupathdb/study-data-access/lib/shared/studies';
+import {
+  getStudyId,
+  getStudyRequestNeedsApproval,
+} from '@veupathdb/study-data-access/lib/shared/studies';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import { H5, Paragraph } from '@veupathdb/coreui';
+import { useDispatch } from 'react-redux';
+import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
+import { useHistory } from 'react-router';
+import { parsePath } from 'history';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -51,18 +58,42 @@ export default function DownloadTab({
     filteredCounts
   );
   const datasetId = studyRecord.id[0].value;
-  const permission = usePermissions();
+  const permissions = usePermissions();
+  console.log({ permissions });
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const attemptAction = useAttemptActionCallback();
+  const history = useHistory();
+  const dispatch = useDispatch();
+
+  // const handleClick = useCallback(
+  //   (event: React.MouseEvent<HTMLButtonElement>) => {
+  //     event.preventDefault();
+  //     attemptAction(Action.download, {
+  //       studyId: datasetId,
+  //     });
+  //   },
+  //   [datasetId, attemptAction]
+  // );
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
-      attemptAction(Action.download, {
-        studyId: datasetId,
-      });
+      const loggedInRoute = `/request-access/${datasetId}?redirectUrl=${encodeURIComponent(
+        window.location.href
+      )}`;
+
+      if (user === undefined || user.isGuest) {
+        dispatch(
+          showLoginForm(
+            window.location.origin +
+              history.createHref(parsePath(loggedInRoute))
+          )
+        );
+      } else {
+        history.push(loggedInRoute);
+      }
     },
-    [datasetId, attemptAction]
+    [datasetId, history, user, dispatch]
   );
 
   // Longitudinal studies on beta.microbiome are not formatted correctly (missing repeated measures) which affects the download files. This will be fixed for b60.
@@ -105,9 +136,9 @@ export default function DownloadTab({
   const dataAccessDeclaration = useMemo(() => {
     if (
       !user ||
-      !permission ||
+      !permissions ||
       !studyRecord ||
-      permission.loading ||
+      permissions.loading ||
       !datasetId
     )
       return;
@@ -117,9 +148,13 @@ export default function DownloadTab({
         : '<status not found>';
     const requestNeedsApproval =
       getStudyRequestNeedsApproval(studyRecord) !== '0';
+    console.log({ studyId: studyRecord.id[0].value });
+    const permissionsForDataset =
+      permissions.permissions.perDataset[studyRecord.id[0].value];
+    console.log({ permissionsForDataset });
+    // const requestStatus = permissionsForDataset?.accessRequestStatus!;
     const hasPermission =
-      permission.permissions.perDataset[studyRecord.id[0].value]
-        ?.actionAuthorization['resultsAll'];
+      permissionsForDataset?.actionAuthorization['resultsAll'];
     const requestElement = (
       <button className="link" style={{ padding: 0 }} onClick={handleClick}>
         request access
@@ -158,7 +193,7 @@ export default function DownloadTab({
     );
   }, [
     user,
-    permission,
+    permissions,
     studyRecord,
     handleClick,
     datasetId,
@@ -186,8 +221,8 @@ export default function DownloadTab({
 
   // Only fetch study releases if they are expected to be available
   const shouldFetchStudyReleases = Boolean(
-    !permission.loading &&
-      permission.permissions.perDataset[datasetId]?.sha1Hash
+    !permissions.loading &&
+      permissions.permissions.perDataset[datasetId]?.sha1Hash
   );
 
   // Get a list of all available study releases according to the Download Service.
@@ -282,17 +317,22 @@ function getDataAccessDeclaration(
   hasPermission: boolean = false,
   requestElement: JSX.Element
 ): JSX.Element {
+  console.log({ studyAccess });
   const PUBLIC_ACCESS_STUB =
-    'Data downloads for this study are public. Data is available without logging in.';
+    'Data downloads for this study are public. Data are available without logging in.';
   const LOGIN_REQUEST_STUB = (
     <span>
-      To download data please register or log in and {requestElement}.
+      To download data, please {requestElement}. Data will be available upon
+      study team review and approval.
     </span>
   );
-  const CONTROLLED_ACCESS_STUB =
-    ' Data will be available immediately following request submission.';
-  const PROTECTED_ACCESS_STUB =
-    ' Data will be available upon study team review and approval.';
+  // this should probably be non-site-specific
+  const PRERELEASE_STUB =
+    'Data downloads for this study are not yet available on ClinEpiDB.';
+  // const CONTROLLED_ACCESS_STUB =
+  //   ' Data will be available immediately following request submission.';
+  // const PROTECTED_ACCESS_STUB =
+  //   ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
   // const ACCESS_PENDING_STUB = 'Your data access request is pending.';
@@ -307,12 +347,7 @@ function getDataAccessDeclaration(
         {studyAccess === 'Public' ? (
           <span>{PUBLIC_ACCESS_STUB}</span>
         ) : isGuest || !hasPermission ? (
-          <span>
-            {LOGIN_REQUEST_STUB}
-            {requestNeedsApproval
-              ? PROTECTED_ACCESS_STUB
-              : CONTROLLED_ACCESS_STUB}
-          </span>
+          <span>{LOGIN_REQUEST_STUB}</span>
         ) : (
           <span>{ACCESS_GRANTED_STUB}</span>
         )}
