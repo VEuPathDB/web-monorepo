@@ -12,6 +12,7 @@ import {
 import { gradientDivergingColorscaleMap } from '../../types/plots/addOns';
 import { VEuPathDBScatterPlotData } from '../plots/ScatterPlot.storyData';
 import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
+import { rgb, lab } from 'd3-color';
 
 export default {
   title: 'Colors/Gradient Diverging',
@@ -51,6 +52,10 @@ const Template: Story<TemplateProps> = (args) => {
     args.nPoints
   );
   dataSetProcessGradient.series[0].y = dataSetProcessGradient.series[0].y.slice(
+    0,
+    args.nPoints
+  );
+  dataSetProcessGradient.series[0].seriesGradientColorscale = dataSetProcessGradient.series[0].seriesGradientColorscale?.slice(
     0,
     args.nPoints
   );
@@ -133,6 +138,15 @@ dataSetDivergingDiscrete.scatterplot.data[0].seriesGradientColorscale?.forEach(
 );
 
 let legendItems = vocabularyEquidistant.map((label) => {
+  console.log(
+    rgb(
+      lab(
+        gradientDivergingColorscaleMap(
+          +label / max(vocabularyEquidistant.map(Number))!
+        )
+      ).darker()
+    )
+  );
   return {
     label,
     marker: 'square',
@@ -159,7 +173,7 @@ Discrete.args = {
 
 // Showcase discretized version of the diverging gradient colormap. For this story,
 // the overlay var is a low cardinality variable with non-uniform spacing between neighboring values.
-const vocabularyNonUniform = ['-27', '-8', '-1', '0', '1', '8', '27'];
+const vocabularyNonUniform = ['-10', '-9.2', '-1', '0', '1.1', '3', '27'];
 legendItems = vocabularyNonUniform.map((label) => {
   return {
     label,

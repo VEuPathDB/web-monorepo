@@ -75,7 +75,9 @@ export const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
     data: [
       {
         seriesX: randomPosValues,
-        seriesY: randPosNegvalues,
+        seriesY: sequentialIntegers.map((i) =>
+          Math.abs(getNormallyDistributedRandomNumber(0, 1))
+        ),
         // variable mapped to color (same as seriesY for easier verification of the colorscale)
         seriesGradientColorscale: randPosNegvalues,
       },
