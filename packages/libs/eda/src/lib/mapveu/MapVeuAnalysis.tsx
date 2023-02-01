@@ -107,11 +107,11 @@ export function MapVeuAnalysis(props: Props) {
     setMouseMode,
     setSelectedOverlayVariable,
     setViewport,
-    setIsVizSelectorVisible,
     setActiveVisualizationId,
   } = useAppState('@@mapApp@@', analysisState);
 
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
+  const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   const selectedVariables = useMemo(
     () => ({
@@ -434,7 +434,7 @@ export function MapVeuAnalysis(props: Props) {
           {(app) => {
             return (
               <NewVisualizationPickerModal
-                visible={appState.isVizSelectorVisible}
+                visible={isVizSelectorVisible}
                 onVisibleChange={setIsVizSelectorVisible}
                 computation={computation!}
                 updateVisualizations={updateVisualizations}
@@ -481,7 +481,6 @@ const AppState = t.intersection([
       default: null,
       magnification: null,
     }),
-    isVizSelectorVisible: t.boolean,
   }),
   t.partial({
     selectedOverlayVariable: VariableDescriptor,
@@ -498,7 +497,6 @@ const defaultAppState: AppState = {
     zoom: 4,
   },
   mouseMode: 'default',
-  isVizSelectorVisible: false,
 };
 
 function useAppState(uiStateKey: string, analysisState: AnalysisState) {
@@ -515,33 +513,28 @@ function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setAppState(savedState);
   }, [savedState]);
 
-  function useStateUpdater<T extends keyof AppState>(key: T) {
-    return useCallback(
-      (value: AppState[T]) => {
-        setVariableUISettings((prev) => ({
-          ...prev,
-          [uiStateKey]: {
-            ...appState,
-            [key]: value,
-          },
-        }));
-      },
-      [key]
-    );
+  function makeSetter<T extends keyof AppState>(key: T) {
+    return function setter(value: AppState[T]) {
+      setVariableUISettings((prev) => ({
+        ...prev,
+        [uiStateKey]: {
+          ...appState,
+          [key]: value,
+        },
+      }));
+    };
   }
 
-  const setViewport = useStateUpdater('viewport');
-  const setMouseMode = useStateUpdater('mouseMode');
-  const setSelectedOverlayVariable = useStateUpdater('selectedOverlayVariable');
-  const setIsVizSelectorVisible = useStateUpdater('isVizSelectorVisible');
-  const setActiveVisualizationId = useStateUpdater('activeVisualizationId');
+  const setViewport = makeSetter('viewport');
+  const setMouseMode = makeSetter('mouseMode');
+  const setSelectedOverlayVariable = makeSetter('selectedOverlayVariable');
+  const setActiveVisualizationId = makeSetter('activeVisualizationId');
 
   return {
     appState,
     setViewport,
     setMouseMode,
     setSelectedOverlayVariable,
-    setIsVizSelectorVisible,
     setActiveVisualizationId,
   };
 }
