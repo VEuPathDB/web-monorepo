@@ -270,7 +270,7 @@ function chartMarkerSVGIcon(
       barHeight +
       ' fill=' +
       // empty string does not work: filled with white rgb
-      (el.color ?? 'rgb(255,255,255)').replace(/\s/g, '') +
+      (el.color ?? 'rgb(192,192,192)').replace(/\s/g, '') +
       ' />';
   });
 
