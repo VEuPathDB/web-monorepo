@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import * as t from 'io-ts';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
-  AnalysisState,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -21,8 +20,6 @@ import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import { VariableDescriptor } from '../../core/types/variable';
-import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import {
   FullScreenVisualization,
   NewVisualizationPickerModal,
@@ -48,8 +45,9 @@ import { lineplotVisualization } from '../../core/components/visualizations/impl
 import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import { getOrElse } from 'fp-ts/lib/Either';
-import { pipe } from 'fp-ts/lib/function';
+import { MapLegend } from './MapLegend';
+import { useAppState } from './appState';
+import { FloatingDiv } from './FloatingDiv';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -75,13 +73,7 @@ const plugin: ComputationPlugin = {
     scatterplot: vizPluginWithOptions(scatterplotVisualization),
     lineplot: vizPluginWithOptions(lineplotVisualization),
     barplot: vizPluginWithOptions(barplotVisualization),
-    _boxplot: vizPluginWithOptions(boxplotVisualization),
-    get boxplot() {
-      return this._boxplot;
-    },
-    set boxplot(value) {
-      this._boxplot = value;
-    },
+    boxplot: vizPluginWithOptions(boxplotVisualization),
   },
 };
 
@@ -209,7 +201,7 @@ export function MapAnalysis(props: Props) {
               if (activeViz == null) return;
               updateVisualizations((visualizations) =>
                 visualizations.filter(
-                  (v) => v.visualizationId !== appState.activeVisualizationId
+                  (v) => v.visualizationId !== activeViz.visualizationId
                 )
               );
               setActiveVisualizationId(undefined);
@@ -258,136 +250,126 @@ export function MapAnalysis(props: Props) {
   );
 
   return (
-    <ShowHideVariableContextProvider>
-      <DocumentationContainer>
-        <div
-          style={{
-            height: '100%',
-            position: 'relative',
-          }}
-        >
-          <MapVEuMap
-            height="100%"
-            width="100%"
-            style={mapStyle}
-            showMouseToolbar
-            showSpinner={pending}
-            animation={null}
-            viewport={appState.viewport}
-            markers={finalMarkers}
-            mouseMode={appState.mouseMode}
-            flyToMarkers={false}
-            flyToMarkersDelay={500}
-            onBoundsChanged={setBoundsZoomLevel}
-            onViewportChanged={setViewport}
-            onMouseModeChange={setMouseMode}
-            showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
-            zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
-          />
-          {legendItems.length > 0 && (
-            <FloatingDiv
+    <PromiseResult state={appPromiseState}>
+      {(app) => (
+        <ShowHideVariableContextProvider>
+          <DocumentationContainer>
+            <div
               style={{
-                top: 50,
-                right: 50,
+                height: '100%',
+                position: 'relative',
               }}
             >
-              <div>
-                <strong>{variable?.displayName}</strong>
-              </div>
-              <PlotLegend
-                type="list"
-                legendItems={legendItems}
-                showOverlayLegend
-                checkedLegendItems={legendItems.map((item) => item.label)}
-                containerStyles={{
-                  border: 'none',
-                  boxShadow: 'none',
-                  padding: 0,
-                  width: 'auto',
-                }}
+              <MapVEuMap
+                height="100%"
+                width="100%"
+                style={mapStyle}
+                showMouseToolbar
+                showSpinner={pending}
+                animation={null}
+                viewport={appState.viewport}
+                markers={finalMarkers}
+                mouseMode={appState.mouseMode}
+                flyToMarkers={false}
+                flyToMarkersDelay={500}
+                onBoundsChanged={setBoundsZoomLevel}
+                onViewportChanged={setViewport}
+                onMouseModeChange={setMouseMode}
+                showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
+                zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
               />
-            </FloatingDiv>
-          )}
-          <FloatingDiv
-            style={{
-              top: 10,
-              left: 100,
-            }}
-          >
-            <div>
-              {safeHtml(studyRecord.displayName)} ({totalEntityCount})
-            </div>
-            <div>
-              Showing {entity?.displayName} variable {variable?.displayName}
-            </div>
-            <div>
-              <InputVariables
-                inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                entities={studyEntities}
-                selectedVariables={selectedVariables}
-                onChange={(selectedVariables) =>
-                  setSelectedOverlayVariable(selectedVariables.overlay)
-                }
-                starredVariables={
-                  analysisState.analysis?.descriptor.starredVariables ?? []
-                }
-                toggleStarredVariable={toggleStarredVariable}
-              />
-            </div>
-            <FilledButton
-              text="Add a plot"
-              onPress={() => setIsVizSelectorVisible(true)}
-            />
-            <ul>
-              {analysisState.analysis?.descriptor.computations.map(
-                (computation) => (
-                  <li>
-                    <strong>
-                      {computation.displayName} ({computation.descriptor.type})
-                    </strong>
-                    <ul>
-                      {computation.visualizations.map((viz) => (
-                        <li>
-                          <button
-                            type="button"
-                            className="link"
-                            onClick={() => {
-                              setActiveVisualizationId(viz.visualizationId);
-                            }}
-                          >
-                            {viz.displayName} ({viz.descriptor.type})
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                )
-              )}
-            </ul>
-          </FloatingDiv>
-          <FloatingDiv
-            style={{
-              bottom: 10,
-              left: 100,
-            }}
-          >
-            {activeViz && (
-              <div
+              <FloatingDiv
                 style={{
-                  transform: 'scale(0.9)',
-                  background: 'white',
-                  minHeight: '10em',
-                  minWidth: '12em',
-                  width: '65em',
-                  position: 'fixed',
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 2000,
-                  padding: '0 1em',
+                  top: 50,
+                  right: 50,
                 }}
               >
-                <PromiseResult state={appPromiseState}>
-                  {(app) => (
+                {legendItems.length > 0 && (
+                  <MapLegend
+                    legendItems={legendItems}
+                    title={variable?.displayName}
+                  />
+                )}
+              </FloatingDiv>
+              <FloatingDiv
+                style={{
+                  top: 10,
+                  left: 100,
+                }}
+              >
+                <div>
+                  {safeHtml(studyRecord.displayName)} ({totalEntityCount})
+                </div>
+                <div>
+                  Showing {entity?.displayName} variable {variable?.displayName}
+                </div>
+                <div>
+                  <InputVariables
+                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    selectedVariables={selectedVariables}
+                    onChange={(selectedVariables) =>
+                      setSelectedOverlayVariable(selectedVariables.overlay)
+                    }
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                  />
+                </div>
+                <FilledButton
+                  text="Add a plot"
+                  onPress={() => setIsVizSelectorVisible(true)}
+                />
+                <ul>
+                  {analysisState.analysis?.descriptor.computations.map(
+                    (computation) => (
+                      <li>
+                        <strong>
+                          {computation.displayName} (
+                          {computation.descriptor.type})
+                        </strong>
+                        <ul>
+                          {computation.visualizations.map((viz) => (
+                            <li>
+                              <button
+                                type="button"
+                                className="link"
+                                onClick={() => {
+                                  setActiveVisualizationId(viz.visualizationId);
+                                }}
+                              >
+                                {viz.displayName} ({viz.descriptor.type})
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    )
+                  )}
+                </ul>
+              </FloatingDiv>
+              <FloatingDiv
+                style={{
+                  bottom: 10,
+                  left: 100,
+                }}
+              >
+                {activeViz && (
+                  <div
+                    style={{
+                      transform: 'scale(0.9)',
+                      background: 'white',
+                      minHeight: '10em',
+                      minWidth: '12em',
+                      width: '65em',
+                      position: 'fixed',
+                      right: 0,
+                      bottom: 0,
+                      zIndex: 2000,
+                      padding: '0 1em',
+                    }}
+                  >
                     <FullScreenVisualization
                       analysisState={analysisState}
                       computation={computation!}
@@ -412,125 +394,31 @@ export function MapAnalysis(props: Props) {
                       id={activeViz.visualizationId}
                       actions={fullScreenActions}
                     />
-                  )}
-                </PromiseResult>
-              </div>
-            )}
-          </FloatingDiv>
-          {(basicMarkerError || overlayError) && (
-            <FloatingDiv
-              style={{ top: undefined, bottom: 50, left: 100, right: 100 }}
-            >
-              {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-              {overlayError && <div>{String(overlayError)}</div>}
-            </FloatingDiv>
-          )}
-        </div>
-        <PromiseResult state={appPromiseState}>
-          {(app) => {
-            return (
-              <NewVisualizationPickerModal
-                visible={isVizSelectorVisible}
-                onVisibleChange={setIsVizSelectorVisible}
-                computation={computation!}
-                updateVisualizations={updateVisualizations}
-                visualizationPlugins={plugin.visualizationPlugins}
-                visualizationsOverview={app.visualizations}
-                geoConfigs={[geoConfig]}
-                onVisualizationCreated={onVisualizationCreated}
-              />
-            );
-          }}
-        </PromiseResult>
-      </DocumentationContainer>
-    </ShowHideVariableContextProvider>
+                  </div>
+                )}
+              </FloatingDiv>
+              {(basicMarkerError || overlayError) && (
+                <FloatingDiv
+                  style={{ top: undefined, bottom: 50, left: 100, right: 100 }}
+                >
+                  {basicMarkerError && <div>{String(basicMarkerError)}</div>}
+                  {overlayError && <div>{String(overlayError)}</div>}
+                </FloatingDiv>
+              )}
+            </div>
+            <NewVisualizationPickerModal
+              visible={isVizSelectorVisible}
+              onVisibleChange={setIsVizSelectorVisible}
+              computation={computation!}
+              updateVisualizations={updateVisualizations}
+              visualizationPlugins={plugin.visualizationPlugins}
+              visualizationsOverview={app.visualizations}
+              geoConfigs={[geoConfig]}
+              onVisualizationCreated={onVisualizationCreated}
+            />
+          </DocumentationContainer>
+        </ShowHideVariableContextProvider>
+      )}
+    </PromiseResult>
   );
-}
-
-function FloatingDiv(props: {
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        zIndex: 1,
-        padding: '1em',
-        backgroundColor: 'white',
-        border: '1px solid black',
-        ...props.style,
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
-
-const AppState = t.intersection([
-  t.type({
-    viewport: t.type({
-      center: t.tuple([t.number, t.number]),
-      zoom: t.number,
-    }),
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
-    }),
-  }),
-  t.partial({
-    selectedOverlayVariable: VariableDescriptor,
-    activeVisualizationId: t.string,
-  }),
-]);
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-type AppState = t.TypeOf<typeof AppState>;
-
-const defaultAppState: AppState = {
-  viewport: {
-    center: [0, 0],
-    zoom: 4,
-  },
-  mouseMode: 'default',
-};
-
-function useAppState(uiStateKey: string, analysisState: AnalysisState) {
-  const { setVariableUISettings } = analysisState;
-  const savedState = pipe(
-    AppState.decode(
-      analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey]
-    ),
-    getOrElse(() => defaultAppState)
-  );
-  const [appState, setAppState] = useState<AppState>(savedState);
-
-  useEffect(() => {
-    setAppState(savedState);
-  }, [savedState]);
-
-  function makeSetter<T extends keyof AppState>(key: T) {
-    return function setter(value: AppState[T]) {
-      setVariableUISettings((prev) => ({
-        ...prev,
-        [uiStateKey]: {
-          ...appState,
-          [key]: value,
-        },
-      }));
-    };
-  }
-
-  const setViewport = makeSetter('viewport');
-  const setMouseMode = makeSetter('mouseMode');
-  const setSelectedOverlayVariable = makeSetter('selectedOverlayVariable');
-  const setActiveVisualizationId = makeSetter('activeVisualizationId');
-
-  return {
-    appState,
-    setViewport,
-    setMouseMode,
-    setSelectedOverlayVariable,
-    setActiveVisualizationId,
-  };
 }
