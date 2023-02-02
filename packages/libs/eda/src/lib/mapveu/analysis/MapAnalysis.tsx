@@ -90,7 +90,7 @@ interface Props {
   studyId: string;
 }
 
-export function MapVeuAnalysis(props: Props) {
+export function MapAnalysis(props: Props) {
   const { analysisId } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();

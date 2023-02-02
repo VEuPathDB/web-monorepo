@@ -8,7 +8,7 @@ import {
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
-import { MapVeuAnalysis } from './analysis/MapVeuAnalysis';
+import { MapAnalysis } from './analysis/MapAnalysis';
 
 import { StudyList } from './StudyList';
 import {
@@ -53,7 +53,7 @@ export function MapVeuContainer(props: Props) {
               computeClient={computeClient}
               className="MapVEu"
             >
-              <MapVeuAnalysis
+              <MapAnalysis
                 analysisId={props.match.params.analysisId}
                 studyId={props.match.params.studyId}
               />
