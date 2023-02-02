@@ -13,41 +13,41 @@ import {
   useStudyEntities,
   useStudyMetadata,
   useStudyRecord,
-} from '../core';
+} from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
-import { useGeoConfig } from '../core/hooks/geoConfig';
-import { useMapMarkers } from '../core/hooks/mapMarkers';
-import { InputVariables } from '../core/components/visualizations/InputVariables';
-import { useToggleStarredVariable } from '../core/hooks/starredVariables';
-import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
-import { VariableDescriptor } from '../core/types/variable';
+import { useGeoConfig } from '../../core/hooks/geoConfig';
+import { useMapMarkers } from '../../core/hooks/mapMarkers';
+import { InputVariables } from '../../core/components/visualizations/InputVariables';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
+import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
+import { VariableDescriptor } from '../../core/types/variable';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import {
   FullScreenVisualization,
   NewVisualizationPickerModal,
-} from '../core/components/visualizations/VisualizationsContainer';
+} from '../../core/components/visualizations/VisualizationsContainer';
 import { FilledButton } from '@veupathdb/coreui';
-import { Visualization } from '../core/types/visualization';
-import { useEntityCounts } from '../core/hooks/entityCounts';
+import { Visualization } from '../../core/types/visualization';
+import { useEntityCounts } from '../../core/hooks/entityCounts';
 import { Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import { ComputationPlugin } from '../core/components/computations/Types';
-import { ZeroConfigWithButton } from '../core/components/computations/ZeroConfiguration';
-import { histogramVisualization } from '../core/components/visualizations/implementations/HistogramVisualization';
-import { VisualizationPlugin } from '../core/components/visualizations/VisualizationPlugin';
-import { LayoutOptions } from '../core/components/layouts/types';
-import { OverlayOptions } from '../core/components/visualizations/options/types';
-import { FloatingLayout } from '../core/components/layouts/FloatingLayout';
+import { ComputationPlugin } from '../../core/components/computations/Types';
+import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
+import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
+import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
+import { LayoutOptions } from '../../core/components/layouts/types';
+import { OverlayOptions } from '../../core/components/visualizations/options/types';
+import { FloatingLayout } from '../../core/components/layouts/FloatingLayout';
 import {
   contTableVisualization,
   twoByTwoVisualization,
-} from '../core/components/visualizations/implementations/MosaicVisualization';
-import { scatterplotVisualization } from '../core/components/visualizations/implementations/ScatterplotVisualization';
-import { lineplotVisualization } from '../core/components/visualizations/implementations/LineplotVisualization';
-import { barplotVisualization } from '../core/components/visualizations/implementations/BarplotVisualization';
-import { boxplotVisualization } from '../core/components/visualizations/implementations/BoxplotVisualization';
-import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
+} from '../../core/components/visualizations/implementations/MosaicVisualization';
+import { scatterplotVisualization } from '../../core/components/visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../../core/components/visualizations/implementations/LineplotVisualization';
+import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
+import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 

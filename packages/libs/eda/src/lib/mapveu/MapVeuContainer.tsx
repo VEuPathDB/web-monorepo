@@ -8,7 +8,7 @@ import {
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
-import { MapVeuAnalysis } from './MapVeuAnalysis';
+import { MapVeuAnalysis } from './analysis/MapVeuAnalysis';
 
 import { StudyList } from './StudyList';
 import {
