@@ -1,6 +1,6 @@
-import { ReactNode, useState } from "react";
+import { CSSProperties, ReactNode, useState } from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { DragHandle } from "@material-ui/icons";
 import { gray } from "../../../definitions/colors";
 import { CloseCircle } from "../../icons";
@@ -9,6 +9,11 @@ import { primaryFont } from "../../../styleDefinitions/typography";
 export type DraggablePanelCoordinatePair = {
   x: number;
   y: number;
+};
+
+export type DraggablePanelStyleOverrides = {
+  boxShadow?: CSSProperties["boxShadow"];
+  zIndex?: CSSProperties["zIndex"];
 };
 
 export type DraggablePanelProps = {
@@ -28,10 +33,14 @@ export type DraggablePanelProps = {
   isOpen: boolean;
   /** This allows developers to show or hide the panel title. */
   showPanelTitle: boolean;
+  /** This surfaces configurable CSS properties for the <DraggablePanel /> */
+  styleOverrides?: DraggablePanelStyleOverrides;
   /** This event fires when the user's drag completes. */
   onDragComplete?: (
     destinationCoordinates: DraggablePanelCoordinatePair
   ) => void;
+  /** This event fires when the user's drag begins. */
+  onDragStart?: () => void;
   /** This event fires when the user dismisses a visible panel. */
   onPanelDismiss?: () => void;
 };
@@ -53,9 +62,11 @@ export function DraggablePanel({
   initialPanelWidth,
   isOpen,
   onDragComplete,
+  onDragStart,
   onPanelDismiss,
   panelTitle,
   showPanelTitle,
+  styleOverrides,
 }: DraggablePanelProps) {
   const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -66,6 +77,8 @@ export function DraggablePanel({
 
   function handleDragStart() {
     setIsDragging(true);
+
+    if (onDragStart) onDragStart();
   }
 
   function handleOnDragStop(_: DraggableEvent, data: DraggableData) {
@@ -93,16 +106,18 @@ export function DraggablePanel({
         // At the moment, jsdom and dragging is a bad combo for testing.
         data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
         css={css`
+          background: white;
           border-radius: 7px;
           box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
             rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
           min-width: 250px;
-          background: white;
+          position: relative;
           width: ${initialPanelWidth || "unset"};
           ${isOpen === false &&
           `
-        visibility: hidden;
-        `}
+          visibility: hidden;
+          `}
+          z-index: ${styleOverrides?.zIndex ?? "auto"}
         `}
       >
         <div

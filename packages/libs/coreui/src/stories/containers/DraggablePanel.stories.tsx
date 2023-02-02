@@ -25,6 +25,21 @@ const Template: Story<DraggablePanelProps> = (args) => {
 
   const [panelTwoIsOpen, setPanelTwoIsOpen] = useState<boolean>(true);
 
+  const panelDefinitionOjects: DraggablePanelProps[] = [
+    "Panel 1",
+    "Panel 2",
+    "Panel 3",
+  ].map((panelTitle) => {
+    return {
+      children: () => <p>Panel Contents</p>,
+      panelTitle,
+      showPanelTitle: true,
+      isOpen: true,
+    };
+  });
+
+  return <StackOrderingKeeper draggablePanelProps={panelDefinitionOjects} />;
+
   return (
     <UIThemeProvider
       theme={{
@@ -369,6 +384,42 @@ function getHtmlTable() {
         </tbody>
         <tfoot />
       </table>
+    </div>
+  );
+}
+
+type StackOrderingKeeper = { draggablePanelProps: DraggablePanelProps[] };
+function StackOrderingKeeper({ draggablePanelProps }: StackOrderingKeeper) {
+  const [zIndicies, setZIndicies] = useState<string[]>([]);
+
+  return (
+    <div>
+      {draggablePanelProps.map((props) => {
+        const indexOfelement = zIndicies.findIndex(
+          (panelTitle) => panelTitle === props.panelTitle
+        );
+        const zIndex = indexOfelement > 0 ? indexOfelement : 0;
+        return (
+          <DraggablePanel
+            isOpen
+            panelTitle={props.panelTitle}
+            showPanelTitle
+            key={props.panelTitle}
+            onDragStart={() => {
+              setZIndicies((currentList) => {
+                return currentList
+                  .filter((panelTitle) => panelTitle !== props.panelTitle)
+                  .concat(props.panelTitle);
+              });
+            }}
+            styleOverrides={{
+              zIndex,
+            }}
+          >
+            content... my z: {zIndex}
+          </DraggablePanel>
+        );
+      })}
     </div>
   );
 }
