@@ -1,6 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
-import { DraggablePanel, DraggablePanelCoordinatePair } from "./DraggablePanel";
+import { DraggableProps } from "react-draggable";
+import {
+  DraggablePanel,
+  DraggablePanelCoordinatePair,
+  DraggablePanelProps,
+} from "./DraggablePanel";
 
 describe("Draggable Panels", () => {
   test("dragging a panel changes where it lives.", () => {
@@ -98,6 +103,59 @@ describe("Draggable Panels", () => {
       screen.getByText("I might be here or I might be gone")
     ).toBeVisible();
   });
+  test("panels are layered from most-to-least recently dragged", () => {
+    const panelDefinitionOjects: DraggablePanelProps[] = [
+      "Panel 1",
+      "Panel 2",
+      "Panel 3",
+    ].map((panelTitle) => {
+      return {
+        children: () => <p>Panel Contents</p>,
+        panelTitle,
+        showPanelTitle: true,
+        isOpen: true,
+      };
+    });
+
+    render(<StackOrderingKeeper draggablePanelProps={panelDefinitionOjects} />);
+
+    const dragMeFirst = screen.getByText("Panel 3");
+    const dragMeMiddle = screen.getByText("Panel 2");
+    const dragMeLast = screen.getByText("Panel 1");
+
+    drag(dragMeFirst, { clientX: 50, clientY: 50 });
+    drag(dragMeMiddle, { clientX: 60, clientY: 60 });
+    drag(dragMeLast, { clientX: 70, clientY: 70 });
+
+    /**
+     * Asserting on z-index values makes this test brittle to refactoring. Is there
+     * another way to programmatically determine stacking order?
+     */
+    const firstDraggedZIndex = getZIndexValue(
+      screen.getByTestId(`Panel 3 dragged`)
+    );
+    const middleDraggedZIndex = getZIndexValue(
+      screen.getByTestId(`Panel 2 dragged`)
+    );
+    const lastDraggedZIndex = getZIndexValue(
+      screen.getByTestId(`Panel 1 dragged`)
+    );
+    // const firstDraggedZIndex = window.getComputedStyle(
+    //   screen.getByTestId(`Panel 3 dragged`)
+    // ).zIndex;
+    // const middleDraggedZIndex = window.getComputedStyle(
+    //   screen.getByTestId(`Panel 2 dragged`)
+    // ).zIndex;
+    // const lastDraggedZIndex = window.getComputedStyle(
+    //   screen.getByTestId(`Panel 1 dragged`)
+    // ).zIndex;
+    expect(Number(lastDraggedZIndex)).toBeGreaterThan(
+      Number(middleDraggedZIndex)
+    );
+    expect(Number(middleDraggedZIndex)).toBeGreaterThan(
+      Number(firstDraggedZIndex)
+    );
+  });
 });
 
 /**
@@ -121,4 +179,43 @@ function drag(
   fireEvent.mouseDown(element);
   fireEvent.mouseMove(element, destinationCoordinates);
   fireEvent.mouseUp(element);
+}
+
+type StackOrderingKeeper = { draggablePanelProps: DraggablePanelProps[] };
+function StackOrderingKeeper({ draggablePanelProps }: StackOrderingKeeper) {
+  const [zIndicies, setZIndicies] = useState<string[]>([]);
+
+  return (
+    <div>
+      {draggablePanelProps.map((props) => {
+        const zIndex = zIndicies.findIndex(
+          (panelTitle) => panelTitle === props.panelTitle
+        );
+        return (
+          <DraggablePanel
+            isOpen
+            panelTitle={props.panelTitle}
+            showPanelTitle
+            key={props.panelTitle}
+            onDragStart={() => {
+              setZIndicies((currentList) => {
+                return currentList
+                  .filter((panelTitle) => panelTitle !== props.panelTitle)
+                  .concat(props.panelTitle);
+              });
+            }}
+            styleOverrides={{
+              zIndex: zIndex > -1 ? zIndex : "unset",
+            }}
+          >
+            content...
+          </DraggablePanel>
+        );
+      })}
+    </div>
+  );
+}
+
+function getZIndexValue(element: HTMLElement) {
+  return window.getComputedStyle(element).zIndex;
 }
