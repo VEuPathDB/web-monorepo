@@ -25,6 +25,8 @@ const Template: Story<DraggablePanelProps> = (args) => {
 
   const [panelTwoIsOpen, setPanelTwoIsOpen] = useState<boolean>(true);
 
+  // https://beta.reactjs.org/reference/react/Children
+  // https://beta.reactjs.org/reference/react/Children#accepting-an-array-of-objects-as-a-prop
   const panelDefinitionOjects: DraggablePanelProps[] = [
     "Panel 1",
     "Panel 2",
