@@ -140,15 +140,7 @@ describe("Draggable Panels", () => {
     const lastDraggedZIndex = getZIndexValue(
       screen.getByTestId(`Panel 1 dragged`)
     );
-    // const firstDraggedZIndex = window.getComputedStyle(
-    //   screen.getByTestId(`Panel 3 dragged`)
-    // ).zIndex;
-    // const middleDraggedZIndex = window.getComputedStyle(
-    //   screen.getByTestId(`Panel 2 dragged`)
-    // ).zIndex;
-    // const lastDraggedZIndex = window.getComputedStyle(
-    //   screen.getByTestId(`Panel 1 dragged`)
-    // ).zIndex;
+
     expect(Number(lastDraggedZIndex)).toBeGreaterThan(
       Number(middleDraggedZIndex)
     );
