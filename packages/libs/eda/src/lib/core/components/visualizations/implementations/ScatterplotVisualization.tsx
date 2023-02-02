@@ -1807,7 +1807,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
         outputEntity={outputEntity}
-        stratificationIsActive={overlayVariable != null}
+        stratificationIsActive={
+          overlayVariable != null || computedOverlayVariableDescriptor != null
+        }
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }

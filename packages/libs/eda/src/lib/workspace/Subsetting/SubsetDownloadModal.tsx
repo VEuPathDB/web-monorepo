@@ -58,11 +58,13 @@ type SubsetDownloadModalProps = {
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 };
 
-const NumberedHeader = (props: {
+export type NumberedHeaderProps = {
   number: number;
   text: string;
   color?: string;
-}) => {
+};
+
+export const NumberedHeader = (props: NumberedHeaderProps) => {
   const color = props.color ?? 'black';
   const height = 25;
 
