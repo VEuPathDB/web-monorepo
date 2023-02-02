@@ -21,10 +21,17 @@ const AccessRequestView = (props) => {
       const indexOfFirst =
         props.location.pathname.toString().indexOf("/DS_") + 1;
       const datasetId = props.location.pathname.toString().slice(indexOfFirst);
-      const response =
-        datasetId && user
-          ? await studyAccessApi.fetchEndUserEntry(user.id, datasetId)
-          : null;
+      let response = null;
+
+      try {
+        response =
+          datasetId && user
+            ? await studyAccessApi.fetchEndUserEntry(user.id, datasetId)
+            : null;
+      } catch (error) {
+        if (!error.message.startsWith("404 Not Found")) throw error;
+      }
+
       console.log({ response });
       const requestData = response
         ? Object.keys(response).reduce((newObj, key) => {
@@ -56,11 +63,16 @@ class AccessRequestViewInner extends Component {
   }
 
   renderTitle() {
-    const { formTitle, successfullySubmitted, alreadyRequested } = this.props;
+    const {
+      formTitle,
+      successfullySubmitted,
+      alreadyRequested,
+      existingRequestData,
+    } = this.props;
 
     if (successfullySubmitted) {
       return <h1>Data Access Request Submitted</h1>;
-    } else if (alreadyRequested) {
+    } else if (alreadyRequested || existingRequestData) {
       return <h1>Data Access Request Already Submitted</h1>;
     } else {
       return <h1>{formTitle}</h1>;
@@ -76,6 +88,7 @@ class AccessRequestViewInner extends Component {
       alreadyRequested,
       webAppUrl,
       formValues,
+      existingRequestData,
     } = this.props;
     const studyPageUrl = webAppUrl + "/app/record/dataset/" + datasetId;
     console.log({ formValues });
@@ -103,7 +116,7 @@ class AccessRequestViewInner extends Component {
           </p>
         </Fragment>
       );
-    } else if (alreadyRequested) {
+    } else if (alreadyRequested || existingRequestData) {
       return (
         <Fragment>
           <p>
