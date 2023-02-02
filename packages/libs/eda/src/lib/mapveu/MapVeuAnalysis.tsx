@@ -5,7 +5,6 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
   AnalysisState,
-  makeNewAnalysis,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -16,12 +15,10 @@ import {
   useStudyRecord,
 } from '../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
-import { BoundsViewport, Viewport } from '@veupathdb/components/lib/map/Types';
-import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { useGeoConfig } from '../core/hooks/geoConfig';
 import { useMapMarkers } from '../core/hooks/mapMarkers';
 import { InputVariables } from '../core/components/visualizations/InputVariables';
-import { VariablesByInputName } from '../core/utils/data-element-constraints';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
 import { VariableDescriptor } from '../core/types/variable';
@@ -130,7 +127,6 @@ export function MapVeuAnalysis(props: Props) {
     markers,
     pending,
     legendItems,
-    vocabulary,
     basicMarkerError,
     overlayError,
     totalEntityCount,
