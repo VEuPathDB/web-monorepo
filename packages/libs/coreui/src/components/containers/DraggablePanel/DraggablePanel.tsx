@@ -2,7 +2,10 @@ import { CSSProperties, ReactNode, useState } from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { css } from "@emotion/react";
 import { gray } from "../../../definitions/colors";
-import { primaryFont } from "../../../styleDefinitions/typography";
+import {
+  primaryFont,
+  screenReaderOnly,
+} from "../../../styleDefinitions/typography";
 import { useUITheme } from "../../theming";
 import DismissButton from "../../notifications/DismissButton";
 import { H6 } from "../../typography";
@@ -114,7 +117,7 @@ export function DraggablePanel({
           css={css`
             align-items: center;
             border-radius: 7px 7px 0 0;
-            background: ${theme?.palette.primary.hue[100] ?? gray[100]};
+            background: ${theme?.palette?.primary?.hue[100] ?? gray[100]};
             cursor: ${isDragging ? "grabbing" : "grab"};
             display: flex;
             height: 2rem;
@@ -135,7 +138,10 @@ export function DraggablePanel({
                 right: 0;
               `}
             >
-              <DismissButton onClick={onPanelDismiss} />
+              <DismissButton
+                buttonText={`Close ${panelTitle}`}
+                onClick={onPanelDismiss}
+              />
             </div>
           )}
         </div>
