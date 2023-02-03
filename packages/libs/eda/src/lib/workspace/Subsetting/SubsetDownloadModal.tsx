@@ -43,7 +43,7 @@ import {
   SortBy,
 } from '@veupathdb/coreui/dist/components/grids/DataGrid';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
-import Error from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -257,11 +257,15 @@ export default function SubsetDownloadModal({
         })
         .catch((error: Error) => {
           const splitErrorMessage = error.message.split('\n');
-          setApiError({
-            status: splitErrorMessage[0],
-            message: splitErrorMessage[1],
-            requestID: '',
-          });
+          try {
+            setApiError(JSON.parse(splitErrorMessage[1]));
+          } catch (/* ignore JSON.parse error */ _) {
+            setApiError({
+              status: splitErrorMessage[0],
+              message: splitErrorMessage[1],
+              requestID: '',
+            });
+          }
         })
         .finally(() => {
           setDataLoading(false);
@@ -402,6 +406,14 @@ export default function SubsetDownloadModal({
             />
           )}
         </div>
+        {apiError && (
+          <Banner
+            banner={{
+              type: 'error',
+              message: apiError.status,
+            }}
+          />
+        )}
         {gridData ? (
           <div
             css={{
@@ -842,24 +854,7 @@ export default function SubsetDownloadModal({
           }}
         >
           {renderVariableSelectionArea()}
-          {apiError ? (
-            <Error>
-              <h2>Please try again later.</h2>
-              <br />
-              <span>
-                <strong>Error status: </strong> <br />
-                {apiError.status}
-              </span>
-              <br />
-              <br />
-              <span>
-                <strong>Error message:</strong> <br />
-                {apiError.message}
-              </span>
-            </Error>
-          ) : (
-            renderDataGridArea()
-          )}
+          {renderDataGridArea()}
         </div>
       </div>
     </Modal>
