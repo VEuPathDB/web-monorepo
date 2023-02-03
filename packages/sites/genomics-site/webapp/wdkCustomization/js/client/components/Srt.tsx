@@ -283,7 +283,7 @@ function SrtForm({
       <ResetFormButton
         disabled={isResetButtonDisabled}
         onResetForm={onReset}
-        resetFormContent={<><i className="fa fa-refresh"></i>Reset to default</>}
+        resetFormContent={<><i className="fa fa-refresh"></i>Reset values to default</>}
       />
       <input type="hidden" name="project_id" value={projectId} />
       <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
