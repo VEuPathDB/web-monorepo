@@ -2257,10 +2257,10 @@
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
 
-"@veupathdb/eda@^3.15.7":
-  version "3.15.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.15.7.tgz#02f286be0dcf5214c733bd79ff3b26fa02eb305a"
-  integrity sha512-u2+5Fq7Q2GD+QuvHfUpnx0lkrlbPmc4hB84VevoupA8ota3AXXDm5mV/Nm5yiWImnAJYfKt9PAlU8470z/XFGg==
+"@veupathdb/eda@^3.15.8":
+  version "3.15.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-3.15.8.tgz#e795cdfccfcb75c1bf6efbd5a46a9f9182f838b8"
+  integrity sha512-eUuZlTdIQdf8pGNHOpOXVPh2moDAkeslPV+/VeiwUXHaK/Ffc0++G4q4xVKiDnOZ6cHqXV/NFLHisHlyUcQHWA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
