@@ -255,7 +255,7 @@ function useResetFormConfig(
             resetFormContent: (
               <React.Fragment>
                 <IconAlt fa="refresh" />
-                Reset values
+                Reset values to default
               </React.Fragment>
             )
           }
