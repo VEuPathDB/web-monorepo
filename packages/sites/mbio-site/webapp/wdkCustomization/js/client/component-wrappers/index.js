@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import Header from '@veupathdb/web-common/lib/App/Header';
 import Footer from '@veupathdb/web-common/lib/components/Footer';
+import { DIYStudyMenuItem } from '@veupathdb/web-common/lib/App/Studies/DIYStudyMenuItem';
 import CardBasedIndexController from '@veupathdb/web-common/lib/controllers/CardBasedIndexController';
 import StudyAnswerController from '@veupathdb/web-common/lib/component-wrappers/StudyAnswerController';
 import StudyRecordHeading from '@veupathdb/web-common/lib/component-wrappers/StudyRecordHeading';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
-import { StudyMenuItem } from '@veupathdb/web-common/lib/App/Studies';
+import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from '../visualizations.json';
@@ -14,10 +16,13 @@ import { AnalysisCard } from '@veupathdb/web-common/lib/App/Analyses';
 import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
 import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
 import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
+import { useDiyDatasets } from '@veupathdb/web-common/lib/hooks/diyDatasets';
 
 import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
 import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 import { useEda } from '@veupathdb/web-common/lib/config';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 import { Page } from './Page';
 
@@ -43,6 +48,13 @@ function SiteFooter() {
 }
 
 function SiteHeader() {
+  const permissions = usePermissions();
+  const { diyDatasets, reloadDiyDatasets } = useDiyDatasets();
+  const [searchTerm, setSearchTerm] = useSessionBackedState('', "SiteHeader__filterString", s => s, s => s );
+  const makeHeaderMenuItems = useMemo(
+    () => makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
+    [permissions, diyDatasets, reloadDiyDatasets]
+  );
   return (
     <Header
       logoUrl={logoUrl}
@@ -53,6 +65,8 @@ function SiteHeader() {
       tagline="A data-mining platform for interrogating microbiome experiments"
       getSiteData={getSiteData}
       makeHeaderMenuItems={makeHeaderMenuItems}
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
     />
   );
 }
@@ -155,98 +169,190 @@ function getHomeContent({ studies, searches, visualizations }) {
     ];
 }
 
-function makeHeaderMenuItems(state) {
-  const { siteConfig } = state.globalData;
-  const siteData = getSiteData(state);
-  const { studies } = siteData;
-  const socialIcons = iconMenuItemsFromSocials(siteConfig);
-  const socialLinks = menuItemsFromSocials(siteConfig);
-  const {vimeoUrl} = siteConfig;
+function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets, reloadDiyDatasets) {
+  return function makeHeaderMenuItems(state, props) {
+    const { siteConfig } = state.globalData;
+    const siteData = getSiteData(state);
+    const { studies } = siteData;
+    const socialIcons = iconMenuItemsFromSocials(siteConfig);
+    const socialLinks = menuItemsFromSocials(siteConfig);
+    const {vimeoUrl} = siteConfig;
+    const searchTerm = props.searchTerm;
+    const setSearchTerm = props.setSearchTerm;
+    const filteredUserStudies = (
+      useEda &&
+      useUserDatasetsWorkspace
+        ? diyDatasets
+        : []
+    )?.filter(
+      study => (
+        stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
+      )
+    );
 
-  return {
-    mainMenu: [
-      {
-        id: 'search',
-        text: 'Search a Study',
-        children: [
-          {
-            text: <div style={{ padding: '0.5em 0' }}>View All Studies</div>,
-            route: '/search/dataset/Studies/result'
-          }
-        ].concat(studies.entities == null ? [] : studies.entities
-          .map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> })))
-      },
-      {
-        id: 'workspace',
-        text: 'Workspace',
-        children: useEda ? [
-          {
-            text: 'My analyses',
-            route: '/workspace/analyses',
-          },
-          {
-            text: 'Public analyses',
-            route: '/workspace/analyses/public',
-          },
-        ] : [
-          {
-            text: 'My Search Strategies',
-            route: '/workspace/strategies'
-          },
-          {
-            text: 'My Basket',
-            route: '/workspace/basket',
-            loginRequired: true
-          },
-          {
-            text: 'My Favorites',
-            route: '/workspace/favorites',
-            loginRequired: true
-          },
-          {
-            text: 'Public Search Strategies',
-            route: '/workspace/strategies/public'
-          },
-          ...(
-            useUserDatasetsWorkspace 
-              ? [
-                  {
-                    text: 'My Data Sets',
-                    route: '/workspace/datasets'
-                  }
-                ]
-              : []
-          )
-        ]
-      },
-      {
-        id: 'about',
-        text: 'About',
-        children: [
-          {
-            text: 'FAQs',
-            route: useEda ? `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq_beta.html` : `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq.html`
-          },
-          {
-            text: 'News',
-            route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/news.html`
-          },
-          {
-            text: 'Tutorials and Resources',
-            url: vimeoUrl,
-            target: '_blank'
-          },
-          ...socialLinks
-        ]
-      },
-      {
-        target: '_blank',
-        id: 'contactus',
-        text: 'Contact Us',
-        route: '/contact-us'
-      }
-    ],
-    iconMenu: [ ...socialIcons ]
+    const filteredCuratedStudies = studies.entities?.filter(
+      study => (
+        stripHTML(study.name.toLowerCase()).includes(searchTerm.toLowerCase())
+      )
+    );
+
+    const studyTableIconStyle = {
+      fontSize: '1.4em',
+      marginRight: '.25em',
+      position: 'relative',
+      bottom: '-.25em'
+    }
+
+    return {
+      mainMenu: [
+        {
+          id: 'studies',
+          text: 'Studies',
+          children: ({ isFocused }) => [
+            {
+              text: (
+                <>
+                  <DiyStudiesDaemon
+                    isFocused={isFocused}
+                    reloadDiyDatasets={reloadDiyDatasets}
+                  />
+                  <div style={{ padding: '0.5em 0' }}>
+                    <i className="ebrc-icon-table" style={studyTableIconStyle}></i> Study summaries table
+                  </div>
+                </>
+              ),
+              route: '/search/dataset/Studies/result'
+            },
+            {
+              text: <StudyMenuSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm}/>
+            }
+          ].concat(
+            filteredCuratedStudies != null && filteredUserStudies != null && !permissionsValue.loading
+              ? (
+                  filteredUserStudies.length > 0 && studies.entities?.length > 0
+                    ? [
+                        {
+                          text: <small>User studies</small>
+                        }
+                      ]
+                    : []
+                ).concat(
+                  filteredUserStudies.map(
+                    study => ({
+                      text: (
+                        <DIYStudyMenuItem
+                          name={study.name}
+                          link={`${study.baseEdaRoute}/new`}
+                        />
+                      )
+                    })
+                  )
+                ).concat(
+                  filteredCuratedStudies.length > 0 && diyDatasets?.length > 0
+                    ? [
+                        {
+                          text: <small>Curated studies</small>
+                        }
+                      ]
+                    : []
+                ).concat(
+                  filteredCuratedStudies
+                    .map(
+                      study => ({
+                        text: (
+                          <StudyMenuItem
+                            study={study}
+                            config={siteConfig}
+                            permissions={permissionsValue.permissions}
+                          />
+                        )
+                      })
+                    )
+                )
+              : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }])
+        },
+        {
+          id: 'workspace',
+          text: 'Workspace',
+          children: useEda ? [
+            {
+              text: 'My analyses',
+              route: '/workspace/analyses',
+            },
+            ...(
+              useUserDatasetsWorkspace
+                ? [
+                    {
+                      text: 'My User Studies',
+                      route: '/workspace/datasets'
+                    }
+                  ]
+                : []
+            ),
+            {
+              text: 'Public analyses',
+              route: '/workspace/analyses/public',
+            },
+          ] : [
+            {
+              text: 'My Search Strategies',
+              route: '/workspace/strategies'
+            },
+            {
+              text: 'My Basket',
+              route: '/workspace/basket',
+              loginRequired: true
+            },
+            {
+              text: 'My Favorites',
+              route: '/workspace/favorites',
+              loginRequired: true
+            },
+            {
+              text: 'Public Search Strategies',
+              route: '/workspace/strategies/public'
+            },
+            ...(
+              useUserDatasetsWorkspace 
+                ? [
+                    {
+                      text: 'My Data Sets',
+                      route: '/workspace/datasets'
+                    }
+                  ]
+                : []
+            )
+          ]
+        },
+        {
+          id: 'about',
+          text: 'About',
+          children: [
+            {
+              text: 'FAQs',
+              route: useEda ? `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq_beta.html` : `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq.html`
+            },
+            {
+              text: 'News',
+              route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/news.html`
+            },
+            {
+              text: 'Tutorials and Resources',
+              url: vimeoUrl,
+              target: '_blank'
+            },
+            ...socialLinks
+          ]
+        },
+        {
+          target: '_blank',
+          id: 'contactus',
+          text: 'Contact Us',
+          route: '/contact-us'
+        }
+      ],
+      iconMenu: [ ...socialIcons ]
+    }
   }
 }
 
@@ -264,4 +370,17 @@ async function loadItems({ analysisClient, wdkService }) {
       analysisId: overview.analysisId,
     }];
   });
+}
+
+/**
+ * Effectful component which reloads DIY studies whenever "focused"
+ */
+function DiyStudiesDaemon(props) {
+  useEffect(() => {
+    if (props.isFocused) {
+      props.reloadDiyDatasets();
+    }
+  }, [props.isFocused, props.reloadDiyDatasets]);
+
+  return null;
 }
