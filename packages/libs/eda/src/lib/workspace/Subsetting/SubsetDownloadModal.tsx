@@ -43,6 +43,7 @@ import {
   SortBy,
 } from '@veupathdb/coreui/dist/components/grids/DataGrid';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -255,7 +256,16 @@ export default function SubsetDownloadModal({
           setGridData(data);
         })
         .catch((error: Error) => {
-          setApiError(JSON.parse(error.message.split('\n')[1]));
+          const splitErrorMessage = error.message.split('\n');
+          try {
+            setApiError(JSON.parse(splitErrorMessage[1]));
+          } catch (/* ignore JSON.parse error */ _) {
+            setApiError({
+              status: splitErrorMessage[0],
+              message: splitErrorMessage[1],
+              requestID: '',
+            });
+          }
         })
         .finally(() => {
           setDataLoading(false);
@@ -396,6 +406,14 @@ export default function SubsetDownloadModal({
             />
           )}
         </div>
+        {apiError && (
+          <Banner
+            banner={{
+              type: 'error',
+              message: apiError.status,
+            }}
+          />
+        )}
         {gridData ? (
           <div
             css={{
