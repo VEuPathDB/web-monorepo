@@ -44,7 +44,7 @@ export const plugin: ComputationPlugin = {
         if (AbundanceConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Relative abundance',
+            placeholderDisplayName: 'Abundance',
           };
         }
       },
@@ -60,7 +60,7 @@ export const plugin: ComputationPlugin = {
         if (AbundanceConfig.is(config)) {
           return {
             entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Relative abundance',
+            placeholderDisplayName: 'Abundance',
           };
         }
       },
