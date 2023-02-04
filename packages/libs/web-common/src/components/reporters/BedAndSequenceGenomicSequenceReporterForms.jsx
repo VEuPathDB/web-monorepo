@@ -98,7 +98,7 @@ const formBeforeCommonOptions = (props) => {
         <RadioList name="resultType" value={formState.resultType}
           onChange={typeUpdateHandler} items={resultTypes}
         />
-        <h3>Type-specific Params</h3>
+        <h4>Configure details:</h4>
         {getTypeSpecificParams()}
       </div>
       <h3>Strand:</h3>
