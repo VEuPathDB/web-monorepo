@@ -105,7 +105,7 @@ let GenomicSequenceRegionInputs = props => {
       </div>
     </div>
   );
-}
+};
 let ProteinSequenceRegionInputs = props => {
   let { formState, getUpdateHandler } = props;
   return (
