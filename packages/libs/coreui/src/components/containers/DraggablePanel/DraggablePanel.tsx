@@ -1,15 +1,6 @@
-import {
-  CSSProperties,
-  ReactNode,
-  Ref,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { CSSProperties, ReactNode, useEffect, useState } from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { css } from "@emotion/react";
-// import useResizeObserver from "@react-hook/resize-observer";
 import useResizeObserver from "use-resize-observer";
 import { gray } from "../../../definitions/colors";
 import { screenReaderOnly } from "../../../styleDefinitions/typography";
