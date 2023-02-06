@@ -2,4 +2,5 @@ node_modules
 dist
 .DS_Store
 build-storybook.log
-/coverage 
+/coverage
+.vscode/*
