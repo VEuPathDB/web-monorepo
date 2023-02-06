@@ -179,7 +179,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
-  console.log(computeJobStatus);
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -352,7 +351,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
-      if (computeJobStatus !== 'complete') return undefined;
+      // If this boxplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+      if (computedYAxisDetails && computeJobStatus !== 'complete')
+        return undefined;
 
       if (
         !variablesAreUnique([
@@ -363,8 +364,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         ])
       )
         throw new Error(nonUniqueWarning);
-
-      console.log('getting data');
 
       // add visualization.type here. valueSpec too?
       const params = {
@@ -393,8 +392,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         params,
         BoxplotResponse
       );
-
-      console.log(response);
 
       const showMissingOverlay =
         vizConfig.showMissingness &&
@@ -453,6 +450,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       xAxisVariable,
       computation.descriptor.configuration,
       computation.descriptor.type,
+      computeJobStatus,
       yAxisVariable,
       outputEntity,
       filteredCounts.pending,
