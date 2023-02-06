@@ -110,7 +110,7 @@ export const ShowMore = (args) => {
             type: 'warning',
             // message is used as a basic text
             message: 'Smoothed mean(s) were not calculated for one or more data series.',
-            pinned: false,
+            pinned: true,
             intense: false,
             // additionalMessage is shown next to message when clicking showMoreLinkText.
             // disappears when clicking showLess link
@@ -131,6 +131,11 @@ export const ShowMore = (args) => {
             showMoreLinkColor: '#006699',
             // is showMoreLink bold?
             isShowMoreLinkBold: false,
+            spacing: {
+              margin: '0.3125em 0',
+              padding: '0.3125em 0.625em',
+            },
+            fontSize: '0.8125em',
           }}
           onClose={handleCloseWarning}
         />
@@ -144,6 +149,57 @@ export const ShowMore = (args) => {
         />
       </div>
     </div>
+  );
+};
+
+// testing Banner timeout
+export const BannerTimeout = (args) => {
+
+  // Banner timeout related useState
+  const [showBanner, setShowBanner] = useState(true);
+  // hiding duration (unit in milli-second)
+  const autoHideDuration = 5000;
+  // fadeout effect when timeout
+  const [fadeoutEffect, setFadeoutEffect] = useState(false);
+
+  // just for testing Banner timeout - no need for actual implementation
+  // it is just to show banner again by toggling after disappearance, regardless of true/false
+  const [showAgain, setShowagain] = useState(false);
+
+  return (
+    <>
+      <div style={{ width: '750px', height: '4em' }}>
+        <Banner
+          banner={{
+            type: 'warning',
+            // message is used as a basic text
+            message: 'Smoothed mean(s) were not calculated for one or more data series.',
+            pinned: true,
+            intense: false,
+            // Banner timeout props
+            showBanner: showBanner,
+            setShowBanner: setShowBanner,
+            autoHideDuration: autoHideDuration,
+            // fadeout effect when timeout
+            fadeoutEffect: fadeoutEffect,
+            setFadeoutEffect: setFadeoutEffect,
+          }}
+        />
+      </div>
+      {/* test timeout with toggle: Banner will show up whenever toggling and then disappear */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <Toggle
+          label="Toggle to show banner again:"
+          value={showAgain}
+          onChange={(newValue: boolean) => {
+            setShowagain(newValue);
+            setShowBanner(true);
+            setFadeoutEffect(false);
+          }}
+        />
+      </div>
+      <p> auto hide duration: {autoHideDuration} ms</p>
+  </>
   );
 };
 

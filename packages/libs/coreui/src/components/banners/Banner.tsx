@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect, CSSProperties } from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -31,6 +31,19 @@ export type BannerProps = {
   showMoreLinkColor?: string;
   // is showMoreLink bold?
   isShowMoreLinkBold?: boolean;
+  // banner margin, padding, text font size
+  spacing?: {
+    margin?: CSSProperties['margin'],
+    padding?: CSSProperties['padding'],
+  };
+  fontSize?: CSSProperties['fontSize'];
+  // implementing Banner timeout
+  showBanner?: boolean;
+  setShowBanner?: (newValue: boolean) => void;
+  autoHideDuration?: number;
+  // fadeout effect when timeout
+  fadeoutEffect?: boolean;
+  setFadeoutEffect?: (newValue: boolean) => void;
 }
 
 export type BannerComponentProps = {
@@ -82,7 +95,7 @@ export default function Banner(props: BannerComponentProps) {
   const { banner, onClose, CollapsibleContent } = props;
 
   // set default values of showMoreLinkText and showLessLinkText
-  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, isShowMoreLinkBold = false, additionalMessage } = banner;
+  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, isShowMoreLinkBold = false, additionalMessage, spacing, fontSize, showBanner = true, setShowBanner, autoHideDuration, fadeoutEffect, setFadeoutEffect } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
 
@@ -99,130 +112,153 @@ export default function Banner(props: BannerComponentProps) {
   const onMouseEnter = () => { setIsHover(true); };
   const onMouseLeave = () => { setIsHover(false); };
 
+  // Banner timeout with fadeout
+  useEffect(() => {
+    const autoFadeoutDuration = autoHideDuration ? autoHideDuration - 1000 : undefined;
+    const fadeoutTimeout = setTimeout(() => {
+      if (autoHideDuration && setFadeoutEffect) setFadeoutEffect(true);
+    }, autoFadeoutDuration);
+
+    const timeout = setTimeout(() => {
+      if (autoHideDuration && setShowBanner) setShowBanner(false);
+    }, autoHideDuration);
+    return () => {
+      clearTimeout(timeout);
+      clearTimeout(fadeoutTimeout);
+    };
+  }, [showBanner, autoHideDuration, fadeoutEffect]);
+
   // conditional border color and radius with the presence of CollapsibleContent
   return (
-    <div
-      css={css`
-        display: flex;
-        color: ${intense ? 'white' : 'black'};
-        background-color: ${intense ? getColorTheme(type, 600) : getColorTheme(type, 100)};
-        border: ${intense
-          ? 'none'
-          : CollapsibleContent != null
-            ? `1px solid #dedede`
-            : `1px solid ${getColorTheme(type, 600)}`
-        };
-        box-sizing: border-box;
-        border-radius: ${CollapsibleContent != null
-          ? '0'
-          : '7px'
-        };
-        margin: 10px 0;
-        width: 100%;
-        padding: 10px;
-        align-items: center;
-        font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
-        font-size: 13px;
-      `}
-    >
-      <div
-        css={css`
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-        `}
-      >
+    <>
+      {showBanner && (
         <div
           css={css`
             display: flex;
+            color: ${intense ? 'white' : 'black'};
+            background-color: ${intense ? getColorTheme(type, 600) : getColorTheme(type, 100)};
+            border: ${intense
+              ? 'none'
+              : CollapsibleContent != null
+                ? `1px solid #dedede`
+                : `1px solid ${getColorTheme(type, 600)}`
+            };
+            box-sizing: border-box;
+            border-radius: ${CollapsibleContent != null
+              ? '0'
+              : '7px'
+            };
+            margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
+            width: 100%;
+            padding: ${spacing?.padding != null ? spacing.padding : '10px'};
             align-items: center;
+            font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;
+            font-size: ${fontSize != null ? fontSize : '13px'};
+            // for fadeout effect
+            opacity: ${fadeoutEffect ? 0 : 1};
+            transition: ${fadeoutEffect ? 'opacity 1s ease' : undefined};
           `}
         >
-          <IconComponent
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+          `}
+        >
+          <div
             css={css`
-              color: ${intense
-                  ? 'white'
-                  : CollapsibleContent != null
-                    ? '#00008B'
-                    : 'black'
-              };
-              font-size: 1.4em;
-              line-height: 1.4em;
-              width: 30px;
-              text-align: center;
-              margin-right: 5px;
+              display: flex;
+              align-items: center;
+            `}
+          >
+            <IconComponent
+              css={css`
+                color: ${intense
+                    ? 'white'
+                    : CollapsibleContent != null
+                      ? '#00008B'
+                      : 'black'
+                };
+                font-size: 1.4em;
+                line-height: 1.4em;
+                width: 30px;
+                text-align: center;
+                margin-right: 5px;
+              `}>
+            </IconComponent>
+            <span css={css`
+              margin-right: auto;
             `}>
-          </IconComponent>
-          <span css={css`
-            margin-right: auto;
-          `}>
-            {/* showMore implementation */}
-            {message}&nbsp;
-            {(additionalMessage != null || CollapsibleContent != null) && (
-              <>
-                {isShowMore && additionalMessage}
-                <button
-                  css={css`
-                    background-color: transparent;
-                    border: none;
-                    text-align: center;
-                    text-decoration: ${isHover ? 'underline' : 'none' };
-                    color: ${showMoreLinkColor};
-                    display: inline-block;
-                    cursor: pointer;
-                  `}
-                  onClick={() => {
-                    setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
-                  }}
-                  onMouseEnter={onMouseEnter}
-                  onMouseLeave={onMouseLeave}
-                >
-                  {/* set bold here: somehow font-weight does not work */}
-                  {isShowMoreLinkBold ? <b>{showMoreLink}</b> : <>{showMoreLink}</>}
-                </button>
-              </>
-            )}
+              {/* showMore implementation */}
+              {message}&nbsp;
+              {(additionalMessage != null || CollapsibleContent != null) && (
+                <>
+                  {isShowMore && additionalMessage}
+                  <button
+                    css={css`
+                      background-color: transparent;
+                      border: none;
+                      text-align: center;
+                      text-decoration: ${isHover ? 'underline' : 'none' };
+                      color: ${showMoreLinkColor};
+                      display: inline-block;
+                      cursor: pointer;
+                    `}
+                    onClick={() => {
+                      setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
+                    }}
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                  >
+                    {/* set bold here: somehow font-weight does not work */}
+                    {isShowMoreLinkBold ? <b>{showMoreLink}</b> : <>{showMoreLink}</>}
+                  </button>
+                </>
+              )}
 
-          </span>
-          {pinned || !onClose ? null : (
-            <a
-              css={css`
-                text-align: right;
-                padding-right: 10px;
-                &:hover {
-                  color: ${intense ? 'black' : getColorTheme(type, 600)};
-                }
-              `}
-              onClick={onClose}
-            >
-              <CloseIcon css={css`vertical-align: middle`} />
-            </a>
-          )}
-          {/* show CollapsibleContent icon */}
-          {CollapsibleContent != null && (
-            <a
-              css={css`
-                text-align: right;
-                padding-right: 10px;
-                &:hover {
-                  color: ${intense ? 'black' : getColorTheme(type, 600)};
-                }
-              `}
-              onClick={() => {
-                setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
-              }}
-            >
-              {collapsibleIcon}
-            </a>
+            </span>
+            {pinned || !onClose ? null : (
+              <a
+                css={css`
+                  text-align: right;
+                  padding-right: 10px;
+                  &:hover {
+                    color: ${intense ? 'black' : getColorTheme(type, 600)};
+                  }
+                `}
+                onClick={onClose}
+              >
+                <CloseIcon css={css`vertical-align: middle`} />
+              </a>
+            )}
+            {/* show CollapsibleContent icon */}
+            {CollapsibleContent != null && (
+              <a
+                css={css`
+                  text-align: right;
+                  padding-right: 10px;
+                  &:hover {
+                    color: ${intense ? 'black' : getColorTheme(type, 600)};
+                  }
+                `}
+                onClick={() => {
+                  setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
+                }}
+              >
+                {collapsibleIcon}
+              </a>
+            )}
+          </div>
+          {/* show/hide CollapsibleContent */}
+          {isShowMore && CollapsibleContent != null && (
+            <div style={{ marginTop: '1em', marginLeft: '2.3em' }}>
+              <CollapsibleContent />
+            </div>
           )}
         </div>
-        {/* show/hide CollapsibleContent */}
-        {isShowMore && CollapsibleContent != null && (
-          <div style={{ marginTop: '1em', marginLeft: '2.3em' }}>
-            <CollapsibleContent />
-          </div>
-        )}
       </div>
-    </div>
+      )}
+    </>
   );
 }
