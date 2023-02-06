@@ -245,6 +245,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    computeJobStatus,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -520,6 +521,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
+      // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+      if (computedYAxisDetails && computeJobStatus !== 'complete')
+        return undefined;
+
       if (
         outputEntity == null ||
         filteredCounts.pending ||
@@ -706,6 +711,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
       computation.descriptor.configuration,
       computation.descriptor.type,
+      computeJobStatus,
       providedOverlayVariable,
       showLogScaleBanner,
       // // get data when changing independentAxisRange
