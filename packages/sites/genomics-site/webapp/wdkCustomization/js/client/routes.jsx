@@ -18,6 +18,10 @@ import {
   usePreferredOrganismsEnabledState
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
+import {
+  useReferenceStrains
+} from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
+
 import { PageLoading } from './components/common/PageLoading';
 import SampleForm from './components/samples/SampleForm';
 
@@ -93,11 +97,13 @@ function addProjectIdPkValueWrapper(Route) {
 function SiteSearchRouteComponent() {
   const [ preferredOrganisms ] = usePreferredOrganismsState();
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+  const referenceStrains = useReferenceStrains();
 
   return (
     <SiteSearchController
       preferredOrganisms={preferredOrganisms}
       preferredOrganismsEnabled={preferredOrganismsEnabled}
+      referenceStrains={referenceStrains}
     />
   );
 }
