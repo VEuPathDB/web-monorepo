@@ -173,11 +173,13 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    computeJobStatus,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities();
   const dataClient: DataClient = useDataClient();
+  console.log(computeJobStatus);
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -350,6 +352,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
+      if (computeJobStatus !== 'complete') return undefined;
+
       if (
         !variablesAreUnique([
           xAxisVariable,
@@ -359,6 +363,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         ])
       )
         throw new Error(nonUniqueWarning);
+
+      console.log('getting data');
 
       // add visualization.type here. valueSpec too?
       const params = {
@@ -387,6 +393,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         params,
         BoxplotResponse
       );
+
+      console.log(response);
 
       const showMissingOverlay =
         vizConfig.showMissingness &&

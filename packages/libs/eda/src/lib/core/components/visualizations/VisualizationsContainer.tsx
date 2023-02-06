@@ -724,43 +724,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               isStepDisabled={computeJobStatus !== 'complete'}
             >
               <div style={{ marginLeft: '3em' }}>
-                {computeJobStatus !== 'complete' ? (
-                  computeJobStatus == null &&
-                  isComputationConfigurationValid ? (
-                    <Loading />
-                  ) : (
-                    <div
-                      style={{
-                        margin: '2em 0',
-                        fontSize: '1.2em',
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        gap: '2ex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      <H5>
-                        {computeJobStatus === 'requesting'
-                          ? 'Requesting computation status.'
-                          : computeJobStatus === 'no-such-job' ||
-                            !computeJobStatus
-                          ? 'Configure and run a computation to use this visualization.'
-                          : computeJobStatus === 'expired'
-                          ? 'Computation has expired. You will need to run it again.'
-                          : computeJobStatus === 'failed'
-                          ? 'Computation has failed. Please contact us for support.'
-                          : 'Computation is in progress. This visualization will be available when it is complete.'}
-                      </H5>
-                      {/* Add image for some compute statuses} */}
-                      {(computeJobStatus == 'no-such-job' ||
-                        !computeJobStatus) && <EmptyPlotSVG />}
-                      {computeJobStatus &&
-                        !isTerminalStatus(computeJobStatus) && (
-                          <RelaxMicrobeSVG />
-                        )}
-                    </div>
-                  )
-                ) : (
+                {computationAppOverview.computeName && (
                   <vizPlugin.fullscreenComponent
                     options={vizPlugin.options}
                     dataElementConstraints={constraints}
@@ -778,6 +742,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                     filteredCounts={filteredCounts}
                     geoConfigs={geoConfigs}
                     otherVizOverviews={overviews.others}
+                    computeJobStatus={computeJobStatus}
                   />
                 )}
               </div>
@@ -800,6 +765,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               filteredCounts={filteredCounts}
               geoConfigs={geoConfigs}
               otherVizOverviews={overviews.others}
+              computeJobStatus={computeJobStatus}
             />
           )}
         </div>
