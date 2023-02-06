@@ -6,6 +6,7 @@ import {
   DraggablePanel,
   DraggablePanelCoordinatePair,
   DraggablePanelProps,
+  HeightAndWidthInPixels,
 } from "../../components/containers/DraggablePanel/DraggablePanel";
 import UIThemeProvider from "../../components/theming/UIThemeProvider";
 import { mutedMagenta, gray } from "../../definitions/colors";
@@ -63,15 +64,36 @@ function StackOrderingKeeper({
     draggablePanelProps.map((props) => props.panelTitle)
   );
 
-  const [panelOpenMap, setPanelOpenMap] = useState(
+  const [panelOpenDictionary, setPanelOpenDictionary] = useState(
     draggablePanelProps.reduce((acc, props) => {
       acc[props.panelTitle] = true;
       return acc;
     }, {})
   );
 
+  const [dimensionByPanelTitleDictionary, setDimensionsByPanelTitleDictionary] =
+    useState<{ [key: string]: HeightAndWidthInPixels }>(
+      draggablePanelProps.reduce((acc, props) => {
+        acc[props.panelTitle] = {
+          height: props.styleOverrides?.height,
+          width: props.styleOverrides?.width,
+        };
+        return acc;
+      }, {})
+    );
+  const [positionByPanelTitleDictionary, setPositionByPanelTitleDictionary] =
+    useState<{ [key: string]: DraggablePanelCoordinatePair }>(
+      draggablePanelProps.reduce((dictionary, props, index) => {
+        dictionary[props.panelTitle] = {
+          x: (index + 15) * 25,
+          y: (index + 7) * 25,
+        };
+        return dictionary;
+      }, {})
+    );
+
   function togglePanelOpen(panelTitle) {
-    setPanelOpenMap((currentMap) => ({
+    setPanelOpenDictionary((currentMap) => ({
       ...currentMap,
       [panelTitle]: !currentMap[panelTitle],
     }));
@@ -85,8 +107,26 @@ function StackOrderingKeeper({
     });
   }
 
+  function setDestinationCoordinatesOnDragComplete(
+    destinationCoordinates: DraggablePanelCoordinatePair,
+    panelTitle: string
+  ) {
+    setPositionByPanelTitleDictionary((currentMap) => {
+      return {
+        ...currentMap,
+        [panelTitle]: destinationCoordinates,
+      };
+    });
+  }
+
   return (
-    <div>
+    <div
+      style={{
+        position: "relative",
+        height: "97vh",
+        border: "3px solid coral",
+      }}
+    >
       <ul
         style={{
           display: "flex",
@@ -95,7 +135,7 @@ function StackOrderingKeeper({
         }}
       >
         {draggablePanelProps.map((props) => {
-          const isOpen = panelOpenMap[props.panelTitle];
+          const isOpen = panelOpenDictionary[props.panelTitle];
           return (
             <li key={props.panelTitle}>
               <button
@@ -119,7 +159,7 @@ function StackOrderingKeeper({
           );
         })}
       </ul>
-      {draggablePanelProps.map((props, propsIndex) => {
+      {draggablePanelProps.map((props) => {
         const indexOfelement = zIndicies.findIndex(
           (panelTitle) => panelTitle === props.panelTitle
         );
@@ -132,36 +172,67 @@ function StackOrderingKeeper({
 
         return (
           <DraggablePanel
-            defaultPosition={{ x: 20 * propsIndex, y: 1 * propsIndex }}
+            defaultPosition={positionByPanelTitleDictionary[props.panelTitle]}
             confineToParentContainer
             key={props.panelTitle}
-            isOpen={panelOpenMap[props.panelTitle]}
+            isOpen={panelOpenDictionary[props.panelTitle]}
             onPanelDismiss={
               props.includeDismissButton ? handleOnPanelDismiss : undefined
             }
             panelTitle={props.panelTitle}
             showPanelTitle={props.showPanelTitle}
             onDragStart={() => movePanelToTopLayer(props.panelTitle)}
+            onDragComplete={(destinationCoordinates) => {
+              setDestinationCoordinatesOnDragComplete(
+                destinationCoordinates,
+                props.panelTitle
+              );
+            }}
+            onPanelResize={(dimensions: HeightAndWidthInPixels) =>
+              setDimensionsByPanelTitleDictionary((currentDictionary) => {
+                return {
+                  ...currentDictionary,
+                  [props.panelTitle]: dimensions,
+                };
+              })
+            }
             styleOverrides={{
               zIndex,
               margin: "0 0 1rem 0",
+              width: "500px",
+              height: "200px",
+              minHeight: "175px",
+              minWidth: "285px",
               ...props.styleOverrides,
             }}
           >
             {/* This is just nonsense to fill the panel with content */}
             <div
+              onClick={() => {
+                movePanelToTopLayer(props.panelTitle);
+              }}
               style={{
                 padding: "1rem",
-                maxHeight: 150,
-                maxWidth: 500,
                 fontFamily: "sans-serif",
               }}
             >
               <h2>{props.panelTitle} Content</h2>
+              <p>
+                Panel Dimensions:{" "}
+                {JSON.stringify(
+                  dimensionByPanelTitleDictionary[props.panelTitle]
+                )}
+              </p>
+              <p>
+                Panel Position:{" "}
+                {JSON.stringify(
+                  positionByPanelTitleDictionary[props.panelTitle]
+                )}
+              </p>
+
               <div
                 style={{
                   height: 25,
-                  width: "100%",
                   backgroundColor: props.backgroundColorForStorybookOnly,
                 }}
               ></div>

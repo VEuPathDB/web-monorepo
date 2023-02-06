@@ -211,3 +211,12 @@ function StackOrderingKeeper({ draggablePanelProps }: StackOrderingKeeper) {
 function getZIndexValue(element: HTMLElement) {
   return window.getComputedStyle(element).zIndex;
 }
+
+// JSDom (which is used by jest) does not implement layout/rendering.
+// we create this mock to simply simulate a desktop view with a width of 1000
+function mockResizeObserver() {
+  return {
+    width: 1000,
+    height: 1000,
+  };
+}

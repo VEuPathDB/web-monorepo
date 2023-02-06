@@ -1,11 +1,18 @@
-import { CSSProperties, ReactNode, useState } from "react";
+import {
+  CSSProperties,
+  ReactNode,
+  Ref,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
 import { css } from "@emotion/react";
+// import useResizeObserver from "@react-hook/resize-observer";
+import useResizeObserver from "use-resize-observer";
 import { gray } from "../../../definitions/colors";
-import {
-  primaryFont,
-  screenReaderOnly,
-} from "../../../styleDefinitions/typography";
+import { screenReaderOnly } from "../../../styleDefinitions/typography";
 import { useUITheme } from "../../theming";
 import DismissButton from "../../notifications/DismissButton";
 import { H6 } from "../../typography";
@@ -17,9 +24,19 @@ export type DraggablePanelCoordinatePair = {
 
 export type DraggablePanelStyleOverrides = {
   boxShadow?: CSSProperties["boxShadow"];
+  height?: CSSProperties["height"];
   margin?: CSSProperties["margin"];
+  minHeight?: CSSProperties["minHeight"];
+  minWidth?: CSSProperties["minWidth"];
   padding?: CSSProperties["padding"];
+  resize?: CSSProperties["resize"];
+  width?: CSSProperties["width"];
   zIndex?: CSSProperties["zIndex"];
+};
+
+export type HeightAndWidthInPixels = {
+  height: number;
+  width: number;
 };
 
 export type DraggablePanelProps = {
@@ -45,6 +62,8 @@ export type DraggablePanelProps = {
   onDragStart?: () => void;
   /** This event fires when the user dismisses a visible panel. If you supply nothing, then the close button will not render. */
   onPanelDismiss?: () => void;
+  /** This event fires when the user resizes the height or width of the panel. */
+  onPanelResize?: (heightAndWidth: HeightAndWidthInPixels) => void;
 };
 
 export function DraggablePanel({
@@ -55,6 +74,7 @@ export function DraggablePanel({
   onDragComplete,
   onDragStart,
   onPanelDismiss,
+  onPanelResize,
   panelTitle,
   showPanelTitle,
   styleOverrides,
@@ -85,6 +105,20 @@ export function DraggablePanel({
     }
   }
 
+  const { ref, height, width } = useResizeObserver();
+
+  useEffect(
+    function invokeOnResizeHandler() {
+      if (!onPanelResize || !height || !width) return;
+
+      onPanelResize({
+        height: height,
+        width: width,
+      });
+    },
+    [height, width, onPanelResize]
+  );
+
   return (
     <Draggable
       bounds={confineToParentContainer ? "parent" : false}
@@ -95,6 +129,8 @@ export function DraggablePanel({
       onStop={handleOnDragStop}
     >
       <div
+        // ref={setRefForResizeObserver}
+        ref={ref}
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
         data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
@@ -104,12 +140,21 @@ export function DraggablePanel({
           box-shadow: ${styleOverrides?.boxShadow ??
           `rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
           rgba(0, 0, 0, 0.3) 0px 1px 3px -1px`};
-          min-width: 250px;
-          position: relative;
-          width: fit-content;
+          position: absolute;
+          top: 0;
           visibility: ${isOpen === false ? "hidden" : "visible"};
           z-index: ${styleOverrides?.zIndex ?? "auto"};
           margin: ${styleOverrides?.margin ?? "margin"};
+          // If resize is set, you can consider these two values as
+          // initial heights and widths.
+          height: ${styleOverrides?.height ?? "fit-content"};
+          width: ${styleOverrides?.width ?? "fit-content"};
+          // Hey, so you need to explicitly set overflow wherever
+          // you plan to use resize.
+          overflow: scroll;
+          resize: ${styleOverrides?.resize ?? "none"};
+          min-height: ${styleOverrides?.minHeight ?? 0};
+          min-width: ${styleOverrides?.minWidth ?? 0};
         `}
       >
         <div
@@ -122,7 +167,12 @@ export function DraggablePanel({
             display: flex;
             height: 2rem;
             justify-content: center;
-            position: relative;
+            // Because the panels are positioned absolutely and overflow scroll,
+            // the handle will get lost when the user scrolls down. We can pin the
+            // handle (which includes the panel title and dismiss button) to
+            // the top of the panel with position sticky and top 0.
+            position: sticky;
+            top: 0;
             width: 100%;
           `}
         >
