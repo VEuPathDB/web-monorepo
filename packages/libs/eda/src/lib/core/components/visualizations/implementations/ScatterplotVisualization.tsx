@@ -1058,12 +1058,19 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     'X-axis'
   );
 
-  const dependentAxisLabel = getVariableLabel(
-    'yAxis',
-    data.value?.computedVariableMetadata,
-    entities,
-    'Y-axis'
-  );
+  // If we're to use a computed variable but no variableId is given for the computed variable,
+  // simply use the placeholder display name given by the app.
+  // Otherwise, create the dependend axis label as usual.
+  const dependentAxisLabel =
+    computedYAxisDetails?.placeholderDisplayName &&
+    !computedYAxisDetails?.variableId
+      ? computedYAxisDetails.placeholderDisplayName
+      : getVariableLabel(
+          'yAxis',
+          data.value?.computedVariableMetadata,
+          entities,
+          'Y-axis'
+        );
 
   // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
   // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
@@ -1378,8 +1385,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const [showBanner, setShowBanner] = useState(true);
 
   //DKDK
-  console.log('data =', data);
-  console.log('!showLogScaleBanner =', !showLogScaleBanner);
+  // console.log('data =', data);
+  // console.log('!showLogScaleBanner =', !showLogScaleBanner);
 
   const controlsNode = (
     <>
