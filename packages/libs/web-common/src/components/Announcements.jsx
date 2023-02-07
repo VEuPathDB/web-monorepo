@@ -219,15 +219,15 @@ const siteAnnouncements = [
  {
     id: 'rnaseqBug',
     renderDisplay: props => {
-      if ( (props.projectId == 'AmoebaDB' || 
+      if ( isGenomeBrowser(props.location) &&
+           (props.projectId == 'AmoebaDB' || 
             props.projectId == 'CryptoDB' ||
             props.projectId == 'FungiDB' ||
             props.projectId == 'PiroplasmaDB' ||
             props.projectId == 'PlasmoDB' ||
             props.projectId == 'ToxoDB' || 
             props.projectId == 'VectorBase' || 
-            props.projectId == 'HostDB') &&
-           ( isGenomeBrowser(props.projectId, props.location) )
+            props.projectId == 'HostDB')
          )
       {
         return (
