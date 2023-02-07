@@ -75,12 +75,13 @@ export function useCytoscapeConfig(
   const initialCytoscapeConfig = {
     elements,
     stylesheet,
-    layout: { name: 'preset' },
-    panningEnabled: false,
-    userPanningEnabled: false,
+    layout: { name: 'fcose', animate: false
+             },
+    panningEnabled: true,
+    userPanningEnabled: true,
     zoom: 1,
-    zoomingEnabled: false,
-    userZoomingEnabled: false,
+    zoomingEnabled: true,
+    userZoomingEnabled: true,
     boxSelectionEnabled: false,
     autoungrabify: true,
     autounselectify: true
@@ -161,10 +162,6 @@ function useNodes(
                 pfamDomainNPieSlices
               )
             ),
-            position: {
-              x: Number(nodeEntry.x),
-              y: Number(nodeEntry.y)
-            }
           })
       ),
       [ layout ]

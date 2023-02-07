@@ -1,6 +1,7 @@
 {
   "extends": "@veupathdb/site-tsconfig/tsconfig.json",
   "compilerOptions": {
+    "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
       "ortho-client/*": [ "webapp/wdkCustomization/js/client/*" ]
