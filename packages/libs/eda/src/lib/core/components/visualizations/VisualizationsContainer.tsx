@@ -724,27 +724,25 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               isStepDisabled={computeJobStatus !== 'complete'}
             >
               <div style={{ marginLeft: '3em' }}>
-                {computationAppOverview.computeName && (
-                  <vizPlugin.fullscreenComponent
-                    options={vizPlugin.options}
-                    dataElementConstraints={constraints}
-                    dataElementDependencyOrder={dataElementDependencyOrder}
-                    visualization={viz}
-                    computation={computation}
-                    filters={filters}
-                    starredVariables={starredVariables}
-                    toggleStarredVariable={toggleStarredVariable}
-                    updateConfiguration={updateConfiguration}
-                    updateThumbnail={
-                      disableThumbnailCreation ? undefined : updateThumbnail
-                    }
-                    totalCounts={totalCounts}
-                    filteredCounts={filteredCounts}
-                    geoConfigs={geoConfigs}
-                    otherVizOverviews={overviews.others}
-                    computeJobStatus={computeJobStatus}
-                  />
-                )}
+                <vizPlugin.fullscreenComponent
+                  options={vizPlugin.options}
+                  dataElementConstraints={constraints}
+                  dataElementDependencyOrder={dataElementDependencyOrder}
+                  visualization={viz}
+                  computation={computation}
+                  filters={filters}
+                  starredVariables={starredVariables}
+                  toggleStarredVariable={toggleStarredVariable}
+                  updateConfiguration={updateConfiguration}
+                  updateThumbnail={
+                    disableThumbnailCreation ? undefined : updateThumbnail
+                  }
+                  totalCounts={totalCounts}
+                  filteredCounts={filteredCounts}
+                  geoConfigs={geoConfigs}
+                  otherVizOverviews={overviews.others}
+                  computeJobStatus={computeJobStatus}
+                />
               </div>
             </ComputationStepContainer>
           ) : (
