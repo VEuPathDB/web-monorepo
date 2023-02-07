@@ -25,7 +25,7 @@
     "@veupathdb/study-data-access": "^0.3.6",
     "@veupathdb/user-datasets": "^0.1.13",
     "@veupathdb/wdk-client": "^0.9.27",
-    "@veupathdb/web-common": "^0.7.9",
+    "@veupathdb/web-common": "^0.7.10",
     "ciena-dagre": "^1.0.0",
     "core-js": "^3.21.1",
     "cytoscape": "3.2.9",
