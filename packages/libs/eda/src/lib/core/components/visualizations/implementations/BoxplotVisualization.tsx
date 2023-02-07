@@ -173,6 +173,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    computeJobStatus,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -350,6 +351,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
+      // If this boxplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+      if (computedYAxisDetails && computeJobStatus !== 'complete')
+        return undefined;
+
       if (
         !variablesAreUnique([
           xAxisVariable,
@@ -445,6 +450,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       xAxisVariable,
       computation.descriptor.configuration,
       computation.descriptor.type,
+      computeJobStatus,
       yAxisVariable,
       outputEntity,
       filteredCounts.pending,

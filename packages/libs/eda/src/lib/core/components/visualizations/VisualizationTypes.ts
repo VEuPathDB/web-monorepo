@@ -10,6 +10,7 @@ import {
   Visualization,
   VisualizationOverview,
 } from '../../types/visualization';
+import { JobStatus } from '../computations/ComputeJobStatusHook';
 
 /**
  * Props passed to viz components
@@ -29,6 +30,7 @@ export interface VisualizationProps<Options = undefined> {
   filteredCounts: PromiseHookState<EntityCounts>;
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
+  computeJobStatus?: JobStatus;
 }
 
 export interface IsEnabledInPickerParams {

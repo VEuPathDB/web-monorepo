@@ -106,7 +106,7 @@ function AlphaDivConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
+const ALPHA_DIV_METHODS = ['shannon', 'simpson'];
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const {
