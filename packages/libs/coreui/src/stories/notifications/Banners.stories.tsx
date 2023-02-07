@@ -220,16 +220,17 @@ export const Collapsible = (args) => {
 
     return (
       <>
-        The shorthand "A, B, C, D" is used to refer to specific quadrants in the 2x2 contingency table:
+        The shorthand "A, B, C, D" is used to refer to specific quadrants in the 2x2 table:
         <table style={{ borderCollapse: 'collapse', marginTop: '1em', textAlign: 'center' }}>
           <tr>
             <td style={{ width: '10em' }}>&nbsp;</td>
-            <td colSpan={3}><b>X-axis:</b> outcome/disease status;<br />
+            <td colSpan={3}><b>Columns (X-axis):<br />
+              </b> outcome/disease status;<br />
               gold standard/reference test result
             </td>
           </tr>
           <tr>
-            <td rowSpan={3}><b>Y-axis:</b><br />
+            <td rowSpan={3}><b>Rows (Y-axis):</b><br />
               exposure/risk factor; <br />
               diagnostic test result
             </td>
@@ -239,26 +240,26 @@ export const Collapsible = (args) => {
           </tr>
           <tr>
             <td style={tableCellStyle}><b>+</b></td>
-            <td style={tableCellStyle}>A</td>
-            <td style={tableCellStyle}>B</td>
+            <td style={tableCellStyle}><b>A</b></td>
+            <td style={tableCellStyle}><b>B</b></td>
           </tr>
           <tr>
             <td style={tableCellStyle}><b>-</b></td>
-            <td style={tableCellStyle}>C</td>
-            <td style={tableCellStyle}>D</td>
+            <td style={tableCellStyle}><b>C</b></td>
+            <td style={tableCellStyle}><b>D</b></td>
           </tr>
         </table>
         <br />
         <b><i>If you want to investigate a measure of association:</i></b>
         <ul>
-          <li>X-axis: select a value for Quadrant A representing the outcome or disease status of interest</li>
-          <li>Y-axis: select a value for Quadrant A representing the exposure or risk factor of interest</li>
+          <li>Columns (X-axis): select a value for Quadrant A representing the outcome or disease status of interest.</li>
+          <li>Rows (Y-axis): select a value for Quadrant A representing the exposure or risk factor of interest.</li>
         </ul>
         <br />
         <b><i>If you want to investigate diagnostic test performance:</i></b>
         <ul>
-          <li>X-axis: select a value for Quadrant A representing a positive result for the reference (gold standard) diagnostic test</li>
-          <li>Y-axis: select values for Quadrant A representing a positive result for the diagnostic test being evaluated</li>
+          <li>Columns (X-axis): select a value for Quadrant A representing a positive result for the reference (gold standard) diagnostic test.</li>
+          <li>Rows (Y-axis): select values for Quadrant A representing a positive result for the diagnostic test being evaluated.</li>
         </ul>
       </>
     )
@@ -270,18 +271,28 @@ export const Collapsible = (args) => {
     const tableThickBorder = '2px solid black';
     const tablePaddingDefault = '0.3em 0.5em 0.3em 0em';
 
-    const tableColumnHeaderStyle = {
+    const tableFirstColumnHeaderStyle = {
       borderRight: tableThickBorder,
       borderBottom: tableThinBorder,
       borderLeft: tableThickBorder,
-      width: '20em',
+      width: '21em',
+      padding: tablePaddingDefault,
+    };
+
+    const tableSecondColumnHeaderStyle = {
+      borderRight: tableThickBorder,
+      borderBottom: tableThinBorder,
+      borderLeft: tableThickBorder,
+      width: '13em',
       padding: tablePaddingDefault,
     };
 
     const tableRowHeaderStyle = {
       borderTop: tableThickBorder,
-      width: '10em',
-      padding: tablePaddingDefault,
+      width: '7em',
+      // padding: tablePaddingDefault,
+      backgroundColor: 'lightgray',
+      margin: 'auto',
     };
 
     const tableRowBorder = {
@@ -291,47 +302,84 @@ export const Collapsible = (args) => {
 
     const tableCellStyle = {
       borderBottom: tableThinBorder,
-      width: '10em',
-      padding: tablePaddingDefault,
+      width: '7em',
     };
+
+    const tableCellAlignCenter = {
+      textAlign: 'center'
+    }
 
     return (
       <>
         <table style={{ borderCollapse: 'collapse', marginTop: '1em', textAlign: 'right' }}>
           <tr style={{ borderBottom: tableThickBorder, borderRight: tableThickBorder }}>
+            <td style={{}}>&nbsp;</td>
             <td style={{ borderRight: tableThickBorder }}>&nbsp;</td>
             <td style={tableRowHeaderStyle}><b>value</b></td>
             <td style={tableRowHeaderStyle}><b>95% CI</b></td>
             <td style={tableRowHeaderStyle}><b>P-value</b></td>
           </tr>
           <tr style={tableRowBorder}>
-            <td style={tableColumnHeaderStyle}><b>Cohort or RCT: Odds ratio</b></td>
-            <td style={tableCellStyle}>5</td>
-            <td style={tableCellStyle}>92</td>
-            <td style={tableCellStyle}>97</td>
-          </tr>
-          <tr style={tableRowBorder}>
-            <td style={tableColumnHeaderStyle}><b>Case control or Cross-sectional: Risk ratio</b></td>
-            <td style={tableCellStyle}>13</td>
-            <td style={tableCellStyle}>126</td>
-            <td style={tableCellStyle}>139</td>
-          </tr>
-          <tr style={tableRowBorder}>
-            <td style={tableColumnHeaderStyle}><b>Chi-squared (df=1)</b></td>
-            <td style={tableCellStyle}>18</td>
+            <td style={tableFirstColumnHeaderStyle}>Association between 2 categorical variables</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Chi-squared (df=1)</b></td>
+            <td style={tableCellStyle}>2.82</td>
             <td style={tableCellStyle}>n/a</td>
-            <td style={tableCellStyle}>236</td>
+            <td style={tableCellStyle}>&lt; 0.0001</td>
           </tr>
           <tr style={tableRowBorder}>
-            <td style={tableColumnHeaderStyle}><b>Sensitivity</b></td>
-            <td style={tableCellStyle}>&nbsp;</td>
-            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableFirstColumnHeaderStyle}>Association between 2 categorical variables</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Fisher's Exact Test</b></td>
+            <td style={tableCellStyle}>0.34</td>
+            <td style={tableCellStyle}>(0.32-0.39)</td>
+            <td style={tableCellStyle}>0.66</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableFirstColumnHeaderStyle}>Cross-sectional studies</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Prevalence</b></td>
+            <td style={tableCellStyle}>1.82</td>
+            <td style={tableCellStyle}>(0.87, 59.30)</td>
+            <td style={tableCellStyle}>0.041</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableFirstColumnHeaderStyle}>Case control or Cross-sectional: Risk ratio</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Odds ratio</b></td>
+            <td style={tableCellStyle}>3.27</td>
+            <td style={tableCellStyle}>(3.00, 4.01)</td>
+            <td style={tableCellStyle}>0.0054</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableFirstColumnHeaderStyle}>Cohort studies & randomized controlled trials</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Risk Ratio</b></td>
+            <td style={tableCellStyle}>0.55</td>
+            <td style={tableCellStyle}>(0.22, 70.30)</td>
+            <td style={tableCellStyle}>0.64</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableFirstColumnHeaderStyle}>Diagnostic test performance</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Sensitivity</b></td>
+            <td style={tableCellStyle}>0.92</td>
+            <td style={tableCellStyle}>(0.87, 0.98)</td>
+            <td style={tableCellStyle}>n/a</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableFirstColumnHeaderStyle}>Diagnostic test performance</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Specificity</b></td>
+            <td style={tableCellStyle}>0.87</td>
+            <td style={tableCellStyle}>(0.70, 0.96)</td>
+            <td style={tableCellStyle}>n/a</td>
+          </tr>
+          <tr style={tableRowBorder}>
+            <td style={tableFirstColumnHeaderStyle}>Diagnostic test performance</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Positive Predictive Value</b></td>
+            <td style={tableCellStyle}>0.89</td>
+            <td style={tableCellStyle}>(0.75, 0.94)</td>
             <td style={tableCellStyle}>n/a</td>
           </tr>
           <tr style={{ borderRight: tableThickBorder, borderBottom: tableThickBorder, borderLeft: tableThickBorder }}>
-            <td style={tableColumnHeaderStyle}><b>Specificity</b></td>
-            <td style={tableCellStyle}>&nbsp;</td>
-            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableFirstColumnHeaderStyle}>Diagnostic test performance</td>
+            <td style={tableSecondColumnHeaderStyle}><b>Negative Predictive Value</b></td>
+            <td style={tableCellStyle}>0.91</td>
+            <td style={tableCellStyle}>(0.85, 0.96)</td>
             <td style={tableCellStyle}>n/a</td>
           </tr>
         </table>
@@ -341,27 +389,143 @@ export const Collapsible = (args) => {
 
   const CollapsibleStatsContent = () => {
 
-  return (
-    <div>
-      Which measure of association to choose depends on whether you are working with incidence or prevalence data, which in turn depends on the type of study design used.
+    const tableCellStyleNormal = {
+      border: '1px solid black',
+      borderSpacing: '0px',
+      width: '7em',
+    };
 
-      Studies that collect incidence data: cohort studies and randomized controlled trials
+    const tableCellStyleMoreWidth = {
+      border: '1px solid black',
+      borderSpacing: '0px',
+      width: '8em',
+    };
 
-      <ul>
-      <li> Look for new cases of disease.</li>
-      <li> There is some longitudinal follow-up that must occur to allow for these new cases to develop.</li>
-      <li> Must start with those who were at risk (i.e., without the disease or health outcome) as our baseline.</li>
-      <li> Calculate Risk ratio over the length of time of follow-up</li>
-      <ul>
-      <li> If the RR is greater than 1, it means that we observed less disease in the exposed group than in the unexposed group. Likewise, if the RR is less than 1, it means that we observed less disease in the exposed group than in the unexposed group. If we assume causality, an exposure with an RR &lt; 1 is preventing disease, and an exposure with an RR &gt; 1 is causing disease.</li>
-      <li> "The risk of [disease] was [RR] times as high in [exposed] compared to [unexposed] over [x] days/months/years."</li>
-      </ul>
-      <li> Rate ratio if person time at risk.</li>
-      <li> Both the risk ratio and the rate ratio are abbreviated RR. This abbreviation (and the risk ratio and/or rate ratio) is often referred to by epidemiologists as relative risk. This is an example of inconsistent lexicon in the field of epidemiology; in this book, I use risk ratio and rate ratio separately (rather than relative risk as an umbrella term) because it is helpful, in my opinion, to distinguish between studies using the population at risk vs. those using a person-time at risk approach. Regardless, a measure of association called RR always calculated as incidence in the exposed divided by incidence in the unexposed.</li>
-      </ul>
+    const tableCellStyleBold = {
+      border: '1px solid black',
+      borderSpacing: '0px',
+      width: '7em',
+    };
 
-      Studies that look at prevalence data: Cross sectional studies and case-control studies. For both of these, since we are not using incidence cases, we cannot calculate the RR, because we have no data on incidence. We instead calculate the odds ratio (OR).
-  </div>
+    return (
+      <div>
+        The appropriate measure of association or diagnostic test performance depends on the study design.
+        The shorthand "A, B, C, D" is used to refer to specific quadrants in the 2x2 contingency table:
+        <table style={{ borderCollapse: 'collapse', marginTop: '1em', textAlign: 'center' }}>
+            <tr>
+              <td style={{ width: '10em' }}>&nbsp;</td>
+              <td colSpan={4}><b>Columns (X-axis):<br />
+                </b> outcome/disease status;<br />
+                gold standard/reference test result
+              </td>
+            </tr>
+            <tr>
+              <td rowSpan={4}><b>Rows (Y-axis):</b><br />
+                exposure/risk factor; <br />
+                diagnostic test result
+              </td>
+              <td style={tableCellStyleBold}>&nbsp;</td>
+              <td style={tableCellStyleBold}><b>+</b></td>
+              <td style={tableCellStyleBold}><b>-</b></td>
+              <td style={tableCellStyleMoreWidth}><i>Row Totals</i></td>
+            </tr>
+            <tr>
+              <td style={tableCellStyleBold}><b>+</b></td>
+              <td style={tableCellStyleBold}><b>A</b></td>
+              <td style={tableCellStyleBold}><b>B</b></td>
+              <td style={tableCellStyleMoreWidth}><i>A + B</i></td>
+            </tr>
+            <tr>
+              <td style={tableCellStyleBold}><b>-</b></td>
+              <td style={tableCellStyleBold}><b>C</b></td>
+              <td style={tableCellStyleBold}><b>D</b></td>
+              <td style={tableCellStyleMoreWidth}><i>C + D</i></td>
+            </tr>
+            <tr>
+              <td style={tableCellStyleNormal}><i>Column Totals</i></td>
+              <td style={tableCellStyleNormal}><i>A + C</i></td>
+              <td style={tableCellStyleNormal}><i>B + D</i></td>
+              <td style={tableCellStyleMoreWidth}><i>n = A + B + C + D</i></td>
+            </tr>
+          </table>
+          <br />
+
+        <b>All studies:</b>
+        <ul>
+          <li><b><i>Chi-squared Statistic (&chi;<sup>2</sup>)</i></b>: &Sigma; (O<sub>i</sub> - EO<sub>i</sub>)<sup>2</sup> / EO<sub>i</sub>
+            <ul>
+              <li>Tests whether there is an association between the two 2x2 table variables.</li>
+              <li>If sample sizes are small, use Fisher’s Exact Test.</li>
+              <li>For more information, see: <a href="https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/8-chi-squared-tests" target="_blank">https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/8-chi-squared-tests</a></li>
+            </ul>
+          </li>
+          <br />
+          <li>
+            <b><i>Fisher’s Exact Test</i></b>: [ (A + B)! (C + D)! (A + C)! (B + D)! ] / ( A! B! C! D! n! )
+            <ul>
+              <li>Tests whether there is an association between the two 2x2 table variables.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <br />
+        <b>Studies that use prevalence data:</b>
+        <br /><br />
+        <u>Cross-sectional Studies:</u>
+        <ul>
+          <li><b><i>Prevalence</i></b>: (A + C) / (A + B + C + D)</li>
+          <ul>
+            <li>The proportion of the population who have the disease specified in the columns (X-axis) at the examined point in time was [<i>Prevalence</i>].</li>
+          </ul>
+          <li><b><i>Odds Ratio</i></b>: (A / B) / (C / D)</li>
+          <ul>
+            <li>The odds of having the disease specified in the columns (X-axis) was [<i>Odds Ratio</i>] times as high in those exposed to the potential risk factor indicated in the rows (Y-axis), as compared to those unexposed.</li>
+          </ul>
+        </ul>
+        {/* <br /> */}
+        <u>Case-Control Studies:</u>
+        <ul>
+          <li><b><i>Odds Ratio</i></b>: (A / B) / (C / D)</li>
+          <ul>
+            <li>The odds of having the disease specified in the columns (X-axis) was [<i>Odds Ratio</i>] times as high in those exposed to the potential risk factor indicated in the rows (Y-axis) in the time period of interest, as compared to those unexposed.</li>
+          </ul>
+        </ul>
+
+        <br />
+        <b>Studies that use incidence data:</b>
+        <br /><br />
+        <u>Cohort Studies and Randomized Controlled Trials:</u>
+        <ul>
+          <li><b><i>Risk Ratio</i></b> (for studies using a population at risk approach): [A / (A + B)] / [C / (C + D)]</li>
+          <ul>
+            <li>The risk of having the disease specified in the columns (X-axis) over the follow-up period was [<i>Risk Ratio</i>] times as high in those exposed to the potential risk factor indicated in the rows (Y-axis), as compared to those unexposed.</li>
+          </ul>
+        </ul>
+
+        <br />
+        <b>Studies that investigate diagnostic test performance:</b>
+        <ul>
+          <li><b><i>Sensitivity</i></b>: A / (A + C)</li>
+          <ul>
+            <li>The probability of being positive by the diagnostic test indicated in the rows (Y-axis) when the disease specified in the columns (X-axis) is present is [<i>Sensitivity</i>].</li>
+          </ul>
+
+          <li><b><i>Specificity</i></b>: D / (B + D)</li>
+          <ul>
+            <li>The probability of being negative by the diagnostic test indicated in the rows (Y-axis) when the disease specified in the columns (X-axis) is absent is [<i>Specificity</i>].</li>
+          </ul>
+
+          <li><b><i>Positive Predictive Value</i></b>: A / (A + B)</li>
+          <ul>
+            <li>The probability that a person testing positive by the diagnostic test indicated in the rows (Y-axis) actually has the disease specified in the columns (X-axis) is [<i>Positive Predictive Value</i>].</li>
+          </ul>
+
+          <li><b><i>Negative Predictive Value</i></b>: D / (C + D)</li>
+          <ul>
+            <li>The probability that a person testing negative by the diagnostic test indicated in the rows (Y-axis) does NOT actually have the disease specified in the columns (X-axis) is [<i>Negative Predictive Value</i>].</li>
+          </ul>
+        </ul>
+    </div>
   )};
 
   return (
@@ -373,7 +537,7 @@ export const Collapsible = (args) => {
             banner={{
               type: 'info',
               // message is used as a basic text
-              message: 'The 2x2 contingency table must be properly constructed to correctly calculate statistics and interpret your results.',
+              message: 'Learn how to set up a 2x2 table in order for statistics to be calculated correctly.',
               pinned: true,
               intense: false,
               additionalMessage: undefined,
@@ -400,7 +564,7 @@ export const Collapsible = (args) => {
           banner={{
             type: 'info',
             // message is used as a basic text
-            message: 'The 2x2 contingency table must be properly constructed to correctly calculate statistics and interpret your results.',
+            message: 'Learn about appropriate statistics for each study design.',
             pinned: true,
             intense: false,
             additionalMessage: undefined,
