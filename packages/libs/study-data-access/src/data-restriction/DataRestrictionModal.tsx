@@ -126,16 +126,17 @@ function Buttons(props: Props) {
     study,
     user,
   });
+  const loggedInRoute = `/request-access/${getStudyId(
+    study
+  )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
+  const loginFormRedirect =
+    window.location.origin + history.createHref(parsePath(loggedInRoute));
 
   const submitDataAccessButton = (
     <button
       onClick={() => {
-        const loggedInRoute = `/request-access/${getStudyId(
-          study
-        )}?redirectUrl=${encodeURIComponent(window.location.href)}`;
-
         if (user.isGuest) {
-          showLoginForm(window.location.origin + history.createHref(parsePath(loggedInRoute)));
+          showLoginForm(loginFormRedirect);
         } else {
           history.push(loggedInRoute);
         }
@@ -180,7 +181,7 @@ function Buttons(props: Props) {
     <div className="DataRestrictionModal-Buttons">
       {!user.isGuest ? null : (
         <button
-          onClick={() => showLoginForm(window.location.href)}
+          onClick={() => showLoginForm(loginFormRedirect)}
           className="btn"
         >
           Log In
