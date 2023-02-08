@@ -22,13 +22,7 @@ import { useEnhancedEntityData } from './hooks/useEnhancedEntityData';
 import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
-import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
-import {
-  getStudyId,
-  getStudyRequestNeedsApproval,
-} from '@veupathdb/study-data-access/lib/shared/studies';
 import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import { H5, Paragraph } from '@veupathdb/coreui';
 import { useDispatch } from 'react-redux';
@@ -58,22 +52,10 @@ export default function DownloadTab({
     filteredCounts
   );
   const datasetId = studyRecord.id[0].value;
-  const permissions = usePermissions();
-  console.log({ permissions });
+  const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
-  const attemptAction = useAttemptActionCallback();
   const history = useHistory();
   const dispatch = useDispatch();
-
-  // const handleClick = useCallback(
-  //   (event: React.MouseEvent<HTMLButtonElement>) => {
-  //     event.preventDefault();
-  //     attemptAction(Action.download, {
-  //       studyId: datasetId,
-  //     });
-  //   },
-  //   [datasetId, attemptAction]
-  // );
 
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -136,9 +118,9 @@ export default function DownloadTab({
   const dataAccessDeclaration = useMemo(() => {
     if (
       !user ||
-      !permissions ||
+      !permission ||
       !studyRecord ||
-      permissions.loading ||
+      permission.loading ||
       !datasetId
     )
       return;
@@ -146,13 +128,8 @@ export default function DownloadTab({
       typeof studyRecord.attributes['study_access'] === 'string'
         ? studyRecord.attributes['study_access']
         : '<status not found>';
-    const requestNeedsApproval =
-      getStudyRequestNeedsApproval(studyRecord) !== '0';
-    console.log({ studyId: studyRecord.id[0].value });
     const permissionsForDataset =
-      permissions.permissions.perDataset[studyRecord.id[0].value];
-    console.log({ permissionsForDataset });
-    // const requestStatus = permissionsForDataset?.accessRequestStatus!;
+      permission.permissions.perDataset[studyRecord.id[0].value];
     const hasPermission =
       permissionsForDataset?.actionAuthorization['resultsAll'];
     const requestElement = (
@@ -184,7 +161,6 @@ export default function DownloadTab({
         {/* End temporary solution section */}
         {getDataAccessDeclaration(
           studyAccess,
-          requestNeedsApproval,
           user.isGuest,
           hasPermission ?? false,
           requestElement
@@ -193,7 +169,7 @@ export default function DownloadTab({
     );
   }, [
     user,
-    permissions,
+    permission,
     studyRecord,
     handleClick,
     datasetId,
@@ -221,8 +197,8 @@ export default function DownloadTab({
 
   // Only fetch study releases if they are expected to be available
   const shouldFetchStudyReleases = Boolean(
-    !permissions.loading &&
-      permissions.permissions.perDataset[datasetId]?.sha1Hash
+    !permission.loading &&
+      permission.permissions.perDataset[datasetId]?.sha1Hash
   );
 
   // Get a list of all available study releases according to the Download Service.
@@ -312,7 +288,6 @@ export default function DownloadTab({
 
 function getDataAccessDeclaration(
   studyAccess: string,
-  requestNeedsApproval: boolean,
   isGuest: boolean,
   hasPermission: boolean = false,
   requestElement: JSX.Element
@@ -329,13 +304,8 @@ function getDataAccessDeclaration(
   // this should probably be non-site-specific
   const PRERELEASE_STUB =
     'Data downloads for this study are not yet available on ClinEpiDB.';
-  // const CONTROLLED_ACCESS_STUB =
-  //   ' Data will be available immediately following request submission.';
-  // const PROTECTED_ACCESS_STUB =
-  //   ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
-  // const ACCESS_PENDING_STUB = 'Your data access request is pending.';
 
   return (
     <div>
@@ -346,10 +316,16 @@ function getDataAccessDeclaration(
       <Paragraph styleOverrides={{ margin: 0 }}>
         {studyAccess === 'Public' ? (
           <span>{PUBLIC_ACCESS_STUB}</span>
-        ) : isGuest || !hasPermission ? (
-          <span>{LOGIN_REQUEST_STUB}</span>
+        ) : studyAccess === 'Controlled' || studyAccess === 'Protected' ? (
+          isGuest || !hasPermission ? (
+            <span>{LOGIN_REQUEST_STUB}</span>
+          ) : (
+            <span>{ACCESS_GRANTED_STUB}</span>
+          )
+        ) : studyAccess === 'Prerelease' ? (
+          <span>{PRERELEASE_STUB}</span>
         ) : (
-          <span>{ACCESS_GRANTED_STUB}</span>
+          <span>Unknown study accessibility value</span>
         )}
       </Paragraph>
     </div>
