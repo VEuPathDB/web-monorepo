@@ -453,6 +453,20 @@ export interface MosaicRequestParams {
   };
 }
 
+export interface TwoByTwoRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    facetVariable: ZeroToTwoVariables;
+    showMissingness?: 'TRUE' | 'FALSE';
+    xAxisReferenceValue: string;
+    yAxisReferenceValue: string;
+  };
+}
+
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
 export const MosaicResponse = type({
   mosaic: type({
