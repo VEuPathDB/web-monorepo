@@ -61,6 +61,7 @@ import { LayoutOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
 import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 const plotContainerStyles = {
   width: 750,
@@ -92,6 +93,13 @@ const modalPlotContainerStyles = {
   width: '85%',
   height: '100%',
   margin: 'auto',
+};
+
+export const twoBytwoInputStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '115px auto',
+  marginBottom: '0.5em',
+  alignItems: 'center',
 };
 
 type ContTableData = MosaicPlotData &
@@ -151,15 +159,6 @@ const MosaicConfig = t.partial({
   xAxisReferenceValue: t.string,
   yAxisReferenceValue: t.string,
 });
-
-// type TwoByTwoConfig = MosaicConfig & { xAxisReferenceValue: string, yAxisReferenceValue: string };
-// // eslint-disable-next-line @typescript-eslint/no-redeclare
-// const TwoByTwoConfig = t.partial({
-//   xAxisVariable: VariableDescriptor,
-//   yAxisVariable: VariableDescriptor,
-//   facetVariable: VariableDescriptor,
-//   showMissingness: t.boolean,
-// })
 
 type Props<T> = VisualizationProps<T> & {
   isTwoByTwo?: boolean;
@@ -288,14 +287,21 @@ function MosaicViz(props: Props<Options>) {
         vizConfig.xAxisVariable == null ||
         xAxisVariable == null ||
         vizConfig.yAxisVariable == null ||
-        yAxisVariable == null ||
-        xAxisReferenceValue == null ||
-        yAxisReferenceValue == null
+        yAxisVariable == null
       )
         return undefined;
 
       if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
+
+      if (
+        isTwoByTwo &&
+        (!vizConfig.xAxisReferenceValue ||
+          !xAxisReferenceValue ||
+          !vizConfig.yAxisReferenceValue ||
+          !yAxisReferenceValue)
+      )
+        return undefined;
 
       const params = isTwoByTwo
         ? getTwoByTwoRequestParams(
@@ -304,6 +310,7 @@ function MosaicViz(props: Props<Options>) {
             vizConfig.xAxisVariable,
             vizConfig.yAxisVariable,
             outputEntity?.id ?? '',
+            // @ts-ignore
             xAxisReferenceValue,
             yAxisReferenceValue,
             vizConfig.facetVariable,
@@ -581,6 +588,15 @@ function MosaicViz(props: Props<Options>) {
 
   const classes = useInputStyles();
 
+  const areQuadrantSelectionsDisabled =
+    !xAxisVariable?.vocabulary || !yAxisVariable?.vocabulary;
+
+  const twoByTwoQuadrantStyle: React.CSSProperties = {
+    ...twoBytwoInputStyle,
+    pointerEvents: areQuadrantSelectionsDisabled ? 'none' : undefined,
+    opacity: areQuadrantSelectionsDisabled ? 0.5 : 1,
+  };
+
   const twoByTwoParams = [
     {
       title: (
@@ -592,80 +608,88 @@ function MosaicViz(props: Props<Options>) {
       ),
       order: 75,
       content: (
-        <div>
-          <div>
-            <span
-              className={classes.label}
-              style={xAxisReferenceValue ? undefined : requiredInputStyle}
-            >
-              Columns (X-axis)<sup>*</sup>
-            </span>
-            {xAxisVariable?.vocabulary ? (
-              <>
-                <SingleSelect
-                  items={xAxisVariable?.vocabulary?.map((vocab) => ({
-                    display: vocab,
-                    value: vocab,
-                  }))}
-                  value={xAxisReferenceValue}
-                  onSelect={onXAxisReferenceValueChange}
-                  buttonDisplayContent={xAxisReferenceValue ?? 'Select a value'}
-                />
-                <ClearSelectionButton
-                  onClick={() => onXAxisReferenceValueChange(undefined)}
-                  disabled={!xAxisReferenceValue}
-                  style={{ marginLeft: '0.5em' }}
-                />
-              </>
-            ) : (
+        <>
+          <div style={twoByTwoQuadrantStyle}>
+            <Tooltip css={{}} title={'Required parameter'}>
               <span
-                style={{
-                  color: '#969696',
-                  fontWeight: 500,
-                  marginLeft: '1em',
-                }}
+                className={classes.label}
+                style={
+                  !xAxisReferenceValue && !areQuadrantSelectionsDisabled
+                    ? { ...requiredInputStyle, cursor: 'default' }
+                    : { cursor: 'default' }
+                }
               >
-                First choose an X-axis table variable.
+                Columns (X-axis)<sup>*</sup>
               </span>
-            )}
-          </div>
-          <div>
-            <span
-              className={classes.label}
-              style={yAxisReferenceValue ? undefined : requiredInputStyle}
+            </Tooltip>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'nowrap',
+                alignItems: 'center',
+              }}
             >
-              Rows (Y-axis)<sup>*</sup>
-            </span>
-            {yAxisVariable?.vocabulary ? (
-              <>
-                <SingleSelect
-                  items={yAxisVariable?.vocabulary?.map((vocab) => ({
-                    display: vocab,
-                    value: vocab,
-                  }))}
-                  value={yAxisReferenceValue}
-                  onSelect={onYAxisReferenceValueChange}
-                  buttonDisplayContent={yAxisReferenceValue ?? 'Select a value'}
-                />
-                <ClearSelectionButton
-                  onClick={() => onYAxisReferenceValueChange(undefined)}
-                  disabled={!yAxisReferenceValue}
-                  style={{ marginLeft: '0.5em' }}
-                />
-              </>
-            ) : (
-              <span
-                style={{
-                  color: '#969696',
-                  fontWeight: 500,
-                  marginLeft: '1em',
-                }}
-              >
-                First choose a Y-axis table variable.
-              </span>
-            )}
+              <SingleSelect
+                items={
+                  xAxisVariable?.vocabulary
+                    ? xAxisVariable?.vocabulary?.map((vocab) => ({
+                        display: vocab,
+                        value: vocab,
+                      }))
+                    : []
+                }
+                value={xAxisReferenceValue}
+                onSelect={onXAxisReferenceValueChange}
+                buttonDisplayContent={xAxisReferenceValue ?? 'Select a value'}
+              />
+              <ClearSelectionButton
+                onClick={() => onXAxisReferenceValueChange(undefined)}
+                disabled={!xAxisReferenceValue}
+                style={{ marginLeft: '0.5em' }}
+              />
+            </div>
           </div>
-        </div>
+          <div style={twoByTwoQuadrantStyle}>
+            <Tooltip css={{}} title={'Required parameter'}>
+              <span
+                className={classes.label}
+                style={
+                  !yAxisReferenceValue && !areQuadrantSelectionsDisabled
+                    ? { ...requiredInputStyle, cursor: 'default' }
+                    : { cursor: 'default' }
+                }
+              >
+                Rows (Y-axis)<sup>*</sup>
+              </span>
+            </Tooltip>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'nowrap',
+                alignItems: 'center',
+              }}
+            >
+              <SingleSelect
+                items={
+                  yAxisVariable?.vocabulary
+                    ? yAxisVariable?.vocabulary?.map((vocab) => ({
+                        display: vocab,
+                        value: vocab,
+                      }))
+                    : []
+                }
+                value={yAxisReferenceValue}
+                onSelect={onYAxisReferenceValueChange}
+                buttonDisplayContent={yAxisReferenceValue ?? 'Select a value'}
+              />
+              <ClearSelectionButton
+                onClick={() => onYAxisReferenceValueChange(undefined)}
+                disabled={!yAxisReferenceValue}
+                style={{ marginLeft: '0.5em' }}
+              />
+            </div>
+          </div>
+        </>
       ),
     },
   ];
@@ -677,13 +701,13 @@ function MosaicViz(props: Props<Options>) {
           inputs={[
             {
               name: 'xAxisVariable',
-              label: 'Columns (X-axis)',
-              role: 'axis',
+              label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
+              role: isTwoByTwo ? 'twoByTwoAxis' : 'axis',
             },
             {
               name: 'yAxisVariable',
-              label: 'Rows (Y-axis)',
-              role: 'axis',
+              label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
+              role: isTwoByTwo ? 'twoByTwoAxis' : 'axis',
             },
             ...(options?.hideFacetInputs
               ? []

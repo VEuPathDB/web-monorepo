@@ -16,6 +16,9 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
 
+// used for 2x2 axis variable style override
+import { twoBytwoInputStyle } from './implementations/MosaicVisualization';
+
 export interface InputSpec {
   name: string;
   label: string;
@@ -23,7 +26,7 @@ export interface InputSpec {
    * The string will be displayed instead of a variable selector.
    */
   readonlyValue?: string;
-  role?: 'axis' | 'stratification';
+  role?: 'axis' | 'stratification' | 'twoByTwoAxis';
   /**
    * Instead of just providing a string, as above, provide a variable that the
    * user will be able to choose with a radio button group (the other option is "no variable").
@@ -50,6 +53,14 @@ const sectionInfo: Record<string, SectionSpec> = {
   default: {
     order: 0,
     title: 'Variables',
+  },
+  twoByTwoAxis: {
+    /** Duplicating order: 50 because
+     * A) I don't forsee a scenario wherein we'd render twoByTwoAxis and axis
+     * B) I don't wish to interfere with existing order values in custom sections
+     */
+    order: 50,
+    title: '2x2 table variables',
   },
   axis: {
     order: 50,
@@ -185,7 +196,7 @@ export function InputVariables(props: Props) {
 
   return (
     <div className={classes.inputs}>
-      {[undefined, 'axis', 'stratification'].map(
+      {[undefined, 'twoByTwoAxis', 'axis', 'stratification'].map(
         (inputRole) =>
           inputs.filter((input) => input.role === inputRole).length > 0 && (
             <div
@@ -200,16 +211,15 @@ export function InputVariables(props: Props) {
                 .map((input) => (
                   <div
                     key={input.name}
-                    className={classes.input}
+                    className={
+                      input.role === 'twoByTwoAxis' ? undefined : classes.input
+                    }
                     style={
                       input.readonlyValue
                         ? {}
-                        : !selectedVariables[input.name] &&
-                          constraints &&
-                          constraints.length &&
-                          constraints[0][input.name]?.isRequired
-                        ? requiredInputStyle
-                        : {}
+                        : input.role === 'twoByTwoAxis'
+                        ? twoBytwoInputStyle
+                        : undefined
                     }
                   >
                     <Tooltip
@@ -225,7 +235,15 @@ export function InputVariables(props: Props) {
                     >
                       <div
                         className={classes.label}
-                        style={{ cursor: 'default' }}
+                        style={
+                          !input.readonlyValue &&
+                          constraints &&
+                          constraints.length &&
+                          constraints[0][input.name]?.isRequired &&
+                          !selectedVariables[input.name]
+                            ? requiredInputStyle
+                            : { cursor: 'default' }
+                        }
                       >
                         {input.label +
                           (input.readonlyValue &&
