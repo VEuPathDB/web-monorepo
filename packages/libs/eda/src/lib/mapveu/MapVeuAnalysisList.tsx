@@ -58,7 +58,7 @@ export function AnalysisList(props: Props) {
       ) : (
         <ul>
           {list.value?.map((analysis) => (
-            <li>
+            <li key={analysis.analysisId}>
               <Link to={`${url}/${analysis.analysisId}`}>
                 {safeHtml(analysis.displayName)}
               </Link>
