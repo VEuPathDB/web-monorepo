@@ -8,6 +8,7 @@ import { Alert } from '@material-ui/lab';
 import _ from 'lodash';
 import 'react-resizable/css/styles.css';
 import './GlobalFiltersDialog.scss';
+import { VariableLinkConfig } from './VariableLink';
 
 interface Props {
   // Whether the dialog is open
@@ -22,6 +23,7 @@ interface Props {
   setFilters: (filters: Filter[]) => void;
   // A function to remove a given filter
   removeFilter: (filter: Filter) => void;
+  variableLinkConfig: VariableLinkConfig;
 }
 
 /**
@@ -51,6 +53,7 @@ export default function GlobalFiltersDialog(props: Props) {
               filters={matchingFilters}
               entities={props.entities}
               removeFilter={props.removeFilter}
+              variableLinkConfig={props.variableLinkConfig}
             />
           </div>
         );
