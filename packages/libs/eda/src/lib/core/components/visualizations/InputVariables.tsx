@@ -61,7 +61,7 @@ const sectionInfo: Record<string, SectionSpec> = {
   },
 };
 
-const requiredInputStyle = {
+export const requiredInputStyle = {
   color: '#dd314e',
 };
 
