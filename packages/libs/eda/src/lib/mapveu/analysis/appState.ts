@@ -1,9 +1,12 @@
-import { getOrElse } from 'fp-ts/lib/Either';
+import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useEffect, useState } from 'react';
+import { isEqual } from 'lodash';
+import { useCallback, useEffect } from 'react';
 import { AnalysisState } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
+
+const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
 export const AppState = t.intersection([
   t.type({
@@ -19,6 +22,18 @@ export const AppState = t.intersection([
   t.partial({
     selectedOverlayVariable: VariableDescriptor,
     activeVisualizationId: t.string,
+    boundsZoomLevel: t.type({
+      zoomLevel: t.number,
+      bounds: t.type({
+        southWest: LatLngLiteral,
+        northEast: LatLngLiteral,
+      }),
+    }),
+    subsetVariableAndEntity: t.partial({
+      entityId: t.string,
+      variableId: t.string,
+    }),
+    isSubsetPanelOpen: t.boolean,
   }),
 ]);
 
@@ -34,41 +49,52 @@ const defaultAppState: AppState = {
 };
 
 export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
-  const { setVariableUISettings } = analysisState;
-  const savedState = pipe(
+  const { analysis, setVariableUISettings } = analysisState;
+  const appState = pipe(
     AppState.decode(
       analysisState.analysis?.descriptor.subset.uiSettings[uiStateKey]
     ),
-    getOrElse(() => defaultAppState)
+    getOrElseW(() => undefined)
   );
-  const [appState, setAppState] = useState<AppState>(savedState);
 
   useEffect(() => {
-    setAppState(savedState);
-  }, [savedState]);
-
-  function makeSetter<T extends keyof AppState>(key: T) {
-    return function setter(value: AppState[T]) {
+    if (analysis && !appState) {
       setVariableUISettings((prev) => ({
         ...prev,
-        [uiStateKey]: {
-          ...appState,
-          [key]: value,
-        },
+        [uiStateKey]: defaultAppState,
       }));
-    };
-  }
+    }
+  }, [analysis, appState, setVariableUISettings, uiStateKey]);
 
-  const setViewport = makeSetter('viewport');
-  const setMouseMode = makeSetter('mouseMode');
-  const setSelectedOverlayVariable = makeSetter('selectedOverlayVariable');
-  const setActiveVisualizationId = makeSetter('activeVisualizationId');
+  function useSetter<T extends keyof AppState>(key: T) {
+    return useCallback(
+      function setter(value: AppState[T]) {
+        setVariableUISettings((prev) => {
+          const prevValue = prev[uiStateKey][key];
+          if (!isEqual(prevValue, value)) {
+            return {
+              ...prev,
+              [uiStateKey]: {
+                ...prev[uiStateKey],
+                [key]: value,
+              },
+            };
+          }
+          return prev;
+        });
+      },
+      [key]
+    );
+  }
 
   return {
     appState,
-    setViewport,
-    setMouseMode,
-    setSelectedOverlayVariable,
-    setActiveVisualizationId,
+    setViewport: useSetter('viewport'),
+    setMouseMode: useSetter('mouseMode'),
+    setSelectedOverlayVariable: useSetter('selectedOverlayVariable'),
+    setActiveVisualizationId: useSetter('activeVisualizationId'),
+    setBoundsZoomLevel: useSetter('boundsZoomLevel'),
+    setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
+    setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
   };
 }

@@ -14,7 +14,6 @@ import {
   useStudyRecord,
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
-import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
@@ -24,7 +23,7 @@ import {
   FullScreenVisualization,
   NewVisualizationPickerModal,
 } from '../../core/components/visualizations/VisualizationsContainer';
-import { FilledButton } from '@veupathdb/coreui';
+import { Close, FilledButton, FloatingButton } from '@veupathdb/coreui';
 import { Visualization } from '../../core/types/visualization';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import { Tooltip } from '@material-ui/core';
@@ -46,8 +45,15 @@ import { barplotVisualization } from '../../core/components/visualizations/imple
 import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
-import { useAppState } from './appState';
+import { AppState, useAppState } from './appState';
 import { FloatingDiv } from './FloatingDiv';
+import Subsetting from '../../workspace/Subsetting';
+import { findFirstVariable } from '../../workspace/Utils';
+import {
+  useFeaturedFields,
+  useFieldTree,
+  useFlattenedFields,
+} from '../../core/components/variableTrees/hooks';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -83,7 +89,32 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const { analysisId } = props;
+  const appStateAndSetters = useAppState(
+    '@@mapApp@@',
+    useAnalysis(props.analysisId, 'pass-through')
+  );
+  if (appStateAndSetters.appState == null) return null;
+  return (
+    <MapAnalysisImpl {...props} {...(appStateAndSetters as CompleteAppState)} />
+  );
+}
+
+type CompleteAppState = ReturnType<typeof useAppState> & {
+  appState: AppState;
+};
+
+export function MapAnalysisImpl(props: Props & CompleteAppState) {
+  const {
+    analysisId,
+    appState,
+    setMouseMode,
+    setSelectedOverlayVariable,
+    setViewport,
+    setActiveVisualizationId,
+    setBoundsZoomLevel,
+    setSubsetVariableAndEntity,
+    setIsSubsetPanelOpen,
+  } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const studyEntities = useStudyEntities();
@@ -91,15 +122,6 @@ export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(analysisId, 'pass-through');
   const geoConfig = geoConfigs[0];
 
-  const {
-    appState,
-    setMouseMode,
-    setSelectedOverlayVariable,
-    setViewport,
-    setActiveVisualizationId,
-  } = useAppState('@@mapApp@@', analysisState);
-
-  const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   const selectedVariables = useMemo(
@@ -124,7 +146,7 @@ export function MapAnalysis(props: Props) {
     totalEntityCount,
   } = useMapMarkers({
     requireOverlay: false,
-    boundsZoomLevel,
+    boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters: analysisState.analysis?.descriptor.subset.descriptor,
@@ -189,6 +211,32 @@ export function MapAnalysis(props: Props) {
   const filteredCounts = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
   );
+
+  const fieldTree = useFieldTree(
+    useFlattenedFields(studyEntities, 'variableTree')
+  );
+  const featuredFields = useFeaturedFields(studyEntities, 'variableTree');
+
+  const subsetVariableAndEntity = useMemo(() => {
+    if (appState.subsetVariableAndEntity)
+      return appState.subsetVariableAndEntity;
+    if (featuredFields.length) {
+      const [entityId, variableId] = featuredFields[0].term.split('/');
+      return { entityId, variableId };
+    } else {
+      const variable = findFirstVariable(
+        fieldTree,
+        studyMetadata.rootEntity.id
+      );
+      const [entityId, variableId] = variable?.field.term.split('/') ?? [];
+      return { entityId, variableId };
+    }
+  }, [
+    appState.subsetVariableAndEntity,
+    featuredFields,
+    fieldTree,
+    studyMetadata.rootEntity.id,
+  ]);
 
   const fullScreenActions = (
     <>
@@ -304,6 +352,12 @@ export function MapAnalysis(props: Props) {
                   Showing {entity?.displayName} variable {variable?.displayName}
                 </div>
                 <div>
+                  <FilledButton
+                    text="Open Filters"
+                    onPress={() => setIsSubsetPanelOpen(true)}
+                  />
+                </div>
+                <div>
                   <InputVariables
                     inputs={[{ name: 'overlay', label: 'Overlay' }]}
                     entities={studyEntities}
@@ -406,6 +460,45 @@ export function MapAnalysis(props: Props) {
                 </FloatingDiv>
               )}
             </div>
+            <FloatingDiv
+              style={{
+                top: 100,
+                left: 100,
+                right: 100,
+                bottom: 10,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              {appState.isSubsetPanelOpen && (
+                <>
+                  <FloatingButton
+                    text=""
+                    icon={Close}
+                    onPress={() => setIsSubsetPanelOpen(false)}
+                    styleOverrides={{
+                      container: {
+                        display: 'flex',
+                        marginLeft: 'auto',
+                      },
+                    }}
+                  />
+                  <div style={{ overflow: 'auto' }}>
+                    <Subsetting
+                      variableLinkConfig={{
+                        type: 'button',
+                        onClick: setSubsetVariableAndEntity,
+                      }}
+                      entityId={subsetVariableAndEntity?.entityId ?? ''}
+                      variableId={subsetVariableAndEntity?.variableId ?? ''}
+                      analysisState={analysisState}
+                      totalCounts={totalCounts.value}
+                      filteredCounts={filteredCounts.value}
+                    />
+                  </div>
+                </>
+              )}
+            </FloatingDiv>
             <NewVisualizationPickerModal
               visible={isVizSelectorVisible}
               onVisibleChange={setIsVizSelectorVisible}
