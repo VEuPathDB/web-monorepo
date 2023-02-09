@@ -10,6 +10,8 @@ import CloseIcon from '@material-ui/icons/Close';
 // Collapsible icons
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+// using native CoreUI icons? but no mouseover event is supported
+// import { CaretUp, CaretDown} from '../../assets/icons';
 
 import { gray, warning, error, success, blue, ColorHue } from '../../definitions/colors';
 
@@ -106,6 +108,8 @@ export default function Banner(props: BannerComponentProps) {
 
   // define collapsible icon component
   const collapsibleIcon = isShowMore ? <ExpandLessIcon /> : <ExpandMoreIcon />;
+  // using native CoreUI icons? but no mouseover event is supported
+  // const collapsibleIcon = isShowMore ? <CaretUp color={ '#000000' } /> : <CaretDown color={ '#000000' } />;
 
   // hover effect
   const [isHover, setIsHover] = useState(false);
