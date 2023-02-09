@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
 import * as t from 'io-ts';
-import _ from 'lodash';
+import _, { isEqual } from 'lodash';
 import DataClient, {
   ContTableResponse,
   MosaicRequestParams,
@@ -31,7 +31,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables } from '../InputVariables';
+import { InputVariables, requiredInputStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
@@ -60,6 +60,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
+import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 
 const plotContainerStyles = {
   width: 750,
@@ -188,13 +189,6 @@ function MosaicViz(props: Props<Options>) {
   // set default tab to Mosaic in TabbedDisplay component
   const [activeTab, setActiveTab] = useState('Mosaic');
 
-  const [xAxisReferenceValue, setXAxisReferenceValue] = useState<
-    string | undefined
-  >(undefined);
-  const [yAxisReferenceValue, setYAxisReferenceValue] = useState<
-    string | undefined
-  >(undefined);
-
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
     MosaicConfig,
@@ -210,6 +204,12 @@ function MosaicViz(props: Props<Options>) {
         xAxisVariable,
         yAxisVariable,
         facetVariable,
+        xAxisReferenceValue: isEqual(xAxisVariable, vizConfig.xAxisVariable)
+          ? xAxisReferenceValue
+          : undefined,
+        yAxisReferenceValue: isEqual(yAxisVariable, vizConfig.yAxisVariable)
+          ? yAxisReferenceValue
+          : undefined,
       });
     },
     [updateVizConfig]
@@ -236,6 +236,14 @@ function MosaicViz(props: Props<Options>) {
     'showMissingness'
   );
 
+  const onXAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'xAxisReferenceValue'
+  );
+
+  const onYAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'yAxisReferenceValue'
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable();
 
   const { xAxisVariable, yAxisVariable, facetVariable } = useMemo(() => {
@@ -254,6 +262,16 @@ function MosaicViz(props: Props<Options>) {
     vizConfig.yAxisVariable,
     vizConfig.facetVariable,
   ]);
+
+  const xAxisReferenceValue = useMemo(() => {
+    if (!xAxisVariable || !vizConfig.xAxisVariable) return;
+    return vizConfig.xAxisReferenceValue;
+  }, [xAxisVariable, vizConfig.xAxisVariable, vizConfig.xAxisReferenceValue]);
+
+  const yAxisReferenceValue = useMemo(() => {
+    if (!yAxisVariable || !vizConfig.yAxisVariable) return;
+    return vizConfig.yAxisReferenceValue;
+  }, [yAxisVariable, vizConfig.yAxisVariable, vizConfig.yAxisReferenceValue]);
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
@@ -540,18 +558,117 @@ function MosaicViz(props: Props<Options>) {
 
   const areRequiredInputsSelected = useMemo(() => {
     if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
+    const areRequiredMosaicInputsSelected = Object.entries(
+      dataElementConstraints[0]
+    )
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    if (!isTwoByTwo) return areRequiredMosaicInputsSelected;
+    return (
+      areRequiredMosaicInputsSelected &&
+      vizConfig.xAxisReferenceValue &&
+      vizConfig.yAxisReferenceValue
+    );
   }, [
     dataElementConstraints,
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
+    vizConfig.xAxisReferenceValue,
+    vizConfig.yAxisReferenceValue,
   ]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
   const classes = useInputStyles();
+
+  const twoByTwoParams = [
+    {
+      title: (
+        <>
+          <span style={{ marginRight: '0.5em' }}>
+            2x2 table quadrant A values
+          </span>
+        </>
+      ),
+      order: 75,
+      content: (
+        <div>
+          <div>
+            <span
+              className={classes.label}
+              style={xAxisReferenceValue ? undefined : requiredInputStyle}
+            >
+              Columns (X-axis)<sup>*</sup>
+            </span>
+            {xAxisVariable?.vocabulary ? (
+              <>
+                <SingleSelect
+                  items={xAxisVariable?.vocabulary?.map((vocab) => ({
+                    display: vocab,
+                    value: vocab,
+                  }))}
+                  value={xAxisReferenceValue}
+                  onSelect={onXAxisReferenceValueChange}
+                  buttonDisplayContent={xAxisReferenceValue ?? 'Select a value'}
+                />
+                <ClearSelectionButton
+                  onClick={() => onXAxisReferenceValueChange(undefined)}
+                  disabled={!xAxisReferenceValue}
+                  style={{ marginLeft: '0.5em' }}
+                />
+              </>
+            ) : (
+              <span
+                style={{
+                  color: '#969696',
+                  fontWeight: 500,
+                  marginLeft: '1em',
+                }}
+              >
+                First choose an X-axis table variable.
+              </span>
+            )}
+          </div>
+          <div>
+            <span
+              className={classes.label}
+              style={yAxisReferenceValue ? undefined : requiredInputStyle}
+            >
+              Rows (Y-axis)<sup>*</sup>
+            </span>
+            {yAxisVariable?.vocabulary ? (
+              <>
+                <SingleSelect
+                  items={yAxisVariable?.vocabulary?.map((vocab) => ({
+                    display: vocab,
+                    value: vocab,
+                  }))}
+                  value={yAxisReferenceValue}
+                  onSelect={onYAxisReferenceValueChange}
+                  buttonDisplayContent={yAxisReferenceValue ?? 'Select a value'}
+                />
+                <ClearSelectionButton
+                  onClick={() => onYAxisReferenceValueChange(undefined)}
+                  disabled={!yAxisReferenceValue}
+                  style={{ marginLeft: '0.5em' }}
+                />
+              </>
+            ) : (
+              <span
+                style={{
+                  color: '#969696',
+                  fontWeight: 500,
+                  marginLeft: '1em',
+                }}
+              >
+                First choose a Y-axis table variable.
+              </span>
+            )}
+          </div>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -578,78 +695,7 @@ function MosaicViz(props: Props<Options>) {
                   } as const,
                 ]),
           ]}
-          customSections={[
-            {
-              title: (
-                <>
-                  <span style={{ marginRight: '0.5em' }}>
-                    2x2 table quadrant A values
-                  </span>
-                </>
-              ),
-              order: 75,
-              content: (
-                <div>
-                  <div>
-                    <span className={classes.label}>
-                      Columns (X-axis)<sup>*</sup>
-                    </span>
-                    {xAxisVariable?.vocabulary ? (
-                      <SingleSelect
-                        items={xAxisVariable?.vocabulary?.map((vocab) => ({
-                          display: vocab,
-                          value: vocab,
-                        }))}
-                        value={xAxisReferenceValue}
-                        onSelect={setXAxisReferenceValue}
-                        buttonDisplayContent={
-                          xAxisReferenceValue ?? 'Select a value'
-                        }
-                      />
-                    ) : (
-                      <span
-                        style={{
-                          color: '#969696',
-                          fontWeight: 500,
-                          marginLeft: '1em',
-                        }}
-                      >
-                        First choose an X-axis table variable.
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <span className={classes.label}>
-                      Rows (Y-axis)<sup>*</sup>
-                    </span>
-                    {yAxisVariable?.vocabulary ? (
-                      <SingleSelect
-                        items={yAxisVariable?.vocabulary?.map((vocab) => ({
-                          display: vocab,
-                          value: vocab,
-                        }))}
-                        value={yAxisReferenceValue}
-                        onSelect={setYAxisReferenceValue}
-                        buttonDisplayContent={
-                          yAxisReferenceValue ?? 'Select a value'
-                        }
-                      />
-                    ) : (
-                      <span
-                        style={{
-                          color: '#969696',
-                          fontWeight: 500,
-                          marginLeft: '1em',
-                        }}
-                      >
-                        First choose a Y-axis table variable.
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ),
-            },
-          ]}
+          customSections={isTwoByTwo ? twoByTwoParams : undefined}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
