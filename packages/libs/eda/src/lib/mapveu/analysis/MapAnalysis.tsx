@@ -378,14 +378,14 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
                 <ul>
                   {analysisState.analysis?.descriptor.computations.map(
                     (computation) => (
-                      <li>
+                      <li key={computation.computationId}>
                         <strong>
                           {computation.displayName} (
                           {computation.descriptor.type})
                         </strong>
                         <ul>
                           {computation.visualizations.map((viz) => (
-                            <li>
+                            <li key={viz.visualizationId}>
                               <button
                                 type="button"
                                 className="link"
