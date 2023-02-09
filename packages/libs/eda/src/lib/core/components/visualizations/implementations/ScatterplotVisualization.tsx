@@ -1514,7 +1514,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         label={'Marker opacity'}
         colorSpec={colorSpecProps}
         // set isReverseSlider: true if reversed slider
-        isReverseSlider={false}
+        // isReverseSlider={false}
       />
 
       {/* axis range control UIs */}
