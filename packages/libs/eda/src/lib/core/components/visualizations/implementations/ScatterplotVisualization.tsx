@@ -194,7 +194,7 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
-    markerBodyOpacity: 0,
+    markerBodyOpacity: 0.5,
   };
 }
 
@@ -402,7 +402,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
-        markerBodyOpacity: 0,
+        markerBodyOpacity: 0.5,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -1231,8 +1231,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     type: 'gradient',
     tooltip: '#aaa',
     knobColor: '#aaa',
+    // normal slider color: e.g., from 0 to 1
     trackGradientStart: '#fff',
     trackGradientEnd: '#000',
+    // reversed slider color: e.g., from 1 to 0
+    // trackGradientStart: '#000',
+    // trackGradientEnd: '#fff',
   };
 
   const scatterplotProps: ScatterPlotProps = {
@@ -1274,7 +1278,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? plotSpacingOptions
       : undefined,
     // need to define markerColorOpacity for faceted plot
-    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0,
+    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
@@ -1297,7 +1301,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ref={plotRef}
           data={data.value?.dataSetProcess}
           checkedLegendItems={checkedLegendItems}
-          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0}
+          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
         />
       )}
     </>
@@ -1383,10 +1387,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // add showBanner prop in this Viz
   const [showBanner, setShowBanner] = useState(true);
-
-  //DKDK
-  // console.log('data =', data);
-  // console.log('!showLogScaleBanner =', !showLogScaleBanner);
 
   const controlsNode = (
     <>
@@ -1504,7 +1504,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         minimum={0}
         maximum={1}
         step={0.1}
-        value={vizConfig.markerBodyOpacity ?? 0}
+        value={vizConfig.markerBodyOpacity ?? 0.5}
         debounceRateMs={250}
         onChange={(newValue: number) => {
           onMarkerBodyOpacityChange(newValue);
@@ -1513,6 +1513,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         showLimits={true}
         label={'Marker opacity'}
         colorSpec={colorSpecProps}
+        // set isReverseSlider: true if reversed slider
+        isReverseSlider={false}
       />
 
       {/* axis range control UIs */}
