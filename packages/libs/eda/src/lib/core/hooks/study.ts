@@ -134,7 +134,7 @@ export function useWdkStudyRecords(
       );
     },
     [attributes, tables]
-  )?.records;
+  )?.records.filter((record) => record.attributes.eda_study_id != null);
 }
 
 /**

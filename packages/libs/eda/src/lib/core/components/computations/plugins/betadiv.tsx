@@ -1,6 +1,6 @@
+/** @jsxImportSource @emotion/react */
 import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
-import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
@@ -9,65 +9,68 @@ import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useMemo } from 'react';
+import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { sharedConfigCssStyles } from './abundance';
 
-export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
+export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AlphaDivConfig = t.type({
+export const BetaDivConfig = t.type({
   collectionVariable: VariableDescriptor,
-  alphaDivMethod: t.string,
+  betaDivDistanceMethod: t.string,
 });
 
 export const plugin: ComputationPlugin = {
-  configurationComponent: AlphaDivConfiguration,
-  configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
+  configurationComponent: BetaDivConfiguration,
+  configurationDescriptionComponent: BetaDivConfigDescriptionComponent,
   createDefaultConfiguration: () => undefined,
-  isConfigurationValid: AlphaDivConfig.is,
+  isConfigurationValid: BetaDivConfig.is,
   visualizationPlugins: {
-    boxplot: boxplotVisualization.withOptions({
-      getComputedYAxisDetails(config) {
-        if (AlphaDivConfig.is(config)) {
-          return {
-            entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Alpha Diversity',
-            variableId: 'alphaDiversity',
-          };
-        }
-      },
-      hideShowMissingnessToggle: true,
-    }),
-    scatterplot: scatterplotVisualization.withOptions({
-      getComputedYAxisDetails(config) {
-        if (AlphaDivConfig.is(config)) {
-          return {
-            entityId: config.collectionVariable.entityId,
-            placeholderDisplayName: 'Alpha Diversity',
-            variableId: 'alphaDiversity',
-          };
-        }
-      },
-      hideShowMissingnessToggle: true,
-    }),
+    scatterplot: scatterplotVisualization
+      .withOptions({
+        getComputedXAxisDetails(config) {
+          if (BetaDivConfig.is(config)) {
+            return {
+              entityId: config.collectionVariable.entityId,
+              placeholderDisplayName: 'Beta Diversity Axis 1',
+              variableId: 'Axis1',
+            };
+          }
+        },
+        getComputedYAxisDetails(config) {
+          if (BetaDivConfig.is(config)) {
+            return {
+              entityId: config.collectionVariable.entityId,
+              placeholderDisplayName: 'Beta Diversity Axis 2',
+              variableId: 'Axis2',
+            };
+          }
+        },
+        hideShowMissingnessToggle: true,
+        hideTrendlines: true,
+        hideFacetInputs: true,
+        hideLogScale: true,
+      })
+      .withSelectorIcon(ScatterBetadivSVG),
   },
 };
 
-function AlphaDivConfigDescriptionComponent({
+function BetaDivConfigDescriptionComponent({
   computation,
 }: {
   computation: Computation;
 }) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
-  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  assertComputationWithConfig<BetaDivConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
       ? configuration.collectionVariable
       : undefined;
-  const alphaDivMethod =
-    'alphaDivMethod' in configuration
-      ? configuration.alphaDivMethod
+  const betaDivDistanceMethod =
+    'betaDivDistanceMethod' in configuration
+      ? configuration.betaDivDistanceMethod
       : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -91,10 +94,11 @@ function AlphaDivConfigDescriptionComponent({
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
-        Method:{' '}
+        Distance method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {alphaDivMethod ? (
-            alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)
+          {betaDivDistanceMethod ? (
+            betaDivDistanceMethod[0].toUpperCase() +
+            betaDivDistanceMethod.slice(1)
           ) : (
             <i>Not selected</i>
           )}
@@ -105,9 +109,9 @@ function AlphaDivConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const ALPHA_DIV_METHODS = ['shannon', 'simpson'];
+const BETA_DIV_DISTANCE_METHODS = ['bray', 'jaccard', 'jsd'];
 
-export function AlphaDivConfiguration(props: ComputationConfigProps) {
+export function BetaDivConfiguration(props: ComputationConfigProps) {
   const {
     computationAppOverview,
     computation,
@@ -120,10 +124,10 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   if (collections.length === 0)
     throw new Error('Could not find any collections for this app.');
 
-  assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
+  assertComputationWithConfig<BetaDivConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
 
-  const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
+  const changeConfigHandler = useConfigChangeHandler<BetaDivConfig>(
     analysisState,
     computation,
     visualizationId
@@ -152,9 +156,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
     }
   }, [collectionVarItems, configuration]);
 
-  const alphaDivMethod = useMemo(() => {
-    if (configuration && 'alphaDivMethod' in configuration) {
-      return configuration.alphaDivMethod;
+  const betaDivDistanceMethod = useMemo(() => {
+    if (configuration && 'betaDivDistanceMethod' in configuration) {
+      return configuration.betaDivDistanceMethod;
     }
   }, [configuration]);
 
@@ -189,15 +193,17 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Method</div>
+          <div style={{ justifySelf: 'end', fontWeight: 500 }}>
+            Distance method
+          </div>
           <SingleSelect
-            value={alphaDivMethod ?? 'Select a method'}
-            buttonDisplayContent={alphaDivMethod ?? 'Select a method'}
-            items={ALPHA_DIV_METHODS.map((method) => ({
+            value={betaDivDistanceMethod ?? 'Select a method'}
+            buttonDisplayContent={betaDivDistanceMethod ?? 'Select a method'}
+            items={BETA_DIV_DISTANCE_METHODS.map((method) => ({
               value: method,
               display: method,
             }))}
-            onSelect={partial(changeConfigHandler, 'alphaDivMethod')}
+            onSelect={partial(changeConfigHandler, 'betaDivDistanceMethod')}
           />
         </div>
       </div>

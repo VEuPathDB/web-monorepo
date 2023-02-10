@@ -13,6 +13,7 @@ import {
   useValuesMap,
 } from './hooks';
 import { CustomCheckboxes } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
+import { VariableLinkConfig } from '../VariableLink';
 
 export interface MultiSelectVariableTreeProps {
   /** The "scope" of variables which should be offered. */
@@ -79,7 +80,9 @@ export default function MultiSelectVariableTree({
     [onSelectedVariablesChange]
   );
 
-  const onActiveFieldChange = useCallback(() => undefined, []);
+  const variableLinkConfig = useMemo((): VariableLinkConfig => {
+    return { type: 'button', onClick: () => {} };
+  }, []);
 
   return (
     <VariableList
@@ -87,7 +90,7 @@ export default function MultiSelectVariableTree({
       showMultiFilterDescendants={true}
       selectedFields={selectedVariableFields}
       onSelectedFieldsChange={onSelectedVariableTermsChange}
-      onActiveFieldChange={onActiveFieldChange}
+      variableLinkConfig={variableLinkConfig}
       featuredFields={featuredFields}
       starredVariables={starredVariableDescriptors}
       valuesMap={valuesMap}

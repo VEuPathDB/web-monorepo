@@ -4,13 +4,13 @@ import EntityDiagramComponent, {
   StudyData,
 } from '@veupathdb/components/lib/EntityDiagram/EntityDiagram';
 import { StudyEntity } from '../types/study';
-import { VariableLink } from './VariableLink';
 import {
   mapStructure,
   preorder,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { reduce } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { useEffect, useMemo, useState } from 'react';
+import { VariableLink, VariableLinkConfig } from './VariableLink';
 
 interface Props {
   expanded: boolean;
@@ -20,10 +20,11 @@ interface Props {
   entityCounts?: Record<string, number>;
   filteredEntities?: string[];
   filteredEntityCounts?: Record<string, number>;
+  variableLinkConfig: VariableLinkConfig;
 }
 
 export function EntityDiagram(props: Props) {
-  const { selectedEntity, selectedVariable } = props;
+  const { selectedEntity, selectedVariable, variableLinkConfig } = props;
   const studyMetadata = useStudyMetadata();
   const entityTree = useMemo((): StudyEntity => {
     return mapStructure(
@@ -64,6 +65,7 @@ export function EntityDiagram(props: Props) {
         children={children}
         replace={false}
         style={{ textDecoration: 'none' }}
+        linkConfig={variableLinkConfig}
       ></VariableLink>
     );
   };

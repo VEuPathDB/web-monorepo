@@ -366,7 +366,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
               computation={appState.computation}
               updateVisualizations={updateVisualizations}
               visualizationPlugins={plugin.visualizationPlugins}
-              visualizationsOverview={app.visualizations!}
+              visualizationsOverview={app.visualizations}
               geoConfigs={[geoConfig]}
               onVisualizationCreated={onVisualizationCreated}
             />
@@ -500,7 +500,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
                 computation={appState.computation}
                 updateVisualizations={updateVisualizations}
                 visualizationPlugins={plugin.visualizationPlugins}
-                visualizationsOverview={app.visualizations!}
+                visualizationsOverview={app.visualizations}
                 geoConfigs={[geoConfig]}
                 computationAppOverview={app}
                 filters={filtersForViz}
