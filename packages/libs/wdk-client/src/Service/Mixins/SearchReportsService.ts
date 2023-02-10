@@ -68,13 +68,19 @@ export default (base: ServiceBase) => {
     const question = await base.findQuestion(answerSpec.searchName);
     const recordClass = await base.findRecordClass(question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
-    let searchConfig: SearchConfig = answerSpec.searchConfig
-    let body: StandardSearchReportRequest = { searchConfig, reportConfig };
+    let searchConfig: SearchConfig = answerSpec.searchConfig;
+    const reportConfigWithResponseBufferingSet: StandardReportConfig = {
+      ...reportConfig,
+      bufferEntireResponse: reportConfig.bufferEntireResponse ?? true,
+    };
+    let body: StandardSearchReportRequest = {
+      searchConfig,
+      reportConfig: reportConfigWithResponseBufferingSet,
+    };
     return base._fetchJson<Answer>('post', url, stringify(body));
   }
 
   async function downloadAnswer(answerRequest: AnswerRequest, target = '_blank') {
-
     let info = await getCustomSearchReportRequestInfo(answerRequest.answerSpec, answerRequest.formatting);
 
     // a submission must trigger a form download, meaning we must POST the form

@@ -359,6 +359,7 @@ export interface StandardReportConfig extends AttributesConfig {
   tables?: string[] | '__ALL_TABLES__';
   attachmentType?: string;
   includeEmptyTables?: boolean;
+  bufferEntireResponse?: boolean;
 }
 
 export interface AttributeSortingSpec {

@@ -27,6 +27,8 @@ import { createWdkStore } from 'wdk-client/Core/Store';
  * Initialize the application.
  *
  * @param {object} options
+ * @param {boolean} [options.requireLogin] If true, users will be required to
+ *   login to use the website 
  * @param {string} options.rootUrl Root URL used by the router. If the current
  *   page's url does not begin with this option's value, the application will
  *   not render automatically.
@@ -53,6 +55,7 @@ import { createWdkStore } from 'wdk-client/Core/Store';
  */
 export function initialize(options) {
   let {
+    requireLogin = false,
     rootUrl,
     rootElement,
     endpoint,
@@ -105,6 +108,7 @@ export function initialize(options) {
     if (container != null) {
       let applicationElement = createElement(
         Root, {
+          requireLogin,
           rootUrl,
           store,
           history,

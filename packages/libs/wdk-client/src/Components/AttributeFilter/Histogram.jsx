@@ -138,6 +138,12 @@ var Histogram = (function() {
       }), { min: Infinity, max: -Infinity });
     }
 
+    isEveryValueAnInteger(distribution) {
+      return distribution.every(
+        ({ value }) => Number.isInteger(value)
+      );
+    }
+
     getDefaultBinSize(props) {
       if (props.chartType === 'date') return 1;
       const { min, max } = this.getRange(props.distribution);
@@ -146,8 +152,9 @@ var Histogram = (function() {
       const padding = (max - min) / 100;
       // Compute number of bins using Sturge's rule
       const numBins = Math.ceil(Math.log2(numVals)) + 1;
-      const binSize = (padding + max - min) / numBins;
-      return binSize || (max - Math.min(0, min)) / 10;
+      const binSize = (padding + max - min) / numBins || (max - Math.min(0, min)) / 10;
+      if (!this.isEveryValueAnInteger(props.distribution)) return binSize;
+      return Math.ceil(binSize);
     }
 
     getXAxisMinMax(props) {

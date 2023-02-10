@@ -1,5 +1,5 @@
 import { capitalize } from 'lodash';
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { wrappable, makeClassNameHelper } from "wdk-client/Utils/ComponentUtils";
 import Modal from "wdk-client/Components/Overlays/Modal";
 import Icon from "wdk-client/Components/Icon/Icon";
@@ -16,11 +16,10 @@ interface Props {
   errors?: UnhandledError[];
   showStackTraces: boolean;
   clearErrors: () => void;
-  children: ReactElement;
 }
 
 function UnhandledErrors(props: Props) {
-  const { children, clearErrors, errors, showStackTraces } = props;
+  const { clearErrors, errors, showStackTraces } = props;
   const errorsToDisplay = Seq.from(errors || [])
     // .orderBy(error => error.type)
     .groupBy(error => error.message)
@@ -35,7 +34,7 @@ function UnhandledErrors(props: Props) {
       </div>
     );
 
-  const modal = errors && errors.length > 0 && (
+  return errors && errors.length > 0 ? (
     <Modal>
       <div className={cx()}>
         <button type="button" onClick={clearErrors}>
@@ -51,14 +50,7 @@ function UnhandledErrors(props: Props) {
         />
       </div>
     </Modal>
-  );
-
-  return (
-    <>
-      {children}
-      {modal}
-    </>
-  );
+  ) : null;
 }
 
 function ErrorDetail(props: { error: unknown, id: string, showStackTraces: boolean, message: string, type: string }) {

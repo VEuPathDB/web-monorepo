@@ -19,7 +19,7 @@ function ServerSideAttributeFilter (props) {
   }
 
   return (
-    <div>
+    <div style={{overflowX: 'auto', marginRight: '1em'}}>
       {hideFilterPanel || <FilterList {...props} /> }
 
       {/* Main selection UI */}
