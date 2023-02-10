@@ -294,38 +294,6 @@ function MosaicViz(props: Props<Options>) {
       if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
-      if (
-        isTwoByTwo &&
-        (!vizConfig.xAxisReferenceValue ||
-          !xAxisReferenceValue ||
-          !vizConfig.yAxisReferenceValue ||
-          !yAxisReferenceValue)
-      )
-        return undefined;
-
-      const params = isTwoByTwo
-        ? getTwoByTwoRequestParams(
-            studyId,
-            filters ?? [],
-            vizConfig.xAxisVariable,
-            vizConfig.yAxisVariable,
-            outputEntity?.id ?? '',
-            // @ts-ignore
-            xAxisReferenceValue,
-            yAxisReferenceValue,
-            vizConfig.facetVariable,
-            vizConfig.showMissingness
-          )
-        : getMosaicRequestParams(
-            studyId,
-            filters ?? [],
-            vizConfig.xAxisVariable,
-            vizConfig.yAxisVariable,
-            outputEntity?.id ?? '',
-            vizConfig.facetVariable,
-            vizConfig.showMissingness
-          );
-
       const xAxisVocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
         xAxisVariable
@@ -340,6 +308,26 @@ function MosaicViz(props: Props<Options>) {
       );
 
       if (isTwoByTwo) {
+        if (
+          !vizConfig.xAxisReferenceValue ||
+          !xAxisReferenceValue ||
+          !vizConfig.yAxisReferenceValue ||
+          !yAxisReferenceValue
+        )
+          return undefined;
+
+        const params = getTwoByTwoRequestParams(
+          studyId,
+          filters ?? [],
+          vizConfig.xAxisVariable,
+          vizConfig.yAxisVariable,
+          outputEntity?.id ?? '',
+          vizConfig.xAxisReferenceValue,
+          vizConfig.yAxisReferenceValue,
+          vizConfig.facetVariable,
+          vizConfig.showMissingness
+        );
+
         const response = dataClient.getTwoByTwo(
           computation.descriptor.type,
           params
@@ -357,6 +345,15 @@ function MosaicViz(props: Props<Options>) {
           vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
         ) as TwoByTwoDataWithCoverage;
       } else {
+        const params = getMosaicRequestParams(
+          studyId,
+          filters ?? [],
+          vizConfig.xAxisVariable,
+          vizConfig.yAxisVariable,
+          outputEntity?.id ?? '',
+          vizConfig.facetVariable,
+          vizConfig.showMissingness
+        );
         const response = dataClient.getContTable(
           computation.descriptor.type,
           params
