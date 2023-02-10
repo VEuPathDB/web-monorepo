@@ -243,6 +243,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
       <div>
         <Tooltip title="Delete visualization">
           <button
+            aria-label={`Delete ${activeViz?.displayName || 'visualization.'}`}
             type="button"
             className="link"
             onClick={() => {
@@ -255,13 +256,16 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
               setActiveVisualizationId(undefined);
             }}
           >
-            <i className="fa fa-trash"></i>
+            <i aria-hidden className="fa fa-trash"></i>
           </button>
         </Tooltip>
       </div>
       <div>
         <Tooltip title="Copy visualization">
           <button
+            aria-label={`Create a copy of ${
+              activeViz?.displayName || 'visualization.'
+            }`}
             type="button"
             className="link"
             onClick={() => {
@@ -279,7 +283,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
               setActiveVisualizationId(vizCopyId);
             }}
           >
-            <i className="fa fa-clone"></i>
+            <i aria-hidden className="fa fa-clone"></i>
           </button>
         </Tooltip>
       </div>
@@ -291,7 +295,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
             setActiveVisualizationId(undefined);
           }}
         >
-          <i className="fa fa-window-minimize" />
+          <i aria-hidden className="fa fa-window-minimize" />
         </Link>
       </Tooltip>
     </>
