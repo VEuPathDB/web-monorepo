@@ -1,8 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 
-import { Core } from 'cytoscape';
+import { Core,use } from 'cytoscape';
 import produce from 'immer';
+import fcose from 'cytoscape-fcose';
 import CytoscapeComponent from 'react-cytoscapejs';
+
+use(fcose);
 
 import { useCytoscapeConfig } from 'ortho-client/hooks/cytoscapeData';
 import {
@@ -55,7 +58,6 @@ export function ClusterGraphCanvas({
   onClickNode
 }: Props) {
   const cyRef = useRef<Core>();
-
   const [ cytoscapeConfig, setCytoscapeConfig ] = useCytoscapeConfig(
     layout,
     corePeripheralMap,
