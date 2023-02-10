@@ -441,30 +441,31 @@ export const LineplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
-export interface MosaicRequestParams {
-  studyId: string;
-  filters: Filter[];
-  config: {
-    outputEntityId: string;
-    xAxisVariable: VariableDescriptor;
-    yAxisVariable: VariableDescriptor;
-    facetVariable: ZeroToTwoVariables;
-    showMissingness?: 'TRUE' | 'FALSE';
-  };
-}
+/** JM: open to suggestsions on DRY'ing up Mosaic v TwoByTwo parameter interfaces */
+type TwoByTwoRequestConfig = {
+  outputEntityId: string;
+  xAxisVariable: VariableDescriptor;
+  yAxisVariable: VariableDescriptor;
+  facetVariable: ZeroToTwoVariables;
+  showMissingness?: 'TRUE' | 'FALSE';
+  xAxisReferenceValue: string;
+  yAxisReferenceValue: string;
+};
+
+type MosaicRequestConfig = Omit<
+  TwoByTwoRequestConfig,
+  'xAxisReferenceValue' | 'yAxisReferenceValue'
+>;
 
 export interface TwoByTwoRequestParams {
   studyId: string;
   filters: Filter[];
-  config: {
-    outputEntityId: string;
-    xAxisVariable: VariableDescriptor;
-    yAxisVariable: VariableDescriptor;
-    facetVariable: ZeroToTwoVariables;
-    showMissingness?: 'TRUE' | 'FALSE';
-    xAxisReferenceValue: string;
-    yAxisReferenceValue: string;
-  };
+  config: TwoByTwoRequestConfig;
+}
+
+export interface MosaicRequestParams
+  extends Omit<TwoByTwoRequestParams, 'config'> {
+  config: MosaicRequestConfig;
 }
 
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
