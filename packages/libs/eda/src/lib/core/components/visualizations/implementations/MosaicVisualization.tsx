@@ -316,16 +316,16 @@ function MosaicViz(props: Props<Options>) {
         )
           return undefined;
 
-        const params = getTwoByTwoRequestParams(
+        const params = getRequestParams(
           studyId,
           filters ?? [],
           vizConfig.xAxisVariable,
           vizConfig.yAxisVariable,
           outputEntity?.id ?? '',
-          vizConfig.xAxisReferenceValue,
-          vizConfig.yAxisReferenceValue,
           vizConfig.facetVariable,
-          vizConfig.showMissingness
+          vizConfig.showMissingness,
+          vizConfig.xAxisReferenceValue,
+          vizConfig.yAxisReferenceValue
         );
 
         const response = dataClient.getTwoByTwo(
@@ -345,7 +345,7 @@ function MosaicViz(props: Props<Options>) {
           vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
         ) as TwoByTwoDataWithCoverage;
       } else {
-        const params = getMosaicRequestParams(
+        const params = getRequestParams(
           studyId,
           filters ?? [],
           vizConfig.xAxisVariable,
@@ -588,108 +588,116 @@ function MosaicViz(props: Props<Options>) {
   const areQuadrantSelectionsDisabled =
     !xAxisVariable?.vocabulary || !yAxisVariable?.vocabulary;
 
-  const twoByTwoQuadrantStyle: React.CSSProperties = {
-    ...twoBytwoInputStyle,
-    pointerEvents: areQuadrantSelectionsDisabled ? 'none' : undefined,
-    opacity: areQuadrantSelectionsDisabled ? 0.5 : 1,
-  };
+  const twoByTwoQuadrantStyle: React.CSSProperties | undefined = !isTwoByTwo
+    ? undefined
+    : {
+        ...twoBytwoInputStyle,
+        pointerEvents: areQuadrantSelectionsDisabled ? 'none' : undefined,
+        opacity: areQuadrantSelectionsDisabled ? 0.5 : 1,
+      };
 
-  const twoByTwoParams = [
-    {
-      title: (
-        <>
-          <span style={{ marginRight: '0.5em' }}>
-            2x2 table quadrant A values
-          </span>
-        </>
-      ),
-      order: 75,
-      content: (
-        <>
-          <div style={twoByTwoQuadrantStyle}>
-            <Tooltip css={{}} title={'Required parameter'}>
-              <span
-                className={classes.label}
-                style={
-                  !xAxisReferenceValue && !areQuadrantSelectionsDisabled
-                    ? requiredInputLabelStyle
-                    : { cursor: 'default' }
-                }
-              >
-                Columns (X-axis)<sup>*</sup>
+  const twoByTwoParams = !isTwoByTwo
+    ? undefined
+    : [
+        {
+          title: (
+            <>
+              <span style={{ marginRight: '0.5em' }}>
+                2x2 table quadrant A values
               </span>
-            </Tooltip>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'nowrap',
-                alignItems: 'center',
-              }}
-            >
-              <SingleSelect
-                items={
-                  xAxisVariable?.vocabulary
-                    ? xAxisVariable?.vocabulary?.map((vocab) => ({
-                        display: vocab,
-                        value: vocab,
-                      }))
-                    : []
-                }
-                value={xAxisReferenceValue}
-                onSelect={onXAxisReferenceValueChange}
-                buttonDisplayContent={xAxisReferenceValue ?? 'Select a value'}
-              />
-              <ClearSelectionButton
-                onClick={() => onXAxisReferenceValueChange(undefined)}
-                disabled={!xAxisReferenceValue}
-                style={{ marginLeft: '0.5em' }}
-              />
-            </div>
-          </div>
-          <div style={twoByTwoQuadrantStyle}>
-            <Tooltip css={{}} title={'Required parameter'}>
-              <span
-                className={classes.label}
-                style={
-                  !yAxisReferenceValue && !areQuadrantSelectionsDisabled
-                    ? requiredInputLabelStyle
-                    : { cursor: 'default' }
-                }
-              >
-                Rows (Y-axis)<sup>*</sup>
-              </span>
-            </Tooltip>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'nowrap',
-                alignItems: 'center',
-              }}
-            >
-              <SingleSelect
-                items={
-                  yAxisVariable?.vocabulary
-                    ? yAxisVariable?.vocabulary?.map((vocab) => ({
-                        display: vocab,
-                        value: vocab,
-                      }))
-                    : []
-                }
-                value={yAxisReferenceValue}
-                onSelect={onYAxisReferenceValueChange}
-                buttonDisplayContent={yAxisReferenceValue ?? 'Select a value'}
-              />
-              <ClearSelectionButton
-                onClick={() => onYAxisReferenceValueChange(undefined)}
-                disabled={!yAxisReferenceValue}
-                style={{ marginLeft: '0.5em' }}
-              />
-            </div>
-          </div>
-        </>
-      ),
-    },
-  ];
+            </>
+          ),
+          order: 75,
+          content: (
+            <>
+              <div style={twoByTwoQuadrantStyle}>
+                <Tooltip css={{}} title={'Required parameter'}>
+                  <span
+                    className={classes.label}
+                    style={
+                      !xAxisReferenceValue && !areQuadrantSelectionsDisabled
+                        ? requiredInputLabelStyle
+                        : { cursor: 'default' }
+                    }
+                  >
+                    Columns (X-axis)<sup>*</sup>
+                  </span>
+                </Tooltip>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                  }}
+                >
+                  <SingleSelect
+                    items={
+                      xAxisVariable?.vocabulary
+                        ? xAxisVariable?.vocabulary?.map((vocab) => ({
+                            display: vocab,
+                            value: vocab,
+                          }))
+                        : []
+                    }
+                    value={xAxisReferenceValue}
+                    onSelect={onXAxisReferenceValueChange}
+                    buttonDisplayContent={
+                      xAxisReferenceValue ?? 'Select a value'
+                    }
+                  />
+                  <ClearSelectionButton
+                    onClick={() => onXAxisReferenceValueChange(undefined)}
+                    disabled={!xAxisReferenceValue}
+                    style={{ marginLeft: '0.5em' }}
+                  />
+                </div>
+              </div>
+              <div style={twoByTwoQuadrantStyle}>
+                <Tooltip css={{}} title={'Required parameter'}>
+                  <span
+                    className={classes.label}
+                    style={
+                      !yAxisReferenceValue && !areQuadrantSelectionsDisabled
+                        ? requiredInputLabelStyle
+                        : { cursor: 'default' }
+                    }
+                  >
+                    Rows (Y-axis)<sup>*</sup>
+                  </span>
+                </Tooltip>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                  }}
+                >
+                  <SingleSelect
+                    items={
+                      yAxisVariable?.vocabulary
+                        ? yAxisVariable?.vocabulary?.map((vocab) => ({
+                            display: vocab,
+                            value: vocab,
+                          }))
+                        : []
+                    }
+                    value={yAxisReferenceValue}
+                    onSelect={onYAxisReferenceValueChange}
+                    buttonDisplayContent={
+                      yAxisReferenceValue ?? 'Select a value'
+                    }
+                  />
+                  <ClearSelectionButton
+                    onClick={() => onYAxisReferenceValueChange(undefined)}
+                    disabled={!yAxisReferenceValue}
+                    style={{ marginLeft: '0.5em' }}
+                  />
+                </div>
+              </div>
+            </>
+          ),
+        },
+      ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1041,42 +1049,18 @@ export function twoByTwoResponseToData(
   } as TwoByTwoDataWithCoverage;
 }
 
-function getMosaicRequestParams(
+function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   outputEntityId: string,
   facetVariable?: VariableDescriptor,
-  showMissingness?: boolean
-): MosaicRequestParams {
-  return {
-    studyId,
-    filters,
-    config: {
-      // add outputEntityId
-      outputEntityId: outputEntityId,
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness:
-        facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
-    },
-  };
-}
-
-function getTwoByTwoRequestParams(
-  studyId: string,
-  filters: Filter[],
-  xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor,
-  outputEntityId: string,
-  xAxisReferenceValue: string,
-  yAxisReferenceValue: string,
-  facetVariable?: VariableDescriptor,
-  showMissingness?: boolean
-): TwoByTwoRequestParams {
-  return {
+  showMissingness?: boolean,
+  xAxisReferenceValue?: string,
+  yAxisReferenceValue?: string
+): MosaicRequestParams | TwoByTwoRequestParams {
+  const baseConfig = {
     studyId,
     filters,
     config: {
@@ -1085,12 +1069,22 @@ function getTwoByTwoRequestParams(
       xAxisVariable,
       yAxisVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
-      xAxisReferenceValue,
-      yAxisReferenceValue,
       showMissingness:
         facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
     },
   };
+  if (!xAxisReferenceValue || !yAxisReferenceValue) {
+    return baseConfig as MosaicRequestParams;
+  } else {
+    return {
+      ...baseConfig,
+      config: {
+        ...baseConfig.config,
+        xAxisReferenceValue,
+        yAxisReferenceValue,
+      },
+    } as TwoByTwoRequestParams;
+  }
 }
 
 function reorderData(
