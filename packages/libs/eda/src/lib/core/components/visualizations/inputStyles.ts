@@ -7,17 +7,16 @@ export const useInputStyles = makeStyles({
     // perhaps after the Material UI capitalization is removed.
     marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
     alignItems: 'flex-start',
-    columnGap: '1em',
+    columnGap: '5em',
   },
   inputGroup: {
     display: 'flex',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
   },
   input: {
     display: 'flex',
     alignItems: 'center',
     marginBottom: '0.5em', // in case they end up stacked vertically on a narrow screen
-    marginRight: '2em',
   },
   label: {
     marginRight: '1ex',
@@ -33,7 +32,7 @@ export const useInputStyles = makeStyles({
     flexBasis: '100%',
   },
   showMissingness: {
-    height: '32px', // this is the height of the neighbouring input variable selector (20 + 2*6px padding)
+    minHeight: '32px', // this is the height of the neighbouring input variable selector (20 + 2*6px padding)
     display: 'flex',
     alignItems: 'center',
   },

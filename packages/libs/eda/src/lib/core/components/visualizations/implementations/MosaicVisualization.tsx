@@ -31,7 +31,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables, requiredInputStyle } from '../InputVariables';
+import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
@@ -615,7 +615,7 @@ function MosaicViz(props: Props<Options>) {
                 className={classes.label}
                 style={
                   !xAxisReferenceValue && !areQuadrantSelectionsDisabled
-                    ? { ...requiredInputStyle, cursor: 'default' }
+                    ? requiredInputLabelStyle
                     : { cursor: 'default' }
                 }
               >
@@ -655,7 +655,7 @@ function MosaicViz(props: Props<Options>) {
                 className={classes.label}
                 style={
                   !yAxisReferenceValue && !areQuadrantSelectionsDisabled
-                    ? { ...requiredInputStyle, cursor: 'default' }
+                    ? requiredInputLabelStyle
                     : { cursor: 'default' }
                 }
               >

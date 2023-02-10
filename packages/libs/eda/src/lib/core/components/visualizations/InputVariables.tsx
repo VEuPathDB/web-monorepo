@@ -72,8 +72,15 @@ const sectionInfo: Record<string, SectionSpec> = {
   },
 };
 
-export const requiredInputStyle = {
+export const requiredInputLabelStyle = {
   color: '#dd314e',
+  cursor: 'default',
+};
+
+// ensures labels are stacked nicely based on the width of the longer string, "Overlay"
+const multipleStratificationVariableLabelStyle = {
+  width: '45px',
+  cursor: 'default',
 };
 
 interface CustomSectionSpec extends SectionSpec {
@@ -194,6 +201,9 @@ export function InputVariables(props: Props) {
     ]
   );
 
+  const hasMultipleStratificationValues =
+    inputs.filter((input) => input.role === 'stratification').length > 1;
+
   return (
     <div className={classes.inputs}>
       {[undefined, 'twoByTwoAxis', 'axis', 'stratification'].map(
@@ -241,7 +251,10 @@ export function InputVariables(props: Props) {
                           constraints.length &&
                           constraints[0][input.name]?.isRequired &&
                           !selectedVariables[input.name]
-                            ? requiredInputStyle
+                            ? requiredInputLabelStyle
+                            : input.role === 'stratification' &&
+                              hasMultipleStratificationValues
+                            ? multipleStratificationVariableLabelStyle
                             : { cursor: 'default' }
                         }
                       >
