@@ -23,6 +23,7 @@ interface Props {
   setFilters: (filters: Filter[]) => void;
   // A function to remove a given filter
   removeFilter: (filter: Filter) => void;
+  // Determines if we render a link or a button.
   variableLinkConfig: VariableLinkConfig;
 }
 
