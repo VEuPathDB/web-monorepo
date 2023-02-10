@@ -1,6 +1,6 @@
 import React from 'react';
 import { RadioList, CheckboxList, SingleSelect, TextBox, Checkbox, NumberSelector } from '@veupathdb/wdk-client/lib/Components';
-import { FeaturesList, ComponentsList } from './SequenceFormElements';
+import { FeaturesList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import SrtHelp from '../SrtHelp';
@@ -13,7 +13,7 @@ import createSequenceForm from './SequenceFormFactory';
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
 let splicedGenomicOptions = [
-  { value: 'cds', display: 'CDS'},
+  { value: 'cds', display: 'Coding Sequence'},
   { value: 'transcript', display: 'Transcript'},
 ];
 
@@ -24,12 +24,15 @@ let proteinFeatureOptions = [
   { value: 'low_complexity', display: 'Low Complexity Regions' }
 ];
 
-let geneComponentOptions = [
-  { value: 'five_prime_utr', display: '5\' UTR' },
-  { value: 'three_prime_utr', display: '3\' UTR' },
+let dnaComponentOptions = [
   { value: 'exon', display: 'Exon' },
-  { value: 'cds', display: 'CDS' },
   { value: 'intron', display: 'Intron' },
+];
+
+let transcriptComponentOptions = [
+  { value: 'five_prime_utr', display: '5\' UTR' },
+  { value: 'cds', display: 'CDS' },
+  { value: 'three_prime_utr', display: '3\' UTR' },
 ];
 
 let genomicAnchorValues = [
@@ -142,8 +145,10 @@ let formBeforeCommonOptions = props => {
         return <GenomicSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>;
       case 'spliced_genomic':
         return <FeaturesList field="splicedGenomic" features={splicedGenomicOptions} formState={formState} getUpdateHandler={getUpdateHandler} />;
-      case 'gene_components':
-        return <ComponentsList field="geneComponents" features={geneComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />;
+      case 'dna_component':
+        return <FeaturesList field="dnaComponent" features={dnaComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />;
+      case 'transcript_component':
+        return <FeaturesList field="transcriptComponent" features={transcriptComponentOptions} formState={formState} getUpdateHandler={getUpdateHandler} />;
       case 'protein':
         return <ProteinSequenceRegionInputs formState={formState} getUpdateHandler={getUpdateHandler}/>;
       case 'protein_features':
@@ -158,7 +163,8 @@ let formBeforeCommonOptions = props => {
           onChange={typeUpdateHandler} items={[
             { value: 'genomic', display: 'Unspliced Genomic Sequence' },
             { value: 'spliced_genomic', display: 'Spliced Genomic Sequence' },
-            { value: 'gene_components', display: 'Gene Components' },
+            { value: 'dna_component', display: 'DNA Component' },
+            { value: 'transcript_component', display: 'Transcript Component' },
             { value: 'protein', display: 'Protein Sequence' },
             { value: 'protein_features', display: 'Protein Features' },
           ]}
@@ -204,7 +210,8 @@ let getFormInitialState = () => ({
   endAnchor3: proteinAnchorValues[1].value,
   endOffset3: 0,
 
-  geneComponents: geneComponentOptions.map((x) => x.value),
+  dnaComponent: dnaComponentOptions[0].value,
+  transcriptComponent: transcriptComponentOptions[0].value,
   proteinFeature: proteinFeatureOptions[0].value,
   splicedGenomic: splicedGenomicOptions[0].value,
 });
