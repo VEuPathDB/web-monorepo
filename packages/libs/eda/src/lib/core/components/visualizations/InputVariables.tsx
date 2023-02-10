@@ -56,7 +56,7 @@ const sectionInfo: Record<string, SectionSpec> = {
   },
   twoByTwoAxis: {
     /** Duplicating order: 50 because
-     * A) I don't forsee a scenario wherein we'd render twoByTwoAxis and axis
+     * A) I don't foresee a scenario wherein we'd render twoByTwoAxis and axis
      * B) I don't wish to interfere with existing order values in custom sections
      */
     order: 50,

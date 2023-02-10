@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
 import * as t from 'io-ts';
-import _, { isEqual } from 'lodash';
+import _ from 'lodash';
 import DataClient, {
   ContTableResponse,
   MosaicRequestParams,
@@ -203,12 +203,22 @@ function MosaicViz(props: Props<Options>) {
         xAxisVariable,
         yAxisVariable,
         facetVariable,
-        xAxisReferenceValue: isEqual(xAxisVariable, vizConfig.xAxisVariable)
-          ? xAxisReferenceValue
-          : undefined,
-        yAxisReferenceValue: isEqual(yAxisVariable, vizConfig.yAxisVariable)
-          ? yAxisReferenceValue
-          : undefined,
+        ...(isTwoByTwo
+          ? {
+              xAxisReferenceValue: _.isEqual(
+                xAxisVariable,
+                vizConfig.xAxisVariable
+              )
+                ? xAxisReferenceValue
+                : undefined,
+              yAxisReferenceValue: _.isEqual(
+                yAxisVariable,
+                vizConfig.yAxisVariable
+              )
+                ? yAxisReferenceValue
+                : undefined,
+            }
+          : {}),
       });
     },
     [updateVizConfig]
@@ -263,14 +273,24 @@ function MosaicViz(props: Props<Options>) {
   ]);
 
   const xAxisReferenceValue = useMemo(() => {
-    if (!xAxisVariable || !vizConfig.xAxisVariable) return;
+    if (!isTwoByTwo || !xAxisVariable || !vizConfig.xAxisVariable) return;
     return vizConfig.xAxisReferenceValue;
-  }, [xAxisVariable, vizConfig.xAxisVariable, vizConfig.xAxisReferenceValue]);
+  }, [
+    isTwoByTwo,
+    xAxisVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.xAxisReferenceValue,
+  ]);
 
   const yAxisReferenceValue = useMemo(() => {
-    if (!yAxisVariable || !vizConfig.yAxisVariable) return;
+    if (!isTwoByTwo || !yAxisVariable || !vizConfig.yAxisVariable) return;
     return vizConfig.yAxisReferenceValue;
-  }, [yAxisVariable, vizConfig.yAxisVariable, vizConfig.yAxisReferenceValue]);
+  }, [
+    isTwoByTwo,
+    yAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.yAxisReferenceValue,
+  ]);
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
@@ -585,9 +605,16 @@ function MosaicViz(props: Props<Options>) {
 
   const classes = useInputStyles();
 
+  /**
+   * Disabled because reference value selection options are based on the variable's vocabulary
+   * */
   const areQuadrantSelectionsDisabled =
     !xAxisVariable?.vocabulary || !yAxisVariable?.vocabulary;
 
+  /**
+   * TEMPORARY: would be better to upgrade CoreUI's SingleSelect (and other selectors) to enable disabling
+   * By using pointerEvents: 'none', we lose the ability to convey messages via tooltips and cursors
+   * */
   const twoByTwoQuadrantStyle: React.CSSProperties | undefined = !isTwoByTwo
     ? undefined
     : {
@@ -596,7 +623,7 @@ function MosaicViz(props: Props<Options>) {
         opacity: areQuadrantSelectionsDisabled ? 0.5 : 1,
       };
 
-  const twoByTwoParams = !isTwoByTwo
+  const twoByTwoReferenceValueInputs = !isTwoByTwo
     ? undefined
     : [
         {
@@ -724,7 +751,7 @@ function MosaicViz(props: Props<Options>) {
                   } as const,
                 ]),
           ]}
-          customSections={isTwoByTwo ? twoByTwoParams : undefined}
+          customSections={isTwoByTwo ? twoByTwoReferenceValueInputs : undefined}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
