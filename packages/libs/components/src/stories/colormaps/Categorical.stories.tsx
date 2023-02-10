@@ -47,7 +47,6 @@ const Template: Story<TemplateProps> = (args) => {
     false,
     ColorPaletteDefault
   );
-  console.log(datasetProcessCategorical);
 
   // Reduce the input data to only approximately nPoints points. There will be multiple series so we have to
   // slice each series at nPoints/nSeries.

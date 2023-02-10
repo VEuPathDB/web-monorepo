@@ -138,15 +138,6 @@ dataSetDivergingDiscrete.scatterplot.data[0].seriesGradientColorscale?.forEach(
 );
 
 let legendItems = vocabularyEquidistant.map((label) => {
-  console.log(
-    rgb(
-      lab(
-        gradientDivergingColorscaleMap(
-          +label / max(vocabularyEquidistant.map(Number))!
-        )
-      ).darker()
-    )
-  );
   return {
     label,
     marker: 'square',
