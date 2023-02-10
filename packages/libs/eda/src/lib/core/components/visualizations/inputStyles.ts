@@ -3,8 +3,7 @@ import { makeStyles } from '@material-ui/core';
 export const useInputStyles = makeStyles({
   inputs: {
     display: 'flex',
-    flexWrap: 'nowrap', // if it didn't wrap so aggressively, it would be good to allow wrapping
-    // perhaps after the Material UI capitalization is removed.
+    flexWrap: 'wrap',
     marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
     alignItems: 'flex-start',
     columnGap: '5em',
