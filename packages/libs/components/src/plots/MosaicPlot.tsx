@@ -209,7 +209,7 @@ const MosaicPlot = makePlotlyPlotComponent(
         itemclick: false,
         itemdoubleclick: false,
       },
-      hovermode: 'x',
+      hovermode: 'x unified',
       shapes: showColumnLabels != false && [
         ...column_centers.flatMap((column_center, index) => {
           // Make elbow pointer
@@ -286,7 +286,7 @@ const MosaicPlot = makePlotlyPlotComponent(
                 `<b>${data.dependentLabels[i]}</b> (${(
                   (count / raw_widths[j]) *
                   100
-                ).toFixed(1)}%)`
+                ).toFixed(1)}%)` + ` - <b>${data.independentLabels[j]}</b>`
             ),
             width: percent_widths,
             type: 'bar',
