@@ -7,6 +7,7 @@ export const useInputStyles = makeStyles({
     marginLeft: '0.5em', // this indent is only needed because the wdk-SaveableTextEditor above it is indented
     alignItems: 'flex-start',
     columnGap: '5em',
+    rowGap: '1em',
   },
   inputGroup: {
     display: 'flex',

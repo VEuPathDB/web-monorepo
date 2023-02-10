@@ -441,7 +441,7 @@ export const LineplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
-/** JM: open to suggestsions on DRY'ing up Mosaic v TwoByTwo parameter interfaces */
+/** JM: open to suggestions on DRY'ing up Mosaic v TwoByTwo parameter interfaces */
 type TwoByTwoRequestConfig = {
   outputEntityId: string;
   xAxisVariable: VariableDescriptor;
