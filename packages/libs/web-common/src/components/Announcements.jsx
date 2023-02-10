@@ -82,8 +82,9 @@ const siteAnnouncements = [
     if ( (props.projectId == 'MicrobiomeDB') && (props.location.pathname === '/') ) {
         return (
           <div>
-           Welcome to MicrobiomeDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
-           &nbsp;&nbsp;Access the original version of our website, including your saved strategies, at <a href="https://microbiomedb.org">microbiomedbdb.org</a>.
+           Welcome to the BETA version of MicrobiomeDB with the new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
+           &nbsp;&nbsp;While we resolve bugs on the BETA site, you can access the original version of our website, 
+           including your saved strategies, at <a href="https://microbiomedb.org">microbiomedbdb.org</a>.
           </div>
         );
       }
@@ -92,9 +93,9 @@ const siteAnnouncements = [
   },
 
 {  
-    id: 'clinepi-beta',
+    id: 'clinepiEDA',
     renderDisplay: (props) => {
-    if ( (props.projectId == 'ClinEpiDB' || props.projectId == 'AllClinEpiDB') && (props.location.pathname === '/') ) {
+    if ( (props.projectId == 'ClinEpiDB') && (props.location.pathname === '/') ) {
         return (
           <div>
            Welcome to ClinEpiDB’s new and improved <span style={{fontWeight: 'bold', fontStyle: 'italic'}}>data exploration platform!</span>
@@ -131,7 +132,6 @@ const siteAnnouncements = [
   {
     id: 'beta-genomics',
     renderDisplay: props => {
-      // We want this on all genomic home pages running this code
       if ( isGenomicHomePage(props.projectId, props.location) ) return (
         <div key="beta">
           {props.displayName} <em>beta</em> is available for early community review!
@@ -184,7 +184,7 @@ const siteAnnouncements = [
         return (
           <div key="blast-beta">
             Would you like to submit multiple sequences in a single BLAST search?{' '}
-            Try our <Link to="/workspace/blast/new">new beta release of BLAST</Link>{' '}
+            Use our <Link to="/workspace/blast/new">new BLAST</Link>{' '}
             and <Link to="/contact-us" target="_blank">let us know what you think</Link>.
           </div>
         );
@@ -215,10 +215,34 @@ const siteAnnouncements = [
     }
   },
 */
+ // RNASeq issue in certain datasets Jan 2023
+ {
+    id: 'rnaseqBug',
+    renderDisplay: props => {
+      if ( isGenomeBrowser(props.location) &&
+           (props.projectId == 'AmoebaDB' || 
+            props.projectId == 'CryptoDB' ||
+            props.projectId == 'FungiDB' ||
+            props.projectId == 'PiroplasmaDB' ||
+            props.projectId == 'PlasmoDB' ||
+            props.projectId == 'ToxoDB' || 
+            props.projectId == 'VectorBase' || 
+            props.projectId == 'HostDB')
+         )
+      {
+        return (
+          <div>
+            We discovered a bug that affects RNA-Seq coverage plots in JBrowse for a number of datasets. This bug only affects the coverage representation in JBrowse. It does not affect queries, plots and splice junction analyses. For affected datasets, it will appear that coverage in introns is similar to coverage in exons. We are working on fixing this as soon as possible.
+          </div>
+        );
+      }
+      return null;
+    }
+  },
 
   // TriTryp gene page for Bodo saltans strain Lake Konstanz
   {
-    id: 'geneFungi',
+    id: 'bodo',
     renderDisplay: props => { 
       if ( (props.projectId == 'TriTrypDB') && 
            ( (props.location.pathname.indexOf("/record/gene/BS") > -1)    ||
@@ -450,6 +474,9 @@ function isBetaSite() {
 }
 function isGalaxy(routerLocation) {
   return routerLocation.pathname.startsWith('/galaxy-orientation');
+}
+function isGenomeBrowser(routerLocation) {
+  return routerLocation.pathname.startsWith('/jbrowse');
 }
 function isApollo(routerLocation) {
   return routerLocation.pathname.startsWith('/static-content/apollo');

@@ -191,7 +191,6 @@ let FastaGeneReporterForm = props => {
 FastaGeneReporterForm.getInitialState = () => ({
   formState: {
     attachmentType: 'plain',
-    endOffset3: 0,
     type: 'genomic',
     sourceIdFilter: defaultSourceIdFilterValue,
 

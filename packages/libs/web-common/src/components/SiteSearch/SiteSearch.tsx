@@ -43,6 +43,7 @@ interface Props {
   onFiltersChange: (filters: string[]) => void;
   onOrganismsChange: (organisms: string[]) => void;
   onClearFilters: () => void;
+  referenceStrains?: Set<string>;
 }
 
 const cx = makeClassNameHelper('SiteSearch');
@@ -150,7 +151,7 @@ function ResultInfo(props: Props) {
 }
 
 function SearchCounts(props: Props) {
-  const { searchString, response, documentType, hideDocumentTypeClearButton, offerOrganismFilter, organismTree, filterOrganisms, preferredOrganismsEnabled = false, onOrganismsChange, onDocumentTypeChange } = props;
+  const { searchString, response, documentType, hideDocumentTypeClearButton, offerOrganismFilter, organismTree, filterOrganisms, preferredOrganismsEnabled = false, onOrganismsChange, onDocumentTypeChange, referenceStrains } = props;
   const { categories, documentTypes, organismCounts } = response || {};
   const [ onlyShowMatches, setOnlyShowMatches ] = useState(true);
   const docTypesById = useMemo(() => keyBy(documentTypes, 'id'), [ documentTypes ]);
@@ -225,20 +226,22 @@ function SearchCounts(props: Props) {
           onOrganismsChange={onOrganismsChange}
           searchString={searchString}
           onlyShowMatches={onlyShowMatches}
+          referenceStrains={referenceStrains}
         />
       )}
     </div>
   )
 }
 
-function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrganisms' | 'preferredOrganismsEnabled' | 'onOrganismsChange' | 'response' | 'searchString'>> & { onlyShowMatches: boolean }) {
-  const { organismTree, filterOrganisms, preferredOrganismsEnabled, onOrganismsChange, response, searchString, onlyShowMatches } = props;
+function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrganisms' | 'preferredOrganismsEnabled' | 'onOrganismsChange' | 'response' | 'searchString' >> & Pick<Props, 'referenceStrains'> & { onlyShowMatches: boolean }) {
+  const { organismTree, filterOrganisms, preferredOrganismsEnabled, onOrganismsChange, response, searchString, onlyShowMatches, referenceStrains } = props;
   const initialExpandedNodes = useMemo(() => organismTree.children.length === 1 ? organismTree.children.map(node => node.data.term) : [], [ organismTree ]);
   const [ expansion, setExpansion ] = useState<string[]>(initialExpandedNodes);
   const [ selection, setSelection ] = useState<string[]>(filterOrganisms);
   const [ filterTerm, setFilterTerm ] = useState<string>('');
   const pendingFilter = !isEqual(selection, filterOrganisms);
   const renderNode = useCallback((node: TreeBoxVocabNode) => {
+    const organismName = getNodeId(node);
     const count = node.children.length === 0
       ? response.organismCounts[node.data.term] ?? 0
       : getLeaves(node, node => node.children)
@@ -246,7 +249,11 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         .reduce(add, 0);
     return (
       <div className={cx('--OrganismFilterNode')}>
-        <div>{node.data.display}</div>
+        <div>{node.data.display}{' '}
+        {referenceStrains?.has(organismName) && (
+          <span><strong>[Reference]</strong></span>
+        )}
+        </div>
         <div>{count.toLocaleString()}</div>
       </div>
     )
@@ -254,7 +261,10 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
   const getNodeId = useCallback((node: TreeBoxVocabNode) => node.data.term, []);
   const getNodeChildren = useCallback((node: TreeBoxVocabNode) => node.children, []);
   const searchPredicate = useCallback((node: TreeBoxVocabNode, searchTerms: string[]) => {
-    return areTermsInString(searchTerms, node.data.display);
+    const organismName = getNodeId(node);
+    const display = referenceStrains?.has(organismName) ? 
+      node.data.display + ' [Reference]' : node.data.display;
+    return areTermsInString(searchTerms, display);
   }, []);
   const showResetButton = filterOrganisms.length > 0;
   const showApplyCancelButtons = pendingFilter;

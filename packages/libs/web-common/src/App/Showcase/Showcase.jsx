@@ -5,7 +5,7 @@ import CardList from './CardList';
 import './Showcase.scss';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { AnalysisClient } from '@veupathdb/eda/lib/core/api/analysis-api';
+import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
 import { edaServiceUrl } from 'ebrc-client/config';
 
 export default function Showcase(props) {

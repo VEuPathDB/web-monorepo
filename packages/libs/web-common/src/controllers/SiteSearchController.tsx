@@ -19,12 +19,14 @@ interface Props {
   offerOrganismFilter?: boolean;
   preferredOrganisms?: string[];
   preferredOrganismsEnabled?: boolean;
+  referenceStrains?: Set<string>
 }
 
 export default function SiteSearchController({
   offerOrganismFilter = true,
   preferredOrganisms,
-  preferredOrganismsEnabled
+  preferredOrganismsEnabled,
+  referenceStrains
 }: Props) {
   const [ params, updateParams ] = useQueryParams(
     SEARCH_TERM_PARAM,
@@ -201,6 +203,7 @@ export default function SiteSearchController({
       offerOrganismFilter={offerOrganismFilter}
       onSearch={setSearchString}
       onPageOffsetChange={setOffset}
+      referenceStrains={referenceStrains}
     />
   )
 }
