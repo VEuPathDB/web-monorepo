@@ -16,7 +16,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@types/cytoscape": "3.2.9",
     "@veupathdb/blast-summary-view": "^0.1.0",
-    "@veupathdb/components": "^0.19.17",
+    "@veupathdb/components": "^0.19.18",
     "@veupathdb/coreui": "^0.18.18",
     "@veupathdb/eda": "^3.15.7",
     "@veupathdb/http-utils": "^1.1.0",

@@ -2241,10 +2241,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.17":
-  version "0.19.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.17.tgz#82f6bf86fa4817062c1b97372954eac2cc630ee8"
-  integrity sha512-grFUE69YbBMSaLMAT05PmnorULxnte8aAsqIZfbuiHFTiC8Ylya4LJWI2c5wOlTwN50G9PbRrzAAO9gS7qFAYQ==
+"@veupathdb/components@^0.19.18":
+  version "0.19.18"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.18.tgz#c1f5ed76783cca6bf910c6b1025c9ad014285619"
+  integrity sha512-fBZBUi1wAEHtR74/lJ95eMhfWuRFgZ0mti/YqEm3omsIXuI5mpX4YyJA3zVlWJtg26B976/Po6hz+kAAWCdTcQ==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.46.0"
     "@typescript-eslint/parser" "^5.46.0"
@@ -2399,10 +2399,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.7.12":
-  version "0.7.12"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.12.tgz#777b35ef694f13ff43c48c5d9f2b1c0cd0e0e275"
-  integrity sha512-PrQD2itZGXyk3lk9DNLm+T3xaIZG0ccRB+SX/0ouT0mh16HntgpBpsz0Xr4Ynp+bZyLRjcNBoXIZcoSN8BSQEg==
+"@veupathdb/web-common@^0.7.13":
+  version "0.7.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.7.13.tgz#bc83ea6f5b84e3c1cb736ef57e8e3378da0fab25"
+  integrity sha512-4rYnF5LmdBf6lcUXaKPm6ZM+UT3bYbIMXgs585yVzVFD4hBqutmcXjOuIDKYkB/WGuf3J4a2kVxNFE6l3NR9JA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
