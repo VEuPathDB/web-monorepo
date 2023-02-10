@@ -1,10 +1,10 @@
 import FilterChip from './FilterChip';
 import { StudyEntity } from '..';
-import { VariableLink } from './VariableLink';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
 import { findEntityAndVariable } from '../utils/study-metadata';
 import { ReactNode, Fragment } from 'react';
+import { VariableLink, VariableLinkConfig } from './VariableLink';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -24,6 +24,7 @@ interface Props {
   selectedEntityId?: string;
   selectedVariableId?: string;
   removeFilter: (filter: Filter) => void;
+  variableLinkConfig: VariableLinkConfig;
 }
 
 /**
@@ -32,7 +33,13 @@ interface Props {
  */
 export default function FilterChipList(props: Props) {
   const classes = useStyles();
-  const { filters, removeFilter, selectedEntityId, selectedVariableId } = props;
+  const {
+    filters,
+    removeFilter,
+    selectedEntityId,
+    selectedVariableId,
+    variableLinkConfig,
+  } = props;
 
   if (filters) {
     return (
@@ -113,6 +120,7 @@ export default function FilterChipList(props: Props) {
                   entityId={entity.id}
                   variableId={variable.id}
                   replace={true}
+                  linkConfig={variableLinkConfig}
                 >
                   {variable.displayName}
                 </VariableLink>
