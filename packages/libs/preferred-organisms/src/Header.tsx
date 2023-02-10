@@ -6,6 +6,7 @@ export default function Header() {
   return (
     <header>
       <h1 style={{ background: 'black', color: 'whitesmoke' }}>
+        {/* eslint-disable-next-line */}
         <code>/// ========================== \\\</code>
         <br />
         <code>||| VEUPATHDB DEVELOPMENT SITE |||</code>
