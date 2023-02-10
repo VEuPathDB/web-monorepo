@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { Grow } from '@material-ui/core';
+import { Grow } from "@material-ui/core";
 import {
   OptionsObject,
   ProviderContext,
   SnackbarMessage,
-  useSnackbar as useNotistackSnackbar
-} from 'notistack';
+  useSnackbar as useNotistackSnackbar,
+} from "notistack";
 
-import DismissButton from './DismissButton';
+import DismissButton from "./DismissButton";
 
 /**
  * A wrapping of notistack's (https://www.iamhosseindhv.com/notistack)
@@ -22,33 +22,32 @@ import DismissButton from './DismissButton';
  * which applies our standard styling.)
  */
 export default function useSnackbar(): ProviderContext {
-  const {
-    enqueueSnackbar,
-    closeSnackbar,
-  } = useNotistackSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useNotistackSnackbar();
 
-  return useMemo(() => ({
-    enqueueSnackbar(message: SnackbarMessage, options?: OptionsObject) {
-      return enqueueSnackbar(
-        message,
-        {
-          variant: 'info',
+  return useMemo(
+    () => ({
+      enqueueSnackbar(message: SnackbarMessage, options?: OptionsObject) {
+        return enqueueSnackbar(message, {
+          variant: "info",
           TransitionComponent: Grow as React.ComponentType,
-          action: options?.persist === true
-            ? function (key) {
-                return (
-                  <DismissButton
-                    onClick={() => {
-                      closeSnackbar(key);
-                    }}
-                  />
-                );
-              }
-            : undefined,
+          action:
+            options?.persist === true
+              ? function (key) {
+                  return (
+                    <DismissButton
+                      onClick={() => {
+                        closeSnackbar(key);
+                      }}
+                      buttonText="Close Notification"
+                    />
+                  );
+                }
+              : undefined,
           ...options,
-        }
-      );
-    },
-    closeSnackbar
-  }), [ enqueueSnackbar, closeSnackbar ]);
+        });
+      },
+      closeSnackbar,
+    }),
+    [enqueueSnackbar, closeSnackbar]
+  );
 }
