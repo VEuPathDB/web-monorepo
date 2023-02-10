@@ -27,12 +27,14 @@ export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
 
 export const VariableLink = forwardRef(
   (props: Props, ref: Ref<HTMLAnchorElement>) => {
-    const { entityId, variableId, linkConfig, ...rest } = props;
+    const { entityId, variableId, linkConfig, style, ...rest } = props;
     const value = { entityId, variableId };
 
     return linkConfig.type === 'link' ? (
       <Link
+        ref={ref}
         replace
+        style={style}
         {...rest}
         to={{
           pathname: linkConfig.makeVariableLink(value),
@@ -47,8 +49,8 @@ export const VariableLink = forwardRef(
       <a
         ref={ref}
         role="button"
-        aria-pressed="false"
         tabIndex={0}
+        style={{ cursor: 'pointer', ...style }}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
