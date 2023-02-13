@@ -54,6 +54,7 @@ import { fullScreenAppPlugins } from '../core/components/fullScreenApps';
 import { FullScreenAppPlugin } from '../core/types/fullScreenApp';
 import FullScreenContainer from '../core/components/fullScreenApps/FullScreenContainer';
 import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import { VariableLinkConfig } from '../core/components/VariableLink';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -190,6 +191,21 @@ export function AnalysisPanel({
       : 'Analysis'
   );
 
+  const variableLinkConfig: VariableLinkConfig = {
+    type: 'link',
+    makeVariableLink: (value) => {
+      const { entityId, variableId } = value ?? {};
+      const linkBase = `${routeBase}/variables`;
+      if (entityId) {
+        if (variableId) {
+          return `${linkBase}/${entityId}/${variableId}`;
+        }
+        return `${linkBase}/${entityId}`;
+      }
+      return linkBase;
+    },
+  };
+
   if (status === Status.Error)
     return (
       <div>
@@ -261,6 +277,7 @@ export function AnalysisPanel({
                 )
               )
             }
+            variableLinkConfig={variableLinkConfig}
           />
           <Route
             path={[
@@ -291,6 +308,7 @@ export function AnalysisPanel({
                   entityCounts={totalCounts.value}
                   filteredEntityCounts={filteredCounts.value}
                   filteredEntities={filteredEntities}
+                  variableLinkConfig={variableLinkConfig}
                 />
               </div>
             )}
@@ -368,6 +386,7 @@ export function AnalysisPanel({
               <AnalysisTabErrorBoundary>
                 <Subsetting
                   {...props.match.params}
+                  variableLinkConfig={variableLinkConfig}
                   analysisState={analysisState}
                   totalCounts={totalCounts.value}
                   filteredCounts={filteredCounts.value}
