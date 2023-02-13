@@ -1,4 +1,3 @@
-// A collection of stories for viewing our Sequential Gradient Colormap
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
@@ -34,13 +33,14 @@ const plotHeight = 600;
 const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
 
+// Create a template for the sequential colormap stories.
+// Show a scatterplot with overlay, as well as legend so we can see the colormap.
 interface TemplateProps {
   data: VEuPathDBScatterPlotData;
   plotLegendProps: PlotLegendProps;
   nPoints?: number;
 }
 
-// Template for these colormap stories. Show a scatterplot with overlay, as well as legend so we can see the colormap.
 const Template: Story<TemplateProps> = (args) => {
   const { dataSetProcess: dataSetProcessGradient } = processInputData(
     args.data,
@@ -51,22 +51,22 @@ const Template: Story<TemplateProps> = (args) => {
     false
   );
 
+  // Reduce the dataset to only nPoints points so that we can see how the colormap looks when the
+  // scatter plot is or isn't overplotted.
+  // Points without both x and y aren't drawn, so only need to remove x coordinate.
   dataSetProcessGradient.series[0].x = dataSetProcessGradient.series[0].x.slice(
     0,
     args.nPoints
   );
-  dataSetProcessGradient.series[0].y = dataSetProcessGradient.series[0].y.slice(
-    0,
-    args.nPoints
-  );
 
+  // Find the y axis min and max
   const [yMin, yMax] = [
     min(dataSetProcessGradient.series[0].y),
     max(dataSetProcessGradient.series[0].y),
   ];
 
   // Opacity slider state
-  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(0);
+  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(1);
 
   // Opacity slider coloring
   const opacityColorSpecProps: SliderWidgetProps['colorSpec'] = {
@@ -78,7 +78,6 @@ const Template: Story<TemplateProps> = (args) => {
   };
 
   // For each colormap, show the legend, an example plot, and our opacity slider.
-
   return (
     <div
       style={{
@@ -93,7 +92,7 @@ const Template: Story<TemplateProps> = (args) => {
         minimum={0}
         maximum={1}
         step={0.05}
-        value={0}
+        value={1}
         debounceRateMs={250}
         onChange={(newValue: number) => {
           setMarkerBodyOpacity(newValue);
@@ -166,6 +165,8 @@ Continuous.args = {
 
 // Showcase discretized version of the sequential gradient colormap. For this story,
 // the overlay var is a low cardinality, equidistant set of integers.
+
+// Set up discretized legend.
 const vocabularyEquidistant = ['1', '2', '3', '4', '5', '6', '7'];
 let legendItems = vocabularyEquidistant.map((label) => {
   return {
@@ -194,6 +195,8 @@ Discrete.args = {
 
 // Showcase discretized version of the sequential gradient colormap. For this story,
 // the overlay var is a low cardinality variable with non-uniform spacing between neighboring values.
+
+// Set up discretized legend.
 const vocabularyNonUniform = ['1', '2', '5', '6', '7', '18', '20'];
 legendItems = vocabularyNonUniform.map((label) => {
   return {

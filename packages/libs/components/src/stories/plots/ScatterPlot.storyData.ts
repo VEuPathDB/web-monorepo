@@ -24,7 +24,9 @@ export interface VEuPathDBScatterPlotData {
   };
 }
 
-// Many example scatter plots can be made with toy data. Define some toy data here.
+/**
+ * Many example scatter plots can be made with toy data. Define some toy data here.
+ */
 
 const nPoints = 300;
 let sequentialIntegers = [];
@@ -35,28 +37,31 @@ for (let index = 0; index < nPoints; index++) {
 const randomIntegers = sequentialIntegers.map(
   (i) => Math.ceil(Math.random() * 7) // 7 is arbitrary. Matches value in Colors.stories.
 );
+// Arrays of random values
 const randomPosValues = sequentialIntegers.map((i) =>
   Math.abs(getNormallyDistributedRandomNumber(0, 1))
 );
 const randPosNegvalues = sequentialIntegers.map(() =>
   getNormallyDistributedRandomNumber(0, 1)
 );
+const randNegvalues = sequentialIntegers.map(
+  () => -Math.abs(getNormallyDistributedRandomNumber(0, 1))
+);
 
-// Positive y-value data with random positive overlay values
+// Scatterplot data with random positive overlay values
 export const dataSetSequentialGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
         seriesX: randPosNegvalues,
-        seriesY: randomPosValues,
-        // variable mapped to color (same as seriesY for easier verification of the colorscale)
+        seriesY: randNegvalues,
         seriesGradientColorscale: randomPosValues,
       },
     ],
   },
 };
 
-// Positive y-value data with random, discrete integers in 1:7 for the overlay values.
+// Scatterplot data data with random, discrete integers in 1:7 for the overlay values.
 export const dataSetSequentialDiscrete: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
@@ -69,24 +74,21 @@ export const dataSetSequentialDiscrete: VEuPathDBScatterPlotData = {
   },
 };
 
-// Positive and negative y-value data and the same for overlay values.
+// Scatterplot data with random, normally distributed values for overlay.
 export const dataSetDivergingGradient: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
       {
         seriesX: randomPosValues,
-        seriesY: sequentialIntegers.map((i) =>
-          Math.abs(getNormallyDistributedRandomNumber(0, 1))
-        ),
-        // variable mapped to color (same as seriesY for easier verification of the colorscale)
+        seriesY: randNegvalues,
         seriesGradientColorscale: randPosNegvalues,
       },
     ],
   },
 };
 
-// Dataset with 8 series so we can use the eight colors of the categorical colormap.
-// Use only a small number of points (suggest nPoins/2) so that the plot doesn't get too crazy crowded.
+// Scatterplot data with 8 series so we can use the eight colors of the categorical colormap.
+// Using only a small number of points (suggest nPoints/2) so that the plot doesn't get too crazy crowded.
 export const dataSetCategoricalOverlay: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [

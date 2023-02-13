@@ -34,13 +34,14 @@ const plotHeight = 600;
 const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
 
+// Create a template for the categorical colormap stories.
+// Show a scatterplot with overlay, as well as legend so we can see the colormap.
 interface TemplateProps {
   data: VEuPathDBScatterPlotData;
   plotLegendProps: PlotLegendProps;
   nPoints: number;
 }
 
-// Template for these colormap stories. Show a scatterplot with overlay, as well as legend so we can see the colormap.
 const Template: Story<TemplateProps> = (args) => {
   const { dataSetProcess: datasetProcessCategorical } = processInputData(
     args.data,
@@ -54,37 +55,29 @@ const Template: Story<TemplateProps> = (args) => {
 
   // Reduce the input data to only approximately nPoints points. There will be multiple series so we have to
   // slice each series at nPoints/nSeries.
-  //   const trimmedDatasetCategorical = {
-  //     ...datasetProcessCategorical,
-  //     // Being lazy with types here, Ann return to this and fix
-  //     series: datasetProcessCategorical.series.map(({x, y, ...rest}: any) => ({x: x.slice(), y: y.slice(), ...rest})),
-  //  };
-  for (
-    let index = 0;
-    index < datasetProcessCategorical.series.length;
-    index++
-  ) {
-    datasetProcessCategorical.series[
-      index
-    ].x = datasetProcessCategorical.series[index].x.slice(
-      0,
-      Math.ceil(args.nPoints / datasetProcessCategorical.series.length)
-    );
-    datasetProcessCategorical.series[
-      index
-    ].y = datasetProcessCategorical.series[index].y.slice(
-      0,
-      Math.ceil(args.nPoints / datasetProcessCategorical.series.length)
-    );
-  }
+  const trimmedDatasetProcess = {
+    ...datasetProcessCategorical,
+    series: datasetProcessCategorical.series.map(({ x, y, ...rest }: any) => ({
+      x: x.slice(
+        0,
+        Math.ceil(args.nPoints / datasetProcessCategorical.series.length)
+      ),
+      y: y.slice(
+        0,
+        Math.ceil(args.nPoints / datasetProcessCategorical.series.length)
+      ),
+      ...rest,
+    })),
+  };
 
+  // Find the y axis min and max
   const [yMin, yMax] = [
-    min(datasetProcessCategorical.series[0].y),
-    max(datasetProcessCategorical.series[0].y),
+    min(trimmedDatasetProcess.series[0].y),
+    max(trimmedDatasetProcess.series[0].y),
   ];
 
   // Opacity slider state
-  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(0);
+  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(1);
 
   // Opacity slider coloring
   const opacityColorSpecProps: SliderWidgetProps['colorSpec'] = {
@@ -110,7 +103,7 @@ const Template: Story<TemplateProps> = (args) => {
         minimum={0}
         maximum={1}
         step={0.05}
-        value={0}
+        value={1}
         debounceRateMs={250}
         onChange={(newValue: number) => {
           setMarkerBodyOpacity(newValue);
@@ -126,7 +119,7 @@ const Template: Story<TemplateProps> = (args) => {
         colorSpec={opacityColorSpecProps}
       />
       <ScatterPlot
-        data={datasetProcessCategorical}
+        data={trimmedDatasetProcess}
         independentAxisLabel={independentAxisLabel}
         dependentAxisLabel={dependentAxisLabel}
         // not to use independentAxisRange
@@ -152,6 +145,7 @@ const Template: Story<TemplateProps> = (args) => {
 };
 
 // Showcase default categorical colormap.
+
 const vocabulary = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
 const legendItems = vocabulary.map((label) => {
@@ -177,7 +171,7 @@ Default.args = {
   nPoints: 120,
 };
 
-// Showcase ordinal categorical colormap.
+// Showcase ordinal categorical colormap. (Ordinal colormap itself still a work in progress)
 
 const ordinalLegendItems = vocabulary.map((label) => {
   return {
