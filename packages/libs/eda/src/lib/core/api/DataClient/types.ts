@@ -441,31 +441,27 @@ export const LineplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
-/** JM: open to suggestions on DRY'ing up Mosaic v TwoByTwo parameter interfaces */
-type TwoByTwoRequestConfig = {
+interface MosaicRequestConfig {
   outputEntityId: string;
   xAxisVariable: VariableDescriptor;
   yAxisVariable: VariableDescriptor;
   facetVariable: ZeroToTwoVariables;
   showMissingness?: 'TRUE' | 'FALSE';
-  xAxisReferenceValue: string;
-  yAxisReferenceValue: string;
-};
-
-type MosaicRequestConfig = Omit<
-  TwoByTwoRequestConfig,
-  'xAxisReferenceValue' | 'yAxisReferenceValue'
->;
-
-export interface TwoByTwoRequestParams {
-  studyId: string;
-  filters: Filter[];
-  config: TwoByTwoRequestConfig;
 }
 
-export interface MosaicRequestParams
-  extends Omit<TwoByTwoRequestParams, 'config'> {
+interface TwoByTwoRequestConfig extends MosaicRequestConfig {
+  xAxisReferenceValue: string;
+  yAxisReferenceValue: string;
+}
+
+export interface MosaicRequestParams {
+  studyId: string;
+  filters: Filter[];
   config: MosaicRequestConfig;
+}
+
+export interface TwoByTwoRequestParams extends MosaicRequestParams {
+  config: TwoByTwoRequestConfig;
 }
 
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
