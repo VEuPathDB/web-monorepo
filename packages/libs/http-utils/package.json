@@ -49,7 +49,8 @@
   "dependencies": {
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "uuid": "^9.0.0"
   },
   "peerDependencies": {
     "@veupathdb/wdk-client": "*"
