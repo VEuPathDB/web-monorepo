@@ -11,7 +11,6 @@ import SliderWidget, {
 // Import scatterplot data
 import {
   dataSetSequentialGradient,
-  dataSetDivergingGradient,
   dataSet,
   dateStringDataSet,
   processInputData,
@@ -63,14 +62,6 @@ const { dataSetProcess: dataSetProcessSequentialGradient } = processInputData(
   false
 );
 
-const { dataSetProcess: dataSetProcessDivergingGradient } = processInputData(
-  dataSetDivergingGradient,
-  'scatterplot',
-  'markers',
-  independentValueType,
-  dependentValueType,
-  false
-);
 // Case 1-2) checking line plot: raw data with line
 // const { dataSetProcess, yMin, yMax } = processInputData(
 //   dataSet,
@@ -124,73 +115,6 @@ export const MultipleDataDefaultColors = () => {
       independentValueType={independentValueType}
       dependentValueType={dependentValueType}
     />
-  );
-};
-
-export const GradientColorscaleSequential = () => {
-  return (
-    <ScatterPlot
-      data={dataSetProcessSequentialGradient}
-      independentAxisLabel={independentAxisLabel}
-      dependentAxisLabel={dependentAxisLabel}
-      // not to use independentAxisRange
-      // independentAxisRange={[xMin, xMax]}
-      dependentAxisRange={{ min: yMin, max: yMax }}
-      title={plotTitle}
-      // width height is replaced with containerStyles
-      containerStyles={{
-        width: plotWidth,
-        height: plotHeight,
-      }}
-      // staticPlot is changed to interactive
-      interactive={true}
-      // check enable/disable legend and built-in controls
-      displayLegend={true}
-      displayLibraryControls={true}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
-      // add legend title
-      legendTitle={'legend title example'}
-      independentValueType={independentValueType}
-      dependentValueType={dependentValueType}
-    />
-  );
-};
-
-export const GradientColorscaleDiverging = () => {
-  return (
-    <div>
-      <ScatterPlot
-        data={dataSetProcessDivergingGradient}
-        independentAxisLabel={independentAxisLabel}
-        dependentAxisLabel={dependentAxisLabel}
-        // not to use independentAxisRange
-        // independentAxisRange={[xMin, xMax]}
-        dependentAxisRange={{ min: yMin, max: yMax }}
-        title={plotTitle}
-        // width height is replaced with containerStyles
-        containerStyles={{
-          width: plotWidth,
-          height: plotHeight,
-        }}
-        // staticPlot is changed to interactive
-        interactive={true}
-        // check enable/disable legend and built-in controls
-        displayLegend={true}
-        displayLibraryControls={true}
-        // margin={{l: 50, r: 10, b: 20, t: 10}}
-        // add legend title
-        legendTitle={'legend title example'}
-        independentValueType={independentValueType}
-        dependentValueType={dependentValueType}
-      />
-      {/* <PlotGradientLegend
-        legendMin={-3.5}
-        legendMax={3.5}
-        gradientColorscale={DivergingGradientColorscale}
-        nTicks={7}
-        legendTitle="Diverging colorscale"
-      /> */}
-    </div>
   );
 };
 
