@@ -183,9 +183,11 @@ export const SequentialGradientColorscale: string[] = [
   'rgb(0, 1, 0)',
 ];
 
-/** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
-/** Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
-/** MUST have ODD number of colors! Assume the middle color maps to the midpoint */
+/**
+ * Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0)
+ *  Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py
+ *  MUST have ODD number of colors! Assume the middle color maps to the midpoint
+ */
 export const DivergingGradientColorscale: string[] = [
   'rgb(1, 18, 97)',
   'rgb(2, 37, 109)',
@@ -210,34 +212,40 @@ export const DivergingGradientColorscale: string[] = [
   'rgb(97, 18, 0)',
 ];
 
-// Berlin for converging. When the time comes for a converging colorscale, we picked a lighter version of Berlin
-// Leaving the following commented out until the time comes. See figma Colormap examples for more details.
-// const Berlin = [
-//   'rgb(158, 176, 255)',
-//   'rgb(130, 173, 242)',
-//   'rgb(98, 166, 224)',
-//   'rgb(68, 151, 198)',
-//   'rgb(50, 128, 166)',
-//   'rgb(40, 104, 134)',
-//   'rgb(32, 82, 106)',
-//   'rgb(23, 60, 77)',
-//   'rgb(17, 39, 50)',
-//   'rgb(17, 22, 27)',
-//   'rgb(25, 12, 9)',
-//   'rgb(38, 13, 1)',
-//   'rgb(55, 16, 0)',
-//   'rgb(74, 21, 2)',
-//   'rgb(97, 32, 11)',
-//   'rgb(125, 52, 30)',
-//   'rgb(150, 74, 54)',
-//   'rgb(176, 98, 83)',
-//   'rgb(202, 123, 113)',
-//   'rgb(229, 149, 144)',
-//   'rgb(255, 173, 173)',
-// ];
-// export const ConvergingGradientColorscale = Berlin.map((color) =>
-//   rgb(lab(color).darker(-1)).toString()
-// );
+/**
+ * Converging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) and we want to see midpoint values easily.
+ * Using Berlin from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py
+ * MUST have ODD number of colors! Assume the middle color maps to the midpoint
+ * In a data viz meeting, decided to lighten the Berlin map slightly. See figma Colormap Examples file for details.
+ */
+
+const Berlin = [
+  'rgb(158, 176, 255)',
+  'rgb(130, 173, 242)',
+  'rgb(98, 166, 224)',
+  'rgb(68, 151, 198)',
+  'rgb(50, 128, 166)',
+  'rgb(40, 104, 134)',
+  'rgb(32, 82, 106)',
+  'rgb(23, 60, 77)',
+  'rgb(17, 39, 50)',
+  'rgb(17, 22, 27)',
+  'rgb(25, 12, 9)',
+  'rgb(38, 13, 1)',
+  'rgb(55, 16, 0)',
+  'rgb(74, 21, 2)',
+  'rgb(97, 32, 11)',
+  'rgb(125, 52, 30)',
+  'rgb(150, 74, 54)',
+  'rgb(176, 98, 83)',
+  'rgb(202, 123, 113)',
+  'rgb(229, 149, 144)',
+  'rgb(255, 173, 173)',
+];
+// Lighten in LAB space, then convert to RGB for plotting.
+export const ConvergingGradientColorscale = Berlin.map((color) =>
+  rgb(lab(color).darker(-1)).toString()
+);
 
 // Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
 export const gradientSequentialColorscaleMap = scaleLinear<string>()
@@ -260,6 +268,19 @@ export const gradientDivergingColorscaleMap = scaleLinear<string>()
     )
   )
   .range(DivergingGradientColorscale)
+  .interpolate(interpolateLab);
+
+// Create converging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
+const convergingColorscaleSteps = Math.floor(
+  ConvergingGradientColorscale.length / 2
+);
+export const gradientConvergingColorscaleMap = scaleLinear<string>()
+  .domain(
+    range(-convergingColorscaleSteps, convergingColorscaleSteps + 1).map(
+      (a: number) => a / convergingColorscaleSteps
+    )
+  )
+  .range(ConvergingGradientColorscale)
   .interpolate(interpolateLab);
 
 /** truncated axis flags */
