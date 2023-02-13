@@ -8,7 +8,7 @@ import {
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
-import { MapVeuAnalysis } from './MapVeuAnalysis';
+import { MapAnalysis } from './analysis/MapAnalysis';
 
 import { StudyList } from './StudyList';
 import {
@@ -19,7 +19,14 @@ import {
   useConfiguredComputeClient,
 } from '../core/hooks/client';
 
-export function MapVeuContainer() {
+import './MapVEu.scss';
+
+interface Props {
+  singleAppMode?: string;
+}
+
+export function MapVeuContainer(props: Props) {
+  const { singleAppMode } = props;
   const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
   const dataClient = useConfiguredDataClient('/eda-data-service');
   const computeClient = useConfiguredComputeClient('/eda-data-service');
@@ -31,7 +38,6 @@ export function MapVeuContainer() {
   const { path } = useRouteMatch();
   return (
     <>
-      <h1>MapVEu</h1>
       <Switch>
         <Route
           path={`${path}/:studyId/:analysisId`}
@@ -45,8 +51,9 @@ export function MapVeuContainer() {
               dataClient={dataClient}
               downloadClient={downloadClient}
               computeClient={computeClient}
+              className="MapVEu"
             >
-              <MapVeuAnalysis
+              <MapAnalysis
                 analysisId={props.match.params.analysisId}
                 studyId={props.match.params.studyId}
               />
@@ -63,10 +70,12 @@ export function MapVeuContainer() {
               dataClient={dataClient}
               downloadClient={downloadClient}
               computeClient={computeClient}
+              className="MapVEu"
             >
               <AnalysisList
                 studyId={props.match.params.studyId}
                 analysisStore={analysisClient}
+                singleAppMode={singleAppMode}
               />
             </EDAAnalysisListContainer>
           )}

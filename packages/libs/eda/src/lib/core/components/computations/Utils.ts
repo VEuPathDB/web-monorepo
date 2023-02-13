@@ -15,7 +15,8 @@ export function createComputation(
   configuration: unknown,
   computations: Computation[] = [],
   visualizations: Visualization[] = [],
-  computationId?: string
+  computationId?: string,
+  displayName?: string
 ): Computation {
   if (!computationId) {
     computationId = createNewId(
@@ -30,7 +31,7 @@ export function createComputation(
       configuration,
     },
     visualizations,
-    displayName: '',
+    displayName,
   };
 }
 
