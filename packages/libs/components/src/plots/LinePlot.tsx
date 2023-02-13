@@ -123,7 +123,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   ]);
 
   const layout: Partial<Layout> = {
-    hovermode: 'closest',
+    hovermode: 'x',
     xaxis: {
       title: independentAxisLabel,
       // add axis range control truncation

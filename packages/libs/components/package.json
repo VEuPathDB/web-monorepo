@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/components",
-  "version": "0.19.17",
+  "version": "0.19.18",
   "license": "Apache-2.0",
   "description": "React Components for VEuPathDB Websites",
   "repository": {
