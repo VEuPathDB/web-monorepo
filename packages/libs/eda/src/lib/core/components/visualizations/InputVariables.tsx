@@ -26,7 +26,7 @@ export interface InputSpec {
    * The string will be displayed instead of a variable selector.
    */
   readonlyValue?: string;
-  role?: 'axis' | 'stratification' | 'twoByTwoAxis';
+  role?: 'axis' | 'stratification';
   /**
    * Instead of just providing a string, as above, provide a variable that the
    * user will be able to choose with a radio button group (the other option is "no variable").
@@ -39,6 +39,13 @@ export interface InputSpec {
    * will switch to "no variable")
    */
   providedOptionalVariable?: VariableDescriptor;
+  /**
+   * Can be used to override an input role's default title assigned in sectionInfo
+   * when we want the behavior/logic of an existing role but with a different
+   * title. Example: 2x2 mosaic's 'axis' variables.
+   */
+  titleOverride?: ReactNode;
+  styleOverride?: React.CSSProperties;
 }
 
 interface SectionSpec {
@@ -53,14 +60,6 @@ const sectionInfo: Record<string, SectionSpec> = {
   default: {
     order: 0,
     title: 'Variables',
-  },
-  twoByTwoAxis: {
-    /** Duplicating order: 50 because
-     * A) I don't foresee a scenario wherein we'd render twoByTwoAxis and axis
-     * B) I don't wish to interfere with existing order values in custom sections
-     */
-    order: 50,
-    title: '2x2 table variables',
   },
   axis: {
     order: 50,
@@ -206,7 +205,7 @@ export function InputVariables(props: Props) {
 
   return (
     <div className={classes.inputs}>
-      {[undefined, 'twoByTwoAxis', 'axis', 'stratification'].map(
+      {[undefined, 'axis', 'stratification'].map(
         (inputRole) =>
           inputs.filter((input) => input.role === inputRole).length > 0 && (
             <div
@@ -214,23 +213,18 @@ export function InputVariables(props: Props) {
               style={{ order: sectionInfo[inputRole ?? 'default'].order }}
             >
               <div className={classes.fullRow}>
-                <h4>{sectionInfo[inputRole ?? 'default'].title}</h4>
+                <h4>
+                  {inputs.find((input) => input.titleOverride)?.titleOverride ??
+                    sectionInfo[inputRole ?? 'default'].title}
+                </h4>
               </div>
               {inputs
                 .filter((input) => input.role === inputRole)
                 .map((input) => (
                   <div
                     key={input.name}
-                    className={
-                      input.role === 'twoByTwoAxis' ? undefined : classes.input
-                    }
-                    style={
-                      input.readonlyValue
-                        ? {}
-                        : input.role === 'twoByTwoAxis'
-                        ? twoBytwoInputStyle
-                        : undefined
-                    }
+                    className={classes.input}
+                    style={input.readonlyValue ? {} : input.styleOverride}
                   >
                     <Tooltip
                       css={{}}
