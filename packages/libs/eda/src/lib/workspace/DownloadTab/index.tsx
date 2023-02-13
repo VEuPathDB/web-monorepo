@@ -292,7 +292,6 @@ function getDataAccessDeclaration(
   hasPermission: boolean = false,
   requestElement: JSX.Element
 ): JSX.Element {
-  console.log({ studyAccess });
   const PUBLIC_ACCESS_STUB =
     'Data downloads for this study are public. Data are available without logging in.';
   const LOGIN_REQUEST_STUB = (
@@ -301,9 +300,8 @@ function getDataAccessDeclaration(
       study team review and approval.
     </span>
   );
-  // this should probably be non-site-specific
   const PRERELEASE_STUB =
-    'Data downloads for this study are not yet available on ClinEpiDB.';
+    'Data downloads for this study are not yet available on this website.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
 
