@@ -734,12 +734,16 @@ function MosaicViz(props: Props<Options>) {
             {
               name: 'xAxisVariable',
               label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
-              role: isTwoByTwo ? 'twoByTwoAxis' : 'axis',
+              role: 'axis',
+              titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+              styleOverride: isTwoByTwo ? twoBytwoInputStyle : undefined,
             },
             {
               name: 'yAxisVariable',
               label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
-              role: isTwoByTwo ? 'twoByTwoAxis' : 'axis',
+              role: 'axis',
+              titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+              styleOverride: isTwoByTwo ? twoBytwoInputStyle : undefined,
             },
             ...(options?.hideFacetInputs
               ? []
