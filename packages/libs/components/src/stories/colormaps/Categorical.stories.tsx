@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import ScatterPlot from '../../plots/ScatterPlot';
@@ -12,6 +13,9 @@ import {
 } from '../../types/plots/addOns';
 import { VEuPathDBScatterPlotData } from '../plots/ScatterPlot.storyData';
 import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
+import SliderWidget, {
+  SliderWidgetProps,
+} from '../../components/widgets/Slider';
 
 // A collection of stories for vieweing our categorical colormaps
 export default {
@@ -25,8 +29,8 @@ export default {
 } as Meta;
 
 // set some default props
-const plotWidth = 500;
-const plotHeight = 400;
+const plotWidth = 1000;
+const plotHeight = 600;
 const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
 
@@ -79,9 +83,48 @@ const Template: Story<TemplateProps> = (args) => {
     max(datasetProcessCategorical.series[0].y),
   ];
 
+  // Opacity slider state
+  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(0);
+
+  // Opacity slider coloring
+  const opacityColorSpecProps: SliderWidgetProps['colorSpec'] = {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
+  };
+
+  // For each colormap, show the legend, an example plot, and our opacity slider.
   return (
-    <div style={{ padding: 15 }}>
+    <div
+      style={{
+        padding: 25,
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+      }}
+    >
       <PlotLegend {...args.plotLegendProps} />
+      <SliderWidget
+        minimum={0}
+        maximum={1}
+        step={0.05}
+        value={0}
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          setMarkerBodyOpacity(newValue);
+        }}
+        containerStyles={{
+          height: 100,
+          width: 425,
+          marginLeft: 75,
+        }}
+        showLimits={true}
+        label={'Marker opacity'}
+        disabled={false}
+        colorSpec={opacityColorSpecProps}
+      />
       <ScatterPlot
         data={datasetProcessCategorical}
         independentAxisLabel={independentAxisLabel}
@@ -102,6 +145,7 @@ const Template: Story<TemplateProps> = (args) => {
         displayLibraryControls={true}
         independentValueType={'number'}
         dependentValueType={'number'}
+        markerBodyOpacity={markerBodyOpacity}
       />
     </div>
   );

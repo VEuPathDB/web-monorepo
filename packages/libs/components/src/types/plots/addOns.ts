@@ -186,7 +186,7 @@ export const SequentialGradientColorscale: string[] = [
 /** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
 /** Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
 /** MUST have ODD number of colors! Assume the middle color maps to the midpoint */
-const DivergingGradientColorscale: string[] = [
+export const DivergingGradientColorscale: string[] = [
   'rgb(1, 18, 97)',
   'rgb(2, 37, 109)',
   'rgb(2, 57, 122)',
@@ -211,7 +211,7 @@ const DivergingGradientColorscale: string[] = [
 ];
 
 // Berlin for converging. When the time comes for a converging colorscale, we picked a lighter version of Berlin
-// Leaving the following commented out until the time comes.
+// Leaving the following commented out until the time comes. See figma Colormap examples for more details.
 // const Berlin = [
 //   'rgb(158, 176, 255)',
 //   'rgb(130, 173, 242)',

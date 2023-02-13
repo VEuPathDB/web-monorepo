@@ -1,4 +1,5 @@
 // A collection of stories for viewing our Diverging Gradient Colormap
+import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import { PlotLegendGradientProps } from '../../components/plotControls/PlotGradientLegend';
@@ -12,7 +13,9 @@ import {
 import { gradientDivergingColorscaleMap } from '../../types/plots/addOns';
 import { VEuPathDBScatterPlotData } from '../plots/ScatterPlot.storyData';
 import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
-import { rgb, lab } from 'd3-color';
+import SliderWidget, {
+  SliderWidgetProps,
+} from '../../components/widgets/Slider';
 
 export default {
   title: 'Colors/Gradient Diverging',
@@ -25,8 +28,8 @@ export default {
 } as Meta;
 
 // set some default props
-const plotWidth = 500;
-const plotHeight = 400;
+const plotWidth = 1000;
+const plotHeight = 600;
 const independentAxisLabel = 'independent axis label';
 const dependentAxisLabel = 'dependent axis label';
 
@@ -65,9 +68,48 @@ const Template: Story<TemplateProps> = (args) => {
     max(dataSetProcessGradient.series[0].y),
   ];
 
+  // Opacity slider state
+  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(0);
+
+  // Opacity slider coloring
+  const opacityColorSpecProps: SliderWidgetProps['colorSpec'] = {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
+  };
+
+  // For each colormap, show the legend, an example plot, and our opacity slider.
   return (
-    <div style={{ padding: 15 }}>
+    <div
+      style={{
+        padding: 25,
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+      }}
+    >
       <PlotLegend {...args.plotLegendProps} />
+      <SliderWidget
+        minimum={0}
+        maximum={1}
+        step={0.05}
+        value={0}
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          setMarkerBodyOpacity(newValue);
+        }}
+        containerStyles={{
+          height: 100,
+          width: 425,
+          marginLeft: 75,
+        }}
+        showLimits={true}
+        label={'Marker opacity'}
+        disabled={false}
+        colorSpec={opacityColorSpecProps}
+      />
       <ScatterPlot
         data={dataSetProcessGradient}
         independentAxisLabel={independentAxisLabel}
@@ -88,6 +130,7 @@ const Template: Story<TemplateProps> = (args) => {
         displayLibraryControls={true}
         independentValueType={'number'}
         dependentValueType={'number'}
+        markerBodyOpacity={markerBodyOpacity}
       />
     </div>
   );
