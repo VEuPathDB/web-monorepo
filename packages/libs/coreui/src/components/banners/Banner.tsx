@@ -7,6 +7,11 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import InfoIcon from '@material-ui/icons/Info';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import CloseIcon from '@material-ui/icons/Close';
+// Collapsible icons
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
+// using native CoreUI icons? but no mouseover event is supported
+// import { CaretUp, CaretDown} from '../../assets/icons';
 
 import { gray, warning, error, success, blue, ColorHue } from '../../definitions/colors';
 
@@ -26,6 +31,8 @@ export type BannerProps = {
   showLessLinkText?: ReactNode;
   // color for show more links
   showMoreLinkColor?: string;
+  // is showMoreLink bold?
+  isShowMoreLinkBold?: boolean;
   // banner margin, padding, text font size
   spacing?: {
     margin?: CSSProperties['margin'],
@@ -44,6 +51,8 @@ export type BannerProps = {
 export type BannerComponentProps = {
   banner: BannerProps;
   onClose?: () => void;
+  // CollapsibleContent is a functional component: refer to Collapsible story
+  CollapsibleContent?: React.FC;
 }
 
 function getIconComponentFromType(type: BannerProps['type']) {
@@ -83,9 +92,12 @@ function getColorTheme(type: BannerProps['type'], weight: keyof ColorHue) {
 }
 
 export default function Banner(props: BannerComponentProps) {
-  const { banner, onClose } = props;
+
+  // add CollapsibleContent
+  const { banner, onClose, CollapsibleContent } = props;
+
   // set default values of showMoreLinkText and showLessLinkText
-  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, additionalMessage, spacing, fontSize, showBanner = true, setShowBanner, autoHideDuration, fadeoutEffect, setFadeoutEffect } = banner;
+  const { type, message, pinned, intense, showMoreLinkText = 'Show more >>', showLessLinkText = 'Show less <<', showMoreLinkColor, isShowMoreLinkBold = false, additionalMessage, spacing, fontSize, showBanner = true, setShowBanner, autoHideDuration, fadeoutEffect, setFadeoutEffect } = banner;
 
   const [isShowMore, setIsShowMore] = useState(false);
 
@@ -93,6 +105,11 @@ export default function Banner(props: BannerComponentProps) {
 
   // define showMore link texts
   const showMoreLink = isShowMore ? showLessLinkText : showMoreLinkText;
+
+  // define collapsible icon component
+  const collapsibleIcon = isShowMore ? <ExpandLessIcon /> : <ExpandMoreIcon />;
+  // using native CoreUI icons? but no mouseover event is supported
+  // const collapsibleIcon = isShowMore ? <CaretUp color={ '#000000' } /> : <CaretDown color={ '#000000' } />;
 
   // hover effect
   const [isHover, setIsHover] = useState(false);
@@ -115,6 +132,7 @@ export default function Banner(props: BannerComponentProps) {
     };
   }, [showBanner, autoHideDuration, fadeoutEffect]);
 
+  // conditional border color and radius with the presence of CollapsibleContent
   return (
     <>
       {showBanner && (
@@ -123,9 +141,17 @@ export default function Banner(props: BannerComponentProps) {
             display: flex;
             color: ${intense ? 'white' : 'black'};
             background-color: ${intense ? getColorTheme(type, 600) : getColorTheme(type, 100)};
-            border: ${intense ? 'none' : `1px solid ${getColorTheme(type, 600)}`};
+            border: ${intense
+              ? 'none'
+              : CollapsibleContent != null
+                ? `1px solid #dedede`
+                : `1px solid ${getColorTheme(type, 600)}`
+            };
             box-sizing: border-box;
-            border-radius: 7px;
+            border-radius: ${CollapsibleContent != null
+              ? '0'
+              : '7px'
+            };
             margin: ${spacing?.margin != null ? spacing.margin : '10px 0'};
             width: 100%;
             padding: ${spacing?.padding != null ? spacing.padding : '10px'};
@@ -137,61 +163,105 @@ export default function Banner(props: BannerComponentProps) {
             transition: ${fadeoutEffect ? 'opacity 1s ease' : undefined};
           `}
         >
-          <IconComponent
+        <div
+          css={css`
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+          `}
+        >
+          <div
             css={css`
-              color: ${intense ? 'white' : 'black'};
-              font-size: 1.4em;
-              line-height: 1.4em;
-              width: 30px;
-              text-align: center;
-              margin-right: 5px;
-            `}>
-          </IconComponent>
-          <span css={css`
-            margin-right: auto;
-          `}>
-            {/* showMore implementation */}
-            {message}&nbsp;
-            {additionalMessage != null && (
-              <>
-                {isShowMore && additionalMessage}
-                <button
-                  css={css`
-                    background-color: transparent;
-                    border: none;
-                    text-align: center;
-                    text-decoration: ${isHover ? 'underline' : 'none' };
-                    color: ${showMoreLinkColor};
-                    display: inline-block;
-                    cursor: pointer;
-                  `}
-                  onClick={() => {
-                    setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
-                  }}
-                  onMouseEnter={onMouseEnter}
-                  onMouseLeave={onMouseLeave}
-                >
-                  {showMoreLink}
-                </button>
-              </>
-            )}
-
-          </span>
-          {pinned || !onClose ? null : (
-            <a
+              display: flex;
+              align-items: center;
+            `}
+          >
+            <IconComponent
               css={css`
-                text-align: right;
-                padding-right: 10px;
-                &:hover {
-                  color: ${intense ? 'black' : getColorTheme(type, 600)};
-                }
-              `}
-              onClick={onClose}
-            >
-              <CloseIcon css={css`vertical-align: middle`} />
-            </a>
+                color: ${intense
+                    ? 'white'
+                    : CollapsibleContent != null
+                      ? '#00008B'
+                      : 'black'
+                };
+                font-size: 1.4em;
+                line-height: 1.4em;
+                width: 30px;
+                text-align: center;
+                margin-right: 5px;
+              `}>
+            </IconComponent>
+            <span css={css`
+              margin-right: auto;
+            `}>
+              {/* showMore implementation */}
+              {message}&nbsp;
+              {(additionalMessage != null || CollapsibleContent != null) && (
+                <>
+                  {isShowMore && additionalMessage}
+                  <button
+                    css={css`
+                      background-color: transparent;
+                      border: none;
+                      text-align: center;
+                      text-decoration: ${isHover ? 'underline' : 'none' };
+                      color: ${showMoreLinkColor};
+                      display: inline-block;
+                      cursor: pointer;
+                    `}
+                    onClick={() => {
+                      setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
+                    }}
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
+                  >
+                    {/* set bold here: somehow font-weight does not work */}
+                    {isShowMoreLinkBold ? <b>{showMoreLink}</b> : <>{showMoreLink}</>}
+                  </button>
+                </>
+              )}
+
+            </span>
+            {pinned || !onClose ? null : (
+              <a
+                css={css`
+                  text-align: right;
+                  padding-right: 10px;
+                  &:hover {
+                    color: ${intense ? 'black' : getColorTheme(type, 600)};
+                  }
+                `}
+                onClick={onClose}
+              >
+                <CloseIcon css={css`vertical-align: middle`} />
+              </a>
+            )}
+            {/* show CollapsibleContent icon */}
+            {CollapsibleContent != null && (
+              <a
+                css={css`
+                  text-align: right;
+                  padding-right: 10px;
+                  &:hover {
+                    color: ${intense ? 'black' : getColorTheme(type, 600)};
+                  }
+                `}
+                onClick={() => {
+                  setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
+                }}
+              >
+                {collapsibleIcon}
+              </a>
+            )}
+          </div>
+          {/* show/hide CollapsibleContent */}
+          {isShowMore && CollapsibleContent != null && (
+            <div style={{ marginTop: '1em', marginLeft: '2.3em' }}>
+              <CollapsibleContent />
+            </div>
           )}
         </div>
+      </div>
       )}
     </>
   );
