@@ -197,6 +197,7 @@ initialize({
       component: () => <MapVeuContainer singleAppMode={singleAppMode} />,
       exact: false,
       rootClassNameModifier: 'MapVEu',
+      isFullscreen: true,
     },
     ...routes,
   ],
