@@ -209,6 +209,9 @@ img[data-assets-src][src] {
 .wdk-PageContent {
   position: relative;
   padding: 0 2em;
+  &__fullscreen {
+    padding: 0;
+  }
 }
 
 .wdk-Link {

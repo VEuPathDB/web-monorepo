@@ -121,8 +121,8 @@ export default class Root extends React.Component<Props, State> {
     const activeRoute = routes.find(({ path, exact = true }) =>
       matchPath(location.pathname, { path, exact })
     );
-    const rootClassNameModifier =
-      activeRoute && activeRoute.rootClassNameModifier;
+    const rootClassNameModifier = activeRoute?.rootClassNameModifier;
+    const isFullscreen = activeRoute?.isFullscreen;
     return (
       <Provider store={this.props.store}>
         <ErrorBoundary>
@@ -136,6 +136,7 @@ export default class Root extends React.Component<Props, State> {
                 <Page
                   classNameModifier={rootClassNameModifier}
                   requireLogin={this.props.requireLogin}
+                  isFullScreen={isFullscreen}
                 >
                   {staticContent ? (
                     safeHtml(staticContent, null, 'div')

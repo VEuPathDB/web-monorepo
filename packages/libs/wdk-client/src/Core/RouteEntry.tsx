@@ -8,6 +8,7 @@ export interface RouteEntry {
   readonly component: RouteProps['component'];
   readonly requiresLogin?: boolean;
   readonly rootClassNameModifier?: string;
+  readonly isFullscreen?: boolean;
 }
 
 export function parseQueryString(props: RouteComponentProps<any>): Record<string, string> {
