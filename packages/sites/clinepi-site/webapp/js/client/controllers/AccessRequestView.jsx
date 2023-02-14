@@ -1,6 +1,6 @@
 import React, { Component, Fragment, useEffect, useState } from 'react';
 
-import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { Link } from '@veupathdb/wdk-client/lib/Components'
 
 import SupportFormBase from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBase';
 import SupportFormBody from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBody';
@@ -136,7 +136,7 @@ class AccessRequestViewInner extends Component {
     } = this.props;
  
    // probably better: offer datasetId in props to avoid this
-    const indexOfFirst = location.pathname.toString().indexOf('/DS_') + 1;
+    const indexOfFirst = location.pathname.toString().indexOf('/DS_')+1;
     const datasetId = location.pathname.toString().slice(indexOfFirst);
 
     return (
