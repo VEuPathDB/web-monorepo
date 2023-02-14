@@ -17,22 +17,21 @@ const AccessRequestView = (props) => {
   const studyAccessApi = useStudyAccessApi();
 
   useEffect(() => {
+    // It's possible that the user has already submitted an access request. If
+    // so, this will get the submitted form values so we can prepopulate the
+    // fields.
     const asyncFunction = async () => {
-      const indexOfFirst =
-        props.location.pathname.toString().indexOf("/DS_") + 1;
-      const datasetId = props.location.pathname.toString().slice(indexOfFirst);
       let response = null;
 
       try {
         response =
-          datasetId && user
-            ? await studyAccessApi.fetchEndUserEntry(user.id, datasetId)
+          props.datasetId && user
+            ? await studyAccessApi.fetchEndUserEntry(user.id, props.datasetId)
             : null;
       } catch (error) {
         if (!error.message.startsWith("404 Not Found")) throw error;
       }
 
-      console.log({ response });
       const requestData = response
         ? Object.keys(response).reduce((newObj, key) => {
             newObj[camelToSnakeCase(key)] = response[key];
@@ -87,7 +86,6 @@ class AccessRequestViewInner extends Component {
       datasetId,
       alreadyRequested,
       webAppUrl,
-      formValues,
       existingRequestData,
     } = this.props;
     const studyPageUrl = webAppUrl + '/app/record/dataset/' + datasetId;
@@ -130,14 +128,10 @@ class AccessRequestViewInner extends Component {
       submitForm,
       submissionError,
       webAppUrl,
-      location,
       alreadyRequested,
       existingRequestData,
+      datasetId,
     } = this.props;
- 
-   // probably better: offer datasetId in props to avoid this
-    const indexOfFirst = location.pathname.toString().indexOf('/DS_')+1;
-    const datasetId = location.pathname.toString().slice(indexOfFirst);
 
     return (
       <Fragment>
