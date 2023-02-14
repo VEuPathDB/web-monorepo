@@ -351,18 +351,18 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
         additionalFilters={[
-          <button
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: '0 0.25em',
-              whiteSpace: 'nowrap',
-            }}
-            type="button"
-            onClick={toggleShowOnlyReferenceOrganisms}
-          >
-            <Toggle on={showOnlyReferenceOrganisms} /> Show only reference organisms
-          </button>
+          <Tooltip 
+            css={{}} 
+            title={
+              <span style={{fontWeight: 'normal'}}>
+                Show only reference organisms <span style={{fontWeight: 'bolder'}}>[Ref]</span>
+              </span>
+            }>
+              <label className={cx('--OnlyMatchesToggle')}>
+                <input style={{marginRight: '0.25em'}} type="checkbox" checked={showOnlyReferenceOrganisms} onChange={toggleShowOnlyReferenceOrganisms}/>
+                <span style={{fontSize: '1.1em'}}><strong>[Ref]</strong> only</span>
+              </label>
+          </Tooltip>
         ]}
         styleOverrides={{
           treeSection: {
@@ -375,14 +375,10 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
               top: '3px',
             }
           },
-          searchAndFilterWrapper: {
-            flexWrap: 'wrap',
-            rowGap: '0.5em',
-          },
           additionalFilters: {
             container: {
+              width: '100px',
               marginLeft: '0.5em',
-              flexGrow: 1,
             }
           }
         }}
