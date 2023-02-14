@@ -1,6 +1,6 @@
 import React, { Component, Fragment, useEffect, useState } from 'react';
 
-import { Link } from "@veupathdb/wdk-client/lib/Components";
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 import SupportFormBase from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBase';
 import SupportFormBody from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBody';
@@ -104,7 +104,7 @@ class AccessRequestViewInner extends Component {
       return (
         <Fragment>
           <p>
-            Thank you for submitting your data access registration. You may go to the <a href={`${studyPageUrl}`}>study page</a> to download the data files.
+          Thank you for submitting your data access registration. You may go to the <a href={`${studyPageUrl}`}>study page</a> to download the data files.
           </p>
         </Fragment>
       );
@@ -134,9 +134,9 @@ class AccessRequestViewInner extends Component {
       alreadyRequested,
       existingRequestData,
     } = this.props;
-
-    // probably better: offer datasetId in props to avoid this
-    const indexOfFirst = location.pathname.toString().indexOf("/DS_") + 1;
+ 
+   // probably better: offer datasetId in props to avoid this
+    const indexOfFirst = location.pathname.toString().indexOf('/DS_') + 1;
     const datasetId = location.pathname.toString().slice(indexOfFirst);
 
     return (
@@ -155,7 +155,7 @@ class AccessRequestViewInner extends Component {
           }}>
           <table align="left">
             <tbody>
-              {fieldElements.map(({ key, FieldComponent, label, onChangeKey }) =>
+              {fieldElements.map(({ key, FieldComponent, label, onChangeKey }) => 
                 <FieldComponent
                   key={key}
                   mykey={key}
