@@ -269,7 +269,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
       <div className={cx('--OrganismFilterNode')}>
         <div>{node.data.display}{' '}
         {referenceStrains?.has(organismName) && (
-          <span style={{fontSize: '0.9em'}}><strong>[Reference]</strong></span>
+          <span style={{fontSize: '0.95em'}}><strong>[Reference]</strong></span>
         )}
         </div>
         <div>{count.toLocaleString()}</div>
