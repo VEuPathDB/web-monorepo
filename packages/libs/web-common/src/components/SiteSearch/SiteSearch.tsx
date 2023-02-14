@@ -269,7 +269,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
       <div className={cx('--OrganismFilterNode')}>
         <div>{node.data.display}{' '}
         {referenceStrains?.has(organismName) && (
-          <span style={{fontSize: '0.95em'}}><strong>[Reference]</strong></span>
+          <span style={{fontSize: '0.9em'}}><strong>[Ref]</strong></span>
         )}
         </div>
         <div>{count.toLocaleString()}</div>
@@ -281,7 +281,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
   const searchPredicate = useCallback((node: TreeBoxVocabNode, searchTerms: string[]) => {
     const organismName = getNodeId(node);
     const display = referenceStrains?.has(organismName) ? 
-      node.data.display + ' [Reference]' : node.data.display;
+      node.data.display + ' [Ref]' : node.data.display;
     return areTermsInString(searchTerms, display);
   }, []);
   const showResetButton = filterOrganisms.length > 0;
