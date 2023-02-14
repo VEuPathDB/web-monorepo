@@ -21,6 +21,7 @@ import { add, capitalize, chunk, intersection, isEmpty, isEqual, keyBy, memoize,
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { CellProps, Column } from 'react-table';
+import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import './SiteSearch.scss';
 
 
@@ -239,6 +240,23 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
   const [ expansion, setExpansion ] = useState<string[]>(initialExpandedNodes);
   const [ selection, setSelection ] = useState<string[]>(filterOrganisms);
   const [ filterTerm, setFilterTerm ] = useState<string>('');
+
+  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] = useState(false);
+  const toggleShowOnlyReferenceOrganisms = useCallback(() => {
+    setShowOnlyReferenceOrganisms((value) => !value);
+  }, []);
+  const configTree = useMemo(
+    () =>
+      !showOnlyReferenceOrganisms || !referenceStrains
+        ? organismTree
+        : pruneDescendantNodes(
+            (node) =>
+              node.children.length > 0 || referenceStrains.has(node.data.term),
+            organismTree
+          ),
+    [organismTree, referenceStrains, showOnlyReferenceOrganisms]
+  );
+
   const pendingFilter = !isEqual(selection, filterOrganisms);
   const renderNode = useCallback((node: TreeBoxVocabNode) => {
     const organismName = getNodeId(node);
@@ -251,7 +269,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
       <div className={cx('--OrganismFilterNode')}>
         <div>{node.data.display}{' '}
         {referenceStrains?.has(organismName) && (
-          <span><strong>[Reference]</strong></span>
+          <span style={{fontSize: '0.9em'}}><strong>[Reference]</strong></span>
         )}
         </div>
         <div>{count.toLocaleString()}</div>
@@ -315,7 +333,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         </div>
       </div>
       <CheckboxTree<TreeBoxVocabNode>
-        tree={organismTree}
+        tree={configTree}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
         isSearchable
@@ -332,6 +350,20 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         selectedList={selection}
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
+        additionalFilters={[
+          <button
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '0 0.25em',
+              whiteSpace: 'nowrap',
+            }}
+            type="button"
+            onClick={toggleShowOnlyReferenceOrganisms}
+          >
+            <Toggle on={showOnlyReferenceOrganisms} /> Show only reference organisms
+          </button>
+        ]}
         styleOverrides={{
           treeSection: {
             ul: {
@@ -341,6 +373,16 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
           searchBox: {
             optionalIcon: {
               top: '3px',
+            }
+          },
+          searchAndFilterWrapper: {
+            flexWrap: 'wrap',
+            rowGap: '0.5em',
+          },
+          additionalFilters: {
+            container: {
+              marginLeft: '0.5em',
+              flexGrow: 1,
             }
           }
         }}
