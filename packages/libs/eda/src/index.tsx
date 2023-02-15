@@ -38,11 +38,11 @@ import {
   reduxMiddleware,
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 
-import { endpoint, rootElement, rootUrl } from './constants';
+import { edaEndpoint, wdkEndpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 import Header from './Header';
-import { MapVeuContainer } from './lib/mapveu';
-import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
+import MapApp from './lib/mapveu';
+import WorkspaceApp from './lib/workspace';
 import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 
 // Hooks
@@ -56,11 +56,6 @@ import './index.css';
 
 // snackbar
 import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
-
-const subsettingServiceUrl = '/eda-subsetting-service';
-const dataServiceUrl = '/eda-data-service';
-const userServiceUrl = '/eda-user-service';
-const downloadServiceUrl = '/eda-user-service';
 
 // Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
 // Otherwise, let singleAppMode remain undefined or set it to '' to allow multiple app instances.
@@ -177,11 +172,8 @@ initialize({
         }, [setLoginFormVisible]);
 
         return (
-          <WorkspaceRouter
-            subsettingServiceUrl={subsettingServiceUrl}
-            dataServiceUrl={dataServiceUrl}
-            userServiceUrl={userServiceUrl}
-            downloadServiceUrl={downloadServiceUrl}
+          <WorkspaceApp
+            serviceUrl={edaEndpoint}
             exampleAnalysesAuthor={exampleAnalysesAuthor}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}
@@ -194,14 +186,16 @@ initialize({
     },
     {
       path: '/mapveu',
-      component: () => <MapVeuContainer singleAppMode={singleAppMode} />,
+      component: () => (
+        <MapApp edaServiceUrl={edaEndpoint} singleAppMode={singleAppMode} />
+      ),
       exact: false,
       rootClassNameModifier: 'MapVEu',
       isFullscreen: true,
     },
     ...routes,
   ],
-  wrapWdkDependencies: partial(wrapWdkDependencies, '/eda-dataset-access'),
+  wrapWdkDependencies: partial(wrapWdkDependencies, edaEndpoint),
   wrapStoreModules: (storeModules: any) => ({
     ...storeModules,
     dataRestriction: {
@@ -209,7 +203,7 @@ initialize({
       reduce: dataRestrictionReducer,
     },
   }),
-  endpoint,
+  endpoint: wdkEndpoint,
   additionalMiddleware: [reduxMiddleware],
 } as any);
 

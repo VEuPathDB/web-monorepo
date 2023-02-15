@@ -12,7 +12,6 @@ import { useWdkStudyRecords } from '../core/hooks/study';
 import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 
 interface StudyListProps {
-  subsettingServiceUrl: string;
   baseUrl: string;
 }
 /**

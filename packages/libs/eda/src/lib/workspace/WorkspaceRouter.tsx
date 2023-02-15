@@ -31,10 +31,7 @@ import { StandaloneStudyPage } from './StandaloneStudyPage';
 const theme = createTheme(workspaceTheme);
 
 type Props = {
-  subsettingServiceUrl: string;
-  dataServiceUrl: string;
-  userServiceUrl: string;
-  downloadServiceUrl: string;
+  serviceUrl: string;
   exampleAnalysesAuthor?: number;
   showUnreleasedData?: boolean;
   /**
@@ -60,10 +57,7 @@ type Props = {
  * Router component for application.
  */
 export function WorkspaceRouter({
-  subsettingServiceUrl,
-  dataServiceUrl,
-  userServiceUrl,
-  downloadServiceUrl,
+  serviceUrl,
   exampleAnalysesAuthor,
   sharingUrlPrefix,
   showLoginForm,
@@ -75,9 +69,9 @@ export function WorkspaceRouter({
   const coreUIPrimaryColor = coreUITheme?.palette.primary;
   const { path, url } = useRouteMatch();
 
-  const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
-  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
-  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
+  const subsettingClient = useConfiguredSubsettingClient(serviceUrl);
+  const analysisClient = useConfiguredAnalysisClient(serviceUrl);
+  const downloadClient = useConfiguredDownloadClient(serviceUrl);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL
@@ -196,12 +190,7 @@ export function WorkspaceRouter({
             <Route
               path={`${path}/studies`}
               exact
-              render={() => (
-                <StudyList
-                  baseUrl={url}
-                  subsettingServiceUrl={subsettingServiceUrl}
-                />
-              )}
+              render={() => <StudyList baseUrl={url} />}
             />
             <Route
               path={`${path}/public`}
@@ -218,10 +207,7 @@ export function WorkspaceRouter({
               render={(props: RouteComponentProps<{ studyId: string }>) => (
                 <WorkspaceContainer
                   {...props.match.params}
-                  subsettingServiceUrl={subsettingServiceUrl}
-                  dataServiceUrl={dataServiceUrl}
-                  userServiceUrl={userServiceUrl}
-                  downloadServiceUrl={downloadServiceUrl}
+                  serviceUrl={serviceUrl}
                 >
                   <StandaloneStudyPage
                     studyId={props.match.params.studyId}
@@ -235,10 +221,7 @@ export function WorkspaceRouter({
               render={(props: RouteComponentProps<{ studyId: string }>) => (
                 <WorkspaceContainer
                   {...props.match.params}
-                  subsettingServiceUrl={subsettingServiceUrl}
-                  dataServiceUrl={dataServiceUrl}
-                  userServiceUrl={userServiceUrl}
-                  downloadServiceUrl={downloadServiceUrl}
+                  serviceUrl={serviceUrl}
                 >
                   <AnalysisPanel
                     {...props.match.params}
@@ -303,10 +286,7 @@ export function WorkspaceRouter({
               ) => (
                 <WorkspaceContainer
                   {...props.match.params}
-                  subsettingServiceUrl={subsettingServiceUrl}
-                  dataServiceUrl={dataServiceUrl}
-                  userServiceUrl={userServiceUrl}
-                  downloadServiceUrl={downloadServiceUrl}
+                  serviceUrl={serviceUrl}
                 >
                   <AnalysisPanel
                     {...props.match.params}
