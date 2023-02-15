@@ -95,7 +95,7 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-export const twoBytwoInputStyle: React.CSSProperties = {
+const twoBytwoInputStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: '115px auto',
   marginBottom: '0.5em',
@@ -644,7 +644,7 @@ function MosaicViz(props: Props<Options>) {
                     style={
                       !xAxisReferenceValue && !areQuadrantSelectionsDisabled
                         ? requiredInputLabelStyle
-                        : { cursor: 'default' }
+                        : undefined
                     }
                   >
                     Columns (X-axis)<sup>*</sup>
@@ -686,7 +686,7 @@ function MosaicViz(props: Props<Options>) {
                     style={
                       !yAxisReferenceValue && !areQuadrantSelectionsDisabled
                         ? requiredInputLabelStyle
-                        : { cursor: 'default' }
+                        : undefined
                     }
                   >
                     Rows (Y-axis)<sup>*</sup>

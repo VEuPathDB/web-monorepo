@@ -20,7 +20,7 @@ export const useInputStyles = makeStyles({
   },
   label: {
     marginRight: '1ex',
-    fontWeight: 500,
+    cursor: 'default',
   },
   dataLabel: {
     textAlign: 'right',

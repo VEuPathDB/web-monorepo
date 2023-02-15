@@ -15,9 +15,7 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
-
-// used for 2x2 axis variable style override
-import { twoBytwoInputStyle } from './implementations/MosaicVisualization';
+import { red } from '@veupathdb/coreui/dist/definitions/colors';
 
 export interface InputSpec {
   name: string;
@@ -72,14 +70,12 @@ const sectionInfo: Record<string, SectionSpec> = {
 };
 
 export const requiredInputLabelStyle = {
-  color: '#dd314e',
-  cursor: 'default',
+  color: red[600],
 };
 
 // ensures labels are stacked nicely based on the width of the longer string, "Overlay"
 const multipleStratificationVariableLabelStyle = {
   width: '45px',
-  cursor: 'default',
 };
 
 interface CustomSectionSpec extends SectionSpec {
@@ -249,7 +245,7 @@ export function InputVariables(props: Props) {
                             : input.role === 'stratification' &&
                               hasMultipleStratificationValues
                             ? multipleStratificationVariableLabelStyle
-                            : { cursor: 'default' }
+                            : undefined
                         }
                       >
                         {input.label +
