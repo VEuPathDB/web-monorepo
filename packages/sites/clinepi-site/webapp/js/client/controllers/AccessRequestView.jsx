@@ -29,6 +29,8 @@ const AccessRequestView = (props) => {
             ? await studyAccessApi.fetchEndUserEntry(user.id, props.datasetId)
             : null;
       } catch (error) {
+        // The endpoint returns a 404 if the user has not already submitted
+        // a request, so a 404 is expected behavior. Any other error is not.
         if (!error.message.startsWith("404 Not Found")) throw error;
       }
 
