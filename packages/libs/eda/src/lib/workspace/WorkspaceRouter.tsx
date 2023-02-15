@@ -18,6 +18,8 @@ import {
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
   useConfiguredDownloadClient,
+  useConfiguredDataClient,
+  useConfiguredComputeClient,
 } from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
 import { ImportAnalysis } from './ImportAnalysis';
@@ -70,8 +72,10 @@ export function WorkspaceRouter({
   const { path, url } = useRouteMatch();
 
   const subsettingClient = useConfiguredSubsettingClient(serviceUrl);
+  const dataClient = useConfiguredDataClient(serviceUrl);
   const analysisClient = useConfiguredAnalysisClient(serviceUrl);
   const downloadClient = useConfiguredDownloadClient(serviceUrl);
+  const computeClient = useConfiguredComputeClient(serviceUrl);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL
@@ -207,7 +211,11 @@ export function WorkspaceRouter({
               render={(props: RouteComponentProps<{ studyId: string }>) => (
                 <WorkspaceContainer
                   {...props.match.params}
-                  serviceUrl={serviceUrl}
+                  subsettingClient={subsettingClient}
+                  dataClient={dataClient}
+                  analysisClient={analysisClient}
+                  downloadClient={downloadClient}
+                  computeClient={computeClient}
                 >
                   <StandaloneStudyPage
                     studyId={props.match.params.studyId}
@@ -221,7 +229,11 @@ export function WorkspaceRouter({
               render={(props: RouteComponentProps<{ studyId: string }>) => (
                 <WorkspaceContainer
                   {...props.match.params}
-                  serviceUrl={serviceUrl}
+                  subsettingClient={subsettingClient}
+                  dataClient={dataClient}
+                  analysisClient={analysisClient}
+                  downloadClient={downloadClient}
+                  computeClient={computeClient}
                 >
                   <AnalysisPanel
                     {...props.match.params}
@@ -286,7 +298,11 @@ export function WorkspaceRouter({
               ) => (
                 <WorkspaceContainer
                   {...props.match.params}
-                  serviceUrl={serviceUrl}
+                  subsettingClient={subsettingClient}
+                  dataClient={dataClient}
+                  analysisClient={analysisClient}
+                  downloadClient={downloadClient}
+                  computeClient={computeClient}
                 >
                   <AnalysisPanel
                     {...props.match.params}
