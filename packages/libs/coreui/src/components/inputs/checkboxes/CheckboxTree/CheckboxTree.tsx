@@ -1,4 +1,4 @@
-import React, { useCallback, MouseEventHandler, useMemo } from 'react';
+import React, { useCallback, MouseEventHandler, useMemo, useState, useEffect } from 'react';
 import { css } from '@emotion/react';
 import { merge } from 'lodash';
 
@@ -108,7 +108,7 @@ type StatefulNode<T> = T & {
   __expandableTreeChildren: StatefulNode<T>[];
 };
 
-let Bar = () => <span> | </span>;
+const Bar = () => <span> | </span>;
 
 type ChangeHandler = (ids: string[]) => void;
 
@@ -340,7 +340,7 @@ function TreeLinks({
 
     </div>
   );
-};
+}
 
 type ListFetcher = () => string[] | void;
 
@@ -390,13 +390,13 @@ function AdditionalFilters({ filters, filtersStyleSpec }: AdditionalFiltersProps
  * call to applyPropsToStatefulTree() applies props to an existing stateful tree.
  */
 function createStatefulTree<T>(root: T, getNodeChildren: (t: T) => T[]) {
-  let mapFunction = (node: T, mappedChildren: StatefulNode<T>[]) =>
-    Object.assign({} as T, node, {
-      __expandableTreeChildren: mappedChildren,
-      __expandableTreeState: getInitialNodeState(node, getNodeChildren)
-    });
+  const mapFunction = (node: T, mappedChildren: StatefulNode<T>[]) => ({
+    ...node,
+    __expandableTreeChildren: mappedChildren,
+    __expandableTreeState: getInitialNodeState(node, getNodeChildren)
+  });
   return mapStructure(mapFunction, getNodeChildren, root);
-};
+}
 
 /**
  * Applies a set of expandable tree props to an existing stateful tree (a copy
@@ -416,10 +416,20 @@ function createStatefulTree<T>(root: T, getNodeChildren: (t: T) => T[]) {
  * - if no descendent leaves are selected, the node is collapsed
  * - if some but not all descendent leaves are selected, the node is expanded
  */
-function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: CheckboxTreeProps<T>, isLeafVisible: (id: string) => boolean, stateExpandedList?: string[]) {
-
-  let { getNodeId, getNodeChildren, isSelectable, isMultiPick, selectedList } = props;
-  let propsExpandedList = props.expandedList;
+function applyPropsToStatefulTree<T>(
+  root: StatefulNode<T>,
+  getNodeId: CheckboxTreeProps<T>['getNodeId'],
+  getNodeChildren: CheckboxTreeProps<T>['getNodeChildren'],
+  isSelectable: CheckboxTreeProps<T>['isSelectable'],
+  isSearchable: CheckboxTreeProps<T>['isSearchable'],
+  isMultiPick: CheckboxTreeProps<T>['isMultiPick'],
+  searchTerm: CheckboxTreeProps<T>['searchTerm'],
+  selectedList: CheckboxTreeProps<T>['selectedList'],
+  propsExpandedList: CheckboxTreeProps<T>['expandedList'],
+  isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
+  isLeafVisible: (id: string) => boolean,
+  stateExpandedList?: string[]
+) {
 
   // if single-pick then trim selected list so at most 1 item present
   if (!isMultiPick && selectedList.length > 1) {
@@ -428,25 +438,25 @@ function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: CheckboxTreeP
   }
 
   // if expanded list is null, then use default rules to determine expansion rather than explicit list
-  let expandedList = propsExpandedList != null ? propsExpandedList : stateExpandedList;
-  let expansionListProvided = (expandedList != null);
-  let generatedExpandedList = new Set<string>();
+  const expandedList = propsExpandedList != null ? propsExpandedList : stateExpandedList;
+  const expansionListProvided = (expandedList != null);
+  const generatedExpandedList = new Set<string>();
 
   // convert arrays to sets for search efficiency
-  let selectedSet = new Set<string>(selectedList);
-  let expandedSet = new Set<string>(expandedList);
+  const selectedSet = new Set<string>(selectedList);
+  const expandedSet = new Set<string>(expandedList);
 
-  let mapFunction = (node: StatefulNode<T>, mappedChildren: StatefulNode<T>[]) => {
+  const mapFunction = (node: StatefulNode<T>, mappedChildren: StatefulNode<T>[]) => {
 
-    let nodeId = getNodeId(node);
-    let { isSelected, isVisible, isExpanded, isIndeterminate } = getNodeState(node);
+    const nodeId = getNodeId(node);
+    const { isSelected, isVisible, isExpanded, isIndeterminate } = getNodeState(node);
     let newState = Object.assign({}, getNodeState(node));
     let modifyThisNode = false;
 
     if (isLeaf(node, getNodeChildren)) {
       // only leaves can change via direct selectedness and direct visibility
-      let newIsSelected = (isSelectable && selectedSet.has(nodeId));
-      let newIsVisible = isLeafVisible(nodeId);
+      const newIsSelected = (isSelectable && selectedSet.has(nodeId));
+      const newIsVisible = isLeafVisible(nodeId);
       if (newIsSelected !== isSelected || newIsVisible != isVisible) {
         modifyThisNode = true;
         newState = Object.assign(newState, {
@@ -462,14 +472,14 @@ function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: CheckboxTreeP
       let indeterminateChildFound = false;
       let visibleChildFound = false;
 
-      let oldChildren = getStatefulChildren(node);
+      const oldChildren = getStatefulChildren(node);
       for (let i = 0; i < oldChildren.length; i++) {
-        let newChild = mappedChildren[i];
+        const newChild = mappedChildren[i];
         if (newChild !== oldChildren[i]) {
           // reference equality check failed; a child has been modified, so must modify this node
           modifyThisNode = true;
         }
-        let newChildState = getNodeState(newChild);
+        const newChildState = getNodeState(newChild);
         if (newChildState.isSelected)
           selectedChildFound = true;
         else
@@ -481,10 +491,10 @@ function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: CheckboxTreeP
       }
 
       // determine new state and compare with old to determine if this node should be modified
-      let newIsSelected = (!indeterminateChildFound && !unselectedChildFound);
-      let newIsIndeterminate = !newIsSelected && (indeterminateChildFound || selectedChildFound);
-      let newIsVisible = visibleChildFound;
-      let newIsExpanded = (isActiveSearch(props) && newIsVisible) ||
+      const newIsSelected = (!indeterminateChildFound && !unselectedChildFound);
+      const newIsIndeterminate = !newIsSelected && (indeterminateChildFound || selectedChildFound);
+      const newIsVisible = visibleChildFound;
+      const newIsExpanded = (isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm) && newIsVisible) ||
           (expansionListProvided ? expandedSet.has(nodeId) :
               (indeterminateChildFound || (selectedChildFound && (!isMultiPick || unselectedChildFound))));
 
@@ -516,7 +526,7 @@ function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: CheckboxTreeP
   }
 
   // generate the new stateful tree, and expanded list (if necessary)
-  let newStatefulTree = mapStructure(mapFunction, getStatefulChildren, root);
+  const newStatefulTree = mapStructure(mapFunction, getStatefulChildren, root);
   return {
     // convert whichever Set we want back to an array
     expandedList: Array.from(expansionListProvided ? expandedSet : generatedExpandedList),
@@ -528,7 +538,11 @@ function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: CheckboxTreeP
  * Returns true if a search is being actively performed (i.e. if this tree is
  * searchable, and at least one filter has been applied).
  */
-function isActiveSearch({ isAdditionalFilterApplied, isSearchable, searchTerm }: CheckboxTreeProps<any>) {
+function isActiveSearch<T>(
+  isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
+  isSearchable: CheckboxTreeProps<T>['isSearchable'],
+  searchTerm: CheckboxTreeProps<T>['searchTerm'],
+) {
   return isSearchable && isFiltered(searchTerm, isAdditionalFilterApplied);
 }
 
@@ -561,10 +575,18 @@ function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
  * branches, but tells absolutely if a leaf should be visible (i.e. if the leaf
  * matches the search or if any ancestor matches the search).
  */
-function createIsLeafVisible<T>(props: CheckboxTreeProps<T>) {
-  const { tree, searchTerm, searchPredicate, getNodeId, getNodeChildren, filteredList = [] } = props;
+function createIsLeafVisible<T>(
+  tree: CheckboxTreeProps<T>['tree'],
+  searchTerm: CheckboxTreeProps<T>['searchTerm'],
+  searchPredicate: CheckboxTreeProps<T>['searchPredicate'],
+  getNodeId: CheckboxTreeProps<T>['getNodeId'],
+  getNodeChildren: CheckboxTreeProps<T>['getNodeChildren'],
+  isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
+  isSearchable: CheckboxTreeProps<T>['isSearchable'],
+  filteredList: CheckboxTreeProps<T>['filteredList'] = [],
+) {
   // if not searching and no filtered list is passed in, then all nodes are visible
-  if (!isActiveSearch(props) && !filteredList.length) {
+  if (!isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm) && !filteredList.length) {
     return (nodeId: string) => true;
   }
   // otherwise must construct array of visible leaves
@@ -656,58 +678,48 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         renderNoResults,
         styleOverrides = {},
         customTreeNodeCssSelectors = {},
+        renderNode: renderNodeProp
     } = props;
 
     const styleSpec: CheckboxTreeStyleSpec = useMemo(() => {
       return merge({}, defaultCheckboxTreeStyleSpec, styleOverrides)
     }, [styleOverrides])
-
+        
     // initialize stateful tree; this immutable tree structure will be replaced with each state change
-    const treeState = useMemo(() => {
-        const isLeafVisible = createIsLeafVisible(props);
-        const generatedTreeState = applyPropsToStatefulTree(createStatefulTree(tree, getNodeChildren), props, isLeafVisible, undefined);
-        return {
-            isLeafVisible,
-            generated: generatedTreeState,
-        }
-    }, [tree, isSearchable, searchTerm, searchPredicate, isAdditionalFilterApplied, name, getNodeId, getNodeChildren, props.renderNode, expandedList, selectedList, filteredList]);
-
+    const treeState = useTreeState(props);
 
     /**
      * Creates a function that will handle a click of one of the tree links above
     */
-    const createLinkHandler = useCallback(
-        (idListFetcher: ListFetcher, changeHandlerProp: keyof CheckboxTreeProps<T>): TreeLinkHandler => {
-            return function(event) {
-  
-                // prevent update to URL
-                event.preventDefault();
-            
-                // get changeHandler
-                let changeHandler = props[changeHandlerProp] as ChangeHandler;
-            
-                // call instance's change handler with the appropriate ids
-                let idList = idListFetcher();
-                if (idList !== undefined && idList !== null) {
-                    changeHandler(idList);
-                }
-            
-              };
-    }, []);
+    function createLinkHandler(
+      idListFetcher: ListFetcher,
+      changeHandler: ChangeHandler
+    ): TreeLinkHandler {
+      return function (event) {
+        // prevent update to URL
+        event.preventDefault();
+
+        // call instance's change handler with the appropriate ids
+        const idList = idListFetcher();
+        if (idList !== undefined && idList !== null) {
+          changeHandler(idList);
+        }
+      };
+    }
   
     /**
      * Creates a function that will handle expansion-related tree link clicks
      */
-    const createExpander = useCallback(
-        (listFetcher: ListFetcher) => createLinkHandler(listFetcher, 'onExpansionChange'),
-    []);
+    function createExpander(listFetcher: ListFetcher) {
+      return createLinkHandler(listFetcher, props.onExpansionChange);
+    }
   
     /**
      * Creates a function that will handle selection-related tree link clicks
      */
-    const createSelector = useCallback(
-        (listFetcher: ListFetcher) => createLinkHandler(listFetcher, 'onSelectionChange'),
-    []);
+    function createSelector(listFetcher: ListFetcher) {
+      return createLinkHandler(listFetcher, props.onSelectionChange);
+    }
 
     // define event handlers related to expansion
     const expandAll = createExpander(() => getBranches(tree, getNodeChildren).map(node => getNodeId(node)));
@@ -749,17 +761,17 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
     /**
     * Toggle expansion of the given node.  If node is a leaf, does nothing.
     */
-    function toggleExpansion(node: T) {
-        if (!isActiveSearch(props) && !isLeaf(node, getNodeChildren)) {
+    const toggleExpansion = useCallback((node: T) => {
+        if (!isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm) && !isLeaf(node, getNodeChildren)) {
             if (!shouldExpandDescendantsWithOneChild || treeState.generated.expandedList.includes(getNodeId(node))) {
             // If "shouldExpandDescendantsWithOneChild" is not set to "true," or the node is already expanded,
             // simply addOrRemove the node to/from the expandedList
             onExpansionChange(addOrRemove(treeState.generated.expandedList, getNodeId(node)));
             } else {
             // Otherwise, add the node and its descendants with one child to the expandedList
-            let descendantNodesWithOneChild = _findDescendantsWithOneChild(node);
+            const descendantNodesWithOneChild = _findDescendantsWithOneChild(node);
 
-            let newExpandedList = Seq.from(treeState.generated.expandedList)
+            const newExpandedList = Seq.from(treeState.generated.expandedList)
             .concat(descendantNodesWithOneChild)
             .uniq()
             .toArray();
@@ -768,15 +780,15 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
             }
         }
         function _findDescendantsWithOneChild(descendant: T): Seq<string> {
-          let nextNodes = getNodeId(node) === getNodeId(descendant) || getNodeChildren(descendant).length === 1
+          const nextNodes = getNodeId(node) === getNodeId(descendant) || getNodeChildren(descendant).length === 1
             ? Seq.from([ getNodeId(descendant) ])
-            : Seq.empty();
+            : Seq.empty<string>();
     
-          let remainingNodes = Seq.from(getNodeChildren(descendant)).flatMap(_findDescendantsWithOneChild);
+          const remainingNodes = Seq.from(getNodeChildren(descendant)).flatMap(_findDescendantsWithOneChild);
     
           return nextNodes.concat(remainingNodes);
         }
-    }
+    }, [getNodeChildren, getNodeId, isAdditionalFilterApplied, isSearchable, onExpansionChange, searchTerm, shouldExpandDescendantsWithOneChild, treeState.generated.expandedList]);
 
 
     /**
@@ -786,7 +798,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
    * If toggled checkbox is a selected non-leaf - identify the node's leaves and add them to the select list to be returned
    * If toggled checkbox is an unselected non-leaf - identify the node's leaves and remove them from the select list to be returned
    */
-    function toggleSelection(node: T, selected: boolean) {
+    const toggleSelection = useCallback((node: T, selected: boolean) => {
         if (!isSelectable) return;
         if (isLeaf(node, getNodeChildren)) {
             if (isMultiPick) {
@@ -799,11 +811,11 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
             }
         }
         else {
-            let newSelectedList = (selectedList ? selectedList.slice() : []);
-            let leafNodes = getLeaves(node, getNodeChildren);
+            const newSelectedList = (selectedList ? selectedList.slice() : []);
+            const leafNodes = getLeaves(node, getNodeChildren);
             leafNodes.forEach(leafNode => {
-                let leafId = getNodeId(leafNode);
-                let index = newSelectedList.indexOf(leafId);
+                const leafId = getNodeId(leafNode);
+                const index = newSelectedList.indexOf(leafId);
                 if (selected && index === -1) {
                     newSelectedList.push(leafId);
                 }
@@ -813,22 +825,22 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
             });
             onSelectionChange(newSelectedList);
         }
-    }
+    }, [getNodeChildren, getNodeId, isMultiPick, isSelectable, onSelectionChange, selectedList]);
 
-    function renderNode(node: T, path?: number[]) {
-        return props.renderNode
-            ? props.renderNode(node, path)
+    const renderNode = useCallback((node: T, path?: number[]) => {
+        return renderNodeProp
+            ? renderNodeProp(node, path)
             : <span>{getNodeId(node)}</span>
-    }
+    }, [getNodeId, renderNodeProp]);
 
-    let topLevelNodes = (showRoot ? [ treeState.generated.statefulTree ] :
+    const topLevelNodes = (showRoot ? [ treeState.generated.statefulTree ] :
       getStatefulChildren(treeState.generated.statefulTree));
 
-    let isTreeVisible = treeState.generated && getNodeState(treeState.generated.statefulTree).isVisible;
-    let noResultsRenderFunction = renderNoResults || defaultRenderNoResults;
-    let noResultsMessage = isTreeVisible ? null : noResultsRenderFunction(searchTerm, tree);
+    const isTreeVisible = treeState.generated && getNodeState(treeState.generated.statefulTree).isVisible;
+    const noResultsRenderFunction = renderNoResults || defaultRenderNoResults;
+    const noResultsMessage = isTreeVisible ? null : noResultsRenderFunction(searchTerm, tree);
 
-    let treeLinks = (
+    const treeLinks = (
       <TreeLinks
         isFiltered={isFiltered(searchTerm, isAdditionalFilterApplied)}
         selectAll={selectAll}
@@ -843,7 +855,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         showSelectionLinks={!!isSelectable && !!isMultiPick}
         showCurrentLink={currentList != null}
         showDefaultLink={defaultList != null}
-        showExpansionLinks={!isActiveSearch(props)}
+        showExpansionLinks={!isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm)}
         additionalActions={additionalActions}
         treeLinksStyleSpec={styleSpec.treeLinks ?? defaultTreeLinksStyleSpec}
       />
@@ -866,7 +878,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
       })
     }, [styleSpec.treeNode, customTreeNodeCssSelectors])
 
-    let treeSection = (
+    const treeSection = (
       <div style={styleSpec.treeSection?.container}>
         <ul 
           style={styleSpec.treeSection?.ul}
@@ -880,11 +892,11 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
                 key={"node_" + nodeId}
                 name={name || ''}
                 node={node}
-                path={[index]}
+                path={String(index)}
                 getNodeState={getNodeState}
                 isSelectable={!!isSelectable}
                 isMultiPick={!!isMultiPick}
-                isActiveSearch={isActiveSearch(props)}
+                isActiveSearch={isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm)}
                 toggleSelection={toggleSelection}
                 toggleExpansion={toggleExpansion}
                 shouldExpandOnClick={shouldExpandOnClick}
@@ -950,13 +962,13 @@ const defaultProps = {
   selectedList: [],
   customCheckboxes: {},
   isMultiPick: true,
-  onSelectionChange: () => {},
+  onSelectionChange: () => {/* */},
   isSearchable: false,
   showSearchBox: true,
   searchBoxPlaceholder: "Search...",
   searchBoxHelp: '',
   searchTerm: '',
-  onSearchTermChange: () => {},
+  onSearchTermChange: () => {/* */},
   searchPredicate: () => true,
   linksPosition: LinksPosition.Both
 };
@@ -964,3 +976,72 @@ const defaultProps = {
 CheckboxTree.defaultProps = defaultProps;
 CheckboxTree.LinkPlacement = LinksPosition;
 export default CheckboxTree;
+
+
+function useTreeState<T>(props: CheckboxTreeProps<T>) {
+  const {
+    tree,
+    searchTerm,
+    searchPredicate,
+    getNodeId,
+    getNodeChildren,
+    isAdditionalFilterApplied,
+    isSearchable,
+    isSelectable,
+    isMultiPick,
+    selectedList,
+    expandedList,
+    filteredList
+  } = props;
+  const statefulTree = useMemo(() => createStatefulTree(tree, getNodeChildren), [tree, getNodeChildren]);
+
+  // initialize stateful tree; this immutable tree structure will be replaced with each state change
+  const makeTreeState = useCallback(() => {
+    const isLeafVisible = createIsLeafVisible(
+      tree,
+      searchTerm,
+      searchPredicate,
+      getNodeId,
+      getNodeChildren,
+      isAdditionalFilterApplied,
+      isSearchable,
+      filteredList,
+    );
+    const generatedTreeState = applyPropsToStatefulTree(
+      statefulTree,
+      getNodeId,
+      getNodeChildren,
+      isSelectable,
+      isSearchable,
+      isMultiPick,
+      searchTerm,
+      selectedList,
+      expandedList,
+      isAdditionalFilterApplied,
+      isLeafVisible,
+      undefined
+    );
+    return {
+      isLeafVisible,
+      generated: generatedTreeState,
+    }
+  }, [tree, searchTerm, searchPredicate, getNodeId, getNodeChildren, isAdditionalFilterApplied, isSearchable, statefulTree, isSelectable, isMultiPick, selectedList, expandedList, filteredList]);
+
+  const [treeState, setTreeState] = useState(makeTreeState);
+
+  useEffect(() => {
+    function performUpdate() {
+      setTreeState(makeTreeState());
+    }
+    if (searchTerm) {
+      const timerId = setTimeout(performUpdate, 250);
+      return function cancel() {
+        clearTimeout(timerId);
+      }
+    } else {
+      performUpdate();
+    }
+  }, [makeTreeState, searchTerm])
+
+  return treeState;
+}
