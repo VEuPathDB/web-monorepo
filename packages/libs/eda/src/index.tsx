@@ -41,7 +41,7 @@ import {
 import { edaEndpoint, wdkEndpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 import Header from './Header';
-import MapApp from './lib/mapveu';
+import MapApp from './lib/map';
 import WorkspaceApp from './lib/workspace';
 import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 

@@ -1,1 +1,1 @@
-export { WorkspaceRouter, WorkspaceRouter as default } from './WorkspaceRouter';
+export { WorkspaceRouter as default } from './WorkspaceRouter';
