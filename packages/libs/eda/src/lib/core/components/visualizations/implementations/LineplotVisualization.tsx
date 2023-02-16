@@ -2126,8 +2126,7 @@ function getRequestParams(
   const viewport =
     vizConfig?.independentAxisRange?.min != null &&
     vizConfig?.independentAxisRange?.max != null
-      ? // ? vizConfig.useBinning || (!vizConfig.useBinning && vizConfig.independentAxisValueSpec === 'Custom')
-        vizConfig.useBinning
+      ? vizConfig.useBinning
         ? undefined
         : {
             xMin: String(vizConfig?.independentAxisRange?.min),
