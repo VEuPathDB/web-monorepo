@@ -583,10 +583,10 @@ function createIsLeafVisible<T>(
   getNodeChildren: CheckboxTreeProps<T>['getNodeChildren'],
   isAdditionalFilterApplied: CheckboxTreeProps<T>['isAdditionalFilterApplied'],
   isSearchable: CheckboxTreeProps<T>['isSearchable'],
-  filteredList: CheckboxTreeProps<T>['filteredList'] = [],
+  filteredList: CheckboxTreeProps<T>['filteredList'],
 ) {
-  // if not searching and no filtered list is passed in, then all nodes are visible
-  if (!isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm) && !filteredList.length) {
+  // if not searching, no additional filters are applied, and filteredList is undefined, then all nodes are visible
+  if (!isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm) && !filteredList) {
     return (nodeId: string) => true;
   }
   // otherwise must construct array of visible leaves
@@ -599,12 +599,12 @@ function createIsLeafVisible<T>(
     if (parentMatches) {
       // if parent matches, automatically match (always show children of matching parents)
       nodeMatches = parentMatches;
-    } else if (searchTerm && filteredList.length) {
-      nodeMatches = searchPredicate(node, searchTerms) && filteredSet.has(nodeId)
-    } else if (!searchTerm && filteredList.length) {
-      nodeMatches = filteredSet.has(nodeId)
+    } else if (searchTerm && filteredList && filteredList.length) {
+      nodeMatches = searchPredicate(node, searchTerms) && filteredSet.has(nodeId);
+    } else if (!searchTerm && filteredList && filteredList.length) {
+      nodeMatches = filteredSet.has(nodeId);
     } else {
-      // handles filtering by search only (no filteredList is defined)
+      // handles filtering by search only (filteredList is undefined or an empty array)
       nodeMatches = searchPredicate(node, searchTerms)
     }
 
@@ -647,9 +647,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         getNodeId,
         getNodeChildren,
         searchTerm,
-        searchPredicate,
         selectedList,
-        filteredList = [],
         currentList,
         defaultList,
         isSearchable,
@@ -674,7 +672,6 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         wrapTreeSection,
         shouldExpandOnClick = true,
         customCheckboxes,
-        expandedList,
         renderNoResults,
         styleOverrides = {},
         customTreeNodeCssSelectors = {},
