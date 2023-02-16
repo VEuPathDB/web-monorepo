@@ -151,6 +151,9 @@ export type CheckboxTreeProps<T> = {
   /** List of selected nodes as represented by their ids, defaults to [ ] */
   selectedList: string[];
 
+  /** List of filtered nodes as represented by their ids, defaults to [ ] */
+  filteredList?: string[];
+
   /** An object mapping a node (by its id) to a function that returns a React component. This component will be used instead of the default checkbox. */
   customCheckboxes?: CustomCheckboxes<T>;
 
@@ -543,32 +546,49 @@ function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
 
 /**
  * Returns a function that takes a leaf node ID and returns true if leaf node
- * should be visible.  If no search is being performed, all leaves are visible,
- * unless one of their ancestors is collapsed.  In that case visibility of the
- * leaf container is controlled by a parent, so the function returned here will
- * still return true.
+ * should be visible.  If no search is being performed and no filtered list is
+ * provided, all leaves are visible, unless one of their ancestors is collapsed.  
+ * In that case visibility of the leaf container is controlled by a parent, so 
+ * the function returned here will still return true.
  *
  * If a search is being actively performed, matching nodes, their children, and
  * their ancestors, will be visible (expansion is locked and all branches are
- * expanded).  The function returned by createIsLeafVisible does not care about
+ * expanded). Similar behavior exists when A) no search is being performed but 
+ * a filtered list is provided and B) both a search is being performed and a
+ * filtered list is provided.
+ * 
+ * The function returned by createIsLeafVisible does not care about
  * branches, but tells absolutely if a leaf should be visible (i.e. if the leaf
  * matches the search or if any ancestor matches the search).
  */
 function createIsLeafVisible<T>(props: CheckboxTreeProps<T>) {
-  let { tree, searchTerm, searchPredicate, getNodeId, getNodeChildren } = props;
-  // if not searching, then all nodes are visible
-  if (!isActiveSearch(props)) {
+  const { tree, searchTerm, searchPredicate, getNodeId, getNodeChildren, filteredList = [] } = props;
+  // if not searching and no filtered list is passed in, then all nodes are visible
+  if (!isActiveSearch(props) && !filteredList.length) {
     return (nodeId: string) => true;
   }
   // otherwise must construct array of visible leaves
-  let visibleLeaves = new Set<string>();
-  let searchTerms = parseSearchQueryString(searchTerm);
-  let addVisibleLeaves = (node: T, parentMatches: boolean) => {
-    // if parent matches, automatically match (always show children of matching parents)
-    let nodeMatches = (parentMatches || searchPredicate(node, searchTerms));
+  const visibleLeaves = new Set<string>();
+  const searchTerms = parseSearchQueryString(searchTerm);
+  const filteredSet = new Set(filteredList);
+  const addVisibleLeaves = (node: T, parentMatches: boolean) => {
+    const nodeId = getNodeId(node);
+    let nodeMatches = false;
+    if (parentMatches) {
+      // if parent matches, automatically match (always show children of matching parents)
+      nodeMatches = parentMatches;
+    } else if (searchTerm && filteredList.length) {
+      nodeMatches = searchPredicate(node, searchTerms) && filteredSet.has(nodeId)
+    } else if (!searchTerm && filteredList.length) {
+      nodeMatches = filteredSet.has(nodeId)
+    } else {
+      // handles filtering by search only (no filteredList is defined)
+      nodeMatches = searchPredicate(node, searchTerms)
+    }
+
     if (isLeaf(node, getNodeChildren)) {
       if (nodeMatches) {
-        visibleLeaves.add(getNodeId(node));
+        visibleLeaves.add(nodeId);
       }
     }
     else {
@@ -607,6 +627,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
         searchTerm,
         searchPredicate,
         selectedList,
+        filteredList = [],
         currentList,
         defaultList,
         isSearchable,
@@ -649,7 +670,7 @@ function CheckboxTree<T> (props: CheckboxTreeProps<T>) {
             isLeafVisible,
             generated: generatedTreeState,
         }
-    }, [tree, isSearchable, searchTerm, searchPredicate, isAdditionalFilterApplied, name, getNodeId, getNodeChildren, props.renderNode, expandedList, selectedList]);
+    }, [tree, isSearchable, searchTerm, searchPredicate, isAdditionalFilterApplied, name, getNodeId, getNodeChildren, props.renderNode, expandedList, selectedList, filteredList]);
 
 
     /**
