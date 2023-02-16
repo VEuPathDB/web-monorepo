@@ -1,5 +1,3 @@
-import { useCallback, useMemo } from 'react';
-
 import { VariableScope } from '../../types/study';
 import { VariableDescriptor } from '../../types/variable';
 import VariableList from './VariableList';
@@ -13,6 +11,9 @@ import {
 } from './hooks';
 
 import { ClearSelectionButton } from './VariableTreeDropdown';
+import { VariableLinkConfig } from '../VariableLink';
+import { useHistory } from 'react-router';
+import { useMemo } from 'react';
 
 export interface VariableTreeProps {
   starredVariables?: VariableDescriptor[];
@@ -21,8 +22,7 @@ export interface VariableTreeProps {
   variableId?: string;
   disabledVariables?: VariableDescriptor[];
   customDisabledVariableMessage?: string;
-  /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
-  onChange: (variable?: VariableDescriptor) => void;
+  variableLinkConfig: VariableLinkConfig;
   /** Indicate whether or not variables with children   */
   showMultiFilterDescendants?: boolean;
   /** The "scope" of variables which should be offered. */
@@ -37,7 +37,7 @@ export default function VariableTree({
   toggleStarredVariable,
   entityId,
   variableId,
-  onChange,
+  variableLinkConfig,
   showMultiFilterDescendants = false,
   scope,
   asDropdown,
@@ -48,22 +48,11 @@ export default function VariableTree({
   const fieldsByTerm = useFlattenFieldsByTerm(flattenedFields);
   const fieldTree = useFieldTree(flattenedFields);
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
+  const history = useHistory();
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
     [disabledVariables]
-  );
-
-  const onActiveFieldChange = useCallback(
-    (term?: string) => {
-      if (term == null) {
-        onChange(term);
-        return;
-      }
-      const [entityId, variableId] = term.split('/');
-      onChange({ entityId, variableId });
-    },
-    [onChange]
   );
 
   // Lookup activeField
@@ -78,7 +67,13 @@ export default function VariableTree({
   const label = variable?.displayName ?? 'Select a variable';
 
   const clearSelectionButton = (
-    <ClearSelectionButton onClick={() => onChange()} disabled={!variable} />
+    <ClearSelectionButton
+      onClick={() => {
+        if (variableLinkConfig.type === 'button') variableLinkConfig.onClick();
+        else history.replace(variableLinkConfig.makeVariableLink());
+      }}
+      disabled={!variable}
+    />
   );
 
   return (
@@ -88,7 +83,7 @@ export default function VariableTree({
       showMultiFilterDescendants={showMultiFilterDescendants}
       activeField={activeField}
       disabledFieldIds={disabledFields}
-      onActiveFieldChange={onActiveFieldChange}
+      variableLinkConfig={variableLinkConfig}
       featuredFields={featuredFields}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
