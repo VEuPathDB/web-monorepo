@@ -2090,10 +2090,8 @@ function getRequestParams(
     showMissingness,
     binWidth = NumberVariable.is(xAxisVariableMetadata) ||
     DateVariable.is(xAxisVariableMetadata)
-      ? vizConfig.independentAxisValueSpec === 'Full' // only use 'annotated' binwidth when fully zoomed out
-        ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-          xAxisVariableMetadata.distributionDefaults.binWidth
-        : undefined
+      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
+        xAxisVariableMetadata.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
       ? xAxisVariableMetadata.distributionDefaults.binUnits
@@ -2128,10 +2126,13 @@ function getRequestParams(
   const viewport =
     vizConfig?.independentAxisRange?.min != null &&
     vizConfig?.independentAxisRange?.max != null
-      ? {
-          xMin: String(vizConfig?.independentAxisRange?.min),
-          xMax: String(vizConfig?.independentAxisRange?.max),
-        }
+      ? // ? vizConfig.useBinning || (!vizConfig.useBinning && vizConfig.independentAxisValueSpec === 'Custom')
+        vizConfig.useBinning
+        ? undefined
+        : {
+            xMin: String(vizConfig?.independentAxisRange?.min),
+            xMax: String(vizConfig?.independentAxisRange?.max),
+          }
       : undefined;
 
   return {
