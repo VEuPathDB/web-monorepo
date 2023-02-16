@@ -21,7 +21,6 @@ import { add, capitalize, chunk, intersection, isEmpty, isEqual, keyBy, memoize,
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { CellProps, Column } from 'react-table';
-import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import './SiteSearch.scss';
 
 
