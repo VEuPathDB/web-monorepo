@@ -4,6 +4,7 @@ import { stepAnalysisDecoder, stepAnalysisConfigDecoder, stepAnalysisTypeDecoder
 import { parametersDecoder } from 'wdk-client/Service/Mixins/SearchesService';
 import { Parameter, ParameterValues } from 'wdk-client/Utils/WdkModel';
 import { extractParamValues } from 'wdk-client/Utils/WdkUser';
+import { makeTraceid } from '../ServiceUtils';
 
 export type StepAnalysisWithParameters = StepAnalysisType & {
   parameters: Parameter[];
@@ -108,7 +109,10 @@ export default (base: ServiceBase) => {
   }
 
   function updateStepAnalysisForm(stepId: number, analysisId: number, formParams: FormParams) {
-    const headers = new Headers({ 'Content-Type': 'application/json'});
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      traceid: makeTraceid(),
+    });
     if (base._version) headers.append(CLIENT_WDK_VERSION_HEADER, String(base._version))
     return fetch(`${base.serviceUrl}/users/current/steps/${stepId}/analyses/${analysisId}`, {
       headers,

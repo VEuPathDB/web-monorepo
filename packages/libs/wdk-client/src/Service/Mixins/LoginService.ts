@@ -1,5 +1,6 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import * as Decode from 'wdk-client/Utils/Json';
+import { makeTraceid } from '../ServiceUtils';
 
 /** This is for POST requests */
 export type TryLoginResponse = {
@@ -35,7 +36,12 @@ export default (base: ServiceBase) => {
   async function logout() {
     return fetch(
       `${base.serviceUrl}/logout`,
-      { credentials: 'include' }
+      {
+        credentials: 'include',
+        headers: {
+          traceid: makeTraceid(),
+        }
+      }
     );
   }
 
