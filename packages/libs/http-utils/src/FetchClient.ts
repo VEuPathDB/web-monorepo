@@ -91,6 +91,6 @@ async function fetchResponseBody(response: Response) {
 }
 
 function generateTraceidHeaderValue() {
-  const traceId = uuid().replace(/-/g, '');
+  const traceId = uuid().replaceAll('-', '');
   return traceId;
 }
