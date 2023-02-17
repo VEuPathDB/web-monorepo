@@ -510,17 +510,31 @@ export const ContTableResponse = intersection([
   }),
 ]);
 
+// typing 2x2 stats table content
+export type twoByTwoStatsContent = TypeOf<typeof twoByTwoStatsContent>;
+const twoByTwoStatsContent = type({
+  confidenceInterval: union([string, nullType]),
+  confidenceLevel: union([number, nullType]),
+  pvalue: union([string, nullType]),
+  value: union([number, nullType]),
+});
+
 export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
 export const TwoByTwoResponse = intersection([
   MosaicResponse,
   partial({
     statsTable: array(
+      // typing 2x2 stats table content
       partial({
-        oddsratio: NumberOrNull, // TO DO: should these stats values really all be optional?
-        pvalue: union([number, string]),
-        orInterval: string,
-        rrInterval: string,
-        relativerisk: NumberOrNull,
+        chiSq: twoByTwoStatsContent,
+        fisher: twoByTwoStatsContent,
+        prevalence: twoByTwoStatsContent,
+        oddsRatio: twoByTwoStatsContent,
+        relativeRisk: twoByTwoStatsContent,
+        sensitivity: twoByTwoStatsContent,
+        specificity: twoByTwoStatsContent,
+        posPredictiveValue: twoByTwoStatsContent,
+        negPredictiveValue: twoByTwoStatsContent,
         facetVariableDetails: union([
           tuple([StringVariableValue]),
           tuple([StringVariableValue, StringVariableValue]),

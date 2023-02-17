@@ -14,6 +14,8 @@ import DataClient, {
   MosaicRequestParams,
   TwoByTwoRequestParams,
   TwoByTwoResponse,
+  // 2x2 stats table content type
+  twoByTwoStatsContent,
 } from '../../../api/DataClient';
 import { useCallback, useMemo, useState } from 'react';
 import { usePromise } from '../../../hooks/promise';
@@ -109,13 +111,18 @@ type ContTableData = MosaicPlotData &
     chisq: number;
   }>;
 
+// reflecting 2x2 stats table content
 type TwoByTwoData = MosaicPlotData &
   Partial<{
-    pValue: number | string;
-    relativeRisk: number;
-    rrInterval: string;
-    oddsRatio: number;
-    orInterval: string;
+    chiSq: twoByTwoStatsContent;
+    fisher: twoByTwoStatsContent;
+    prevalence: twoByTwoStatsContent;
+    oddsRatio: twoByTwoStatsContent;
+    relativeRisk: twoByTwoStatsContent;
+    sensitivity: twoByTwoStatsContent;
+    specificity: twoByTwoStatsContent;
+    posPredictiveValue: twoByTwoStatsContent;
+    negPredictiveValue: twoByTwoStatsContent;
   }>;
 
 type ContTableDataWithCoverage = (ContTableData | FacetedData<ContTableData>) &
@@ -802,11 +809,16 @@ function MosaicViz(props: Props<Options>) {
 }
 
 function TwoByTwoStats(props?: {
-  pValue?: number | string;
-  oddsRatio?: number | string;
-  orInterval?: number | string;
-  relativeRisk?: number | string;
-  rrInterval?: number | string;
+  // reflecting 2x2 stats table content
+  chiSq?: twoByTwoStatsContent;
+  fisher?: twoByTwoStatsContent;
+  prevalence?: twoByTwoStatsContent;
+  oddsRatio?: twoByTwoStatsContent;
+  relativeRisk?: twoByTwoStatsContent;
+  sensitivity?: twoByTwoStatsContent;
+  specificity?: twoByTwoStatsContent;
+  posPredictiveValue?: twoByTwoStatsContent;
+  negPredictiveValue?: twoByTwoStatsContent;
 }) {
   // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
   if (1)
@@ -838,19 +850,25 @@ function TwoByTwoStats(props?: {
           <tr>
             <th>P-value</th>
             <td className="numeric">
-              {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
+              {/* temporarily commented out to avoid error */}
+              {/* {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'} */}
+              &nbsp;
             </td>
             <td className="numeric">N/A</td>
           </tr>
           <tr>
             <th>Odds ratio</th>
             <td className="numeric">{props.oddsRatio ?? 'N/A'}</td>
-            <td className="numeric">{props.orInterval ?? 'N/A'}</td>
+            {/* temporarily commented out to avoid error*/}
+            {/* <td className="numeric">{props.orInterval ?? 'N/A'}</td> */}
+            <td className="numeric">&nbsp;</td>
           </tr>
           <tr>
             <th>Relative risk</th>
             <td className="numeric">{props.relativeRisk ?? 'N/A'}</td>
-            <td className="numeric">{props.rrInterval ?? 'N/A'}</td>
+            {/* temporarily commented out to avoid error */}
+            {/* <td className="numeric">{props.rrInterval ?? 'N/A'}</td> */}
+            <td className="numeric">&nbsp;</td>
           </tr>
         </tbody>
       </table>
@@ -1048,11 +1066,16 @@ export function twoByTwoResponseToData(
         ),
         ...(stats != null
           ? {
-              pValue: stats[0].pvalue,
-              relativeRisk: stats[0].relativerisk,
-              rrInterval: stats[0].rrInterval,
-              oddsRatio: stats[0].oddsratio,
-              orInterval: stats[0].orInterval,
+              // new 2x2 stats table content
+              chiSq: stats[0].chiSq,
+              fisher: stats[0].fisher,
+              prevalence: stats[0].prevalence,
+              oddsRatio: stats[0].oddsRatio,
+              relativeRisk: stats[0].relativeRisk,
+              sensitivity: stats[0].sensitivity,
+              specificity: stats[0].specificity,
+              posPredictiveValue: stats[0].posPredictiveValue,
+              negPredictiveValue: stats[0].negPredictiveValue,
             }
           : {}),
       };
