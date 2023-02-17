@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
 import { Keyframes } from '@emotion/serialize';
 
-export const spin = keyframes({
+export const spin: Keyframes = keyframes({
   from: {
     transform: 'rotate(0deg)',
   },
@@ -10,7 +10,7 @@ export const spin = keyframes({
   },
 });
 
-export const fadeIn = keyframes({
+export const fadeIn: Keyframes = keyframes({
   from: {
     opacity: 0,
   },
@@ -19,7 +19,7 @@ export const fadeIn = keyframes({
   },
 });
 
-export const fadeOut = keyframes({
+export const fadeOut: Keyframes = keyframes({
   from: {
     opacity: 1,
   },
