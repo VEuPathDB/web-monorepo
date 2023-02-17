@@ -151,7 +151,11 @@ export type CheckboxTreeProps<T> = {
   /** List of selected nodes as represented by their ids, defaults to [ ] */
   selectedList: string[];
 
-  /** List of filtered nodes as represented by their ids, defaults to [ ] */
+  /** 
+   * List of filtered nodes as represented by their ids used to determine isLeafVisible node status. 
+   * Refer to the documentation of the createIsLeafVisible function for a better understanding of its use and behavior.
+   * TL;DR: an empty array will render an empty tree whereas an undefined filteredList is ignored
+   * */
   filteredList?: string[];
 
   /** An object mapping a node (by its id) to a function that returns a React component. This component will be used instead of the default checkbox. */
@@ -569,7 +573,11 @@ function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
  * their ancestors, will be visible (expansion is locked and all branches are
  * expanded). Similar behavior exists when A) no search is being performed but 
  * a filtered list is provided and B) both a search is being performed and a
- * filtered list is provided.
+ * filtered list is provided. 
+ * 
+ * An important "gotcha" to consider: passing an empty array will render no tree
+ * based on the two `else-if` statements. If that is not desired, pass in an
+ * undefined filterList prop instead of an empty array.
  * 
  * The function returned by createIsLeafVisible does not care about
  * branches, but tells absolutely if a leaf should be visible (i.e. if the leaf
@@ -599,12 +607,12 @@ function createIsLeafVisible<T>(
     if (parentMatches) {
       // if parent matches, automatically match (always show children of matching parents)
       nodeMatches = parentMatches;
-    } else if (searchTerm && filteredList && filteredList.length) {
+    } else if (searchTerm && filteredList) {
       nodeMatches = searchPredicate(node, searchTerms) && filteredSet.has(nodeId);
-    } else if (!searchTerm && filteredList && filteredList.length) {
+    } else if (!searchTerm && filteredList) {
       nodeMatches = filteredSet.has(nodeId);
     } else {
-      // handles filtering by search only (filteredList is undefined or an empty array)
+      // handles filtering by search only (filteredList is undefined)
       nodeMatches = searchPredicate(node, searchTerms)
     }
 
