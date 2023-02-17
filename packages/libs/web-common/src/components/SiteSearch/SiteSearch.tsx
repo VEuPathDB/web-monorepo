@@ -332,7 +332,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         shouldExpandDescendantsWithOneChild
         isSelectable
         selectedList={selection}
-        filteredList={showOnlyReferenceOrganisms && referenceStrains ? Array.from(referenceStrains) : []}
+        filteredList={showOnlyReferenceOrganisms && referenceStrains ? Array.from(referenceStrains) : undefined}
         isAdditionalFilterApplied={showOnlyReferenceOrganisms}
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
