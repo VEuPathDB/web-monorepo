@@ -10,7 +10,7 @@ import React, {
   useContext,
   ReactNode,
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
@@ -52,6 +52,7 @@ import { useActiveDocument } from '../docs/DocumentationContainer';
 import { CustomCheckboxes } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTreeNode';
 import { Toggle } from '@veupathdb/coreui';
 import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import { VariableLink, VariableLinkConfig } from '../VariableLink';
 
 const baseFieldNodeLinkStyle = {
   padding: '0.25em 0.5em',
@@ -145,7 +146,6 @@ interface FieldNodeProps {
   isMultiFilterDescendant: boolean;
   showMultiFilterDescendants: boolean;
   customDisabledVariableMessage?: string;
-  handleFieldSelect: (field: VariableField) => void;
   activeFieldEntity?: string;
   isStarred: boolean;
   starredVariablesLoading: boolean;
@@ -153,6 +153,7 @@ interface FieldNodeProps {
   scrollIntoView: boolean;
   asDropdown?: boolean;
   isFeaturedField?: boolean;
+  variableLinkConfig: VariableLinkConfig;
 }
 
 interface getNodeSearchStringType {
@@ -185,7 +186,7 @@ type ValuesMap = Record<string, string>;
 interface VariableListProps {
   mode: 'singleSelection' | 'multiSelection';
   activeField?: VariableField;
-  onActiveFieldChange: (term: string) => void;
+  variableLinkConfig: VariableLinkConfig;
   selectedFields?: Array<VariableField>;
   onSelectedFieldsChange?: (terms: Array<string>) => void;
   valuesMap: ValuesMap;
@@ -215,7 +216,7 @@ interface VariableListProps {
 export default function VariableList({
   mode,
   activeField,
-  onActiveFieldChange,
+  variableLinkConfig,
   selectedFields = [],
   onSelectedFieldsChange,
   disabledFieldIds,
@@ -267,6 +268,24 @@ export default function VariableList({
 
   const activeFieldEntity = activeField?.term.split('/')[0];
 
+  const history = useHistory();
+
+  const onActiveFieldChange = useCallback(
+    (field: Field) => {
+      const [entityId, variableId] = field.term.split('/');
+      const variableDescriptor = { entityId, variableId };
+      if (variableLinkConfig.type === 'button') {
+        variableLinkConfig.onClick(variableDescriptor);
+      } else {
+        history.replace(
+          variableLinkConfig.makeVariableLink(variableDescriptor),
+          { scrollToTop: false }
+        );
+      }
+    },
+    [history, variableLinkConfig]
+  );
+
   // When active field changes, we want to collapse entity nodes that are not an ancestor
   // of the active field. We also want to retain the expanded state of internal nodes, so
   // we will only remove entity nodes from the list of expanded nodes.
@@ -305,7 +324,7 @@ export default function VariableList({
         else selectedFieldTerms.splice(indexOfField, 1);
         onSelectedFieldsChange(selectedFieldTerms);
       } else {
-        onActiveFieldChange(field.term);
+        onActiveFieldChange(field);
       }
     },
     [isMultiPick, onSelectedFieldsChange, selectedFields, onActiveFieldChange]
@@ -419,7 +438,7 @@ export default function VariableList({
           isActive={node.field.term === activeField?.term}
           isDisabled={disabledFields.has(node.field.term)}
           customDisabledVariableMessage={customDisabledVariableMessage}
-          handleFieldSelect={handleFieldSelect}
+          variableLinkConfig={variableLinkConfig}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
           activeFieldEntity={activeFieldEntity}
@@ -439,10 +458,11 @@ export default function VariableList({
       activeField?.term,
       disabledFields,
       customDisabledVariableMessage,
-      handleFieldSelect,
+      variableLinkConfig,
       activeFieldEntity,
       starredVariableTermsSet,
       starredVariablesLoading,
+      asDropdown,
       toggleStarredVariable,
     ]
   );
@@ -733,7 +753,7 @@ export default function VariableList({
                         customDisabledVariableMessage
                       }
                       searchTerm=""
-                      handleFieldSelect={handleFieldSelect}
+                      variableLinkConfig={variableLinkConfig}
                       isStarred={starredVariableTermsSet.has(field.term)}
                       starredVariablesLoading={starredVariablesLoading}
                       onClickStar={() =>
@@ -876,7 +896,7 @@ const FieldNode = ({
   isDisabled,
   isMultiPick,
   customDisabledVariableMessage,
-  handleFieldSelect,
+  variableLinkConfig,
   activeFieldEntity,
   isStarred,
   starredVariablesLoading,
@@ -888,6 +908,8 @@ const FieldNode = ({
   isFeaturedField,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
+
+  const [entityId, variableId] = field.term.split('/');
 
   const nodeColorSelector = asDropdown
     ? 'dropdown-node-color'
@@ -926,8 +948,11 @@ const FieldNode = ({
     //       : 'Select this variable.'
     //   }
     // >
-    <a
+    <VariableLink
       ref={nodeRef}
+      entityId={entityId}
+      variableId={variableId}
+      linkConfig={variableLinkConfig}
       title={
         isMultiPick
           ? ''
@@ -943,15 +968,9 @@ const FieldNode = ({
           ? `disabled-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
           : `base-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
       }
-      href={'#' + field.term}
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!isDisabled) handleFieldSelect(field);
-      }}
     >
       <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
-    </a>
+    </VariableLink>
   ) : (
     // </Tooltip>
     //add condition for identifying entity parent and entity parent of activeField
