@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { red } from '@veupathdb/coreui/dist/definitions/colors';
 
 const requiredInputsContainerStyles: CSSProperties = {
   position: 'relative',
@@ -18,7 +19,7 @@ const requiredInputsHeaderStyles: CSSProperties = {
 };
 
 const requiredTextStyles: CSSProperties = {
-  color: '#dd314e',
+  color: red[600],
 };
 
 interface RequiredPromptProps {

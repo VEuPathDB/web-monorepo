@@ -29,7 +29,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
@@ -123,6 +123,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 const plotContainerStyles = {
   width: 750,
@@ -1674,9 +1675,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <div className={classes.label}>
-            Function<sup>*</sup>
-          </div>
+          <Tooltip css={{}} title={'Required parameter'}>
+            <div className={classes.label}>
+              Function<sup>*</sup>
+            </div>
+          </Tooltip>
           <SingleSelect
             onSelect={onValueSpecChange}
             value={vizConfig.valueSpecConfig}
@@ -1694,16 +1697,22 @@ function LineplotViz(props: VisualizationProps<Options>) {
             gridTemplateRows: 'repeat(3, auto)',
           }}
         >
-          <div
-            className={classes.label}
-            style={{
-              gridColumn: 1,
-              gridRow: 2,
-              color: !areRequiredInputsSelected ? '#dd314e' : '',
-            }}
-          >
-            Proportion<sup>*</sup>&nbsp;=
-          </div>
+          <Tooltip css={{}} title={'Required parameter'}>
+            <div
+              className={classes.label}
+              style={{
+                gridColumn: 1,
+                gridRow: 2,
+                color:
+                  vizConfig.numeratorValues?.length &&
+                  vizConfig.denominatorValues?.length
+                    ? undefined
+                    : requiredInputLabelStyle.color,
+              }}
+            >
+              Proportion<sup>*</sup>&nbsp;=
+            </div>
+          </Tooltip>
           <div
             className={classes.input}
             style={{
