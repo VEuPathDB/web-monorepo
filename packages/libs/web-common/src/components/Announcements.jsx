@@ -252,7 +252,7 @@ const siteAnnouncements = [
           <div key="geneVB-HLOH">
             The <i>Haemaphysalis longicornis</i> HaeL-2018 version presented here was downloaded directly from NCBI 
               (<a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_013339765.2" target="_blank">GCA_013339765.2</a>).  
-              The version at Genome Warehouse (href="https://ngdc.cncb.ac.cn/gwh/Assembly/8865/show" target="_blank">GWHAMMI00000000</a> 
+              The version at Genome Warehouse (<a href="https://ngdc.cncb.ac.cn/gwh/Assembly/8865/show" target="_blank">GWHAMMI00000000</a> 
               may differ from this, especially for non-coding genes.  
           </div>
         );
@@ -272,7 +272,7 @@ const siteAnnouncements = [
           <div key="geneVB-HASH">
             The <i>Hyalomma asiaticum</i> Hyas-2018 version presented here was downloaded directly from NCBI 
               (<a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_013339685.2" target="_blank">GCA_013339685.2</a>).  
-              The version at Genome Warehouse (href="https://ngdc.cncb.ac.cn/gwh/Assembly/8867/show" target="_blank">GWHAMMK00000000</a> 
+              The version at Genome Warehouse (<a href="https://ngdc.cncb.ac.cn/gwh/Assembly/8867/show" target="_blank">GWHAMMK00000000</a> 
               may differ from this, especially for non-coding genes.        
           </div>
         );
@@ -292,7 +292,7 @@ const siteAnnouncements = [
           <div key="geneVB-IPEI">
             The <i>Ixodes persulcatus</i> Iper-2018 version presented here was downloaded directly from NCBI 
               (<a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_013358835.2" target="_blank">GCA_013358835.2</a>).  
-              The version at Genome Warehouse (href="https://ngdc.cncb.ac.cn/gwh/Assembly/8896/show" target="_blank">GWHAMMH00000000.1</a> 
+              The version at Genome Warehouse (<a href="https://ngdc.cncb.ac.cn/gwh/Assembly/8896/show" target="_blank">GWHAMMH00000000.1</a> 
               may differ from this, especially for non-coding genes. 
           </div>
         );
