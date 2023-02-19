@@ -194,7 +194,7 @@ const siteAnnouncements = [
     }
   },
 
-// VectorBasei
+// VectorBase
 /*
   {
     id: 'vbIndianStrain',
@@ -216,7 +216,7 @@ const siteAnnouncements = [
   },
 */
  // RNASeq issue in certain datasets Jan 2023
- {
+/* {
     id: 'rnaseqBug',
     renderDisplay: props => {
       if ( isGenomeBrowser(props.location) &&
@@ -233,6 +233,67 @@ const siteAnnouncements = [
         return (
           <div>
             We discovered a bug that affects RNA-Seq coverage plots in JBrowse for a number of datasets. This bug only affects the coverage representation in JBrowse. It does not affect queries, plots and splice junction analyses. For affected datasets, it will appear that coverage in introns is similar to coverage in exons. We are working on fixing this as soon as possible.
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+*/
+  // VectorBase gene page for Haemaphysalis longicornis HaeL-2018
+  {
+    id: 'HLOH',
+    renderDisplay: props => { 
+      if ( (props.projectId == 'VectorBase') && 
+           (props.location.pathname.indexOf("/record/gene/HLOH_0") > -1)   
+         ) 
+      {
+        return (
+          <div key="geneVB-HLOH">
+            The <i>Haemaphysalis longicornis</i> HaeL-2018 version presented here was downloaded directly from NCBI 
+              (<a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_013339765.2" target="_blank">GCA_013339765.2</a>).  
+              The version at Genome Warehouse (href="https://ngdc.cncb.ac.cn/gwh/Assembly/8865/show" target="_blank">GWHAMMI00000000</a> 
+              may differ from this, especially for non-coding genes.  
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+  // VectorBase gene page for Hyalomma asiaticum Hyas-2018
+  {
+    id: 'HASH',
+    renderDisplay: props => {
+      if ( (props.projectId == 'VectorBase') &&
+           (props.location.pathname.indexOf("/record/gene/HASH_0") > -1)    
+         )
+      {
+        return (
+          <div key="geneVB-HASH">
+            The <i>Hyalomma asiaticum</i> Hyas-2018 version presented here was downloaded directly from NCBI 
+              (<a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_013339685.2" target="_blank">GCA_013339685.2</a>).  
+              The version at Genome Warehouse (href="https://ngdc.cncb.ac.cn/gwh/Assembly/8867/show" target="_blank">GWHAMMK00000000</a> 
+              may differ from this, especially for non-coding genes.        
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+  // VectorBase gene page for Ixodes persulcatus Iper-2018
+  {
+    id: 'IPEI',
+    renderDisplay: props => {
+      if ( (props.projectId == 'VectorBase') &&
+           (props.location.pathname.indexOf("/record/gene/IPEI_0") > -1)    
+         )
+      {
+        return (
+          <div key="geneVB-IPEI">
+            The <i>Ixodes persulcatus</i> Iper-2018 version presented here was downloaded directly from NCBI 
+              (<a href="https://www.ncbi.nlm.nih.gov/assembly/GCA_013358835.2" target="_blank">GCA_013358835.2</a>).  
+              The version at Genome Warehouse (href="https://ngdc.cncb.ac.cn/gwh/Assembly/8896/show" target="_blank">GWHAMMH00000000.1</a> 
+              may differ from this, especially for non-coding genes. 
           </div>
         );
       }
