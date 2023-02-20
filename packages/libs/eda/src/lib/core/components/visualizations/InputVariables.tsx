@@ -205,6 +205,7 @@ export function InputVariables(props: Props) {
         (inputRole) =>
           inputs.filter((input) => input.role === inputRole).length > 0 && (
             <div
+              key={String(inputRole)}
               className={classes.inputGroup}
               style={{ order: sectionInfo[inputRole ?? 'default'].order }}
             >
@@ -322,8 +323,13 @@ export function InputVariables(props: Props) {
                         toggleStarredVariable={toggleStarredVariable}
                         entityId={selectedVariables[input.name]?.entityId}
                         variableId={selectedVariables[input.name]?.variableId}
-                        onChange={(variable) => {
-                          handleChange(input.name, variable);
+                        variableLinkConfig={{
+                          type: 'button',
+                          onClick: (variable) =>
+                            handleChange(
+                              input.name,
+                              variable as VariableDescriptor
+                            ),
                         }}
                       />
                     )}
@@ -353,7 +359,7 @@ export function InputVariables(props: Props) {
           )
       )}
       {customSections?.map(({ order, title, content }) => (
-        <div className={classes.inputGroup} style={{ order }}>
+        <div key={order} className={classes.inputGroup} style={{ order }}>
           <div className={classes.fullRow}>
             <h4>{title}</h4>
           </div>

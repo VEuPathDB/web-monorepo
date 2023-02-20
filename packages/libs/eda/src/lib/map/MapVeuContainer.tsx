@@ -8,7 +8,7 @@ import {
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
-import { MapVeuAnalysis } from './MapVeuAnalysis';
+import { MapAnalysis } from './analysis/MapAnalysis';
 
 import { StudyList } from './StudyList';
 import {
@@ -19,19 +19,26 @@ import {
   useConfiguredComputeClient,
 } from '../core/hooks/client';
 
-export function MapVeuContainer() {
-  const edaClient = useConfiguredSubsettingClient('/eda-subsetting-service');
-  const dataClient = useConfiguredDataClient('/eda-data-service');
-  const computeClient = useConfiguredComputeClient('/eda-data-service');
-  const analysisClient = useConfiguredAnalysisClient('/eda-user-service');
-  const downloadClient = useConfiguredDownloadClient('/eda-user-service');
+import './MapVEu.scss';
+
+interface Props {
+  edaServiceUrl: string;
+  singleAppMode?: string;
+}
+
+export function MapVeuContainer(props: Props) {
+  const { edaServiceUrl, singleAppMode } = props;
+  const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
+  const dataClient = useConfiguredDataClient(edaServiceUrl);
+  const computeClient = useConfiguredComputeClient(edaServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
 
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
   return (
     <>
-      <h1>MapVEu</h1>
       <Switch>
         <Route
           path={`${path}/:studyId/:analysisId`}
@@ -45,8 +52,9 @@ export function MapVeuContainer() {
               dataClient={dataClient}
               downloadClient={downloadClient}
               computeClient={computeClient}
+              className="MapVEu"
             >
-              <MapVeuAnalysis
+              <MapAnalysis
                 analysisId={props.match.params.analysisId}
                 studyId={props.match.params.studyId}
               />
@@ -63,10 +71,12 @@ export function MapVeuContainer() {
               dataClient={dataClient}
               downloadClient={downloadClient}
               computeClient={computeClient}
+              className="MapVEu"
             >
               <AnalysisList
                 studyId={props.match.params.studyId}
                 analysisStore={analysisClient}
+                singleAppMode={singleAppMode}
               />
             </EDAAnalysisListContainer>
           )}

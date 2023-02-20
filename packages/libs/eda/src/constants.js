@@ -1,3 +1,4 @@
 module.exports.rootUrl = '/';
 module.exports.rootElement = '#root';
-module.exports.endpoint = '/service';
+module.exports.wdkEndpoint = '/service';
+module.exports.edaEndpoint = '/eda-service';
