@@ -2149,14 +2149,15 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-2.0.0.tgz#a9cd8723c60d1d3f03630f598e0ae68d0192b854"
   integrity sha512-dxiVoIKrEwf0E6C9QN6YGiSWJ59XvPsHfKtkWnPgkYr4eAUeNoGN6Rdv71UtnhrWkDbDO12QjvNuJy1iqqyAww==
 
-"@veupathdb/http-utils@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.0.tgz#fb563593aae2dd7f32eb634ea9776793b35be65f"
-  integrity sha512-pkDxTCCq2y7G7tjtFSKe3I7V/SP4jpMuvRQK1HW7c8j/uQDo4a0qLbfsdaZZ/QmVUjapPYh9JS08ehd/UnDljg==
+"@veupathdb/http-utils@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/http-utils/-/http-utils-1.1.1.tgz#06fbeac6b1897b6261416667b51d9d0643df40eb"
+  integrity sha512-sZmlFkCEzYfYtqIAT6GkUJCcXTDYeG6KeBIfiTVhbhhx06STr7gp7i8gqrx4npfdkS7mM+AJrk9XvUEIFnj8Zg==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
     lodash "^4.17.21"
+    uuid "^9.0.0"
 
 "@veupathdb/prettier-config@^1.0.0":
   version "1.0.0"
@@ -2180,10 +2181,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-2.0.0.tgz#bfbf9cd60a5e284d14728412a625d3df2f55a91e"
   integrity sha512-NiGLeoxOZQEIUsgyQ5Lxj0r7C+rfad6mF394wBL95r9BzpLjFEoEfVhLf6Owv2ybPrK+AaUjG4QN5QD0/55MPw==
 
-"@veupathdb/wdk-client@^0.9.22":
-  version "0.9.22"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.22.tgz#9070f840c60cc96b0273c7facd2d144c4223dcfc"
-  integrity sha512-pBefehM+OEXqR4YWvjXvBf23OtYMlt8fOMX3emk3/gHlT71LToyh76GLxOF6uQnpIumNyYZvpdroSCVEmZGMPQ==
+"@veupathdb/wdk-client@^0.9.29":
+  version "0.9.29"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.29.tgz#6fe41a88939d4958e83ee9d0461bb0a256c456d0"
+  integrity sha512-3Olh9r+GHcCIBO/IwuH40Q4bi30nsn2iWylHZLbs8SsdKpfB64Z7p1WzypkcS3BWiG7rOCOxQsodYujuvXn01w==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -11379,6 +11380,11 @@ uuid@^8.1.0, uuid@^8.3.0:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
+uuid@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-9.0.0.tgz#592f550650024a38ceb0c562f2f6aa435761efb5"
+  integrity sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==
 
 v8-compile-cache@^2.0.3:
   version "2.3.0"

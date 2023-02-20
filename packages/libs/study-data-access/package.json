@@ -31,11 +31,11 @@
     "@types/react-router-dom": "^5.3.3",
     "@veupathdb/browserslist-config": "^1.1.0",
     "@veupathdb/eslint-config": "^2.0.0",
-    "@veupathdb/http-utils": "^1.1.0",
+    "@veupathdb/http-utils": "^1.1.1",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^2.0.0",
     "@veupathdb/tsconfig": "^2.0.0",
-    "@veupathdb/wdk-client": "^0.9.22",
+    "@veupathdb/wdk-client": "^0.9.29",
     "husky": ">=4",
     "lint-staged": ">=10",
     "prettier": "2.2.1",
@@ -60,7 +60,7 @@
     "lodash": "^4.17.21"
   },
   "peerDependencies": {
-    "@veupathdb/http-utils": "^1.1.0",
-    "@veupathdb/wdk-client": ">=0.9.22"
+    "@veupathdb/http-utils": "^1.1.1",
+    "@veupathdb/wdk-client": ">=0.9.29"
   }
 }
