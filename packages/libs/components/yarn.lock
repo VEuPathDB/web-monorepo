@@ -5296,18 +5296,20 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/coreui@^0.18.18":
-  version "0.18.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.18.tgz#eaadca0170fb90ed69569b58bb594799ec2117af"
-  integrity sha512-GrkSIhxyfvlkxatcGvk7Gs4gyRiNRsqtXm3cx3FAijQN4vn9gn8PY/ufyHPFndQk3HoTzvPDNS3ox+nnjCsKOw==
+"@veupathdb/coreui@^0.18.20":
+  version "0.18.20"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.20.tgz#f5eca391543f46c8cfcc0e5938d20efdeb85bf46"
+  integrity sha512-7xovr/4Ztru6BW7cIUvKGyPIMBXOXL+IDVcpMQPf4RXkxcg1CGdg19JTQVMsqGW35mFV6k/BYMstDuJJAawSAg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
+    react-draggable "^4.4.5"
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
+    use-resize-observer "^9.1.0"
 
 "@veupathdb/eslint-config@^2.0.0":
   version "2.0.0"
@@ -7393,6 +7395,11 @@ clsx@^1.0.4:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
   integrity sha512-6/bPho624p3S2pMyvP5kKBPXnI3ufHLObBFCfgx+LkeR5lg2XYy2hqZqUf45ypD8COn2bhgGJSUE+l5dhNBieA==
+
+clsx@^1.1.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
+  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 code-point-at@^1.0.0:
   version "1.1.0"
@@ -14337,6 +14344,14 @@ react-dom@^16.13.1:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-draggable@^4.4.5:
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.5.tgz#9e37fe7ce1a4cf843030f521a0a4cc41886d7e7c"
+  integrity sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g==
+  dependencies:
+    clsx "^1.1.1"
+    prop-types "^15.8.1"
+
 react-element-to-jsx-string@^14.3.4:
   version "14.3.4"
   resolved "https://registry.yarnpkg.com/react-element-to-jsx-string/-/react-element-to-jsx-string-14.3.4.tgz#709125bc72f06800b68f9f4db485f2c7d31218a8"
@@ -16791,6 +16806,13 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+use-resize-observer@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/use-resize-observer/-/use-resize-observer-9.1.0.tgz#14735235cf3268569c1ea468f8a90c5789fc5c6c"
+  integrity sha512-R25VqO9Wb3asSD4eqtcxk8sJalvIOYBqS8MNZlpDSQ4l4xMQxC/J7Id9HoTqPq8FwULIn0PVW+OAqF2dyYbjow==
+  dependencies:
+    "@juggle/resize-observer" "^3.3.1"
 
 use@^3.1.0:
   version "3.1.1"

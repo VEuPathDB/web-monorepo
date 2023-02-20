@@ -97,7 +97,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/stats-lite": "^2.2.0",
     "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/coreui": "^0.18.18",
+    "@veupathdb/coreui": "^0.18.20",
     "@veupathdb/eslint-config": "^2.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/tsconfig": "^2.0.0",
