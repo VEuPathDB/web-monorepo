@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
-import { appendUrlAndRethrow } from '../ServiceUtils';
+import { appendUrlAndRethrow, makeTraceid } from '../ServiceUtils';
 
 export default (base: ServiceBase) => {
 
@@ -12,7 +12,10 @@ export default (base: ServiceBase) => {
     return fetch(base.serviceUrl + path, {
       method: 'POST',
       credentials: 'include',
-      body: formData
+      body: formData,
+      headers: {
+        traceid: makeTraceid(),
+      }
     }).then(response => {
       if (response.ok) {
         const id = response.headers.get('ID');

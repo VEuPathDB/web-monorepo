@@ -10,7 +10,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
 import { Question } from 'wdk-client/Utils/WdkModel';
-import { appendUrlAndRethrow } from './ServiceUtils';
+import { appendUrlAndRethrow, makeTraceid } from './ServiceUtils';
 
 
 
@@ -214,7 +214,10 @@ export const ServiceBase = (serviceUrl: string) => {
   }
 
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
-    const headers = new Headers({ 'Content-Type': 'application/json'});
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+      traceid: makeTraceid(),
+    });
     if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
     return fetchWithRetry(
       1,

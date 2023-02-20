@@ -16,9 +16,11 @@ export type Props = RouteComponentProps<any> & {
   classNameModifier?: string;
   children: React.ReactChild;
   requireLogin: boolean;
+  isFullScreen?: boolean;
 };
 
 const cx = makeClassNameHelper('wdk-RootContainer');
+const pageContentCx = makeClassNameHelper('wdk-PageContent');
 
 function Page(props: Props) {
   const dispatch = useDispatch();
@@ -51,9 +53,9 @@ function Page(props: Props) {
 
   return (
     <div className={cx('', props.classNameModifier)}>
-      <ErrorBoundary><Header/></ErrorBoundary>
-      <div className="wdk-PageContent">{props.children}</div>
-      <ErrorBoundary><Footer/></ErrorBoundary>
+      {!props.isFullScreen && <ErrorBoundary><Header/></ErrorBoundary>}
+      <ErrorBoundary><div className={pageContentCx('', props.isFullScreen && 'fullscreen')}>{props.children}</div></ErrorBoundary>
+      {!props.isFullScreen && <ErrorBoundary><Footer/></ErrorBoundary>}
     </div>
   );
 }
