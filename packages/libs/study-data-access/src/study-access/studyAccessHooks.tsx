@@ -1433,6 +1433,7 @@ function makeContentSearchableSring(
     disseminationPlan && 'Dissemination Plan:',
     disseminationPlan,
     priorAuth && 'Prior Authorization:',
+    priorAuth,
   ].filter(negate(isNil)).join('\0');
 }
 
