@@ -956,9 +956,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
   ] = useState(false);
   const [showErrorBarBanner, setShowErrorBarBanner] = useState(false);
 
-  // add showBanner prop in this Viz
-  const [showBanner, setShowBanner] = useState(true);
-
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1165,8 +1162,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 padding: '0.3125em 0.625em',
               },
               fontSize: '1em',
-              showBanner: showBanner,
-              setShowBanner: setShowBanner,
             }}
           />
         )}
@@ -1194,8 +1189,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 padding: '0.3125em 0.625em',
               },
               fontSize: '1em',
-              showBanner: showBanner,
-              setShowBanner: setShowBanner,
             }}
           />
         )}
@@ -1240,8 +1233,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.useBinning) {
                   setShowIndependentLogScaleBanner(true);
                   setShowBinningBanner(false);
@@ -1288,8 +1279,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.independentAxisLogScale) {
                   setShowBinningBanner(true);
                   setShowIndependentLogScaleBanner(false);
@@ -1462,8 +1451,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.showErrorBars) {
                   setShowDependentLogScaleBanner(true);
                   setShowErrorBarBanner(false);
@@ -1507,8 +1494,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.dependentAxisLogScale) {
                   setShowErrorBarBanner(true);
                   setShowDependentLogScaleBanner(false);
