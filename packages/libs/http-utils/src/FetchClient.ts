@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid';
+
 /*
  * An "Api" is an abstraction for interacting with resources.
  *
@@ -41,6 +43,8 @@ export abstract class FetchClient {
   protected readonly baseUrl: string;
   protected readonly init: RequestInit;
   protected readonly fetchApi: Window['fetch'];
+  // Subclasses can set this to false to disable including a traceparent header with all requests.
+  protected readonly includeTraceidHeader: boolean = true;
 
   constructor(options: FetchApiOptions) {
     this.baseUrl = options.baseUrl;
@@ -60,6 +64,9 @@ export abstract class FetchClient {
         ...init.headers,
       },
     });
+    if (this.includeTraceidHeader) {
+      request.headers.set('traceid', generateTraceidHeaderValue());
+    }
     const response = await fetchApi(request);
     // TODO Make this behavior configurable
     if (response.ok) {
@@ -81,4 +88,9 @@ async function fetchResponseBody(response: Response) {
     : contentType.startsWith('application/json')
     ? response.json()
     : response.text();
+}
+
+function generateTraceidHeaderValue() {
+  const traceId = uuid().replaceAll('-', '');
+  return traceId;
 }
