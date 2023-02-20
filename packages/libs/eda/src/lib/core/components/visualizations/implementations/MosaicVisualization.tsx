@@ -12,6 +12,7 @@ import _ from 'lodash';
 import DataClient, {
   ContTableResponse,
   MosaicRequestParams,
+  TwoByTwoRequestParams,
   TwoByTwoResponse,
 } from '../../../api/DataClient';
 import { useCallback, useMemo, useState } from 'react';
@@ -30,7 +31,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables } from '../InputVariables';
+import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
@@ -57,6 +58,10 @@ import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/Face
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
+import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import { useInputStyles } from '../inputStyles';
+import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 const plotContainerStyles = {
   width: 750,
@@ -88,6 +93,13 @@ const modalPlotContainerStyles = {
   width: '85%',
   height: '100%',
   margin: 'auto',
+};
+
+const twoBytwoInputStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '115px auto',
+  marginBottom: '0.5em',
+  alignItems: 'center',
 };
 
 type ContTableData = MosaicPlotData &
@@ -144,6 +156,8 @@ const MosaicConfig = t.partial({
   yAxisVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
   showMissingness: t.boolean,
+  xAxisReferenceValue: t.string,
+  yAxisReferenceValue: t.string,
 });
 
 type Props<T> = VisualizationProps<T> & {
@@ -189,6 +203,22 @@ function MosaicViz(props: Props<Options>) {
         xAxisVariable,
         yAxisVariable,
         facetVariable,
+        ...(isTwoByTwo
+          ? {
+              xAxisReferenceValue: _.isEqual(
+                xAxisVariable,
+                vizConfig.xAxisVariable
+              )
+                ? xAxisReferenceValue
+                : undefined,
+              yAxisReferenceValue: _.isEqual(
+                yAxisVariable,
+                vizConfig.yAxisVariable
+              )
+                ? yAxisReferenceValue
+                : undefined,
+            }
+          : {}),
       });
     },
     [updateVizConfig]
@@ -197,22 +227,30 @@ function MosaicViz(props: Props<Options>) {
   // prettier-ignore
   // changed for consistency as now all other Vizs have this format
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+    <ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = resetCheckedLegendItems
         ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
+          [key]: newValue,
+          checkedLegendItems: undefined
+        }
         : {
           [key]: newValue
         };
-       updateVizConfig(newPartialConfig);
+      updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
 
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness'
+  );
+
+  const onXAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'xAxisReferenceValue'
+  );
+
+  const onYAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'yAxisReferenceValue'
   );
 
   const findEntityAndVariable = useFindEntityAndVariable();
@@ -232,6 +270,26 @@ function MosaicViz(props: Props<Options>) {
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
     vizConfig.facetVariable,
+  ]);
+
+  const xAxisReferenceValue = useMemo(() => {
+    if (!isTwoByTwo || !xAxisVariable || !vizConfig.xAxisVariable) return;
+    return vizConfig.xAxisReferenceValue;
+  }, [
+    isTwoByTwo,
+    xAxisVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.xAxisReferenceValue,
+  ]);
+
+  const yAxisReferenceValue = useMemo(() => {
+    if (!isTwoByTwo || !yAxisVariable || !vizConfig.yAxisVariable) return;
+    return vizConfig.yAxisReferenceValue;
+  }, [
+    isTwoByTwo,
+    yAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.yAxisReferenceValue,
   ]);
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -256,16 +314,6 @@ function MosaicViz(props: Props<Options>) {
       if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable,
-        outputEntity?.id ?? '',
-        vizConfig.facetVariable,
-        vizConfig.showMissingness
-      );
-
       const xAxisVocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
         xAxisVariable
@@ -280,6 +328,26 @@ function MosaicViz(props: Props<Options>) {
       );
 
       if (isTwoByTwo) {
+        if (
+          !vizConfig.xAxisReferenceValue ||
+          !xAxisReferenceValue ||
+          !vizConfig.yAxisReferenceValue ||
+          !yAxisReferenceValue
+        )
+          return undefined;
+
+        const params = getRequestParams(
+          studyId,
+          filters ?? [],
+          vizConfig.xAxisVariable,
+          vizConfig.yAxisVariable,
+          outputEntity?.id ?? '',
+          vizConfig.facetVariable,
+          vizConfig.showMissingness,
+          vizConfig.xAxisReferenceValue,
+          vizConfig.yAxisReferenceValue
+        );
+
         const response = dataClient.getTwoByTwo(
           computation.descriptor.type,
           params
@@ -297,6 +365,15 @@ function MosaicViz(props: Props<Options>) {
           vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
         ) as TwoByTwoDataWithCoverage;
       } else {
+        const params = getRequestParams(
+          studyId,
+          filters ?? [],
+          vizConfig.xAxisVariable,
+          vizConfig.yAxisVariable,
+          outputEntity?.id ?? '',
+          vizConfig.facetVariable,
+          vizConfig.showMissingness
+        );
         const response = dataClient.getContTable(
           computation.descriptor.type,
           params
@@ -325,6 +402,8 @@ function MosaicViz(props: Props<Options>) {
       computation.descriptor.type,
       isTwoByTwo,
       outputEntity?.id,
+      xAxisReferenceValue,
+      yAxisReferenceValue,
     ])
   );
 
@@ -503,16 +582,149 @@ function MosaicViz(props: Props<Options>) {
 
   const areRequiredInputsSelected = useMemo(() => {
     if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
+    const areRequiredMosaicInputsSelected = Object.entries(
+      dataElementConstraints[0]
+    )
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    if (!isTwoByTwo) return areRequiredMosaicInputsSelected;
+    return (
+      areRequiredMosaicInputsSelected &&
+      vizConfig.xAxisReferenceValue &&
+      vizConfig.yAxisReferenceValue
+    );
   }, [
     dataElementConstraints,
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
+    vizConfig.xAxisReferenceValue,
+    vizConfig.yAxisReferenceValue,
   ]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+
+  const classes = useInputStyles();
+
+  /**
+   * Disabled because reference value selection options are based on the variable's vocabulary
+   * */
+  const areQuadrantSelectionsDisabled =
+    !xAxisVariable?.vocabulary || !yAxisVariable?.vocabulary;
+
+  /**
+   * TEMPORARY: would be better to upgrade CoreUI's SingleSelect (and other selectors) to enable disabling
+   * By using pointerEvents: 'none', we lose the ability to convey messages via tooltips and cursors
+   * */
+  const twoByTwoQuadrantStyle: React.CSSProperties | undefined = !isTwoByTwo
+    ? undefined
+    : {
+        ...twoBytwoInputStyle,
+        pointerEvents: areQuadrantSelectionsDisabled ? 'none' : undefined,
+        opacity: areQuadrantSelectionsDisabled ? 0.5 : 1,
+      };
+
+  const twoByTwoReferenceValueInputs = !isTwoByTwo
+    ? undefined
+    : [
+        {
+          title: (
+            <>
+              <span style={{ marginRight: '0.5em' }}>
+                2x2 table quadrant A values
+              </span>
+            </>
+          ),
+          order: 75,
+          content: (
+            <>
+              <div style={twoByTwoQuadrantStyle}>
+                <Tooltip css={{}} title={'Required parameter'}>
+                  <span
+                    className={classes.label}
+                    style={
+                      !xAxisReferenceValue && !areQuadrantSelectionsDisabled
+                        ? requiredInputLabelStyle
+                        : undefined
+                    }
+                  >
+                    Columns (X-axis)<sup>*</sup>
+                  </span>
+                </Tooltip>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                  }}
+                >
+                  <SingleSelect
+                    items={
+                      xAxisVariable?.vocabulary
+                        ? xAxisVariable?.vocabulary?.map((vocab) => ({
+                            display: vocab,
+                            value: vocab,
+                          }))
+                        : []
+                    }
+                    value={xAxisReferenceValue}
+                    onSelect={onXAxisReferenceValueChange}
+                    buttonDisplayContent={
+                      xAxisReferenceValue ?? 'Select a value'
+                    }
+                  />
+                  <ClearSelectionButton
+                    onClick={() => onXAxisReferenceValueChange(undefined)}
+                    disabled={!xAxisReferenceValue}
+                    style={{ marginLeft: '0.5em' }}
+                  />
+                </div>
+              </div>
+              <div style={twoByTwoQuadrantStyle}>
+                <Tooltip css={{}} title={'Required parameter'}>
+                  <span
+                    className={classes.label}
+                    style={
+                      !yAxisReferenceValue && !areQuadrantSelectionsDisabled
+                        ? requiredInputLabelStyle
+                        : undefined
+                    }
+                  >
+                    Rows (Y-axis)<sup>*</sup>
+                  </span>
+                </Tooltip>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                  }}
+                >
+                  <SingleSelect
+                    items={
+                      yAxisVariable?.vocabulary
+                        ? yAxisVariable?.vocabulary?.map((vocab) => ({
+                            display: vocab,
+                            value: vocab,
+                          }))
+                        : []
+                    }
+                    value={yAxisReferenceValue}
+                    onSelect={onYAxisReferenceValueChange}
+                    buttonDisplayContent={
+                      yAxisReferenceValue ?? 'Select a value'
+                    }
+                  />
+                  <ClearSelectionButton
+                    onClick={() => onYAxisReferenceValueChange(undefined)}
+                    disabled={!yAxisReferenceValue}
+                    style={{ marginLeft: '0.5em' }}
+                  />
+                </div>
+              </div>
+            </>
+          ),
+        },
+      ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -521,13 +733,17 @@ function MosaicViz(props: Props<Options>) {
           inputs={[
             {
               name: 'xAxisVariable',
-              label: 'X-axis',
+              label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
               role: 'axis',
+              titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+              styleOverride: isTwoByTwo ? twoBytwoInputStyle : undefined,
             },
             {
               name: 'yAxisVariable',
-              label: 'Y-axis',
+              label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
               role: 'axis',
+              titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+              styleOverride: isTwoByTwo ? twoBytwoInputStyle : undefined,
             },
             ...(options?.hideFacetInputs
               ? []
@@ -539,6 +755,7 @@ function MosaicViz(props: Props<Options>) {
                   } as const,
                 ]),
           ]}
+          customSections={isTwoByTwo ? twoByTwoReferenceValueInputs : undefined}
           entities={entities}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
@@ -870,21 +1087,35 @@ function getRequestParams(
   yAxisVariable: VariableDescriptor,
   outputEntityId: string,
   facetVariable?: VariableDescriptor,
-  showMissingness?: boolean
-): MosaicRequestParams {
-  return {
+  showMissingness?: boolean,
+  xAxisReferenceValue?: string,
+  yAxisReferenceValue?: string
+): MosaicRequestParams | TwoByTwoRequestParams {
+  const baseConfig = {
     studyId,
     filters,
     config: {
       // add outputEntityId
-      outputEntityId: outputEntityId,
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
+      outputEntityId,
+      xAxisVariable,
+      yAxisVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness:
         facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
     },
   };
+  if (!xAxisReferenceValue || !yAxisReferenceValue) {
+    return baseConfig as MosaicRequestParams;
+  } else {
+    return {
+      ...baseConfig,
+      config: {
+        ...baseConfig.config,
+        xAxisReferenceValue,
+        yAxisReferenceValue,
+      },
+    } as TwoByTwoRequestParams;
+  }
 }
 
 function reorderData(

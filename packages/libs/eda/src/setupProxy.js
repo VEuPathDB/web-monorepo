@@ -1,14 +1,14 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const { endpoint } = require('./constants');
+const { wdkEndpoint, edaEndpoint } = require('./constants');
 
 const { curry } = require('lodash/fp');
 
 module.exports = function (app) {
   app.use(
-    endpoint,
+    wdkEndpoint,
     createProxyMiddleware({
       target: process.env.WDK_SERVICE_URL,
-      pathRewrite: { [`^${endpoint}`]: '' },
+      pathRewrite: { [`^${wdkEndpoint}`]: '' },
       secure: false,
       changeOrigin: true,
       followRedirects: true,
@@ -19,46 +19,10 @@ module.exports = function (app) {
     })
   );
   app.use(
-    '/eda-subsetting-service',
+    edaEndpoint,
     createProxyMiddleware({
-      target: process.env.EDA_SUBSETTING_SERVICE_URL,
-      pathRewrite: { [`^/eda-subsetting-service`]: '' },
-      secure: false,
-      changeOrigin: true,
-      followRedirects: true,
-      logLevel: 'debug',
-      onProxyReq: addPrereleaseAuthCookieToProxyReq,
-    })
-  );
-  app.use(
-    '/eda-data-service',
-    createProxyMiddleware({
-      target: process.env.EDA_DATA_SERVICE_URL,
-      pathRewrite: { [`^/eda-data-service`]: '' },
-      secure: false,
-      changeOrigin: true,
-      followRedirects: true,
-      logLevel: 'debug',
-      onProxyReq: addPrereleaseAuthCookieToProxyReq,
-    })
-  );
-  app.use(
-    '/eda-user-service',
-    createProxyMiddleware({
-      target: process.env.EDA_USER_SERVICE_URL,
-      pathRewrite: { [`^/eda-user-service`]: '' },
-      secure: false,
-      changeOrigin: true,
-      followRedirects: true,
-      logLevel: 'debug',
-      onProxyReq: addPrereleaseAuthCookieToProxyReq,
-    })
-  );
-  app.use(
-    '/eda-dataset-access',
-    createProxyMiddleware({
-      target: process.env.DATASET_ACCESS_SERVICE_URL,
-      pathRewrite: { [`^/eda-dataset-access`]: '' },
+      target: process.env.BASE_EDA_URL,
+      pathRewrite: { [`^${edaEndpoint}`]: '' },
       secure: false,
       changeOrigin: true,
       followRedirects: true,

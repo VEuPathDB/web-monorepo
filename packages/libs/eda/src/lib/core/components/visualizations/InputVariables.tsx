@@ -15,6 +15,7 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
+import { red } from '@veupathdb/coreui/dist/definitions/colors';
 
 export interface InputSpec {
   name: string;
@@ -36,6 +37,13 @@ export interface InputSpec {
    * will switch to "no variable")
    */
   providedOptionalVariable?: VariableDescriptor;
+  /**
+   * Can be used to override an input role's default title assigned in sectionInfo
+   * when we want the behavior/logic of an existing role but with a different
+   * title. Example: 2x2 mosaic's 'axis' variables.
+   */
+  titleOverride?: ReactNode;
+  styleOverride?: React.CSSProperties;
 }
 
 interface SectionSpec {
@@ -61,8 +69,13 @@ const sectionInfo: Record<string, SectionSpec> = {
   },
 };
 
-const requiredInputStyle = {
-  color: '#dd314e',
+export const requiredInputLabelStyle = {
+  color: red[600],
+};
+
+// ensures labels are stacked nicely based on the width of the longer string, "Overlay"
+const multipleStratificationVariableLabelStyle = {
+  width: '45px',
 };
 
 interface CustomSectionSpec extends SectionSpec {
@@ -183,6 +196,9 @@ export function InputVariables(props: Props) {
     ]
   );
 
+  const hasMultipleStratificationValues =
+    inputs.filter((input) => input.role === 'stratification').length > 1;
+
   return (
     <div className={classes.inputs}>
       {[undefined, 'axis', 'stratification'].map(
@@ -194,7 +210,10 @@ export function InputVariables(props: Props) {
               style={{ order: sectionInfo[inputRole ?? 'default'].order }}
             >
               <div className={classes.fullRow}>
-                <h4>{sectionInfo[inputRole ?? 'default'].title}</h4>
+                <h4>
+                  {inputs.find((input) => input.titleOverride)?.titleOverride ??
+                    sectionInfo[inputRole ?? 'default'].title}
+                </h4>
               </div>
               {inputs
                 .filter((input) => input.role === inputRole)
@@ -202,16 +221,7 @@ export function InputVariables(props: Props) {
                   <div
                     key={input.name}
                     className={classes.input}
-                    style={
-                      input.readonlyValue
-                        ? {}
-                        : !selectedVariables[input.name] &&
-                          constraints &&
-                          constraints.length &&
-                          constraints[0][input.name]?.isRequired
-                        ? requiredInputStyle
-                        : {}
-                    }
+                    style={input.readonlyValue ? {} : input.styleOverride}
                   >
                     <Tooltip
                       css={{}}
@@ -226,7 +236,18 @@ export function InputVariables(props: Props) {
                     >
                       <div
                         className={classes.label}
-                        style={{ cursor: 'default' }}
+                        style={
+                          !input.readonlyValue &&
+                          constraints &&
+                          constraints.length &&
+                          constraints[0][input.name]?.isRequired &&
+                          !selectedVariables[input.name]
+                            ? requiredInputLabelStyle
+                            : input.role === 'stratification' &&
+                              hasMultipleStratificationValues
+                            ? multipleStratificationVariableLabelStyle
+                            : undefined
+                        }
                       >
                         {input.label +
                           (input.readonlyValue &&
