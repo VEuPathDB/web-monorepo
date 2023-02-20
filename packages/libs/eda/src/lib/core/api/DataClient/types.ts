@@ -519,6 +519,14 @@ const twoByTwoStatsContent = type({
   value: union([number, nullType]),
 });
 
+export type facetVariableDetailsType = TypeOf<typeof facetVariableDetailsType>;
+const facetVariableDetailsType = type({
+  facetVariableDetails: union([
+    tuple([StringVariableValue]),
+    tuple([StringVariableValue, StringVariableValue]),
+  ]),
+});
+
 export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
 export const TwoByTwoResponse = intersection([
   MosaicResponse,
