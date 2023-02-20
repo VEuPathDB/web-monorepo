@@ -94,7 +94,7 @@ export type CustomCheckboxes<T> = {[index: string]: React.ComponentType<Partial<
 type Props<T> = {
   node: T;
   name: string;
-  path: number[];
+  path: string;
   getNodeState: (node: T) => NodeState;
   isSelectable: boolean;
   isMultiPick: boolean;
@@ -132,7 +132,7 @@ export default function CheckboxTreeNode<T>({
     let isLeafNode = isLeaf(node, getNodeChildren);
     let inputName = isLeafNode ? name : '';
     let nodeId = getNodeId(node);
-    const nodeElement = renderNode(node, path);
+    const nodeElement = renderNode(node, path.split('/').map(Number));
     const commonInputProps = {
       name: inputName,
       checked: isSelected,
@@ -211,7 +211,7 @@ export default function CheckboxTreeNode<T>({
                 key={"node_" + getNodeId(child)}
                 name={name}
                 node={child}
-                path={path.concat(index)}
+                path={path + '/' + index}
                 getNodeState={getNodeState}
                 isSelectable={isSelectable}
                 isMultiPick={isMultiPick}
