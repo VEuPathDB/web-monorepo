@@ -151,7 +151,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       ...tickSettings(
         independentAxisLogScale,
         extendedIndependentAxisRange,
-        independentValueType
+        independentValueType,
+        data.series.length
       ),
     },
     yaxis: {
@@ -181,7 +182,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       ...tickSettings(
         dependentAxisLogScale,
         extendedDependentAxisRange,
-        dependentValueType
+        dependentValueType,
+        data.series.length
       ),
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
