@@ -11,11 +11,14 @@ import {
   TimeDelta,
 } from '../../types/general';
 import { Toggle } from '@veupathdb/coreui';
+import { LinePlotDataSeries } from '../../types/plots';
 
 export default {
   title: 'Plots/LinePlot',
   component: LinePlot,
 } as Meta;
+
+const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
 const dataSet = {
   series: [
@@ -47,6 +50,30 @@ const errorBarData = {
       yErrorBarLower: [5, 10, 2, 8, 11.5],
       binLabel: ['[0,2)', '[2,5)', '[5,8)', '[8,12)', '[12,15)'],
       sampleSize: [11, 22, 33, 44, 55, 66],
+    },
+  ],
+};
+
+const markerTooltipData = {
+  series: [
+    {
+      ...dataSet.series[0],
+      extraTooltipText: ['n: 1', 'n: 2', 'n: 3', 'n: 4', 'n: 5'],
+      mode: modeValue,
+    },
+    {
+      x: [0, 2, 5, 8, 12],
+      y: [6, 8, 4, 10, 11],
+      name: 'Dogs',
+      extraTooltipText: ['n: 5', 'n: 4', 'n: 3', 'n: 2', 'n: 1'],
+      mode: modeValue,
+    },
+    {
+      x: [0, 2, 5, 8, 12],
+      y: [12, 10, 6, 1, 11],
+      name: 'Turtles',
+      extraTooltipText: ['n: 3', 'n: 6', 'n: 9', 'n: 12', 'n: 15'],
+      mode: modeValue,
     },
   ],
 };
@@ -89,6 +116,16 @@ NoDataOverlay.args = {
   independentAxisLabel: 'Independent axis label',
   showNoDataOverlay: true,
   title: 'Awesomeness of animals',
+};
+
+export const MarkerTooltips = Template.bind({});
+MarkerTooltips.args = {
+  data: markerTooltipData,
+  dependentAxisLabel: 'Awesomeness',
+  independentAxisLabel: 'Age',
+  legendTitle: 'Animal',
+  title: 'Awesomeness of animals',
+  interactive: true,
 };
 
 /**
