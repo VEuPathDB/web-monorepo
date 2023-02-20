@@ -49,6 +49,7 @@ import {
   vocabularyWithMissingData,
   fixVarIdLabels,
   fixVarIdLabel,
+  getVariableLabel,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -557,10 +558,19 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     variableDisplayWithUnit(xAxisVariable) ??
     'X-axis';
 
+  // If we're to use a computed variable but no variableId is given for the computed variable,
+  // use the placeholder display name given by the app.
+  // Otherwise, create the dependent axis label as usual.
   const dependentAxisLabel =
-    computedYAxisDetails?.placeholderDisplayName ??
-    variableDisplayWithUnit(yAxisVariable) ??
-    'Y-axis';
+    computedYAxisDetails?.placeholderDisplayName &&
+    !computedYAxisDetails?.variableId
+      ? computedYAxisDetails.placeholderDisplayName
+      : getVariableLabel(
+          'yAxis',
+          data.value?.computedVariableMetadata,
+          entities,
+          'Y-axis'
+        );
 
   const overlayLabel = variableDisplayWithUnit(overlayVariable);
   const neutralPaletteProps = useNeutralPaletteProps(
