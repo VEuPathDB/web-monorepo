@@ -441,16 +441,27 @@ export const LineplotResponse = type({
   completeCasesTable: completeCasesTableArray,
 });
 
+interface MosaicRequestConfig {
+  outputEntityId: string;
+  xAxisVariable: VariableDescriptor;
+  yAxisVariable: VariableDescriptor;
+  facetVariable: ZeroToTwoVariables;
+  showMissingness?: 'TRUE' | 'FALSE';
+}
+
+interface TwoByTwoRequestConfig extends MosaicRequestConfig {
+  xAxisReferenceValue: string;
+  yAxisReferenceValue: string;
+}
+
 export interface MosaicRequestParams {
   studyId: string;
   filters: Filter[];
-  config: {
-    outputEntityId: string;
-    xAxisVariable: VariableDescriptor;
-    yAxisVariable: VariableDescriptor;
-    facetVariable: ZeroToTwoVariables;
-    showMissingness?: 'TRUE' | 'FALSE';
-  };
+  config: MosaicRequestConfig;
+}
+
+export interface TwoByTwoRequestParams extends MosaicRequestParams {
+  config: TwoByTwoRequestConfig;
 }
 
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;

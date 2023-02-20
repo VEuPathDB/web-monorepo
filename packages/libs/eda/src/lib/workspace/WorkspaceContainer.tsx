@@ -5,12 +5,12 @@ import { TreeNode } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/T
 
 import { EDAWorkspaceContainer, FieldWithMetadata } from '../core';
 import {
-  useConfiguredAnalysisClient,
-  useConfiguredDataClient,
-  useConfiguredSubsettingClient,
-  useConfiguredDownloadClient,
-  useConfiguredComputeClient,
-} from '../core/hooks/client';
+  AnalysisClient,
+  ComputeClient,
+  DataClient,
+  DownloadClient,
+  SubsettingClient,
+} from '../core/api';
 import { VariableDescriptor } from '../core/types/variable';
 import { cx, findFirstVariable } from './Utils';
 
@@ -27,28 +27,25 @@ const useStyles = makeStyles({
 interface Props {
   studyId: string;
   analysisId?: string;
-  subsettingServiceUrl: string;
-  dataServiceUrl: string;
-  userServiceUrl: string;
-  downloadServiceUrl: string;
   children: ReactNode;
+  analysisClient: AnalysisClient;
+  computeClient: ComputeClient;
+  dataClient: DataClient;
+  downloadClient: DownloadClient;
+  subsettingClient: SubsettingClient;
 }
 
 /** Allows a user to create a new analysis or edit an existing one. */
 export function WorkspaceContainer({
   studyId,
-  subsettingServiceUrl,
-  dataServiceUrl,
-  userServiceUrl,
-  downloadServiceUrl,
+  subsettingClient,
+  dataClient,
+  analysisClient,
+  downloadClient,
+  computeClient,
   children,
 }: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
-  const dataClient = useConfiguredDataClient(dataServiceUrl);
-  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
-  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
-  const computeClient = useConfiguredComputeClient(dataServiceUrl);
 
   const initializeMakeVariableLink = useCallback(
     (fieldTree: TreeNode<FieldWithMetadata>) => ({
