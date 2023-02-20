@@ -3554,10 +3554,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.18":
-  version "0.19.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.18.tgz#c1f5ed76783cca6bf910c6b1025c9ad014285619"
-  integrity sha512-fBZBUi1wAEHtR74/lJ95eMhfWuRFgZ0mti/YqEm3omsIXuI5mpX4YyJA3zVlWJtg26B976/Po6hz+kAAWCdTcQ==
+"@veupathdb/components@^0.19.20":
+  version "0.19.20"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.20.tgz#81c0f1355e0b8e800c1ef5f2106dfae881f91e37"
+  integrity sha512-y7scAyS4sakPvEnZaQwBjY0ouOM2pTZ9ODl3Tx1Ab2/WIu2VBojnJUFxYYfaBePt0zAeCu1+ArWESN2keIDGFg==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.46.0"
     "@typescript-eslint/parser" "^5.46.0"
@@ -3589,18 +3589,20 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.18":
-  version "0.18.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.18.tgz#eaadca0170fb90ed69569b58bb594799ec2117af"
-  integrity sha512-GrkSIhxyfvlkxatcGvk7Gs4gyRiNRsqtXm3cx3FAijQN4vn9gn8PY/ufyHPFndQk3HoTzvPDNS3ox+nnjCsKOw==
+"@veupathdb/coreui@^0.18.19":
+  version "0.18.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.19.tgz#51127857d1586c85111550a926a81aec392581bc"
+  integrity sha512-oNSX0LhIx91/+skAZyr7TWjCvjHS7pYh8DRg+jbaVEmsN8qiaPirKGFhhelcFP16xefCM8wQsoRHHJUCOHme6A==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
     lodash "^4.17.21"
     react-cool-dimensions "^2.0.7"
+    react-draggable "^4.4.5"
     react-responsive-modal "^6.2.0"
     react-table "^7.7.0"
     regenerator-runtime "^0.13.9"
+    use-resize-observer "^9.1.0"
 
 "@veupathdb/eslint-config@^2.0.0":
   version "2.0.0"
@@ -3633,10 +3635,10 @@
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
 
-"@veupathdb/study-data-access@^0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.5.tgz#753eff861b8ce72238fde30a7d96d7460b5cc0ac"
-  integrity sha512-mtJO3glTHn7AnaL25c2HGoKSpZ0hqWfHX63cp7IfTIGkpzedeXwriJL1PmQwEUEqb5+jZGyQuKAN2S07L5XxQA==
+"@veupathdb/study-data-access@^0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.7.tgz#50e99637e4b3be95f0b42d27e195f4b24702b11f"
+  integrity sha512-Vs5jNlnooCMtMYqKjzrnbkw4k9DX8Yi2K2FPxA90I4q5GI5gPZjqlDE5eeCrxWau28di3UTTw+2UgwHtabqL0g==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -3647,10 +3649,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-2.0.0.tgz#bfbf9cd60a5e284d14728412a625d3df2f55a91e"
   integrity sha512-NiGLeoxOZQEIUsgyQ5Lxj0r7C+rfad6mF394wBL95r9BzpLjFEoEfVhLf6Owv2ybPrK+AaUjG4QN5QD0/55MPw==
 
-"@veupathdb/wdk-client@^0.9.17":
-  version "0.9.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.17.tgz#eccc39202623e98c31070cc0f1331e04cbd56bf7"
-  integrity sha512-umYc1Xshv+YxWT5FQHf9h6IhvqrdxXoT9utARXrjQtTNrAKk6fzRe4PaTYFc0/eotoVCDZ/WvjON22dpTEewbA==
+"@veupathdb/wdk-client@^0.9.28":
+  version "0.9.28"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.28.tgz#8f132dfa6673d5403126d92336ff000cefa339d2"
+  integrity sha512-HnB21jviKSYMUznaNrgF5dH1kZ93hZzHDbUN9qMEL3DUsqh5eclWpfRvqxi4l+1NcsKdS9uMpl1hjP4cgSwsfw==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -11890,6 +11892,14 @@ react-draggable@^4.0.3, react-draggable@^4.4.3:
     clsx "^1.1.1"
     prop-types "^15.6.0"
 
+react-draggable@^4.4.5:
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.5.tgz#9e37fe7ce1a4cf843030f521a0a4cc41886d7e7c"
+  integrity sha512-OMHzJdyJbYTZo4uQE393fHcqqPYsEtkjfMgvCHr6rejT+Ezn4OZbNyGH50vv+SunC1RMvwOTSWkEODQLzw1M9g==
+  dependencies:
+    clsx "^1.1.1"
+    prop-types "^15.8.1"
+
 react-error-boundary@^3.1.0:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-3.1.4.tgz#255db92b23197108757a888b01e5b729919abde0"
@@ -14045,6 +14055,13 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+use-resize-observer@^9.1.0:
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/use-resize-observer/-/use-resize-observer-9.1.0.tgz#14735235cf3268569c1ea468f8a90c5789fc5c6c"
+  integrity sha512-R25VqO9Wb3asSD4eqtcxk8sJalvIOYBqS8MNZlpDSQ4l4xMQxC/J7Id9HoTqPq8FwULIn0PVW+OAqF2dyYbjow==
+  dependencies:
+    "@juggle/resize-observer" "^3.3.1"
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"

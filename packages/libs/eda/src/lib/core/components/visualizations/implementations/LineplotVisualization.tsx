@@ -29,7 +29,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
@@ -123,6 +123,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 const plotContainerStyles = {
   width: 750,
@@ -956,9 +957,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
   ] = useState(false);
   const [showErrorBarBanner, setShowErrorBarBanner] = useState(false);
 
-  // add showBanner prop in this Viz
-  const [showBanner, setShowBanner] = useState(true);
-
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1165,8 +1163,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 padding: '0.3125em 0.625em',
               },
               fontSize: '1em',
-              showBanner: showBanner,
-              setShowBanner: setShowBanner,
             }}
           />
         )}
@@ -1194,8 +1190,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 padding: '0.3125em 0.625em',
               },
               fontSize: '1em',
-              showBanner: showBanner,
-              setShowBanner: setShowBanner,
             }}
           />
         )}
@@ -1240,8 +1234,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.useBinning) {
                   setShowIndependentLogScaleBanner(true);
                   setShowBinningBanner(false);
@@ -1288,8 +1280,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.independentAxisLogScale) {
                   setShowBinningBanner(true);
                   setShowIndependentLogScaleBanner(false);
@@ -1462,8 +1452,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.showErrorBars) {
                   setShowDependentLogScaleBanner(true);
                   setShowErrorBarBanner(false);
@@ -1507,8 +1495,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                // to reuse Banner
-                setShowBanner(true);
                 if (newValue && vizConfig.dependentAxisLogScale) {
                   setShowErrorBarBanner(true);
                   setShowDependentLogScaleBanner(false);
@@ -1703,9 +1689,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <div className={classes.label}>
-            Function<sup>*</sup>
-          </div>
+          <Tooltip css={{}} title={'Required parameter'}>
+            <div className={classes.label}>
+              Function<sup>*</sup>
+            </div>
+          </Tooltip>
           <SingleSelect
             onSelect={onValueSpecChange}
             value={vizConfig.valueSpecConfig}
@@ -1723,16 +1711,22 @@ function LineplotViz(props: VisualizationProps<Options>) {
             gridTemplateRows: 'repeat(3, auto)',
           }}
         >
-          <div
-            className={classes.label}
-            style={{
-              gridColumn: 1,
-              gridRow: 2,
-              color: !areRequiredInputsSelected ? '#dd314e' : '',
-            }}
-          >
-            Proportion<sup>*</sup>&nbsp;=
-          </div>
+          <Tooltip css={{}} title={'Required parameter'}>
+            <div
+              className={classes.label}
+              style={{
+                gridColumn: 1,
+                gridRow: 2,
+                color:
+                  vizConfig.numeratorValues?.length &&
+                  vizConfig.denominatorValues?.length
+                    ? undefined
+                    : requiredInputLabelStyle.color,
+              }}
+            >
+              Proportion<sup>*</sup>&nbsp;=
+            </div>
+          </Tooltip>
           <div
             className={classes.input}
             style={{
