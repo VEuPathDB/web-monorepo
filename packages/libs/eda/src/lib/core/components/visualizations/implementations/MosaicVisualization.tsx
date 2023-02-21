@@ -801,10 +801,7 @@ function MosaicViz(props: Props<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         // statistics tab is disabled in 2x2, so no need to prompt for required inputs
-        showRequiredInputsPrompt={
-          !areRequiredInputsSelected &&
-          !(isTwoByTwo && activeTab === 'Statistics')
-        }
+        showRequiredInputsPrompt={!areRequiredInputsSelected}
         isMosaicPlot={true}
       />
     </div>
@@ -1035,16 +1032,16 @@ function ContTableStats(props?: {
           <tr>
             <th>P-value</th>
             <td className="numeric">
-              {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
+              {props.pValue != null ? quantizePvalue(props.pValue) : 'n/a'}
             </td>
           </tr>
           <tr>
             <th>Degrees of freedom</th>
-            <td className="numeric">{props.degreesFreedom ?? 'N/A'}</td>
+            <td className="numeric">{props.degreesFreedom ?? 'n/a'}</td>
           </tr>
           <tr>
             <th>Chi-squared</th>
-            <td className="numeric">{props.chisq ?? 'N/A'}</td>
+            <td className="numeric">{props.chisq ?? 'n/a'}</td>
           </tr>
         </tbody>
       </table>
