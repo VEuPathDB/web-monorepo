@@ -38,6 +38,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
             expandedList={props.expandedList}
             isSelectable={props.isSelectable}
             selectedList={selectedList}
+            filteredList={props.filteredList}
             customCheckboxes={props.customCheckboxes}
             isMultiPick={props.isMultiPick}
             name={props.name}
