@@ -1,11 +1,60 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, useEffect, useState } from 'react';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components'
 
 import SupportFormBase from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBase';
 import SupportFormBody from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBody';
 
-export default class AccessRequestView extends Component {
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
+
+const camelToSnakeCase = (str) =>
+  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+
+const AccessRequestView = (props) => {
+  const [existingRequestData, setExistingRequestData] = useState(null);
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
+  const studyAccessApi = useStudyAccessApi();
+
+  useEffect(() => {
+    // It's possible that the user has already submitted an access request. If
+    // so, this will get the submitted form values so we can prepopulate the
+    // fields.
+    const asyncFunction = async () => {
+      let response = null;
+
+      try {
+        response =
+          props.datasetId && user
+            ? await studyAccessApi.fetchEndUserEntry(user.id, props.datasetId)
+            : null;
+      } catch (error) {
+        // The endpoint returns a 404 if the user has not already submitted
+        // a request, so a 404 is expected behavior. Any other error is not.
+        if (!error.message.startsWith("404 Not Found")) throw error;
+      }
+
+      const requestData = response
+        ? Object.keys(response).reduce((newObj, key) => {
+            newObj[camelToSnakeCase(key)] = response[key];
+            return newObj;
+          }, {})
+        : null;
+      setExistingRequestData(requestData);
+    };
+
+    asyncFunction();
+  }, [user, studyAccessApi, props.location]);
+
+  return (
+    <AccessRequestViewInner
+      {...props}
+      existingRequestData={existingRequestData}
+    />
+  );
+};
+
+class AccessRequestViewInner extends Component {
   constructor(...args) {
     super(...args);
 
@@ -18,12 +67,13 @@ export default class AccessRequestView extends Component {
     const {
       formTitle,
       successfullySubmitted,
-      alreadyRequested
+      alreadyRequested,
+      existingRequestData,
     } = this.props;
 
     if (successfullySubmitted) {
       return <h1>Data Access Request Submitted</h1>;
-    } else if (alreadyRequested) {
+    } else if (alreadyRequested || existingRequestData) {
       return <h1>Data Access Request Already Submitted</h1>;
     } else {
       return <h1>{formTitle}</h1>;
@@ -37,7 +87,8 @@ export default class AccessRequestView extends Component {
       requestNeedsApproval,
       datasetId,
       alreadyRequested,
-      webAppUrl
+      webAppUrl,
+      existingRequestData,
     } = this.props;
     const studyPageUrl = webAppUrl + '/app/record/dataset/' + datasetId;
 
@@ -57,12 +108,13 @@ export default class AccessRequestView extends Component {
           </p>
         </Fragment>
       );
-    } else if (alreadyRequested) {
+    } else if (alreadyRequested || existingRequestData) {
       return (
         <Fragment>
           <p>
             Our records indicate that you have already submitted a request for this dataset. If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a>. 
           </p>
+          <AccessRequestForm />
         </Fragment>
       );
     } else {
@@ -78,12 +130,10 @@ export default class AccessRequestView extends Component {
       submitForm,
       submissionError,
       webAppUrl,
-      location
+      alreadyRequested,
+      existingRequestData,
+      datasetId,
     } = this.props;
- 
-   // probably better: offer datasetId in props to avoid this
-    const indexOfFirst = location.pathname.toString().indexOf('/DS_')+1;
-    const datasetId = location.pathname.toString().slice(indexOfFirst);
 
     return (
       <Fragment>
@@ -106,8 +156,14 @@ export default class AccessRequestView extends Component {
                   key={key}
                   mykey={key}
                   label={label}
-                  value={formValues[key]}
-                  onChange={this.props[onChangeKey]} />
+                  value={
+                    existingRequestData &&
+                    existingRequestData.hasOwnProperty(key)
+                      ? existingRequestData[key]
+                      : formValues[key]
+                  }
+                  onChange={this.props[onChangeKey]}
+                  disabled={alreadyRequested || existingRequestData} />
               )}
               <tr>
                 <td colSpan={4}>
@@ -120,7 +176,11 @@ export default class AccessRequestView extends Component {
               </tr>
               <tr>
                 <td colSpan={4}>
-                  <input type="submit" disabled={disableSubmit} value="Submit" />
+                  <input
+                    type="submit"
+                    disabled={disableSubmit || existingRequestData}
+                    value="Submit"
+                  />
                 </td>
               </tr>
               {
@@ -157,3 +217,5 @@ export default class AccessRequestView extends Component {
     );
   }
 }
+
+export default AccessRequestView;
