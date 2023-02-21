@@ -24,7 +24,8 @@ export function makeEdaRoute(studyId) {
   return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
 }
 
-const WorkspaceRouter = React.lazy(() => import('./WorkspaceRouter'));
+const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
+const EdaMap = React.lazy(() => import('@veupathdb/eda/lib/map'));
 
 
 /**
@@ -52,12 +53,9 @@ export const wrapRoutes = wdkRoutes => [
 
       return (
         <Suspense fallback={<Loading/>}>
-          <WorkspaceRouter
+          <EdaWorkspace
             showUnreleasedData={showUnreleasedData}
-            dataServiceUrl={edaServiceUrl}
-            subsettingServiceUrl={edaServiceUrl}
-            userServiceUrl={edaServiceUrl}
-            downloadServiceUrl={edaServiceUrl}
+            serviceUrl={edaServiceUrl}
             exampleAnalysesAuthor={edaExampleAnalysesAuthor}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
@@ -67,6 +65,18 @@ export const wrapRoutes = wdkRoutes => [
         </Suspense>
       );
     }
+  },
+
+  {
+    path: '/maps',
+    exact: false,
+    isFullscreen: true,
+    rootClassNameModifier: 'MapVEu',
+    component: ()  => (
+      <Suspense fallback={<Loading/>}>
+        <EdaMap singleAppMode={edaSingleAppMode} edaServiceUrl={edaServiceUrl}/>
+      </Suspense>
+    )
   },
 
   {
