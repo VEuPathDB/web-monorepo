@@ -173,7 +173,7 @@ initialize({
 
         return (
           <WorkspaceApp
-            serviceUrl={edaEndpoint}
+            edaServiceUrl={edaEndpoint}
             exampleAnalysesAuthor={exampleAnalysesAuthor}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}
