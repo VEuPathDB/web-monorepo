@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/web-common",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "repository": {
     "url": "https://github.com/VEuPathDB/EbrcWebsiteCommon",
     "directory": "Client"
@@ -32,7 +32,7 @@
   },
   "peerDependencies": {
     "@veupathdb/components": "^0.19.19",
-    "@veupathdb/coreui": "^0.18.20",
+    "@veupathdb/coreui": "^0.18.21",
     "@veupathdb/eda": "^4.0.0",
     "@veupathdb/wdk-client": "^0.9.29",
     "notistack": "^1.0.10",
@@ -55,7 +55,7 @@
     "@types/react-table": "^7.7.11",
     "@types/shelljs": "^0.8.8",
     "@veupathdb/components": "^0.19.19",
-    "@veupathdb/coreui": "^0.18.20",
+    "@veupathdb/coreui": "^0.18.21",
     "@veupathdb/eda": "^4.0.0",
     "@veupathdb/http-utils": "^1.1.1",
     "@veupathdb/react-scripts": "^2.0.0",

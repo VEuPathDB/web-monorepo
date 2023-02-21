@@ -239,6 +239,8 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
   const [ expansion, setExpansion ] = useState<string[]>(initialExpandedNodes);
   const [ selection, setSelection ] = useState<string[]>(filterOrganisms);
   const [ filterTerm, setFilterTerm ] = useState<string>('');
+  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] = useState<boolean>(false);
+
   const pendingFilter = !isEqual(selection, filterOrganisms);
   const renderNode = useCallback((node: TreeBoxVocabNode) => {
     const organismName = getNodeId(node);
@@ -251,7 +253,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
       <div className={cx('--OrganismFilterNode')}>
         <div>{node.data.display}{' '}
         {referenceStrains?.has(organismName) && (
-          <span><strong>[Reference]</strong></span>
+          <span style={{fontSize: '0.9em'}}><strong>[Ref]</strong></span>
         )}
         </div>
         <div>{count.toLocaleString()}</div>
@@ -263,7 +265,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
   const searchPredicate = useCallback((node: TreeBoxVocabNode, searchTerms: string[]) => {
     const organismName = getNodeId(node);
     const display = referenceStrains?.has(organismName) ? 
-      node.data.display + ' [Reference]' : node.data.display;
+      node.data.display + ' [Ref]' : node.data.display;
     return areTermsInString(searchTerms, display);
   }, []);
   const showResetButton = filterOrganisms.length > 0;
@@ -330,8 +332,31 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         shouldExpandDescendantsWithOneChild
         isSelectable
         selectedList={selection}
+        filteredList={showOnlyReferenceOrganisms && referenceStrains ? Array.from(referenceStrains) : undefined}
+        isAdditionalFilterApplied={showOnlyReferenceOrganisms}
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
+        additionalFilters={[
+          <Tooltip 
+            css={{}} 
+            title={
+              <span style={{fontWeight: 'normal'}}>
+                Show only reference organisms <span style={{fontWeight: 'bolder'}}>[Ref]</span>
+              </span>
+            }>
+              <label className={cx('--OnlyMatchesToggle')}>
+                <input 
+                  style={{marginRight: '0.25em'}} 
+                  type="checkbox" 
+                  checked={showOnlyReferenceOrganisms} 
+                  onChange={() => setShowOnlyReferenceOrganisms(value => !value)}
+                />
+                <span style={{fontSize: '0.95em'}}>
+                  Reference only
+                </span>
+              </label>
+          </Tooltip>
+        ]}
         styleOverrides={{
           treeSection: {
             ul: {
@@ -341,6 +366,12 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
           searchBox: {
             optionalIcon: {
               top: '3px',
+            }
+          },
+          additionalFilters: {
+            container: {
+              width: '125px',
+              marginLeft: '0.5em',
             }
           }
         }}
