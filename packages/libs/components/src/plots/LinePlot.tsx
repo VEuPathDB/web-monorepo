@@ -3,7 +3,7 @@ import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 import { isArrayOfNumbersOrNulls } from '../types/guards';
-import { zip } from 'lodash';
+import { zip, uniq } from 'lodash';
 // add axis range control truncation
 import {
   LinePlotData,
@@ -19,6 +19,7 @@ import {
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
+import { TimeDelta } from '../../src/types/general';
 
 // is it possible to have this interface extend ScatterPlotProps?
 // or would we need some abstract layer, w scatter and line both as equal children below it?
@@ -154,6 +155,24 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         independentValueType,
         data.series.length
       ),
+      tickformat:
+        independentValueType === 'date' &&
+        data.binWidthSlider != null &&
+        (data.binWidthSlider.binWidth as TimeDelta).unit === 'year'
+          ? '%Y'
+          : undefined,
+      tickvals:
+        data != null &&
+        data.series.length > 0 &&
+        independentValueType === 'date' &&
+        data.binWidthSlider != null &&
+        (data.binWidthSlider.binWidth as TimeDelta).unit === 'year'
+          ? uniq(
+              data.series.flatMap((series) =>
+                series.x.map((x) => (x as string).substring(0, 4))
+              )
+            )
+          : undefined,
     },
     yaxis: {
       title: dependentAxisLabel,
