@@ -553,17 +553,17 @@ function StrategyLinkout(props: Props) {
     if (!isMoreFilteringRequired) return;
     return (
       <CommonModal
-        title={'Result Too Large'}
+        title={<><i style={{margin: 'auto 0', marginRight: '0.25em', color: '#CB0'}} className='fa fa-warning'/><span>Result Too Large</span></>}
         onClose={() => setIsMoreFilteringRequired(!isMoreFilteringRequired)} 
       >
         <div style={{
           fontSize: '1.1em',
-          minWidth: '350px',
+          minWidth: '400px',
         }}>
           <p style={{
             margin: 0,
           }}>
-            We're sorry. Your result ({response.searchResults.totalCount.toLocaleString()}) is too large to export. The maximum is 50,000.
+            Your result ({response.searchResults.totalCount.toLocaleString()}) is too large to export. The maximum is 50,000.
           </p>
           <br />
           <p style={{
@@ -573,8 +573,8 @@ function StrategyLinkout(props: Props) {
             <ul style={{
               marginTop: '0.25em',
             }}>
-              <li>adjusting your search term</li> 
               <li>applying an Organism filter</li>
+              <li>adjusting your search term</li> 
             </ul>
           </p>
           <br />
