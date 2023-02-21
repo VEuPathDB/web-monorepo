@@ -800,7 +800,6 @@ function MosaicViz(props: Props<Options>) {
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
-        // statistics tab is disabled in 2x2, so no need to prompt for required inputs
         showRequiredInputsPrompt={!areRequiredInputsSelected}
         isMosaicPlot={true}
       />
@@ -845,7 +844,11 @@ function TwoByTwoStats(props?: {
             </th>
             <th
               className="stats-table_top-cell"
-              style={{ background: MEDIUM_GRAY, textAlign: 'center' }}
+              style={{
+                background: MEDIUM_GRAY,
+                textAlign: 'center',
+                paddingLeft: '2em',
+              }}
             >
               95% CI
             </th>
@@ -864,7 +867,7 @@ function TwoByTwoStats(props?: {
               <b>Chi-squared (df=1)</b>
             </td>
             <td>{props.chiSq?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.chiSq?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -879,7 +882,7 @@ function TwoByTwoStats(props?: {
               <b>Fisher's Exact Test</b>
             </td>
             <td>{props.fisher?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.fisher?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -894,7 +897,7 @@ function TwoByTwoStats(props?: {
               <b>Prevalence</b>
             </td>
             <td>{props.prevalence?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.prevalence?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -909,7 +912,7 @@ function TwoByTwoStats(props?: {
               <b>Odds ratio</b>
             </td>
             <td>{props.oddsRatio?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.oddsRatio?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -924,7 +927,7 @@ function TwoByTwoStats(props?: {
               <b>Risk Ratio</b>
             </td>
             <td>{props.relativeRisk?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.relativeRisk?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -939,7 +942,7 @@ function TwoByTwoStats(props?: {
               <b>Sensitivity</b>
             </td>
             <td>{props.sensitivity?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.sensitivity?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -954,7 +957,7 @@ function TwoByTwoStats(props?: {
               <b>Specificity</b>
             </td>
             <td>{props.specificity?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.specificity?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -969,7 +972,7 @@ function TwoByTwoStats(props?: {
               <b>Positive Predictive Value</b>
             </td>
             <td>{props.posPredictiveValue?.value ?? 'n/a'}</td>
-            <td style={{ textAlign: 'center' }}>
+            <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
               {props.posPredictiveValue?.confidenceInterval ?? 'n/a'}
             </td>
             <td className="stats-table_rightmost-cell">
@@ -988,7 +991,7 @@ function TwoByTwoStats(props?: {
             </td>
             <td
               className="stats-table_bottom-cell"
-              style={{ textAlign: 'center' }}
+              style={{ textAlign: 'center', paddingLeft: '2em' }}
             >
               {props.negPredictiveValue?.confidenceInterval ?? 'n/a'}
             </td>
