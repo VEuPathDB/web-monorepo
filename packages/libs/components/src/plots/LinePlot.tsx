@@ -124,7 +124,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
   ]);
 
   const layout: Partial<Layout> = {
-    hovermode: 'closest',
+    hovermode: 'x',
     xaxis: {
       title: independentAxisLabel,
       // add axis range control truncation
@@ -152,7 +152,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       ...tickSettings(
         independentAxisLogScale,
         extendedIndependentAxisRange,
-        independentValueType
+        independentValueType,
+        data.series.length
       ),
       tickformat:
         independentValueType === 'date' &&
@@ -200,7 +201,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
       ...tickSettings(
         dependentAxisLogScale,
         extendedDependentAxisRange,
-        dependentValueType
+        dependentValueType,
+        data.series.length
       ),
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
