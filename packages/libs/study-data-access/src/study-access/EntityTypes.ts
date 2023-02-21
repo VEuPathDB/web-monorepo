@@ -359,6 +359,8 @@ export const historyRow = intersection([
    denialReason: string,
    // FIXME: The api docs say this is required. Who is right?
    dateDenied: string,
+   // FIXME: The api docs say this is required. Who is right?
+   priorAuth: string,
  })
 
 ])

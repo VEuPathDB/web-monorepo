@@ -84,6 +84,7 @@ interface EndUserTableFullRow extends EndUserTableRow {
   researchQuestion: string;
   analysisPlan: string;
   disseminationPlan: string;
+  priorAuth: string;
 }
 
 interface HistoryTableRow extends BaseTableRow {
@@ -103,6 +104,7 @@ interface HistoryTableFullRow extends HistoryTableRow {
   researchQuestion: NonNullable<HistoryResult['row']['researchQuestion']>;
   analysisPlan: NonNullable<HistoryResult['row']['analysisPlan']>;
   disseminationPlan: NonNullable<HistoryResult['row']['disseminationPlan']>;
+  priorAuth: NonNullable<HistoryResult['row']['priorAuth']>;
 }
 
 export type StaffTableSectionConfig = UserTableSectionConfig<StaffTableFullRow, keyof StaffTableRow>;
@@ -519,7 +521,8 @@ export function useEndUserTableSectionConfig(
               researchQuestion,
               analysisPlan,
               disseminationPlan,
-              denialReason = ''
+              denialReason = '',
+              priorAuth,
             }) => ({
               userId: user.userId,
               name: `${user.firstName} ${user.lastName}`,
@@ -530,13 +533,15 @@ export function useEndUserTableSectionConfig(
                 purpose,
                 researchQuestion,
                 analysisPlan,
-                disseminationPlan
+                disseminationPlan,
+                priorAuth,
               ),
               purpose: purpose ?? '',
               researchQuestion: researchQuestion ?? '',
               analysisPlan: analysisPlan ?? '',
               disseminationPlan: disseminationPlan ?? '',
-              denialReason: endUserTableUiState.denialReason[user.userId] ?? denialReason
+              denialReason: endUserTableUiState.denialReason[user.userId] ?? denialReason,
+              priorAuth: priorAuth ?? '',
             })),
             columns: {
               userId: {
@@ -593,12 +598,13 @@ export function useEndUserTableSectionConfig(
                 className: cx('--ContentCell'),
                 sortable: false,
                 width: '35em',
-                renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan } }) => {
+                renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan, priorAuth } }) => {
                   const textValue = makeContentDisplay(
                     purpose,
                     researchQuestion,
                     analysisPlan,
-                    disseminationPlan
+                    disseminationPlan,
+                    priorAuth,
                   );
 
                   return <OverflowingTextCell key={userId} value={textValue} />;
@@ -693,11 +699,13 @@ export function useHistoryTableSectionConfig(
                 researchQuestion: row.researchQuestion ?? '',
                 analysisPlan: row.analysisPlan ?? '',
                 disseminationPlan: row.disseminationPlan ?? '',
+                priorAuth: row.priorAuth ?? '',
                 content: makeContentSearchableSring(
                   row.purpose,
                   row.researchQuestion,
                   row.analysisPlan,
-                  row.disseminationPlan
+                  row.disseminationPlan,
+                  row.priorAuth
                 ),
                 denialReason: row.denialReason ?? '',
                 allowSelfEdits: row.allowSelfEdits,
@@ -775,7 +783,8 @@ export function useHistoryTableSectionConfig(
                     row.purpose,
                     row.researchQuestion,
                     row.analysisPlan,
-                    row.disseminationPlan
+                    row.disseminationPlan,
+                    row.priorAuth
                   );
 
                   return <OverflowingTextCell key={getHistoryTableRowId(row)} value={textValue} />;
@@ -1411,7 +1420,8 @@ function makeContentSearchableSring(
   purpose: string | undefined,
   researchQuestion: string | undefined,
   analysisPlan: string | undefined,
-  disseminationPlan: string | undefined
+  disseminationPlan: string | undefined,
+  priorAuth: string | undefined,
 ) {
   return [
     purpose && 'Purpose:',
@@ -1421,7 +1431,9 @@ function makeContentSearchableSring(
     analysisPlan && 'Analysis Plan:',
     analysisPlan,
     disseminationPlan && 'Dissemination Plan:',
-    disseminationPlan
+    disseminationPlan,
+    priorAuth && 'Prior Authorization:',
+    priorAuth,
   ].filter(negate(isNil)).join('\0');
 }
 
@@ -1429,11 +1441,12 @@ function makeContentDisplay(
   purpose: string,
   researchQuestion: string,
   analysisPlan: string,
-  disseminationPlan: string
+  disseminationPlan: string,
+  priorAuth: string,
 ) {
   const contentFields = zipWith(
-    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:'],
-    [ purpose, researchQuestion, analysisPlan, disseminationPlan ],
+    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:', 'Prior Authorization:'],
+    [ purpose, researchQuestion, analysisPlan, disseminationPlan, priorAuth ],
     (heading, field) => {
       return field.length > 0
         ? `${heading}\n${field}`
