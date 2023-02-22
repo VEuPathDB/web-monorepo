@@ -544,11 +544,7 @@ function MosaicViz(props: Props<Options>) {
                   <>
                     {/* 2x2 stats table banner for facet variable */}
                     {isTwoByTwo && (
-                      <div
-                        style={{
-                          width: '750px',
-                        }}
-                      >
+                      <div>
                         {/* 2x2 stats collapsible banner */}
                         <Banner
                           banner={{
