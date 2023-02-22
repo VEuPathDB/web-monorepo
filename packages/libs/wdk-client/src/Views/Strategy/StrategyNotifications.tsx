@@ -92,6 +92,7 @@ function StrategyNotificationAction({
     ? <DismissButton
         className="link"
         onClick={closeAssociatedSnackbar}
+        buttonText='Dismiss notification'
       />
     : null;
 }
