@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/study-data-access",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Utilities and hooks for controlling end user access to study data",
   "main": "lib/index.js",
   "repository": "git@github.com:VEuPathDB/web-study-data-access.git",
