@@ -2291,10 +2291,10 @@
     regenerator-runtime "^0.13.9"
     use-resize-observer "^9.1.0"
 
-"@veupathdb/eda@^4.0.5":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.5.tgz#5c00c79bf3e3bef8980819d2b6871df63eaa6b8d"
-  integrity sha512-516b6F9sqgYOnEBBqNa91QgSO8HP0isk+mbuKYrXpZPcrzlEO7RdVo3159eZjJwpdY1sfWFb9XbcVghHfFjBDQ==
+"@veupathdb/eda@^4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.6.tgz#a7bed3a4067b3d87f707f53bf08a9a6e6fc8439a"
+  integrity sha512-DZXgFkoO27WnRr7oONYAJgnI9QhkIhZKHMDayGMC/Thdcvi3PxN8FIyB3x+0Frxst8La2GPPhEJG3dFth425ow==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2402,10 +2402,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.8.2.tgz#9bdcb91d94e805e82df6afb32b238e8135df8491"
-  integrity sha512-/HtsGrd+6mkc6NYClYejA0Oq8d0mvDEBwtq6GPF77V3/YPUiw9KTLnwuhxmVrxSrMQVCVeoVVh1Vb06rsaeh6w==
+"@veupathdb/web-common@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.8.3.tgz#d8c4ede329d44d6d43d923bd40fd760291a30c8b"
+  integrity sha512-k3SSA9NmOd6PTfrSwKUS6yctvyMMjFAhEUalHxzHoF5FhsDzz60iI2KiCjSoc9L4U3N9MBS4dlVZXdM84QSFWw==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
