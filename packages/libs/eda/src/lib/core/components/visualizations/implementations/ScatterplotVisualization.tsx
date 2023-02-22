@@ -1233,9 +1233,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     // normal slider color: e.g., from 0 to 1
     trackGradientStart: '#fff',
     trackGradientEnd: '#000',
-    // reversed slider color: e.g., from 1 to 0
-    // trackGradientStart: '#000',
-    // trackGradientEnd: '#fff',
   };
 
   const scatterplotProps: ScatterPlotProps = {
@@ -1512,8 +1509,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         showLimits={true}
         label={'Marker opacity'}
         colorSpec={colorSpecProps}
-        // set isReverseSlider: true if reversed slider
-        // isReverseSlider={false}
       />
 
       {/* axis range control UIs */}
