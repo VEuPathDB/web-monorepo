@@ -55,7 +55,7 @@ export const wrapRoutes = wdkRoutes => [
         <Suspense fallback={<Loading/>}>
           <EdaWorkspace
             showUnreleasedData={showUnreleasedData}
-            serviceUrl={edaServiceUrl}
+            edaServiceUrl={edaServiceUrl}
             exampleAnalysesAuthor={edaExampleAnalysesAuthor}
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
