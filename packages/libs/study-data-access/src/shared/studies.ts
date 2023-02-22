@@ -14,21 +14,34 @@ const attributeNames = {
 };
 
 export async function fetchStudies(wdkService: WdkService) {
+  const datasetRecordClass = await wdkService.findRecordClass('dataset');
+
+  const requiredAttributes = [
+    attributeNames.DISPLAY_NAME,
+    attributeNames.DATASET_ID,
+    attributeNames.EMAIL,
+    attributeNames.BULK_DOWNLOAD_URL,
+  ];
+
+  const optionalAttributes = [
+    attributeNames.POLICY_URL,
+    attributeNames.REQUEST_NEEDS_APPROVAL,
+    attributeNames.STUDY_ACCESS,
+  ];
+
+  const attributes = requiredAttributes.concat(
+    optionalAttributes.filter(
+      (attr) => attr in datasetRecordClass.attributesMap
+    )
+  );
+
   return await wdkService.getAnswerJson(
     {
       searchName: 'AllDatasets',
       searchConfig: { parameters: {} },
     },
     {
-      attributes: [
-        attributeNames.DISPLAY_NAME,
-        attributeNames.DATASET_ID,
-        attributeNames.EMAIL,
-        attributeNames.BULK_DOWNLOAD_URL,
-        attributeNames.POLICY_URL,
-        attributeNames.REQUEST_NEEDS_APPROVAL,
-        attributeNames.STUDY_ACCESS,
-      ],
+      attributes,
       tables: [],
     }
   );
