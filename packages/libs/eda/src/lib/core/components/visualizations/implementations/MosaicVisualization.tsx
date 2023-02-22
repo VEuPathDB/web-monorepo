@@ -100,7 +100,7 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
-const twoBytwoInputStyle: React.CSSProperties = {
+const twoByTwoInputStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: '115px auto',
   marginBottom: '0.5em',
@@ -647,22 +647,20 @@ function MosaicViz(props: Props<Options>) {
   const classes = useInputStyles();
 
   /**
-   * Disabled because reference value selection options are based on the variable's vocabulary
-   * */
-  const areQuadrantSelectionsDisabled =
-    !xAxisVariable?.vocabulary || !yAxisVariable?.vocabulary;
-
-  /**
-   * TEMPORARY: would be better to upgrade CoreUI's SingleSelect (and other selectors) to enable disabling
-   * By using pointerEvents: 'none', we lose the ability to convey messages via tooltips and cursors
-   * */
-  const twoByTwoQuadrantStyle: React.CSSProperties | undefined = !isTwoByTwo
-    ? undefined
-    : {
-        ...twoBytwoInputStyle,
-        pointerEvents: areQuadrantSelectionsDisabled ? 'none' : undefined,
-        opacity: areQuadrantSelectionsDisabled ? 0.5 : 1,
-      };
+   * TEMPORARY:
+   * CoreUI's selection components need to be updated to enable disabling them. We lose the ability to convey messages via tooltips
+   * and cursors when we use pointerEvents: 'none'
+   *
+   * In the meantime, these disabled styles are applied when a variable is missing the vocabulary property because a variable's vocabulary
+   * determines the selection options.
+   */
+  const getReferenceValueStyles = (
+    variableHasVocabulary: boolean
+  ): React.CSSProperties => ({
+    ...twoByTwoInputStyle,
+    pointerEvents: variableHasVocabulary ? undefined : 'none',
+    opacity: variableHasVocabulary ? 1 : 0.5,
+  });
 
   const twoByTwoReferenceValueInputs = !isTwoByTwo
     ? undefined
@@ -678,12 +676,12 @@ function MosaicViz(props: Props<Options>) {
           order: 75,
           content: (
             <>
-              <div style={twoByTwoQuadrantStyle}>
+              <div style={getReferenceValueStyles(!!xAxisVariable?.vocabulary)}>
                 <Tooltip css={{}} title={'Required parameter'}>
                   <span
                     className={classes.label}
                     style={
-                      !xAxisReferenceValue && !areQuadrantSelectionsDisabled
+                      !xAxisReferenceValue && xAxisVariable?.vocabulary
                         ? requiredInputLabelStyle
                         : undefined
                     }
@@ -720,12 +718,12 @@ function MosaicViz(props: Props<Options>) {
                   />
                 </div>
               </div>
-              <div style={twoByTwoQuadrantStyle}>
+              <div style={getReferenceValueStyles(!!yAxisVariable?.vocabulary)}>
                 <Tooltip css={{}} title={'Required parameter'}>
                   <span
                     className={classes.label}
                     style={
-                      !yAxisReferenceValue && !areQuadrantSelectionsDisabled
+                      !yAxisReferenceValue && yAxisVariable?.vocabulary
                         ? requiredInputLabelStyle
                         : undefined
                     }
@@ -906,14 +904,14 @@ function MosaicViz(props: Props<Options>) {
                 label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
                 role: 'axis',
                 titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
-                styleOverride: isTwoByTwo ? twoBytwoInputStyle : undefined,
+                styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
               },
               {
                 name: 'yAxisVariable',
                 label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
                 role: 'axis',
                 titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
-                styleOverride: isTwoByTwo ? twoBytwoInputStyle : undefined,
+                styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
               },
               ...(options?.hideFacetInputs
                 ? []
