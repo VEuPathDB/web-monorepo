@@ -402,7 +402,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ? vizConfig.independentAxisValueSpec
           : 'Full',
         dependentAxisValueSpec: 'Full',
-        markerBodyOpacity: 0.5,
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');
