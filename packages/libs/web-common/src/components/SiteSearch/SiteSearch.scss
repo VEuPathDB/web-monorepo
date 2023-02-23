@@ -176,8 +176,8 @@
 
   &--CountsContainer, &--ResultTypeWidgetContainer {
     padding: 1em;
-    width: 24em;
-    max-width: 24em;
+    width: 30em;
+    max-width: 30em;
     // XXX Override in site
     border: 1px solid gray;
     background: whitesmoke;
@@ -401,9 +401,6 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    &:hover {
-      font-weight: bold;
-    }
   }
 
   &--LinkOut {
