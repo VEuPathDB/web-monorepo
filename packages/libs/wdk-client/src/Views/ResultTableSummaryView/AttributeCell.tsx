@@ -3,7 +3,6 @@ import { isEqual, truncate } from 'lodash';
 import { RecordInstance, AttributeField } from 'wdk-client/Utils/WdkModel';
 import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
-import { useIsRefOverflowingHorizontally } from 'wdk-client/Hooks/Overflow';
 
 interface AttributeCellProps {
   attribute: AttributeField;
@@ -21,14 +20,12 @@ function AttributeCell({
   };
   const ref = useRef<HTMLDivElement>(null);
   const [ styleSpec, setStyleSpec ] = useState<React.CSSProperties>(defaultStyleSpec);
-  const isOverflowing = useIsRefOverflowingHorizontally(ref);
   
   useLayoutEffect(() => {
     if (!ref.current) return;
     if (
       ref.current.innerText.length > attribute.truncateTo &&
-      isEqual(styleSpec, defaultStyleSpec) &&
-      isOverflowing
+      isEqual(styleSpec, defaultStyleSpec) 
       ) {
         setStyleSpec({
           ...defaultStyleSpec,
