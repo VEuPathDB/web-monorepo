@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "4.0.10",
+  "version": "4.0.11",
   "dependencies": {
     "debounce-promise": "^3.1.2",
     "fp-ts": "^2.9.3",
