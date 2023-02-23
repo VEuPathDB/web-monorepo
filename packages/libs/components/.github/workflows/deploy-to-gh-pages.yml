@@ -13,7 +13,10 @@ jobs:
           persist-credentials: false
 
       - name: Install and Build 🔧
-        run: |
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: |
           yarn install
           yarn build-storybook
 

@@ -11,7 +11,14 @@ interface tickSettingsType {
 export function tickSettings(
   logScale: boolean,
   range: NumberOrDateRange | undefined,
-  valueType: 'string' | 'number' | 'date' | 'longitude' | 'category' | undefined
+  valueType:
+    | 'string'
+    | 'number'
+    | 'date'
+    | 'longitude'
+    | 'category'
+    | undefined,
+  dataLength?: number
 ): tickSettingsType {
   const axisDtick =
     range != null && range.min != null && range.max != null && logScale
@@ -20,7 +27,7 @@ export function tickSettings(
 
   return {
     // tickformat is conflicted with exponentformat
-    dtick: axisDtick,
+    dtick: dataLength != null && dataLength === 0 ? undefined : axisDtick,
     showexponent: 'all',
     exponentformat:
       valueType === 'date' || (axisDtick != null && axisDtick < 1)
