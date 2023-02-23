@@ -610,7 +610,7 @@ function StrategyLinkout(props: Props) {
           <br />
           {!hasUserSetPreferredOrganisms && 
             <p style={{margin: 0, marginBottom: '1em'}}>
-              Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to search only those organisms most relevant to your work.
+              Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to search the subset of organisms most relevant to your work.
             </p>}
           <div style={{
             textAlign: 'center',
