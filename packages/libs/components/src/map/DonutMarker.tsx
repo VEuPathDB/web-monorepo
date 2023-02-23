@@ -1,9 +1,5 @@
 import React from 'react';
-
-//DKDK leaflet
 import L from 'leaflet';
-
-//DKDK anim
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
@@ -16,7 +12,7 @@ import {
 
 import { last } from 'lodash';
 
-//DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
+// ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon {
@@ -25,7 +21,8 @@ export interface DonutMarkerProps
     label: string;
     color?: string;
   }[];
-  isAtomic?: boolean; // add a special thumbtack icon if this is true
+  // isAtomic: add a special thumbtack icon if this is true
+  isAtomic?: boolean;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
   /** center title/number for marker (defaults to sum of data[].value) */
   markerLabel?: string;
@@ -36,14 +33,14 @@ export interface DonutMarkerProps
   cumulative?: boolean;
 }
 
-// DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
+// convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
 function toCartesian(
   centerX: number,
   centerY: number,
   radius: number,
   angleInRadianInput: number
 ) {
-  let angleInRadians = angleInRadianInput - Math.PI / 2;
+  const angleInRadians = angleInRadianInput - Math.PI / 2;
 
   return {
     x: centerX + radius * Math.cos(angleInRadians),
@@ -51,7 +48,7 @@ function toCartesian(
   };
 }
 
-// DKDK input radian: makeArc(centerX, centerY, Radius for arc to draw, start point of arc (radian), end point of arc (radian))
+// input radian: makeArc(centerX, centerY, Radius for arc to draw, start point of arc (radian), end point of arc (radian))
 function makeArc(
   x: number,
   y: number,
@@ -59,19 +56,18 @@ function makeArc(
   startAngle: number,
   endAngle: number
 ) {
-  let dValue;
-  let endAngleOriginal = endAngle;
+  const endAngleOriginal = endAngle;
   if (endAngleOriginal - startAngle === 2 * Math.PI) {
     endAngle = (359 * Math.PI) / 180;
   }
 
-  let start = toCartesian(x, y, radius, endAngle);
-  let end = toCartesian(x, y, radius, startAngle);
+  const start = toCartesian(x, y, radius, endAngle);
+  const end = toCartesian(x, y, radius, startAngle);
 
-  let arcSweep = endAngle - startAngle <= Math.PI ? '0' : '1';
+  const arcSweep = endAngle - startAngle <= Math.PI ? '0' : '1';
 
   if (endAngleOriginal - startAngle === 2 * Math.PI) {
-    dValue = [
+    const dValue = [
       'M',
       start.x,
       start.y,
@@ -85,8 +81,10 @@ function makeArc(
       end.y,
       'z',
     ].join(' ');
+
+    return dValue;
   } else {
-    dValue = [
+    const dValue = [
       'M',
       start.x,
       start.y,
@@ -99,13 +97,13 @@ function makeArc(
       end.x,
       end.y,
     ].join(' ');
-  }
 
-  return dValue;
+    return dValue;
+  }
 }
 
 /**
- * DKDK this is a SVG donut marker icon
+ * this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
   const {
@@ -115,16 +113,16 @@ export default function DonutMarker(props: DonutMarkerProps) {
     sliceTextOverrides,
   } = donutMarkerSVGIcon(props);
 
-  //DKDK set icon
-  let SVGDonutIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon', //DKDK need to change this className but just leave it as it for now
-    iconSize: new L.Point(size, size), //DKDK this will make icon to cover up SVG area!
-    iconAnchor: new L.Point(size / 2, size / 2), //DKDK location of topleft corner: this is used for centering of the icon like transform/translate in CSS
-    html: svgHTML, //DKDK divIcon HTML svg code generated above
+  // set icon as divIcon
+  const SVGDonutIcon: any = L.divIcon({
+    className: 'leaflet-canvas-icon', // may need to change this className but just leave it as it for now
+    iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
+    iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
+    html: svgHTML, // divIcon HTML svg code generated above
   });
 
-  //DKDK anim check duration exists or not
-  let duration: number = props.duration ? props.duration : 300;
+  // anim check duration exists or not
+  const duration: number = props.duration ? props.duration : 300;
 
   const plotSize = 150;
   const marginSize = 0;

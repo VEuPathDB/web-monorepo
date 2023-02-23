@@ -6,7 +6,7 @@
 // 4. Click marker and see empty popup.
 
 import React from 'react';
-import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
 export default {
   title: 'Popup Errors',
@@ -21,9 +21,10 @@ export const PopupError = () => {
     <>
       <button onClick={() => setShowPopup((val) => !val)}>Toggle popups</button>{' '}
       (show: {showPopup ? 'true' : 'false'})
-      <Map
+      <MapContainer
         style={{ height: 500, width: 500 }}
-        viewport={{ center: position, zoom: 12 }}
+        center={position}
+        zoom={12}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -32,7 +33,7 @@ export const PopupError = () => {
         <Marker position={position}>
           {showPopup && <Popup>Hello, world</Popup>}
         </Marker>
-      </Map>
+      </MapContainer>
     </>
   );
 };

@@ -11,7 +11,7 @@ import {
 } from './api/getMarkersFromFixtureData';
 
 import { LeafletMouseEvent } from 'leaflet';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 
 // sidebar & legend
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
@@ -73,16 +73,13 @@ function removeClassName(targetClass: string) {
 // this onClick event may need to be changed in the future like onMouseOver event
 const handleMarkerClick = (e: LeafletMouseEvent) => {
   /**
-   *  this only works when selecting other marker: not working when clicking map
+   * this only works when selecting other marker: not working when clicking map
    * it may be achieved by setting all desirable events (e.g., map click, preserving highlight, etc.)
    * just stop here and leave detailed events to be handled later
    */
-  //  use a resuable function to remove a class
+  // use a resuable function to remove a class
   removeClassName('highlight-marker');
-  // native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker');
-  // here, perhaps we can add additional click event, like opening sidebar when clicking
-  //console.log("I've been clicked")
 };
 
 const defaultMouseMode: MouseMode = 'default';
@@ -92,7 +89,10 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -113,6 +113,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
@@ -144,7 +145,10 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
 
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
@@ -166,6 +170,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
@@ -203,7 +208,10 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
 
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
@@ -249,6 +257,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={defaultAnimation}
