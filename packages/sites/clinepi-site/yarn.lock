@@ -2259,10 +2259,10 @@
     regenerator-runtime "^0.13.9"
     use-resize-observer "^9.1.0"
 
-"@veupathdb/eda@^4.0.6":
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.6.tgz#a7bed3a4067b3d87f707f53bf08a9a6e6fc8439a"
-  integrity sha512-DZXgFkoO27WnRr7oONYAJgnI9QhkIhZKHMDayGMC/Thdcvi3PxN8FIyB3x+0Frxst8La2GPPhEJG3dFth425ow==
+"@veupathdb/eda@^4.0.11":
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.11.tgz#679a4f12df5cb660c65f625a48bcd6b52f0ce297"
+  integrity sha512-Fs4WKhmsdPf3azseO7fUtwu42jvyZks6MyWuIGZ9Xzg/OIVUeYmKtYcDgpTfi5zjc5KJLii8Vbh5SdBbbT2CnQ==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2311,10 +2311,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.4.0.tgz#c4a1bcc36280de089b0bdd042e3e5a7a3a6693b0"
-  integrity sha512-hj4IQWS7CGY130Hru/hcgPo5treCcs5LYjqfRx5sd4yVOP5Cxz+IyBB4F2E5pKaYzhbQyXGkEdk3qcjvF5bpkg==
+"@veupathdb/study-data-access@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.4.1.tgz#ff8bfd0408b705e2ad12be0234779bd73143714c"
+  integrity sha512-TXWQoSaGCMVU1HKCvqI7vn9oNvvTYCYtETD2Dx6LIhxF3c8YCBsYvn6ByKNhptie6cgPEDHU5tSsA6igBw5wlw==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
