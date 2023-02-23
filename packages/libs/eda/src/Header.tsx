@@ -4,7 +4,7 @@ import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullab
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { DevLoginFormContext } from '.';
-import { endpoint } from './constants';
+import { wdkEndpoint } from './constants';
 
 const buttonLinkStyle = {
   color: 'whitesmoke',
@@ -45,7 +45,7 @@ export default function Header() {
   }
 
   async function logout() {
-    await fetch(`${endpoint}/logout`, {
+    await fetch(`${wdkEndpoint}/logout`, {
       credentials: 'include',
     });
     window.location.assign('/');
