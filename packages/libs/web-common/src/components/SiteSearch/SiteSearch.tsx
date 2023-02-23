@@ -472,7 +472,6 @@ function StrategyLinkout(props: Props) {
   const question = useWdkService(async wdkService =>
     docType == null || !docType.isWdkRecordType ? undefined :
     wdkService.getQuestionAndParameters(docType.wdkSearchName), [ docType ]);
-  const displayName = useWdkService(async wdkService => (await wdkService.getConfig()).displayName, []);
   const [ loading, setLoading ] = useState(false);
   const [ isMoreFilteringRequired, setIsMoreFilteringRequired ] = useState(false);
 
@@ -558,29 +557,29 @@ function StrategyLinkout(props: Props) {
       >
         <div style={{
           fontSize: '1.1em',
-          minWidth: '400px',
+          minWidth: '425px',
         }}>
           <p style={{
             margin: 0,
           }}>
-            Your result ({response.searchResults.totalCount.toLocaleString()}) is too large to export. The maximum is 50,000.
+            Sorry, your result ({response.searchResults.totalCount.toLocaleString()}) is too large to export. The maximum is 50,000.
           </p>
           <br />
           <p style={{
             margin: 0,
           }}>
-            Please try:
+            Please try to reduce the size of your result by:
             <ul style={{
               marginTop: '0.25em',
             }}>
-              <li>applying an Organism filter</li>
+              <li>filtering the result</li>
               <li>adjusting your search term</li> 
             </ul>
           </p>
           <br />
           {!hasUserSetPreferredOrganisms && 
             <p style={{margin: 0, marginBottom: '1em'}}>
-              Consider using <button type="button" className='link' onClick={() => history.push('/preferred-organisms')}>My Organism Preferences</button> to generally limit the organisms you see{displayName ? ` on ${displayName}.` : '.'}
+              Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to search only those organisms most relevant to your work.
             </p>}
           <div style={{
             textAlign: 'center',
