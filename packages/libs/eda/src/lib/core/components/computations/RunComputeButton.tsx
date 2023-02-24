@@ -30,7 +30,7 @@ export function RunComputeButton(props: Props) {
         text={`Generate ${computationAppOverview.displayName} results`}
         textTransform="none"
         onPress={createJob}
-        disabled={status !== 'no-such-job'}
+        disabled={!status || !['no-such-job', 'expired'].includes(status)}
       />
       <div
         style={{
@@ -58,7 +58,7 @@ const colorMap: Record<JobStatus, string> = {
   queued: 'orange',
   'in-progress': 'orange',
   complete: 'green',
-  expired: 'red',
+  expired: 'gray',
   failed: 'red',
 };
 
@@ -70,7 +70,8 @@ const jobStatusDisplay = {
   'in-progress':
     'In progress. You may return later to use results in the visualization.',
   complete: 'Complete. Results saved in the system.',
-  expired: 'Results expired.',
+  expired:
+    'Results expired. Please regenerate results to use this visualization.',
   failed: 'Failed. Contact the VEuPathDB team for support.',
 } as const;
 
