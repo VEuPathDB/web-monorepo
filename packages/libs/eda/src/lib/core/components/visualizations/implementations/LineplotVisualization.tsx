@@ -1060,7 +1060,15 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
+    // reset banners
+    setShowIndependentLogScaleBanner(false);
+    setShowBinningBanner(false);
+  }, [
+    updateVizConfig,
+    setTruncatedIndependentAxisWarning,
+    setShowIndependentLogScaleBanner,
+    setShowBinningBanner,
+  ]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1091,7 +1099,15 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
+    // reset banners
+    setShowDependentLogScaleBanner(false);
+    setShowErrorBarBanner(false);
+  }, [
+    updateVizConfig,
+    setTruncatedDependentAxisWarning,
+    setShowDependentLogScaleBanner,
+    setShowErrorBarBanner,
+  ]);
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
