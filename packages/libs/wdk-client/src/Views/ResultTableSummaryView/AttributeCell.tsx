@@ -3,13 +3,21 @@ import { isEqual, truncate } from 'lodash';
 import { RecordInstance, AttributeField } from 'wdk-client/Utils/WdkModel';
 import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { useIsRefOverflowingHorizontally } from 'wdk-client/Hooks/Overflow';
 
 interface AttributeCellProps {
   attribute: AttributeField;
   recordInstance: RecordInstance;
 }
 
-function AttributeCell({
+function AttributeCell(props: AttributeCellProps) {
+  const { attribute, recordInstance } = props;
+  const attributeValue = recordInstance.attributes[attribute.name];
+  const key = typeof attributeValue === 'string' ? attributeValue : attributeValue?.displayText || attributeValue?.url || '';
+  return <AttributeCellInner {...props} key={key} />;
+}
+
+function AttributeCellInner({
   attribute,
   recordInstance,
 }: AttributeCellProps) {
@@ -20,12 +28,14 @@ function AttributeCell({
   };
   const ref = useRef<HTMLDivElement>(null);
   const [ styleSpec, setStyleSpec ] = useState<React.CSSProperties>(defaultStyleSpec);
+  const isOverflowing = useIsRefOverflowingHorizontally(ref);
   
   useLayoutEffect(() => {
     if (!ref.current) return;
     if (
       ref.current.innerText.length > attribute.truncateTo &&
-      isEqual(styleSpec, defaultStyleSpec) 
+      isEqual(styleSpec, defaultStyleSpec) &&
+      isOverflowing
       ) {
         setStyleSpec({
           ...defaultStyleSpec,
