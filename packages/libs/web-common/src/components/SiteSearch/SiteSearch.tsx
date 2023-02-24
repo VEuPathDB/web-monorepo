@@ -498,7 +498,7 @@ function FieldsHit(props: HitProps) {
 }
 
 function StrategyLinkout(props: Props) {
-  const { response, documentType, filters = [], filterOrganisms = [], searchString, organismTree, hasUserSetPreferredOrganisms } = props;
+  const { response, documentType, filters = [], filterOrganisms = [], searchString, organismTree, hasUserSetPreferredOrganisms, offerOrganismFilter } = props;
   const docType = response.documentTypes.find(d => d.id === documentType);
   const question = useWdkService(async wdkService =>
     docType == null || !docType.isWdkRecordType ? undefined :
@@ -608,7 +608,7 @@ function StrategyLinkout(props: Props) {
             </ul>
           </p>
           <br />
-          {!hasUserSetPreferredOrganisms && 
+          {offerOrganismFilter && !hasUserSetPreferredOrganisms && 
             <p style={{margin: 0, marginBottom: '1em'}}>
               Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to search the subset of organisms most relevant to your work.
             </p>}
