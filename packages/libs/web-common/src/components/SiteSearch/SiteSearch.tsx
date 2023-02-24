@@ -21,6 +21,7 @@ import { add, capitalize, chunk, intersection, isEmpty, isEqual, keyBy, memoize,
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { CellProps, Column } from 'react-table';
+import { CommonModal } from '@veupathdb/wdk-client/lib/Components';
 import './SiteSearch.scss';
 
 
@@ -37,6 +38,7 @@ interface Props {
   offerOrganismFilter: boolean;
   organismTree?: TreeBoxVocabNode;
   preferredOrganismsEnabled?: boolean;
+  hasUserSetPreferredOrganisms?: boolean;
   onSearch: (searchString: string) => void;
   onPageOffsetChange: (offset: number) => void;
   onDocumentTypeChange: (documentType?: string) => void;
@@ -45,6 +47,8 @@ interface Props {
   onClearFilters: () => void;
   referenceStrains?: Set<string>;
 }
+
+const MAXIMUM_EXPORT_SIZE = 50000;
 
 const cx = makeClassNameHelper('SiteSearch');
 
@@ -494,11 +498,13 @@ function FieldsHit(props: HitProps) {
 }
 
 function StrategyLinkout(props: Props) {
-  const { response, documentType, filters = [], filterOrganisms = [], searchString, organismTree } = props;
+  const { response, documentType, filters = [], filterOrganisms = [], searchString, organismTree, hasUserSetPreferredOrganisms, offerOrganismFilter } = props;
   const docType = response.documentTypes.find(d => d.id === documentType);
   const question = useWdkService(async wdkService =>
     docType == null || !docType.isWdkRecordType ? undefined :
     wdkService.getQuestionAndParameters(docType.wdkSearchName), [ docType ]);
+  const [ loading, setLoading ] = useState(false);
+  const [ isMoreFilteringRequired, setIsMoreFilteringRequired ] = useState(false);
 
   const history = useHistory();
   const wdkDependencies = useContext(WdkDependenciesContext);
@@ -506,6 +512,11 @@ function StrategyLinkout(props: Props) {
     const wdkService = wdkDependencies?.wdkService;
 
     if (wdkService == null || question == null || docType == null) return;
+    if (response.searchResults.totalCount > MAXIMUM_EXPORT_SIZE) {
+      setIsMoreFilteringRequired(true);
+      return;
+    }
+    setLoading(true);
     const parameters = question.parameters.reduce((parameters, parameter) => {
       let value: string;
       switch(parameter.name) {
@@ -566,28 +577,98 @@ function StrategyLinkout(props: Props) {
     };
     const strategyResp = await wdkService.createStrategy(strategySpec);
     history.push(`/workspace/strategies/${strategyResp.id}`);
-  }, [question, docType, filters, filterOrganisms, searchString, organismTree, response.organismCounts]);
+  }, [question, docType, filters, filterOrganisms, searchString, organismTree, response.organismCounts, isMoreFilteringRequired]);
+
+  const moreFilteringModalContent = useMemo(() => {
+    if (!isMoreFilteringRequired) return;
+    return (
+      <CommonModal
+        title={<><i style={{margin: 'auto 0', marginRight: '0.25em', color: '#CB0'}} className='fa fa-warning'/><span>Result Too Large</span></>}
+        onClose={() => setIsMoreFilteringRequired(!isMoreFilteringRequired)} 
+      >
+        <div style={{
+          fontSize: '1.1em',
+          minWidth: '425px',
+        }}>
+          <p style={{
+            margin: 0,
+          }}>
+            Sorry, your result ({response.searchResults.totalCount.toLocaleString()}) is too large to export. The maximum is 50,000.
+          </p>
+          <br />
+          <p style={{
+            margin: 0,
+          }}>
+            Please try to reduce the size of your result by:
+            <ul style={{
+              marginTop: '0.25em',
+            }}>
+              <li>filtering the result</li>
+              <li>adjusting your search term</li> 
+            </ul>
+          </p>
+          <br />
+          {offerOrganismFilter && !hasUserSetPreferredOrganisms && 
+            <p style={{margin: 0, marginBottom: '1em'}}>
+              Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to search the subset of organisms most relevant to your work.
+            </p>}
+          <div style={{
+            textAlign: 'center',
+          }}>
+            <button className='btn' type="button" onClick={() => setIsMoreFilteringRequired(!isMoreFilteringRequired)}>Ok</button>
+          </div>
+        </div>
+      </CommonModal>
+    )
+  }, [isMoreFilteringRequired, hasUserSetPreferredOrganisms, response.searchResults.totalCount]);
+
 
   const stringParam = question?.parameters.find(p => p.name === 'text_expression') as StringParam | undefined;
 
-  if (docType == null) return <StrategyLinkoutLink tooltipContent="To export, select a result type (like Genes) on the left."/>
-  if (!docType.isWdkRecordType || question == null) return <StrategyLinkoutLink tooltipContent={`This feature is not available for ${docType.displayNamePlural}`}/>
-  if (stringParam && searchString.length > stringParam.length) return <StrategyLinkoutLink tooltipContent="Your search string is too large to export to a strategy. Try a smaller search string."/>
-  return <StrategyLinkoutLink onClick={onClick} tooltipContent="Download or data mine using the search strategy system." />;
+  if (docType == null) return (
+    <StrategyLinkoutLink 
+      tooltipContent="To export, select a result type (like Genes) on the left." 
+    />
+  );
+  if (!docType.isWdkRecordType || question == null) return (
+    <StrategyLinkoutLink 
+      tooltipContent={`This feature is not available for ${docType.displayNamePlural}`} 
+    />
+  );
+  if (stringParam && searchString.length > stringParam.length) return (
+    <StrategyLinkoutLink 
+      tooltipContent="Your search string is too large to export to a strategy. Try a smaller search string." 
+    />
+  );
+  return (
+    <StrategyLinkoutLink 
+      onClick={onClick} 
+      tooltipContent="Download or data mine using the search strategy system." 
+      isMoreFilteringRequired={isMoreFilteringRequired} 
+      loading={loading} 
+      modalContent={moreFilteringModalContent}
+    />
+  );
+}
+type StrategyLinkoutLinkProps = {
+  onClick?: () => void, 
+  tooltipContent: string, 
+  isMoreFilteringRequired?: boolean, 
+  loading?: boolean, 
+  modalContent?: ReactNode,
 }
 
-function StrategyLinkoutLink(props: { onClick?: () => void, tooltipContent: string }) {
-  const [ loading, setLoading ] = useState(false);
-  const handleClick = () => {
-    setLoading(true);
-    onClick && onClick();
-  }
-  const { onClick, tooltipContent } = props;
+function StrategyLinkoutLink(props: StrategyLinkoutLinkProps) {
+  const { onClick, tooltipContent, isMoreFilteringRequired = false, loading, modalContent } = props;
   const disabled = loading || onClick == null;
+
   return (
     <div className={cx('--LinkOut')}>
+      { isMoreFilteringRequired && modalContent &&
+        modalContent
+      }
       <AnchoredTooltip content={tooltipContent}>
-        <button disabled={disabled} className="btn" type="button" onClick={handleClick}>
+        <button disabled={disabled} className="btn" type="button" onClick={onClick}>
           <div className={cx('--LinkOutText')}>
             <div>Export as a Search Strategy</div>
             <div><small>to download or mine your results</small></div>
