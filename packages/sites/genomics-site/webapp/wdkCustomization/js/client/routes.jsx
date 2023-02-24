@@ -15,7 +15,8 @@ import { useUserDatasetsWorkspace } from '@veupathdb/web-common/lib/config';
 
 import {
   usePreferredOrganismsState,
-  usePreferredOrganismsEnabledState
+  usePreferredOrganismsEnabledState,
+  useAvailableOrganisms,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
 import {
@@ -96,11 +97,19 @@ function addProjectIdPkValueWrapper(Route) {
 
 function SiteSearchRouteComponent() {
   const [ preferredOrganisms ] = usePreferredOrganismsState();
+  const availableOrganisms = useAvailableOrganisms();
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
   const referenceStrains = useReferenceStrains();
+  
+  /**
+   * if user's preferred organisms is less than all available organisms, we can assume the user has
+   * set their preferred organisms
+   */
+  const hasUserSetPreferredOrganisms = preferredOrganisms.length < Array.from(availableOrganisms).length
 
   return (
     <SiteSearchController
+      hasUserSetPreferredOrganisms={hasUserSetPreferredOrganisms}
       preferredOrganisms={preferredOrganisms}
       preferredOrganismsEnabled={preferredOrganismsEnabled}
       referenceStrains={referenceStrains}
