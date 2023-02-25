@@ -18,6 +18,7 @@ import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Parameter, ParameterGroup, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { makeParamDependenciesUpdating, useDependentParamsAreUpdating } from 'wdk-client/Views/Question/Params/Utils';
 import StepValidationInfo from 'wdk-client/Views/Question/StepValidationInfo';
+import { Tabs } from 'wdk-client/Components';
 
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 
@@ -39,6 +40,7 @@ export type Props = {
   validateForm?: boolean;
   renderParamGroup?: (group: ParameterGroup, formProps: Props) => JSX.Element;
   DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
+  DatasetsComponent?: () => JSX.Element;
   onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onSubmit?: (e: React.FormEvent) => boolean | void;
   resetFormConfig: ResetFormConfig;
@@ -176,6 +178,46 @@ export default function DefaultQuestionForm(props: Props) {
     }
   }, [ stepValidation ]);
 
+  const [ selectedTab, setSelectedTab ] = React.useState<string>('form');
+
+  const standardTabs = [
+    {
+      key: 'form',
+      display: 'Configure Search',
+      content: (
+        <>
+          <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'}/>
+          {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
+          <form onSubmit={handleSubmit} noValidate={!validateForm}>
+            {question.groups
+              .filter(group => group.displayType !== 'hidden')
+              .map(group => renderParamGroup(group, props))
+            }
+            <SubmitSection
+              className={cx('SubmitSection')}
+              customName={customName}
+              searchName={question.urlSegment}
+              paramValues={paramValues}
+              weight={weight}
+              handleCustomNameChange={handleCustomNameChange}
+              handleWeightChange={handleWeightChange}
+              submissionMetadata={submissionMetadata}
+              submitting={submitting}
+              submitButtonText={submitButtonText}
+              submissionDisabled={submissionDisabled}
+              onClickWebservicesTutorialLink={handleWebservicesTutorialLinkClick}
+            />
+          </form>
+        </>
+      ),
+    },
+    {
+      key: 'description',
+      display: 'About Search',
+      content: <Description description={question.description} navigatingToDescription={navigatingToDescription} />,
+    },
+  ]
+
   return (
     <div className={fullContainerClassName} ref={containerRef}>
       <QuestionHeader
@@ -184,29 +226,23 @@ export default function DefaultQuestionForm(props: Props) {
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
       />
-      <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'}/>
-      {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
-      <form onSubmit={handleSubmit} noValidate={!validateForm}>
-        {question.groups
-          .filter(group => group.displayType !== 'hidden')
-          .map(group => renderParamGroup(group, props))
+      <Tabs
+        activeTab={selectedTab}
+        onTabSelected={setSelectedTab}
+        tabs={
+          props.DatasetsComponent ? 
+            [
+              ...standardTabs,
+              {
+                key: 'datasets',
+                display: 'Data Sets',
+                content: props.DatasetsComponent(),
+              }
+            ] 
+            : standardTabs
         }
-        <SubmitSection
-          className={cx('SubmitSection')}
-          customName={customName}
-          searchName={question.urlSegment}
-          paramValues={paramValues}
-          weight={weight}
-          handleCustomNameChange={handleCustomNameChange}
-          handleWeightChange={handleWeightChange}
-          submissionMetadata={submissionMetadata}
-          submitting={submitting}
-          submitButtonText={submitButtonText}
-          submissionDisabled={submissionDisabled}
-          onClickWebservicesTutorialLink={handleWebservicesTutorialLinkClick}
-        />
-        <Description description={question.description} navigatingToDescription={navigatingToDescription} />
-      </form>
+      />
+      
     </div>
   );
 }
