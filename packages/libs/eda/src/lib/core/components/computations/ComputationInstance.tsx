@@ -7,7 +7,6 @@ import { ComputationProps } from './Types';
 import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { AnalysisState } from '../../hooks/analysis';
-import { useStudyMetadata } from '../../hooks/workspace';
 import { useComputeJobStatus } from './ComputeJobStatusHook';
 
 export interface Props extends ComputationProps {
@@ -64,11 +63,7 @@ export function ComputationInstance(props: Props) {
 
   const { url } = useRouteMatch();
 
-  const { jobStatus, createJob } = useComputeJobStatus(
-    analysis,
-    computation,
-    computationAppOverview.computeName
-  );
+  const { jobStatus, createJob } = useComputeJobStatus(analysis, computation);
 
   if (analysis == null || computation == null) return null;
 
@@ -153,7 +148,6 @@ function useComputation(
   analysis: AnalysisState['analysis'],
   computationId: string
 ) {
-  const studyMetadata = useStudyMetadata();
   return useMemo(() => {
     const computation = analysis?.descriptor.computations.find(
       (computation) => computation.computationId === computationId
@@ -166,9 +160,5 @@ function useComputation(
       );
     }
     return computation;
-  }, [
-    analysis?.descriptor.computations,
-    computationId,
-    studyMetadata.rootEntity,
-  ]);
+  }, [analysis?.descriptor.computations, computationId]);
 }
