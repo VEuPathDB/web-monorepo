@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -60,7 +60,6 @@ export const useEbrcDescription = (question: Question) => {
         {
           props.description !== undefined && (
             <div className={defaultFormCx('DescriptionSection')}>
-              <hr/>
               <h2 className={cx('SearchDescriptionHeader') + (props.navigatingToDescription ? ' navigatingToDescription' : '')}>
                 Description
               </h2>
@@ -68,26 +67,38 @@ export const useEbrcDescription = (question: Question) => {
             </div>
           )
         }
-        {
-          datasetRecords.status === 'loading' &&
-          <Loading />
-        }
-        {
-          datasetRecords.status === 'present' && datasetRecords.records.length > 0 && (
-            <div className={defaultFormCx('DescriptionSection')}>
-              <hr/>
-              <h2 className={cx('SearchDatasetsHeader')}>Data Sets used by this search</h2>
-              <ul className={cx('DatasetsList')}>
-                {datasetRecords.records.map(recordToAttribution)}
-              </ul>
-            </div>
-          )
-        }
       </div>,
-    [ datasetRecords ]
+    [ ]
   );
 
-  return DescriptionComponent;
+  const DatasetsComponent = useCallback(
+    () =>
+    <div className={cx()}>
+      {
+        datasetRecords.status === 'loading' &&
+        <Loading />
+      }
+      {
+        datasetRecords.status === 'present' && (
+          <div className={defaultFormCx('DescriptionSection')}>
+            <h2 className={cx('SearchDatasetsHeader')}>Data Sets used by this search</h2>
+            {
+              datasetRecords.records.length > 0 ? (
+                <ul className={cx('DatasetsList')}>
+                  {datasetRecords.records.map(recordToAttribution)}
+                </ul>
+              ) : <em>No results found</em>
+            }
+          </div>
+        )
+      }
+    </div>,
+   [ datasetRecords ]
+  );
+
+  // const showDatasets = useMemo(() => datasetRecords.status === 'present' && datasetRecords.records.length > 0, [datasetRecords])
+
+  return ({DescriptionComponent, DatasetsComponent, shouldLoadDatasetRecords});
 };
 
 const deriveAnswerSpec = (questionFullName: string) => (
