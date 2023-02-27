@@ -24,7 +24,7 @@
     "@veupathdb/preferred-organisms": "^1.1.16",
     "@veupathdb/study-data-access": "^0.4.1",
     "@veupathdb/user-datasets": "^0.1.13",
-    "@veupathdb/wdk-client": "^0.9.29",
+    "@veupathdb/wdk-client": "^0.9.30",
     "@veupathdb/web-common": "^0.8.5",
     "ciena-dagre": "^1.0.0",
     "core-js": "^3.21.1",
