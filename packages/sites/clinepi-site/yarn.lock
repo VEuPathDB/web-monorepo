@@ -2265,10 +2265,10 @@
     regenerator-runtime "^0.13.9"
     use-resize-observer "^9.1.0"
 
-"@veupathdb/eda@^4.0.13":
-  version "4.0.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.13.tgz#eec2ef27489b73c186db3d77eac553b47817d375"
-  integrity sha512-Wv4pSTUO/YnCsdfWh7OFtEg106nDrPkrK6FXoU+U/YwHAz7MBUsImf0Nm7cxdaPU7Qp0NbDOewdmhICQl4IIRQ==
+"@veupathdb/eda@^4.0.14":
+  version "4.0.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.14.tgz#f5159763eb31936e85a0307cade623974c3d1115"
+  integrity sha512-VHxEXnH01dgmRfo58ZZiQGArW/r/QLrsq65y/Vp3NfZ1ZggmB6TmRFwA0sPIZNdwv50m+ajOsgjHFMfD6fxr3Q==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2334,10 +2334,10 @@
     date-fns "^2.29.1"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.9.29":
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.29.tgz#6fe41a88939d4958e83ee9d0461bb0a256c456d0"
-  integrity sha512-3Olh9r+GHcCIBO/IwuH40Q4bi30nsn2iWylHZLbs8SsdKpfB64Z7p1WzypkcS3BWiG7rOCOxQsodYujuvXn01w==
+"@veupathdb/wdk-client@^0.9.31":
+  version "0.9.31"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.31.tgz#bec161ec96153984687aaf5796bf3e77fe6881dd"
+  integrity sha512-XObAA8bZTIVdb/TCRNq/X65XaU1SoJBn2UjdLIzdX5gPMRWgpaMnv2R9yIn3WU0n8ehweRmXo7ROqrl6TGP6Mw==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
