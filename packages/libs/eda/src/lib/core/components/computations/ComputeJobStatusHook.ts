@@ -1,10 +1,11 @@
 import { delay } from '@veupathdb/wdk-client/lib/Utils/PromiseUtils';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { isEqual, omit } from 'lodash';
 import { JobStatusReponse } from '../../api/ComputeClient';
 import { useComputeClient, useStudyMetadata } from '../../hooks/workspace';
 import { Analysis, NewAnalysis } from '../../types/analysis';
-import { Computation } from '../../types/visualization';
 import { plugins } from './plugins';
+import { Computation } from '../../types/visualization';
 
 export type JobStatus = JobStatusReponse['status'] | 'requesting';
 
@@ -13,8 +14,7 @@ export type JobStatus = JobStatusReponse['status'] | 'requesting';
  */
 export function useComputeJobStatus(
   analysis: Analysis | NewAnalysis,
-  computation: Computation,
-  computeName?: string
+  computation: Computation
 ) {
   const computeClient = useComputeClient();
   const studyMetadata = useStudyMetadata();
@@ -26,11 +26,32 @@ export function useComputeJobStatus(
   // Mutable ref used to shadow jobStatus state value.
   // This is used in the loop function below, to avoid
   // using it as a useEffect dependency
-  const sharedStatusRef = useRef<JobStatus>();
+  const sharedJobStatusRef = useRef<JobStatus>();
 
   // Update jobStatus state and ref
   function setJobStatus(status?: JobStatus) {
-    _setJobStatus((sharedStatusRef.current = status));
+    _setJobStatus((sharedJobStatusRef.current = status));
+  }
+
+  // Gather dependencies needed for requesting the job status
+  const nextJobStatusDeps = {
+    config: computation.descriptor.configuration,
+    derivedVariables: analysis.descriptor.derivedVariables,
+    filters: analysis.descriptor.subset.descriptor,
+    studyId: studyMetadata.id,
+    computeType: computation.descriptor.type,
+  };
+
+  // Use a state variable to track current dependencies
+  const [jobStatusDeps, setJobStatusDeps] = useState(nextJobStatusDeps);
+
+  // Conditonally update jobStatusDeps and clear current jobStatus if deps
+  // changed. This keeps the job status in sync with the current deps.
+  // See https://beta.reactjs.org/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  // for motivation.
+  if (!isEqual(jobStatusDeps, nextJobStatusDeps)) {
+    setJobStatusDeps(nextJobStatusDeps);
+    setJobStatus(undefined);
   }
 
   // The callback passed to this useEffect will start a loop that will request
@@ -45,8 +66,6 @@ export function useComputeJobStatus(
   useEffect(() => {
     // Track if effect has been "cancelled"
     let cancelled = false;
-    // Clear existing job status
-    setJobStatus(undefined);
     // start the loop
     loop();
 
@@ -56,19 +75,11 @@ export function useComputeJobStatus(
 
     // Fetch the job status and update state
     async function updateJobStatus() {
-      if (
-        computeName == null ||
-        !computePlugin.isConfigurationValid(
-          computation.descriptor.configuration
-        )
-      )
-        return;
-      const { status } = await computeClient.getJobStatus(computeName, {
-        config: computation.descriptor.configuration,
-        derivedVariables: analysis.descriptor.derivedVariables,
-        filters: analysis.descriptor.subset.descriptor,
-        studyId: studyMetadata.id,
-      });
+      if (!computePlugin.isConfigurationValid(jobStatusDeps.config)) return;
+      const { status } = await computeClient.getJobStatus(
+        jobStatusDeps.computeType,
+        omit(jobStatusDeps, 'computeType')
+      );
       if (!cancelled) setJobStatus(status);
     }
 
@@ -76,47 +87,27 @@ export function useComputeJobStatus(
     async function loop() {
       while (!cancelled) {
         if (
-          sharedStatusRef.current == null ||
-          !isTerminalStatus(sharedStatusRef.current)
+          sharedJobStatusRef.current == null ||
+          !isTerminalStatus(sharedJobStatusRef.current)
         ) {
           await updateJobStatus();
         }
         await delay(1000);
       }
     }
-  }, [
-    analysis.descriptor.derivedVariables,
-    analysis.descriptor.subset.descriptor,
-    computation.descriptor.configuration,
-    computeClient,
-    computeName,
-    studyMetadata.id,
-  ]);
+  }, [computeClient, computePlugin, jobStatusDeps]);
 
   const createJob = useCallback(async () => {
-    if (
-      computeName == null ||
-      !computePlugin.isConfigurationValid(computation.descriptor.configuration)
-    )
-      return;
+    if (!computePlugin.isConfigurationValid(jobStatusDeps.config)) return;
     setJobStatus('requesting');
-    const { status } = await computeClient.createJob(computeName, {
-      config: computation.descriptor.configuration,
-      derivedVariables: analysis.descriptor.derivedVariables,
-      filters: analysis.descriptor.subset.descriptor,
-      studyId: studyMetadata.id,
-    });
+    const { status } = await computeClient.createJob(
+      jobStatusDeps.computeType,
+      omit(jobStatusDeps, 'computeType')
+    );
     setJobStatus(status);
-  }, [
-    analysis.descriptor.derivedVariables,
-    analysis.descriptor.subset.descriptor,
-    computation.descriptor.configuration,
-    computeName,
-    computeClient,
-    studyMetadata.id,
-  ]);
+  }, [computePlugin, computeClient, jobStatusDeps]);
 
-  return { jobStatus, createJob };
+  return { computation, jobStatus, createJob };
 }
 
 /**
