@@ -10,7 +10,14 @@ interface AttributeCellProps {
   recordInstance: RecordInstance;
 }
 
-function AttributeCell({
+function AttributeCell(props: AttributeCellProps) {
+  const { attribute, recordInstance } = props;
+  const attributeValue = recordInstance.attributes[attribute.name];
+  const key = typeof attributeValue === 'string' ? attributeValue : attributeValue?.displayText || attributeValue?.url || '';
+  return <AttributeCellInner {...props} key={key} />;
+}
+
+function AttributeCellInner({
   attribute,
   recordInstance,
 }: AttributeCellProps) {
