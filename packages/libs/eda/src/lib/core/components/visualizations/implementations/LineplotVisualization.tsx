@@ -945,18 +945,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
   };
 
-  // set four useState to handle Banner
-  const [
-    showIndependentLogScaleBanner,
-    setShowIndependentLogScaleBanner,
-  ] = useState(false);
-  const [showBinningBanner, setShowBinningBanner] = useState(false);
-  const [
-    showDependentLogScaleBanner,
-    setShowDependentLogScaleBanner,
-  ] = useState(false);
-  const [showErrorBarBanner, setShowErrorBarBanner] = useState(false);
-
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1060,15 +1048,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message: including dependent axis warning as well
     setTruncatedIndependentAxisWarning('');
-    // reset banners
-    setShowIndependentLogScaleBanner(false);
-    setShowBinningBanner(false);
-  }, [
-    updateVizConfig,
-    setTruncatedIndependentAxisWarning,
-    setShowIndependentLogScaleBanner,
-    setShowBinningBanner,
-  ]);
+  }, [updateVizConfig, setTruncatedIndependentAxisWarning]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
@@ -1099,15 +1079,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-    // reset banners
-    setShowDependentLogScaleBanner(false);
-    setShowErrorBarBanner(false);
-  }, [
-    updateVizConfig,
-    setTruncatedDependentAxisWarning,
-    setShowDependentLogScaleBanner,
-    setShowErrorBarBanner,
-  ]);
+  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
@@ -1157,9 +1129,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         }}
       >
         {/* independent axis banner */}
-        {(showIndependentLogScaleBanner ||
-          showBinningBanner ||
-          (vizConfig.independentAxisLogScale && vizConfig.useBinning)) && (
+        {vizConfig.independentAxisLogScale && vizConfig.useBinning && (
           <Banner
             banner={{
               type: 'warning',
@@ -1183,9 +1153,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           />
         )}
         {/* dependent axis banner */}
-        {(showDependentLogScaleBanner ||
-          showErrorBarBanner ||
-          (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)) && (
+        {vizConfig.dependentAxisLogScale && vizConfig.showErrorBars && (
           <Banner
             banner={{
               type: 'warning',
@@ -1250,13 +1218,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.useBinning) {
-                  setShowIndependentLogScaleBanner(true);
-                  setShowBinningBanner(false);
-                } else {
-                  setShowIndependentLogScaleBanner(false);
-                  setShowBinningBanner(false);
-                }
               }}
               disabled={
                 lineplotProps.independentValueType === 'date' ||
@@ -1296,13 +1257,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                if (newValue && vizConfig.independentAxisLogScale) {
-                  setShowBinningBanner(true);
-                  setShowIndependentLogScaleBanner(false);
-                } else {
-                  setShowBinningBanner(false);
-                  setShowIndependentLogScaleBanner(false);
-                }
               }}
               disabled={neverUseBinning}
               themeRole="primary"
@@ -1468,13 +1422,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.showErrorBars) {
-                  setShowDependentLogScaleBanner(true);
-                  setShowErrorBarBanner(false);
-                } else {
-                  setShowDependentLogScaleBanner(false);
-                  setShowErrorBarBanner(false);
-                }
               }}
               disabled={lineplotProps.dependentValueType === 'date'}
               themeRole="primary"
@@ -1511,13 +1458,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                if (newValue && vizConfig.dependentAxisLogScale) {
-                  setShowErrorBarBanner(true);
-                  setShowDependentLogScaleBanner(false);
-                } else {
-                  setShowErrorBarBanner(false);
-                  setShowDependentLogScaleBanner(false);
-                }
               }}
               disabled={neverShowErrorBars}
               themeRole="primary"
