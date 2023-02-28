@@ -64,6 +64,11 @@ export function useComputeJobStatus(
   // A mutable ref is used for checking the job status so that the `useState`
   // `jobStatus` variable does not need to be included as a dependency.
   useEffect(() => {
+    if (
+      jobStatusDeps.config == null ||
+      !computePlugin.isConfigurationValid(jobStatusDeps.config)
+    )
+      return;
     // Track if effect has been "cancelled"
     let cancelled = false;
     // start the loop
@@ -75,7 +80,6 @@ export function useComputeJobStatus(
 
     // Fetch the job status and update state
     async function updateJobStatus() {
-      if (!computePlugin.isConfigurationValid(jobStatusDeps.config)) return;
       const { status } = await computeClient.getJobStatus(
         jobStatusDeps.computeType,
         omit(jobStatusDeps, 'computeType')
