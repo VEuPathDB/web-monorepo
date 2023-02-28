@@ -16,6 +16,9 @@
       cursor: pointer;
       border: none;
       background: transparent;
+      font-size: 1.2em;
+      font-weight: 450;
+      z-index: 2; // ensures active tab's white border is above other borders
 
       &__active {
         margin-bottom: -1px;
