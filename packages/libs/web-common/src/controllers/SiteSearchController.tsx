@@ -19,14 +19,16 @@ interface Props {
   offerOrganismFilter?: boolean;
   preferredOrganisms?: string[];
   preferredOrganismsEnabled?: boolean;
-  referenceStrains?: Set<string>
+  referenceStrains?: Set<string>;
+  hasUserSetPreferredOrganisms?: boolean;
 }
 
 export default function SiteSearchController({
   offerOrganismFilter = true,
   preferredOrganisms,
   preferredOrganismsEnabled,
-  referenceStrains
+  referenceStrains,
+  hasUserSetPreferredOrganisms,
 }: Props) {
   const [ params, updateParams ] = useQueryParams(
     SEARCH_TERM_PARAM,
@@ -194,6 +196,7 @@ export default function SiteSearchController({
       onFiltersChange={setFilters}
       filterOrganisms={value.searchSettings.organisms}
       preferredOrganismsEnabled={preferredOrganismsEnabled}
+      hasUserSetPreferredOrganisms={hasUserSetPreferredOrganisms}
       onOrganismsChange={setOrganisms}
       onClearFilters={clearFilters}
       response={value.response}
