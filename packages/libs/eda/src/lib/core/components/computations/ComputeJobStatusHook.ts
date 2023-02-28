@@ -14,7 +14,8 @@ export type JobStatus = JobStatusReponse['status'] | 'requesting';
  */
 export function useComputeJobStatus(
   analysis: Analysis | NewAnalysis,
-  computation: Computation
+  computation: Computation,
+  computeName: string,
 ) {
   const computeClient = useComputeClient();
   const studyMetadata = useStudyMetadata();
@@ -39,7 +40,7 @@ export function useComputeJobStatus(
     derivedVariables: analysis.descriptor.derivedVariables,
     filters: analysis.descriptor.subset.descriptor,
     studyId: studyMetadata.id,
-    computeType: computation.descriptor.type,
+    computeName,
   };
 
   // Use a state variable to track current dependencies
@@ -81,8 +82,8 @@ export function useComputeJobStatus(
     // Fetch the job status and update state
     async function updateJobStatus() {
       const { status } = await computeClient.getJobStatus(
-        jobStatusDeps.computeType,
-        omit(jobStatusDeps, 'computeType')
+        jobStatusDeps.computeName,
+        omit(jobStatusDeps, 'computeName')
       );
       if (!cancelled) setJobStatus(status);
     }
@@ -105,8 +106,8 @@ export function useComputeJobStatus(
     if (!computePlugin.isConfigurationValid(jobStatusDeps.config)) return;
     setJobStatus('requesting');
     const { status } = await computeClient.createJob(
-      jobStatusDeps.computeType,
-      omit(jobStatusDeps, 'computeType')
+      jobStatusDeps.computeName,
+      omit(jobStatusDeps, 'computeName')
     );
     setJobStatus(status);
   }, [computePlugin, computeClient, jobStatusDeps]);
