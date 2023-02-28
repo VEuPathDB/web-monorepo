@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { MosaicPlotData } from '../types/plots/mosaicPlot';
 import _ from 'lodash';
 import { FacetedData } from '../types/plots';
@@ -23,6 +23,11 @@ interface ContingencyTableProps {
   /** Styling for the container of all facets */
   facetedContainerStyles?: CSSProperties;
   enableSpinner?: boolean;
+  /**
+   * Reference values are read as [xAxisReferenceValue, yAxisReferenceValue]
+   * The reference values are used to re-order the 2x2 table quadrants, as needed
+   */
+  referenceValues?: Array<string | undefined>;
 }
 
 function FacetedContingencyTable(props: ContingencyTableProps) {
@@ -56,7 +61,7 @@ function FacetedContingencyTable(props: ContingencyTableProps) {
 }
 
 export function ContingencyTable(props: ContingencyTableProps) {
-  const { data } = props;
+  const { data, referenceValues } = props;
 
   if (data == null) {
     return (
@@ -81,7 +86,25 @@ export function ContingencyTable(props: ContingencyTableProps) {
     return FacetedContingencyTable(props);
   }
 
-  const rowSums = data.values.map((row) => _.sum(row));
+  const processedData = useMemo(() => {
+    const dataCopy = { ...data };
+    if (!referenceValues || !referenceValues[0] || !referenceValues[1])
+      return data;
+    if (referenceValues[0] !== data.independentLabels[0]) {
+      dataCopy.independentLabels = [...data.independentLabels].reverse();
+      dataCopy.values = [...data.values].map((arr) => arr.reverse());
+    }
+    if (referenceValues[1] !== data.dependentLabels[0]) {
+      dataCopy.dependentLabels = [...data.dependentLabels.reverse()];
+      dataCopy.values =
+        referenceValues[0] !== data.independentLabels[0]
+          ? [dataCopy.values[1], dataCopy.values[0]]
+          : [data.values[1], data.values[0]];
+    }
+    return dataCopy as MosaicPlotData;
+  }, [data, referenceValues]);
+
+  const rowSums = processedData.values.map((row) => _.sum(row));
 
   return (
     <div className="contingency-table" style={props.tableContainerStyles}>
@@ -91,7 +114,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
             <td className="contingency-table_top-left-corner" colSpan={1}></td>
             <th
               className="contingency-table_column-header"
-              colSpan={data.independentLabels.length + 1}
+              colSpan={processedData.independentLabels.length + 1}
               style={{ background: MEDIUM_GRAY }}
             >
               {props.independentVariable}
@@ -104,7 +127,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
             >
               {props.dependentVariable}
             </th>
-            {data.independentLabels.map((label) => (
+            {processedData.independentLabels.map((label) => (
               <th key={label} className="contingency-table_column-label">
                 {label}
               </th>
@@ -116,17 +139,17 @@ export function ContingencyTable(props: ContingencyTableProps) {
               Total
             </th>
           </tr>
-          {data.values.map((row, i) => (
-            <tr key={data.dependentLabels[i]}>
+          {processedData.values.map((row, i) => (
+            <tr key={processedData.dependentLabels[i]}>
               <th className="contingency-table_row-label">
-                {data.dependentLabels[i]}
+                {processedData.dependentLabels[i]}
               </th>
               {row.map((value, j) => (
                 <td
-                  key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
+                  key={`${processedData.dependentLabels[i]}-${processedData.independentLabels[j]}`}
                   className="contingency-table_value"
                   style={
-                    i < data.values.length - 1
+                    i < processedData.values.length - 1
                       ? { paddingBottom: '0.75em' }
                       : {}
                   }
@@ -153,9 +176,9 @@ export function ContingencyTable(props: ContingencyTableProps) {
             >
               Total
             </th>
-            {_.unzip(data.values).map((col, i) => (
+            {_.unzip(processedData.values).map((col, i) => (
               <td
-                key={data.independentLabels[i]}
+                key={processedData.independentLabels[i]}
                 className="contingency-table_totals-row-value"
                 style={{ color: MEDIUM_DARK_GRAY }}
               >
