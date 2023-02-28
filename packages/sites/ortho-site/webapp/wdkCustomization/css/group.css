@@ -188,3 +188,26 @@
 .attr-keyword-freq, .attr-descriptions {
     background: white;
 }
+
+.phyletic-distribution-tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.phyletic-distribution-tooltip .phyletic-distribution-tooltiptext {
+    top: 50%;
+    right: 105%;
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: left;
+    padding: 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+}
+
+.phyletic-distribution-tooltip:hover .phyletic-distribution-tooltiptext {
+    visibility: visible;
+}
