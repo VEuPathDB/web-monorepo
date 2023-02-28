@@ -16,18 +16,18 @@ const DATASETS_BY_QUESTION_NAME = 'DatasetsByQuestionName';
 
 type DatasetRecords =
   | {
-      status: 'absent'
-    }
+    status: 'absent'
+  }
   | {
-      status: 'loading'
-    }
+    status: 'loading'
+  }
   | {
-      status: 'present',
-      records: RecordInstance[]
-    };
+    status: 'present',
+    records: RecordInstance[]
+  };
 
 export const useEbrcDescription = (question: Question) => {
-  const [ datasetRecords, setDatasetRecords ] = useState({ status: 'absent' } as DatasetRecords);
+  const [datasetRecords, setDatasetRecords] = useState({ status: 'absent' } as DatasetRecords);
   const shouldLoadDatasetRecords = useSelector(
     (state: RootState) => state.globalData.questions?.find(
       q => q.urlSegment === DATASETS_BY_QUESTION_NAME
@@ -52,15 +52,15 @@ export const useEbrcDescription = (question: Question) => {
         };
       })();
     }
-  }, [ question.fullName, shouldLoadDatasetRecords ]);
+  }, [question.fullName, shouldLoadDatasetRecords]);
 
   const DescriptionComponent = useCallback(
-    (props: { description?: string, navigatingToDescription: boolean }) =>
+    (props: { description?: string }) =>
       <div className={cx()}>
         {
           props.description !== undefined && (
             <div className={defaultFormCx('DescriptionSection')}>
-              <h2 className={cx('SearchDescriptionHeader') + (props.navigatingToDescription ? ' navigatingToDescription' : '')}>
+              <h2 className={cx('SearchDescriptionHeader')}>
                 Description
               </h2>
               {safeHtml(props.description)}
@@ -68,37 +68,35 @@ export const useEbrcDescription = (question: Question) => {
           )
         }
       </div>,
-    [ ]
+    []
   );
 
   const DatasetsComponent = useCallback(
     () =>
-    <div className={cx()}>
-      {
-        datasetRecords.status === 'loading' &&
-        <Loading />
-      }
-      {
-        datasetRecords.status === 'present' && (
-          <div className={defaultFormCx('DescriptionSection')}>
-            <h2 className={cx('SearchDatasetsHeader')}>Data Sets used by this search</h2>
-            {
-              datasetRecords.records.length > 0 ? (
-                <ul className={cx('DatasetsList')}>
-                  {datasetRecords.records.map(recordToAttribution)}
-                </ul>
-              ) : <em>No results found</em>
-            }
-          </div>
-        )
-      }
-    </div>,
-   [ datasetRecords ]
+      <div className={cx()}>
+        {
+          datasetRecords.status === 'loading' &&
+          <Loading />
+        }
+        {
+          datasetRecords.status === 'present' && (
+            <div className={defaultFormCx('DescriptionSection')}>
+              <h2 className={cx('SearchDatasetsHeader')}>Data Sets used by this search</h2>
+              {
+                datasetRecords.records.length > 0 ? (
+                  <ul className={cx('DatasetsList')}>
+                    {datasetRecords.records.map(recordToAttribution)}
+                  </ul>
+                ) : <em>No results found</em>
+              }
+            </div>
+          )
+        }
+      </div>,
+    [datasetRecords]
   );
 
-  // const showDatasets = useMemo(() => datasetRecords.status === 'present' && datasetRecords.records.length > 0, [datasetRecords])
-
-  return ({DescriptionComponent, DatasetsComponent, shouldLoadDatasetRecords});
+  return ({ DescriptionComponent, DatasetsComponent, shouldLoadDatasetRecords });
 };
 
 const deriveAnswerSpec = (questionFullName: string) => (
@@ -164,8 +162,8 @@ const publicationToLink = ({ pubmed_link, dataset_id }: Record<string, Attribute
       {
         publicationLink === null
           ? <RecordError
-              message={`pubmed_link attribute '${pubmed_link}' for data set ${dataset_id} is invalid.`}
-            />
+            message={`pubmed_link attribute '${pubmed_link}' for data set ${dataset_id} is invalid.`}
+          />
           : <a href={publicationLink.url} target="_blank">{safeHtml(publicationLink.displayText || publicationLink.url)}</a>
       }
     </li>
