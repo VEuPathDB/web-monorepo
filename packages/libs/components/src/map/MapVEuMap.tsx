@@ -4,12 +4,12 @@ import React, {
   CSSProperties,
   ReactElement,
   cloneElement,
-  useRef,
   Ref,
   useMemo,
   useImperativeHandle,
   forwardRef,
   useCallback,
+  useRef,
 } from 'react';
 import {
   BoundsViewport,
@@ -18,11 +18,12 @@ import {
 } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import {
-  Viewport,
-  Map,
+  MapContainer,
   TileLayer,
   LayersControl,
   ScaleControl,
+  useMap,
+  useMapEvents,
 } from 'react-leaflet';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
@@ -33,11 +34,16 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { LatLngBounds } from 'leaflet';
-
+import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
+import { makeSharedPromise } from '../utils/promise-utils';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
-const { BaseLayer } = LayersControl;
+// define Viewport type
+export type Viewport = {
+  center: [number, number];
+  zoom: number;
+};
 
 export const baseLayers = {
   Street: {
@@ -57,12 +63,14 @@ export const baseLayers = {
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution:
       'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    noWrap: false,
     // testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-    bounds: [
-      [-90, -180],
-      [90, 180],
-    ],
-    noWrap: true,
+    // // block this as bounds is not compatible?
+    // bounds: [
+    //   [-90, -180],
+    //   [90, 180],
+    // ],
+    // noWrap: true,
     maxZoom: 17,
   },
   // Not sure these are needed, and the "Light" layer requires an API key
@@ -207,15 +215,146 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  const mapRef = useRef<Map>(null);
+  // use a ref to avoid unneeded renders
+  const mapRef = useRef<Map>();
 
-  useImperativeHandle<PlotRef, PlotRef>(ref, () => ({
-    // Set the ref's toImage function that will be called in web-eda
-    toImage: async (imageOpts: ToImgopts) => {
-      if (!mapRef.current?.container) throw new Error('Map not ready');
-      return await domToImage.toPng(mapRef.current.container, imageOpts);
+  // This is used to ensure toImage is called after the plot has been created
+  const sharedPlotCreation = useMemo(
+    () => makeSharedPromise(() => Promise.resolve()),
+    []
+  );
+
+  const onCreated = useCallback(
+    (map: Map) => {
+      mapRef.current = map;
+      sharedPlotCreation.run();
     },
-  }));
+    [sharedPlotCreation.run]
+  );
+
+  useImperativeHandle<PlotRef, PlotRef>(
+    ref,
+    () => ({
+      // Set the ref's toImage function that will be called in web-eda
+      toImage: async (imageOpts: ToImgopts) => {
+        // Wait to allow map to finish rendering
+        await new Promise((res) => setTimeout(res, 1000));
+        await sharedPlotCreation.promise;
+
+        if (!mapRef.current) throw new Error('Map not ready');
+        return domToImage.toPng(mapRef.current.getContainer(), imageOpts);
+      },
+    }),
+    [domToImage, mapRef]
+  );
+
+  const finalMarkers = useMemo(() => {
+    if (mouseMode === 'magnification' && !isDragging)
+      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
+    return markers;
+  }, [markers, isDragging, mouseMode]);
+
+  const disabledInteractiveProps = {
+    dragging: false,
+    keyboard: false,
+    doubleClickZoom: false,
+    tap: false,
+    touchZoom: false,
+    boxZoom: false,
+  };
+
+  return (
+    <MapContainer
+      center={viewport.center}
+      zoom={viewport.zoom}
+      style={{ height, width, ...style }}
+      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
+      minZoom={1}
+      worldCopyJump={false}
+      whenCreated={onCreated}
+      attributionControl={showAttribution}
+      zoomControl={showZoomControl}
+      {...(interactive ? {} : disabledInteractiveProps)}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      />
+
+      <SemanticMarkers
+        onBoundsChanged={onBoundsChanged}
+        markers={finalMarkers}
+        animation={animation}
+        recenterMarkers={recenterMarkers}
+      />
+
+      {showMouseToolbar && (
+        <MouseTools
+          mouseMode={mouseMode}
+          onMouseModeChange={onMouseModeChange}
+        />
+      )}
+
+      {showGrid && zoomLevelToGeohashLevel ? (
+        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
+      ) : null}
+
+      {showLayerSelector && (
+        <LayersControl position="topleft">
+          {Object.entries(baseLayers).map(([name, layerProps], i) => (
+            <LayersControl.BaseLayer
+              name={name}
+              key={name}
+              checked={baseLayer ? name === baseLayer : i === 0}
+            >
+              <TileLayer {...layerProps} />
+            </LayersControl.BaseLayer>
+          ))}
+        </LayersControl>
+      )}
+
+      {showSpinner && <Spinner />}
+      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
+      {/* add Scale in the map */}
+      {showScale && <ScaleControl position="bottomright" />}
+
+      {/* PerformFlyToMarkers component for flyTo functionality */}
+      {flyToMarkers && (
+        <PerformFlyToMarkers
+          markers={markers}
+          flyToMarkers={flyToMarkers}
+          flyToMarkersDelay={flyToMarkersDelay}
+        />
+      )}
+      {/* component for map events */}
+      <MapVEuMapEvents
+        onViewportChanged={onViewportChanged}
+        onBaseLayerChanged={onBaseLayerChanged}
+      />
+      {/* set ScrollWheelZoom */}
+      <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
+    </MapContainer>
+  );
+}
+
+export default forwardRef(MapVEuMap);
+
+// for flyTo
+interface PerformFlyToMarkersProps {
+  /* markers */
+  markers: ReactElement<BoundsDriftMarkerProps>[];
+  /** Whether to zoom and pan map to center on markers */
+  flyToMarkers?: boolean;
+  /** How long (in ms) after rendering to wait before flying to markers */
+  flyToMarkersDelay?: number;
+}
+
+// component to implement flyTo functionality
+function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
+  const { markers, flyToMarkers, flyToMarkersDelay } = props;
+
+  // instead of using useRef() to the map in v2, useMap() should be used instead in v3
+  const map = useMap();
 
   const markersBounds: MapVEuBounds | null = useMemo(() => {
     if (markers) {
@@ -262,9 +401,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         [ne.lat + latBuffer, ne.lng + lngBuffer],
       ]);
 
-      mapRef.current?.leafletElement?.fitBounds(boundingBox);
+      map.fitBounds(boundingBox);
     }
-  }, [markersBounds, mapRef]);
+  }, [markersBounds, map]);
 
   useEffect(() => {
     const asyncEffect = async () => {
@@ -276,83 +415,50 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     if (flyToMarkers && markers.length > 0) asyncEffect();
   }, [markers, flyToMarkers, flyToMarkersDelay, performFlyToMarkers]);
 
-  const finalMarkers = useMemo(() => {
-    if (mouseMode === 'magnification' && !isDragging)
-      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
-    return markers;
-  }, [markers, isDragging, mouseMode]);
-
-  const disabledInteractiveProps = {
-    dragging: false,
-    keyboard: false,
-    doubleClickZoom: false,
-    scrollWheelZoom: false,
-    tap: false,
-    touchZoom: false,
-    boxZoom: false,
-  };
-
-  return (
-    <Map
-      viewport={viewport}
-      style={{ height, width, ...style }}
-      onViewportChanged={onViewportChanged}
-      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
-      minZoom={minZoom}
-      worldCopyJump={false}
-      ondragstart={() => setIsDragging(true)}
-      ondragend={() => setIsDragging(false)}
-      onbaselayerchange={(event) =>
-        onBaseLayerChanged && onBaseLayerChanged(event.name as BaseLayerChoice)
-      }
-      ref={mapRef}
-      attributionControl={showAttribution}
-      zoomControl={showZoomControl}
-      {...(interactive ? {} : disabledInteractiveProps)}
-      scrollWheelZoom={scrollingEnabled}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
-
-      <SemanticMarkers
-        onBoundsChanged={onBoundsChanged}
-        markers={finalMarkers}
-        animation={animation}
-        recenterMarkers={recenterMarkers}
-      />
-
-      {showMouseToolbar && mouseMode && onMouseModeChange && (
-        <MouseTools
-          mouseMode={mouseMode}
-          onMouseModeChange={onMouseModeChange}
-        />
-      )}
-
-      {showGrid && zoomLevelToGeohashLevel ? (
-        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
-      ) : null}
-
-      {showLayerSelector && (
-        <LayersControl position="topleft">
-          {Object.entries(baseLayers).map(([name, layerProps], i) => (
-            <BaseLayer
-              name={name}
-              key={name}
-              checked={baseLayer ? name === baseLayer : i === 0}
-            >
-              <TileLayer {...layerProps} />
-            </BaseLayer>
-          ))}
-        </LayersControl>
-      )}
-      {showSpinner && <Spinner />}
-      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
-      {/* add Scale in the map: currently set to show from zoom = 5 */}
-      {showScale && <ScaleControl position="bottomright" />}
-    </Map>
-  );
+  return null;
 }
 
-export default forwardRef(MapVEuMap);
+interface MapVEuMapEventsProps {
+  onViewportChanged: (viewport: Viewport) => void;
+  onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+}
+
+// function to handle map events such as onViewportChanged and baselayerchange
+function MapVEuMapEvents(props: MapVEuMapEventsProps) {
+  const { onViewportChanged, onBaseLayerChanged } = props;
+  const mapEvents = useMapEvents({
+    zoomend: () => {
+      onViewportChanged({
+        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
+        zoom: mapEvents.getZoom(),
+      });
+    },
+    moveend: () => {
+      onViewportChanged({
+        center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
+        zoom: mapEvents.getZoom(),
+      });
+    },
+    baselayerchange: (e: { name: string }) => {
+      onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
+    },
+  });
+
+  return null;
+}
+
+interface MapScrollWheelZoomProps {
+  scrollingEnabled: boolean;
+}
+
+function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
+  const map = useMap();
+
+  if (props.scrollingEnabled) {
+    map.scrollWheelZoom.enable();
+  } else {
+    map.scrollWheelZoom.disable();
+  }
+
+  return null;
+}

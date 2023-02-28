@@ -19,6 +19,7 @@ import {
   ColorPaletteAddon,
   ColorPaletteDefault,
 } from '../types/plots/addOns';
+import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
 // 3rd party toImage function from plotly
@@ -135,7 +136,7 @@ function PlotlyPlot<T>(
   const yAxisTitle = plotlyProps?.layout?.yaxis?.title;
 
   const finalLayout = useMemo(
-    (): PlotParams['layout'] => ({
+    (): PlotParams['layout'] & LayoutLegendTitle => ({
       ...plotlyProps.layout,
       xaxis: {
         linecolor: 'black',

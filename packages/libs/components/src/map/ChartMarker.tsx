@@ -149,9 +149,7 @@ export function ChartMarkerStandalone(props: ChartMarkerStandaloneProps) {
   );
 }
 
-function chartMarkerSVGIcon(
-  props: ChartMarkerStandaloneProps
-): {
+function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   html: string;
   size: number;
   sumValuesString: string;
@@ -205,7 +203,7 @@ function chartMarkerSVGIcon(
   const marginX = 5 * scale; // margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
   const marginY = 5 * scale; // margin to start drawing bars in Y
 
-  // // thin line: drawing outer box with round corners: changed border color (stroke)
+  // thin line: drawing outer box with round corners: changed border color (stroke)
   svgHTML +=
     '<rect x="0" y="0" rx=' +
     roundX +
@@ -269,8 +267,8 @@ function chartMarkerSVGIcon(
       ' height=' +
       barHeight +
       ' fill=' +
-      // rgb strings with spaces in them don't work in SVG?
-      (el.color ?? '').replace(/\s/g, '') +
+      // empty string does not work: filled with white rgb
+      (el.color ?? 'rgb(192,192,192)').replace(/\s/g, '') +
       ' />';
   });
 

@@ -1,18 +1,18 @@
-//DKDK sample legend
+// sample legend
 import React from 'react';
 
 interface LegendListInfoProps {
   legendType: string;
-  //DKDK used for legend info texts, e.g., Collection Date, Collections
+  // used for legend info texts, e.g., Collection Date, Collections
   dropdownTitle: string;
   legendInfoNumberText?: string;
 }
 
 export default function LegendListInfo(props: LegendListInfoProps) {
-  //DKDK add tutorial image (for now)
+  // add tutorial image (for now)
   let legendListInfoImage: string = '';
   if (props.legendType == 'categorical') {
-    //DKDK for now, use image for categorical one
+    // for now, use image for categorical one
     legendListInfoImage = './img/legend-info-donut-capture.png';
     return (
       <>
@@ -26,7 +26,7 @@ export default function LegendListInfo(props: LegendListInfoProps) {
       </>
     );
   } else {
-    //DKDK using image comprised of chart marker and arrows. Relavent texts come from props
+    // using image comprised of chart marker and arrows. Relavent texts come from props
     legendListInfoImage = './img/legend-chart-arrow-new.png';
     return (
       <>

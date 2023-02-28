@@ -1,4 +1,4 @@
-//DKDK type def for legend: some are set to optional for now
+//type def for legend: some are set to optional for now
 //perhaps this goes to Types.ts to avoid duplicate and legendProps can be an extension
 interface LegendListProps {
   data: {
@@ -7,9 +7,9 @@ interface LegendListProps {
     value: number;
     color: string;
   }[];
-  //DKDK add this
+  //add this
   legendType: string;
-  //DKDK used for legend info text, e.g., Collections
+  //used for legend info text, e.g., Collections
   legendInfoNumberText?: string;
 }
 
@@ -19,7 +19,7 @@ const truncate = function (string: string, max: number, add?: string) {
   return string.length > max ? string.substring(0, max) + add : string;
 };
 
-//DKDK add commas
+//add commas
 function numberWithCommas(x: number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
