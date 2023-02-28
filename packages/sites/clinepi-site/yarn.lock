@@ -1043,7 +1043,7 @@
     "@babel/plugin-transform-react-jsx-development" "^7.18.6"
     "@babel/plugin-transform-react-pure-annotations" "^7.18.6"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3":
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.12.13", "@babel/runtime@^7.12.5", "@babel/runtime@^7.18.3":
   version "7.20.6"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.20.6.tgz#facf4879bfed9b5326326273a64220f099b0fce3"
   integrity sha512-Q+8MqP7TiHMWzSfwiJwXCjyf4GYA4Dgw3emg/7xmwsdLJOZUp+nMqcOwOzzYheuM1rhDu8FSj2l0aoMygEuXuA==
@@ -1681,6 +1681,11 @@
   dependencies:
     "@react-hook/passive-layout-effect" "^1.2.0"
     "@react-hook/resize-observer" "^1.2.1"
+
+"@react-leaflet/core@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@react-leaflet/core/-/core-1.1.1.tgz#827fd05bb542cf874116176d8ef48d5b12163f81"
+  integrity sha512-7PGLWa9MZ5x/cWy8EH2VzI4T8q5WpuHbixzCDXqixP/WyqwIrg5NDUPgYuFnB4IEIZF+6nA265mYzswFo/h1Pw==
 
 "@restart/context@^2.1.4":
   version "2.1.4"
@@ -2451,10 +2456,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.19.20":
-  version "0.19.20"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.19.20.tgz#81c0f1355e0b8e800c1ef5f2106dfae881f91e37"
-  integrity sha512-y7scAyS4sakPvEnZaQwBjY0ouOM2pTZ9ODl3Tx1Ab2/WIu2VBojnJUFxYYfaBePt0zAeCu1+ArWESN2keIDGFg==
+"@veupathdb/components@^0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.20.0.tgz#1b09980cd5ffd914182a4f53729c3e5a59567cbe"
+  integrity sha512-FOqURWpZLOu/ul10UJI7j6LKtQAwSAUJd2Tt39YOHlzGyre3I+45U8ljD1HGoL2nTU+tWF2Wrimaj67rw8DsTA==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.46.0"
     "@typescript-eslint/parser" "^5.46.0"
@@ -2473,23 +2478,24 @@
     dom-to-image "^2.6.0"
     eslint-plugin-react "^7.31.11"
     latlon-geohash "^2.0.0"
-    leaflet "^1.6.0"
-    leaflet-drift-marker "^1.0.3"
+    leaflet "^1.9.3"
+    leaflet-simple-map-screenshoter "^0.4.5"
     luxon "^1.25.0"
     plotly.js "^2.6.0"
     re-resizable "^6.9.0"
     react-bootstrap "^1.3.0"
     react-cool-dimensions "^1.1.11"
     react-html-parser "^2.0.2"
-    react-leaflet "^2.7.0"
+    react-leaflet "^3.2.5"
+    react-leaflet-drift-marker "^3.0.0"
     react-plotly.js "^2.4.0"
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/coreui@^0.18.20":
-  version "0.18.20"
-  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.20.tgz#f5eca391543f46c8cfcc0e5938d20efdeb85bf46"
-  integrity sha512-7xovr/4Ztru6BW7cIUvKGyPIMBXOXL+IDVcpMQPf4RXkxcg1CGdg19JTQVMsqGW35mFV6k/BYMstDuJJAawSAg==
+"@veupathdb/coreui@^0.18.21":
+  version "0.18.21"
+  resolved "https://registry.yarnpkg.com/@veupathdb/coreui/-/coreui-0.18.21.tgz#635ebf88e535c818151b63caf73241a42ff9659e"
+  integrity sha512-bBJDWVRt9Y7LjysB9w0C5VZ7ZJP5p8o3po47J19Kh9JGgvvMrnJNhe5BpL1XBq6u9Diq1LFphc4lXoPpOTyqUg==
   dependencies:
     "@react-hook/size" "^2.1.2"
     core-js "^3.25.3"
@@ -2501,10 +2507,10 @@
     regenerator-runtime "^0.13.9"
     use-resize-observer "^9.1.0"
 
-"@veupathdb/eda@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.3.tgz#ba6cc60118619b2447ca30d6f58653f2c72ab051"
-  integrity sha512-4o9EVu2LMSbwS3DGiSKY4uaRcGdUOuvRSBOp8kE1fxBsLNuab0vnFJ8f0PxJu1wQ+yITC83lIa/mxqs1sl1psw==
+"@veupathdb/eda@^4.0.14":
+  version "4.0.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.14.tgz#f5159763eb31936e85a0307cade623974c3d1115"
+  integrity sha512-VHxEXnH01dgmRfo58ZZiQGArW/r/QLrsq65y/Vp3NfZ1ZggmB6TmRFwA0sPIZNdwv50m+ajOsgjHFMfD6fxr3Q==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2553,10 +2559,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/site-webpack-config/-/site-webpack-config-0.1.0.tgz#b63464c5ce70297102aecd700069f1059f371fe9"
   integrity sha512-J8sPtD8+Zp1ZBhgU+mX7O737zaZ28s7P/9RJjbh5nXYB5IgP6yRm+bvj0ewmW7W9NBAPUHJzeEDxMbYDExb85g==
 
-"@veupathdb/study-data-access@^0.3.7":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.3.7.tgz#50e99637e4b3be95f0b42d27e195f4b24702b11f"
-  integrity sha512-Vs5jNlnooCMtMYqKjzrnbkw4k9DX8Yi2K2FPxA90I4q5GI5gPZjqlDE5eeCrxWau28di3UTTw+2UgwHtabqL0g==
+"@veupathdb/study-data-access@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/study-data-access/-/study-data-access-0.4.1.tgz#ff8bfd0408b705e2ad12be0234779bd73143714c"
+  integrity sha512-TXWQoSaGCMVU1HKCvqI7vn9oNvvTYCYtETD2Dx6LIhxF3c8YCBsYvn6ByKNhptie6cgPEDHU5tSsA6igBw5wlw==
   dependencies:
     fp-ts "^2.11.5"
     io-ts "^2.2.16"
@@ -2570,10 +2576,10 @@
     date-fns "^2.29.1"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.9.29":
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.29.tgz#6fe41a88939d4958e83ee9d0461bb0a256c456d0"
-  integrity sha512-3Olh9r+GHcCIBO/IwuH40Q4bi30nsn2iWylHZLbs8SsdKpfB64Z7p1WzypkcS3BWiG7rOCOxQsodYujuvXn01w==
+"@veupathdb/wdk-client@^0.9.31":
+  version "0.9.31"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.31.tgz#bec161ec96153984687aaf5796bf3e77fe6881dd"
+  integrity sha512-XObAA8bZTIVdb/TCRNq/X65XaU1SoJBn2UjdLIzdX5gPMRWgpaMnv2R9yIn3WU0n8ehweRmXo7ROqrl6TGP6Mw==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2593,10 +2599,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.8.1.tgz#e649381a11c35a278e1630ad2376e5e6d32b5939"
-  integrity sha512-cSV4pQydppdBUD9q56jzSGmkJDNUuQ703gazUCwu97poyGsgMcPqnPzynEQePdTIFdG1uUFUxQNnjTAURYSsbA==
+"@veupathdb/web-common@^0.8.5":
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.8.5.tgz#4f95ce514f75f4662548f970c25a85cf98fbe322"
+  integrity sha512-KNl4yi8bj07ALgax+kY7GuhtTAw2n89P/DjQT7H6yM8M6LiwG/1JoT9GUObOP88klVjcodEHTTy6reyADT5wyQ==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -5292,6 +5298,11 @@ dom-serializer@^1.0.1:
     domhandler "^4.2.0"
     entities "^2.0.0"
 
+dom-to-image-more@^2.8.0:
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/dom-to-image-more/-/dom-to-image-more-2.15.0.tgz#6f7ee2bbeb94ff568d961191fdafae5501de20e3"
+  integrity sha512-L/ocidaHYpTSInsixl8b/7bpP7yhCowbzKsULsXuVxxms7Ng5B1oWahPFfPemPZ5J32Y3oImyzdpjjSYFZmDyQ==
+
 dom-to-image@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/dom-to-image/-/dom-to-image-2.6.0.tgz#8a503608088c87b1c22f9034ae032e1898955867"
@@ -5937,6 +5948,11 @@ file-loader@^3.0.1:
   dependencies:
     loader-utils "^1.0.2"
     schema-utils "^1.0.0"
+
+file-saver@^2.0.2:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -7556,15 +7572,23 @@ latlon-geohash@^2.0.0:
   resolved "https://registry.yarnpkg.com/latlon-geohash/-/latlon-geohash-2.0.0.tgz#2b0203ab30ef56a18600b0312b8c3a627cbd17d1"
   integrity sha512-OKBswTwrvTdtenV+9C9euBmvgGuqyjJNAzpQCarRz1m8/pYD2nz9fKkXmLs2S3jeXaLi3Ry76twQplKKUlgS/g==
 
-leaflet-drift-marker@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-1.0.3.tgz#4b178dc22b918b4713570302461ca636241fac3f"
-  integrity sha512-2b5EqL11+reMqS+RTZAwW9oglWk05V02LQzMSe3D8cPPSvz42RpoqjRI8aGvD8Yjsc31ZwLZMeJ0s3waaj3VEQ==
+leaflet-drift-marker@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/leaflet-drift-marker/-/leaflet-drift-marker-2.0.0.tgz#7ab45dba09270b6fe59d31144c362f8f900e3243"
+  integrity sha512-dmYMW5A/rpNA2YGnakMzhhQNGJADjJG1L6THa/UKMYZ/CI3podhmsCaWCNh0/DnqcxRaSCR/8JBp+iimNx7lEQ==
 
-leaflet@^1.6.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
-  integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
+leaflet-simple-map-screenshoter@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/leaflet-simple-map-screenshoter/-/leaflet-simple-map-screenshoter-0.4.5.tgz#d4f093077663577e7879c0488ebc54292c34314d"
+  integrity sha512-bvd++mQstpgb7F7c2v5jCLlUitQ6CcYLZ56do7PVyyVpGvnlhIEk5S6dLXqpe3itSr2D/re5yUAOf8zBt95ViQ==
+  dependencies:
+    dom-to-image-more "^2.8.0"
+    file-saver "^2.0.2"
+
+leaflet@^1.9.3:
+  version "1.9.3"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.9.3.tgz#52ec436954964e2d3d39e0d433da4b2500d74414"
+  integrity sha512-iB2cR9vAkDOu5l3HAay2obcUHZ7xwUBBjph8+PGtmW/2lYhbLizWtG7nTeYht36WfOslixQF9D/uSIzhZgGMfQ==
 
 levn@~0.3.0:
   version "0.3.0"
@@ -9204,15 +9228,19 @@ react-is@^16.13.1, react-is@^16.3.2, react-is@^16.6.0, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-leaflet@^2.7.0:
-  version "2.8.0"
-  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-2.8.0.tgz#14bfc77b6ae8263d3a62e0ba7a39539c05973c6f"
-  integrity sha512-Y7oHtNrrlRH8muDttXf+jZ2Ga/X7jneSGi1GN8uEdeCfLProTqgG2Zoa5TfloS3ZnY20v7w+DIenMG59beFsQw==
+react-leaflet-drift-marker@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-leaflet-drift-marker/-/react-leaflet-drift-marker-3.0.0.tgz#461c0e90559246c54e3e70e9a0dc188338e9c2ae"
+  integrity sha512-SXyvplhe93Ns1mNQYijLHU1dF1Awjaw9kCA5Wp4UuXFPEieWU/MeadhJnDcSJEATNtknT+DeDlMmUvnHX4M08w==
   dependencies:
-    "@babel/runtime" "^7.12.1"
-    fast-deep-equal "^3.1.3"
-    hoist-non-react-statics "^3.3.2"
-    warning "^4.0.3"
+    leaflet-drift-marker "^2.0.0"
+
+react-leaflet@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-3.2.5.tgz#bec0bfab9dd8c2b030ea630f7a0687a60322ca7d"
+  integrity sha512-Z3KZ+4SijsRbbrt2I1a3ZDY6+V6Pm91eYTdxTN18G6IOkFRsJo1BuSPLFnyFrlF3WDjQFPEcTPkEgD1VEeAoBg==
+  dependencies:
+    "@react-leaflet/core" "^1.1.1"
 
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
