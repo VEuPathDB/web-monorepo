@@ -530,6 +530,7 @@ function MosaicViz(props: Props<Options>) {
                   facetVariable ? facetVariable.displayName : 'Facet'
                 }
                 enableSpinner={data.pending}
+                referenceValues={[xAxisReferenceValue, yAxisReferenceValue]}
               />
             </div>
           ),
