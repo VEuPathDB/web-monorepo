@@ -15,7 +15,7 @@ export type JobStatus = JobStatusReponse['status'] | 'requesting';
 export function useComputeJobStatus(
   analysis: Analysis | NewAnalysis,
   computation: Computation,
-  computeName: string,
+  computeName?: string,
 ) {
   const computeClient = useComputeClient();
   const studyMetadata = useStudyMetadata();
@@ -66,7 +66,7 @@ export function useComputeJobStatus(
   // `jobStatus` variable does not need to be included as a dependency.
   useEffect(() => {
     if (
-      jobStatusDeps.config == null ||
+      !jobStatusDeps.computeName ||
       !computePlugin.isConfigurationValid(jobStatusDeps.config)
     )
       return;
@@ -81,6 +81,7 @@ export function useComputeJobStatus(
 
     // Fetch the job status and update state
     async function updateJobStatus() {
+      if (jobStatusDeps.computeName == null) return;
       const { status } = await computeClient.getJobStatus(
         jobStatusDeps.computeName,
         omit(jobStatusDeps, 'computeName')
@@ -105,6 +106,7 @@ export function useComputeJobStatus(
   const createJob = useCallback(async () => {
     if (!computePlugin.isConfigurationValid(jobStatusDeps.config)) return;
     setJobStatus('requesting');
+    if (jobStatusDeps.computeName == null) return;
     const { status } = await computeClient.createJob(
       jobStatusDeps.computeName,
       omit(jobStatusDeps, 'computeName')
