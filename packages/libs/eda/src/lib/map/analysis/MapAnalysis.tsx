@@ -26,7 +26,7 @@ import {
 import { Close, FilledButton, FloatingButton } from '@veupathdb/coreui';
 import { Visualization } from '../../core/types/visualization';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { Tooltip } from '@material-ui/core';
+import { makeStyles, Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
@@ -54,6 +54,12 @@ import {
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
+import {
+  SemiTransparentHeaderLogoProps,
+  SemiTransparentHeader,
+} from './SemiTransparentHeader';
+import FilterChipList from '../../core/components/FilterChipList';
+import { VariableLinkConfig } from '../../core/components/VariableLink';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -86,6 +92,7 @@ const plugin: ComputationPlugin = {
 interface Props {
   analysisId: string;
   studyId: string;
+  logoProps: SemiTransparentHeaderLogoProps;
 }
 
 export function MapAnalysis(props: Props) {
@@ -144,6 +151,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     basicMarkerError,
     overlayError,
     totalEntityCount,
+    totalVisibleEntityCount,
   } = useMapMarkers({
     requireOverlay: false,
     boundsZoomLevel: appState.boundsZoomLevel,
@@ -156,6 +164,15 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
   });
+
+  // Material UI CSS declarations
+  const useStyles = makeStyles((theme) => ({
+    chipListLabel: {
+      margin: '-2px 5px 5px 5px',
+      fontSize: '16px',
+      fontWeight: 500,
+    },
+  }));
 
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
@@ -301,6 +318,56 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     </>
   );
 
+  const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
+  const classes = useStyles();
+
+  const FilterChipListForHeader = () => {
+    const filterChipConfig: VariableLinkConfig = {
+      type: 'button',
+      onClick(value) {
+        setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
+        setSubsetVariableAndEntity(value);
+      },
+    };
+
+    const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
+    if (!studyEntities || !filters) return <></>;
+
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 30,
+        }}
+        className="FilterChips"
+      >
+        <p className={classes.chipListLabel}>
+          {filters.length === 0 ? `No filters applied.` : `Filters:`}
+        </p>
+        <div>
+          <FilterChipList
+            filters={filters}
+            removeFilter={(filter) =>
+              analysisState.analysis &&
+              analysisState.setFilters(
+                analysisState.analysis.descriptor.subset.descriptor.filter(
+                  (f) => f !== filter
+                )
+              )
+            }
+            variableLinkConfig={filterChipConfig}
+            entities={studyEntities}
+            // selectedEntityId={studyEntities.id}
+            // selectedVariableId={selectedVariables.id}
+          />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app) => (
@@ -312,11 +379,24 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
                 position: 'relative',
               }}
             >
+              <SemiTransparentHeader
+                analysisName={analysisState.analysis?.displayName}
+                filterList={<FilterChipListForHeader />}
+                isExpanded={mapHeaderIsExpanded}
+                logoProps={props.logoProps}
+                onAnalysisNameEdit={analysisState.setName}
+                onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
+                studyName={studyRecord.displayName}
+                totalEntitesCount={totalEntityCount}
+                visibleEntitiesCount={totalVisibleEntityCount}
+              />
               <MapVEuMap
                 height="100%"
                 width="100%"
                 style={mapStyle}
-                showMouseToolbar
+                showMouseToolbar={false}
+                showZoomControl={false}
+                showLayerSelector={false}
                 showSpinner={pending}
                 animation={null}
                 viewport={appState.viewport}
@@ -332,7 +412,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
               />
               <FloatingDiv
                 style={{
-                  top: 50,
+                  top: 350,
                   right: 50,
                 }}
               >
@@ -345,7 +425,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
               </FloatingDiv>
               <FloatingDiv
                 style={{
-                  top: 10,
+                  top: 250,
                   left: 100,
                 }}
               >

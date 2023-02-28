@@ -32,7 +32,7 @@ import { StandaloneStudyPage } from './StandaloneStudyPage';
 const theme = createTheme(workspaceTheme);
 
 type Props = {
-  serviceUrl: string;
+  edaServiceUrl: string;
   exampleAnalysesAuthor?: number;
   showUnreleasedData?: boolean;
   /**
@@ -58,7 +58,7 @@ type Props = {
  * Router component for application.
  */
 export function WorkspaceRouter({
-  serviceUrl,
+  edaServiceUrl,
   exampleAnalysesAuthor,
   sharingUrlPrefix,
   showLoginForm,
@@ -70,11 +70,11 @@ export function WorkspaceRouter({
   const coreUIPrimaryColor = coreUITheme?.palette.primary;
   const { path, url } = useRouteMatch();
 
-  const subsettingClient = useConfiguredSubsettingClient(serviceUrl);
-  const dataClient = useConfiguredDataClient(serviceUrl);
-  const analysisClient = useConfiguredAnalysisClient(serviceUrl);
-  const downloadClient = useConfiguredDownloadClient(serviceUrl);
-  const computeClient = useConfiguredComputeClient(serviceUrl);
+  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+  const dataClient = useConfiguredDataClient(edaServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
+  const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL

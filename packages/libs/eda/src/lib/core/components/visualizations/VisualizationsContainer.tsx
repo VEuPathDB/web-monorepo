@@ -800,6 +800,11 @@ function ConfiguredVisualizationGrayOut({
               primary: 'Computation failed',
               secondary: 'Please contact us for support.',
             }
+          : computeJobStatus === 'expired'
+          ? {
+              primary: 'Computation expired',
+              secondary: 'Please regenerate results to use this visualization.',
+            }
           : computeJobStatus === 'no-such-job' ||
             !isComputationConfigurationValid
           ? {
