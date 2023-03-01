@@ -227,7 +227,7 @@ export function isIndividual(node: CategoryTreeNode): node is IndividualNode {
 export function BasicNodeComponent(props: {node: CategoryTreeNode}) {
   return (
       /** Remove Tooltip for now as performance improvements are underway */ 
-      // <Tooltip title={getDescription(props.node) ?? ''} css={{}}>
+      // <Tooltip title={getDescription(props.node) ?? ''}>
         <span>{getDisplayName(props.node)}</span>
       // </Tooltip>
     );
