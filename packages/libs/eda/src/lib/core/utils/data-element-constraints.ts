@@ -484,7 +484,9 @@ export function leastAncestralVariable(
     )
       return variable;
     else
-      throw 'Error: variables not expected to be in different branches of entity diagram';
+      throw new Error(
+        'Error: variables not expected to be in different branches of entity diagram'
+      );
   } else return undefined;
 }
 
