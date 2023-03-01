@@ -6,7 +6,7 @@ import {
   Bounds,
 } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
-import { useLeaflet } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import { LatLngBounds } from 'leaflet';
 import { debounce } from 'lodash';
 
@@ -33,7 +33,8 @@ export default function SemanticMarkers({
   animation,
   recenterMarkers = true,
 }: SemanticMarkersProps) {
-  const { map } = useLeaflet();
+  // react-leaflet v3
+  const map = useMap();
 
   const [prevMarkers, setPrevMarkers] = useState<
     ReactElement<BoundsDriftMarkerProps>[]

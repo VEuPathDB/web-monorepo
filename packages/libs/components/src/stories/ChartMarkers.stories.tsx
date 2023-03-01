@@ -6,7 +6,7 @@ import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 import {
   getCollectionDateChartMarkers,
   getCollectionDateBasicMarkers,
@@ -62,7 +62,10 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
-  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 0],
+    zoom: 6,
+  });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -101,6 +104,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
@@ -138,7 +142,10 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
-  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 0],
+    zoom: 6,
+  });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -199,6 +206,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
@@ -237,7 +245,10 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
   const [legendRadioValue, setLegendRadioValue] = useState<string>(
     'Individual'
   );
-  const [viewport] = useState<Viewport>({ center: [13, 0], zoom: 6 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 0],
+    zoom: 6,
+  });
 
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
@@ -251,6 +262,8 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
 
   const duration = defaultAnimationDuration;
 
+  // define mouseMode
+  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
   const [dependentAxisLogScale, setDependentAxisLogScale] = useState(false);
 
   // send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
@@ -277,12 +290,15 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
       <MapVEuMap
         {...args}
         viewport={viewport}
+        onViewportChanged={setViewport}
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
         showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        mouseMode={mouseMode}
+        onMouseModeChange={setMouseMode}
       />
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -328,6 +344,32 @@ export const Standalone: Story<MapVEuMapProps> = () => {
         },
       ]}
       cumulative={true}
+      isAtomic={false}
+      markerScale={1}
+      borderColor={'#AAAAAA'}
+      borderWidth={3.5}
+      containerStyles={{ margin: '10px' }}
+    />
+  );
+};
+
+// test no data.color
+export const TestNoDataColor: Story<MapVEuMapProps> = () => {
+  return (
+    <ChartMarkerStandalone
+      data={[
+        {
+          label: 'Gaining control study',
+          value: 0,
+          // "color": "rgb(136,34,85)"
+        },
+        {
+          label: 'Sustaining control study',
+          value: 75,
+          color: 'rgb(136,204,238)',
+        },
+      ]}
+      cumulative={false}
       isAtomic={false}
       markerScale={1}
       borderColor={'#AAAAAA'}

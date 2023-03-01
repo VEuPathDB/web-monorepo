@@ -1,4 +1,4 @@
-import { Polyline, Rectangle, useLeaflet } from 'react-leaflet';
+import { Polyline, Rectangle, useMap } from 'react-leaflet';
 import React, { ReactElement, useEffect, useState } from 'react';
 import Geohash from 'latlon-geohash';
 import L, { LatLngBounds } from 'leaflet';
@@ -14,15 +14,16 @@ interface Props {
  * with the geohashes available in the current map boundaries.
  **/
 export default function CustomGridLayer({ zoomLevelToGeohashLevel }: Props) {
-  const { map } = useLeaflet();
+  // react-leaflet v3
+  const map = useMap();
 
   const [geohashes, setGeohashes] = useState<string[]>([]);
   const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
 
-  let polylines: ReactElement<Polyline>[] = [];
+  let polylines: ReactElement<typeof Polyline>[] = [];
   // Blinkers/blinders: rectangles on edges of viewport to visually block
   // nonactive map areas/extra worlds
-  let blinkers: ReactElement<Rectangle>[] = [];
+  let blinkers: ReactElement<typeof Rectangle>[] = [];
 
   useEffect(() => {
     if (map == null) return;

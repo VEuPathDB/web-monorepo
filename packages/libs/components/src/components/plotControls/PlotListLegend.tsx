@@ -65,8 +65,7 @@ export default function PlotListLegend({
                   display: 'flex',
                   alignItems: 'center',
                   fontSize: legendTextSize,
-                  // gray out for filtered item
-                  color: checkedLegendItems?.includes(item.label) ? '' : '#999',
+                  color: '',
                   // add this for general usage (e.g., story)
                   margin: 0,
                 }}
@@ -102,11 +101,7 @@ export default function PlotListLegend({
                         height: defaultMarkerSize,
                         width: defaultMarkerSize,
                         borderWidth: '0',
-                        backgroundColor: checkedLegendItems?.includes(
-                          item.label
-                        )
-                          ? item.markerColor
-                          : '#999',
+                        backgroundColor: item.markerColor,
                       }}
                     />
                   )}
@@ -118,16 +113,10 @@ export default function PlotListLegend({
                         width: defaultMarkerSize,
                         borderWidth: '0.125em',
                         borderStyle: 'solid',
-                        borderColor: checkedLegendItems?.includes(item.label)
-                          ? item.markerColor
-                          : '#999',
-                        backgroundColor: checkedLegendItems?.includes(
-                          item.label
-                        )
-                          ? ColorMath.evaluate(
-                              item.markerColor + ' @a 50%'
-                            ).result.css()
-                          : '#999',
+                        borderColor: item.markerColor,
+                        backgroundColor: ColorMath.evaluate(
+                          item.markerColor + ' @a 50%'
+                        ).result.css(),
                       }}
                     />
                   )}
@@ -142,9 +131,7 @@ export default function PlotListLegend({
                           borderWidth: '0.15em',
                           borderStyle: 'solid',
                           borderRadius: '0.6em',
-                          borderColor: checkedLegendItems?.includes(item.label)
-                            ? item.markerColor
-                            : '#999',
+                          borderColor: item.markerColor,
                         }}
                       />
                     </div>
@@ -157,11 +144,7 @@ export default function PlotListLegend({
                           height: '0.15em',
                           width: scatterMarkerSpace,
                           borderWidth: '0',
-                          backgroundColor: checkedLegendItems?.includes(
-                            item.label
-                          )
-                            ? item.markerColor
-                            : '#999',
+                          backgroundColor: item.markerColor,
                         }}
                       />
                     </div>
@@ -174,13 +157,9 @@ export default function PlotListLegend({
                           height: '0.5em',
                           width: scatterMarkerSpace,
                           borderWidth: '0',
-                          backgroundColor: checkedLegendItems?.includes(
-                            item.label
-                          )
-                            ? ColorMath.evaluate(
-                                item.markerColor + ' @a 30%'
-                              ).result.css()
-                            : '#999',
+                          backgroundColor: ColorMath.evaluate(
+                            item.markerColor + ' @a 30%'
+                          ).result.css(),
                         }}
                       />
                     </div>
@@ -193,9 +172,7 @@ export default function PlotListLegend({
                           textAlign: 'center',
                           fontWeight: 'normal',
                           fontSize: `calc(1.5 * ${legendTextSize})`,
-                          color: checkedLegendItems?.includes(item.label)
-                            ? '#A6A6A6'
-                            : '#999',
+                          color: '#A6A6A6',
                         }}
                       >
                         &times;

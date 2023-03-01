@@ -20,8 +20,8 @@ const mouseModesArray = mouseModeConfig.map((mode) => mode.name);
 export type MouseMode = typeof mouseModesArray[number]; // Union of mode names
 
 export interface MouseToolsProps {
-  mouseMode: MouseMode;
-  onMouseModeChange: (mode: MouseMode) => void;
+  mouseMode?: MouseMode;
+  onMouseModeChange?: (mode: MouseMode) => void;
 }
 
 export default function MouseTools(props: MouseToolsProps) {
@@ -32,7 +32,11 @@ export default function MouseTools(props: MouseToolsProps) {
     return (
       <a
         role="button"
-        onClick={() => props.onMouseModeChange(mode.name)}
+        onClick={() =>
+          props.onMouseModeChange
+            ? props.onMouseModeChange(mode.name)
+            : undefined
+        }
         className={
           'mapveu-button' +
           (props.mouseMode === mode.name ? ' mapveu-button-selected' : '')

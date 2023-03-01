@@ -1,4 +1,4 @@
-import { ReactElement, useState, useCallback } from 'react';
+import { ReactElement, useState, useCallback, useRef, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
 import { BoundsViewport } from '../map/Types';
@@ -11,7 +11,7 @@ import {
 import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';
 
 import { LeafletMouseEvent } from 'leaflet';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 
 // sidebar & legend
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
@@ -24,6 +24,7 @@ import { Checkbox } from '@material-ui/core';
 
 import geohashAnimation from '../map/animation_functions/geohash';
 import { MouseMode } from '../map/MouseTools';
+import { PlotRef } from '../types/plots';
 
 export default {
   title: 'Map/General',
@@ -60,7 +61,6 @@ const legendInfoNumberText: string = 'Species';
 
 // a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
-  // much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
   if (targetElement != null) {
     targetElement.classList.remove(targetClass);
@@ -76,9 +76,7 @@ const handleMarkerClick = (e: LeafletMouseEvent) => {
    */
   // use a resuable function to remove a class
   removeClassName('highlight-marker');
-  // native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker');
-  // here, perhaps we can add additional click event, like opening sidebar when clicking
 };
 
 const defaultMouseMode: MouseMode = 'default';
@@ -246,6 +244,49 @@ Windowed.args = {
   showMouseToolbar: true,
 };
 
+export const ScreenshotOnLoad: Story<MapVEuMapProps> = function ScreenhotOnLoad(
+  args
+) {
+  const mapRef = useRef<PlotRef>(null);
+  const [image, setImage] = useState('');
+  useEffect(() => {
+    // We're converting the base64 encoding of the image to an object url
+    // because the size of the base64 encoding causes "too much recursion".
+    mapRef.current
+      ?.toImage({
+        height: args.height as number,
+        width: args.width as number,
+        format: 'png',
+      })
+      .then(fetch)
+      .then((res) => res.blob())
+      .then(URL.createObjectURL)
+      .then(setImage);
+  }, []);
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <MapVEuMap
+        {...args}
+        ref={mapRef}
+        animation={defaultAnimation}
+        zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      />
+      <img src={image} />
+    </div>
+  );
+};
+
+ScreenshotOnLoad.args = {
+  height: 500,
+  width: 700,
+  showGrid: true,
+  showMouseToolbar: true,
+  markers: [],
+  viewport: { center: [13, 16], zoom: 4 },
+  onBoundsChanged: () => {},
+};
+
 export const Tiny: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
@@ -303,7 +344,10 @@ export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [13, 16],
+    zoom: 4,
+  });
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
       const markers = await getSpeciesDonuts(
@@ -356,6 +400,7 @@ export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
         <MapVEuMap
           {...args}
           viewport={viewport}
+          onViewportChanged={setViewport}
           onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}

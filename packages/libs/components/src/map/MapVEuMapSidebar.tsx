@@ -1,13 +1,12 @@
-//DKDK this file is only used for sidebar demo
+// this file is only used for sidebar demo
 import React, { useState, ReactElement, CSSProperties } from 'react';
-//DKDK needs to be check later
+// needs to be check later
 // import { MapVEuMapProps } from "./TypesSidebar";
-//DKDK change markerElement's prop
+// change markerElement's prop
 import { BoundsViewport, AnimationFunction } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import {
-  Viewport,
-  Map,
+  MapContainer,
   TileLayer,
   LayersControl,
   ZoomControl,
@@ -16,22 +15,21 @@ import {
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
 import { LeafletMouseEvent } from 'leaflet';
+import { Viewport } from './MapVEuMap';
 
-//DKDK for layers
+// for layers
 const { BaseLayer } = LayersControl;
 
-//DKDK a generic function to remove a class: here it is used for removing highlight-marker
+// a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
-  //DKDK much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
   if (targetElement != null) {
     targetElement.classList.remove(targetClass);
   }
 }
 
-//DKDK a generic function to remove a class: here it is used for removing highlight-marker
+// a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassNameActive(targetClass: string) {
-  //DKDK much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
   if (targetElement != null) {
     targetElement.classList.remove('active');
@@ -57,7 +55,7 @@ interface MapVEuMapPropsCutAndPasteCopy {
   markers: ReactElement<BoundsDriftMarkerProps>[];
   nudge?: 'geohash' | 'none';
 
-  //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
+  // add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void;
   animation: {
     method: string;
@@ -87,13 +85,13 @@ export default function MapVEuMapSidebarSibling({
   // 'bookmarkable' state of the map.
   const [state, setState] = useState<Viewport>(viewport as Viewport);
 
-  //DKDK trying to add map click events: e.g., removing marker highlight, closing sidebar, etc.
+  // trying to add map click events: e.g., removing marker highlight, closing sidebar, etc.
   const mapClick = (e: LeafletMouseEvent) => {
-    //DKDK remove marker highlight
+    // remove marker highlight
     removeClassName('highlight-marker');
-    //DKDK use this for closing sidebar: setSidebarCollapsed(true). Use if condition to avoid type error
+    // use this for closing sidebar: setSidebarCollapsed(true). Use if condition to avoid type error
     if (sidebarOnClose) sidebarOnClose(true);
-    //DKDK deactivate selected sidebar tab
+    // deactivate selected sidebar tab
     removeClassNameActive('sidebartabs active');
   };
 
@@ -102,15 +100,18 @@ export default function MapVEuMapSidebarSibling({
   };
 
   return (
-    //DKDK add fragment
     <>
-      <Map
+      <MapContainer
         // className="sidebar-map"
-        viewport={state}
+        // react-leaflet v3 way: no viewport
+        center={viewport.center}
+        zoom={viewport.zoom}
         style={{ height, width }}
         onViewportChanged={handleViewportChanged}
-        zoomControl={false} //DKDK this is for disabling default zoomControl at top left
-        onClick={mapClick} //DKDK add this to handle map click
+        // this is for disabling default zoomControl at top left
+        zoomControl={false}
+        // add this to handle map click
+        onClick={mapClick}
       >
         <ZoomControl position="topright" />
 
@@ -171,7 +172,7 @@ export default function MapVEuMapSidebarSibling({
           animation={animation}
           // nudge={nudge}
         />
-      </Map>
+      </MapContainer>
     </>
   );
 }
