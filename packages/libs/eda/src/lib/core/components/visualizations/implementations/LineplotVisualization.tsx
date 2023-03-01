@@ -1688,7 +1688,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <Tooltip css={{}} title={'Required parameter'}>
+          <Tooltip title={'Required parameter'}>
             <div className={classes.label}>
               Function<sup>*</sup>
             </div>
@@ -1710,7 +1710,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             gridTemplateRows: 'repeat(3, auto)',
           }}
         >
-          <Tooltip css={{}} title={'Required parameter'}>
+          <Tooltip title={'Required parameter'}>
             <div
               className={classes.label}
               style={{
