@@ -12,7 +12,11 @@ import _ from 'lodash';
 import DataClient, {
   ContTableResponse,
   MosaicRequestParams,
+  TwoByTwoRequestParams,
   TwoByTwoResponse,
+  // 2x2 stats table content type
+  twoByTwoStatsContent,
+  facetVariableDetailsType,
 } from '../../../api/DataClient';
 import { useCallback, useMemo, useState } from 'react';
 import { usePromise } from '../../../hooks/promise';
@@ -30,7 +34,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables } from '../InputVariables';
+import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
@@ -57,6 +61,12 @@ import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/Face
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
+import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import { useInputStyles } from '../inputStyles';
+import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { MEDIUM_GRAY } from '@veupathdb/components/lib/constants/colors';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const plotContainerStyles = {
   width: 750,
@@ -90,6 +100,13 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
+const twoByTwoInputStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '115px auto',
+  marginBottom: '0.5em',
+  alignItems: 'center',
+};
+
 type ContTableData = MosaicPlotData &
   Partial<{
     pValue: number | string;
@@ -97,13 +114,19 @@ type ContTableData = MosaicPlotData &
     chisq: number;
   }>;
 
+// reflecting 2x2 stats table content
 type TwoByTwoData = MosaicPlotData &
   Partial<{
-    pValue: number | string;
-    relativeRisk: number;
-    rrInterval: string;
-    oddsRatio: number;
-    orInterval: string;
+    chiSq: twoByTwoStatsContent;
+    fisher: twoByTwoStatsContent;
+    prevalence: twoByTwoStatsContent;
+    oddsRatio: twoByTwoStatsContent;
+    relativeRisk: twoByTwoStatsContent;
+    sensitivity: twoByTwoStatsContent;
+    specificity: twoByTwoStatsContent;
+    posPredictiveValue: twoByTwoStatsContent;
+    negPredictiveValue: twoByTwoStatsContent;
+    facetVariableDetails: facetVariableDetailsType;
   }>;
 
 type ContTableDataWithCoverage = (ContTableData | FacetedData<ContTableData>) &
@@ -144,6 +167,8 @@ const MosaicConfig = t.partial({
   yAxisVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
   showMissingness: t.boolean,
+  xAxisReferenceValue: t.string,
+  yAxisReferenceValue: t.string,
 });
 
 type Props<T> = VisualizationProps<T> & {
@@ -189,6 +214,22 @@ function MosaicViz(props: Props<Options>) {
         xAxisVariable,
         yAxisVariable,
         facetVariable,
+        ...(isTwoByTwo
+          ? {
+              xAxisReferenceValue: _.isEqual(
+                xAxisVariable,
+                vizConfig.xAxisVariable
+              )
+                ? xAxisReferenceValue
+                : undefined,
+              yAxisReferenceValue: _.isEqual(
+                yAxisVariable,
+                vizConfig.yAxisVariable
+              )
+                ? yAxisReferenceValue
+                : undefined,
+            }
+          : {}),
       });
     },
     [updateVizConfig]
@@ -197,22 +238,30 @@ function MosaicViz(props: Props<Options>) {
   // prettier-ignore
   // changed for consistency as now all other Vizs have this format
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+    <ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
       const newPartialConfig = resetCheckedLegendItems
         ? {
-            [key]: newValue,
-            checkedLegendItems: undefined
-          }
+          [key]: newValue,
+          checkedLegendItems: undefined
+        }
         : {
           [key]: newValue
         };
-       updateVizConfig(newPartialConfig);
+      updateVizConfig(newPartialConfig);
     },
     [updateVizConfig]
   );
 
   const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
     'showMissingness'
+  );
+
+  const onXAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'xAxisReferenceValue'
+  );
+
+  const onYAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'yAxisReferenceValue'
   );
 
   const findEntityAndVariable = useFindEntityAndVariable();
@@ -232,6 +281,26 @@ function MosaicViz(props: Props<Options>) {
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
     vizConfig.facetVariable,
+  ]);
+
+  const xAxisReferenceValue = useMemo(() => {
+    if (!isTwoByTwo || !xAxisVariable || !vizConfig.xAxisVariable) return;
+    return vizConfig.xAxisReferenceValue;
+  }, [
+    isTwoByTwo,
+    xAxisVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.xAxisReferenceValue,
+  ]);
+
+  const yAxisReferenceValue = useMemo(() => {
+    if (!isTwoByTwo || !yAxisVariable || !vizConfig.yAxisVariable) return;
+    return vizConfig.yAxisReferenceValue;
+  }, [
+    isTwoByTwo,
+    yAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.yAxisReferenceValue,
   ]);
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
@@ -256,16 +325,6 @@ function MosaicViz(props: Props<Options>) {
       if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable,
-        outputEntity?.id ?? '',
-        vizConfig.facetVariable,
-        vizConfig.showMissingness
-      );
-
       const xAxisVocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
         xAxisVariable
@@ -280,6 +339,26 @@ function MosaicViz(props: Props<Options>) {
       );
 
       if (isTwoByTwo) {
+        if (
+          !vizConfig.xAxisReferenceValue ||
+          !xAxisReferenceValue ||
+          !vizConfig.yAxisReferenceValue ||
+          !yAxisReferenceValue
+        )
+          return undefined;
+
+        const params = getRequestParams(
+          studyId,
+          filters ?? [],
+          vizConfig.xAxisVariable,
+          vizConfig.yAxisVariable,
+          outputEntity?.id ?? '',
+          vizConfig.facetVariable,
+          vizConfig.showMissingness,
+          vizConfig.xAxisReferenceValue,
+          vizConfig.yAxisReferenceValue
+        );
+
         const response = dataClient.getTwoByTwo(
           computation.descriptor.type,
           params
@@ -297,6 +376,15 @@ function MosaicViz(props: Props<Options>) {
           vocabularyWithMissingData(facetVocabulary, vizConfig.showMissingness)
         ) as TwoByTwoDataWithCoverage;
       } else {
+        const params = getRequestParams(
+          studyId,
+          filters ?? [],
+          vizConfig.xAxisVariable,
+          vizConfig.yAxisVariable,
+          outputEntity?.id ?? '',
+          vizConfig.facetVariable,
+          vizConfig.showMissingness
+        );
         const response = dataClient.getContTable(
           computation.descriptor.type,
           params
@@ -325,6 +413,8 @@ function MosaicViz(props: Props<Options>) {
       computation.descriptor.type,
       isTwoByTwo,
       outputEntity?.id,
+      xAxisReferenceValue,
+      yAxisReferenceValue,
     ])
   );
 
@@ -425,7 +515,7 @@ function MosaicViz(props: Props<Options>) {
           key: 'Table',
           displayName: 'Table',
           content: (
-            <div style={{ margin: '15px 0' }}>
+            <div style={{ margin: '15px 0', marginLeft: '0.75rem' }}>
               <ContingencyTable
                 data={data.pending ? undefined : data.value}
                 tableContainerStyles={
@@ -451,40 +541,70 @@ function MosaicViz(props: Props<Options>) {
             ? vizConfig.showMissingness
               ? 'Statistics are not calculated when the "include no data" option is selected'
               : facetVariable != null && (
-                  <div
-                    style={{
-                      ...facetedStatsTableContainerStyles,
-                      margin: '15px 0',
-                    }}
-                  >
-                    {data.value.facets.map(({ label, data }, index) => (
-                      <table key={index}>
-                        <tbody>
-                          <tr>
-                            <th
-                              style={{
-                                border: 'none' /* cancel WDK style! */,
-                              }}
-                            >
-                              {facetVariable.displayName}: {label}
-                            </th>
-                          </tr>
-                          <tr>
-                            <td>
-                              {' '}
-                              {isTwoByTwo
-                                ? TwoByTwoStats(
-                                    data as TwoByTwoData | undefined
-                                  )
-                                : ContTableStats(
-                                    data as ContTableData | undefined
-                                  )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    ))}
-                  </div>
+                  <>
+                    {/* 2x2 stats table banner for facet variable */}
+                    {isTwoByTwo && (
+                      <div>
+                        {/* 2x2 stats collapsible banner */}
+                        <Banner
+                          banner={{
+                            type: 'info',
+                            // message is used as a basic text
+                            message:
+                              'Learn about appropriate statistics for each study design.',
+                            pinned: true,
+                            intense: false,
+                            additionalMessage: undefined,
+                            // text for showMore link
+                            showMoreLinkText: 'Read more...',
+                            // text for showless link
+                            showLessLinkText: 'Read less...',
+                            // color for show more links
+                            showMoreLinkColor: '#000000',
+                            // is showMoreLink bold?
+                            isShowMoreLinkBold: true,
+                          }}
+                          onClose={() => null}
+                          // collapsible content: React.FC
+                          CollapsibleContent={StatsCollapsibleBannerContent}
+                        />
+                      </div>
+                    )}
+                    <div
+                      style={{
+                        ...facetedStatsTableContainerStyles,
+                        margin: '15px 0',
+                      }}
+                    >
+                      {data.value.facets.map(({ label, data }, index) => (
+                        <table key={index}>
+                          <tbody>
+                            <tr style={{ marginLeft: '0.75rem' }}>
+                              <th
+                                style={{
+                                  border: 'none' /* cancel WDK style! */,
+                                }}
+                              >
+                                {facetVariable.displayName}: {label}
+                              </th>
+                            </tr>
+                            <tr>
+                              <td>
+                                {/* {' '} */}
+                                {isTwoByTwo
+                                  ? TwoByTwoStats(
+                                      data as TwoByTwoData | undefined
+                                    )
+                                  : ContTableStats(
+                                      data as ContTableData | undefined
+                                    )}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      ))}
+                    </div>
+                  </>
                 )
             : isTwoByTwo
             ? TwoByTwoStats(data.value as TwoByTwoData | undefined)
@@ -503,141 +623,863 @@ function MosaicViz(props: Props<Options>) {
 
   const areRequiredInputsSelected = useMemo(() => {
     if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
+    const areRequiredMosaicInputsSelected = Object.entries(
+      dataElementConstraints[0]
+    )
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
+    if (!isTwoByTwo) return areRequiredMosaicInputsSelected;
+    return (
+      areRequiredMosaicInputsSelected &&
+      vizConfig.xAxisReferenceValue &&
+      vizConfig.yAxisReferenceValue
+    );
   }, [
     dataElementConstraints,
     vizConfig.xAxisVariable,
     vizConfig.yAxisVariable,
+    vizConfig.xAxisReferenceValue,
+    vizConfig.yAxisReferenceValue,
   ]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'X-axis',
-              role: 'axis',
-            },
-            {
-              name: 'yAxisVariable',
-              label: 'Y-axis',
-              role: 'axis',
-            },
-            ...(options?.hideFacetInputs
-              ? []
-              : [
-                  {
-                    name: 'facetVariable',
-                    label: 'Facet',
-                    role: 'stratification',
-                  } as const,
-                ]),
-          ]}
-          entities={entities}
-          selectedVariables={{
-            xAxisVariable: vizConfig.xAxisVariable,
-            yAxisVariable: vizConfig.yAxisVariable,
-            facetVariable: vizConfig.facetVariable,
+  const classes = useInputStyles();
+
+  /**
+   * TEMPORARY:
+   * CoreUI's selection components need to be updated to enable disabling them. We lose the ability to convey messages via tooltips
+   * and cursors when we use pointerEvents: 'none'
+   *
+   * In the meantime, these disabled styles are applied when a variable is missing the vocabulary property because a variable's vocabulary
+   * determines the selection options.
+   */
+  const getReferenceValueStyles = (
+    variableHasVocabulary: boolean
+  ): React.CSSProperties => ({
+    ...twoByTwoInputStyle,
+    pointerEvents: variableHasVocabulary ? undefined : 'none',
+    opacity: variableHasVocabulary ? 1 : 0.5,
+  });
+
+  const twoByTwoReferenceValueInputs = !isTwoByTwo
+    ? undefined
+    : [
+        {
+          title: (
+            <>
+              <span style={{ marginRight: '0.5em' }}>
+                2x2 table quadrant A values
+              </span>
+            </>
+          ),
+          order: 75,
+          content: (
+            <>
+              <div style={getReferenceValueStyles(!!xAxisVariable?.vocabulary)}>
+                <Tooltip css={{}} title={'Required parameter'}>
+                  <span
+                    className={classes.label}
+                    style={
+                      !xAxisReferenceValue && xAxisVariable?.vocabulary
+                        ? requiredInputLabelStyle
+                        : undefined
+                    }
+                  >
+                    Columns (X-axis)<sup>*</sup>
+                  </span>
+                </Tooltip>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                  }}
+                >
+                  <SingleSelect
+                    items={
+                      xAxisVariable?.vocabulary
+                        ? xAxisVariable?.vocabulary?.map((vocab) => ({
+                            display: vocab,
+                            value: vocab,
+                          }))
+                        : []
+                    }
+                    value={xAxisReferenceValue}
+                    onSelect={onXAxisReferenceValueChange}
+                    buttonDisplayContent={
+                      xAxisReferenceValue ?? 'Select a value'
+                    }
+                  />
+                  <ClearSelectionButton
+                    onClick={() => onXAxisReferenceValueChange(undefined)}
+                    disabled={!xAxisReferenceValue}
+                    style={{ marginLeft: '0.5em' }}
+                  />
+                </div>
+              </div>
+              <div style={getReferenceValueStyles(!!yAxisVariable?.vocabulary)}>
+                <Tooltip css={{}} title={'Required parameter'}>
+                  <span
+                    className={classes.label}
+                    style={
+                      !yAxisReferenceValue && yAxisVariable?.vocabulary
+                        ? requiredInputLabelStyle
+                        : undefined
+                    }
+                  >
+                    Rows (Y-axis)<sup>*</sup>
+                  </span>
+                </Tooltip>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'nowrap',
+                    alignItems: 'center',
+                  }}
+                >
+                  <SingleSelect
+                    items={
+                      yAxisVariable?.vocabulary
+                        ? yAxisVariable?.vocabulary?.map((vocab) => ({
+                            display: vocab,
+                            value: vocab,
+                          }))
+                        : []
+                    }
+                    value={yAxisReferenceValue}
+                    onSelect={onYAxisReferenceValueChange}
+                    buttonDisplayContent={
+                      yAxisReferenceValue ?? 'Select a value'
+                    }
+                  />
+                  <ClearSelectionButton
+                    onClick={() => onYAxisReferenceValueChange(undefined)}
+                    disabled={!yAxisReferenceValue}
+                    style={{ marginLeft: '0.5em' }}
+                  />
+                </div>
+              </div>
+            </>
+          ),
+        },
+      ];
+
+  // 2x2 more information box banner content
+  const MoreInfoBoxBanner = () => {
+    const tableCellStyle = {
+      border: '1px solid black',
+      borderSpacing: '0px',
+      width: '7em',
+    };
+
+    return (
+      <>
+        The shorthand "A, B, C, D" is used to refer to specific quadrants in the
+        2x2 table:
+        <table
+          style={{
+            borderCollapse: 'collapse',
+            marginTop: '1em',
+            textAlign: 'center',
           }}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            facetVariable != null &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
-          }
-          outputEntity={outputEntity}
+        >
+          <tr>
+            <td style={{ width: '10em' }}>&nbsp;</td>
+            <td colSpan={3}>
+              <b>
+                Columns (X-axis):
+                <br />
+              </b>{' '}
+              outcome/disease status;
+              <br />
+              gold standard/reference test result
+            </td>
+          </tr>
+          <tr>
+            <td rowSpan={3}>
+              <b>Rows (Y-axis):</b>
+              <br />
+              exposure/risk factor; <br />
+              diagnostic test result
+            </td>
+            <td style={tableCellStyle}>&nbsp;</td>
+            <td style={tableCellStyle}>
+              <b>+</b>
+            </td>
+            <td style={tableCellStyle}>
+              <b>-</b>
+            </td>
+          </tr>
+          <tr>
+            <td style={tableCellStyle}>
+              <b>+</b>
+            </td>
+            <td style={tableCellStyle}>
+              <b>A</b>
+            </td>
+            <td style={tableCellStyle}>
+              <b>B</b>
+            </td>
+          </tr>
+          <tr>
+            <td style={tableCellStyle}>
+              <b>-</b>
+            </td>
+            <td style={tableCellStyle}>
+              <b>C</b>
+            </td>
+            <td style={tableCellStyle}>
+              <b>D</b>
+            </td>
+          </tr>
+        </table>
+        <br />
+        <b>
+          <i>If you want to investigate a measure of association:</i>
+        </b>
+        <ul>
+          <li>
+            Columns (X-axis): select a value for Quadrant A representing the
+            outcome or disease status of interest.
+          </li>
+          <li>
+            Rows (Y-axis): select a value for Quadrant A representing the
+            exposure or risk factor of interest.
+          </li>
+        </ul>
+        <br />
+        <b>
+          <i>If you want to investigate diagnostic test performance:</i>
+        </b>
+        <ul>
+          <li>
+            Columns (X-axis): select a value for Quadrant A representing a
+            positive result for the reference (gold standard) diagnostic test.
+          </li>
+          <li>
+            Rows (Y-axis): select values for Quadrant A representing a positive
+            result for the diagnostic test being evaluated.
+          </li>
+        </ul>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {/* 2x2 more information box banner */}
+      {isTwoByTwo && (
+        <div>
+          <Banner
+            banner={{
+              type: 'info',
+              // message is used as a basic text
+              message:
+                'Learn how to set up a 2x2 table in order for statistics to be calculated correctly.',
+              pinned: true,
+              intense: false,
+              additionalMessage: undefined,
+              // text for showMore link
+              showMoreLinkText: 'Read more...',
+              // text for showless link
+              showLessLinkText: 'Read less...',
+              // color for show more links
+              showMoreLinkColor: '#000000',
+              // is showMoreLink bold?
+              isShowMoreLinkBold: true,
+            }}
+            onClose={() => null}
+            // collapsible content: React.FC
+            CollapsibleContent={MoreInfoBoxBanner}
+          />
+        </div>
+      )}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
+          <InputVariables
+            inputs={[
+              {
+                name: 'xAxisVariable',
+                label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
+                role: 'axis',
+                titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+                styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
+              },
+              {
+                name: 'yAxisVariable',
+                label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
+                role: 'axis',
+                titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+                styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
+              },
+              ...(options?.hideFacetInputs
+                ? []
+                : [
+                    {
+                      name: 'facetVariable',
+                      label: 'Facet',
+                      role: 'stratification',
+                    } as const,
+                  ]),
+            ]}
+            customSections={
+              isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
+            }
+            entities={entities}
+            selectedVariables={{
+              xAxisVariable: vizConfig.xAxisVariable,
+              yAxisVariable: vizConfig.yAxisVariable,
+              facetVariable: vizConfig.facetVariable,
+            }}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              facetVariable != null &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              computation.descriptor.type === 'pass'
+                ? onShowMissingnessChange
+                : undefined
+            }
+            outputEntity={outputEntity}
+          />
+        </div>
+
+        <PluginError error={data.error} outputSize={outputSize} />
+        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        <LayoutComponent
+          isFaceted={isFaceted(data.value)}
+          plotNode={plotNode}
+          controlsNode={controlsNode}
+          tableGroupNode={tableGroupNode}
+          showRequiredInputsPrompt={!areRequiredInputsSelected}
+          isMosaicPlot={true}
         />
       </div>
-
-      <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
-      <LayoutComponent
-        isFaceted={isFaceted(data.value)}
-        plotNode={plotNode}
-        controlsNode={controlsNode}
-        tableGroupNode={tableGroupNode}
-        // statistics tab is disabled in 2x2, so no need to prompt for required inputs
-        showRequiredInputsPrompt={
-          !areRequiredInputsSelected &&
-          !(isTwoByTwo && activeTab === 'Statistics')
-        }
-        isMosaicPlot={true}
-      />
-    </div>
+    </>
   );
 }
 
-function TwoByTwoStats(props?: {
-  pValue?: number | string;
-  oddsRatio?: number | string;
-  orInterval?: number | string;
-  relativeRisk?: number | string;
-  rrInterval?: number | string;
-}) {
-  // Temporarily disabled---See https://github.com/VEuPathDB/web-eda/issues/463
-  if (1)
-    return (
-      <div
+// 2x2 stats table content
+const StatsCollapsibleBannerContent = () => {
+  const tableCellStyleNormal = {
+    border: '1px solid black',
+    borderSpacing: '0px',
+    width: '7em',
+  };
+
+  const tableCellStyleMoreWidth = {
+    border: '1px solid black',
+    borderSpacing: '0px',
+    width: '8em',
+  };
+
+  const tableCellStyleBold = {
+    border: '1px solid black',
+    borderSpacing: '0px',
+    width: '7em',
+  };
+
+  return (
+    <div>
+      The appropriate measure of association or diagnostic test performance
+      depends on the study design. The shorthand "A, B, C, D" is used to refer
+      to specific quadrants in the 2x2 contingency table:
+      <table
         style={{
-          margin: '15px 0',
-          height: '2em',
-          width: '750px',
+          borderCollapse: 'collapse',
+          marginTop: '1em',
+          textAlign: 'center',
         }}
       >
-        <i>Stats table coming soon!</i>
-      </div>
-    );
-
-  return props != null ? (
-    <div
-      className="MosaicVisualization-StatsTable"
-      style={{ margin: '15px 0' }}
-    >
-      <table>
-        {' '}
-        <tbody>
-          <tr>
-            <th></th>
-            <th className="numeric-header">Value</th>
-            <th className="numeric-header">95% confidence interval</th>
-          </tr>
-          <tr>
-            <th>P-value</th>
-            <td className="numeric">
-              {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
-            </td>
-            <td className="numeric">N/A</td>
-          </tr>
-          <tr>
-            <th>Odds ratio</th>
-            <td className="numeric">{props.oddsRatio ?? 'N/A'}</td>
-            <td className="numeric">{props.orInterval ?? 'N/A'}</td>
-          </tr>
-          <tr>
-            <th>Relative risk</th>
-            <td className="numeric">{props.relativeRisk ?? 'N/A'}</td>
-            <td className="numeric">{props.rrInterval ?? 'N/A'}</td>
-          </tr>
-        </tbody>
+        <tr>
+          <td style={{ width: '10em' }}>&nbsp;</td>
+          <td colSpan={4}>
+            <b>
+              Columns (X-axis):
+              <br />
+            </b>{' '}
+            outcome/disease status;
+            <br />
+            gold standard/reference test result
+          </td>
+        </tr>
+        <tr>
+          <td rowSpan={4}>
+            <b>Rows (Y-axis):</b>
+            <br />
+            exposure/risk factor; <br />
+            diagnostic test result
+          </td>
+          <td style={tableCellStyleBold}>&nbsp;</td>
+          <td style={tableCellStyleBold}>
+            <b>+</b>
+          </td>
+          <td style={tableCellStyleBold}>
+            <b>-</b>
+          </td>
+          <td style={tableCellStyleMoreWidth}>
+            <i>Row Totals</i>
+          </td>
+        </tr>
+        <tr>
+          <td style={tableCellStyleBold}>
+            <b>+</b>
+          </td>
+          <td style={tableCellStyleBold}>
+            <b>A</b>
+          </td>
+          <td style={tableCellStyleBold}>
+            <b>B</b>
+          </td>
+          <td style={tableCellStyleMoreWidth}>
+            <i>A + B</i>
+          </td>
+        </tr>
+        <tr>
+          <td style={tableCellStyleBold}>
+            <b>-</b>
+          </td>
+          <td style={tableCellStyleBold}>
+            <b>C</b>
+          </td>
+          <td style={tableCellStyleBold}>
+            <b>D</b>
+          </td>
+          <td style={tableCellStyleMoreWidth}>
+            <i>C + D</i>
+          </td>
+        </tr>
+        <tr>
+          <td style={tableCellStyleNormal}>
+            <i>Column Totals</i>
+          </td>
+          <td style={tableCellStyleNormal}>
+            <i>A + C</i>
+          </td>
+          <td style={tableCellStyleNormal}>
+            <i>B + D</i>
+          </td>
+          <td style={tableCellStyleMoreWidth}>
+            <i>n = A + B + C + D</i>
+          </td>
+        </tr>
       </table>
+      <br />
+      <b>All studies:</b>
+      <ul>
+        <li>
+          <b>
+            <i>
+              Chi-squared Statistic (&chi;<sup>2</sup>)
+            </i>
+          </b>
+          : &Sigma; (O<sub>i</sub> - EO<sub>i</sub>)<sup>2</sup> / EO
+          <sub>i</sub>
+          <ul>
+            <li>
+              Tests whether there is an association between the two 2x2 table
+              variables.
+            </li>
+            <li>If sample sizes are small, use Fisher’s Exact Test.</li>
+            <li>
+              For more information, see:{' '}
+              <a
+                href="https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/8-chi-squared-tests"
+                target="_blank"
+              >
+                https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/8-chi-squared-tests
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <b>
+            <i>Fisher’s Exact Test</i>
+          </b>
+          : [ (A + B)! (C + D)! (A + C)! (B + D)! ] / ( A! B! C! D! n! )
+          <ul>
+            <li>
+              Tests whether there is an association between the two 2x2 table
+              variables.
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <br />
+      <b>Studies that use prevalence data:</b>
+      <br />
+      <u>Cross-sectional Studies:</u>
+      <ul>
+        <li>
+          <b>
+            <i>Prevalence</i>
+          </b>
+          : (A + C) / (A + B + C + D)
+        </li>
+        <ul>
+          <li>
+            The proportion of the population who have the disease specified in
+            the columns (X-axis) at the examined point in time was [
+            <i>Prevalence</i>].
+          </li>
+        </ul>
+        <li>
+          <b>
+            <i>Odds Ratio</i>
+          </b>
+          : (A / B) / (C / D)
+        </li>
+        <ul>
+          <li>
+            The odds of having the disease specified in the columns (X-axis) was
+            [<i>Odds Ratio</i>] times as high in those exposed to the potential
+            risk factor indicated in the rows (Y-axis), as compared to those
+            unexposed.
+          </li>
+        </ul>
+      </ul>
+      <u>Case-Control Studies:</u>
+      <ul>
+        <li>
+          <b>
+            <i>Odds Ratio</i>
+          </b>
+          : (A / B) / (C / D)
+        </li>
+        <ul>
+          <li>
+            The odds of having the disease specified in the columns (X-axis) was
+            [<i>Odds Ratio</i>] times as high in those exposed to the potential
+            risk factor indicated in the rows (Y-axis) in the time period of
+            interest, as compared to those unexposed.
+          </li>
+        </ul>
+      </ul>
+      <br />
+      <b>Studies that use incidence data:</b>
+      <br />
+      <u>Cohort Studies and Randomized Controlled Trials:</u>
+      <ul>
+        <li>
+          <b>
+            <i>Risk Ratio</i>
+          </b>{' '}
+          (for studies using a population at risk approach): [A / (A + B)] / [C
+          / (C + D)]
+        </li>
+        <ul>
+          <li>
+            The risk of having the disease specified in the columns (X-axis)
+            over the follow-up period was [<i>Risk Ratio</i>] times as high in
+            those exposed to the potential risk factor indicated in the rows
+            (Y-axis), as compared to those unexposed.
+          </li>
+        </ul>
+      </ul>
+      <br />
+      <b>Studies that investigate diagnostic test performance:</b>
+      <ul>
+        <li>
+          <b>
+            <i>Sensitivity</i>
+          </b>
+          : A / (A + C)
+        </li>
+        <ul>
+          <li>
+            The probability of being positive by the diagnostic test indicated
+            in the rows (Y-axis) when the disease specified in the columns
+            (X-axis) is present is [<i>Sensitivity</i>].
+          </li>
+        </ul>
+
+        <li>
+          <b>
+            <i>Specificity</i>
+          </b>
+          : D / (B + D)
+        </li>
+        <ul>
+          <li>
+            The probability of being negative by the diagnostic test indicated
+            in the rows (Y-axis) when the disease specified in the columns
+            (X-axis) is absent is [<i>Specificity</i>].
+          </li>
+        </ul>
+
+        <li>
+          <b>
+            <i>Positive Predictive Value</i>
+          </b>
+          : A / (A + B)
+        </li>
+        <ul>
+          <li>
+            The probability that a person testing positive by the diagnostic
+            test indicated in the rows (Y-axis) actually has the disease
+            specified in the columns (X-axis) is [
+            <i>Positive Predictive Value</i>].
+          </li>
+        </ul>
+
+        <li>
+          <b>
+            <i>Negative Predictive Value</i>
+          </b>
+          : D / (C + D)
+        </li>
+        <ul>
+          <li>
+            The probability that a person testing negative by the diagnostic
+            test indicated in the rows (Y-axis) does NOT actually have the
+            disease specified in the columns (X-axis) is [
+            <i>Negative Predictive Value</i>].
+          </li>
+        </ul>
+      </ul>
     </div>
+  );
+};
+
+function TwoByTwoStats(props?: {
+  // reflecting 2x2 stats table content
+  chiSq?: twoByTwoStatsContent;
+  fisher?: twoByTwoStatsContent;
+  prevalence?: twoByTwoStatsContent;
+  oddsRatio?: twoByTwoStatsContent;
+  relativeRisk?: twoByTwoStatsContent;
+  sensitivity?: twoByTwoStatsContent;
+  specificity?: twoByTwoStatsContent;
+  posPredictiveValue?: twoByTwoStatsContent;
+  negPredictiveValue?: twoByTwoStatsContent;
+  facetVariableDetails?: facetVariableDetailsType;
+}) {
+  return props != null ? (
+    <>
+      {props.facetVariableDetails != null ? (
+        ''
+      ) : (
+        <div
+          style={{
+            width: '750px',
+            margin: '0 0 0 0.75rem',
+          }}
+        >
+          {/* 2x2 stats table collapsible banner */}
+          <Banner
+            banner={{
+              type: 'info',
+              // message is used as a basic text
+              message:
+                'Learn about appropriate statistics for each study design.',
+              pinned: true,
+              intense: false,
+              additionalMessage: undefined,
+              // text for showMore link
+              showMoreLinkText: 'Read more...',
+              // text for showless link
+              showLessLinkText: 'Read less...',
+              // color for show more links
+              showMoreLinkColor: '#000000',
+              // is showMoreLink bold?
+              isShowMoreLinkBold: true,
+            }}
+            onClose={() => null}
+            // collapsible content: React.FC
+            CollapsibleContent={StatsCollapsibleBannerContent}
+          />
+        </div>
+      )}
+      <div
+        className="stats-table"
+        style={
+          props.facetVariableDetails != null
+            ? { width: '750px' }
+            : { margin: '15px 0', marginLeft: '0.75rem', width: '750px' }
+        }
+      >
+        <table>
+          {' '}
+          <tbody>
+            <tr>
+              <td className="stats-table_top-empty-cell"></td>
+              <td className="stats-table_top-empty-cell"></td>
+              <th
+                className="stats-table_top-left-cell"
+                style={{ background: '#e0e0e0', textAlign: 'right' }}
+              >
+                Value
+              </th>
+              <th
+                className="stats-table_top-cell"
+                style={{
+                  background: '#e0e0e0',
+                  textAlign: 'center',
+                  paddingLeft: '2em',
+                }}
+              >
+                95% CI
+              </th>
+              <th
+                className="stats-table_top-right-cell"
+                style={{ background: '#e0e0e0', textAlign: 'right' }}
+              >
+                P-value
+              </th>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Association between 2 categorical variables
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Chi-squared (df=1)</b>
+              </td>
+              <td>{props.chiSq?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.chiSq?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.chiSq?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Association between 2 categorical variables
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Fisher's Exact Test</b>
+              </td>
+              <td>{props.fisher?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.fisher?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.fisher?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Cross-sectional studies
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Prevalence</b>
+              </td>
+              <td>{props.prevalence?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.prevalence?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.prevalence?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Case control or Cross-sectional: Risk ratio
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Odds ratio</b>
+              </td>
+              <td>{props.oddsRatio?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.oddsRatio?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.oddsRatio?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Cohort studies & randomized controlled trials
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Risk Ratio</b>
+              </td>
+              <td>{props.relativeRisk?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.relativeRisk?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.relativeRisk?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Diagnostic test performance
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Sensitivity</b>
+              </td>
+              <td>{props.sensitivity?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.sensitivity?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.sensitivity?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Diagnostic test performance
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Specificity</b>
+              </td>
+              <td>{props.specificity?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.specificity?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.specificity?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_leftmost-cell">
+                Diagnostic test performance
+              </td>
+              <td className="stats-table_middle-cell">
+                <b>Positive Predictive Value</b>
+              </td>
+              <td>{props.posPredictiveValue?.value ?? 'n/a'}</td>
+              <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
+                {props.posPredictiveValue?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_rightmost-cell">
+                {props.posPredictiveValue?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+            <tr>
+              <td className="stats-table_bottom-left-cell">
+                Diagnostic test performance
+              </td>
+              <td className="stats-table_bottom-middle-cell">
+                <b>Negative Predictive Value</b>
+              </td>
+              <td className="stats-table_bottom-cell">
+                {props.negPredictiveValue?.value ?? 'n/a'}
+              </td>
+              <td
+                className="stats-table_bottom-cell"
+                style={{ textAlign: 'center', paddingLeft: '2em' }}
+              >
+                {props.negPredictiveValue?.confidenceInterval ?? 'n/a'}
+              </td>
+              <td className="stats-table_bottom-right-cell">
+                {props.negPredictiveValue?.pvalue ?? 'n/a'}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </>
   ) : (
     <div
       style={{
@@ -671,16 +1513,16 @@ function ContTableStats(props?: {
           <tr>
             <th>P-value</th>
             <td className="numeric">
-              {props.pValue != null ? quantizePvalue(props.pValue) : 'N/A'}
+              {props.pValue != null ? quantizePvalue(props.pValue) : 'n/a'}
             </td>
           </tr>
           <tr>
             <th>Degrees of freedom</th>
-            <td className="numeric">{props.degreesFreedom ?? 'N/A'}</td>
+            <td className="numeric">{props.degreesFreedom ?? 'n/a'}</td>
           </tr>
           <tr>
             <th>Chi-squared</th>
-            <td className="numeric">{props.chisq ?? 'N/A'}</td>
+            <td className="numeric">{props.chisq ?? 'n/a'}</td>
           </tr>
         </tbody>
       </table>
@@ -831,11 +1673,17 @@ export function twoByTwoResponseToData(
         ),
         ...(stats != null
           ? {
-              pValue: stats[0].pvalue,
-              relativeRisk: stats[0].relativerisk,
-              rrInterval: stats[0].rrInterval,
-              oddsRatio: stats[0].oddsratio,
-              orInterval: stats[0].orInterval,
+              // new 2x2 stats table content
+              chiSq: stats[0].chiSq,
+              fisher: stats[0].fisher,
+              prevalence: stats[0].prevalence,
+              oddsRatio: stats[0].oddsRatio,
+              relativeRisk: stats[0].relativeRisk,
+              sensitivity: stats[0].sensitivity,
+              specificity: stats[0].specificity,
+              posPredictiveValue: stats[0].posPredictiveValue,
+              negPredictiveValue: stats[0].negPredictiveValue,
+              facetVariableDetails: stats[0].facetVariableDetails,
             }
           : {}),
       };
@@ -870,21 +1718,35 @@ function getRequestParams(
   yAxisVariable: VariableDescriptor,
   outputEntityId: string,
   facetVariable?: VariableDescriptor,
-  showMissingness?: boolean
-): MosaicRequestParams {
-  return {
+  showMissingness?: boolean,
+  xAxisReferenceValue?: string,
+  yAxisReferenceValue?: string
+): MosaicRequestParams | TwoByTwoRequestParams {
+  const baseConfig = {
     studyId,
     filters,
     config: {
       // add outputEntityId
-      outputEntityId: outputEntityId,
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
+      outputEntityId,
+      xAxisVariable,
+      yAxisVariable,
       facetVariable: facetVariable ? [facetVariable] : [],
       showMissingness:
         facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
     },
   };
+  if (!xAxisReferenceValue || !yAxisReferenceValue) {
+    return baseConfig as MosaicRequestParams;
+  } else {
+    return {
+      ...baseConfig,
+      config: {
+        ...baseConfig.config,
+        xAxisReferenceValue,
+        yAxisReferenceValue,
+      },
+    } as TwoByTwoRequestParams;
+  }
 }
 
 function reorderData(

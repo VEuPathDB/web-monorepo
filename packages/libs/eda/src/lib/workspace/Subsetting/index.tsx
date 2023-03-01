@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { Redirect, useHistory } from 'react-router';
+import { Redirect } from 'react-router';
 
-import { MultiFilterVariable, useMakeVariableLink, Variable } from '../../core';
+import { MultiFilterVariable, Variable } from '../../core';
 
 // Components
 import { VariableDetails } from '../Variable';
@@ -19,6 +19,7 @@ import { AnalysisState } from '../../core/hooks/analysis';
 // Functions
 import { cx } from '../Utils';
 import { findMultiFilterParent } from '../../core/utils/study-metadata';
+import { VariableLinkConfig } from '../../core/components/VariableLink';
 
 interface SubsettingProps {
   analysisState: AnalysisState;
@@ -31,6 +32,7 @@ interface SubsettingProps {
   variableId: string;
   totalCounts: EntityCounts | undefined;
   filteredCounts: EntityCounts | undefined;
+  variableLinkConfig: VariableLinkConfig;
 }
 
 /** Allow user to filter study data based on the value(s) of any available variable. */
@@ -40,6 +42,7 @@ export default function Subsetting({
   analysisState,
   totalCounts,
   filteredCounts,
+  variableLinkConfig,
 }: SubsettingProps) {
   // Obtain all entities and associated variables.
   const entities = useStudyEntities();
@@ -50,9 +53,7 @@ export default function Subsetting({
   // What is the current variable?
   const variable = entity?.variables.find((v) => v.id === variableId);
 
-  const history = useHistory();
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-  const makeVariableLink = useMakeVariableLink();
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -89,14 +90,7 @@ export default function Subsetting({
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}
           variableId={variable.id}
-          onChange={(variable) => {
-            if (variable) {
-              const { entityId, variableId } = variable;
-              const scrollPosition = [window.scrollX, window.scrollY];
-              history.push(makeVariableLink({ entityId, variableId }));
-              window.scrollTo(scrollPosition[0], scrollPosition[1]);
-            } else history.push('..');
-          }}
+          variableLinkConfig={variableLinkConfig}
         />
       </div>
       <div className="FilterChips">
@@ -110,6 +104,7 @@ export default function Subsetting({
               )
             )
           }
+          variableLinkConfig={variableLinkConfig}
           entities={entities}
           selectedEntityId={entity.id}
           selectedVariableId={variable.id}

@@ -218,7 +218,9 @@ function variableConstraintPredicate(
   );
 }
 
-export type VariablesByInputName = Partial<Record<string, VariableDescriptor>>;
+export type VariablesByInputName<T extends string = string> = Partial<
+  Record<T, VariableDescriptor>
+>;
 export type DataElementConstraintRecord = Partial<
   Record<string, DataElementConstraint>
 >;

@@ -120,9 +120,12 @@ export const VisualizationOverview = intersection([
 export type ComputationAppOverview = TypeOf<typeof ComputationAppOverview>;
 export const ComputationAppOverview = intersection([
   Thing,
-  partial({
+  type({
     visualizations: array(VisualizationOverview),
     projects: array(string),
+  }),
+  partial({
+    computeName: string,
   }),
 ]);
 

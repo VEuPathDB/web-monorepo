@@ -97,6 +97,8 @@ interface MapMarkers {
   xAxisVariable: Variable | undefined;
   /** various stats for birds eye etc */
   totalEntityCount: number | undefined;
+  /** If `totalEntityCount` tells you how many entites there are, `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. */
+  totalVisibleEntityCount: number | undefined;
   completeCasesAllVars: number | undefined;
   completeCases: CompleteCasesTable | undefined;
   /** the possible values for the overlay variable (e.g. back-end derived bin labels) */
@@ -276,6 +278,13 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   );
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
+
+  // Marker Data is relat
+  const totalVisibleEntityCount:
+    | number
+    | undefined = basicMarkerData.value?.markerData.reduce((acc, curr) => {
+    return acc + curr.entityCount;
+  }, 0);
 
   /**
    * Now get the overlay data
@@ -592,6 +601,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     markers,
     xAxisVariable: xAxisVariableAndEntity?.variable,
     outputEntity,
+    totalVisibleEntityCount,
     totalEntityCount,
     completeCasesAllVars,
     completeCases,
