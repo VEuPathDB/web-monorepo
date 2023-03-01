@@ -52,6 +52,7 @@ import {
   keys,
   uniqBy,
   filter,
+  isEqual,
 } from 'lodash';
 // directly use RadioButtonGroup instead of ScatterPlotControls
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
@@ -75,6 +76,7 @@ import {
   vocabularyWithMissingData,
   hasIncompleteCases,
   fixVarIdLabel,
+  getVariableLabel,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -129,6 +131,11 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+
+// add Slider and SliderWidgetProps
+import SliderWidget, {
+  SliderWidgetProps,
+} from '@veupathdb/components/lib/components/widgets/Slider';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -187,6 +194,7 @@ function createDefaultConfig(): ScatterplotConfig {
     dependentAxisLogScale: false,
     independentAxisValueSpec: 'Full',
     dependentAxisValueSpec: 'Full',
+    markerBodyOpacity: 0.5,
   };
 }
 
@@ -208,14 +216,19 @@ export const ScatterplotConfig = t.partial({
   dependentAxisLogScale: t.boolean,
   independentAxisValueSpec: t.string,
   dependentAxisValueSpec: t.string,
+  markerBodyOpacity: t.number,
 });
 
 interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
+  getComputedXAxisDetails?(
+    config: unknown
+  ): ComputedVariableDetails | undefined;
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
   getComputedOverlayVariable?(config: unknown): VariableDescriptor | undefined;
   hideTrendlines?: boolean;
+  hideLogScale?: boolean;
 }
 
 function ScatterplotViz(props: VisualizationProps<Options>) {
@@ -232,6 +245,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    computeJobStatus,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -249,16 +263,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
-  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
-    computation.descriptor.configuration
-  );
-  const computedOverlayVariableDescriptor = options?.getComputedOverlayVariable?.(
-    computation.descriptor.configuration
-  );
-
-  const providedOverlayVariableDescriptor = useMemo(
-    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
-    [options?.getOverlayVariable, computation.descriptor.configuration]
+  const [
+    computedXAxisDetails,
+    computedYAxisDetails,
+    computedOverlayVariableDescriptor,
+    providedOverlayVariableDescriptor,
+  ] = useMemo(
+    () => [
+      options?.getComputedXAxisDetails?.(computation.descriptor.configuration),
+      options?.getComputedYAxisDetails?.(computation.descriptor.configuration),
+      options?.getComputedOverlayVariable?.(
+        computation.descriptor.configuration
+      ),
+      options?.getOverlayVariable?.(computation.descriptor.configuration),
+    ],
+    [computation.descriptor.configuration, options]
   );
 
   const selectedVariables = useDeepValue({
@@ -345,6 +364,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
+      // check xAxisVariable is changed
+      const keepIndependentAxisSettings = isEqual(
+        selectedVariables.xAxisVariable,
+        vizConfig.xAxisVariable
+      );
+
       const {
         xAxisVariable,
         yAxisVariable,
@@ -365,12 +390,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             : vizConfig.valueSpecConfig,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        // set independentAxisRange undefined
-        independentAxisRange: undefined,
+        independentAxisRange: keepIndependentAxisSettings
+          ? vizConfig.independentAxisRange
+          : undefined,
         dependentAxisRange: undefined,
-        independentAxisLogScale: false,
+        independentAxisLogScale: keepIndependentAxisSettings
+          ? vizConfig.independentAxisLogScale
+          : false,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: 'Full',
+        independentAxisValueSpec: keepIndependentAxisSettings
+          ? vizConfig.independentAxisValueSpec
+          : 'Full',
         dependentAxisValueSpec: 'Full',
       });
       // close truncation warnings here
@@ -464,6 +494,15 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     true
   );
 
+  const onMarkerBodyOpacityChange = onChangeHandlerFactory<number>(
+    'markerBodyOpacity',
+    false,
+    false,
+    false, // reset valueSpec to Raw if true
+    false,
+    false
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -481,6 +520,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
+      // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
+      if (computedYAxisDetails && computeJobStatus !== 'complete')
+        return undefined;
+
       if (
         outputEntity == null ||
         filteredCounts.pending ||
@@ -506,29 +549,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
-      // check independentValueType/dependentValueType
-      const independentValueType = xAxisVariable?.type
-        ? xAxisVariable.type
-        : '';
-      const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
-
       // check variable inputs: this is necessary to prevent from data post
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
+      if (
+        computedXAxisDetails == null &&
+        (vizConfig.xAxisVariable == null || xAxisVariable == null)
+      )
         return undefined;
       else if (
         computedYAxisDetails == null &&
         (vizConfig.yAxisVariable == null || yAxisVariable == null)
       )
         return undefined;
-
-      const vars = [xAxisVariable, yAxisVariable, overlayVariable];
-      const unique = vars.filter((item, i, ar) =>
-        item == null ? true : ar.indexOf(item) === i
-      );
-      if (vars.length !== unique.length)
-        throw new Error(
-          'Variables must be unique. Please choose different variables.'
-        );
 
       // Convert valueSpecConfig to valueSpecValue for the data client request.
       let valueSpecValue = 'raw';
@@ -544,13 +575,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         filters,
         config: {
           outputEntityId: outputEntity.id,
-          valueSpec: valueSpecValue,
+          valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
           xAxisVariable: vizConfig.xAxisVariable,
           yAxisVariable: vizConfig.yAxisVariable,
           overlayVariable: vizConfig.overlayVariable,
           facetVariable: vizConfig.facetVariable
             ? [vizConfig.facetVariable]
-            : [],
+            : undefined,
           showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
         },
         computeConfig: computation.descriptor.configuration,
@@ -644,8 +675,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       );
       return scatterplotResponseToData(
         response,
-        independentValueType,
-        dependentValueType,
         showMissingOverlay,
         overlayVocabulary,
         overlayVariable,
@@ -681,6 +710,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       filteredCounts,
       computation.descriptor.configuration,
       computation.descriptor.type,
+      computeJobStatus,
       providedOverlayVariable,
       showLogScaleBanner,
       // // get data when changing independentAxisRange
@@ -695,7 +725,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // use hook
   const defaultIndependentAxisRange = useDefaultAxisRange(
-    xAxisVariable,
+    xAxisVariable ??
+      data?.value?.computedVariableMetadata?.find(
+        (v) => v.plotReference === 'xAxis'
+      ),
     data.value?.xMin,
     data.value?.xMinPos,
     data.value?.xMax,
@@ -1017,10 +1050,26 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateVizConfig
   );
 
+  const independentAxisLabel = getVariableLabel(
+    'xAxis',
+    data.value?.computedVariableMetadata,
+    entities,
+    'X-axis'
+  );
+
+  // If we're to use a computed variable but no variableId is given for the computed variable,
+  // simply use the placeholder display name given by the app.
+  // Otherwise, create the dependend axis label as usual.
   const dependentAxisLabel =
-    computedYAxisDetails?.placeholderDisplayName ??
-    variableDisplayWithUnit(yAxisVariable) ??
-    'Y-axis';
+    computedYAxisDetails?.placeholderDisplayName &&
+    !computedYAxisDetails?.variableId
+      ? computedYAxisDetails.placeholderDisplayName
+      : getVariableLabel(
+          'yAxis',
+          data.value?.computedVariableMetadata,
+          entities,
+          'Y-axis'
+        );
 
   // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
   // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
@@ -1041,9 +1090,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [data]
   );
 
-  // When we only have a computed y axis (and no provided x axis) then the y axis var
-  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
-  // like any other continuous variable.
+  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
+  // just like native vars (for example, in the variable coverage table).
+  const computedXAxisDescriptor = computedXAxisDetails
+    ? {
+        entityId: computedXAxisDetails.entityId,
+        variableId:
+          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
+
+  // When we only have a computed y axis (and no provided overlay) then the y axis var
+  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
   const computedYAxisDescriptor =
     !computedOverlayVariableDescriptor && computedYAxisDetails
       ? {
@@ -1082,6 +1140,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisLogScale,
       vizConfig.independentAxisValueSpec,
       vizConfig.dependentAxisValueSpec,
+      vizConfig.markerBodyOpacity,
     ]
   );
 
@@ -1158,10 +1217,28 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
+  // slider settings
+  const markerBodyOpacityContainerStyles = {
+    height: '4em',
+    width: '20em',
+    marginLeft: '1em',
+    marginBottom: '0.5em',
+  };
+
+  // implement gradient color for slider opacity
+  const colorSpecProps: SliderWidgetProps['colorSpec'] = {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    // normal slider color: e.g., from 0 to 1
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
+  };
+
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
     showSpinner: filteredCounts.pending || data.pending,
-    independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'X-axis',
+    independentAxisLabel: independentAxisLabel,
     dependentAxisLabel: dependentAxisLabel,
     displayLegend: false,
     independentValueType:
@@ -1196,6 +1273,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
       : undefined,
+    // need to define markerColorOpacity for faceted plot
+    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
     // ...neutralPaletteProps, // no-op. we have to handle colours here.
   };
 
@@ -1218,6 +1297,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ref={plotRef}
           data={data.value?.dataSetProcess}
           checkedLegendItems={checkedLegendItems}
+          markerBodyOpacity={vizConfig.markerBodyOpacity ?? 0.5}
         />
       )}
     </>
@@ -1301,19 +1381,68 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max < 0;
 
+  // add showBanner prop in this Viz
+  const [showBanner, setShowBanner] = useState(true);
+
   const controlsNode = (
     <>
-      {/* show Banner message if no smoothed mean exists */}
-      {!data.pending &&
-        vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
-        dataWithoutSmoothedMean != null &&
-        dataWithoutSmoothedMean?.length > 0 && (
-          <div style={{ width: 750, marginLeft: '1em' }}>
+      {/* pre-occupied space for banner:  1 line = 2.5em */}
+      {/* <div style={{ width: 750, marginLeft: '1em', minHeight: '2.5em' }}> */}
+      <div
+        style={{
+          width: 750,
+          marginLeft: '1em',
+          minHeight: '5.1em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        {/* show Banner message if no smoothed mean exists */}
+        {!data.pending &&
+          vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
+          dataWithoutSmoothedMean != null &&
+          dataWithoutSmoothedMean?.length > 0 && (
+            <div>
+              <Banner
+                banner={{
+                  type: 'warning',
+                  message:
+                    'Smoothed mean(s) were not calculated for one or more data series.',
+                  pinned: true,
+                  intense: false,
+                  // additionalMessage is shown next to message when clicking showMoreLinkText.
+                  // disappears when clicking showLess link
+                  // note that this additionalMessage prop is used to determine show more/less behavior or not
+                  // if undefined, then just show normal banner with message
+                  additionalMessage:
+                    'The sample size might be too small or the data too skewed.',
+                  // text for showMore link
+                  showMoreLinkText: 'Why?',
+                  // text for showless link
+                  showLessLinkText: 'Read less',
+                  // color for show more links
+                  showMoreLinkColor: '#006699',
+                  spacing: {
+                    margin: '0.3125em 0 0 0',
+                    padding: '0.3125em 0.625em',
+                  },
+                  fontSize: '1em',
+                  showBanner: showBanner,
+                  setShowBanner: setShowBanner,
+                }}
+              />
+            </div>
+          )}
+        {/* show log scale related Banner message unless plot mode of 'Raw' */}
+        {showLogScaleBanner && (
+          // <div style={{ width: 750, marginLeft: '1em', height: '2.8em' }}>
+          <div>
             <Banner
               banner={{
                 type: 'warning',
                 message:
-                  'Smoothed mean(s) were not calculated for one or more data series.',
+                  'Log scale is not available for plot modes with fitted lines.',
                 pinned: true,
                 intense: false,
                 // additionalMessage is shown next to message when clicking showMoreLinkText.
@@ -1321,43 +1450,26 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 // note that this additionalMessage prop is used to determine show more/less behavior or not
                 // if undefined, then just show normal banner with message
                 additionalMessage:
-                  'The sample size might be too small or the data too skewed.',
+                  'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
                 // text for showMore link
                 showMoreLinkText: 'Why?',
                 // text for showless link
                 showLessLinkText: 'Read less',
                 // color for show more links
                 showMoreLinkColor: '#006699',
+                spacing: {
+                  margin: '0.3125em 0 0 0',
+                  padding: '0.3125em 0.625em',
+                },
+                fontSize: '1em',
+                showBanner: showBanner,
+                setShowBanner: setShowBanner,
               }}
             />
           </div>
         )}
-      {/* show log scale related Banner message unless plot mode of 'Raw' */}
-      {showLogScaleBanner && (
-        <div style={{ width: 750, marginLeft: '1em' }}>
-          <Banner
-            banner={{
-              type: 'warning',
-              message:
-                'Log scale is not available for plot modes with fitted lines.',
-              pinned: true,
-              intense: false,
-              // additionalMessage is shown next to message when clicking showMoreLinkText.
-              // disappears when clicking showLess link
-              // note that this additionalMessage prop is used to determine show more/less behavior or not
-              // if undefined, then just show normal banner with message
-              additionalMessage:
-                'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
-              // text for showMore link
-              showMoreLinkText: 'Why?',
-              // text for showless link
-              showLessLinkText: 'Read less',
-              // color for show more links
-              showMoreLinkColor: '#006699',
-            }}
-          />
-        </div>
-      )}
+      </div>
+
       {!options?.hideTrendlines && (
         // use RadioButtonGroup directly instead of ScatterPlotControls
         <RadioButtonGroup
@@ -1366,6 +1478,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           selectedOption={vizConfig.valueSpecConfig ?? 'Raw'}
           onOptionSelected={(newValue: string) => {
             onValueSpecChange(newValue);
+            // to reuse Banner
+            setShowBanner(true);
           }}
           // disabledList prop is used to disable radio options (grayed out)
           disabledList={
@@ -1376,10 +1490,26 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           orientation={'horizontal'}
           labelPlacement={'end'}
           buttonColor={'primary'}
-          margins={['1em', '0', '0', '1em']}
+          margins={['0em', '0', '0', '1em']}
           itemMarginRight={50}
         />
       )}
+
+      {/* make a plot slide after plot mode for now */}
+      <SliderWidget
+        minimum={0}
+        maximum={1}
+        step={0.1}
+        value={vizConfig.markerBodyOpacity ?? 0.5}
+        debounceRateMs={250}
+        onChange={(newValue: number) => {
+          onMarkerBodyOpacityChange(newValue);
+        }}
+        containerStyles={markerBodyOpacityContainerStyles}
+        showLimits={true}
+        label={'Marker opacity'}
+        colorSpec={colorSpecProps}
+      />
 
       {/* axis range control UIs */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -1408,26 +1538,36 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             </div>
           </div>
 
-          <div
-            style={{
-              marginLeft: '1em',
-              marginTop: '-0.3em',
-              marginBottom: '0.8em',
-            }}
-          >
-            <Toggle
-              label={'Log scale (excludes values \u{2264} 0)'}
-              value={vizConfig.independentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedIndependentAllNegativeWarning(false);
-                onIndependentAxisLogScaleChange(newValue);
+          {!options?.hideLogScale && (
+            <div
+              style={{
+                marginLeft: '1em',
+                marginTop: '-0.3em',
+                marginBottom: '0.8em',
               }}
-              // disable log scale for date variable
-              disabled={scatterplotProps.independentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          {independentAllNegative && !dismissedIndependentAllNegativeWarning ? (
+            >
+              <Toggle
+                label={`Log scale ${
+                  vizConfig.independentAxisLogScale
+                    ? 'on (excludes values \u{2264} 0)'
+                    : 'off'
+                }`}
+                value={vizConfig.independentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedIndependentAllNegativeWarning(false);
+                  onIndependentAxisLogScaleChange(newValue);
+                  // to reuse Banner
+                  setShowBanner(true);
+                }}
+                // disable log scale for date variable
+                disabled={scatterplotProps.independentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+          )}
+          {independentAllNegative &&
+          !dismissedIndependentAllNegativeWarning &&
+          !options?.hideLogScale ? (
             <Notification
               title={''}
               text={
@@ -1480,7 +1620,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               }
             />
             {/* truncation notification */}
-            {truncatedIndependentAxisWarning && !independentAllNegative ? (
+            {truncatedIndependentAxisWarning &&
+            !independentAllNegative &&
+            data.value != null ? (
               <Notification
                 title={''}
                 text={truncatedIndependentAxisWarning}
@@ -1537,26 +1679,36 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             </div>
           </div>
 
-          <div
-            style={{
-              marginLeft: '1em',
-              marginTop: '-0.3em',
-              marginBottom: '0.8em',
-            }}
-          >
-            <Toggle
-              label={'Log scale (excludes values \u{2264} 0)'}
-              value={vizConfig.dependentAxisLogScale ?? false}
-              onChange={(newValue: boolean) => {
-                setDismissedDependentAllNegativeWarning(false);
-                onDependentAxisLogScaleChange(newValue);
+          {!options?.hideLogScale && (
+            <div
+              style={{
+                marginLeft: '1em',
+                marginTop: '-0.3em',
+                marginBottom: '0.8em',
               }}
-              // disable log scale for date variable
-              disabled={scatterplotProps.dependentValueType === 'date'}
-              themeRole="primary"
-            />
-          </div>
-          {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            >
+              <Toggle
+                label={`Log scale ${
+                  vizConfig.dependentAxisLogScale
+                    ? 'on (excludes values \u{2264} 0)'
+                    : 'off'
+                }`}
+                value={vizConfig.dependentAxisLogScale ?? false}
+                onChange={(newValue: boolean) => {
+                  setDismissedDependentAllNegativeWarning(false);
+                  onDependentAxisLogScaleChange(newValue);
+                  // to reuse Banner
+                  setShowBanner(true);
+                }}
+                // disable log scale for date variable
+                disabled={scatterplotProps.dependentValueType === 'date'}
+                themeRole="primary"
+              />
+            </div>
+          )}
+          {dependentAllNegative &&
+          !dismissedDependentAllNegativeWarning &&
+          !options?.hideLogScale ? (
             <Notification
               title={''}
               text={
@@ -1664,7 +1816,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
         outputEntity={outputEntity}
-        stratificationIsActive={overlayVariable != null}
+        stratificationIsActive={
+          overlayVariable != null || computedOverlayVariableDescriptor != null
+        }
         enableSpinner={
           xAxisVariable != null && yAxisVariable != null && !data.error
         }
@@ -1681,8 +1835,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           {
             role: 'X-axis',
             required: true,
-            display: variableDisplayWithUnit(xAxisVariable),
-            variable: vizConfig.xAxisVariable,
+            display: independentAxisLabel,
+            variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
           },
           {
             role: 'Y-axis',
@@ -1752,6 +1906,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               name: 'xAxisVariable',
               label: 'X-axis',
               role: 'axis',
+              readonlyValue: computedXAxisDetails
+                ? independentAxisLabel
+                : undefined,
             },
             {
               name: 'yAxisVariable',
@@ -1853,8 +2010,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
  */
 export function scatterplotResponseToData(
   response: ScatterPlotDataResponse,
-  independentValueType: string,
-  dependentValueType: string,
   showMissingOverlay: boolean = false,
   overlayVocabulary: string[] = [],
   overlayVariable?: Variable,
@@ -1904,8 +2059,12 @@ export function scatterplotResponseToData(
         overlayVariable
       ),
       modeValue,
-      independentValueType,
-      dependentValueType,
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'xAxis'
+      )?.dataType ?? '',
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'yAxis'
+      )?.dataType ?? '',
       showMissingOverlay,
       hasMissingData,
       overlayVariable,
@@ -2058,7 +2217,7 @@ function processInputData<T extends number | string>(
   const markerSymbol = (index: number) =>
     showMissingness && index === responseScatterplotData.length - 1
       ? 'x'
-      : 'circle-open';
+      : 'circle';
 
   // use type: scatter for faceted plot, otherwise scattergl
   const scatterPlotType = facetVariable != null ? 'scatter' : 'scattergl';
@@ -2227,7 +2386,6 @@ function processInputData<T extends number | string>(
         name: fixedOverlayLabel ?? 'Data',
         mode: modeValue,
         type: scatterPlotType, // for the raw data of the scatterplot
-        opacity: 0.7,
         marker: {
           color:
             seriesGradientColorscale?.length > 0 &&
@@ -2238,6 +2396,15 @@ function processInputData<T extends number | string>(
             seriesGradientColorscale?.length > 0
               ? markerSymbolGradient
               : markerSymbol(index),
+          // need to set marker.line for a transparent case (opacity != 1)
+          line: {
+            color:
+              seriesGradientColorscale?.length > 0 &&
+              markerSymbolGradient === 'circle'
+                ? markerColorsGradient
+                : markerColor(index),
+            width: 1,
+          },
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },

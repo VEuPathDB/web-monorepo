@@ -1,7 +1,8 @@
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useMemo } from 'react';
-import { AnalysisClient } from '../api/analysis-api';
+import { AnalysisClient } from '../api/AnalysisClient';
+import { ComputeClient } from '../api/ComputeClient';
 import DataClient from '../api/DataClient';
 import { DownloadClient } from '../api/DownloadClient';
 import SubsettingClient from '../api/SubsettingClient';
@@ -38,6 +39,14 @@ export function useConfiguredSubsettingClient(baseUrl: string) {
 export function useConfiguredDownloadClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
   return useMemo(() => new DownloadClient({ baseUrl }, wdkService), [
+    baseUrl,
+    wdkService,
+  ]);
+}
+
+export function useConfiguredComputeClient(baseUrl: string) {
+  const wdkService = useWdkServiceContext();
+  return useMemo(() => new ComputeClient({ baseUrl }, wdkService), [
     baseUrl,
     wdkService,
   ]);

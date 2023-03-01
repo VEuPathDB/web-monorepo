@@ -633,6 +633,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const controlsNode = (
     <>
+      {/* pre-occupied space for banner */}
+      <div style={{ width: 750, marginLeft: '1em', height: '5.1em' }} />
       {/* Plot mode */}
       <RadioButtonGroup
         label="Plot mode"
@@ -640,7 +642,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         options={['count', 'proportion']}
         optionLabels={['Count', 'Proportion']}
         buttonColor={'primary'}
-        margins={['1em', '0', '0', '1em']}
+        margins={['0em', '0', '0', '1em']}
         onOptionSelected={(newOption) => {
           if (newOption === 'proportion') {
             onValueSpecChange('proportion');

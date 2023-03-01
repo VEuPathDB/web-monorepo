@@ -6,8 +6,8 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { ComputationProps } from './Types';
 import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
-import { useStudyMetadata } from '../../hooks/workspace';
 import { AnalysisState } from '../../hooks/analysis';
+import { useComputeJobStatus } from './ComputeJobStatusHook';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -32,6 +32,10 @@ export function ComputationInstance(props: Props) {
   const { analysis, setComputations } = analysisState;
 
   const computation = useComputation(analysis, computationId);
+
+  if (analysis == null) throw new Error('Cannot find analysis.');
+
+  if (computation == null) throw new Error('Cannot find computation.');
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 
@@ -59,24 +63,32 @@ export function ComputationInstance(props: Props) {
 
   const { url } = useRouteMatch();
 
-  if (
-    analysis == null ||
-    computation == null ||
-    computationAppOverview.visualizations == null
-  )
-    return null;
+  const { jobStatus, createJob } = useComputeJobStatus(
+    analysis,
+    computation,
+    computationAppOverview.computeName
+  );
+
+  if (analysis == null || computation == null) return null;
+
+  const showTitle =
+    url.replace(/\/+$/, '').split('/').pop() === 'visualizations';
 
   // If we can have multiple app instances, add a title. Otherwise, use
   // the normal VisualizationsContainer.
   return (
     <div>
-      {baseUrl && (
-        <AppTitle
-          computation={computation}
-          condensed={
-            url.replace(/\/+$/, '').split('/').pop() === 'visualizations'
-          }
-        />
+      {baseUrl && showTitle && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-end',
+            gap: '1em',
+          }}
+        >
+          <AppTitle computation={computation} />
+        </div>
       )}
       <VisualizationsContainer
         analysisState={analysisState}
@@ -93,6 +105,8 @@ export function ComputationInstance(props: Props) {
         filteredCounts={filteredCounts}
         baseUrl={baseUrl}
         isSingleAppMode={isSingleAppMode}
+        computeJobStatus={jobStatus}
+        createComputeJob={createJob}
       />
     </div>
   );
@@ -101,31 +115,43 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  condensed: boolean;
 }
 
 function AppTitle(props: AppTitleProps) {
-  const { computation, condensed } = props;
+  const { computation } = props;
   const plugin = plugins[computation.descriptor?.type];
   const ConfigDescription = plugin
     ? plugin.configurationDescriptionComponent
     : undefined;
   const { configuration } = computation.descriptor;
 
-  return condensed ? (
+  return (
     <div style={{ lineHeight: 1.5 }}>
-      {plugin && configuration
-        ? ConfigDescription && <ConfigDescription computation={computation} />
+      {plugin
+        ? ConfigDescription && (
+            <ConfigDescription
+              computation={
+                configuration
+                  ? computation
+                  : {
+                      ...computation,
+                      descriptor: {
+                        ...computation.descriptor,
+                        configuration: {},
+                      },
+                    }
+              }
+            />
+          )
         : null}
     </div>
-  ) : null;
+  );
 }
 
 function useComputation(
   analysis: AnalysisState['analysis'],
   computationId: string
 ) {
-  const studyMetadata = useStudyMetadata();
   return useMemo(() => {
     const computation = analysis?.descriptor.computations.find(
       (computation) => computation.computationId === computationId
@@ -137,24 +163,6 @@ function useComputation(
         `Unknown computation type: ${computation.descriptor.type}.`
       );
     }
-
-    if (
-      !computePlugin.isConfigurationValid(computation.descriptor.configuration)
-    ) {
-      return {
-        ...computation,
-        descriptor: {
-          ...computation.descriptor,
-          configuration: computePlugin.createDefaultConfiguration(
-            studyMetadata.rootEntity
-          ),
-        },
-      };
-    }
     return computation;
-  }, [
-    analysis?.descriptor.computations,
-    computationId,
-    studyMetadata.rootEntity,
-  ]);
+  }, [analysis?.descriptor.computations, computationId]);
 }

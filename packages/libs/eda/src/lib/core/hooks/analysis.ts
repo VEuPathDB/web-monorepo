@@ -7,7 +7,7 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import {
   AnalysisClient,
   SingleAnalysisPatchRequest,
-} from '../api/analysis-api';
+} from '../api/AnalysisClient';
 import {
   Analysis,
   AnalysisSummary,
@@ -152,7 +152,9 @@ export function useAnalysis(
 
     if (!isSavedAnalysis(analysis)) {
       createAnalysis(analysis);
-    } else {
+    }
+    // Only save if the analysis has changed
+    else if (analysis !== analysisCache.get(analysis.analysisId)) {
       await analysisClient.updateAnalysis(analysis.analysisId, analysis);
       analysisCache.set(analysis.analysisId, analysis);
     }
@@ -479,10 +481,14 @@ function updateAnalysis<T>(
   nestedValueLens: Lens<NewAnalysis | Analysis, T>,
   nestedValue: T | ((nestedValue: T) => T)
 ) {
+  const oldNestedValue = nestedValueLens.get(analysis);
   const newNestedValue =
     typeof nestedValue === 'function'
-      ? (nestedValue as (nestedValue: T) => T)(nestedValueLens.get(analysis))
+      ? (nestedValue as (nestedValue: T) => T)(oldNestedValue)
       : nestedValue;
 
-  return nestedValueLens.set(newNestedValue)(analysis);
+  if (oldNestedValue !== newNestedValue) {
+    return nestedValueLens.set(newNestedValue)(analysis);
+  }
+  return analysis;
 }

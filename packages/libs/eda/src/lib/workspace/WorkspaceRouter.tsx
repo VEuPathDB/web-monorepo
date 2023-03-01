@@ -1,4 +1,6 @@
+/** @jsxImportSource @emotion/react */
 import { createTheme, ThemeProvider } from '@material-ui/core';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Route,
@@ -16,6 +18,8 @@ import {
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
   useConfiguredDownloadClient,
+  useConfiguredDataClient,
+  useConfiguredComputeClient,
 } from '../core/hooks/client';
 import { AllAnalyses } from './AllAnalyses';
 import { ImportAnalysis } from './ImportAnalysis';
@@ -29,10 +33,7 @@ import { StandaloneStudyPage } from './StandaloneStudyPage';
 const theme = createTheme(workspaceTheme);
 
 type Props = {
-  subsettingServiceUrl: string;
-  dataServiceUrl: string;
-  userServiceUrl: string;
-  downloadServiceUrl: string;
+  edaServiceUrl: string;
   exampleAnalysesAuthor?: number;
   showUnreleasedData?: boolean;
   /**
@@ -58,10 +59,7 @@ type Props = {
  * Router component for application.
  */
 export function WorkspaceRouter({
-  subsettingServiceUrl,
-  dataServiceUrl,
-  userServiceUrl,
-  downloadServiceUrl,
+  edaServiceUrl,
   exampleAnalysesAuthor,
   sharingUrlPrefix,
   showLoginForm,
@@ -69,11 +67,15 @@ export function WorkspaceRouter({
   showUnreleasedData = false,
   enableFullScreenApps = false,
 }: Props) {
+  const coreUITheme = useUITheme();
+  const coreUIPrimaryColor = coreUITheme?.palette.primary;
   const { path, url } = useRouteMatch();
 
-  const subsettingClient = useConfiguredSubsettingClient(subsettingServiceUrl);
-  const analysisClient = useConfiguredAnalysisClient(userServiceUrl);
-  const downloadClient = useConfiguredDownloadClient(downloadServiceUrl);
+  const subsettingClient = useConfiguredSubsettingClient(edaServiceUrl);
+  const dataClient = useConfiguredDataClient(edaServiceUrl);
+  const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
+  const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
+  const computeClient = useConfiguredComputeClient(edaServiceUrl);
 
   // The following useEffect handles when the user presses the back button and
   // is inadvertently moved back to a new analysis URL from their saved analysis URL
@@ -150,163 +152,172 @@ export function WorkspaceRouter({
   return (
     <ThemeProvider theme={theme}>
       <DocumentationContainer>
-        <Switch>
-          <Route
-            path={path}
-            exact
-            render={() => (
-              <AllAnalyses
-                analysisClient={analysisClient}
-                subsettingClient={subsettingClient}
-                exampleAnalysesAuthor={exampleAnalysesAuthor}
-                showLoginForm={showLoginForm}
-              />
-            )}
-          />
-          {/* replacing/redirecting double slashes url with single slash one */}
-          <Route
-            exact
-            strict
-            path="(.*//+.*)"
-            render={({ location }) => (
-              <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
-            )}
-          />
-          <Route
-            path={`${path}/documentation/:name`}
-            exact
-            render={(props: RouteComponentProps<{ name: string }>) => (
-              <Documentation documentName={props.match.params.name} />
-            )}
-          />
-          <Route
-            path={`${path}/studies`}
-            exact
-            render={() => (
-              <StudyList
-                baseUrl={url}
-                subsettingServiceUrl={subsettingServiceUrl}
-              />
-            )}
-          />
-          <Route
-            path={`${path}/public`}
-            render={() => (
-              <PublicAnalysesRoute
-                analysisClient={analysisClient}
-                exampleAnalysesAuthor={exampleAnalysesAuthor}
-              />
-            )}
-          />
-          <Route
-            path={`${path}/:studyId`}
-            exact
-            render={(props: RouteComponentProps<{ studyId: string }>) => (
-              <WorkspaceContainer
-                {...props.match.params}
-                subsettingServiceUrl={subsettingServiceUrl}
-                dataServiceUrl={dataServiceUrl}
-                userServiceUrl={userServiceUrl}
-                downloadServiceUrl={downloadServiceUrl}
-              >
-                <StandaloneStudyPage
-                  studyId={props.match.params.studyId}
-                  showUnreleasedData={showUnreleasedData}
-                />
-              </WorkspaceContainer>
-            )}
-          />
-          <Route
-            path={`${path}/:studyId/new`}
-            render={(props: RouteComponentProps<{ studyId: string }>) => (
-              <WorkspaceContainer
-                {...props.match.params}
-                subsettingServiceUrl={subsettingServiceUrl}
-                dataServiceUrl={dataServiceUrl}
-                userServiceUrl={userServiceUrl}
-                downloadServiceUrl={downloadServiceUrl}
-              >
-                <AnalysisPanel
-                  {...props.match.params}
-                  sharingUrlPrefix={sharingUrlPrefix}
+        <div
+          css={{
+            '& .wdk-SaveableTextEditor-Buttons .edit': {
+              color:
+                coreUIPrimaryColor &&
+                coreUIPrimaryColor.hue[coreUIPrimaryColor.level] +
+                  ' !important',
+            },
+          }}
+        >
+          <Switch>
+            <Route
+              path={path}
+              exact
+              render={() => (
+                <AllAnalyses
+                  analysisClient={analysisClient}
+                  subsettingClient={subsettingClient}
+                  exampleAnalysesAuthor={exampleAnalysesAuthor}
                   showLoginForm={showLoginForm}
-                  hideSavedAnalysisButtons
-                  downloadClient={downloadClient}
-                  singleAppMode={singleAppMode}
-                  showUnreleasedData={showUnreleasedData}
-                  enableFullScreenApps={enableFullScreenApps}
                 />
-              </WorkspaceContainer>
-            )}
-          />
-          <Route
-            path={`${path}/:studyId/~latest`}
-            render={(props: RouteComponentProps<{ studyId: string }>) => (
-              <LatestAnalysis
-                {...props.match.params}
-                replaceRegexp={/~latest/}
-                analysisClient={analysisClient}
-              />
-            )}
-          />
-          <Route
-            exact
-            path={`${path}/:analysisId/import`}
-            render={(
-              props: RouteComponentProps<{
-                analysisId: string;
-              }>
-            ) => {
-              return (
-                <ImportAnalysis
+              )}
+            />
+            {/* replacing/redirecting double slashes url with single slash one */}
+            <Route
+              exact
+              strict
+              path="(.*//+.*)"
+              render={({ location }) => (
+                <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
+              )}
+            />
+            <Route
+              path={`${path}/documentation/:name`}
+              exact
+              render={(props: RouteComponentProps<{ name: string }>) => (
+                <Documentation documentName={props.match.params.name} />
+              )}
+            />
+            <Route
+              path={`${path}/studies`}
+              exact
+              render={() => <StudyList baseUrl={url} />}
+            />
+            <Route
+              path={`${path}/public`}
+              render={() => (
+                <PublicAnalysesRoute
+                  analysisClient={analysisClient}
+                  exampleAnalysesAuthor={exampleAnalysesAuthor}
+                />
+              )}
+            />
+            <Route
+              path={`${path}/:studyId`}
+              exact
+              render={(props: RouteComponentProps<{ studyId: string }>) => (
+                <WorkspaceContainer
                   {...props.match.params}
+                  subsettingClient={subsettingClient}
+                  dataClient={dataClient}
+                  analysisClient={analysisClient}
+                  downloadClient={downloadClient}
+                  computeClient={computeClient}
+                >
+                  <StandaloneStudyPage
+                    studyId={props.match.params.studyId}
+                    showUnreleasedData={showUnreleasedData}
+                  />
+                </WorkspaceContainer>
+              )}
+            />
+            <Route
+              path={`${path}/:studyId/new`}
+              render={(props: RouteComponentProps<{ studyId: string }>) => (
+                <WorkspaceContainer
+                  {...props.match.params}
+                  subsettingClient={subsettingClient}
+                  dataClient={dataClient}
+                  analysisClient={analysisClient}
+                  downloadClient={downloadClient}
+                  computeClient={computeClient}
+                >
+                  <AnalysisPanel
+                    {...props.match.params}
+                    sharingUrlPrefix={sharingUrlPrefix}
+                    showLoginForm={showLoginForm}
+                    hideSavedAnalysisButtons
+                    downloadClient={downloadClient}
+                    singleAppMode={singleAppMode}
+                    showUnreleasedData={showUnreleasedData}
+                    enableFullScreenApps={enableFullScreenApps}
+                  />
+                </WorkspaceContainer>
+              )}
+            />
+            <Route
+              path={`${path}/:studyId/~latest`}
+              render={(props: RouteComponentProps<{ studyId: string }>) => (
+                <LatestAnalysis
+                  {...props.match.params}
+                  replaceRegexp={/~latest/}
                   analysisClient={analysisClient}
                 />
-              );
-            }}
-          />
-          <Route
-            exact
-            path={`${path}/:studyId/:analysisId/import`}
-            render={(
-              props: RouteComponentProps<{
-                analysisId: string;
-                studyId: string;
-              }>
-            ) => (
-              <Redirect
-                to={`${path}/${props.match.params.analysisId}/import`}
-              />
-            )}
-          />
-          <Route
-            path={`${path}/:studyId/:analysisId`}
-            render={(
-              props: RouteComponentProps<{
-                studyId: string;
-                analysisId: string;
-              }>
-            ) => (
-              <WorkspaceContainer
-                {...props.match.params}
-                subsettingServiceUrl={subsettingServiceUrl}
-                dataServiceUrl={dataServiceUrl}
-                userServiceUrl={userServiceUrl}
-                downloadServiceUrl={downloadServiceUrl}
-              >
-                <AnalysisPanel
-                  {...props.match.params}
-                  sharingUrlPrefix={sharingUrlPrefix}
-                  showLoginForm={showLoginForm}
-                  downloadClient={downloadClient}
-                  singleAppMode={singleAppMode}
-                  showUnreleasedData={showUnreleasedData}
-                  enableFullScreenApps={enableFullScreenApps}
+              )}
+            />
+            <Route
+              exact
+              path={`${path}/:analysisId/import`}
+              render={(
+                props: RouteComponentProps<{
+                  analysisId: string;
+                }>
+              ) => {
+                return (
+                  <ImportAnalysis
+                    {...props.match.params}
+                    analysisClient={analysisClient}
+                  />
+                );
+              }}
+            />
+            <Route
+              exact
+              path={`${path}/:studyId/:analysisId/import`}
+              render={(
+                props: RouteComponentProps<{
+                  analysisId: string;
+                  studyId: string;
+                }>
+              ) => (
+                <Redirect
+                  to={`${path}/${props.match.params.analysisId}/import`}
                 />
-              </WorkspaceContainer>
-            )}
-          />
-        </Switch>
+              )}
+            />
+            <Route
+              path={`${path}/:studyId/:analysisId`}
+              render={(
+                props: RouteComponentProps<{
+                  studyId: string;
+                  analysisId: string;
+                }>
+              ) => (
+                <WorkspaceContainer
+                  {...props.match.params}
+                  subsettingClient={subsettingClient}
+                  dataClient={dataClient}
+                  analysisClient={analysisClient}
+                  downloadClient={downloadClient}
+                  computeClient={computeClient}
+                >
+                  <AnalysisPanel
+                    {...props.match.params}
+                    sharingUrlPrefix={sharingUrlPrefix}
+                    showLoginForm={showLoginForm}
+                    downloadClient={downloadClient}
+                    singleAppMode={singleAppMode}
+                    showUnreleasedData={showUnreleasedData}
+                    enableFullScreenApps={enableFullScreenApps}
+                  />
+                </WorkspaceContainer>
+              )}
+            />
+          </Switch>
+        </div>
       </DocumentationContainer>
     </ThemeProvider>
   );

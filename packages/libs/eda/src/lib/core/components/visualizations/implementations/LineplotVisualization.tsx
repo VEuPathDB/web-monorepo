@@ -29,7 +29,7 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
@@ -122,6 +122,8 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 const plotContainerStyles = {
   width: 750,
@@ -344,7 +346,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const keepBin = isEqual(
+      const keepIndependentAxisSettings = isEqual(
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -366,14 +368,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       updateVizConfig({
         ...selectedVariables,
-        binWidth: keepBin ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepIndependentAxisSettings
+          ? vizConfig.binWidthTimeUnit
+          : undefined,
         // set valueSpec as Raw when yAxisVariable = date
         valueSpecConfig: valueSpec,
         // set undefined for variable change
         checkedLegendItems: undefined,
         // axis range control: set independentAxisRange undefined
-        independentAxisRange: undefined,
+        independentAxisRange: keepIndependentAxisSettings
+          ? vizConfig.independentAxisRange
+          : undefined,
         dependentAxisRange: undefined,
         ...(keepValues
           ? {}
@@ -384,7 +390,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }),
         independentAxisLogScale: false,
         dependentAxisLogScale: false,
-        independentAxisValueSpec: 'Full',
+        independentAxisValueSpec: keepIndependentAxisSettings
+          ? vizConfig.independentAxisValueSpec
+          : 'Full',
         dependentAxisValueSpec:
           yAxisVar != null
             ? isSuitableCategoricalVariable(yAxisVar)
@@ -503,7 +511,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     'showErrorBars',
     true,
     false,
-    true, // reset dependentAxisLogScale
+    false, // reset dependentAxisLogScale
     false,
     false,
     false,
@@ -513,7 +521,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const onUseBinningChange = onChangeHandlerFactory<boolean>(
     'useBinning',
     false,
-    true, // reset independentAxisLogScale
+    false, // reset independentAxisLogScale
     false,
     false,
     false,
@@ -533,7 +541,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     false,
     false,
     false,
-    true, // reset useBinning
+    false, // reset useBinning
     false,
     true,
     false
@@ -545,7 +553,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     false,
     false,
     false,
-    true, // reset showErrorBars
+    false, // reset showErrorBars
     false,
     true
   );
@@ -941,7 +949,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
         <FacetedLinePlot
-          data={data.value?.dataSetProcess}
+          data={
+            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
+            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
+              ? undefined
+              : data.value?.dataSetProcess
+          }
           // considering axis range control
           componentProps={lineplotProps}
           modalComponentProps={{
@@ -955,7 +968,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
         <LinePlot
           {...lineplotProps}
           ref={plotRef}
-          data={data.value?.dataSetProcess}
+          data={
+            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
+            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
+              ? undefined
+              : data.value?.dataSetProcess
+          }
           // add controls
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
@@ -983,7 +1001,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     yMinMaxDataRange?.max != null &&
     yMinMaxDataRange.max <= 0;
 
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
 
   const widgetHeight = '4em';
 
@@ -1098,6 +1116,68 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const controlsNode = (
     <>
+      {/* pre-occupied space for Banner: 1 line = 2.5em */}
+      {/* <div style={{ width: 750, marginLeft: '1em', minHeight: '5em' }}> */}
+      <div
+        style={{
+          width: 750,
+          marginLeft: '1em',
+          minHeight: '5.1em',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        {/* independent axis banner */}
+        {vizConfig.independentAxisLogScale && vizConfig.useBinning && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message: 'Log scale and binning are not available concurrently.',
+              pinned: true,
+              intense: false,
+              additionalMessage:
+                'Binning of non-log transformed raw data cannot be accurately plotted on log scale axes.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
+              spacing: {
+                margin: '0.3125em 0 0 0',
+                padding: '0.3125em 0.625em',
+              },
+              fontSize: '1em',
+            }}
+          />
+        )}
+        {/* dependent axis banner */}
+        {vizConfig.dependentAxisLogScale && vizConfig.showErrorBars && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message:
+                'Y-axis log scale and error bars are not available concurrently.',
+              pinned: true,
+              intense: false,
+              additionalMessage:
+                'Error bars for non-log transformed raw data cannot be accurately plotted on log scale y-axis.',
+              // text for showMore link
+              showMoreLinkText: 'Why?',
+              // text for showless link
+              showLessLinkText: 'Read less',
+              // color for show more links
+              showMoreLinkColor: '#006699',
+              spacing: {
+                margin: '0.3125em 0 0 0',
+                padding: '0.3125em 0.625em',
+              },
+              fontSize: '1em',
+            }}
+          />
+        )}
+      </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {/* X-axis controls   */}
@@ -1107,6 +1187,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              marginTop: '-1em',
             }}
           >
             <LabelledGroup label="X-axis controls"> </LabelledGroup>
@@ -1137,10 +1218,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.useBinning)
-                  enqueueSnackbar(
-                    'Binning is no longer appropriate and has been disabled'
-                  );
               }}
               disabled={
                 lineplotProps.independentValueType === 'date' ||
@@ -1159,7 +1236,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
             }}
           >
             {independentAllNegative &&
-            !dismissedIndependentAllNegativeWarning ? (
+            !dismissedIndependentAllNegativeWarning &&
+            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
               <Notification
                 title={''}
                 text={
@@ -1178,10 +1257,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                if (newValue && vizConfig.independentAxisLogScale)
-                  enqueueSnackbar(
-                    'Log scale is no longer appropriate and has been disabled'
-                  );
               }}
               disabled={neverUseBinning}
               themeRole="primary"
@@ -1269,7 +1344,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               }
             />
             {/* truncation notification */}
-            {truncatedIndependentAxisWarning && !independentAllNegative ? (
+            {truncatedIndependentAxisWarning &&
+            !independentAllNegative &&
+            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
               <Notification
                 title={''}
                 text={truncatedIndependentAxisWarning}
@@ -1300,6 +1378,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             position: 'relative',
             marginLeft: '-1px',
             top: '1.5em',
+            marginTop: '-1em',
           }}
         >
           {' '}
@@ -1312,6 +1391,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
+              marginTop: '-1em',
             }}
           >
             <LabelledGroup label="Y-axis controls"> </LabelledGroup>
@@ -1342,10 +1422,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.showErrorBars)
-                  enqueueSnackbar(
-                    'Error bars are no longer appropriate and have been disabled'
-                  );
               }}
               disabled={lineplotProps.dependentValueType === 'date'}
               themeRole="primary"
@@ -1360,7 +1436,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               marginLeft: '1em',
             }}
           >
-            {dependentAllNegative && !dismissedDependentAllNegativeWarning ? (
+            {dependentAllNegative &&
+            !dismissedDependentAllNegativeWarning &&
+            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
               <Notification
                 title={''}
                 text={
@@ -1379,10 +1458,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                if (newValue && vizConfig.dependentAxisLogScale)
-                  enqueueSnackbar(
-                    'Log scale is no longer appropriate and has been disabled'
-                  );
               }}
               disabled={neverShowErrorBars}
               themeRole="primary"
@@ -1434,7 +1509,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
               }
             />
             {/* truncation notification */}
-            {truncatedDependentAxisWarning && !dependentAllNegative ? (
+            {truncatedDependentAxisWarning &&
+            !dependentAllNegative &&
+            !(vizConfig.independentAxisLogScale && vizConfig.useBinning) &&
+            !(vizConfig.dependentAxisLogScale && vizConfig.showErrorBars) ? (
               <Notification
                 title={''}
                 text={truncatedDependentAxisWarning}
@@ -1567,9 +1645,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <div className={classes.label}>
-            Function<sup>*</sup>
-          </div>
+          <Tooltip css={{}} title={'Required parameter'}>
+            <div className={classes.label}>
+              Function<sup>*</sup>
+            </div>
+          </Tooltip>
           <SingleSelect
             onSelect={onValueSpecChange}
             value={vizConfig.valueSpecConfig}
@@ -1587,16 +1667,22 @@ function LineplotViz(props: VisualizationProps<Options>) {
             gridTemplateRows: 'repeat(3, auto)',
           }}
         >
-          <div
-            className={classes.label}
-            style={{
-              gridColumn: 1,
-              gridRow: 2,
-              color: !areRequiredInputsSelected ? '#dd314e' : '',
-            }}
-          >
-            Proportion<sup>*</sup>&nbsp;=
-          </div>
+          <Tooltip css={{}} title={'Required parameter'}>
+            <div
+              className={classes.label}
+              style={{
+                gridColumn: 1,
+                gridRow: 2,
+                color:
+                  vizConfig.numeratorValues?.length &&
+                  vizConfig.denominatorValues?.length
+                    ? undefined
+                    : requiredInputLabelStyle.color,
+              }}
+            >
+              Proportion<sup>*</sup>&nbsp;=
+            </div>
+          </Tooltip>
           <div
             className={classes.input}
             style={{
@@ -1988,6 +2074,7 @@ function getRequestParams(
   const valueSpec = valueSpecLookup[valueSpecConfig];
 
   // define viewport based on independent axis range: need to check undefined case
+  // also no viewport change regardless of the change of overlayVariable
   const viewport =
     vizConfig?.independentAxisRange?.min != null &&
     vizConfig?.independentAxisRange?.max != null
@@ -2174,9 +2261,7 @@ function processInputData(
               extraTooltipText: categoricalMode
                 ? el.binSampleSize.map(
                     (bss) =>
-                      `n: ${(bss as { numeratorN: number }).numeratorN}/${
-                        (bss as { denominatorN: number }).denominatorN
-                      }`
+                      `n: ${(bss as { denominatorN: number }).denominatorN}`
                   )
                 : el.binSampleSize.map(
                     (bss) => `n: ${(bss as { N: number }).N}`

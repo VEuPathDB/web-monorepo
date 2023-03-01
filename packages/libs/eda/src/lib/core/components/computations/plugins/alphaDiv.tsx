@@ -1,23 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
-import { H6 } from '@veupathdb/coreui';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
-import { findCollections } from '../../../utils/study-metadata';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import { useMemo } from 'react';
+import { ComputationStepContainer } from '../ComputationStepContainer';
+import { sharedConfigCssStyles } from './abundance';
 
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AlphaDivConfig = t.type({
-  name: t.string,
   collectionVariable: VariableDescriptor,
   alphaDivMethod: t.string,
 });
@@ -25,7 +23,7 @@ export const AlphaDivConfig = t.type({
 export const plugin: ComputationPlugin = {
   configurationComponent: AlphaDivConfiguration,
   configurationDescriptionComponent: AlphaDivConfigDescriptionComponent,
-  createDefaultConfiguration,
+  createDefaultConfiguration: () => undefined,
   isConfigurationValid: AlphaDivConfig.is,
   visualizationPlugins: {
     boxplot: boxplotVisualization.withOptions({
@@ -64,13 +62,21 @@ function AlphaDivConfigDescriptionComponent({
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
   const { configuration } = computation.descriptor;
+  const collectionVariable =
+    'collectionVariable' in configuration
+      ? configuration.collectionVariable
+      : undefined;
+  const alphaDivMethod =
+    'alphaDivMethod' in configuration
+      ? configuration.alphaDivMethod
+      : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
         variableId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
-      configuration.collectionVariable
+      collectionVariable
     )
   );
   return (
@@ -78,36 +84,29 @@ function AlphaDivConfigDescriptionComponent({
       <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
         Data:{' '}
         <span style={{ fontWeight: 300 }}>
-          {`${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`}
+          {updatedCollectionVariable ? (
+            `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {configuration.alphaDivMethod[0].toUpperCase() +
-            configuration.alphaDivMethod.slice(1)}
+          {alphaDivMethod ? (
+            alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
     </>
   );
 }
 
-function createDefaultConfiguration(rootEntity: StudyEntity): AlphaDivConfig {
-  const collections = findCollections(rootEntity);
-  if (collections.length === 0)
-    throw new Error('Could not find any collections for this app.');
-  return {
-    name: 'AlphaDivComputation',
-    collectionVariable: {
-      variableId: collections[0].id,
-      entityId: collections[0].entityId,
-    },
-    alphaDivMethod: 'shannon',
-  };
-}
-
 // Include available methods in this array.
-const ALPHA_DIV_METHODS = ['shannon', 'simpson', 'evenness'];
+const ALPHA_DIV_METHODS = ['shannon', 'simpson'];
 
 export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const {
@@ -124,7 +123,6 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
 
   assertComputationWithConfig<AlphaDivConfig>(computation, Computation);
   const configuration = computation.descriptor.configuration;
-  const { alphaDivMethod, collectionVariable } = configuration;
 
   const changeConfigHandler = useConfigChangeHandler<AlphaDivConfig>(
     analysisState,
@@ -144,50 +142,66 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
-    const selectedItem = collectionVarItems.find((item) =>
-      isEqual(item.value, {
-        variableId: collectionVariable.variableId,
-        entityId: collectionVariable.entityId,
-      })
-    );
-    return selectedItem ?? collectionVarItems[0];
-  }, [collectionVarItems, collectionVariable]);
+    if (configuration && 'collectionVariable' in configuration) {
+      const selectedItem = collectionVarItems.find((item) =>
+        isEqual(item.value, {
+          variableId: configuration.collectionVariable.variableId,
+          entityId: configuration.collectionVariable.entityId,
+        })
+      );
+      return selectedItem;
+    }
+  }, [collectionVarItems, configuration]);
+
+  const alphaDivMethod = useMemo(() => {
+    if (configuration && 'alphaDivMethod' in configuration) {
+      return configuration.alphaDivMethod;
+    }
+  }, [configuration]);
 
   return (
-    <div style={{ display: 'flex', gap: '0 2em', padding: '1em 0' }}>
-      <H6 additionalStyles={{ margin: 0 }}>
-        {computationAppOverview.displayName[0].toUpperCase() +
-          computationAppOverview.displayName.substring(1).toLowerCase() +
-          ' parameters:'}
-      </H6>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto 1fr',
-          gap: '.5em 1em',
-          width: '800px',
-          justifyItems: 'start',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
-        <SingleSelect
-          value={selectedCollectionVar.value}
-          buttonDisplayContent={selectedCollectionVar.display}
-          items={collectionVarItems}
-          onSelect={partial(changeConfigHandler, 'collectionVariable')}
-        />
-        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Method</div>
-        <SingleSelect
-          value={alphaDivMethod}
-          buttonDisplayContent={alphaDivMethod}
-          items={ALPHA_DIV_METHODS.map((method) => ({
-            value: method,
-            display: method,
-          }))}
-          onSelect={partial(changeConfigHandler, 'alphaDivMethod')}
-        />
+    <ComputationStepContainer
+      computationStepInfo={{
+        stepNumber: 1,
+        stepTitle: `Configure ${computationAppOverview.displayName}`,
+      }}
+    >
+      <div style={sharedConfigCssStyles}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1em',
+            justifyItems: 'start',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
+          <SingleSelect
+            value={
+              selectedCollectionVar
+                ? selectedCollectionVar.value
+                : 'Select the data'
+            }
+            buttonDisplayContent={
+              selectedCollectionVar
+                ? selectedCollectionVar.display
+                : 'Select the data'
+            }
+            items={collectionVarItems}
+            onSelect={partial(changeConfigHandler, 'collectionVariable')}
+          />
+          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Method</div>
+          <SingleSelect
+            value={alphaDivMethod ?? 'Select a method'}
+            buttonDisplayContent={alphaDivMethod ?? 'Select a method'}
+            items={ALPHA_DIV_METHODS.map((method) => ({
+              value: method,
+              display: method,
+            }))}
+            onSelect={partial(changeConfigHandler, 'alphaDivMethod')}
+          />
+        </div>
       </div>
-    </div>
+    </ComputationStepContainer>
   );
 }

@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { useEffect, useState } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
@@ -52,6 +53,8 @@ import { Link } from 'react-router-dom';
 import { fullScreenAppPlugins } from '../core/components/fullScreenApps';
 import { FullScreenAppPlugin } from '../core/types/fullScreenApp';
 import FullScreenContainer from '../core/components/fullScreenApps/FullScreenContainer';
+import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import { VariableLinkConfig } from '../core/components/VariableLink';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -127,7 +130,7 @@ export function AnalysisPanel({
     deleteAnalysis,
     setFilters,
   } = analysisState;
-
+  const themePrimaryColor = useUITheme()?.palette.primary;
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
   const filters = analysis?.descriptor.subset.descriptor;
@@ -188,6 +191,21 @@ export function AnalysisPanel({
       : 'Analysis'
   );
 
+  const variableLinkConfig: VariableLinkConfig = {
+    type: 'link',
+    makeVariableLink: (value) => {
+      const { entityId, variableId } = value ?? {};
+      const linkBase = `${routeBase}/variables`;
+      if (entityId) {
+        if (variableId) {
+          return `${linkBase}/${entityId}/${variableId}`;
+        }
+        return `${linkBase}/${entityId}`;
+      }
+      return linkBase;
+    },
+  };
+
   if (status === Status.Error)
     return (
       <div>
@@ -195,13 +213,16 @@ export function AnalysisPanel({
         <p>Could not load the analysis.</p>
       </div>
     );
+
   if (analysis == null || approvalStatus === 'loading') return <Loading />;
+
   if (
     (studyRecord.attributes.is_public === 'false' && !showUnreleasedData) ||
     approvalStatus === 'not-approved' ||
     isStubEntity(studyMetadata.rootEntity)
   )
     return <Redirect to={Path.normalize(routeBase + '/..')} />;
+
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <ShowHideVariableContextProvider>
@@ -213,7 +234,18 @@ export function AnalysisPanel({
           sharingUrlPrefix={sharingUrlPrefix}
           showLoginForm={showLoginForm}
         />
-        <div className={cx('-Analysis')}>
+        <div
+          css={
+            themePrimaryColor
+              ? {
+                  '& .WorkspaceNavigation--Item': {
+                    color: themePrimaryColor.hue[themePrimaryColor.level],
+                  },
+                }
+              : undefined
+          }
+          className={cx('-Analysis')}
+        >
           <AnalysisSummary
             analysis={analysis}
             setAnalysisName={setName}
@@ -245,6 +277,7 @@ export function AnalysisPanel({
                 )
               )
             }
+            variableLinkConfig={variableLinkConfig}
           />
           <Route
             path={[
@@ -275,6 +308,7 @@ export function AnalysisPanel({
                   entityCounts={totalCounts.value}
                   filteredEntityCounts={filteredCounts.value}
                   filteredEntities={filteredEntities}
+                  variableLinkConfig={variableLinkConfig}
                 />
               </div>
             )}
@@ -352,6 +386,7 @@ export function AnalysisPanel({
               <AnalysisTabErrorBoundary>
                 <Subsetting
                   {...props.match.params}
+                  variableLinkConfig={variableLinkConfig}
                   analysisState={analysisState}
                   totalCounts={totalCounts.value}
                   filteredCounts={filteredCounts.value}
