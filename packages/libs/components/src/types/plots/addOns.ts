@@ -6,6 +6,7 @@ import { CSSProperties } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
 import { scaleLinear } from 'd3-scale';
 import { interpolateLab, extent, range } from 'd3';
+import { rgb, lab } from 'd3-color';
 
 /** PlotProps addons */
 
@@ -153,6 +154,19 @@ export const ColorPaletteDark: string[] = [
   'rgb(13, 96, 41)',
 ];
 
+/** Based on [Tol's muted colormap](https://personal.sron.nl/~pault/) */
+/** Needs work - this is a draft for purposes of discussion and choosing an ordinal colormap */
+export const ColorPaletteOrdinal: string[] = [
+  'rgb(136,34,85)',
+  'rgb(204,102,119)',
+  'rgb(153,153,51)',
+  'rgb(221,204,119)',
+  'rgb(68,170,153)',
+  'rgb(17,119,51)',
+  'rgb(136,204,238)',
+  'rgb(51,34,136)',
+];
+
 /** Sequential gradient colorscale. Useful for coloring based on a continuous variable that is always positive, for example. */
 /** Using oslo from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
 export const SequentialGradientColorscale: string[] = [
@@ -169,9 +183,11 @@ export const SequentialGradientColorscale: string[] = [
   'rgb(0, 1, 0)',
 ];
 
-/** Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) */
-/** Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py */
-/** MUST have ODD number of colors! Assume the middle color maps to the midpoint */
+/**
+ * Diverging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0)
+ *  Using vik from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py
+ *  MUST have ODD number of colors! Assume the middle color maps to the midpoint
+ */
 export const DivergingGradientColorscale: string[] = [
   'rgb(1, 18, 97)',
   'rgb(2, 37, 109)',
@@ -196,6 +212,41 @@ export const DivergingGradientColorscale: string[] = [
   'rgb(97, 18, 0)',
 ];
 
+/**
+ * Converging gradient colorscale. Useful for coloring a continuous variable that has values above and below a midpoint (usually 0) and we want to see midpoint values easily.
+ * Using Berlin from https://www.fabiocrameri.ch/colourmaps/, copied from https://github.com/empet/scientific-colorscales/blob/master/scicolorscales.py
+ * MUST have ODD number of colors! Assume the middle color maps to the midpoint
+ * In a data viz meeting, decided to lighten the Berlin map slightly. See figma Colormap Examples file for details.
+ */
+
+const Berlin = [
+  'rgb(158, 176, 255)',
+  'rgb(130, 173, 242)',
+  'rgb(98, 166, 224)',
+  'rgb(68, 151, 198)',
+  'rgb(50, 128, 166)',
+  'rgb(40, 104, 134)',
+  'rgb(32, 82, 106)',
+  'rgb(23, 60, 77)',
+  'rgb(17, 39, 50)',
+  'rgb(17, 22, 27)',
+  'rgb(25, 12, 9)',
+  'rgb(38, 13, 1)',
+  'rgb(55, 16, 0)',
+  'rgb(74, 21, 2)',
+  'rgb(97, 32, 11)',
+  'rgb(125, 52, 30)',
+  'rgb(150, 74, 54)',
+  'rgb(176, 98, 83)',
+  'rgb(202, 123, 113)',
+  'rgb(229, 149, 144)',
+  'rgb(255, 173, 173)',
+];
+// Lighten in LAB space, then convert to RGB for plotting.
+export const ConvergingGradientColorscale = Berlin.map((color) =>
+  rgb(lab(color).darker(-1)).toString()
+);
+
 // Create colorscale for series. Maps [0, 1] to gradient colorscale using Lab interpolation
 export const gradientSequentialColorscaleMap = scaleLinear<string>()
   .domain(
@@ -217,6 +268,19 @@ export const gradientDivergingColorscaleMap = scaleLinear<string>()
     )
   )
   .range(DivergingGradientColorscale)
+  .interpolate(interpolateLab);
+
+// Create converging colorscale. Maps [-1, 1] to gradient colorscale using Lab interpolation
+const convergingColorscaleSteps = Math.floor(
+  ConvergingGradientColorscale.length / 2
+);
+export const gradientConvergingColorscaleMap = scaleLinear<string>()
+  .domain(
+    range(-convergingColorscaleSteps, convergingColorscaleSteps + 1).map(
+      (a: number) => a / convergingColorscaleSteps
+    )
+  )
+  .range(ConvergingGradientColorscale)
   .interpolate(interpolateLab);
 
 /** truncated axis flags */
