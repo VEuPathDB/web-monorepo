@@ -1716,7 +1716,7 @@ Faceted.args = {
 
 export const opacitySlider = () => {
   const disabled = false;
-  const [markerColorOpacity, setMarkerColorOpacity] = useState(0);
+  const [markerBodyOpacity, setMarkerBodyOpacity] = useState(0);
   const containerStyles = {
     height: 100,
     width: 425,
@@ -1757,7 +1757,7 @@ export const opacitySlider = () => {
         legendTitle={'legend title example'}
         independentValueType={independentValueType}
         dependentValueType={dependentValueType}
-        markerColorOpacity={markerColorOpacity}
+        markerBodyOpacity={markerBodyOpacity}
       />
 
       {/* Sequential gradient color   */}
@@ -1784,7 +1784,7 @@ export const opacitySlider = () => {
         legendTitle={'legend title example'}
         independentValueType={independentValueType}
         dependentValueType={dependentValueType}
-        markerColorOpacity={markerColorOpacity}
+        markerBodyOpacity={markerBodyOpacity}
       />
 
       <SliderWidget
@@ -1796,7 +1796,7 @@ export const opacitySlider = () => {
         value={0}
         debounceRateMs={250}
         onChange={(newValue: number) => {
-          setMarkerColorOpacity(newValue);
+          setMarkerBodyOpacity(newValue);
         }}
         containerStyles={containerStyles}
         showLimits={true}

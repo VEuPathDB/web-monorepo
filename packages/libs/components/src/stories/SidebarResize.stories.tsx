@@ -5,7 +5,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { BoundsViewport, Bounds } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 
 //let's use new approach for data retrieval
 import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';

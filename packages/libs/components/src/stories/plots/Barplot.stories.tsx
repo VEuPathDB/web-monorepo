@@ -1,7 +1,11 @@
+import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import Barplot, { BarplotProps } from '../../plots/Barplot';
 import { FacetedData, BarplotData } from '../../types/plots';
 import FacetedBarplot from '../../plots/facetedPlots/FacetedBarplot';
+import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
+import { NumberRange, NumberOrDateRange } from '../../types/general';
+import { Toggle } from '@veupathdb/coreui';
 
 export default {
   title: 'Plots/Barplot',
@@ -112,7 +116,9 @@ export const Faceted = FacetedTemplate.bind({});
 Faceted.args = {
   data: facetedData,
   componentProps: {
-    title: 'indoor and outdoor pets',
+    title: 'Indoor and outdoor pets',
+    independentAxisLabel: 'Pet',
+    dependentAxisLabel: 'Count',
     containerStyles: {
       width: 300,
       height: 300,
@@ -125,5 +131,58 @@ Faceted.args = {
       height: '100%',
       margin: 'auto',
     },
+  },
+};
+
+const TemplateWithSelectedRangeControls: Story<Omit<BarplotProps, 'data'>> = (
+  args
+) => {
+  const [dependentAxisRange, setDependentAxisRange] = useState<
+    NumberRange | undefined
+  >({ min: 1, max: 40 });
+  const [dependentAxisLogScale, setDependentAxisLogScale] = useState<
+    boolean | undefined
+  >(false);
+
+  const handleDependentAxisRangeChange = async (
+    newRange?: NumberOrDateRange
+  ) => {
+    setDependentAxisRange(newRange as NumberRange);
+  };
+
+  const onDependentAxisLogScaleChange = async (value?: boolean) => {
+    setDependentAxisLogScale(value);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Barplot
+        data={dataSet}
+        {...args}
+        dependentAxisRange={dependentAxisRange}
+        dependentAxisLogScale={dependentAxisLogScale}
+      />
+      <Toggle
+        label="Log scale (will exclude values &le; 0):"
+        value={dependentAxisLogScale ?? false}
+        onChange={onDependentAxisLogScaleChange}
+        styleOverrides={{ container: { marginLeft: '5em' } }}
+      />
+      <div style={{ height: 25 }} />
+      <AxisRangeControl
+        label="Y-axis range control"
+        range={dependentAxisRange}
+        onRangeChange={handleDependentAxisRangeChange}
+        containerStyles={{ marginLeft: '5em' }}
+      />
+    </div>
+  );
+};
+
+export const LogScale = TemplateWithSelectedRangeControls.bind({});
+LogScale.args = {
+  containerStyles: {
+    height: '450px',
+    width: '750px',
   },
 };

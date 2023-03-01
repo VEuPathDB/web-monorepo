@@ -336,3 +336,21 @@ Faceted.args = {
     },
   },
 };
+
+// test long axis label for both X and Y axes
+export const TwoByTwoLongAxisLabel = Template.bind({});
+TwoByTwoLongAxisLabel.args = {
+  ...defaults,
+  data: {
+    values: [
+      [40, 15],
+      [10, 25],
+    ],
+    independentLabels: ['Men', 'Women'],
+    dependentLabels: ['Died', 'Survived'],
+  },
+  independentAxisLabel:
+    'Weight-for-length or -height z-score, using median weight and median length or height',
+  dependentAxisLabel: 'Diarrhea case during the last 7 days, caregiver report',
+  colors: ['orange', 'blue'],
+};

@@ -1,6 +1,5 @@
 import React, { ReactElement, useCallback, useState } from 'react';
 import { Story } from '@storybook/react';
-//DKDK change below
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
@@ -9,7 +8,7 @@ import testDataStraddling from './fixture-data/geoclust-date-dateline-straddling
 import BoundsDriftMarker from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
-import { Viewport } from 'react-leaflet';
+import { Viewport } from '../map/MapVEuMap';
 import '../map/TempIconHack';
 
 export default {
@@ -70,7 +69,10 @@ const getDatelineArgs = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
-  const [viewport] = useState<Viewport>({ center: [0, 0], zoom: 2 });
+  const [viewport, setViewport] = useState<Viewport>({
+    center: [0, 0],
+    zoom: 2,
+  });
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback(
@@ -84,6 +86,7 @@ const getDatelineArgs = () => {
     viewport: viewport,
     height: '100vh',
     width: '100vw',
+    onViewportChanged: setViewport,
     onBoundsChanged: handleViewportChanged,
     markers: markerElements,
     animation: {
