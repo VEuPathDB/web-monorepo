@@ -41,7 +41,6 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
               <Tooltip
                 key={feature.sourceId}
                 interactive
-                css={{}}
                 title={
                   <FeatureTooltip
                     feature={feature}

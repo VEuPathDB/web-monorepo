@@ -152,7 +152,6 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   recordType,
 }) =>
   <Tooltip
-    css={{}}
     interactive
     title={
       <FeatureTooltip

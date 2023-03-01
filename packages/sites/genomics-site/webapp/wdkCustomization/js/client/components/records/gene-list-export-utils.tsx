@@ -80,7 +80,6 @@ export function useSendToBasketConfig(
           value: 'basket',
           label: (
             <Tooltip
-              css={{}}
               title={isGuest !== false
                 ? 'You must be logged in to use this feature'
                 : ''
@@ -133,7 +132,6 @@ export function useSendToGeneListUserDatasetConfig(
           value: 'my-data-sets',
           label: (
             <Tooltip
-              css={{}}
               title={
                 isGuest !== false
                   ? 'You must be logged in to use this feature'
