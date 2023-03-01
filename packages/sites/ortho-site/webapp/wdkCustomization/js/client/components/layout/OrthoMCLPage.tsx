@@ -187,6 +187,7 @@ function useHeaderMenuItems() {
         expandedBranches={expandedBranches}
         setSearchTerm={setSearchTerm}
         setExpandedBranches={setExpandedBranches}
+        type='headerMenu'
       />
     ),
     [ searchTree, searchTerm, expandedBranches ]
