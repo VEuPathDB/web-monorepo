@@ -341,8 +341,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
         onSelectionChange={setSelection}
         linksPosition={LinksPosition.Top}
         additionalFilters={[
-          <Tooltip 
-            css={{}} 
+          <Tooltip
             title={
               <span style={{fontWeight: 'normal'}}>
                 Show only reference organisms <span style={{fontWeight: 'bolder'}}>[Ref]</span>
