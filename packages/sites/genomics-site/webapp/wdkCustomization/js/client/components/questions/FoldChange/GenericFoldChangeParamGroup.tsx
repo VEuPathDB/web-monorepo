@@ -27,7 +27,7 @@ const preAndPostParams = (props: GroupProps): PreAndPostParameterEntries[] =>
         postParameterContent: null
       },
       {
-        preParameterContent: <span>with a <b>Fold change</b> >=</span>,
+        preParameterContent: <span>with a <b>Fold change</b> {'>='}</span>,
         parameterName: 'fold_change',
         postParameterContent: null
       }
@@ -44,7 +44,7 @@ const preAndPostParams = (props: GroupProps): PreAndPostParameterEntries[] =>
         postParameterContent: null
       },
       {
-        preParameterContent: <span>with a <b>Fold change</b> >=</span>,
+        preParameterContent: <span>with a <b>Fold change</b> {'>='}</span>,
         parameterName: 'fold_change',
         postParameterContent: null
       }

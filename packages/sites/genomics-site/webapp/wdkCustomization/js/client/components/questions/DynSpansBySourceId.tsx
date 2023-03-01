@@ -167,9 +167,9 @@ const makeRenderParamGroup = (
 
 const AddLocationButton = (props: { onClick: () => void }) =>
   <div className={cx('AddLocationButton')}>
-    <span className={cx('AddLocationArrows')}>>>></span>
+    <span className={cx('AddLocationArrows')}{'>>>>'}</span>
     <button type="button" onClick={props.onClick}>Add Location</button>
-    <span className={cx('AddLocationArrows')}>>>></span>
+    <span className={cx('AddLocationArrows')}{'>>>>'}</span>
   </div>
 
 type Validation =

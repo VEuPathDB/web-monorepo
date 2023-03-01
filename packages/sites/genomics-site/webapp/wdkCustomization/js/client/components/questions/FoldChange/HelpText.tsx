@@ -334,13 +334,13 @@ export const HelpText: React.FunctionComponent<HelpTextProps> = ({
   const criteria = direction === 'up or down regulated'
     ? (
       <>
-        <b>fold change<sub>up</sub> >= {foldChange}</b> or{' '}
-        <b>fold change<sub>down</sub> >= {foldChange}</b>
+        <b>fold change<sub>up</sub> {'>='} {foldChange}</b> or{' '}
+        <b>fold change<sub>down</sub> {'>='} {foldChange}</b>
       </>
     )
     : (
       <>
-        <b>fold change >= {foldChange}</b>
+        <b>fold change {'>='} {foldChange}</b>
       </>
     );
 

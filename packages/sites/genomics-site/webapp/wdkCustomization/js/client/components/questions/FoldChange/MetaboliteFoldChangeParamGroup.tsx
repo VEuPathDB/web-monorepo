@@ -22,7 +22,7 @@ const metaboliteFoldChangePreAndPostParams = memoize((props: GroupProps): PreAnd
     postParameterContent: null
   },
   {
-    preParameterContent: <span>with a <b>Fold change</b> >=</span>,
+    preParameterContent: <span>with a <b>Fold change</b> {'>='}</span>,
     parameterName: 'fold_change_compound',
     postParameterContent: null
   }
