@@ -18,7 +18,7 @@
     "@veupathdb/blast-summary-view": "^0.1.0",
     "@veupathdb/components": "^0.20.0",
     "@veupathdb/coreui": "^0.18.21",
-    "@veupathdb/eda": "^4.0.14",
+    "@veupathdb/eda": "^4.0.15",
     "@veupathdb/http-utils": "^1.1.1",
     "@veupathdb/multi-blast": "^3.0.2",
     "@veupathdb/preferred-organisms": "^1.1.16",
