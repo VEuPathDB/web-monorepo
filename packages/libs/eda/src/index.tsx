@@ -173,7 +173,7 @@ initialize({
 
         return (
           <WorkspaceApp
-            serviceUrl={edaEndpoint}
+            edaServiceUrl={edaEndpoint}
             exampleAnalysesAuthor={exampleAnalysesAuthor}
             sharingUrlPrefix={window.location.href}
             showLoginForm={showLoginForm}
@@ -187,7 +187,16 @@ initialize({
     {
       path: '/mapveu',
       component: () => (
-        <MapApp edaServiceUrl={edaEndpoint} singleAppMode={singleAppMode} />
+        <MapApp
+          logoProps={{
+            href: 'https://veupathdb.org',
+            src:
+              'https://veupathdb.org/veupathdb/images/VEuPathDB/icons-footer/vectorbase.png',
+            siteName: 'VectorBase',
+          }}
+          singleAppMode={singleAppMode}
+          edaServiceUrl={edaEndpoint}
+        />
       ),
       exact: false,
       rootClassNameModifier: 'MapVEu',
