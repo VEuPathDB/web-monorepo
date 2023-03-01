@@ -938,7 +938,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     },
     independentAxisLogScale: vizConfig.independentAxisLogScale,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
-
     independentAxisRange:
       vizConfig.independentAxisRange ?? defaultIndependentAxisRange,
     dependentAxisRange:
@@ -2204,15 +2203,7 @@ function processInputData(
         }
       : {};
 
-  // please note that this is temporarily set to avoid using npm-pack-here for test
-  // This type definition is actually implemented at web-components
-  // https://github.com/VEuPathDB/web-components/pull/431
-  // thus, this will be removed after approval
-  // let dataSetProcess: LinePlotDataSeries[] = [];
-  interface LinePlotDataSeriesProps extends LinePlotDataSeries {
-    connectgaps?: boolean;
-  }
-  let dataSetProcess: LinePlotDataSeriesProps[] = [];
+  let dataSetProcess: LinePlotDataSeries[] = [];
 
   responseLineplotData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
