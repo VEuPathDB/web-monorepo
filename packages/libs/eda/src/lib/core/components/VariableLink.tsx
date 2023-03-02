@@ -1,11 +1,12 @@
 /*
  * Link to the page for a variable
  */
-import { CSSProperties, forwardRef, Ref } from 'react';
+import { forwardRef, Ref } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
 const disabledStyle: React.CSSProperties = {
-  pointerEvents: 'none',
+  cursor: 'not-allowed',
+  opacity: 0.5,
 };
 
 type VariableValue = {
@@ -41,15 +42,12 @@ export const VariableLink = forwardRef(
       ...rest
     } = props;
     const value = { entityId, variableId };
-    const disabledStyle: CSSProperties = {
-      cursor: 'not-allowed',
-      opacity: 0.5,
-    };
     const finalStyle = disabled ? { ...style, ...disabledStyle } : style;
 
     return linkConfig.type === 'link' ? (
       <Link
         ref={ref}
+        aria-disabled={disabled}
         replace
         style={finalStyle}
         {...rest}
@@ -73,6 +71,7 @@ export const VariableLink = forwardRef(
       // eslint-disable-next-line jsx-a11y/anchor-has-content
       <a
         ref={ref}
+        aria-disabled={disabled}
         role="button"
         tabIndex={0}
         style={finalStyle}
