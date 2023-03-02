@@ -1,30 +1,19 @@
 .wdk-QuestionForm {
   margin: auto;
-  max-width: 90vw;
-
-  &__default-width {
-    max-width: 62.5rem;
-  }
-
-  &__wide-width {
-    width: 110em;
-  }
+  max-width: 81.25rem; // same max-width as .wdk-InternalGeneDatasetForm
 
   &QuestionHeader {
     position: sticky;
     top: 1.75rem;
-    z-index: 2;
+    z-index: 3; // tabs in search pages have z-index 2, so this needs to be at least 1 greater
     background-color: white;
     border-bottom: 0.0625rem solid black;
-  }
+    margin-bottom: 1em;
 
-  &DescriptionLink {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    font-size: 1rem;
-    margin-bottom: -0.5em;
-    padding-top: 1em;
+    h1 {
+      font-size: 2.25em;
+      padding: 0.5em 0;
+    }
   }
 
   &ShowHideGroup {
@@ -56,7 +45,11 @@
   &ParameterHeading {
     h2 {
       font-size: 1.6em;
+      padding: 8px 0;
     }
+
+    display: flex;
+    column-gap: 0.75em;
     border-bottom: 1px solid #ccc;
   }
 
@@ -66,10 +59,9 @@
 
   &VisibleHelp {
     font-style: oblique;
-    margin-left: 2em; /* : 0.5rem auto;*/
+    margin-left: 2em;
     color: #525252;
     font-weight: 400;
-    /*max-width: 50vw;*/
   }
 
   &SubmitSection {
@@ -98,22 +90,6 @@
     margin: 1em;
   }
 
-  &DescriptionSection {
-    padding-top: 7em;
-    margin: -5em 0 1em 0;
-
-    h2.navigatingToDescription::before {
-      animation: fade-in-out ease-in 3s;
-      opacity: 0;
-      content: "\f0da";
-      position: absolute;
-      margin-left: -.6em;
-      color: #046599;
-      font-family: FontAwesome;
-      font-size: 2.5em;    
-    } 
-  }
-
   &Description {
     h2 {
       font-size: 1.6em;
@@ -122,11 +98,13 @@
 
   /* Parameter-specific rules */
 
-  .wdk-CheckboxList, .wdk-TreeBoxParam {
+  .wdk-CheckboxList,
+  .wdk-TreeBoxParam {
     width: 50%;
   }
 
-  .wdk-CheckboxListLinks, .wdk-CheckboxTreeLinks > div {
+  .wdk-CheckboxListLinks,
+  .wdk-CheckboxTreeLinks>div {
     text-align: left;
   }
 }
