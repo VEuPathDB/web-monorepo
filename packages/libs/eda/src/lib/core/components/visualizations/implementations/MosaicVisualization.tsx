@@ -477,7 +477,6 @@ function MosaicViz(props: Props<Options>) {
     independentAxisLabel: xAxisLabel ?? 'X-axis',
     dependentAxisLabel: yAxisLabel ?? 'Y-axis',
     displayLegend: false,
-    interactive: !isFaceted(data.value) ? true : false,
     showSpinner: data.pending,
     displayLibraryControls: false,
   };
