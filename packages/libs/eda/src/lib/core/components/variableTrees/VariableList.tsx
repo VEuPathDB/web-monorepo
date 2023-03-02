@@ -65,11 +65,6 @@ const activeFieldNodeLinkStyle = {
   background: '#e6e6e6',
 };
 
-const disabledFieldNodeLinkStyle = {
-  cursor: 'not-allowed',
-  opacity: '0.5',
-};
-
 const usePrimaryColorString = () => {
   const themePrimaryColor = useUITheme()?.palette.primary;
 
@@ -85,13 +80,12 @@ const useFieldNodeCssSelectors = () => {
   return useMemo(() => {
     return {
       '.base-field-node': { ...baseFieldNodeLinkStyle },
+      'a.base-field-node:not([aria-disabled=true]):hover': {
+        textDecoration: 'underline',
+      },
       '.active-field-node': {
         ...baseFieldNodeLinkStyle,
         ...activeFieldNodeLinkStyle,
-      },
-      '.disabled-field-node': {
-        ...baseFieldNodeLinkStyle,
-        ...disabledFieldNodeLinkStyle,
       },
       '.single-select-anchor-node': { marginLeft: '0.5em' },
       '.dropdown-node-color': { color: '#2f2f2f' },
@@ -945,6 +939,7 @@ const FieldNode = ({
       entityId={entityId}
       variableId={variableId}
       linkConfig={variableLinkConfig}
+      disabled={isDisabled}
       title={
         isMultiPick
           ? ''
@@ -956,8 +951,6 @@ const FieldNode = ({
       className={
         isActive
           ? `active-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
-          : isDisabled
-          ? `disabled-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
           : `base-field-node ${nodeColorSelector} ${anchorNodeLinkSelector}`
       }
     >
