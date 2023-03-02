@@ -100,13 +100,14 @@ export function ContingencyTable(props: ContingencyTableProps) {
    * From there, we know 'Control' must be the right column and 'Yes' the bottom row.
    */
   const orderedData = useMemo(() => {
-    const dataCopy = { ...data };
     if (
       !selectedReferenceValues ||
       !selectedReferenceValues[0] ||
       !selectedReferenceValues[1]
     )
       return data;
+
+    const dataCopy = { ...data };
 
     /**
      * If the selected xAxisRefValue doesn't match the first xAxis label, then
@@ -115,7 +116,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
      */
     if (selectedReferenceValues[0] !== data.independentLabels[0]) {
       dataCopy.independentLabels = [...data.independentLabels].reverse();
-      dataCopy.values = [...data.values].map((arr) => arr.reverse());
+      dataCopy.values = data.values.map((arr) => [...arr].reverse());
     }
 
     /**
@@ -126,11 +127,11 @@ export function ContingencyTable(props: ContingencyTableProps) {
      *       No -> use data object to reverse rows
      */
     if (selectedReferenceValues[1] !== data.dependentLabels[0]) {
-      dataCopy.dependentLabels = [...data.dependentLabels.reverse()];
+      dataCopy.dependentLabels = [...data.dependentLabels].reverse();
       dataCopy.values =
         selectedReferenceValues[0] !== data.independentLabels[0]
-          ? [dataCopy.values[1], dataCopy.values[0]]
-          : [data.values[1], data.values[0]];
+          ? [...dataCopy.values].reverse()
+          : [...data.values].reverse();
     }
     return dataCopy as MosaicPlotData;
   }, [data, selectedReferenceValues]);
