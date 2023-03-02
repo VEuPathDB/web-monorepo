@@ -48,7 +48,7 @@ interface Props {
   referenceStrains?: Set<string>;
 }
 
-const MAXIMUM_EXPORT_SIZE = 50000;
+const LARGE_EXPORT_WARNING_THRESHOLD = 50000;
 
 const cx = makeClassNameHelper('SiteSearch');
 
@@ -504,16 +504,18 @@ function StrategyLinkout(props: Props) {
     docType == null || !docType.isWdkRecordType ? undefined :
     wdkService.getQuestionAndParameters(docType.wdkSearchName), [ docType ]);
   const [ loading, setLoading ] = useState(false);
-  const [ isMoreFilteringRequired, setIsMoreFilteringRequired ] = useState(false);
+
+  const isLargeSearchResult = response.searchResults.totalCount > LARGE_EXPORT_WARNING_THRESHOLD;
+  const [ showLargeExportModal, setShowLargeExportModal ] = useState(false);
 
   const history = useHistory();
   const wdkDependencies = useContext(WdkDependenciesContext);
-  const onClick = useCallback(async () => {
+  const onClick = useCallback(async (shouldContinueToExport: boolean) => {
     const wdkService = wdkDependencies?.wdkService;
 
     if (wdkService == null || question == null || docType == null) return;
-    if (response.searchResults.totalCount > MAXIMUM_EXPORT_SIZE) {
-      setIsMoreFilteringRequired(true);
+    if (isLargeSearchResult && !shouldContinueToExport) {
+      setShowLargeExportModal(true);
       return;
     }
     setLoading(true);
@@ -577,14 +579,14 @@ function StrategyLinkout(props: Props) {
     };
     const strategyResp = await wdkService.createStrategy(strategySpec);
     history.push(`/workspace/strategies/${strategyResp.id}`);
-  }, [question, docType, filters, filterOrganisms, searchString, organismTree, response.organismCounts, isMoreFilteringRequired]);
+  }, [question, docType, filters, filterOrganisms, searchString, organismTree, response.organismCounts]);
 
   const moreFilteringModalContent = useMemo(() => {
-    if (!isMoreFilteringRequired) return;
+    if (!showLargeExportModal) return;
     return (
       <CommonModal
-        title={<><i style={{margin: 'auto 0', marginRight: '0.25em', color: '#CB0'}} className='fa fa-warning'/><span>Result Too Large</span></>}
-        onClose={() => setIsMoreFilteringRequired(!isMoreFilteringRequired)} 
+        title={<><i style={{margin: 'auto 0', marginRight: '0.25em', color: '#CB0'}} className='fa fa-warning'/><span>Large Result</span></>}
+        onClose={() => setShowLargeExportModal(false)} 
       >
         <div style={{
           fontSize: '1.1em',
@@ -593,13 +595,13 @@ function StrategyLinkout(props: Props) {
           <p style={{
             margin: 0,
           }}>
-            Sorry, your result ({response.searchResults.totalCount.toLocaleString()}) is too large to export. The maximum is 50,000.
+            Your result ({response.searchResults.totalCount.toLocaleString()}) is large and may result in a timeout or slow response.
           </p>
           <br />
           <p style={{
             margin: 0,
           }}>
-            Please try to reduce the size of your result by:
+            Consider reducing the size of your result by:
             <ul style={{
               marginTop: '0.25em',
             }}>
@@ -610,17 +612,35 @@ function StrategyLinkout(props: Props) {
           <br />
           {offerOrganismFilter && !hasUserSetPreferredOrganisms && 
             <p style={{margin: 0, marginBottom: '1em'}}>
-              Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to search the subset of organisms most relevant to your work.
+              Large results can also be avoided by setting <Link to='/preferred-organisms'>My Organism Preferences</Link> to the subset of organisms most relevant to your work.
             </p>}
           <div style={{
-            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            columnGap: '1em',
           }}>
-            <button className='btn' type="button" onClick={() => setIsMoreFilteringRequired(!isMoreFilteringRequired)}>Ok</button>
+            <button
+              className='btn'
+              type="button"
+              onClick={() => setShowLargeExportModal(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className='btn'
+              type="button"
+              onClick={() => {
+                setShowLargeExportModal(false);
+                onClick(true);
+              }}
+            >
+              Continue to export
+            </button>
           </div>
         </div>
       </CommonModal>
     )
-  }, [isMoreFilteringRequired, hasUserSetPreferredOrganisms, response.searchResults.totalCount]);
+  }, [showLargeExportModal, hasUserSetPreferredOrganisms, response.searchResults.totalCount]);
 
 
   const stringParam = question?.parameters.find(p => p.name === 'text_expression') as StringParam | undefined;
@@ -644,31 +664,33 @@ function StrategyLinkout(props: Props) {
     <StrategyLinkoutLink 
       onClick={onClick} 
       tooltipContent="Download or data mine using the search strategy system." 
-      isMoreFilteringRequired={isMoreFilteringRequired} 
+      showLargeExportModal={showLargeExportModal} 
       loading={loading} 
       modalContent={moreFilteringModalContent}
+      isLargeSearchResult={isLargeSearchResult}
     />
   );
 }
 type StrategyLinkoutLinkProps = {
-  onClick?: () => void, 
+  onClick?: (shouldContinueToExport: boolean) => void, 
   tooltipContent: string, 
-  isMoreFilteringRequired?: boolean, 
+  showLargeExportModal?: boolean, 
   loading?: boolean, 
   modalContent?: ReactNode,
+  isLargeSearchResult?: boolean,
 }
 
 function StrategyLinkoutLink(props: StrategyLinkoutLinkProps) {
-  const { onClick, tooltipContent, isMoreFilteringRequired = false, loading, modalContent } = props;
+  const { onClick, tooltipContent, showLargeExportModal = false, isLargeSearchResult = false, loading, modalContent } = props;
   const disabled = loading || onClick == null;
 
   return (
     <div className={cx('--LinkOut')}>
-      { isMoreFilteringRequired && modalContent &&
+      { showLargeExportModal && modalContent &&
         modalContent
       }
       <AnchoredTooltip content={tooltipContent}>
-        <button disabled={disabled} className="btn" type="button" onClick={onClick}>
+        <button disabled={disabled} className="btn" type="button" onClick={() => onClick && (isLargeSearchResult ? onClick(false) : onClick(true))}>
           <div className={cx('--LinkOutText')}>
             <div>Export as a Search Strategy</div>
             <div><small>to download or mine your results</small></div>
