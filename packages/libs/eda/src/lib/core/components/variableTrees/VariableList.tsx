@@ -81,6 +81,9 @@ const useFieldNodeCssSelectors = () => {
   return useMemo(() => {
     return {
       '.base-field-node': { ...baseFieldNodeLinkStyle },
+      'a.base-field-node:not([aria-disabled=true]):hover': {
+        textDecoration: 'underline',
+      },
       '.active-field-node': {
         ...baseFieldNodeLinkStyle,
         ...activeFieldNodeLinkStyle,
