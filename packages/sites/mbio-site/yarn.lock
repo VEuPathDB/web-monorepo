@@ -2283,10 +2283,10 @@
     regenerator-runtime "^0.13.9"
     use-resize-observer "^9.1.0"
 
-"@veupathdb/eda@^4.0.18":
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.0.18.tgz#28f373adafc9044e665c3b93437742d4b1e9a8f5"
-  integrity sha512-fvcRsJK6M4+KcMO3UL5MwJwJueaoq7/4WVtVsR5edQSXDSGOhdDToc6fEeOO42c2lRxo/a88yQBP8dTKz/lMmw==
+"@veupathdb/eda@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.1.0.tgz#094fb974f5f208864eb9c209e74b1d949267bb1e"
+  integrity sha512-aDdlUT8aVZHWGKDH0qfeFK1HMPVVMASpdG5/mQ1vcJZRAgtBDOMOfFI5ypsumtP++ULQpupsWu8D+5fJPf4LfA==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -2352,10 +2352,10 @@
     date-fns "^2.29.1"
     lodash "^4.17.21"
 
-"@veupathdb/wdk-client@^0.9.31":
-  version "0.9.31"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.31.tgz#bec161ec96153984687aaf5796bf3e77fe6881dd"
-  integrity sha512-XObAA8bZTIVdb/TCRNq/X65XaU1SoJBn2UjdLIzdX5gPMRWgpaMnv2R9yIn3WU0n8ehweRmXo7ROqrl6TGP6Mw==
+"@veupathdb/wdk-client@^0.9.32":
+  version "0.9.32"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.9.32.tgz#e2986aa2f36c164a807e7507ee47b5b726d863d6"
+  integrity sha512-OBIy+0LX4dZQwzqaV7ONhWmfUtxEwZxU1wFBCWh5eJ92Nj0ZDvJsuR5vH8CAVg0DvRmXCHE3DfXo+7TMgOTWsA==
   dependencies:
     classnames "^2.2.0"
     history "^4.10.1"
@@ -2375,10 +2375,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.8.5":
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.8.5.tgz#4f95ce514f75f4662548f970c25a85cf98fbe322"
-  integrity sha512-KNl4yi8bj07ALgax+kY7GuhtTAw2n89P/DjQT7H6yM8M6LiwG/1JoT9GUObOP88klVjcodEHTTy6reyADT5wyQ==
+"@veupathdb/web-common@^0.8.7":
+  version "0.8.7"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.8.7.tgz#e062a71e5b2600c9983f4c1cacc2617e3fdbfdf6"
+  integrity sha512-+je5vVZwWziEO48SH3asmyk3AXR3itmmItbx6WlDmzwYNtDB1vVfA417Tm7uyuQ9zZ9JcyAKE1QUkG6UcZt1Zg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
