@@ -34,7 +34,7 @@ export const PubMedIdsField: React.SFC<PubMedIdsFieldProps> = ({
       
       <HelpIcon>
         <ul>
-          <li> First, find the publcation in <a href="http://www.ncbi.nlm.nih.gov/pubmed">PubMed</a> based on author or title.</li>
+          <li> First, find the publication in <a href="http://www.ncbi.nlm.nih.gov/pubmed">PubMed</a> based on author or title.</li>
           <li>Enter one or more IDs in the box above separated by ','s (Example: 18172196,10558988).</li>
           <li>Click 'Preview' to see information about these publications.</li>
         </ul>
