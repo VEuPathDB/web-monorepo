@@ -1,3 +1,7 @@
+!function() {
+    // Some dependencies define a global `exports` variable. which
+    // makes these scripts break when being loaded via the webpack script-loader.
+    var exports = void 0;
 /*
  * This combined file was created by the DataTables downloader builder:
  *   https://datatables.net/download
@@ -30816,3 +30820,5 @@ return Scroller;
 }));
 
 
+
+}();
