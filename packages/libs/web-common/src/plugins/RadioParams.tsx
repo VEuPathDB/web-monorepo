@@ -7,7 +7,7 @@ import { Parameter, ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkMo
 import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { Props, Group } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
-import { isMultiPick, isEnumParam, toMultiValueString, toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+import { isMultiPick, toMultiValueString, toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
@@ -51,8 +51,8 @@ function RadioParameterList(props: RadioParameterListProps) {
             onFocus={
               radioParamSet.has(parameter.name)
                 ? () => {
-                    updateActiveRadioParam(parameter.name);
-                  }
+                  updateActiveRadioParam(parameter.name);
+                }
                 : undefined
             }
           >
@@ -62,7 +62,6 @@ function RadioParameterList(props: RadioParameterListProps) {
                   <input
                     type="radio"
                     name="radio-param"
-                    className={cx('RadioParamElement')}
                     checked={parameter.name === activeRadioParam}
                     onChange={() => {
                       updateActiveRadioParam(parameter.name);
@@ -87,7 +86,7 @@ function RadioParameterList(props: RadioParameterListProps) {
 const NONSENSE_VALUE = 'N/A';
 const NONSENSE_VALUE_REGEX = /^(nil|N\/A)$/;
 
-const NONSENSE_MULTIPICK_STRING = toMultiValueString([ NONSENSE_VALUE ]);
+const NONSENSE_MULTIPICK_STRING = toMultiValueString([NONSENSE_VALUE]);
 
 export const RadioParams: React.FunctionComponent<Props> = props => {
   const radioParams: string[] = get(
@@ -97,7 +96,7 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
   );
   const radioParamSet = useMemo(
     () => new Set(radioParams),
-    [ radioParams ]
+    [radioParams]
   );
 
   const initialRadioParam = radioParams.find(
@@ -114,41 +113,41 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
     }
   ) || radioParams[0];
 
-  const [ activeRadioParam, updateActiveRadioParam ] = React.useState(initialRadioParam);
+  const [activeRadioParam, updateActiveRadioParam] = React.useState(initialRadioParam);
 
   const renderParamGroup = useCallback((group: ParameterGroup, props: Props) => {
-      const {
-        state: { question, groupUIState, paramsUpdatingDependencies },
-        eventHandlers: { setGroupVisibility },
-        parameterElements
-      } = props;
-      const paramDependenciesUpdating = fromPairs(
-        question.parameters.filter(
-          parameter => paramsUpdatingDependencies[parameter.name]
-        ).flatMap(parameter => parameter.dependentParams.map(pn => [pn, true]))
-      );
+    const {
+      state: { question, groupUIState, paramsUpdatingDependencies },
+      eventHandlers: { setGroupVisibility },
+      parameterElements
+    } = props;
+    const paramDependenciesUpdating = fromPairs(
+      question.parameters.filter(
+        parameter => paramsUpdatingDependencies[parameter.name]
+      ).flatMap(parameter => parameter.dependentParams.map(pn => [pn, true]))
+    );
 
-      return (
-        <Group
-          key={group.name}
-          searchName={question.urlSegment}
-          group={group}
-          uiState={groupUIState}
-          onVisibilityChange={setGroupVisibility}
-        >
-          <RadioParameterList
-            parameterMap={question.parametersByName}
-            parameterElements={parameterElements}
-            parameters={group.parameters}
-            radioParamSet={radioParamSet}
-            activeRadioParam={activeRadioParam}
-            updateActiveRadioParam={updateActiveRadioParam}
-            paramDependenciesUpdating={paramDependenciesUpdating}
-          />
-        </Group>
-      );
-    },
-    [ radioParamSet, activeRadioParam ]
+    return (
+      <Group
+        key={group.name}
+        searchName={question.urlSegment}
+        group={group}
+        uiState={groupUIState}
+        onVisibilityChange={setGroupVisibility}
+      >
+        <RadioParameterList
+          parameterMap={question.parametersByName}
+          parameterElements={parameterElements}
+          parameters={group.parameters}
+          radioParamSet={radioParamSet}
+          activeRadioParam={activeRadioParam}
+          updateActiveRadioParam={updateActiveRadioParam}
+          paramDependenciesUpdating={paramDependenciesUpdating}
+        />
+      </Group>
+    );
+  },
+    [radioParamSet, activeRadioParam]
   );
 
   const onSubmit = useCallback((e: React.FormEvent) => {
@@ -171,7 +170,7 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
     });
 
     return true;
-  }, [ props.state, props.eventHandlers.updateParamValue, activeRadioParam ]);
+  }, [props.state, props.eventHandlers.updateParamValue, activeRadioParam]);
 
   return (
     <EbrcDefaultQuestionForm
