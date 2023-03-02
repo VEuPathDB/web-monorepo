@@ -1,13 +1,9 @@
 .wdk-InternalGeneDatasetForm {
   margin: auto;
-  max-width: 81.25rem;
+  max-width: 81.25rem; // same max-width as .wdk-QuestionForm
 
-  > .wdk-QuestionFormQuestionHeader {
+  >.wdk-QuestionFormQuestionHeader {
     position: inherit;
-  }
-
-  .wdk-QuestionFormDescriptionLink  {
-    display: none;
   }
 
   .TableToolbar-Info {
@@ -20,7 +16,7 @@
     align-items: center;
     white-space: nowrap;
     margin-right: 0.5rem;
-    
+
     span {
       margin-right: 1em;
     }
@@ -46,7 +42,7 @@
     text-align: center;
   }
 
-  tr.DataRow { 
+  tr.DataRow {
     .DataCell:nth-child(3) {
       display: flex;
       justify-content: center;
@@ -85,7 +81,8 @@
     filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)";
     background-repeat: repeat-x;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background-position: 0 -8px;
       text-decoration: none;
     }
@@ -102,7 +99,9 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
   }
 
-  .bttn:active, .bttn-active, .bttn-legend {
+  .bttn:active,
+  .bttn-active,
+  .bttn-legend {
     background-image: none;
     box-shadow: 1px 1px 0 #dddddd;
     -moz-box-shadow: 1px 1px 0 #dddddd;
@@ -110,7 +109,8 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
   }
 
-  .bttn:active, .bttn.bttn-active {
+  .bttn:active,
+  .bttn.bttn-active {
     cursor: default;
   }
 
