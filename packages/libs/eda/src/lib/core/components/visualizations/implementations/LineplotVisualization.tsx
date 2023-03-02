@@ -938,7 +938,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     },
     independentAxisLogScale: vizConfig.independentAxisLogScale,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
-
     independentAxisRange:
       vizConfig.independentAxisRange ?? defaultIndependentAxisRange,
     dependentAxisRange:
@@ -2205,6 +2204,7 @@ function processInputData(
       : {};
 
   let dataSetProcess: LinePlotDataSeries[] = [];
+
   responseLineplotData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
       if (el.seriesX.length !== el.seriesY.length) {
@@ -2275,6 +2275,8 @@ function processInputData(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        // for connecting points regardless of missing data
+        connectgaps: true,
       });
 
       return breakAfterThisSeries(index);
