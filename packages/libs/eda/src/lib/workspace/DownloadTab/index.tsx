@@ -116,22 +116,14 @@ export default function DownloadTab({
   // End of this section of the temporary solution for funky download files
 
   const dataAccessDeclaration = useMemo(() => {
-    if (
-      !user ||
-      !permission ||
-      !studyRecord ||
-      permission.loading ||
-      !datasetId
-    )
-      return;
     const studyAccess =
       typeof studyRecord.attributes['study_access'] === 'string'
         ? studyRecord.attributes['study_access']
         : '<status not found>';
-    const permissionsForDataset =
-      permission.permissions.perDataset[studyRecord.id[0].value];
-    const hasPermission =
-      permissionsForDataset?.actionAuthorization['resultsAll'];
+    const hasPermission = permission.loading
+      ? undefined
+      : permission.permissions.perDataset[studyRecord.id[0].value]
+          ?.actionAuthorization['resultsAll'] || false;
     const requestElement = (
       <button className="link" style={{ padding: 0 }} onClick={handleClick}>
         request access
@@ -161,9 +153,9 @@ export default function DownloadTab({
         {/* End temporary solution section */}
         {getDataAccessDeclaration(
           studyAccess,
-          user.isGuest,
-          hasPermission ?? false,
-          requestElement
+          requestElement,
+          user?.isGuest,
+          hasPermission
         )}
       </span>
     );
@@ -288,20 +280,25 @@ export default function DownloadTab({
 
 function getDataAccessDeclaration(
   studyAccess: string,
-  isGuest: boolean,
-  hasPermission: boolean = false,
-  requestElement: JSX.Element
+  requestElement: JSX.Element,
+  isGuest?: boolean,
+  hasPermission?: boolean
 ): JSX.Element {
-  const PUBLIC_ACCESS_STUB =
-    'Data downloads for this study are public. Data are available without logging in.';
-  const LOGIN_REQUEST_STUB = (
-    <span>
-      To download data, please {requestElement}. Data will be available upon
-      study team review and approval.
-    </span>
-  );
+  const accessIsControlled = studyAccess === 'Controlled';
+  const accessIsProtected = studyAccess === 'Protected';
+  const requestIsRequired = accessIsControlled || accessIsProtected;
+
   const PRERELEASE_STUB =
     'Data downloads for this study are not yet available on this website.';
+  const PUBLIC_ACCESS_STUB =
+    'Data downloads for this study are public. Data are available without logging in.';
+  const LOGIN_REQUEST_SPAN = () => (
+    <span>To download data, please {requestElement}.</span>
+  );
+  const CONTROLLED_ACCESS_STUB =
+    ' Data will be available immediately after submitting the request.';
+  const PROTECTED_ACCESS_STUB =
+    ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
 
@@ -312,11 +309,22 @@ function getDataAccessDeclaration(
         <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
       </H5>
       <Paragraph styleOverrides={{ margin: 0 }}>
-        {studyAccess === 'Public' ? (
+        {isGuest === undefined || hasPermission === undefined ? (
+          <AnimatedLoadingText text="Getting permissions" />
+        ) : studyAccess === 'Public' ? (
           <span>{PUBLIC_ACCESS_STUB}</span>
-        ) : studyAccess === 'Controlled' || studyAccess === 'Protected' ? (
+        ) : requestIsRequired ? (
           isGuest || !hasPermission ? (
-            <span>{LOGIN_REQUEST_STUB}</span>
+            <span>
+              <LOGIN_REQUEST_SPAN />
+              <span>
+                {accessIsControlled
+                  ? CONTROLLED_ACCESS_STUB
+                  : accessIsProtected
+                  ? PROTECTED_ACCESS_STUB
+                  : ''}
+              </span>
+            </span>
           ) : (
             <span>{ACCESS_GRANTED_STUB}</span>
           )
@@ -329,3 +337,20 @@ function getDataAccessDeclaration(
     </div>
   );
 }
+
+const AnimatedLoadingText = (props: { text?: string }) => {
+  const text = props.text ?? 'Loading';
+  const [numDots, setNumDots] = useState(1);
+
+  useEffect(() => {
+    const nextNumDots = (numDots % 3) + 1;
+    setTimeout(() => setNumDots(nextNumDots), 500);
+  });
+
+  return (
+    <span>
+      {text}
+      {'.'.repeat(numDots)}
+    </span>
+  );
+};
