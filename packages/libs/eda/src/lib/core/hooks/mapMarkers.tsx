@@ -93,8 +93,12 @@ interface MapMarkers {
   xAxisVariable: Variable | undefined;
   /** various stats for birds eye etc */
   totalEntityCount: number | undefined;
-  /** If `totalEntityCount` tells you how many entites there are, `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. */
+  /** If `totalEntityCount` tells you how many entites there are, `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
   totalVisibleEntityCount: number | undefined;
+  /** This tells you how many entities are on screen that also have data for the overlay variable
+   * if there is one, otherwise it defaults to the totalVisibleEntityCount.
+   * This number should always be the sum of the numbers in the center of the markers (assuming no checkboxes unchecked). */
+  totalVisibleWithOverlayEntityCount: number | undefined;
   completeCasesAllVars: number | undefined;
   completeCases: CompleteCasesTable | undefined;
   /** the possible values for the overlay variable (e.g. back-end derived bin labels) */
@@ -269,7 +273,6 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
 
-  // Marker Data is relat
   const totalVisibleEntityCount:
     | number
     | undefined = basicMarkerData.value?.markerData.reduce((acc, curr) => {
@@ -411,35 +414,30 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       : undefined;
   }, [overlayResponse]);
 
-  // calculate minPos and max for chart marker dependent axis
-  const valueMax = useMemo(
+  // calculate minPos, max and sum for chart marker dependent axis
+  const { valueMax, valueMinPos, valueSum } = useMemo(
     () =>
       overlayData
         ? values(overlayData) // it's a Record 'object'
             .map((record) => record.data)
             .flat() // flatten all the arrays into one
             .reduce(
-              (accum, elem) => (elem.value > accum ? elem.value : accum),
-              0
-            ) // find max value
-        : 0,
-    [overlayData]
-  );
-
-  const valueMinPos = useMemo(
-    () =>
-      overlayData
-        ? values(overlayData)
-            .map((record) => record.data)
-            .flat()
-            .reduce<number | undefined>(
-              (accum, elem) =>
-                elem.value > 0 && (accum == null || elem.value < accum)
-                  ? elem.value
-                  : accum,
-              undefined
+              ({ valueMax, valueMinPos, valueSum }, elem) => ({
+                valueMax: elem.value > valueMax ? elem.value : valueMax,
+                valueMinPos:
+                  elem.value > 0 &&
+                  (valueMinPos == null || elem.value < valueMinPos)
+                    ? elem.value
+                    : valueMinPos,
+                valueSum: valueSum + elem.value,
+              }),
+              {
+                valueMax: 0,
+                valueMinPos: undefined as number | undefined,
+                valueSum: 0,
+              }
             )
-        : undefined,
+        : { valueMax: 0, valueMinPos: undefined, valueSum: 0 },
     [overlayData]
   );
 
@@ -598,6 +596,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     markers,
     xAxisVariable: xAxisVariableAndEntity?.variable,
     outputEntity,
+    totalVisibleWithOverlayEntityCount: valueSum ?? totalVisibleEntityCount,
     totalVisibleEntityCount,
     totalEntityCount,
     completeCasesAllVars,
