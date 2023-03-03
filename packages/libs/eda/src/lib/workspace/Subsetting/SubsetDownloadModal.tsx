@@ -365,6 +365,8 @@ export default function SubsetDownloadModal({
 
   const headerMarginBottom = 15;
 
+  const showPreviewTableWarning = currentEntity.variables.length >= 1000;
+
   // Render the table data or instructions on how to get started.
   const renderDataGridArea = () => {
     return (
@@ -406,6 +408,15 @@ export default function SubsetDownloadModal({
             />
           )}
         </div>
+        {showPreviewTableWarning && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message:
+                'A table preview is not available for this entity. You can still select variables and download a tabular file.',
+            }}
+          />
+        )}
         {apiError && (
           <Banner
             banner={{
