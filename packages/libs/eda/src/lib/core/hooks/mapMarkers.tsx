@@ -75,6 +75,7 @@ export interface MapMarkersProps {
   markerType: MapConfig['markerType'];
   dependentAxisLogScale?: boolean;
   /** checked legend items - or undefined if not known */
+  // TO DO: disable checkbox functionality everywhere for map markers and their legends?
   checkedLegendItems?: string[];
   /** mini markers - default = false */
   miniMarkers?: boolean;
