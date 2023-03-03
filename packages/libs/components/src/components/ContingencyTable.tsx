@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { MosaicPlotData } from '../types/plots/mosaicPlot';
 import _ from 'lodash';
 import { FacetedData } from '../types/plots';
@@ -23,6 +23,11 @@ interface ContingencyTableProps {
   /** Styling for the container of all facets */
   facetedContainerStyles?: CSSProperties;
   enableSpinner?: boolean;
+  /**
+   * Reference values are read as [xAxisReferenceValue, yAxisReferenceValue]
+   * The reference values are used to re-order the 2x2 table quadrants, as needed
+   */
+  selectedReferenceValues?: Array<string | undefined>;
 }
 
 function FacetedContingencyTable(props: ContingencyTableProps) {
@@ -56,7 +61,7 @@ function FacetedContingencyTable(props: ContingencyTableProps) {
 }
 
 export function ContingencyTable(props: ContingencyTableProps) {
-  const { data } = props;
+  const { data, selectedReferenceValues } = props;
 
   if (data == null) {
     return (
@@ -81,7 +86,57 @@ export function ContingencyTable(props: ContingencyTableProps) {
     return FacetedContingencyTable(props);
   }
 
-  const rowSums = data.values.map((row) => _.sum(row));
+  /**
+   * JM: This is a hack to get 2x2 table data in the correct quadrants without affecting the mosaic plots.
+   * The selectedReferenceValues (note that these are considered the quadrant A values in the UI) determine
+   * the top-left quadrant (A), from which the converse relationships can naturally populate the remaining quadrants.
+   *
+   * For example, with the following variable selections in GEMS1 Case Control:
+   *  - Columns (X-axis) var: Case or control participant
+   *  - Columns (X-axis) reference var: Case
+   *  - Rows (Y-axis) var: Rotavirus, by ELISA
+   *  - Rows (Y-axis) reference var: No
+   * We know 'Case' would be the left column and 'No' would be the top row, thus should render in quadrant A
+   * From there, we know 'Control' must be the right column and 'Yes' the bottom row.
+   */
+  const orderedData = useMemo(() => {
+    if (
+      !selectedReferenceValues ||
+      !selectedReferenceValues[0] ||
+      !selectedReferenceValues[1]
+    )
+      return data;
+
+    const dataCopy = { ...data };
+
+    /**
+     * If the selected xAxisRefValue doesn't match the first xAxis label, then
+     *   1. reverse the column labels
+     *   2. reverse the column data
+     */
+    if (selectedReferenceValues[0] !== data.independentLabels[0]) {
+      dataCopy.independentLabels = [...data.independentLabels].reverse();
+      dataCopy.values = data.values.map((arr) => [...arr].reverse());
+    }
+
+    /**
+     * If the selected yAxisRefValue doesn't match the first yAxis label, then
+     *   1. reverse the row labels
+     *   2. check if column data was reversed
+     *      Yes -> use dataCopy object to reverse the rows, thus capturing the previous column reversal
+     *       No -> use data object to reverse rows
+     */
+    if (selectedReferenceValues[1] !== data.dependentLabels[0]) {
+      dataCopy.dependentLabels = [...data.dependentLabels].reverse();
+      dataCopy.values =
+        selectedReferenceValues[0] !== data.independentLabels[0]
+          ? [...dataCopy.values].reverse()
+          : [...data.values].reverse();
+    }
+    return dataCopy as MosaicPlotData;
+  }, [data, selectedReferenceValues]);
+
+  const rowSums = orderedData.values.map((row) => _.sum(row));
 
   return (
     <div className="contingency-table" style={props.tableContainerStyles}>
@@ -91,7 +146,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
             <td className="contingency-table_top-left-corner" colSpan={1}></td>
             <th
               className="contingency-table_column-header"
-              colSpan={data.independentLabels.length + 1}
+              colSpan={orderedData.independentLabels.length + 1}
               style={{ background: MEDIUM_GRAY }}
             >
               {props.independentVariable}
@@ -104,7 +159,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
             >
               {props.dependentVariable}
             </th>
-            {data.independentLabels.map((label) => (
+            {orderedData.independentLabels.map((label) => (
               <th key={label} className="contingency-table_column-label">
                 {label}
               </th>
@@ -116,17 +171,17 @@ export function ContingencyTable(props: ContingencyTableProps) {
               Total
             </th>
           </tr>
-          {data.values.map((row, i) => (
-            <tr key={data.dependentLabels[i]}>
+          {orderedData.values.map((row, i) => (
+            <tr key={orderedData.dependentLabels[i]}>
               <th className="contingency-table_row-label">
-                {data.dependentLabels[i]}
+                {orderedData.dependentLabels[i]}
               </th>
               {row.map((value, j) => (
                 <td
-                  key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
+                  key={`${orderedData.dependentLabels[i]}-${orderedData.independentLabels[j]}`}
                   className="contingency-table_value"
                   style={
-                    i < data.values.length - 1
+                    i < orderedData.values.length - 1
                       ? { paddingBottom: '0.75em' }
                       : {}
                   }
@@ -153,9 +208,9 @@ export function ContingencyTable(props: ContingencyTableProps) {
             >
               Total
             </th>
-            {_.unzip(data.values).map((col, i) => (
+            {_.unzip(orderedData.values).map((col, i) => (
               <td
-                key={data.independentLabels[i]}
+                key={orderedData.independentLabels[i]}
                 className="contingency-table_totals-row-value"
                 style={{ color: MEDIUM_DARK_GRAY }}
               >
