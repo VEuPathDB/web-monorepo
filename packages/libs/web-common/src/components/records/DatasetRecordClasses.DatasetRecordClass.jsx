@@ -298,24 +298,26 @@ function StudyAccessOverviewItem(props) {
 
   function makeMessage() {
     switch(study_access) {
+      case 'Prerelease':
+        return 'Data downloads for this study are not yet available on this website.';
       case 'Public':
-        return 'Data downloads for this study are public. Data is available without logging in.';
+        return 'Data downloads for this study are public. Data are available without logging in.';
       case 'Controlled':
         return isUserApproved
           ? 'You have been granted access to download the data.'
-          : <>To download data please register or log in and {requestAccessButton}. Data will be available immediately following request submission.</>;
+          : <>To download data, please {requestAccessButton}. Data will be available immediately after submitting the request.</>;
       case 'Protected':
       default:
         return isUserApproved
           ? 'You have been granted access to download the data.'
-          : <>To download data please register or log in and {requestAccessButton}. Data will be available upon study team review and approval.</>;
+          : <>To download data, please {requestAccessButton}. Data will be available upon study team review and approval.</>;
     }
   }
 
   return (
     <>
       <div className="eupathdb-RecordOverviewItem">
-        <strong>Data accesibility: </strong>
+        <strong>Data accessibility: </strong>
         <span>{study_access}</span>
       </div>
       {loading ? null : (
