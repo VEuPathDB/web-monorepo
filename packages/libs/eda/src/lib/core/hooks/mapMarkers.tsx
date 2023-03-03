@@ -390,6 +390,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
               map[geoAggKey] = {
                 // sum up the entity count from the sampleSizeTable because
                 // the data.label values might be proportions (and sum to 1)
+                // SEE 'WARNING' BELOW ABOUT THIS BEING INCORRECT
                 entityCount: sum(
                   overlayResponse.value.sampleSizeTable.find(
                     (item) =>
@@ -512,6 +513,12 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
                 donutData.reduce((sum, item) => (sum = sum + item.value), 0)
               : // the bar/histogram charts always show the constant entity count
                 // however, if there is no data at all we can safely infer a zero
+
+                // TO DO/WARNING: for (literal) edge cases in proportion mode
+                // this is buggy - see explanation here
+                // https://github.com/VEuPathDB/web-eda/issues/1674 (the bit about viewport)
+                // wait for new back end before addressing it
+
                 overlayData[geoAggregateValue]?.entityCount ?? 0
             : entityCount;
 
