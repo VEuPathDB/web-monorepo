@@ -2344,10 +2344,10 @@
     io-ts "^2.2.16"
     lodash "^4.17.21"
 
-"@veupathdb/user-datasets@^0.1.13":
-  version "0.1.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.13.tgz#f483e2473a97b51634bc2ecdc6bb7c378b612b5b"
-  integrity sha512-UxMuBYw+gWr8e242KZXJkkr8RRbBr681quu1YR6VuVq6hA9uqCKnN7v7a8GN9y4+aBGnqJIsV4ENNOQkVIl6HA==
+"@veupathdb/user-datasets@^0.1.14":
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/user-datasets/-/user-datasets-0.1.14.tgz#94a134370308211f828fb0b494ae9b83e5c31a64"
+  integrity sha512-aTVROsB17wwLGkfYD6mBpRtjv3zPXWmmmpDxV9h0ndIBfE8IKYQM27IZtxgUUU/wlIbv1YlnQEmbf/xYhgPDWA==
   dependencies:
     date-fns "^2.29.1"
     lodash "^4.17.21"
