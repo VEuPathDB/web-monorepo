@@ -59,10 +59,7 @@ The following environment variables are used by the `yarn start` script:
 | `VEUPATHDB_LOGIN_USER`                | VEuPathDB BRC prerelease user name                                      |
 | `VEUPATHDB_LOGIN_PASS`                | VEuPathDB BRC prerelease user password                                  |
 | `WDK_SERVICE_URL`                     | Full url to a running WDK REST Service                                  |
-| `EDA_SUBSETTING_SERVICE_URL`          | Full url to a running EDA Subsetting Service                            |
-| `EDA_DATA_SERVICE_URL`                | Full url to a running EDA Data Service                                  |
-| `EDA_USER_SERVICE_URL`                | Full url to a running EDA User Service                                  |
-| `DATASET_ACCESS_SERVICE_URL`          | Full url to a running Dataset Access Service                            |
+| `BASE_EDA_URL`                        | Full url to a running EDA Subsetting/Data/User/Dataset Access Service   |
 | `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions                       |
 | `REACT_APP_EXAMPLE_ANALYSES_AUTHOR`   | The ID of the WDK user who maintains "example strategies" (optional)    |
 | `REACT_APP_SINGLE_APP_MODE`           | Name of one app. If defined, runs the eda with one instance of that app |
