@@ -160,7 +160,13 @@
     overflow-x: auto;
     max-width: 97vw;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
+  }
+
+  // introducing pseudo element
+  .Entities::before,
+  .Entities::after {
+    content: '';
   }
 
   .expanded-diagram {
