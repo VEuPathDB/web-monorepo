@@ -20,6 +20,8 @@ export type LinePlotDataSeries = Override<
   extraTooltipText?: string[];
   /* Strings (such as '[10,15)') to describe how the x-axis variable was binned for tooltip info only */
   binLabel?: string[];
+  /* for connecting points regardless of missing data */
+  connectgaps?: boolean;
 };
 
 export type LinePlotData = {

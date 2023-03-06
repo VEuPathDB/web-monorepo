@@ -288,3 +288,67 @@ YAxisLabelWithHtml.args = {
     width: '750px',
   },
 };
+
+// test data for dateDataFormat
+const dateData = {
+  series: [
+    {
+      x: ['2017-01-01', '2018-01-01', '2019-01-01'],
+      y: [0.5285, 0.5058, 0.4205],
+      binLabel: [
+        '2017-01-01 - 2018-01-01',
+        '2018-01-01 - 2019-01-01',
+        '2019-01-01 - 2020-01-01',
+      ],
+      yErrorBarUpper: [0.5399, 0.5158, 0.4364],
+      yErrorBarLower: [0.517, 0.4959, 0.4046],
+      extraTooltipText: ['n: 3880/7342', 'n: 4932/9750', 'n: 1556/3700'],
+      name: 'Data',
+      mode: 'lines+markers',
+      opacity: 0.7,
+      marker: {
+        color: 'rgb(136,34,85)',
+        symbol: 'circle',
+      },
+      line: {
+        color: 'rgb(136,34,85)',
+        shape: 'linear',
+      },
+    },
+  ],
+  binWidthSlider: {
+    valueType: 'date',
+    binWidth: {
+      value: 1,
+      unit: 'year',
+    },
+    binWidthRange: {
+      min: 1,
+      max: 2,
+      unit: 'year',
+    },
+    binWidthStep: 1,
+  },
+};
+
+// testing date data format, especially year
+export const dateDataFormat: Story<LinePlotProps> = (args: any) => {
+  return (
+    <LinePlot
+      data={dateData}
+      dependentAxisLabel={
+        '<b><i>Arithmetic mean:</i></b><br /> Plasmodium asexual stages, by microscopy result'
+      }
+      interactive={true}
+      independentValueType={'date'}
+      {...args}
+    />
+  );
+};
+
+dateDataFormat.args = {
+  containerStyles: {
+    height: '450px',
+    width: '750px',
+  },
+};
