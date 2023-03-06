@@ -42,8 +42,10 @@ type TracksCallback = (data: string[][] | undefined) => void;
 
 export function JbrowseIframe(props: Props) {
   const { jbrowseUrl, height } = props;
-  const [ key, setKey ] = useState<string>('jbrowse-iframe-' + Math.floor(Math.random()*1000000));
   const [ isResetButtonDisabled, setIsResetButtonDisabled ] = useState<boolean>(true);
+
+  // used in the logic that forces a re-render of the JBrowse iframe
+  const [ key, setKey ] = useState<string>('jbrowse-iframe-' + Math.floor(Math.random()*1000000));
 
   const handleButtonState = useCallback(
     (hasJBrowseViewChanged: boolean) => {
@@ -55,10 +57,18 @@ export function JbrowseIframe(props: Props) {
     const JBrowse = event.currentTarget.contentWindow?.JBrowse;
     if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
     JBrowse.afterMilestone('completely initialized', function() {
-      let areInitialTracksLoaded = false;
+      const { highlight: initialHighlight, tracks: initialTracks } = JBrowse.config.queryParams;
+      
+      /**
+       * When JBrowse loads, the 'start' and 'end' properties in queryParams.location will differ slightly from what the JBrowse 'navigate' subscriber reports. 
+       * Parsing out the query params from JBrowse.config.makeFullViewURL() or the jbrowseUrl prop (which is what populates queryParams.location) results in a
+       * similar discrepancy. To further complicate matters, the 'end' location is even more volatile: after JBrowse loads, one can simply click on the iframe 
+       * and the 'end' location will differ from the initial load. Thus, I decided to use only the 'start' property to listen to iframe navigation changes by:
+       *  1. closing over a boolean that determines when the initial location has loaded and using it to set an 'initialStart' value
+       *  2. having the subscriber's callback disable the reset button if the 'start' data changes
+       */
       let isInitialLocationLoaded = false;
       let initialStart: number | null = null;
-      const { highlight: initialHighlight, tracks: initialTracks } = JBrowse.config.queryParams;
       JBrowse.subscribe(
         '/jbrowse/v1/n/navigate',
         function(data) {
@@ -67,37 +77,49 @@ export function JbrowseIframe(props: Props) {
             initialStart = data.start;
           }
           if (initialStart == null) return
-          handleButtonState(initialStart !== data.start)
+          if (initialStart !== data.start) {
+            handleButtonState(true)
+          }
         } as LocationCallback
       );
+      
+      /**
+       * When loading for the first time, this subscriber callback will run as each initial track is loaded, then (for reasons unknown to me) one more time with 
+       * 'undefined' data. Therefore, I've closed over another boolean to determine when the initial tracks have loaded such that we can then listen to changes
+       * to the tracks.
+       */
+      let areInitialTracksLoaded = false;
       JBrowse.subscribe(
         '/jbrowse/v1/n/tracks/visibleChanged',
         function(data) {
           if (!data) return;
-          if (!areInitialTracksLoaded && data && data[0].length !== initialTracks.split(',').length) {
+          if (!areInitialTracksLoaded && data[0].length !== initialTracks.split(',').length) {
             return;
           }
-          if (!areInitialTracksLoaded && data && data[0].length === initialTracks.split(',').length) {
+          if (!areInitialTracksLoaded && data[0].length === initialTracks.split(',').length) {
             areInitialTracksLoaded = true;
             return;
           }
-          if (areInitialTracksLoaded) {
-            handleButtonState(data[0].toString() !== initialTracks);
+          if (areInitialTracksLoaded && data[0].toString() !== initialTracks) {
+            handleButtonState(true);
           }
         } as TracksCallback
       );
+
       JBrowse.subscribe(
         '/jbrowse/v1/n/globalHighlightChanged',
         function(data) {
           const newHighlightSection = `${data[0].ref}:${data[0].start}..${data[0].end}`;
-          handleButtonState(initialHighlight !== newHighlightSection);
+          if (initialHighlight !== newHighlightSection) {
+            handleButtonState(true);
+          }
         } as HighlightCallback
       );
     });
   }
   
   function onClick() {
-    setKey('jbrowse-iframe-' + Math.floor(Math.random()*1000000));
+    setKey('jbrowse-iframe-' + Math.floor(Math.random() * 1000000));
     setIsResetButtonDisabled(true);
   }
 
