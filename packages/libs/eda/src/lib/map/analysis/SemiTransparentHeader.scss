@@ -33,13 +33,23 @@ $header-background: rgba(255, 255, 255, 0.8);
     margin: 0 1.5rem;
     img {
       border-radius: 50%;
-      height: 65px;
+      width: 65px;
     }
   }
 
   &__SampleCounter {
     margin-right: 1.5rem;
     font-size: 16px;
+
+    th {
+      border-width: 0;
+    }
+    tbody tr td:first-child {
+      &::after {
+        content: ':';
+      }
+      font-weight: bold;
+    }
   }
 }
 
