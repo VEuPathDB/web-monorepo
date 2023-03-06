@@ -417,7 +417,7 @@ export default function SubsetDownloadModal({
             banner={{
               type: 'warning',
               message:
-                'A table preview is not available for this entity. You can still select variables and download a tabular file.',
+                'Preview is not available. You can still configure and download a tabular file of the filtered dataset.',
             }}
           />
         )}
