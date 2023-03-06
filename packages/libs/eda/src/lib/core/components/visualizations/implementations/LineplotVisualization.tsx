@@ -938,24 +938,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
     },
     independentAxisLogScale: vizConfig.independentAxisLogScale,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
-
     independentAxisRange:
       vizConfig.independentAxisRange ?? defaultIndependentAxisRange,
     dependentAxisRange:
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
   };
-
-  // set four useState to handle Banner
-  const [
-    showIndependentLogScaleBanner,
-    setShowIndependentLogScaleBanner,
-  ] = useState(false);
-  const [showBinningBanner, setShowBinningBanner] = useState(false);
-  const [
-    showDependentLogScaleBanner,
-    setShowDependentLogScaleBanner,
-  ] = useState(false);
-  const [showErrorBarBanner, setShowErrorBarBanner] = useState(false);
 
   const plotNode = (
     <>
@@ -1141,9 +1128,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         }}
       >
         {/* independent axis banner */}
-        {(showIndependentLogScaleBanner ||
-          showBinningBanner ||
-          (vizConfig.independentAxisLogScale && vizConfig.useBinning)) && (
+        {vizConfig.independentAxisLogScale && vizConfig.useBinning && (
           <Banner
             banner={{
               type: 'warning',
@@ -1167,9 +1152,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           />
         )}
         {/* dependent axis banner */}
-        {(showDependentLogScaleBanner ||
-          showErrorBarBanner ||
-          (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)) && (
+        {vizConfig.dependentAxisLogScale && vizConfig.showErrorBars && (
           <Banner
             banner={{
               type: 'warning',
@@ -1234,13 +1217,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedIndependentAllNegativeWarning(false);
                 onIndependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.useBinning) {
-                  setShowIndependentLogScaleBanner(true);
-                  setShowBinningBanner(false);
-                } else {
-                  setShowIndependentLogScaleBanner(false);
-                  setShowBinningBanner(false);
-                }
               }}
               disabled={
                 lineplotProps.independentValueType === 'date' ||
@@ -1280,13 +1256,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.useBinning}
               onChange={(newValue: boolean) => {
                 onUseBinningChange(newValue);
-                if (newValue && vizConfig.independentAxisLogScale) {
-                  setShowBinningBanner(true);
-                  setShowIndependentLogScaleBanner(false);
-                } else {
-                  setShowBinningBanner(false);
-                  setShowIndependentLogScaleBanner(false);
-                }
               }}
               disabled={neverUseBinning}
               themeRole="primary"
@@ -1452,13 +1421,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               onChange={(newValue: boolean) => {
                 setDismissedDependentAllNegativeWarning(false);
                 onDependentAxisLogScaleChange(newValue);
-                if (newValue && vizConfig.showErrorBars) {
-                  setShowDependentLogScaleBanner(true);
-                  setShowErrorBarBanner(false);
-                } else {
-                  setShowDependentLogScaleBanner(false);
-                  setShowErrorBarBanner(false);
-                }
               }}
               disabled={lineplotProps.dependentValueType === 'date'}
               themeRole="primary"
@@ -1495,13 +1457,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
               value={vizConfig.showErrorBars ?? true}
               onChange={(newValue: boolean) => {
                 onShowErrorBarsChange(newValue);
-                if (newValue && vizConfig.dependentAxisLogScale) {
-                  setShowErrorBarBanner(true);
-                  setShowDependentLogScaleBanner(false);
-                } else {
-                  setShowErrorBarBanner(false);
-                  setShowDependentLogScaleBanner(false);
-                }
               }}
               disabled={neverShowErrorBars}
               themeRole="primary"
@@ -2249,6 +2204,7 @@ function processInputData(
       : {};
 
   let dataSetProcess: LinePlotDataSeries[] = [];
+
   responseLineplotData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
       if (el.seriesX.length !== el.seriesY.length) {
@@ -2319,6 +2275,8 @@ function processInputData(
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
+        // for connecting points regardless of missing data
+        connectgaps: true,
       });
 
       return breakAfterThisSeries(index);
