@@ -588,14 +588,11 @@ function useHeaderMenuItems() {
           type: 'reactRoute',
           url: '/reset-session',
         },
-        { 
+        {
           key: 'user-doc',
           display: 'Downloadable User documentation',
           type: 'externalLink',
-          url: makeExternalStaticPageUrl(
-                 communitySite,
-                 '/documents/VEuPathDB_User_Documentation.pdf'
-               )
+          url: '/reports/VEuPathDB_User_Documentation.pdf'
         }
         ]
       },
@@ -603,7 +600,8 @@ function useHeaderMenuItems() {
         key: 'contact-us',
         display: 'Contact Us',
         type: 'reactRoute',
-        url: '/contact-us'
+        url: '/contact-us',
+        target: '_blank'
       }
     ];
 
