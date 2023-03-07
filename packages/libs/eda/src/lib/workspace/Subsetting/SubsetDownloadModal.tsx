@@ -284,6 +284,7 @@ export default function SubsetDownloadModal({
       analysisState.analysis?.descriptor.subset.descriptor,
       currentEntity,
       mergeKeys,
+      canLoadTablePreview,
     ]
   );
 
