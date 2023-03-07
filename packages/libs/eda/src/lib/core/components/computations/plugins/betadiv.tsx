@@ -16,7 +16,7 @@ export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BetaDivConfig = t.type({
   collectionVariable: VariableDescriptor,
-  betaDivDistanceMethod: t.string,
+  betaDivDissimilarityMethod: t.string,
 });
 
 export const plugin: ComputationPlugin = {
@@ -67,9 +67,9 @@ function BetaDivConfigDescriptionComponent({
     'collectionVariable' in configuration
       ? configuration.collectionVariable
       : undefined;
-  const betaDivDistanceMethod =
-    'betaDivDistanceMethod' in configuration
-      ? configuration.betaDivDistanceMethod
+  const betaDivDissimilarityMethod =
+    'betaDivDissimilarityMethod' in configuration
+      ? configuration.betaDivDissimilarityMethod
       : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -93,11 +93,11 @@ function BetaDivConfigDescriptionComponent({
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
-        Distance method:{' '}
+        Dissimilarity method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {betaDivDistanceMethod ? (
-            betaDivDistanceMethod[0].toUpperCase() +
-            betaDivDistanceMethod.slice(1)
+          {betaDivDissimilarityMethod ? (
+            betaDivDissimilarityMethod[0].toUpperCase() +
+            betaDivDissimilarityMethod.slice(1)
           ) : (
             <i>Not selected</i>
           )}
@@ -108,7 +108,7 @@ function BetaDivConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const BETA_DIV_DISTANCE_METHODS = ['bray', 'jaccard', 'jsd'];
+const BETA_DIV_DISSIMILARITY_METHODS = ['bray', 'jaccard', 'jsd'];
 
 export function BetaDivConfiguration(props: ComputationConfigProps) {
   const {
@@ -155,9 +155,9 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
     }
   }, [collectionVarItems, configuration]);
 
-  const betaDivDistanceMethod = useMemo(() => {
-    if (configuration && 'betaDivDistanceMethod' in configuration) {
-      return configuration.betaDivDistanceMethod;
+  const betaDivDissimilarityMethod = useMemo(() => {
+    if (configuration && 'betaDivDissimilarityMethod' in configuration) {
+      return configuration.betaDivDissimilarityMethod;
     }
   }, [configuration]);
 
@@ -193,16 +193,21 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>
-            Distance method
+            Dissimilarity method
           </div>
           <SingleSelect
-            value={betaDivDistanceMethod ?? 'Select a method'}
-            buttonDisplayContent={betaDivDistanceMethod ?? 'Select a method'}
-            items={BETA_DIV_DISTANCE_METHODS.map((method) => ({
+            value={betaDivDissimilarityMethod ?? 'Select a method'}
+            buttonDisplayContent={
+              betaDivDissimilarityMethod ?? 'Select a method'
+            }
+            items={BETA_DIV_DISSIMILARITY_METHODS.map((method) => ({
               value: method,
               display: method,
             }))}
-            onSelect={partial(changeConfigHandler, 'betaDivDistanceMethod')}
+            onSelect={partial(
+              changeConfigHandler,
+              'betaDivDissimilarityMethod'
+            )}
           />
         </div>
       </div>

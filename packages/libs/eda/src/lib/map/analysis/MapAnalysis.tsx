@@ -26,7 +26,7 @@ import {
 import { Close, FilledButton, FloatingButton } from '@veupathdb/coreui';
 import { Visualization } from '../../core/types/visualization';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { makeStyles, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
@@ -149,9 +149,11 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     pending,
     legendItems,
     basicMarkerError,
+    outputEntity,
     overlayError,
     totalEntityCount,
     totalVisibleEntityCount,
+    totalVisibleWithOverlayEntityCount,
   } = useMapMarkers({
     requireOverlay: false,
     boundsZoomLevel: appState.boundsZoomLevel,
@@ -164,15 +166,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
   });
-
-  // Material UI CSS declarations
-  const useStyles = makeStyles((theme) => ({
-    chipListLabel: {
-      margin: '-2px 5px 5px 5px',
-      fontSize: '16px',
-      fontWeight: 500,
-    },
-  }));
 
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
@@ -255,6 +248,9 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     studyMetadata.rootEntity.id,
   ]);
 
+  const outputEntityTotalCount =
+    totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
+
   const fullScreenActions = (
     <>
       <div>
@@ -319,7 +315,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
-  const classes = useStyles();
 
   const FilterChipListForHeader = () => {
     const filterChipConfig: VariableLinkConfig = {
@@ -344,10 +339,18 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
         }}
         className="FilterChips"
       >
-        <p className={classes.chipListLabel}>
-          {filters.length === 0 ? `No filters applied.` : `Filters:`}
-        </p>
-        <div>
+        <FilledButton
+          text="Add filters"
+          onPress={() => setIsSubsetPanelOpen(true)}
+          size="small"
+          styleOverrides={{
+            container: {
+              width: 'max-content',
+              marginBottom: '5px',
+            },
+          }}
+        />
+        <div style={{ margin: '0 10px' }}>
           <FilterChipList
             filters={filters}
             removeFilter={(filter) =>
@@ -360,10 +363,24 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
             }
             variableLinkConfig={filterChipConfig}
             entities={studyEntities}
-            // selectedEntityId={studyEntities.id}
-            // selectedVariableId={selectedVariables.id}
+            selectedEntityId={subsetVariableAndEntity.entityId}
+            selectedVariableId={subsetVariableAndEntity.variableId}
           />
         </div>
+        {filters.length > 0 && (
+          <FloatingButton
+            text="Remove all"
+            onPress={() => analysisState.setFilters([])}
+            size="small"
+            themeRole="secondary"
+            styleOverrides={{
+              container: {
+                width: 'max-content',
+                margin: '0 10px 5px 0',
+              },
+            }}
+          />
+        )}
       </div>
     );
   };
@@ -381,14 +398,18 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
             >
               <SemiTransparentHeader
                 analysisName={analysisState.analysis?.displayName}
+                entityDisplayName={outputEntity?.displayNamePlural || 'Samples'}
                 filterList={<FilterChipListForHeader />}
                 isExpanded={mapHeaderIsExpanded}
                 logoProps={props.logoProps}
                 onAnalysisNameEdit={analysisState.setName}
                 onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
                 studyName={studyRecord.displayName}
-                totalEntitesCount={totalEntityCount}
-                visibleEntitiesCount={totalVisibleEntityCount}
+                totalEntityCount={outputEntityTotalCount}
+                totalEntityInSubsetCount={totalEntityCount}
+                visibleEntityCount={
+                  totalVisibleWithOverlayEntityCount ?? totalVisibleEntityCount
+                }
               />
               <MapVEuMap
                 height="100%"

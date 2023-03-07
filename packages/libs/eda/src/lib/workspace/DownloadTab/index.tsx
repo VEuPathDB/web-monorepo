@@ -78,60 +78,15 @@ export default function DownloadTab({
     [datasetId, history, user, dispatch]
   );
 
-  // Longitudinal studies on beta.microbiome are not formatted correctly (missing repeated measures) which affects the download files. This will be fixed for b60.
-  // For now, warn the user about improperly formatted download files.
-  const SHOULD_SHOW_DOWNLOAD_WARNING_KEY = `shouldShowDownloadWarning-${datasetId}`;
-  const [
-    shouldShowWarning,
-    setShouldShowWarning,
-  ] = useLocalBackedState<boolean>(
-    true,
-    SHOULD_SHOW_DOWNLOAD_WARNING_KEY,
-    (boolean) => String(boolean),
-    (string) => string !== 'false'
-  );
-  const studiesForDownloadWarning = [
-    'DS_b3b3ae9838', // BONUS
-    'DS_1102462e80', // Bangladesh
-    'DS_a2f8877e68', // DIABIMMUNE
-    'DS_5a4f8a1791', // DailyBaby
-    'DS_accd1b80f6', // ECAM
-    'DS_d20b9c4094', // Eco-CF
-    'DS_570856e10e', // HMP V1-V3
-    'DS_ca4404e155', // HMP V3-V5
-    'DS_72c94486c6', // MAL-ED 2yr
-    'DS_2e56313a65', // MAL-ED diarrhea
-    'DS_84fcb69f4e', // NICU NEC
-    'DS_d1b9f788dc', // Preterm Resistome I
-    'DS_b9dc726b20', // Preterm Resistome II
-  ];
-  const handleCloseWarning = () => {
-    setShouldShowWarning(false);
-  };
-  const downloadWarningMessage = [
-    'Download files for this dataset may be formatted improperly. Instead, please download files for this study from ',
-    <a href="https://microbiomedb.org">https://microbiomedb.org</a>,
-    '. We appreciate your patience as we transfer to the new system.',
-  ];
-  // End of this section of the temporary solution for funky download files
-
   const dataAccessDeclaration = useMemo(() => {
-    if (
-      !user ||
-      !permission ||
-      !studyRecord ||
-      permission.loading ||
-      !datasetId
-    )
-      return;
     const studyAccess =
       typeof studyRecord.attributes['study_access'] === 'string'
         ? studyRecord.attributes['study_access']
         : '<status not found>';
-    const permissionsForDataset =
-      permission.permissions.perDataset[studyRecord.id[0].value];
-    const hasPermission =
-      permissionsForDataset?.actionAuthorization['resultsAll'];
+    const hasPermission = permission.loading
+      ? undefined
+      : permission.permissions.perDataset[studyRecord.id[0].value]
+          ?.actionAuthorization['resultsAll'] || false;
     const requestElement = (
       <button className="link" style={{ padding: 0 }} onClick={handleClick}>
         request access
@@ -146,35 +101,15 @@ export default function DownloadTab({
           fontSize: '1.4em',
         }}
       >
-        {/* The following is part of the temporary solution for funky mbio download files */}
-        {studiesForDownloadWarning.includes(datasetId) && shouldShowWarning && (
-          <Banner
-            banner={{
-              type: 'warning',
-              message: downloadWarningMessage,
-              pinned: false,
-              intense: false,
-            }}
-            onClose={handleCloseWarning}
-          ></Banner>
-        )}
-        {/* End temporary solution section */}
         {getDataAccessDeclaration(
           studyAccess,
-          user.isGuest,
-          hasPermission ?? false,
-          requestElement
+          requestElement,
+          user?.isGuest,
+          hasPermission
         )}
       </span>
     );
-  }, [
-    user,
-    permission,
-    studyRecord,
-    handleClick,
-    datasetId,
-    shouldShowWarning,
-  ]);
+  }, [user, permission, studyRecord, handleClick, datasetId]);
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -288,20 +223,25 @@ export default function DownloadTab({
 
 function getDataAccessDeclaration(
   studyAccess: string,
-  isGuest: boolean,
-  hasPermission: boolean = false,
-  requestElement: JSX.Element
+  requestElement: JSX.Element,
+  isGuest?: boolean,
+  hasPermission?: boolean
 ): JSX.Element {
-  const PUBLIC_ACCESS_STUB =
-    'Data downloads for this study are public. Data are available without logging in.';
-  const LOGIN_REQUEST_STUB = (
-    <span>
-      To download data, please {requestElement}. Data will be available upon
-      study team review and approval.
-    </span>
-  );
+  const accessIsControlled = studyAccess === 'Controlled';
+  const accessIsProtected = studyAccess === 'Protected';
+  const requestIsRequired = accessIsControlled || accessIsProtected;
+
   const PRERELEASE_STUB =
     'Data downloads for this study are not yet available on this website.';
+  const PUBLIC_ACCESS_STUB =
+    'Data downloads for this study are public. Data are available without logging in.';
+  const LOGIN_REQUEST_SPAN = () => (
+    <span>To download data, please {requestElement}.</span>
+  );
+  const CONTROLLED_ACCESS_STUB =
+    ' Data will be available immediately after submitting the request.';
+  const PROTECTED_ACCESS_STUB =
+    ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
 
@@ -312,11 +252,22 @@ function getDataAccessDeclaration(
         <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
       </H5>
       <Paragraph styleOverrides={{ margin: 0 }}>
-        {studyAccess === 'Public' ? (
+        {isGuest === undefined || hasPermission === undefined ? (
+          <AnimatedLoadingText text="Getting permissions" />
+        ) : studyAccess === 'Public' ? (
           <span>{PUBLIC_ACCESS_STUB}</span>
-        ) : studyAccess === 'Controlled' || studyAccess === 'Protected' ? (
+        ) : requestIsRequired ? (
           isGuest || !hasPermission ? (
-            <span>{LOGIN_REQUEST_STUB}</span>
+            <span>
+              <LOGIN_REQUEST_SPAN />
+              <span>
+                {accessIsControlled
+                  ? CONTROLLED_ACCESS_STUB
+                  : accessIsProtected
+                  ? PROTECTED_ACCESS_STUB
+                  : ''}
+              </span>
+            </span>
           ) : (
             <span>{ACCESS_GRANTED_STUB}</span>
           )
@@ -329,3 +280,20 @@ function getDataAccessDeclaration(
     </div>
   );
 }
+
+const AnimatedLoadingText = (props: { text?: string }) => {
+  const text = props.text ?? 'Loading';
+  const [numDots, setNumDots] = useState(1);
+
+  useEffect(() => {
+    const nextNumDots = (numDots % 3) + 1;
+    setTimeout(() => setNumDots(nextNumDots), 500);
+  });
+
+  return (
+    <span>
+      {text}
+      {'.'.repeat(numDots)}
+    </span>
+  );
+};
