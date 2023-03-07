@@ -303,6 +303,12 @@ function MosaicViz(props: Props<Options>) {
     vizConfig.yAxisReferenceValue,
   ]);
 
+  // passed into ContingencyTable and referenced in order quadrants, so memoizing will prevent unnecessary re-renders
+  const selectedReferenceValues = useMemo(
+    () => [xAxisReferenceValue, yAxisReferenceValue],
+    [xAxisReferenceValue, yAxisReferenceValue]
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -477,7 +483,7 @@ function MosaicViz(props: Props<Options>) {
     independentAxisLabel: xAxisLabel ?? 'X-axis',
     dependentAxisLabel: yAxisLabel ?? 'Y-axis',
     displayLegend: false,
-    interactive: !isFaceted(data.value) ? true : false,
+    interactive: true,
     showSpinner: data.pending,
     displayLibraryControls: false,
   };
@@ -515,7 +521,7 @@ function MosaicViz(props: Props<Options>) {
           key: 'Table',
           displayName: 'Table',
           content: (
-            <div style={{ margin: '15px 0', marginLeft: '0.9em' }}>
+            <div style={{ margin: '15px 0', marginLeft: '0.75rem' }}>
               <ContingencyTable
                 data={data.pending ? undefined : data.value}
                 tableContainerStyles={
@@ -530,6 +536,7 @@ function MosaicViz(props: Props<Options>) {
                   facetVariable ? facetVariable.displayName : 'Facet'
                 }
                 enableSpinner={data.pending}
+                selectedReferenceValues={selectedReferenceValues}
               />
             </div>
           ),
@@ -579,7 +586,7 @@ function MosaicViz(props: Props<Options>) {
                       {data.value.facets.map(({ label, data }, index) => (
                         <table key={index}>
                           <tbody>
-                            <tr style={{ marginLeft: '0.9em' }}>
+                            <tr style={{ marginLeft: '0.75rem' }}>
                               <th
                                 style={{
                                   border: 'none' /* cancel WDK style! */,
@@ -1270,8 +1277,8 @@ function TwoByTwoStats(props?: {
       ) : (
         <div
           style={{
-            marginLeft: '0.9em',
             width: '750px',
+            margin: '0 0 0 0.75rem',
           }}
         >
           {/* 2x2 stats table collapsible banner */}
@@ -1304,26 +1311,25 @@ function TwoByTwoStats(props?: {
         style={
           props.facetVariableDetails != null
             ? { width: '750px' }
-            : { margin: '15px 0', marginLeft: '0.9em', width: '750px' }
+            : { margin: '15px 0', marginLeft: '0.75rem', width: '750px' }
         }
       >
         <table>
           {' '}
           <tbody>
             <tr>
-              {/* <th></th> */}
               <td className="stats-table_top-empty-cell"></td>
               <td className="stats-table_top-empty-cell"></td>
               <th
                 className="stats-table_top-left-cell"
-                style={{ background: MEDIUM_GRAY, textAlign: 'right' }}
+                style={{ background: '#e0e0e0', textAlign: 'right' }}
               >
                 Value
               </th>
               <th
                 className="stats-table_top-cell"
                 style={{
-                  background: MEDIUM_GRAY,
+                  background: '#e0e0e0',
                   textAlign: 'center',
                   paddingLeft: '2em',
                 }}
@@ -1332,7 +1338,7 @@ function TwoByTwoStats(props?: {
               </th>
               <th
                 className="stats-table_top-right-cell"
-                style={{ background: MEDIUM_GRAY, textAlign: 'right' }}
+                style={{ background: '#e0e0e0', textAlign: 'right' }}
               >
                 P-value
               </th>
