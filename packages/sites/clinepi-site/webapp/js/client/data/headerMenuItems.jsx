@@ -166,16 +166,16 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`
             },
             {
-              text: 'Features coming soon',
-              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/newfeatures.html`
-            },
-            {
               text: 'News',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`
             },
             {
               text: 'FAQ',
               route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`
+            },
+            { 
+              text: 'Submit Data to ClinEpiDB',
+              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/submit.html`
             },
             {
               text: 'Data Access & Use Policy',
@@ -190,6 +190,10 @@ export default function makeHeaderMenuItemsFactory(permissionsValue, diyDatasets
               text: 'Publications that use our resource',
               url: 'https://scholar.google.com/scholar?hl=en&q=ClinEpiDB',
               target: '_blank'
+            },
+            { 
+              text: 'Features coming soon',
+              route: `${STATIC_ROUTE_PATH}/ClinEpiDB/newfeatures.html`
             },
             ...socialLinks
           ]
