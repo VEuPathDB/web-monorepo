@@ -16,14 +16,16 @@ export type SemiTransparentHeaderLogoProps = {
 
 export type SemiTransparentHeaderProps = {
   analysisName?: string;
+  entityDisplayName: string;
   filterList?: ReactElement;
   isExpanded: boolean;
   logoProps: SemiTransparentHeaderLogoProps;
   onAnalysisNameEdit: (newName: string) => void;
   onToggleExpand: () => void;
   studyName: string;
-  totalEntitesCount: number | undefined;
-  visibleEntitiesCount: number | undefined;
+  totalEntityCount: number | undefined;
+  totalEntityInSubsetCount: number | undefined;
+  visibleEntityCount: number | undefined;
 };
 
 /**
@@ -34,14 +36,16 @@ export type SemiTransparentHeaderProps = {
  */
 export function SemiTransparentHeader({
   analysisName,
+  entityDisplayName,
   filterList,
   isExpanded,
   logoProps,
   onAnalysisNameEdit,
   onToggleExpand,
   studyName,
-  totalEntitesCount,
-  visibleEntitiesCount,
+  totalEntityCount = 0,
+  totalEntityInSubsetCount = 0,
+  visibleEntityCount = 0,
 }: SemiTransparentHeaderProps) {
   const semiTransparentHeader = makeClassNameHelper('SemiTransparentHeader');
 
@@ -69,10 +73,32 @@ export function SemiTransparentHeader({
         />
       </div>
       <div className={semiTransparentHeader('__SampleCounter')}>
-        <p>
-          {visibleEntitiesCount || 0} of {totalEntitesCount || 0} samples
-          visible
-        </p>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>{entityDisplayName}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr title={`There are X total samples.`}>
+              <td>All</td>
+              <td>{totalEntityCount}</td>
+            </tr>
+            <tr
+              title={`You've subset all samples down to ${totalEntityInSubsetCount} entites.`}
+            >
+              <td>Subset</td>
+              <td>{totalEntityInSubsetCount}</td>
+            </tr>
+            <tr
+              title={`${visibleEntityCount} samples of your subset samples visible at your current viewport.`}
+            >
+              <td>Visible</td>
+              <td>{visibleEntityCount}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <OpenCloseToggleButton
         isExpanded={isExpanded}
