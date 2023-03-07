@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useCallback, useState } from 'react';
+import React, { SyntheticEvent, useCallback, useState, useMemo } from 'react';
 
 interface Props {
   jbrowseUrl: string;
@@ -44,8 +44,9 @@ export function JbrowseIframe(props: Props) {
   const { jbrowseUrl, height } = props;
   const [ isResetButtonDisabled, setIsResetButtonDisabled ] = useState<boolean>(true);
 
-  // used in the logic that forces a re-render of the JBrowse iframe
-  const [ key, setKey ] = useState<string>('jbrowse-iframe-' + Math.floor(Math.random()*1000000));
+  // counter and key are used in the logic that forces a re-render of the JBrowse iframe
+  const [ counter, setCounter ] = useState<number>(0);
+  const key = useMemo(() => 'jbrowse-iframe-' + counter, [counter]);
 
   const handleButtonState = useCallback(
     (hasJBrowseViewChanged: boolean) => {
@@ -119,7 +120,7 @@ export function JbrowseIframe(props: Props) {
   }
   
   function onClick() {
-    setKey('jbrowse-iframe-' + Math.floor(Math.random() * 1000000));
+    setCounter(prev => prev + 1);
     setIsResetButtonDisabled(true);
   }
 
