@@ -7,8 +7,6 @@ import { JbrowseIframe } from '@veupathdb/web-common/lib/components/JbrowseIfram
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
-import './Gbrowse.scss';
-
 const JBrowseLinkContainerStyle = {
   display: 'flex',
   justifyContent: 'center',
