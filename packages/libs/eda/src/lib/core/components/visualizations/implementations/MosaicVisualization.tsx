@@ -303,6 +303,12 @@ function MosaicViz(props: Props<Options>) {
     vizConfig.yAxisReferenceValue,
   ]);
 
+  // passed into ContingencyTable and referenced in order quadrants, so memoizing will prevent unnecessary re-renders
+  const selectedReferenceValues = useMemo(
+    () => [xAxisReferenceValue, yAxisReferenceValue],
+    [xAxisReferenceValue, yAxisReferenceValue]
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -477,6 +483,7 @@ function MosaicViz(props: Props<Options>) {
     independentAxisLabel: xAxisLabel ?? 'X-axis',
     dependentAxisLabel: yAxisLabel ?? 'Y-axis',
     displayLegend: false,
+    interactive: true,
     showSpinner: data.pending,
     displayLibraryControls: false,
   };
@@ -529,6 +536,7 @@ function MosaicViz(props: Props<Options>) {
                   facetVariable ? facetVariable.displayName : 'Facet'
                 }
                 enableSpinner={data.pending}
+                selectedReferenceValues={selectedReferenceValues}
               />
             </div>
           ),

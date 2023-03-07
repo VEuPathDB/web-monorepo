@@ -2039,10 +2039,8 @@ function getRequestParams(
     showMissingness,
     binWidth = NumberVariable.is(xAxisVariableMetadata) ||
     DateVariable.is(xAxisVariableMetadata)
-      ? vizConfig.independentAxisValueSpec === 'Full' // only use 'annotated' binwidth when fully zoomed out
-        ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
-          xAxisVariableMetadata.distributionDefaults.binWidth
-        : undefined
+      ? xAxisVariableMetadata.distributionDefaults.binWidthOverride ??
+        xAxisVariableMetadata.distributionDefaults.binWidth
       : undefined,
     binWidthTimeUnit = xAxisVariableMetadata?.type === 'date'
       ? xAxisVariableMetadata.distributionDefaults.binUnits
@@ -2072,17 +2070,6 @@ function getRequestParams(
 
   const valueSpec = valueSpecLookup[valueSpecConfig];
 
-  // define viewport based on independent axis range: need to check undefined case
-  // also no viewport change regardless of the change of overlayVariable
-  const viewport =
-    vizConfig?.independentAxisRange?.min != null &&
-    vizConfig?.independentAxisRange?.max != null
-      ? {
-          xMin: String(vizConfig?.independentAxisRange?.min),
-          xMax: String(vizConfig?.independentAxisRange?.max),
-        }
-      : undefined;
-
   return {
     studyId,
     filters,
@@ -2106,7 +2093,6 @@ function getRequestParams(
             yAxisDenominatorValues: denominatorValues,
           }
         : {}),
-      viewport,
     },
   };
 }
