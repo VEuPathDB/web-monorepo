@@ -41,9 +41,13 @@ export const Footer: FunctionComponent<Props> = ({ children, containerClassName 
 
     <div className={cx('SiteFamilyRow')}>
       <div className={cx('Copyright')}>
-         <div><a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers">
+         <div><a target="_blank" href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers">
                 <img src="/assets/images/BRC_Logo_transparent-01.png"></img>
-         </a></div>
+             </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             <a target="_blank" href="https://globalbiodata.org/scientific-activities/global-core-biodata-resources">
+                <img src="/assets/images/GCBR-Logo-CMYK.png"></img>
+             </a>
+        </div>
       </div>
       <div className="footer-center"> 
       <div className={cx('ProjectLinks')}>
