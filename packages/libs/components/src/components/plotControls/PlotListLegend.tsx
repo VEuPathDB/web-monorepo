@@ -18,6 +18,8 @@ export interface PlotListLegendProps {
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
   // add a condition to show legend for single overlay data
   showOverlayLegend?: boolean;
+  // define markerBodyOpaciy prop
+  markerBodyOpacity?: number;
 }
 
 export default function PlotListLegend({
@@ -25,6 +27,7 @@ export default function PlotListLegend({
   checkedLegendItems,
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
+  markerBodyOpacity = 1,
 }: PlotListLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -131,7 +134,21 @@ export default function PlotListLegend({
                           borderWidth: '0.15em',
                           borderStyle: 'solid',
                           borderRadius: '0.6em',
-                          borderColor: item.markerColor,
+                          borderColor:
+                            markerBodyOpacity === 0
+                              ? item.markerColor
+                              : // we don't need borderColor with marker opacity except opacity = 0
+                                'transparent',
+                          // add backgroundColor with marker opacity
+                          backgroundColor:
+                            markerBodyOpacity === 0
+                              ? 'transparent'
+                              : ColorMath.evaluate(
+                                  item.markerColor +
+                                    ' @a ' +
+                                    (markerBodyOpacity * 100).toString() +
+                                    '%'
+                                ).result.css(),
                         }}
                       />
                     </div>
