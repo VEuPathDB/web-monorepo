@@ -231,5 +231,5 @@ function handleRouting(
   urlToReplace: string,
   urlToReplaceWith: string
 ) {
-  history.push(baseUrl.replace(urlToReplace, urlToReplaceWith));
+  history.replace(baseUrl.replace(urlToReplace, urlToReplaceWith));
 }

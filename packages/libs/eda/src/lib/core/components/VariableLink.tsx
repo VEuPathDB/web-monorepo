@@ -4,6 +4,11 @@
 import { forwardRef, Ref } from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 
+const disabledStyle: React.CSSProperties = {
+  cursor: 'not-allowed',
+  opacity: 0.5,
+};
+
 type VariableValue = {
   entityId?: string;
   variableId?: string;
@@ -23,22 +28,40 @@ export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
   entityId?: string;
   variableId?: string;
   linkConfig: VariableLinkConfig;
+  disabled?: boolean;
 }
 
 export const VariableLink = forwardRef(
   (props: Props, ref: Ref<HTMLAnchorElement>) => {
-    const { entityId, variableId, linkConfig, style, ...rest } = props;
+    const {
+      entityId,
+      disabled,
+      variableId,
+      linkConfig,
+      style,
+      ...rest
+    } = props;
     const value = { entityId, variableId };
+    const finalStyle = disabled ? { ...style, ...disabledStyle } : style;
 
     return linkConfig.type === 'link' ? (
       <Link
         ref={ref}
+        aria-disabled={disabled}
         replace
-        style={style}
+        style={finalStyle}
         {...rest}
         to={{
           pathname: linkConfig.makeVariableLink(value),
           state: { scrollToTop: false },
+        }}
+        onClick={(event) => {
+          if (disabled) {
+            event.stopPropagation();
+            event.preventDefault();
+          } else {
+            rest.onClick?.(event);
+          }
         }}
       />
     ) : (
@@ -48,17 +71,23 @@ export const VariableLink = forwardRef(
       // eslint-disable-next-line jsx-a11y/anchor-has-content
       <a
         ref={ref}
+        aria-disabled={disabled}
         role="button"
         tabIndex={0}
-        style={{ cursor: 'pointer', ...style }}
+        style={finalStyle}
         onKeyDown={(event) => {
+          event.preventDefault();
+          if (disabled) {
+            return;
+          }
           if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
             linkConfig.onClick(value);
           }
         }}
         onClick={(event) => {
           event.preventDefault();
+          event.stopPropagation();
+          if (disabled) return;
           linkConfig.onClick(value);
         }}
         {...rest}
