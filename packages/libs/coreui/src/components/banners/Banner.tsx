@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { ReactNode, useState, useEffect, CSSProperties } from 'react';
+import { ReactNode, useState, useEffect, CSSProperties, useMemo } from 'react';
 
 import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -132,6 +132,18 @@ export default function Banner(props: BannerComponentProps) {
     };
   }, [showBanner, autoHideDuration, fadeoutEffect]);
 
+  const iconBtnCss = useMemo(() => {
+    return (
+      `text-align: right;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      &:hover {
+        color: ${intense ? 'black' : getColorTheme(type, 600)};
+      }`
+    )
+  }, [type, intense])
+
   // conditional border color and radius with the presence of CollapsibleContent
   return (
     <>
@@ -223,35 +235,27 @@ export default function Banner(props: BannerComponentProps) {
 
             </span>
             {pinned || !onClose ? null : (
-              <a
+              <button
                 css={css`
-                  text-align: right;
-                  padding-right: 10px;
-                  &:hover {
-                    color: ${intense ? 'black' : getColorTheme(type, 600)};
-                  }
+                  ${iconBtnCss}
                 `}
                 onClick={onClose}
               >
                 <CloseIcon css={css`vertical-align: middle`} />
-              </a>
+              </button>
             )}
             {/* show CollapsibleContent icon */}
             {CollapsibleContent != null && (
-              <a
+              <button
                 css={css`
-                  text-align: right;
-                  padding-right: 10px;
-                  &:hover {
-                    color: ${intense ? 'black' : getColorTheme(type, 600)};
-                  }
-                `}
+                ${iconBtnCss}
+              `}
                 onClick={() => {
                   setIsShowMore != null ? setIsShowMore(!isShowMore) : null;
                 }}
               >
                 {collapsibleIcon}
-              </a>
+              </button>
             )}
           </div>
           {/* show/hide CollapsibleContent */}
