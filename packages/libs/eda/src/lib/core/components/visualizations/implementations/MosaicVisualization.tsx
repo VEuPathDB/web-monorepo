@@ -1390,7 +1390,7 @@ function TwoByTwoStats(props?: {
             </tr>
             <tr>
               <td className="stats-table_leftmost-cell">
-                Case control or Cross-sectional studies
+                Case control & Cross-sectional studies
               </td>
               <td className="stats-table_middle-cell">
                 <b>Odds Ratio</b>
