@@ -85,7 +85,6 @@ export default function PopoverButton(props: PopoverButtonProps) {
         textTransform: 'none',
       }}
       disabled={isDisabled}
-      aria-disabled={isDisabled}
     >
       {buttonDisplayContent}
     </Button>
