@@ -58,3 +58,11 @@ Default.args = {
   placeholder: 'Example Placeholder',
   characterLimit: 500,
 };
+export const NoLimit = Template.bind({})
+NoLimit.args = {
+  heading: 'Example Heading',
+  instructions: 'These are example instructions. ',
+  width: '50vw',
+  height: '50vh',
+  placeholder: 'Testing no character limit',
+};
