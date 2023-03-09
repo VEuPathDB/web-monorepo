@@ -48,6 +48,8 @@ import {
   mapValues,
   map,
   keys,
+  get,
+  set,
 } from 'lodash';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -665,7 +667,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        neutralPaletteProps.colorPalette
+        neutralPaletteProps.colorPalette,
+        params.config.valueSpec === 'proportion'
       );
     }, [
       studyId,
@@ -1835,7 +1838,8 @@ export function lineplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  dependentIsProportion?: boolean
 ): LinePlotDataWithCoverage {
   const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
@@ -1880,7 +1884,8 @@ export function lineplotResponseToData(
       response.lineplot.config.binSpec,
       response.lineplot.config.binSlider,
       overlayVariable,
-      colorPaletteOverride
+      colorPaletteOverride,
+      dependentIsProportion
     );
 
     return {
@@ -1953,6 +1958,8 @@ function nullZeroHack(
   dataSetProcess: LinePlotDataSeries[],
   dependentValueType: string
 ): LinePlotDataSeries[] {
+  console.log('In nullZeroHack()');
+  console.log({ dataSetProcess });
   // make no attempt to process date values
   if (dependentValueType === 'date') return dataSetProcess;
 
@@ -1963,7 +1970,9 @@ function nullZeroHack(
       .filter((_): _ is keyof LinePlotDataSeries => true)
       .filter((key): key is keyof ArrayTypes => Array.isArray(series[key]));
 
-    const otherArrayKeys = arrayKeys.filter((key) => key !== 'y');
+    const otherArrayKeys = arrayKeys.filter((key) => key !== 'y') as string[];
+    if (Array.isArray(series.marker?.symbol))
+      otherArrayKeys.push('marker.symbol');
 
     // coersce type of y knowing that we're not dealing with dates (as string[])
     const y = series.y as (number | null)[];
@@ -1992,19 +2001,22 @@ function nullZeroHack(
           newY.push(current);
         }
 
+        // need to handle markers of 0/0 values here
         otherArrayKeys.forEach(
           // e.g. x, binLabel etc
           (key) => {
             // initialize empty array if needed
-            if (accum[key] == null) accum[key] = [];
+            if (get(accum, key) == null) set(accum, key, []);
             // get the value of, e.g. x[i]
-            const value = series[key]![index];
+            const value = get(series, key)[index];
             // figure out if we're going to push one or three identical values
             const oneOrThree = current == null ? 3 : 1;
             // and do it
             [...Array(oneOrThree)].forEach(() =>
-              (accum[key] as (number | null | string)[]).push(value)
+              (get(accum, key) as (number | null | string)[]).push(value)
             );
+            if (key === 'marker.symbol')
+              accum['marker']!['color'] = series.marker!.color;
           }
         );
 
@@ -2126,8 +2138,12 @@ function processInputData(
   binSpec?: BinSpec,
   binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable,
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  dependentIsProportion?: boolean
 ) {
+  console.log({ responseLineplotData });
+  console.log({ dependentIsProportion });
+
   // set fillAreaValue for densityplot
   const fillAreaValue: LinePlotDataSeries['fill'] =
     vizType === 'densityplot' ? 'toself' : undefined;
@@ -2164,10 +2180,23 @@ function processInputData(
     );
   };
 
-  const markerSymbol = (index: number): string =>
-    showMissingness && index === responseLineplotData.length - 1
-      ? 'x'
-      : 'circle';
+  const markerSymbol = (
+    index: number,
+    el: LineplotResponse['lineplot']['data'][number]
+  ): string | string[] => {
+    const symbol =
+      showMissingness && index === responseLineplotData.length - 1
+        ? 'x'
+        : dependentIsProportion &&
+          el.binSampleSize &&
+          el.binSampleSize[0].hasOwnProperty('numeratorN')
+        ? el.binSampleSize.map((obj: any) =>
+            obj.numeratorN || obj.denominatorN ? 'circle' : 'circle-open'
+          )
+        : 'circle';
+    console.log({ symbol });
+    return symbol;
+  };
 
   const binWidthSliderData =
     binSpec != null && binWidthSlider != null
@@ -2271,12 +2300,14 @@ function processInputData(
         opacity: 0.7,
         marker: {
           color: markerColor(index),
-          symbol: markerSymbol(index),
+          // Can make this an array to specify symbols for specific points
+          symbol: markerSymbol(index, el) as any,
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index), shape: 'linear' },
         // for connecting points regardless of missing data
-        connectgaps: true,
+        // note: removing this may cause other issues
+        // connectgaps: true,
       });
 
       return breakAfterThisSeries(index);
@@ -2301,10 +2332,13 @@ function processInputData(
         .filter((val): val is number | string => val != null)
     );
 
+  console.log({ dataSetProcess });
+  const zeroHackedSeries = nullZeroHack(dataSetProcess, dependentValueType);
+  console.log({ zeroHackedSeries });
+
   return {
     dataSetProcess: {
-      // Let's not show no data: nullZeroHack is not used
-      series: dataSetProcess,
+      series: zeroHackedSeries,
       ...binWidthSliderData,
     },
     xMin: min(xValues),
@@ -2320,6 +2354,7 @@ function processInputData(
  * Utility functions for processInputData()
  */
 
+// May need to add multiple new 0/0 series here
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
   categoricalMode: boolean,
