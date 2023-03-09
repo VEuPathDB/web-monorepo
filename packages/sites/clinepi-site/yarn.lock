@@ -2265,10 +2265,10 @@
     regenerator-runtime "^0.13.9"
     use-resize-observer "^9.1.0"
 
-"@veupathdb/eda@^4.1.7":
-  version "4.1.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.1.7.tgz#8c0aabf1cdbf0cb0b1749e9d49e4c5e564f81f95"
-  integrity sha512-YDe5H9CJn7qPyMLY9JG9wxriOoPNLC+l/Jw6q4U4S2g+CNhsuMifYmdkF/T3GOJrfP5cP/OPZ4ANCC/UudkbAg==
+"@veupathdb/eda@^4.1.8":
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-4.1.8.tgz#5cdd136e112d6ee78b6e8bff57000401b0f927a4"
+  integrity sha512-2kfDucldXvOIt30CSzz3c3OtdnW7hgk5CGSTihfA1UD4gBODMf4rWX+MF81EA8HMrR0NRGUhIbUbJPF2UGJzNQ==
   dependencies:
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
