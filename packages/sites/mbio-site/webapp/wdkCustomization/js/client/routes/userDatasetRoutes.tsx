@@ -26,7 +26,7 @@ const BiomDatasetDetail = React.lazy(
 
 const UserDatasetRouter = React.lazy(() => import('../controllers/UserDatasetRouter'));
 
-const availableUploadTypes = ['isasimple'];
+const availableUploadTypes = ['biom'];
 
 const USER_DATASETS_HELP_PAGE = `${projectId}/user_datasets_help.html`;
 
