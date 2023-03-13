@@ -122,6 +122,12 @@ export default function SubsetDownloadModal({
   const theme = useUITheme();
   const primaryColor = theme?.palette.primary.hue[theme.palette.primary.level];
 
+  // In order to show a sortable preview we need a wide table of data.
+  // Wide tables can only be up to 1000 columns. So if there are at least 1000
+  // vars, (1) do not ask for the wide table and (2) tell the user that we can't
+  // show a preview but everything is okay.
+  const canLoadTablePreview = currentEntity.variables.length < 1000;
+
   //   Various Custom Hooks
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -222,7 +228,7 @@ export default function SubsetDownloadModal({
   >['serverSidePagination']['fetchPaginatedData'] = useCallback(
     ({ pageSize, pageIndex, sortBy }) => {
       if (!currentEntity) return;
-      if (selectedVariableDescriptors.length === 0) {
+      if (selectedVariableDescriptors.length === 0 || !canLoadTablePreview) {
         setGridData(null);
         return;
       }
@@ -277,6 +283,7 @@ export default function SubsetDownloadModal({
       analysisState.analysis?.descriptor.subset.descriptor,
       currentEntity,
       mergeKeys,
+      canLoadTablePreview,
     ]
   );
 
@@ -405,6 +412,15 @@ export default function SubsetDownloadModal({
             />
           )}
         </div>
+        {!canLoadTablePreview && (
+          <Banner
+            banner={{
+              type: 'warning',
+              message:
+                'Preview is not available. You can still configure and download a tabular file of the filtered dataset.',
+            }}
+          />
+        )}
         {apiError && (
           <Banner
             banner={{
@@ -555,7 +571,7 @@ export default function SubsetDownloadModal({
             </button>
             {dataLoading && <LoadingOverlay />}
           </div>
-        ) : selectedVariableDescriptors.length === 0 ? (
+        ) : selectedVariableDescriptors.length === 0 || !canLoadTablePreview ? (
           <div
             style={{
               width: '100%',
