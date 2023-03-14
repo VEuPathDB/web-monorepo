@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ScatterPlot, { ScatterPlotProps } from '../../plots/ScatterPlot';
-import { min, max, lte, gte } from 'lodash';
+import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
+// import { min, max, lte, gte } from 'lodash';
 // import { dataSetProcess, xAxisRange, yAxisRange } from './ScatterPlot.storyData';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // test to use RadioButtonGroup directly instead of ScatterPlotControls
@@ -17,6 +17,7 @@ interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
     data: Array<{
       foldChange: string[];
+      pValue: string[];
       adjustedPValue: string[];
       pointId: string[];
       overlayValue: string;
@@ -30,19 +31,22 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
     data: [
       {
         foldChange: ['2', '3'],
-        adjustedPValue: ['0.001', '0.0001'],
+        pValue: ['0.001', '0.0001'],
+        adjustedPValue: ['0.01', '0.001'],
         pointId: ['a', 'b'],
         overlayValue: 'positive',
       },
       {
         foldChange: ['-1', '0', '1', '0.5', '-0.5', '4', '-5'],
-        adjustedPValue: ['0.001', '0.0001', '0.2', '0.1', '0.7', '0.1', '0.4'],
+        pValue: ['0.001', '0.0001', '0.2', '0.1', '0.7', '0.1', '0.4'],
+        adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
         pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
         overlayValue: 'none',
       },
       {
         foldChange: ['-2', '-3', '-4'],
-        adjustedPValue: ['0.001', '0.0001', '0.002'],
+        pValue: ['0.001', '0.0001', '0.002'],
+        adjustedPValue: ['0.01', '0.001', '0.02'],
         pointId: ['j', 'k', 'l'],
         overlayValue: 'negative',
       },
@@ -87,13 +91,20 @@ const Template: Story<TemplateProps> = (args) => {
    *
    */
 
-  const independentAxisRange = [-5, 5]; // Determined by the data and symmetric around 0 by default?
-  const dependentAxisRange = [0, 0.2]; // By default max determined by data and min at 0
+  const independentAxisRange = {
+    min: -5,
+    max: 5,
+  };
+  // Determined by the data and symmetric around 0 by default?
+  const dependentAxisRange = {
+    min: 0,
+    max: 0.2,
+  }; // By default max determined by data and min at 0
 
   return (
     <div>
-      <VolcanoPlot>
-        data={datasetProcess}
+      <VolcanoPlot
+        data={datasetProcess} // call it PlotlyScatterData???
         foldChangeGates={foldChangeGates}
         comparisonLabels={comparisonLabels}
         adjustedPValueGate={args.adjustedPValueGate}
@@ -101,7 +112,7 @@ const Template: Story<TemplateProps> = (args) => {
         plotTitle={plotTitle}
         independentAxisRange={independentAxisRange}
         dependentAxisRange={dependentAxisRange}
-      </VolcanoPlot>
+      />
     </div>
   );
 };
