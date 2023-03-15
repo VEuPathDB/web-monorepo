@@ -6,6 +6,7 @@ export interface SelectListProps<T> extends CheckboxListProps<T> {
     children?: ReactNode;
     /** A button's content if/when no values are currently selected */
     defaultButtonDisplayContent: ReactNode;
+    isDisabled?: boolean;
 }
 
 export default function SelectList<T>({
@@ -16,6 +17,7 @@ export default function SelectList<T>({
     linksPosition,
     children,
     defaultButtonDisplayContent,
+    isDisabled = false,
 }: SelectListProps<T>) {
     const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
     const [ buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(value.length ? value.join(', ') : defaultButtonDisplayContent);
@@ -51,6 +53,7 @@ export default function SelectList<T>({
         <PopoverButton
             buttonDisplayContent={buttonLabel}
             onClose={onClose}
+            isDisabled={isDisabled}
         >
             <div css={{
                 margin: '0.5em'
