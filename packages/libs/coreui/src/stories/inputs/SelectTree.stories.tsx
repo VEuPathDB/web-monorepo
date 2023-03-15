@@ -133,3 +133,21 @@ ClosesOnSelection.args = {
     ...AsSingleSelect.args,
     shouldCloseOnSelection: true
 } as SelectTreeProps<unknown>;
+
+export const ToggleDisabledState: Story<SelectTreeProps<unknown>> = (args) => {
+  const [ isDisabled, setIsDisabled ] = useState<boolean>(false);
+
+  return (
+      <div>
+          <label>
+              <input type="checkbox" onChange={() => setIsDisabled(!isDisabled)} />
+              Disable button
+          </label>
+          <br /><br />
+          <SelectTree
+              {...AsSingleSelect.args}
+              isDisabled={isDisabled}
+          />
+      </div>
+  )
+}

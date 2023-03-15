@@ -6,6 +6,7 @@ export interface SelectTreeProps<T> extends CheckboxTreeProps<T> {
     buttonDisplayContent: ReactNode;
     shouldCloseOnSelection?: boolean;
     wrapPopover?: (checkboxTree: ReactNode) => ReactNode;
+    isDisabled?: boolean;
 }
 
 function SelectTree<T>(props: SelectTreeProps<T>) {
@@ -70,6 +71,7 @@ function SelectTree<T>(props: SelectTreeProps<T>) {
             key={shouldCloseOnSelection ? key : ''}
             buttonDisplayContent={buttonDisplayContent}
             onClose={onClose}
+            isDisabled={props.isDisabled}
         >
             {wrapPopover ? wrapPopover(checkboxTree) : checkboxTree}
         </PopoverButton>
@@ -91,7 +93,8 @@ const defaultProps = {
     searchTerm: '',
     onSearchTermChange: () => {},
     searchPredicate: () => true,
-    linksPosition: LinksPosition.Both
+    linksPosition: LinksPosition.Both,
+    isDisabled: false,
   };
 
 SelectTree.defaultProps = defaultProps;

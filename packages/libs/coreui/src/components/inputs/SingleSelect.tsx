@@ -16,6 +16,7 @@ export interface SingleSelectProps<T> {
 
     onSelect: (value: T) => void;
     buttonDisplayContent: ReactNode;
+    isDisabled?: boolean;
 }
 
 export default function SingleSelect<T>({
@@ -23,6 +24,7 @@ export default function SingleSelect<T>({
     value,
     onSelect,
     buttonDisplayContent,
+    isDisabled = false,
 }: SingleSelectProps<T>) {
     const [ isPopoverOpen, setIsPopoverOpen ] = useState<boolean>(false);
 
@@ -62,6 +64,7 @@ export default function SingleSelect<T>({
             key={key}
             buttonDisplayContent={buttonDisplayContent}
             setIsPopoverOpen={setIsPopoverOpen}
+            isDisabled={isDisabled}
         >
             <ul
                 aria-label={'Menu of selectable options'}

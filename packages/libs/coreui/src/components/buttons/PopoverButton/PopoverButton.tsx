@@ -14,6 +14,8 @@ export interface PopoverButtonProps {
 
   /** Used in SingleSelect component to set focus when popover opens */
   setIsPopoverOpen?: (isOpen: boolean) => void;
+
+  isDisabled?: boolean;
 }
 
 const useStyles = makeStyles({
@@ -26,7 +28,7 @@ const useStyles = makeStyles({
  * Renders a button that display `children` in a popover widget.
  */
 export default function PopoverButton(props: PopoverButtonProps) {
-  const { children, buttonDisplayContent, onClose, setIsPopoverOpen } = props;
+  const { children, buttonDisplayContent, onClose, setIsPopoverOpen, isDisabled = false } = props;
   const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
   const classes = useStyles();
 
@@ -82,15 +84,19 @@ export default function PopoverButton(props: PopoverButtonProps) {
       style={{
         textTransform: 'none',
       }}
+      disabled={isDisabled}
     >
       {buttonDisplayContent}
     </Button>
   );
 
   return (
-    <>
+    <div style={{
+      width: 'fit-content', 
+      ...(isDisabled ? { cursor: 'not-allowed' } : {})
+    }}>
       {button}
       {menu}
-    </>
+    </div>
   );
 }

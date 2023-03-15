@@ -1,4 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { useState } from 'react';
 
 import SelectList, { SelectListProps } from '../../components/inputs/SelectList';
 
@@ -7,7 +8,7 @@ export default {
     component: SelectList
 } as Meta;
 
-const Template: Story<SelectListProps> = (args) => {
+const Template: Story<SelectListProps<unknown>> = (args) => {
     return (
         <SelectList {...args} />
     )
@@ -23,4 +24,22 @@ Standard.args = {
     value: [],
     onChange: (value: string[]) => null,
     defaultButtonDisplayContent: 'Select a letter'
-} as SelectListProps;
+} as SelectListProps<unknown>;
+
+export const ToggleDisabledState: Story<SelectListProps<unknown>> = () => {
+    const [ isDisabled, setIsDisabled ] = useState<boolean>(false);
+
+    return (
+        <div>
+            <label>
+                <input type="checkbox" onChange={() => setIsDisabled(!isDisabled)} />
+                Disable button
+            </label>
+            <br /><br />
+            <SelectList
+                {...Standard.args}
+                isDisabled={isDisabled}
+            />
+        </div>
+    )
+}
