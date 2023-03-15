@@ -211,8 +211,9 @@ export function InputVariables(props: Props) {
             >
               <div className={classes.fullRow}>
                 <h4>
-                  {inputs.find((input) => input.titleOverride)?.titleOverride ??
-                    sectionInfo[inputRole ?? 'default'].title}
+                  {inputs.find(
+                    (input) => input.role === inputRole && input.titleOverride
+                  )?.titleOverride ?? sectionInfo[inputRole ?? 'default'].title}
                 </h4>
               </div>
               {inputs
