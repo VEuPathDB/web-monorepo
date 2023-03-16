@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { v4 as uuid } from 'uuid';
 import * as t from 'io-ts';
 
 import {
@@ -15,12 +14,7 @@ import {
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { useMapMarkers } from '../../core/hooks/mapMarkers';
-import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import {
-  FullScreenVisualization,
-  NewVisualizationPickerModal,
-} from '../../core/components/visualizations/VisualizationsContainer';
 import {
   Close,
   Download,
@@ -28,10 +22,7 @@ import {
   Filter,
   FloatingButton,
 } from '@veupathdb/coreui';
-import { Visualization } from '../../core/types/visualization';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { Tooltip } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
 import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
@@ -63,14 +54,17 @@ import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
 import { SiteInformationProps } from '..';
+import FloatingVizManagement from './FloatingVizManagement';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
 };
 
-function vizPluginWithOptions(
-  vizPlugin: VisualizationPlugin<LayoutOptions & OverlayOptions>
-) {
+export type MapVisualizationPluginType = VisualizationPlugin<
+  LayoutOptions & OverlayOptions
+>;
+
+function vizPluginWithOptions(vizPlugin: MapVisualizationPluginType) {
   return vizPlugin.withOptions({
     hideFacetInputs: true,
     layoutComponent: FloatingLayout,
@@ -113,7 +107,7 @@ type CompleteAppState = ReturnType<typeof useAppState> & {
   appState: AppState;
 };
 
-export function MapAnalysisImpl(props: Props & CompleteAppState) {
+function MapAnalysisImpl(props: Props & CompleteAppState) {
   const {
     analysisId,
     appState,
@@ -144,8 +138,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
   const findEntityAndVariable = useFindEntityAndVariable();
   const { entity, variable } =
     findEntityAndVariable(selectedVariables.overlay) ?? {};
-
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   const {
     markers,
@@ -183,43 +175,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
     }, [dataClient])
   );
 
-  const computation = analysisState.analysis?.descriptor.computations[0];
-
-  const updateVisualizations = useCallback(
-    (
-      visualizations:
-        | Visualization[]
-        | ((visualizations: Visualization[]) => Visualization[])
-    ) => {
-      analysisState.setComputations((computations) =>
-        computations.map((c) =>
-          c.computationId !== computation?.computationId
-            ? c
-            : {
-                ...c,
-                visualizations:
-                  typeof visualizations === 'function'
-                    ? visualizations(c.visualizations)
-                    : visualizations,
-              }
-        )
-      );
-    },
-    [analysisState, computation?.computationId]
-  );
-
-  const onVisualizationCreated = useCallback(
-    (visualizationId: string) => {
-      setIsVizSelectorVisible(false);
-      setActiveVisualizationId(visualizationId);
-    },
-    [setActiveVisualizationId, setIsVizSelectorVisible]
-  );
-
-  const activeViz = analysisState.analysis?.descriptor.computations
-    .flatMap((c) => c.visualizations)
-    .find((v) => v.visualizationId === appState.activeVisualizationId);
-
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
@@ -253,69 +208,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const outputEntityTotalCount =
     totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
-
-  const fullScreenActions = (
-    <>
-      <div>
-        <Tooltip title="Delete visualization">
-          <button
-            aria-label={`Delete ${activeViz?.displayName || 'visualization.'}`}
-            type="button"
-            className="link"
-            onClick={() => {
-              if (activeViz == null) return;
-              updateVisualizations((visualizations) =>
-                visualizations.filter(
-                  (v) => v.visualizationId !== activeViz.visualizationId
-                )
-              );
-              setActiveVisualizationId(undefined);
-            }}
-          >
-            <i aria-hidden className="fa fa-trash"></i>
-          </button>
-        </Tooltip>
-      </div>
-      <div>
-        <Tooltip title="Copy visualization">
-          <button
-            aria-label={`Create a copy of ${
-              activeViz?.displayName || 'visualization.'
-            }`}
-            type="button"
-            className="link"
-            onClick={() => {
-              if (activeViz == null) return;
-              const vizCopyId = uuid();
-              updateVisualizations((visualizations) =>
-                visualizations.concat({
-                  ...activeViz,
-                  visualizationId: vizCopyId,
-                  displayName:
-                    'Copy of ' +
-                    (activeViz.displayName || 'unnamed visualization'),
-                })
-              );
-              setActiveVisualizationId(vizCopyId);
-            }}
-          >
-            <i aria-hidden className="fa fa-clone"></i>
-          </button>
-        </Tooltip>
-      </div>
-      <Tooltip title="Minimize visualization">
-        <Link
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveVisualizationId(undefined);
-          }}
-        >
-          <i aria-hidden className="fa fa-window-minimize" />
-        </Link>
-      </Tooltip>
-    </>
-  );
 
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
 
@@ -602,86 +494,19 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
                     toggleStarredVariable={toggleStarredVariable}
                   />
                 </div>
-                <FilledButton
-                  text="Add a plot"
-                  onPress={() => setIsVizSelectorVisible(true)}
-                />
-                <ul>
-                  {analysisState.analysis?.descriptor.computations.map(
-                    (computation) => (
-                      <li key={computation.computationId}>
-                        <strong>
-                          {computation.displayName} (
-                          {computation.descriptor.type})
-                        </strong>
-                        <ul>
-                          {computation.visualizations.map((viz) => (
-                            <li key={viz.visualizationId}>
-                              <button
-                                type="button"
-                                className="link"
-                                onClick={() => {
-                                  setActiveVisualizationId(viz.visualizationId);
-                                }}
-                              >
-                                {viz.displayName} ({viz.descriptor.type})
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </FloatingDiv> */}
-              <FloatingDiv
-                style={{
-                  bottom: 10,
-                  left: 100,
-                }}
-              >
-                {activeViz && (
-                  <div
-                    style={{
-                      transform: 'scale(0.9)',
-                      background: 'white',
-                      minHeight: '10em',
-                      minWidth: '12em',
-                      width: '65em',
-                      position: 'fixed',
-                      right: 0,
-                      bottom: 0,
-                      zIndex: 2000,
-                      padding: '0 1em',
-                    }}
-                  >
-                    <FullScreenVisualization
-                      analysisState={analysisState}
-                      computation={computation!}
-                      updateVisualizations={updateVisualizations}
-                      visualizationPlugins={plugin.visualizationPlugins}
-                      visualizationsOverview={app.visualizations}
-                      geoConfigs={[geoConfig]}
-                      computationAppOverview={app}
-                      filters={
-                        analysisState.analysis?.descriptor.subset.descriptor ??
-                        []
-                      }
-                      starredVariables={
-                        analysisState.analysis?.descriptor.starredVariables ??
-                        []
-                      }
-                      toggleStarredVariable={toggleStarredVariable}
-                      totalCounts={totalCounts}
-                      filteredCounts={filteredCounts}
-                      isSingleAppMode
-                      disableThumbnailCreation
-                      id={activeViz.visualizationId}
-                      actions={fullScreenActions}
-                    />
-                  </div>
-                )}
-              </FloatingDiv>
+		*/}
+
+              <FloatingVizManagement
+                analysisState={analysisState}
+                setActiveVisualizationId={setActiveVisualizationId}
+                appState={appState}
+                visualizationPlugins={plugin.visualizationPlugins}
+                app={app}
+                geoConfigs={geoConfigs}
+                totalCounts={totalCounts}
+                filteredCounts={filteredCounts}
+              />
+
               {(basicMarkerError || overlayError) && (
                 <FloatingDiv
                   style={{ top: undefined, bottom: 50, left: 100, right: 100 }}
@@ -730,16 +555,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
                 </>
               )}
             </FloatingDiv>
-            <NewVisualizationPickerModal
-              visible={isVizSelectorVisible}
-              onVisibleChange={setIsVizSelectorVisible}
-              computation={computation!}
-              updateVisualizations={updateVisualizations}
-              visualizationPlugins={plugin.visualizationPlugins}
-              visualizationsOverview={app.visualizations}
-              geoConfigs={[geoConfig]}
-              onVisualizationCreated={onVisualizationCreated}
-            />
           </DocumentationContainer>
         </ShowHideVariableContextProvider>
       )}
