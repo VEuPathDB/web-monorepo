@@ -21,6 +21,7 @@ import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { logScaleDtick } from '../utils/logscale-dtick';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
+import { zip } from 'lodash';
 
 export interface ScatterPlotProps
   extends PlotProps<ScatterPlotData>,
@@ -231,6 +232,27 @@ const ScatterPlot = makePlotlyPlotComponent(
                       : 1,
                 },
         },
+        // formatting mouseover tooltip content
+        hovertemplate: zip(
+          (d.x ?? []).map(String),
+          (d.y ?? []).map(String),
+          (d.seriesGradientColorscale ?? []).map(String)
+        ).map(([x, y, seriesGradientColorscale]) => {
+          return `x: ${x}<br />y: ${y}<br />${
+            seriesGradientColorscale != null
+              ? 'value: ' + seriesGradientColorscale
+              : ''
+          }<br />${
+            seriesGradientColorscale == null &&
+            data.series.length > 1 &&
+            d.name != 'Data' &&
+            d.name != 'Smoothed mean' &&
+            d.name != '95% Confidence interval' &&
+            !d.name.startsWith('Best fit, R')
+              ? 'overlay: ' + d.name
+              : ''
+          }<extra></extra>`;
+        }),
       }));
     }, [data, markerBodyOpacity]);
 
