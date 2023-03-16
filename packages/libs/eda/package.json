@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "4.1.8",
+  "version": "4.1.10",
   "dependencies": {
     "debounce-promise": "^3.1.2",
     "fp-ts": "^2.11.5",
@@ -19,8 +19,8 @@
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
-    "@veupathdb/components": "^0.20.3",
-    "@veupathdb/coreui": "^0.18.20",
+    "@veupathdb/components": "^0.20.4",
+    "@veupathdb/coreui": "^0.18.19",
     "@veupathdb/http-utils": "^1.1.1",
     "@veupathdb/study-data-access": "^0.3.7",
     "@veupathdb/wdk-client": "^0.9.29",
@@ -80,7 +80,7 @@
     "@types/react-table": "^7.7.12",
     "@types/uuid": "^8.3.4",
     "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/components": "^0.20.3",
+    "@veupathdb/components": "^0.20.4",
     "@veupathdb/coreui": "^0.18.20",
     "@veupathdb/eslint-config": "^2.0.0",
     "@veupathdb/http-utils": "^1.1.1",

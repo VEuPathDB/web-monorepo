@@ -7,19 +7,14 @@ import {
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './SemiTransparentHeader.scss';
+import { SiteInformationProps } from '..';
 
-export type SemiTransparentHeaderLogoProps = {
-  href: string;
-  siteName: string;
-  src: string;
-};
-
-export type SemiTransparentHeaderProps = {
+export type MapNavigationProps = {
   analysisName?: string;
   entityDisplayName: string;
   filterList?: ReactElement;
   isExpanded: boolean;
-  logoProps: SemiTransparentHeaderLogoProps;
+  siteInformation: SiteInformationProps;
   onAnalysisNameEdit: (newName: string) => void;
   onToggleExpand: () => void;
   studyName: string;
@@ -39,14 +34,14 @@ export function SemiTransparentHeader({
   entityDisplayName,
   filterList,
   isExpanded,
-  logoProps,
+  siteInformation,
   onAnalysisNameEdit,
   onToggleExpand,
   studyName,
   totalEntityCount = 0,
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
-}: SemiTransparentHeaderProps) {
+}: MapNavigationProps) {
   const semiTransparentHeader = makeClassNameHelper('SemiTransparentHeader');
 
   return (
@@ -61,8 +56,11 @@ export function SemiTransparentHeader({
         }`}
       >
         <div className={semiTransparentHeader('__LogoContainer')}>
-          <a href={logoProps.href}>
-            <img src={logoProps.src} alt={logoProps.siteName} />
+          <a href={siteInformation.siteHomeUrl}>
+            <img
+              src={siteInformation.siteLogoSrc}
+              alt={siteInformation.siteName}
+            />
           </a>
         </div>
         <HeaderContent
@@ -72,7 +70,11 @@ export function SemiTransparentHeader({
           onAnalysisNameEdit={onAnalysisNameEdit}
         />
       </div>
-      <div className={semiTransparentHeader('__SampleCounter')}>
+      <div
+        className={`${semiTransparentHeader('__SampleCounter')} ${
+          isExpanded ? '' : 'screenReaderOnly'
+        }`}
+      >
         <table>
           <thead>
             <tr>
