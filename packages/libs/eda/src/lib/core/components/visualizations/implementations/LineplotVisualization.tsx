@@ -566,6 +566,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     'yAxisVariable'
   );
 
+  // data
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
@@ -763,6 +764,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   // custom legend list
+  // Will have to change colors separately here
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const allData = data.value?.dataSetProcess;
     const palette = neutralPaletteProps.colorPalette ?? ColorPaletteDefault;
@@ -782,7 +784,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
             marker: 'line',
             // set marker colors appropriately
             markerColor:
-              dataItem?.name === 'No data' ? '#E8E8E8' : palette[index], // set first color for no overlay variable selected
+              dataItem?.name === 'No data'
+                ? '#E8E8E8'
+                : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
               ? dataItem.y != null &&
@@ -1856,6 +1860,7 @@ export function lineplotResponseToData(
       : '__NO_FACET__'
   );
 
+  // processedData
   const processedData = mapValues(facetGroupedResponseData, (group) => {
     const {
       dataSetProcess,
@@ -1954,6 +1959,9 @@ type ArrayTypes = PickByType<
  * input:  { x: [1,2,3,4,5], y: [6,1,null,9,11], foo: ['a','b','c','d','e'] }
  * output: { x: [1,2,3,3,3,4,5], y: [ 6,1,null,0,null,9,11, foo: ['a','b','c','c','c','d','e'] ] }
  */
+// nullZeroHack
+// Update this to get rid of marker.symbol array logic
+// because adding whole new 0/0 series alleviates the issue
 function nullZeroHack(
   dataSetProcess: LinePlotDataSeries[],
   dependentValueType: string
@@ -2124,6 +2132,7 @@ function getRequestParams(
 }
 
 // making plotly input data
+// processInputData
 function processInputData(
   responseLineplotData: LineplotResponse['lineplot']['data'],
   categoricalMode: boolean,
@@ -2141,8 +2150,15 @@ function processInputData(
   colorPaletteOverride?: string[],
   dependentIsProportion?: boolean
 ) {
+  const { zeroSeriesAdded, zeroSplitLineplotData } = processZeroOverZeroData(
+    responseLineplotData,
+    hasMissingData,
+    dependentIsProportion
+  );
+
   console.log({ responseLineplotData });
   console.log({ dependentIsProportion });
+  console.log({ zeroSplitLineplotData });
 
   // set fillAreaValue for densityplot
   const fillAreaValue: LinePlotDataSeries['fill'] =
@@ -2150,7 +2166,7 @@ function processInputData(
 
   // catch the case when the back end has returned valid but completely empty data
   if (
-    responseLineplotData.every(
+    zeroSplitLineplotData.every(
       (data) => data.seriesX?.length === 0 && data.seriesY?.length === 0
     )
   ) {
@@ -2159,13 +2175,24 @@ function processInputData(
     };
   }
 
+  console.log({ zeroSeriesAdded });
+
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
     const palette = colorPaletteOverride ?? ColorPaletteDefault;
-    if (showMissingness && index === responseLineplotData.length - 1) {
+    if (showMissingness && index === zeroSplitLineplotData.length - 1) {
       return gray;
     } else {
-      return palette[index] ?? 'black'; // TO DO: decide on overflow behaviour
+      console.log({ index });
+      console.log({
+        newIndex: index % Math.floor(zeroSplitLineplotData.length / 2),
+      });
+      return (
+        (!zeroSeriesAdded
+          ? palette[index]
+          : palette[index % Math.floor(zeroSplitLineplotData.length / 2)]) ??
+        'black'
+      ); // TO DO: decide on overflow behaviour
     }
   };
 
@@ -2176,16 +2203,17 @@ function processInputData(
     return (
       showMissingness &&
       !hasMissingData &&
-      index === responseLineplotData.length - 2
+      index === zeroSplitLineplotData.length - 2
     );
   };
 
+  // Update this to just read zeroSeriesAdded and infer symbol from that
   const markerSymbol = (
     index: number,
     el: LineplotResponse['lineplot']['data'][number]
   ): string | string[] => {
     const symbol =
-      showMissingness && index === responseLineplotData.length - 1
+      showMissingness && index === zeroSplitLineplotData.length - 1
         ? 'x'
         : dependentIsProportion &&
           el.binSampleSize &&
@@ -2234,7 +2262,7 @@ function processInputData(
 
   let dataSetProcess: LinePlotDataSeries[] = [];
 
-  responseLineplotData.some(function (el, index) {
+  zeroSplitLineplotData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
       if (el.seriesX.length !== el.seriesY.length) {
         throw new Error(
@@ -2355,6 +2383,7 @@ function processInputData(
  */
 
 // May need to add multiple new 0/0 series here
+// reorderResponseLineplotData
 function reorderResponseLineplotData(
   data: LinePlotDataResponse['lineplot']['data'],
   categoricalMode: boolean,
@@ -2431,6 +2460,93 @@ function reorderResponseLineplotData(
   } else {
     return xAxisOrderedSeries;
   }
+}
+
+type ArrayTypesGeneral = Omit<
+  PickByType<LineplotResponse['lineplot']['data'][number], any[]>,
+  'facetVariableDetails'
+>;
+
+function processZeroOverZeroData(
+  lineplotData: LineplotResponse['lineplot']['data'],
+  hasMissingData: boolean,
+  dependentIsProportion?: boolean
+) {
+  if (!dependentIsProportion)
+    return { zeroSeriesAdded: false, zeroSplitLineplotData: lineplotData };
+
+  const newNonZeroSeries: Array<
+    LineplotResponse['lineplot']['data'][number]
+  > = [];
+  const newZeroSeries: Array<LineplotResponse['lineplot']['data'][number]> = [];
+
+  const stopIndex = hasMissingData
+    ? lineplotData.length - 1
+    : lineplotData.length;
+
+  for (let seriesIndex = 0; seriesIndex < stopIndex; seriesIndex++) {
+    const series = lineplotData[seriesIndex];
+
+    // which are the arrays in the series object?
+    // (assumption: the lengths of all arrays are all the same)
+    const arrayKeys = Object.keys(series)
+      .filter(
+        (_): _ is keyof LineplotResponse['lineplot']['data'][number] => true
+      )
+      .filter(
+        (key): key is keyof ArrayTypesGeneral =>
+          Array.isArray(series[key]) && key !== 'facetVariableDetails'
+      );
+    const binSampleSize = series.binSampleSize as {
+      numeratorN: number;
+      denominatorN: number;
+    }[];
+
+    console.log({ arrayKeys });
+
+    const makeEmptySeries = () => ({
+      ...series,
+      ...arrayKeys.reduce((newObj, arrayKey) => {
+        newObj[arrayKey] = [];
+        return newObj;
+      }, {} as Pick<LineplotResponse['lineplot']['data'][number], typeof arrayKeys[number]>),
+    });
+
+    const nonZeroSeries = makeEmptySeries();
+    const zeroSeries = makeEmptySeries();
+
+    for (
+      let dataPointIndex = 0;
+      dataPointIndex < binSampleSize.length;
+      dataPointIndex++
+    ) {
+      let destinationSeries: typeof nonZeroSeries;
+
+      if (
+        binSampleSize[dataPointIndex].numeratorN ||
+        binSampleSize[dataPointIndex].denominatorN
+      ) {
+        destinationSeries = nonZeroSeries;
+      } else {
+        destinationSeries = zeroSeries;
+      }
+
+      arrayKeys.forEach((key) => {
+        const array = series[key]!;
+        const value = array[dataPointIndex]!;
+        destinationSeries[key]!.push(value as any);
+      });
+
+      if (dataPointIndex === 0) console.log({ nonZeroSeries, zeroSeries });
+    }
+
+    newNonZeroSeries.push(nonZeroSeries);
+    newZeroSeries.push(zeroSeries);
+  }
+
+  const newLineplotData = [...newNonZeroSeries, ...newZeroSeries];
+  if (hasMissingData) newLineplotData.push(...lineplotData.slice(-1));
+  return { zeroSeriesAdded: true, zeroSplitLineplotData: newLineplotData };
 }
 
 /**
