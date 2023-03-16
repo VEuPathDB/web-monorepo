@@ -166,7 +166,7 @@ export default function MultilineTextField({
               {`${value.length} / ${characterLimit}`}
             </p>
           )}
-          <div css={{ paddingTop: 3 }}>
+          <div css={{ paddingTop: 3, marginLeft: characterLimit ? undefined : 'auto' }}>
             {status === 'syncing' && (
               <Loading
                 fontSize={20}
