@@ -69,6 +69,7 @@ interface TemplateProps {
 }
 
 const Template: Story<TemplateProps> = (args) => {
+  console.log(args.data);
   const { dataSetProcess: datasetProcess } = processVolcanoData(
     args.data,
     highMedLowColors
@@ -98,7 +99,7 @@ const Template: Story<TemplateProps> = (args) => {
   // Determined by the data and symmetric around 0 by default?
   const dependentAxisRange = {
     min: 0,
-    max: 0.2,
+    max: 0.03,
   }; // By default max determined by data and min at 0
 
   return (
@@ -142,8 +143,8 @@ function processVolcanoData<T extends number>(
   let processedDataSeries: any = [];
   dataSet.volcanoplot.data.forEach(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
-    let xSeriesValue: T[] = [];
-    let ySeriesValue: T[] = [];
+    let xSeries = [];
+    let ySeries = [];
 
     // set rgbValue here per dataset with a default color
     // Add check for len(colors) = number of series
@@ -152,14 +153,14 @@ function processVolcanoData<T extends number>(
     let scatterPointColor: string = '';
 
     // series is for scatter plot
-    if (el.series) {
+    if (el) {
       // check the number of x = number of y
-      if (el.series.foldChange.length !== el.series.adjustedPValue.length) {
+      if (el.foldChange.length !== el.adjustedPValue.length) {
         console.log(
           'x length=',
-          el.series.foldChange.length,
+          el.foldChange.length,
           '  y length=',
-          el.series.adjustedPValue.length
+          el.adjustedPValue.length
         );
         alert('The number of X data is not equal to the number of Y data');
         throw new Error(
@@ -172,24 +173,26 @@ function processVolcanoData<T extends number>(
        * This is for finding global min/max values among data arrays for better display of the plot(s)
        */
 
+      // ANN needs log 2 adjusting!
+      xSeries = el.foldChange;
+      ySeries = el.adjustedPValue;
+
       xMin =
-        xMin < Math.min(...(xSeriesValue as number[]))
+        xMin < Math.min(...(xSeries as number[]))
           ? xMin
-          : Math.min(...(xSeriesValue as number[]));
+          : Math.min(...(xSeries as number[]));
       xMax =
-        xMax > Math.max(...(xSeriesValue as number[]))
+        xMax > Math.max(...(xSeries as number[]))
           ? xMax
-          : Math.max(...(xSeriesValue as number[]));
+          : Math.max(...(xSeries as number[]));
 
       // check if this Y array consists of numbers & add type assertion
       if (index == 0) {
-        yMin = Math.min(...ySeriesValue);
-        yMax = Math.max(...ySeriesValue);
+        yMin = Math.min(...ySeries);
+        yMax = Math.max(...ySeries);
       } else {
-        yMin =
-          yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
-        yMax =
-          yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        yMin = yMin < Math.min(...ySeries) ? yMin : Math.min(...ySeries);
+        yMax = yMax > Math.max(...ySeries) ? yMax : Math.max(...ySeries);
       }
 
       // use global opacity for coloring
@@ -206,8 +209,8 @@ function processVolcanoData<T extends number>(
 
       // add scatter data considering input options
       processedDataSeries.push({
-        x: xSeriesValue,
-        y: ySeriesValue,
+        x: xSeries,
+        y: ySeries,
         name: el.label,
         mode: 'markers',
         // type: 'scattergl',
