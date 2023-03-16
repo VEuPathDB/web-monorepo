@@ -1,0 +1,38 @@
+# web-monorepo
+
+## Prerequisties
+* `Node >=16.17.0`
+* A global installation of `yarn >=1.17.0`
+** With such a version globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`
+
+## Quick Start
+
+### Install yarn dependencies
+
+From anywhere in the repo:
+
+```
+yarn
+```
+
+### View workspace dependency graph
+
+From the root `package.json`:
+
+```
+yarn nx graph
+```
+
+### Execute a workspace's yarn script using the `nx` task runner
+
+From the root `package.json`:
+
+```
+yarn nx run <workspaceName>:<scriptName>
+```
+
+For example, you can start the MultiBLAST dev server by running
+
+```
+yarn nx run @veupathdb/multi-blast:start
+```

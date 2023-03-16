@@ -1,0 +1,35 @@
+{
+  "extends": "nx/presets/npm.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build-npm-modules"]
+      }
+    }
+  },
+  "namedInputs": {
+    "srcFiles": ["!{projectRoot}/{lib,dist}/**/*"]
+  },
+  "targetDefaults": {
+    "build-npm-modules": {
+      "dependsOn": ["^build-npm-modules"],
+      "inputs": ["srcFiles", "^srcFiles"]
+    },
+    "start": {
+      "dependsOn": ["^build-npm-modules"]
+    },
+    "bundle": {
+      "dependsOn": ["^build-npm-modules"]
+    },
+    "prepack": {
+      "dependsOn": ["^build-npm-modules"]
+    },
+    "storybook": {
+      "dependsOn": ["^build-npm-modules"]
+    }
+  },
+  "affected": {
+    "defaultBase": "main"
+  }
+}
