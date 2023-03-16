@@ -1803,6 +1803,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         onCheckedLegendItemsChange={setCheckedLegendItems}
         legendTitle={legendTitle}
         showOverlayLegend={showOverlayLegend}
+        // pass markerBodyOpacity to PlotLegend to control legend color opacity
+        markerBodyOpacity={vizConfig.markerBodyOpacity}
       />
     ));
 
