@@ -15,8 +15,13 @@ export default {
   component: DraggablePanel,
 } as Meta;
 
-const Template: Story<DraggablePanelProps> = (args) => {
-  const panelDefinitionOjects: DraggablePanelProps[] = [
+interface DraggablePanelStoryProps extends DraggablePanelProps {
+  backgroundColorForStorybookOnly: string;
+  includeDismissButton: boolean;
+}
+
+const Template: Story<DraggablePanelStoryProps> = (args) => {
+  const panelDefinitionOjects: DraggablePanelStoryProps[] = [
     "Panel 1",
     "Panel 2",
     "Panel 3",
@@ -54,7 +59,7 @@ Default.args = {
   styleOverrides: {},
 };
 
-type StackOrderingKeeperProps = { draggablePanelProps: DraggablePanelProps[] };
+type StackOrderingKeeperProps = { draggablePanelProps: DraggablePanelStoryProps[] };
 
 function StackOrderingKeeper({
   draggablePanelProps,
