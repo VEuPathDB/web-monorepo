@@ -15,7 +15,7 @@ export type JobStatus = JobStatusReponse['status'] | 'requesting';
 export function useComputeJobStatus(
   analysis: Analysis | NewAnalysis,
   computation: Computation,
-  computeName?: string,
+  computeName?: string
 ) {
   const computeClient = useComputeClient();
   const studyMetadata = useStudyMetadata();
