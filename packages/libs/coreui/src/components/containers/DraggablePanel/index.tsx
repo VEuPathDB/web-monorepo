@@ -57,7 +57,7 @@ export type DraggablePanelProps = {
   onPanelResize?: (heightAndWidth: HeightAndWidthInPixels) => void;
 };
 
-export function DraggablePanel({
+export default function DraggablePanel({
   confineToParentContainer,
   children,
   defaultPosition,
