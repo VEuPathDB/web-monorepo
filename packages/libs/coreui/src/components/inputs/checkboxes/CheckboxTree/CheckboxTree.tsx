@@ -565,23 +565,21 @@ function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
 /**
  * Returns a function that takes a leaf node ID and returns true if leaf node
  * should be visible.  If no search is being performed and no filtered list is
- * provided, all leaves are visible, unless one of their ancestors is collapsed.  
- * In that case visibility of the leaf container is controlled by a parent, so 
+ * provided, all leaves are visible unless one of their ancestors is collapsed.
+ * In that case visibility of the leaf container is controlled by a parent, so
  * the function returned here will still return true.
  *
- * If a search is being actively performed, matching nodes, their children, and
- * their ancestors, will be visible (expansion is locked and all branches are
- * expanded). Similar behavior exists when A) no search is being performed but 
- * a filtered list is provided and B) both a search is being performed and a
- * filtered list is provided. 
+ * If a search is being actively performed, then matching nodes, their children, and
+ * their ancestors will be visible (expansion is locked and all branches are
+ * expanded).
  * 
- * An important "gotcha" to consider: passing an empty array will render no tree
- * based on the two `else-if` statements. If that is not desired, pass in an
- * undefined filterList prop instead of an empty array.
+ * The filteredList prop is only applied to leaves. An important "gotcha" to consider
+ * is this: passing an empty array will render no leaves based on leaf filtering logic.
+ * If that is not desired, pass in an undefined filteredList prop instead of an empty array.
  * 
- * The function returned by createIsLeafVisible does not care about
- * branches, but tells absolutely if a leaf should be visible (i.e. if the leaf
- * matches the search or if any ancestor matches the search).
+ * The function returned by createIsLeafVisible does not care about branches, but tells
+ * absolutely if a leaf should be visible (i.e. if the leaf matches the search or if any
+ * ancestor matches the search).
  */
 function createIsLeafVisible<T>(
   tree: CheckboxTreeProps<T>['tree'],
@@ -593,7 +591,7 @@ function createIsLeafVisible<T>(
   isSearchable: CheckboxTreeProps<T>['isSearchable'],
   filteredList: CheckboxTreeProps<T>['filteredList'],
 ) {
-  // if not searching, no additional filters are applied, and filteredList is undefined, then all nodes are visible
+  // if not searching, if no additional filters are applied, and if filteredList is undefined, then all nodes are visible
   if (!isActiveSearch(isAdditionalFilterApplied, isSearchable, searchTerm) && !filteredList) {
     return (nodeId: string) => true;
   }
@@ -607,18 +605,17 @@ function createIsLeafVisible<T>(
     if (parentMatches) {
       // if parent matches, automatically match (always show children of matching parents)
       nodeMatches = parentMatches;
-    } else if (searchTerm && filteredList) {
-      nodeMatches = searchPredicate(node, searchTerms) && filteredSet.has(nodeId);
-    } else if (!searchTerm && filteredList) {
-      nodeMatches = filteredSet.has(nodeId);
     } else {
-      // handles filtering by search only (filteredList is undefined)
+      // handles filtering by search only
       nodeMatches = searchPredicate(node, searchTerms)
     }
 
     if (isLeaf(node, getNodeChildren)) {
       if (nodeMatches) {
-        visibleLeaves.add(nodeId);
+        // leaves consider filteredList prop when determining visibleLeaves
+        if (!filteredList || (filteredList && filteredSet.has(nodeId))) {
+          visibleLeaves.add(nodeId);
+        }
       }
     }
     else {
