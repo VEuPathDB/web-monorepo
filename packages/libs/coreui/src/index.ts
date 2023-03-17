@@ -12,7 +12,7 @@ export { Checkbox, Chip } from "./components/widgets";
 export { default as Toggle } from "./components/widgets/Toggle";
 
 // Containers
-export { Card, Modal } from "./components/containers";
+export { Card, ExpandablePanel, Modal } from "./components/containers";
 
 // Grids
 export { DataGrid, TabbedDisplay } from "./components/grids";

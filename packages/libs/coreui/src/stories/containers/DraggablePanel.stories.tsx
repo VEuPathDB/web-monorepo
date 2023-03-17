@@ -1,14 +1,13 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react/types-6-0";
 import { useState } from "react";
-import {
-  DraggablePanel,
+import UIThemeProvider from "../../components/theming/UIThemeProvider";
+import { mutedMagenta, gray } from "../../definitions/colors";
+import DraggablePanel, {
   DraggablePanelCoordinatePair,
   DraggablePanelProps,
   HeightAndWidthInPixels,
-} from "../../components/containers/DraggablePanel/DraggablePanel";
-import UIThemeProvider from "../../components/theming/UIThemeProvider";
-import { mutedMagenta, gray } from "../../definitions/colors";
+} from "../../components/containers/DraggablePanel";
 
 export default {
   title: "Containers/DraggablePanel",
