@@ -9,8 +9,7 @@ import {
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
-
-import { timeFromNow } from '../UserDatasetUtils';
+import { DateTime } from '../DateTime';
 
 import './UserDatasetSharingModal.scss';
 
@@ -212,7 +211,7 @@ class UserDatasetSharingModal extends React.Component {
     return (
       <div key={index}>
         <span className="faded">Shared with</span> <b>{userDisplayName}</b>{' '}
-        {timeFromNow(time)}
+        <DateTime datetime={time} />
         <button
           type="button"
           onClick={() => this.unshareWithUser(userDataset.id, user)}
