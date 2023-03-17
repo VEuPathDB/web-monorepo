@@ -17,12 +17,9 @@ import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWra
 
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import {
-  formatDate,
-  makeClassifier,
-  normalizePercentage,
-  timeFromNow,
-} from '../UserDatasetUtils';
+import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
+
+import { DateTime } from '../DateTime';
 
 import './UserDatasetDetail.scss';
 
@@ -203,11 +200,7 @@ class UserDatasetDetail extends React.Component {
       },
       {
         attribute: 'Created',
-        value: (
-          <AnchoredTooltip content={formatDate(created)}>
-            {timeFromNow(created)}
-          </AnchoredTooltip>
-        ),
+        value: <DateTime datetime={created} />,
       },
       { attribute: 'Data set size', value: bytesToHuman(size) },
       !isOwner
@@ -227,7 +220,7 @@ class UserDatasetDetail extends React.Component {
                 {sharedWith.map((share) => (
                   <li key={share.email}>
                     {share.userDisplayName} &lt;{share.email}&gt;{' '}
-                    {timeFromNow(share.time)}
+                    <DateTime datetime={share.time} />
                   </li>
                 ))}
               </ul>

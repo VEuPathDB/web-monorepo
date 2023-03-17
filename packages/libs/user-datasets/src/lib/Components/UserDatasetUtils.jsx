@@ -1,5 +1,3 @@
-import { formatISO, formatDistanceToNowStrict } from 'date-fns';
-
 export function makeClassifier(...classNames) {
   return (substyle = null) =>
     classNames
@@ -17,12 +15,4 @@ export function textCell(prop, transform) {
   const getValue =
     typeof transform === 'function' ? transform : (value) => value;
   return ({ row }) => (prop in row ? <span>{getValue(row[prop])}</span> : null);
-}
-
-export function timeFromNow(date) {
-  return formatDistanceToNowStrict(date, { addSuffix: true });
-}
-
-export function formatDate(date) {
-  return formatISO(date);
 }

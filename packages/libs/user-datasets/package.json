@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/user-datasets",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "sideEffects": [
     "src/globals.js",
     "*.scss"
@@ -10,7 +10,6 @@
     "src/lib"
   ],
   "dependencies": {
-    "date-fns": "^2.29.1",
     "lodash": "^4.17.21"
   },
   "scripts": {
