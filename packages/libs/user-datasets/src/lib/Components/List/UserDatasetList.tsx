@@ -31,13 +31,10 @@ import {
 import UserDatasetEmptyState from '../EmptyState';
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
-import {
-  normalizePercentage,
-  textCell,
-  timeFromNow,
-} from '../UserDatasetUtils';
+import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
 import './UserDatasetList.scss';
+import { DateTime } from '../DateTime';
 
 interface Props {
   baseUrl: string;
@@ -276,9 +273,9 @@ class UserDatasetList extends React.Component<Props, State> {
         key: 'created',
         name: 'Created',
         sortable: true,
-        renderCell: textCell('created', (created: number) =>
-          timeFromNow(created)
-        ),
+        renderCell: textCell('created', (created: number) => (
+          <DateTime datetime={created} />
+        )),
       },
       {
         key: 'datafiles',
