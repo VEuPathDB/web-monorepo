@@ -500,7 +500,7 @@ export function leastAncestralEntity(
   entities: StudyEntity[]
 ): StudyEntity | undefined {
   if (query.length === 0)
-    throw 'Error: empty array passed to leastAncestralEntity';
+    throw new Error('Error: empty array passed to leastAncestralEntity');
 
   // The least ancestral node has the most ancestors, so let's count them.
   // And sort by the counts, most-first
