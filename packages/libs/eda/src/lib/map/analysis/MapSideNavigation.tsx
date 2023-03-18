@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { ChevronRight } from '@veupathdb/coreui';
 import { Launch, LockOpen } from '@material-ui/icons';
-import { SiteInformationProps } from '..';
+import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
 
 export type MapSideNavigationProps = {
   children: React.ReactNode;
   siteInformationProps: SiteInformationProps;
 };
-
-const menuBackground = 'rgba(255, 255, 255, 0.8)';
 
 const bottomLinkStyles: React.CSSProperties = {
   // These are for formatting the links to the login
@@ -35,7 +33,7 @@ export function MapSideNavigation({
         // These styles define the look of the side navigation,
         // including its width, height, and location on the
         // page (which depends on the `isExpanded` piece of state.
-        background: menuBackground,
+        background: mapNavigationBackgroundColor,
         // height: 'calc(100% - 150px)',
         height: '100%',
         left: isExpanded ? 0 : -sideMenuWidth,
@@ -57,7 +55,7 @@ export function MapSideNavigation({
         style={{
           // This makes the button users will click to open/close
           // the side navigation.
-          background: menuBackground,
+          background: mapNavigationBackgroundColor,
           borderColor: 'transparent',
           height: 50,
           width: sideMenuExpandButtonWidth,

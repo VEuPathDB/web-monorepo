@@ -347,6 +347,7 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
           text="Add filters"
           onPress={() => setIsSubsetPanelOpen(true)}
           size="small"
+          textTransform="unset"
           styleOverrides={{
             container: {
               width: 'max-content',
@@ -371,20 +372,6 @@ export function MapAnalysisImpl(props: Props & CompleteAppState) {
             selectedVariableId={subsetVariableAndEntity.variableId}
           />
         </div>
-        {filters.length > 0 && (
-          <FloatingButton
-            text="Remove all"
-            onPress={() => analysisState.setFilters([])}
-            size="small"
-            themeRole="secondary"
-            styleOverrides={{
-              container: {
-                width: 'max-content',
-                margin: '0 10px 5px 0',
-              },
-            }}
-          />
-        )}
       </div>
     );
   };
