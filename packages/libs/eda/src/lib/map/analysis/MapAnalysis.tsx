@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import * as t from 'io-ts';
 
 import {
+  AnalysisState,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -93,24 +94,27 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const appStateAndSetters = useAppState(
-    '@@mapApp@@',
-    useAnalysis(props.analysisId, 'pass-through')
-  );
+  const analysisState = useAnalysis(props.analysisId, 'pass-through');
+  const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   if (appStateAndSetters.appState == null) return null;
   return (
-    <MapAnalysisImpl {...props} {...(appStateAndSetters as CompleteAppState)} />
+    <MapAnalysisImpl
+      {...props}
+      {...(appStateAndSetters as CompleteAppState)}
+      analysisState={analysisState}
+    />
   );
 }
 
 type CompleteAppState = ReturnType<typeof useAppState> & {
   appState: AppState;
+  analysisState: AnalysisState;
 };
 
 function MapAnalysisImpl(props: Props & CompleteAppState) {
   const {
-    analysisId,
     appState,
+    analysisState,
     setMouseMode,
     setSelectedOverlayVariable,
     setViewport,
@@ -123,7 +127,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyMetadata = useStudyMetadata();
   const studyEntities = useStudyEntities();
   const geoConfigs = useGeoConfig(studyEntities);
-  const analysisState = useAnalysis(analysisId, 'pass-through');
   const geoConfig = geoConfigs[0];
 
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
