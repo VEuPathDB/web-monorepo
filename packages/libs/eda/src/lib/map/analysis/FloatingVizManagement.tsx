@@ -35,6 +35,8 @@ import { lineplotVisualization } from '../../core/components/visualizations/impl
 import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
 import * as t from 'io-ts';
+import { VariableDescriptor } from '../../core/types/variable';
+import { Filter } from '../../core/types/filter';
 
 interface Props {
   analysisState: AnalysisState;
@@ -46,6 +48,8 @@ interface Props {
   geoConfigs: GeoConfig[];
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
+  toggleStarredVariable: (variable: VariableDescriptor) => void;
+  filters: Filter[];
 }
 
 export default function FloatingVizManagement({
@@ -56,6 +60,8 @@ export default function FloatingVizManagement({
   app,
   totalCounts,
   filteredCounts,
+  toggleStarredVariable,
+  filters,
 }: Props) {
   // Define plugins inside component so that we can access appState in the getOverlayVariable option.
   // This is needed to prevent issues where the pass app does not accept a configuration object.
@@ -193,8 +199,6 @@ export default function FloatingVizManagement({
     </>
   );
 
-  const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
   return (
     <>
       <FloatingDiv
@@ -263,7 +267,7 @@ export default function FloatingVizManagement({
             visualizationsOverview={app.visualizations}
             geoConfigs={geoConfigs}
             computationAppOverview={app}
-            filters={analysisState.analysis?.descriptor.subset.descriptor ?? []}
+            filters={filters}
             starredVariables={
               analysisState.analysis?.descriptor.starredVariables ?? []
             }

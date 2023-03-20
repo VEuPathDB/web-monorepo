@@ -42,6 +42,7 @@ import { SiteInformationProps } from '..';
 import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
+import { filtersFromBoundingBox } from '../../core/utils/visualization';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -310,6 +311,32 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
+  const filtersIncludingViewport = useMemo(() => {
+    const viewportFilters = appState.boundsZoomLevel
+      ? filtersFromBoundingBox(
+          appState.boundsZoomLevel.bounds,
+          {
+            variableId: geoConfig.latitudeVariableId,
+            entityId: geoConfig.entity.id,
+          },
+          {
+            variableId: geoConfig.longitudeVariableId,
+            entityId: geoConfig.entity.id,
+          }
+        )
+      : [];
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...viewportFilters,
+    ];
+  }, [
+    appState.boundsZoomLevel,
+    geoConfig.entity.id,
+    geoConfig.latitudeVariableId,
+    geoConfig.longitudeVariableId,
+    props.analysisState.analysis?.descriptor.subset.descriptor,
+  ]);
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app) => (
@@ -475,6 +502,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 geoConfigs={geoConfigs}
                 totalCounts={totalCounts}
                 filteredCounts={filteredCounts}
+                toggleStarredVariable={toggleStarredVariable}
+                filters={filtersIncludingViewport}
               />
 
               {(basicMarkerError || overlayError) && (
