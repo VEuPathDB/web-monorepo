@@ -145,7 +145,7 @@ function PhyleticExpressionParameter({
           Use either the text box or the graphical tree display, or both, to specify your pattern.
           The graphical tree display is a friendly way to generate a pattern expression.
           You can always edit the expression directly.
-          For PPE help see the instructions at the bottom of this page.
+          For PPE help see the instructions above under 'Learn More'.
         </p>
 
         <br/>
