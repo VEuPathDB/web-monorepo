@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
+import { XYChart, Tooltip, Axis, Grid, GlyphSeries } from '@visx/xychart';
 // import { min, max, lte, gte } from 'lodash';
 // import { dataSetProcess, xAxisRange, yAxisRange } from './ScatterPlot.storyData';
 import { Story, Meta } from '@storybook/react/types-6-0';
@@ -7,9 +8,11 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { NumberRange } from '../../types/general';
 
 import { ScatterPlotData } from '../../types/plots';
+import { AxisBottom } from '@visx/visx';
+import { scaleLinear } from '@visx/scale';
 
 export default {
-  title: 'Plots/VolcanoPlot',
+  title: 'Plots/VolcanoPlotVisx',
   component: VolcanoPlot,
 } as Meta;
 
@@ -99,27 +102,71 @@ const Template: Story<TemplateProps> = (args) => {
   // Determined by the data and symmetric around 0 by default?
   const dependentAxisRange = {
     min: 0,
-    max: 8,
+    max: 0.03,
   }; // By default max determined by data and min at 0
 
+  const accessors = {
+    xAccessor: (d: any) => Number(d.x),
+    yAccessor: (d: any) => Number(d.y),
+  };
+
+  const bottomScale = scaleLinear({
+    domain: [-4, 4],
+    range: [-1, 8],
+    nice: true,
+  });
+
+  // ANN RETURN TO THE AXIS ISSUE
+
   return (
-    <div>
-      <VolcanoPlot
-        data={datasetProcess} // call it PlotlyScatterData???
-        foldChangeGates={foldChangeGates}
-        comparisonLabels={comparisonLabels}
-        adjustedPValueGate={args.adjustedPValueGate}
-        markerBodyOpacity={args.markerBodyOpacity}
-        plotTitle={plotTitle}
-        independentAxisRange={independentAxisRange}
-        dependentAxisRange={dependentAxisRange}
+    <XYChart
+      height={300}
+      xScale={{ type: 'band' }}
+      yScale={{ type: 'linear' }}
+      width={300}
+    >
+      <Axis orientation="left" />
+      <Grid columns={false} numTicks={4} />
+      <AxisBottom
+        scale={bottomScale}
+        label="log2 Fold Change"
+        orientation="bottom"
       />
-    </div>
+      <Axis orientation="bottom" />
+      {datasetProcess.series.map((series, i) => {
+        console.log(series);
+        return (
+          <GlyphSeries
+            dataKey={String(i)}
+            data={(series as unknown) as any[]}
+            {...accessors}
+          />
+        );
+      })}
+      {/* <GlyphSeries dataKey="Stuff 1" data={data1} {...accessors} />
+      <GlyphSeries dataKey="Stuff 2" data={data2} {...accessors} /> */}
+      <Tooltip
+        snapTooltipToDatumX
+        snapTooltipToDatumY
+        showVerticalCrosshair
+        showSeriesGlyphs
+        renderTooltip={({ tooltipData, colorScale }) => (
+          <div>
+            <div style={{ color: colorScale!(tooltipData!.nearestDatum!.key) }}>
+              {tooltipData!.nearestDatum!.key}
+            </div>
+            {accessors.xAccessor(tooltipData!.nearestDatum!.datum)}
+            {', '}
+            {accessors.yAccessor(tooltipData!.nearestDatum!.datum)}
+          </div>
+        )}
+      />
+    </XYChart>
   );
 };
 
-export const Default = Template.bind({});
-Default.args = {
+export const Default2 = Template.bind({});
+Default2.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.8,
 };
@@ -144,7 +191,7 @@ function processVolcanoData<T extends number>(
   dataSet.volcanoplot.data.forEach(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xSeries = [];
-    let ySeries = [];
+    let ySeries: never[] = [];
 
     // set rgbValue here per dataset with a default color
     // Add check for len(colors) = number of series
@@ -208,15 +255,14 @@ function processVolcanoData<T extends number>(
         ')';
 
       // add scatter data considering input options
-      processedDataSeries.push({
-        x: xSeries,
-        y: ySeries,
-        name: el.label,
-        mode: 'markers',
-        // type: 'scattergl',
-        type: 'scatter',
-        marker: { color: scatterPointColor, size: 12 },
+      const points = xSeries.map((x: any, i: any) => {
+        return {
+          x: Number(x),
+          y: Number(ySeries[i]),
+        };
       });
+      console.log(points);
+      processedDataSeries.push(points);
     }
 
     // make some margin for y-axis range (5% of range for now)

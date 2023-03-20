@@ -1,4 +1,4 @@
-import { XYChart, Tooltip, Axis, Grid, LineSeries } from '@visx/xychart';
+import { XYChart, Tooltip, Axis, Grid, GlyphSeries } from '@visx/xychart';
 import ScatterPlot from '../../../lib/plots/ScatterPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { DivIcon } from 'leaflet';
@@ -31,9 +31,10 @@ const Template: Story<TemplateProps> = (args) => {
   return (
     <XYChart height={300} xScale={{ type: 'band' }} yScale={{ type: 'linear' }}>
       <Axis orientation="bottom" />
+      <Axis orientation="left" />
       <Grid columns={false} numTicks={4} />
-      <LineSeries dataKey="Line 1" data={data1} {...accessors} />
-      <LineSeries dataKey="Line 2" data={data2} {...accessors} />
+      <GlyphSeries dataKey="Stuff 1" data={data1} {...accessors} />
+      <GlyphSeries dataKey="Stuff 2" data={data2} {...accessors} />
       <Tooltip
         snapTooltipToDatumX
         snapTooltipToDatumY
