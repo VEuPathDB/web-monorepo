@@ -1,4 +1,5 @@
 import { CSSProperties } from 'react';
+import { FloatingDiv } from '../../../map/analysis/FloatingDiv';
 import { RequiredInputsPrompt } from './RequiredInputPrompts';
 
 import { LayoutProps } from './types';
