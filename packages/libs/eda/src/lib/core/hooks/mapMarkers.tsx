@@ -16,7 +16,11 @@ import DataClient, {
   MapMarkersRequestParams,
 } from '../api/DataClient';
 import { Filter } from '../types/filter';
-import { useDataClient, useFindEntityAndVariable } from './workspace';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+  useStudyEntities,
+} from './workspace';
 import { BinSpec, NumberRange } from '../types/general';
 import { useDefaultAxisRange } from './computeDefaultAxisRange';
 import { zip, sum, values, some } from 'lodash';
@@ -30,6 +34,7 @@ import { kFormatter, mFormatter } from '../utils/big-number-formatters';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../types/variable';
+import { leastAncestralEntity } from '../utils/data-element-constraints';
 
 // TO DO: move to configuration somewhere?
 const numContinuousBins = 8;
@@ -130,8 +135,8 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   } = props;
 
   const dataClient: DataClient = useDataClient();
-
   const findEntityAndVariable = useFindEntityAndVariable();
+  const entities = useStudyEntities();
 
   // prepare some info that the map-markers and overlay requests both need
   const {
@@ -165,7 +170,13 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     };
 
     const xAxisVariableAndEntity = findEntityAndVariable(xAxisVariable);
-    const outputEntity = xAxisVariableAndEntity?.entity ?? geoConfig.entity;
+    // output entity needs to be the least ancestral of the two entities (if both are non-null)
+    const outputEntity = xAxisVariableAndEntity?.entity
+      ? leastAncestralEntity(
+          [xAxisVariableAndEntity.entity, geoConfig.entity],
+          entities
+        )
+      : geoConfig.entity;
 
     return {
       latitudeVariable,

@@ -3559,10 +3559,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.1.0.tgz#5c7eecc048a91195404411d8729393197af0128c"
   integrity sha512-TQ58MbCy7UZN/h11HZ31CSJfywG17oDNHQzQJysj65Fvv2gAM1w7CjwCvV0bG3sRESKUDORSA7sJrVVv27GHBw==
 
-"@veupathdb/components@^0.20.3":
-  version "0.20.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.20.3.tgz#25fdfddaeb3d7a5c18c98d3ab444c2503f158204"
-  integrity sha512-uNn5yq0lUf2BAQiq1dNIMpFW1kpZ40Yqd7uQABPNlqd0+lzIm6FAm47XPNXn8KfnQYXhBPJqRaE3R/hJyEg7MA==
+"@veupathdb/components@^0.20.4":
+  version "0.20.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.20.4.tgz#a21f7596c6130c0cf456ba8dd3472a35b24bdc2d"
+  integrity sha512-BB5pZRbfNTadU9UplS2RbD1y8+XEaqYATsLTAoQJuxmiGGH34XW060Cn4LFSK0oPUBnGWP13+WCIw5NwGrwHbg==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.46.0"
     "@typescript-eslint/parser" "^5.46.0"
