@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 
 import { AnalysisState, PromiseHookState } from '../../core';
@@ -20,6 +20,21 @@ import { Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { EntityCounts } from '../../core/hooks/entityCounts';
+import { ComputationPlugin } from '../../core/components/computations/Types';
+import { LayoutOptions } from '../../core/components/layouts/types';
+import { OverlayOptions } from '../../core/components/visualizations/options/types';
+import { FloatingLayout } from '../../core/components/layouts/FloatingLayout';
+import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
+import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
+import {
+  contTableVisualization,
+  twoByTwoVisualization,
+} from '../../core/components/visualizations/implementations/MosaicVisualization';
+import { scatterplotVisualization } from '../../core/components/visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../../core/components/visualizations/implementations/LineplotVisualization';
+import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
+import * as t from 'io-ts';
 
 interface Props {
   analysisState: AnalysisState;
@@ -27,7 +42,6 @@ interface Props {
     typeof useAppState
   >['setActiveVisualizationId'];
   appState: AppState;
-  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   app: ComputationAppOverview;
   geoConfigs: GeoConfig[];
   totalCounts: PromiseHookState<EntityCounts>;
@@ -38,12 +52,45 @@ export default function FloatingVizManagement({
   analysisState,
   appState,
   setActiveVisualizationId,
-  visualizationPlugins,
   geoConfigs,
   app,
   totalCounts,
   filteredCounts,
 }: Props) {
+  // Define plugins inside component so that we can access appState in the getOverlayVariable option.
+  // This is needed to prevent issues where the pass app does not accept a configuration object.
+  // It also allows us to avoid duplicating state in both appState and compute config.
+  const plugin = useMemo((): ComputationPlugin => {
+    function vizWithOptions(
+      visualization: VisualizationPlugin<LayoutOptions & OverlayOptions>
+    ) {
+      return visualization.withOptions({
+        hideFacetInputs: true,
+        layoutComponent: FloatingLayout,
+        getOverlayVariable: (_) => appState.selectedOverlayVariable,
+        getOverlayVariableHelp: () =>
+          'The overlay variable can be selected via the top-right panel.',
+        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
+      });
+    }
+
+    return {
+      configurationComponent: ZeroConfigWithButton,
+      isConfigurationValid: t.undefined.is,
+      createDefaultConfiguration: () => undefined,
+      visualizationPlugins: {
+        histogram: vizWithOptions(histogramVisualization),
+        twobytwo: vizWithOptions(twoByTwoVisualization),
+        conttable: vizWithOptions(contTableVisualization),
+        scatterplot: vizWithOptions(scatterplotVisualization),
+        lineplot: vizWithOptions(lineplotVisualization),
+        // 'map-markers': vizWithOptions(mapVisualization), // disabling because of potential confusion between marker colors
+        barplot: vizWithOptions(barplotVisualization),
+        boxplot: vizWithOptions(boxplotVisualization),
+      },
+    };
+  }, [appState.selectedOverlayVariable]);
+
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   const activeViz = analysisState.analysis?.descriptor.computations
@@ -193,58 +240,43 @@ export default function FloatingVizManagement({
         onVisibleChange={setIsVizSelectorVisible}
         computation={computation!}
         updateVisualizations={updateVisualizations}
-        visualizationPlugins={visualizationPlugins}
+        visualizationPlugins={plugin.visualizationPlugins}
         visualizationsOverview={app.visualizations}
         geoConfigs={geoConfigs}
         onVisualizationCreated={onVisualizationCreated}
       />
 
-      <FloatingDiv
-        style={{
-          bottom: 10,
-          left: 100,
-        }}
-      >
-        {activeViz && (
-          <div
-            style={{
-              transform: 'scale(0.9)',
-              background: 'white',
-              minHeight: '10em',
-              minWidth: '12em',
-              width: '65em',
-              position: 'fixed',
-              right: 0,
-              bottom: 0,
-              zIndex: 2000,
-              padding: '0 1em',
-            }}
-          >
-            <FullScreenVisualization
-              analysisState={analysisState}
-              computation={computation!}
-              updateVisualizations={updateVisualizations}
-              visualizationPlugins={visualizationPlugins}
-              visualizationsOverview={app.visualizations}
-              geoConfigs={geoConfigs}
-              computationAppOverview={app}
-              filters={
-                analysisState.analysis?.descriptor.subset.descriptor ?? []
-              }
-              starredVariables={
-                analysisState.analysis?.descriptor.starredVariables ?? []
-              }
-              toggleStarredVariable={toggleStarredVariable}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              isSingleAppMode
-              disableThumbnailCreation
-              id={activeViz.visualizationId}
-              actions={fullScreenActions}
-            />
-          </div>
-        )}
-      </FloatingDiv>
+      {activeViz && (
+        <FloatingDiv
+          style={{
+            bottom: 10,
+            left: 500,
+            transformOrigin: 'bottom left',
+            transform: 'scale(0.8)',
+          }}
+        >
+          <FullScreenVisualization
+            analysisState={analysisState}
+            computation={computation!}
+            updateVisualizations={updateVisualizations}
+            visualizationPlugins={plugin.visualizationPlugins}
+            visualizationsOverview={app.visualizations}
+            geoConfigs={geoConfigs}
+            computationAppOverview={app}
+            filters={analysisState.analysis?.descriptor.subset.descriptor ?? []}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables ?? []
+            }
+            toggleStarredVariable={toggleStarredVariable}
+            totalCounts={totalCounts}
+            filteredCounts={filteredCounts}
+            isSingleAppMode
+            disableThumbnailCreation
+            id={activeViz.visualizationId}
+            actions={fullScreenActions}
+          />
+        </FloatingDiv>
+      )}
     </>
   );
 }

@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import * as t from 'io-ts';
 
 import {
   AnalysisState,
@@ -24,21 +23,6 @@ import {
   FloatingButton,
 } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
-import { ComputationPlugin } from '../../core/components/computations/Types';
-import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
-import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
-import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
-import { LayoutOptions } from '../../core/components/layouts/types';
-import { OverlayOptions } from '../../core/components/visualizations/options/types';
-import { FloatingLayout } from '../../core/components/layouts/FloatingLayout';
-import {
-  contTableVisualization,
-  twoByTwoVisualization,
-} from '../../core/components/visualizations/implementations/MosaicVisualization';
-import { scatterplotVisualization } from '../../core/components/visualizations/implementations/ScatterplotVisualization';
-import { lineplotVisualization } from '../../core/components/visualizations/implementations/LineplotVisualization';
-import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
-import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
 import { AppState, useAppState } from './appState';
@@ -56,35 +40,11 @@ import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
 import { SiteInformationProps } from '..';
 import FloatingVizManagement from './FloatingVizManagement';
+import { InputVariables } from '../../core/components/visualizations/InputVariables';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
-};
-
-export type MapVisualizationPluginType = VisualizationPlugin<
-  LayoutOptions & OverlayOptions
->;
-
-function vizPluginWithOptions(vizPlugin: MapVisualizationPluginType) {
-  return vizPlugin.withOptions({
-    hideFacetInputs: true,
-    layoutComponent: FloatingLayout,
-  });
-}
-
-const plugin: ComputationPlugin = {
-  configurationComponent: ZeroConfigWithButton,
-  isConfigurationValid: t.undefined.is,
-  createDefaultConfiguration: () => undefined,
-  visualizationPlugins: {
-    histogram: vizPluginWithOptions(histogramVisualization),
-    twobytwo: vizPluginWithOptions(twoByTwoVisualization),
-    conttable: vizPluginWithOptions(contTableVisualization),
-    scatterplot: vizPluginWithOptions(scatterplotVisualization),
-    lineplot: vizPluginWithOptions(lineplotVisualization),
-    barplot: vizPluginWithOptions(barplotVisualization),
-    boxplot: vizPluginWithOptions(boxplotVisualization),
-  },
 };
 
 interface Props {
@@ -129,8 +89,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
 
-  const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
-
   const selectedVariables = useMemo(
     () => ({
       overlay: appState.selectedOverlayVariable,
@@ -139,7 +97,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const findEntityAndVariable = useFindEntityAndVariable();
-  const { entity, variable } =
+  const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariables.overlay) ?? {};
 
   const {
@@ -350,6 +308,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     );
   });
 
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app) => (
@@ -460,7 +420,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {legendItems.length > 0 && (
                   <MapLegend
                     legendItems={legendItems}
-                    title={variable?.displayName}
+                    title={overlayVariable?.displayName}
                   />
                 )}
               </FloatingDiv>
@@ -483,27 +443,34 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     onPress={() => setIsSubsetPanelOpen(true)}
                   />
                 </div>
-                <div>
-                  <InputVariables
-                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                    entities={studyEntities}
-                    selectedVariables={selectedVariables}
-                    onChange={(selectedVariables) =>
-                      setSelectedOverlayVariable(selectedVariables.overlay)
-                    }
-                    starredVariables={
-                      analysisState.analysis?.descriptor.starredVariables ?? []
-                    }
-                    toggleStarredVariable={toggleStarredVariable}
-                  />
-                </div>
 		*/}
+              <FloatingDiv
+                style={{
+                  top: 150,
+                  right: 50,
+                }}
+              >
+                <span style={{ backgroundColor: 'yellow' }}>
+                  temporary - remove me
+                </span>
+                <InputVariables
+                  inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                  entities={studyEntities}
+                  selectedVariables={selectedVariables}
+                  onChange={(selectedVariables) =>
+                    setSelectedOverlayVariable(selectedVariables.overlay)
+                  }
+                  starredVariables={
+                    analysisState.analysis?.descriptor.starredVariables ?? []
+                  }
+                  toggleStarredVariable={toggleStarredVariable}
+                />
+              </FloatingDiv>
 
               <FloatingVizManagement
                 analysisState={analysisState}
                 setActiveVisualizationId={setActiveVisualizationId}
                 appState={appState}
-                visualizationPlugins={plugin.visualizationPlugins}
                 app={app}
                 geoConfigs={geoConfigs}
                 totalCounts={totalCounts}
