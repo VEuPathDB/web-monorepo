@@ -10,6 +10,7 @@ import { NumberRange } from '../../types/general';
 import { ScatterPlotData } from '../../types/plots';
 import { AxisBottom } from '@visx/visx';
 import { scaleLinear } from '@visx/scale';
+import ControlsHeader from '../../../lib/components/typography/ControlsHeader';
 
 export default {
   title: 'Plots/VolcanoPlotVisx',
@@ -40,14 +41,14 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         overlayValue: 'positive',
       },
       {
-        foldChange: ['-1', '0', '1', '0.5', '-0.5', '4', '-5'],
+        foldChange: ['0.5', '0', '1', '0.5', '0.1', '4', '0.2'],
         pValue: ['0.001', '0.0001', '0.2', '0.1', '0.7', '0.1', '0.4'],
         adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
         pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
         overlayValue: 'none',
       },
       {
-        foldChange: ['-2', '-3', '-4'],
+        foldChange: ['0.01', '0.02', '0.03'],
         pValue: ['0.001', '0.0001', '0.002'],
         adjustedPValue: ['0.01', '0.001', '0.02'],
         pointId: ['j', 'k', 'l'],
@@ -72,12 +73,10 @@ interface TemplateProps {
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  console.log(args.data);
   const { dataSetProcess: datasetProcess } = processVolcanoData(
     args.data,
     highMedLowColors
   );
-  console.log(datasetProcess);
 
   // Better to break into a high and low prop? Would be more clear
   const foldChangeGates = [-1.5, 1.5];
@@ -106,8 +105,12 @@ const Template: Story<TemplateProps> = (args) => {
   }; // By default max determined by data and min at 0
 
   const accessors = {
-    xAccessor: (d: any) => Number(d.x),
-    yAccessor: (d: any) => Number(d.y),
+    xAccessor: (d: any) => {
+      return Math.log2(Number(d.x));
+    },
+    yAccessor: (d: any) => {
+      return -Math.log10(Number(d.y));
+    },
   };
 
   const bottomScale = scaleLinear({
@@ -116,36 +119,26 @@ const Template: Story<TemplateProps> = (args) => {
     nice: true,
   });
 
-  // ANN RETURN TO THE AXIS ISSUE
-
   return (
     <XYChart
       height={300}
-      xScale={{ type: 'band' }}
-      yScale={{ type: 'linear' }}
+      xScale={{ type: 'linear', domain: [-7, 7] }}
+      yScale={{ type: 'linear', domain: [-2, 4] }}
       width={300}
     >
-      <Axis orientation="left" />
+      <Axis orientation="left" label="-log10 p value" />
       <Grid columns={false} numTicks={4} />
-      <AxisBottom
-        scale={bottomScale}
-        label="log2 Fold Change"
-        orientation="bottom"
-      />
-      <Axis orientation="bottom" />
-      {datasetProcess.series.map((series, i) => {
-        console.log(series);
+      <Axis orientation="bottom" label="log2 Fold Change" />
+      {datasetProcess.series.map((series, index) => {
         return (
           <GlyphSeries
-            dataKey={String(i)}
+            dataKey={String(index)}
             data={(series as unknown) as any[]}
             {...accessors}
           />
         );
       })}
-      {/* <GlyphSeries dataKey="Stuff 1" data={data1} {...accessors} />
-      <GlyphSeries dataKey="Stuff 2" data={data2} {...accessors} /> */}
-      <Tooltip
+      {/* <Tooltip
         snapTooltipToDatumX
         snapTooltipToDatumY
         showVerticalCrosshair
@@ -160,7 +153,7 @@ const Template: Story<TemplateProps> = (args) => {
             {accessors.yAccessor(tooltipData!.nearestDatum!.datum)}
           </div>
         )}
-      />
+      /> */}
     </XYChart>
   );
 };
@@ -261,7 +254,6 @@ function processVolcanoData<T extends number>(
           y: Number(ySeries[i]),
         };
       });
-      console.log(points);
       processedDataSeries.push(points);
     }
 

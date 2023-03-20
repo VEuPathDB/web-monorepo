@@ -5089,7 +5089,7 @@
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
-"@visx/axis@3.1.0":
+"@visx/axis@3.1.0", "@visx/axis@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-3.1.0.tgz#775b221e5abfdec25304c607eeae8cda1a8bade6"
   integrity sha512-JDj/1VYx0JO0pHFtwoFtYcnqdoZFh/dpHImEl169S5nTslSFlIoNTXA/ekpBP6ELkEZ59gmF1X5k29x6MFBwCA==
