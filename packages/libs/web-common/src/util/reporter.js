@@ -18,6 +18,7 @@ import FastaOrthoSequenceReporterForm from '../components/reporters/FastaOrthoSe
 import TableReporterForm from '../components/reporters/TableReporterForm';
 import TranscriptTableReporterForm from '../components/reporters/TranscriptTableReporterForm';
 import TranscriptAttributesReporterForm from '../components/reporters/TranscriptAttributesReporterForm';
+import ZippedFilesReporterForm from '../components/reporters/ZippedFilesReporterForm';
 
 let EmptyReporter = props => ( null );
 
@@ -93,6 +94,8 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
       return XmlReporterForm;
     case 'json':
       return JsonReporterForm;
+    case 'zippedFiles':
+      return ZippedFilesReporterForm;
     case STANDARD_REPORTER_NAME:
       return WdkServiceJsonReporterForm;
     default:
