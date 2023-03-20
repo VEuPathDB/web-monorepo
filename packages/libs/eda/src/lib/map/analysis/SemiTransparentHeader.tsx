@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { CSSProperties, ReactElement, ReactNode } from 'react';
 import ArrowRight from '@veupathdb/coreui/dist/components/icons/ChevronRight';
 import {
   makeClassNameHelper,
@@ -7,7 +7,7 @@ import {
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './SemiTransparentHeader.scss';
-import { SiteInformationProps } from '..';
+import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
 
 export type MapNavigationProps = {
   analysisName?: string;
@@ -46,6 +46,7 @@ export function SemiTransparentHeader({
 
   return (
     <header
+      style={{ background: mapNavigationBackgroundColor }}
       className={`${semiTransparentHeader()} ${
         !isExpanded ? semiTransparentHeader('--collapsed') : ''
       }`}
@@ -75,12 +76,18 @@ export function SemiTransparentHeader({
           isExpanded ? '' : 'screenReaderOnly'
         }`}
       >
+        <p>{entityDisplayName}</p>
+        <LeftBracket
+          styles={{
+            // Bring closer the content of the righthand side of
+            // the bracket.
+            marginLeft: 10,
+            marginRight: -5,
+          }}
+        />
         <table>
           <thead>
-            <tr>
-              <th></th>
-              <th>{entityDisplayName}</th>
-            </tr>
+            <tr>{/* <th colSpan={2}>{entityDisplayName}</th> */}</tr>
           </thead>
           <tbody>
             <tr title={`There are X total samples.`}>
@@ -168,6 +175,7 @@ function OpenCloseToggleButton({
   return (
     <div className={expandToggleContainer()}>
       <button
+        style={{ background: mapNavigationBackgroundColor }}
         className={`Button ${
           isExpanded ? '' : expandToggleContainer('--collapsed')
         }`}
@@ -191,5 +199,24 @@ function OpenCloseToggleButton({
         </span>
       </button>
     </div>
+  );
+}
+
+type LeftBracketProps = {
+  /** Should you need to adjust anything! */
+  styles?: CSSProperties;
+};
+function LeftBracket(props: LeftBracketProps) {
+  return (
+    <div
+      style={{
+        border: '2px solid black',
+        borderRight: 'none',
+        height: '90%',
+        width: 5,
+        ...props.styles,
+      }}
+      aria-hidden
+    ></div>
   );
 }
