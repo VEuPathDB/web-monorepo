@@ -293,6 +293,7 @@ export const ScatterplotResponseData = array(
     // changed to string array
     seriesX: array(string),
     seriesY: array(string),
+    seriesGradientColorscale: array(string),
     smoothedMeanX: array(string),
     smoothedMeanY: array(number),
     smoothedMeanSE: array(number),

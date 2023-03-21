@@ -625,39 +625,60 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         (overlayVariable?.type === 'integer' ||
           overlayVariable?.type === 'number')
       ) {
-        const defaultOverlayMin: number =
-          overlayVariable.distributionDefaults.displayRangeMin ||
-          overlayVariable.distributionDefaults.displayRangeMin === 0
-            ? overlayVariable.distributionDefaults.displayRangeMin
+        // find data-based Min/Max for seriesGradientColorscale
+        const zMin = min(
+          response.scatterplot.data.map((series) =>
+            min(series.seriesGradientColorscale?.map(Number))
+          )
+        );
+        const zMax = max(
+          response.scatterplot.data.map((series) =>
+            max(series.seriesGradientColorscale?.map(Number))
+          )
+        );
+
+        // considering filters
+        overlayMin =
+          filters != null && filters.length > 0
+            ? overlayVariable.distributionDefaults.displayRangeMin != null &&
+              zMin != null
+              ? Math.min(
+                  overlayVariable.distributionDefaults.displayRangeMin,
+                  zMin
+                )
+              : zMin
+            : overlayVariable.distributionDefaults.displayRangeMin != null
+            ? Math.min(
+                overlayVariable.distributionDefaults.displayRangeMin,
+                overlayVariable.distributionDefaults.rangeMin
+              )
             : overlayVariable.distributionDefaults.rangeMin;
 
-        const defaultOverlayMax: number = overlayVariable.distributionDefaults
-          .displayRangeMax
-          ? overlayVariable.distributionDefaults.displayRangeMax
-          : overlayVariable.distributionDefaults.rangeMax;
+        overlayMax =
+          filters != null && filters.length > 0
+            ? overlayVariable.distributionDefaults.displayRangeMax != null &&
+              zMax != null
+              ? Math.max(
+                  overlayVariable.distributionDefaults.displayRangeMax,
+                  zMax
+                )
+              : zMax
+            : overlayVariable.distributionDefaults.displayRangeMax != null
+            ? Math.max(
+                overlayVariable.distributionDefaults.displayRangeMax,
+                overlayVariable.distributionDefaults.rangeMax
+              )
+            : overlayVariable.distributionDefaults.rangeMax;
 
         // Note overlayMin and/or overlayMax could be intentionally 0.
         gradientColorscaleType =
-          defaultOverlayMin >= 0 && defaultOverlayMax >= 0
-            ? 'sequential'
-            : defaultOverlayMin <= 0 && defaultOverlayMax <= 0
-            ? 'sequential reversed'
-            : 'divergent';
-
-        // Update overlay min and max
-        if (gradientColorscaleType === 'divergent') {
-          overlayMin = -Math.max(
-            Math.abs(defaultOverlayMin),
-            Math.abs(defaultOverlayMax)
-          );
-          overlayMax = Math.max(
-            Math.abs(defaultOverlayMin),
-            Math.abs(defaultOverlayMax)
-          );
-        } else {
-          overlayMin = defaultOverlayMin;
-          overlayMax = defaultOverlayMax;
-        }
+          overlayMin != null && overlayMax != null
+            ? overlayMin >= 0 && overlayMax >= 0
+              ? 'sequential'
+              : overlayMin <= 0 && overlayMax <= 0
+              ? 'sequential reversed'
+              : 'divergent'
+            : undefined;
       }
 
       const overlayVocabulary = computedOverlayVariableDescriptor
@@ -2643,8 +2664,6 @@ function processInputData<T extends number | string>(
 
   return {
     dataSetProcess: { series: dataSetProcess },
-    overlayMin,
-    overlayMax,
     gradientColorscaleType,
     xMin,
     xMinPos,
