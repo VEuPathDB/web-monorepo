@@ -30,23 +30,23 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
     data: [
       {
-        foldChange: ['2', '3'],
+        foldChange: ['6', '3'],
         pValue: ['0.001', '0.0001'],
         adjustedPValue: ['0.01', '0.001'],
         pointId: ['a', 'b'],
         overlayValue: 'positive',
       },
       {
-        foldChange: ['-1', '0', '1', '0.5', '-0.5', '4', '-5'],
-        pValue: ['0.001', '0.0001', '0.2', '0.1', '0.7', '0.1', '0.4'],
-        adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
+        foldChange: ['0.2', '0.8', '1', '0.5', '0.5', '4', '1.2'],
+        pValue: ['0.01', '0.0001', '0.2', '0.1', '0.3', '0.1', '0.4'],
+        adjustedPValue: ['0.1', '0.001', '2', '1', '7', '1', '4'],
         pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
         overlayValue: 'none',
       },
       {
-        foldChange: ['-2', '-3', '-4'],
-        pValue: ['0.001', '0.0001', '0.002'],
-        adjustedPValue: ['0.01', '0.001', '0.02'],
+        foldChange: ['0.02', '0.03', '0.06'],
+        pValue: ['0.001', '0.0001', '0.0014'],
+        adjustedPValue: ['0.01', '0.001', '0.014'],
         pointId: ['j', 'k', 'l'],
         overlayValue: 'negative',
       },
@@ -77,7 +77,8 @@ const Template: Story<TemplateProps> = (args) => {
   console.log(datasetProcess);
 
   // Better to break into a high and low prop? Would be more clear
-  const foldChangeGates = [-1.5, 1.5];
+  const foldChangeGates = [-1, 1];
+  const adjustedPValueGate = 1.6;
 
   const comparisonLabels = ['group a', 'group b'];
 
@@ -98,7 +99,7 @@ const Template: Story<TemplateProps> = (args) => {
   };
   // Determined by the data and symmetric around 0 by default?
   const dependentAxisRange = {
-    min: 0,
+    min: -1,
     max: 8,
   }; // By default max determined by data and min at 0
 
@@ -108,7 +109,7 @@ const Template: Story<TemplateProps> = (args) => {
         data={datasetProcess} // call it PlotlyScatterData???
         foldChangeGates={foldChangeGates}
         comparisonLabels={comparisonLabels}
-        adjustedPValueGate={args.adjustedPValueGate}
+        adjustedPValueGate={adjustedPValueGate}
         markerBodyOpacity={args.markerBodyOpacity}
         plotTitle={plotTitle}
         independentAxisRange={independentAxisRange}
@@ -173,9 +174,8 @@ function processVolcanoData<T extends number>(
        * This is for finding global min/max values among data arrays for better display of the plot(s)
        */
 
-      // ANN needs log 2 adjusting!
-      xSeries = el.foldChange;
-      ySeries = el.adjustedPValue;
+      xSeries = el.foldChange.map((fc: number) => Math.log2(fc));
+      ySeries = el.adjustedPValue.map((apv: number) => -Math.log10(apv));
 
       xMin =
         xMin < Math.min(...(xSeries as number[]))

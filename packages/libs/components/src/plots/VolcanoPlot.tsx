@@ -65,6 +65,8 @@ const VolcanoPlot = makePlotlyPlotComponent(
       independentAxisLogScale = false,
       dependentAxisLogScale = false,
       markerBodyOpacity,
+      adjustedPValueGate,
+      foldChangeGates,
       ...restProps
     } = props;
 
@@ -168,7 +170,51 @@ const VolcanoPlot = makePlotlyPlotComponent(
         ),
       },
       // add truncatedAxisHighlighting for layout.shapes
-      shapes: truncatedAxisHighlighting,
+      // shapes: truncatedAxisHighlighting,
+      shapes: [
+        {
+          type: 'line',
+          x0: 0,
+          y0: adjustedPValueGate,
+          x1: 1,
+          y1: adjustedPValueGate,
+          line: {
+            color: 'rgb(0.3.0.35.0.35)',
+            width: 1,
+            dash: 'dash',
+          },
+          xref: 'paper',
+          layer: 'below',
+        },
+        {
+          type: 'line',
+          x0: foldChangeGates![0],
+          y0: 0,
+          x1: foldChangeGates![0],
+          y1: 1,
+          line: {
+            color: 'rgb(0.3.0.35.0.35)',
+            width: 1,
+            dash: 'dash',
+          },
+          yref: 'paper',
+          layer: 'below',
+        },
+        {
+          type: 'line',
+          x0: foldChangeGates![1],
+          y0: 0,
+          x1: foldChangeGates![1],
+          y1: 1,
+          line: {
+            color: 'rgb(0.3.0.35.0.35)',
+            width: 1,
+            dash: 'dash',
+          },
+          yref: 'paper',
+          layer: 'below',
+        },
+      ],
     };
 
     // change data here for marker opacity

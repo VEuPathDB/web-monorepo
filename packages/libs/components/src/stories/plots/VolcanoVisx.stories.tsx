@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
-import { XYChart, Tooltip, Axis, Grid, GlyphSeries } from '@visx/xychart';
+import {
+  XYChart,
+  Tooltip,
+  Axis,
+  Grid,
+  GlyphSeries,
+  LineSeries,
+} from '@visx/xychart';
 // import { min, max, lte, gte } from 'lodash';
 // import { dataSetProcess, xAxisRange, yAxisRange } from './ScatterPlot.storyData';
 import { Story, Meta } from '@storybook/react/types-6-0';
@@ -11,6 +18,8 @@ import { ScatterPlotData } from '../../types/plots';
 import { AxisBottom } from '@visx/visx';
 import { scaleLinear } from '@visx/scale';
 import ControlsHeader from '../../../lib/components/typography/ControlsHeader';
+import { Line } from '@visx/shape';
+import { Group } from '@visx/group';
 
 export default {
   title: 'Plots/VolcanoPlotVisx',
@@ -25,6 +34,7 @@ interface VEuPathDBVolcanoPlotData {
       adjustedPValue: string[];
       pointId: string[];
       overlayValue: string;
+      id: string;
     }>;
   };
 }
@@ -39,6 +49,7 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         adjustedPValue: ['0.01', '0.001'],
         pointId: ['a', 'b'],
         overlayValue: 'positive',
+        id: 'id1',
       },
       {
         foldChange: ['0.5', '0', '1', '0.5', '0.1', '4', '0.2'],
@@ -46,6 +57,7 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
         pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
         overlayValue: 'none',
+        id: 'id2',
       },
       {
         foldChange: ['0.01', '0.02', '0.03'],
@@ -53,6 +65,7 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         adjustedPValue: ['0.01', '0.001', '0.02'],
         pointId: ['j', 'k', 'l'],
         overlayValue: 'negative',
+        id: 'id3',
       },
     ],
   },
@@ -106,10 +119,10 @@ const Template: Story<TemplateProps> = (args) => {
 
   const accessors = {
     xAccessor: (d: any) => {
-      return Math.log2(Number(d.x));
+      return d.x;
     },
     yAccessor: (d: any) => {
-      return -Math.log10(Number(d.y));
+      return d.y;
     },
   };
 
@@ -120,41 +133,57 @@ const Template: Story<TemplateProps> = (args) => {
   });
 
   return (
-    <XYChart
-      height={300}
-      xScale={{ type: 'linear', domain: [-7, 7] }}
-      yScale={{ type: 'linear', domain: [-2, 4] }}
-      width={300}
-    >
-      <Axis orientation="left" label="-log10 p value" />
-      <Grid columns={false} numTicks={4} />
-      <Axis orientation="bottom" label="log2 Fold Change" />
-      {datasetProcess.series.map((series, index) => {
-        return (
-          <GlyphSeries
-            dataKey={String(index)}
-            data={(series as unknown) as any[]}
-            {...accessors}
-          />
-        );
-      })}
-      {/* <Tooltip
+    <Group>
+      <XYChart
+        height={300}
+        xScale={{ type: 'linear', domain: [-7, 7] }}
+        yScale={{ type: 'linear', domain: [-2, 4] }}
+        width={300}
+      >
+        <Axis orientation="left" label="-log10 p value" />
+        <Grid columns={false} numTicks={4} />
+        <Axis orientation="bottom" label="log2 Fold Change" />
+        {datasetProcess.series.map((series, index) => {
+          console.log(String(index) + 'a');
+          return (
+            <GlyphSeries
+              dataKey={String(index)}
+              data={(series as unknown) as any[]}
+              {...accessors}
+            />
+          );
+        })}
+        {/* <LineSeries className='pvalLine' data = {[{x: -7, y:1.5},{x:7, y:1.5}]} fill='#000000' stroke='#000000' strokeWidth={3}/> */}
+        {/* <Tooltip
         snapTooltipToDatumX
         snapTooltipToDatumY
         showVerticalCrosshair
         showSeriesGlyphs
-        renderTooltip={({ tooltipData, colorScale }) => (
-          <div>
-            <div style={{ color: colorScale!(tooltipData!.nearestDatum!.key) }}>
-              {tooltipData!.nearestDatum!.key}
+        renderTooltip={({ tooltipData, colorScale }) => {
+          console.log(tooltipData!.nearestDatum!);
+          return (
+            <div>
+              <div style={{ color: colorScale!(tooltipData!.nearestDatum!.key) }}>
+                {tooltipData!.nearestDatum!.key}
+              </div>
+              {accessors.xAccessor(tooltipData!.nearestDatum!.datum)}
+              {', '}
+              {accessors.yAccessor(tooltipData!.nearestDatum!.datum)}
             </div>
-            {accessors.xAccessor(tooltipData!.nearestDatum!.datum)}
-            {', '}
-            {accessors.yAccessor(tooltipData!.nearestDatum!.datum)}
-          </div>
-        )}
+          )
+        }
+        }
       /> */}
-    </XYChart>
+      </XYChart>
+      <Line
+        className="pvalLine"
+        from={{ x: -7, y: 1.5 }}
+        to={{ x: 7, y: 1.5 }}
+        fill="#000000"
+        stroke="#000000"
+        strokeWidth={3}
+      />
+    </Group>
   );
 };
 
@@ -213,9 +242,8 @@ function processVolcanoData<T extends number>(
        * This is for finding global min/max values among data arrays for better display of the plot(s)
        */
 
-      // ANN needs log 2 adjusting!
-      xSeries = el.foldChange;
-      ySeries = el.adjustedPValue;
+      xSeries = el.foldChange.map((fc: number) => Math.log2(fc));
+      ySeries = el.adjustedPValue.map((apv: number) => -Math.log10(apv));
 
       xMin =
         xMin < Math.min(...(xSeries as number[]))
