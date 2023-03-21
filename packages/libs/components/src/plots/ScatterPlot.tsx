@@ -240,7 +240,7 @@ const ScatterPlot = makePlotlyPlotComponent(
         ).map(([x, y, seriesGradientColorscale]) => {
           return `x: ${x}<br />y: ${y}<br />${
             seriesGradientColorscale != null
-              ? 'value: ' + seriesGradientColorscale
+              ? 'Overlay: ' + seriesGradientColorscale
               : ''
           }<br />${
             seriesGradientColorscale == null &&
@@ -249,7 +249,7 @@ const ScatterPlot = makePlotlyPlotComponent(
             d.name != 'Smoothed mean' &&
             d.name != '95% Confidence interval' &&
             !d.name.startsWith('Best fit, R')
-              ? 'overlay: ' + d.name
+              ? 'Overlay: ' + d.name
               : ''
           }<extra></extra>`;
         }),
