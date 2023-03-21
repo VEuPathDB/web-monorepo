@@ -1,9 +1,6 @@
-$header-background: rgba(255, 255, 255, 0.8);
-
 .SemiTransparentHeader {
   pointer-events: auto;
   align-items: center;
-  background: $header-background;
   display: flex;
   justify-content: space-between;
   // Filters chips stack, so the header will grow taller.
@@ -11,6 +8,7 @@ $header-background: rgba(255, 255, 255, 0.8);
   transition: top 0.1s ease;
   width: 100%;
   z-index: 10;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px;
 
   &--collapsed {
     // The header gets out of the way by tucking itself
@@ -23,7 +21,6 @@ $header-background: rgba(255, 255, 255, 0.8);
     align-items: center;
     display: flex;
     justify-content: flex-start;
-    margin-bottom: 0.5rem;
     &--collapsed {
       visibility: hidden;
     }
@@ -31,24 +28,41 @@ $header-background: rgba(255, 255, 255, 0.8);
 
   &__LogoContainer {
     margin: 0 1.5rem;
+    height: 100%;
     img {
-      border-radius: 50%;
-      width: 65px;
+      width: 55px;
     }
   }
 
   &__SampleCounter {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
     margin-right: 1.5rem;
-    font-size: 16px;
+    font-size: 15px;
 
     th {
       border-width: 0;
+      padding: 0;
+      margin: 0;
     }
+    td {
+      margin: 0;
+      padding: 0 0 0 10px;
+    }
+    tbody tr td:first-child {
+      text-align: left;
+    }
+    tbody tr td:nth-child(2) {
+      text-align: right;
+    }
+
     tbody tr td:first-child {
       &::after {
         content: ':';
       }
-      font-weight: bold;
+      font-weight: 500;
     }
   }
 }
@@ -70,7 +84,7 @@ $header-background: rgba(255, 255, 255, 0.8);
 
   &__AnalysisTitle {
     font-style: italic;
-    padding: 10px 0;
+    padding: 0;
     font-size: 19px;
   }
 }
@@ -82,21 +96,20 @@ $header-background: rgba(255, 255, 255, 0.8);
   position: absolute;
   // Stick the expand button in the viewport's center.
   // and beneath
-  bottom: -20px;
+  bottom: -21px;
   left: 50%;
   transform: translate(-50%, -50%);
 
   .Button {
     align-items: center;
-    background: $header-background;
     border: none;
     display: flex;
-    height: 40px;
     justify-content: center;
     margin-right: 0;
     position: absolute;
     width: 50px;
     z-index: 10;
+    padding: 0;
 
     &--collapsed {
       margin-top: 50px;
@@ -107,8 +120,6 @@ $header-background: rgba(255, 255, 255, 0.8);
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 60px;
-      height: 40px;
       fill: #000;
     }
   }
