@@ -77,11 +77,16 @@ export default function PlotGradientLegend({
           dominantBaseline="middle"
           fontSize={tickFontSize}
         >
-          {(a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin}
+          {((a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin).toFixed(
+            2
+          )}
         </text>
       </g>
     );
   });
+
+  //DKDK
+  console.log('ticks =', ticks);
 
   return (
     <div>
