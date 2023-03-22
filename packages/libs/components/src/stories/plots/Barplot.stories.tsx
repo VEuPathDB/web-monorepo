@@ -140,9 +140,8 @@ const TemplateWithSelectedRangeControls: Story<Omit<BarplotProps, 'data'>> = (
   const [dependentAxisRange, setDependentAxisRange] = useState<
     NumberRange | undefined
   >({ min: 1, max: 40 });
-  const [dependentAxisLogScale, setDependentAxisLogScale] = useState<
-    boolean | undefined
-  >(false);
+  const [dependentAxisLogScale, setDependentAxisLogScale] =
+    useState<boolean | undefined>(false);
 
   const handleDependentAxisRangeChange = async (
     newRange?: NumberOrDateRange

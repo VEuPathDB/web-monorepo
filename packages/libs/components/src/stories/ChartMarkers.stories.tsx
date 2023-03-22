@@ -59,9 +59,8 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [legendRadioValue, setLegendRadioValue] = useState<string>(
-    'Individual'
-  );
+  const [legendRadioValue, setLegendRadioValue] =
+    useState<string>('Individual');
   const [viewport, setViewport] = useState<Viewport>({
     center: [13, 0],
     zoom: 6,
@@ -71,8 +70,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     setLegendRadioValue(e.target.value);
   };
   const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
-    0,
-    0,
+    0, 0,
   ]);
 
   const legendType = 'numeric';
@@ -139,9 +137,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [legendRadioValue, setLegendRadioValue] = useState<string>(
-    'Individual'
-  );
+  const [legendRadioValue, setLegendRadioValue] =
+    useState<string>('Individual');
   const [viewport, setViewport] = useState<Viewport>({
     center: [13, 0],
     zoom: 6,
@@ -160,8 +157,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   );
 
   const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
-    0,
-    0,
+    0, 0,
   ]);
 
   const legendType = 'numeric';
@@ -242,9 +238,8 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
-  const [legendRadioValue, setLegendRadioValue] = useState<string>(
-    'Individual'
-  );
+  const [legendRadioValue, setLegendRadioValue] =
+    useState<string>('Individual');
   const [viewport, setViewport] = useState<Viewport>({
     center: [13, 0],
     zoom: 6,
@@ -254,8 +249,7 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
     setLegendRadioValue(e.target.value);
   };
   const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
-    0,
-    0,
+    0, 0,
   ]);
 
   const legendType = 'numeric';

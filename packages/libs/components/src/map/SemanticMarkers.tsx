@@ -36,9 +36,8 @@ export default function SemanticMarkers({
   // react-leaflet v3
   const map = useMap();
 
-  const [prevMarkers, setPrevMarkers] = useState<
-    ReactElement<BoundsDriftMarkerProps>[]
-  >(markers);
+  const [prevMarkers, setPrevMarkers] =
+    useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
   // local bounds state needed for recentreing markers
   const [bounds, setBounds] = useState<Bounds>();
 

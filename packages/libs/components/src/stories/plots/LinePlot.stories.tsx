@@ -218,9 +218,8 @@ const TemplateWithSelectedRangeControls: Story<Omit<LinePlotProps, 'data'>> = (
   const [dependentAxisRange, setDependentAxisRange] = useState<
     NumberOrDateRange | undefined
   >({ min: 1, max: 80 });
-  const [dependentAxisLogScale, setDependentAxisLogScale] = useState<
-    boolean | undefined
-  >(false);
+  const [dependentAxisLogScale, setDependentAxisLogScale] =
+    useState<boolean | undefined>(false);
 
   const handleDependentAxisRangeChange = async (
     newRange?: NumberOrDateRange

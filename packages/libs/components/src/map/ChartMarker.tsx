@@ -149,9 +149,7 @@ export function ChartMarkerStandalone(props: ChartMarkerStandaloneProps) {
   );
 }
 
-function chartMarkerSVGIcon(
-  props: ChartMarkerStandaloneProps
-): {
+function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   html: string;
   size: number;
   sumValuesString: string;

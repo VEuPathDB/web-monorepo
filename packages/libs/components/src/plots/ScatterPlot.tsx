@@ -99,30 +99,29 @@ const ScatterPlot = makePlotlyPlotComponent(
     );
 
     // make rectangular layout shapes for truncated axis/missing data
-    const truncatedAxisHighlighting:
-      | Partial<Shape>[]
-      | undefined = useMemo(() => {
-      if (data.series.length > 0) {
-        const filteredTruncationLayoutShapes = truncationLayoutShapes(
-          orientation,
-          standardIndependentAxisRange, // send undefined for independentAxisRange
-          standardDependentAxisRange,
-          extendedIndependentAxisRange, // send undefined for independentAxisRange
-          extendedDependentAxisRange,
-          axisTruncationConfig
-        );
+    const truncatedAxisHighlighting: Partial<Shape>[] | undefined =
+      useMemo(() => {
+        if (data.series.length > 0) {
+          const filteredTruncationLayoutShapes = truncationLayoutShapes(
+            orientation,
+            standardIndependentAxisRange, // send undefined for independentAxisRange
+            standardDependentAxisRange,
+            extendedIndependentAxisRange, // send undefined for independentAxisRange
+            extendedDependentAxisRange,
+            axisTruncationConfig
+          );
 
-        return filteredTruncationLayoutShapes;
-      } else {
-        return [];
-      }
-    }, [
-      standardDependentAxisRange,
-      extendedDependentAxisRange,
-      orientation,
-      data,
-      axisTruncationConfig,
-    ]);
+          return filteredTruncationLayoutShapes;
+        } else {
+          return [];
+        }
+      }, [
+        standardDependentAxisRange,
+        extendedDependentAxisRange,
+        orientation,
+        data,
+        axisTruncationConfig,
+      ]);
 
     const layout: Partial<Layout> = {
       hovermode: 'closest',

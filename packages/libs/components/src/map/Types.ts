@@ -15,14 +15,6 @@ export interface Bounds {
 }
 
 /*
-  This is the information Leaflet needs in order to show a map.
-*/
-export interface Viewport {
-  center: LatLng;
-  zoom: number;
-}
-
-/*
   This is information Leaflet *provides* that we use for fetching/generating markers.
 */
 
