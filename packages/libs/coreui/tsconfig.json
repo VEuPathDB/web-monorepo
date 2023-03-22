@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "jsxImportSource": "@emotion/react",
+    "jsx": "react-jsx",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    // "isolatedModules": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "target": "ES5",
+    // set downlevelIteration to true to resolve TS error regarding iterables
+    // https://stackoverflow.com/questions/49218765/typescript-and-iterator-type-iterableiteratort-is-not-an-array-type
+    "downlevelIteration": true,
+    // TODO: This is for react-table only. Hopefully can be eliminated in the future.
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/stories"],
+}
