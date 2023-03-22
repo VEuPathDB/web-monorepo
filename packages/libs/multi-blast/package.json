@@ -15,18 +15,18 @@
     "*.scss"
   ],
   "dependencies": {
-    "@veupathdb/preferred-organisms": "^1.1.16",
+    "@veupathdb/preferred-organisms": "workspace:^",
     "file-saver": "^2.0.5",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.21",
-    "react-select": "^3.0.4"
+    "react-select": "^3.0.4",
+    "@veupathdb/coreui": "workspace:^",
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^",
+    "@veupathdb/web-common": "workspace:^"
   },
   "peerDependencies": {
-    "@veupathdb/coreui": "^0.18.20",
-    "@veupathdb/http-utils": "^1.1.1",
-    "@veupathdb/wdk-client": ">=0.9.29",
-    "@veupathdb/web-common": ">=0.8.1",
     "react": ">=16.14.0",
     "react-dom": ">=16.14.0",
     "react-redux": "^7.2.6",
@@ -73,19 +73,14 @@
     "@types/react-select": "^3.1.2",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.0.0",
-    "@veupathdb/blast-summary-view": "^0.1.0",
-    "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/components": "^0.19.14",
-    "@veupathdb/coreui": "^0.18.20",
-    "@veupathdb/eda": "^4.0.3",
-    "@veupathdb/eslint-config": "^2.0.0",
-    "@veupathdb/http-utils": "^1.1.1",
-    "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/react-scripts": "^2.0.0",
-    "@veupathdb/study-data-access": "^0.3.7",
-    "@veupathdb/tsconfig": "^2.0.0",
-    "@veupathdb/wdk-client": "^0.9.29",
-    "@veupathdb/web-common": "^0.8.1",
+    "@veupathdb/blast-summary-view": "workspace:^",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/eda": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
+    "@veupathdb/study-data-access": "workspace:^",
+    "@veupathdb/tsconfig": "workspace:^",
     "babel-eslint": "^10.0.0",
     "eslint": "^7.5.0",
     "eslint-config-react-app": "^6.0.0",
@@ -97,9 +92,6 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "eslint-plugin-testing-library": "^5.9.1",
     "http-proxy-middleware": "^1.0.6",
-    "husky": "4",
-    "lint-staged": ">=10",
-    "prettier": "2.2.1",
     "react": "^17.0.2",
     "react-app-rewired": "^2.2.1",
     "react-dom": ">=16.14.0",
@@ -116,15 +108,6 @@
     "typescript": "^4.0.3",
     "web-vitals": "^0.2.4"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
-  },
-  "prettier": "@veupathdb/prettier-config",
   "volta": {
     "node": "14.21.1",
     "yarn": "1.22.11"
