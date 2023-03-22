@@ -16,31 +16,17 @@
       "@veupathdb"
     ]
   },
-  "prettier": "@veupathdb/prettier-config",
   "browserslist": [
     "extends @veupathdb/browserslist-config"
   ],
   "devDependencies": {
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
-    "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/eslint-config": "^2.0.0",
-    "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/tsconfig": "^2.0.0",
-    "@veupathdb/wdk-client": "*",
-    "husky": ">=4",
-    "lint-staged": ">=10",
-    "prettier": "2.2.1",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/tsconfig": "workspace:^",
     "react-scripts": "4.0.1",
     "typescript": "^4.4.4"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
   },
   "volta": {
     "node": "14.15.5",
@@ -50,9 +36,8 @@
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.21",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@veupathdb/wdk-client": "workspace:^"
   },
-  "peerDependencies": {
-    "@veupathdb/wdk-client": "*"
-  }
+  "peerDependencies": {}
 }
