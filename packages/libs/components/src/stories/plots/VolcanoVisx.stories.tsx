@@ -133,57 +133,83 @@ const Template: Story<TemplateProps> = (args) => {
   });
 
   return (
-    <Group>
-      <XYChart
-        height={300}
-        xScale={{ type: 'linear', domain: [-7, 7] }}
-        yScale={{ type: 'linear', domain: [-2, 4] }}
-        width={300}
-      >
-        <Axis orientation="left" label="-log10 p value" />
-        <Grid columns={false} numTicks={4} />
-        <Axis orientation="bottom" label="log2 Fold Change" />
-        {datasetProcess.series.map((series, index) => {
-          console.log(String(index) + 'a');
-          return (
-            <GlyphSeries
-              dataKey={String(index)}
-              data={(series as unknown) as any[]}
-              {...accessors}
-            />
-          );
-        })}
-        {/* <LineSeries className='pvalLine' data = {[{x: -7, y:1.5},{x:7, y:1.5}]} fill='#000000' stroke='#000000' strokeWidth={3}/> */}
-        {/* <Tooltip
+    <XYChart
+      height={300}
+      xScale={{ type: 'linear', domain: [-7, 7] }}
+      yScale={{ type: 'linear', domain: [-2, 4] }}
+      width={300}
+    >
+      <Axis orientation="left" label="-log10 p value" />
+      <Grid columns={false} numTicks={4} />
+      <Axis orientation="bottom" label="log2 Fold Change" />
+      {datasetProcess.series.map((series, index) => {
+        console.log(String(index) + 'a');
+        return (
+          <GlyphSeries
+            dataKey={String(index) + 'a'}
+            data={(series as unknown) as any[]}
+            {...accessors}
+          />
+        );
+      })}
+      <LineSeries
+        className="pvalLine"
+        data={[
+          { x: -7, y: 1.5 },
+          { x: 7, y: 1.5 },
+        ]}
+        dataKey="pvalline"
+        fill="#000000"
+        stroke="#000000"
+        strokeWidth={1}
+        {...accessors}
+      />
+      <LineSeries
+        className="fcgatelow"
+        data={[
+          { x: -4.5, y: -2 },
+          { x: -4.5, y: 4 },
+        ]}
+        dataKey="fcgatelow"
+        fill="#000000"
+        stroke="#000000"
+        strokeWidth={1}
+        {...accessors}
+      />
+      <LineSeries
+        className="fcgatehigh"
+        data={[
+          { x: 0.5, y: -2 },
+          { x: 0.5, y: 4 },
+        ]}
+        dataKey="fcgatehigh"
+        fill="#000000"
+        stroke="#000000"
+        strokeWidth={1}
+        {...accessors}
+      />
+      <Tooltip
         snapTooltipToDatumX
         snapTooltipToDatumY
         showVerticalCrosshair
         showSeriesGlyphs
         renderTooltip={({ tooltipData, colorScale }) => {
-          console.log(tooltipData!.nearestDatum!);
+          // console.log(tooltipData!.nearestDatum!);
           return (
             <div>
-              <div style={{ color: colorScale!(tooltipData!.nearestDatum!.key) }}>
+              <div
+                style={{ color: colorScale!(tooltipData!.nearestDatum!.key) }}
+              >
                 {tooltipData!.nearestDatum!.key}
               </div>
               {accessors.xAccessor(tooltipData!.nearestDatum!.datum)}
               {', '}
               {accessors.yAccessor(tooltipData!.nearestDatum!.datum)}
             </div>
-          )
-        }
-        }
-      /> */}
-      </XYChart>
-      <Line
-        className="pvalLine"
-        from={{ x: -7, y: 1.5 }}
-        to={{ x: 7, y: 1.5 }}
-        fill="#000000"
-        stroke="#000000"
-        strokeWidth={3}
+          );
+        }}
       />
-    </Group>
+    </XYChart>
   );
 };
 
