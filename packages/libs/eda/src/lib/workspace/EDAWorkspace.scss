@@ -1,0 +1,252 @@
+.EDAWorkspace {
+  font-size: 13px;
+  padding: 1em 0;
+
+  // SVG icons inherit the CSS color
+  [class*='icon'] svg {
+    fill: currentColor;
+  }
+
+  .wdk-RecordContainer {
+    margin-top: 2em;
+    font-size: 0.9em;
+  }
+
+  .wdk-RecordSidebarToggle,
+  .wdk-RecordSidebar {
+    background-color: #eaeaea;
+  }
+
+  .wdk-RecordActions,
+  .wdk-RecordHeading {
+    display: none;
+  }
+
+  &-Heading {
+    display: grid;
+    grid:
+      'title linkouts' auto
+      / auto 1fr;
+    gap: 1em;
+    align-items: center;
+    line-height: 1;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 1em;
+    padding-bottom: 0.75em;
+    width: 100%;
+  }
+
+  h1 {
+    grid-area: title;
+    padding: 0;
+  }
+
+  h2 {
+    padding: 0.25em 0;
+  }
+
+  h3 {
+    padding: 0.25em 0;
+  }
+
+  &-ProviderLabel {
+    font-weight: 300;
+    .HelpTrigger .fa {
+      font-size: 1em;
+    }
+    * {
+      display: inline-block;
+    }
+  }
+
+  label.btn {
+    padding: 8px 12px;
+    font-size: 1em;
+    border-radius: 6px;
+    line-height: 1em;
+    color: #3e3e3e;
+    background: #f5f5f7;
+    border: 0.5px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #999;
+    margin: 5px 5px 5px 5px;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-block;
+    &:active {
+      background: #ddd;
+    }
+    &:focus {
+      border-color: #717171;
+    }
+    &:hover {
+      background-color: #f0f0f2;
+      transform: scale(0.98);
+      -webkit-transform: scale(0.98);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  &-Linkouts {
+    grid-area: linkouts;
+    font-size: 1.5em;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.5em;
+    margin-right: auto;
+    margin-left: 2em;
+    align-items: center;
+  }
+
+  .Linkouts-buttons {
+    font-size: 0.75em;
+  }
+
+  &-Analysis {
+    min-height: 100vh;
+  }
+
+  &-AnalysisNameEditBox {
+    font-style: italic;
+
+    i.wdk-Icon.edit {
+      color: #338899 !important;
+    }
+  }
+
+  &-SeeAllFiltersButton {
+    margin-left: 15px !important;
+    box-shadow: none !important;
+
+    .MuiButton-label {
+      text-transform: none;
+      font-weight: bold;
+    }
+  }
+
+  &-ActionIconButton {
+    margin-left: 1em;
+    button {
+      position: relative;
+      top: 0px;
+      transition: top 200ms ease-in-out;
+      outline: none;
+      &:active {
+        top: 3px;
+      }
+      &:focus,
+      &:hover {
+        background-color: #0b6c9d1f !important;
+      }
+    }
+  }
+
+  .WorkspaceNavigation {
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    background: white;
+
+    h1 {
+      font-size: 1em;
+    }
+
+    .WorkspaceNavigation--Item {
+      margin-right: 1.25em;
+    }
+  }
+
+  .Entities {
+    display: flex;
+    overflow-x: auto;
+    max-width: 97vw;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  // introducing pseudo element
+  .Entities::before,
+  .Entities::after {
+    content: '';
+  }
+
+  .expanded-diagram {
+  }
+
+  .MiniMapContainer {
+    box-shadow: 2px 2px 7px #00000050;
+  }
+
+  &-Variables {
+    h3 {
+      padding: 0;
+    }
+
+    dl {
+      margin: 0;
+    }
+
+    dt,
+    dd {
+      display: inline-block;
+    }
+
+    dt {
+      font-weight: 600;
+      &::after {
+        content: ': ';
+      }
+    }
+
+    dd {
+      margin-left: 1ex;
+    }
+  }
+
+  &-Subsetting {
+    display: grid;
+    grid:
+      [row1-start] '.             filter-chips tabular-download' auto [row1-end]
+      [row2-start] 'variables     filter       filter' 1fr [row2-end]
+      / 20% 1fr auto;
+    gap: 1em 3em;
+    padding-top: 1em;
+    .Variables {
+      grid-area: variables;
+      max-height: 100vh;
+    }
+    .FilterChips {
+      height: 2em;
+      grid-area: filter-chips;
+    }
+    .TabularDownload {
+      grid-area: tabular-download;
+      font-size: 3em;
+    }
+    .Filter {
+      grid-area: filter;
+    }
+    .filter-param .field-detail {
+      margin: 0;
+      padding: 0;
+      width: auto;
+    }
+  }
+
+  &-VariableEntityHeader {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    > div {
+      font-size: 1.333em;
+    }
+  }
+
+  .fa.fa-filter {
+    color: green;
+  }
+
+  &-SubsettingVariableDefinition {
+    margin-top: 0.3em;
+    margin-bottom: 0.5em;
+  }
+}

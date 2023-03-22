@@ -1,0 +1,23 @@
+name: Node.js Package Patch
+
+on:
+  push:
+    branches:
+      - '**-patch'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+      - run: |
+          yarn install
+          yarn build-npm-modules
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
+          tag: ${{ github.ref_name }}

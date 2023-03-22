@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/lib",
+    "src/custom.d.ts"
+  ],
+  "exclude": [
+    "**/__test__/**"
+  ],
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "lib",
+    "target": "ES2015",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  }
+}

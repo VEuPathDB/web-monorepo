@@ -1,0 +1,96 @@
+.GlobalFiltersDialog_Wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1100;
+  pointer-events: none;
+
+  .react-draggable.react-resizable {
+    pointer-events: auto;
+    // top and left are dependent on the inital width/height of the dialog
+    // set at the <ResizableBox> element in GlobalFiltersDialog.tsx
+    top: calc(50vh - 150px);
+    left: calc(50vw - 200px);
+  }
+
+  .GlobalFiltersDialog {
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  .GlobalFiltersDialog_Header {
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    position: relative;
+    font-size: 1.2em;
+    font-weight: 700;
+    padding: 0.6em 0.8em;
+    cursor: move;
+    flex: 0 1 42px;
+  }
+
+  .GlobalFiltersDialog_Header_Left {
+    display: flex;
+    justify-content: flex-start;
+    flex: 1;
+  }
+
+  .GlobalFiltersDialog_Header_Center {
+    display: flex;
+    justify-content: center;
+    flex: 5;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: auto;
+  }
+
+  .GlobalFiltersDialog_Header_Right {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
+  }
+
+  .GlobalFiltersDialog_CloseButton {
+    border: none;
+    background: none;
+
+    &:hover {
+      background-color: lightgray;
+    }
+  }
+
+  .GlobalFiltersDialog_Content {
+    padding: 10px;
+    overflow: auto;
+    flex: 1 1 auto;
+  }
+
+  .GlobalFiltersDialog_Footer {
+    width: 100%;
+    background-color: #eee;
+    text-align: center;
+    flex: 0 1 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .GlobalFiltersDialog_RemoveAllButton {
+    background-color: lightgray;
+    box-shadow: none;
+
+    &:hover {
+      background-color: pink;
+    }
+  }
+}

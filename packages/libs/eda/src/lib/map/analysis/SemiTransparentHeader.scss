@@ -1,0 +1,152 @@
+.SemiTransparentHeader {
+  pointer-events: auto;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  // Filters chips stack, so the header will grow taller.
+  position: relative;
+  transition: top 0.1s ease;
+  width: 100%;
+  z-index: 10;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px;
+
+  &--collapsed {
+    // The header gets out of the way by tucking itself
+    background: none;
+    top: -1px;
+    height: 0px;
+  }
+
+  &__Contents {
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+    &--collapsed {
+      visibility: hidden;
+    }
+  }
+
+  &__LogoContainer {
+    margin: 0 1.5rem;
+    height: 100%;
+    img {
+      width: 55px;
+    }
+  }
+
+  &__SampleCounter {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    font-size: 15px;
+
+    th {
+      border-width: 0;
+      padding: 0;
+      margin: 0;
+    }
+    td {
+      margin: 0;
+      padding: 0 0 0 10px;
+    }
+    tbody tr td:first-child {
+      text-align: left;
+    }
+    tbody tr td:nth-child(2) {
+      text-align: right;
+    }
+
+    tbody tr td:first-child {
+      &::after {
+        content: ':';
+      }
+      font-weight: 500;
+    }
+  }
+}
+
+.HeaderContent {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+
+  &__SaveableTextEditorContainer {
+    cursor: text;
+    font-size: 19px;
+  }
+
+  &__StudyName {
+    cursor: default;
+  }
+
+  &__AnalysisTitle {
+    font-style: italic;
+    padding: 0;
+    font-size: 19px;
+  }
+}
+
+.OpenCloseToggleButton {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  // Stick the expand button in the viewport's center.
+  // and beneath
+  bottom: -21px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .Button {
+    align-items: center;
+    border: none;
+    display: flex;
+    justify-content: center;
+    margin-right: 0;
+    position: absolute;
+    width: 50px;
+    z-index: 10;
+    padding: 0;
+
+    &--collapsed {
+      margin-top: 50px;
+    }
+
+    &__SvgContainer {
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      fill: #000;
+    }
+  }
+
+  &__ArrowIcon {
+    transform: rotate(-90deg);
+    width: 30px;
+    height: 40px;
+
+    &--collapsed {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.screenReaderOnly {
+  /* TLDR: The [aria-label] attribute isn’t announced consistently 
+  If text is not needed for sighted users, hide it this way. 
+  https://gomakethings.com/revisting-aria-label-versus-a-visually-hidden-class/#:~:text=In%20the%20posts%2C%20I%20recommended,visually%20shown%20to%20sighted%20users. */
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  display: inline-block;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 1px;
+}

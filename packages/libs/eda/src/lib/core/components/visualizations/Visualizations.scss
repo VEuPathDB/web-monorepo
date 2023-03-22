@@ -1,0 +1,420 @@
+.VisualizationsContainer {
+  h3 {
+    padding: 0;
+    font-weight: normal;
+  }
+  &-NewVisualization {
+    height: 8em;
+    width: 15em;
+    border: 0.2em dashed black;
+    border-radius: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: #eee;
+    font-size: 1.15em;
+  }
+
+  &-ConfiguredVisualization {
+    height: 15em;
+    width: 25em;
+    border: 1px solid black;
+    border-radius: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+    }
+
+    &NoPreview {
+      background: #f3f3f3;
+      width: 80%;
+      height: 55%;
+      border: 1px solid #aaa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    // gray out box for thumbnail view
+    &GrayOut {
+      background: rgba(217, 217, 217, 0.8);
+      padding: 1em;
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.7em;
+      text-align: center;
+      color: #333;
+      // outer glow effect
+      text-shadow: 0em 0em 0.25em #fff;
+    }
+
+    // adjusting icons for thumbnail
+    &Actions {
+      display: flex;
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 0.5em;
+      font-size: 1.35em;
+      > * {
+        margin: 0 0.25em;
+      }
+      z-index: 2;
+      // add hover effect for thumbnail icons
+      opacity: 0;
+    }
+
+    &Title,
+    &Subtitle {
+      display: flex;
+      justify-content: center;
+    }
+
+    &Title {
+      margin-top: 0.5em;
+      font-weight: 400;
+      font-size: 1.15em;
+    }
+
+    &Subtitle {
+      margin-top: 0.25em;
+      font-weight: 300;
+    }
+  }
+
+  // add hover effect for thumbnail icons
+  &-ConfiguredVisualization:hover &-ConfiguredVisualizationActions {
+    opacity: 1;
+  }
+
+  &-PickerContainer {
+    position: relative;
+    padding: 1em 0;
+  }
+  &-PickerActions {
+    padding: 2em 0;
+    position: absolute;
+    right: 0;
+    > * {
+      font-size: 1.5em;
+    }
+  }
+  &-PickerEntry {
+    &__disabled {
+      opacity: 0.75;
+    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    button {
+      height: 10em;
+      width: 10em;
+      background: white;
+      margin-bottom: 1em;
+      border: 0.15em solid #0000003d;
+      box-shadow: 1px 1px 4px #0000003d;
+      &:hover:not([disabled]) {
+        box-shadow: 2px 2px 7px #000000a3;
+      }
+      &:disabled {
+        background: #eee;
+        color: #aaa;
+      }
+    }
+    &Name {
+      color: #444;
+      font-weight: 500;
+      text-align: center;
+      font-size: 1.2em;
+    }
+  }
+  &-FullScreenContainer {
+    position: relative;
+    padding: 1em 0;
+    h3 {
+      font-style: italic;
+    }
+    .Subtitle {
+      padding-left: 0.3em;
+      font-weight: 300;
+      font-size: 1.1em;
+      font-style: italic;
+      margin-bottom: 1em;
+    }
+  }
+  &-FullScreenActions {
+    display: flex;
+    position: absolute;
+    right: 0;
+    * {
+      margin: 0 0.25em;
+    }
+    > * {
+      font-size: 1.35em;
+    }
+  }
+}
+
+$data-table-inner-border: 1px solid #888;
+$data-table-thick-border: 2px solid #262626;
+
+@mixin data-table {
+  z-index: 1;
+  background-color: #fafafa;
+  border: 1px solid #bfbfbf;
+  padding: 10px;
+
+  table {
+    min-width: 100%;
+  }
+
+  th,
+  td {
+    padding-right: 20px;
+  }
+
+  th {
+    font-weight: 500;
+    border: none;
+    border-bottom: $data-table-inner-border;
+    white-space: nowrap;
+  }
+
+  th:first-of-type {
+    border-bottom: 0;
+  }
+
+  .numeric {
+    text-align: right;
+  }
+
+  .numeric-header {
+    text-align: center;
+  }
+}
+
+.VariableCoverageTable {
+  @include data-table;
+  width: 400px;
+  .percentage {
+    color: #333;
+    font-size: 0.85em;
+  }
+  th {
+    vertical-align: baseline;
+  }
+}
+
+.MosaicVisualization-StatsTable {
+  @include data-table;
+  width: 400px;
+}
+
+.contingency-table {
+  @include data-table;
+  overflow: auto;
+  // override data-table
+  background-color: white;
+  border: 0px solid #bfbfbf;
+  padding: 0px;
+
+  th {
+    max-width: 150px;
+    white-space: normal;
+  }
+
+  th,
+  td {
+    text-align: right;
+    padding-right: 10px;
+  }
+
+  td {
+    line-height: 1.4em;
+  }
+
+  .contingency-table_column-label {
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .contingency-table_column-label:first-of-type {
+    border-left: $data-table-inner-border;
+  }
+
+  .contingency-table_row-label {
+    border-bottom: 0;
+    border-right: $data-table-thick-border;
+    border-left: $data-table-thick-border;
+  }
+
+  .contingency-table_row-header,
+  .contingency-table_column-header {
+    font-size: 1.2em;
+    border: $data-table-thick-border !important;
+    // set lightgray color
+    background-color: #e0e0e0 !important;
+  }
+
+  .contingency-table_totals-column-header {
+    border: $data-table-thick-border;
+    border-left: $data-table-inner-border;
+  }
+
+  .contingency-table_column-header {
+    text-align: center;
+  }
+
+  .contingency-table_totals-row-header {
+    border: $data-table-thick-border !important;
+    border-top: $data-table-inner-border !important;
+  }
+
+  .contingency-table_totals-row-value {
+    border-top: $data-table-inner-border;
+    border-bottom: $data-table-thick-border;
+  }
+
+  .contingency-table_totals-column-value {
+    border-left: $data-table-inner-border;
+    border-right: $data-table-thick-border;
+  }
+
+  .contingency-table_grand-total {
+    border-top: $data-table-inner-border;
+    border-left: $data-table-inner-border;
+    border-right: $data-table-thick-border;
+    border-bottom: $data-table-thick-border;
+  }
+}
+
+// stats table
+.stats-table {
+  @include data-table;
+  overflow: auto;
+  // override data-table
+  background-color: white;
+  border: 0px solid #bfbfbf;
+  padding: 0px;
+
+  th {
+    max-width: 150px;
+    white-space: normal;
+  }
+
+  th,
+  td {
+    text-align: right;
+    padding-right: 10px;
+  }
+
+  td {
+    line-height: 1.4em;
+  }
+
+  tr {
+    border-bottom: $data-table-inner-border;
+  }
+
+  .stats-table_top-empty-cell {
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_top-left-cell {
+    border-top: $data-table-thick-border !important;
+    border-left: $data-table-thick-border !important;
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_top-right-cell {
+    border-top: $data-table-thick-border !important;
+    border-right: $data-table-thick-border !important;
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_top-cell {
+    border-top: $data-table-thick-border !important;
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_leftmost-cell {
+    border-left: $data-table-thick-border !important;
+  }
+
+  .stats-table_rightmost-cell {
+    border-right: $data-table-thick-border !important;
+  }
+
+  .stats-table_middle-cell {
+    border-left: $data-table-thick-border !important;
+    border-right: $data-table-thick-border !important;
+  }
+
+  .stats-table_bottom-left-cell {
+    border-left: $data-table-thick-border !important;
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_bottom-right-cell {
+    border-right: $data-table-thick-border !important;
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_bottom-middle-cell {
+    border-left: $data-table-thick-border !important;
+    border-right: $data-table-thick-border !important;
+    border-bottom: $data-table-thick-border !important;
+  }
+
+  .stats-table_bottom-cell {
+    border-bottom: $data-table-thick-border !important;
+  }
+}
+
+.OutputEntityTitle {
+  font-size: 1.3em;
+
+  margin-left: 0.75rem;
+
+  &-EntityName__unselected {
+    visibility: hidden;
+  }
+}
+
+.OutputEntitySubtitle {
+  font-style: italic;
+  font-size: 0.9em;
+  margin-top: -10px;
+}
+
+// R-square table for Scatter plot's Best fit option
+.ScatterRsquareTable {
+  @include data-table;
+  width: 400px;
+
+  .percentage {
+    color: #333;
+    font-size: 0.85em;
+  }
+  th {
+    vertical-align: baseline;
+  }
+  th:first-of-type {
+    border-bottom: $data-table-inner-border;
+  }
+}

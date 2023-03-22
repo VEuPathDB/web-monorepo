@@ -1,0 +1,8 @@
+.Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(22em, 1fr));
+  justify-items: center;
+  align-items: start;
+  gap: 4em;
+  padding: 2em;
+}
