@@ -11,7 +11,12 @@
     "react-cool-dimensions": "^2.0.7",
     "react-draggable": "^4.4.3",
     "react-resizable": "^3.0.4",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/coreui": "workspace:^",
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/study-data-access": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^"
   },
   "peerDependencies": {
     "@emotion/react": "^11.10.0",
@@ -19,11 +24,6 @@
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
-    "@veupathdb/components": "^0.20.4",
-    "@veupathdb/coreui": "^0.18.19",
-    "@veupathdb/http-utils": "^1.1.1",
-    "@veupathdb/study-data-access": "^0.3.7",
-    "@veupathdb/wdk-client": "^0.9.29",
     "react": ">=16.14",
     "react-dom": ">=16.14",
     "react-router-dom": "^5.3.0"
@@ -35,10 +35,6 @@
     "lib",
     "src/lib"
   ],
-  "resolutions": {
-    "@veupathdb/**/react": "^17.0.1",
-    "@veupathdb/**/react-dom": "^17.0.1"
-  },
   "scripts": {
     "start": "veupathdb-react-scripts start",
     "build": "veupathdb-react-scripts prepare",
@@ -51,7 +47,6 @@
       "@veupathdb"
     ]
   },
-  "prettier": "@veupathdb/prettier-config",
   "browserslist": [
     "extends @veupathdb/browserslist-config"
   ],
@@ -79,27 +74,18 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-table": "^7.7.12",
     "@types/uuid": "^8.3.4",
-    "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/components": "^0.20.4",
-    "@veupathdb/coreui": "^0.18.20",
-    "@veupathdb/eslint-config": "^2.0.0",
-    "@veupathdb/http-utils": "^1.1.1",
-    "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/react-scripts": "^2.0.0",
-    "@veupathdb/study-data-access": "^0.3.7",
-    "@veupathdb/tsconfig": "^2.0.0",
-    "@veupathdb/wdk-client": "^0.9.29",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
+    "@veupathdb/tsconfig": "workspace:^",
     "assert": "^2.0.0",
     "bubleify": "^2.0.0",
     "buffer": "^6.0.3",
     "http-proxy-middleware": "^2.0.6",
-    "husky": "^4.3.8",
     "ify-loader": "^1.1.0",
-    "lint-staged": ">=10",
     "notistack": "^1.0.10",
     "path-browserify": "^1.0.1",
     "postcss-normalize": "^10.0.1",
-    "prettier": "2.2.1",
     "process": "^0.11.10",
     "querystring-es3": "^0.2.1",
     "react": "^17.0.1",
@@ -116,14 +102,6 @@
     "stream-browserify": "^3.0.0",
     "typescript": "^4.3.4",
     "web-vitals": "^0.2.4"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
   },
   "volta": {
     "node": "14.19.3",
