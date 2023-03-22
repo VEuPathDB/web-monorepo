@@ -1,0 +1,856 @@
+@import url('https://fonts.googleapis.com/css?family=Exo+2:500');
+@import url('https://fonts.googleapis.com/css?family=Rubik:300');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&display=swap');
+
+
+@value hlColor: #9c242d;
+@value bgColor: #85b3c3;
+
+body, h1, h2, h3, h4, h5, h6 {
+  /* Some rules below are tailored to the current font. See FONT_RELATED section below */
+  font-family: 'Roboto', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
+  /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; */
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-width: 900px;
+  font-size: 12px;
+}
+
+.HeaderNav-Title {
+  font-weight: 300;
+}
+
+.HeaderNav-Title > a {
+  font-family: Rubik;
+  > mark {
+    font-family: 'Exo 2';
+    font-weight: 400;
+  }
+}
+
+.Hero-Title {
+  font-weight: 400;
+  font-family: 'Exo 2';
+  + span {
+    font-family: Rubik;
+  }
+}
+
+#header {
+  height: auto;
+  background: bgColor;
+  margin-bottom: 10px;
+}
+
+#header2 {
+  background: bgColor;
+  color: hlColor;
+  min-width: 0;
+  padding: 0 3em;
+  height: auto;
+}
+
+#header_rt {
+  position: relative;
+  margin-right: 0;
+  margin-top: 0;
+}
+
+#toplink {
+  margin-top: 10px;
+  margin-bottom: 0;
+  position: initial;
+}
+
+.eupathdb-Logo {
+
+}
+
+/* Alpha Release Badge */
+.eupathdb-Logo:after {
+  content: "Prototype";
+  position: absolute;
+  font-size: 1rem;
+  border: 1px solid;
+  padding: 2px 5px;
+  background: #9c242d;
+  color: #efefef;
+  top: 16px;
+  left: 336px;
+}
+
+.eupathdb-LogoRelease {
+  margin-top: 12px;
+}
+
+.eupathdb-LogoImage {
+  margin: 0 8px 0 18px;
+  height: 76px;
+  /*max-width: 350px;*/
+}
+
+#nav-top a,
+#nav-top a:visited,
+#nav-top a:link {
+  color: hlColor;
+}
+
+.eupathdb-Menu {
+  height: 2.3em;
+  background: bgColor;
+  border: none;
+  border-bottom: 1px solid #868686;
+  padding: 0 2.5em;
+  min-width: 0;
+}
+
+.eupathdb-SmallMenu {
+  position: relative;
+  top: -7px;
+}
+
+.eupathdb-Menu, .eupathdb-SmallMenu {
+  font-size: 1.2em;
+}
+.eupathdb-MenuItem:hover {
+  background-color: #548394;
+}
+
+#menu #favorite-menu {
+  float: left;
+}
+
+.eupathdb-MenuItem__favorites {
+  float: none;
+}
+
+.sf-menu {
+  background: bgColor;
+  border: none;
+  min-width: 0;
+}
+
+a.eupathdb-MenuItemText,
+.eupathdb-MenuItemText,
+.sf-menu a {
+  border: none;
+}
+
+.sf-menu li:hover,
+.sf-menu li li:hover,
+.sf-menu li.sfHover,
+.sf-menu a:focus,
+.sf-menu a:hover,
+.sf-menu a:active {
+  background: #e0e0e0;
+  color: black;
+}
+
+.eupathdb-SmallMenuItem > a {
+  color: hlColor;
+}
+
+.SiteName {
+  font-style: italic;
+  font-weight: 400;
+  color: hlColor;
+}
+
+/* Fix for IE11 weirdness */
+
+@media all and (-ms-high-contrast:none) {
+  #RightColumn {
+    margin-left: -40px;
+    position: relative;
+    left: 40px;
+  }
+}
+
+img.WelcomeBanner {
+  margin: -10px auto -30px;
+  width: 100%;
+  min-width: 450px;
+}
+
+.StudiesNav {
+  margin-top: -10px;
+  border: 1px solid #8db2c2;
+  padding: 10px 0;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.StudiesNav h4 {
+  font-weight: bold;
+  margin: 5px 0;
+  padding-left: 10px;
+  padding-bottom: 0px;
+}
+
+.StudiesNav ul {
+  padding: none;
+  margin: 0;
+}
+
+.StudiesNav li {
+  list-style: none;
+  font-size: 1rem;
+  padding: 5px;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.StudiesNav li::before {
+  content: '- ';
+  opacity: 0.33;
+}
+
+.StudiesNav li.active {
+  background-color: #e3ecf0;
+  font-weight: bold;
+  color: #069;
+}
+
+.StudyDetails h3 {
+  color: #069;
+  font-style: italic;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
+.StudyDetails a.LearnMoreLink {
+  display: block;
+  margin: 5px 0;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.StudyDetails a.LearnMoreLink .fa {
+  margin-left: 5px;
+}
+
+.StudyDetails p {
+  background-color: #e3ecf0;
+  padding: 15px;
+  font-size: 1rem;
+  line-height: 1.4em;
+  margin: 0;
+  border-radius: 10px;
+}
+
+.Experiences {
+  position: relative;
+  padding-top: 1.6em;
+}
+
+.ExperienceTestimonial {
+  position: absolute;
+  bottom: 1.2em;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.63);
+  color: white;
+  font-style: italic;
+}
+
+.ImagePlaceholder {
+  background: lightgray;
+  display: block;
+  width: 100%;
+}
+
+.ImagePlaceholder:after {
+  content: "Image here";
+}
+
+ul.ExampleSearches {
+  padding-left: 20px;
+}
+
+ul.ExampleSearches li {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  line-height: 1.45em;
+}
+
+.WelcomeSectionContent {
+  margin-bottom: 3em;
+  min-height: 6em;
+}
+
+.AboutStudies {
+  font-size: 1.1em;
+}
+
+.SearchContainer {
+  text-align: center;
+}
+
+.IconButton {
+  width: 5rem;
+  height: 5rem;
+  margin: 1rem auto;
+  display: block;
+  color: white;
+  background: #069;
+  text-align: center;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+  border-bottom: 4px solid #b4b4b4;
+  border-left: 1px solid #b5b5b5;
+  border-right: 1px solid #b5b5b5;
+}
+
+.IconButton:hover {
+  box-shadow:
+    inset 0px -5px 30px rgba(100,170,230,0.7),
+    0px 0px 5px rgba(0,0,0,0.1);
+  transform: scale(0.98) translateY(4px);
+  border-bottom: 1px solid #b5b4b4;
+}
+
+.SearchLink, .SearchLink-Caption:hover {
+  color: #069;
+  text-decoration: none;
+}
+
+.SearchLink-Icon {
+  font-size: 3.5rem;
+  padding: 11px 5px;
+}
+
+.AnalysisLink-Icon {
+  overflow: hidden;
+}
+
+.AnalysisLink-Icon img {
+  opacity: 0.97;
+  height: 100%;
+  width: 100%;
+  transition: opacity 0.3s ease;
+}
+
+.AnalysisLink-Icon:hover img {
+  opacity: 1;
+}
+
+.SearchLink-Caption, .AnalysisLink-Caption {
+  text-align: center;
+  display: block;
+  width: 100%;
+  font-size: 0.9rem;
+  font-weight: 500;
+  align-self: center;
+  margin: 10px auto;
+  color: black;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
+}
+.SearchLink:hover, .AnalysisLink:hover {
+  text-decoration: none;
+}
+.SearchLink:hover .SearchLink-Caption, .AnalysisLink:hover .AnalysisLink-Caption {
+  color: #069;
+  text-shadow: 0px 0px 10px rgba(0, 96, 143, 0.25);
+}
+
+a.WelcomeBoxLink {
+  background: bgColor;
+  color: white;
+  padding: 6px 0;
+  border: 1px solid #b5b5b5;
+  border-radius: 4px;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.AnalysisToolsContainer {
+  display: flex;
+  justify-content: space-around;
+}
+.AnalysisTool {
+  text-align: center;
+  font-size: 1.1em;
+}
+
+.AnalysisToolImage {
+  border: 1px solid #777;
+  border-radius: 8px;
+  height: 4em;
+}
+
+.SearchContainer {
+  display: flex;
+  justify-content: space-around;
+  max-width: 800px;
+}
+
+.Search {
+  display: inline-block;
+  text-align: center;
+  padding: 4px;
+}
+
+.SearchAlt {
+  display: inline-block;
+  text-align: center;
+  margin: 0 5px;
+}
+
+.SearchAlt.disabled, .SearchLink.disabled, .AnalysisLink.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  color: #444;
+}
+
+.SearchIcon {
+  font-size: 4em;
+  color: black;
+}
+
+.SearchIconAlt {
+  font-size: 4em;
+  border: 1px solid;
+  width: 1.1em;
+  padding: 5px;
+  border-radius: 8px;
+  /* resembles mockup with green background
+  color: black;
+  background: #bbd2a0;
+  */
+  color: white;
+  background: #202020;
+}
+
+.SearchIconCaption {
+  color: black;
+}
+
+.SearchIconCaptionAlt {
+  margin-top: 4px;
+  font-size: 1.1em;
+}
+
+@media (min-width: 1000px) {
+  .ExploreContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+  }
+
+  .ExploreSection {
+    /*width: 45%;*/
+  }
+}
+
+@media (min-width: 800px) {
+  .wdk-PageContent.wdk-PageContent__welcome {
+    margin: auto;
+    padding: 1em 2em;
+  }
+
+  .WelcomeCenter {
+    position: relative;
+    padding-right: 400px;
+    min-height: 220px;
+  }
+
+  .Experiences {
+    position: absolute;
+    top: 2em;
+    right: 0;
+    padding: 0;
+  }
+
+  .ImagePlaceholder {
+    width: 300px;
+  }
+
+  .WelcomeBoxContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1em;
+  }
+
+  .WelcomeBoxContainer.hidden {
+    display: none;
+  }
+
+  .WelcomeBox {
+    width: 30%;
+    position: relative;
+  }
+
+  .WelcomeBoxLink {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: 1.1em;
+    margin: 0;
+  }
+
+  .Search {
+    width: 40%;
+    padding: 1em 0;
+  }
+}
+
+.clinepi-StudyLink {
+  font-size: 1.25em;
+  font-weight: 500;
+}
+
+.ebrc-QuestionWizard div.clinepi-Summary {
+  max-width: 75em;
+  font-size: 1.2em; 
+  margin: 0;
+}
+.ebrc-QuestionWizard div.clinepi-Summary span#prompt {
+  font-weight: 500;
+}
+
+.ebrc-QuestionWizardHeading {
+  font-size: 2em;
+}
+
+.ebrc-QuestionWizardHackyStudyLink {
+  margin-left: auto;
+  padding-top: 2.5em;
+  padding-left: 1em;
+}
+
+.ebrc-QuestionWizardParamGroupCount {
+  font-size: 1.2em;
+}
+
+
+button.ebrc-QuestionWizardParamGroupButton__active,
+button.ebrc-QuestionWizardParamGroupButton__active:active,
+button.ebrc-QuestionWizardParamGroupButton__active:focus,
+button.ebrc-QuestionWizardParamGroupButton__active:hover {
+  box-shadow: 0px 0px 0px 4px #9c242d;
+}
+
+.wdk-PageContent__question .ebrc-QuestionWizardNavigationContainer__fixed {
+  top: 55px;
+}
+
+.question-content {
+  max-width: 100%;
+}
+
+#query_form {
+  max-width: 90vw;
+}
+#query_form form {
+  width: 90vw;
+}
+
+
+/* filterParam.css  override for range warning */
+.filter-param .chart-controls .chart-controlsContent .range-warning {
+    color: #d32f2f;
+    font-size: 200%;
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
+
+.Padded {
+  padding-right: 1ex;
+  padding-left: 1ex;
+}
+.Padded__first {
+  padding-left: 0;
+}
+.Padded__last {
+  padding-right: 0;
+}
+
+.RelativeVisitsLayout,
+.RelativeVisitsLayout > * {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: row wrap;
+}
+
+.RelativeVisitsLayout {
+  padding: 1em 0;
+}
+
+.RelativeVisitsLayout input {
+  padding: 1px !important;
+  font-size: 1.1em;
+}
+
+.RelativeVisitsLayoutOverlay,
+.CaseControlLayoutOverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.7;
+  z-index: 1;
+  background: white;
+}
+
+.RelativeVisitsActiveGroupWrapper__off .ebrc-QuestionWizardActiveGroupCount,
+.CaseControlGroupWrapper__off .ebrc-QuestionWizardActiveGroupCount {
+  visibility: hidden;
+}
+.RelativeVisitsMessage,
+.CaseControlMessage {
+  font-size: 1.3em;
+  padding: 2em 0;
+}
+.RelativeVisitsMessage__warning,
+.CaseControlMessage__warning {
+  font-size: 1.4em;
+  color: darkred;
+}
+.RelativeVisitsContainer,
+.CaseControlContainer {
+  z-index: 1;
+  position: relative;
+}
+.RelativeVisitsContainer .ebrc-QuestionWizardActiveGroupDescription,
+.CaseControlContainer .ebrc-QuestionWizardActiveGroupDescription {
+  z-index: 2;
+}
+
+/* Hide action links on Dataset page for now */
+.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
+  display: none;
+}
+
+/* Hide Favorites action link on record pages */
+.wdk-RecordActionItem .favorites {
+  display: none;
+}
+/* Hide Basket action link on record pages */
+.wdk-RecordActionItem .basket {
+  display: none;
+}
+.wdk-RecordActionItem {
+    padding: 0;
+}
+
+/* wdk Record.css  overrides */
+
+.wdk-RecordNavigationIndicator {
+  display: none;
+}
+
+div.wdk-CollapsibleSectionContent li {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
+
+.wdk-RecordContainer a.btn.StudyRecordHeadingSearchLinksDashboardLink {
+  background: #3c78d8;
+  border-color: #0d47a2;
+  color: white;
+  font-size: 130%; 
+  margin-left: 0;
+}
+.wdk-RecordContainer div.StudyRecordHeadingSearchLinksDashboardLink {
+  margin-top: 2em;
+}
+
+.eupathdb-RecordOverviewItem {
+  line-height: 150%;
+}
+
+.wdk-RecordMain div#Publications {
+  line-height: 200%;
+}
+
+.wdk-RecordMain div#description {
+  line-height: 200%;
+  max-width: 80em;
+}
+
+.wdk-RecordAttributeName, .wdk-RecordAttributeSectionItemHeader, .wdk-RecordTableContainerHeader {
+  color: #3e3e3e;
+  font-size: 130%;
+}
+
+.wdk-RecordAttributeValue, .wdk-RecordAttributeSectionItemContent, .wdk-RecordTableContainerContent {
+  font-size: 125%;
+}
+
+.wdk-RecordAttributeName, .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
+  font-size: 135%;
+}
+
+/* FONT_RELATED overrides */
+b, strong, th,
+.filter-param .wdk-AttributeFilterFieldParent,
+.filter-param .wdk-AttributeFilterFieldItem {
+  font-weight: 500;
+}
+
+
+/* Ensures that clicking a child of a .study-action button targets the button itself */
+button.study-action[data-study-id][data-args] * {
+  pointer-events: none;
+}
+
+
+/* ========================================================================= */
+/* Static Content  pages                                                      */
+/* ========================================================================= */
+
+
+
+/* Data access and Use Policy  page */
+/* ========================================================================= */
+
+#ce-data-access {
+    padding: 0 3em;
+
+    p, ul, table {
+      font-size: 130%;
+      margin-bottom: 1em;
+    }
+
+}
+
+/* Static Content  pages with div#ce-static-content wrapper */                                            
+/* ========================================================================= */
+
+#ce-static-content {
+    padding: 0 3em;
+
+    h2 + div {
+      font-size: 130%;
+      margin-bottom: 1em;
+/*      padding-bottom: 2em;
+      border-bottom: 1px solid #eee;*/
+    }
+    h2 + div li {
+      font-size: 95%;
+      list-style: decimal;
+    }
+    h2 + div ol {
+      padding-left: 1.3em;
+    }
+    h2:last-of-type + div {
+      border-bottom: 0;
+    }
+    h2#how-was-it-made + div img{
+      width: 800px;
+      margin: 0 0 2em 10em;
+    }
+}
+
+div#ce-static-content summary {
+  color: #069;
+}
+
+div#ce-static-content li {
+  font-size: 130%; //1.4em;
+  margin: 1em 0;
+  list-style: none;
+}
+
+div#ce-static-content li .fa {
+  color: #333;
+  margin-right: .5em;
+}
+
+/* Tutorials (#resources) and Resources (#external-resources) pages          */
+/* ========================================================================= */
+
+div#ce-static-content h1#resources ~ div summary.h2,
+div#ce-static-content h1#external-resources ~ div summary.h2 {
+  // size and weight like h2 in ebrc/client.scss 
+  font-size: 1.8em;
+  font-weight: 500;
+  // like h2 in allsites 
+  margin: 0;
+  padding: 12px 0 8px 0;
+  color: #222; 
+}
+
+div#ce-static-content h1#resources ~ div summary.h3,
+div#ce-static-content h1#external-resources ~ div summary.h3 {
+  // size and weight like h3 in ebrc/client.scss 
+  font-size: 1.5em;
+  font-weight: 500;
+  // like h3 in allsites 
+  margin: 0;
+  padding: 12px 0 8px 0;
+  color: #222;
+}
+
+div#ce-static-content h1#resources ~ div details.h3,
+div#ce-static-content h1#external-resources ~ div details.h3 {
+  margin-left: 2.5em;
+}
+
+div#ce-static-content h1#resources ~ div#clinepi-resources li,
+div#ce-static-content h1#news ~ section li {
+  list-style: disc;
+  margin-left:  1em;
+}
+
+div#ce-static-content h1#news ~ h2 {
+  color: maroon;
+}
+
+
+/* FAQ page */
+/* ========================================================================= */
+
+#FAQ ~ div li p, #FAQ ~ div li ol li {
+  font-size: 90%;
+  padding-left: 1em;
+  list-style: decimal;
+}
+#FAQ ~ div li p span.indent {
+  padding-left: 2em;
+}
+
+/* News page                                                                */
+/* ========================================================================= */
+div.static-content section ul {
+  max-width: 55em;
+}
+div.static-content section ul li {
+  padding-bottom: 0.5em;
+}
+div.static-content section ul img {
+  width: 55em;
+  margin: 1em 1em;
+}
+div.static-content section ul li ul{
+  font-size: 90%;
+  margin: 1em 0 1em 3em;
+}
+
+
+/* ========================================================================= */
+/* All Studies page                                                        */
+/* ========================================================================= */
+
+div.wdk-Answer tr.greyed-out {
+  opacity: 0.5;
+  pointer-events: none;
+  display: none;
+}
+
+ul.wdk-AnswerTable-AttributeSelector li input#column-select-description, ul.wdk-AnswerTable-AttributeSelector li input#column-select-description + label {
+  display:none;
+}
+
+
+.EDAWorkspace .WorkspaceNavigation {
+  top: 40px !important;
+}

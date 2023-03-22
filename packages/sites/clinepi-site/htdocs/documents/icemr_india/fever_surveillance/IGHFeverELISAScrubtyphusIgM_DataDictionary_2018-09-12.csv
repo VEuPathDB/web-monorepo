@@ -1,0 +1,10 @@
+"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+igm_typhus_sid1,igh_fever_elisa_scrubtyphus_igm,,text,Subject,,,,,,,,,RH,,,,
+igm_typhus_sid2,igh_fever_elisa_scrubtyphus_igm,,text,"Subject (plain)",,"no --1 or --2",,,,,,,,,,,
+igm_typhus_scd,igh_fever_elisa_scrubtyphus_igm,"ELISA INFORMATION",text,"Sample collection date",,,date_dmy,,,,,,RH,,,,
+igm_typhus_rad,igh_fever_elisa_scrubtyphus_igm,,radio,IgM,"1, Pos | 2, Neg",,,,,,,,RH,,,,
+igm_typhus_od,igh_fever_elisa_scrubtyphus_igm,,text,"OD VALUE",,,,,,,,,RH,,,,
+form_date,igh_fever_elisa_scrubtyphus_igm,"BATCH FORM INFORMATION",text,"Batch Form completion date",,,date_dmy,,,,,,RH,,,,
+filled_by,igh_fever_elisa_scrubtyphus_igm,,text,"Batch Form filled by",,,,,,,,,RH,,,,
+page_number,igh_fever_elisa_scrubtyphus_igm,,text,"Batch Form page number",,,,,,,,,RH,,,,
+deo_notes,igh_fever_elisa_scrubtyphus_igm,NOTES,notes,"Data Entry notes",,"DEOs: Use this box to add comments or to describe problems encountered during this data entry. Also use for FORM ID if entering old data",,,,,,,RH,,,,

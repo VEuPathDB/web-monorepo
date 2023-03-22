@@ -1,0 +1,90 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-tr-public-codebook.txt
+  log type:  text
+ opened on:   9 Apr 2018, 10:03:57
+
+. desc
+
+Contains data from Public/washb-kenya-tr-public.dta
+  obs:           702                          WASH Benefits Kenya cluster level treatment
+                                                assignments
+ vars:             3                          9 Apr 2018 10:03
+ size:         7,722                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+block           byte    %10.0g                Randomization block
+clusterid       str6    %9s                   Cluster ID
+tr              float   %15.0g     tr         Randomized treatment assignment
+----------------------------------------------------------------------------------------------------
+Sorted by: block  tr
+
+. codebook, c
+
+Variable   Obs Unique      Mean  Min  Max  Label
+----------------------------------------------------------------------------------------------------
+block      702     89  44.73362    1   89  Randomization block
+clusterid  702    702         .    .    .  Cluster ID
+tr         702      8  4.119658    1    8  Randomized treatment assignment
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,89]                       units:  1
+         unique values:  89                       missing .:  0/702
+
+                  mean:   44.7336
+              std. dev:   25.9506
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 8        22        45        67        80
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str6)
+
+         unique values:  702                      missing "":  0/702
+
+              examples:  "172700"
+                         "202900"
+                         "462570"
+                         "482900"
+
+----------------------------------------------------------------------------------------------------
+tr                                                                   Randomized treatment assignment
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  tr
+
+                 range:  [1,8]                        units:  1
+         unique values:  8                        missing .:  0/702
+
+            tabulation:  Freq.   Numeric  Label
+                           158         1  Control
+                            77         2  Water
+                            77         3  Sanitation
+                            77         4  Handwashing
+                            76         5  WSH
+                            78         6  Nutrition
+                            79         7  Nutrition + WSH
+                            80         8  Passive Control
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-tr-public-codebook.txt
+  log type:  text
+ closed on:   9 Apr 2018, 10:03:57
+----------------------------------------------------------------------------------------------------

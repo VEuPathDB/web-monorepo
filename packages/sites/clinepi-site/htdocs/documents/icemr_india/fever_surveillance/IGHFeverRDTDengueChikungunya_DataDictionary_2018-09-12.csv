@@ -1,0 +1,13 @@
+"Variable / Field Name","Form Name","Section Header","Field Type","Field Label","Choices, Calculations, OR Slider Labels","Field Note","Text Validation Type OR Show Slider Number","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?","Custom Alignment","Question Number (surveys only)","Matrix Group Name","Matrix Ranking?","Field Annotation"
+rdt_sid1,igh_surveillance_dengue_chik_rdt,,text,"Subject ID",,,,,,,,,RH,,,,
+rdt_scd,igh_surveillance_dengue_chik_rdt,"SAMPLE DATA",text,"Sample date",,,date_dmy,,,,,,RH,,,,
+rdt_dengue_jmitra_ns1,igh_surveillance_dengue_chik_rdt,"------------------------------------------------------------------------------             DENGUE ----------------------------------------------------------------------------------------------------",radio,"Jmitra NS1_Den","1, NS1 | 2, Neg",,,,,,,,RH,,,,
+rdt_dengue_jmitra_ab,igh_surveillance_dengue_chik_rdt,,checkbox,"Jmitra Ab_Den","1, M | 2, G | 3, Neg",,,,,,,,RH,,,,
+rdt_dengue_alere_ns1,igh_surveillance_dengue_chik_rdt,,radio,"Alere NS1_Den","1, NS1 | 2, Neg",,,,,,,,RH,,,,
+rdt_dengue_alere_ab,igh_surveillance_dengue_chik_rdt,,checkbox,"Alere Ab_Den","1, M | 2, G | 3, Neg",,,,,,,,RH,,,,
+rdt_chik_jmitra_igm,igh_surveillance_dengue_chik_rdt,"--------------------------------------------------------------------------             CHIKUNGUNYA ------------------------------------------------------------------------------------------------",radio,Jmitra_Chik,"1, IgM | 2, Neg",,,,,,,,RH,,,,
+rdt_chik_alere_igm,igh_surveillance_dengue_chik_rdt,,radio,Alere_Chik,"1, IgM | 2, Neg",,,,,,,,RH,,,,
+rdt_form_date,igh_surveillance_dengue_chik_rdt,"FORM INFORMATION",text,Date,,,date_dmy,,,,,,RH,,,,
+rdt_filled_by,igh_surveillance_dengue_chik_rdt,,text,"Filled by",,,,,,,,,RH,,,,
+rdt_page_num,igh_surveillance_dengue_chik_rdt,,text,"Page number (for this date)",,,,,,,,,RH,,,,
+rdt_deo_notes,igh_surveillance_dengue_chik_rdt,"DEO NOTES",notes,"Data Entry notes",,"DEOs: Use this box to add comments or to describe problems encountered during this data entry.",,,,,,,RH,,,,

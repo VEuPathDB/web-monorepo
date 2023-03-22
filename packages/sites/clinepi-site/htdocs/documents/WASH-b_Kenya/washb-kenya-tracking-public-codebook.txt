@@ -1,0 +1,390 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-tracking-public-codebook.txt
+  log type:  text
+ opened on:   9 Apr 2018, 10:04:08
+
+. desc
+
+Contains data from Public/washb-kenya-tracking-public.dta
+  obs:         8,246                          
+ vars:            22                          9 Apr 2018 10:04
+ size:       766,878                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+clusterid       str6    %9s                   Cluster ID
+hhid            str8    %9s                   Household ID
+compoundid      str6    %9s                   Compound ID
+indata_bl       float   %9.0g      yes_no     Household in baseline
+parasite_bl     float   %9.0g      yes_no     Household has baseline parasite child
+indata_ml       float   %9.0g      yes_no     Household in midline
+indata_el       float   %9.0g      yes_no     Household in endline
+attritioncase~l byte    %8.0g      yes_no     Attrition migrantion household at endline
+week_ms_bl_date float   %9.0g                 Week of survey
+year_ms_bl_date float   %9.0g                 Year of survey
+week_ms_ml_up~e float   %9.0g                 Week of survey
+year_ms_ml_up~e float   %9.0g                 Year of survey
+week_ms_ml_ad~e float   %9.0g                 Week of survey
+year_ms_ml_ad~e float   %9.0g                 Year of survey
+week_ms_ml_am~e float   %9.0g                 Week of survey
+year_ms_ml_am~e float   %9.0g                 Year of survey
+week_ms_el_up~e float   %9.0g                 Week of survey
+year_ms_el_up~e float   %9.0g                 Year of survey
+week_ms_el_ad~e float   %9.0g                 Week of survey
+year_ms_el_ad~e float   %9.0g                 Year of survey
+week_ms_el_am~e float   %9.0g                 Week of survey
+year_ms_el_am~e float   %9.0g                 Year of survey
+----------------------------------------------------------------------------------------------------
+Sorted by: hhid
+
+. codebook, c
+
+Variable       Obs Unique      Mean   Min   Max  Label
+----------------------------------------------------------------------------------------------------
+clusterid     8246    702         .     .     .  Cluster ID
+hhid          8246   8246         .     .     .  Household ID
+compoundid    8246   7960         .     .     .  Compound ID
+indata_bl     8246      1         1     1     1  Household in baseline
+parasite_bl   8246      2  1.909896     1     2  Household has baseline parasite child
+indata_ml     8246      2  1.019161     1     2  Household in midline
+indata_el     8246      2  1.029954     1     2  Household in endline
+attritionc~l  8246      2  1.916566     1     2  Attrition migrantion household at endline
+week_ms_bl~e  8246     45  29.78377     3    51  Week of survey
+year_ms_bl~e  8246      3  2013.292  2012  2014  Year of survey
+w~ml_up_date  6084     36  21.77005     1    51  Week of survey
+y~ml_up_date  6084      2  2014.649  2014  2015  Year of survey
+w~ml_ad_date  7692     35  23.10426     2    51  Week of survey
+y~ml_ad_date  7692      2  2014.629  2014  2015  Year of survey
+w~ml_am_date  7603     35  23.11364     2    51  Week of survey
+y~ml_am_date  7603      2  2014.622  2014  2015  Year of survey
+w~el_up_date  7138     51  23.85528     1    51  Week of survey
+y~el_up_date  7138      2  2015.611  2015  2016  Year of survey
+w~el_ad_date  7231     51  23.72424     1    51  Week of survey
+y~el_ad_date  7231      2  2015.618  2015  2016  Year of survey
+w~el_am_date  7138     51  23.59611     1    51  Week of survey
+y~el_am_date  7138      2  2015.623  2015  2016  Year of survey
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str6)
+
+         unique values:  702                      missing "":  0/8,246
+
+              examples:  "172720"
+                         "202960"
+                         "462640"
+                         "482960"
+
+----------------------------------------------------------------------------------------------------
+hhid                                                                                    Household ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str8)
+
+         unique values:  8,246                    missing "":  0/8,246
+
+              examples:  "24803930"
+                         "34733430"
+                         "72112730"
+                         "75753230"
+
+----------------------------------------------------------------------------------------------------
+compoundid                                                                               Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str6)
+
+         unique values:  7,960                    missing "":  0/8,246
+
+              examples:  "247714"
+                         "347009"
+                         "720802"
+                         "757207"
+
+----------------------------------------------------------------------------------------------------
+indata_bl                                                                      Household in baseline
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  yes_no
+
+                 range:  [1,1]                        units:  1
+         unique values:  1                        missing .:  0/8,246
+
+            tabulation:  Freq.   Numeric  Label
+                         8,246         1  YES
+
+----------------------------------------------------------------------------------------------------
+parasite_bl                                                    Household has baseline parasite child
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  yes_no
+
+                 range:  [1,2]                        units:  1
+         unique values:  2                        missing .:  0/8,246
+
+            tabulation:  Freq.   Numeric  Label
+                           743         1  YES
+                         7,503         2  NO
+
+----------------------------------------------------------------------------------------------------
+indata_ml                                                                       Household in midline
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  yes_no
+
+                 range:  [1,2]                        units:  1
+         unique values:  2                        missing .:  0/8,246
+
+            tabulation:  Freq.   Numeric  Label
+                         8,088         1  YES
+                           158         2  NO
+
+----------------------------------------------------------------------------------------------------
+indata_el                                                                       Household in endline
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  yes_no
+
+                 range:  [1,2]                        units:  1
+         unique values:  2                        missing .:  0/8,246
+
+            tabulation:  Freq.   Numeric  Label
+                         7,999         1  YES
+                           247         2  NO
+
+----------------------------------------------------------------------------------------------------
+attritioncase_el                                           Attrition migrantion household at endline
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  yes_no
+
+                 range:  [1,2]                        units:  1
+         unique values:  2                        missing .:  0/8,246
+
+            tabulation:  Freq.   Numeric  Label
+                           688         1  YES
+                         7,558         2  NO
+
+----------------------------------------------------------------------------------------------------
+week_ms_bl_date                                                                       Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [3,51]                       units:  1
+         unique values:  45                       missing .:  0/8,246
+
+                  mean:   29.7838
+              std. dev:   14.7079
+
+           percentiles:        10%       25%       50%       75%       90%
+                                10        15        33        42        49
+
+----------------------------------------------------------------------------------------------------
+year_ms_bl_date                                                                       Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2012,2014]                  units:  1
+         unique values:  3                        missing .:  0/8,246
+
+            tabulation:  Freq.  Value
+                           533  2012
+                         4,776  2013
+                         2,937  2014
+
+----------------------------------------------------------------------------------------------------
+week_ms_ml_up_date                                                                    Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,51]                       units:  1
+         unique values:  36                       missing .:  2,162/8,246
+
+                  mean:   21.7701
+              std. dev:   16.5883
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 3         8        17        42        47
+
+----------------------------------------------------------------------------------------------------
+year_ms_ml_up_date                                                                    Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2014,2015]                  units:  1
+         unique values:  2                        missing .:  2,162/8,246
+
+            tabulation:  Freq.  Value
+                         2,138  2014
+                         3,946  2015
+                         2,162  .
+
+----------------------------------------------------------------------------------------------------
+week_ms_ml_ad_date                                                                    Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2,51]                       units:  1
+         unique values:  35                       missing .:  554/8,246
+
+                  mean:   23.1043
+              std. dev:    17.064
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 3         8        18        43        48
+
+----------------------------------------------------------------------------------------------------
+year_ms_ml_ad_date                                                                    Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2014,2015]                  units:  1
+         unique values:  2                        missing .:  554/8,246
+
+            tabulation:  Freq.  Value
+                         2,853  2014
+                         4,839  2015
+                           554  .
+
+----------------------------------------------------------------------------------------------------
+week_ms_ml_am_date                                                                    Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2,51]                       units:  1
+         unique values:  35                       missing .:  643/8,246
+
+                  mean:   23.1136
+              std. dev:    17.041
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 3         8        18        43        48
+
+----------------------------------------------------------------------------------------------------
+year_ms_ml_am_date                                                                    Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2014,2015]                  units:  1
+         unique values:  2                        missing .:  643/8,246
+
+            tabulation:  Freq.  Value
+                         2,874  2014
+                         4,729  2015
+                           643  .
+
+----------------------------------------------------------------------------------------------------
+week_ms_el_up_date                                                                    Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,51]                       units:  1
+         unique values:  51                       missing .:  1,108/8,246
+
+                  mean:   23.8553
+              std. dev:   14.8741
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 5        10        22        37        46
+
+----------------------------------------------------------------------------------------------------
+year_ms_el_up_date                                                                    Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2015,2016]                  units:  1
+         unique values:  2                        missing .:  1,108/8,246
+
+            tabulation:  Freq.  Value
+                         2,775  2015
+                         4,363  2016
+                         1,108  .
+
+----------------------------------------------------------------------------------------------------
+week_ms_el_ad_date                                                                    Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,51]                       units:  1
+         unique values:  51                       missing .:  1,015/8,246
+
+                  mean:   23.7242
+              std. dev:   14.7464
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 5        10        22        37        45
+
+----------------------------------------------------------------------------------------------------
+year_ms_el_ad_date                                                                    Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2015,2016]                  units:  1
+         unique values:  2                        missing .:  1,015/8,246
+
+            tabulation:  Freq.  Value
+                         2,759  2015
+                         4,472  2016
+                         1,015  .
+
+----------------------------------------------------------------------------------------------------
+week_ms_el_am_date                                                                    Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,51]                       units:  1
+         unique values:  51                       missing .:  1,108/8,246
+
+                  mean:   23.5961
+              std. dev:   14.7005
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 6        10        22        37        45
+
+----------------------------------------------------------------------------------------------------
+year_ms_el_am_date                                                                    Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2015,2016]                  units:  1
+         unique values:  2                        missing .:  1,108/8,246
+
+            tabulation:  Freq.  Value
+                         2,694  2015
+                         4,444  2016
+                         1,108  .
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-tracking-public-codebook.txt
+  log type:  text
+ closed on:   9 Apr 2018, 10:04:09
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,850 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-anthro-codebook.txt
+  log type:  text
+ opened on:  12 Apr 2018, 11:33:16
+
+. desc
+
+Contains data from washb-bangladesh-anthro.dta
+  obs:         9,341                          Bangladesh anthropometry analysis dataset, created
+                                                by 4-bangladesh-dm-anthro.do
+ vars:            49                          23 Aug 2016 09:32
+ size:     2,120,407                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+dataid          str5    %9s                   Compound ID
+childid         str2    %9s                   Child ID
+motherid        str2    %2s                   Mother ID
+tchild          byte    %12.0g     tchild     Target child in birth cohort
+clusterid       str3    %9s                   Cluster ID
+block           byte    %8.0g                 Randomization block
+svy             byte    %9.0g                 Survey round (0,1,2)
+month           byte    %9.0g                 Month of measurement
+c404            double  %10.0g                Maternal weight meas 1
+c405            double  %10.0g                Maternal weight meas 2
+c406            double  %10.0g                Maternal weight meas 3
+c408            double  %10.0g                Child weight w/ mother meas 1
+c409            double  %10.0g                Child weight w/ mother meas 2
+c410            double  %10.0g                Child weight w/ mother meas 3
+c411            double  %10.0g                Child weight meas 1
+c412            double  %10.0g                Child weight meas 2
+c413            double  %10.0g                Child weight meas 3
+c414            double  %10.0g                Child length meas 1
+c415            double  %10.0g                Child length meas 2
+c416            double  %10.0g                Child length meas 3
+c418            double  %10.0g                Head circumference meas 1
+c419            double  %10.0g                Head circumference meas 2
+c420            double  %10.0g                Head circumference meas 3
+sex             byte    %10.0g     sex        Sex
+birthord        byte    %8.0g                 Birth order (target child)
+aged            int     %9.0g                 Age in days (anthro meas)
+agem            double  %10.0g                Age in months (anthro meas)
+agey            double  %10.0g                Age in years (anthro meas)
+weight          float   %9.0g               * Child weight (median), kg
+length          float   %9.0g               * Child length (median), cm
+headcir         float   %9.0g               * Child head circumference (median), cm
+laz             double  %10.0g                Length/height-for-age Z-score
+laz_x           byte    %9.0g                 abs(LAZ)>6, set to missing
+lazminus2       byte    %8.0g                 Stunted (LAZ<-2)
+lazminus3       byte    %8.0g                 Severely Stunted (LAZ<-3)
+waz             double  %10.0g                Weight-for-age Z-score
+waz_x           byte    %9.0g                 WAZ < -6 or WAZ > 5, set to missing
+wazminus2       byte    %8.0g                 Underweight (WAZ<-2)
+wazminus3       byte    %8.0g                 Severely Underweight (WAZ<-3)
+whz             double  %10.0g                Weight-for-length/height Z-score
+whz_x           byte    %9.0g                 abs(WHZ)>5, set to missing
+whzminus2       byte    %8.0g                 Wasted (WHZ<-2)
+whzminus3       byte    %8.0g                 Severely Wasted (WHZ<-3)
+bmiz            double  %10.0g                BMI-for-age Z-score
+bmiz_x          byte    %9.0g                 abs(BMIZ)>5, set to missing
+hcz             double  %10.0g                Head circumference-for-age z-score
+hcz_x           byte    %9.0g                 abs(HCZ)>5, set to missing
+anthroweek      float   %9.0g                 Week of anthropometry measurement
+anthroyear      float   %9.0g                 Year of anthropometry measurement
+                                            * indicated variables have notes
+----------------------------------------------------------------------------------------------------
+Sorted by: dataid
+     Note: Dataset has changed since last saved.
+
+. codebook, c
+
+Variable     Obs Unique       Mean       Min       Max  Label
+----------------------------------------------------------------------------------------------------
+dataid      9341   4845          .         .         .  Compound ID
+childid     9341      2          .         .         .  Child ID
+motherid    4708      8          .         .         .  Mother ID
+tchild      9341      1          1         1         1  Target child in birth cohort
+clusterid   9341    720          .         .         .  Cluster ID
+block       9341     90   45.32138         1        90  Randomization block
+svy         9341      2   1.495985         1         2  Survey round (0,1,2)
+month       9341     12   6.083289         1        12  Month of measurement
+c404        9326    853   46.13421     26.15        90  Maternal weight meas 1
+c405        9325    849   46.13752      26.2        90  Maternal weight meas 2
+c406        1909    614    46.9841      27.7     82.65  Maternal weight meas 3
+c408        7242    850     54.083     33.25     92.95  Child weight w/ mother meas 1
+c409        7242    858   54.08475     33.05     92.75  Child weight w/ mother meas 2
+c410        2127    670   54.66467     33.15     92.95  Child weight w/ mother meas 3
+c411        2099    152   9.862292       5.2        19  Child weight meas 1
+c412        2099    149   9.864845       5.2        19  Child weight meas 2
+c413          66     46   10.54015      8.25     14.35  Child weight meas 3
+c414        9341    351   78.84865      42.1     999.9  Child length meas 1
+c415        9341    351   81.54569      42.2     999.9  Child length meas 2
+c416         500    197   187.1126         0     999.9  Child length meas 3
+c418        9341    145   43.88806      34.9      99.9  Head circumference meas 1
+c419        9341    148   43.92715        35      99.9  Head circumference meas 2
+c420         120     60    48.2225      37.5     442.4  Head circumference meas 3
+sex         9341      2   .4978054         0         1  Sex
+birthord    9098     11   2.270719         1        11  Birth order (target child)
+aged        9341    636   472.9363        42      1159  Age in days (anthro meas)
+agem        9341    636   15.54857   1.38082  38.10407  Age in months (anthro meas)
+agey        9341    636   1.294829  .1149897  3.173169  Age in years (anthro meas)
+weight      9341    403   8.586539     3.275        19  Child weight (median), kg
+length      9291    652   73.90887     42.15     99.65  Child length (median), cm
+headcir     9334    260   43.85804     34.95     69.15  Child head circumference (median), cm
+laz         9277    645  -1.471444     -5.68      5.18  Length/height-for-age Z-score
+laz_x       9305      2   .0030091         0         1  abs(LAZ)>6, set to missing
+lazminus2   9277      2   .3089361         0         1  Stunted (LAZ<-2)
+lazminus3   9277      2   .0807373         0         1  Severely Stunted (LAZ<-3)
+waz         9336    656    -1.3215     -5.48      4.28  Weight-for-age Z-score
+waz_x       9341      2   .0005353         0         1  WAZ < -6 or WAZ > 5, set to missing
+wazminus2   9336      2   .2572836         0         1  Underweight (WAZ<-2)
+wazminus3   9336      2   .0595544         0         1  Severely Underweight (WAZ<-3)
+whz         9283    605  -.7139998     -4.91      4.97  Weight-for-length/height Z-score
+whz_x       9305      2   .0023643         0         1  abs(WHZ)>5, set to missing
+whzminus2   9283      2   .0929656         0         1  Wasted (WHZ<-2)
+whzminus3   9283      2   .0087256         0         1  Severely Wasted (WHZ<-3)
+bmiz        9280    589  -.5955172     -4.57      4.67  BMI-for-age Z-score
+bmiz_x      9305      2   .0026867         0         1  abs(BMIZ)>5, set to missing
+hcz         9302    582  -1.470372     -4.96      3.33  Head circumference-for-age z-score
+hcz_x       9334      2   .0034283         0         1  abs(HCZ)>5, set to missing
+anthroweek  9341     50   24.60261         1        52  Week of anthropometry measurement
+anthroyear  9341      3   2014.336      2013      2015  Year of anthropometry measurement
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+dataid                                                                                   Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str5)
+
+         unique values:  4,845                    missing "":  0/9,341
+
+              examples:  "42105"
+                         "56308"
+                         "70903"
+                         "85803"
+
+----------------------------------------------------------------------------------------------------
+childid                                                                                     Child ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str2)
+
+         unique values:  2                        missing "":  0/9,341
+
+            tabulation:  Freq.  Value
+                         9,283  "T1"
+                            58  "T2"
+
+----------------------------------------------------------------------------------------------------
+motherid                                                                                   Mother ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str2)
+
+         unique values:  8                        missing "":  4,633/9,341
+
+            tabulation:  Freq.  Value
+                         4,633  ""
+                           625  "01"
+                           620  "02"
+                           600  "03"
+                           600  "04"
+                           599  "05"
+                           594  "06"
+                           596  "07"
+                           474  "08"
+
+----------------------------------------------------------------------------------------------------
+tchild                                                                  Target child in birth cohort
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  tchild
+
+                 range:  [1,1]                        units:  1
+         unique values:  1                        missing .:  0/9,341
+
+            tabulation:  Freq.   Numeric  Label
+                         9,341         1  Target child
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  720                      missing "":  0/9,341
+
+              examples:  "421"
+                         "563"
+                         "709"
+                         "858"
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,90]                       units:  1
+         unique values:  90                       missing .:  0/9,341
+
+                  mean:   45.3214
+              std. dev:   26.1214
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 9        23        45        68        82
+
+----------------------------------------------------------------------------------------------------
+svy                                                                             Survey round (0,1,2)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,2]                        units:  1
+         unique values:  2                        missing .:  0/9,341
+
+            tabulation:  Freq.  Value
+                         4,708  1
+                         4,633  2
+
+----------------------------------------------------------------------------------------------------
+month                                                                           Month of measurement
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,12]                       units:  1
+         unique values:  12                       missing .:  0/9,341
+
+                  mean:   6.08329
+              std. dev:    3.2427
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 2         4         6         9        10
+
+----------------------------------------------------------------------------------------------------
+c404                                                                          Maternal weight meas 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [26.15,90]                   units:  .01
+         unique values:  853                      missing .:  15/9,341
+
+                  mean:   46.1342
+              std. dev:   8.00366
+
+           percentiles:        10%       25%       50%       75%       90%
+                             37.05     40.45    44.875      50.7     56.95
+
+----------------------------------------------------------------------------------------------------
+c405                                                                          Maternal weight meas 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [26.2,90]                    units:  .01
+         unique values:  849                      missing .:  16/9,341
+
+                  mean:   46.1375
+              std. dev:   8.00212
+
+           percentiles:        10%       25%       50%       75%       90%
+                                37     40.45     44.85      50.7     56.95
+
+----------------------------------------------------------------------------------------------------
+c406                                                                          Maternal weight meas 3
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [27.7,82.65]                 units:  .01
+         unique values:  614                      missing .:  7,432/9,341
+
+                  mean:   46.9841
+              std. dev:   8.26098
+
+           percentiles:        10%       25%       50%       75%       90%
+                             37.55     41.15      45.7     51.55     58.05
+
+----------------------------------------------------------------------------------------------------
+c408                                                                   Child weight w/ mother meas 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [33.25,92.95]                units:  .01
+         unique values:  850                      missing .:  2,099/9,341
+
+                  mean:    54.083
+              std. dev:   8.36358
+
+           percentiles:        10%       25%       50%       75%       90%
+                             44.55      48.2      52.7      58.8      65.5
+
+----------------------------------------------------------------------------------------------------
+c409                                                                   Child weight w/ mother meas 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [33.05,92.75]                units:  .01
+         unique values:  858                      missing .:  2,099/9,341
+
+                  mean:   54.0847
+              std. dev:   8.36368
+
+           percentiles:        10%       25%       50%       75%       90%
+                             44.55      48.2      52.7      58.8     65.45
+
+----------------------------------------------------------------------------------------------------
+c410                                                                   Child weight w/ mother meas 3
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [33.15,92.95]                units:  .01
+         unique values:  670                      missing .:  7,214/9,341
+
+                  mean:   54.6647
+              std. dev:   8.71236
+
+           percentiles:        10%       25%       50%       75%       90%
+                             45.05     48.55      52.9     59.55     66.35
+
+----------------------------------------------------------------------------------------------------
+c411                                                                             Child weight meas 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [5.2,19]                     units:  .01
+         unique values:  152                      missing .:  7,242/9,341
+
+                  mean:   9.86229
+              std. dev:   1.30731
+
+           percentiles:        10%       25%       50%       75%       90%
+                              8.35      8.95      9.75      10.6     11.45
+
+----------------------------------------------------------------------------------------------------
+c412                                                                             Child weight meas 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [5.2,19]                     units:  .01
+         unique values:  149                      missing .:  7,242/9,341
+
+                  mean:   9.86485
+              std. dev:   1.30866
+
+           percentiles:        10%       25%       50%       75%       90%
+                              8.35      8.95      9.75      10.6     11.45
+
+----------------------------------------------------------------------------------------------------
+c413                                                                             Child weight meas 3
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [8.25,14.35]                 units:  .01
+         unique values:  46                       missing .:  9,275/9,341
+
+                  mean:   10.5402
+              std. dev:   1.29897
+
+           percentiles:        10%       25%       50%       75%       90%
+                               9.2      9.65     10.35      11.4      12.2
+
+----------------------------------------------------------------------------------------------------
+c414                                                                             Child length meas 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [42.1,999.9]                 units:  .1
+         unique values:  351                      missing .:  0/9,341
+
+                  mean:   78.8486
+              std. dev:   67.9438
+
+           percentiles:        10%       25%       50%       75%       90%
+                                65      67.7      73.7      80.1      83.2
+
+----------------------------------------------------------------------------------------------------
+c415                                                                             Child length meas 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [42.2,999.9]                 units:  .1
+         unique values:  351                      missing .:  0/9,341
+
+                  mean:   81.5457
+              std. dev:   84.0297
+
+           percentiles:        10%       25%       50%       75%       90%
+                              65.1      67.8      73.8      80.1      83.2
+
+----------------------------------------------------------------------------------------------------
+c416                                                                             Child length meas 3
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,999.9]                    units:  .1
+         unique values:  197                      missing .:  8,841/9,341
+
+                  mean:   187.113
+              std. dev:   309.185
+
+           percentiles:        10%       25%       50%       75%       90%
+                                64     66.85      70.3     82.05     999.9
+
+----------------------------------------------------------------------------------------------------
+c418                                                                       Head circumference meas 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [34.9,99.9]                  units:  .1
+         unique values:  145                      missing .:  0/9,341
+
+                  mean:   43.8881
+              std. dev:   2.63554
+
+           percentiles:        10%       25%       50%       75%       90%
+                              41.1      42.3      43.9      45.4      46.5
+
+----------------------------------------------------------------------------------------------------
+c419                                                                       Head circumference meas 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [35,99.9]                    units:  .1
+         unique values:  148                      missing .:  0/9,341
+
+                  mean:   43.9271
+              std. dev:   2.81351
+
+           percentiles:        10%       25%       50%       75%       90%
+                              41.1      42.3      43.9      45.4      46.5
+
+----------------------------------------------------------------------------------------------------
+c420                                                                       Head circumference meas 3
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [37.5,442.4]                 units:  .1
+         unique values:  60                       missing .:  9,221/9,341
+
+                  mean:   48.2225
+              std. dev:   37.7612
+
+           percentiles:        10%       25%       50%       75%       90%
+                             40.65     41.65     42.95     44.45      46.3
+
+----------------------------------------------------------------------------------------------------
+sex                                                                                              Sex
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  sex
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/9,341
+
+            tabulation:  Freq.   Numeric  Label
+                         4,691         0  female
+                         4,650         1  male
+
+----------------------------------------------------------------------------------------------------
+birthord                                                                  Birth order (target child)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,11]                       units:  1
+         unique values:  11                       missing .:  243/9,341
+
+                  mean:   2.27072
+              std. dev:   1.33118
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 1         1         2         3         4
+
+----------------------------------------------------------------------------------------------------
+aged                                                                       Age in days (anthro meas)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [42,1159]                    units:  1
+         unique values:  636                      missing .:  0/9,341
+
+                  mean:   472.936
+              std. dev:    216.25
+
+           percentiles:        10%       25%       50%       75%       90%
+                               221       266       385       678       729
+
+----------------------------------------------------------------------------------------------------
+agem                                                                     Age in months (anthro meas)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [1.3808204,38.104068]        units:  1.000e-09
+         unique values:  636                      missing .:  0/9,341
+
+                  mean:   15.5486
+              std. dev:   7.10959
+
+           percentiles:        10%       25%       50%       75%       90%
+                           7.26575    8.7452   12.6575   22.2904   23.9671
+
+----------------------------------------------------------------------------------------------------
+agey                                                                      Age in years (anthro meas)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [.11498973,3.1731691]        units:  1.000e-10
+         unique values:  636                      missing .:  0/9,341
+
+                  mean:   1.29483
+              std. dev:   .592061
+
+           percentiles:        10%       25%       50%       75%       90%
+                           .605065   .728268   1.05407   1.85626   1.99589
+
+----------------------------------------------------------------------------------------------------
+weight                                                                     Child weight (median), kg
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [3.275,19]                   units:  .001
+         unique values:  403                      missing .:  0/9,341
+
+                  mean:   8.58654
+              std. dev:   1.65481
+
+           percentiles:        10%       25%       50%       75%       90%
+                             6.575     7.325     8.475     9.675     10.75
+
+----------------------------------------------------------------------------------------------------
+length                                                                     Child length (median), cm
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [42.15,99.65]                units:  .01
+         unique values:  652                      missing .:  50/9,341
+
+                  mean:   73.9089
+              std. dev:   7.12106
+
+           percentiles:        10%       25%       50%       75%       90%
+                             65.05     67.75      73.6        80     83.05
+
+----------------------------------------------------------------------------------------------------
+headcir                                                        Child head circumference (median), cm
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [34.95,69.15]                units:  .01
+         unique values:  260                      missing .:  7/9,341
+
+                  mean:    43.858
+              std. dev:   2.13766
+
+           percentiles:        10%       25%       50%       75%       90%
+                              41.1     42.35    43.925      45.4      46.5
+
+----------------------------------------------------------------------------------------------------
+laz                                                                    Length/height-for-age Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-5.68,5.18]                 units:  .01
+         unique values:  645                      missing .:  64/9,341
+
+                  mean:  -1.47144
+              std. dev:   1.10489
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -2.86     -2.21     -1.47      -.75      -.09
+
+----------------------------------------------------------------------------------------------------
+laz_x                                                                     abs(LAZ)>6, set to missing
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  36/9,341
+
+            tabulation:  Freq.  Value
+                         9,277  0
+                            28  1
+                            36  .
+
+----------------------------------------------------------------------------------------------------
+lazminus2                                                                           Stunted (LAZ<-2)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  64/9,341
+
+            tabulation:  Freq.  Value
+                         6,411  0
+                         2,866  1
+                            64  .
+
+----------------------------------------------------------------------------------------------------
+lazminus3                                                                  Severely Stunted (LAZ<-3)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  64/9,341
+
+            tabulation:  Freq.  Value
+                         8,528  0
+                           749  1
+                            64  .
+
+----------------------------------------------------------------------------------------------------
+waz                                                                           Weight-for-age Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-5.48,4.28]                 units:  .01
+         unique values:  656                      missing .:  5/9,341
+
+                  mean:   -1.3215
+              std. dev:   1.09052
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -2.67     -2.03     -1.33      -.63       .04
+
+----------------------------------------------------------------------------------------------------
+waz_x                                                            WAZ < -6 or WAZ > 5, set to missing
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/9,341
+
+            tabulation:  Freq.  Value
+                         9,336  0
+                             5  1
+
+----------------------------------------------------------------------------------------------------
+wazminus2                                                                       Underweight (WAZ<-2)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  5/9,341
+
+            tabulation:  Freq.  Value
+                         6,934  0
+                         2,402  1
+                             5  .
+
+----------------------------------------------------------------------------------------------------
+wazminus3                                                              Severely Underweight (WAZ<-3)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  5/9,341
+
+            tabulation:  Freq.  Value
+                         8,780  0
+                           556  1
+                             5  .
+
+----------------------------------------------------------------------------------------------------
+whz                                                                 Weight-for-length/height Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-4.91,4.97]                 units:  .01
+         unique values:  605                      missing .:  58/9,341
+
+                  mean:     -.714
+              std. dev:   1.00602
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -1.96     -1.39      -.75      -.07       .55
+
+----------------------------------------------------------------------------------------------------
+whz_x                                                                     abs(WHZ)>5, set to missing
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  36/9,341
+
+            tabulation:  Freq.  Value
+                         9,283  0
+                            22  1
+                            36  .
+
+----------------------------------------------------------------------------------------------------
+whzminus2                                                                            Wasted (WHZ<-2)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  58/9,341
+
+            tabulation:  Freq.  Value
+                         8,420  0
+                           863  1
+                            58  .
+
+----------------------------------------------------------------------------------------------------
+whzminus3                                                                   Severely Wasted (WHZ<-3)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  58/9,341
+
+            tabulation:  Freq.  Value
+                         9,202  0
+                            81  1
+                            58  .
+
+----------------------------------------------------------------------------------------------------
+bmiz                                                                             BMI-for-age Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-4.57,4.67]                 units:  .01
+         unique values:  589                      missing .:  61/9,341
+
+                  mean:  -.595517
+              std. dev:   .990518
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -1.82     -1.27      -.62       .04       .65
+
+----------------------------------------------------------------------------------------------------
+bmiz_x                                                                   abs(BMIZ)>5, set to missing
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  36/9,341
+
+            tabulation:  Freq.  Value
+                         9,280  0
+                            25  1
+                            36  .
+
+----------------------------------------------------------------------------------------------------
+hcz                                                               Head circumference-for-age z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-4.96,3.33]                 units:  .01
+         unique values:  582                      missing .:  39/9,341
+
+                  mean:  -1.47037
+              std. dev:   .951566
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -2.64     -2.09     -1.48      -.87      -.27
+
+----------------------------------------------------------------------------------------------------
+hcz_x                                                                     abs(HCZ)>5, set to missing
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  7/9,341
+
+            tabulation:  Freq.  Value
+                         9,302  0
+                            32  1
+                             7  .
+
+----------------------------------------------------------------------------------------------------
+anthroweek                                                         Week of anthropometry measurement
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,52]                       units:  1
+         unique values:  50                       missing .:  0/9,341
+
+                  mean:   24.6026
+              std. dev:   14.1682
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 5        14        23        37        44
+
+----------------------------------------------------------------------------------------------------
+anthroyear                                                         Year of anthropometry measurement
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2013,2015]                  units:  1
+         unique values:  3                        missing .:  0/9,341
+
+            tabulation:  Freq.  Value
+                         1,244  2013
+                         3,712  2014
+                         4,385  2015
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-anthro-codebook.txt
+  log type:  text
+ closed on:  12 Apr 2018, 11:33:17
+----------------------------------------------------------------------------------------------------

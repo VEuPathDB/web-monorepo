@@ -1,0 +1,89 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-tr-codebook.txt
+  log type:  text
+ opened on:  12 Apr 2018, 11:33:25
+
+. desc
+
+Contains data
+  obs:           720                          
+ vars:             3                          
+ size:        13,680                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+block           byte    %8.0g                 Randomization block
+clusterid       str3    %9s                   Cluster ID
+tr              str15   %15s                  
+----------------------------------------------------------------------------------------------------
+Sorted by: clusterid
+     Note: Dataset has changed since last saved.
+
+. codebook, c
+
+Variable   Obs Unique  Mean  Min  Max  Label
+----------------------------------------------------------------------------------------------------
+block      720     90  45.5    1   90  Randomization block
+clusterid  720    720     .    .    .  Cluster ID
+tr         720      7     .    .    .  
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,90]                       units:  1
+         unique values:  90                       missing .:  0/720
+
+                  mean:      45.5
+              std. dev:   25.9972
+
+           percentiles:        10%       25%       50%       75%       90%
+                               9.5        23      45.5        68      81.5
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  720                      missing "":  0/720
+
+              examples:  "423"
+                         "567"
+                         "711"
+                         "855"
+
+----------------------------------------------------------------------------------------------------
+tr                                                                                       (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str15)
+
+         unique values:  7                        missing "":  0/720
+
+            tabulation:  Freq.  Value
+                           180  "Control"
+                            90  "Handwashing"
+                            90  "Nutrition"
+                            90  "Nutrition + WSH"
+                            90  "Sanitation"
+                            90  "WSH"
+                            90  "Water"
+
+               warning:  variable has embedded blanks
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-tr-codebook.txt
+  log type:  text
+ closed on:  12 Apr 2018, 11:33:25
+----------------------------------------------------------------------------------------------------

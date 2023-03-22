@@ -1,0 +1,29 @@
+[
+  {
+    "name": "contingency_tables",
+    "appUrl": "/app/workspace/strategies/import/7412023d29fba952?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/images/analysis_plugins/contingency_tables.jpg",
+    "linkText": "Open The Analysis",
+    "description": "Selects children who were followed for at least a year and had an upper respiratory tract infection (URTI). The contingency table looks at the association between ever having an URTI and ever having malaria. The results page histogram 'Matching Observations/Year' gives the overall incidence of URTI.",
+    "title": "<b>PRISM: Association between URTI and malaria in children</b>",
+    "linkTarget": "_self"
+  },
+  {
+    "name": "summary",
+    "appUrl": "/app/workspace/strategies/import/3bb29848445ca389?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/images/data-summary-chart.jpg",
+    "linkText": "Open The Analysis",
+    "description": "This data summaries visualization produces boxplots of the Shigella/EIEC TAC results stratified by age and location. Shigella/EIEC appears more common in children older than 8 months of age and Bangladesh in particular appears to have lower Ct values overall perhaps indicating a higher burden of Shigella.",
+    "title": "<b>GEMS: Shigella/EIEC TAC Results Stratified by Age and Country</b>",
+    "linkTarget": "_self"
+  },
+  {
+    "name": "distributions",
+    "appUrl": "/app/workspace/strategies/import/ea06cf5f198037aa?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/images/analysis_plugins/distributions.jpg",
+    "linkText": "Open The Analysis",
+    "description": "Plots the age distribution of children at their first asymptomatic parasitemia (smear or LAMP+) in the study, stratified by subcounty.",
+    "title": "<b>PRISM: Age at first asymptomatic parasitemia</b>",
+    "linkTarget": "_self"
+  }
+]
