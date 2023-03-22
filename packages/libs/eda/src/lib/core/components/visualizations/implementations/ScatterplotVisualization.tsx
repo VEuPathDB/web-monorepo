@@ -2384,6 +2384,10 @@ function processInputData<T extends number | string>(
       dataSetProcess.push({
         x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
         y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
+        // add seriesGradientColorscale for marker tooltip content
+        seriesGradientColorscale: el.seriesGradientColorscale
+          ? el.seriesGradientColorscale
+          : undefined,
         // distinguish X/Y Data from Overlay
         name: fixedOverlayLabel ?? 'Data',
         mode: modeValue,
