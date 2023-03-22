@@ -207,9 +207,7 @@ export function DonutMarkerStandalone(props: DonutMarkerStandaloneProps) {
   );
 }
 
-function donutMarkerSVGIcon(
-  props: DonutMarkerStandaloneProps
-): {
+function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
   html: string;
   size: number;
   sliceTextOverrides: string[];

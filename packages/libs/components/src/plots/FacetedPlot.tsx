@@ -84,10 +84,12 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
             showNoDataOverlay: data == null,
           };
 
+          const UntypedComponent: any = Component;
+
           const divModalProps = modalComponentProps && {
             onClick: () => {
               setModalPlot(
-                <Component
+                <UntypedComponent
                   {...sharedProps}
                   displayLegend={true}
                   interactive={true}
@@ -109,9 +111,9 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
                 cursor: modalComponentProps && 'pointer',
               }}
             >
-              <Component
+              <UntypedComponent
                 {...sharedProps}
-                ref={(plotInstance) => {
+                ref={(plotInstance: PlotRef) => {
                   if (plotInstance == null) {
                     delete plotRefs.current[index];
                   } else {
@@ -153,10 +155,8 @@ function renderFacetedPlot<D, P extends PlotProps<D>>(
 const makeFacetedPlotComponent = memoize(function <D, P extends PlotProps<D>>(
   UnfacetedPlotComponent: ComponentWithPlotRef<P>
 ) {
-  const FacetedPlotComponent = forwardRef<
-    FacetedPlotRef,
-    FacetedPlotProps<D, P>
-  >(renderFacetedPlot);
+  const FacetedPlotComponent =
+    forwardRef<FacetedPlotRef, FacetedPlotProps<D, P>>(renderFacetedPlot);
 
   FacetedPlotComponent.displayName = `FacetedPlotComponent(${
     UnfacetedPlotComponent.displayName || UnfacetedPlotComponent.name

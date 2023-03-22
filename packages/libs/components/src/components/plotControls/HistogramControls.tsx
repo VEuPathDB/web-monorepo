@@ -162,7 +162,7 @@ export default function HistogramControls({
   errorManagement,
 }: HistogramControlsProps) {
   const accentColorStr = accentColor.hue[accentColor.level];
-  const { ref, width } = useDimensions<HTMLDivElement>();
+  const { observe, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
     if (errorManagement == null) return [];
@@ -184,7 +184,7 @@ export default function HistogramControls({
 
   return (
     <div
-      ref={ref}
+      ref={observe}
       style={{
         borderStyle: 'solid',
         borderWidth: '0em',
