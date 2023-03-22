@@ -1,0 +1,47 @@
+[
+  {
+    "name": "abundance",
+    "appUrl": "/app/workspace/strategies/import/c7283f8b75b1e82a?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/wdkCustomization/images/OTU_abundance_120.png",
+    "linkText": "Open The Strategy",
+    "description": "Displays box plots for the top 10 taxa (by mean relative abundance) at any taxomonmic level.  Stacked bar charts and single taxon views with statistics are also available.",
+    "title": "<b>Relative Abundance</b>",
+    "linkTarget": "_self"
+  },
+  {
+    "name": "alphaDiversity",
+    "appUrl": "/app/workspace/strategies/import/6e34ce48f1765080?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/wdkCustomization/images/alpha_diversity_120.png",
+    "linkText": "Open The Strategy",
+    "description": "Calculates Shannon, Simpson, Chao1 and ACE diversity metrics for each sample, then displays as a box plot.  For longitudinal data, users can fit a curve to a dot plot of alpha diversity.",
+    "title": "<b>Alpha Diversity</b>",
+    "linkTarget": "_self"
+  },
+  {
+    "name": "betaDiversity",
+    "appUrl": "/app/workspace/strategies/import/63bf2b6d74138c13?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/wdkCustomization/images/beta_diversity_120.png",
+    "linkText": "Open The Strategy",
+    "description": "Calculates beta diversity using Bray-Curtis, Jensen-Shannon divergence, and Jaccard distance metrics, and more.  Points are displayed on a 2D ordination plot where point color and shape can be mapped to available metadata.",
+    "title": "<b>Beta Diversity</b>",
+    "linkTarget": "_self"
+  },
+  {
+    "name": "differentialAbundance",
+    "appUrl": "/app/workspace/strategies/import/c286ae8d0549db37?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/wdkCustomization/images/differential_abundance_120.png",
+    "linkText": "Open The Strategy",
+    "description": "Uses DESeq2 to identify differentially abundant taxa, at any taxonomic level, for a user-selected pairwise comparison.  Results are displayed as a bubble chart that incorporates statistics.",
+    "title": "<b>Differential Abundance</b>",
+    "linkTarget": "_self"
+  },
+  {
+    "name": "correlation",
+    "appUrl": "/app/workspace/strategies/import/be424110c9d114e0?selectedTab=stepAnalysis:first_analysis",
+    "appImage": "/wdkCustomization/images/correlation_120.png",
+    "linkText": "Open The Strategy",
+    "description": "Calculates Spearman correlation between continuous covariates (e.g. age, weight, etc) from a selected set of samples and either taxa or other study variables.",
+    "title": "<b>Correlation</b>",
+    "linkTarget": "_self"
+  }
+]

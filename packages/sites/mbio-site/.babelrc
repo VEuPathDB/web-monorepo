@@ -1,0 +1,3 @@
+{
+  "extends": "@veupathdb/site-babel-config"
+}
