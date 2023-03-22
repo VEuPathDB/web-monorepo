@@ -1,0 +1,45 @@
+.StrategyLinkOut {
+  a,
+  button.btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    background: #1345bd;
+    color: white;
+    font-size: 1.2em;
+    margin: 0;
+    position: relative;
+
+    &,
+    &:hover {
+      border: 0.1em solid white;
+      box-shadow: 0 0.2em 0.5em #00000073;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      background: #0c3aaa;
+      text-decoration: none;
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      background: #1345bd;
+      color: white;
+    }
+  }
+  &--Text {
+    margin: 0.25em 1.5em;
+  }
+  &--Arrow {
+    font-size: 2em;
+    position: absolute;
+    right: 0;
+    .fa {
+      margin-right: 0;
+    }
+  }
+}

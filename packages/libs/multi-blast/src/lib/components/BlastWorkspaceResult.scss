@@ -1,0 +1,64 @@
+.BlastWorkspaceResult {
+  &__Loading {
+    .Caption {
+      text-align: center;
+      margin-top: 2em;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.2em;
+    }
+  }
+
+  &__Complete {
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+      margin-top: 1em;
+    }
+
+    a.BackToAllJobs {
+      font-size: 1.2em;
+    }
+
+    .ConfigDetailsContainer {
+      font-size: 1.2em;
+      background-color: #efefef;
+      border: 1px solid black;
+      border-radius: 4px;
+      padding: 1em;
+    }
+
+    .ConfigDetails {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-column-gap: 1em;
+      grid-row-gap: 0.5em;
+    }
+
+    .JobId {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 2em;
+    }
+
+    a.EditJob {
+      font-weight: bold;
+    }
+  }
+
+  .WorkspaceNavigation {
+    margin-top: 2em;
+    margin-bottom: 1em;
+
+    h1 {
+      display: none;
+    }
+  }
+
+  .InlineHeader {
+    font-weight: bold;
+  }
+}

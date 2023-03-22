@@ -1,0 +1,39 @@
+.CombinedResult {
+  .MesaComponent .MesaComponent {
+    overflow-x: auto;
+  }
+
+  .TableToolbar-Children {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .ResultSummary {
+    font-size: 1.2em;
+  }
+
+  .EmptyState {
+    border: 1px solid #aaa;
+    padding: 2em;
+
+    p {
+      font-size: 1.8em;
+    }
+
+    p:first-child,
+    p > span {
+      font-weight: 500;
+    }
+  }
+
+  &--DownloadOptions {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.5em;
+  }
+}

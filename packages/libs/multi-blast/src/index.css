@@ -1,0 +1,7 @@
+.wdk-QuestionFormQuestionHeader {
+  top: 0;
+}
+
+.wdk-QuestionForm .wdk-QuestionFormSubmittingIndicator {
+  background-image: url('./wizard-busy.gif');
+}

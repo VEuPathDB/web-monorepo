@@ -1,0 +1,10 @@
+.ReportSelect {
+  &Container {
+    font-size: 1.2em;
+    min-width: 25em;
+  }
+
+  &Container &__placeholder {
+    color: black;
+  }
+}

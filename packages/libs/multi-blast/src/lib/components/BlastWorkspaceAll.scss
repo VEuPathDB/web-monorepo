@@ -1,0 +1,16 @@
+.BlastWorkspaceAll {
+  padding: 1.5em;
+
+  .EmptyState {
+    border: 1px solid #aaa;
+    padding: 2em;
+
+    p {
+      font-size: 1.8em;
+    }
+
+    p:first-child {
+      font-weight: 500;
+    }
+  }
+}

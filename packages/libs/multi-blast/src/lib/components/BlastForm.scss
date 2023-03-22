@@ -1,0 +1,56 @@
+.wdk-QuestionForm {
+  &MultiBlast {
+    .SequenceParam {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 1em;
+
+      &Instructions {
+        font-size: 1.2em;
+      }
+
+      textarea {
+        font-family: Courier, monospace;
+      }
+    }
+
+    .wdk-QuestionFormParameterHeading {
+      border-bottom: unset;
+      font-size: 0.9em;
+    }
+
+    .wdk-QuestionFormGroup__empty {
+      .wdk-QuestionFormParameterList {
+        display: grid;
+        grid-template-columns: 15em auto;
+        column-gap: 1em;
+      }
+
+      .wdk-QuestionFormParameterControl .wdk-RadioList {
+        display: inline-grid;
+        grid-auto-flow: column;
+        gap: 1em;
+
+        label {
+          display: flex;
+        }
+      }
+
+      .wdk-QuestionFormParameterControl {
+        padding: 1.1em 0;
+      }
+
+      input[type='text'] {
+        width: 90ch;
+      }
+    }
+
+    .wdk-QuestionFormGroup__advancedParams {
+      .wdk-QuestionFormParameterList {
+        display: grid;
+        grid-template-columns: 30em auto;
+        align-items: center;
+      }
+    }
+  }
+}

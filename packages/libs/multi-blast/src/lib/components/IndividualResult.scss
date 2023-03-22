@@ -1,0 +1,50 @@
+.IndividualResult {
+  .Header {
+    display: grid;
+    grid-template-areas:
+      'query-options link-outs'
+      'hit-count     link-outs';
+  }
+
+  p.HitCountDescription {
+    grid-area: hit-count;
+
+    font-size: 1.2em;
+    margin: 1.5em 0 0.5em 0;
+  }
+
+  .IndividualQueryOptions {
+    grid-area: query-options;
+    font-size: 1.2em;
+
+    display: grid;
+    gap: 0.5em;
+  }
+
+  .IndividualQuerySelect {
+    &Container {
+      max-width: 25em;
+    }
+
+    &__option {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .LinkOuts {
+    grid-area: link-outs;
+    align-self: flex-end;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 2em;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  p.NotOffered {
+    font-size: 1.2em;
+  }
+}
