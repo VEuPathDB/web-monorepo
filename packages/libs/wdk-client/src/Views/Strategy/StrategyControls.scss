@@ -1,0 +1,21 @@
+.StrategyControls {
+  &--Controls {
+    display: flex;
+  }
+
+  &--Controls > * {
+    font-size: 1.5em;
+    margin-left: .5em;
+    margin-right: .5em;
+  }
+
+  &--Action {
+    min-width: 30em;
+    min-height: 10em;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+  }
+}

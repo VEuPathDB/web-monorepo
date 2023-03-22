@@ -1,0 +1,48 @@
+.StrategyInputSelector {
+  .MesaComponent {
+    .TableToolbar-Children {
+      display: flex;
+      align-items: center;
+      width: 100%;
+
+      padding: 1em 0;
+
+      white-space: nowrap;
+
+      .StrategyInputSelector--SearchGroup {
+        display: flex;
+        align-items: center;
+
+        .StrategyInputSelector--SearchTitle {
+          margin-right: 1em;
+          padding: unset;
+        }
+      }
+    }
+
+    .MesaComponent {
+      width: 100%;
+
+      td {
+        padding: 0.5em;
+      }
+    }
+  }
+
+  &--NoAvailableStrategies {
+    font-size: 1.2em;
+    text-align: center;
+
+    padding: 4em;
+  }
+
+  &--OpenedRow {
+    font-weight: bold;
+  }
+
+  &--SearchBox {
+    &__hide {
+      display: none;
+    }
+  }
+}

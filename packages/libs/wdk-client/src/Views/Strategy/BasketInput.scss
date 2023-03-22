@@ -1,0 +1,28 @@
+.BasketInput {
+  font-size: 1.2em;
+
+  &__enabled {
+    display: grid;
+    grid-gap: 0.75em;
+    justify-items: center;
+    margin: auto;
+    width: max-content;
+
+    button {
+      padding: 0.5em;
+      background: #f1f1f1;
+      color: black;
+      border-color: black;
+      border-width: 0.0625rem 0.0625rem 0.1250rem 0.0625rem;
+      border-radius: 5px;
+    }
+  }
+
+  &__is-guest {
+    text-align: center;
+  }
+
+  &__enabled, &__is-guest {
+    padding: 4em;
+  }
+}

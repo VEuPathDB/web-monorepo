@@ -1,0 +1,73 @@
+.MatchedTranscriptsFilter {
+
+  &-Heading {
+    /* font-weight: bold; */
+  }
+
+  button.MatchedTranscriptsFilter-ExpandButton {
+    margin-left: 1em !important;
+  }
+
+  &-FilterPanel {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-flow: row wrap;
+    margin: 1em;
+  }
+
+  .fa {
+    font-size: 1.5em;
+    &-times-circle {
+      color: #ff5b62;
+    }
+    &-check-circle {
+      color: #2caa4b;
+    }
+    &-exclamation-circle {
+      color: blue;
+    }
+  }
+
+  &-FilterOptions {
+    margin-left: 1em;
+    display: table;
+
+    > * {
+      display: table-row;
+    }
+    > * > * {
+      display: table-cell;
+      padding: 0 .2em .5em .2em;
+      vertical-align: baseline;
+    }
+  }
+
+  &-FilterOption {
+    &__YY, &__YN, &__NY, &__NN {
+      img {
+        height: 3em;
+        vertical-align: bottom;
+      }
+    }
+    &__Y, &__N {
+      img {
+        height: 1.5em;
+        vertical-align: bottom;
+      }
+    }
+  }
+
+  &-FilterOption__disabled {
+    > *:nth-child(2), > *:nth-child(4), > *:nth-child(5) {
+      opacity: .4;
+    }
+  }
+
+  &-ApplyButtonContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+}

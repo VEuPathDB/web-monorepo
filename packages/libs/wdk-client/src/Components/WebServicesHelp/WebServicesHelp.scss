@@ -1,0 +1,95 @@
+body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__web-services-help .vpdb-Main {
+  margin: 0;
+  padding: 0;
+}
+
+.wdk-WebServicesHelp {
+  h1 {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  &--Content {
+    display: grid;
+    grid-template-columns: 60% 40%;
+  }
+
+  &--Steps {
+    counter-reset: step;
+    padding-left: 1rem;
+    margin-right: 1rem;
+    box-sizing: content-box;
+    border-right: 0.1250rem solid #777777;
+  }
+
+  &--StepHeader {
+    font-size: 1.5em;
+    font-weight: 500;
+  }
+
+  &--StepHeader::before {
+    counter-increment: step;
+    content: counter(step);
+    background: #777777;
+    border-radius: 1em;
+    height: 1.5em;
+    width: 1.5em;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: .5em;
+    color: white;
+  }
+
+  &--SearchPartInstructions, &--ReportPartInstructions {
+    font-size: 1.2em;
+  }
+
+  &--SearchPartInstructions {
+    > * {
+      margin: 1.5em 2.5em 2.5em 2.5em;
+    }
+  }
+
+  &--ReportPartInstructions {
+    // FIXME: Get rid of these !importants once inline styles have
+    // been removed from the DownloadForm components
+    > div:first-child {
+      padding-top: 0 !important;
+      padding-left: calc(1rem + 1.5em) !important;
+    }
+
+    h2 {
+      font-size: 1.1em;
+      margin: 1em 0 0.5em 0;
+      padding: 0;
+    }
+  }
+
+  &--GeneratedRequests {
+    margin-left: 2em;
+
+    h2 {
+      font-size: 1.4em;
+      padding: 0;
+    }
+  }
+
+  &--GeneratedGetRequest, &--GeneratedPostRequest {
+    margin-right: 1em;
+    padding: 1em;
+    overflow: auto;
+
+    a {
+      white-space: nowrap;
+    }
+
+    pre {
+      overflow: visible;
+    }
+  }
+
+  &--RequestContent {
+    margin: 1em 0;
+  }
+}

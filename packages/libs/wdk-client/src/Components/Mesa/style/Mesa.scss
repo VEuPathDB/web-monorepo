@@ -1,0 +1,19 @@
+@import 'Vars';
+@import 'Rows';
+@import 'Cells';
+@import 'Components/all';
+@import 'Ui/all';
+
+.MesaComponent {
+  * {
+    box-sizing: border-box;
+  }
+
+  .faded {
+    opacity: 0.5;
+  }
+  .disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}

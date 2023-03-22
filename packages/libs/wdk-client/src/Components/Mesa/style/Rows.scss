@@ -1,0 +1,55 @@
+$headingRowBg: rgba(0, 0, 0, 0.035);
+$evenRowBg: rgba(0, 0, 0, 0.02);
+$oddRowBg: transparent;
+
+.MesaComponent {
+  thead {
+    tr:first-of-type {
+      background-color: $headingRowBg;
+      th, td {
+        border-top: 1px solid $borderColor;
+      }
+    }
+    tr:first-of-type {
+      th:first-child, td:first-child {
+        border-top-left-radius: $borderRadius;
+        overflow: hidden;
+      }
+      th:last-child, td:last-child {
+        border-top-right-radius: $borderRadius;
+        overflow: hidden;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(odd) {
+        background-color: $oddRowBg;
+      }
+      &:nth-child(even) {
+        background-color: $evenRowBg;
+      }
+      &:last-child {
+        th, td {
+          border-bottom: 1px solid $borderColor;
+        }
+        th:first-child, td:first-child {
+          border-bottom-left-radius: $borderRadius;
+          overflow: hidden;
+        }
+        th:last-child, td:last-child {
+          border-bottom-right-radius: $borderRadius;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+
+  tr {
+    transition: all 0.3s;
+    &:hover {
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    }
+  }
+}

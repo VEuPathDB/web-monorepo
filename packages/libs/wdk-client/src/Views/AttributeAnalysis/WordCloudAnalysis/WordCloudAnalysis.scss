@@ -1,0 +1,30 @@
+.WordCloudAnalysis {
+
+  &Filter, &Sort {
+    display: flex;
+    align-items: center;
+    margin: .5em 0;
+
+    & > * {
+      margin-right: 1em;
+    }
+
+    .wdk-RadioList {
+      display: flex;
+
+      li {
+        margin-right: 1em;
+      }
+    }
+
+  }
+
+  &Cloud {
+    align-items: baseline;
+    border: 1px solid #ccc;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1em;
+  }
+
+}

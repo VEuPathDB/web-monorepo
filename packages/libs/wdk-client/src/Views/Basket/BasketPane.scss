@@ -1,0 +1,11 @@
+.BasketPane {
+  &--Header {
+    display: flex;
+    align-items: center;
+  }
+  &--Notes {
+    margin-left: auto;
+    text-align: right;
+    font-size: .9em;
+  }
+}

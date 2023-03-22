@@ -1,0 +1,64 @@
+@import './palette';
+
+/* General Mixins -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
+@mixin transition ($duration: 0.3s) {
+  transition: all $duration;
+  -webkit-transition: all $duration;
+}
+
+/* Table Mixins -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
+
+@mixin flex () {
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+@mixin row () {
+  -webkit-flex-direction: row;
+  -moz-box-orient: horizontal;
+  -moz-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+
+@mixin alignCenter () {
+  -webkit-align-items: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+@mixin truncated () {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin buttonStyle ($base) {
+  background-color: $base;
+  color: $white;
+}
+
+// Add a prefix to a parent selector.
+// E.g.,
+//
+// .FancyTable {
+//   &--Cell {
+//     #{unify-parent('td')} {
+//       background-color: blue;
+//     }
+//   }
+// }
+//
+// will result in
+//
+// td.FancyTable--Cell {
+//   background-color: blue;
+// }
+//
+@mixin unify-parent($child) {
+  @at-root #{selector-unify(&, $child)} {
+    @content;
+  }
+}

@@ -1,0 +1,284 @@
+/* clearfix */
+.wdk-Record:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+.wdk-RecordActions {
+  padding: 0;
+  margin: 0;
+  padding-top: 1em;
+}
+
+.wdk-RecordHeading {
+  clear: both;
+  padding: 10px 0;
+}
+
+.wdk-RecordActionItem {
+  display: inline-block;
+}
+
+.wdk-RecordActionItem {
+  padding: 0 2em 0 0;
+}
+
+.wdk-RecordContainer {
+  position: relative;
+  height: 100%;
+}
+
+.wdk-RecordMain, .wdk-RecordSidebar {
+  padding: 2.5em 3em;
+  transition: margin-left 250ms ease;
+  transition: left 250ms ease;
+}
+
+.wdk-RecordMain {
+  /* make prevent contents panel from being clipped. */
+  min-height: 65vh;
+}
+
+.wdk-RecordSidebarContainer {
+  position: sticky;
+  top: 0;
+}
+
+.wdk-RecordSidebar {
+  left: -332px;
+  width: 282px;
+  position: absolute;
+  padding-right: 48px;
+  transition: right 250ms ease;
+  z-index: 10;
+  background: white;
+  padding: 0 8px;
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+  border: 1px solid #ccc;
+}
+
+.wdk-RecordSidebarHeader {
+  font-weight: 400;
+}
+
+.wdk-RecordSidebarToggle {
+  position: absolute;
+  top: 16px;
+  right: -50px;
+  background: white;
+  z-index: 1;
+  font-size: 1.5em;
+  transform: rotate(-90deg) translateY(76px) translateX(-62px);
+  border: 1px solid;
+  padding: 4px 8px;
+}
+
+.wdk-RecordSidebarToggle, h2.wdk-RecordNavigationSectionHeader {
+  word-wrap:break-word;
+  color: black;
+  font-weight:400;
+}
+
+.wdk-RecordContainer__withSidebar .wdk-RecordMain {
+  margin-left: 290px;
+}
+
+.wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
+  left: 0;
+}
+
+.wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {
+  right: 12px;
+  border: 0;
+  transform: rotate(-90deg);
+  padding: 0;
+}
+
+.wdk-RecordNavigationSection .wdk-RealTimeSearchBox {
+  width: 100%;
+  width: calc(100% - 1rem);
+}
+
+.wdk-RecordNavigationExpand {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.wdk-RecordNavigationIndicator {
+  position: absolute;
+  left: -2.5em;
+  padding-top: 0;
+  line-height: 1rem;
+}
+
+.wdk-RecordNavigationIndicator:hover {
+  text-decoration: none;
+}
+
+.wdk-RecordNavigationSection .wdk-CheckboxTree > .wdk-CheckboxTreeList {
+  max-height: 70vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.wdk-RecordNavigationSection .wdk-CheckboxTreeNodeWrapper {
+  padding: 4px 0 4px 1.5em;
+}
+
+.wdk-RecordNavigationSectionHeader {
+  margin-left: 0;
+  padding-bottom: 0;
+}
+
+.wdk-RecordNavigationSearchInput {
+  width: calc(100% - 1.5em);
+  padding: .5em;
+}
+
+.wdk-RecordNavigationCategories {
+  overflow-y: auto;
+  max-height: calc(100vh - 150px);
+  /* border-bottom: 1px solid lightgrey; */
+  padding-bottom: 1em;
+}
+
+.wdk-Record-sidebar > ul {
+  padding: 0;
+  margin: 0;
+}
+
+.wdk-Record-sidebar-title {
+  display: block;
+}
+
+.wdk-Record-sidebar-title__active:after {
+  font-family: FontAwesome;
+  content: '\f111';
+  position: absolute;
+  left: -26px;
+  font-size: 90%;
+  cursor: initial;
+}
+
+.wdk-Record-sidebar-checkbox {
+  position: absolute;
+  right: 2px;
+}
+
+.wdk-RecordMainSectionFieldToggles {
+  text-align: center;
+  position: absolute;
+  right: 50px;
+  z-index: 1;
+  padding: 10px;
+}
+
+.wdk-RecordSectionEnumeration {
+  opacity: .5;
+}
+
+.wdk-RecordSectionHeader {
+  margin: 8px 0;
+  position: relative;
+  border-bottom: 1px solid;
+  cursor: default;
+}
+
+.wdk-RecordSectionLink {
+  visibility: hidden;
+  margin-left: 1ex;
+}
+
+.wdk-RecordSectionHeader:hover .wdk-RecordSectionLink,
+.wdk-RecordSubsectionHeader:hover .wdk-RecordSectionLink {
+  visibility: visible;
+}
+
+.wdk-RecordSectionHeader:before, .wdk-RecordSectionHeader__collapsed:before {
+  display: none;
+}
+
+.wdk-RecordSectionContent {
+  padding-left: 0;
+}
+
+.wdk-RecordSubsectionHeader {
+  margin: 1px 0 8px 0;
+  position: relative;
+  border-bottom: 1px dotted;
+  cursor: pointer;
+}
+
+
+.wdk-RecordSectionHeaderTopLink {
+  position: absolute;
+  right: 1em;
+  z-index: 1;
+}
+
+.wdk-RecordSectionContent {
+  margin-bottom: 22px;
+}
+
+.wdk-RecordAttributeContent {
+  word-break: break-all;
+  display: inline-block;
+}
+
+.wdk-RecordAttributeSectionItem, .wdk-RecordTableContainer, .wdk-RecordSubsection {
+  margin: 1.5rem 1rem;
+}
+
+.wdk-RecordAttributeName, .wdk-RecordAttributeValue {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  z-index: 1;
+}
+
+.wdk-RecordAttributeValue {
+  padding: 0 .5em;
+  word-break: break-word;
+  top: 1px;
+}
+
+.wdk-RecordTableContainerContent,
+.wdk-RecordAttributeSectionItemContent {
+  padding-left: 1rem;
+  margin: 1em 0 2em;
+}
+
+.wdk-RecordAttributeSectionItemHeader,
+.wdk-RecordTableContainerHeader {
+  margin-left: -1rem;
+}
+
+.wdk-RecordAttributeName,
+.wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+.wdk-RecordMain .wdk-CollapsibleSectionHeader.wdk-RecordSubsectionHeader {
+  font-size: 1.5em;
+}
+
+.wdk-RecordTableContainerContent {
+  margin-bottom: 1em;
+}
+
+.wdk-RecordTableContainerContent .wdk-DataTableContainer {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.wdk-RecordTableList {
+  vertical-align: top;
+  display: inline-block;
+  min-width: 20%;
+}

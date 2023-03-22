@@ -1,0 +1,58 @@
+.wdk-TabsContainer.result-tabs {
+
+  width: 100%;
+
+  .wdk-Tabs {
+
+    & {
+      display: flex;
+      width: 100%;
+      border-bottom: 1px solid #CCC;
+    }
+
+
+    .wdk-Tab {
+      cursor: pointer;
+      background: #E6E6E6;
+      margin: 0 0.5em -1px 0;
+      border: 1px solid #CCC;
+      padding: 2px 6px;
+
+      &__active {
+        background: transparent;
+        border-bottom: 1px solid white;
+        border-top-right-radius: 4px;
+        border-top-left-radius: 4px;
+      }
+
+      &:hover, &:focus, &:active {
+        background: #C6C6C6;
+      }
+    }
+
+  }
+
+  .wdk-TabContent {
+    position: relative;
+    padding: 1em;
+    border: 1px solid #ccc;
+    border-top: none;
+    min-height: 50em;
+  }
+
+  button#add-analysis {
+    margin-left: 1em;
+    color: #FFF;
+    background-image: none;
+    background-color: #4F81BD;
+    border-color: #346792;
+    box-shadow: 0px 0px 1px #245F92;
+     
+    top: -1px;
+
+    &:hover, &:active, &:focus {
+      background-color: #357EBD;
+    }
+  }
+
+}

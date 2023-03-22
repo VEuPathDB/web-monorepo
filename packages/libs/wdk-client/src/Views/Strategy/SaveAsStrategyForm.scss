@@ -1,0 +1,68 @@
+@import 'wdk-client/Core/Style/mixins.scss';
+
+@mixin highlight {
+  background-color: #286dda;
+  color: white;
+}
+
+.SaveAsStrategyForm {
+  width: 1400px;
+  max-width: 90vw;
+
+  &--TableCell {
+    text-align: left;
+    @include unify-parent('th, td') {
+      padding: 3px 4px;
+      vertical-align: middle;
+    }
+  }
+
+  &--TableCell__name {
+    width: 50%;
+  }
+
+  &--TableRow {
+    cursor: pointer;
+  }
+
+  &--SelectorPanel {
+    margin-top: 1em;
+  }
+
+  .Mesa {
+    box-shadow: 0 0 2px inset #00000096;
+    width: 100%;
+
+    .DataTable .DataTable-Sticky .DataTable-Body {
+      padding: 0;
+    }
+  }
+
+  .MesaComponent tbody &--TableRow__selected {
+    @include unify-parent('tr') {
+      @include highlight;
+    }
+  }
+
+  &--InputLine {
+    display: flex;
+    align-items: center;
+
+    label {
+      font-weight: bold;
+    }
+
+    input {
+      flex-grow: 2;
+      margin-left: 1em;
+      &::selection {
+        @include highlight;
+      }
+    }
+  }
+
+  &--Buttons {
+    text-align: center;
+    margin: 1em;
+  }
+}

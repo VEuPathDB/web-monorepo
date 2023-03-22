@@ -1,0 +1,15 @@
+.wdk-CheckboxList {
+  &Item label {
+    display: flex;
+    align-items: center;
+    margin: .5ex 0;
+    > input {
+      margin-right: .5ch;
+    }
+  }
+  &Links {
+    font-size: .9em;
+    margin: .5em;
+    text-align: center;
+  }
+}

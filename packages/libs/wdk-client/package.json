@@ -1,0 +1,129 @@
+{
+  "name": "@veupathdb/wdk-client",
+  "version": "0.9.32",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "jest",
+    "clean": "rm -rf ./lib",
+    "compile": "tsc -p tsconfig.build.json",
+    "copy-assets": "veupathdb-react-scripts copy-assets src lib",
+    "relativize": "ts-node-script ./scripts/relativize.ts lib wdk-client",
+    "build": "npm-run-all compile copy-assets relativize",
+    "build-npm-modules": "npm-run-all clean build",
+    "check-ts": "tsc --version && tsc --noEmit",
+    "watch-ts": "tsc --noEmit --watch -p ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VEuPathDB/WDKClient.git",
+    "directory": "Client"
+  },
+  "main": "./lib/Core",
+  "files": [
+    "src",
+    "lib",
+    "vendored"
+  ],
+  "dependencies": {
+    "classnames": "^2.2.0",
+    "history": "^4.10.1",
+    "json-stable-stringify": "^1.0.0",
+    "localforage": "^1.5.0",
+    "lodash": "^4.17.21",
+    "mansion-ui": "2.5",
+    "natural-sort": "^1.0.0",
+    "prop-types": "^15.7.2",
+    "react-redux": "^7.1.3",
+    "react-select": "^3.0.4",
+    "redux": "^4.0.0",
+    "redux-observable": "^1.2.0",
+    "reselect": "^3.0.1",
+    "rxjs": "^6.2.2",
+    "spin.js": "^4.0.0",
+    "uuid": "^8.3.2",
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/coreui": "workspace:^"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.10.0",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@testing-library/react-hooks": "^3.4.2",
+    "@types/datatables.net": "^1.10.5",
+    "@types/flot": "^0.0.31",
+    "@types/history": "^4.7.4",
+    "@types/jest": "^23.3.1",
+    "@types/jqueryui": "^1.11.35",
+    "@types/json-stable-stringify": "^1.0.31",
+    "@types/lodash": "^4.14.104",
+    "@types/natural-sort": "^0.0.20",
+    "@types/node": "^14.14.7",
+    "@types/prop-types": "^15.7.3",
+    "@types/qtip2": "^2.2.29",
+    "@types/react": "^16.9.18",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-redux": "^7.1.5",
+    "@types/react-router": "^5.1.4",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/react-select": "^3.0.4",
+    "@types/shelljs": "^0.8.8",
+    "@types/uuid": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "@veupathdb/react-scripts": "workspace:^",
+    "babel-eslint": "^8.0.1",
+    "babel-jest": "^23.1.2",
+    "eslint": "^7.12.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-react": "^7.4.0",
+    "jest": "^23.4.2",
+    "jest-tap-reporter": "^1.9.0",
+    "notistack": "^1.0.10",
+    "npm-run-all": "^4.1.5",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2",
+    "react-test-renderer": "^16.9.0",
+    "shelljs": "^0.8.4",
+    "ts-jest": "^23.1.2",
+    "ts-node": "^9.0.0",
+    "tspath": "^1.3.7",
+    "typescript": "~4.3.5"
+  },
+  "peerDependencies": {
+    "notistack": "^1.0.10",
+    "react": ">=16.14",
+    "react-dom": ">=16.14",
+    "react-router-dom": "^5.1.2"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^wdk-client(.*)$": "<rootDir>/src$1"
+    },
+    "testURL": "http://localhost/",
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "reporters": [
+      "jest-tap-reporter"
+    ]
+  },
+  "volta": {
+    "node": "16.15.0",
+    "yarn": "1.22.10"
+  }
+}

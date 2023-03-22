@@ -1,0 +1,1406 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getTree Should collapse chain of intermediate nodes with single child 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "children": Array [
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [
+                Object {
+                  "children": Array [
+                    Object {
+                      "children": Array [
+                        Object {
+                          "children": Array [],
+                          "field": Object {
+                            "display": "Severe malaria criteria",
+                            "isRange": false,
+                            "parent": "EUPATH_0000036",
+                            "precision": 1,
+                            "term": "EUPATH_0000046",
+                            "type": "string",
+                          },
+                        },
+                      ],
+                      "field": Object {
+                        "description": "Diagnosis of malaria with danger signs including inability to sit up or stand, vomiting, unable to breastfeed or drink and lethargy, or criteria for severe malaria.",
+                        "display": "Basis of complicated diagnosis",
+                        "isRange": false,
+                        "parent": "EUPATH_0000040",
+                        "precision": 1,
+                        "term": "EUPATH_0000036",
+                        "type": "string",
+                      },
+                    },
+                  ],
+                  "field": Object {
+                    "display": "Complicated malaria",
+                    "isRange": false,
+                    "parent": "EUPATH_0000090",
+                    "precision": 1,
+                    "term": "EUPATH_0000040",
+                    "type": "string",
+                  },
+                },
+              ],
+              "field": Object {
+                "description": "a positive blood smear with subjective fever or elevated temperature resulting in antimalarial treatment",
+                "display": "Malaria diagnosis",
+                "isRange": false,
+                "parent": "OGMS_0000073",
+                "precision": 1,
+                "term": "EUPATH_0000090",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Other diagnosis",
+                "isRange": false,
+                "parent": "OGMS_0000073",
+                "precision": 1,
+                "term": "EUPATH_0000317",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Diagnosis",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "OGMS_0000073",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Admitting hospital",
+                "isRange": false,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000318",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Date of hospital admission",
+                "isRange": true,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000319",
+                "type": "date",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Date of hospital discharge",
+                "isRange": true,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000320",
+                "type": "date",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Diagnosis at hospitalization",
+                "isRange": false,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000638",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Hospitalization",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000308",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "display": "Malaria diagnosis and parasite status",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000338",
+            "type": "string",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Age at visit (years)",
+                "isRange": true,
+                "parent": "EUPATH_0000310",
+                "precision": 1,
+                "term": "EUPATH_0000113",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Month and year",
+                "display": "Date of visit",
+                "isRange": true,
+                "parent": "EUPATH_0000310",
+                "precision": 1,
+                "term": "EUPATH_0000091",
+                "type": "date",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Number of days from time of participant enrollment in study until current visit",
+                "display": "Days since enrollment",
+                "isRange": true,
+                "parent": "EUPATH_0000310",
+                "precision": 1,
+                "term": "EUPATH_0000191",
+                "type": "number",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Observation details",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000310",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "description": "Slept in an insectside treated net last night?",
+            "display": "ITN last night",
+            "isRange": false,
+            "parent": "EUPATH_0021097",
+            "precision": 1,
+            "term": "EUPATH_0000216",
+            "type": "string",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Height (cm)",
+                "isRange": true,
+                "parent": "OGMS_0000083",
+                "precision": 1,
+                "term": "IAO_0000408",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Temperature (C)",
+                "isRange": true,
+                "parent": "OGMS_0000083",
+                "precision": 1,
+                "term": "EUPATH_0000110",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Weight (kg)",
+                "isRange": true,
+                "parent": "OGMS_0000083",
+                "precision": 1,
+                "term": "IAO_0000414",
+                "type": "number",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Physical examination",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "OGMS_0000083",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Abdominal pain",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0002027",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Abdominal pain duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000154",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Anorexia",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000523",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Anorexia duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000155",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Cough",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000614",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Cough duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000156",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Diarrhea",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "DOID_13250",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Diarrhea duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000157",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Fatigue or malaise",
+                "display": "Fatigue",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0019177",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Fatigue duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000158",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Elevated temperature or subjective fever",
+                "display": "Febrile",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000097",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Fever",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000100",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Fever, subjective duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000164",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Headache",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0002315",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Headache duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000159",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Yellow pigmentation of the skin or sclera due to bilirubin, the result of increased bilirubin in the bloodstream",
+                "display": "Jaundice",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0000952",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Jaundice duration (days)",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000160",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Joint pains",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000064",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Joint pains duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000161",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Muscle aches",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000252",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Muscle aches duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000162",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Other medical complaint",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0020002",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Intermittent abnormality of the central nervous system (FMA:HP:0002011) due to sudden, excessive, disorderly discharge of cerebral neurons; characterized by some combination of disturbance of sensation, loss of consciousness, impairment of psychic function, or convulsive movements (epilepsy is used to describe chronic, recurrent seizures)",
+                "display": "Seizures",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000124",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Seizures duration (days)",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000163",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Vomiting",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0002013",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Vomiting duration (days)",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000165",
+                "type": "number",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Signs and symptoms",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000309",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Malaria treatment",
+                "isRange": false,
+                "parent": "OGMS_0000090",
+                "precision": 1,
+                "term": "EUPATH_0000740",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Non-malaria medication only",
+                "display": "Non-malaria medication",
+                "isRange": false,
+                "parent": "OGMS_0000090",
+                "precision": 1,
+                "term": "EUPATH_0000059",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Treatment",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "OGMS_0000090",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "display": "Visit type",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000311",
+            "type": "string",
+          },
+        },
+      ],
+      "field": Object {
+        "display": "Observation",
+        "isRange": false,
+        "precision": 1,
+        "term": "EUPATH_0000738",
+      },
+    },
+    Object {
+      "children": Array [
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Number of asexual parasites in the blood (counts per microliter)",
+                "display": "Asexual parasite density",
+                "isRange": true,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000092",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Asexual parasites in the blood, as determined by microscopy",
+                "display": "Asexual parasites present, microscopy",
+                "isRange": false,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000048",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Gametocytes present, microscopy",
+                "isRange": false,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000207",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Blood hemoglobin (g/dl)",
+                "display": "Hemoglobin (g/dL)",
+                "isRange": true,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000047",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Submicroscopic parasites present, LAMP",
+                "isRange": false,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000487",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Laboratory test",
+            "isRange": false,
+            "parent": "EUPATH_0000609",
+            "precision": 1,
+            "term": "OGMS_0000056",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "description": "Type of sample/specimen collected during a clinical visit",
+            "display": "Sample type",
+            "isRange": false,
+            "parent": "EUPATH_0000609",
+            "precision": 1,
+            "term": "OBI_0100051",
+            "type": "string",
+          },
+        },
+      ],
+      "field": Object {
+        "display": "Sample",
+        "isRange": false,
+        "precision": 1,
+        "term": "EUPATH_0000609",
+      },
+    },
+  ],
+  "field": Object {
+    "display": "@@root@@",
+    "term": "@@root@@",
+  },
+}
+`;
+
+exports[`getTree Should create a tree 1`] = `
+Object {
+  "children": Array [
+    Object {
+      "children": Array [
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [
+                Object {
+                  "children": Array [
+                    Object {
+                      "children": Array [
+                        Object {
+                          "children": Array [],
+                          "field": Object {
+                            "display": "Severe malaria criteria",
+                            "isRange": false,
+                            "parent": "EUPATH_0000036",
+                            "precision": 1,
+                            "term": "EUPATH_0000046",
+                            "type": "string",
+                          },
+                        },
+                      ],
+                      "field": Object {
+                        "description": "Diagnosis of malaria with danger signs including inability to sit up or stand, vomiting, unable to breastfeed or drink and lethargy, or criteria for severe malaria.",
+                        "display": "Basis of complicated diagnosis",
+                        "isRange": false,
+                        "parent": "EUPATH_0000040",
+                        "precision": 1,
+                        "term": "EUPATH_0000036",
+                        "type": "string",
+                      },
+                    },
+                  ],
+                  "field": Object {
+                    "display": "Complicated malaria",
+                    "isRange": false,
+                    "parent": "EUPATH_0000090",
+                    "precision": 1,
+                    "term": "EUPATH_0000040",
+                    "type": "string",
+                  },
+                },
+              ],
+              "field": Object {
+                "description": "a positive blood smear with subjective fever or elevated temperature resulting in antimalarial treatment",
+                "display": "Malaria diagnosis",
+                "isRange": false,
+                "parent": "OGMS_0000073",
+                "precision": 1,
+                "term": "EUPATH_0000090",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Other diagnosis",
+                "isRange": false,
+                "parent": "OGMS_0000073",
+                "precision": 1,
+                "term": "EUPATH_0000317",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Diagnosis",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "OGMS_0000073",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Admitting hospital",
+                "isRange": false,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000318",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Date of hospital admission",
+                "isRange": true,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000319",
+                "type": "date",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Date of hospital discharge",
+                "isRange": true,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000320",
+                "type": "date",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Diagnosis at hospitalization",
+                "isRange": false,
+                "parent": "EUPATH_0000308",
+                "precision": 1,
+                "term": "EUPATH_0000638",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Hospitalization",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000308",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "display": "Malaria diagnosis and parasite status",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000338",
+            "type": "string",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Age at visit (years)",
+                "isRange": true,
+                "parent": "EUPATH_0000310",
+                "precision": 1,
+                "term": "EUPATH_0000113",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Month and year",
+                "display": "Date of visit",
+                "isRange": true,
+                "parent": "EUPATH_0000310",
+                "precision": 1,
+                "term": "EUPATH_0000091",
+                "type": "date",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Number of days from time of participant enrollment in study until current visit",
+                "display": "Days since enrollment",
+                "isRange": true,
+                "parent": "EUPATH_0000310",
+                "precision": 1,
+                "term": "EUPATH_0000191",
+                "type": "number",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Observation details",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000310",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Slept in an insectside treated net last night?",
+                "display": "ITN last night",
+                "isRange": false,
+                "parent": "EUPATH_0021097",
+                "precision": 1,
+                "term": "EUPATH_0000216",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Personal vector intervention",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0021097",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Height (cm)",
+                "isRange": true,
+                "parent": "OGMS_0000083",
+                "precision": 1,
+                "term": "IAO_0000408",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Temperature (C)",
+                "isRange": true,
+                "parent": "OGMS_0000083",
+                "precision": 1,
+                "term": "EUPATH_0000110",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Weight (kg)",
+                "isRange": true,
+                "parent": "OGMS_0000083",
+                "precision": 1,
+                "term": "IAO_0000414",
+                "type": "number",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Physical examination",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "OGMS_0000083",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Abdominal pain",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0002027",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Abdominal pain duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000154",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Anorexia",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000523",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Anorexia duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000155",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Cough",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000614",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Cough duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000156",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Diarrhea",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "DOID_13250",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Diarrhea duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000157",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Fatigue or malaise",
+                "display": "Fatigue",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0019177",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Fatigue duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000158",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Elevated temperature or subjective fever",
+                "display": "Febrile",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000097",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Fever",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000100",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Fever, subjective duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000164",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Headache",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0002315",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Headache duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000159",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Yellow pigmentation of the skin or sclera due to bilirubin, the result of increased bilirubin in the bloodstream",
+                "display": "Jaundice",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0000952",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Jaundice duration (days)",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000160",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Joint pains",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000064",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Joint pains duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000161",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Muscle aches",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000252",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Muscle aches duration (days)",
+                "isRange": true,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000162",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Other medical complaint",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0020002",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Intermittent abnormality of the central nervous system (FMA:HP:0002011) due to sudden, excessive, disorderly discharge of cerebral neurons; characterized by some combination of disturbance of sensation, loss of consciousness, impairment of psychic function, or convulsive movements (epilepsy is used to describe chronic, recurrent seizures)",
+                "display": "Seizures",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "SYMP_0000124",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Seizures duration (days)",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000163",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Vomiting",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "HP_0002013",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Vomiting duration (days)",
+                "isRange": false,
+                "parent": "EUPATH_0000309",
+                "precision": 1,
+                "term": "EUPATH_0000165",
+                "type": "number",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Signs and symptoms",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000309",
+          },
+        },
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Malaria treatment",
+                "isRange": false,
+                "parent": "OGMS_0000090",
+                "precision": 1,
+                "term": "EUPATH_0000740",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Non-malaria medication only",
+                "display": "Non-malaria medication",
+                "isRange": false,
+                "parent": "OGMS_0000090",
+                "precision": 1,
+                "term": "EUPATH_0000059",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Treatment",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "OGMS_0000090",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "display": "Visit type",
+            "isRange": false,
+            "parent": "EUPATH_0000738",
+            "precision": 1,
+            "term": "EUPATH_0000311",
+            "type": "string",
+          },
+        },
+      ],
+      "field": Object {
+        "display": "Observation",
+        "isRange": false,
+        "precision": 1,
+        "term": "EUPATH_0000738",
+      },
+    },
+    Object {
+      "children": Array [
+        Object {
+          "children": Array [
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Number of asexual parasites in the blood (counts per microliter)",
+                "display": "Asexual parasite density",
+                "isRange": true,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000092",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Asexual parasites in the blood, as determined by microscopy",
+                "display": "Asexual parasites present, microscopy",
+                "isRange": false,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000048",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Gametocytes present, microscopy",
+                "isRange": false,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000207",
+                "type": "string",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "description": "Blood hemoglobin (g/dl)",
+                "display": "Hemoglobin (g/dL)",
+                "isRange": true,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000047",
+                "type": "number",
+              },
+            },
+            Object {
+              "children": Array [],
+              "field": Object {
+                "display": "Submicroscopic parasites present, LAMP",
+                "isRange": false,
+                "parent": "OGMS_0000056",
+                "precision": 1,
+                "term": "EUPATH_0000487",
+                "type": "string",
+              },
+            },
+          ],
+          "field": Object {
+            "display": "Laboratory test",
+            "isRange": false,
+            "parent": "EUPATH_0000609",
+            "precision": 1,
+            "term": "OGMS_0000056",
+          },
+        },
+        Object {
+          "children": Array [],
+          "field": Object {
+            "description": "Type of sample/specimen collected during a clinical visit",
+            "display": "Sample type",
+            "isRange": false,
+            "parent": "EUPATH_0000609",
+            "precision": 1,
+            "term": "OBI_0100051",
+            "type": "string",
+          },
+        },
+      ],
+      "field": Object {
+        "display": "Sample",
+        "isRange": false,
+        "precision": 1,
+        "term": "EUPATH_0000609",
+      },
+    },
+  ],
+  "field": Object {
+    "display": "@@root@@",
+    "term": "@@root@@",
+  },
+}
+`;

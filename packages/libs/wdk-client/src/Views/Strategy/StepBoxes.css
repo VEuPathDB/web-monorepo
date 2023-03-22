@@ -1,0 +1,559 @@
+.StepBoxes {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 1em;
+  position: relative;
+}
+
+.StepBoxes.StepBoxes__preview {
+  font-size: 0.8em;
+  justify-content: center;
+}
+
+.StepBoxes,
+.StepBoxes * {
+  box-sizing: border-box;
+}
+
+.StepBoxes > * {
+  margin-bottom: 1.25em;
+}
+
+.StepBoxes--Link {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.StepBoxes--Slot {
+  display: flex;
+  flex-flow: column-reverse nowrap;
+  justify-content: space-between;
+  height: 8em;
+  position: relative;
+}
+
+/*
+ * Line connecting primary input steps
+ *
+ *           []
+ *           |
+ * []-->[]-->oo-->[]
+ */
+.StepBoxes--Slot:before {
+  content: "";
+  border-top: .17em solid black;
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.StepBoxes--Slot:first-of-type:before {
+  left: 50%;
+}
+
+.StepBoxes--Slot:last-of-type:before {
+  right: 50%;
+}
+
+.StepBoxes--SlotLabel {
+  position: absolute;
+  bottom: -1.5em;
+  width: calc(100% - 1em);
+  text-align: center;
+  line-height: 1;
+  font-size: 0.9em;
+}
+
+.StepBoxes--Box {
+  height: 45%;
+  position: relative;
+}
+
+.StepBoxes--Box__invalid:before,
+.StepBoxes--Box__invalid:after {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  right: 1em;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  border-radius: .75em;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%, auto;
+}
+
+/* Red X over step box */
+.StepBoxes--Box__invalid:before {
+  background-image: url("./red-x.svg");
+  background-color: #ffffff60;
+}
+
+.StepBoxes--BoxLink {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0 1em;
+  margin-right: 1em;
+  border-radius: 0.5em;
+  position: relative;
+}
+
+.StepBoxes--BoxLink__leaf {
+  background-color: #d0cfcf;
+  border: .17em solid black;
+  box-shadow: .1em .1em .35em #6a6a6a45;
+  z-index: 1;
+}
+
+.StepBoxes--BoxLink__leaf.StepBoxes--BoxLink__new-step-preview {
+  background-color: #eaeaea;
+  border-color: #999999;
+  box-shadow: none;
+  border-style: dashed;
+  min-width: 7.5em;
+}
+
+.StepBoxes--BoxLink__transform.StepBoxes--BoxLink__new-step-preview {
+  min-width: 8em;
+}
+
+.StepBoxes--BoxLink__transform {
+  z-index: 1;
+  height: calc(100% - 0.17em);
+  margin-right: 0;
+}
+
+.StepBoxes--BoxLink__leaf_active,
+.StepBoxes--BoxLink__combined_active {
+  background-color: #ffffa0;
+}
+
+/* Line connecting leaf step and combined step */
+.StepBoxes--BoxLink__combined:before {
+  content: "";
+  border-right: .17em solid black;
+  height: 4em;
+  position: absolute;
+  left: calc(50% + .4em);
+  top: -4em;
+}
+
+.StepBoxes--BoxLink__nested:before {
+  content: "";
+  border: .1em solid #111;
+  position: absolute;
+  border-radius: 0.5em;
+  left: .17em;
+  bottom: .17em;
+  border-left: none;
+  border-bottom: none;
+  width: calc(100% + .17em);
+  height: calc(100% + .17em);
+}
+
+.StepBoxes--BoxLink__nested:after {
+  content: "";
+  border: .1em solid #111;
+  position: absolute;
+  border-radius: 0.5em;
+  left: calc(.1em + (.17em * 2));
+  bottom: calc(.1em + (.17em * 2));
+  border-left: none;
+  border-bottom: none;
+  width: calc(100% + .17em);
+  height: calc(100% + .17em);
+}
+
+.StepBoxes--BoxLink__existing-step-preview:hover,
+.StepBoxes--BoxLink__existing-step-preview:visited,
+.StepBoxes--BoxLink__existing-step-preview:focus,
+.StepBoxes--BoxLink__existing-step-preview:active {
+  text-decoration: none;
+}
+
+.StepBoxes--FilterIcon {
+  bottom: .6em;
+  color: #ef6565;
+  position: absolute;
+  right: 1.3em;
+  z-index: 1;
+}
+
+.StepBoxes--StepName {
+  color: black;
+  font-weight: bold;
+  max-width: 15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.StepBoxes.StepBoxes__preview.StepBoxes__inserting-between-steps .StepBoxes--StepName {
+  max-width: 6.75em;
+}
+
+.StepBoxes--StepCount {
+  font-size: 0.9em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.StepBoxes--BoxLink__existing-step-preview .StepBoxes--StepName,
+.StepBoxes--BoxLink__existing-step-preview .StepBoxes--StepCount {
+  white-space: nowrap;
+}
+
+.StepBoxes--BoxLink__combined.StepBoxes--BoxLink__new-step-preview .StepBoxes--StepCount {
+  height: 1em;
+}
+
+.StepBoxes--CombineOperator {
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 1.9em;
+  width: 3em;
+  z-index: 1;
+}
+
+/* Arrows */
+.StepBoxes--CombinePrimaryInputArrow {
+  top: .8em;
+  left: -.4em;
+  position: relative;
+  color: black;
+  background-image: url('./primary-input-arrow.svg');
+  height: 0.83333333333em;
+  width: 0.83333333333em;
+}
+
+/* Arrows */
+.StepBoxes--CombineSecondaryInputArrow {
+  top: -1.5em;
+  left: calc(50% + .07em);
+  position: relative;
+  color: black;
+  background-image: url('./secondary-input-arrow.svg');
+  height: 0.83333333333em;
+  width: 0.83333333333em;
+}
+
+/* Arrows */
+.StepBoxes--TransformInputArrow {
+  top: 1.1em;
+  left: -.25em;
+  position: absolute;
+  color: black;
+  background-image: url('./primary-input-arrow.svg');
+  height: 0.83333333333em;
+  width: 0.83333333333em;
+}
+
+.StepBoxes--TransformIconContainer {
+  position: absolute;
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100%;
+  width: 100%;
+  left: -.25em;
+  top: .085em;
+  filter: drop-shadow(0.1em 0.1em 0.35em #6a6a6a45);
+}
+
+.StepBoxes--BoxLink__transform.StepBoxes--BoxLink__new-step-preview .StepBoxes--TransformIconContainer {
+  filter: none;
+}
+
+.StepBoxes--TransformDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  height: 100%;
+  padding-right: 1em;
+  padding-left: 0.5em;
+}
+
+svg.StepBoxes--TransformIconInputSide, svg.StepBoxes--TransformIconOutputSide {
+  overflow: visible;
+}
+
+svg.StepBoxes--TransformIconInputSide path, svg.StepBoxes--TransformIconOutputSide path {
+  fill: #d0cfcf;
+}
+
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconInputSide path,
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconOutputSide path {
+  fill: #eaeaea;
+  stroke: #999999;
+}
+
+.StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconInputSide path, .StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconOutputSide path {
+  fill: #ffffa0;
+}
+
+svg.StepBoxes--TransformIconContents {
+  background-color: #d0cfcf;
+  height: 100%;
+  width: calc(100% - 2.5em);
+  overflow: visible;
+}
+
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconContents {
+  background-color: #eaeaea;
+}
+
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconContents path {
+  stroke: #999999;
+}
+
+.StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconContents {
+  background-color: #ffffa0;
+}
+
+.StepBoxes--CombineOperator__INTERSECT {
+  background-image: url('./a_intersect_b.svg');
+}
+
+.StepBoxes--CombineOperator__UNION {
+  background-image: url('./a_union_b.svg');
+}
+
+.StepBoxes--CombineOperator__MINUS {
+  background-image: url('./a_minus_b.svg');
+}
+
+.StepBoxes--CombineOperator__RMINUS {
+  background-image: url('./b_minus_a.svg');
+}
+
+.StepBoxes--CombineOperator__RONLY {
+  background-image: url('./b_only.svg');
+}
+
+.StepBoxes--CombineOperator__LONLY {
+  background-image: url('./a_only.svg');
+}
+
+.StepBoxes--CombineOperator__PREVIEW {
+  background-image: url('./boolean_preview.svg');
+}
+
+.StepBoxes--InsertStepButton {
+  height: calc(8em * .45);
+  font-weight: bold;
+  border-radius: .5em;
+  display: flex;
+  align-items: center;
+  border-style: dashed;
+  background: #d0cfcf6b;
+  border-width: .2em;
+  border-color: #4f81bd;
+}
+
+.StepBoxes--InsertStepButton:hover,
+.StepBoxes--InsertStepButton:focus,
+.StepBoxes--InsertStepButton:active {
+  background: #d0cfcfcf;
+}
+
+.StepBoxes--InsertStepButton div {
+  font-size: 1.1em;
+}
+
+.StepBoxes--InsertStepButton .fa {
+  font-size: 1.4em;
+  margin-right: .4em;
+  color: #666;
+}
+
+button.StepBoxes--EditButton {
+  position: absolute;
+  right: .5em;
+  top: -.5em;
+  padding: 0 2px;
+  margin: 2px;
+  z-index: 3;
+  background: white;
+  border: .085em solid;
+  border-radius: 4px;
+  display: none;
+  color: black;
+}
+
+.StepBoxes--BoxLink__combined + button.StepBoxes--EditButton {
+  right: calc(50% - 3em);
+}
+
+.StepBoxes--BoxLink__transform + button.StepBoxes--EditButton {
+  right: 0.5em;
+}
+
+button.StepBoxes--EditButton:hover {
+  background: yellow;
+}
+
+.StrategyPanel--Panel:hover button.StepBoxes--EditButton {
+  display: inline;
+}
+
+.StepBoxes--RenameInput {
+  position: absolute;
+  top: .8em;
+  z-index: 1;
+  width: calc(100% - 2em);
+  left: .5em;
+}
+
+.StepBoxes--StepActions {
+  display: flex;
+  font-size: .8em;
+  white-space: nowrap;
+  margin: .5em 0;
+}
+
+.StepBoxes--StepActions > * {
+  padding: 0 .5em;
+  border-right: 1px solid;
+}
+.StepBoxes--StepActions > *:last-of-type {
+  border-right: none;
+}
+
+/* Override .wdk-Dialog */
+.StepBoxes--StepDetails {
+  min-width: 700px;
+  max-height: 95vh;
+}
+
+.StepBoxes--StepDetailsHeader > button {
+  position: absolute;
+  right: 1em;
+}
+
+.StepBoxes--StepDetailsContent {
+  display: block;
+  width: 100%;
+  padding: 1em;
+}
+
+.StepBoxes--StepDetailsContent table {
+  margin: 2em 1em;
+}
+
+.StepBoxes--StepDetailsContent td,
+.StepBoxes--StepDetailsContent th {
+  border: none;
+  padding: .5em;
+  vertical-align: top;
+}
+
+.StepBoxes--StepDetailsContent th {
+  text-align: right;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.StepBoxes--StepDetailsResults {
+  text-align: center;
+}
+
+.StepBoxes--StepDetailsTitle {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2em;
+  flex: 10;
+}
+
+.StepBoxes--StepDetailsHeading {
+  font-size: 1.2em;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.StepBoxes--StepDetailsName {
+  font-style: italic;
+  font-weight: normal;
+  margin-left: 1ex;
+}
+
+.StepBoxes--StepDetailsName fieldset {
+  padding: 0;
+}
+
+.StepBoxes--StepDetailsWeight {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+}
+
+.StepBoxes--StepDetailsWeightHeader {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.StepBoxes--StepDetailsWeightHeader:before {
+  font-size: 1.6em;
+}
+
+.StepBoxes--StepDetailsWeightContent {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  padding: .5em;
+  margin: 0;
+}
+
+.StepBoxes--StepDetailsWeightContent > * {
+  padding: .5em;
+}
+
+.CombineStepDetails {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.CombineStepDetailsTitle {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 1em;
+}
+
+.CombineStepDetails > hr {
+  width: 100%;
+}
+
+.StepOperators {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 1em 0;
+  width: 100%;
+}
+
+.StepOperator {
+  display: flex;
+  align-items: center;
+}
+
+.StepOperator > * {
+  margin: 0 .2em;
+}
+
+.StepOperator > *:last-child {
+  margin-right: 2em;
+}

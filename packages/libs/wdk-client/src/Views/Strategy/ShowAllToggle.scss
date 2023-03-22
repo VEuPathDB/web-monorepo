@@ -1,0 +1,29 @@
+.ShowAllToggle {
+  display: flex;
+  font-size: 1.2em;
+
+  &--Container {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin: auto;
+    z-index: 1;
+
+    > * {
+      margin: 0 .6em;
+    }
+  }
+
+  &--Option {
+    cursor: pointer;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+  }
+
+  &--Icon {
+    width: 3em;
+    display: block;
+    padding-bottom: 4px;
+  }
+}

@@ -1,0 +1,36 @@
+.wdk-Alert {
+  text-align: center;
+  position: fixed;
+
+  .ui-dialog-title {
+    width: 100%;
+    font-size: 1.1em;
+  }
+
+  .ui-dialog-titlebar {
+    background: none;
+    border: none;
+  }
+
+  .ui-dialog-titlebar-close {
+    display: none;
+  }
+
+  .ui-dialog-content {
+    font-size: 1.1em;
+  }
+
+  &Buttons {
+    padding-top: 1em;
+    margin-top: 2em;
+    border-top: 1px solid #ccc;
+    text-align: right;
+  }
+
+  &Buttons button {
+    min-width: 6em;
+    display: inline-block;
+    margin: 0 4px;
+  }
+
+}

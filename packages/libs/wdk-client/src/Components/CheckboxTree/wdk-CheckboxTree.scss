@@ -1,0 +1,121 @@
+/* Enclosing div for checkbox tree */
+.wdk-CheckboxTree {
+  padding: 0.2em;
+  flex-grow: 1;
+
+  &List {
+    margin: 0;
+    list-style: none;
+  }
+
+  & > &List {
+    margin-top: 0.5em;
+  }
+
+  &Item {
+    line-height: 15px;
+    padding-left: 1.2em;
+  }
+
+  & > &List > &Item {
+    padding-left: 0;
+  }
+
+  &Item__selectable {
+    padding-left: 1.5em;
+  }
+
+  &Item &NodeWrapper:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  &Item__leaf &NodeWrapper:hover,
+  &Item__selectable &NodeWrapper:hover {
+    cursor: default;
+    text-decoration: none;
+  }
+
+  &NodeWrapper {
+    display: flex;
+    align-items: center;
+    padding: 1px 0;
+  }
+
+  /* Provdes vertical lines between vertically aligned checkboxes */
+  /*
+  &Item__selectable&Item__expanded:after {
+    content:"";
+    position:absolute;
+    top: 1.2em;
+    left: 1.6em;
+    right: 0;
+    bottom: 0;
+    width: 5px;
+    background:url("../images/checkboxTree-vertical-line.png") repeat-y;
+  }
+
+  &Item__expanded:last-of-type:after {
+    background: none;
+  }
+  */
+
+  /* Modifies size and color of accordion (expand/collapse) icon */
+  &Toggle {
+    cursor: pointer;
+    color: #AAA;
+    font-size: 1.2em;
+    position: absolute;
+    width: 1.2em;
+    line-height: 1rem;
+  }
+
+  &Checkbox {
+    margin-right: .5ex;
+  }
+
+  &NodeContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin-left: 1em;
+  }
+
+  &Links {
+    text-align: left;
+    font-size: 0.9em;
+    margin: 0.5em 0;
+  }
+
+  &Links > div {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+  }
+
+  &Filters {
+    display: grid;
+    grid-template-areas: "searchbox additional-filters";
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  & .wdk-RealTimeSearchBox {
+    grid-area: searchbox;
+  }
+
+  & .wdk-RealTimeSearchBox__withHelp {
+    width: calc(100% - 2rem);
+  }
+
+  & .wdk-RealTimeSearchBox,
+  &Links {
+    margin-left: 1rem;
+  }
+
+  &AdditionalFilters {
+    grid-area: additional-filters;
+  }
+
+}

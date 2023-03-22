@@ -1,0 +1,8 @@
+@import '~wdk-client/Core/Style/palette';
+@import '~wdk-client/Core/Style/mixins';
+
+.wdk-DateSelector {
+  select {
+    margin: 0 2.5px;
+  }
+}

@@ -1,0 +1,110 @@
+.wdk-QuestionForm {
+  margin: auto;
+  max-width: 81.25rem; // same max-width as .wdk-InternalGeneDatasetForm
+
+  &QuestionHeader {
+    position: sticky;
+    top: 1.75rem;
+    z-index: 3; // tabs in search pages have z-index 2, so this needs to be at least 1 greater
+    background-color: white;
+    border-bottom: 0.0625rem solid black;
+    margin-bottom: 1em;
+
+    h1 {
+      font-size: 2.25em;
+      padding: 0.5em 0;
+    }
+  }
+
+  &ShowHideGroup {
+    border: 1px solid #eaeaea;
+    background-color: #f0f0f0;
+    margin-top: .5em;
+
+    &Toggle {
+      padding: .5rem 1.5rem;
+      cursor: pointer;
+      font-size: 1.2em;
+      font-weight: bold;
+      display: block;
+      text-align: left;
+      background: transparent;
+      border-color: transparent;
+      width: 100%;
+    }
+
+    &Content {
+      padding: 0 1.5rem;
+    }
+  }
+
+  &ParameterList {
+    padding-bottom: .5rem;
+  }
+
+  &ParameterHeading {
+    h2 {
+      font-size: 1.6em;
+      padding: 8px 0;
+    }
+
+    display: flex;
+    column-gap: 0.75em;
+    border-bottom: 1px solid #ccc;
+  }
+
+  &ParameterControl {
+    padding: 1.3rem;
+  }
+
+  &VisibleHelp {
+    font-style: oblique;
+    margin-left: 2em;
+    color: #525252;
+    font-weight: 400;
+  }
+
+  &SubmitSection {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    button[type=submit] {
+      font-size: 1.4em;
+      margin: 1em;
+    }
+
+    input {
+      width: 16em;
+      margin: 0 .2em;
+    }
+  }
+
+  &SubmittingIndicator {
+    background-image: url('./wizard-busy.gif');
+    height: 24px;
+    width: 160px;
+    background-size: cover;
+    margin: 1em;
+  }
+
+  &Description {
+    h2 {
+      font-size: 1.6em;
+    }
+  }
+
+  /* Parameter-specific rules */
+
+  .wdk-CheckboxList,
+  .wdk-TreeBoxParam {
+    width: 50%;
+  }
+
+  .wdk-CheckboxListLinks,
+  .wdk-CheckboxTreeLinks>div {
+    text-align: left;
+  }
+}

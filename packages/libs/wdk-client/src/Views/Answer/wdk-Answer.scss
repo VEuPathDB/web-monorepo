@@ -1,0 +1,171 @@
+.wdk-Answer {
+  position: relative;
+
+  .wdkAnswerLoading {
+    position: absolute;
+    left: 50%;
+  }
+
+  &-filter {
+    position: relative;
+    display: inline-block;
+    margin-right: 1em;
+  }
+
+  &-filterIcon {
+    color: gray;
+    position: relative;
+    left: -20.5em;
+  }
+
+  &-filterInput {
+    padding: .5em;
+    width: 30em;
+    margin-right: 1em;
+    border: 1px solid #888;
+    background: #fafaf9;
+  }
+
+  &-filterSelectFieldsIcon,
+  &-filterSelectFieldsIcon:active,
+  &-filterSelectFieldsIcon:focus,
+  &-filterSelectFieldsIcon:hover,
+  &-filterFieldSelectorCloseIcon,
+  &-filterFieldSelectorCloseIcon:active,
+  &-filterFieldSelectorCloseIcon:focus,
+  &-filterFieldSelectorCloseIcon:hover {
+    padding: .7em;
+    border: 2px solid transparent;
+    background: transparent;
+  }
+
+  &-filterSelectFieldsIcon:hover,
+  &-filterSelectFieldsIcon:focus,
+  &-filterSelectFieldsIcon:active,
+  &-filterFieldSelectorCloseIcon:active,
+  &-filterFieldSelectorCloseIcon:focus,
+  &-filterFieldSelectorCloseIcon:hover {
+    color: black;
+  }
+
+  &-filterSelectFieldsIcon {
+    color: gray;
+    position: absolute;
+    right: 3em;
+  }
+
+  &-filterFieldSelector {
+    position: absolute;
+    z-index: 2;
+    background: white;
+    width: 30em;
+    padding: 0.6em;
+    border: 1px solid #C3C3C3;
+    box-shadow: 0px 1px 4px #c3c3c3;
+  }
+
+  &-filterFieldSelectorCloseIcon {
+    color: gray;
+  }
+
+  &-filterFieldSelectorCloseIconWrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  &-filterInfoIcon {
+    color: blue;
+  }
+
+  &-filterButton {
+    border: none;
+    background: transparent;
+    color: #5F0F47;
+    vertical-align: middle;
+    padding: 6px;
+  }
+
+  &-count {
+    display: inline-block;
+    margin-left: 1em;
+  }
+
+  &Table-Wrapper {
+    position: relative;
+    overflow-x: auto;
+    padding: 0 5px 5px 0;
+  }
+
+  &Table {
+    margin-top: 1em;
+  }
+
+  &Table-header {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+  }
+
+  &Table-headerWrapper {
+    position: relative;
+  }
+
+  &Table-headerWrapper_sortable {
+    cursor: pointer;
+  }
+
+  &Table th {
+    white-space: nowrap;
+  }
+
+  &Table-AttributeSelectorOpenButton {
+    position: absolute;
+    right: 2em;
+    top: 0;
+    font-size:1.2em;
+  }
+  &Table-attributeValue {
+    line-height: 1.6;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  &Table-headerWrapper .ui-icon-close {
+    /*visibility: hidden;*/
+    cursor: pointer;
+    float: right;
+  }
+
+  &Table-headerWrapper .ui-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: .5em;
+  }
+
+  &Table-headerWrapper .fa {
+    margin-left: .5em;
+  }
+
+  &Table-unsorted {
+    color: rgb(170, 170, 170);
+    color: rgba(0, 0, 0, 0.26);
+  }
+
+  &Table-AttributeSelectorWrapper {
+    float: right;
+  }
+
+  &Table-AttributeSelector {
+    list-style: none;
+  }
+
+  &Table-AttributeSelectorButtonWrapper {
+    text-align: center;
+    padding: 4px;
+  }
+
+}

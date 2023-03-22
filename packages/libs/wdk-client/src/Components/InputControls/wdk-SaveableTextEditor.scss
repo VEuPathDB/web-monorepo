@@ -1,0 +1,82 @@
+@import '~wdk-client/Core/Style/palette';
+
+.wdk-SaveableTextEditor {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  fieldset {
+    border: none;
+    padding: 5px 2px;
+  }
+  pre {
+    font-family: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  .wdk-SaveableTextEditor-Field {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column nowrap;
+
+    input, textarea {
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      outline-offset: 2px;
+      outline: solid 1px black;
+    }
+  }
+
+  .wdk-SaveableTextEditor-ValueContainer {
+    &--Editing {
+      padding: 0 .5em;
+      visibility: hidden;
+      height: 0;
+    }
+  }
+
+  .wdk-SaveableTextEditor-Children {
+    margin: 0 0 0 -3px;
+    padding: 5px;
+  }
+
+  .wdk-SaveableTextEditor-Buttons {
+    flex: 0 0 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0 .25em;
+    }
+
+    i.wdk-Icon {
+      box-sizing: border-box;
+      line-height: 14px;
+      width: 18px;
+      height: 18px;
+      padding: 2px 0;
+      text-align: center;
+      border-radius: 4px;
+      margin: 2px auto;
+      cursor: pointer;
+      color: $white;
+      &.edit {
+        background-color: transparent;
+        color: $blue;
+        font-size: .8em;
+        line-height: inherit;
+        width: fit-content;
+        height: fit-content;
+      }
+      &.cancel { background-color: $red; font-size: 12px; }
+      &.save { background-color: $green; font-size: 12px; }
+    }
+  }
+}

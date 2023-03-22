@@ -1,0 +1,56 @@
+.wdk-DatasetParam {
+
+  @mixin disabled($modifer: 'disabled') {
+    &__#{$modifer} {
+      opacity: .3;
+      pointer-events: none;
+    }
+  }
+
+  &Section {
+    @include disabled;
+    display: flex;
+    margin: 1em 0;
+    max-width: 950px;
+  }
+
+  &SectionList {
+    list-style: none;
+  }
+
+  &IdList {
+    position: relative;
+    display: inline-block;
+
+    &__loading::before {
+      content: "\f1ce";
+      position: absolute;
+      top: .35em;
+      right: .35em;
+      font-family: FontAwesome;
+      -webkit-animation: fa-spin 2s infinite linear;
+      animation: fa-spin 2s infinite linear;
+    }
+  }
+
+  &URLField {
+    width: 40em;
+  }
+
+  &FileParserList {
+    list-style: none;
+    display: flex;
+    margin: .4rem 0;
+  }
+
+  &Label {
+    flex: 1;
+    margin-right: .1rem;
+  }
+
+  &Control {
+    @include disabled;
+    flex: 5;
+  }
+
+}

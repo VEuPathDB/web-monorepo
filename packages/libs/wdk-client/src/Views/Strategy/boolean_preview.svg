@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 600 400">
+  <circle cx="225" cy="200" r="150" stroke-width="0.085em" vector-effect="non-scaling-stroke" fill="#eaeaea" stroke="#999999" stroke-dasharray="2"/>
+  <circle cx="375" cy="200" r="150" stroke-width="0.085em" vector-effect="non-scaling-stroke" fill="#eaeaea" stroke="#999999" stroke-dasharray="2"/>
+  <path d="M 300 329.9038105676658 A 150 150 0 0 0 300 70.0961894323342" stroke-width="0.085em" vector-effect="non-scaling-stroke" fill="#eaeaea" stroke="#999999" stroke-dasharray="2"/>
+</svg>

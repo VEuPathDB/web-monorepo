@@ -1,0 +1,20 @@
+.MesaComponent {
+  .Trigger {
+    margin: 0 0.5em;
+    transition: all 0.4s;
+    cursor: pointer;
+    display: inline-block;
+    color: black;
+
+    &.inactive {
+      opacity: 0.2;
+    }
+    &.active {
+      opacity: 1;
+      color: $accentColor;
+    }
+    &:hover {
+      tramsform: scale(1.1);
+    }
+  }
+}

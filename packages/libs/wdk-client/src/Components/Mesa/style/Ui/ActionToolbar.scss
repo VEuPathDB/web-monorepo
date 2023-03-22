@@ -1,0 +1,27 @@
+.MesaComponent {
+  .ActionToolbar {
+    .ActionToolbar-Info {
+      flex: 1;
+      padding: 5px;
+      text-align: left;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      a {
+        cursor: pointer;
+      }
+    }
+
+    .ActionToolbar-ItemList {
+      display: flex;
+    }
+
+    .ActionToolbar-Item, .ActionToolbar-Children {
+      flex: 0 0 auto;
+      margin: 10px 2.5px;
+      &.ActionToolbar-Item--disabled {
+        @extend .disabled;
+      }
+    }
+  }
+}

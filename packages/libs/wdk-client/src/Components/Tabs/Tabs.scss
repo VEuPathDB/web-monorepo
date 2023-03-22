@@ -1,0 +1,40 @@
+.wdk-TabsContainer {
+
+  width: 100%;
+
+  .wdk-Tabs {
+
+    & {
+      display: flex;
+      width: 100%;
+      border-bottom: 1px solid #ccc;
+    }
+
+
+    .wdk-Tab {
+      padding: 1em;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-size: 1.2em;
+      font-weight: 450;
+      z-index: 2; // ensures active tab's white border is above other borders
+
+      &__active {
+        margin-bottom: -1px;
+        border: 1px solid #ccc;
+        border-bottom: 1px solid white;
+        border-radius: 4px 4px 0 0;
+      }
+
+    }
+
+  }
+
+  .wdk-TabContent {
+    padding: 1em;
+    border: 1px solid #ccc;
+    border-top: none;
+  }
+
+}

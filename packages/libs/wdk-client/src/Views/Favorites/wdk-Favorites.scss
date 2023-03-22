@@ -1,0 +1,163 @@
+@import '~wdk-client/Core/Style/palette.scss';
+@import '~wdk-client/Core/Style/mixins.scss';
+
+.wdk-Favorites {
+  width: 960px;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 10vh;
+
+  .wdk-RealTimeSearchBoxInfoIcon {
+    color: $blue;
+  }
+
+  .DataTable-Body {
+    max-height: 300px;
+  }
+
+  h1.page-title {
+    font-size: 2.4rem;
+    padding-bottom: 10px;
+  }
+
+  a { cursor: pointer; }
+
+  textarea, input[type] {
+    border-color: #ddd !important;
+  }
+
+  .wdk-BannerList {
+    padding: 0;
+  }
+
+  .EmptyState .fa {
+    font-size: 80px;
+    color: rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 15px auto;
+  }
+
+  .Favorites-CountList {
+    margin: 20px 0;
+    display: block;
+  }
+
+  .Favorites-GroupCount {
+    margin: 0;
+    padding: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    &.active {
+      border-color: $blue;
+      color: $blue;
+      font-weight: bold;
+    }
+    &.inactive {
+      opacity: 0.65;
+    }
+  }
+
+  .wdk-RealTimeSearchBoxInput {
+    min-width: 250px;
+  }
+
+  .MesaComponent {
+    margin-bottom: 50px;
+    .Toolbar {
+      .wdk-RealTimeSearchBox {
+        button {
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  .ActionToolbar {
+    margin-top: -20px;
+  }
+
+  .editor-cell {
+    width: 100%;
+    @include flex;
+
+    textarea, input[type="text"] {
+      margin: 5px 0;
+      padding: 5px;
+      border-radius: 2px;
+      flex-grow: 1;
+    }
+    textarea {
+      position: relative;
+      margin-top: 10px;
+      display: block;
+      clear: both;
+    }
+    input[type="submit"] {
+      margin: 3px 0;
+      font-size: 0.9em;
+    }
+    .action-icon {
+      @include transition;
+      font-size: 1.2em;
+      cursor: pointer;
+      flex: 0;
+      margin: 10px 5px 10px 0;
+
+      &:first-of-type {
+        margin-left: 5px;
+      }
+
+      &.save-icon {
+        color: $green;
+        &:hover { color: darken($green, 10%); }
+      }
+      &.cancel-icon {
+        color: $red;
+        &:hover { color: darken($red, 10%); }
+      }
+    }
+  }
+
+  h1 {
+    font-weight: 100;
+  }
+
+  a.edit-link {
+    color: $blue;
+    @include transition;
+
+    .fa {
+      margin-left: 5px;
+    }
+
+    &:hover {
+      text-decoration: none;
+      color: lighten($blue, 10%);
+    }
+  }
+
+  .faded {
+    opacity: 0.33;
+  }
+
+  .search-area {
+    margin: 10px 0;
+    .favorites-search-field {
+      width: 400px;
+    }
+  }
+
+  .empty-message {
+    display: block;
+    text-align: center;
+    margin: 30px auto;
+    max-width: 650px;
+    padding: 20px;
+    line-height: 1.7em;
+    color: #777;
+  }
+}

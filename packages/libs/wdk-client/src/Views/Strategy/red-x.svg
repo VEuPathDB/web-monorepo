@@ -1,0 +1,4 @@
+<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'>
+  <path d='M 0 5 L 100 95 ' stroke-width='5' stroke='#b40606' />
+  <path d='M 0 95 L 100 5' stroke-width='5' stroke='#b40606' />
+</svg>

@@ -1,0 +1,92 @@
+.StrategyPanel {
+  /* prevent margin collapse */
+  overflow: auto;
+}
+
+.StrategyPanel--Heading {
+  font-weight: normal;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 1.4em;
+  padding: 0;
+  height: 2em;
+  margin-top: .5em;
+}
+
+.StrategyPanel--CloseButton {
+  padding: 1em;
+  position: relative;
+}
+
+.StrategyPanel--CloseButton > button {
+  text-decoration: none !important;
+  font-size: 1.5em;
+}
+
+.StrategyPanel--CloseButton:before {
+  border-left: 1px solid #666;
+  content: ' ';
+  font-size: 2em;
+  height: .85em;
+  position: absolute;
+  left: 0;
+}
+
+.StrategyPanel--StepBoxesContainer {
+  margin-right: auto;
+  overflow-x: auto;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.StrategyPanel--StrategyCount {
+  margin-right: 2em;
+}
+
+.StrategyPanel--StrategyName {
+  font-weight: normal;
+}
+
+.StrategyPanel--Panel {
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  justify-content: space-between;
+  background-color: #fafafa;
+  border: .17em solid #666;
+  border-radius: 1em;
+  white-space: nowrap;
+  min-height: 11.5em;
+  position: relative;
+}
+
+.StrategyPanel--Loading {
+  position: absolute;
+  left: 0;
+}
+
+/* Nested strategy */
+.StrategyPanel--Panel .StrategyPanel--Panel {
+  margin: 0em auto 2em 4em;
+  overflow: auto;
+}
+
+.StrategyPanel--NestedTitle {
+  margin: 2em 2em .5em 4em;
+}
+
+.StrategyPanel .StrategyControls--Controls {
+  padding: 1em;
+}
+
+.StrategyPanel--ReviseForm {
+  min-width: 1000px;
+}
+
+.StrategyPanel--ReviseFormDialogTitle {
+  margin: auto;
+}
+
+.StrategyPanel--ReviseForm .wdk-QuestionFormQuestionHeader {
+  position: inherit;
+}

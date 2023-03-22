@@ -1,0 +1,28 @@
+.LoadingOverlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  background: #00000036;
+  z-index: 1;
+
+  &-Spinner {
+    font-size: 1.5em;
+    border-radius: .5em;
+    position: absolute;
+    top: 6em;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    height: 5.5em;
+    background: #f3f3f3e0;
+    box-shadow: 0 0 4px 1px #00000036;
+  }
+
+  .wdk-Loading {
+    padding: 0 2em 1em 2em;
+  }
+}

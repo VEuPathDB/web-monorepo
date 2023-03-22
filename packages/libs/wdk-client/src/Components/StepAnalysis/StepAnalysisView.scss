@@ -1,0 +1,157 @@
+.analysis-menu-tab-pane {
+  ul {
+    padding: 0;
+    overflow: auto;
+  }
+
+  h3 {
+    margin: 4px 0;
+  }
+
+  .analysis-selector-container {
+    /* max-width: 600px; */
+    max-width: 100%;
+    display: flex;
+    position: relative;
+    margin: 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    .analysis-selector {
+      /* flex: 0 1 calc(50% - 24px); */
+      flex: 1 0 auto;
+      border-radius: 4px;
+      border: 1px solid #EEE;
+      box-shadow: 0px 0px 2px #AFAFAF;
+      margin: 12px;
+      display: flex;
+      flex-direction: column;
+      min-height: 110px;
+      position: relative;
+
+      .analysis-selector-image {
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-image: url('./images/analysis-background.png');
+        background-position: center center;
+        flex: 1 0 140px;
+      }
+
+      .analysis-selector-content {
+        flex: 0 1 auto;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .analysis-selector-title {
+        font-weight: bold;
+        font-size: 1.1em;
+      }
+
+      .analysis-selector-description {
+        display: none;
+      }
+
+      .analysis-selection-banner {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+      }
+
+      .analysis-selection-banner.new-analysis {
+        background-image: url(./images/new-feature.png);
+        width: 30px;
+        height: 15px;
+      }
+    }
+
+    .analysis-selector:hover {
+      cursor: pointer;
+      border-color: #BBB;
+    }
+  }
+}
+
+.step-analysis-pane {
+
+  h3 {
+    padding: 8px 0;
+  }
+  
+  .wdk-CollapsibleSectionContent {
+    padding: 1em 0;
+    margin: 1em 0 0.5em 0;
+  }
+
+  #step-analysis-title {
+    padding-top: 0;
+  }
+
+  .step-analysis-subpane {
+    margin-top: 1em;
+  }
+
+  .external-result-container {
+    display: flex;
+    justify-content: center;
+
+    iframe {
+      border: 0;
+      width: 100%;
+      height: calc(100vh - 100px);
+    }
+  }
+
+  .toggle-description {
+    cursor: pointer;
+    color: blue;
+    font-style: italic;
+    margin-left: 4px;
+  }
+  
+  .step-analysis-parameters {
+    margin-left: 1em;
+  }
+  
+  .step-analysis-parametersHeader {
+    font-weight: bold;
+    font-size: 120%;
+  }
+  
+  .step-analysis-parametersContent {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 10, 0.02);
+    padding-top: 6px;
+  }
+
+  .step-analysis-description {
+    margin-bottom: 1em;
+  }
+  
+  .step-analysis-errors-pane {
+    color: red;
+    font-weight: bold;
+    
+    li {
+      line-height: 1.4em;
+      padding-left: 15px;
+    }
+  }
+}
+
+.wdk-LoadingSavedAnalysis {
+  text-align: center;
+  margin-top: 2em;
+  font-size: 2em;
+}
+
+.analysis-pending-pane {
+  margin: 10px auto;
+  text-align: center;
+
+  h3 {
+    text-align: center;
+  }
+}

@@ -1,0 +1,21 @@
+.MesaComponent {
+  .TableToolbar {
+    h1,h2,h3,h4,h5,h6 {
+      margin: 0;
+      padding-right: 30px;
+    }
+  }
+
+  .TableToolbar-Title {
+    margin: 30px 0 15px;
+  }
+
+  .TableToolbar-Info {
+    font-size: 80%;
+    padding: 0px 20px 0px 10px
+  }
+
+  .TableToolbar-Children {
+    padding: 10px;
+  }
+}

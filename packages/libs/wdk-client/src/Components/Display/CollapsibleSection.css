@@ -1,0 +1,22 @@
+.wdk-CollapsibleSectionHeader {
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+
+.wdk-CollapsibleSectionHeader:before {
+  content: '\f0d7';
+  font-family: FontAwesome;
+  font-size: 1.2em;
+  margin-right: .5ex;
+  line-height: 1.2em;
+}
+
+.wdk-CollapsibleSectionHeader__collapsed:before {
+  content: '\f0da';
+}
+
+.wdk-CollapsibleSectionContent__collapsed {
+  display: none;
+}

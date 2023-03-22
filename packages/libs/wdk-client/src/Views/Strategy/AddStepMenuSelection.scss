@@ -1,0 +1,49 @@
+.AddStepMenuSelection {
+  min-width: 25em;
+  position: relative;
+  background: white;
+  border: 0.0625rem solid #afafaf;
+  border-radius: 1em;
+  box-shadow: 0.1em 0.1em 0.35em #afafaf;
+
+  padding: 0.85em;
+
+  &:hover, &:focus {
+    background: white;
+  }
+
+  &:hover {
+    outline: none;
+  }
+
+  &__selected {
+    border: 0.35em solid #4f81bd;
+    padding: 0.5em 0.5em 0.75em 0.5em;
+    box-shadow: inset 0.2em 0.2em 0.35em #6a6a6a45;
+
+    &:hover, &:focus {
+      border: 0.35em solid #4f81bd;
+      outline: none;
+    }
+
+    &::after {
+      width: 0;
+      height: 0;
+      content: '';
+      border-top: 2.5em solid transparent;
+      border-bottom: 2.5em solid transparent;
+      border-left: 2em solid #4f81bd;
+      position: absolute;
+      bottom: calc(50% - 2.5em);
+      right: -2.35em;
+      filter: drop-shadow(0.2em 0.2em 0.35em #6a6a6a45);
+    }
+  }
+
+  h3 {
+    font-size: 1.4em;
+    font-weight: 400;
+    margin: 0.15em 0.5em 0.25em 0.5em;
+    padding: 0;
+  }
+}

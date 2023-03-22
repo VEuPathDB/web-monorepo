@@ -1,0 +1,54 @@
+@import '~wdk-client/Core/Style/palette';
+
+.wdk-DateRangeSelector {
+  &--Label, &--Control__reset {
+    font-size: 0.9em;
+  }
+
+  &__inline {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  &__inline &--Label__from {
+    display: none;
+  }
+  &__inline &--Label__to {
+    margin-right: .5em;
+  }
+  &__inline &--Label__to, &__inline &--Control__reset {
+    margin-left: .5em;
+  }
+
+  &__grid {
+    display: inline-grid;
+    row-gap: .5em;
+    column-gap: .5em;
+    grid:
+      "label-from control-from"
+      "label-to control-to"
+      ". control-reset";
+  }
+
+  &__grid &--Label__from {
+    grid-area: label-from;
+    justify-self: end;
+    text-transform: capitalize;
+  }
+  &__grid &--Control__from {
+    grid-area: control-from;
+  }
+  &__grid &--Label__to {
+    grid-area: label-to;
+    justify-self: end;
+    text-transform: capitalize;
+  }
+  &__grid &--Control__to {
+    grid-area: control-to;
+  }
+  &__grid &--Control__reset {
+    grid-area: control-reset;
+  }
+
+}

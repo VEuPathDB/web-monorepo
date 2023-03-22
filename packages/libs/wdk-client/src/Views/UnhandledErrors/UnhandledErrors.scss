@@ -1,0 +1,84 @@
+.UnhandledErrors {
+  position: relative;
+  width: 100vw;
+  max-height: 80vh;
+  background: white;
+  padding: 2em;
+  border-radius: 1em;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  @media screen and (min-width: 768px) {
+    min-width: 60em;
+    max-width: 80vw;
+    width: 44vw;
+  }
+
+  h1 {
+    padding: 0;
+    font-size: 2.4em;
+    // space for button
+    margin-right: 1em;
+  }
+
+  summary {
+    font-size: 1.2em;
+  }
+
+  summary, details {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  h2, h3 {
+    font-size: 1.2em;
+    padding: .4em 0;
+  }
+
+  > button {
+    position: absolute;
+    right: 1em;
+    border: none;
+    border-radius: 100%;
+    background: none;
+    font-size: 2em;
+    height: 2em;
+    width: 2em;
+  }
+
+  &--Details {
+    overflow: auto;
+    max-height: calc(100vh - 35em);
+    font-size: .9em;
+    color: #000000e6;
+
+    h3 {
+      margin-top: 1em;
+    }
+  }
+
+  ol {
+    padding: 0;
+    padding-left: 1em;
+  }
+
+  &--Stack {
+    margin: 1em 0;
+    padding: 1em;
+    background: #ff00001a;
+    border-radius: .5em;
+    color: #e22222;
+  }
+
+  &--Message {
+    margin: 0;
+    padding: 1em;
+    background: #8888881a;
+    border-radius: .5em;
+    color: #333;
+  }
+}
