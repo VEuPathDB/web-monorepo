@@ -12,13 +12,14 @@
     "index.js"
   ],
   "peerDependencies": {
-    "@veupathdb/base-webpack-config": "^0.1.0",
     "bubleify": "^2.0.0",
     "ify-loader": "^1.1.0",
     "source-map-loader": "^1.1.2"
   },
   "devDependencies": {
-    "@veupathdb/base-webpack-config": "*",
     "source-map-loader": "^1.1.2"
+  },
+  "dependencies": {
+    "@veupathdb/base-webpack-config": "workspace:^"
   }
 }
