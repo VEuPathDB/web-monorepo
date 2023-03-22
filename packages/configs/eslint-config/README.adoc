@@ -1,0 +1,23 @@
+== @veupathdb/eslint-config
+
+This package includes the https://eslint.org/[eslint] configuration used by VEuPathDB websites.
+
+=== Usage
+
+First, install the package and dependencies with npm:
+[source, sh]
+----
+npm install --save-dev eslint-config-react-app @veupathdb/eslint-config
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D eslint-config-react-app @veupathdb/eslint-config
+----
+
+Then, include the following in your eslint configuration file:
+[source, json]
+----
+    "extends": ["@veupathdb"]
+----

@@ -1,0 +1,25 @@
+{
+  "name": "@veupathdb/site-webpack-config",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev.git",
+    "directory": "packages/site-webpack-config"
+  },
+  "files": [
+    "index.js"
+  ],
+  "peerDependencies": {
+    "bubleify": "^2.0.0",
+    "ify-loader": "^1.1.0",
+    "source-map-loader": "^1.1.2"
+  },
+  "devDependencies": {
+    "source-map-loader": "^1.1.2"
+  },
+  "dependencies": {
+    "@veupathdb/base-webpack-config": "workspace:^"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@veupathdb/site-babel-config",
+  "version": "0.1.0",
+  "main": ".babelrc",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev",
+    "directory": "packages/site-babel-config"
+  },
+  "files": [
+    ".babelrc"
+  ],
+  "peerDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.14.5",
+    "core-js": "^3.21.1"
+  }
+}

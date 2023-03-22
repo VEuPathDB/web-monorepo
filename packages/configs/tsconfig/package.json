@@ -1,0 +1,17 @@
+{
+  "name": "@veupathdb/tsconfig",
+  "version": "2.0.0",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev.git",
+    "directory": "packages/tsconfig"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "bugs": {
+    "url": "https://github.com/VEuPathDB/web-dev/issues"
+  }
+}

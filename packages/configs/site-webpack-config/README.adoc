@@ -1,0 +1,17 @@
+== @veupathdb/site-webpack-config
+
+Webpack configuration used for bundling VEuPathDB websites.
+
+=== Installation
+
+Install the package with npm:
+[source, sh]
+----
+npm install --save-dev @veupathdb/site-webpack-config
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D @veupathdb/site-webpack-config
+----

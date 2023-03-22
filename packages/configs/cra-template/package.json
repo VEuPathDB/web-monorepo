@@ -1,0 +1,27 @@
+{
+  "name": "@veupathdb/cra-template",
+  "version": "2.0.0",
+  "keywords": [
+    "react",
+    "create-react-app",
+    "template",
+    "typescript",
+    "veupathdb"
+  ],
+  "description": "The base template for developing VEuPathDB web client features.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VEuPathDB/web-dev.git"
+  },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=14"
+  },
+  "bugs": {
+    "url": "https://github.com/VEuPathDB/web-dev/issues"
+  },
+  "files": [
+    "template",
+    "template.json"
+  ]
+}

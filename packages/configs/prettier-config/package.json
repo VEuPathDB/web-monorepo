@@ -1,0 +1,12 @@
+{
+  "name": "@veupathdb/prettier-config",
+  "version": "1.0.0",
+  "description": "Prettier configuration for VEuPathDB",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev",
+    "directory": "packages/prettier-config"
+  },
+  "main": "index.js",
+  "license": "Apache-2.0"
+}

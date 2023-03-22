@@ -1,0 +1,31 @@
+== @veupathdb/browserslist-config
+
+This package includes the https://github.com/browserslist/browserslist[browserslist] config used by VEuPathDB websites.
+
+=== Usage
+
+First, install the package with `npm`:
+[source, sh]
+----
+npm install --save-dev @veupathdb/browserslist-config
+----
+
+or, if you are using `yarn`:
+[source, sh]
+----
+yarn add -D @veupathdb/browserslist-config
+----
+
+Then, add the following to `package.json`
+[source, json]
+----
+    "browserslist": [
+      "extends @veupathdb/browserslist-config"
+    ]
+----
+
+or in `.browserslistrc`
+[source, js]
+----
+    extends @veupathdb/browserslist-config
+----

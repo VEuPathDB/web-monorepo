@@ -1,0 +1,23 @@
+== @veupathdb/prettier-config
+
+This package includes the https://prettier.io/[prettier] configuration used by VEuPathDB websites.
+
+=== Usage
+
+First, install the package and dependencies with npm:
+[source, sh]
+----
+npm install --save-dev @veupathdb/prettier-config
+----
+
+or with yarn:
+[source, sh]
+----
+yarn add -D @veupathdb/prettier-config
+----
+
+Then, add the following to `package.json`:
+[source, json]
+----
+    "prettier": "@veupathdb/prettier-config"
+----

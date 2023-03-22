@@ -1,0 +1,17 @@
+{
+  "name": "@veupathdb/site-tsconfig",
+  "version": "0.1.0",
+  "main": "tsconfig.json",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev.git",
+    "directory": "packages/site-tsconfig"
+  },
+  "files": [
+    "tsconfig.json"
+  ],
+  "license": "Apache-2.0",
+  "peerDependencies": {
+    "typescript": "3.7"
+  }
+}

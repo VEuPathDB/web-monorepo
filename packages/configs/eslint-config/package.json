@@ -1,0 +1,26 @@
+{
+  "name": "@veupathdb/eslint-config",
+  "version": "2.0.0",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev.git",
+    "directory": "packages/eslint-config"
+  },
+  "files": [
+    "index.js"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "bugs": {
+    "url": "https://github.com/VEuPathDB/web-dev/issues"
+  },
+  "peerDependencies": {
+    "eslint-config-react-app": "^7.0.0"
+  },
+  "dependencies": {
+    "eslint-config-react-app": "^7.0.0"
+  }
+}
