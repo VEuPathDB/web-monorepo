@@ -1,0 +1,397 @@
+@import '../../dist/ebrc-icons.css';
+@import './AllSites.scss';
+@import './question-wizard.css';
+
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+}
+h1 {
+  text-align: left;
+  font-size: 2.8em;
+  font-weight: 400;
+  color: #222;
+}
+h2 {
+  font-size: 1.8em;
+  font-weight: 500;
+}
+h3 {
+  font-size: 1.5em;
+  font-weight: 500;
+}
+h4 {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+
+.TableAsTree .wdk-CheckboxTreeItem__leaf .wdk-CheckboxTreeNodeContent span {
+  background: yellow;
+  font-weight: bold;
+}
+
+.form-group {
+  margin: .6em 0;
+}
+
+.form-radio {
+  margin: .4em;
+}
+
+#wdk-container {
+  position: relative;
+  text-rendering: optimizeLegibility;
+}
+
+.wdk-PageContent {
+  background-color: #ffffff;
+}
+
+.wdk-NotFound p {
+  font-size: 1.2em;
+}
+
+.wdk-RecordOverview:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* FIXME: Remove when rest of page is responsive */
+.wdk-RecordContainer {
+  max-width: calc(100vw - 4em);
+}
+
+.wdk-RecordAttributeValue,
+.wdk-RecordTableContainerContent,
+.wdk-RecordAttributeSectionItemContent {
+  font-size: 1.2em;
+}
+
+.wdk-RecordSidebarToggle,
+.wdk-RecordNavigationSectionHeader {
+  color: #777;
+}
+
+.wdk-UserDatasetOverview {
+  font-size: 1.4em;
+}
+
+.wdk-UserDatasetOverviewItemText {
+  font-weight: 300;
+}
+
+.wdk-UserDatasetSection {
+  font-size: 1.2em;
+  font-weight: 400;
+}
+
+.wdk-UserDatasetSectionHeading {
+  font-size: 1.4em;
+}
+
+.wdk-DataTableCellExpand {
+  color: #777;
+}
+
+td.wdk-DataTableCell__thumbnail {
+  vertical-align: middle;
+  height: 50px;
+}
+
+.wdk-RecordSection__collapsed {
+  display: none;
+}
+
+/* Offset for menu */
+.wdk-RecordAttributeSectionItem:before,
+.wdk-RecordTableContainer:before,
+.wdk-RecordSubsection:before,
+.wdk-RecordSection:before,
+.ExternalContentController a[name]::before {
+  content: '';
+  display: block;
+  height: 68px;
+  margin-top: -68px;
+}
+
+.wdk-RecordSectionHeader,
+.wdk-RecordSubsectionHeader {
+  color: black;
+}
+
+.eupathdb-RecordOverviewItem {
+  width: 100%;
+}
+
+.eupathdb-RecordOverviewItem, .eupathdb-RecordOverviewLink {
+  margin: .2em 0;
+  font-size: 1.4em;
+  font-weight: 300;
+  max-width: 95%;
+}
+
+.eupathdb-RecordOverviewItem[data-label]:before {
+  content: attr(data-label) ": ";
+  font-weight: bold;
+}
+
+.eupathdb-RecordOverviewItem:empty {
+  display: none;
+}
+
+.eupathdb-ReporterFormSubmit {
+  text-align: center;
+  margin: 1em 0;
+}
+
+@media all and (min-width: 800px) {
+  .eupathdb-ReporterFormWrapper {
+    width: fit-content;
+  }
+
+  .eupathdb-ReporterForm {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 2em;
+    margin: 0;
+  }
+
+  .eupathdb-ReporterFormGroup { width: 400px; }
+
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 2; }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 3; }
+}
+
+/* break point based on combined width of all ReporterFormGroup elemens */
+@media all and (min-width: 1024px) {
+  .eupathdb-ReporterForm { margin: 0 2em; column-gap: 4em; }
+  .eupathdb-ReporterFormGroup__otherOptions { width: auto; }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 2; }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 3; }
+}
+
+.eupathdb-ReporterFormGroup .wdk-CheckboxTree-list li label {
+  white-space: initial;
+}
+
+.eupathdb-ExpressionGraphsDataTableContainerHeader {
+  font-weight: 500;
+  margin: 0;
+}
+
+.eupathdb-ExpressionGraphsDataTableContainer td:nth-child(1),
+.eupathdb-ExpressionGraphsDataTableContainer td:nth-child(2) {
+  white-space: normal;
+}
+
+.eupathdb-DatasetGraphContainer {
+  overflow: auto;
+  position: relative;
+  padding: 0 1rem;
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.eupathdb-DatasetGraphContainer2 > h4 {
+  position: absolute;
+  right: 0;
+  margin-right: 1em;
+}
+
+.eupathdb-DatasetGraph {
+  min-width: 500px;
+  flex-grow: 1;
+}
+
+.eupathdb-DatasetGraphDetails {
+  width: 50%;
+  flex-grow: 1;
+}
+
+.eupathdb-DatasetGraphDescriptionHeader {
+  margin: 0;
+}
+
+/** Dataset page */
+.eupathdb-DatasetRecord {
+  padding: 0 2em;
+}
+
+.eupathdb-DatasetRecord h2,
+.eupathdb-DatasetRecord h3 {
+  margin: 22px 0 11px;
+  color: #333333;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.eupathdb-DatasetRecord-summary {
+  font-size: 1.2em;
+}
+.eupathdb-DatasetRecord ul {
+  line-height: 1.6;
+  list-style: none;
+  padding-left: 1em;
+  margin: 0;
+}
+.eupathdb-DatasetRecord-title {
+  color: black;
+}
+.eupathdb-DatasetRecord-headerTable tr th {
+  white-space: nowrap;
+  padding-right: 1em;
+  vertical-align: top;
+  text-align: right;
+  border: none;
+}
+
+.eupathdb-DatasetRecord-GraphImg {
+  width: 450px;
+}
+
+/*
+@media (min-width: 1175px) {
+  .eupathdb-DatasetRecord {
+    padding: 0 20px;
+    max-width: 1350px;
+    margin: auto;
+  }
+  .eupathdb-DatasetRecord-Main {
+    float: left;
+    max-width: 700px;
+  }
+  .eupathdb-DatasetRecord-Sidebar {
+    max-width: 375px;
+    float: right;
+    font-size: 95%;
+    color: #333333;
+  }
+  .eupathdb-DatasetRecord-Sidebar ul {
+    padding-left: 0;
+  }
+  .eupathdb-DatasetRecord-Sidebar table {
+    width: 100%;
+  }
+}
+*/
+
+@media (min-width: 1150px) {
+  .eupathdb-DatasetRecord-GraphMeta {
+    width: 58%;
+    float: right;
+  }
+  .eupathdb-DatasetRecord-GraphData {
+    width: 450px;
+  }
+}
+@media (min-width: 1300px) {
+  .eupathdb-DatasetRecord-GraphMeta {
+    width: 65%;
+  }
+}
+.eupathdb-Beta-Announcement {
+  float: right;
+  font-style: italic;
+  font-size: 1.2em;
+  padding: 4px 0;
+}
+
+div.RecordAttribution {
+  padding-top: 60px;
+}
+
+div.eupathdb-content {
+  font-size: 16px;
+  margin-bottom: 20px;
+  line-height: 150%;
+}
+
+
+
+/* ======================= */
+/* Galaxy Orientation page */
+/* ======================= */
+
+#eupathdb-GalaxyTerms p, #eupathdb-GalaxyTerms div {
+  font-size: 1.2em;
+}
+#eupathdb-GalaxyTerms h1 {
+  font-weight: 200;
+}
+
+#eupathdb-GalaxyTerms-initial {
+ text-align: center;
+ margin: 2em 0;
+}
+#eupathdb-GalaxyTerms img {
+  width: 95%;
+  border: solid #365EA2 1px;
+}
+#eupathdb-GalaxyTerms-submit {
+  margin-top: 2em;
+  text-align: center;
+}
+.eupath-bold {
+  font-weight: bold;
+}
+.eupath-bigItalic {
+  font-style: italic;
+  font-size: 1.2em;
+  margin-top: 0;
+}
+
+.eupathdb-GalaxyTermsLead {
+  font-size: 1.2em;
+}
+
+/** 2-column grid */
+.eupathdb-GalaxyWelcomeGrid {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 2em 0;
+}
+.eupathdb-GalaxyWelcomeGrid > div {
+  width: 50%;
+  font-size: 1.1em;
+}
+.eupathdb-GalaxyWelcomeGrid > div:first-of-type {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+.eupathdb-GalaxyWelcomeAnalysisList {
+  margin: 0;
+}
+.eupathdb-GalaxyTermsContinueLink {
+  text-align: center;
+  font-size: 1.1em;
+  margin: 1em 0;
+}
+
+.column-left{ float: left; width: 33%; }
+.column-right{ float: right; width: 33%; }
+.column-center{ display: inline-block; width: 33%; }
+
+.eupathdb-GalaxySignUpScreens {
+  display: flex;
+  justify-content: space-between;
+}
+.eupathdb-GalaxySignUpScreens > div {
+  width: 30%;
+}
+#eupathdb-GalaxyTerms .eupathdb-GalaxySignUpScreenHeader,
+#eupathdb-GalaxyTerms .eupathdb-GalaxySignUpScreenCaption {
+  font-size: 85%;
+  margin: .5em 0;
+}
+.eupathdb-GalaxySignUpScreenCaption {
+  font-style: italic;
+}
+.eupathdb-GalaxySignUpScreen {
+  width: 320px;
+}
+.smaller-font {
+  font-size: 90%;
+}

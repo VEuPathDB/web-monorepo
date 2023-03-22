@@ -1,0 +1,491 @@
+.SiteSearch {
+  position: relative;
+  z-index: 0;
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+
+  .LoadingOverlay {
+    z-index: 2;
+    background-color: unset;
+
+    &-Spinner {
+      top: 1em;
+    }
+  }
+
+  &--Loading {
+    position: absolute;
+    left: 50%;
+
+    > * {
+      padding: .5em 1em;
+      border-radius: .5em;
+      background: #BBDEFB;
+      box-shadow: 0px 0px 2px #00000036;
+      margin: 1em;
+      font-size: 1.1em;
+      position: relative;
+      left: -50%;
+      font-weight: bold;
+    }
+  }
+
+  &--TitleLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    > *:first-child {
+      margin-right: 1em;
+    }
+  }
+
+  h1 {
+    grid-area: title;
+    padding: 0;
+    padding-top: .5em;
+  }
+
+  &--Results {
+    display: grid;
+    grid:
+      "...... pagination-top" auto
+      "counts result" 1fr
+      "counts pagination-bottom" auto
+      / auto 1fr;
+    grid-gap: 0em 2em;
+    flex-grow: 1;
+  }
+
+  &--Pagination {
+    &:first-child {
+      grid-area: pagination-top;
+    }
+    &:last-child {
+      grid-area: pagination-bottom;
+    }
+    &.MesaComponent {
+      display: flex;
+      min-height: 4.25em;
+      align-items: center;
+      flex-wrap: wrap;
+      
+      .PaginationMenu {
+        margin: auto;
+
+        .Pagination-Spacer {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &--SearchContainer {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+  }
+  
+  &--SearchBox {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 1.5em;
+    overflow: hidden;
+
+    &:focus-within {
+      box-shadow: 0 0 3pt 2pt #0067f4;
+    }
+
+    input {
+      border: none !important;
+      border-radius: 0;
+      padding: .4em .9em !important;
+      width: 100%;
+      &:focus {
+        outline: none;
+      }
+    }
+
+    button {
+      border: none;
+      border-radius: 0;
+      background: #6c757d;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-left: .9em;
+      padding-right: 1em;
+
+      &:not(:last-of-type) {
+        border-right: 1px solid #00000042;
+      }
+
+      &:focus, &:hover {
+        background: #2b2d2f;
+        outline: none;
+      }
+
+      i {
+        font-size: .7em;
+      }
+
+      &.back i {
+        font-size: 1em;
+      }
+    }
+
+    .reset {
+      font-size: .85em;
+      white-space: nowrap;
+      background: #fafaf9;
+      color: #069;
+      &:hover {
+        color: white;
+      }
+    }
+  }
+
+
+  &--CountsContainer {
+    grid-area: counts;
+    justify-self: end;
+  }
+
+  &--ResultTypeWidgetContainer {
+    grid-area: widgets;
+    justify-self: start;
+  }
+
+  .wdk-CheckboxList {
+    &Item {
+      margin-left: 1em;
+      :hover {
+        font-weight: bold;
+      }
+    }
+    &Links {
+      text-align: left;
+      margin-left: 0;
+    }
+  }
+
+  &--CountsContainer, &--ResultTypeWidgetContainer {
+    padding: 1em;
+    width: 30em;
+    max-width: 30em;
+    // XXX Override in site
+    border: 1px solid gray;
+    background: whitesmoke;
+
+    > * {
+      background-color: inherit;
+    }
+
+    h2 {
+      padding: 0;
+      margin-bottom: .5em;
+    }
+
+    h3 {
+      padding: .2em 0;
+    }
+
+    &:empty {
+      border: none;
+      background: none;
+    }
+  }
+
+  &--ResultContainer {
+    grid-area: result;
+    position: relative;
+  }
+
+  &--CountsTitle {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &--OnlyMatchesToggle {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: .9em;
+    input {
+      margin-right: 1ex;
+    }
+  }
+
+  &--ResultInfo {
+    font-size: 1.1em;
+  }
+
+  &--Result {
+    border-top: 1px solid #bdbdbd;
+    display: grid;
+    row-gap: .5em;
+    padding: .5em 0;
+
+    color: #4e4e4e;
+
+    strong {
+      font-weight: 400;
+      color: black;
+      margin-right: .5ex;
+    }
+
+    &List &:nth-child(2n + 1) {
+      background-color: #fafafa;
+    }
+
+    &__exact {
+      font-size: 1.3em;
+      border: 1px solid #969696;
+      border-radius: 1em;
+      background: white;
+      box-shadow: 0px 2px 3px #00000021;
+      margin: 0 3em;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+    &__exact &Link {
+      font-weight: bold;
+    }
+  }
+
+  &--SummaryField {
+    line-break: anywhere;
+    strong {
+      font-weight: 500;
+    }
+  }
+
+  &--ResultSummary .wdk-CollapsibleSection {
+    padding: .5em 0;
+    margin-bottom: -1em;
+  }
+
+  &--ResultSubTitle {
+    display: inline;
+    margin-left: 1em;
+  }
+
+  &--FieldsHit {
+    padding: .5em 0;
+    ul {
+      margin-left: 1em;
+      display: table;
+      > li {
+        display: table-row;
+        > * {
+          padding: .15em;
+          display: table-cell;
+          &:first-child {
+            white-space: nowrap;
+            text-align: right;
+            padding-right: 1ch;
+            color: black;
+            font-style: italic;
+            font-weight: normal;
+          }
+        }
+      }
+    }
+  }
+
+  &--FieldHighlight {
+    em {
+      color: black;
+      font-weight: 500;
+      font-style: normal;
+    }
+  }
+
+  &--Counts {
+    .wdk-CheckboxTree {
+      padding: 0;
+      &Links {
+        margin-left: 0;
+        > div {
+          text-align: left;
+        }
+      }
+      .wdk-RealTimeSearchBoxInput {
+        background-color: #eaeaea;
+      }
+    }
+  }
+
+  &--SearchCounts {
+    width: 100%;
+
+    th {
+      border: none;
+      padding: .5em 0 0 .25em;
+      font-weight: normal;
+      font-size: 1.1em;
+      color: #4f4f4f;
+    }
+
+    td {
+      padding: 0;
+    }
+
+    tr td:first-child {
+      padding-right: 2em;
+      padding-left: 1em;
+    }
+
+    tr td:last-child,
+    tr th:last-child {
+      text-align: right;
+    }
+  }
+
+  &--FilterTitleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: inherit;
+    position: relative;
+    z-index: 1;
+
+    &__organism, &__widget {
+      margin-top: 2em;
+    }
+  }
+
+  &--FilterButtons {
+    font-weight: bold;
+    transition: all 250ms ease-in-out;
+    white-space: nowrap;
+
+    &__visible {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    &__hidden {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+
+  &--FilterTitleContainer &--FilterButtons {
+    position: absolute;
+    right: 0;
+    padding-left: 1em;
+    background: inherit;
+  }
+
+  &--ResultTypeWidget &--FilterButtons {
+    display: flex;
+    justify-content: center;
+    button {
+      white-space: nowrap;
+    }
+  }
+
+  &--ResultTypeWidgetItem {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &--OrganismFilterNode {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  &--LinkOut {
+    a, button.btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      background: #1345bd;
+      color: white;
+      font-size: 1.2em;
+      margin: 0;
+      position: relative;
+
+      &, &:hover {
+        border: .1em solid white;
+        box-shadow: 0 0.2em 0.5em #00000073;
+      }
+
+      &:hover, &:active, &:focus {
+        background: #0c3aaa;
+        text-decoration: none;
+        outline: none;
+      }
+
+      &:disabled {
+        opacity: .5;
+        background: #1345bd;
+        color: white;
+      }
+
+    }
+    &Text {
+      margin: .25em 1.5em;
+    }
+    &Arrow {
+      font-size: 2em;
+      position: absolute;
+      right: 0;
+      .fa {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &--Result {
+    &Link {
+      font-size: 1.145em;
+    }
+    &DocumentTypePath {
+      color: #3e3e3e;
+      font-weight: bold;
+    }
+  }
+
+  &--StrategyImage {
+    background-image: url('./strategy.png');
+    background-size: cover;
+    border: 1px solid #cccccc;
+    width: 100%;
+    height: 130px;
+  }
+
+  &--GreenButton {
+    background: green !important;
+  }
+
+  &--RedButton {
+    background: #B71C1C !important;
+  }
+
+  &--GreenButton.btn, &--RedButton.btn {
+    color: white;
+    border-radius: .5em;
+    font-size: .9em;
+    padding: .5em .75em;
+    margin: 0;
+    .fa {
+      margin: 0;
+      font-size: 1em;
+    }
+    &:disabled {
+      opacity: .5;
+    }
+  }
+
+}
+

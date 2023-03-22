@@ -1,0 +1,59 @@
+$red: #DD314E;
+
+.StudyMenuItem {
+  min-width: 300px;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  font-weight: 400;
+  [class*=ebrc-icon] {
+    font-size: 1.4em;
+    margin-right: .5ex;
+  }
+  .StudyMenuItem-Name {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+  }
+  .StudyMenuItem-Links {
+    justify-content: flex-end;
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    i {
+      font-size: 1.4em;
+      padding: 5px;
+      transition: all 0.25s;
+      &:hover {
+        color: $red;
+      }
+    }
+  }
+  .StudyMenuItem-RecordLink {
+    // font-weight: 500;
+    transition: color 0.5s;
+    .fa {
+      margin-left: 5px;
+    }
+    &:hover {
+      color: $red !important;
+    }
+  }
+}
+
+span:has(> div.StudyMenuItem--disabled) { 
+  display: none;
+}
+
+.StudyMenuItem--disabled {
+  /* cursor: not-allowed;
+  opacity: 0.5;
+  * { pointer-events: none !important; }
+  */
+  display: none; 
+}
+
+div.prerelease {
+  font-style: italic;
+  padding: 0.4em; /* try consistent with .SiteMenuItem-Text in SiteMenuItem.scss*/
+}
+

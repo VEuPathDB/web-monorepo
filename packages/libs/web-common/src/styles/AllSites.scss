@@ -1,0 +1,1759 @@
+@import './eupathdb-Buttons.scss';
+
+/**
+ * AllSites.css - CSS rules common for all EuPathDB websites
+ */
+
+body {
+  min-width: 1070px;
+}
+
+/** This image messes with layout */
+img[src*=awstats] {
+  position: absolute;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =Scrollbars for webkit browsers on OS x
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* need this to make scrollbar show for whole page */
+html {
+  /* overflow-y: auto; */
+  background-color: transparent;
+}
+.show-scrollbar *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.show-scrollbar *::-webkit-scrollbar-track {
+  background: #eee;
+  border: thin solid rgba(204, 204, 204, 0.2);
+  border-radius: 10px;
+}
+.show-scrollbar *::-webkit-scrollbar-thumb {
+  background:#bbb;
+  border: thin solid #eee;
+  border-radius: 10px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   Create main stacking context
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.main-stack {
+  position: relative;
+  z-index: 1;
+}
+/* only do this on hover so modals can block */
+.main-stack #header:hover {
+  position: relative;
+  z-index: 3;
+}
+
+.main-stack .wdk-PageContent {
+  position: relative;
+  z-index: 2;
+}
+
+.main-stack footer {
+  position: relative;
+  z-index: 1;
+}
+
+._BodyLayer {
+  position: relative;
+  z-index: 2;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Create three-row layout with footer at bottom of screen (when possible)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.main-stack, .wdk-RootContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100vh;
+
+}
+
+.wdk-PageContent {
+  flex: 1;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     Stylesheet for styles that are the same across all sites
+     Definitions here get overriden by entries in (project).css
+     (after the order set up in header.tag)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = Global rules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+a, div.divlink, .link, .wdk-Link, .HelpTrigger .fa {
+	color: #069;
+}
+
+a:hover, a:active, a:focus, div.divlink:hover, .link:hover, .wdk-Link:hover {
+	text-decoration: underline;
+}
+
+h1 {
+  color: #222;
+  margin: 0;
+  padding: 22px 0;
+}
+
+h2 {
+  color: #222;
+  margin: 0;
+  padding: 12px 0 8px 0;
+}
+
+h3 {
+  color: #222;
+  margin: 0;
+  padding: 22px 0 8px 0;
+}
+
+h4 {
+  color: #222;
+  margin: 0;
+  padding: 10px 0 8px 0;
+}
+
+.h2center, .h3left,.h3center, .h4left {
+  color: #222;
+}
+
+a[name] {
+  text-decoration: none;
+  display: block;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  =GENERAL: useful classes for styling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.underline {
+  text-decoration: underline;
+}
+
+:focus {
+  outline: thin dotted;
+}
+a.eupathdb-BigButton,input[type="submit"] {
+  color: #3e3e3e;
+  text-decoration: none;
+}
+
+/* useful for embedding forms and making submit button look like a link */
+input.link, button.link, button.wdk-Link {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+/* Search boxes */
+textarea,
+input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=hidden]):not([type=image]):not([type=radio]):not([type=range]):not([type=reset]):not([type=submit]):not([class~="select2-input"]):not([class~="wdk-RealTimeSearchBoxInput"]):not([class*=MuiInput]) {
+  border: 1px solid #888;
+}
+input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=hidden]):not([type=image]):not([type=radio]):not([type=range]):not([type=reset]):not([type=submit]):not([class~="select2-input"]):not([class~="wdk-RealTimeSearchBoxInput"]):not([class*=MuiInput]):not([disabled]) {
+  background: #fafaf9;
+}
+textarea,
+input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=hidden]):not([type=image]):not([type=radio]):not([type=range]):not([type=reset]):not([type=submit]):not([class~="select2-input"]):not([class~="wdk-RealTimeSearchBoxInput"]):not([class*=MuiInput]):not([class~="wdk-Answer-filterInput"]) {
+  padding: 4px;
+}
+
+/* Filtering input */
+.wdk-RealTimeSearchBoxInput {
+  border: 1px solid #888;
+  border-radius: 16px;
+  padding: 0.2em 1.5em .2em 1em;
+}
+
+::-webkit-input-placeholder { color: #888; }
+:-ms-input-placeholder      { color: #888; }
+/* firefox seems to lighten the color, so making it darker to compensate */
+::-moz-placeholder          { color: #333; }
+:-moz-placeholder           { color: #333; }
+
+
+::placeholder {
+  font-style: italic;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  =SEMANTIC: sematic-based rules, using HTML5 elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+article h1,
+article h2,
+article h3,
+article h4,
+article h5,
+article h6 {
+  text-align: left;
+  margin-left: 0;
+}
+article section {
+  padding-left: 1em;
+  margin-top: 1em;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MAIN structure: contentwrapper css provided by wdk
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#search-bubbles {
+	min-width: 780px;
+	margin: 0 5px 0 220px;
+	background-color: #FFFFFF;
+	background-repeat: repeat-x;
+	text-align: left;
+}
+
+#contentcolumn {
+	min-width: 780px;
+	margin: 0 5px 0 220px;
+	/*background-color: #FFFFFF; */
+	background-repeat: repeat-x;
+	text-align: left;
+}
+
+#contentcolumn2 {
+	/*background-color: #FFFFFF; */
+	background-position: 0 -25px;
+	background-repeat: repeat-x;
+	margin: 0 5px 0 6px;
+}
+
+div.innertube #record-toolbox {
+    float: right;
+    border-style: double;
+    border-width: 3px;
+    margin: 3px;
+    padding: 5px;
+    text-align: center;
+}
+
+div.innertube #record-toolbox ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+div.innertube #record-toolbox li {
+    margin-top: 2px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HOME Page:  BUBBLE Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.threecolumn {
+  /* flex container -- flex items are .threecolumndiv */
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start; /* align to top */
+  /* the following take effect when flex is not available */
+  /* text-align: center; */
+}
+
+.threecolumndiv {
+  /* flex item -- flex container is .threecolumn */
+  border: 1px solid gray;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  /* need a fixed height since height of contents changes when expanded */
+  min-height: 490px;
+  width: 255px;
+  /* the following take effect when flex is not available */
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 10px;
+}
+
+.threecolumndiv div.heading {
+  display: block;
+  border-radius: 13px 13px 0 0;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #FFFFFF;
+  text-decoration: none;
+  padding-right: 10px;
+  padding-left:  7px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+}
+
+
+#bubbles .info, #bubbles .tools {
+  text-align: left;
+  padding-right: 15px;  /* 19px; */
+  padding-bottom: 20px;
+  padding-top: 6px;
+  padding-left: 15px;  /* 19px; */
+  line-height: 1.5em;
+}
+
+#bubbles .info ul, #bubbles .tools ul  {
+  height: 100%;
+  padding: 0;
+  margin: 0.5em 0;
+}
+#bubbles .tools ul {
+  margin-top: 1em;
+}
+
+#bubbles .tools li {
+  list-style-type: none;
+  margin-left: 7px;
+}
+
+#bubbles .info li ul, #bubbles .tools li ul  {
+  margin: 0 0 4px 0;
+}
+
+#bubbles .info li ul li {
+  /* border-bottom:1px solid lightgrey; separation lines might not be needed */
+  list-style: disc;
+  color: #aaa;
+  line-height: 1.1em;
+  padding:1px;
+  margin-left: 30px;
+}
+#bubbles .info li ul li .wdk-CheckboxTreeNodeContent {
+  margin-left: 0;
+}
+
+#bubbles .tools li ul li {
+  line-height: 1.1em;
+  padding:1px;
+}
+
+
+
+#bubbles .info .wdk-CheckboxTreeItem__expanded,
+#bubbles .info .wdk-CheckboxTreeItem__collapsed {
+  list-style: none;
+}
+
+#bubbles .wdk-CheckboxTreeList li label {
+  white-space: initial;
+}
+
+#bubbles .wdk-CheckboxTreeItem__expanded:after {
+  display: none;
+}
+
+#bubbles .info .wdk-CheckboxTree > .wdk-CheckboxTreeList > li.wdk-CheckboxTreeItem__leaf {
+  list-style: disc inside;
+  margin-left: 0px;
+  color: #aaa;
+}
+
+#bubbles .info .wdk-CheckboxTree > .wdk-CheckboxTreeList > li.wdk-CheckboxTreeItem__leaf label {
+  position: relative;
+  left: -4px;
+}
+
+.bubble-header {
+  margin-bottom: -4px;
+}
+
+/* Ortho only */
+#bubbles .infobottom {
+/* 	width: 209px; */
+	min-height: 35px;    /* trying to keep buckest same size */
+/* 	background-image: url(../images/bubble_bottom.png);
+	background-position: bottom;
+	background-repeat: no-repeat; */
+	text-align: center;
+	padding-top: 2px;
+	padding-right: 19px;
+	padding-bottom: 0px;
+	padding-left: 19px;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+#sidebar, #menu_lefttop {
+  width: 220px;
+  float: left;
+  z-index: 10;
+}
+
+#sidebar a.heading:link, #sidebar a.heading:visited,
+#menu_lefttop a.heading:link, #menu_lefttop a.heading:visited {
+	color: #FFFFFF;
+	display: block;
+}
+
+#sidebar a.heading:hover,
+#menu_lefttop a.heading:hover {
+	color: #CCCCCC;
+	display: block;
+}
+
+#sidebar img,
+#menu_lefttop img {
+        display: block;
+}
+
+#sidebar h3 {
+  padding: 0;
+}
+
+#sidebar h3.ui-state-active {
+  background:0;
+  border:0;
+}
+
+#sidebar h3.ui-state-default {
+  background:0;
+  border:0;
+}
+
+#sidebar div {
+   font-family: Arial, Helvetica, sans-serif;
+   font-size: 12px;
+   font-weight: normal;
+   padding: 6px;
+   line-height: 15px;
+   background-color: #FFFFFF;
+   margin: -5px 0px 5px;
+}
+
+#menu_lefttop div {
+	height: auto;
+}
+
+#menu_lefttop div ul{  /* second-level lists */
+/*	width: 179px; */
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: normal;
+	padding: 6px 6px 6px 4px;
+	line-height: 15px;
+	list-style-position: outside;  /* so bullet lists wrap under text */
+	list-style-type: square;
+	margin-left:  1em;
+	padding-left: 0;
+}
+
+.menu_lefttop_drop {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 6px;
+  line-height: 15px;
+  border: 1px solid grey;
+  background-color: #FFFFFF;
+  margin: -5px 0px 5px;
+}
+
+
+
+#sidebar a.heading,
+#menu_lefttop a.heading {
+  text-align: center;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+  padding-right: 10px;
+  padding-left:  7px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 5px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+#menu_lefttop div ul.related-sites,
+#menu_lefttop div ul#news,
+#menu_lefttop div ul#communityEventList {
+    border: 1px lightgrey solid;
+    max-height: 90px;
+    list-style-position: inside;
+    margin-left: 0;
+    overflow-y: auto;
+}
+
+#menu_lefttop div ul#news {
+		margin-bottom:5px;
+}
+iframe.twitter-timeline {
+		margin-top:8px;
+}
+
+
+div.twitter-footer {
+  display: none;
+}
+
+#menu_lefttop div ul.related-sites li,
+#menu_lefttop div ul#news li,
+#menu_lefttop div ul#communityEventList li {
+    padding-left: 1.7em;
+    text-indent: -1.5em;
+}
+
+
+
+/* newitems.js (highlight in yellow unread items) --  also adds warning sentence on side header, with how many items are unread*/
+p.unreadlabel {
+  color:yellow;
+  font-size:10px;
+  padding-left:7px;
+  font-family: Verdana;
+  margin: 0;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =News
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+table#news {
+  width:100%;
+}
+table#news ul {
+  list-style: disc;
+  padding-left: 2em;
+}
+table#news ul ul {
+  list-style-type: circle;
+}
+table#news p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+table#news a[href]:link, table#news a[href]:visited {
+  text-decoration: underline;
+}
+table#news a[href]:hover, table#news a[href]:active {
+  text-decoration: none;
+}
+table#news aside {
+  font-style: italic;
+  margin: 1em 0;
+}
+table#news h1 {
+  color: black;
+  font-size: 115%;
+}
+table#news .date {
+  font-weight: normal;
+  font-size: 80%;
+}
+table#news .date:before {
+  content: '\2014  ';
+}
+table#news h2 {
+  color: black;
+  font-size: 110%;
+}
+table#news h3, table#news h4, table#news h5, table#news h6 {
+  color: black;
+  font-size: 100%;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =BULLET LISTS    classic bullet list
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#cirbulletlist ol,#cirbulletlist ul {
+	list-style-type: disc;
+	margin-left:  1em;
+	padding-left: 1em;
+	list-style-position: outside;
+}
+#cirbulletlist ol {
+    list-style-type: decimal;
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = classic bullet list with no padding: serviceList.jsp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+ul.cirbulletlist {
+	list-style-type: disc;
+	margin-left:  1em;
+	list-style-position: outside;
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.eupathdb-SmallMenu > .eupathdb-SmallMenuItem {
+  display: inline-block;
+  padding: 0 5px;
+  border-left: 1px solid #716e61;
+  line-height: .8;
+  cursor: default;
+}
+
+.eupathdb-SmallMenu > .eupathdb-SmallMenuItem > .eupathdb-SmallMenu {
+  visibility: hidden;
+  position: absolute;
+  z-index: 2;
+  text-align: left;
+  border: 1px solid;
+  padding: 6px 6px 6px 18px;
+  margin: 0;
+  width: 13em;
+  list-style: disc;
+  background: white;
+  transition: visibility 250ms linear 250ms;
+}
+
+.eupathdb-SmallMenu > .eupathdb-SmallMenuItem:active > .eupathdb-SmallMenu,
+.eupathdb-SmallMenu > .eupathdb-SmallMenuItem:hover > .eupathdb-SmallMenu {
+  visibility: visible;
+}
+
+.eupathdb-SmallMenu .eupathdb-SmallMenuItem .eupathdb-SmallMenuItem {
+  padding: 2px 0;
+  display: list-item;
+}
+
+.eupathdb-SmallMenuDivider {
+  color: gray;
+  margin-top: 8px;
+  font-style: italic;
+  font-size: 90%;
+  list-style: none;
+}
+
+.eupathdb-SmallMenuItem.eupathdb-SmallMenuSocialMediaContainer {
+  padding: 0;
+}
+
+.eupathdb-SmallMenuItem.eupathdb-SmallMenuSocialMediaContainer,
+.eupathdb-SmallMenuItem .eupathdb-SmallMenuItem,
+.eupathdb-SmallMenu > .eupathdb-SmallMenuItem:first-of-type {
+  border-left: none;
+  line-height: 1;
+}
+
+#nav-top li ul {  /* second-level lists */
+  background-repeat: repeat-x;      /*was in AllSites, did not make it into WDK*/
+  width:13em;
+  padding: 6px 6px 6px 18px;
+}
+
+#quick-search {
+  margin-bottom: 12px;
+  margin-top: 16px;
+  height: 26px;
+}
+
+#quick-search fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+div#quick-search td {
+  white-space: nowrap;
+}
+
+#header {
+  height: 132px;
+}
+
+#header2 {
+	color: #666666;
+	font-size: 10px;  /*version,date*/
+	min-width: 1070px;
+	height: 104px;
+	background-repeat: no-repeat;
+}
+
+
+#header_rt {
+   font-size: 12px;
+   float: right;
+   text-align: right;
+   margin-right: 12px;
+   margin-top: 26px;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   text-decoration: none;
+}
+
+#header_rt a:hover, #header_rt a:active {
+   color: #FFFFFF;
+   text-decoration: none;
+}
+
+#header_rt #bottom {
+   width: 100%;
+   height: 50px;
+   margin-top: 18px;
+}
+
+#toplink {
+  padding-top: 1px;
+  position: absolute;
+  top: 0;
+  right: 25px;
+}
+
+#toplink a:link, #toplink a:visited{
+	display: block;
+	text-align: right;
+}
+
+#toplink a:hover {
+	display: block;
+	text-align: right;
+}
+
+.eupathdb-Logo {
+  overflow: auto;
+}
+.eupathdb-LogoImage {
+  float: left;
+}
+.eupathdb-LogoRelease {
+  display: inline-block;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =ABOUT  menu (in sidebar and header)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+span.smallTitle {
+	color:grey;
+	font-style:italic;
+	font-size:90%
+}
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =MENUBAR (horizontal bar, under header)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.fixed-menu #menu .sf-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid white;
+}
+
+/** This is needed due to .fixed-menu css **/
+.wdk-RecordSidebar {
+  margin-top: 7em; /* it depends on the header width  */
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Menu bar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.eupathdb-MenuContainer__fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  box-shadow: 0px 1px 5px #ddd;
+}
+
+.eupathdb-Menu {
+  line-height: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  z-index: 99;
+  min-width: 1070px;
+  width: 100%;
+  background-color: #a0a0a0;
+  /* border: 1px solid #a9a9a9; */
+  font-family: Helvetica Neue, Arial, Helvetica, sans-serif;
+}
+
+.eupathdb-MenuItem:hover {
+  background-color: #c7c7c7;
+}
+
+.eupathdb-Menu > .eupathdb-MenuItem {
+  display: inline-block;
+}
+
+.eupathdb-Submenu {
+  position: absolute;
+  z-index: 1000;
+  background: #a0a0a0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  transition: visibility 0s linear 1s, opacity 0.25s linear 1s;
+  visibility: hidden;
+  opacity: 0;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.eupathdb-MenuItem:hover > .eupathdb-MenuItemText__parent + .eupathdb-Submenu {
+  visibility: visible;
+  opacity: 1;
+}
+
+.eupathdb-Menu:hover .eupathdb-MenuItem > .eupathdb-MenuItemText__parent + .eupathdb-Submenu,
+.eupathdb-MenuItem:hover > .eupathdb-MenuItemText__parent + .eupathdb-Submenu {
+  transition-delay: .5s;
+}
+
+.eupathdb-Submenu {
+  display: block;
+}
+
+.eupathdb-Submenu .eupathdb-Submenu {
+  display: inline-block;
+}
+
+a.eupathdb-MenuItemText {
+  color: white;
+  text-decoration: none;
+}
+
+.eupathdb-MenuItemText {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  border-left: 1px solid #fff;
+  border-top: none;
+  padding: .65em 1em;
+  display: inline-block;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+/* Favorites icon */
+.eupathdb-MenuItem__favorites {
+  float: right;
+}
+
+.eupathdb-MenuItemText__favorites {
+  border: none;
+  position: relative;
+  padding-left: 30px;
+}
+
+.eupathdb-MenuItemText__favorites:before {
+  content: ' ';
+  background-image: url(~@veupathdb/wdk-client/lib/Core/Style/images/favorite_color.gif);
+  background-size: 18px auto;
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  top: 4px;
+  left: 8px;
+}
+
+.eupathdb-MenuItemText__beta,
+.eupathdb-MenuItemText__new {
+  position: relative;
+  padding-right: 40px;
+}
+
+.eupathdb-MenuItemText__beta:after,
+.eupathdb-MenuItemText__new:after {
+  position: absolute;
+  padding-left: 5px;
+}
+
+/*
+ * The '~' prefix indicates a top-level module path, which
+ * is used by the image-loader webpack plugin to inline the
+ * image data as base64 encoded string.
+ *
+ * See https://github.com/tcoopman/image-webpack-loader
+ */
+
+.eupathdb-MenuItemText__beta:after {
+  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+  top: 0;
+}
+
+.eupathdb-MenuItemText__parent:after {
+  content: '\f0d7';
+  font-family: FontAwesome;
+  color: rgba(255,255,255,.5);
+  padding-left: 8px;
+}
+
+.eupathdb-Submenu .eupathdb-MenuItemText__parent:after {
+  content: '\f0da';
+}
+.eupathdb-MenuItemText__new:after {
+  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
+  top: 4px;
+}
+.eupathdb-MenuItemText__beta:after {
+  content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+  top: 0;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SOCIALMEDIA (about, help, etc.)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.eupathdb-SocialMedia__twitter:before,
+.eupathdb-SocialMedia__facebook:before,
+.eupathdb-SocialMedia__youtube:before,
+.eupathdb-MenuItemText__twitter:before,
+.eupathdb-MenuItemText__facebook:before,
+.eupathdb-MenuItemText__youtube:before {
+  font-family: FontAwesome;
+  display: inline-block;
+  border-radius: 4px;
+  border: 0;
+  background: white;
+  font-size: 1.8em;
+  padding: 0px;
+  margin: 0 5px;
+  width: 18px;
+  height: 18px;
+  line-height: 19px;
+}
+.eupathdb-SocialMedia__twitter:before,
+.eupathdb-MenuItemText__twitter:before {
+  content: '\f081';
+  color: #1da1f2;
+}
+.eupathdb-SocialMedia__facebook:before,
+.eupathdb-MenuItemText__facebook:before {
+  content: '\f082';
+  color: #4267b2;
+}
+.eupathdb-SocialMedia__youtube:before,
+.eupathdb-MenuItemText__youtube:before {
+  content: '\f16a';
+  color: darkred;
+  height: 12px;
+  line-height: 15px;
+  border-radius: 10px;
+  font-size: 1.6em;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Superfish menu stuff -- override in ${project}.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#menu {
+  height: 28px;
+  line-height: 1;
+  margin-bottom: inherit;
+}
+
+.sf-menu {
+  box-sizing: border-box;
+  z-index: 99;
+  min-width: 1070px;
+  width: 100%;
+  /*
+  box-shadow: 0 2px 6px 0px rgba(0, 0, 0, 0.2);
+  background: -webkit-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background: -o-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background: -moz-linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  background: linear-gradient(rgb(191,191,191), rgb(121,121,121));
+  */
+  background-color: #a0a0a0;
+  border: 1px solid #a9a9a9;
+  margin-bottom: -0;
+  font-family: Helvetica Neue, Arial, Helvetica, sans-serif;
+}
+
+.sf-menu a {
+  border-left: 1px solid #fff;
+  border-top: none;
+  padding: .65em 1em;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.sf-menu a:link, .sf-menu a, .sf-menu a:visited  {
+  color: white;
+  font-weight: 500;
+}
+
+.sf-menu li {
+  background: transparent;
+  z-index: 99;
+}
+
+.sf-menu li li {
+    background: #B7B7B7;
+}
+
+.sf-menu li li li {
+    background: #A7A7A7;
+}
+
+.sf-menu li:hover,
+.sf-menu li li:hover,
+.sf-menu li.sfHover,
+.sf-menu a:focus,
+.sf-menu a:hover,
+.sf-menu a:active {
+	background:		#C7C7C7; /* on hover, lighter */
+	outline:		0;
+}
+
+.sf-menu li.sfHover a.back-to-top:link, .sf-menu li.sfHover a.back-to-top:visited, .sf-menu li.sfHover a.back-to-top:hover {
+  background-color: #ABABAB;
+  color: white;
+}
+
+/*
+.sf-menu li:hover {
+	background:		transparent;
+	outline:		0;
+}
+*/
+
+.sf-menu li#favorite-menu > a {
+  padding: 0.3em;
+  border-left: none;
+}
+/*
+.sf-menu a:hover {
+  color: #7a3838;
+}
+
+.sf-menu .sfHover > a {
+  color: #364179;
+}
+*/
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Search Boxes (ORTHO: commmon.css)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.search-box{
+   width: 10em;
+   padding: 2px;
+   color: black;    /*   #5b5b5b;  */
+   font-size: 11px;
+   text-align: right;
+}
+
+.search-box input{
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.search-box .textbox{
+	color: #333333;
+	padding: 3px 5px;
+}
+
+.search-box .submit{
+	padding: 3px 0;
+	color: white;
+	background-color: black;
+}
+
+.img_align_middle {
+	white-space: normal;
+	margin-bottom: -4px;
+	background-color: transparent; /* to override gbrowse background white  */
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =FOOTER       this allows to insert a div with version and date
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.Footer {
+  background-color: #fafafa;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.Footer > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 1em;
+}
+
+.site-icons li { display: inline; }
+.site-icons li.short-space { margin-left: 9px; }
+.site-icons li.long-space { margin-left: 15px; }
+.site-icons a {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 .5em;
+  color: transparent;
+}
+.site-icons .divider {
+  display: inline-block;
+  width: 2px;
+  height: 20px;
+  background-color: #d3d3d3;
+  margin: 0 0.5rem;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   =Fixed Footer
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#fixed-footer {
+  position: relative;
+  clear: both;
+  height: 2em;
+  padding: 2em;
+  background: #fafafa;
+  border: 1px solid #f0f0f0;
+}
+
+#fixed-footer .left {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 1;
+  text-align: center;
+}
+
+#fixed-footer .right {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 1;
+}
+
+#fixed-footer .bottom {
+  text-align: center;
+  position: relative;
+  bottom: 2px;
+}
+
+#fixed-footer .attributions {
+  text-align: right;
+}
+
+#fixed-footer .attributions,
+#fixed-footer .site-icons {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#fixed-footer .site-icons img {
+  height: 20px;
+}
+
+#fixed-footer .build-info {
+  padding: .5em 0;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =QUERY GRID
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#queryGrid td {
+	padding: 1px;
+	vertical-align: top;
+}
+
+#queryGrid .queryGridBullet, #queryGrid .queryGridLink, #queryGrid .queryGridIcons {
+	vertical-align: middle;
+}
+
+.innertube2{
+	margin: 2px; /*Margins for inner DIV inside each column (to provide padding)*/
+}
+tr.headerrow2 td, #queryGrid tr.headerrow2 td {
+	font-size: 14px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-repeat: repeat-x;
+	background-position: top;
+	padding: 4px;
+	background-color: #EEEEEE;
+}
+
+tr.subheaderrow2 td, #queryGrid tr.subheaderrow2 td {
+	font-size: 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #474747;
+	background-repeat: repeat-x;
+	background-position: top;
+	font-weight: bold;
+	padding: 4px;
+	background-color: #EEEEEE;
+}
+div.smallBlack { font-size: 8pt; color: black}
+a.queryGridInactive {
+        text-align:         center;
+        font-family:        Helvetica;
+        font-size:          10pt;
+        color:              #C8C8C8;
+}
+a.queryGridActive {
+        text-align:         center;
+        font-family:        Helvetica;
+        font-size:          10pt;
+}
+td.lines2, #queryGrid td.lines2 {
+	padding-top: 3px;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SUMMARY TABLES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* used by Expression graphs (fix for text alignment bug) */
+td.centered {
+       vertical-align: middle;
+       padding: 20px;
+}
+td.top {
+       vertical-align: top;
+}
+
+
+table.mytableStyle {
+	empty-cells:show;
+	border-width:1px;
+	border-style:solid;	   /* solid, none, inset, outset, dashed, solid, */
+	border-color:black;
+	border-collapse:collapse;  /*separate */
+/*	border-spacing:2px;  */    /* only makes sense when border-collapse is separate
+	table-layout: auto;        /* fixed */
+}
+tr.mytdStyle {
+	text-align:center;
+
+}
+tr.mythStyle {
+	background-color:lightgrey;
+	text-align:center;
+	font-weight:bold;
+}
+td.mythStyle,td.mytdStyle,th.mythStyle {
+	vertical-align:middle;
+	border-width:1px;
+	border-style:inset;
+	border-color:gray;
+	-moz-border-radius:0px;
+	padding:3px;
+	background-color:white;
+}
+th.mythStyle {
+	font-weight:bold;
+	background-color:lightgrey;
+	border-bottom: 3px solid grey;
+	cursor: pointer;
+/*	if we add back the sort icons in data summary .....
+	padding:0;
+	vertical-align:bottom; */
+
+}
+
+	#data-summary_info { font-weight:bold; }
+	#data-summary_filter { font-weight:bold; }
+	#gene-metrics_filter { font-weight:bold; }
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =WARNING BANNERS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.announcebox {
+	min-height: 35px;
+  /*  height:auto !important; */
+   /*  height:35px; */
+	margin: 12px 12px 0;
+	padding: 6px;
+	background-repeat: repeat-x;
+	text-align: left;
+	border: 1px solid #345d9b;
+	vertical-align: middle;
+}
+
+.announcebox.home {
+        min-width: 770px;
+        margin: 5px 5px 0 230px;
+}
+
+
+.announcebox img {
+	margin-right: 3px;
+}
+
+.announcebox td {
+	vertical-align:middle;
+}
+
+.announcebox.info {
+/*	background-image: url(../images/infobox.jpg); */
+	color: #093c8a;
+	background-color: #cdd9eb;
+}
+
+.announcebox.error {
+	color: #c4000e;
+	background-color: #eec1c2;
+/*	background-image: url(../images/errorbox.jpg); */
+}
+
+.announcebox.warn {
+	color: #c4000e;
+	background-color: #edf0ac;
+/*	background-image: url(../images/warnbox.jpg); */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =genes Filters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+table#geneFilters th.phylum {
+  font-size: 110%;
+  font-weight: bold;
+}
+table#geneFilters th.genus {
+ font-size: 110%;
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TOXO  advanced filters (should be moved to Toxo.css)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+.vennFilter {
+   float:left;
+   margin-right: 30px;
+   margin-bottom: 5px;
+}
+
+.vennFilter ul {
+   list-style-type: none;
+   margin: 0;
+   padding: 0;
+}
+
+.vennFilter ul .current {
+   background-color: transparent;
+}
+
+.vennDiagram {
+   background: transparent url('../images/venn_filters.png') repeat scroll 2px 0;
+   height: 100px;
+   width: 100px;
+}
+
+.vennDiagram.topSelected {
+   background-position: 2px -108px;
+}
+
+.vennDiagram.midSelected {
+   background-position: 2px -216px;
+}
+
+.vennDiagram.btmSelected {
+   background-position: 2px -324px;
+}
+
+.vennLabels {
+   margin-right: 3px;
+   height: 100px;
+}
+
+.vennFilter.vennLabels ul {
+   text-align: right;
+}
+
+.vennFilter.vennDiagram ul {
+   text-align: center;
+}
+
+.vennFilter.vennDiagram ul li {
+   margin-top: 7px;  
+}
+
+.top_label {
+   margin-top: 16px;
+}
+
+.bottom_label {
+   margin-top: 24px;
+}
+
+*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =some custom QUESTION PAGES, also blast.js
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.question-content {
+  margin: auto;
+}
+
+.question-content__default-width {
+  max-width: 1000px;
+}
+
+.question-content__wide-width {
+  max-width: 1300px;
+}
+
+.question-description-link {
+  font-size: 1.2em;
+  text-align: right;
+  margin-bottom: -0.5em;
+}
+
+.search-section {
+  padding: 7em 0 2em;
+  margin-top: -5em;
+}
+
+@keyframes fade-in-out {
+  50% { opacity: 1; }
+}
+
+.search-section:target:before {
+  animation: fade-in-out ease-in 3s;
+  opacity: 0;
+  content: "\f0da";
+  position: absolute;
+  margin-left: -.6em;
+  color: #046599;
+  font-family: FontAwesome;
+  font-size: 2.5em;
+}
+
+.search-section .group-title {
+  padding: .4em .5em;
+  margin-left: -1em;
+  margin-right: -.5em;
+  border-left: .5em solid transparent;
+}
+
+/* min width for Add Step question form */
+#query_form {
+  min-width: 825px;
+  max-width: 1300px;
+  margin: 0 5em;
+}
+
+#query_form .filter.params,
+#query_form .search-section {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+div.usererror {
+  color:red;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SPANLOGIC POPUP?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.crumb_details td.region_a,
+.crumb_details td.region_b {
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 SEARCH page: jQuery treeParam code (also used for attribute selection)
+	 makes organism <a href>.... so it picks up the link color
+	 in Project.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.jstree a[href]:link,.jstree a[href]:visited {
+	color:black;
+}
+.jstree a[href]:hover,.jstree a[href]:active {
+	color:black;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = SAMPLE STRATEGIES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.tableWithBorders table{
+	border-collapse: collapse;
+}
+.tableWithBorders tr td{
+	padding: 3px 4px 3px 4px;
+	border: 1px solid black;
+        vertical-align: middle;
+}
+
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	   RECORD (gene) PAGE: GBrowse button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+a#gbView {
+/*    background: transparent url('../../images/button-design.gif') no-repeat scroll top right; */
+    display: block; 
+/*    float: left; */
+    height: 24px;
+    padding-left: 7px;
+    padding-right: 4px;
+    padding-top: 5px;
+    width: 140px;
+    margin: 0px auto;
+		margin-top:1em;
+}
+
+#gnCtx {
+    height: 500px;
+    overflow: auto;
+}
+
+#gnCtx #imgMapDivId_loading {
+  margin-top: 200px;
+}
+
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 BASKET
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#export-basket {
+    background-color: #EEEEEE;
+    padding: 1px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 = BASKET page: jQuery tabs:
+         = in wdk/css/ui-custom-custom-theme/jquery-ui....custom.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.ui-tabs .ui-tabs-nav li a {
+	padding: 0.1em 1em;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =RESULTS page, column names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+tr.headerrow th {
+	background-size: 9990%;
+}
+
+/* In sites.css we have as background image an image that is narrow for some cases where the th needs to stretch to hold 5 or 6 lines of text; this size forces the image to stretch with the container
+	it does not work on IE7/8 (do not support css3) but it does not hurt either. */
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    = RESULT PAGE: motif
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.motif { color: red; }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = Download tab reporter (table.center in wdk)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+h4#tab-reporter-header {
+		font-size:120%;
+		margin:0 0 1em 1em;
+}
+table#download-columns table td#column-title{
+		border-width:2px 0;
+		border-color:black;
+		border-style:solid;
+		font-weight:bold;
+		text-align:center;
+}
+table#download-columns input[type="submit"]{
+			margin-left: 4em;
+}
+table#download-columns table div#overlay{
+  width: 23px;
+  height: 30px;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+  position: relative;
+  bottom:2em;
+  background-color: white;
+}
+table#download-columns table div#tree-column{
+  position: relative;
+  bottom:3em;
+}
+table#download-columns table div#tree-column div#treeLinks-top{
+  position: relative;
+  bottom:18px;
+}
+table#download-columns table div#download-featureID{
+  position: relative;
+  top:25px;
+}
+table#download-columns table div#download-featureID input{
+		opacity:0.7;
+}
+table#download-galaxy,table#download-columns {
+		margin-left:7em;
+}
+table#download-galaxy {
+		background-color: #FFFFCC;
+		border-color:#EAEAA8;
+		border-style:solid;
+		border-width:2px;
+}
+table#download-galaxy form{
+		float:right;
+}
+table#download-galaxy td b{
+		position:relative;
+		bottom:1px;
+}
+table#download-galaxy td{
+		padding-bottom:1em;
+		padding-top:1em;
+}
+table#download-galaxy form{
+		margin-left: 26em;
+}
+span.galaxy,b.galaxy{
+		border-color:#EAEAA8;
+		border-style:solid;
+		border-width:2px;
+		padding:3px;
+		background-color:#FFFFCC;
+}
+span.galaxy {
+		border-width:2px 0;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = Filter param
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+form[name="questionForm"] .filter-param-tabs {
+  /*margin-left: -20em;*/
+}
+
+/* STEP ANALYSIS USER NOTES */
+div.step-analysis-usernotes {
+  display:none;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Search and Download pages: larger submit button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*
+  May no longer be needed.  Submit buttons should all be 1.1rem.
+  Should remove at some point.
+.filter-button input[type="submit"],
+.eupathdb-ReporterFormSubmit input[type="submit"] {
+  font-size: 120%;
+}
+*/
+
+/* ---------------------------------------------------------------
+                    jbrowse
+    -------------------------------------------------------------*/
+
+
+.wdk-PageContent__jbrowse {
+  padding: 0;
+}
+
+#jbrowse_iframe {
+  box-sizing: border-box;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      MESA table cells
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+a.wdkLinkCell {
+  // The parent selector
+  & {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Answer MESA datatable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+   display: block;
+   position: sticky;
+   background-color: #efefef;
+   z-index: 1;
+}
+
+/* ========================================================================= */
+/* Static Content  page                                                      */
+/* ========================================================================= */
+
+  div.static-content {
+    font-size: 1.2em; 
+    line-height: 1.35;
+    margin-bottom: 2em;
+    padding: 0 1em;
+  }
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      gitter
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+.gitter-open-chat-button {
+  visibility: hidden; 
+  background-color: #36bc98; //#e3f2fd;
+  color: white; 
+}
+
+a.gitter-open-chat-button:hover {
+  background-color: #36bc98;
+  color: white;
+}
+
+.gitter-open-chat-button:after {
+  content: "  Community Chat";
+  visibility: visible; 
+  background-color: #36bc98;// e3f2fd;
+  color: white; 
+  border-top-left-radius: .5em;
+  border-top-right-radius: .5em;
+  padding: 1em;
+  font-size: 12px;
+  padding-left: 2em;
+}
+
+.gitter-open-chat-button:before {
+  content: "\f086";
+  font-family: FontAwesome;
+  visibility: visible;
+  color: white;
+  font-size: 14px;
+  position: relative;
+  left: 7.2em;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      = THE END
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/* under this, commented out */
+

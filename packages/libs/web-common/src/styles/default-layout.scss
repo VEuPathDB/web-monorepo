@@ -1,0 +1,60 @@
+// FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
+@import './breakpoints.scss';
+
+$expanded-header-height: 11em;
+$collapsed-header-height: 5.5em;
+
+body.vpdb-Body {
+  background-image: unset;
+  font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  }
+
+  // FIXME: Find sensible values for these
+  min-width: unset;
+  width: unset;
+
+  .vpdb-RootContainer {
+    display: grid;
+
+    grid-template-areas:
+      "header"
+      "banner"
+      "content"
+      "footer";
+
+    grid-template-rows: $expanded-header-height auto 1fr auto;
+
+    @media screen and (max-width: $hamburger-width) {
+      grid-template-rows: auto auto 1fr auto;
+    }
+
+    grid-template-columns: 100%;
+
+    min-height: 100vh;
+  }
+
+  .vpdb-BgDark {
+    background-color: #02385a;
+  }
+
+  .vpdb-BdDark {
+    border-color: #02385a;
+  }
+
+  .vpdb-BgWash {
+    background-color: #eef0f2;
+  }
+
+  // Fix for question page sticky header
+  .wdk-QuestionFormQuestionHeader {
+    top: $collapsed-header-height;
+
+    @media screen and (max-width: $hamburger-width) {
+      top: 0;
+    }
+  }
+}

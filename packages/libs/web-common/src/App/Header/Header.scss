@@ -1,0 +1,81 @@
+@mixin shadowed {
+  text-shadow: 3px 3px 0px fade-out(#02171b, 0.5);
+}
+
+
+.Header--Home ~ .Footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  box-sizing: border-box;
+  z-index: 999;
+}
+
+.Footer {
+  border-top: 0.0625rem solid #C0C0C0;
+  font-size: 120%;
+
+  .copyright {
+    color: grey;
+    padding-top: 0.7em;
+    font-size: 80%;
+  }
+
+  .contact-us {
+    font-style: italic; 
+  }  
+
+}
+
+.Footer > div {
+  margin: 0.5em;
+}
+
+
+.Header {
+  color: #fff;
+  min-width: 1250px;
+  width: 100%;
+  background-color: #333;
+  border-bottom: 4px solid #DD314E;
+
+  &.Header--Home {
+/*    border-bottom-width: 10px;*/
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  h1 {
+    @include shadowed;
+    font-weight: 100;
+    color: white;
+    text-align: center;
+    font-size: 55px;
+    margin: 0.5em 0;
+    width: 100%;
+    padding: 0;
+  }
+
+  h3 {
+   /* @include shadowed;*/
+    font-style: italic;
+    font-weight: 300;
+  /*  padding: 0 0 2.4em; */
+    padding: 0;
+    color: white;
+    text-align: center;
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .SiteSearch--SearchBox input {
+    background: #e6e6e6;
+  }
+}
+
+.wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+  top: 40px;
+}
+

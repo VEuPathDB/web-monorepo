@@ -1,0 +1,52 @@
+@import './breakpoints.scss';
+
+.vpdb-SearchPane {
+  grid-area: nav;
+
+  border-right: 0.0625rem solid;
+  padding-right: 0.1em;
+
+  .wdk-CheckboxTree {
+    > .wdk-CheckboxTreeList {
+      position: relative;
+      max-height: 65vh;
+      overflow-y: auto;
+      padding-right: 0.5em;
+    }
+  }
+
+  .wdk-RealTimeSearchBox__withHelp {
+    margin-left: 0;
+    width: calc(100% - 1em);
+
+    .wdk-RealTimeSearchBoxInput {
+      padding-left: 2.50em;
+    }
+
+  }
+
+  .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeList {
+    padding-left: 0.5em;
+  }
+
+  .wdk-CheckboxTreeList .wdk-CheckboxTreeItem__leaf .wdk-CheckboxTreeNodeContent {
+    margin-left: 0.2em;
+  }
+
+  .wdk-CheckboxTreeList .wdk-CheckboxTreeItem__leaf .wdk-CheckboxTreeNodeContent i {
+    font-size: 0.7em;
+    color: grey;
+  }
+
+  @media screen and (max-width: $mobile-width) {
+    border-right: none;
+    padding-right: 1rem;
+
+    .wdk-CheckboxTree {
+      > .wdk-CheckboxTreeList {
+        max-height: none;
+        padding-right: 1rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,104 @@
+@import './collapsed-header-mixins.scss';
+
+.vpdb-Header {
+  grid-area: header;
+
+  .vpdb-HeaderBranding {
+    height: $branding-height;
+  }
+
+  @media screen and (max-width: $cramped-header-width) {
+    .ebrc-HeaderBrandingContainer {
+      font-size: $small-branding-scale-factor;
+    }
+  }
+
+  &__expanded {
+    position: relative;
+
+    @media screen and (max-width: $cramped-header-width) {
+      grid-template-areas:
+        "site-branding .         project-branding project-branding "
+        "site-branding searchbar .                .                "
+        ".             menubar   social           login            ";
+
+      .ebrc-HeaderBrandingContainer {
+        align-self: flex-start;
+        margin-top: 1.5em;
+      }
+    }
+
+    @media screen and (max-width: $hamburger-width) {
+      .ebrc-HeaderBrandingContainer {
+        margin-top: 0.5em;
+      }
+    }
+  }
+
+  &__collapsed {
+    @include collapsed-header-styling;
+  }
+
+  .vpdb-CommunitySocialMediaLink {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 0.25em;
+  }
+
+  .wdk-CategoriesCheckboxTreeWrapper {
+    position: relative;
+
+    .wdk-CheckboxTreeItem__leaf {
+      .wdk-CheckboxTreeNodeContent {
+        a {
+          color: #069;
+        }
+
+        i {
+          margin-right: 0.25em;
+        }
+      }
+    }
+  }
+
+  .wdk-CheckboxTree {
+    min-width: 18.75em;
+  }
+
+  .wdk-CheckboxTreeLinks {
+    margin-left: 0;
+  }
+
+  .wdk-RealTimeSearchBox {
+    &Input {
+      border-radius: 0.5em;
+      padding: 0.2em 1.5em 0.2em 1.75em;
+    }
+
+    &SearchIcon {
+      left: 0.5em;
+    }
+  }
+
+  @media screen and (max-width: $hamburger-width) {
+    position: relative;
+
+    grid-template-areas:
+      "site-branding site-branding     social    login"
+      "hamburger     searchbar         searchbar searchbar"
+      "menubar       menubar           menubar   menubar";
+
+    grid-template-columns: auto auto 1fr;
+
+    row-gap: 0.5em;
+    padding: 0.5em;
+  }
+
+  @media screen and (max-width: $small-mobile-width) {
+    .ebrc-SocialMediaLinks {
+      a:not(.ebrc-SocialMediaLinks--AnnouncementsToggle) {
+        display: none;
+      }
+    }
+  }
+}

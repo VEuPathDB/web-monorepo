@@ -1,0 +1,22 @@
+/* ========================================================================= */
+/* Study page                                                                */
+/* ========================================================================= */
+
+.StudyRecordHeadingSearchLinks {
+  display: flex;
+  font-size: 1.8em;
+  margin: 1.5em 0 0;
+  align-items: center;
+
+  &Label {
+    font-weight: 400;
+    margin-right: .5em;
+    text-transform: uppercase;
+  }
+
+  & .StudySearchIconLinks {
+    font-size: 1.5em;
+  }
+}
+
+

@@ -1,0 +1,23 @@
+.contact-us-files {
+  .contact-us-file-list {
+    margin-top: 0.5em;
+  }
+
+  input[type="file"] {
+    width: 27em;
+    margin-left: 0.5em;
+  }
+
+  .remove-file button.btn {
+    margin-left: 1em;
+  }
+
+  .add-file button.btn, .add-another-file button.btn {
+    margin-bottom: 0;
+    margin-left: 0.5em;
+  }
+
+  .add-another-file {
+    margin-top: 1em;
+  }
+}

@@ -1,0 +1,182 @@
+.vpdb-FeaturedTools {
+  position: relative;
+  color: #00304c;
+
+  h2 {
+    font-size: 2.3em;
+    margin-bottom: 0.25em;
+    padding: 0;
+    font-weight: normal;
+  }
+
+  h3 {
+    font-size: 1.66666666667em;
+    font-weight: normal;
+  }
+
+  &Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    a {
+      font-size: 1.2em;
+      color: #00304c;
+    }
+  }
+
+  &List {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > div:first-of-type {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      margin-bottom: 1em;
+
+      button {
+        background: white;
+        border: none;
+        color: #00304c;
+        padding: 2.5em 1em;
+        opacity: 0.5;
+        font-size: 1.1em;
+
+        &:hover, &:active, &:focus {
+          opacity: 0.75;
+        }
+
+        &:disabled {
+          visibility: hidden;
+        }
+      }
+
+      button:last-of-type {
+        order: 1;
+      }
+    }
+
+    &Items {
+      position: relative;
+      display: flex;
+      font-weight: 500;
+      margin: 1.25em 1em;
+      overflow-x: auto;
+      width: auto;
+
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+    }
+
+    &Item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1 0 8em;
+      padding: 0 1em;
+
+      padding-bottom: 0.5em;
+      border-bottom: 0.5em solid transparent;
+
+      color: #00304c;
+
+      &IconContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 1.75em;
+        width: 1.75em;
+
+        border: 0.05em solid #00304c;
+        border-radius: 0.25em;
+        padding: 0.25em;
+        font-size: 2em;
+
+        box-shadow: 1px 1px 8px #00000085;
+      }
+
+      &Caption {
+        margin-top: 0.25em;
+      }
+      
+      &:hover {
+        text-decoration: none;
+
+        .vpdb-FeaturedToolsListItemIconContainer {
+          border: 0.075em solid #00304c;
+        }
+      }
+
+      &__selected, &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+        outline: none;
+        text-decoration: none;
+        font-weight: bold;
+
+        border-color: #00304c;
+
+        .vpdb-FeaturedToolsListItemIconContainer {
+          border: 0.2em solid #00304c;
+        }
+      }
+    }
+  }
+
+  &Selection {
+    box-shadow: 0px 0px 12px 0px #0000001a;
+    width: 90%;
+    position: relative;
+
+    &Header {
+      color: white;
+      padding: 0.25em 1.39em;
+      margin: 0;
+    }
+
+    &Body {
+      padding: 1.39em;
+      font-size: 1.2em;
+
+      &Content {
+        height: 250px; // FIXME: Use rem instead of px?
+        overflow: hidden;
+  
+        &__expanded {
+          height: unset;
+        }
+      }
+      
+      &ReadMore {
+        font-size: 1.1em;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        padding-bottom: 1.39em;
+        padding-left: 1.39em;
+        padding-top: 3em;
+        width: 100%;
+        background-image: linear-gradient(to bottom, rgba(white, 0), white 50%);
+
+        &__expanded {
+          position: relative;
+          padding-top: 1em;
+          padding-bottom: 0;
+          padding-left: 0;
+          background-image: unset;
+        }
+
+        &__top {
+          padding-top: 0;
+        }
+      }
+    }
+  }
+}

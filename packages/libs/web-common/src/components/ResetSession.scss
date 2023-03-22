@@ -1,0 +1,14 @@
+.ebrc-ResetSession {
+  &--Content {
+    font-size: 1.3em;
+  }
+
+  &--Confirmation {
+    display: inline-grid;
+    grid-template-columns: repeat(3, auto);
+    align-items: center;
+    grid-gap: 0.5em;
+
+    margin-top: 1em;
+  }
+}

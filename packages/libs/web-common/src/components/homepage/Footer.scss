@@ -1,0 +1,101 @@
+$mobile-width: 575px;
+
+
+
+.footer-center {
+  max-width: 70%;
+  text-align: center;
+}
+.footer-center-copyright {
+  padding-top: 0.7em;
+}
+
+.ebrc-Footer {
+  background-color: #f5f5f5;
+  color: #6c757d;
+  border-top: 0.0625rem solid #C0C0C0;
+
+//  padding: 1rem 0;
+
+  &PageDescriptionRow {
+    padding: 0.5rem 0.9375rem;
+  }
+
+  &SiteFamilyRow {
+    padding: 0.5rem 0.9375rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    @media screen and (max-width: $mobile-width) {
+      flex-direction: column;
+    }
+  }
+
+  &Copyright {
+    max-width: 25%;
+    position: relative;
+    bottom: 0.9em;
+    left: 1em;
+    margin-right: 1em;
+   
+    div a img {
+      height: 3.8rem;
+    }
+
+    @media screen and (max-width: $mobile-width) {
+      max-width: 100%;
+      margin: 0.5rem 0 1rem 0;
+      align-self: center;
+      text-align: center;
+    }
+  }
+
+  &Brand {
+    a {
+      font-size: 1.2em;
+      font-weight: bold;
+
+      color: #6c757d;
+    }
+  }
+
+  &ProjectLinks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+//    max-width: 70%;
+
+    a {
+      height: 1.7rem;
+      padding: 0 0.3rem;
+    }
+
+    @media screen and (max-width: $mobile-width) {
+      max-width: 100%;
+      margin: 0.5rem 0 1rem 0;
+    }
+  }
+
+  .ebrc-SocialMediaLinks {
+    visibility: hidden;
+    font-size: 12px;
+    max-width: 15%;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media screen and (max-width: $mobile-width) {
+      flex-direction: row;
+      max-width: 100%;
+      margin: 0.5rem 0 1rem 0;
+    }
+  }
+
+  &Divider {
+    width: 0.125rem;
+    margin: 0 0.5rem;
+    background-color: #d3d3d3;
+  }
+}

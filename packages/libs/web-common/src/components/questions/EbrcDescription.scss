@@ -1,0 +1,39 @@
+.ebrc-Description {
+  &DatasetsList {
+    list-style-type: square;
+    margin-left: 2em;
+  }
+
+  &DatasetItem {
+    margin: 0.25em;
+    padding: .16666666667em 0;
+
+    > a {
+      font-weight: bold;
+    }
+  }
+
+  &Details {
+    margin: 0.41666666666em 1em;
+  }
+
+  &PublicationsList {
+    list-style-type: circle;
+    margin-left: 2em;
+  }
+
+  &PublicationItem {
+    margin: 0.41666666666em 1.16666666667em;
+    font-size: 0.91666666666em;
+  }
+
+  &RecordError {
+    color: red;
+  }
+
+  &SearchDescriptionHeader, &SearchDatasetsHeader {
+    font-size: 1.6em;
+    margin: 0.5em 0 1em 0;
+    padding: 0;
+  }  
+}
