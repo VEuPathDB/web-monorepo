@@ -1,10 +1,12 @@
 {
-  "name": "clinepi-website",
+  "name": "@veupathdb/clinepi-site",
   "version": "0.0.1",
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs"
+    "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
+    "bundle": "rm -rf dist && webpack",
+    "prepack": "rm -rf dist && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
   },
   "keywords": [],
   "author": "",
@@ -19,14 +21,14 @@
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
-    "@veupathdb/components": "^0.20.3",
-    "@veupathdb/coreui": "^0.18.21",
-    "@veupathdb/eda": "^4.1.8",
-    "@veupathdb/http-utils": "^1.1.1",
-    "@veupathdb/study-data-access": "^0.4.1",
-    "@veupathdb/user-datasets": "^0.1.14",
-    "@veupathdb/wdk-client": "^0.9.32",
-    "@veupathdb/web-common": "^0.8.12",
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/coreui": "workspace:^",
+    "@veupathdb/eda": "workspace:^",
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/study-data-access": "workspace:^",
+    "@veupathdb/user-datasets": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^",
+    "@veupathdb/web-common": "workspace:^",
     "core-js": "^3.25.3",
     "notistack": "^1.0.10",
     "react": "17",
@@ -45,12 +47,12 @@
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "@types/react-router-dom": "^5.3.3",
-    "@veupathdb/base-webpack-config": "^0.1.0",
-    "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/react-scripts": "^2.0.0",
-    "@veupathdb/site-babel-config": "^0.1.0",
-    "@veupathdb/site-tsconfig": "^0.1.0",
-    "@veupathdb/site-webpack-config": "^0.1.0",
+    "@veupathdb/base-webpack-config": "workspace:^",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
+    "@veupathdb/site-babel-config": "workspace:^",
+    "@veupathdb/site-tsconfig": "workspace:^",
+    "@veupathdb/site-webpack-config": "workspace:^",
     "babel-loader": "^8.0.5",
     "bubleify": "^2.0.0",
     "css-loader": "^2.1.1",
@@ -64,7 +66,7 @@
     "script-loader": "^0.7.2",
     "source-map-loader": "^1.1.2",
     "ts-loader": "^5.4.5",
-    "typescript": "3.7",
+    "typescript": "~4.3.5",
     "url-loader": "^1.1.2",
     "webpack": "4.46.0",
     "webpack-cli": "^4.9.2",
@@ -76,5 +78,9 @@
     "@veupathdb/wdk-client": "../../WDKClient/Client",
     "@veupathdb/web-common": "../../EbrcWebsiteCommon/Client",
     "@veupathdb/study-data-access": "../../web-study-data-access"
-  }
+  },
+  "files": [
+    "dist",
+    "webapp"
+  ]
 }
