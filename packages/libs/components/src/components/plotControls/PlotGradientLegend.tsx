@@ -86,9 +86,6 @@ export default function PlotGradientLegend({
     );
   });
 
-  //DKDK
-  console.log('ticks =', ticks);
-
   return (
     <div>
       <svg id="gradientLegend" height={gradientBoxHeight + 20} width={150}>
