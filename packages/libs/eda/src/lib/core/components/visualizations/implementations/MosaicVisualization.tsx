@@ -1390,10 +1390,10 @@ function TwoByTwoStats(props?: {
             </tr>
             <tr>
               <td className="stats-table_leftmost-cell">
-                Case control or Cross-sectional: Risk ratio
+                Case control & Cross-sectional studies
               </td>
               <td className="stats-table_middle-cell">
-                <b>Odds ratio</b>
+                <b>Odds Ratio</b>
               </td>
               <td>{props.oddsRatio?.value ?? 'n/a'}</td>
               <td style={{ textAlign: 'center', paddingLeft: '2em' }}>
@@ -1405,7 +1405,7 @@ function TwoByTwoStats(props?: {
             </tr>
             <tr>
               <td className="stats-table_leftmost-cell">
-                Cohort studies & randomized controlled trials
+                Cohort studies & Randomized controlled trials
               </td>
               <td className="stats-table_middle-cell">
                 <b>Risk Ratio</b>

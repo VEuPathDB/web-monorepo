@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode } from 'react';
+import { CSSProperties, ReactElement, ReactNode } from 'react';
 import ArrowRight from '@veupathdb/coreui/dist/components/icons/ChevronRight';
 import {
   makeClassNameHelper,
@@ -7,19 +7,14 @@ import {
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './SemiTransparentHeader.scss';
+import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
 
-export type SemiTransparentHeaderLogoProps = {
-  href: string;
-  siteName: string;
-  src: string;
-};
-
-export type SemiTransparentHeaderProps = {
+export type MapNavigationProps = {
   analysisName?: string;
   entityDisplayName: string;
   filterList?: ReactElement;
   isExpanded: boolean;
-  logoProps: SemiTransparentHeaderLogoProps;
+  siteInformation: SiteInformationProps;
   onAnalysisNameEdit: (newName: string) => void;
   onToggleExpand: () => void;
   studyName: string;
@@ -39,18 +34,19 @@ export function SemiTransparentHeader({
   entityDisplayName,
   filterList,
   isExpanded,
-  logoProps,
+  siteInformation,
   onAnalysisNameEdit,
   onToggleExpand,
   studyName,
   totalEntityCount = 0,
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
-}: SemiTransparentHeaderProps) {
+}: MapNavigationProps) {
   const semiTransparentHeader = makeClassNameHelper('SemiTransparentHeader');
 
   return (
     <header
+      style={{ background: mapNavigationBackgroundColor }}
       className={`${semiTransparentHeader()} ${
         !isExpanded ? semiTransparentHeader('--collapsed') : ''
       }`}
@@ -61,8 +57,11 @@ export function SemiTransparentHeader({
         }`}
       >
         <div className={semiTransparentHeader('__LogoContainer')}>
-          <a href={logoProps.href}>
-            <img src={logoProps.src} alt={logoProps.siteName} />
+          <a href={siteInformation.siteHomeUrl}>
+            <img
+              src={siteInformation.siteLogoSrc}
+              alt={siteInformation.siteName}
+            />
           </a>
         </div>
         <HeaderContent
@@ -72,13 +71,23 @@ export function SemiTransparentHeader({
           onAnalysisNameEdit={onAnalysisNameEdit}
         />
       </div>
-      <div className={semiTransparentHeader('__SampleCounter')}>
+      <div
+        className={`${semiTransparentHeader('__SampleCounter')} ${
+          isExpanded ? '' : 'screenReaderOnly'
+        }`}
+      >
+        <p>{entityDisplayName}</p>
+        <LeftBracket
+          styles={{
+            // Bring closer the content of the righthand side of
+            // the bracket.
+            marginLeft: 10,
+            marginRight: -5,
+          }}
+        />
         <table>
           <thead>
-            <tr>
-              <th></th>
-              <th>{entityDisplayName}</th>
-            </tr>
+            <tr>{/* <th colSpan={2}>{entityDisplayName}</th> */}</tr>
           </thead>
           <tbody>
             <tr title={`There are X total samples.`}>
@@ -166,6 +175,7 @@ function OpenCloseToggleButton({
   return (
     <div className={expandToggleContainer()}>
       <button
+        style={{ background: mapNavigationBackgroundColor }}
         className={`Button ${
           isExpanded ? '' : expandToggleContainer('--collapsed')
         }`}
@@ -189,5 +199,24 @@ function OpenCloseToggleButton({
         </span>
       </button>
     </div>
+  );
+}
+
+type LeftBracketProps = {
+  /** Should you need to adjust anything! */
+  styles?: CSSProperties;
+};
+function LeftBracket(props: LeftBracketProps) {
+  return (
+    <div
+      style={{
+        border: '2px solid black',
+        borderRight: 'none',
+        height: '90%',
+        width: 5,
+        ...props.styles,
+      }}
+      aria-hidden
+    ></div>
   );
 }
