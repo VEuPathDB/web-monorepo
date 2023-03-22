@@ -26,13 +26,13 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "custom-event-polyfill": "^1.0.7",
-    "md5": "^2.3.0",
-    "whatwg-fetch": "^3.5.0",
     "@veupathdb/components": "workspace:^",
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/eda": "workspace:^",
-    "@veupathdb/wdk-client": "workspace:^"
+    "@veupathdb/wdk-client": "workspace:^",
+    "custom-event-polyfill": "^1.0.7",
+    "md5": "^2.3.0",
+    "whatwg-fetch": "^3.5.0"
   },
   "peerDependencies": {
     "notistack": "^1.0.10",

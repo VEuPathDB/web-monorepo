@@ -15,16 +15,16 @@
     "*.scss"
   ],
   "dependencies": {
+    "@veupathdb/coreui": "workspace:^",
+    "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/preferred-organisms": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^",
+    "@veupathdb/web-common": "workspace:^",
     "file-saver": "^2.0.5",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
     "lodash": "^4.17.21",
-    "react-select": "^3.0.4",
-    "@veupathdb/coreui": "workspace:^",
-    "@veupathdb/http-utils": "workspace:^",
-    "@veupathdb/wdk-client": "workspace:^",
-    "@veupathdb/web-common": "workspace:^"
+    "react-select": "^3.0.4"
   },
   "peerDependencies": {
     "react": ">=16.14.0",

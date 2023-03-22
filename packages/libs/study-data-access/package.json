@@ -40,11 +40,10 @@
     "yarn": "1.22.10"
   },
   "dependencies": {
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
-    "lodash": "^4.17.21",
-    "@veupathdb/http-utils": "workspace:^",
-    "@veupathdb/wdk-client": "workspace:^"
-  },
-  "peerDependencies": {}
+    "lodash": "^4.17.21"
+  }
 }

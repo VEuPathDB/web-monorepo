@@ -13,9 +13,9 @@
     "src/lib"
   ],
   "dependencies": {
-    "lodash": "^4.17.21",
     "@veupathdb/wdk-client": "workspace:^",
-    "@veupathdb/web-common": "workspace:^"
+    "@veupathdb/web-common": "workspace:^",
+    "lodash": "^4.17.21"
   },
   "scripts": {
     "start": "veupathdb-react-scripts start",

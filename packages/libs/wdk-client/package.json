@@ -25,6 +25,8 @@
     "vendored"
   ],
   "dependencies": {
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/coreui": "workspace:^",
     "classnames": "^2.2.0",
     "history": "^4.10.1",
     "json-stable-stringify": "^1.0.0",
@@ -40,9 +42,7 @@
     "reselect": "^3.0.1",
     "rxjs": "^6.2.2",
     "spin.js": "^4.0.0",
-    "uuid": "^8.3.2",
-    "@veupathdb/components": "workspace:^",
-    "@veupathdb/coreui": "workspace:^"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@emotion/react": "^11.10.0",

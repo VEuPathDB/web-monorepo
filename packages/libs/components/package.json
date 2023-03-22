@@ -10,6 +10,7 @@
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
+    "@veupathdb/coreui": "workspace:^",
     "@visx/gradient": "^1.0.0",
     "@visx/group": "^1.0.0",
     "@visx/hierarchy": "^1.0.0",
@@ -36,8 +37,7 @@
     "react-leaflet": "^3.2.5",
     "react-leaflet-drift-marker": "^3.0.0",
     "react-plotly.js": "^2.4.0",
-    "shape2geohash": "^1.2.5",
-    "@veupathdb/coreui": "workspace:^"
+    "shape2geohash": "^1.2.5"
   },
   "files": [
     "lib",
