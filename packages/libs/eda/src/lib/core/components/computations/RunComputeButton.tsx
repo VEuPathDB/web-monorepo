@@ -88,7 +88,7 @@ export function StatusIcon({ status, showLabel = false }: StatusIconProps) {
 
 function Dot(props: { color: string; label: string; showLabel: boolean }) {
   return (
-    <Tooltip css={{}} title={props.label}>
+    <Tooltip title={props.label}>
       <div
         style={{
           display: 'inline-flex',

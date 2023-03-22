@@ -11,7 +11,7 @@ import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLe
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { MouseMode } from '@veupathdb/components/lib/map/MouseTools';
-import { BoundsViewport, Viewport } from '@veupathdb/components/lib/map/Types';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { FilledButton, FloatingButton } from '@veupathdb/coreui';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -150,7 +150,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
   const onViewportChanged = useCallback(
-    (viewport: Viewport) => {
+    (viewport) => {
       setAppState({ viewport });
     },
     [setAppState]

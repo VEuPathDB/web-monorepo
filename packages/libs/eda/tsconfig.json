@@ -4,6 +4,7 @@
     "src"
   ],
   "compilerOptions": {
+    "jsxImportSource": "@emotion/react",
     "noErrorTruncation": true
   }
 }
