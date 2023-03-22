@@ -28,13 +28,13 @@
   "dependencies": {
     "custom-event-polyfill": "^1.0.7",
     "md5": "^2.3.0",
-    "whatwg-fetch": "^3.5.0"
+    "whatwg-fetch": "^3.5.0",
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/coreui": "workspace:^",
+    "@veupathdb/eda": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^"
   },
   "peerDependencies": {
-    "@veupathdb/components": "^0.19.19",
-    "@veupathdb/coreui": "^0.18.21",
-    "@veupathdb/eda": "^4.0.6",
-    "@veupathdb/wdk-client": "^0.9.32",
     "notistack": "^1.0.10",
     "react": ">=16.14",
     "react-dom": ">=16.14"
@@ -54,14 +54,10 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-table": "^7.7.11",
     "@types/shelljs": "^0.8.8",
-    "@veupathdb/components": "^0.19.19",
-    "@veupathdb/coreui": "^0.18.21",
-    "@veupathdb/eda": "^4.0.6",
-    "@veupathdb/http-utils": "^1.1.1",
-    "@veupathdb/react-scripts": "^2.0.0",
-    "@veupathdb/study-data-access": "^0.3.7",
-    "@veupathdb/user-datasets": "^0.1.13",
-    "@veupathdb/wdk-client": "^0.9.32",
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
+    "@veupathdb/study-data-access": "workspace:^",
+    "@veupathdb/user-datasets": "workspace:^",
     "bubleify": "^2.0.0",
     "icon-font-generator": "^2.1.11",
     "ify-loader": "^1.1.0",
