@@ -1,0 +1,17 @@
+$red: #cc0000;
+$gray: #444444;
+
+.OrganismPreferencesWarning {
+  font-size: 1.2em;
+  display: grid;
+  gap: 0.6em;
+
+  .Instructions {
+    font-size: 1.2em;
+    color: $red;
+  }
+
+  .Explanation {
+    color: $gray;
+  }
+}

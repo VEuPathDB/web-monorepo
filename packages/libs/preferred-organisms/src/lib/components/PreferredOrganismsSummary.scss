@@ -1,0 +1,35 @@
+.PreferredOrganisms {
+  display: grid;
+  gap: 0.5em;
+
+  .PreferredOrganismsConfig--Toggle {
+    grid-gap: 0.25em;
+  }
+
+  .PreferredOrganismsConfig--Toggle .wdk-Icon {
+    font-size: 1.69em;
+  }
+
+  &--Summary {
+    display: grid;
+    gap: 1em;
+    grid-auto-flow: column;
+  }
+
+  &--Link {
+    font-size: 1.4em;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.25em;
+    align-items: center;
+
+    &:link {
+      text-decoration: none;
+    }
+
+    i {
+      font-size: 1.4em;
+      color: slategray;
+    }
+  }
+}

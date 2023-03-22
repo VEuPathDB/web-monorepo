@@ -1,0 +1,102 @@
+{
+  "name": "@veupathdb/preferred-organisms",
+  "version": "1.1.16",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-app-preferred-organisms.git",
+    "directory": "src/lib"
+  },
+  "files": [
+    "lib",
+    "src/lib"
+  ],
+  "sideEffects": [
+    "*.scss"
+  ],
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "recoil": "^0.2.0",
+    "@veupathdb/coreui": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^",
+    "@veupathdb/web-common": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": ">=16.14.0",
+    "react-dom": ">=16.14.0"
+  },
+  "scripts": {
+    "start": "veupathdb-react-scripts start",
+    "build": "veupathdb-react-scripts build",
+    "test": "veupathdb-react-scripts test",
+    "eject": "veupathdb-react-scripts eject",
+    "compile": "vepoathdb-react-scripts compile",
+    "copy-assets": "veupathdb-react-scripts copy-assets",
+    "build-npm-modules": "veupathdb-react-scripts prepare"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@veupathdb"
+    ]
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@emotion/react": "^11.10.0",
+    "@emotion/serialize": "^1.0.2",
+    "@emotion/styled": "^11.10.0",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@testing-library/dom": "^7.21.4",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "@types/react-router": "^5.1.8",
+    "@types/react-router-dom": "^5.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.0.0",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/components": "workspace:^",
+    "@veupathdb/eda": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
+    "@veupathdb/study-data-access": "workspace:^",
+    "@veupathdb/tsconfig": "workspace:^",
+    "babel-eslint": "^10.0.0",
+    "eslint": "^7.5.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.20.3",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "http-proxy-middleware": "^1.0.6",
+    "notistack": "^1.0.10",
+    "react": "^17.0.2",
+    "react-app-rewired": "^2.2.1",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "react-select": "^3.0.4",
+    "read": "^1.0.7",
+    "sass": "^1.56.2",
+    "script-loader": "^0.7.2",
+    "set-cookie-parser": "^2.4.6",
+    "typescript": "^4.0.3",
+    "web-vitals": "^0.2.4"
+  },
+  "volta": {
+    "node": "19.0.1",
+    "yarn": "1.22.11"
+  }
+}
