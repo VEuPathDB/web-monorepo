@@ -1,10 +1,13 @@
-import { useState } from 'react';
 import { ChevronRight } from '@veupathdb/coreui';
 import { Launch, LockOpen } from '@material-ui/icons';
 import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
 
 export type MapSideNavigationProps = {
+  /** The navigation is stateless. */
+  isExpanded: boolean;
   children: React.ReactNode;
+  /** This fires when the user expands/collapses the nav. */
+  onToggleIsExpanded: () => void;
   siteInformationProps: SiteInformationProps;
 };
 
@@ -19,11 +22,11 @@ const bottomLinkStyles: React.CSSProperties = {
 };
 
 export function MapSideNavigation({
-  siteInformationProps,
   children,
+  isExpanded,
+  onToggleIsExpanded,
+  siteInformationProps,
 }: MapSideNavigationProps) {
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
-
   const sideMenuWidth = 200;
   const sideMenuExpandButtonWidth = 50;
 
@@ -73,7 +76,7 @@ export function MapSideNavigation({
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onClick={() => setIsExpanded((current) => !current)}
+        onClick={() => onToggleIsExpanded()}
       >
         <ChevronRight
           style={{

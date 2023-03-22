@@ -372,6 +372,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   }
                 />
                 <MapSideNavigation
+                  isExpanded={true}
+                  onToggleIsExpanded={() => alert('ok')}
                   siteInformationProps={props.siteInformationProps}
                 >
                   <div style={{ width: '100%' }}>
