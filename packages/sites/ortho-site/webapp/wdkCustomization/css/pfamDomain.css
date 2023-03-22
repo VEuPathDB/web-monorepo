@@ -1,0 +1,24 @@
+#domains .domain .legend {width:200px;}
+
+#domains .domain .legend div, #proteins .protein .domains .domain > div {height:5px;}
+
+#domains .domain .legend,
+#proteins .protein .domains .domain
+{border: 1px solid #eee; border-radius: 5px;}
+
+#domains .domain .legend div:first-child,
+#proteins .protein .domains .domain > div:first-child
+{border-radius: 5px 5px 0 0;}
+
+#domains .domain .legend div:last-child,
+#proteins .protein .domains .domain > div:last-child
+{border-radius: 0 0 5px 5px;}
+
+#proteins .protein .domains {position:relative;}
+
+#proteins .protein .domains .protein-graph {margin:11px 0px; background-color:#666; height:1px;}
+
+#proteins .protein .domains .domain {top:-11px; position:absolute; display:block;}
+
+#proteins .protein .domains .domain > div {min-width:5px;}
+

@@ -1,0 +1,131 @@
+.wdk-QuestionForm {
+  &GroupsByPhyleticPattern {
+    max-width: 110em;
+
+    .PhyleticExpression--Instructions {
+      .fa-caret-right.wdk-Icon {
+        font-size: 1.2em;
+        color: #AAA;
+      }
+    }
+
+    .PhyleticExpression--IconLegend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      border: 0.0625rem solid black;
+      padding: 0.5em;
+      margin: 1em 0;
+
+      .PhyleticExpression--ConstraintIcon {
+        margin-left: 0.25em;
+      }
+
+      &Header {
+        margin-right: 0.5em;
+
+        font-weight: bold;
+      }
+
+      &Content {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .PhyleticExpression--ConstraintIcon {
+      font-size: 1.1em;
+      width: 1.06em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      i {
+        text-shadow: 0 0 1px black;
+      }
+
+      &__free {
+        color: #808080;
+
+        i {
+          font-size: 0.75em;
+          text-shadow: 0 0 1px blue;
+        }
+      }
+
+      &__include-at-least-one {
+        color: #e4e500;
+      }
+
+      &__include-all {
+        color: #0ba104;
+      }
+
+      &__exclude {
+        color: #ff0100;
+      }
+
+      &__mixed {
+        color: #3f3f4c;
+
+        i {
+          font-size: 0.75em;
+          text-shadow: 0 0 1px blue;
+        }
+      }
+    }
+
+    .PhyleticExpression--Node {
+      display: flex;
+      align-items: center;
+
+      font-weight: bold;
+
+      &__species {
+        font-weight: normal;
+      }
+
+      &Constraint {
+        cursor: pointer;
+      }
+
+      &Description {
+        margin-left: 0.25em;
+      }
+    }
+
+    .PhyleticExpression--TextField {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      input {
+        width: 80em;
+        margin: 0 2em 0 1em;
+      }
+
+      .PhyleticExpression--SubmitButtonContainer {
+        width: 160px;
+
+        button.btn {
+          margin-left: 0;
+        }
+      }
+    }
+
+    .wdk-CheckboxTree {
+      font-size: 1.1em;
+      width: 41em;
+    }
+
+    .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
+      display: none;
+    }
+
+    .wdk-CheckboxTreeItem .wdk-CheckboxTreeNodeWrapper:hover {
+      cursor: default;
+      text-decoration: none;
+    }
+  }
+}

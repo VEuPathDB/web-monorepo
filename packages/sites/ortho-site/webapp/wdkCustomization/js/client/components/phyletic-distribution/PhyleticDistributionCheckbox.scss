@@ -1,0 +1,30 @@
+.PhyleticDistributionCheckbox {
+  width: 45em;
+
+  &--MissingSpeciesFilter {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &--Node {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 2em);
+
+    font-weight: bold;
+
+    &__species {
+      font-weight: normal;
+    }
+  }
+
+  .wdk-CheckboxTreeItem .wdk-CheckboxTreeNodeWrapper:hover {
+    cursor: default;
+    text-decoration: none;
+  }
+
+  .wdk-CheckboxTreeLinks > * {
+    text-align: left;
+    margin: 0.15em 0;
+  }
+}

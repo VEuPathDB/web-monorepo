@@ -1,0 +1,23 @@
+.wdk-RecordContainer__SequenceRecordClasses\.SequenceRecordClass {
+  .MissingAttribute {
+    color: darkred;
+  }
+
+  .SequenceAttribute {
+    display: inline-block;
+  }
+
+  .DomainArchitectureHeader {
+    font-size: 1.2em;
+    font-weight: 500;
+    margin-bottom: 0.5em;
+  }
+
+  .PfamDomainArchitecture {
+    margin-bottom: 2.5em;
+    border-left: 0.0625rem dotted black;
+    border-right: 0.0625rem dotted black;
+    padding: 1.5em;
+    background-color: #f5f5f5;
+  }
+}

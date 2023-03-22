@@ -1,0 +1,114 @@
+.GraphControls {
+  grid-area: controls;
+
+  width: 24em;
+  max-height: 700px;
+  overflow-y: auto;
+
+  .EValueHeader {
+    margin-bottom: 0.75em;
+  }
+
+  .EValueText {
+    font-weight: bold;
+    margin-left: 1em;
+  }
+
+  .EValueText input[type="text"] {
+    margin-left: 0.25em;
+    width: 3.5em;
+  }
+
+  .EValueSlider {
+    width: 100%;
+  }
+
+  .EdgeOptions {
+    margin-bottom: 1em;
+  }
+
+  .EdgeOptions .GraphAccordionContent > *:nth-child(n+2) {
+    margin-top: 1em;
+  }
+
+  .EdgeTypeOption, .LegendEntry {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.25em;
+    align-items: center;
+    padding: 0.2em;
+    border: 0.0625rem dotted gray;
+
+    &:hover {
+      background-color: #FFFF99;
+    }
+  }
+
+  .LegendHeader {
+    color: #555555;
+    font-style: italic;
+    margin-bottom: 0.25em;
+  }
+
+  .EdgeTypeOptions, .LegendContent {
+    display: inline-grid;
+    grid-gap: 0.4em;
+  }
+
+  .EdgeTypeOptions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ControlSection {
+    max-height: 40em;
+    overflow-y: auto;
+  }
+
+  .ControlSection.taxa .LegendContent {
+    grid-template-columns: 6.8em 6.8em 6.8em;
+  }
+
+  .ControlSection.ec-numbers .LegendContent,
+  .ControlSection.pfam-domains .LegendContent,
+  .ControlSection.core-peripheral .LegendContent {
+    grid-template-columns: 9.3em 9.3em;
+  }
+
+  fieldset + fieldset {
+    margin-top: 1em;
+  }
+
+  fieldset, .ControlSection {
+    border: 0.0625rem dotted gray;
+    padding: 0.5em;
+  }
+
+  .ControlSection {
+    padding-top: 0.25em;
+  }
+
+  legend {
+    font-weight: bold;
+  }
+
+  .NodeOptions .wdk-RadioList {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding-left: 0.5em;
+  }
+
+  .NodeOptions fieldset {
+    margin: 0 0 0.25em 0;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+  }
+
+  .GraphAccordionHeader > * {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: calc(100% - 1.25em);
+  }
+}

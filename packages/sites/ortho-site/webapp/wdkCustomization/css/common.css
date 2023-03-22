@@ -1,0 +1,166 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =main content pane
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* optional class to buffer main content */
+div.buffered-content {
+  margin: 6px;
+  border: 1px solid #0B4796;
+  padding: 6px;
+  text-align: left;
+}
+
+/* clear record-specific style and use
+   buffered-content like the rest of the site */
+div.Workspace {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+p.indented {
+  margin-left: 11px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#header2 {min-width:975px; clear:both;}
+
+div#header2 .ui-widget-content {
+  background:0;
+  border:0;
+}
+
+#header-control {float:right; text-align: right; margin: 7px; }
+#header2 #quick-search, #header2 #tool-sets { margin: 5px; }
+#header2 #quick-search input.search-box { width: 100px; }
+#header2 #site-logo a {font:bold 50pt Georgia,serif; color:#3333FF; text-decoration:none;}
+
+#header_rt {
+  margin-top: 22px;
+}
+
+#toplink {
+  top: 6px;
+}
+
+#nav-top .socmedia-link {
+  position: relative;
+  bottom: 3px;
+}
+
+#nav-top .socmedia-link-twitter {
+  position: relative;
+  bottom: 2px;
+  left:2px;
+}
+
+.eupathdb-SmallMenuItem {
+  vertical-align: middle;
+}
+
+.eupathdb-SmallMenu .eupathdb-SmallMenu,
+.eupathdb-SmallMenu .eupathdb-SmallMenu * {
+  color: #2a3469;
+}
+
+.eupathdb-LogoRelease {
+  text-shadow: 1px 1px 4px #fff;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =grey MENUBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#menu {clear:both; position:relative; z-index:11;}
+#menu > ul.menu {float:none;}
+#menu #favorite-menu {float:right;}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =SEARCH page
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/* #query-description-section { font-size: 12pt; margin: 10px; } */
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =WEBSERVICES page
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#webservices-list {
+  height: auto;
+  min-height: 295px;
+  text-align: left;
+}
+
+#webservices-list h3 {
+  margin-top: 16px;
+  margin-bottom: 5px;
+}
+
+#webservices-list li {
+  line-height: 1.5em;
+  list-style-type: none;
+}
+
+#webservices-list li ul li {
+  line-height: 1.1em;
+  list-style-type: none;
+  margin-left: 22px;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =Summary page 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#release-overview ul {
+  list-style-type: disc;
+  margin-left: 1em;
+  list-style-position: outside;
+}
+
+#release-overview ul > li {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =ERROR page (WEB-INF/jsp/error.jsp)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#error-main {
+  width: 100%;
+  text-align: center;
+  margin: 30px 8px;
+}
+
+#error-main h1 {
+  font-size: 32px;
+}
+
+#error-main p {
+  margin: 15px auto 10px auto;
+  font-size: 16px;
+  text-align: center;
+  width: 550px;
+}
+
+#error-main .error-image {
+  width: 230px;
+  margin: 15px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;  
+  -khtml-border-radius: 50px;
+  border-radius: 50px;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      =FOOTER     using also css from AllSites.css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#footer { padding: 5px;}
+#footer #copyright { float: left; padding: 10px; }
+#footer #contact { float: right; text-align: right; font-size:120%;}
+
+
+
+
+

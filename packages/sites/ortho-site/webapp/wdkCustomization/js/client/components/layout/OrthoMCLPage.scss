@@ -1,0 +1,73 @@
+@import '@veupathdb/web-common/lib/styles/breakpoints.scss';
+@import '@veupathdb/web-common/lib/styles/default-layout.scss';
+@import '@veupathdb/web-common/lib/styles/header.scss';
+@import '@veupathdb/web-common/lib/styles/announcements.scss';
+@import '@veupathdb/web-common/lib/styles/main.scss';
+@import '@veupathdb/web-common/lib/styles/footer.scss';
+
+
+/*
+  OrthoMCL: (
+    primary-color: #3d4675,
+    secondary-color: #e7e9ee,
+    secondary-color-border: #dadde5,
+    bckgrnd-img: url('~site/images/Header-backgrounds/header-orthoMCL.jpg'),
+    logo: url('~site/images/Logos-web/orthomclDB.png'),
+    superscript-position-left: 29.4em,
+  ),
+*/
+
+  .vpdb-Header {
+    background-image: url('~site/images/Header-backgrounds/header-orthoMCL.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: 100;
+
+
+    .ebrc-HeaderBrandingContainer {
+      position: relative;
+
+
+      .vpdb-HeaderBranding {
+        content: url('~site/images/Logos-web/orthomclDB.png');
+      }
+
+      .vpdb-HeaderBrandingSuperscript {
+        position: absolute;
+        top: 0em;
+        left: 28em;
+        font-size: 0.9em;
+        font-weight: 500;
+        color: white;
+        white-space: nowrap;
+      }
+    }  
+  
+
+    &__collapsed {
+      .ebrc-HeaderBrandingContainer {
+        .vpdb-HeaderBrandingSuperscript {
+          top: 0em;
+          left: 28em;
+          font-size: 0.9em;
+        }
+      }
+    }
+
+
+    .vpdb-HeaderBranding {
+      height: 6em;
+    }
+
+
+    .wdk-CheckboxTreeNodeWrapper {
+      position: relative;
+    }
+  }
+
+  // site search overrides
+  .SiteSearch--CountsContainer, .SiteSearch--ResultTypeWidgetContainer {
+    border: 1px solid #dadde5;
+    background: #e7e9ee;
+  }
+

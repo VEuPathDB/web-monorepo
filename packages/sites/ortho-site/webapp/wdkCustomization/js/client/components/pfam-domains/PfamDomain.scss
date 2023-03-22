@@ -1,0 +1,18 @@
+.PfamDomain {
+  border: 0.0625rem solid #eee;
+  border-radius: 0.41666666666em;
+
+  .Band {
+    height: 0.41666666666em;
+  }
+
+  .Band:first-child {
+    border-top-left-radius: 0.41666666666em;
+    border-top-right-radius: 0.41666666666em;
+  }
+
+  .Band:last-child {
+    border-bottom-left-radius: 0.41666666666em;
+    border-bottom-right-radius: 0.41666666666em;
+  }
+}

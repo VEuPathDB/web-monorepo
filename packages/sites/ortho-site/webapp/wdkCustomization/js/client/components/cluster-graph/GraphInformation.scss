@@ -1,0 +1,56 @@
+.GraphInformation {
+  grid-area: information;
+
+  max-height: 700px;
+
+  .wdk-Tabs .wdk-Tab {
+    padding: 0.5em;
+  }
+
+  .wdk-Tabs .wdk-Tab .HelpTrigger {
+    margin-left: 0.25em;
+  }
+
+  .wdk-TabContent {
+    max-height: 669px;
+    overflow-y: auto;
+  }
+
+  .MesaComponent .MesaComponent {
+    overflow-x: auto;
+  }
+
+  .SearchBoxContainer {
+    display: flex;
+    align-items: center;
+  }
+
+  .wdk-RealTimeSearchBox {
+    margin-left: 0.5em;
+  }
+
+  .MesaComponent .HeadingCell {
+    color: black;
+    background-color: #eee;
+
+    padding: 0.2em 0.5em 0.2em 0.2em;
+  }
+
+  .MesaComponent .DataCell {
+    white-space: nowrap;
+
+    padding: 0.3em;
+  }
+
+  .MesaComponent thead tr:first-of-type th {
+    border: 0.0625rem solid #d3d3d3;
+  }
+
+  .MesaComponent tbody tr:hover {
+    background-color: #FFFF99;
+  }
+
+  .MesaComponent tbody tr td {
+    border: 0.0625rem dotted #666;
+  }
+}

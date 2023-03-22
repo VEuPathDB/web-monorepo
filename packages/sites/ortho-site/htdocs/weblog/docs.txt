@@ -1,0 +1,450 @@
+                             DOCUMENTATION
+
+         WebLog 2.53 by Darryl C. Burgdorf (burgdorf@awsd.com)
+
+                    http://awsd.com/scripts/weblog/
+
+WebLog is a comprehensive access log analysis tool.  It allows you to
+keep track of activity on your site by month, week, day and hour, to
+monitor total hits, bytes transferred and page views, and to keep track
+of your most popular pages.  It can also print out secondary reports to
+track "user sessions," showing the paths taken through your site by your
+visitors and giving you a rough idea of how long they spent looking at
+your pages, and to provide you with information on referring sites, the
+search engine keywords which brought your visitors and the agents and
+platforms they used while visiting.  It can read NCSA common or
+combined log files, as well as Microsoft extended format log files.
+
+              ===========================================
+
+I.  THE REPORTS
+
+The primary WebLog access report provides the following information:
+
+    A.  Long-Term Statistics
+
+        1.  Monthly Statistics:  An overview of site activity (number
+            of hits, number of bytes transferred, and approximate number
+            of visitors) per month for each month since you started
+            running WebLog.
+        2.  Daily Statistics (Past Five Weeks):  An overview of site
+            activity per day for the past five weeks.
+        3.  Day of Week Statistics:  An overview of site activity by
+            weekday.
+        4.  Hourly Statistics:  An overview of site activity by hour of
+            the day.
+        5.  "Record Book":  A simple listing of the days on which your
+            site had the most hits, transferred the most data and saw
+            the most visitors.
+
+        Each of the "Long-Term Statistics" reports (except the "record
+        book," of course) lists four pieces of information:  Hits,
+        Bytes, Visits and PViews.  The number of "hits" is the total
+        number of files requested from the server.  For example, if a
+        visitor loads a page which includes four inline graphics, a
+        total of five hits will be recorded in the access log.  The
+        number of bytes represents the total amount of information
+        transferred by the server in filling those requests.  (Note that
+        WebLog automatically factors in a bit extra in its calculations
+        to allow for the fact that "header" information -- which is not
+        recorded in the server access log -- is sent by the server along
+        with each file.)  The number of "visits" is an approximation of
+        the number of actual individual visitors to your Web site.  This
+        is only a *very* rough approximation, and should be regarded as
+        such.  The number of "pview" shows the number of Web pages
+        viewed by your visitors.  Each of the "Long-Term Statistics"
+        reports also includes a simple "bar graph" representation; the
+        graph can be configured to reflect whichever of the four items
+        you're most interested in being able to track "at a glance."
+
+    B.  Statistics for The Current Month
+
+        1.  Top N Files by Number of Hits (optional):  A list of the
+            pages most frequently requested.
+        2.  Top N Files by Volume (optional):  A list of the pages which
+            resulted in the greatest number of bytes transferred.
+        3.  Complete File Statistics (optional):  A list of all pages
+            accessed in the current calendar month, with the date of
+            last access, number of times requested, and total number of
+            bytes transferred.
+        4.  Top N Most Frequently Requested 404 Files (optional):  A
+            list of the pages people are requesting most often which
+            don't actually exist on your site.
+        5.  Complete 404 File Not Found Statistics (optional):  A
+            complete list of those nonexistent files.
+        6.  Top 25 "Entrance" Pages (optional): A list of the pages
+		    most often seen first by visitors to your site.
+        7.  Complete "Entrance" Page List (optional): The complete
+		    version of the above list.
+        8.  Top 25 "Exit" Pages (optional): A list of the pages most
+		    often seen last by visitors to your site.
+        9.  Complete "Exit" Page List (optional): The complete version
+		    of the above list.
+       10.  User ID Statistics (optional):  A complete list of user IDs
+            (and the associated second-level domains) utilized by the
+            visitors to your Web site.  Note that this report can, of
+            course, only be generated if at least part of your Web site
+            is password protected through your server's default system.
+       11.  "Top Level" Domains:  A breakdown of how many visits you've
+            had from each type of domain (.com, .net, .edu, etc.)
+       12.  Top N Domains by Number of Hits (optional):  A list of the
+            IP addresses (domains) from which people have visited your
+            site most often.
+       13.  Top N Domains by Volume (optional):  A list of the IP
+            addresses from which people have requested the greatest
+            amount of information.
+       14.  Complete Domain Statistics (optional):  A complete list of
+            the IP addresses from which people have visited your site
+            since the beginning of the current calendar month.
+
+        Each of the "Current Month" reports resets automatically at the
+        beginning of each month.  This allows you to easily keep track
+        of things while preventing the report file from reaching too
+        ridiculous a size over time.
+
+The optional access details report keeps track of "user sessions."  It
+will show you detailed "tracks" of the paths taken through your site by
+visitors for however many days you specify, and will give you overview
+information regarding how many unique visitors you've had each day and
+how long they seem to be staying around.  If logging of referring URLs
+is enabled, it will also show you, where possible, where your visitors
+came from.  Please note that precise tracking of the number of visitors
+is impossible; the information in this report is at best a reasonably
+close approximation based on the information in your server access log.
+
+The optional referring URL report logs the URLs reported by browsers as
+the "referers" directing them to the various listed pages.  You should
+be aware that this information is far from perfect.  Many browsers do
+not provide any information on the referring page; even those that do
+can at times provide false or misleading data.  Of course, this report
+is only available if your server log contains the necessary information.
+
+The optional keywords report logs the keywords used by your visitors
+to find you in the various Internet search engines and directories.  The
+major search engines are each listed individually.  Again, this report
+is only available if your server log contains the necessary information.
+
+The optional agent and platform reports list the agents (browsers)
+and platforms (operating systems) utilized by visitors to your pages.
+Again, of course, this report is only available if your server log
+contains the necessary information.
+
+    (CAVEAT:
+
+    (Like any log analysis software, WebLog is based squarely upon
+    several unfortunately questionable assumptions.  Chief among these
+    is the assumption that any accesses from a specific IP address
+    within a reasonably short period of time belong to a single user,
+    and the assumption that analysis of access logs can actually tell
+    you anything useful about site visitors, anyway.
+
+    (It is possible for different users to access your site with the
+    same IP address, so a single "user session" might actually reflect
+    visits from multiple users.  As well, thanks to the number of
+    systems which now employ local caching, it is quite likely that some
+    of the pages which seem to be accessed only once are in actuality
+    viewed many times by many different users.
+
+    (WebLog also assumes that the time between the loading of one page
+    and the loading of the next, so long as it is less than 30 minutes,
+    is actually spent looking at the first page.  This is clearly not
+    necessarily the case.  The user could have gotten up to fix himself
+    lunch or use the bathroom.  He could have reloaded another page
+    already in his browser's cache, or could even have gone to look at
+    pages on other sites before returning to yours.  There is no way of
+    knowing.
+
+    (Finally, WebLog assumes that the average length of time spent
+    viewing the last -- or only -- page visited in a user session is 30
+    seconds.  Again, there is obviously no way to check the validity of
+    this assumption.)
+
+              ===========================================
+
+II.  SETTING UP AND RUNNING WEBLOG
+
+The files that you need are as follows:
+
+weblog.pl:  This is the main program file.  You don't actually need to
+  do anything to it; in fact, you don't even have to execute it.
+
+config.pl:  This is the configuration file.  Everything you need to
+  change or modify is contained here.  This is also the file that you
+  will execute.  (Things are set up this way so that you can effectively
+  maintain multiple versions of the script, for example if you want to
+  run separate log analyses for different sites, just by keeping
+  separate config files for each.)
+
+bar1.gif, bar2.gif, bar3.gif, bar4.gif, and bar5.gif:  These five small
+  graphics files are used to create the bar graphs in the main access
+  report.
+
+As noted above, the WebLog configuration file, and not the WebLog
+program itself, should be executed.  (And please note that it should
+be executed from the telnet command prompt rather than your browser;
+WebLog is *not* a CGI script, and most likely won't run correctly if you
+try to access it from your browser.)  The configuration file should, of
+course, be set executable.  Make sure that the first line of the script
+matches the location of your system's Perl interpreter.  As well, the
+following variables need to be defined:
+
+$LogFile:  The path (not URL) of the Web site access log file from
+  which the log reports will be generated.  Note that this file is
+  generated by your server; if you're not sure where to find it or what
+  it's called, check with your system administrators.  It is possible,
+  though not likely, that you don't actually have access to log data.
+  If that is the case, then you won't be able to use WebLog at all.
+  The script can read both NCSA common ("standard") and combined
+  ("extended") format log files, as well as Microsoft extended format
+  log files.  You don't need to specify the type, as WebLog determines
+  it automatically when it reads the file.  Obviously, if you're
+  dealing with NCSA standard log files, or with log files which for
+  whatever reason don't include agent and referer information, WebLog
+  won't be able to generate agent or referer reports.  You can use an
+  asterisk in the variable definition as a "wildcard."  For example, if
+  your log files come to you named "www.YYMMDD" you can simply define
+  $LogFile as "www.*".  This will tell WebLog to analyze *any* file
+  whose name matches the pattern.  This can also be useful if you have
+  several log reports backed up, and want to run WebLog on all of them
+  at once.
+
+$IPLog:  The path to an optional DBM (database) file in which resolved
+  IP/domain pairs will be stored.  Logging this information will allow
+  WebLog to run much faster, especially if you're running multiple
+  reports from a single log file.  However, especially on a busy site,
+  the log file could become *very* large.  If you define an IP log file,
+  keep an eye on its size.
+
+$FileDir:  The path of the directory in which the various report files
+  will be created.
+
+$ReportFile, $FullListFile, $DetailsFile, $RefsFile, $KeywordsFile and
+  $AgentsFile:  The file names to be used for each of the reports WebLog
+  can generate.  All but the first are optional; if you don't assign a
+  file name, the report simply won't be generated.  The "full list" file
+  allows you to put the "full" file, user ID and domain lists on a page
+  of their own, while keeping the "top N" lists on the main report page;
+  this makes the most interesting data easy to see, without requiring
+  that the main report page be extremely large.
+
+$AgentListFile:  An optional DBM (database) file in which a *complete*
+  list of agents (browsers) visiting your site will be maintained.  In
+  most cases, there's really no reason to maintain such a list.
+
+$DBMType:  This variable determines how the DBM (database) files used
+  for storage of IP and/or agent info will be accessed.  Most users can
+  leave it set to 0.  If the script can't open the database file,
+  though -- and especially if you receive "Inappropriate file type
+  or format" errors -- try setting it to 1.  This will replace the
+  basic tie() command with a version of the command specific to the
+  DB_File module, which produces the above error message.  If all
+  else fails, set $DBMType to 2, and instead of tie() commands, the
+  more generic (but less efficient) dbmopen() commands will be
+  used.
+
+$PrintFullAgentLists:  If this variable is set to 1, and if you have
+  a DBM file containing a full list of agents, instead of printing out
+  its normal reports, WebLog will print two lists, showing exactly which
+  agents fall into the various agent and platform categories listed on
+  your agents report.  Again, this is of little or no interest to most
+  of those using WebLog, and can quite safely be set to 0 and forgotten.
+
+$EOMFile:  An optional file which WebLog can "spin off" at the close
+  of each month, containing a full record of file access, etc., for the
+  month.  This makes it easier for those who wish to keep permanent
+  "archive" reports to do so.
+
+$SystemName:  The name or description which you want to appear at the
+  top of your reports (e.g., "WebScripts").
+
+$OrgName and $OrgDomain:  The name and domain of the "host" organization
+  (e.g., ISP and isp.com).  If these variables are defined, accesses
+  from this organization/domain will be counted separately from other
+  accesses in the details report.
+
+$GraphURL:  The URL of the directory containing the bar graph images
+  (e.g., "http://awsd.com/graphs").  Do NOT include a trailing slash!
+
+$GraphBase:  This variable defines the information on which you want the
+  bar graphs in the main report to be based.  It can be set either as
+  "hits", "visits", "pviews" or "bytes"; if left undefined (or defined
+  incorrectly), graphs will be based on bytes transferred.
+
+$IncludeOnlyRefsTo and $ExcludeRefsTo:  Regexs specifying files or
+  directories to include or ignore in the files lists.  For example, to
+  include only files in a "scripts" subdirectory, $IncludeOnlyRefsTo =
+  "^/scripts" would suffice.  Multiple entries should be "OR"ed
+  (e.g., $IncludeOnlyRefsTo = "(^/dir1|^/dir2)").
+
+$IncludeOnlyDomain and $ExcludeDomain:  Regexs specifying domains to
+  include or ignore in the log file.  If you want your log analysis to
+  ignore any visits by you to your own site, for example, set the
+  $ExcludeDomain variable to your own IP address.  (Note that even if
+  you don't ignore your own visits completely, you can still track them
+  separately in the details report by using the $OrgName and $OrgDomain
+  variables.)
+
+$IncludeQuery:  If this variable is set to "0" any query information
+  contained in a URL will be stripped as the log file is processed.  If
+  it is set to "1" the information will be retained.
+
+$PrintFiles:  A flag specifying whether the lists of accessed files
+  should be generated.  (Normally, of course, you'd want to do so.
+  However, for example, if you generate a separate access report for
+  each site on a server, and also a report for the server as a whole,
+  you might want to suppress the files listings on the server-wide
+  report.)  0 = no; 1 = yes.  As noted earlier, by defining a "full
+  list" report, you can put the full list "off to the side," to keep
+  your main report's size down, but still have WebLog generate the
+  "top N files" lists.
+
+$Print404:  A flag specifying whether the "Code 404" file lists should
+  be printed.  0 = no; 1 = yes.
+
+$PrintDomains:  A flag specifying whether or not to print lists of
+  visiting IP addresses.  0 = no; 1 = yes.  This variable can also be
+  set to "2" to indicate that you want only second-level domains
+  tracked.  (In other words, for example, one hit each from
+  user1.foo.com and user2.foo.com will show up simply as two hits
+  from foo.com, which can greatly reduce the size of your log file,
+  especially if your site is busy!)
+
+$PrintUserIDs:  A flag specifying whether the User ID list should be
+  generated.  If no portion of your site is password protected, or if
+  you use a password system other than that which is integral to your
+  server software (.htaccess in the case of most UNIX systems), then
+  this list can be turned off, as your log file won't contain any user
+  IDs, anyway.
+
+$PrintTopNFiles:  The number of files to include in the "Top N Files"
+  lists.  Set to 0 if you don't want to print the lists.  The script
+  cannot generate the "top N" list if the full list isn't also being
+  stored.
+
+$TopFileListFilter:  Regex defining files to exclude from the "Top N
+  Files" lists.  The default value of "(\.gif|\.jpg|\.jpeg|Code 404)"
+  will filter out most image files and any frequently-requested but non-
+  existing files.
+
+$PrintTopNDomains:  The number of domains to include in the "Top N
+  Domains" lists.  (This, of course, is irrelevant if you're not
+  printing domain lists.)
+
+$LogOnlyNew:  Setting this variable to "1" will instruct WebLog to
+  ignore any entries in the log file being analyzed which date from
+  before the end of the last log file analyzed.  If you're afraid that
+  you might accidentally run the script with the same log file twice in
+  a row, setting this to "1" will prevent any data duplication.  If, on
+  the other hand, you won't necessarily be analyzing log files in strict
+  chronological order, you will want to keep this set to "0" so that all
+  information is parsed.
+
+$NoSessions:  If set to "1" this variable will instruct WebLog *not* to
+  include visitor counts on the monthly, daily and day-of-week lists.
+  It will also disable creation of the details report.
+
+$NoResolve:  By default, WebLog will attempt to resolve any IP numbers
+  in the log file to domain names.  This can take a while, especially
+  with larger log files.  If you don't want the script to bother -- if,
+  for example, you don't care whether visitors came from ".com", ".net"
+  or ".jp" sites, or if your log file already contains resolved domain
+  names wherever possible, anyway -- just set this variable to "1".
+
+$HourOffset:  If you are in one time zone and your Web host is in
+  another, you can use this variable to adjust the times shown in
+  the various reports.  For example, if your server is located in the
+  Eastern time zone, but you're in the Pacific time zone, set it to
+  "-3".
+
+$DetailsFilter:  A regex defining files to exclude from the details
+  report.  (It's also used to determine what qualifies as a "page view"
+  in the main report.)  The default value of "(\.gif|\.jpg|\.jpeg)" will
+  filter out most image files, making it easier to follow which actual
+  pages were viewed, and allowing a (theoretically) more accurate
+  tracking of the time spent on each page.
+
+$DetailsDays:  The number of "days" past to include in the details
+  report. (This, of course, is only relevant if you're actually printing
+  the details report.)  The number cannot be greater than 36.  Note that
+  this only refers to literal days if you are in fact running the script
+  once per day (as most users would).  Technically, this actually tells
+  the script the number of previous runs from which to still show info
+  on the report.  So if you only generate a report once per week, and
+  this variable is set to 7, you'll actually end up with 7 *weeks*
+  of details data in your report.  Of course, keeping that much info in
+  the report is not a good idea, and is likely to cause "out of memory"
+  errors when you try to run the script.
+
+$DetailsSummaryDays:  You can keep the "summary" data from the details
+  report longer, if you like, than you keep the actual detailed traffic
+  breakdown.  The $DetailsDays variable, above, defines how many "days"
+  worth of detailed data you want in the report; this variable defines
+  the total number of "days" for which you want at least summary data.
+  For example, you might set $DetailsDays to 2, and $DetailsSummaryDays
+  to 30; that would give you a detailed look at the paths taken through
+  your site by visitors in the past two days, and general info about the
+  number of visitors and how long they spent on your site, for the
+  entire past month.
+
+$refsexcludefrom and $refsexcludeto:  If you want references to or from
+  certain files ignored in the referring URLs report, define them here.
+  You might want to exclude any references from within the same domain,
+  for example, so that you can more easily see what *outside* locations
+  are sending visitors to your site.
+
+$RefsStripWWW:  Setting this variable to "1" will instruct the script to
+  remove the "www" prefix from URLs.  If you don't strip those, the same
+  URL could end up appearing twice in your referring URL list, both as
+  "www.foo.com" and as "foo.com"; if you *do* strip the prefix, though,
+  while the lists will be a bit easier to read and interpret, you'll end
+  up with some URLs which you can't actually follow unless you manually
+  put the "www" back.  (On some systems, for whatever reason, it's
+  mandatory.)
+
+$RefsFilterLists:  This variable determines whether or not *all*
+  referring URLs and/or keywords will be listed in the reports.  If it's
+  set to 1, the reports will automatically "filter out" less significant
+  URLs and keywords.  This will of course keep the size of the reports
+  down.  If you have a very busy site, and just want to know where
+  *most* people are coming from, filter your reports.  On the other
+  hand, if you have a fairly quiet site, or if you're interested in
+  tracking all accesses, set this variable to 0.
+
+$TopNRefDoms:  This variable tells WebLog how many domains, if any, to
+  include in the "top referers" list.  (This is just a list of the
+  domains -- not the specific pages -- from which the majority of your
+  visitors seem to be coming.)
+
+$TopNKeywords:  This variable defines the number of entries you want
+  included in your "top keywords" listing.  (As with the top referring
+  domains list above, defining the variable as "0" will disable the
+  creation of the list.)
+
+$AgentsIgnore:  If you wish to ignore references to particular files in
+  your agents/platforms report, list them here.  Eliminating references
+  to graphic images, for example, will prevent your report from
+  indicating an overly-high percentage of graphical browsers, since
+  only hits to actual pages will be included.
+
+$Verbose:  Setting this variable to "1" will instruct the script to
+  provide you with "status" comments as it runs.  Setting it to "0"
+  will disable the comments.  Any error messages, of course, will still
+  be generated.
+
+$bodyspec:  This variable defines any traits to be assigned to reports'
+  BODY tags.
+  
+$headerfile and $footerfile:  These variables define the locations of
+  text files containing HTML code and text to appear at the top and
+  bottom, respectively, of the reports.
+
+              ===========================================
+
+This documentation assumes that you have at least a general familiarity
+with setting up Perl scripts.  If you need more specific assistance,
+check with your system administrators, consult the WebScripts FAQs
+(frequently-asked questions) files <http://awsd.com/scripts/faqs.shtml>,
+or post your question on the WebScripts General Support Forum
+<http://awsd.com/scripts/forum/general/>.
+
+-- Darryl C. Burgdorf

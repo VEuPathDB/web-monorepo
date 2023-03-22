@@ -1,0 +1,34 @@
+
+/*~~~~~~~~~~~~~ Proteome Upload Form ~~~~~~~~~~~~~*/
+
+div.prot-upload {
+  margin-left: auto;
+  margin-right: auto;
+  width: 620px;
+  line-height: 1.2;
+}
+
+div.prot-upload h2 {
+  text-align: center;
+  margin: 8px 0 15px 0;
+}
+
+div.prot-upload p {
+  margin: 0 0 11px 22px;
+}
+
+div.prot-upload ul {
+  margin: 5px 0 5px 33px;
+  list-style: inside disc;
+}
+
+div.prot-upload .indent3 {
+  margin-left: 33px;
+}
+
+div.prot-upload #upload-form {
+  margin-left: auto;
+  margin-right: auto;
+  width: 450px;
+}
+
