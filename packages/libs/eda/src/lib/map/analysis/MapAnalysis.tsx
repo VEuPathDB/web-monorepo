@@ -264,8 +264,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const [activeSideMenuItems, setActiveSideMenuItems] = useState<Set<number>>(
     new Set()
   );
+  const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
+    useState<boolean>(true);
 
-  const sideNavigationItems = [
+  const sideNavigationItemObjs = [
     {
       isButton: true,
       labelText: 'Filter Data',
@@ -276,7 +278,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       labelText: 'Download Map',
       icon: <Download />,
     },
-  ].map((item, index) => {
+  ];
+
+  const sideNavigationItems = sideNavigationItemObjs.map((item, index) => {
     return (
       <button
         style={buttonStyles}
@@ -372,8 +376,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   }
                 />
                 <MapSideNavigation
-                  isExpanded={true}
-                  onToggleIsExpanded={() => alert('ok')}
+                  isExpanded={sideNavigationIsExpanded}
+                  onToggleIsExpanded={() =>
+                    setSideNavigationIsExpanded((isExpanded) => !isExpanded)
+                  }
                   siteInformationProps={props.siteInformationProps}
                 >
                   <div style={{ width: '100%' }}>
