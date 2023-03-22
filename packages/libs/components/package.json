@@ -36,7 +36,8 @@
     "react-leaflet": "^3.2.5",
     "react-leaflet-drift-marker": "^3.0.0",
     "react-plotly.js": "^2.4.0",
-    "shape2geohash": "^1.2.5"
+    "shape2geohash": "^1.2.5",
+    "@veupathdb/coreui": "workspace:^"
   },
   "files": [
     "lib",
@@ -61,15 +62,6 @@
     "not dead",
     "not op_mini all"
   ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
-  },
-  "prettier": "@veupathdb/prettier-config",
   "devDependencies": {
     "@babel/core": "^7.17.9",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.16.7",
@@ -103,16 +95,12 @@
     "@types/react-leaflet": "^2.5.2",
     "@types/react-plotly.js": "^2.2.4",
     "@types/stats-lite": "^2.2.0",
-    "@veupathdb/browserslist-config": "^1.1.0",
-    "@veupathdb/coreui": "^0.18.20",
-    "@veupathdb/eslint-config": "^2.0.0",
-    "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/tsconfig": "^2.0.0",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/tsconfig": "workspace:^",
     "babel-loader": "^8.1.0",
     "eslint": "^8.29.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "husky": "^4.3.8",
-    "lint-staged": "^10.5.3",
     "lodash": "^4.17.21",
     "md5": "^2.3.0",
     "npm-run-all": "^4.1.5",
@@ -127,7 +115,6 @@
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.61",
-    "@veupathdb/coreui": "^0.18.18",
     "react": ">=16.14"
   },
   "volta": {
