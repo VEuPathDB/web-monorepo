@@ -77,9 +77,10 @@ export default function PlotGradientLegend({
           dominantBaseline="middle"
           fontSize={tickFontSize}
         >
-          {((a / (nTicks! - 1)) * (legendMax - legendMin) + legendMin).toFixed(
-            2
-          )}
+          {(
+            (a / (nTicks! - 1)) * (legendMax - legendMin) +
+            legendMin
+          ).toPrecision(3)}
         </text>
       </g>
     );
