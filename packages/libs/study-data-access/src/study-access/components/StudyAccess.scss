@@ -1,0 +1,54 @@
+.StudyAccess {
+  &--UserTableSection {
+    padding: 0.75em 0;
+  }
+
+  &--UserTableSection summary {
+    font-size: 1.5em;
+    padding: 0.5em;
+  }
+
+  &--UserTableSection .MesaComponent .MesaComponent {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  &--SearchBoxContainer {
+    display: flex;
+    align-items: center;
+  }
+
+  &--SearchBoxContainer > * {
+    margin: 0 0.25em;
+  }
+
+  &--UserTableDialog {
+    min-width: 600px;
+    max-width: 80vw;
+  }
+
+  &--UserTableDialog p {
+    font-size: 1.5em;
+  }
+
+  &--UserTableDialog textarea {
+    font-size: 1.2em;
+  }
+
+  &--UsersAddedContent > * {
+    margin: 0.5em 0;
+  }
+
+  &--UsersAddedContent p, &--UsersAddedContent ul {
+    font-size: 1.2em;
+  }
+
+  &--AccessDenialSubmit, &--AddUsersSubmit, &--UsersAddedConfirm {
+    display: flex;
+    justify-content: center;
+  }
+
+  &--NameCell, &--TimestampCell {
+    white-space: nowrap;
+  }
+}

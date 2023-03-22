@@ -1,0 +1,50 @@
+{
+  "name": "@veupathdb/study-data-access",
+  "version": "0.4.1",
+  "description": "Utilities and hooks for controlling end user access to study data",
+  "main": "lib/index.js",
+  "repository": "git@github.com:VEuPathDB/web-study-data-access.git",
+  "author": "Dave Falke <dmfalke@gmail.com>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build-npm-modules": "veupathdb-react-scripts prepare src lib",
+    "build": "veupathdb-react-scripts prepare src lib"
+  },
+  "typings": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "src/lib"
+  ],
+  "eslintConfig": {
+    "extends": [
+      "@veupathdb"
+    ]
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/lodash": "^4.14.175",
+    "@types/node": "^12.0.0",
+    "@types/react-router-dom": "^5.3.3",
+    "@veupathdb/browserslist-config": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
+    "@veupathdb/tsconfig": "workspace:^",
+    "react-scripts": "4.0.1",
+    "typescript": "^4.4.4"
+  },
+  "volta": {
+    "node": "14.15.5",
+    "yarn": "1.22.10"
+  },
+  "dependencies": {
+    "fp-ts": "^2.11.5",
+    "io-ts": "^2.2.16",
+    "lodash": "^4.17.21",
+    "@veupathdb/http-utils": "workspace:^",
+    "@veupathdb/wdk-client": "workspace:^"
+  },
+  "peerDependencies": {}
+}
