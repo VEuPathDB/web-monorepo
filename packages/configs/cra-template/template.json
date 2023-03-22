@@ -2,11 +2,9 @@
   "package": {
     "dependencies": {
       "react": "^17.0.2",
-      "react-dom": "^17.0.2"
-    },
-    "peerDependencies": {
-      "@veupathdb/wdk-client": ">=0.6.7",
-      "@veupathdb/web-common": ">=0.5.0"
+      "react-dom": "^17.0.2",
+      "@veupathdb/wdk-client": "workspace:^",
+      "@veupathdb/web-common": "workspace:^"
     },
     "devDependencies": {
       "@babel/core": "^7.16.0",
@@ -28,33 +26,27 @@
       "@types/react": "^17.0.38",
       "@types/react-dom": "^17.0.11",
       "@types/react-router-dom": "^5.3.3",
-      "@veupathdb/browserslist-config": "^1.0.0",
-      "@veupathdb/components": "^0.15.0",
-      "@veupathdb/coreui": "^0.16.0",
-      "@veupathdb/eda": "^3.2.1",
-      "@veupathdb/eslint-config": "^2.0.0",
-      "@veupathdb/http-utils": "^1.1.0",
-      "@veupathdb/prettier-config": "^1.0.0",
-      "@veupathdb/study-data-access": "^0.3.0",
-      "@veupathdb/react-scripts": "^2.0.0",
-      "@veupathdb/tsconfig": "^2.0.0",
-      "@veupathdb/wdk-client": "^0.6.7",
-      "@veupathdb/web-common": "^0.5.0",
+      "@veupathdb/browserslist-config": "workspace:^",
+      "@veupathdb/components": "workspace:^",
+      "@veupathdb/coreui": "workspace:^",
+      "@veupathdb/eda": "workspace:^",
+      "@veupathdb/eslint-config": "workspace:^",
+      "@veupathdb/http-utils": "workspace:^",
+      "@veupathdb/study-data-access": "workspace:^",
+      "@veupathdb/react-scripts": "workspace:^",
+      "@veupathdb/tsconfig": "workspace:^",
       "assert": "^2.0.0",
       "autoprefixer": "^10.0.2",
       "bubleify": "^2.0.0",
       "buffer": "^6.0.3",
       "eslint": "^8.7.0",
       "eslint-config-react-app": "^7.0.0",
-      "husky": "^4.3.8",
       "ify-loader": "^1.1.0",
       "jquery": "1.9.1",
-      "lint-staged": ">=10",
       "popper.js": "^1.16.1",
       "sass": "^1.49.0",
       "path-browserify": "^1.0.1",
       "postcss": "^8.1.0",
-      "prettier": "2.2.1",
       "querystring-es3": "^0.2.1",
       "react-router": "^5.2.0",
       "react-router-dom": "^5.3.0",
@@ -66,19 +58,6 @@
       "typescript": "^4.5.4",
       "web-vitals": "^0.2.4"
     },
-    "husky": {
-      "hooks": {
-        "pre-commit": "lint-staged"
-      }
-    },
-    "lint-staged": {
-      "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
-    },
-    "prettier": "@veupathdb/prettier-config",
-    "resolutions": {
-      "@veupathdb/**/react": "17",
-      "@veupathdb/**/react-dom": "17"
-    },
     "scripts": {
       "start": "veupathdb-react-scripts start",
       "build": "veupathdb-react-scripts build",
@@ -89,7 +68,9 @@
       "build-npm-modules": "veupathdb-react-scripts prepare"
     },
     "eslintConfig": {
-      "extends": ["@veupathdb"]
+      "extends": [
+        "@veupathdb"
+      ]
     },
     "browserslist": [
       "extends @veupathdb/browserslist-config"
