@@ -1,0 +1,117 @@
+.parent-leaflet-tile .leaflet-tile {
+  border: solid gray 1px;
+}
+
+.cursor-zoom-in {
+  cursor: zoom-in;
+}
+
+.mouse-toolbar {
+  position: relative;
+  right: 6rem;
+}
+
+.mapveu-hori-bar > a {
+  display: inline-block !important;
+}
+
+.mapveu-hori-bar a:first-child {
+  border-radius: 4px 0 0 4px !important;
+}
+
+.mapveu-hori-bar a:last-child {
+  border-radius: 0 4px 4px 0 !important;
+}
+
+.mouse-toolbar > a:hover {
+  background-color: #f4f4f4;
+}
+
+.mapveu-button :not(.mapveu-button-selected) :hover {
+  background-color: rgb(78, 78, 78) !important;
+}
+
+.mapveu-button-selected {
+  background-color: rgb(1, 1, 144) !important;
+}
+
+.mapveu-button > i {
+  background: none;
+  border: inherit;
+  border-radius: inherit;
+}
+
+.mapveu-button-selected > i {
+  color: white;
+}
+
+.plot-marker-popup.popup-right,
+.plot-marker-popup.popup-left,
+.plot-marker-popup.popup-down {
+  transform-origin: center bottom;
+}
+
+.plot-marker-popup.popup-right,
+.plot-marker-popup.popup-left {
+  margin-bottom: 7px;
+}
+
+.plot-marker-popup.histogram-popup.popup-up {
+  margin-bottom: 36px;
+}
+
+.plot-marker-popup.histogram-popup.popup-right {
+  margin-left: 30px;
+}
+
+.plot-marker-popup.histogram-popup.popup-left {
+  margin-left: -30px;
+}
+
+.plot-marker-popup.histogram-popup.popup-down {
+  margin-bottom: -22px;
+}
+
+.plot-marker-popup.donut-popup.popup-up {
+  margin-bottom: 27px;
+}
+
+.plot-marker-popup.donut-popup.popup-right {
+  margin-left: 20px;
+}
+
+.plot-marker-popup.donut-popup.popup-left {
+  margin-left: -20px;
+}
+
+.plot-marker-popup.donut-popup.popup-down {
+  margin-bottom: -12px;
+}
+
+.plot-marker-popup.popup-up .leaflet-popup-content {
+  transform: rotate(0deg);
+}
+
+.plot-marker-popup.popup-right .leaflet-popup-content {
+  transform: rotate(-90deg);
+}
+
+.plot-marker-popup.popup-left .leaflet-popup-content {
+  transform: rotate(90deg);
+}
+
+.plot-marker-popup.popup-down .leaflet-popup-content {
+  transform: rotate(180deg);
+}
+
+/* on mouse-over, marker to top */
+.top-marker {
+  z-index: 3100 !important;
+}
+
+/* Replace leaflet styles*/
+
+/* general typography */
+.leaflet-container {
+  font: 12px/1.5 'Open Sans', Arial, Helvetica, sans-serif;
+}

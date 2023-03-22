@@ -1,0 +1,1333 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+#min_width_container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  /*padding-top: 110px;*/
+}
+#masthead {
+  height: 118px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+#map_container {
+  position: relative;
+  height: 598px;
+}
+#map {
+  border-top: 3px solid #154b6f;
+  border-bottom: 3px solid #154b6f;
+  height: 100%;
+  background: #88a3c1;
+}
+#content-inner {
+  margin-top: -26px;
+  margin-bottom: -26px;
+}
+.gutter {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+/*Overwrite bootstrap's label font size*/
+.label {
+  font-weight: normal;
+  font-size: small;
+}
+.bootstrap-tagsinput {
+  line-height: 2em;
+}
+.bootstrap-tagsinput .tag {
+  margin-right: 0px;
+  display: inline-block;
+  padding: 0.03em 0.6em 0.06em;
+}
+.bootstrap-tagsinput .tag [data-role='remove']:after {
+  content: '\00d7';
+  padding: 0px 0px;
+}
+.info {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  padding: 10px;
+  font-size: small;
+  background: white;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 5px;
+}
+.nvd3 text {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.nvtooltip {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  border-radius: 0;
+  border: 1px solid #cccccc;
+}
+.nvtooltip tbody {
+  border: 0 !important;
+}
+.nvtooltip table {
+  width: auto !important;
+}
+.nv-label text {
+  fill: #ffffff !important;
+}
+.nvd3.nv-pie path {
+  fill-opacity: 0.8;
+}
+.nv-legend-text-italics {
+  font-style: italic !important;
+}
+.legend-color-guide {
+  border-radius: 10px !important;
+  border: 0 !important;
+}
+.info h4 {
+  margin: 0 0 5px;
+  color: #777777;
+}
+.legend-contents {
+  text-align: left;
+  line-height: 15px;
+  color: #555555;
+  /* DKDK changed margin-bottom from 5 to 0 */
+  margin-bottom: 0px !important;
+  border-radius: 0 !important;
+  /* DKDK change these for mapveu v2
+    width         : 280px;
+    min-height    : 300px; */
+  width: 250px;
+  min-height: 210px;
+  /* DKDK combine with other CSS defined */
+  /* padding: 6px 8px 6px 8px; */
+  padding: 0px 0px 0px 0px;
+  background: white;
+  /*max-width     : 230px;
+    position: absolute;
+    right: 0px;
+    top: 30%;*/
+}
+.legend i,
+#Other-Terms-List i,
+#table-legend-controls i {
+  width: 14px;
+  height: 14px;
+  float: left;
+  margin-right: 6px;
+  opacity: 1;
+  border-radius: 10px;
+}
+
+.legend-count {
+  float: right;
+  min-width: 50px;
+  text-align: right;
+  font-weight: 600;
+  /*DKDK VB-8650*/
+  width: 27%;
+}
+
+.summ-by-value {
+  float: left;
+  /*DKDK VB-8650 */
+  /*width: 79%;*/
+}
+
+/*DKDK VB-8650 add below class to handle active-legend and external link separately*/
+.active-legend-area {
+  float: left;
+  width: 73%;
+}
+
+.legend-others {
+  margin-left: 68px;
+}
+
+.legend {
+  position: absolute;
+  /* DKDK set bottom to be smaller
+    bottom: 40px; */
+  bottom: 10px;
+  right: 0px;
+  z-index: 10000;
+}
+
+/* .legend > div {
+    /* DKDK change padding from 0 8px to 0 4px
+    padding: 0 2px;
+} */
+
+.legend p {
+  font-size: smaller;
+  word-wrap: break-word;
+  max-width: 280px;
+  margin-top: 20px;
+  text-align: justify;
+}
+
+.min-value,
+.max-value {
+  vertical-align: middle;
+  width: 25px;
+}
+.data-layer-legend {
+  text-align: center;
+}
+.sort-by {
+  margin: 3px 3px 0 0 !important;
+}
+
+#sortByDropdown li {
+  text-transform: capitalize;
+}
+
+/*center the search box*/
+.mapbox {
+  position: relative;
+  margin-left: 80px;
+  margin-right: 80px;
+}
+.mapbox .overlaytop {
+  position: absolute;
+  top: 11px;
+  left: 396px;
+  width: 56%;
+  min-width: 250px;
+  /*max-width: 500px;*/
+  z-index: 3000;
+}
+
+.leaflet-pseudo-fullscreen {
+  z-index: 2999;
+}
+
+.leaflet-control-fullscreen {
+  display: none;
+}
+
+.mapboxbottom .overlaybottom {
+  position: absolute;
+  /*DKDK VB-8707 change bottom from 3 to 25 px*/
+  bottom: 25px;
+  left: 40%;
+  width: 30%;
+  min-width: 200px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.7);
+  /*max-width: 500px;*/
+  z-index: 3000;
+  font-size: small;
+}
+.sidebar-pane h1,
+.sidebar-pane h2,
+.sidebar-pane h3,
+.sidebar-pane h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.sidebar-pane h3 {
+  font-size: 24px;
+  color: #666666;
+}
+.sidebar-pane h4 {
+  font-size: 18px;
+  color: #666666;
+}
+.sidebar-pane h1 {
+  font-size: 36px;
+  color: #333333;
+}
+.sidebar-icon,
+circle,
+path,
+.boxplot {
+  cursor: pointer;
+  list-style: none;
+}
+
+/* fixes a problem from VB-2017-10 postmortem where sidebar icons were heavily obscured on Windows or Linux Chrome */
+.sidebar-tabs > li {
+  overflow: visible;
+}
+
+/*keep the curson inline with the tags if the space left is more than width*/
+/*span.twitter-typeahead {*/
+/*width: 250px;*/
+/*}*/
+
+.tt-suggestion p {
+  margin: 0 0 0 0;
+}
+/*typeahead more results header*/
+.more-results {
+  margin: 0 20px 5px 20px;
+  padding: 3px 0;
+  border-bottom: 1px solid #cccccc;
+}
+.dropdown-menu li {
+  list-style-type: none;
+  list-style-image: none;
+  margin-bottom: 0;
+}
+.single-marker-icon {
+  text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff,
+    1px 1px 0 #ffffff;
+}
+.highlight-marker {
+  background-clip: padding-box;
+  border-radius: 30px;
+  box-shadow: 0px 0px 0px 4px rgba(255, 255, 0, 1);
+  z-index: 9999 !important;
+}
+.top-marker {
+  z-index: 3100 !important;
+}
+/* for the table */
+#marker-table {
+  overflow: hidden;
+  height: 100%;
+  padding-right: 0;
+}
+.row.no-pad {
+  margin-right: 10px;
+  margin-left: 0px;
+}
+.tooltip-bs .row.no-pad {
+  margin-left: 0px;
+}
+.row.no-pad > [class*='col-'] {
+  padding-right: 0;
+  padding-left: 0;
+}
+.marker-row p,
+.tooltip-bs p {
+  margin: 0;
+  padding: 3px 0px 3px 3px;
+  text-align: left;
+}
+.marker-row span,
+.tooltip-bs span {
+  display: inline-block;
+  margin: 2px 0;
+}
+.marker-row ul,
+.tooltip-bs ul {
+  padding: 3px 4px 0 4px;
+  margin-left: 3px;
+}
+.marker-row ul li,
+.tooltip-bs ul li {
+  display: table-row;
+}
+.marker-row ul li:last-child:after,
+.tooltip-bs ul li:last-child:after {
+  content: '';
+}
+.row.less-margin {
+  margin-left: -10px;
+  margin-right: -5px;
+}
+/*.marker-row.row {*/
+/*padding-right: 8px !important;*/
+/*}*/
+/*.marker-row ul li:after, .tooltip-bs ul li:after {*/
+/*content: ", ";*/
+/*}*/
+
+/* for the violin plots */
+.cancel {
+  position: relative;
+  cursor: pointer;
+  margin: 4px -5px 0 0;
+  opacity: 0.6;
+  float: right;
+  height: 15px;
+  width: 14px;
+  background: transparent;
+  text-align: center;
+  font-size: 14px;
+  color: #ffffff;
+  z-index: 3100;
+  text-decoration: none;
+  text-shadow: none;
+  display: none;
+}
+.cancel:hover,
+.cancel:focus {
+  opacity: 1;
+}
+.marker-row,
+.tooltip-bs,
+.tooltip {
+  background-color: rgba(255, 255, 255, 1);
+  color: rgba(0, 0, 0, 1);
+  padding: 1px;
+  border: 1px solid #cccccc;
+  border-radius: 0;
+  z-index: 100;
+  display: block;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  font-family: 'Open Sans';
+  font-size: 13px;
+  text-align: left;
+  white-space: normal;
+}
+.tooltip,
+.tooltip-bs {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 3080;
+  pointer-events: none;
+  user-select: none;
+  border: none;
+}
+.tooltip-bs {
+  pointer-events: auto;
+  user-select: text;
+  max-height: 1000px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.marker-row h3,
+.tooltip-bs h3,
+.tooltip h3 {
+  margin: 0;
+  padding: 4px 14px;
+  line-height: 18px;
+  font-weight: normal;
+  font-size: large;
+  background-color: rgba(247, 247, 247, 0.75);
+  color: rgba(0, 0, 0, 1);
+  text-align: center;
+  border-bottom: 1px solid #ebebeb;
+  border-radius: 0;
+}
+.tooltip p {
+  margin: 0;
+  padding: 5px 14px;
+  text-align: center;
+}
+.tooltip span {
+  display: inline-block;
+  margin: 2px 0;
+}
+.area {
+  shape-rendering: geometricPrecision;
+  fill: #cccccc !important;
+}
+.boxplot {
+  shape-rendering: crispEdges;
+  fill: none;
+  stroke: black;
+  stroke-width: 2px;
+}
+.boxplot.fill {
+  fill: none;
+}
+.boxplot.mean,
+.boxplot.median {
+  fill: white;
+  stroke: red;
+}
+.boxplot.mean {
+  shape-rendering: geometricPrecision;
+}
+.violin {
+  shape-rendering: geometricPrecision;
+  fill: none !important;
+  stroke: #777777;
+  stroke-width: 1px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 1px;
+  /* DKDK temporarily block below */
+  /* color-rendering : optimizeQuality !important; */
+  shape-rendering: crispEdges !important;
+  text-rendering: geometricPrecision !important;
+}
+.axis text {
+  font-family: sans-serif;
+  font-size: 11px;
+}
+/* end of violin plots specific CSS*/
+
+ul.dropdown-menu.inner {
+  margin: 0 !important;
+}
+
+.xy-tooltip {
+  z-index: 3070;
+}
+.no-interactions {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: -1000001;
+}
+.foreground {
+  z-index: 3150;
+}
+html {
+  font-size: 100%;
+}
+.tg {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: none;
+}
+.tg td {
+  padding: 10px 5px;
+  border-style: solid;
+  border-width: 0px;
+  overflow: hidden;
+  word-break: normal;
+}
+.tg th {
+  font-weight: normal;
+  padding: 10px 5px;
+  border-style: solid;
+  border-width: 0px;
+  overflow: hidden;
+  word-break: normal;
+}
+.leaflet-bar i {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  display: block;
+  background: #ffffff no-repeat 50% 50%;
+  border-bottom: 1px solid #cccccc;
+  text-align: center;
+  text-decoration: none;
+  color: black;
+}
+.rotate {
+  -moz-transition: all 300ms linear;
+  -webkit-transition: all 300ms linear;
+  transition: all 300ms linear;
+}
+.rotate.down {
+  -moz-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+#norm-ir-slider {
+  width: 90%;
+  margin-left: 5%;
+}
+/* Replace leaflet styles*/
+
+/* general typography */
+.leaflet-container {
+  font: 12px/1.5 'Open Sans', Arial, Helvetica, sans-serif;
+}
+.leaflet-bar,
+.leaflet-control-layers,
+.sidebar-tabs {
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #e7e7e7 !important;
+  border-radius: 0px;
+  box-shadow: none;
+}
+/* x-jsrender active terms DKDK VB-8650 */
+.active-term,
+.active-legend,
+.active-others,
+.insertExternalLinkLegend {
+  border-bottom: 1px dotted;
+  cursor: pointer;
+  /*text-transform: capitalize;*/
+  /*text-decoration: underline;*/
+  /*text-decoration-style: dotted;*/
+}
+/*.active-term::before {*/
+/*content: '<i class="fa fa-plus-circle fa-fw" aria-hidden="true"></i>';*/
+/*}*/
+
+.active-hover {
+  cursor: pointer;
+}
+.marker-row,
+#beeViolinPlot {
+  display: none;
+}
+/* Overwrite VB definitions*/
+
+div.error div,
+div.warning div,
+div.info div,
+div.hint div {
+  border: 0;
+  border-radius: 0;
+}
+.multiColumn-2 {
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+}
+.multiColumn-3 {
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  -webkit-column-count: 3;
+  -moz-column-count: 3;
+  column-count: 3;
+}
+.multiColumn-4 {
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  -webkit-column-count: 4;
+  -moz-column-count: 4;
+  column-count: 4;
+}
+.multiColumn-5 {
+  -webkit-column-gap: 20px;
+  -moz-column-gap: 20px;
+  column-gap: 20px;
+  -webkit-column-count: 5;
+  -moz-column-count: 5;
+  column-count: 5;
+}
+/* CSS transitions for map markers */
+
+/*.marker-row {*/
+/*!*-webkit-animation: fadein 0.5s; !* Safari, Chrome and Opera > 12.1 *!*!*/
+/*!*-moz-animation: fadein 0.5s; !* Firefox < 16 *!*!*/
+/*!*-ms-animation: fadein 0.5s; !* Internet Explorer *!*!*/
+/*!*-o-animation: fadein 0.5s; !* Opera < 12.1 *!*!*/
+/*animation: fadein 1.5s;*/
+/*!*transition:all 1.3s ease;*!*/
+/*}*/
+
+/*@keyframes fadein {*/
+/*from { opacity: 0; }*/
+/*to   { opacity: 1; }*/
+/*}*/
+
+/*!* Firefox < 16 *!*/
+/*@-moz-keyframes fadein {*/
+/*from { opacity: 0; }*/
+/*to   { opacity: 1; }*/
+/*}*/
+
+/*!* Safari, Chrome and Opera > 12.1 *!*/
+/*@-webkit-keyframes fadein {*/
+/*from { opacity: 0; }*/
+/*to   { opacity: 1; }*/
+/*}*/
+
+/*!* Internet Explorer *!*/
+/*@-ms-keyframes fadein {*/
+/*from { opacity: 0; }*/
+/*to   { opacity: 1; }*/
+/*}*/
+
+/*!* Opera < 12.1 *!*/
+/*@-o-keyframes fadein {*/
+/*from { opacity: 0; }*/
+/*to   { opacity: 1; }*/
+/*}*/
+
+/*.marker-cluster {*/
+/*position: relative;*/
+/*}*/
+
+/*.marker-cluster i {*/
+/*position: absolute;*/
+/*top: 45%;*/
+/*left: 45%;*/
+/*transform: translate(-45%, -45%);*/
+/*}*/
+
+/* add the font awesome icon */
+
+.marker-cluster:before {
+  content: '\f0c4';
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  text-decoration: inherit;
+}
+
+.leaflet-select-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  z-index: 800;
+  border: 2px dotted #38f;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.leaflet-marker-icon-anim {
+  -webkit-transition: -webkit-transform 0.3s linear, -webkit-opacity 0.3s linear;
+  -moz-transition: -moz-transform 0.3s linear, -moz-opacity 0.3s linear;
+  -o-transition: -o-transform 0.3s linear, -moz-opacity 0.3s linear;
+  transition: transform 0.3s ease-in-out, opacity 0.3s linear;
+}
+
+.leaflet-marker-icon-fout {
+  -webkit-transition: -webkit-opacity 0.3s linear;
+  -moz-transition: -moz-opacity 0.3s linear;
+  -o-transition: -o-opacity 0.3s linear;
+  transition: opacity 0.3s linear;
+}
+
+/* make keyframes that tell the start state and the end state of our object */
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-moz-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  opacity: 0; /* make things invisible upon start */
+  -webkit-animation: fadeIn ease-in 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation: fadeIn ease-in 1;
+  animation: fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode: forwards; /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+
+  -webkit-animation-duration: 0.3s;
+  -moz-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+}
+
+/* VB-6377 new additions for Bootstrap tooltip*/
+.detailedTip {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* DKDK VB-8650 */
+.active-legend,
+.insertExternalLinkLegend {
+  line-height: 17px;
+}
+
+/* DKDK VB-8650 */
+/* .active-legend i, #Other-Terms-List i{ */
+.active-legend .summ-by-value .summ-by-value-item,
+.insertExternalLinkLegend .summ-by-value .summ-by-value-item,
+#Other-Terms-List i {
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+  background: transparent;
+  border: 3px solid;
+  z-index: 1;
+}
+
+.scale-bars i {
+  border: 2px solid #808080;
+}
+
+/* Decoration of tooltip, if necessary */
+/*.detailedTip + .tooltip > .tooltip-inner {
+    background-color: #73AD21;
+    color: #FFFFFF;
+    border: 1px solid green;
+    padding: 10px;
+    font-size: 12px;
+}*/
+
+#generate-link-msg {
+  position: absolute;
+  top: 290px;
+  width: 350px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: none;
+  z-index: 3002;
+  left: 10px;
+}
+
+.highcharts-container {
+  margin: auto;
+}
+
+.highcharts-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap !important;
+}
+
+#projects-notice {
+  display: none;
+}
+
+#plots-control-panel {
+  width: 90%;
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #eeeeee;
+  display: none;
+}
+
+#plots-control-panel i {
+  margin-left: 4px;
+}
+
+#resolution-selector-group {
+  padding: 10px;
+}
+
+#resolution-selector-title {
+  padding-bottom: 4px;
+}
+
+#resolution-selector-title .fa-exclamation-triangle {
+  color: #fbbd08;
+}
+
+#resolution-selector-title .fa-exclamation-triangle.danger {
+  color: red;
+}
+
+#limit-terms-toggle-group {
+  display: inline-block;
+  width: 264px;
+  text-align: left;
+}
+
+#limit-terms-toggle-label {
+  float: left;
+}
+
+#limit-terms-toggle-title > span {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#limit-terms-toggle-details {
+  font-size: 12px;
+  font-style: italic;
+}
+
+#limit-terms-toggle {
+  float: right;
+}
+
+#limit-terms-toggle .toggle.disabled {
+  background-color: #ffffff;
+  border-color: #e7e7e7;
+}
+
+#limit-terms-toggle label.disabled {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+#limit-terms-toggle .toggle-group .btn-default {
+  background-color: #ffffff;
+}
+
+#sidebar {
+  min-width: 460px;
+  background: none;
+  border: none;
+  display: none;
+  z-index: 3001;
+  overflow: visible;
+  transition: all 0.5s;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+  }
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: absolute;
+  }
+}
+
+#sidebar .sidebar-pane {
+  min-width: 420px;
+}
+
+#sidebar .sidebar-pane #table-contents {
+  min-width: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: absolute;
+  top: 85px;
+  bottom: 0px;
+  left: 20px;
+  right: 0px;
+}
+
+#sidebar .sidebar-pane #table-contents .col-md-6 {
+  width: 50%;
+  float: left;
+}
+
+#sidebar.collapsed {
+  min-width: 0px;
+}
+
+/*.leaflet-bottom.leaflet-right {
+    height: 100%;
+    display: table;
+}*/
+
+/*.leaflet-bottom.leaflet-right .leaflet-bar {
+    display: table-cell;
+    vertical-align: middle;
+    height: 150px;
+    float: none;
+    background: none;
+    border: none !important;
+    z-index: 100;
+}*/
+
+.leaflet-bottom.leaflet-right .easy-button-container {
+  bottom: 42px;
+  height: 50px;
+  border-radius: 5px;
+}
+
+.leaflet-bottom.leaflet-right .easy-button-container.active {
+  right: 300px;
+}
+
+.leaflet-bottom.leaflet-right .leaflet-bar button {
+  /* display: table-cell;
+    vertical-align: middle; */
+  height: 50px;
+  border: 1px solid #e7e7e7;
+  padding-right: 5px;
+  padding-left: 5px;
+  border-radius: 5px;
+}
+
+.leaflet-bottom.leaflet-right .easy-button-container .button-state {
+  font-size: 0.67em;
+}
+
+.leaflet-bottom.leaflet-right .easy-button-container .fa {
+  color: #2c699e;
+  /*color: #4472C4;*/
+  font-size: 4em;
+  border-bottom: none;
+}
+
+/* Fixes for bottom right controls */
+.mq-attribution-control.leaflet-control {
+  position: absolute;
+  right: 0;
+}
+
+.mq-attribution-control.leaflet-control a {
+  display: inline;
+}
+
+.leaflet-control-scale {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+}
+
+.leaflet-top.leaflet-left {
+  top: -3px;
+  left: 40px;
+}
+
+.leaflet-top.leaflet-left div {
+  margin-left: 16px;
+}
+
+@media (max-width: 767px) {
+  .leaflet-top.leaflet-left div {
+    margin-left: 5px;
+  }
+
+  #generate-link-msg {
+    left: 0px;
+    top: 280px;
+  }
+
+  .mapbox .overlaytop {
+    left: 40px;
+    width: 90%;
+  }
+}
+
+.leaflet-top.leaflet-left .leaflet-bar a:focus {
+  color: #000000;
+  text-decoration: none;
+}
+
+.sidebar-tabs {
+  /*height: 70%;*/
+  border-radius: 4px;
+  /*min-height: 300px;*/
+}
+
+.leaflet-bottom.leaflet-right .leaflet-bar {
+  /*border: none !important;*/
+  display: none;
+}
+/*
+.leaflet-top.leaflet-left .leaflet-bar a {
+    border: none !important;
+}
+
+
+
+.leaflet-control-layers {
+    border: none !important;
+    width: 30px !important;
+}
+
+.leaflet-control-layers-toggle {
+    width: 16px !important;
+    height: 16px !important;
+    background-size: 16px;
+    margin: auto;
+}
+
+.leaflet-control-layers-expanded {
+    width: 100% !important;
+}*/
+
+.fa-stack-sm {
+  font-size: 0.6em;
+}
+
+.fa-stack-lg {
+  font-size: 6em;
+  color: #2c699e;
+}
+
+.fa-circle.fa-stack-1x {
+  font-size: 1.3em;
+  color: #ffffff;
+}
+
+.sidebar-tabs > li.active .fa-circle.fa-stack-1x {
+  color: #0074d9;
+}
+
+.leaflet-control a {
+  color: #000000 !important;
+}
+
+.leaflet-control-layers-toggle {
+  width: 30px !important;
+  height: 30px !important;
+  background-size: 18px !important;
+}
+
+#generate-link {
+  height: 40px;
+  font-size: 12pt;
+  overflow: hidden;
+  transition: all 80ms;
+  display: block;
+  width: 100%;
+  line-height: 40px;
+  color: inherit;
+  text-decoration: none;
+  text-align: center;
+}
+
+/*DKDK add vectorbase-icon*/
+#vectorbase-icon {
+  height: 40px;
+  font-size: 12pt;
+  overflow: hidden;
+  transition: all 80ms;
+  display: block;
+  width: 100%;
+  line-height: 40px;
+  color: inherit;
+  text-decoration: none;
+  text-align: center;
+}
+
+#generate-link:hover {
+  color: #000;
+  background-color: #eee;
+}
+
+.title-tutorial-link {
+  color: #27638c !important;
+  float: right;
+  padding-right: 10px;
+  vertical-align: top;
+  font-size: medium;
+  font-weight: normal;
+  text-decoration: none;
+  /* line-height: 2.4;*/
+}
+
+.title-tutorial-link:hover {
+  text-decoration: none;
+}
+
+.title-tutorial-link img {
+  vertical-align: top !important;
+}
+
+.title-tutorial-link span {
+  display: inline-block !important;
+  vertical-align: bottom !important;
+}
+
+.title-tutorial-link span:hover {
+  text-decoration: underline;
+}
+
+.sidebar-icon a.disabled,
+.sidebar-icon a.disabled:hover,
+#swarm-plots .disabled,
+#swarm-plots .disabled:hover {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+#swarm-plots {
+  width: 100%;
+  height: 100%;
+}
+
+.tooltip {
+  background-color: transparent;
+  background: transparent;
+  border: none;
+}
+
+.sidebar-x {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  cursor: pointer;
+}
+
+.sidebar-x line {
+  stroke: #cccccc;
+  stroke-width: 2;
+}
+
+#vectorbase-navigation {
+  margin-top: 20px;
+  font-size: 120%;
+}
+
+#vectorbase-navigation a {
+  display: block;
+  padding: 15px;
+  text-decoration: none;
+  color: black;
+  text-align: center;
+  width: 100%;
+  margin: -1px auto;
+}
+
+#vectorbase-navigation a:hover {
+  background: #bcbcbc;
+}
+
+#vectorbase-navigation div {
+  height: 1px;
+  max-width: 30px;
+  margin: auto;
+  background: linear-gradient(
+    to right,
+    #ffffff00,
+    #bcbcbc 20%,
+    #bcbcbc 80%,
+    #ffffff00
+  );
+}
+
+#help td {
+  white-space: normal;
+}
+
+.flash {
+  animation-delay: 2.5s;
+  animation-direction: alternate;
+  animation-duration: 500ms;
+  animation-iteration-count: 6;
+  animation-name: flash;
+}
+
+@keyframes flash {
+  from {
+    background-color: white;
+  }
+
+  to {
+    background-color: #0074d9;
+  }
+}
+
+/*Do not prevent disabled buttons from displaying a tooltip*/
+#add-dates[disabled] {
+  pointer-events: none;
+}
+
+#add-dates-tooltip.disabled {
+  cursor: not-allowed;
+}
+
+/* Fade in the active panels ot give it a better feel */
+.sidebar-pane.active {
+  opacity: 1;
+  animation-name: fadeIn;
+  animation-duration: 0.5s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.3;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#menu-bar .wrapper {
+  padding: 0;
+  border: none;
+}
+
+#menu-bar .wrapper .inner {
+  width: 100%;
+}
+
+#menu-bar .toggle {
+  width: 100%;
+}
+
+/* Adding back border properites for the tooltip removed doing border: 0 on div.info div selector above */
+.legend .tooltip-arrow {
+  border-bottom-color: rgb(204, 204, 204);
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(204, 204, 204);
+  border-top-style: solid;
+}
+
+#export-message {
+  text-align: center;
+}
+
+/* DKDK VB-8112 disabling cursor change on pie chart legend */
+.nvd3 .nv-legend .nv-series {
+  cursor: default !important;
+}
+
+.ui-resizable-e {
+  font-size: 30px;
+  width: 20px;
+  height: 30px;
+  right: 5px;
+  top: 50%;
+  bottom: 50%;
+  color: #bcbcbc;
+  position: absolute;
+  cursor: ew-resize;
+}
+
+/* DKDK VB-8650 related CSS */
+/*.insertExternalLinkLegend .insertExternalLink {
+    float: initial;
+}
+*/
+.insertExternalLink {
+  /*float: initial;*/
+  /*float: left;*/
+  position: relative;
+  margin: 0.2em 0 0 0.5em;
+  font-size: 0.9em;
+}
+
+.active-others {
+  float: left;
+}
+
+.insertExternalLinkText {
+  /*float: initial;*/
+  /*float: left;*/
+  /*float: none;*/
+  position: relative;
+  margin: 0em -0.5em 0 0em;
+  font-size: 0.9em;
+}
+
+#errorModal .alert {
+  margin: 0;
+}
+
+#errorModal .close {
+  margin: 0;
+}
+
+#errorModal #retry-button {
+  background-color: transparent;
+  border-color: #fff;
+  border-width: 2px;
+  border-radius: 5px;
+}

@@ -1,0 +1,34 @@
+.mini-diagram {
+  position: absolute;
+}
+
+.expanded-diagram {
+  margin: auto;
+  max-width: 100vw;
+}
+
+.expanded-diagram-enter {
+  opacity: 0;
+  transform: scale(-0.5);
+  transform-origin: top left;
+  margin-top: 60px;
+  margin-left: 60px;
+}
+
+.expanded-diagram-enter-active {
+  opacity: 1;
+  transition: 1000ms;
+  transform: initial;
+  margin-top: 0;
+  margin-left: 0;
+}
+
+.expanded-diagram-exit {
+  opacity: 1;
+}
+.expanded-diagram-exit-active {
+  opacity: 0;
+  transition: 1000ms;
+  transform: scale(-0.2);
+  transform-origin: top left;
+}
