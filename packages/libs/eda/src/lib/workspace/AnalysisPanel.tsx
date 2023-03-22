@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { useEffect, useState } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
