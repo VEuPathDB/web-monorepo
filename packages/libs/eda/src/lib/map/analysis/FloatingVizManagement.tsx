@@ -201,12 +201,7 @@ export default function FloatingVizManagement({
 
   return (
     <>
-      <FloatingDiv
-        style={{
-          top: 200,
-          left: 200,
-        }}
-      >
+      <div>
         <FilledButton
           text="Add a plot"
           onPress={() => setIsVizSelectorVisible(true)}
@@ -237,7 +232,7 @@ export default function FloatingVizManagement({
             )
           )}
         </ul>
-      </FloatingDiv>
+      </div>
 
       <NewVisualizationPickerModal
         visible={isVizSelectorVisible}

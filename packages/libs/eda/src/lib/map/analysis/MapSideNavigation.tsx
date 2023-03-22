@@ -8,6 +8,7 @@ export type MapSideNavigationProps = {
   children: React.ReactNode;
   /** This fires when the user expands/collapses the nav. */
   onToggleIsExpanded: () => void;
+  activeNavigationMenu?: React.ReactNode;
   siteInformationProps: SiteInformationProps;
 };
 
@@ -22,12 +23,12 @@ const bottomLinkStyles: React.CSSProperties = {
 };
 
 export function MapSideNavigation({
+  activeNavigationMenu,
   children,
   isExpanded,
   onToggleIsExpanded,
   siteInformationProps,
 }: MapSideNavigationProps) {
-  const sideMenuWidth = 200;
   const sideMenuExpandButtonWidth = 50;
 
   return (
@@ -39,11 +40,12 @@ export function MapSideNavigation({
         background: mapNavigationBackgroundColor,
         // height: 'calc(100% - 150px)',
         height: '100%',
-        left: isExpanded ? 0 : -sideMenuWidth,
         minHeight: 125,
         position: 'relative',
         transition: 'left 0.1s ease',
-        width: sideMenuWidth,
+        // Zero always makes math easy. Either the menu is as big as
+        // it needs to be or it's 0px.
+        width: isExpanded ? 'max-content' : 0,
         marginTop: '2rem',
         // The parent of this element probably had its pointer-events
         // set to "none". This restores the default behavior. Without
@@ -52,6 +54,7 @@ export function MapSideNavigation({
         // Just as with the map header, we need to set a z-index to
         // ensure that the side menu sits atop the map.
         zIndex: 10,
+        display: 'flex',
       }}
     >
       <button
@@ -92,6 +95,7 @@ export function MapSideNavigation({
         </span>
       </button>
       <div
+        className={isExpanded ? '' : 'screenReaderOnly'}
         style={{
           position: 'relative',
           // Ensures that the div takes up all the available height.
@@ -120,6 +124,7 @@ export function MapSideNavigation({
           }}
         />
         <div
+          className={isExpanded ? '' : 'screenReaderOnly'}
           style={{
             // This handles short viewports. These styles allow
             // content inside the div to be scrollable when it exceeds the
@@ -152,6 +157,9 @@ export function MapSideNavigation({
             </li>
           </ul>
         </div>
+      </div>
+      <div className={isExpanded ? '' : 'screenReaderOnly'}>
+        {activeNavigationMenu && activeNavigationMenu}
       </div>
     </nav>
   );

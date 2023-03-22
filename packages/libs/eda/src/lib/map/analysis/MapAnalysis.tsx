@@ -330,228 +330,240 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   return (
     <PromiseResult state={appPromiseState}>
-      {(app) => (
-        <ShowHideVariableContextProvider>
-          <DocumentationContainer>
-            <div
-              style={{
-                height: '100%',
-                position: 'relative',
-              }}
-            >
+      {(app) => {
+        const sideNavigationMenuContent = (
+          <FloatingVizManagement
+            analysisState={analysisState}
+            setActiveVisualizationId={setActiveVisualizationId}
+            appState={appState}
+            app={app}
+            geoConfigs={geoConfigs}
+            totalCounts={totalCounts}
+            filteredCounts={filteredCounts}
+            toggleStarredVariable={toggleStarredVariable}
+            filters={filtersIncludingViewport}
+          />
+        );
+
+        return (
+          <ShowHideVariableContextProvider>
+            <DocumentationContainer>
               <div
                 style={{
-                  // Make a div that completely fills its parent. Have it
-                  // layout its children with flexbox.
-                  display: 'flex',
-                  flexDirection: 'column',
                   height: '100%',
-                  width: '100%',
-                  // Attach this div container to it's parent.
-                  position: 'absolute',
-                  // Remember that just about everything in the DOM is box.
-                  // This div is sitting on top of the map. By disabling
-                  // pointer events we are saying: hey, div, become porous.
-                  // If a user clicks you, don't capture it, but let it go
-                  // to the map you're covering.
-                  pointerEvents: 'none',
+                  position: 'relative',
                 }}
               >
-                <SemiTransparentHeader
-                  analysisName={analysisState.analysis?.displayName}
-                  entityDisplayName={
-                    outputEntity?.displayNamePlural || 'Samples'
-                  }
-                  filterList={<FilterChipListForHeader />}
-                  isExpanded={mapHeaderIsExpanded}
-                  siteInformation={props.siteInformationProps}
-                  onAnalysisNameEdit={analysisState.setName}
-                  onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
-                  studyName={studyRecord.displayName}
-                  totalEntityCount={outputEntityTotalCount}
-                  totalEntityInSubsetCount={totalEntityCount}
-                  visibleEntityCount={
-                    totalVisibleWithOverlayEntityCount ??
-                    totalVisibleEntityCount
-                  }
-                />
-                <MapSideNavigation
-                  isExpanded={sideNavigationIsExpanded}
-                  onToggleIsExpanded={() =>
-                    setSideNavigationIsExpanded((isExpanded) => !isExpanded)
-                  }
-                  siteInformationProps={props.siteInformationProps}
+                <div
+                  style={{
+                    // Make a div that completely fills its parent. Have it
+                    // layout its children with flexbox.
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    width: '100%',
+                    // Attach this div container to it's parent.
+                    position: 'absolute',
+                    // Remember that just about everything in the DOM is box.
+                    // This div is sitting on top of the map. By disabling
+                    // pointer events we are saying: hey, div, become porous.
+                    // If a user clicks you, don't capture it, but let it go
+                    // to the map you're covering.
+                    pointerEvents: 'none',
+                  }}
                 >
-                  <div style={{ width: '100%' }}>
-                    <ul style={{ margin: 0, padding: 0 }}>
-                      {sideNavigationItems.map((item, itemIndex) => {
-                        const isActive = activeSideMenuItems.has(itemIndex);
-                        return (
-                          <li
-                            key={itemIndex}
-                            style={{
-                              // These styles format the lefthand side menu items.
-                              // Nothing special here. We can conditionally apply
-                              // styles based on in/active states, if we like.
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'flex-start',
-                              padding: '0.25rem',
-                              width: '100%',
-                              transition: 'background 0.2s ease',
-                              // An example of an active state style.
-                              borderRight: `5px solid ${
-                                isActive ? 'black' : 'transparent'
-                              }`,
-                            }}
-                          >
-                            {item}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </MapSideNavigation>
-              </div>
-              <MapVEuMap
-                height="100%"
-                width="100%"
-                style={mapStyle}
-                showMouseToolbar={false}
-                showZoomControl={false}
-                showLayerSelector={false}
-                showSpinner={pending}
-                animation={null}
-                viewport={appState.viewport}
-                markers={finalMarkers}
-                mouseMode={appState.mouseMode}
-                flyToMarkers={false}
-                flyToMarkersDelay={500}
-                onBoundsChanged={setBoundsZoomLevel}
-                onViewportChanged={setViewport}
-                onMouseModeChange={setMouseMode}
-                showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
-                zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
-              />
-              <FloatingDiv
-                style={{
-                  top: 350,
-                  right: 50,
-                }}
-              >
-                {legendItems.length > 0 && (
-                  <MapLegend
-                    legendItems={legendItems}
-                    title={overlayVariable?.displayName}
+                  <SemiTransparentHeader
+                    analysisName={analysisState.analysis?.displayName}
+                    entityDisplayName={
+                      outputEntity?.displayNamePlural || 'Samples'
+                    }
+                    filterList={<FilterChipListForHeader />}
+                    isExpanded={mapHeaderIsExpanded}
+                    siteInformation={props.siteInformationProps}
+                    onAnalysisNameEdit={analysisState.setName}
+                    onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
+                    studyName={studyRecord.displayName}
+                    totalEntityCount={outputEntityTotalCount}
+                    totalEntityInSubsetCount={totalEntityCount}
+                    visibleEntityCount={
+                      totalVisibleWithOverlayEntityCount ??
+                      totalVisibleEntityCount
+                    }
                   />
-                )}
-              </FloatingDiv>
-              {/* <FloatingDiv
-                style={{
-                  top: 250,
-                  left: 500,
-                  left: 100,
-                }}
-              >
-                <div>
-                  {safeHtml(studyRecord.displayName)} ({totalEntityCount})
+                  <MapSideNavigation
+                    isExpanded={sideNavigationIsExpanded}
+                    onToggleIsExpanded={() =>
+                      setSideNavigationIsExpanded((isExpanded) => !isExpanded)
+                    }
+                    siteInformationProps={props.siteInformationProps}
+                    activeNavigationMenu={sideNavigationMenuContent}
+                  >
+                    <div>
+                      <ul style={{ margin: 0, padding: 0 }}>
+                        {sideNavigationItems.map((item, itemIndex) => {
+                          const isActive = activeSideMenuItems.has(itemIndex);
+                          return (
+                            <li
+                              key={itemIndex}
+                              style={{
+                                // These styles format the lefthand side menu items.
+                                // Nothing special here. We can conditionally apply
+                                // styles based on in/active states, if we like.
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                padding: '0.25rem',
+                                width: '100%',
+                                transition: 'background 0.2s ease',
+                                // An example of an active state style.
+                                borderRight: `5px solid ${
+                                  isActive ? 'black' : 'transparent'
+                                }`,
+                              }}
+                            >
+                              {item}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </MapSideNavigation>
                 </div>
-                <div>
-                  Showing {entity?.displayName} variable {variable?.displayName}
-                </div>
-                <div>
-                  <FilledButton
-                    text="Open Filters"
-                    onPress={() => setIsSubsetPanelOpen(true)}
-                  />
-                </div>
-		*/}
-              <FloatingDiv
-                style={{
-                  top: 150,
-                  right: 50,
-                }}
-              >
-                <span style={{ backgroundColor: 'yellow' }}>
-                  temporary - remove me
-                </span>
-                <InputVariables
-                  inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                  entities={studyEntities}
-                  selectedVariables={selectedVariables}
-                  onChange={(selectedVariables) =>
-                    setSelectedOverlayVariable(selectedVariables.overlay)
+                <MapVEuMap
+                  height="100%"
+                  width="100%"
+                  style={mapStyle}
+                  showMouseToolbar={false}
+                  showZoomControl={false}
+                  showLayerSelector={false}
+                  showSpinner={pending}
+                  animation={null}
+                  viewport={appState.viewport}
+                  markers={finalMarkers}
+                  mouseMode={appState.mouseMode}
+                  flyToMarkers={false}
+                  flyToMarkersDelay={500}
+                  onBoundsChanged={setBoundsZoomLevel}
+                  onViewportChanged={setViewport}
+                  onMouseModeChange={setMouseMode}
+                  showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
+                  zoomLevelToGeohashLevel={
+                    geoConfig?.zoomLevelToAggregationLevel
                   }
-                  starredVariables={
-                    analysisState.analysis?.descriptor.starredVariables ?? []
-                  }
-                  toggleStarredVariable={toggleStarredVariable}
                 />
-              </FloatingDiv>
-
-              <FloatingVizManagement
-                analysisState={analysisState}
-                setActiveVisualizationId={setActiveVisualizationId}
-                appState={appState}
-                app={app}
-                geoConfigs={geoConfigs}
-                totalCounts={totalCounts}
-                filteredCounts={filteredCounts}
-                toggleStarredVariable={toggleStarredVariable}
-                filters={filtersIncludingViewport}
-              />
-
-              {(basicMarkerError || overlayError) && (
                 <FloatingDiv
-                  style={{ top: undefined, bottom: 50, left: 100, right: 100 }}
+                  style={{
+                    top: 350,
+                    right: 50,
+                  }}
                 >
-                  {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-                  {overlayError && <div>{String(overlayError)}</div>}
+                  {legendItems.length > 0 && (
+                    <MapLegend
+                      legendItems={legendItems}
+                      title={overlayVariable?.displayName}
+                    />
+                  )}
                 </FloatingDiv>
-              )}
-            </div>
-            <FloatingDiv
-              style={{
-                top: 100,
-                left: 100,
-                right: 100,
-                bottom: 10,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              {appState.isSubsetPanelOpen && (
-                <>
-                  <FloatingButton
-                    text=""
-                    icon={Close}
-                    onPress={() => setIsSubsetPanelOpen(false)}
-                    styleOverrides={{
-                      container: {
-                        display: 'flex',
-                        marginLeft: 'auto',
-                      },
-                    }}
-                  />
-                  <div style={{ overflow: 'auto' }}>
-                    <Subsetting
-                      variableLinkConfig={{
-                        type: 'button',
-                        onClick: setSubsetVariableAndEntity,
-                      }}
-                      entityId={subsetVariableAndEntity?.entityId ?? ''}
-                      variableId={subsetVariableAndEntity?.variableId ?? ''}
-                      analysisState={analysisState}
-                      totalCounts={totalCounts.value}
-                      filteredCounts={filteredCounts.value}
+                {/* <FloatingDiv
+                  style={{
+                    top: 250,
+                    left: 500,
+                    left: 100,
+                  }}
+                >
+                  <div>
+                    {safeHtml(studyRecord.displayName)} ({totalEntityCount})
+                  </div>
+                  <div>
+                    Showing {entity?.displayName} variable {variable?.displayName}
+                  </div>
+                  <div>
+                    <FilledButton
+                      text="Open Filters"
+                      onPress={() => setIsSubsetPanelOpen(true)}
                     />
                   </div>
-                </>
-              )}
-            </FloatingDiv>
-          </DocumentationContainer>
-        </ShowHideVariableContextProvider>
-      )}
+      */}
+                <FloatingDiv
+                  style={{
+                    top: 150,
+                    right: 50,
+                  }}
+                >
+                  <span style={{ backgroundColor: 'yellow' }}>
+                    temporary - remove me
+                  </span>
+                  <InputVariables
+                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    selectedVariables={selectedVariables}
+                    onChange={(selectedVariables) =>
+                      setSelectedOverlayVariable(selectedVariables.overlay)
+                    }
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                  />
+                </FloatingDiv>
+
+                {(basicMarkerError || overlayError) && (
+                  <FloatingDiv
+                    style={{
+                      top: undefined,
+                      bottom: 50,
+                      left: 100,
+                      right: 100,
+                    }}
+                  >
+                    {basicMarkerError && <div>{String(basicMarkerError)}</div>}
+                    {overlayError && <div>{String(overlayError)}</div>}
+                  </FloatingDiv>
+                )}
+              </div>
+              <FloatingDiv
+                style={{
+                  top: 100,
+                  left: 100,
+                  right: 100,
+                  bottom: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {appState.isSubsetPanelOpen && (
+                  <>
+                    <FloatingButton
+                      text=""
+                      icon={Close}
+                      onPress={() => setIsSubsetPanelOpen(false)}
+                      styleOverrides={{
+                        container: {
+                          display: 'flex',
+                          marginLeft: 'auto',
+                        },
+                      }}
+                    />
+                    <div style={{ overflow: 'auto' }}>
+                      <Subsetting
+                        variableLinkConfig={{
+                          type: 'button',
+                          onClick: setSubsetVariableAndEntity,
+                        }}
+                        entityId={subsetVariableAndEntity?.entityId ?? ''}
+                        variableId={subsetVariableAndEntity?.variableId ?? ''}
+                        analysisState={analysisState}
+                        totalCounts={totalCounts.value}
+                        filteredCounts={filteredCounts.value}
+                      />
+                    </div>
+                  </>
+                )}
+              </FloatingDiv>
+            </DocumentationContainer>
+          </ShowHideVariableContextProvider>
+        );
+      }}
     </PromiseResult>
   );
 }
