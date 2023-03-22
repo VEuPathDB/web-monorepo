@@ -3,9 +3,9 @@ import { useGeoConfig } from '../../hooks/geoConfig';
 import { useMapMarkers } from '../../hooks/mapMarkers';
 import { useStudyEntities, useStudyMetadata } from '../../hooks/workspace';
 import { TriggerComponentTypes } from '../../types/fullScreenApp';
-import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
+import MapVEuMap, { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
 import { defaultAnimation } from '../visualizations/implementations/MapVisualization';
-import { BoundsViewport, Viewport } from '@veupathdb/components/lib/map/Types';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { tinyLeafletZoomLevelToGeohashLevel } from '@veupathdb/components/lib/map/utils/leaflet-geohash';
 import { GeoConfig } from '../../types/geoConfig';
 import { isEqual } from 'lodash';
@@ -70,7 +70,7 @@ export function MiniMap(props: TriggerComponentTypes) {
       title={
         <div>
           Location of {entityDisplayName}
-          {filters.length ? ' in current subset' : ''}.<br />
+          {filters && filters.length ? ' in current subset' : ''}.<br />
           Click the map to enlarge...
         </div>
       }

@@ -225,7 +225,6 @@ export function InputVariables(props: Props) {
                     style={input.readonlyValue ? {} : input.styleOverride}
                   >
                     <Tooltip
-                      css={{}}
                       title={
                         !input.readonlyValue &&
                         constraints &&

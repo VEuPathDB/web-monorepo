@@ -684,7 +684,7 @@ function MosaicViz(props: Props<Options>) {
           content: (
             <>
               <div style={getReferenceValueStyles(!!xAxisVariable?.vocabulary)}>
-                <Tooltip css={{}} title={'Required parameter'}>
+                <Tooltip title={'Required parameter'}>
                   <span
                     className={classes.label}
                     style={
@@ -726,7 +726,7 @@ function MosaicViz(props: Props<Options>) {
                 </div>
               </div>
               <div style={getReferenceValueStyles(!!yAxisVariable?.vocabulary)}>
-                <Tooltip css={{}} title={'Required parameter'}>
+                <Tooltip title={'Required parameter'}>
                   <span
                     className={classes.label}
                     style={
