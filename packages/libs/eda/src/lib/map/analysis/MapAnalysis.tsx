@@ -43,6 +43,7 @@ import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
+import { BarChartTwoTone } from '@material-ui/icons';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -261,13 +262,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
    * can keep track of the open panels and use that info to
    * conditionally render some styles or something.
    */
-  const [activeSideMenuItems, setActiveSideMenuItems] = useState<Set<number>>(
-    new Set()
-  );
+  const [activeSideMenuIndex, setActiveSideMenuIndex] =
+    useState<number | undefined>();
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);
 
   const sideNavigationItemObjs = [
+    {
+      isButton: true,
+      labelText: 'Add a Plot',
+      icon: <BarChartTwoTone />,
+    },
     {
       isButton: true,
       labelText: 'Filter Data',
@@ -285,11 +290,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       <button
         style={buttonStyles}
         onClick={() => {
-          setActiveSideMenuItems((currentSet) => {
-            const newSet = new Set(currentSet);
-            newSet.has(index) ? newSet.delete(index) : newSet.add(index);
-            return newSet;
-          });
+          setActiveSideMenuIndex((currentIndex) =>
+            currentIndex === index ? undefined : index
+          );
         }}
       >
         <span style={iconStyles} aria-hidden>
@@ -331,19 +334,20 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   return (
     <PromiseResult state={appPromiseState}>
       {(app) => {
-        const sideNavigationMenuContent = (
-          <FloatingVizManagement
-            analysisState={analysisState}
-            setActiveVisualizationId={setActiveVisualizationId}
-            appState={appState}
-            app={app}
-            geoConfigs={geoConfigs}
-            totalCounts={totalCounts}
-            filteredCounts={filteredCounts}
-            toggleStarredVariable={toggleStarredVariable}
-            filters={filtersIncludingViewport}
-          />
-        );
+        const activeNavigationItemMenu =
+          activeSideMenuIndex === 0 ? (
+            <FloatingVizManagement
+              analysisState={analysisState}
+              setActiveVisualizationId={setActiveVisualizationId}
+              appState={appState}
+              app={app}
+              geoConfigs={geoConfigs}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              toggleStarredVariable={toggleStarredVariable}
+              filters={filtersIncludingViewport}
+            />
+          ) : null;
 
         return (
           <ShowHideVariableContextProvider>
@@ -396,12 +400,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }
                     siteInformationProps={props.siteInformationProps}
-                    activeNavigationMenu={sideNavigationMenuContent}
+                    activeNavigationMenu={activeNavigationItemMenu}
                   >
                     <div>
                       <ul style={{ margin: 0, padding: 0 }}>
                         {sideNavigationItems.map((item, itemIndex) => {
-                          const isActive = activeSideMenuItems.has(itemIndex);
+                          const isActive = activeSideMenuIndex === itemIndex;
                           return (
                             <li
                               key={itemIndex}
@@ -416,9 +420,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 width: '100%',
                                 transition: 'background 0.2s ease',
                                 // An example of an active state style.
-                                borderRight: `5px solid ${
-                                  isActive ? 'black' : 'transparent'
-                                }`,
+                                fontWeight: isActive ? 'bold' : 'inherit',
                               }}
                             >
                               {item}
