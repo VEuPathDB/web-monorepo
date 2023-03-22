@@ -1,0 +1,42 @@
+.ColocateStepForm {
+  &--Header {
+    text-align: center;
+  }
+
+  &--SelectSearchPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &--SearchInputSelectorContainer {
+    display: flex;
+    align-items: start;
+    justify-content: space-evenly;
+
+    >:first-child {
+      margin-right: 1em;
+    }
+
+    >:not(:first-child) {
+      margin: 0 1em;
+    }
+  }
+
+  &--SearchInputSelector {
+    width: 50%;
+  }
+
+  &--ColocationIcon {
+    background-image: url('../questions/overlap.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    border: 1px solid black;
+
+    width: 4em;
+    height: 4em;
+  }
+}

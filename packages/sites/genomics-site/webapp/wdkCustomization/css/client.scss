@@ -1,0 +1,655 @@
+/* pdbe molstar plugin */
+.msp-plugin .msp-layout-expanded {
+  /* Deal with fixed header */
+  top: 168px;
+  z-index: 1;
+}
+
+.ResultTableSummaryView .HeadingCell--key-link > div > *:nth-child(2){
+  position: relative;
+  margin-left: 40px;
+  &:before {
+    position: absolute;
+    left: -37px;
+    pointer-events: none;
+    content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
+  }
+}
+
+/* Hide default record ID printed by WDK for genes */
+.wdk-RecordContainer__GeneRecordClasses\.GeneRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+/* Hide default record ID printed by WDK for geomic sequences */
+.wdk-RecordContainer__SequenceRecordClasses\.SequenceRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+/* Hide default record ID printed by WDK for compounds */
+.wdk-RecordContainer__CompoundRecordClasses\.CompoundRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+/* Hide default record ID printed by WDK for popsets */
+.wdk-RecordContainer__PopsetRecordClasses\.PopsetRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+/* Hide default record ID printed by WDK for ests */
+.wdk-RecordContainer__EstRecordClasses\.EstRecordClass .wdk-RecordHeading {
+  display: none;
+}
+/* Hide default record IF printed by WDK for pathways */
+.wdk-RecordContainer__PathwayRecordClasses\.PathwayRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
+.eupathdb-RecordOverview {
+  overflow: auto;
+}
+
+.eupathdb-RecordOverviewTitle, .eupathdb-GeneOverviewSubtitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: .5em 0 0;
+  font-size: 2em;
+}
+
+.eupathdb-GeneOverviewSubtitle {
+  padding: 0 !important; /* i give up */
+  font-size: 1rem;
+}
+
+.eupathdb-GeneOverviewSubtitle[data-new-product-name=''] {
+  display: none;
+}
+
+.eupathdb-GeneOverviewHighlighted {
+  color: darkred;
+  font-weight: 400;
+  background-color: #E6E6E6;
+}
+
+.eupathdb-RecordOverviewId, .eupathdb-RecordOverviewDescription {
+  display: inline;
+}
+
+.eupathdb-RecordOverviewId {
+  font-size: 1.3em;
+}
+
+.eupathdb-GeneOverviewSubtitle .eupathdb-RecordOverviewId {
+  visibility: hidden;
+  line-height: 0;
+  display: inline-block;
+  height: 0;
+  padding: 0;
+  font-size: 1.95em;
+}
+
+.eupathdb-RecordOverviewDescription {
+  font-weight: 300;
+  font-size: 1.1em;
+  margin-left: .5em;
+}
+
+.eupathdb-GeneOverviewSubtitle .eupathdb-RecordOverviewDescription {
+  font-size: 1rem;
+  font-style: italic;
+  vertical-align: text-top;
+}
+
+.eupathdb-RecordOverviewPanels {
+  margin-top: 2em;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+/* gene page overview */
+@media all and (min-width: 1000px) {
+  .eupathdb-RecordOverviewLeft {
+    margin-right: 60px;
+    max-width: 450px;
+  }
+  .eupathdb-RecordOverviewRight {
+    flex: 1;
+  }
+}
+
+.eupathdb-RecordOverviewLeft h1, .eupathdb-RecordOverviewRight .GeneOverviewProduct {
+  padding: 10px 0;
+}
+
+/* Hide sections based on gene type */
+.eupathdb-RecordOverview[data-show-gene-type] {
+  display: none;
+}
+
+.eupathdb-RecordOverview[data-gene-type="protein coding"] [data-show-gene-type="protein coding"] {
+  display: initial;
+}
+
+/* Hide sections based on number of comments */
+.eupathdb-RecordOverview [data-show-num-user-comments] {
+  display: none;
+}
+
+/* if data-show-num-user-comments is '0' and we don't have comments, show section */
+.eupathdb-RecordOverview[data-num-user-comments=""] [data-show-num-user-comments="0"],
+.eupathdb-RecordOverview[data-num-user-comments="0"] [data-show-num-user-comments="0"] {
+  display: initial;
+}
+
+/* if data-show-num-user-comments begins with a '+' and we have comments, show section */
+.eupathdb-RecordOverview:not([data-num-user-comments=""]):not([data-num-user-comments="0"]) [data-show-num-user-comments="+1"] {
+  display: initial;
+}
+
+/* if data-show-num-user-comments equals '+2' and we have more than 2 comments, show section */
+.eupathdb-RecordOverview:not([data-num-user-comments=""]):not([data-num-user-comments="0"]):not([data-num-user-comments="1"]) [data-show-num-user-comments="+2"] {
+  display: initial;
+}
+
+/*Hide Apollo link based on attribute */
+.eupathdb-RecordOverview [data-show-apollo] {
+    display: none;
+}
+
+.eupathdb-RecordOverview[data-apollo="1"] [data-show-apollo="1"] {
+    display: initial;
+}
+
+.GeneOverviewIntent {
+  font-size: 1.2em;
+  font-style: italic;
+}
+
+.GeneOverviewGeneType {
+  position: relative;
+  top: -1em;
+  font-weight: normal;
+}
+
+.eupathdb-TranscriptTabContent .wdk-RecordSection {
+  margin-top: -84px;
+  padding-top: 64px;
+}
+
+.eupathdb-VerticalScrollHelper {
+  padding: 0 30px;
+  position: relative;
+  height: 100%;
+}
+
+.eupathdb-VerticalScrollHelperButton {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  border: none;
+  background: transparent;
+}
+
+.eupathdb-VerticalScrollHelperButton:hover {
+  color: black;
+}
+
+.eupathdb-VerticalScrollHelperButton[disabled] {
+  color: lightgrey;
+}
+
+.eupathdb-VerticalScrollHelperButton:first-child {
+  left: 0;
+  border-right: 1px solid #ccc;;
+}
+
+.eupathdb-VerticalScrollHelperButton:last-child {
+  right: 0;
+  border-left: 1px solid #ccc;;
+}
+
+.eupathdb-ThumbnailLabel {
+  font-weight: 300;
+  font-size: 1.2em;
+  margin: .2em 0;
+}
+
+.eupathdb-ThumbnailsTitle {
+  font-size: 1.5em;
+  font-weight: 500;
+  margin: 16px 0 12px 0;
+}
+
+.eupathdb-ThumbnailsContainer {
+  border: 1px solid #d8d8d8;
+  background: #f2f2f2;
+  border-radius: 4px;
+  display: inline-block;
+  max-width: 100%;
+  min-height: 100px;
+  white-space: nowrap;
+}
+
+.eupathdb-Thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.eupathdb-ThumbnailWrapper {
+  margin: .5em 1em;
+  position: relative;
+}
+
+.eupathdb-Thumbnail {
+  border: 1px solid #a9a9a9;
+  display: block;
+  margin-left: auto;
+  height: 60px;
+  width: 100px;
+  overflow: hidden;
+  background: white;
+}
+
+.eupathdb-ThumbnailZoomButton {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 0;
+  border-top-left-radius: 4px;
+  z-index: 1;
+}
+
+.eupathdb-ThumbnailWrapper img {
+  display: block;
+  width: 100%;
+}
+
+.eupathdb-Thumbnail__PhenotypeGraphs,
+.eupathdb-Thumbnail__CrisprPhenotypeGraphs,
+.eupathdb-Thumbnail__ExpressionGraphs {
+  position: relative;
+}
+
+.eupathdb-Thumbnail__PhenotypeGraphs:before,
+.eupathdb-Thumbnail__CrisprPhenotypeGraphs:before,
+.eupathdb-Thumbnail__ExpressionGraphs:before {
+  content: attr(data-count) " data sets";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 30px;
+  font-size: 1.2em;
+  text-align: center;
+  text-shadow: 0px 0px 1px black;
+  color: white;
+  background: rgba(0,0,0,.4);
+  z-index: 1;
+}
+
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail {
+  width: auto;
+  height: auto;
+  overflow: visible;
+  margin: 0 auto;
+  max-width: calc(100vw - 100px);
+}
+
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail__PhenotypeGraphs:before,
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail__CrisprPhenotypeGraphs:before,
+.eupathdb-ThumbnailPopover .eupathdb-Thumbnail__ExpressionGraphs:before {
+  font-size: 10vh;
+  line-height: 75vh;
+}
+
+.eupathdb-Thumbnail__PhenotypeGraphs img,
+.eupathdb-Thumbnail__CrisprPhenotypeGraphs img,
+.eupathdb-Thumbnail__ExpressionGraphs img {
+  -moz-filter: grayscale(.7) blur(1px);
+  -webkit-filter: grayscale(.7) blur(1px);
+  -o-filter: grayscale(.7) blur(1px);
+  -ms-filter: grayscale(.7) blur(1px);
+  filter: grayscale(.7) blur(1px);
+}
+
+.eupathdb-ThumbnailPopover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.eupathdb-ThumbnailPopoverText {
+  color: #fafafa;
+}
+
+.eupathdb-ThumbnailPopover h3 {
+  text-align: center;
+  padding: 2px 0;
+  font-weight: 400;
+}
+
+.eupathdb-ThumbnailPopover img {
+  max-height: calc(100vh - 140px);
+  /* max-width: 80vw; */
+  border: 1px solid #aaa;
+  display: block;
+}
+
+.eupathdb-GbrowseImage {
+  max-width: 100%;
+}
+
+.eupathdb-GbrowseImageMapTooltip {
+  font-size: 1.2em;
+  line-height: 1.2;
+  max-width: 600px;
+}
+
+.eupathdb-GbrowseImageMapTooltip .qtip-content {
+  max-height: calc(100vh - 60px);
+  overflow: auto;
+}
+
+/*
+.eupathdb-Thumbnail:hover {
+  position: absolute;
+  z-index: 1;
+  height: auto;
+  width: 710px;
+  box-shadow: 0px 0px 14px #ddd;
+  left: 30em;
+}
+
+.eupathdb-Thumbnail:hover img {
+  width: 800px;
+  left: -90px;
+}
+*/
+
+#MercatorTable .wdk-CollapsibleSectionContent,
+#SNPsAlignment .wdk-CollapsibleSectionContent,
+#snps_alignment_form .wdk-CollapsibleSectionContent {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  margin: 1rem;
+}
+
+.wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence {
+  width: 100%;
+}
+
+.wdk-RecordAttributeSectionItem.wdk-RecordAttributeSectionItem__fasta_transcript_sequence .wdk-RecordAttributeName {
+  display: block;
+}
+
+.wdk-RecordTable__ExpressionGraphs .wdk-DataTableCell__summary {
+  min-width: 20em;
+}
+
+.wdk-RecordTable__ProteinExpressionGraphs .wdk-DataTableCell__assay_type {
+  white-space: nowrap;
+}
+
+.wdk-RecordTable__UserComments th.wdk-DataTableCell,
+.wdk-RecordTable__UserComments .wdk-DataTableCell__comment_date {
+  white-space: nowrap;
+}
+
+.eupathdb-MercatorTable .wdk-CategoriesCheckboxTree {
+  width: 500px;
+}
+
+.eupathdb-MercatorTable input[type="submit"] {
+  margin: 1em 0;
+}
+
+/*  
+  creates whitespace to allow sections to scroll into
+  the range of the activeSection logic (which is used to render the
+  blue selection indicator next to the link in the sidebar navigation)
+*/
+.wdk-RecordMain {
+  padding-bottom: 50vh;
+}
+
+/** record table cell overrides */
+
+/** content in these cells should not wrap */
+.wdk-DataTableCell__note,
+.wdk-DataTableCell__transcript_id,
+.wdk-DataTableCell__transcript_ids,
+.wdk-DataTableCell__Pvalue,
+.wdk-DataTableCell__rmgmid_rodmal_link,
+.wdk-DataTableCell__pubmed_link,
+.wdk-DataTableCell__doi_link,
+.wdk-DataTableCell__term_name {
+  white-space: nowrap;
+}
+
+/* Prevent sequence table from having an scroll container ancestor */
+.wdk-RecordTable__Sequences .wdk-DataTableContainer {
+  overflow: visible;
+}
+
+.eupathdb-TranscriptRecordNavigationSectionContainer h3 {
+  padding-top: 18px;
+}
+
+.eupathdb-TranscriptRecordNavigationSectionContainer h3:first-child {
+  padding-top: 10px;
+}
+
+.eupathdb-TranscriptListContainer {
+  margin-bottom: 6px;
+}
+
+.eupathdb-TranscriptRecordNavList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-weight: 300;
+}
+
+.eupathdb-TranscriptRecordNavList > li a {
+  padding-left: 1em;
+  position: relative;
+  display: block;
+}
+.eupathdb-TranscriptRecordNavList > li a:hover,
+.eupathdb-TranscriptRecordNavList > li a.active {
+  font-weight: 400;
+}
+.eupathdb-TranscriptRecordNavList > li a:hover:before,
+.eupathdb-TranscriptRecordNavList > li a.active:before {
+  font-family: FontAwesome;
+  opacity: 0.8;
+  position: absolute;
+  left: -2px;
+  content: '\f178 ';
+}
+.eupathdb-TranscriptSticky {
+  background: #fcfcfc;
+  padding-top: 36px;
+}
+.eupathdb-TranscriptSticky-fixed {
+  z-index: 1;
+  border-color: #999;
+  position: fixed;
+  top: 0;
+  width: calc(100vw - 362px);
+}
+#wdk-container .eupathdb-TranscriptHeading {
+  float: left;
+  margin: 0;
+  padding: 0;
+  padding-right: 1em;
+  padding-top: .2em;
+}
+.eupathdb-TranscriptTabList {
+  border-bottom: 1px solid #aaa;
+}
+.eupathdb-TranscriptTabList:before,
+.eupathdb-TranscriptTabList:after {
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.eupathdb-TranscriptTabList:after {
+  clear: both;
+}
+.eupathdb-TranscriptLink {
+  display: block;
+  float: left;
+  padding: .8em;
+  font-size: 1.3em;
+  font-weight: 400;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-right: 2px;
+  margin-bottom: -1px;
+}
+.eupathdb-TranscriptLink:hover,
+.eupathdb-TranscriptLink:focus {
+  background-color: #ccc;
+  z-index: 1;
+}
+.eupathdb-TranscriptLink-active,
+.eupathdb-TranscriptLink-active:hover,
+.eupathdb-TranscriptLink-active:focus {
+  background-color: #fcfcfc;
+  border-color: #aaa;
+}
+.eupathdb-TranscriptTabContent {
+  border: 1px solid #aaa;
+  border-top: none;
+  padding: 2em;
+}
+
+.eupathdb-UtrSequenceNucleotide {
+  background-color: #cae4ff;
+  text-transform: lowercase;
+}
+
+.eupathdb-IntronSequenceNucleotide {
+  background-color: #dddddd;
+  color: #333;;
+  text-transform: lowercase;
+}
+
+/* gene page orthologs table MSA */
+
+div#userOptions {
+  margin-bottom: 5px;
+}
+div#userOptions input {
+  margin-left: 10px;
+}
+div#userOptions span.genomic {
+  visibility:hidden;
+}
+div#userOptions input[value=genomic]:checked ~ span.genomic {
+  visibility:visible;
+}
+
+
+.eupathdb-CompoundStructureWrapper {
+  display: inline-block;
+}
+
+.eupathdb-OtherCompoundStructures {
+  margin: 0 20px;
+}
+
+.ChemDoodleWebComponent {
+  border: 1px solid #d8d8d8;
+  margin: 4px;
+}
+
+
+/* Query Grid CSS */
+
+#eupathdb-QueryGrid p {
+  font-size: 1.2em;
+  margin-top: 0;
+}
+
+#eupathdb-QueryGrid ul {
+  font-size: 0.95em;
+  font-weight: 400;
+  text-align: left;
+  margin: 0;
+  padding: 0.3em 0 1em 0;
+  line-height: 1.25em;
+}
+
+#eupathdb-QueryGrid li.threeTierList, #eupathdb-QueryGrid li.twoTierList {
+  list-style-type: none;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.3em;
+  line-height: 1.55em;
+  width:100%;
+}
+
+#eupathdb-QueryGrid li.threeTierList div, #eupathdb-QueryGrid li.twoTierList div {
+  background-color: #DDD;
+  margin-bottom: 0.3em;
+}
+
+#eupathdb-QueryGrid li.threeTierList > ul > li {
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 0.5em;
+  line-height: 1.3em;
+  width: 32.5%;
+}
+
+#eupathdb-QueryGrid li.threeTierList > ul > li > div {
+  padding-left: 1em;
+  background-color: #DDD;
+}
+
+#eupathdb-QueryGrid li.threeTierList > ul > li > ul {
+  padding-left: 1.5em;
+}
+
+#eupathdb-QueryGrid li.twoTierList {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 0.5em;
+  width: 49%;
+}
+
+#eupathdb-QueryGrid li.twoTierList > ul {
+  padding-left: 1.5em;
+}
+
+#eupathdb-QueryGrid li.twoTierList > ul > li {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+}
+
+#eupathdb-QueryGrid .bullet {
+  color: #000;
+  font-size: 0.4em;
+  height: 1em;
+  top: 1.2em;
+}
+

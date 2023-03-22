@@ -1,0 +1,23 @@
+.TranscriptViewFilter {
+  display: flex;
+  color: maroon;
+
+  > * {
+    display: flex;
+    margin-right: 1.5em;
+    font-weight: bold;
+  }
+
+  &--Label {
+    color: black;
+    margin-right: .5em;
+  }
+
+  #TranscriptViewFilter--Toggle {
+    margin-right: .5em;
+  }
+}
+
+.TranscriptResultTableButton .ResultTableButton .fa {
+  color: #3e3e3e;
+}

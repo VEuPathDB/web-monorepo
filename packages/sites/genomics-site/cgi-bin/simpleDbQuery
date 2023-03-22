@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+
+# Simple cgi script for testing cgi or mod-perl Apache::Registry configurations
+# and WDK::Model::ModelConfig. 
+# Returns SYSDATE from dual.
+# Requires WDK model-config file for DBI connection strings.
+
+use strict;
+use lib $ENV{GUS_HOME};
+use DBI;
+use CGI qw/:standard/;
+use CGI::Carp qw(fatalsToBrowser set_message);
+use WDK::Model::ModelConfig;
+
+BEGIN {
+
+    # Carp callback for sending fatal messages to browser
+    sub handle_errors {
+        my ($msg) = @_;
+        print "<h3>Oops</h3>";
+        print "<p>Got an error: <pre>$msg</pre>";
+    }
+    set_message(\&handle_errors);
+}
+
+my $q = new CGI;
+
+my $model = $q->param('model') or die <<"EOF";
+WDK model file not specified. Example expectations:
+@{[$q->url]}?model=ApiDB
+@{[$q->url]}?model=CryptoDB
+@{[$q->url]}?model=PlasmoDB
+@{[$q->url]}?model=ToxoDB
+EOF
+
+my $c = new WDK::Model::ModelConfig($model);
+
+
+my $dbh = DBI->connect(
+    $c->getAppDbDbiDsn,
+    $c->getAppDbLogin,
+    $c->getAppDbPassword,
+    { PrintError => 1,
+      RaiseError => 0
+    }
+) or die "Can't connect to the database: $DBI::errstr\n";;
+
+my $sql = q(select sysdate from dual);
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+
+print $q->header();
+
+print "DSN: ", $c->getAppDbDbiDsn, "<p>";
+
+while (my @row = $sth->fetchrow_array) {
+    print $row[0] . "<br>\n";
+}
+
+$sth->finish();
+
+print "<p>$0 running under @{[ 
+    ($ENV{MOD_PERL}) ? 
+        'mod_perl' :
+        'cgi'
+]}";
+
+print "<p>";
+
+my @modules = ('DBI', 'DBD::Oracle');
+for my $module (@modules) {
+    eval "require $module";
+    printf( "<br>%-20s version %s - ", $module, $module->VERSION ) unless ( $@ );
+
+    my $file = $module;
+    $file =~ s|::|/|g;
+    $file .= '.pm';
+    
+    for my $inc (@INC) {
+       if (-e "$inc/$file") {
+           print "$inc/$file<br>";
+           last;
+       }
+    }
+}
+

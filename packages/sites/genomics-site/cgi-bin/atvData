@@ -1,0 +1,69 @@
+#!/usr/bin/perl -wT
+
+# Simple cgi script for retrieving ATV phylogenetic tree data
+# for ATV applet.
+# Requires WDK model-config file for DBI connection strings.
+#
+# Pass the source_id as an id parameter
+# /cgi-bin/atvData?id=16879 
+
+use strict;
+use lib map { /(.*)/ } split /:/, $ENV{PERL5LIB}; # untaint PERL5LIB
+use DBI;
+use CGI qw/:standard/;
+use CGI::Carp qw(fatalsToBrowser set_message);
+use WDK::Model::ModelConfig;
+
+BEGIN {
+    # Carp callback for sending fatal messages to browser
+    sub handle_errors {
+        my ($msg) = @_;
+        print "<h3>Oops</h3>";
+
+        my $server = $ENV{'SERVER_NAME'} || '';
+        my $isPublicSite = $server =~ 
+           m/
+             ^(qa|www|.*patch.*\.)?  # optional hostname
+             [^\.]+                  # single subdomain
+             \.org/x;
+
+       ($isPublicSite) ?
+           print "<p>There was a problem running this service." :
+           print "<p>Got an error: <pre>$msg</pre>";
+    }
+    set_message(\&handle_errors);
+}
+
+my $q = new CGI;
+
+my ($project_id) = $q->param('project_id') =~ m/^([a-zA-Z]+)$/ if $q->param('project_id');
+my ($source_id)  = $q->param('id') =~ m/(^\w+$)/               if $q->param('id');
+
+($project_id) or die "valid 'project_id' is required";
+($source_id)  or die "valid 'source_id' is required";
+
+my $c = new WDK::Model::ModelConfig($project_id);
+
+my $dbh = DBI->connect(
+    $c->getAppDbDbiDsn,
+    $c->getAppDbLogin,
+    $c->getAppDbPassword,
+    { PrintError => 1,
+      RaiseError => 0
+    }
+) or die "Can't connect to the database: $DBI::errstr\n";;
+
+my $sql = qq(select to_char(atv) from apidb.phylogenetictree where source_id = ?);
+
+my $sth = $dbh->prepare($sql);
+
+$sth->execute($source_id);
+
+print $q->header('text/plain');
+
+while (my @row = $sth->fetchrow_array) {
+    print $row[0];
+}
+
+$sth->finish();
+

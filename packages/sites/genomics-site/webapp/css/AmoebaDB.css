@@ -1,0 +1,65 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(../images/AmoebaDB/background_s.jpg);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header2 {
+	background-image: url(../images/AmoebaDB/backgroundtop_s.jpg);
+}
+
+/*  quick search  brown  */
+#header_rt, #header_rt a:link, #header_rt a:visited {
+   color: #58441F;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+#nav-top, #nav-top a:link, #nav-top a:visited {
+	color: #58441F;
+}
+
+#nav-top li ul { 
+	border-color:#58441F;
+	list-style-image: url(../images/AmoebaDB/bullet_arrow.gif);
+}
+
+#nav-top li ul a:link, #nav-top li ul a:visited {
+	color: #58441F;  /* brownish */
+}
+
+#nav-top li ul a:hover, #nav-top li ul a:active {
+	color: #4f7f6d;   /* greenish */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HOME 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+.threecolumndiv div.heading {
+  background-color: #82bca6;  /* greenish lighter */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Sidebar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.menu_lefttop_drop {
+   border-color:  #726249;
+}
+
+
+#menu_lefttop a.heading {
+  background-color: #726249; /*  brownish */
+}
+
+
+/*THE END */

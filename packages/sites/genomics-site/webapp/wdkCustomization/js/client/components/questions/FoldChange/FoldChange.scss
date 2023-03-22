@@ -1,0 +1,132 @@
+
+.wdk-QuestionFormFoldChange {
+  display: flex;
+  margin-top: 0.5em;
+
+  .wdk-FoldChangeParams {
+    padding-left: 1em;
+    padding-right: 1em;
+
+    > div {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    .wdk-QuestionFormFoldChangeSampleParamSubgroup {
+      margin-left: 1em;
+
+      > div {
+        margin-top: 4px;
+        margin-bottom: 4px;
+        white-space: nowrap;
+      }
+
+      .wdk-FoldChangeSampleParameterTab {
+        font-weight: bold;
+        margin-top: 2px;
+        position: relative;
+        top: 1px;
+        border-width: 1px 1px 1px;
+        border-style: solid solid none;
+        border-color: rgb(170, 170, 170) rgb(170, 170, 170) rgb(170, 170, 170);
+        border-image: initial;
+        border-bottom: none;
+        border-radius: 4px 4px 0px 0px;
+        padding: 2px 4px;
+
+        &.wdk-FoldChangeReferenceSample {
+          background-color: rgb(180, 210, 235);
+        }
+
+        &.wdk-FoldChangeComparisonSample {
+          background-color: rgb(189, 117, 120);
+        }
+      }
+
+      .wdk-FoldChangeSampleParameterContainer {
+        margin-bottom: 1em;
+        padding: 0.5em;
+        border-width: 1px;
+        border-style: solid;
+        border-color: rgb(238, 238, 238);
+        border-image: initial;
+        border-radius: 4px;
+
+        .wdk-CheckboxList > div, .wdk-CheckboxTree {
+          background: white;
+          border-radius: 4px;
+          padding: 2px;
+        }
+
+        .wdk-CheckboxList > div:first-child, .wdk-CheckboxTree {
+          height: 100px;
+          overflow-y: scroll;
+          border: 1px solid #AAA;
+          padding: 0 .3em;
+        }
+
+        .wdk-CheckboxTree {
+          position: relative;
+          margin-left: 0;
+        }
+
+        &.wdk-FoldChangeReferenceSample {
+          background-color: rgb(180, 210, 235);
+        }
+
+        &.wdk-FoldChangeComparisonSample {
+          background-color: rgb(189, 117, 120);
+        }
+      }
+    }
+  }
+
+  .wdk-FoldChangeParamPreview {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px inset #aaaaaa;
+
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+
+  .wdk-FoldChangeImg {
+    font-size: 12px;
+    font-family: Arial;
+    margin: 1em auto;
+  }
+
+  .wdk-FoldChangeHelpComplete,.wdk-FoldChangeHelpIncomplete {
+    margin-left: 1em;
+  }
+
+  .wdk-FoldChangeTitle {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .wdk-FoldChangeTitle, .wdk-FoldChangeSubtitle {
+    text-align: center;
+  }
+
+  .wdk-FoldChangeCaption {
+    color: red;
+    font-style: italic;
+    font-family: serif;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .wdk-Icon {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  input[type=text],select {
+    margin-left: 4px;
+  }
+
+  .wdk-CheckboxList, .wdk-TreeBoxParam {
+    width: 100%;
+  }
+}

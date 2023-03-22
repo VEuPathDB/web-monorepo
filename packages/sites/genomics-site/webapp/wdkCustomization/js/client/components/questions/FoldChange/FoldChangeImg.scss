@@ -1,0 +1,314 @@
+// Styling for the fold change image container
+.wdk-FoldChangeImg {
+  position: relative;
+  width: 402px;
+  height: 302px;
+  border: 1px solid #AAA;
+  border-radius: 4px;
+  padding: 1px;
+  margin-top: 2em;
+
+  .wdk-FoldChangeImg__UpRegulated, .wdk-FoldChangeImg__DownRegulated, .wdk-FoldChangeImg__UpOrDownRegulated {
+    height: 100%;
+    width: 100%;
+  }
+
+  .wdk-FoldChangeImg__UpRegulated, .wdk-FoldChangeImg__DownRegulated {
+    background-image: url(./graph-background.jpg);
+  }
+
+  .wdk-FoldChangeImg__UpOrDownRegulated {
+    background-image: url(./two-graph-background.jpg);
+  }
+}
+
+// Basic styling for the sample collections
+.wdk-SampleCollection {
+  font-size: 120%;
+  font-weight: bold;
+
+  &.wdk-SampleCollectionReferenceSamples {
+    color: rgb(39,136,194);
+
+    .wdk-SampleCollectionSamplesLabel {
+      left: 90px;
+    }
+  }
+
+  &.wdk-SampleCollectionComparisonSamples {
+    color: rgb(158,19,22);
+
+    .wdk-SampleCollectionSamplesLabel {
+      left: 166px;
+    }
+  }
+
+  .wdk-SampleCollectionOperation {
+    position: absolute;
+    right: 30px;
+    width: 6em;
+
+    .wdk-SampleCollectionOperationLine {
+      left: -198px;
+      width: 184%;
+      border-bottom: 2px dashed;
+      position: relative;
+      top: 0.5em;
+    }
+
+    .wdk-SampleCollectionSample {
+      width: 14px;
+      height: 14px;
+      margin: 1px;
+      border-radius: 8px;
+      position: absolute;
+    }
+  }
+
+  .wdk-SampleCollectionSamplesLabel {
+    position: absolute;
+    bottom: 22px;
+  }
+}
+
+// Sizing of sample collection operation
+.wdk-FoldChangeImg {
+  .wdk-FoldChangeImg__UpRegulated, .wdk-FoldChangeImg__DownRegulated {
+    .wdk-SampleCollectionOperation {
+      height: 48px;
+    }
+  }
+}
+
+// Horizontal positioning and coloring for collection and reference samples
+.wdk-FoldChangeImg {
+  .wdk-SampleCollectionReferenceSamples {
+    .wdk-SampleCollectionSample {
+      background-color: rgb(39,136,194);
+      left: -170px;    
+    }
+  }
+
+  .wdk-SampleCollectionComparisonSamples {
+    .wdk-SampleCollectionSample {
+      background-color: rgb(158,19,22);
+      left: -85px;
+    }
+  }
+}
+
+// Vertical positioning for the four possible types of samples: 
+// (up-regulated or down-regulated) + (reference or collected)
+.wdk-FoldChangeImg {
+  .wdk-FoldChangeImg__UpRegulated {
+    .wdk-SampleCollectionReferenceSamples {
+      .wdk-SampleCollectionOperation {
+        top: 178px;
+      }
+    }
+
+    .wdk-SampleCollectionComparisonSamples {
+      .wdk-SampleCollectionOperation {
+        top: 98px;
+      }
+    }
+  }
+
+  .wdk-FoldChangeImg__DownRegulated {
+    .wdk-SampleCollectionReferenceSamples {
+      .wdk-SampleCollectionOperation {
+        top: 98px;
+      }
+    }
+
+    .wdk-SampleCollectionComparisonSamples {
+      .wdk-SampleCollectionOperation {
+        top: 178px;
+      }
+    }
+  }
+}
+
+// Styling for the fold change label
+.wdk-FoldChangeLabel {
+  position: relative;
+  top: 89px;
+  font-weight: bold;
+  font-family: serif;
+  text-align: left;
+  margin-left: 218px;
+
+  .wdk-FoldChangeLabelUpArrow, .wdk-FoldChangeLabelDownArrow {
+    height: 30px;
+    display: block;
+    margin-left: 20px;
+    border-left: 2px solid black;    
+  }
+
+  .wdk-FoldChangeLabelUpArrow:before, .wdk-FoldChangeLabelDownArrow:before {
+    position: relative;
+    display: block;
+    content: " ";
+    height: 0;
+    width: 0;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    left: -6px;
+  }
+
+  .wdk-FoldChangeLabelUpArrow:before {
+    top: -1px;
+    border-bottom: 8px solid black;
+  }
+
+  .wdk-FoldChangeLabelDownArrow:before {
+    top: 25px;
+    border-top: 8px solid black;
+  }
+
+  .wdk-FoldChangeLabelText {
+    font-style: italic;
+    white-space: nowrap;
+    line-height: 14px;
+    margin-left: 8px;
+    height: auto;    
+  }
+}
+
+// Position and sizing of graph content for "up or down regulated"
+.wdk-FoldChangeImg {
+  .wdk-FoldChangeImg__UpOrDownRegulated {
+    .wdk-FoldChangeImgLeftSamples {
+      display: inline-block;
+      position: relative;
+      height: 35%;
+      top: 42px;
+      left: 21px;
+      width: 180px;
+    }
+
+    .wdk-FoldChangeImgRightSamples {
+      display: inline-block;
+      position: relative;
+      height: 35%;
+      top: 42px;
+      left: 34px;
+      width: 180px;
+    }
+  }
+}  
+
+// Overrides to the sample collection position/styling for "up or down regulated" (PT 1)
+.wdk-FoldChangeImg { 
+  .wdk-FoldChangeImgLeftSamples, .wdk-FoldChangeImgRightSamples {
+    .wdk-SampleCollectionOperation {
+      width: 7em;
+      height: 2em;
+      right: -9px;
+      font-size: 75%;
+
+      .wdk-SampleCollectionOperationLine {
+        left: -113px;
+        width: 92%;
+        top: 0.3em;
+      }
+    }
+  }
+
+  .wdk-FoldChangeImgLeftSamples {
+    .wdk-SampleCollectionReferenceSamples {
+      .wdk-SampleCollectionOperation {
+        top: 70px;
+      }
+    }
+  }
+
+  .wdk-FoldChangeImgRightSamples {
+    .wdk-SampleCollectionComparisonSamples {
+      .wdk-SampleCollectionOperation {
+        top: 70px;
+      }
+    }
+  }
+
+  .wdk-FoldChangeImgLeftSamples {
+    .wdk-SampleCollectionComparisonSamples {
+      .wdk-SampleCollectionOperation {
+        top: 10px;
+      }
+    }
+  }
+
+  .wdk-FoldChangeImgRightSamples {
+    .wdk-SampleCollectionReferenceSamples {
+      .wdk-SampleCollectionOperation {
+        top: 10px;
+      }
+    }
+  }      
+}
+
+// Overrides to the sample collection position/styling for "up or down regulated" (PT 2)
+.wdk-FoldChangeImg { 
+  .wdk-FoldChangeImg__UpOrDownRegulated {
+    .wdk-SampleCollectionSamplesLabel {
+      font-size: 65%;
+      bottom: -47px;
+    }
+
+    .wdk-SampleCollectionReferenceSamples {
+      .wdk-SampleCollectionSamplesLabel {
+        left: 0px;
+      }
+    }
+
+    .wdk-SampleCollectionComparisonSamples {
+      .wdk-SampleCollectionSamplesLabel {
+        left: 48px;
+      }
+    }
+
+    .wdk-SampleCollectionSample {
+      width: 8px;
+      height: 8px;
+      margin: 1px;
+      border-radius: 8px;
+    }
+
+    .wdk-SampleCollectionReferenceSamples {
+      .wdk-SampleCollectionSample {
+        left: -100px;
+      }
+    }
+
+    .wdk-SampleCollectionComparisonSamples {
+      .wdk-SampleCollectionSample {
+        left: -50px;
+      }
+    }
+  }
+}
+
+// Overrides to the fold change label styling for "up or down regulated"
+.wdk-FoldChangeImg {
+  .wdk-FoldChangeImg__UpOrDownRegulated { 
+    .wdk-FoldChangeLabel {
+      top: 17px;
+      height: 54px;
+      font-size: 90%;
+      margin-left: 36%;
+
+      .wdk-FoldChangeLabelUpArrow, .wdk-FoldChangeLabelDownArrow {
+        height: 19px;
+      }
+
+      .wdk-FoldChangeLabelDownArrow:before {
+        top: 14px;
+      }
+
+      .wdk-FoldChangeLabelText {
+        margin-left: 14px;
+      }
+    }
+  }
+}

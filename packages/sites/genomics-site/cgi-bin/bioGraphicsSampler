@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+
+use Bio::Graphics;
+use CGI qw/:standard/;
+use CGI::Carp qw(fatalsToBrowser set_message);
+
+BEGIN {
+    # Carp callback for sending fatal messages to browser
+    sub handle_errors {
+        my ($msg) = @_;
+        print "<h3>Oops</h3>";
+        print "<p>Got an error: <pre>$msg</pre>";
+    }
+    set_message(\&handle_errors);
+}
+
+my $tableWidth = 8;
+
+my $q = new CGI;
+my $p = Bio::Graphics::Panel->new();
+
+
+print $q->header();
+
+print '<p>';
+print_color_table();
+
+
+
+
+
+
+
+########################################################################
+
+
+sub print_color_table {
+  print 'The following colors are recognized by Bio::Graphics::Panel:';
+  print "<table border='1'>";
+  print '<tr>';
+  
+  my $colCount = 0;
+  for $c ( $p->color_names ) {
+    $colCount++;
+    print <<"EOF";
+    <td bgcolor='#@{[color_name_to_hex($c)]}'>
+    <font color='@{[text_color($c)]}'>$c<br>
+    <font size='-2'>#@{[color_name_to_hex($c)]}</font></font>
+    </td>
+EOF
+    print "</tr><tr>\n" if ($colCount % $tableWidth == 0);
+  }
+  
+  while ($colCount % $tableWidth != 0) {
+      print "<td>&nbsp;</td>\n";
+      $colCount++;
+  }
+  
+  print "</tr></table>";
+}
+
+
+sub color_name_to_hex {
+    return sprintf ("%2.2X%2.2X%2.2X", $p->color_name_to_rgb(@_[0]));
+}
+
+sub text_color {
+  (luminance(@_[0]) < 0.5) ? 'white' : 'black';
+}
+
+sub luminance {
+    my ($r, $g, $b) = $p->color_name_to_rgb(@_[0]);
+    return
+        (( $r / 255) * 0.30) + 
+        (( $g / 255) * 0.59) + 
+        (( $b / 255) * 0.11) ;
+}

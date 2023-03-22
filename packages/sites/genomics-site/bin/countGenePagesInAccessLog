@@ -1,0 +1,108 @@
+#!/usr/bin/perl
+
+use Data::Dumper;
+use strict;
+use Getopt::Long;
+use Time::Local;
+
+my $uniquePerPage = 'GET /cgi-bin/gbrowse_img/\w+aa';
+my $exclude = 'thumb';
+
+my ($help, $time_filter);
+&GetOptions('h' => \$help,
+            't=s' => \$time_filter,
+            );
+
+usage() if $help;
+
+my ($time_min, $time_max);
+if ($time_filter) {
+  ($time_min, $time_max) = split(/,\s*/, $time_filter);
+  print "\nTime filter start: " . localtime($time_min) . " ($time_min)\n";
+  print   "Time filter end:   " . localtime($time_max) . " ($time_max)\n" if $time_max;
+  print "\n";
+}
+
+# use the call to embedded pbrowse cache as a unique event per gene page
+
+=pod
+
+130.91.178.190 - - [21/Oct/2010:14:21:09 -0400] "GET /cgi-bin/gbrowse_img/plasmodbaa/?name=PKH_030450;type=;width=640;embed=1;genepage=1 HTTP/1.1" 200 7480 "-" "Java/1.5.0_08"
+
+=cut
+
+my %h;
+$h{unknown} = 0;
+my $min_absolute_time = 1000000000000000;
+my $max_absolute_time = 0;
+my $day_hash;
+while(<>) {
+  next unless /$uniquePerPage/;
+  next if /$exclude/;
+
+  m|\[(\d\d)/(\w\w\w)/(\d\d\d\d)\:(\d\d)\:(\d\d)\:(\d\d)|;
+  my ($mday, $mon_str, $year, $hour, $min, $sec) = ($1, $2, $3, $4, $5, $6);
+  my $months = {Jan=>0, Feb=>1, Mar=>2, Apr=>3, May=>4, Jun=>5, Jul=>6, Aug=>7, Sep=>8, Oct=>9, Nov=>10, Dec=>11};
+  my $day_str = "$mday, $mon_str, $year";
+  my $mon = $months->{$mon_str};
+  my $absoluteTime = timelocal($sec,$min,$hour,$mday,$mon,$year);
+  next if ($time_min && $absoluteTime < $time_min);
+  next if ($time_max && $absoluteTime > $time_max);
+  $day_hash->{$day_str} = 1 unless $day_hash->{$day_str};
+
+  $min_absolute_time = $absoluteTime if $absoluteTime < $min_absolute_time;  # the first time we have included
+  $max_absolute_time = $absoluteTime if $absoluteTime > $max_absolute_time;  # the latest time we have included
+
+
+  my $genename = "unknown";
+  if (/\?name=([^;]+)/) {$genename = $1};
+  $h{$genename} += 1;
+}
+
+my %histogram;
+my $singleton;
+my $duplicated;
+foreach my $gene (keys(%h)) {
+  $histogram{$h{$gene}}++;
+  $singleton++;
+  $duplicated += $h{$gene} - 1;
+}
+
+my $total = $singleton + $duplicated;
+
+print "\nFirst time found: " . localtime($min_absolute_time) . " ($min_absolute_time)\n";
+print   "Last time found:  " . localtime($max_absolute_time) . " ($max_absolute_time)\n";
+
+print "\nUnique days seen: " . scalar(keys(%$day_hash)) . "\n";
+
+print "
+total gene pages:  $total
+unique genes:      $singleton
+cache hits:        $duplicated
+
+";
+
+print "histogram:\n";
+foreach my $count (sort {$a <=> $b} (keys(%histogram))) {
+  next unless $count;
+  print "$count $histogram{$count}\n";
+}
+
+print "\n(requests with unknown gene names: $h{'unknown'})\n\n";
+
+
+sub usage {
+
+print "
+Count gene pages requested in the apache access log (from STDIN).  Uses '$uniquePerPage' as a string that reliably appears one per gene page in the log, and excluding that contains '$exclude';
+
+usage:  countGenePagesInAccessLog [-h | -t starttime[,endtime]]
+
+where:
+  -h:  print usage
+  -t:  time filter (use seconds since epoch, which is a column in gbrowse log)
+
+";
+
+  exit(1);
+}

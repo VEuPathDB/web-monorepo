@@ -1,0 +1,14 @@
+.vpdb-PageDescription {
+  font-size: 1.1em;
+
+  &--DisplayName {
+    font-weight: bold;
+  }
+
+  text-align: center;
+
+  p {
+    font-size: 1.0em;
+    margin: 0.4em 0;
+  }
+}

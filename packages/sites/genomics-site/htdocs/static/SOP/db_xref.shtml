@@ -1,0 +1,104 @@
+<!--#include virtual="/a/header.jsp?ftype=Annoation_SOP"-->
+<link href="sop_style.css" rel=stylesheet type="text/css" />
+
+<table>
+
+<tr>
+<th>Gene Model and Functional Curation</th>
+</tr>
+
+<tr><td>
+<span class=smalltitle>Standard Operational Procedures (SOP)</span>
+</td></tr>
+
+
+<tr><td>
+<table>
+
+<tr><td align=center colspan=2>
+  <span class=title>Add db_xref Qualifiers</span>
+  <hr>
+</td></tr>
+
+  <tr>
+    <td>Title:</td>
+    <td>Add db_xref Qualifiers</td>
+  </tr>
+
+  <tr>
+    <td>Author:</td>
+    <td><a href=/>CryptoDB</a> and <a href=apidb.org>ApiDB</a></td>
+  </tr>
+
+  <tr>
+    <td>Version:</td>
+    <td>v1.0
+  </tr>
+
+  <tr>
+    <td>SOP #:</td>
+    <td>AP_F05
+  </tr>
+
+  <tr>
+    <td>Effective Date:</td>
+    <td>January, 2007</td>
+  </tr>
+
+  <tr>
+    <td>Other SOPs:</td>
+    <td><a href=/static/SOP/index.shtml><i>C. parvum</i> Annotation SOP Main Page</a></td>
+  </tr>
+
+  <tr><td colspan=2><hr></td></tr>
+
+	</table>
+</td></tr>
+
+  <tr><td>
+
+<p><span class=title>1. Overview</span>
+
+<p>
+
+Four db_xref database qualifiers, ApiDB, ApiDB_CryptoDB, ApiDB_PlasmoDB and ApiDB_ToxoDB, have been registered at NCBI. 
+
+<pre class=programinput>
+ApiDB<http://apidb.org/apidb/>
+/db_xref="ApiDB:cgd7_20"
+
+ApiDB_CryptoDB <http://cryptodb.org/cryptodb/>
+/db_xref="ApiDB_CryptoDB:cgd7_20"
+
+ApiDB_PlasmoDB <http://www.plasmodb.org/plasmo/home.jsp>
+/db_xref="ApiDB_PlasmoDB: PF11_0344"
+
+ApiDB_ToxoDB <http://www.toxodb.org/toxo/home.jsp>
+/db_xref="ApiDB_ToxoDB:49.m00014"
+
+</pre>
+
+<p>Include them in the .tbl file like this:
+
+<pre class=programinput>
+   db_xref	ApiDB_CryptoDB:cgd7_20
+</pre>
+
+<p><span class=title>2. Procedure</span>
+
+<p><span class=title>3. Related Documentation</span>
+
+<p><span class=title>4. Revision History</span>
+
+<p><span class=title>5. References</span>
+
+</td></tr>
+
+<tr><td>
+<!--#include file="reference.html"-->
+</td></tr>
+
+</table>
+
+<!--#include virtual='/a/footer.jsp' -->
+

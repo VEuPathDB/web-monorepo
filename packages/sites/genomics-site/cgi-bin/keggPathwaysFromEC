@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+
+use lib "@targetDir@/lib/perl";
+$ENV{GUS_HOME} = '@targetDir@';
+
+use ApiCommonWebsite::View::CgiApp::KeggPathways;
+
+my $app =
+  ApiCommonWebsite::View::CgiApp::KeggPathways->new();
+
+$app->go();
+
+
+
+
+
+
+

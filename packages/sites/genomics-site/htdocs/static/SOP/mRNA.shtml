@@ -1,0 +1,138 @@
+<!--#include virtual="/a/header.jsp?ftype=Annoation_SOP"-->
+<link href="sop_style.css" rel=stylesheet type="text/css" />
+
+<table align=center width=640 border=0 cellpadding=3 cellspacing=3>
+
+<tr>
+<th>Gene Model and Functional Curation
+</th>
+</tr>
+
+<tr><td>Standard Operational Procedures (SOP)
+</td>
+</tr>
+
+<tr><td>
+  Add mRNA Feature
+  <hr>
+</td></tr>
+
+  <tr>
+	<td>
+	<table>
+
+    <td>Title:</td>
+    <td>Add mRNA Feature</td>
+  </tr>
+
+  <tr>
+    <td>Author:</td>
+    <td><a href=/>CryptoDB</a> and <a href=apidb.org>ApiDB</a></td>
+  </tr>
+
+  <tr>
+    <td>Version:</td>
+    <td>v1.0
+  </tr>
+
+  <tr>
+    <td>SOP #:</td>
+    <td>AP_F04
+  </tr>
+
+  <tr>
+    <td>Effective Date:</td>
+    <td>January, 2007</td>
+  </tr>
+
+  <tr>
+    <td>Other SOPs:</td>
+    <td><a href=/static/SOP/index.shtml><i>C. parvum</i> Annotation SOP Main Page</a></td>
+  </tr>
+
+	</table>
+	</td>
+	</tr>
+
+  <tr><td><hr></td></tr>
+
+  <tr><td> 
+1. Overview
+</td></tr>
+
+<tr><td>
+
+<p>
+Since <i>Cryptosporidium parvum</i> is a eukaryotic organism, it's necessary to add mRNA features to the GenBank records. Each mRNA will have the same product name as its CDS. If there is no UTR info, then the ends of the mRNA will match the CDS and be partial, like the ends of the gene. See the <a href=http://www.ncbi.nlm.nih.gov/Genbank/eukaryotic_genome_submission.html#mRNA>mRNA section of the Eukaryotic Guid</a> page.
+</p>
+
+<p>
+The protein accession numbers are assigned when the processed files are loaded into the database at NCBI, so we don't include that in the protein_id of new proteins. So a new protein's protein_id will be like this:
+</p>
+
+<pre class=programinput>
+      protein_id    gnl|WGS:AAEE|cgd7_20
+</pre>
+
+<p>
+For proteins that being tracked to the update, please make two changes to the existing format, put the "gb|accession_number" last, and don't include the .version with the accession number.  So the protein_id of an existing protein will be like this:
+
+<pre class=programinput>
+      protein_id    gnl|WGS:AAEE|cgd3_220|gb|EAK87311
+</pre>
+
+<p>We include transcript_ids on the mRNAS and CDS, so that the pairs can be associated together properly. 'transcript_id' will be in the similar format to the protein_id format, yet be a unique identifier. Here's an example of the desired format, with 'mrna_' making the SeqID identifier unique.
+
+<pre class=programinput>
+      transcript_id    gnl|WGS:AAEE|mrna_cgd3_220
+</pre>
+
+<p>
+So the mRNA and CDS of this gene would be like this:
+</p>
+
+<pre class=programinput>
+<53176  >52679  gene
+                      locus_tag     cgd3_220
+                      db_xref       ApiDB_CryptoDB:cgd3_220
+<53176  >52679  mRNA
+                      product       hypothetical protein
+                      protein_id    gnl|WGS:AAEE|cgd3_220|gb|EAK87311.1
+                      transcript_id gnl|WGS:AAEE|mrna_cgd3_220
+                      db_xref       ApiDB_CryptoDB:cgd3_220
+53176 52679     CDS
+                      product       hypothetical protein
+                      protein_id    gnl|WGS:AAEE|cgd3_220|gb|EAK87311.1
+                      transcript_id gnl|WGS:AAEE|mrna_cgd3_220
+                      db_xref       ApiDB_CryptoDB:cgd3_220
+</pre>
+
+<p>
+If there is alternative splicing occurring with this organism, then it would be good to add notes "transcript variant hypothetical protein" / "encoded by transcript variant hytpthetical protein" to each alternative mRNA/CDS pair, so that database users can easily see which mRNA and CDS go together.  This is also described in the Eukaryotic Guide. Click <a href=http://www.ncbi.nlm.nih.gov/Genbank/eukaryotic_genome_submission.html#Alternatively%20spliced%20genes>here</a> to see the details.
+</p>
+
+</td></tr>
+
+<tr><td>
+2. Procedure
+</td></tr>
+
+<tr><td>
+3. Related Documentation
+</td></tr>
+
+<tr><td>
+4. Revision History
+</td></tr>
+
+<tr><td>
+5. References
+</td></tr>
+
+<tr><td>
+<!--#include file="reference.html"-->
+</td></tr>
+
+</table>
+
+ <!--#include virtual='/a/footer.jsp' -->

@@ -1,0 +1,75 @@
+@import '@veupathdb/web-common/lib/styles/breakpoints.scss';
+
+body.vpdb-Body .vpdb-RootContainer {
+  grid-template-areas:
+  "header"
+  "subheader"
+  "banner"
+  "content"
+  "footer";
+
+  grid-template-rows: 11em auto auto 1fr auto;
+
+  &__home {
+    grid-template-areas:
+      "header header header"
+      "subheader subheader subheader"
+      "banner banner banner"
+      "nav content side"
+      "footer footer footer";
+
+    .vpdb-Main {
+      overflow: hidden;
+    }
+
+    @media screen and (max-width: $tablet-width) {
+      grid-template-areas:
+        "header header header"
+        "subheader subheader subheader"
+        "banner banner banner"
+        "nav content content"
+        "nav content content"
+        "nav side side"
+        "footer footer footer";
+    }
+  }
+
+  &__home.vpdb-RootContainer__news-expanded {
+    grid-template-columns: 26em 1fr 23em;
+  }
+
+  &__home.vpdb-RootContainer__news-collapsed {
+    grid-template-columns: 31em 1fr 3em;
+  }
+
+  @media screen and (min-width: $hamburger-width + 1) {
+    &__home {
+      .vpdb-SearchPane, .vpdb-Main, .vpdb-NewsPane {
+        padding-bottom: 12em;
+      }
+
+      .vpdb-Footer {
+        display: grid;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+
+      .vpdb-Footer__thin {
+        .ebrc-FooterPageDescriptionRow {
+          display: none;
+        }
+
+        .ebrc-FooterCopyright {
+          bottom: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $mobile-width) {
+    &__home.vpdb-RootContainer__news-expanded, &__home.vpdb-RootContainer__news-collapsed {
+      grid-template-columns: 100%;
+    }
+  }
+}

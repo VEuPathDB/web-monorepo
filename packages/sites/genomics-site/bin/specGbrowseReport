@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long;
+
+my $siteSet;
+
+&GetOptions('siteSet=s' => \$siteSet,
+	   );
+
+usage() if $siteSet ne "q" && $siteSet ne "w";
+
+my @componentList = ` find /var/www  -maxdepth 1 -type d -name '*DB' -printf "%f\n"|grep -v ApiDB`;
+my @campusList = (1, 2);
+
+foreach my $campus (@campusList) {
+  foreach my $component (@componentList) {
+    chomp($component);
+    my $lcComponent = lc($component);
+    my $site = "$siteSet$campus.$lcComponent.org";
+    print "$site\t/var/www/Common/tmp/gbrowseLogs/$site/*_slow.log\t/var/log/httpd/$site/access_log\n";
+
+  }
+}
+
+sub usage {
+  print STDERR "
+
+Generate the tab-delimited input file that gbrowseSlowQueryReport reads from its standard in to specify what log files to report on
+
+usage:  specGbrowseReport -siteSet [ q | w ]
+
+where the siteSet parameter determines whether to specify a report on [w]ww or [q]a sites.
+";
+  exit(1);
+}

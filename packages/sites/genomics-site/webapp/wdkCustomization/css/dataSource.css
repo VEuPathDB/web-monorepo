@@ -1,0 +1,127 @@
+#data-sets { padding: 5px; }
+
+
+/* h4 was used in genome history
+#data-sets h4 {
+  margin-top: 1em;
+  margin-bottom: .2em;
+}
+#data-sets h4,
+#data-sets h4 + div {
+  margin-left: .5em;
+}
+#data-sets h4 + div table {
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+#data-sets h4 + div td {
+  padding-bottom: 0;
+}
+#data-sets h4 + div th {
+  border: none;
+  font-weight: normal;
+  padding-bottom: 0;
+  background-color: #f6f6f6;
+}
+*/
+
+
+#data-sets ul { 
+	list-style: disc inside none; 
+	font-size:120%;
+}
+
+#data-sets .smallitalics { 
+	font-size:90%;
+	font-style:italic; 
+}
+
+#data-sets .anchor {
+  padding: 5px;
+  float: right;
+}
+
+#data-sets .caption {
+  color: #555555;
+}
+
+#data-sets .category div.ctitle {
+	background-color:lightgrey;  /* #d3d3d3 */
+	padding:10px;
+	margin-top:10px;
+	border-top:3px solid grey;
+}
+
+#data-sets .category-content .data-set {
+	margin-bottom:10px;
+
+} 
+#data-sets .category-content .data-set .dstitle {
+	font-size:120%;
+	margin-left:5px;
+	padding:5px 0;
+	font-weight:bold;
+}
+
+#data-sets .category-content .data-set div.detail {
+	margin-left:15px;
+}
+
+#data-sets .toggle-all {
+  float: right;
+  text-align: center;
+  border: 3px double;
+  padding: 5px;
+  position:relative;
+  left:150px;
+}
+
+#data-sets .category-content .data-set .wdk-toggle {
+	font-family: Arial;
+	font-size: 100%;
+}
+
+/* cancelling jquery styles in this page*/
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-default, 
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-hover,
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-active,
+#data-sets .category-content .data-set .wdk-toggle .ui-widget-content {
+	border:0;
+	background:0;
+}
+
+#data-sets .category-content .data-set .wdk-toggle .ui-accordion {
+	padding:0;
+	margin-left:5px;
+}
+
+#data-sets .category-content .data-set .wdk-toggle > h3 {
+	text-decoration:underline;
+	padding:0;
+  font-size: 1em;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-weight: normal;
+}
+
+#data-sets .category-content .data-set .wdk-toggle > h3 a {
+  color: #555;
+  padding-left: 0.4em;
+}
+
+#data-sets .category-content .data-set li {
+	font-size: 85%;
+}
+
+#data-sets .wdk-toggle-content th {
+	color: #555;
+}
+
+#data-sets #beta-page {
+  float:right;
+  font-style:italic;
+  font-size: 1.2em;
+  position:relative;
+  bottom:60px;
+  right:20px;
+}

@@ -1,0 +1,323 @@
+$red-text: #c80064;
+$blue-text: #0000ee;
+
+$grey-background: #efefef;
+
+$red-region: #c80064;
+$blue-region: #0000ff; 
+$grey-feature: #646464;
+
+.SpanLogicForm {
+  display: grid;
+
+  &--SpanSentence-Output {
+    grid-row: 1;
+    grid-column: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    margin-right: 0.25em;
+
+    font-size: 1.25em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &--SpanSentence-LeftRegion {
+    grid-row: 1;
+    grid-column: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-left: 1px solid grey;
+    border-top: 1px solid grey;
+    border-right: 1px solid grey;
+
+    font-size: 1.25em;
+    font-weight: 500;
+    white-space: nowrap;
+
+    background-color: $grey-background;
+
+    .region_a {
+      margin-left: 0.25em;
+      margin-right: 0.25em;
+
+      color: $blue-text;
+    }
+
+    .region_b {
+      margin-left: 0.25em;
+      margin-right: 0.25em;
+
+      color: $red-text;
+    }
+  }
+
+  &--SpanSentence-Operation {
+    grid-row: 1;
+    grid-column: 3;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+
+    font-size: 1.25em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &--SpanSentence-RightRegion {
+    grid-row: 1;
+    grid-column: 4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-left: 1px solid grey;
+    border-top: 1px solid grey;
+    border-right: 1px solid grey;
+
+    font-size: 1.25em;
+    font-weight: 500;
+    white-space: nowrap;
+
+    background-color: $grey-background;
+
+    .region_a {
+      margin-left: 0.25em;
+      margin-right: 0.25em;
+
+      color: $blue-text;
+    }
+
+    .region_b {
+      margin-left: 0.25em;
+      margin-right: 0.25em;
+
+      color: $red-text;
+    }
+  }
+
+  &--SpanSentence-Strand {
+    grid-row: 1;
+    grid-column: 5;
+
+    display: flex;
+    align-items: center;
+
+    margin-left: 0.25em;
+
+    font-size: 1.25em;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &--LeftRegionGutter {
+    grid-row: 2;
+    grid-column: 1;
+
+    border-bottom: 1px solid grey;
+
+    height: 1.5em;
+  }
+
+  &--LeftRegionTabBottom {
+    grid-row: 2;
+    grid-column: 2;
+
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+
+    background-color: $grey-background;    
+  } 
+
+  &--RightRegionTabBottom {
+    grid-row: 2;
+    grid-column: 4;
+
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+
+    background-color: $grey-background;
+  }
+
+  &--RightRegionGutter {
+    grid-row: 2;
+    grid-column: 5;
+
+    border-bottom: 1px solid grey;
+
+    height: 1.5em;
+  }
+
+  &--RegionConfig-LeftRegion {
+    grid-row: 3;
+    grid-column: 1 / 3;
+
+    border-left: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-right: 1px solid grey;
+
+    background-color: $grey-background;
+  }
+  
+  &--OperationDescription {
+    grid-row: 3;
+    grid-column: 3;
+
+    display: flex;
+    justify-content: center;
+  }
+
+  &--RegionConfig-RightRegion {
+    grid-row: 3;
+    grid-column: 4 / 6;
+
+    border-left: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-right: 1px solid grey;
+
+    background-color: $grey-background;
+
+    input[type="text"] {
+      width: 6em;
+    }
+
+    input[type="radio"] {
+      margin-right: 0.5em;
+    }
+  }
+
+  &--SubmissionContainer {
+    grid-row: 4;
+    grid-column: 1 / 7;
+
+    display: flex;
+    justify-content: center;
+
+    margin-top: 2em;
+  }
+
+  &--RegionConfig {
+    &-Preview {
+      display: flex;
+      justify-content: center;
+
+      padding: 1em;
+
+      svg {
+        border: 1px solid grey;
+
+        padding: 0em 7em;
+
+        height: 7em;
+        width: 100%;
+
+        background-color: white;
+
+        overflow: visible;
+  
+        .region_a {
+          line {
+            stroke: $blue-region;
+          }
+
+          rect {
+            cursor: pointer;
+          }
+        }
+
+        .region_b {
+          line {
+            stroke: $red-region;
+          }
+
+          cursor: pointer;
+        }
+
+        .feature {
+          polygon {
+            cursor: pointer;
+            fill: $grey-feature;
+          }
+        }
+      }
+    }
+
+    &-ParamGroup {
+      padding: 0.5em;
+
+      &-Params {
+        border: 1px solid silver;
+
+        padding: 0.25em 0.5em 0.5em 0.5em;
+  
+        > * {
+          margin: 0.5em 1em;
+        }
+
+        input[type="text"] {
+          width: 6em;
+        }
+    
+        input[type="radio"] {
+          margin-right: 0.5em;
+        }
+      }
+    }
+
+    &-CustomRegionParams {
+      display: grid;
+      grid-template-columns: 7em 1fr;
+  
+      > * {
+        display: flex;
+        align-items: center;
+  
+        margin: 0.25em;
+      }
+  
+      &-BeginHeader, &-EndHeader {
+        justify-content: flex-end;
+      }
+
+      &-BeginBody, &-EndBody {
+        > * {
+          margin: 0.25em;
+        }
+      }
+    }
+  }
+
+  &--SpanOperator {
+    background-color: $grey-background;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    width: 4em;
+    height: 4em;
+
+    border: 1px solid grey;
+
+    &__OVERLAP {
+      background-image: url("./overlap.svg");
+    }
+
+    &__B_CONTAIN_A {
+      background-image: url("./b_contain_a.svg");
+    }
+
+    &__A_CONTAIN_B {
+      background-image: url("./a_contain_b.svg");
+    }
+  }
+}

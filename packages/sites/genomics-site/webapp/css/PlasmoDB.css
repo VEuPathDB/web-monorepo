@@ -1,0 +1,94 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+body {
+	background-image: url(../images/PlasmoDB/background_s.jpg);
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =FOOTER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+.Footer {
+  background-color: #efedf2;
+  border: 1px solid #dfdfdf;
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header2 {
+	background-image: url(../images/PlasmoDB/backgroundtop_s.jpg);
+}
+
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
+   color: #543792;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#nav-top {
+	color: #634697;
+}
+
+#nav-top a:link, #nav-top a:visited {
+	color: #634697;
+}
+
+#nav-top li ul {  /* second-level lists */
+/* 	background-image: url(../images/PlasmoDB/footer.png); */
+	border-color:#634697;
+	list-style-image: url(../images/PlasmoDB/bullet_arrow.gif);
+}
+
+#nav-top li ul a:link, #nav-top li ul a:visited {
+	color: #634697;
+}
+
+#nav-top li ul a:hover, #nav-top li ul a:active {
+	color: #8f0165;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	  =HOME Page:  BUBBLE Lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+/* #bubbles .info {
+  min-height: 299px;
+} */
+
+.threecolumndiv div.heading {
+/*	background-image: url(../images/PlasmoDB/menu_lft2.png); */
+  background-color: #9070AF;  /* rebeccapurple; */
+
+}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.menu_lefttop_drop {
+   border-color: #888; /* #634697;  color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+  background: #985c86;
+}
+
+

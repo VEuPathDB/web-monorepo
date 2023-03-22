@@ -1,0 +1,105 @@
+.OrganismFilter {
+  width: 28em;
+  padding-right: 3em;
+  padding-left: .5em;
+  border: 1px solid #ccc;
+  position: relative;
+  margin-top: 1.65em;
+  margin-right: -1px;
+
+  &--Heading {
+    font-size: 1em;
+    font-weight: bold;
+    padding: 0;
+    margin-left: 1.4em;
+    margin-top: 1.4em;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  &--Buttons {
+    text-align: right;
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    font-size: .9em;
+    font-weight: bold;
+    &__hidden {
+      visibility: hidden;
+    }
+    > button.btn {
+      margin: 0 .5em;
+      padding: .4em .6em;
+      text-shadow: 0 0 1px #585858;
+    }
+  }
+  &--ApplyButton.btn {
+    &, &:hover {
+      background: green;
+      color: white;
+    }
+  }
+
+  &--CancelButton.btn {
+    &, &:hover {
+      background: #cb2b39;
+      color: white;
+    }
+    .fa {
+      margin: 0;
+      font-size: 1em;
+    }
+  }
+
+  &--Node {
+    display: flex;
+    width: calc(100% - 2em);
+
+    &Count {
+      margin-left: auto;
+    }
+  }
+
+  &--HideZeroes {
+    display: inline-flex;
+    align-items: center;
+    margin: .4em 0;
+
+    &-Input {
+      margin-right: .25em;
+    }
+  }
+
+  &--ExpansionBar {
+    background-color: #4F81BD;
+    background-image: none;
+    border: solid 1px #346792;
+    color: #FFF;
+    cursor: pointer;
+    height: 2em;
+    right: 0;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    top: 7em;
+    transform-origin: right bottom;
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    width: 18em;
+
+    &Text {
+      margin: 0 2em;
+    }
+  }
+
+  &--ErrorMessage {
+    margin-left: 1.4em;
+    word-break: break-all;
+  }
+
+  .wdk-CheckboxTreeLinks > div {
+    text-align: left;
+    margin: .15em 0;
+  }
+
+}

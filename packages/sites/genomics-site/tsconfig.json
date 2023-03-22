@@ -1,0 +1,10 @@
+{
+  "extends": "@veupathdb/site-tsconfig/tsconfig.json",
+  // "compilerOptions": {
+  //   "baseUrl": ".",
+  //   "paths": {
+  //     "*": [ "./node_modules/@types/*", "*" ]
+  //   }
+  // },
+  "include": [ "./webapp/**/*" ]
+}

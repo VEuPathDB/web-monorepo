@@ -1,0 +1,32 @@
+$red-text: #c80064;
+$blue-text: #0000ee;
+
+.ColocateStepMenu {
+  .region_a {
+    color: $red-text;
+  }
+
+  .region_b {
+    color: $blue-text;
+  }
+
+  .wdk-RadioList {
+    display: flex;
+    justify-content: space-evenly;
+
+    margin: 1em 1em 1em 2em;
+
+    input {
+      margin-right: 0.5em;
+    }
+  }
+
+  .SearchInputSelector {
+    margin: 1em 1em 1em 2em;
+  }
+
+  p {
+    font-size: 1.2em;
+    margin: 0 0 2em 0;
+  }
+}

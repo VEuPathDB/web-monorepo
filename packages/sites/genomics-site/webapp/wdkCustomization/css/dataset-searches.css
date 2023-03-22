@@ -1,0 +1,313 @@
+html {
+  overflow-y: scroll;
+}
+
+/* utility classes */
+.btn {
+  cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 2px 0px;
+  font-size: 10px;
+  line-height: 15px;
+  width: 36px;
+  display: inline-block;
+  text-align: center;
+  color: #000000;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  box-shadow: 1px 1px 0 #dddddd;
+  -moz-box-shadow: 1px 1px 0 #dddddd;
+  -webkit-box-shadow: 1px 1px 0 #dddddd;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#e6e6e6')";
+  background-color: #e6e6e6;
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-image: -moz-linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-image: -o-linear-gradient(to bottom, #ffffff, #e6e6e6);
+  background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+  filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)";
+  background-repeat: repeat-x;
+}
+.btn-blue {
+  color: #ffffff;
+  border: 1px solid #4576c0;
+  background-color: #4576c0;
+  background-image: linear-gradient(to bottom, #73a5f1, #4576c0);
+  background-image: -moz-linear-gradient(to bottom, #73a5f1, #4576c0);
+  background-image: -o-linear-gradient(to bottom, #73a5f1, #4576c0);
+  background-image: -webkit-linear-gradient(top, #73a5f1, #4576c0);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#73a5f1, endColorStr=#4576c0)";
+}
+.btn-brown {
+  color: #ffffff;
+  border: 1px solid #9E6946;
+  background-color: #9E6946;
+  background-image: linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -moz-linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -o-linear-gradient(to bottom, #C79F6C, #9E6946);
+  background-image: -webkit-linear-gradient(top, #C79F6C, #9E6946);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C79F6C, endColorStr=#9E6946)";
+}
+.btn-green {
+  color: #ffffff;
+  border: 1px solid #3f963f;
+  background-color: #3f963f;
+  background-image: linear-gradient(to bottom, #86c586, #3f963f);
+  background-image: -moz-linear-gradient(to bottom, #86c586, #3f963f);
+  background-image: -o-linear-gradient(to bottom, #86c586, #3f963f);
+  background-image: -webkit-linear-gradient(top, #86c586, #3f963f);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#86c586, endColorStr=#3f963f)";
+}
+.btn-red {
+  color: #ffffff;
+  border: 1px solid #b34949;
+  background-color: #b34949;
+  background-image: linear-gradient(to bottom, #d67676, #b34949);
+  background-image: -moz-linear-gradient(to bottom, #d67676, #b34949);
+  background-image: -o-linear-gradient(to bottom, #d67676, #b34949);
+  background-image: -webkit-linear-gradient(top, #d67676, #b34949);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#d67676, endColorStr=#b34949)";
+}
+.btn-cyan {
+  color: #ffffff;
+  border: 1px solid #2f96b4;
+  background-color: #2f96b4;
+  background-image: linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-image: -moz-linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-image: -o-linear-gradient(to bottom, #5bc0de, #2f96b4);
+  background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
+}
+.btn:hover, .btn:focus {
+  background-position: 0 -8px;
+  text-decoration: none;
+}
+.btn:active, .btn-active {
+  background-image: none;
+  box-shadow: 1px 1px 0 #dddddd;
+  -moz-box-shadow: 1px 1px 0 #dddddd;
+  -webkit-box-shadow: 1px 1px 0 #dddddd;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
+}
+
+.dataset-searches {
+  max-width: 1500px;
+  margin: 0 auto;
+  visibility: hidden;
+  position: relative;
+}
+#query_form .dataset-searches {
+  min-width: 95%;
+}
+.dataTable {
+  font-size: 14px;
+  width: 100%;
+}
+.dataTable .ui-state-default {
+  border: none;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  background: white;
+}
+.dataTables_wrapper .ui-widget-header {
+  padding: 0px;
+}
+.dataTables_filter input {
+  padding-right: 2em;
+  width: 12em;
+}
+.dataTables_filter input + .filter-clear {
+  display: none;
+  position: relative;
+  left: -20px;
+  top: 3px;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  cursor: pointer;
+}
+.dataTables_filter input.content + .filter-clear:hover {
+  opacity: 0.7;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+}
+.dataTables_filter input.content + .filter-clear,
+.dataTables_filter input.content + .filter-clear:active {
+  display: inline-block;
+  opacity: 0.5;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+}
+.dataTable th ,
+.dataTable td {
+  padding: 0.4em 0em;
+  vertical-align: middle;
+  background-color: #ffffff;
+  text-align: left;
+}
+.dataTable tr:first-child th:first-child ,
+.dataTable tr td:first-child {
+  padding-left: 0.8em;
+}
+.dataTable tr:first-child th:last-child ,
+.dataTable tr td:last-child {
+  padding-right: 0.8em;
+}
+.dataTable th {
+  color: black; /* define link hover color in {project}.css */
+  vertical-align: bottom;
+}
+.dataTable td {
+  border-bottom: 1px solid #dddddd;
+  border-top: none;
+  border-left: 1px dotted #cccccc;
+  line-height: 1.2;
+}
+.dataTable tr:hover td {
+  background-color: #f7f7f7;
+}
+.dataTable tr.active td {
+  background-color: #f0f0f0;
+}
+.dataTable tr > td:first-child,
+.dataTable tr:first-child > th:first-child {
+  border-left: none;
+}
+th.searches {
+  text-align: center;
+  white-space: nowrap;
+}
+.search-head {
+  display: none;
+}
+.dataTable th.sorting,
+.dataTable th.sorting_asc,
+.dataTable th.sorting_desc {
+  cursor: pointer;
+  background-position: left center;
+  background-repeat: no-repeat;
+  text-indent: 1.5em;
+}
+.dataTable th.sorting {
+  background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_both.png');
+}
+.dataTable th.sorting_asc {
+  background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_asc.png');
+}
+.dataTable th.sorting_desc {
+  background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_desc.png');
+}
+.dataTable td.description {
+  padding: 0 .5em;
+}
+.dataTable.collapsed tbody tr {
+  display: none;
+}
+.dataTable.collapsed tbody tr.active {
+  display: table-row;
+}
+.table-toggle {
+  display: none;
+  text-align: center;
+  background: #f7f7f7;
+  border-bottom: 1px solid #dddddd;
+  cursor: pointer;
+  padding-bottom: 2px;
+}
+.table-toggle:hover {
+  background: #f0f0f0;
+}
+.table-toggle label {
+  cursor: pointer;
+  font-weight: bold;
+}
+.table-toggle .ui-icon {
+  display: inline-block;
+  position: relative;
+  top: 4px;
+}
+.dataTables_scrollBody {
+  position: relative;
+}
+td.search-mechanism {
+  text-align: center;
+  padding: 4px;
+  width: 36px;
+}
+td.search-mechanism a {
+  color: #ffffff;
+}
+.red-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: darkred;
+}
+.mag-glass {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background: url(../../images/mag_glass.png);
+  vertical-align: middle;
+}
+.legend .tooltip-content,
+.dataset-tooltip-content {
+  display: none;
+}
+#question-wrapper.active {
+  margin-top: 0.5em;
+  padding-top: 1em;
+}
+#question-wrapper .ui-widget {
+  font-size: 1em;
+}
+.tabs {
+  border: none;
+}
+.ui-tabs-panel {
+  min-height: 500px;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+  font-family: inherit;
+  font-size: inherit;
+}
+.legend {
+  float: right;
+  right: 0em;
+  color: #555555;
+  width: 68%;
+  background-color: #f6f6f6;
+  margin-bottom: 4px;
+  position: relative;
+  left: -1px;
+  padding: 2px 4px;
+}
+.legend div:first-child {
+  color: black;
+  width: 60px;
+  float: left;
+  line-height: 20px;
+}
+.legend > ul {
+  margin-left: 60px;
+}
+.legend ul span:first-child {
+  margin-right: 0.4em;
+  float: left;
+}
+.legend ul span:nth-child(2) {
+  line-height: 20px;
+}
+.legend li {
+  float: left;
+  padding: 0.2em 0.6em;
+  width: 20%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.legend div span:first-child {
+  margin-right: 0.2em;
+}
+.legend .search-mechanism.btn {
+  /* color: #e6e6e6; */
+  cursor: default;
+}

@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use EbrcModelCommon::Model::pcbiPubmed;
+use EbrcModelCommon::Model::XMLUtils;
+use CGI;
+use JSON;
+use strict;
+
+my $q = new CGI;
+
+print $q->header('application/json');
+my $idstr = $q->param('pmids');
+
+my @ids = split /[-|,]/, $idstr;
+
+my $index = 0;
+print "[\n";
+foreach my $id (@ids) {
+
+  next if($id.length == 0);
+
+  my $content = EbrcModelCommon::Model::pcbiPubmed::setPubmedID($id);
+  my $title   = EbrcModelCommon::Model::pcbiPubmed::fetchTitle($content, "ArticleTitle");
+  my $journal = EbrcModelCommon::Model::pcbiPubmed::fetchPublication($content, "Journal");
+  my $author  = EbrcModelCommon::Model::pcbiPubmed::fetchAuthorList($content, "Author");
+  my $url     = EbrcModelCommon::Model::pcbiPubmed::fetchPubmedUrl();
+
+  if ($index++ > 0) {
+    print ','
+  }
+
+  my %rec_hash = (
+    'id' => $id,
+    'title' => $title,
+    'author' => $author,
+    'journal' => $journal,
+    'url' => $url
+  );
+  my $jsonStr = encode_json \%rec_hash;
+  print "$jsonStr\n";
+}
+print ']';

@@ -1,0 +1,450 @@
+/*
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CSS rules for Formula = BEGIN
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+.formula { font-style: italic;font-weight:bold; }
+.formula .left-hand-side, .formula .right-hand-side { display: inline-block; vertical-align: middle; }
+.formula .left-hand-side::after { content: " ="; }
+.formula .right-hand-side { padding-left: .1em; }
+.formula .division > div { text-align: center; padding: 0px 4px; }
+.formula .division .numerator { border-bottom: 1px solid; }
+
+.group-detail.ui-widget-content {
+  background: #fafafa;
+  padding: 0 2em;
+}
+
+/*
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CSS rules for Formula = END
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+/*
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CSS rules for Fold Change Expression graph = BEGIN
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+.fold-change {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+}
+
+.fold-change .param-item {
+  padding-left: 1em;
+}
+
+.fold-change-params,
+.fold-change-graphic {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.fold-change-params {
+  margin-left: auto;
+}
+
+.fold-change-graphic {
+  border-left: 1px inset #aaaaaa;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fold-change-graphic > div {
+  margin: auto;
+}
+
+.fold-change-img {
+  position: relative;
+  width: 402px;
+  height: 302px;
+  border: 1px solid #AAA;
+  border-radius: 4px;
+  padding: 1px;
+  margin-top: 2em;
+}
+
+.fold-change-img .up-regulated,
+.fold-change-img .down-regulated,
+.fold-change-img .up-or-down-regulated {
+  height: 100%;
+  width: 100%;
+}
+.fold-change-img .up-regulated,
+.fold-change-img .down-regulated {
+  background-image: url(../../images/fold-change/graph-background.jpg);
+}
+.fold-change-img .up-or-down-regulated {
+  background-image: url(../../images/fold-change/two-graph-background.jpg);
+}
+
+.fold-change .param {
+  display: inline-block;
+}
+.fold-change .param-control .param {
+  width: 93%; /* force wrap */
+  text-indent: -2em;
+  position: relative;
+  left: 2em;
+}
+
+.fold-change-params > div {
+  padding-left: 1em;
+}
+
+.fold-change .param-item label {
+  float: none;
+  margin-left: -1.5em;
+}
+
+.fold-change .param-control {
+  margin: 0;
+}
+
+.fold-change .caption {
+  color: red;
+  font-style: italic;
+  font-family: serif;
+  font-weight: bold;
+  width: 400px;
+  visibility: hidden;
+}
+.fold-change-help {
+  margin-top: 1em;
+  width: 400px;
+}
+
+.fold-change-help.detailed-help {
+  margin-top: 1em;
+}
+
+.fold-change-help p {
+  margin: 0.4em 0;
+}
+
+.fold-change-help a {
+  vertical-align: top;
+}
+
+.fold-change .param-line {
+  padding: 0.2em;
+  /*font-size: larger;*/
+  line-height: 1.4;
+}
+.fold-change .text .prompt,
+.fold-change .text.prompt {
+  font-weight: bold;
+}
+.reference, .comparison {
+  padding: 0.5em;
+  margin-bottom: 1em;
+  border: 1px solid #EEE;
+  border-radius: 4px;
+}
+.reference {
+  background-color: rgb(180,210,235);
+}
+.comparison {
+  background-color: rgb(189,117,120);
+}
+.reference-label {
+  color: rgb(39,136,194);
+}
+.comparison-label {
+  color: rgb(158,19,22);
+}
+.fold-change-params .samples .samples-tab {
+  border: 1px solid #AAA;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  /*background-color: whitesmoke;*/
+  font-weight: bold;
+  padding: 2px 4px;
+  margin-top: 2px;
+  position: relative;
+  top: 1px;
+}
+.reference .text, .comparison .text {
+  font-size: small;
+}
+.reference .param-line, .comparison .param-line {
+  background-color: white;
+  border: 1px solid #AAA;
+  border-radius: 4px;
+  padding: 0.4em;
+  margin-top: 1em;
+}
+.fold-change #samples_fc_comp_genericaaa,
+.fold-change #samples_fc_ref_genericaaa {
+  background: white;
+  border: 1px solid #AAA;
+  border-radius: 4px;
+}
+
+.fold-change .comparison .param,
+.fold-change .comparison .param table,
+.fold-change .reference .param,
+.fold-change .reference .param table {
+  width: 100%;
+}
+.fold-change .comparison .param ul,
+.fold-change .comparison .checkbox-tree,
+.fold-change .reference .param ul,
+.fold-change .reference .checkbox-tree {
+  height: 100px;
+  background: white;
+  overflow-y: scroll;
+  border: 1px solid #AAA;
+  padding: 0 .3em;
+}
+.fold-change .checkbox-tree {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+.fold-change-params .samples {
+  margin: 1em auto;
+}
+#min_max_avg_ref, #min_max_avg_comp {
+  /*font-weight: bold !important;*/
+  margin: 0px;
+}
+#fold_change {
+  width: 2em;
+}
+.formula {
+  padding: 1em 0em;
+}
+
+.fold-change-graphic .title, .fold-change-graphic .subtitle {
+  text-align: center;
+}
+.fold-change-graphic .title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.fold-change-graphic .samples {
+  font-size: 120%;
+  font-weight: bold;
+  /*line-height: 1.4;*/
+}
+
+.fold-change-graphic .sample {
+  width: 14px;
+  height: 14px;
+  margin: 1px;
+  border-radius: 8px;
+}
+
+.fold-change-graphic .samples-label {
+  position: absolute;
+  bottom: 22px;
+}
+
+.fold-change-graphic .sample {
+  position: absolute;
+}
+
+.fold-change-graphic .reference-samples .sample {
+  background-color: rgb(39,136,194);
+  left: -170px;
+}
+
+.fold-change-graphic .comparison-samples .sample {
+  background-color: rgb(158,19,22);
+  left: -85px;
+}
+
+.fold-change-graphic .reference-samples .samples-label {
+  left: 90px;
+}
+
+.fold-change-graphic .comparison-samples .samples-label {
+  left: 166px;
+}
+
+.fold-change-graphic .sample-operation {
+  position: absolute;
+  right: 30px;
+  width: 6em;
+}
+
+.fold-change-graphic .reference-samples {
+  color: rgb(39,136,194);
+}
+
+.fold-change-graphic .comparison-samples {
+  color: rgb(158,19,22);
+}
+
+.fold-change-graphic .down-regulated .sample-operation,
+.fold-change-graphic .up-regulated .sample-operation {
+  height: 48px;
+}
+
+.fold-change-graphic .down-regulated .reference-samples .sample-operation,
+.fold-change-graphic .up-regulated .comparison-samples .sample-operation {
+  top: 98px;
+}
+
+.fold-change-graphic .up-regulated .reference-samples .sample-operation,
+.fold-change-graphic .down-regulated .comparison-samples .sample-operation {
+  top: 178px;
+}
+
+.fold-change-graphic .operation-line {
+  left: -198px;
+  width: 184%;
+  border-bottom: 2px dashed;
+  position: relative;
+  top: 0.5em;
+}
+
+.fold-change-graphic .up-or-down-regulated .left-samples {
+  display: inline-block;
+  position: relative;
+  height: 35%;
+  top: 42px;
+  left: 21px;
+  width: 180px;
+}
+.fold-change-graphic .up-or-down-regulated .right-samples {
+  display: inline-block;
+  position: relative;
+  height: 35%;
+  top: 42px;
+  left: 34px;
+  width: 180px;
+}
+
+.fold-change-graphic .left-samples .sample-operation,
+.fold-change-graphic .right-samples .sample-operation {
+  width: 7em;
+  height: 2em;
+  right: -9px;
+  font-size: 75%;
+}
+
+.fold-change-graphic .left-samples .operation-line,
+.fold-change-graphic .right-samples .operation-line {
+  left: -113px;
+  width: 92%;
+  top: 0.3em;
+}
+.fold-change-graphic .left-samples .reference-samples .sample-operation,
+.fold-change-graphic .right-samples .comparison-samples .sample-operation {
+  top: 70px;
+}
+.fold-change-graphic .left-samples .comparison-samples .sample-operation,
+.fold-change-graphic .right-samples .reference-samples .sample-operation {
+  top: 10px;
+}
+.fold-change-graphic .up-or-down-regulated .samples-label {
+  font-size: 65%;
+  bottom: -33px;
+}
+.fold-change-graphic .up-or-down-regulated .reference-samples .samples-label {
+  left: 0px;
+}
+.fold-change-graphic .up-or-down-regulated .comparison-samples .samples-label {
+  left: 48px;
+}
+
+.fold-change-graphic .up-or-down-regulated .sample {
+  width: 8px;
+  height: 8px;
+  margin: 1px;
+  border-radius: 8px;
+}
+
+.fold-change-graphic .up-or-down-regulated .reference-samples .sample {
+  left: -100px;
+}
+
+.fold-change-graphic .up-or-down-regulated .comparison-samples .sample {
+  left: -50px;
+}
+
+.fold-change-label {
+  position: relative;
+  top: 75px;
+  /*height: 82px;*/
+  font-weight: bold;
+  font-family: serif;
+  text-align: left;
+  margin-left: 218px;
+}
+.up-or-down-regulated .fold-change-label {
+  top: 17px;
+  height: 54px;
+  font-size: 90%;
+  margin-left: 0px;
+}
+.fold-change-label .up-arrow, .fold-change-label .down-arrow {
+  height: 30px;
+  display: block;
+  margin-left: 20px;
+  border-left: 2px solid black;
+}
+.fold-change-label .up-arrow:before, .fold-change-label .down-arrow:before {
+  position: relative;
+  display: block;
+  content: " ";
+  height: 0;
+  width: 0;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  left: -6px;
+}
+.fold-change-label .up-arrow:before {
+  top: -1px;
+  border-bottom: 8px solid black;
+}
+.fold-change-label .down-arrow:before {
+  top: 25px;
+  border-top: 8px solid black;
+}
+.fold-change-label .label {
+  font-style: italic;
+  white-space: nowrap;
+  line-height: 14px;
+  margin-left: 8px;
+  height: auto;
+}
+.fold-change .up-or-down-regulated .fold-change-label {
+  margin-left: 36%;
+}
+.fold-change .up-or-down-regulated .fold-change-label .up-arrow,
+.fold-change .up-or-down-regulated .fold-change-label .down-arrow {
+  height: 19px;
+}
+.fold-change .up-or-down-regulated .fold-change-label .down-arrow:before {
+  top: 14px;
+}
+.fold-change .up-or-down-regulated .fold-change-label .label {
+  margin-left: 14px;
+}
+
+/*
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CSS rules for Fold Change Expression graph = END
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+/*
+ * Specific parameter styling
+ */
+.fold-change #profileset_generic {
+  max-width: 100%;
+}
+
+.fold-change .wdk-TreeBoxParam { 
+  padding: 1em 2em;
+}
+

@@ -1,0 +1,84 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =TAGS 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+body {
+	background-image: url(../images/TriTrypDB/background_s.jpg);
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#header2 {
+	background-image: url(../images/TriTrypDB/backgroundtop_s.jpg);
+}
+
+#header_rt {
+   color: #95461a;
+}
+
+#header_rt a:link, #header_rt a:visited {
+   color: #95461a;
+}
+
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HEADER DROPDOWN MENU
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+#nav-top {
+	color: #395b8e;
+}
+
+#nav-top a:link, #nav-top a:visited {
+	color: #97400e;
+}
+
+#nav-top li ul {  /* second-level lists */
+/* 	background-image: url(../images/TriTrypDB/footer.png);*/
+	border-color:#95461a;
+	list-style-image: url(../images/TriTrypDB/bullet_arrow.gif);
+}
+
+#nav-top li ul a:link, #nav-top li ul a:visited {
+	color: #95461a;
+}
+
+#nav-top li ul a:hover, #nav-top li ul a:active {
+	color: #013c63;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =HOME 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+
+
+.threecolumndiv div.heading {
+  background-color: #c06530;    /* #274f94; */
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =STRUCTURE 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+ 
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =Top Menu Bar Dropdown List
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 =SIDEBAR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.menu_lefttop_drop {
+   border-color: #888;  /* #9E5933; color as in contentcolumn border */
+}
+
+#menu_lefttop a.heading {
+	background:  #1b7FbF;  /* #2083c1; */ /*#359cd7; /*/   /* #274f94;   */
+}
+
+
+
+/*THE END */

@@ -1,0 +1,166 @@
+.genome-view {
+	width: 100%;
+
+	* {
+		box-sizing: content-box;
+	}
+
+	.ui-tooltip, .qtip {
+		max-width:600px;
+	}
+
+	th {
+		white-space: nowrap;
+	}
+
+	td {
+		vertical-align: top;
+		border: 1px solid #AAAAAA;
+		padding: 4px;
+	}
+
+	.canvas {
+		.feature.forward {
+			top: 0px;
+		}
+
+		.feature.reversed {
+			bottom: 0px;
+		}
+	}
+
+	td.length, td.span-count {
+		text-align: right;
+	}
+
+	#emptyChromosomes {
+		float: right;
+		margin-right: 10px;
+	}
+
+	.region {
+		min-width: 2px;
+	}
+
+	.region.forward {
+		background-color: #AAAAFF;
+	}
+
+	.region.reversed {
+		background-color:#FFAAAA;
+	}
+
+	.legend {
+		background-color:#EEEEEE;
+		border-radius:5px;
+		padding:5px;
+		margin:5px;
+		width: 425px;
+		font-size:90%;
+		font-style:italic;
+		line-height:20px;
+
+		.title {
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.icon {
+			display: inline-block;
+			width: 1.0%
+		}
+
+		.region {
+			height: 20px;
+		}
+
+		.region.diffSize {
+			height: 15px;
+		}
+
+		.feature {
+			height: 7px;
+			display: inline-block;
+			width: 25px;
+		}
+
+		.feature.forward {
+			background-color: #0000FF;
+		}
+
+		.feature.reversed {
+			background-color: #FF0000;
+		}
+
+		li {
+			line-height: 22px;
+			font-size:80%;
+		}
+	}
+}
+
+.region {
+	width: 800px;
+
+	.end {
+		float:right;
+		margin:0px 10px 0px 0px;
+	}
+
+	.canvas {
+		bottom: -7px;
+		margin:0px 10px 0px 0px;
+
+		.ruler {
+			width: 100%;
+		}
+
+		.feature.forward {
+			bottom: 7px;
+		}
+
+		.feature.reversed {
+			top: 7px;
+		}
+	}
+
+	.legend {
+		.feature {
+			height: 5px;
+			display: inline-block;
+			width: 20px;
+		}
+
+		.feature.forward {
+			background-color: #0000FF;
+		}
+
+		.feature.reversed {
+			background-color: #FF0000;
+		}
+	}
+}
+
+/* height needs to account for scrolling bar when zooming */
+.genome-view .canvas, .region .canvas { position:relative; overflow:visible; height:21px; }
+.genome-view .canvas .ruler, .region .canvas .ruler { min-width:2px; position:absolute; height:5px; top:8px; background-color:#666666; cursor:pointer; border-left:1px solid #F5F5F5; }
+
+.genome-view .canvas .region, .genome-view .canvas .feature, .region .canvas .feature { height:7px; min-width:2px; display:block; position:absolute; cursor:pointer; border-left:1px solid #F5F5F5; }
+.genome-view .canvas .feature.forward, .region .canvas .feature.forward { background-color:#0000FF; }
+.genome-view .canvas .feature.reversed, .region .canvas .feature.reversed { background-color:#FF0000; }
+.genome-view .canvas .region.forward { top: 0px; background-color:#AAAAFF; }
+.genome-view .canvas .region.reversed { bottom: 0px; background-color:#FFAAAA; }
+
+.smaller-font {
+	font-size: 90%;
+}
+
+.genome-view th, .region th { white-space:nowrap; }
+
+div.genome-view_wrapper div.genome-view_length {
+	padding-left:3em;
+}
+div.genome-view_wrapper div.genome-view_paginate {
+	position:relative;
+	top:4px;
+}

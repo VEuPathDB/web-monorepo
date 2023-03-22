@@ -1,0 +1,126 @@
+.wdk-InternalGeneDatasetForm {
+  margin: auto;
+  max-width: 81.25rem; // same max-width as .wdk-QuestionForm
+
+  >.wdk-QuestionFormQuestionHeader {
+    position: inherit;
+  }
+
+  .TableToolbar-Info {
+    font-size: 100%;
+    margin-bottom: 0.25em;
+  }
+
+  .wdk-RealTimeSearchBoxContainer {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    margin-right: 0.5rem;
+
+    span {
+      margin-right: 1em;
+    }
+  }
+
+  .wdk-InternalGeneDatasetFormLegend {
+    display: flex;
+    background-color: #f6f6f6;
+    padding: 0.5rem;
+
+    span {
+      padding: 0 0.25rem;
+    }
+  }
+
+  .wdk-InternalGeneDatasetFormRecordToggle {
+    cursor: pointer;
+    margin: 0.5rem 0;
+    padding: 0.25rem;
+    border-bottom: 1px solid #dddddd;
+    background-color: #f7f7f7;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  tr.DataRow {
+    .DataCell:nth-child(3) {
+      display: flex;
+      justify-content: center;
+
+      div {
+        display: inline-block;
+        width: 36px;
+        margin: 0 2px;
+      }
+    }
+  }
+
+  .bttn {
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 2px 0px;
+    font-size: 10px;
+    line-height: 15px;
+    width: 36px;
+    display: inline-block;
+    text-align: center;
+    color: #000000;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    box-shadow: 1px 1px 0 #dddddd;
+    -moz-box-shadow: 1px 1px 0 #dddddd;
+    -webkit-box-shadow: 1px 1px 0 #dddddd;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#e6e6e6')";
+    background-color: #e6e6e6;
+    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-image: -moz-linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-image: -o-linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)";
+    background-repeat: repeat-x;
+
+    &:hover,
+    &:focus {
+      background-position: 0 -8px;
+      text-decoration: none;
+    }
+  }
+
+  .bttn-cyan {
+    color: #ffffff;
+    border: 1px solid #2f96b4;
+    background-color: #2f96b4;
+    background-image: linear-gradient(to bottom, #5bc0de, #2f96b4);
+    background-image: -moz-linear-gradient(to bottom, #5bc0de, #2f96b4);
+    background-image: -o-linear-gradient(to bottom, #5bc0de, #2f96b4);
+    background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
+  }
+
+  .bttn:active,
+  .bttn-active,
+  .bttn-legend {
+    background-image: none;
+    box-shadow: 1px 1px 0 #dddddd;
+    -moz-box-shadow: 1px 1px 0 #dddddd;
+    -webkit-box-shadow: 1px 1px 0 #dddddd;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
+  }
+
+  .bttn:active,
+  .bttn.bttn-active {
+    cursor: default;
+  }
+
+  &NewDataset {
+    content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
+    margin-left: 0.25em;
+  }
+
+  .OrganismPreferencesWarning {
+    text-align: left;
+    font-weight: normal;
+  }
+}

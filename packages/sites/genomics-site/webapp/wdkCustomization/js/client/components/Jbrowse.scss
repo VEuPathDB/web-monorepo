@@ -1,0 +1,17 @@
+@import '@veupathdb/web-common/lib/styles/collapsed-header-mixins.scss';
+
+body.vpdb-Body .vpdb-RootContainer__jbrowse {
+  @include collapsed-header-page-layout;
+
+  @media screen and (min-width: $hamburger-width + 1) {
+    grid-template-rows: $collapsed-header-height auto auto 1fr auto;
+  }
+
+  .vpdb-Main {
+    margin: 0;
+    padding: 0;
+    iframe {
+      border: none;
+    }
+  }
+}

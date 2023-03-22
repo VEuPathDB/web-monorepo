@@ -1,0 +1,213 @@
+@import './themes.scss';
+@import '@veupathdb/web-common/lib/styles/breakpoints.scss';
+@import '@veupathdb/web-common/lib/styles/default-layout.scss';
+@import '@veupathdb/web-common/lib/styles/header.scss';
+@import '@veupathdb/web-common/lib/styles/announcements.scss';
+@import '@veupathdb/web-common/lib/styles/search-pane.scss';
+@import '@veupathdb/web-common/lib/styles/main.scss';
+@import '@veupathdb/web-common/lib/styles/news.scss';
+@import '@veupathdb/web-common/lib/styles/footer.scss';
+@import '~site/wdkCustomization/js/client/styles/home-page-layout.scss';
+
+@include themify($child: '') {
+  $primary-color: themed('primary-color');
+  $bckgrnd-img: themed('bckgrnd-img');
+  $logo: themed('logo');
+  $small-logo: themed('small-logo');
+
+  $superscript-position-top: themed('superscript-position-top');
+  $superscript-position-left: themed('superscript-position-left');
+  $superscript-font-size: themed('superscript-font-size');
+  $superscript-position-top-small: themed('superscript-position-top-small');
+  $superscript-position-left-small: themed('superscript-position-left-small');
+  $superscript-font-size-small: themed('superscript-font-size-small');
+
+  .vpdb-BgDark {
+    background-color: $primary-color;
+  }
+
+  .vpdb-BdDark {
+    border-color: $primary-color; 
+  }
+
+  .vpdb-Header {
+    background-image: $bckgrnd-img;
+    background-size: cover;
+    background-position: center;
+
+    .ebrc-HeaderBrandingContainer {
+      position: relative;
+
+      .vpdb-HeaderBrandingSuperscript {
+        position: absolute;
+        @if ($superscript-position-top) {
+          top: $superscript-position-top;
+        } @else {
+          top: 0.5em;
+        }
+        left: $superscript-position-left;
+        @if ($superscript-font-size) {
+          font-size: $superscript-font-size;
+        } @else {
+          font-size: 0.9em;
+        }
+        font-weight: 500;
+        color: white;
+        white-space: nowrap;
+      }
+    }
+
+    .vpdb-HeaderBranding {
+      content: $logo;
+    }
+
+    &__collapsed {
+      box-shadow: unset;
+
+      .ebrc-HeaderBrandingContainer {
+        .vpdb-HeaderBrandingSuperscript {
+          top: $superscript-position-top-small;
+          left: $superscript-position-left-small;
+          font-size: $superscript-font-size-small;
+        }
+      }
+
+      .vpdb-HeaderBranding {
+        content: $small-logo;
+      }
+    }
+    
+    @media screen and (max-width: $cramped-header-width) {
+      .ebrc-HeaderBrandingContainer {
+        .vpdb-HeaderBrandingSuperscript {
+          top: $superscript-position-top-small;
+          left: $superscript-position-left-small;
+          font-size: $superscript-font-size-small;
+        }
+      }
+
+      .vpdb-HeaderBranding {
+        content: $small-logo;
+      }
+    }
+  }
+
+  .vpdb-SubHeader {
+    grid-area: subheader;
+    z-index: 99;
+    background: white;
+    width: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 0.0625rem solid $primary-color;
+    padding: 0.5em 0;
+
+    .PreferredOrganismsLink--Container {
+      margin-right: 1em;
+    }
+
+    &__collapsed {
+      position: sticky;
+      top: 5.5em;
+      box-shadow: 0 1px 1px #00000066;
+    }
+
+    @media screen and (max-width: $hamburger-width) {
+      position: relative;
+      top: 0;
+      box-shadow: unset;
+    }
+  }
+
+  .vpdb-SearchPane {
+    .wdk-CheckboxTree {
+      > .wdk-CheckboxTreeList {
+        border-bottom: 0.0625rem solid $primary-color;
+
+        @media screen and (max-width: $mobile-width) {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .vpdb-Main {
+    border-color: $primary-color;
+  }
+
+  .vpdb-FeaturedToolsListItem {
+    &__selected {
+      .vpdb-FeaturedToolsListItemIconContainer {
+        border-color: $primary-color;
+      }
+    }
+
+    &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+      border-color: $primary-color;
+    }
+  }
+
+  // site search overrides
+  .SiteSearch--CountsContainer, .SiteSearch--ResultTypeWidgetContainer {
+    border: 1px solid themed('secondary-color-border');
+    background: themed('secondary-color')
+  }
+
+}
+
+// Fix for question page sticky header
+body.vpdb-Body .wdk-QuestionFormQuestionHeader {
+  top: 8.5em;
+}
+
+// Fix for All Datasets sticky header
+body.vpdb-Body .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+  top: 103px;
+}
+
+// Fix for Preferred Organisms config page header
+body.vpdb-Body .PreferredOrganismsConfig {
+  h1 {
+    padding-top: 0.25rem;
+  }
+
+  &--ToggleHelp::after {
+    right: 3.48em;
+  }
+}
+
+// Various offsets for header on record pages
+body.vpdb-Body .wdk-RecordAttributeSectionItem:before,
+body.vpdb-Body .wdk-RecordTableContainer:before,
+body.vpdb-Body .wdk-RecordSubsection:before,
+body.vpdb-Body .wdk-RecordSection:before {
+  height: 103px;
+  margin-top: -103px;
+}
+
+// Offset for header on static content pages {
+body.vpdb-Body .ExternalContentController a[name]::before {
+  height: 139px;
+  margin-top: -139px;
+}
+
+// Fix for RecordSidebar sticky container
+body.vpdb-Body .wdk-RecordSidebarContainer {
+  top: 2em;
+}
+
+body.vpdb-Body .vpdb-RootContainer {
+  @media screen and (max-width: $mobile-width) {
+    grid-template-areas:
+      "header"
+      "subheader"
+      "banner"
+      "nav"
+      "content"
+      "side"
+      "footer";
+
+    grid-template-rows: auto auto auto auto 1fr auto auto;
+  }
+}

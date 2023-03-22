@@ -1,0 +1,20 @@
+/* set back the styles of <fieldset>, <ul>, <li> */
+fieldset { /* border:1px solid #999999;  */
+	padding:5px 5px 5px 15px; margin:10px; }
+fieldset > legend { font-weight:bold; font-size:12pt; }
+fieldset ul { list-style:disc outside none; margin-left:10px; }
+fieldset li { padding:2px; }
+
+#site-search #search-info { padding: 10px; text-align: center; }
+#site-search #search-info #keyword {font-weight:bold; }
+#site-search .loading, #site-search .loaded { margin: 2px; }
+#site-search .wait { background: url(../../wdk/images/load.gif) no-repeat center; width: 16px; height: 16px; display: inline-block; }
+#site-search .source, #site-search .loaded, #site-search .result { display: none; }
+#site-search .error { display: none; color: red; }
+#site-search .to-results { margin: 5px 2px 2px 10px; font-style: italic; }
+
+/* hide unrelated sections from freefind result */
+#site-search .search-headline-table:first { display: none; }
+#site-search #ffsponsors { display: none; }
+#site-search {margin: 0 3em 0;}
+

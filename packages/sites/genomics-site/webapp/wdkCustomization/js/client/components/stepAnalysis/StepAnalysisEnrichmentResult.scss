@@ -1,0 +1,90 @@
+.step-analysis-pane {
+  .MesaComponent {
+    // nested .MesaComponent
+    > .MesaComponent {
+      width: 100%;
+      overflow: auto;
+    }
+  }
+}
+
+.enrich-result-p {
+  font-size: 90%;
+  font-weight: normal;
+  margin: 0;
+  text-align: right;
+}
+
+.enrich-result-q {
+  font-size: 90%;
+  font-weight: normal;
+  margin: 0;
+  text-align: right;
+}
+
+.enrich-table {
+  th {
+    text-align: left;
+  }
+
+  td {
+    text-align: left;
+  }
+
+  td.enrich-centered {
+    text-align: center;
+  }
+}
+
+.enrich-databar {
+  border:0; margin:0; padding:0;
+  display: inline-block;
+  height: 1em;
+  background-color: lightgreen;
+}
+
+.enrich-download-link {
+  float: right;
+  font-weight: bold;
+  font-size: 110%;
+  width: 1200px;
+  text-align: right;
+}
+
+.enrich-empty-results {
+  font-weight: bold;
+  margin: 25px auto;
+  text-align: center;
+}
+
+.Revigo-analysis {
+  float: right;
+  width: 1200px;
+}
+
+#revigoSubmit {
+  float:right;
+  color:#FFFFFF;
+  background: #4F81BD;
+  border-color: #346792;
+  box-shadow: 0px 0px 1px #245F92;
+  padding: 1px 1em;
+  margin-left: .5em;
+  font-weight: normal;
+  font-size: smaller;
+  border-radius: 4px;
+  line-height: normal;
+}
+
+.wdk-Dialog.word-cloud-modal {
+  height: 400px;
+  width: 700px;
+
+  .word-cloud-modalContent {
+    display: block;
+  }
+
+  img {
+    width: 700px;
+  }
+}

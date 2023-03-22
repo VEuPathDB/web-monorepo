@@ -1,0 +1,49 @@
+#!/bin/bash
+
+USAGE="usage: $0 [ q | w ] { -g }"
+
+# check argument count
+if [ $# -eq 0 ]
+then
+  echo "$USAGE"
+  exit -1
+fi
+
+PREFIX="$1"
+GENEPAGE="$2"
+STARTTIME=1293858000
+
+# make sure q/w switch is one of those
+if [ "$PREFIX" != "q" -a "$PREFIX" != "w" ]
+then
+  echo "$USAGE"
+  exit -1
+fi
+
+SITES="tritrypdb3.0 trichdb1.2.4 cryptodb4.3.5 amoeba1.3.1 plasmo7.1.1 toxo6.3 giardiadb2.3.2"
+
+if [ "$PREFIX" = "w" ]
+then
+  SITES="tritrypdb2.5 trichdb1.2.3 cryptodb4.3.4 amoeba1.3 plasmo7.1.1 toxo6.2.1 giardiadb2.3.1"
+fi
+
+for SITE in $SITES
+do
+#   echo $DIVIDER
+#   echo "${SITE} wdk:"
+#   echo
+
+#   cat /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j | wdkSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
+
+  for SITELOG in `ls /usr/local/tomcat_instances/*/logs/${SITE}/wdk-warn.log4j`
+  do
+    LOGFILES="$LOGFILES $SITELOG"
+  done
+
+done
+
+# echo $DIVIDER
+echo "wdk combined:"
+echo
+
+cat ${LOGFILES} | wdkSlowQueryReport -s .01 $GENEPAGE -t $STARTTIME
