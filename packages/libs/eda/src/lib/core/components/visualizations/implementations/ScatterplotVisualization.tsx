@@ -1979,7 +1979,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ]}
       />
 
-      <h1>foo</h1>
       <OutputEntityTitle
         entity={outputEntity}
         outputSize={outputSize}
