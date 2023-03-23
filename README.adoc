@@ -37,3 +37,15 @@ For example, you can start the MultiBLAST dev server by running
 ```
 yarn nx run @veupathdb/multi-blast:start
 ```
+
+### Rebuild dependencies when running a development server
+
+When running a development server (such as `yarn nx start @veupathdb/eda` or `yarn nx start @veupathdb/clinepi-site`),
+use the following command to rebuild changes made to dependencies, and to have the dev site reload with the changes:
+
+```
+cd packages/lib/<package>
+yarn build-npm-modules
+```
+
+_Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`) has proven inadequate in this scenario._
