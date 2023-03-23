@@ -117,11 +117,11 @@ export function MapSideNavigation({
         <hr
           style={{
             // Styles for the <hr />
-            backgroundColor: `rgba(0, 0, 0,0.25)`,
+            backgroundColor: `rgba(0, 0, 0,0.15)`,
             border: 0,
-            height: '1px',
+            height: '2px',
             marginBottom: '1.5rem',
-            width: '90%',
+            width: '50%',
           }}
         />
         <div
