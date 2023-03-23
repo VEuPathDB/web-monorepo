@@ -11,26 +11,26 @@ import {
   oneOf,
   optional,
   record,
-  string
+  string,
 } from './Json';
 import { ParameterGroup, ParameterValues } from './WdkModel';
 import { paramGroupDecoder } from '../Service/Mixins/SearchesService';
-import { ValidStepValidation, InvalidStepValidation } from 'wdk-client/Utils/WdkUser';
+import { ValidStepValidation, InvalidStepValidation } from '../Utils/WdkUser';
 
 export interface StepAnalysis {
-  analysisId: number,
-  displayName: string
+  analysisId: number;
+  displayName: string;
 }
 
 export interface StepAnalysisType {
-  displayName: string,
-  releaseVersion: string,
-  name: string,
-  description: string,
-  customThumbnail?: string,
-  shortDescription: string,
-  paramNames: string[],
-  groups: ParameterGroup[]
+  displayName: string;
+  releaseVersion: string;
+  name: string;
+  description: string;
+  customThumbnail?: string;
+  shortDescription: string;
+  paramNames: string[];
+  groups: ParameterGroup[];
 }
 
 export type FormParams = ParameterValues;
@@ -51,16 +51,16 @@ export type StepAnalysisStatus =
 export type InvalidStepReason = string | null;
 
 export interface StepAnalysisConfig {
-  analysisId: number,
-  stepId: number,
-  analysisName: string,
-  parameters: FormParams,
-  displayName: string,
-  shortDescription?: string,
-  description?: string,
-  userNotes?: string,
-  status: StepAnalysisStatus,
-  validation: ValidStepValidation | InvalidStepValidation
+  analysisId: number;
+  stepId: number;
+  analysisName: string;
+  parameters: FormParams;
+  displayName: string;
+  shortDescription?: string;
+  description?: string;
+  userNotes?: string;
+  status: StepAnalysisStatus;
+  validation: ValidStepValidation | InvalidStepValidation;
 }
 
 export const stepAnalysisDecoder: Decoder<StepAnalysis> = combine(
@@ -110,5 +110,5 @@ export const stepAnalysisConfigDecoder: Decoder<StepAnalysisConfig> = record({
   userNotes: optional(string),
   status: stepAnalysisStatusDecoder,
   parameters: formParamsDecoder,
-  validation: ok // FIXME: Make decoders for ValidStepValidation and InvalidStepValidation
+  validation: ok, // FIXME: Make decoders for ValidStepValidation and InvalidStepValidation
 });

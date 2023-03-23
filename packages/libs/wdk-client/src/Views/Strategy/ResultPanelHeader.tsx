@@ -1,9 +1,9 @@
 import React from 'react';
-import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
-import { Step } from 'wdk-client/Utils/WdkUser';
-import {setReviseFormVisibility} from 'wdk-client/Actions/StrategyPanelActions';
-import {connect} from 'react-redux';
-import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import { RecordClass, Question } from '../../Utils/WdkModel';
+import { Step } from '../../Utils/WdkUser';
+import { setReviseFormVisibility } from '../../Actions/StrategyPanelActions';
+import { connect } from 'react-redux';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 interface Props {
   step: Step;
@@ -17,32 +17,40 @@ interface DispatchProps {
 }
 
 const dispatchProps: DispatchProps = {
-  setReviseFormVisibility
-}
+  setReviseFormVisibility,
+};
 
 const headerStyle: React.CSSProperties = {
   order: 1,
   margin: '0',
   padding: '0',
   fontWeight: 'bold',
-  fontSize: '1.4em'
+  fontSize: '1.4em',
 };
 
 const buttonStyle: React.CSSProperties = {
   order: 2,
   fontWeight: 'normal',
   verticalAlign: 'middle',
-  marginLeft: '1em'
-}
+  marginLeft: '1em',
+};
 
-function ResultPanelHeader({ step, recordClass, question, reviseViewId, setReviseFormVisibility }: Props & DispatchProps) {
+function ResultPanelHeader({
+  step,
+  recordClass,
+  question,
+  reviseViewId,
+  setReviseFormVisibility,
+}: Props & DispatchProps) {
   return (
     <React.Fragment>
       <h2 style={headerStyle}>
-        {step.estimatedSize == null ? '?' : step.estimatedSize.toLocaleString()} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}
+        {step.estimatedSize == null ? '?' : step.estimatedSize.toLocaleString()}{' '}
+        {step.estimatedSize === 1
+          ? recordClass.displayName
+          : recordClass.displayNamePlural}
       </h2>
-      {
-        !isBinaryOperator(question) &&
+      {!isBinaryOperator(question) && (
         <button
           style={buttonStyle}
           type="button"
@@ -50,9 +58,9 @@ function ResultPanelHeader({ step, recordClass, question, reviseViewId, setRevis
         >
           Revise this search
         </button>
-      }
+      )}
     </React.Fragment>
-  )
+  );
 }
 
 function isBinaryOperator(question: Question) {

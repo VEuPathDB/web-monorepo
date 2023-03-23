@@ -6,7 +6,7 @@ import './Showcase.scss';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { AnalysisClient } from '@veupathdb/eda/lib/core/api/AnalysisClient';
-import { edaServiceUrl } from 'ebrc-client/config';
+import { edaServiceUrl } from '../../config';
 
 export default function Showcase(props) {
   const { analyses, content, prefix, attemptAction } = props;
@@ -35,16 +35,16 @@ export default function Showcase(props) {
   const [list, setList] = React.useState(loadItems == null ? items : null);
   const [error, setError] = React.useState();
   const { wdkService } = React.useContext(WdkDependenciesContext);
-  const analysisClient = useMemo(() => new AnalysisClient({ baseUrl: edaServiceUrl }, wdkService), [edaServiceUrl, wdkService]);
+  const analysisClient = useMemo(
+    () => new AnalysisClient({ baseUrl: edaServiceUrl }, wdkService),
+    [edaServiceUrl, wdkService]
+  );
 
   React.useEffect(() => {
     if (loadItems) {
       return new Task((fulfill, reject) => {
         loadItems({ analysisClient, wdkService }).then(fulfill, reject);
-      }).run(
-        setList,
-        setError
-      );
+      }).run(setList, setError);
     }
   }, [loadItems]);
 
@@ -66,7 +66,9 @@ export default function Showcase(props) {
           {/*!filters ? null : <ShowcaseFilter filters={filters} onFilter={handleFilter} items={items} />*/}
           {!viewAllUrl && !viewAllAppUrl ? null : (
             <a href={viewAllAppUrl ? prefix + viewAllAppUrl : viewAllUrl}>
-              <button className="ViewAll">View All <Icon fa="angle-double-right" /></button>
+              <button className="ViewAll">
+                View All <Icon fa="angle-double-right" />
+              </button>
             </a>
           )}
         </div>
@@ -87,9 +89,16 @@ export default function Showcase(props) {
           permissions={permissions}
           attemptAction={attemptAction}
           additionalClassName={contentType}
-          renderCard={(card) =>
-            <Card analyses={analyses} card={card} attemptAction={attemptAction} prefix={prefix} key={card.name} permissions={permissions}/>
-          }
+          renderCard={(card) => (
+            <Card
+              analyses={analyses}
+              card={card}
+              attemptAction={attemptAction}
+              prefix={prefix}
+              key={card.name}
+              permissions={permissions}
+            />
+          )}
         />
       </div>
     </div>

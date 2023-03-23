@@ -1,7 +1,7 @@
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
+import { wrappable } from '../../Utils/ComponentUtils';
+import WdkServiceJsonReporterForm from '../../Views/ReporterForm/WdkServiceJsonReporterForm';
 
-let DownloadForm = props => ( <WdkServiceJsonReporterForm {...props}/> );
+let DownloadForm = (props) => <WdkServiceJsonReporterForm {...props} />;
 
 export default wrappable(DownloadForm);

@@ -2,21 +2,27 @@ import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useLayoutEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
-import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import Icon from 'wdk-client/Components/Icon/IconAlt';
-import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
-import { isFilterField, isMulti, isRange, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
-
-
+import { scrollIntoViewIfNeeded } from '../../Utils/DomUtils';
+import { Seq } from '../../Utils/IterableUtils';
+import { areTermsInString, makeSearchHelpText } from '../../Utils/SearchUtils';
+import { preorderSeq } from '../../Utils/TreeUtils';
+import CheckboxTree, {
+  LinksPosition,
+} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import Icon from '../../Components/Icon/IconAlt';
+import Tooltip from '../../Components/Overlays/Tooltip';
+import {
+  isFilterField,
+  isMulti,
+  isRange,
+  findAncestorFields,
+} from '../../Components/AttributeFilter/AttributeFilterUtils';
 
 /**
  * Tree of Fields, used to set the active field.
  */
-export default class FieldList extends React.Component { // eslint-disable-line react/no-deprecated
+export default class FieldList extends React.Component {
+  // eslint-disable-line react/no-deprecated
 
   constructor(props) {
     super(props);
@@ -33,20 +39,27 @@ export default class FieldList extends React.Component { // eslint-disable-line 
       searchTerm: '',
 
       // expand branch containing selected field
-      expandedNodes: this._getPathToField(this.props.activeField)
+      expandedNodes: this._getPathToField(this.props.activeField),
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.activeField == null || this.props.activeField === nextProps.activeField) return;
+    if (
+      nextProps.activeField == null ||
+      this.props.activeField === nextProps.activeField
+    )
+      return;
 
     if (
       nextProps.activeField.parent != null &&
       !this.state.expandedNodes.includes(nextProps.activeField.parent)
     ) {
       this.setState({
-        expandedNodes: uniq(this.state.expandedNodes.concat(
-          this._getPathToField(nextProps.activeField)))
+        expandedNodes: uniq(
+          this.state.expandedNodes.concat(
+            this._getPathToField(nextProps.activeField)
+          )
+        ),
       });
     }
   }
@@ -71,7 +84,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
 
   handleSearchTermChange(searchTerm) {
     // update search term, then if it is empty, make sure selected field is visible
-    this.setState({searchTerm});
+    this.setState({ searchTerm });
   }
   getNodeId(node) {
     return node.field.term;
@@ -83,7 +96,9 @@ export default class FieldList extends React.Component { // eslint-disable-line 
 
   getFieldSearchString(node) {
     return isMulti(node.field)
-      ? preorderSeq(node).map(getNodeSearchString(this.props.valuesMap)).join(' ')
+      ? preorderSeq(node)
+          .map(getNodeSearchString(this.props.valuesMap))
+          .join(' ')
       : getNodeSearchString(this.props.valuesMap)(node);
   }
 
@@ -95,7 +110,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
     if (field == null) return [];
 
     return findAncestorFields(this.props.fieldTree, field.term)
-      .map(field => field.term)
+      .map((field) => field.term)
       .toArray();
   }
 
@@ -115,11 +130,13 @@ export default class FieldList extends React.Component { // eslint-disable-line 
           isSelectable={false}
           isSearchable={true}
           searchBoxPlaceholder="Find a variable"
-          searchBoxHelp={makeSearchHelpText("the variables by name or description")}
+          searchBoxHelp={makeSearchHelpText(
+            'the variables by name or description'
+          )}
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}
-          renderNode={node => (
+          renderNode={(node) => (
             <FieldNode
               node={node}
               searchTerm={this.state.searchTerm}
@@ -132,8 +149,8 @@ export default class FieldList extends React.Component { // eslint-disable-line 
             treeNode: {
               nodeWrapper: {
                 padding: 0,
-              }
-            }
+              },
+            },
           }}
         />
       </div>
@@ -146,50 +163,56 @@ FieldList.propTypes = {
   fieldTree: PropTypes.object.isRequired,
   onActiveFieldChange: PropTypes.func.isRequired,
   activeField: PropTypes.object,
-  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired).isRequired
+  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired)
+    .isRequired,
 };
 
 function getNodeSearchString(valuesMap) {
-  return function ({ field: { term, display = '', description = '', variableName = ''}}) {
-    return `${display} ${description} ${variableName} ${valuesMap[term] || ''}`.toLowerCase();
-  }
+  return function ({
+    field: { term, display = '', description = '', variableName = '' },
+  }) {
+    return `${display} ${description} ${variableName} ${
+      valuesMap[term] || ''
+    }`.toLowerCase();
+  };
 }
 
-
-function FieldNode({node, isActive, searchTerm, handleFieldSelect }) {
+function FieldNode({ node, isActive, searchTerm, handleFieldSelect }) {
   const nodeRef = useRef(null);
 
   useLayoutEffect(() => {
     if (isActive && nodeRef.current && nodeRef.current.offsetParent) {
       scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
     }
-  }, [ isActive, nodeRef.current, searchTerm ])
+  }, [isActive, nodeRef.current, searchTerm]);
 
   return (
     <Tooltip content={node.field.description} hideDelay={0}>
-      {isFilterField(node.field)
-      ? (
+      {isFilterField(node.field) ? (
         <a
           ref={nodeRef}
-          className={'wdk-AttributeFilterFieldItem' +
-            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')}
+          className={
+            'wdk-AttributeFilterFieldItem' +
+            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
+          }
           href={'#' + node.field.term}
-          onClick={e => {
+          onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleFieldSelect(node);
-          }}>
-          <Icon fa={getIcon(node.field)}/> {node.field.display}
+          }}
+        >
+          <Icon fa={getIcon(node.field)} /> {node.field.display}
         </a>
       ) : (
-        <div className="wdk-Link wdk-AttributeFilterFieldParent">{node.field.display}</div>
+        <div className="wdk-Link wdk-AttributeFilterFieldParent">
+          {node.field.display}
+        </div>
       )}
     </Tooltip>
   );
 }
 
 function getIcon(field) {
-  return isRange(field) ? 'bar-chart-o'
-    : isMulti(field) ? 'th-list'
-    : 'list';
+  return isRange(field) ? 'bar-chart-o' : isMulti(field) ? 'th-list' : 'list';
 }

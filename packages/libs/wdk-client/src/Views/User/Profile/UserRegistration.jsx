@@ -1,10 +1,17 @@
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import UserFormContainer, { UserFormContainerPropTypes, FormMessage, VisitOtherBrc, getDescriptionBoxStyle } from 'wdk-client/Views/User/UserFormContainer';
+import { wrappable } from '../../../Utils/ComponentUtils';
+import UserFormContainer, {
+  UserFormContainerPropTypes,
+  FormMessage,
+  VisitOtherBrc,
+  getDescriptionBoxStyle,
+} from '../../../Views/User/UserFormContainer';
 
 let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
   // configure properties for banner and submit button enabling based on status
-  let messageClass = "wdk-UserProfile-banner ", message = "", disableSubmit = false;
+  let messageClass = 'wdk-UserProfile-banner ',
+    message = '',
+    disableSubmit = false;
   switch (formStatus) {
     case 'new':
       disableSubmit = true;
@@ -13,34 +20,41 @@ let interpretFormStatus = (formStatus, userFormData, errorMessage) => {
       // don't give status and enable submit button
       break;
     case 'pending':
-      message = "Submitting registration...";
-      messageClass += "wdk-UserProfile-pending";
+      message = 'Submitting registration...';
+      messageClass += 'wdk-UserProfile-pending';
       disableSubmit = true;
       break;
     case 'success':
       // special case for success; include Joint-BRC advertisement
       message = (
         <div>
-          <p>You have registered successfully.  Please check your email (inbox and spam folder) for a temporary password.</p>
-          <VisitOtherBrc user={userFormData}/>
+          <p>
+            You have registered successfully. Please check your email (inbox and
+            spam folder) for a temporary password.
+          </p>
+          <VisitOtherBrc user={userFormData} />
         </div>
       );
-      messageClass += "wdk-UserProfile-success";
+      messageClass += 'wdk-UserProfile-success';
       disableSubmit = true; // same as 'new'
       break;
     case 'error':
       message = errorMessage;
-      messageClass += "wdk-UserProfile-error";
+      messageClass += 'wdk-UserProfile-error';
   }
-  let messageElement = ( <FormMessage messageClass={messageClass} message={message}/> );
+  let messageElement = (
+    <FormMessage messageClass={messageClass} message={message} />
+  );
   return { messageElement, disableSubmit };
-}
+};
 
 let IntroText = () => (
-  <div style={{width:"70%",textAlign:"center",margin:"15px"}}>
-    IMPORTANT: If you already registered in another site<br/>
-    (AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB,
-    PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB, VectorBase or VEuPathDB)<br/>
+  <div style={{ width: '70%', textAlign: 'center', margin: '15px' }}>
+    IMPORTANT: If you already registered in another site
+    <br />
+    (AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB,
+    PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB, VectorBase or VEuPathDB)
+    <br />
     you do NOT need to register again.
   </div>
 );
@@ -63,30 +77,46 @@ let WhyRegister = () => (
 let PrivacyPolicy = () => (
   <div style={getDescriptionBoxStyle()}>
     <h4>
-      <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
+      <a
+        title="It will open in a new tab"
+        target="_blank"
+        href="/a/app/static-content/privacyPolicy.html"
+      >
         VEuPathDB Websites Privacy Policy
-      </a> 
+      </a>
     </h4>
     <table>
       <tbody>
         <tr>
           <td width="40%">
-            <p><b>How we will use your email:</b></p>
+            <p>
+              <b>How we will use your email:</b>
+            </p>
             <div id="cirbulletlist">
               <ul>
                 <li>Confirm your subscription.</li>
                 <li>If you subscribe to them, send infrequent email alerts.</li>
-                <li>NOTHING ELSE.  We will not release the email list.</li>
+                <li>NOTHING ELSE. We will not release the email list.</li>
               </ul>
             </div>
           </td>
           <td>
-            <p><b>How we will use your name and institution:</b></p>
+            <p>
+              <b>How we will use your name and institution:</b>
+            </p>
             <div id="cirbulletlist">
               <ul>
-                <li>If you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment.</li>
-                <li>If you make a search strategy public, your name and institution will be displayed with it.</li>
-                <li>NOTHING ELSE.  We will not release your name or institution.</li>
+                <li>
+                  If you add a comment to a Gene or a Sequence, your name and
+                  institution will be displayed with the comment.
+                </li>
+                <li>
+                  If you make a search strategy public, your name and
+                  institution will be displayed with it.
+                </li>
+                <li>
+                  NOTHING ELSE. We will not release your name or institution.
+                </li>
               </ul>
             </div>
           </td>
@@ -100,26 +130,28 @@ let PrivacyPolicy = () => (
  * React component for the user profile/account form
  * @type {*|Function}
  */
-let UserRegistration = props => (
-
+let UserRegistration = (props) => (
   <div>
-    <UserFormContainer {...props}
-        shouldHideForm={!props.globalData.user.isGuest}
-        hiddenFormMessage="You must log out before registering a new user."
-        titleText="Registration"
-        introComponent={IntroText}
-        statusDisplayFunction={interpretFormStatus}
-        showChangePasswordBox={false}
-        submitButtonText="Register"
-        onSubmit={props.userEvents.submitRegistrationForm}/>
-    {!props.globalData.user.isGuest ? '' : (
+    <UserFormContainer
+      {...props}
+      shouldHideForm={!props.globalData.user.isGuest}
+      hiddenFormMessage="You must log out before registering a new user."
+      titleText="Registration"
+      introComponent={IntroText}
+      statusDisplayFunction={interpretFormStatus}
+      showChangePasswordBox={false}
+      submitButtonText="Register"
+      onSubmit={props.userEvents.submitRegistrationForm}
+    />
+    {!props.globalData.user.isGuest ? (
+      ''
+    ) : (
       <div>
-        <WhyRegister/>
-        <PrivacyPolicy/>
+        <WhyRegister />
+        <PrivacyPolicy />
       </div>
     )}
   </div>
-
 );
 
 UserRegistration.propTypes = UserFormContainerPropTypes;

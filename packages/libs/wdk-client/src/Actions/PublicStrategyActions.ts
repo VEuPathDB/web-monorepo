@@ -1,9 +1,9 @@
-import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
-import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { MesaSortObject } from '../Core/CommonTypes';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
+import { StrategySummary } from '../Utils/WdkUser';
 
 export const requestPublicStrategies = makeActionCreator(
-  'publicStrategies/requestPublicStrategies',
+  'publicStrategies/requestPublicStrategies'
 );
 
 export const fulfillPublicStrategies = makeActionCreator(
@@ -28,7 +28,7 @@ export const setSort = makeActionCreator(
 export const setPrioritizeExamples = makeActionCreator(
   'publicStrategies/setPrioritizeExamples',
   (prioritizeExamples: boolean) => ({ prioritizeExamples })
-)
+);
 
 export type Action =
   | InferAction<typeof requestPublicStrategies>

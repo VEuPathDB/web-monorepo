@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { safeHtml, wrappable } from '../../../Utils/ComponentUtils';
 
 function RecordTableDescription(props) {
   const { description } = props.table;
@@ -10,7 +10,7 @@ function RecordTableDescription(props) {
 RecordTableDescription.propTypes = {
   table: PropTypes.object.isRequired,
   record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired
+  recordClass: PropTypes.object.isRequired,
 };
 
 export default wrappable(RecordTableDescription);

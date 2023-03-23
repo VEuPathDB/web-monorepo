@@ -1,7 +1,7 @@
 import { difference, union } from 'lodash';
 import { map, filter } from 'rxjs/operators';
-import { Favorite, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { MesaState } from 'wdk-client/Components/Mesa';
+import { Favorite, RecordClass } from '../Utils/WdkModel';
+import { MesaState } from '../Components/Mesa';
 import {
   TYPE_GETTER,
   SORT_TABLE,
@@ -18,11 +18,11 @@ import {
   END_DELETE_WITH_ERROR,
   UPDATE_SEARCH_TERM,
   FILTER_BY_TYPE,
-  createTypeGetter
-} from 'wdk-client/Actions/FavoritesActions';
-import { EpicDependencies } from 'wdk-client/Core/Store';
+  createTypeGetter,
+} from '../Actions/FavoritesActions';
+import { EpicDependencies } from '../Core/Store';
 import { Observable } from 'rxjs';
-import { Action } from 'wdk-client/Actions';
+import { Action } from '../Actions';
 
 export const key = 'favorites';
 
@@ -41,7 +41,7 @@ export interface State {
   key: string;
   filterByType: string | null;
   typeGetter: (favorite: Favorite, state: State) => string;
-};
+}
 
 const initialState = {
   tableSelection: [],
@@ -56,7 +56,7 @@ const initialState = {
   existingFavorite: {},
   deletedFavorite: null,
   favoritesLoading: false,
-  typeGetter: () => 'Unknown'
+  typeGetter: () => 'Unknown',
 };
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -69,7 +69,10 @@ export function reduce(state: State = initialState, action: Action): State {
     case SORT_TABLE: {
       const { setSortDirection, setSortColumnKey } = MesaState;
       const { sortDirection, sortKey } = action.payload;
-      const tableState = setSortDirection(setSortColumnKey(state.tableState, sortKey), sortDirection);
+      const tableState = setSortDirection(
+        setSortColumnKey(state.tableState, sortKey),
+        sortDirection
+      );
       return { ...state, tableState };
     }
 
@@ -81,21 +84,26 @@ export function reduce(state: State = initialState, action: Action): State {
     case END_FAVORITES_REQUEST_WITH_SUCCESS: {
       const favoritesLoading = false;
       const { tableState } = action.payload;
-      const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, state);
+      const predicate = (fav: Favorite) =>
+        meetsFilterAndSearchCriteria(fav, state);
       const updatedTableState = MesaState.filterRows(tableState, predicate);
       return { ...state, tableState: updatedTableState, favoritesLoading };
     }
 
     case UPDATE_TABLE_STATE: {
       const { tableState } = action.payload;
-      const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, state);
+      const predicate = (fav: Favorite) =>
+        meetsFilterAndSearchCriteria(fav, state);
       const updatedTableState = MesaState.filterRows(tableState, predicate);
       return { ...state, tableState: updatedTableState };
     }
 
     case UPDATE_TABLE_SELECTION: {
       const { selectIds = [], deselectIds = [] } = action.payload;
-      const tableSelection = difference(union(state.tableSelection, selectIds), deselectIds);
+      const tableSelection = difference(
+        union(state.tableSelection, selectIds),
+        deselectIds
+      );
       return { ...state, tableSelection };
     }
 
@@ -137,7 +145,8 @@ export function reduce(state: State = initialState, action: Action): State {
     case END_SAVE_CELL_WITH_SUCCESS: {
       const editCoordinates = {};
       const { tableState } = action.payload;
-      const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, state);
+      const predicate = (fav: Favorite) =>
+        meetsFilterAndSearchCriteria(fav, state);
       const updatedTableState = MesaState.filterRows(tableState, predicate);
       return { ...state, tableState: updatedTableState, editCoordinates };
     }
@@ -157,9 +166,14 @@ export function reduce(state: State = initialState, action: Action): State {
       const { tableState } = state;
       const searchText = action.payload;
       const stateWithTerm = Object.assign({}, state, { searchText });
-      const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, stateWithTerm);
+      const predicate = (fav: Favorite) =>
+        meetsFilterAndSearchCriteria(fav, stateWithTerm);
       const updatedTableState = MesaState.filterRows(tableState, predicate);
-      return { ...stateWithTerm, editCoordinates, tableState: updatedTableState };
+      return {
+        ...stateWithTerm,
+        editCoordinates,
+        tableState: updatedTableState,
+      };
     }
 
     case FILTER_BY_TYPE: {
@@ -167,9 +181,14 @@ export function reduce(state: State = initialState, action: Action): State {
       const { tableState } = state;
       const filterByType = action.payload;
       const stateWithFilter = Object.assign({}, state, { filterByType });
-      const predicate = (fav: Favorite) => meetsFilterAndSearchCriteria(fav, stateWithFilter);
+      const predicate = (fav: Favorite) =>
+        meetsFilterAndSearchCriteria(fav, stateWithFilter);
       const updatedTableState = MesaState.filterRows(tableState, predicate);
-      return { ...stateWithFilter, editCoordinates, tableState: updatedTableState };
+      return {
+        ...stateWithFilter,
+        editCoordinates,
+        tableState: updatedTableState,
+      };
     }
 
     default:
@@ -177,7 +196,11 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 }
 
-export function observe(action$: Observable<any>, state$: Observable<any>, dependencies: EpicDependencies) {
+export function observe(
+  action$: Observable<any>,
+  state$: Observable<any>,
+  dependencies: EpicDependencies
+) {
   return action$.pipe(
     filter(({ type }) => type === 'static/recordClasses-loaded'),
     map(({ payload: { recordClasses } }) => createTypeGetter(recordClasses))
@@ -185,24 +208,30 @@ export function observe(action$: Observable<any>, state$: Observable<any>, depen
 }
 
 function meetsFilterAndSearchCriteria(favorite: Favorite, state: State) {
-    let { filterByType, searchText = '', typeGetter = () => 'Unknown' } = state;
-    searchText = searchText.toLowerCase();
+  let { filterByType, searchText = '', typeGetter = () => 'Unknown' } = state;
+  searchText = searchText.toLowerCase();
 
-    return (!filterByType || favorite.recordClassName === filterByType) &&
+  return (
+    (!filterByType || favorite.recordClassName === filterByType) &&
     (!searchText ||
-      (favorite.displayName.toLowerCase().indexOf(searchText) > -1) ||
-      (typeGetter(favorite, state).toLowerCase().indexOf(searchText) > -1) ||
-      (favorite.description != null && favorite.description.toLowerCase().indexOf(searchText) > -1) ||
-      (favorite.group != null && favorite.group.toLowerCase().indexOf(searchText) > -1)
-    );
-  }
-
-const typeGetterFactory = (recordClasses: RecordClass[]) => (favorite: Favorite, state: State) => {
-  if (recordClasses == null) {
-    return 'Unknown';
-  }
-
-  const recordClass = recordClasses.find((recordClass) => recordClass.fullName === favorite.recordClassName);
-  
-  return recordClass == null ? 'Unknown' : recordClass.displayName;
+      favorite.displayName.toLowerCase().indexOf(searchText) > -1 ||
+      typeGetter(favorite, state).toLowerCase().indexOf(searchText) > -1 ||
+      (favorite.description != null &&
+        favorite.description.toLowerCase().indexOf(searchText) > -1) ||
+      (favorite.group != null &&
+        favorite.group.toLowerCase().indexOf(searchText) > -1))
+  );
 }
+
+const typeGetterFactory =
+  (recordClasses: RecordClass[]) => (favorite: Favorite, state: State) => {
+    if (recordClasses == null) {
+      return 'Unknown';
+    }
+
+    const recordClass = recordClasses.find(
+      (recordClass) => recordClass.fullName === favorite.recordClassName
+    );
+
+    return recordClass == null ? 'Unknown' : recordClass.displayName;
+  };

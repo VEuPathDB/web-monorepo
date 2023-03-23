@@ -1,10 +1,10 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
-import Icon from 'wdk-client/Components/Icon/Icon';
-import { useBodyScrollManager } from 'wdk-client/Components/Overlays/BodyScrollManager';
-import Popup from 'wdk-client/Components/Overlays/Popup';
-import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import Icon from '../../Components/Icon/Icon';
+import { useBodyScrollManager } from '../../Components/Overlays/BodyScrollManager';
+import Popup from '../../Components/Overlays/Popup';
+import { makeClassNameHelper, wrappable } from '../../Utils/ComponentUtils';
 
-import 'wdk-client/Components/Overlays/Dialog.css';
+import '../../Components/Overlays/Dialog.css';
 
 type Props = {
   open: boolean;
@@ -29,21 +29,29 @@ function Dialog(props: Props) {
 
   const {
     onClose = () => {},
-    buttons = [(
+    buttons = [
       <button key="close" type="button" onClick={() => onClose()}>
-        <Icon type="close"/>
-      </button>
-    )],
-    leftButtons
+        <Icon type="close" />
+      </button>,
+    ],
+    leftButtons,
   } = props;
 
   const content = (
-    <div onKeyDown={handleKeyDown} className={makeClassName(props.className, '', props.modal && 'modal')} >
-      <div ref={headerNode} className={makeClassName(props.className, 'Header')} >
+    <div
+      onKeyDown={handleKeyDown}
+      className={makeClassName(props.className, '', props.modal && 'modal')}
+    >
+      <div
+        ref={headerNode}
+        className={makeClassName(props.className, 'Header')}
+      >
         <div className={makeClassName(props.className, 'LeftButtons')}>
           {leftButtons}
         </div>
-        <div className={makeClassName(props.className, 'Title')}>{props.title}</div>
+        <div className={makeClassName(props.className, 'Title')}>
+          {props.title}
+        </div>
         <div className={makeClassName(props.className, 'RightButtons')}>
           {buttons}
         </div>
@@ -70,25 +78,24 @@ function Dialog(props: Props) {
       onClose();
     }
   }
-
 }
 
 let c = makeClassNameHelper('wdk-Dialog');
 let c2 = makeClassNameHelper(' ');
 
 function makeClassName(className?: string, suffix = '', ...modifiers: any[]) {
-  return c(suffix, ...modifiers) + (
-    className ? c2(className + suffix, ...modifiers) : ''
+  return (
+    c(suffix, ...modifiers) +
+    (className ? c2(className + suffix, ...modifiers) : '')
   );
 }
 
 function useRestorePrevoiusFocus(isOpen: boolean) {
-  const previousActiveRef = useRef<Element|null>();
+  const previousActiveRef = useRef<Element | null>();
   useEffect(() => {
     if (isOpen) {
       previousActiveRef.current = document.activeElement;
-    }
-    else {
+    } else {
       restoreFocus();
     }
 
@@ -97,10 +104,9 @@ function useRestorePrevoiusFocus(isOpen: boolean) {
     function restoreFocus() {
       if (previousActiveRef.current instanceof HTMLElement) {
         previousActiveRef.current.focus();
-      }  
+      }
     }
-
-  }, [isOpen])
+  }, [isOpen]);
 }
 
 export default wrappable(Dialog);
