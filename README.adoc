@@ -39,5 +39,5 @@ yarn nx run @veupathdb/multi-blast:start
 
 ### EDA dev server
 
-For more details see (packages/libs/eda/README.md)[here].
+For more details see link:packages/libs/eda/README.md[here].
 
