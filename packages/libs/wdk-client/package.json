@@ -5,13 +5,9 @@
   "scripts": {
     "test": "jest",
     "clean": "rm -rf ./lib",
-    "compile": "tsc -p tsconfig.build.json",
-    "copy-assets": "veupathdb-react-scripts copy-assets src lib",
     "relativize": "ts-node-script ./scripts/relativize.ts lib wdk-client",
-    "build": "npm-run-all compile copy-assets relativize",
-    "build-npm-modules": "npm-run-all clean build",
-    "check-ts": "tsc --version && tsc --noEmit",
-    "watch-ts": "tsc --noEmit --watch -p ."
+    "build": "veupathdb-react-scripts prepare src",
+    "build-npm-modules": "npm-run-all build relativize"
   },
   "repository": {
     "type": "git",

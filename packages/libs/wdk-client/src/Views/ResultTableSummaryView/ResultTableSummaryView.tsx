@@ -19,16 +19,16 @@ import {
   OpenAttributeAnalysis,
   CloseAttributeAnalysis,
   UpdateSelectedIds,
-  ShowLoginWarning
+  ShowLoginWarning,
 } from 'wdk-client/Views/ResultTableSummaryView/Types';
 import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
 import { LoadingOverlay } from 'wdk-client/Components';
 
 import './ResultTableSummaryView.scss';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ResultType } from 'wdk-client/Utils/WdkResult';
 
 // Export this for convenience
-export { Action };
+export type { Action };
 
 interface Props {
   answer?: Answer;

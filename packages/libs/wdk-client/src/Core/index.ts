@@ -45,8 +45,8 @@ export {
   StoreModules,
   TreeUtils,
   WdkModel,
-  WdkService,
   WdkMiddleware,
   initialize,
   wrapComponents,
 };
+export type { WdkService };

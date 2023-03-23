@@ -1,31 +1,12 @@
 {
-  "compileOnSave": false,
+  "extends": "@veupathdb/tsconfig",
+  "include": [
+    "src"
+  ],
   "compilerOptions": {
-    "target": "es2017",
-    "module": "esnext",
-    "allowJs": true,
-    "noImplicitAny": true,
-    "removeComments": false,
-    "preserveConstEnums": true,
-    "allowSyntheticDefaultImports": true,
-    "noImplicitReturns": true,
-    "sourceMap": true,
-    "jsx": "react",
-    "strict": true,
-    "alwaysStrict": true,
-    "lib": [ "dom", "dom.iterable", "esnext" ],
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "baseUrl": ".",
-    "outDir": "lib",
-    "noEmit": true,
-    "declaration": true,
-    "declarationMap": true,
+    "baseUrl": "./src",
     "paths": {
-      "ebrc-client/*": [ "src/*" ],
-      "*": [ "./node_modules/@types/*", "*" ] // prevent issues with npm/yarn link (see https://github.com/Microsoft/TypeScript/issues/11916#issuecomment-257130001)
+      "ebrc-client/*": [ "*" ]
     }
-  },
-  "skipLibCheck": true,
-  "include": [ "src/**/*" ]
+  }
 }
