@@ -37,9 +37,9 @@ For example, you can start the MultiBLAST dev server by running
 yarn nx run @veupathdb/multi-blast:start
 ```
 
-### Notes on individual packages
+## Notes on individual packages
 
-## EDA dev server
+### EDA dev server
 
 Directory: `packages/libs/eda`
 
