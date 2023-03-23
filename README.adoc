@@ -48,4 +48,6 @@ cd packages/libs/<package>
 yarn build-npm-modules
 ```
 
+**Note: You may need to manually reload your website to see the changes the first time.**
+
 _Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`) has proven inadequate in this scenario._
