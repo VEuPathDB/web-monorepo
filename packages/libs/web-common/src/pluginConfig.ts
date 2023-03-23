@@ -4,109 +4,108 @@ import {
   StepAnalysisViewPlugin,
   ResultTableSummaryViewPlugin,
   StepAnalysisDefaultForm,
-  StepAnalysisDefaultResult
+  StepAnalysisDefaultResult,
 } from '@veupathdb/wdk-client/lib/Plugins';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
-import { StepAnalysisEupathExternalResult } from './plugins/StepAnalysisEupathExternalResult'
+import { StepAnalysisEupathExternalResult } from './plugins/StepAnalysisEupathExternalResult';
 
-import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
-import { RadioParams } from 'ebrc-client/plugins/RadioParams';
-import QuestionWizardPlugin from 'ebrc-client/plugins/QuestionWizardPlugin';
+import { EbrcDefaultQuestionForm } from './components/questions/EbrcDefaultQuestionForm';
+import { RadioParams } from './plugins/RadioParams';
+import QuestionWizardPlugin from './plugins/QuestionWizardPlugin';
 
 const ebrcPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'attributeAnalysis',
     name: 'wordCloud',
-    component: WordCloudAnalysisPlugin
+    component: WordCloudAnalysisPlugin,
   },
   {
     type: 'attributeAnalysis',
     name: 'histogram',
-    component: HistogramAnalysisPlugin
+    component: HistogramAnalysisPlugin,
   },
   {
     type: 'stepAnalysisView',
     name: 'defaultStepAnalysisView',
-    component: StepAnalysisViewPlugin
+    component: StepAnalysisViewPlugin,
   },
   {
     type: 'summaryView',
     name: '_default',
-    component: ResultTableSummaryViewPlugin
+    component: ResultTableSummaryViewPlugin,
   },
   {
     type: 'questionController',
     test: ({ question }) =>
       question?.properties?.websiteProperties?.includes('useWizard') ?? false,
-    component: QuestionWizardPlugin
+    component: QuestionWizardPlugin,
   },
   {
     type: 'questionForm',
-    test: ({ question }) =>
-      question?.properties?.['radio-params'] != null,
-    component: RadioParams
+    test: ({ question }) => question?.properties?.['radio-params'] != null,
+    component: RadioParams,
   },
   {
     type: 'questionForm',
-    component: EbrcDefaultQuestionForm
+    component: EbrcDefaultQuestionForm,
   },
   {
     type: 'stepAnalysisForm',
-    component: StepAnalysisDefaultForm
+    component: StepAnalysisDefaultForm,
   },
   {
     type: 'stepAnalysisResult',
     name: 'otu_abundance',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'alpha_diversity',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'beta_diversity',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'differential_abundance',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'correlation_app',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'person-graph-analysis',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'light-trap-plots',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'clinepi-cont-table',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'clinepi-event-dist',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
     name: 'clinepi-summaries',
-    component: StepAnalysisEupathExternalResult
+    component: StepAnalysisEupathExternalResult,
   },
   {
     type: 'stepAnalysisResult',
-    component: StepAnalysisDefaultResult
+    component: StepAnalysisDefaultResult,
   },
 ];
 

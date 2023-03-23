@@ -1,12 +1,12 @@
 import { partial, pick, values } from 'lodash';
 
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { stripHTML } from 'wdk-client/Utils/DomUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { getPropertyValue, nodeHasProperty } from 'wdk-client/Utils/OntologyUtils';
-import { filterItems } from 'wdk-client/Utils/SearchUtils';
-import { filterNodes } from 'wdk-client/Utils/TreeUtils';
-import { RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { CategoryTreeNode } from '../../Utils/CategoryUtils';
+import { stripHTML } from '../../Utils/DomUtils';
+import { Seq } from '../../Utils/IterableUtils';
+import { getPropertyValue, nodeHasProperty } from '../../Utils/OntologyUtils';
+import { filterItems } from '../../Utils/SearchUtils';
+import { filterNodes } from '../../Utils/TreeUtils';
+import { RecordInstance } from '../../Utils/WdkModel';
 
 type FilterSpec = {
   /** Search string */
@@ -25,9 +25,16 @@ export interface PartialRecordRequest {
 /**
  * Filter the results of an answer and return the filtered results.
  */
-export function filterRecords(records: RecordInstance[], filterSpec: FilterSpec): RecordInstance[] {
+export function filterRecords(
+  records: RecordInstance[],
+  filterSpec: FilterSpec
+): RecordInstance[] {
   let { filterTerm, filterAttributes = [], filterTables = [] } = filterSpec;
-  let getSearchableStringPartial = partial(getSearchableString, filterAttributes, filterTables);
+  let getSearchableStringPartial = partial(
+    getSearchableString,
+    filterAttributes,
+    filterTables
+  );
   return filterItems(records, getSearchableStringPartial, filterTerm);
 }
 
@@ -42,29 +49,48 @@ export function filterRecords(records: RecordInstance[], filterSpec: FilterSpec)
  *
  * There is much room for performance tuning here.
  */
-export function getSearchableString(filterAttributes: string[], filterTables: string[], record: RecordInstance): string {
-  let useAllTablesAndAttributes = filterAttributes.length === 0 && filterTables.length === 0;
-  let attributes = useAllTablesAndAttributes ? record.attributes : pick(record.attributes, filterAttributes);
-  let tables = useAllTablesAndAttributes ? record.tables : pick(record.tables, filterTables);
+export function getSearchableString(
+  filterAttributes: string[],
+  filterTables: string[],
+  record: RecordInstance
+): string {
+  let useAllTablesAndAttributes =
+    filterAttributes.length === 0 && filterTables.length === 0;
+  let attributes = useAllTablesAndAttributes
+    ? record.attributes
+    : pick(record.attributes, filterAttributes);
+  let tables = useAllTablesAndAttributes
+    ? record.tables
+    : pick(record.tables, filterTables);
   return Seq.from(values(tables))
-    .flatMap(rows => rows)
-    .flatMap(row => Object.values(row))
+    .flatMap((rows) => rows)
+    .flatMap((row) => Object.values(row))
     .concat(values(attributes))
-    .flatMap(value =>
-      value == null ? []
-      : typeof value === 'object' ? [value.displayText || value.url]
-      : [value] )
+    .flatMap((value) =>
+      value == null
+        ? []
+        : typeof value === 'object'
+        ? [value.displayText || value.url]
+        : [value]
+    )
     .map(stripHTML)
     .join('\0');
 }
 
-
 // Category tree interactions
 // --------------------------
 
-export const isInternalNode = partial(nodeHasProperty, 'scope', 'record-internal');
+export const isInternalNode = partial(
+  nodeHasProperty,
+  'scope',
+  'record-internal'
+);
 export const isNotInternalNode = partial(nodeHasProperty, 'scope', 'record');
-export const isAttributeNode = partial(nodeHasProperty, 'targetType', 'attribute');
+export const isAttributeNode = partial(
+  nodeHasProperty,
+  'targetType',
+  'attribute'
+);
 export const isTableNode = partial(nodeHasProperty, 'targetType', 'table');
 const getAttributes = partial(filterNodes, isAttributeNode);
 const getTables = partial(filterNodes, isTableNode);
@@ -82,9 +108,9 @@ export function getTableNames(categoryTree: CategoryTreeNode): string[] {
 export function isLeafFor(recordClassName: string) {
   return function isLeaf(node: CategoryTreeNode) {
     return (
-      (isAttributeNode(node) || isTableNode(node))
-      && nodeHasProperty('recordClassName', recordClassName, node)
-      && (isInternalNode(node) || isNotInternalNode(node))
+      (isAttributeNode(node) || isTableNode(node)) &&
+      nodeHasProperty('recordClassName', recordClassName, node) &&
+      (isInternalNode(node) || isNotInternalNode(node))
     );
-  }
+  };
 }

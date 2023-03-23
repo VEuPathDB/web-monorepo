@@ -1,17 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Templates from 'wdk-client/Components/Mesa/Templates';
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
-import Tooltip from 'wdk-client/Components/Mesa/Components/Tooltip';
-import { makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
-import Events, { EventsFactory } from 'wdk-client/Components/Mesa/Utils/Events';
+import Templates from '../../../Components/Mesa/Templates';
+import Icon from '../../../Components/Mesa/Components/Icon';
+import Tooltip from '../../../Components/Mesa/Components/Tooltip';
+import { makeClassifier } from '../../../Components/Mesa/Utils/Utils';
+import Events, { EventsFactory } from '../../../Components/Mesa/Utils/Events';
 import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
 
 const headingCellClass = makeClassifier('HeadingCell');
 
 class HeadingCell extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       offset: null,
@@ -37,21 +37,23 @@ class HeadingCell extends React.PureComponent {
     this.onDragLeave = this.onDragLeave.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.updateOffset();
     this.listeners = {
       scroll: Events.add('scroll', this.updateOffset),
       resize: Events.add('resize', this.updateOffset),
       MesaScroll: Events.add(MESA_SCROLL_EVENT, this.updateOffset),
-      MesaReflow: Events.add(MESA_REFLOW_EVENT, this.updateOffset)
+      MesaReflow: Events.add(MESA_REFLOW_EVENT, this.updateOffset),
     };
   }
 
-  componentWillUnmount () {
-    Object.values(this.listeners).forEach(listenerId => Events.remove(listenerId));
+  componentWillUnmount() {
+    Object.values(this.listeners).forEach((listenerId) =>
+      Events.remove(listenerId)
+    );
   }
 
-  componentdidUpdate (prevProps) {
+  componentdidUpdate(prevProps) {
     if (
       prevProps.column !== this.props.column ||
       prevProps.column.width !== this.props.column.width
@@ -60,25 +62,26 @@ class HeadingCell extends React.PureComponent {
     }
   }
 
-  updateOffset () {
+  updateOffset() {
     const { element } = this;
     if (!element) return;
     let offset = Tooltip.getOffset(element);
     this.setState({ offset });
   }
 
-  sortColumn () {
+  sortColumn() {
     const { column, sort, eventHandlers } = this.props;
     const { onSort } = eventHandlers;
     if (typeof onSort !== 'function' || !column.sortable) return;
     const currentlySorting = sort && sort.columnKey === column.key;
-    const direction = currentlySorting && sort.direction === 'asc' ? 'desc' : 'asc';
+    const direction =
+      currentlySorting && sort.direction === 'asc' ? 'desc' : 'asc';
     return onSort(column, direction);
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-  wrapContent (content = null) {
+  wrapContent(content = null) {
     const SortTrigger = this.renderSortTrigger;
     const HelpTrigger = this.renderHelpTrigger;
     const ClickBoundary = this.renderClickBoundary;
@@ -87,9 +90,7 @@ class HeadingCell extends React.PureComponent {
         <div className={headingCellClass(['Content', 'Aside'])}>
           <SortTrigger />
         </div>
-        <div className={headingCellClass(['Content', 'Label'])}>
-          {content}
-        </div>
+        <div className={headingCellClass(['Content', 'Label'])}>{content}</div>
         <div className={headingCellClass(['Content', 'Aside'])}>
           <ClickBoundary>
             <HelpTrigger />
@@ -99,7 +100,7 @@ class HeadingCell extends React.PureComponent {
     );
   }
 
-  renderContent () {
+  renderContent() {
     const { column, columnIndex, headingRowIndex } = this.props;
     const SortTrigger = this.renderSortTrigger;
     const HelpTrigger = this.renderHelpTrigger;
@@ -107,19 +108,27 @@ class HeadingCell extends React.PureComponent {
 
     if ('renderHeading' in column && column.renderHeading === false)
       return null;
-    if (!('renderHeading' in column) || typeof column.renderHeading !== 'function')
+    if (
+      !('renderHeading' in column) ||
+      typeof column.renderHeading !== 'function'
+    )
       return this.wrapContent(Templates.heading(column, columnIndex));
 
-    const content = column.renderHeading(column, columnIndex, { SortTrigger, HelpTrigger, ClickBoundary });
+    const content = column.renderHeading(column, columnIndex, {
+      SortTrigger,
+      HelpTrigger,
+      ClickBoundary,
+    });
     const { wrapCustomHeadings } = column;
-    const shouldWrap = (wrapCustomHeadings && typeof wrapCustomHeadings === 'function')
-      ? wrapCustomHeadings({ column, columnIndex, headingRowIndex })
-      : wrapCustomHeadings;
+    const shouldWrap =
+      wrapCustomHeadings && typeof wrapCustomHeadings === 'function'
+        ? wrapCustomHeadings({ column, columnIndex, headingRowIndex })
+        : wrapCustomHeadings;
 
     return shouldWrap ? this.wrapContent(content) : content;
   }
 
-  renderClickBoundary ({ children }) {
+  renderClickBoundary({ children }) {
     const style = { display: 'inline-block' };
     const stopPropagation = (node) => {
       if (!node) return null;
@@ -127,11 +136,11 @@ class HeadingCell extends React.PureComponent {
       instance.add('click', (e) => {
         e.stopPropagation();
       });
-    }
-    return <div ref={stopPropagation} style={style} children={children} />
+    };
+    return <div ref={stopPropagation} style={style} children={children} />;
   }
 
-  renderSortTrigger () {
+  renderSortTrigger() {
     const { column, sort, eventHandlers } = this.props;
     const { columnKey, direction } = sort ? sort : {};
     const { key, sortable } = column ? column : {};
@@ -144,13 +153,19 @@ class HeadingCell extends React.PureComponent {
       ? 'sort inactive'
       : 'sort-amount-' + direction + ' active';
 
-    const sortHelpText = `Activate to sort the table by ${column.name} in ` +
+    const sortHelpText =
+      `Activate to sort the table by ${column.name} in ` +
       `${direction === 'asc' ? 'descending' : 'ascending'} order.`;
 
     return (
       <button
         title={sortHelpText}
-        style={{ background: 'transparent', border: 'none', padding: 'none', margin: 'none' }}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          padding: 'none',
+          margin: 'none',
+        }}
         type="button"
         onClick={this.sortColumn}
       >
@@ -159,7 +174,7 @@ class HeadingCell extends React.PureComponent {
     );
   }
 
-  renderHelpTrigger () {
+  renderHelpTrigger() {
     const { column } = this.props;
     const { offset } = this.state;
     const { top, left, height } = offset ? offset : {};
@@ -167,7 +182,11 @@ class HeadingCell extends React.PureComponent {
 
     if (!column.helpText) return null;
     return (
-      <Tooltip position={position} className="Trigger HelpTrigger" content={column.helpText}>
+      <Tooltip
+        position={position}
+        className="Trigger HelpTrigger"
+        content={column.helpText}
+      >
         <Icon fa="question-circle" />
       </Tooltip>
     );
@@ -175,7 +194,7 @@ class HeadingCell extends React.PureComponent {
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-  onDragStart (event) {
+  onDragStart(event) {
     const { key } = this.props.column;
     event.dataTransfer.effectAllowed = 'copy';
     event.dataTransfer.setData('text', key);
@@ -183,34 +202,34 @@ class HeadingCell extends React.PureComponent {
     return event;
   }
 
-  onDragEnd (event) {
+  onDragEnd(event) {
     this.setState({ isDragging: false, isDragTarget: false });
     this.element.blur();
     event.preventDefault();
   }
 
-  onDragEnter (event) {
+  onDragEnter(event) {
     const dragee = event.dataTransfer.getData('text');
     if (!this.state.isDragTarget) this.setState({ isDragTarget: true });
     event.preventDefault();
   }
 
-  onDragExit (event) {
+  onDragExit(event) {
     this.setState({ isDragTarget: false });
     event.preventDefault();
   }
 
-  onDragOver (event) {
+  onDragOver(event) {
     event.preventDefault();
   }
 
-  onDragLeave (event) {
+  onDragLeave(event) {
     this.setState({ isDragTarget: false });
     this.element.blur();
     event.preventDefault();
   }
 
-  onDrop (event) {
+  onDrop(event) {
     this.element.blur();
     event.preventDefault();
     const { eventHandlers, columnIndex } = this.props;
@@ -221,59 +240,72 @@ class HeadingCell extends React.PureComponent {
     onColumnReorder(draggedColumn, columnIndex);
   }
 
-  getDomEvents () {
+  getDomEvents() {
     const {
-      onDragStart, onDragEnd,
-      onDragEnter, onDragExit,
-      onDragOver, onDragLeave,
-      onDrop
+      onDragStart,
+      onDragEnd,
+      onDragEnter,
+      onDragExit,
+      onDragOver,
+      onDragLeave,
+      onDrop,
     } = this;
     return {
-      onDragStart, onDragEnd,
-      onDragEnter, onDragExit,
-      onDragOver, onDragLeave,
-      onDrop
+      onDragStart,
+      onDragEnd,
+      onDragEnter,
+      onDragExit,
+      onDragOver,
+      onDragLeave,
+      onDrop,
     };
   }
 
-
-  getClassName () {
+  getClassName() {
     const { key, className } = this.props.column;
     const { isDragging, isDragTarget } = this.state;
     const modifiers = ['key-' + key];
     if (isDragging) modifiers.push('Dragging');
     if (isDragTarget) modifiers.push('DragTarget');
-    return (typeof className === 'string' ? className + ' ' : '') + headingCellClass(null, modifiers);
+    return (
+      (typeof className === 'string' ? className + ' ' : '') +
+      headingCellClass(null, modifiers)
+    );
   }
 
-  render () {
+  render() {
     const { column, eventHandlers, primary } = this.props;
     const { key, headingStyle, width, renderHeading } = column;
     const widthStyle = width ? { width, maxWidth: width, minWidth: width } : {};
 
-    const style = Object.assign({}, headingStyle ? headingStyle : {}, widthStyle);
-    const ref = element => this.element = element;
+    const style = Object.assign(
+      {},
+      headingStyle ? headingStyle : {},
+      widthStyle
+    );
+    const ref = (element) => (this.element = element);
 
     const children = this.renderContent();
     const className = this.getClassName();
     const domEvents = this.getDomEvents();
 
-    const draggable = primary
-      && column.moveable
-      && !column.primary
-      && typeof eventHandlers.onColumnReorder === 'function';
+    const draggable =
+      primary &&
+      column.moveable &&
+      !column.primary &&
+      typeof eventHandlers.onColumnReorder === 'function';
 
     const props = { style, key, ref, draggable, children, className };
 
-    return column.hidden ? null : <th {...props} {...domEvents} />
+    return column.hidden ? null : <th {...props} {...domEvents} />;
   }
-};
+}
 
 HeadingCell.propTypes = {
   sort: PropTypes.object,
   eventHandlers: PropTypes.object,
   column: PropTypes.object.isRequired,
-  columnIndex: PropTypes.number.isRequired
+  columnIndex: PropTypes.number.isRequired,
 };
 
 export default HeadingCell;

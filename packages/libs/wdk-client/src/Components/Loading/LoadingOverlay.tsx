@@ -1,6 +1,6 @@
 import React from 'react';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Loading } from 'wdk-client/Components';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { Loading } from '../../Components';
 
 import './LoadingOverlay.scss';
 
@@ -18,7 +18,7 @@ const cx = makeClassNameHelper('LoadingOverlay');
 export default function LoadingOverlay(props: Props) {
   return (
     <div className={props.className || cx()}>
-      <Loading className={cx('-Spinner')} top="40%" >
+      <Loading className={cx('-Spinner')} top="40%">
         {props.children}
       </Loading>
     </div>

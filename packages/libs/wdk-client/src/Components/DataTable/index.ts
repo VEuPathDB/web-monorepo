@@ -1,2 +1,2 @@
-import DataTable from 'wdk-client/Components/DataTable/DataTable';
+import DataTable from '../../Components/DataTable/DataTable';
 export default DataTable;

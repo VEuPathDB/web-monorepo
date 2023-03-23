@@ -9,9 +9,12 @@
 
 import React, { useCallback } from 'react';
 
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
-type BaseProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'type' | 'value'>;
+type BaseProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'onChange' | 'type' | 'value'
+>;
 
 interface Props extends BaseProps {
   value: number;
@@ -24,17 +27,14 @@ interface Props extends BaseProps {
 function SliderInput(originalProps: Props) {
   const { onChange, ...props } = originalProps;
 
-  const changeHandler = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(Number(event.target.value));
-  }, [ onChange ]);
-
-  return (
-    <input
-      {...props}
-      type="range"
-      onChange={changeHandler}
-    />
+  const changeHandler = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(Number(event.target.value));
+    },
+    [onChange]
   );
+
+  return <input {...props} type="range" onChange={changeHandler} />;
 }
 
 export default wrappable(SliderInput);

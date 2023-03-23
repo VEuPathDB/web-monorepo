@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link, Page } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import { Link, Page } from '../Components';
+import { RootState } from '../Core/State/Types';
+import { wrappable } from '../Utils/ComponentUtils';
+import PageController from '../Core/Controllers/PageController';
 
 // Link is a component used to create links to other routes.
 // See https://github.com/rackt/react-router/blob/master/docs/api/components/Link.md
@@ -32,17 +32,23 @@ class IndexController extends PageController<{ displayName: string }> {
         <p>This is the future home of WDK 3.0</p>
         <h2>Resources under development</h2>
         <ul>
-          <li><Link to="/question-list">Question list</Link></li>
-          <li><Link to="/user/profile">User Profile</Link></li>
-          <li><Link to="/data-finder">Data Finder</Link></li>
+          <li>
+            <Link to="/question-list">Question list</Link>
+          </li>
+          <li>
+            <Link to="/user/profile">User Profile</Link>
+          </li>
+          <li>
+            <Link to="/data-finder">Data Finder</Link>
+          </li>
         </ul>
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ globalData: { config }}: RootState) => ({
-  displayName: config ? config.displayName : ''
-})
+const mapStateToProps = ({ globalData: { config } }: RootState) => ({
+  displayName: config ? config.displayName : '',
+});
 
 export default connect(mapStateToProps)(wrappable(IndexController));

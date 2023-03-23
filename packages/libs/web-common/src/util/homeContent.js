@@ -1,19 +1,22 @@
 import React from 'react';
 
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import { parseSearchQueryString, areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
+import {
+  parseSearchQueryString,
+  areTermsInString,
+} from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
-import { CategoryIcon } from 'ebrc-client/App/Categories';
+import { CategoryIcon } from '../App/Categories';
 
 export function studyFilters(studies) {
   return Seq.from(studies.entities || [])
-    .flatMap(study => study.categories)
-    .orderBy(c => c)
+    .flatMap((study) => study.categories)
+    .orderBy((c) => c)
     .uniq()
-    .map(category => ({
+    .map((category) => ({
       id: category,
-      display: <CategoryIcon category={category}/>,
-      predicate: study => study.categories.includes(category)
+      display: <CategoryIcon category={category} />,
+      predicate: (study) => study.categories.includes(category),
     }))
     .toArray();
 }

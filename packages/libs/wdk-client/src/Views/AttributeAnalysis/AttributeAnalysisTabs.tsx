@@ -2,10 +2,10 @@ import { escapeRegExp } from 'lodash';
 import React from 'react';
 import { Dispatch } from 'redux';
 
-import Mesa from 'wdk-client/Components/Mesa';
-import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
-import { Tabs } from 'wdk-client/Components';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import Mesa from '../../Components/Mesa';
+import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
+import { Tabs } from '../../Components';
+import { Seq } from '../../Utils/IterableUtils';
 
 import {
   searchTable,
@@ -13,9 +13,9 @@ import {
   selectTab,
   changeTablePage,
   changeTableRowsPerPage,
-} from 'wdk-client/Actions/AttributeAnalysisActions';
+} from '../../Actions/AttributeAnalysisActions';
 
-import 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisTabs.scss';
+import '../../Views/AttributeAnalysis/AttributeAnalysisTabs.scss';
 
 export interface TableState {
   currentPage: number;
@@ -44,9 +44,9 @@ type Props<T extends string> = {
 
 type Column = { key: 'value' | 'count'; display: string };
 
-export default class AttributeAnalysisTabs<T extends string> extends React.PureComponent<
-  Props<T>
-> {
+export default class AttributeAnalysisTabs<
+  T extends string
+> extends React.PureComponent<Props<T>> {
   onPageChange = (currentPage: number) =>
     this.props.dispatch(changeTablePage(currentPage));
 
@@ -62,12 +62,8 @@ export default class AttributeAnalysisTabs<T extends string> extends React.PureC
     this.props.dispatch(selectTab(tab));
 
   render() {
-    const {
-      activeTab,
-      tableState,
-      visualizationConfig,
-      tableConfig
-    } = this.props;
+    const { activeTab, tableState, visualizationConfig, tableConfig } =
+      this.props;
     const { currentPage, rowsPerPage, sort, search } = tableState;
 
     const { data } = tableConfig;
@@ -75,14 +71,14 @@ export default class AttributeAnalysisTabs<T extends string> extends React.PureC
     const searchRe = new RegExp(escapeRegExp(search), 'i');
 
     const filteredData = Seq.from(tableConfig.data)
-      .filter(row =>
+      .filter((row) =>
         search
-          ? tableConfig.columns.some(column =>
+          ? tableConfig.columns.some((column) =>
               searchRe.test(String(row[column.key] || ''.toLowerCase()))
             )
           : true
       )
-      .orderBy(row => (row as any)[sort.key], sort.direction === 'desc')
+      .orderBy((row) => (row as any)[sort.key], sort.direction === 'desc')
       .toArray();
 
     const firstRowIndex = (currentPage - 1) * rowsPerPage;
@@ -100,7 +96,7 @@ export default class AttributeAnalysisTabs<T extends string> extends React.PureC
           {
             key: 'visualization',
             display: visualizationConfig.display,
-            content: visualizationConfig.content
+            content: visualizationConfig.content,
           },
           {
             key: 'table',
@@ -117,24 +113,24 @@ export default class AttributeAnalysisTabs<T extends string> extends React.PureC
                   state={{
                     options: {
                       useStickyHeader: true,
-                      tableBodyMaxHeight: '38vh'
+                      tableBodyMaxHeight: '38vh',
                     },
                     actions: [],
                     eventHandlers: {
                       onSort: this.onSort,
                       onPageChange: this.onPageChange,
-                      onRowsPerPageChange: this.onRowsPerPageChange
+                      onRowsPerPageChange: this.onRowsPerPageChange,
                     },
                     uiState: {
                       sort: {
                         columnKey: tableState.sort.key,
-                        direction: tableState.sort.direction
+                        direction: tableState.sort.direction,
                       },
                       pagination: {
                         currentPage,
                         rowsPerPage,
-                        totalRows: filteredData.length
-                      }
+                        totalRows: filteredData.length,
+                      },
                     },
                     rows: data,
                     filteredRows: pagedData,
@@ -142,14 +138,14 @@ export default class AttributeAnalysisTabs<T extends string> extends React.PureC
                       ({ key, display: name }) => ({
                         key,
                         name,
-                        sortable: true
+                        sortable: true,
                       })
-                    )
+                    ),
                   }}
                 />
               </React.Fragment>
-            )
-          }
+            ),
+          },
         ]}
       />
     );

@@ -1,6 +1,6 @@
-import { AttributeSortingSpec, PrimaryKey } from "wdk-client/Utils/WdkModel";
-import {ResultType} from 'wdk-client/Utils/WdkResult';
-import { BasketPatchIdsOperation } from 'wdk-client/Service/Mixins/BasketsService'
+import { AttributeSortingSpec, PrimaryKey } from '../../Utils/WdkModel';
+import { ResultType } from '../../Utils/WdkResult';
+import { BasketPatchIdsOperation } from '../../Service/Mixins/BasketsService';
 
 // Types that are shared by ResultTableSummaryView Components
 
@@ -12,7 +12,6 @@ export type BasketStatus = 'yes' | 'no' | 'loading';
 
 export type BasketStatusArray = BasketStatus[];
 
-
 // Callback functions
 // ==================
 
@@ -23,7 +22,10 @@ export type RequestSortingUpdate = (
   searchName: string
 ) => void;
 
-export type RequestColumnsChoiceUpdate = (columns: string[], searchName: string) => void;
+export type RequestColumnsChoiceUpdate = (
+  columns: string[],
+  searchName: string
+) => void;
 
 export type RequestUpdateBasket = (
   operation: BasketPatchIdsOperation,
@@ -31,9 +33,7 @@ export type RequestUpdateBasket = (
   primaryKeys: PrimaryKey[]
 ) => void;
 
-export type RequestAddStepToBasket= (
-  stepId: number
-) => void;
+export type RequestAddStepToBasket = (stepId: number) => void;
 
 export type RequestPageSizeUpdate = (pageSize: number) => void;
 
@@ -47,8 +47,14 @@ export type UpdateColumnsDialogSearchString = (searchString: string) => void;
 
 export type UpdateColumnsDialogExpandedNodes = (nodes: string[]) => void;
 
-export type OpenAttributeAnalysis = (reporterName: string, resultType: ResultType) => void;
+export type OpenAttributeAnalysis = (
+  reporterName: string,
+  resultType: ResultType
+) => void;
 
-export type CloseAttributeAnalysis = (reporterName: string, resultType: ResultType) => void;
+export type CloseAttributeAnalysis = (
+  reporterName: string,
+  resultType: ResultType
+) => void;
 
 export type UpdateSelectedIds = (ids: string[]) => void;

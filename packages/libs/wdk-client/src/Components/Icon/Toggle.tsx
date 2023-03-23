@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from 'wdk-client/Components/Icon/IconAlt';
+import Icon from '../../Components/Icon/IconAlt';
 
 type Props = {
   on: boolean;

@@ -1,6 +1,4 @@
-import {
-  getTree
-} from 'wdk-client/Utils/OntologyUtils';
+import { getTree } from '../../Utils/OntologyUtils';
 
 test.skip('getTree', () => {
   // TODO Add test

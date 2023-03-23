@@ -1,8 +1,11 @@
 import React from 'react';
 import { Dispatch } from 'redux';
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
-import { Parameter, ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { WizardState, ParameterEventHandlers } from 'ebrc-client/util/WizardTypes';
+import {
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { WizardState, ParameterEventHandlers } from '../util/WizardTypes';
 
 const uiConfig = { hideGlobalCounts: true };
 
@@ -17,7 +20,15 @@ export interface Props {
 }
 
 export default function Param(props: Props) {
-  const { dispatch, param: parameter, paramValues, uiState, eventHandlers, searchName, recordClassName } = props;
+  const {
+    dispatch,
+    param: parameter,
+    paramValues,
+    uiState,
+    eventHandlers,
+    searchName,
+    recordClassName,
+  } = props;
   const value = paramValues[parameter.name];
   return (
     <Plugin
@@ -25,26 +36,23 @@ export default function Param(props: Props) {
         type: 'questionFormParameter',
         name: parameter.name,
         searchName,
-        recordClassName
+        recordClassName,
       }}
       pluginProps={{
         ctx: {
           searchName,
           parameter,
-          paramValues
+          paramValues,
         },
         parameter,
         value,
         uiConfig,
         uiState,
         onParamValueChange: (paramValue: string) => {
-          eventHandlers.onParamValueChange(
-            parameter,
-            paramValue
-          )
+          eventHandlers.onParamValueChange(parameter, paramValue);
         },
-        dispatch: dispatch
+        dispatch: dispatch,
       }}
-      />
+    />
   );
 }

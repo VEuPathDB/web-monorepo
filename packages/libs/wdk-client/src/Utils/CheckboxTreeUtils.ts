@@ -1,6 +1,6 @@
 import { negate } from 'lodash';
 
-import { ChildrenGetter } from 'wdk-client/Utils/TreeUtils';
+import { ChildrenGetter } from '../Utils/TreeUtils';
 
 type VisibilityFilter<T> = (node: T) => boolean;
 
@@ -10,8 +10,8 @@ export function getFilteredNodeChildren<T>(
 ) {
   return function (node: T) {
     return getNodeChildren(node).filter(visibilityFilter);
-  }
-};
+  };
+}
 
 export function nodeSearchPredicateWithHiddenNodes<T>(
   getNodeChildren: ChildrenGetter<T>,
@@ -23,7 +23,7 @@ export function nodeSearchPredicateWithHiddenNodes<T>(
       nodeSearchPredicate(node, searchQueryTerms) ||
       getNodeChildren(node)
         .filter(negate(visibilityFilter))
-        .some(node => nodeSearchPredicate(node, searchQueryTerms))
+        .some((node) => nodeSearchPredicate(node, searchQueryTerms))
     );
-  }
-};
+  };
+}
