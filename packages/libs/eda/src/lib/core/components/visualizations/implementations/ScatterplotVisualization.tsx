@@ -353,10 +353,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   ]);
 
   // set the state of truncation warning message
-  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
-    useState<string>('');
-  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
-    useState<string>('');
+  const [
+    truncatedIndependentAxisWarning,
+    setTruncatedIndependentAxisWarning,
+  ] = useState<string>('');
+  const [
+    truncatedDependentAxisWarning,
+    setTruncatedDependentAxisWarning,
+  ] = useState<string>('');
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -366,8 +370,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         vizConfig.xAxisVariable
       );
 
-      const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
-        selectedVariables;
+      const {
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable,
+        facetVariable,
+      } = selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -770,27 +778,28 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
 
   // gradient colorscale legend
-  const gradientLegendProps: PlotLegendGradientProps | undefined =
-    useMemo(() => {
-      if (
-        data.value?.overlayMax !== undefined &&
-        data.value?.overlayMin !== undefined &&
-        data.value?.gradientColorscaleType
-      ) {
-        return {
-          legendMax: data.value?.overlayMax,
-          legendMin: data.value?.overlayMin,
-          gradientColorscaleType: data.value?.gradientColorscaleType,
-          // MUST be odd! Probably should be a clever function of the box size
-          // and font or something...
-          nTicks: 5,
-          showMissingness: vizConfig.showMissingness,
-          legendTitle,
-        };
-      } else {
-        return undefined;
-      }
-    }, [data, vizConfig.showMissingness, legendTitle]);
+  const gradientLegendProps:
+    | PlotLegendGradientProps
+    | undefined = useMemo(() => {
+    if (
+      data.value?.overlayMax !== undefined &&
+      data.value?.overlayMin !== undefined &&
+      data.value?.gradientColorscaleType
+    ) {
+      return {
+        legendMax: data.value?.overlayMax,
+        legendMin: data.value?.overlayMin,
+        gradientColorscaleType: data.value?.gradientColorscaleType,
+        // MUST be odd! Probably should be a clever function of the box size
+        // and font or something...
+        nTicks: 5,
+        showMissingness: vizConfig.showMissingness,
+        legendTitle,
+      };
+    } else {
+      return undefined;
+    }
+  }, [data, vizConfig.showMissingness, legendTitle]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -2036,34 +2045,41 @@ export function scatterplotResponseToData(
   const fallbackFacetVocabulary = keys(facetGroupedResponseData);
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, xMin, xMinPos, xMax, yMin, yMinPos, yMax } =
-      processInputData(
-        reorderResponseScatterplotData(
-          // reorder by overlay var within each facet
-          group,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          overlayVariable
-        ),
-        modeValue,
-        response.scatterplot.config.variables.find(
-          (mapping) => mapping.plotReference === 'xAxis'
-        )?.dataType ?? '',
-        response.scatterplot.config.variables.find(
-          (mapping) => mapping.plotReference === 'yAxis'
-        )?.dataType ?? '',
-        showMissingOverlay,
-        hasMissingData,
-        overlayVariable,
-        overlayMin,
-        overlayMax,
-        gradientColorscaleType,
-        // pass facetVariable to determine either scatter or scattergl
-        facetVariable,
-        // pass computation here to add conditions for apps
-        computation,
-        entities,
-        colorPaletteOverride
-      );
+    const {
+      dataSetProcess,
+      xMin,
+      xMinPos,
+      xMax,
+      yMin,
+      yMinPos,
+      yMax,
+    } = processInputData(
+      reorderResponseScatterplotData(
+        // reorder by overlay var within each facet
+        group,
+        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+        overlayVariable
+      ),
+      modeValue,
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'xAxis'
+      )?.dataType ?? '',
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'yAxis'
+      )?.dataType ?? '',
+      showMissingOverlay,
+      hasMissingData,
+      overlayVariable,
+      overlayMin,
+      overlayMax,
+      gradientColorscaleType,
+      // pass facetVariable to determine either scatter or scattergl
+      facetVariable,
+      // pass computation here to add conditions for apps
+      computation,
+      entities,
+      colorPaletteOverride
+    );
 
     return {
       dataSetProcess: dataSetProcess,
