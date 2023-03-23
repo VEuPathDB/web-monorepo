@@ -1,9 +1,10 @@
 # web-monorepo
 
 ## Prerequisties
-* `Node >=16.17.0`
-* A global installation of `yarn >=1.17.0`
-** With such a version globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`
+* `Node <=16.17.1`
+* Either a global installation of `yarn >=1.17.0`, or `volta >=1.1.0`
+** With such a version of `yarn` globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`.
+** With such a version of https://volta.sh/[volta] installed, the required version of `yarn` will automatically be installed.
 
 ## Quick Start
 
