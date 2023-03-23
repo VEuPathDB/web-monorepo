@@ -44,7 +44,7 @@ When running a development server (such as `yarn nx start @veupathdb/eda` or `ya
 use the following command to rebuild changes made to dependencies, and to have the dev site reload with the changes:
 
 ```
-cd packages/lib/<package>
+cd packages/libs/<package>
 yarn build-npm-modules
 ```
 
