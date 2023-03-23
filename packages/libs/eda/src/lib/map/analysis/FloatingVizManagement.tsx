@@ -217,13 +217,16 @@ export default function FloatingVizManagement({
         >
           {analysisState.analysis?.descriptor.computations.map(
             (computation) => (
-              <li key={computation.computationId}>
+              <li style={{ marginTop: '1rem' }} key={computation.computationId}>
                 <strong>
                   {computation.displayName} ({computation.descriptor.type})
                 </strong>
                 <ul>
                   {computation.visualizations.map((viz) => (
-                    <li key={viz.visualizationId}>
+                    <li
+                      style={{ marginTop: '0.25rem' }}
+                      key={viz.visualizationId}
+                    >
                       <button
                         style={{ textAlign: 'left' }}
                         type="button"
