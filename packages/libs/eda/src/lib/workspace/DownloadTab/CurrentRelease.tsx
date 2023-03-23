@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Column } from 'react-table';
+import { format, parse } from 'date-fns';
 
 // Components
 import { colors, DataGrid, Download, H5, Paragraph } from '@veupathdb/coreui';
@@ -13,11 +14,19 @@ import { ReleaseFile, useGetReleaseFiles } from './hooks/useGetReleaseFiles';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 
+export type CitationDetails = {
+  studyAuthor: string;
+  studyDisplayName: string;
+  projectDisplayName: string;
+  href: string;
+};
+
 export type CurrentReleaseProps = {
   datasetId: string;
   studyId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
+  citationDetails: CitationDetails;
 };
 
 export default function CurrentRelease({
@@ -25,8 +34,16 @@ export default function CurrentRelease({
   studyId,
   release,
   downloadClient,
+  citationDetails,
 }: CurrentReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
+
+  const parsedReleaseDate = parse(
+    release.date ?? '',
+    'yyyy-MMM-dd',
+    new Date()
+  );
+  const citationDate = format(parsedReleaseDate, 'dd MMMM yyyy');
 
   const attemptAction = useAttemptActionCallback();
 
@@ -111,6 +128,19 @@ export default function CurrentRelease({
         >
           <span style={{ fontWeight: 500 }}>Change Log: </span>
           {release.description}
+        </Paragraph>
+        <Paragraph
+          color={colors.gray[600]}
+          styleOverrides={{ margin: 0 }}
+          textSize="small"
+        >
+          <span style={{ fontWeight: 500 }}>Citation: </span>
+          <span style={{ cursor: 'copy' }}>
+            {citationDetails.studyAuthor}. Study:{' '}
+            {citationDetails.studyDisplayName}.{' '}
+            {citationDetails.projectDisplayName}. {citationDate},{' '}
+            {release.releaseNumber} ({citationDetails.href})
+          </span>
         </Paragraph>
       </div>
       {releaseFiles.length ? (

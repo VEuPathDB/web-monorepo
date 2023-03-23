@@ -29,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import { useHistory } from 'react-router';
 import { parsePath } from 'history';
+import { string } from 'fp-ts';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -54,6 +55,18 @@ export default function DownloadTab({
   const datasetId = studyRecord.id[0].value;
   const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
+  const projectDisplayName = useWdkService(
+    async (wdkService) =>
+      await wdkService.getConfig().then((config) => config.displayName),
+    []
+  );
+  const studyAuthor = useWdkService(
+    async (wdkService) =>
+      await wdkService
+        .getRecord('dataset', studyRecord.id)
+        .then((record) => record.attributes.contact),
+    []
+  );
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -96,7 +109,6 @@ export default function DownloadTab({
     return (
       <span
         style={{
-          lineHeight: '150%',
           fontWeight: 300,
           fontSize: '1.4em',
         }}
@@ -105,11 +117,19 @@ export default function DownloadTab({
           studyAccess,
           requestElement,
           user?.isGuest,
-          hasPermission
+          hasPermission,
+          projectDisplayName
         )}
       </span>
     );
-  }, [user, permission, studyRecord, handleClick, datasetId]);
+  }, [
+    user,
+    permission,
+    studyRecord,
+    handleClick,
+    datasetId,
+    projectDisplayName,
+  ]);
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -124,10 +144,8 @@ export default function DownloadTab({
    * We'll merge the info together later, but for now, that's why
    * you have two different variables for study releases here.
    */
-  const [
-    downloadServiceStudyReleases,
-    setDownloadServiceStudyReleases,
-  ] = useState<Array<string>>([]);
+  const [downloadServiceStudyReleases, setDownloadServiceStudyReleases] =
+    useState<Array<string>>([]);
   const WDKStudyReleases = useWdkStudyReleases();
 
   // Only fetch study releases if they are expected to be available
@@ -201,6 +219,12 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
+              citationDetails={{
+                studyAuthor: studyAuthor?.toString() ?? '',
+                studyDisplayName: studyRecord.displayName,
+                projectDisplayName: projectDisplayName ?? '',
+                href: window.location.href,
+              }}
             />
           ) : (
             <PastRelease
@@ -225,7 +249,8 @@ function getDataAccessDeclaration(
   studyAccess: string,
   requestElement: JSX.Element,
   isGuest?: boolean,
-  hasPermission?: boolean
+  hasPermission?: boolean,
+  projectDisplayName?: string
 ): JSX.Element {
   const accessIsControlled = studyAccess === 'Controlled';
   const accessIsProtected = studyAccess === 'Protected';
@@ -244,6 +269,7 @@ function getDataAccessDeclaration(
     ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
+  const CITATION_STUB = ` Please cite that you accessed data via ${projectDisplayName}.`;
 
   return (
     <div>
@@ -251,11 +277,14 @@ function getDataAccessDeclaration(
         Data Accessibility:{' '}
         <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
       </H5>
-      <Paragraph styleOverrides={{ margin: 0 }}>
+      <Paragraph styleOverrides={{ margin: '0.5em 0 0 0' }}>
         {isGuest === undefined || hasPermission === undefined ? (
           <AnimatedLoadingText text="Getting permissions" />
         ) : studyAccess === 'Public' ? (
-          <span>{PUBLIC_ACCESS_STUB}</span>
+          <span>
+            {PUBLIC_ACCESS_STUB}
+            {CITATION_STUB}
+          </span>
         ) : requestIsRequired ? (
           isGuest || !hasPermission ? (
             <span>
@@ -266,15 +295,22 @@ function getDataAccessDeclaration(
                   : accessIsProtected
                   ? PROTECTED_ACCESS_STUB
                   : ''}
+                {CITATION_STUB}
               </span>
             </span>
           ) : (
-            <span>{ACCESS_GRANTED_STUB}</span>
+            <span>
+              {ACCESS_GRANTED_STUB}
+              {CITATION_STUB}
+            </span>
           )
         ) : studyAccess === 'Prerelease' ? (
-          <span>{PRERELEASE_STUB}</span>
+          <span>
+            {PRERELEASE_STUB}
+            {CITATION_STUB}
+          </span>
         ) : (
-          <span>Unknown study accessibility value</span>
+          <span>Unknown study accessibility value.{CITATION_STUB}</span>
         )}
       </Paragraph>
     </div>
