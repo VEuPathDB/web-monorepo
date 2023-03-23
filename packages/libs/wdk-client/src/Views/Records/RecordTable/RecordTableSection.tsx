@@ -78,11 +78,11 @@ function RecordTableSection(props: Props) {
         ) : isLoading ? (
           <p>Loading...</p>
         ) : (
-          // @ts-ignore
           <RecordTable
             className={className}
             value={value}
             table={table}
+            // @ts-ignore
             record={record}
             recordClass={recordClass}
           />
