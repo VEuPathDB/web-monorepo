@@ -698,10 +698,9 @@ class DataTable extends PureComponent<Props, State> {
 const withLibs = lazy<Props>(async function () {
   // @ts-ignore
   await import('!!script-loader!../../../vendored/datatables');
-  // @ts-ignore prettier-ignore
-  await import(
-    '!!script-loader!../../../vendored/datatables-natural-type-plugin'
-  );
+  // @ts-ignore
+  // prettier-ignore
+  await import('!!script-loader!../../../vendored/datatables-natural-type-plugin');
 });
 export default wrappable(withLibs(DataTable));
 
