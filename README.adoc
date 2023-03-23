@@ -45,5 +45,5 @@ Directory: `packages/libs/eda`
 
 You will need to configure the server with a `packages/libs/eda/.env.local` file that sets various environment variables.
 
-For more documentation see the link:packages/libs/eda/README.md[eda/README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
+For more documentation see the link:packages/libs/eda/README.md[package README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
 
