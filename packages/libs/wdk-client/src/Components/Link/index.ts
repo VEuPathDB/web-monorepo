@@ -1,2 +1,2 @@
-import Link from 'wdk-client/Components/Link/Link';
+import Link from '../../Components/Link/Link';
 export default Link;

@@ -2,11 +2,5 @@
   "extends": "@veupathdb/tsconfig",
   "include": [
     "src"
-  ],
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "ebrc-client/*": [ "*" ]
-    }
-  }
+  ]
 }

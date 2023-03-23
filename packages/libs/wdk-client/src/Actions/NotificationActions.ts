@@ -1,15 +1,8 @@
-import {
-  OptionsObject,
-  SnackbarMessage,
-  SnackbarKey,
-} from 'notistack';
+import { OptionsObject, SnackbarMessage, SnackbarKey } from 'notistack';
 
 import { v4 as uuid } from 'uuid';
 
-import {
-  makeActionCreator,
-  InferAction,
-} from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
 
 /** Dispatch this action to programmatically enqueue a snackbar */
 export const enqueueSnackbar = makeActionCreator(
@@ -19,8 +12,8 @@ export const enqueueSnackbar = makeActionCreator(
       message,
       options: {
         ...options,
-        key: options?.key ?? uuid()
-      }
+        key: options?.key ?? uuid(),
+      },
     };
   }
 );

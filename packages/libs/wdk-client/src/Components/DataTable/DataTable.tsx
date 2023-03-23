@@ -1,26 +1,37 @@
 import $ from 'jquery';
-import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
+import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
 import { isEqual, once, uniqueId, uniqBy } from 'lodash';
-import React, { Component, PureComponent, ReactElement, useEffect } from 'react';
+import React, {
+  Component,
+  PureComponent,
+  ReactElement,
+  useEffect,
+} from 'react';
 import { createPortal } from 'react-dom';
-import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { containsAncestorNode } from 'wdk-client/Utils/DomUtils';
-import { areTermsInStringRegexString, parseSearchQueryString } from 'wdk-client/Utils/SearchUtils';
+import {
+  formatAttributeValue,
+  lazy,
+  wrappable,
+} from '../../Utils/ComponentUtils';
+import { containsAncestorNode } from '../../Utils/DomUtils';
+import {
+  areTermsInStringRegexString,
+  parseSearchQueryString,
+} from '../../Utils/SearchUtils';
 import CheckboxList from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxList';
 import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import 'wdk-client/Components/DataTable/DataTable.css';
+import '../../Components/DataTable/DataTable.css';
 import HelpIcon from '../Icon/HelpIcon';
 import Tooltip from '../Overlays/Tooltip';
 import TabbableContainer from '../Display/TabbableContainer';
-import { ErrorBoundary } from 'wdk-client/Controllers';
-
+import { ErrorBoundary } from '../../Controllers';
 
 const expandColumn = {
   data: undefined,
   className: 'wdk-DataTableCell wdk-DataTableCell__childRowToggle',
   orderable: false,
   title: '<button class="wdk-DataTableCellExpand"></button>',
-  defaultContent: '<div class="wdk-DataTableCellExpand"></div>'
+  defaultContent: '<div class="wdk-DataTableCellExpand"></div>',
 };
 
 type ColumnDef = {
@@ -30,19 +41,19 @@ type ColumnDef = {
   sortType?: string;
   isDisplayable?: boolean;
   isSortable?: boolean;
-}
+};
 
 type Row = { [key: string]: any };
 
 type SortingDef = {
   name: string;
   direction: 'ASC' | 'DESC';
-}
+};
 
 type ChildRowProps = {
   rowIndex: number;
   rowData: Object;
-}
+};
 
 type Props = {
   /**
@@ -107,10 +118,10 @@ type Props = {
 
   /** Called when the search term has changed */
   onSearchTermChange?: (newSearchTerm: string) => void;
-}
+};
 
 interface State {
-  childRows: [ HTMLElement, ChildRowProps ][];
+  childRows: [HTMLElement, ChildRowProps][];
   selectedColumnFilters: string[];
   showFieldSelector: boolean;
 }
@@ -121,7 +132,6 @@ interface State {
  * This uses DataTables jQuery plugin
  */
 class DataTable extends PureComponent<Props, State> {
-
   constructor(props: Props) {
     super(props);
 
@@ -140,15 +150,15 @@ class DataTable extends PureComponent<Props, State> {
       info: 'Showing _TOTAL_ ',
       infoFiltered: 'of _MAX_ ',
       infoEmpty: 'Showing 0 ',
-      infoPostFix: 'rows'
-    }
+      infoPostFix: 'rows',
+    },
   };
 
   state: State = {
     childRows: [],
     selectedColumnFilters: [],
     showFieldSelector: false,
-  }
+  };
 
   _childRowContainers: Map<HTMLTableRowElement, HTMLElement> = new Map();
 
@@ -170,23 +180,25 @@ class DataTable extends PureComponent<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (this._dataTable == null) return;
 
-    let columnsChanged = didPropChange(this, prevProps, 'columns')
+    let columnsChanged = didPropChange(this, prevProps, 'columns');
     let dataChanged = didPropChange(this, prevProps, 'data');
     let sortingChanged = didPropChange(this, prevProps, 'sorting');
     let widthChanged = didPropChange(this, prevProps, 'width');
     let heightChanged = didPropChange(this, prevProps, 'height');
     let expandedRowsChanged = didPropChange(this, prevProps, 'expandedRows');
     let searchTermChanged = didPropChange(this, prevProps, 'searchTerm');
-    let columnFiltersChanged = didStateChange(this, prevState, 'selectedColumnFilters');
+    let columnFiltersChanged = didStateChange(
+      this,
+      prevState,
+      'selectedColumnFilters'
+    );
 
     this._isRedrawing = true;
 
     if (columnsChanged || dataChanged || heightChanged) {
       this._destroy(this._dataTable);
       this._setup();
-    }
-
-    else {
+    } else {
       let needsRedraw = false;
 
       if (sortingChanged) {
@@ -202,10 +214,17 @@ class DataTable extends PureComponent<Props, State> {
       if (expandedRowsChanged) {
         this._updateExpandedRows(this._dataTable);
       }
-      
+
       if (columnFiltersChanged || searchTermChanged) {
-        const indexesOfSelectedFilters = this.state.selectedColumnFilters.map(colFilter => this.props.columns.findIndex(col => col.name === colFilter));
-        this._updateSearch(this._dataTable, this.props.searchTerm ?? this._searchTerm, indexesOfSelectedFilters);
+        const indexesOfSelectedFilters = this.state.selectedColumnFilters.map(
+          (colFilter) =>
+            this.props.columns.findIndex((col) => col.name === colFilter)
+        );
+        this._updateSearch(
+          this._dataTable,
+          this.props.searchTerm ?? this._searchTerm,
+          indexesOfSelectedFilters
+        );
       }
 
       if (needsRedraw && this._dataTable) {
@@ -220,7 +239,6 @@ class DataTable extends PureComponent<Props, State> {
     if (this._dataTable) this._destroy(this._dataTable);
   }
 
-
   // prop change handlers
   // --------------------
 
@@ -234,17 +252,22 @@ class DataTable extends PureComponent<Props, State> {
       sorting = [],
       searchable = true,
       height,
-      width
+      width,
     } = this.props;
 
     let initialSearchTerm = this.props.searchTerm ?? this._searchTerm;
 
-    let columns = this.columns = childRow != null
-      ? [ expandColumn, ...formatColumns(this.props.columns) ]
-      : formatColumns(this.props.columns);
+    let columns = (this.columns =
+      childRow != null
+        ? [expandColumn, ...formatColumns(this.props.columns)]
+        : formatColumns(this.props.columns));
 
-    let order = formatSorting(columns, sorting.length === 0
-      ? [ { name: this.props.columns[0].name, direction: 'ASC' } ] : sorting);
+    let order = formatSorting(
+      columns,
+      sorting.length === 0
+        ? [{ name: this.props.columns[0].name, direction: 'ASC' }]
+        : sorting
+    );
 
     let tableOpts = Object.assign({}, DataTable.defaultDataTableOpts, {
       columns,
@@ -257,32 +280,36 @@ class DataTable extends PureComponent<Props, State> {
         const offset = childRow ? 1 : 0;
         if (childRow) {
           $ths.eq(0).attr('title', 'Show or hide all row details');
-
         }
         this.props.columns
-        .filter(column => column.isDisplayable)
-        .forEach((column, index) => {
-          if (column.help != null) {
-            $ths.eq(index + offset)
-              .append('&nbsp;')
-              .append($(`
+          .filter((column) => column.isDisplayable)
+          .forEach((column, index) => {
+            if (column.help != null) {
+              $ths
+                .eq(index + offset)
+                .append('&nbsp;')
+                .append(
+                  $(
+                    `
                 <div class="HelpTrigger">
                   <i class="fa fa-question-circle"></i>
                 </div>
-              `.trim())
-                .attr('title', column.help)
-                .click(e => e.stopPropagation())
-                .qtip({
-                  hide: {
-                    fixed: true,
-                    delay: 500
-                  },
-                  style: {
-                    classes: 'qtip-wdk'
-                  }
-                }));
-          }
-        });
+              `.trim()
+                  )
+                    .attr('title', column.help)
+                    .click((e) => e.stopPropagation())
+                    .qtip({
+                      hide: {
+                        fixed: true,
+                        delay: 500,
+                      },
+                      style: {
+                        classes: 'qtip-wdk',
+                      },
+                    })
+                );
+            }
+          });
       }),
       createdRow: (row: HTMLTableRowElement) => {
         row.classList.add('wdk-DataTableRow');
@@ -290,84 +317,91 @@ class DataTable extends PureComponent<Props, State> {
           row.classList.add('wdk-DataTableRow__expandable');
           row.tabIndex = 0;
         }
-      }
+      },
     });
 
     if (height != null)
       Object.assign(tableOpts, {
         scrollY: height,
         scrollX: true,
-        scrollCollapse: !childRow
+        scrollCollapse: !childRow,
       });
 
-    const dataTable = this._dataTable = $(document.createElement('table'))
-    .addClass('wdk-DataTable')
-    .width(width || '')
-    .appendTo(this.node)
-    // click handler for expand single row
-    .on('click keydown', '.wdk-DataTableRow__expandable', event => {
+    const dataTable = (this._dataTable = $(document.createElement('table'))
+      .addClass('wdk-DataTable')
+      .width(width || '')
+      .appendTo(this.node)
+      // click handler for expand single row
+      .on('click keydown', '.wdk-DataTableRow__expandable', (event) => {
+        // ignore keydown events if the key is not Enter
+        if (event.type === 'keydown' && event.key !== 'Enter') {
+          return;
+        }
 
-      // ignore keydown events if the key is not Enter
-      if (event.type === 'keydown' && event.key !== 'Enter') {
-        return;
-      }
+        let tr = event.currentTarget;
 
-      let tr = event.currentTarget;
+        // ignore event if a link, button, or input element is clicked
+        if (
+          containsAncestorNode(
+            event.target,
+            (node) => $(node).is('a,:button,:input'),
+            tr
+          )
+        ) {
+          return;
+        }
 
-      // ignore event if a link, button, or input element is clicked
-      if (containsAncestorNode(
-        event.target,
-        node => $(node).is('a,:button,:input'),
-        tr)) {
-        return;
-      }
+        // ignore event if text has been selected
+        const selection = window.getSelection();
+        if (
+          selection &&
+          selection.toString() &&
+          containsAncestorNode(
+            selection.anchorNode,
+            (currNode) => currNode.parentNode === tr
+          )
+        ) {
+          return;
+        }
 
-      // ignore event if text has been selected
-      const selection = window.getSelection();
-      if (
-        selection &&
-        selection.toString() &&
-        containsAncestorNode(
-          selection.anchorNode,
-          currNode => currNode.parentNode === tr
-        )) {
-        return;
-      }
+        let row = dataTable.row(tr);
+        if (row.child.isShown()) {
+          this._hideChildRow(dataTable, row.node() as HTMLTableRowElement);
+        } else {
+          this._renderChildRow(dataTable, row.node() as HTMLTableRowElement);
+        }
+        this._updateChildRowClassNames(dataTable);
+        this._callExpandedRowsCallback(dataTable);
+      })
+      // click handler for expand all rows
+      .on('click', 'th .wdk-DataTableCellExpand', () => {
+        // if all are shown, then hide all, otherwise show any that are hidden
+        let allShown = areAllChildRowsShown(dataTable);
+        for (let tr of dataTable.rows().nodes().toArray()) {
+          if (allShown) this._hideChildRow(dataTable, tr);
+          else this._renderChildRow(dataTable, tr);
+        }
+        this._updateChildRowClassNames(dataTable);
+        this._callExpandedRowsCallback(dataTable);
+      })
+      .on('order.dt', () => {
+        if (
+          this._isRedrawing ||
+          !this.props.onSortingChange ||
+          !this._dataTable
+        )
+          return;
 
-      let row = dataTable.row(tr);
-      if (row.child.isShown()) {
-        this._hideChildRow(dataTable, row.node() as HTMLTableRowElement);
-      }
-      else {
-        this._renderChildRow(dataTable, row.node() as HTMLTableRowElement);
-      }
-      this._updateChildRowClassNames(dataTable);
-      this._callExpandedRowsCallback(dataTable);
-    })
-    // click handler for expand all rows
-    .on('click', 'th .wdk-DataTableCellExpand', () => {
-      // if all are shown, then hide all, otherwise show any that are hidden
-      let allShown = areAllChildRowsShown(dataTable);
-      for (let tr of dataTable.rows().nodes().toArray()) {
-        if (allShown) this._hideChildRow(dataTable, tr);
-        else this._renderChildRow(dataTable, tr);
-      }
-      this._updateChildRowClassNames(dataTable);
-      this._callExpandedRowsCallback(dataTable);
-    })
-    .on('order.dt', () => {
-      if (this._isRedrawing || !this.props.onSortingChange || !this._dataTable) return;
-
-      let sorting = this._dataTable.order().map(entry => ({
-        name: columns[entry[0] as number].data as string,
-        direction: (entry[1] as string).toUpperCase() as 'ASC' | 'DESC'
-      }));
-      this.props.onSortingChange(sorting);
-    })
-    .on('draw.dt', (e) => {
-      this.props.onDraw?.(e.target as HTMLTableElement);
-    })
-    .DataTable(tableOpts as any);
+        let sorting = this._dataTable.order().map((entry) => ({
+          name: columns[entry[0] as number].data as string,
+          direction: (entry[1] as string).toUpperCase() as 'ASC' | 'DESC',
+        }));
+        this.props.onSortingChange(sorting);
+      })
+      .on('draw.dt', (e) => {
+        this.props.onDraw?.(e.target as HTMLTableElement);
+      })
+      .DataTable(tableOpts as any));
 
     if (searchable && initialSearchTerm) {
       this._updateSearch(dataTable, initialSearchTerm, []);
@@ -379,15 +413,22 @@ class DataTable extends PureComponent<Props, State> {
     }
   }
 
-  _updateSearch(dataTable: DataTables.Api, searchTerm: string, indexesOfSelectedFilters: number[]) {
+  _updateSearch(
+    dataTable: DataTables.Api,
+    searchTerm: string,
+    indexesOfSelectedFilters: number[]
+  ) {
     // reset search criteria to sync state/props with the jquery table render
-    dataTable.columns().search('')
+    dataTable.columns().search('');
     const queryTerms = parseSearchQueryString(searchTerm);
     const searchTermRegex = areTermsInStringRegexString(queryTerms);
     if (!indexesOfSelectedFilters.length) {
       dataTable.search(searchTermRegex, true, false, true).draw();
     } else {
-      dataTable.columns(indexesOfSelectedFilters).search(searchTermRegex, true, false, true).draw();
+      dataTable
+        .columns(indexesOfSelectedFilters)
+        .search(searchTermRegex, true, false, true)
+        .draw();
     }
   }
 
@@ -409,8 +450,7 @@ class DataTable extends PureComponent<Props, State> {
       let data = row.data() as Row;
       if (expandedRows.includes(getRowId(data))) {
         this._renderChildRow(dataTable, tr);
-      }
-      else {
+      } else {
         this._hideChildRow(dataTable, tr);
       }
     });
@@ -433,7 +473,11 @@ class DataTable extends PureComponent<Props, State> {
   }
 
   /** Append child row container node to table row and show it */
-  _renderChildRow(dataTable: DataTables.Api, tableRowNode: HTMLTableRowElement, openRow = true) {
+  _renderChildRow(
+    dataTable: DataTables.Api,
+    tableRowNode: HTMLTableRowElement,
+    openRow = true
+  ) {
     let { childRow } = this.props;
     if (childRow == null) return;
     let row = dataTable.row(tableRowNode);
@@ -445,12 +489,14 @@ class DataTable extends PureComponent<Props, State> {
     }
     if (typeof childRow === 'string') {
       childRowContainer.innerHTML = childRow;
-    }
-    else {
+    } else {
       let props = { rowIndex: row.index(), rowData: row.data() };
-      this.setState(state => ({
+      this.setState((state) => ({
         ...state,
-        childRows: uniqBy([ ...state.childRows, [ childRowContainer, props ] ], ([node]) => node),
+        childRows: uniqBy(
+          [...state.childRows, [childRowContainer, props]],
+          ([node]) => node
+        ),
       }));
     }
   }
@@ -466,7 +512,10 @@ class DataTable extends PureComponent<Props, State> {
     let { onExpandedRowsChange } = this.props;
     if (onExpandedRowsChange == null) return;
 
-    let expandedRows =  dataTable.rows().indexes().toArray()
+    let expandedRows = dataTable
+      .rows()
+      .indexes()
+      .toArray()
       .reduce((expandedRows, index) => {
         let row = dataTable.row(index);
         if (row.child.isShown()) {
@@ -495,32 +544,31 @@ class DataTable extends PureComponent<Props, State> {
   }
 
   onColumnFilterChange(value: string[]) {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
       selectedColumnFilters: value,
-    }))
+    }));
   }
 
   toggleFilterFieldSelector() {
-    this.setState(state => ({
+    this.setState((state) => ({
       ...state,
-      showFieldSelector: !state.showFieldSelector
-    }))
+      showFieldSelector: !state.showFieldSelector,
+    }));
   }
 
   render() {
     let { searchable = true, childRow: ChildRow, columns } = this.props;
-    const filterAttributes = columns.filter(col => col.isDisplayable).map(col => ({display: col.displayName, value: col.name}));
+    const filterAttributes = columns
+      .filter((col) => col.isDisplayable)
+      .map((col) => ({ display: col.displayName, value: col.name }));
     return (
       <div className="MesaComponent">
         {searchable && (
           <>
-            <div style={{display: 'flex'}}>
+            <div style={{ display: 'flex' }}>
               <RealTimeSearchBox
-                searchTerm={
-                  this.props.searchTerm ??
-                  this._searchTerm
-                }
+                searchTerm={this.props.searchTerm ?? this._searchTerm}
                 className="wdk-DataTableSearchBox"
                 placeholderText="Search this table..."
                 onSearchTermChange={(searchTerm: string) => {
@@ -532,134 +580,204 @@ class DataTable extends PureComponent<Props, State> {
                   } else {
                     this._searchTerm = searchTerm;
                     // JM: unclear if this is used, but _updateSearch will be called when props.searchTerm does not exist
-                    this._dataTable && 
+                    this._dataTable &&
                       this._updateSearch(
-                          this._dataTable,
-                          searchTerm,
-                          this.state.selectedColumnFilters.map(colFilter => this.props.columns.findIndex(col => col.name === colFilter))
-                        );
+                        this._dataTable,
+                        searchTerm,
+                        this.state.selectedColumnFilters.map((colFilter) =>
+                          this.props.columns.findIndex(
+                            (col) => col.name === colFilter
+                          )
+                        )
+                      );
                   }
                 }}
                 delayMs={0}
-                iconName=''
-                cancelBtnRightMargin='3em'
+                iconName=""
+                cancelBtnRightMargin="3em"
               />
-              <div style={{position: 'relative', width: 0, right: '2.75em', top: '0.25em'}}>
-              <Tooltip content="Show search fields">
-                <button 
-                  className="fa fa-caret-down"
-                  style={{background: 'none', border: 'none'}}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    this.toggleFilterFieldSelector();
-                    }
-                  }
-                />
-              </Tooltip>
+              <div
+                style={{
+                  position: 'relative',
+                  width: 0,
+                  right: '2.75em',
+                  top: '0.25em',
+                }}
+              >
+                <Tooltip content="Show search fields">
+                  <button
+                    className="fa fa-caret-down"
+                    style={{ background: 'none', border: 'none' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      this.toggleFilterFieldSelector();
+                    }}
+                  />
+                </Tooltip>
               </div>
               <HelpIcon>
                 <div>
                   <ul>
-                  <li>The data sets in your refined list will contain ALL your terms (or phrases, when using double quotes), in ANY of the selected fields.</li>
-                  <li>Click on the arrow inside the box to select/unselect fields. </li>
-                  <li>Your terms are matched at the start; 
-                      for example, the term <i>typ</i> will match <i><u>typ</u>ically</i> and <i><u>typ</u>e</i>, but <strong>not</strong> <i><u>atyp</u>ical</i>.</li>
-                  <li>Your terms may include * wildcards;
-                      for example, the term <i>*typ</i> will match <i><u>typ</u>ically</i>, <i><u>typ</u>e</i>, and <i>a<u>typ</u>ical</i>.</li>
+                    <li>
+                      The data sets in your refined list will contain ALL your
+                      terms (or phrases, when using double quotes), in ANY of
+                      the selected fields.
+                    </li>
+                    <li>
+                      Click on the arrow inside the box to select/unselect
+                      fields.{' '}
+                    </li>
+                    <li>
+                      Your terms are matched at the start; for example, the term{' '}
+                      <i>typ</i> will match{' '}
+                      <i>
+                        <u>typ</u>ically
+                      </i>{' '}
+                      and{' '}
+                      <i>
+                        <u>typ</u>e
+                      </i>
+                      , but <strong>not</strong>{' '}
+                      <i>
+                        <u>atyp</u>ical
+                      </i>
+                      .
+                    </li>
+                    <li>
+                      Your terms may include * wildcards; for example, the term{' '}
+                      <i>*typ</i> will match{' '}
+                      <i>
+                        <u>typ</u>ically
+                      </i>
+                      ,{' '}
+                      <i>
+                        <u>typ</u>e
+                      </i>
+                      , and{' '}
+                      <i>
+                        a<u>typ</u>ical
+                      </i>
+                      .
+                    </li>
                   </ul>
                 </div>
               </HelpIcon>
             </div>
-            {this.state.showFieldSelector &&
-              <DataTableFilterSelector 
+            {this.state.showFieldSelector && (
+              <DataTableFilterSelector
                 filterAttributes={filterAttributes}
                 selectedColumnFilters={this.state.selectedColumnFilters}
                 onColumnFilterChange={this.onColumnFilterChange}
                 toggleFilterFieldSelector={this.toggleFilterFieldSelector}
-                containerClassName='wdk-Answer-filterFieldSelector'
+                containerClassName="wdk-Answer-filterFieldSelector"
               />
-            }
+            )}
           </>
         )}
-        <div ref={node => this.node = node} className="wdk-DataTableContainer"/>
-        {this.state.childRows.map(([ node, childRowProps ]) =>
-          ChildRow && createPortal(
-            <ErrorBoundary renderError={() => <h3>We're sorry, something went wrong.</h3>} >
-              <ChildRow {...childRowProps} />
-            </ErrorBoundary>,
-            node
-          ))}
+        <div
+          ref={(node) => (this.node = node)}
+          className="wdk-DataTableContainer"
+        />
+        {this.state.childRows.map(
+          ([node, childRowProps]) =>
+            ChildRow &&
+            createPortal(
+              <ErrorBoundary
+                renderError={() => <h3>We're sorry, something went wrong.</h3>}
+              >
+                <ChildRow {...childRowProps} />
+              </ErrorBoundary>,
+              node
+            )
+        )}
       </div>
     );
   }
-
 }
 
-const withLibs = lazy<Props>(async function() {
+const withLibs = lazy<Props>(async function () {
   // @ts-ignore
   await import('!!script-loader!../../../vendored/datatables');
   // @ts-ignore
-  await import('!!script-loader!../../../vendored/datatables-natural-type-plugin');
+  await import(
+    '!!script-loader!../../../vendored/datatables-natural-type-plugin'
+  );
 });
 export default wrappable(withLibs(DataTable));
-
 
 // helpers
 // -------
 
 /** helper to determine if all child rows are visible */
 function areAllChildRowsShown(dataTable: DataTables.Api) {
-  return dataTable.rows().indexes().toArray().every((i: number) => !!dataTable.row(i).child.isShown());
+  return dataTable
+    .rows()
+    .indexes()
+    .toArray()
+    .every((i: number) => !!dataTable.row(i).child.isShown());
 }
 
 /** Map WDK table attribute fields to datatable data format */
 function formatColumns(columns: ColumnDef[]): DataTables.ColumnSettings[] {
-  return columns.map(
-    column => ({
-      data: column.name,
-      className: 'wdk-DataTableCell wdk-DataTableCell__' + column.name,
-      title: column.displayName || column.name,
-      type: column.sortType || 'natural-ci',
-      visible: column.isDisplayable,
-      searchable: column.isDisplayable,
-      orderable: column.isSortable,
-      render(data: any, type: string) {
-        let value = formatAttributeValue(data);
-        if (type === 'display' && value != null) {
-          return '<div class="wdk-DataTableCellContent">' + value + '</div>'
-        }
-        return value || '';
+  return columns.map((column) => ({
+    data: column.name,
+    className: 'wdk-DataTableCell wdk-DataTableCell__' + column.name,
+    title: column.displayName || column.name,
+    type: column.sortType || 'natural-ci',
+    visible: column.isDisplayable,
+    searchable: column.isDisplayable,
+    orderable: column.isSortable,
+    render(data: any, type: string) {
+      let value = formatAttributeValue(data);
+      if (type === 'display' && value != null) {
+        return '<div class="wdk-DataTableCellContent">' + value + '</div>';
       }
-    })
-  );
+      return value || '';
+    },
+  }));
 }
 
 /** Map WDK table sorting to datatable data format */
-function formatSorting(columns: DataTables.ColumnSettings[], sorting: SortingDef[] = []) {
-  return sorting.length === 0 ? [ [0, 'asc'] ] : sorting.map(sort => {
-    let index = columns.findIndex(column => column.data === sort.name);
-    if (index === -1) {
-      console.warn("Could not determine sort index for the column " + sort.name);
-      return [];
-    }
-    return [ index, sort.direction.toLowerCase() ]
-  });
+function formatSorting(
+  columns: DataTables.ColumnSettings[],
+  sorting: SortingDef[] = []
+) {
+  return sorting.length === 0
+    ? [[0, 'asc']]
+    : sorting.map((sort) => {
+        let index = columns.findIndex((column) => column.data === sort.name);
+        if (index === -1) {
+          console.warn(
+            'Could not determine sort index for the column ' + sort.name
+          );
+          return [];
+        }
+        return [index, sort.direction.toLowerCase()];
+      });
 }
 
 /** Return boolean indicating if a prop's value has changed. */
-function didPropChange(component: Component<Props, any>, prevProps: Props, propName: keyof Props) {
+function didPropChange(
+  component: Component<Props, any>,
+  prevProps: Props,
+  propName: keyof Props
+) {
   return !isEqual(component.props[propName], prevProps[propName]);
 }
 
 /** Return boolean indicating if a state's value has changed. */
-function didStateChange(component: Component<Props, State>, prevState: State, stateName: keyof State) {
+function didStateChange(
+  component: Component<Props, State>,
+  prevState: State,
+  stateName: keyof State
+) {
   return !isEqual(component.state[stateName], prevState[stateName]);
 }
 
 type DataFilterAttribute = {
   value: string;
   display: string;
-}
+};
 
 type DataTableProps = {
   filterAttributes: DataFilterAttribute[];
@@ -667,27 +785,32 @@ type DataTableProps = {
   onColumnFilterChange: (value: DataFilterAttribute['value'][]) => void;
   toggleFilterFieldSelector: () => void;
   containerClassName: string;
-}
+};
 
-function DataTableFilterSelector({filterAttributes, selectedColumnFilters, onColumnFilterChange, toggleFilterFieldSelector, containerClassName}: DataTableProps) {
-
+function DataTableFilterSelector({
+  filterAttributes,
+  selectedColumnFilters,
+  onColumnFilterChange,
+  toggleFilterFieldSelector,
+  containerClassName,
+}: DataTableProps) {
   useEffect(() => {
-    document.addEventListener('click', handleDocumentClick)
-    return () => document.removeEventListener('click', handleDocumentClick)
-  }, [])
-  
+    document.addEventListener('click', handleDocumentClick);
+    return () => document.removeEventListener('click', handleDocumentClick);
+  }, []);
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-      toggleFilterFieldSelector()
+      toggleFilterFieldSelector();
     }
-  }
+  };
 
   const handleDocumentClick = (e: MouseEvent) => {
-    const clickedElement = e.target as HTMLElement
+    const clickedElement = e.target as HTMLElement;
     if (!clickedElement.closest(`.${containerClassName}`)) {
-      toggleFilterFieldSelector()
+      toggleFilterFieldSelector();
     }
-  }
+  };
 
   return (
     <TabbableContainer
@@ -695,10 +818,12 @@ function DataTableFilterSelector({filterAttributes, selectedColumnFilters, onCol
       onKeyDown={handleKeyPress}
       className={containerClassName}
     >
-      <CheckboxList 
+      <CheckboxList
         items={filterAttributes}
         // must ensure referential equality, thus unable to simply pass in selectedColumnFilters as the value prop
-        value={filterAttributes.filter(attr => selectedColumnFilters.includes(attr.value)).map(attr => attr.value)}
+        value={filterAttributes
+          .filter((attr) => selectedColumnFilters.includes(attr.value))
+          .map((attr) => attr.value)}
         onChange={onColumnFilterChange}
         linksPosition={LinksPosition.Top}
       />
@@ -707,7 +832,7 @@ function DataTableFilterSelector({filterAttributes, selectedColumnFilters, onCol
           className="fa fa-close wdk-Answer-filterFieldSelectorCloseIcon"
           onClick={toggleFilterFieldSelector}
         />
-      </div>    
+      </div>
     </TabbableContainer>
-  )
+  );
 }

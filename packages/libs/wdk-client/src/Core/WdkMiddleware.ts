@@ -1,8 +1,8 @@
 import { Middleware } from 'redux';
-import { isPromise } from 'wdk-client/Utils/PromiseUtils';
-import { Action } from 'wdk-client/Actions';
-import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
-import { EpicDependencies } from 'wdk-client/Core/Store';
+import { isPromise } from '../Utils/PromiseUtils';
+import { Action } from '../Actions';
+import { notifyUnhandledError } from '../Actions/UnhandledErrorActions';
+import { EpicDependencies } from '../Core/Store';
 
 export type ActionCreatorServices = EpicDependencies;
 
@@ -38,13 +38,12 @@ export interface ActionThunk<
 export const emptyType = Symbol('empty');
 
 export type EmptyAction = {
-  type: typeof emptyType
-}
+  type: typeof emptyType;
+};
 
 export const emptyAction: EmptyAction = {
-  type: emptyType
-}
-
+  type: emptyType,
+};
 
 /**
  * The DispatchAction type describes the type of function that is used to
@@ -57,7 +56,6 @@ export type DispatchAction<
 
 type WdkMiddleWare<S extends ActionCreatorServices = ActionCreatorServices> =
   Middleware<DispatchAction<Action, S>>;
-
 
 /**
  * Create a function that takes a channel and creates a dispatch function
@@ -82,51 +80,51 @@ type WdkMiddleWare<S extends ActionCreatorServices = ActionCreatorServices> =
  * rejections to go unhandled, which made comprehensive error handling more
  * difficult.
  */
-export const wdkMiddleware = <S extends ActionCreatorServices>(services: S): WdkMiddleWare<S> => ({ dispatch }) => next => action => {
-  try {
-    if (typeof action === 'function') {
-      return dispatch(action(services));
+export const wdkMiddleware =
+  <S extends ActionCreatorServices>(services: S): WdkMiddleWare<S> =>
+  ({ dispatch }) =>
+  (next) =>
+  (action) => {
+    try {
+      if (typeof action === 'function') {
+        return dispatch(action(services));
+      } else if (isPromise<any>(action)) {
+        return action.then(dispatch).then(undefined, logError);
+      } else if (Array.isArray(action)) {
+        return action.map(dispatch);
+      } else if (action == null) {
+        throw new Error('Action received is undefined or is null');
+      } else if (action.type == null) {
+        throw new Error('Action received does not have a `type` property.');
+      }
+      if (action.type === emptyType) {
+        // nothing to dispatch, so bail
+        return;
+      }
+      return next(action);
+    } catch (error) {
+      logError(error);
     }
-    else if (isPromise<any>(action)) {
-      return action.then(dispatch).then(undefined, logError);
-    }
-    else if (Array.isArray(action)) {
-      return action.map(dispatch);
-    }
-    else if (action == null) {
-      throw new Error("Action received is undefined or is null");
-    }
-    else if (action.type == null) {
-      throw new Error("Action received does not have a `type` property.");
-    }
-    if (action.type === emptyType) {
-      // nothing to dispatch, so bail
-      return;
-    }
-    return next(action);
-  }
-  catch(error) {
-    logError(error);
-  }
 
-  function logError(error: Error) {
-    dispatch(notifyUnhandledError(error));
-  }
+    function logError(error: Error) {
+      dispatch(notifyUnhandledError(error));
+    }
+  };
 
-}
-
-export const logger: WdkMiddleWare = store => next => action => {
-  console.log('dispatching', action)
-  let result = next(action)
-  console.log('next state', store.getState())
-  return result
-}
+export const logger: WdkMiddleWare = (store) => (next) => (action) => {
+  console.log('dispatching', action);
+  let result = next(action);
+  console.log('next state', store.getState());
+  return result;
+};
 
 declare module 'redux' {
   export interface Dispatch<
     A extends Action = AnyAction,
     B extends ActionCreatorServices = ActionCreatorServices
   > {
-    <T extends A, S extends B>(action: ActionCreatorResult<T, S>): ActionCreatorResult<T, S>;
+    <T extends A, S extends B>(
+      action: ActionCreatorResult<T, S>
+    ): ActionCreatorResult<T, S>;
   }
 }

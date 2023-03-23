@@ -1,8 +1,8 @@
 import React, { Component, FormEvent } from 'react';
-import { wrappable, getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
-import Link from 'wdk-client/Components/Link/Link';
-import Dialog from 'wdk-client/Components/Overlays/Dialog';
-import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import { wrappable, getChangeHandler } from '../../../Utils/ComponentUtils';
+import Link from '../../../Components/Link/Link';
+import Dialog from '../../../Components/Overlays/Dialog';
+import TextBox from '../../../Components/InputControls/TextBox';
 
 type Props = {
   onCancel: () => void;
@@ -14,15 +14,14 @@ type Props = {
 };
 
 type State = {
-  email: string,
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 /**
  * Form used for authorizing against webapp instead of oauth server.
  */
-class LoginForm extends Component<Props,State> {
-
+class LoginForm extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { email: '', password: '' };
@@ -41,12 +40,14 @@ class LoginForm extends Component<Props,State> {
   }
 
   render() {
-    let { open, message, onCancel, passwordResetPath, registerPath } = this.props;
-    let onChange = (name: string) => getChangeHandler(name, this.updateState, this.state);
+    let { open, message, onCancel, passwordResetPath, registerPath } =
+      this.props;
+    let onChange = (name: string) =>
+      getChangeHandler(name, this.updateState, this.state);
     return open === false ? null : (
       <Dialog title="Login" open={true} modal={true} onClose={onCancel}>
         <form onSubmit={this.submitForm} name="loginForm">
-          {message ? <span style={{color:'red'}}>{message}</span> : ""}
+          {message ? <span style={{ color: 'red' }}>{message}</span> : ''}
           <table>
             <tbody>
               <tr>
@@ -57,7 +58,12 @@ class LoginForm extends Component<Props,State> {
                 </td>
                 <td style={{ textAlign: 'left' }}>
                   <div className="small">
-                    <TextBox autoFocus size={20} value={this.state.email} onChange={onChange('email')}/>
+                    <TextBox
+                      autoFocus
+                      size={20}
+                      value={this.state.email}
+                      onChange={onChange('email')}
+                    />
                   </div>
                 </td>
               </tr>
@@ -69,23 +75,52 @@ class LoginForm extends Component<Props,State> {
                 </td>
                 <td style={{ textAlign: 'left' }}>
                   <div className="small">
-                    <TextBox size={20} type="password" value={this.state.password} onChange={onChange('password')}/>
+                    <TextBox
+                      size={20}
+                      type="password"
+                      value={this.state.password}
+                      onChange={onChange('password')}
+                    />
                   </div>
                 </td>
               </tr>
               <tr>
-                <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }} colSpan={2}>
+                <td
+                  style={{ textAlign: 'center', whiteSpace: 'nowrap' }}
+                  colSpan={2}
+                >
                   <span className="small">
-                    <input style={{width:76, height:30, fontSize: '1em'}} id="login" value="Login" type="submit"/>
-                    <input onClick={onCancel} style={{width:76, height:30, fontSize: '1em'}} value="Cancel" type="button"/>
+                    <input
+                      style={{ width: 76, height: 30, fontSize: '1em' }}
+                      id="login"
+                      value="Login"
+                      type="submit"
+                    />
+                    <input
+                      onClick={onCancel}
+                      style={{ width: 76, height: 30, fontSize: '1em' }}
+                      value="Cancel"
+                      type="button"
+                    />
                   </span>
                 </td>
               </tr>
               <tr>
-                <td style={{ textAlign: 'center', verticalAlign: 'top' }} colSpan={2}>
+                <td
+                  style={{ textAlign: 'center', verticalAlign: 'top' }}
+                  colSpan={2}
+                >
                   <span className="small">
-                    <Link onClick={onCancel} to={passwordResetPath} style={{paddingRight:15 }}>Forgot Password?</Link>
-                    <Link onClick={onCancel} to={registerPath}>Register/Subscribe</Link>
+                    <Link
+                      onClick={onCancel}
+                      to={passwordResetPath}
+                      style={{ paddingRight: 15 }}
+                    >
+                      Forgot Password?
+                    </Link>
+                    <Link onClick={onCancel} to={registerPath}>
+                      Register/Subscribe
+                    </Link>
                   </span>
                 </td>
               </tr>

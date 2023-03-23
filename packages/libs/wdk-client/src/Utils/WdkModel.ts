@@ -2,7 +2,10 @@
  * Type definitions for WDK Model entities
  */
 
-import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
+import {
+  Field,
+  OntologyTermSummary,
+} from '../Components/AttributeFilter/Types';
 
 export interface ModelEntity {
   displayName: string;
@@ -10,16 +13,16 @@ export interface ModelEntity {
 }
 
 export interface Identifier {
-  id: number
+  id: number;
 }
 
 export interface NamedModelEntity extends ModelEntity {
-  name: string
+  name: string;
 }
 
 export interface UrlModelEntity extends ModelEntity {
-  fullName: string,
-  urlSegment: string
+  fullName: string;
+  urlSegment: string;
 }
 
 export interface RecordClass extends UrlModelEntity {
@@ -36,7 +39,7 @@ export interface RecordClass extends UrlModelEntity {
   tablesMap: Record<string, TableField>;
   formats: Reporter[];
   useBasket: boolean;
-  searches: Array<Question>
+  searches: Array<Question>;
 }
 
 export interface Reporter {
@@ -74,7 +77,7 @@ export interface FilterParamNew extends ParameterBase {
   minSelectedCount: number;
   hideEmptyOntologyNodes?: boolean;
   sortLeavesBeforeBranches?: boolean;
-  hideGlobalCounts?:boolean;
+  hideGlobalCounts?: boolean;
   ontology: Array<{
     term: string;
     parent?: string;
@@ -99,7 +102,7 @@ type VocabDisplay = string;
 type VocabParent = string;
 
 interface StandardEnumParamBase extends AbstractEnumParamBase {
-  vocabulary: [ VocabTerm, VocabDisplay, null ][];
+  vocabulary: [VocabTerm, VocabDisplay, null][];
 }
 
 export interface TreeBoxVocabNode {
@@ -135,21 +138,49 @@ interface MultiPickEnumParam {
 }
 
 // final types of all varieties of enum params
-export interface SinglePickSelectEnumParam extends SelectEnumParamBase, SinglePickEnumParam {}
-export interface MultiPickSelectEnumParam extends SelectEnumParamBase, MultiPickEnumParam {}
-export interface SinglePickCheckBoxEnumParam extends CheckBoxEnumParamBase, SinglePickEnumParam {}
-export interface MultiPickCheckBoxEnumParam extends CheckBoxEnumParamBase, MultiPickEnumParam {}
-export interface SinglePickTypeAheadEnumParam extends TypeAheadEnumParamBase, SinglePickEnumParam {}
-export interface MultiPickTypeAheadEnumParam extends TypeAheadEnumParamBase, MultiPickEnumParam {}
-export interface SinglePickTreeBoxEnumParam extends TreeBoxEnumParamBase, SinglePickEnumParam {}
-export interface MultiPickTreeBoxEnumParam extends TreeBoxEnumParamBase, MultiPickEnumParam {}
+export interface SinglePickSelectEnumParam
+  extends SelectEnumParamBase,
+    SinglePickEnumParam {}
+export interface MultiPickSelectEnumParam
+  extends SelectEnumParamBase,
+    MultiPickEnumParam {}
+export interface SinglePickCheckBoxEnumParam
+  extends CheckBoxEnumParamBase,
+    SinglePickEnumParam {}
+export interface MultiPickCheckBoxEnumParam
+  extends CheckBoxEnumParamBase,
+    MultiPickEnumParam {}
+export interface SinglePickTypeAheadEnumParam
+  extends TypeAheadEnumParamBase,
+    SinglePickEnumParam {}
+export interface MultiPickTypeAheadEnumParam
+  extends TypeAheadEnumParamBase,
+    MultiPickEnumParam {}
+export interface SinglePickTreeBoxEnumParam
+  extends TreeBoxEnumParamBase,
+    SinglePickEnumParam {}
+export interface MultiPickTreeBoxEnumParam
+  extends TreeBoxEnumParamBase,
+    MultiPickEnumParam {}
 
-export type SelectEnumParam = SinglePickSelectEnumParam | MultiPickSelectEnumParam;
-export type CheckBoxEnumParam = SinglePickCheckBoxEnumParam | MultiPickCheckBoxEnumParam;
-export type TypeAheadEnumParam = SinglePickTypeAheadEnumParam | MultiPickTypeAheadEnumParam;
-export type TreeBoxEnumParam = SinglePickTreeBoxEnumParam | MultiPickTreeBoxEnumParam;
+export type SelectEnumParam =
+  | SinglePickSelectEnumParam
+  | MultiPickSelectEnumParam;
+export type CheckBoxEnumParam =
+  | SinglePickCheckBoxEnumParam
+  | MultiPickCheckBoxEnumParam;
+export type TypeAheadEnumParam =
+  | SinglePickTypeAheadEnumParam
+  | MultiPickTypeAheadEnumParam;
+export type TreeBoxEnumParam =
+  | SinglePickTreeBoxEnumParam
+  | MultiPickTreeBoxEnumParam;
 
-export type EnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam | TreeBoxEnumParam;
+export type EnumParam =
+  | SelectEnumParam
+  | CheckBoxEnumParam
+  | TypeAheadEnumParam
+  | TreeBoxEnumParam;
 
 export interface NumberParam extends ParameterBase {
   type: 'number';
@@ -180,7 +211,7 @@ export interface DateRangeParam extends ParameterBase {
 export interface DatasetParam extends ParameterBase {
   type: 'input-dataset';
   defaultIdList?: string;
-  parsers: { name: string; displayName: string; description: string; }[]
+  parsers: { name: string; displayName: string; description: string }[];
 }
 
 export interface AnswerParam extends ParameterBase {
@@ -197,7 +228,7 @@ export type Parameter =
   | FilterParamNew
   | NumberParam
   | NumberRangeParam
-  | AnswerParam
+  | AnswerParam;
 
 export interface ParameterGroup {
   description: string;
@@ -257,21 +288,23 @@ export type SortSpec = {
 
 export type FieldState = {
   sort: SortSpec;
-}
+};
 
-export type ParamUIState = { } | {
-  errorMessage?: string;
-  loading: boolean;
-  activeOntologyTerm?: string;
-  hideFilterPanel: boolean;
-  hideFieldPanel: boolean;
-  ontologyTermSummaries: Record<string, OntologyTermSummary>;
-  defaultMemberFieldState: FieldState;
-  fieldStates: Record<string, FieldState>;
-  ontology: Field[];
-  filteredCount?: number;
-  unfilteredCount?: number;
-}
+export type ParamUIState =
+  | {}
+  | {
+      errorMessage?: string;
+      loading: boolean;
+      activeOntologyTerm?: string;
+      hideFilterPanel: boolean;
+      hideFieldPanel: boolean;
+      ontologyTermSummaries: Record<string, OntologyTermSummary>;
+      defaultMemberFieldState: FieldState;
+      fieldStates: Record<string, FieldState>;
+      ontology: Field[];
+      filteredCount?: number;
+      unfilteredCount?: number;
+    };
 
 export interface AttributeField extends NamedModelEntity {
   help?: string;
@@ -304,10 +337,11 @@ export interface RecordInstance {
   tableErrors: string[];
 }
 
-export interface PrimaryKey extends Array<{
-  name: string;
-  value: string;
-}> {}
+export interface PrimaryKey
+  extends Array<{
+    name: string;
+    value: string;
+  }> {}
 
 export type AttributeValue = string | LinkAttributeValue | null;
 
@@ -316,7 +350,7 @@ export interface LinkAttributeValue {
   displayText?: string;
 }
 
-export interface TableValue extends Array<Record<string, AttributeValue>> { }
+export interface TableValue extends Array<Record<string, AttributeValue>> {}
 
 export interface Answer {
   records: RecordInstance[];
@@ -331,14 +365,14 @@ export interface Answer {
     displayViewTotalCount: number;
     sorting: AttributeSortingSpec[];
     pagination: Pagination;
-  }
+  };
 }
 
 export interface SearchConfig {
   parameters: ParameterValues;
   legacyFilterName?: string;
   filters?: FilterValueArray;
-  columnFilters?: Record<string,Record<string,any>>
+  columnFilters?: Record<string, Record<string, any>>;
   viewFilters?: FilterValueArray;
   wdkWeight?: number;
 }
@@ -372,7 +406,10 @@ export interface AttributesConfig {
   sorting?: AttributeSortingSpec[];
 }
 
-export interface Pagination { offset: number, numRecords: number };
+export interface Pagination {
+  offset: number;
+  numRecords: number;
+}
 
 export interface AnswerJsonFormatConfig extends AttributesConfig {
   pagination?: Pagination;
@@ -388,7 +425,7 @@ export type Favorite = {
   displayName: string;
   description: string;
   group: string;
-}
+};
 
 export interface IsolatesSummaryViewReport {
   maxLength: number;
@@ -404,7 +441,9 @@ export interface IsolateForSummaryView {
   lng: number;
 }
 
-export function getSingleRecordQuestionName(recordClassFullName: string): string {
+export function getSingleRecordQuestionName(
+  recordClassFullName: string
+): string {
   let recordClassPortion = recordClassFullName.replace('.', '_');
   return `single_record_question_${recordClassPortion}`;
 }
@@ -414,8 +453,8 @@ export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
     searchName: getSingleRecordQuestionName(record.recordClassName),
     searchConfig: {
       parameters: {
-        "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
-      }
-    }
+        primaryKeys: record.id.map((pkCol) => pkCol.value).join(','),
+      },
+    },
   };
 }

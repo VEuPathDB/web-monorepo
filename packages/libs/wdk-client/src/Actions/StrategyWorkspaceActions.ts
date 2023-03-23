@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash';
-import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
 
 export const openStrategyView = makeActionCreator('strategy-view/open');
 
@@ -7,7 +7,9 @@ export const closeStrategyView = makeActionCreator('strategy-view/close');
 
 export const setActiveStrategy = makeActionCreator(
   'strategy-view/setActiveStrategy',
-  (activeStrategy: { strategyId: number, stepId?: number } | undefined) => ({ activeStrategy })
+  (activeStrategy: { strategyId: number; stepId?: number } | undefined) => ({
+    activeStrategy,
+  })
 );
 
 export const setOpenedStrategies = makeActionCreator(
@@ -28,16 +30,16 @@ export const removeFromOpenedStrategies = makeActionCreator(
 export const setOpenedStrategiesVisibility = makeActionCreator(
   'strategy-view/setOpenedStrategiesVisibility',
   (isVisible: boolean) => ({ isVisible })
-)
+);
 
 export const setActiveModal = makeActionCreator(
   'strategyPanel/setActiveModal',
-  (activeModal: {type: string, strategyId: number}) => activeModal
-)
+  (activeModal: { type: string; strategyId: number }) => activeModal
+);
 
 export const clearActiveModal = makeActionCreator(
-  'strategyPanel/clearActiveModal',
-)
+  'strategyPanel/clearActiveModal'
+);
 
 export type Action =
   | InferAction<typeof openStrategyView>
@@ -48,4 +50,4 @@ export type Action =
   | InferAction<typeof removeFromOpenedStrategies>
   | InferAction<typeof setOpenedStrategiesVisibility>
   | InferAction<typeof setActiveModal>
-  | InferAction<typeof clearActiveModal>
+  | InferAction<typeof clearActiveModal>;

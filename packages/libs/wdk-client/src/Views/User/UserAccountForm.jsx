@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import ApplicationSpecificProperties from 'wdk-client/Views/User/ApplicationSpecificProperties';
-import UserPassword from 'wdk-client/Views/User/Password/UserPassword';
-import UserIdentity from 'wdk-client/Views/User/UserIdentity';
+import { wrappable } from '../../Utils/ComponentUtils';
+import ApplicationSpecificProperties from '../../Views/User/ApplicationSpecificProperties';
+import UserPassword from '../../Views/User/Password/UserPassword';
+import UserIdentity from '../../Views/User/UserIdentity';
 
 /**
  * This React component provides the form wrapper and enclosed fieldsets for the user profile/account form.
@@ -12,28 +12,59 @@ import UserIdentity from 'wdk-client/Views/User/UserIdentity';
  * @constructor
  */
 const UserAccountForm = (props) => {
-  let { wdkConfig, user, onPropertyChange, onPreferenceChange, onEmailChange,
-      onConfirmEmailChange, showChangePasswordBox, disableSubmit, onSubmit, submitButtonText } = props;
-  return(
-    <form className="wdk-UserProfile-profileForm" name="userProfileForm" onSubmit={onSubmit} >
-      <p><i className="fa fa-asterisk"></i> = required</p>
-      <UserIdentity user={user} onEmailChange={onEmailChange} onConfirmEmailChange={onConfirmEmailChange}
-          onPropertyChange={onPropertyChange} propDefs={wdkConfig.userProfileProperties}/>
+  let {
+    wdkConfig,
+    user,
+    onPropertyChange,
+    onPreferenceChange,
+    onEmailChange,
+    onConfirmEmailChange,
+    showChangePasswordBox,
+    disableSubmit,
+    onSubmit,
+    submitButtonText,
+  } = props;
+  return (
+    <form
+      className="wdk-UserProfile-profileForm"
+      name="userProfileForm"
+      onSubmit={onSubmit}
+    >
+      <p>
+        <i className="fa fa-asterisk"></i> = required
+      </p>
+      <UserIdentity
+        user={user}
+        onEmailChange={onEmailChange}
+        onConfirmEmailChange={onConfirmEmailChange}
+        onPropertyChange={onPropertyChange}
+        propDefs={wdkConfig.userProfileProperties}
+      />
       <br />
-      {!showChangePasswordBox ? '' :
-        <UserPassword user={user} wdkConfig={wdkConfig} /> }
+      {!showChangePasswordBox ? (
+        ''
+      ) : (
+        <UserPassword user={user} wdkConfig={wdkConfig} />
+      )}
       <br />
-      <ApplicationSpecificProperties user={user} onPropertyChange={onPropertyChange}
-          propDefs={wdkConfig.userProfileProperties} onPreferenceChange={onPreferenceChange}/>
+      <ApplicationSpecificProperties
+        user={user}
+        onPropertyChange={onPropertyChange}
+        propDefs={wdkConfig.userProfileProperties}
+        onPreferenceChange={onPreferenceChange}
+      />
       <div>
-        <input type="submit" value={submitButtonText} disabled={disableSubmit} />
+        <input
+          type="submit"
+          value={submitButtonText}
+          disabled={disableSubmit}
+        />
       </div>
     </form>
   );
 };
 
 UserAccountForm.propTypes = {
-
   /** The user object to be modified */
   user: PropTypes.object.isRequired,
 
@@ -44,7 +75,7 @@ UserAccountForm.propTypes = {
   disableSubmit: PropTypes.bool.isRequired,
 
   /** The on change handler for the email text box */
-  onEmailChange:  PropTypes.func.isRequired,
+  onEmailChange: PropTypes.func.isRequired,
 
   /** The on change handler for the confirm email text box */
   onConfirmEmailChange: PropTypes.func.isRequired,
@@ -56,13 +87,13 @@ UserAccountForm.propTypes = {
   onPreferenceChange: PropTypes.func.isRequired,
 
   /** The on submit handler for the form */
-  onSubmit:  PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 
   /** Text that should appear on the submit button */
   submitButtonText: PropTypes.string.isRequired,
 
   /** WDK config for setting correct change password link */
-  wdkConfig:  PropTypes.object.isRequired
+  wdkConfig: PropTypes.object.isRequired,
 };
 
 export default wrappable(UserAccountForm);

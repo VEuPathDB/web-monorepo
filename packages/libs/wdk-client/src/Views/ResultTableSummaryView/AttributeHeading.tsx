@@ -1,13 +1,12 @@
 import React from 'react';
+import { AttributeField, RecordClass, Question } from '../../Utils/WdkModel';
+import AttributeAnalysisButton from '../../Views/AttributeAnalysis/AttributeAnalysisButton';
+import { Plugin, PluginEntryContext } from '../../Utils/ClientPlugin';
 import {
-  AttributeField,
-  RecordClass,
-  Question
-} from 'wdk-client/Utils/WdkModel';
-import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
-import { Plugin, PluginEntryContext } from 'wdk-client/Utils/ClientPlugin';
-import { OpenAttributeAnalysis, CloseAttributeAnalysis } from 'wdk-client/Views/ResultTableSummaryView/Types';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+  OpenAttributeAnalysis,
+  CloseAttributeAnalysis,
+} from '../../Views/ResultTableSummaryView/Types';
+import { ResultType } from '../../Utils/WdkResult';
 
 interface Props {
   activeAttributeAnalysisName: string | undefined;
@@ -55,23 +54,23 @@ export default function AttributeHeading(props: Props) {
               removeAttribute();
             }}
           >
-            <i className="fa fa-times-circle"/>
+            <i className="fa fa-times-circle" />
           </button>
         </div>
       )}
 
-      {attribute.formats.map(reporter => {
+      {attribute.formats.map((reporter) => {
         const context: PluginEntryContext = {
           type: 'attributeAnalysis',
           name: reporter.type,
           recordClassName: recordClass.urlSegment,
-          searchName: question.urlSegment
+          searchName: question.urlSegment,
         };
 
         const pluginProps = {
           resultType,
           attributeName: attribute.name,
-          reporterType: reporter.type
+          reporterType: reporter.type,
         };
 
         return (

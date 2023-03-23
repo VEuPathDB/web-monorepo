@@ -9,10 +9,9 @@
   "main": "lib/bootstrap",
   "scripts": {
     "clean": "rm -rf ./lib",
-    "relativize": "ts-node-script ./scripts/relativize.ts lib ebrc-client",
     "generate-icons": "mkdir -p dist && icon-font-generator icons/* -o dist -n ebrc-icons -p ebrc-icon --normalize --center --csstp ./templates/icons-css.hbs",
     "build": "veupathdb-react-scripts prepare src",
-    "build-npm-modules": "npm-run-all build relativize generate-icons",
+    "build-npm-modules": "npm-run-all build generate-icons",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "files": [
@@ -66,7 +65,6 @@
     "react-router": "5",
     "react-router-dom": "5",
     "shelljs": "^0.8.4",
-    "ts-node": "^9.0.0",
     "typescript": "~4.3.5"
   }
 }

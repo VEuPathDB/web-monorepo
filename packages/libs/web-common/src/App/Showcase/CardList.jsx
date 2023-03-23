@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
-import { projectId } from 'ebrc-client/config';
+import { projectId } from '../../config';
 import PlaceholderCard from './PlaceholderCard';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 

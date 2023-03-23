@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import Icon from '../../Components/Mesa/Components/Icon';
 
 export const ColumnDefaults = {
   primary: false,
@@ -13,14 +13,14 @@ export const ColumnDefaults = {
   filterState: {
     enabled: false,
     visible: false,
-    blacklist: []
+    blacklist: [],
   },
 
   hideable: true,
   hidden: false,
 
   disabled: false,
-  type: 'text'
+  type: 'text',
 };
 
 export const OptionsDefaults = {
@@ -35,7 +35,7 @@ export const OptionsDefaults = {
   searchPlaceholder: 'Search This Table',
   isRowSelected: (row, index) => {
     return false;
-  }
+  },
 };
 
 export const UiStateDefaults = {
@@ -43,12 +43,12 @@ export const UiStateDefaults = {
   filteredRowCount: 0,
   sort: {
     columnKey: null,
-    direction: 'asc'
+    direction: 'asc',
   },
   pagination: {
     currentPage: 1,
     totalPages: null,
     totalRows: null,
-    rowsPerPage: 20
-  }
+    rowsPerPage: 20,
+  },
 };

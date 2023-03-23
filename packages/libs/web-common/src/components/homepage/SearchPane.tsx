@@ -37,7 +37,7 @@ import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Toolti
 import {
   combineClassNames,
   useAlphabetizedSearchTree,
-} from 'ebrc-client/components/homepage/Utils';
+} from '../../components/homepage/Utils';
 
 import './SearchPane.scss';
 

@@ -4,10 +4,6 @@
     "src"
   ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "wdk-client/*": [ "src/*" ]
-    },
     "skipLibCheck": true
   }
 }

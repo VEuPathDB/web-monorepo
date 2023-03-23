@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import RecordLink from 'wdk-client/Views/Records/RecordLink';
-import { renderAttributeValue, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import RecordLink from '../../Views/Records/RecordLink';
+import { renderAttributeValue, wrappable } from '../../Utils/ComponentUtils';
 
 // FIXME Remove hardcoded name and lookup from recordClass
 let primaryKeyName = 'primary_key';
@@ -23,8 +23,7 @@ function AnswerTableCell(props) {
         {renderAttributeValue(value)}
       </RecordLink>
     );
-  }
-  else {
+  } else {
     return renderAttributeValue(value);
   }
 }

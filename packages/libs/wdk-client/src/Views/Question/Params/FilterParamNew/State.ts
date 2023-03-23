@@ -1,6 +1,10 @@
 import { groupBy, isEqual, mapValues } from 'lodash';
 
-import { Filter, MemberFilter, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
+import {
+  Filter,
+  MemberFilter,
+  OntologyTermSummary,
+} from '../../../../Components/AttributeFilter/Types';
 
 import {
   SET_ACTIVE_FIELD,
@@ -8,10 +12,9 @@ import {
   UPDATE_FILTERS,
   INVALIDATE_ONTOLOGY_TERMS,
   SUMMARY_COUNTS_LOADED,
-} from 'wdk-client/Actions/FilterParamActions';
-import { sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
-import { Action } from 'wdk-client/Actions';
-
+} from '../../../../Actions/FilterParamActions';
+import { sortDistribution } from '../../../../Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { Action } from '../../../../Actions';
 
 export type SortSpec = {
   groupBySelected: boolean;
@@ -25,34 +28,33 @@ export type MultiFieldSortSpec = {
 };
 
 type OntologySummaryAndTerm = OntologyTermSummary & {
-  term: any
+  term: any;
 };
 type BaseFieldState = {
   summary?: OntologyTermSummary;
   loading?: boolean;
   invalid?: boolean;
   errorMessage?: string;
-}
+};
 
 export type MemberFieldState = BaseFieldState & {
   sort: SortSpec;
   searchTerm: string;
   currentPage: number;
   rowsPerPage: number;
-}
+};
 
 export type MultiFieldState = BaseFieldState & {
   sort: MultiFieldSortSpec;
   leafSummaries: OntologySummaryAndTerm[];
   searchTerm: string;
-}
-
+};
 
 export type RangeFieldState = BaseFieldState & {
   yaxisMax?: number;
   xaxisMin?: number;
   xaxisMax?: number;
-}
+};
 
 export type FieldState = MemberFieldState | RangeFieldState | MultiFieldState;
 
@@ -69,32 +71,35 @@ export type State = Readonly<{
 }>;
 
 export type Value = {
-  filters: Filter[]
-}
+  filters: Filter[];
+};
 
 const initialState: State = {
   fieldStates: {},
-  loadingFilteredCount: false
-}
+  loadingFilteredCount: false,
+};
 
 // FIXME Set loading and error statuses on ontologyTermSummaries entries
 export function reduce(state: State = initialState, action: Action): State {
-  switch(action.type) {
+  switch (action.type) {
     case SET_ACTIVE_FIELD:
       return {
         ...state,
         activeOntologyTerm: action.payload.activeField,
-        fieldStates: state.fieldStates[action.payload.activeField] == null ? {
-          ...state.fieldStates,
-          [action.payload.activeField]: {}
-        } : state.fieldStates
+        fieldStates:
+          state.fieldStates[action.payload.activeField] == null
+            ? {
+                ...state.fieldStates,
+                [action.payload.activeField]: {},
+              }
+            : state.fieldStates,
       };
     case SUMMARY_COUNTS_LOADED:
       return {
         ...state,
         loadingFilteredCount: false,
         filteredCount: action.payload.nativeFiltered,
-        unfilteredCount: action.payload.nativeUnfiltered
+        unfilteredCount: action.payload.nativeUnfiltered,
       };
 
     case UPDATE_FIELD_STATE:
@@ -104,9 +109,9 @@ export function reduce(state: State = initialState, action: Action): State {
           ...state.fieldStates,
           [action.payload.field]: {
             ...state.fieldStates[action.payload.field],
-            ...action.payload.fieldState
-          }
-        }
+            ...action.payload.fieldState,
+          },
+        },
       };
 
     case UPDATE_FILTERS:
@@ -117,7 +122,7 @@ export function reduce(state: State = initialState, action: Action): State {
           state,
           action.payload.prevFilters,
           action.payload.filters
-        )
+        ),
       };
 
     case INVALIDATE_ONTOLOGY_TERMS:
@@ -128,9 +133,10 @@ export function reduce(state: State = initialState, action: Action): State {
           action.payload.retainedFields.includes(key)
             ? fieldState
             : {
-              ...fieldState,
-              invalid: true
-            })
+                ...fieldState,
+                invalid: true,
+              }
+        ),
       };
 
     default:
@@ -138,22 +144,35 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 }
 
-function handleFilterChange(state: State, prevFilters: Filter[], filters: Filter[]) {
+function handleFilterChange(
+  state: State,
+  prevFilters: Filter[],
+  filters: Filter[]
+) {
   // Get an array of fields whose associated filters have been modified.
   // Concat prev and new filters arrays, then group them by field name
-  const modifiedFields = new Set(Object.entries(groupBy(filters.concat(prevFilters), 'field'))
-    // keep filters if prev and new are not equal, or if there is only one for a field name (e.g., added/removed)
-    .filter(([, filters]) => filters.length === 1 || !isEqual(filters[0], filters[1]))
-    .map(([field]) => field));
+  const modifiedFields = new Set(
+    Object.entries(groupBy(filters.concat(prevFilters), 'field'))
+      // keep filters if prev and new are not equal, or if there is only one for a field name (e.g., added/removed)
+      .filter(
+        ([, filters]) =>
+          filters.length === 1 || !isEqual(filters[0], filters[1])
+      )
+      .map(([field]) => field)
+  );
 
   return mapValues(state.fieldStates, (fieldState, fieldTerm) => {
     if (modifiedFields.size > 2 || fieldTerm !== state.activeOntologyTerm) {
       fieldState = {
         ...fieldState,
-        summary: undefined
-      }
+        summary: undefined,
+      };
     }
-    if (isMemberFieldState(fieldState) && fieldState.summary && fieldState.sort.groupBySelected) {
+    if (
+      isMemberFieldState(fieldState) &&
+      fieldState.summary &&
+      fieldState.sort.groupBySelected
+    ) {
       fieldState = {
         ...fieldState,
         summary: {
@@ -161,15 +180,17 @@ function handleFilterChange(state: State, prevFilters: Filter[], filters: Filter
           valueCounts: sortDistribution(
             fieldState.summary.valueCounts,
             fieldState.sort,
-            filters.find(filter => filter.field === fieldTerm) as MemberFilter
-          )
-        }
-      }
+            filters.find((filter) => filter.field === fieldTerm) as MemberFilter
+          ),
+        },
+      };
     }
     return fieldState;
-  })
+  });
 }
 
-function isMemberFieldState(fieldState: FieldState): fieldState is MemberFieldState {
+function isMemberFieldState(
+  fieldState: FieldState
+): fieldState is MemberFieldState {
   return (fieldState as MemberFieldState).sort !== undefined;
 }

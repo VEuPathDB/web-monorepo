@@ -7,30 +7,32 @@ import {
   has,
   isFunction,
   memoize,
-  partition
+  partition,
 } from 'lodash';
 import React from 'react';
-import Toggle from 'wdk-client/Components/Icon/Toggle';
-import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
-import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
-import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { findAncestorNode } from 'wdk-client/Utils/DomUtils';
-import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
-import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
-import { toPercentage } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import Toggle from '../../Components/Icon/Toggle';
+import { MesaController as Mesa } from '../../Components/Mesa';
+import RealTimeSearchBox from '../../Components/SearchBox/RealTimeSearchBox';
+import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
+import { safeHtml } from '../../Utils/ComponentUtils';
+import { findAncestorNode } from '../../Utils/DomUtils';
+import StackedBar from '../../Components/AttributeFilter/StackedBar';
+import UnknownCount from '../../Components/AttributeFilter/UnknownCount';
+import { toPercentage } from '../../Components/AttributeFilter/AttributeFilterUtils';
 
 const UNKNOWN_ELEMENT = <em>Not specified</em>;
 
 class MembershipField extends React.PureComponent {
-
   constructor(props) {
     super(props);
     this.state = {};
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleGroupBySelected = this.handleGroupBySelected.bind(this);
-    this.mapMouseTargetToTooltipState = debounce(this.mapMouseTargetToTooltipState, 250);
+    this.mapMouseTargetToTooltipState = debounce(
+      this.mapMouseTargetToTooltipState,
+      250
+    );
     this.state = { showDisabledTooltip: false };
   }
 
@@ -40,7 +42,11 @@ class MembershipField extends React.PureComponent {
   }
 
   handleMouseLeave() {
-    this.setState({ showDisabledTooltip: false, top: undefined, left: undefined })
+    this.setState({
+      showDisabledTooltip: false,
+      top: undefined,
+      left: undefined,
+    });
     this.mapMouseTargetToTooltipState.cancel();
   }
 
@@ -48,7 +54,7 @@ class MembershipField extends React.PureComponent {
     this.props.onMemberSort(
       this.props.activeField,
       Object.assign({}, this.props.activeFieldState.sort, {
-        groupBySelected: !this.props.activeFieldState.sort.groupBySelected
+        groupBySelected: !this.props.activeFieldState.sort.groupBySelected,
       })
     );
   }
@@ -61,25 +67,26 @@ class MembershipField extends React.PureComponent {
   }
 
   mapMouseTargetToTooltipState(element, root) {
-    const disabledRow = findAncestorNode(
-      element,
-      isDisabledRow,
-      root
-    );
+    const disabledRow = findAncestorNode(element, isDisabledRow, root);
     const showDisabledTooltip = disabledRow != null;
-    const { top, left } = disabledRow == null ? {} : disabledRow.getBoundingClientRect();
+    const { top, left } =
+      disabledRow == null ? {} : disabledRow.getBoundingClientRect();
 
     this.setState({
       showDisabledTooltip,
       tooltipTop: top + 20,
-      tooltipLeft: left + 40
-    })
+      tooltipLeft: left + 40,
+    });
   }
 
   render() {
     return (
       <ErrorBoundary>
-        <div className="membership-filter" onMouseOver={this.handleMouseOver} onMouseLeave={this.handleMouseLeave}>
+        <div
+          className="membership-filter"
+          onMouseOver={this.handleMouseOver}
+          onMouseLeave={this.handleMouseLeave}
+        >
           {this.props.filter == null ? (
             <div className="membership-actions">
               <div className="membership-action__no-filters">
@@ -89,68 +96,65 @@ class MembershipField extends React.PureComponent {
                 <UnknownCount {...this.props} />
               </div>
             </div>
-          )
-            : this.isSortEnabled() ? (
-              <div className="membership-actions">
-                <div className="membership-action membership-action__group-selected">
-                  <button
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0
-                    }}
-                    type="button"
-                    onClick={this.handleGroupBySelected}
-                  >
-                    <Toggle
-                      on={this.props.activeFieldState.sort.groupBySelected}
-                    /> Keep checked values at top
-                  </button>
-                </div>
-                <div className="membership-action">
-                  <UnknownCount {...this.props} />
-                </div>
+          ) : this.isSortEnabled() ? (
+            <div className="membership-actions">
+              <div className="membership-action membership-action__group-selected">
+                <button
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                  }}
+                  type="button"
+                  onClick={this.handleGroupBySelected}
+                >
+                  <Toggle
+                    on={this.props.activeFieldState.sort.groupBySelected}
+                  />{' '}
+                  Keep checked values at top
+                </button>
               </div>
-            ) : null}
+              <div className="membership-action">
+                <UnknownCount {...this.props} />
+              </div>
+            </div>
+          ) : null}
 
-          {this.state.showDisabledTooltip &&
+          {this.state.showDisabledTooltip && (
             <div
               className="disabled-tooltip"
               style={{
                 left: this.state.tooltipLeft,
-                top: this.state.tooltipTop
+                top: this.state.tooltipTop,
               }}
             >
-              This item is unavailable because your previous filters have removed these {this.props.displayName}.
+              This item is unavailable because your previous filters have
+              removed these {this.props.displayName}.
             </div>
-          }
+          )}
 
           <MembershipTable {...this.props} />
         </div>
       </ErrorBoundary>
-    )
+    );
   }
-
 }
 
 MembershipField.defaultProps = {
   filteredCountHeadingPrefix: 'Remaining',
   unfilteredCountHeadingPrefix: '',
-}
+};
 
-function filterBySearchTerm(rows, searchTerm){
-  if (searchTerm !== ''){
+function filterBySearchTerm(rows, searchTerm) {
+  if (searchTerm !== '') {
     let re = new RegExp(escapeRegExp(searchTerm), 'i');
-    return rows.filter(entry => re.test(entry.value));
+    return rows.filter((entry) => re.test(entry.value));
   } else {
     return rows;
   }
 }
-function selectPage(rows, currentPage, rowsPerPage){
-  return rows.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+function selectPage(rows, currentPage, rowsPerPage) {
+  return rows.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 }
 
 /**
@@ -171,7 +175,8 @@ class MembershipTable extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    bindAll(this,
+    bindAll(
+      this,
       'deriveRowClassName',
       'handleRowClick',
       'handleRowDeselect',
@@ -196,14 +201,16 @@ class MembershipTable extends React.PureComponent {
       'renderValueHeading',
       'renderValueHeadingSearch',
       'toFilterValue',
-      'getRows',
+      'getRows'
     );
     this.getKnownValues = memoize(this.getKnownValues);
     this.isItemSelected = memoize(this.isItemSelected);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.activeFieldState.summary !== nextProps.activeFieldState.summary) {
+    if (
+      this.props.activeFieldState.summary !== nextProps.activeFieldState.summary
+    ) {
       this.getKnownValues.cache.clear();
     }
     if (this.props.filter !== nextProps.filter) {
@@ -212,14 +219,17 @@ class MembershipTable extends React.PureComponent {
   }
 
   toFilterValue(value) {
-    return this.props.activeField.type === 'string' ? String(value)
-      : this.props.activeField.type === 'number' ? Number(value)
-      : this.props.activeField.type === 'date' ? Date(value)
+    return this.props.activeField.type === 'string'
+      ? String(value)
+      : this.props.activeField.type === 'number'
+      ? Number(value)
+      : this.props.activeField.type === 'date'
+      ? Date(value)
       : value;
   }
 
-  getRows(){
-     return this.props.activeFieldState.summary.valueCounts;
+  getRows() {
+    return this.props.activeFieldState.summary.valueCounts;
   }
 
   getKnownValues() {
@@ -232,16 +242,15 @@ class MembershipTable extends React.PureComponent {
     return get(this.props, 'filter.value');
   }
 
-
-
   deriveRowClassName(item) {
-    const selectedClassName = (
+    const selectedClassName =
       item.filteredCount > 0 &&
       (this.props.filter == null || this.isItemSelected(item))
-    ) ? 'member__selected' : '';
+        ? 'member__selected'
+        : '';
 
-    const disabledClassName = item.filteredCount === 0
-      ? 'member__disabled' : '';
+    const disabledClassName =
+      item.filteredCount === 0 ? 'member__disabled' : '';
 
     return `member ${selectedClassName} ${disabledClassName}`;
   }
@@ -249,11 +258,13 @@ class MembershipTable extends React.PureComponent {
   isItemSelected(item) {
     let { filter, selectByDefault } = this.props;
 
-    return filter == null ? selectByDefault
-      // value is null (ie, unknown) and includeUnknown selected
-      : item.value == null ? filter.includeUnknown
-      // filter.value is null (ie, all known values), or filter.value includes value
-      : filter.value == null || filter.value.includes(item.value);
+    return filter == null
+      ? selectByDefault
+      : // value is null (ie, unknown) and includeUnknown selected
+      item.value == null
+      ? filter.includeUnknown
+      : // filter.value is null (ie, all known values), or filter.value includes value
+        filter.value == null || filter.value.includes(item.value);
   }
 
   isSortEnabled() {
@@ -263,7 +274,7 @@ class MembershipTable extends React.PureComponent {
     );
   }
 
-  isPaginationEnabled(){
+  isPaginationEnabled() {
     return (
       this.getRows().length > 100 &&
       has(this.props, 'activeFieldState.currentPage') &&
@@ -290,18 +301,22 @@ class MembershipTable extends React.PureComponent {
 
     if (value == null) {
       this.handleUnknownChange(addItem);
-    }
-    else {
-      const currentFilterValue = this.props.filter == null
-        ? (selectByDefault ? this.getKnownValues() : [])
-        : this.getValuesForFilter() || this.getKnownValues();
+    } else {
+      const currentFilterValue =
+        this.props.filter == null
+          ? selectByDefault
+            ? this.getKnownValues()
+            : []
+          : this.getValuesForFilter() || this.getKnownValues();
       const filterValue = addItem
         ? currentFilterValue.concat(value)
-        : currentFilterValue.filter(v => v !== value);
+        : currentFilterValue.filter((v) => v !== value);
 
-      this.setSelections(filterValue.length === this.getKnownValues().length
-        ? undefined
-        : filterValue);
+      this.setSelections(
+        filterValue.length === this.getKnownValues().length
+          ? undefined
+          : filterValue
+      );
     }
   }
 
@@ -323,25 +338,37 @@ class MembershipTable extends React.PureComponent {
 
   handleSelectAll() {
     const allRows = this.getRows();
-    const searchTerm = this.isSearchEnabled() && this.props.activeFieldState.searchTerm;
+    const searchTerm =
+      this.isSearchEnabled() && this.props.activeFieldState.searchTerm;
 
     if (!searchTerm) {
-      if (allRows.some(row => row.filteredCount > 0 && !this.isItemSelected(row))) {
+      if (
+        allRows.some(
+          (row) => row.filteredCount > 0 && !this.isItemSelected(row)
+        )
+      ) {
         // At least one row isn't selected. Select all rows.
-        this.setSelections(allRows.filter(row => row.filteredCount > 0).map(row => row.value));
+        this.setSelections(
+          allRows.filter((row) => row.filteredCount > 0).map((row) => row.value)
+        );
       } else {
         // All rows are selected. Deselect all rows.
         this.setSelections([]);
       }
     } else {
-      const selectableRows = allRows.filter(row => row.filteredCount > 0);
-      const selectedValues = selectableRows.filter(row => this.isItemSelected(row)).map(row => row.value);
+      const selectableRows = allRows.filter((row) => row.filteredCount > 0);
+      const selectedValues = selectableRows
+        .filter((row) => this.isItemSelected(row))
+        .map((row) => row.value);
       // Values in the search results that are selectable
-      const selectableResultValues = filterBySearchTerm(selectableRows, searchTerm).map(row => row.value);
-      const [
-        selectedResultValues,
-        unselectedResultValues
-      ] = partition(selectableResultValues, value => selectedValues.includes(value));
+      const selectableResultValues = filterBySearchTerm(
+        selectableRows,
+        searchTerm
+      ).map((row) => row.value);
+      const [selectedResultValues, unselectedResultValues] = partition(
+        selectableResultValues,
+        (value) => selectedValues.includes(value)
+      );
 
       if (unselectedResultValues.length > 0) {
         // Select all search result values, preserving selections outside the search results
@@ -364,36 +391,54 @@ class MembershipTable extends React.PureComponent {
   }
 
   handleChangeCurrentPage(newCurrentPage) {
-    this.props.onMemberChangeCurrentPage(this.props.activeField, newCurrentPage);
+    this.props.onMemberChangeCurrentPage(
+      this.props.activeField,
+      newCurrentPage
+    );
   }
 
   handleChangeRowsPerPage(newRowsPerPage) {
-    this.props.onMemberChangeRowsPerPage(this.props.activeField, newRowsPerPage);
+    this.props.onMemberChangeRowsPerPage(
+      this.props.activeField,
+      newRowsPerPage
+    );
   }
 
-  setSelections(value, includeUnknown = get(this.props, 'filter.includeUnknown', false)) {
-    this.props.onChange(this.props.activeField, value, includeUnknown,
-      this.getRows());
+  setSelections(
+    value,
+    includeUnknown = get(this.props, 'filter.includeUnknown', false)
+  ) {
+    this.props.onChange(
+      this.props.activeField,
+      value,
+      includeUnknown,
+      this.getRows()
+    );
   }
 
   renderCheckboxHeading() {
-    const availableItems = this.getRows()
-      .filter(member => member.filteredCount > 0);
-    const allAvailableChecked = availableItems
-      .every(member => this.isItemSelected(member));
-    const someAvailableChecked = availableItems
-      .some(member => this.isItemSelected(member));
+    const availableItems = this.getRows().filter(
+      (member) => member.filteredCount > 0
+    );
+    const allAvailableChecked = availableItems.every((member) =>
+      this.isItemSelected(member)
+    );
+    const someAvailableChecked = availableItems.some((member) =>
+      this.isItemSelected(member)
+    );
 
     const showChecked = availableItems.length > 0 && allAvailableChecked;
-    const showIndeterminate = availableItems.length > 0 && someAvailableChecked && ! allAvailableChecked;
+    const showIndeterminate =
+      availableItems.length > 0 && someAvailableChecked && !allAvailableChecked;
 
     return (
       <input
         type="checkbox"
         disabled={availableItems.length === 0}
         checked={showChecked}
-        ref={el => el && (el.indeterminate = showIndeterminate)}
-        onChange={this.handleSelectAll} />
+        ref={(el) => el && (el.indeterminate = showIndeterminate)}
+        onChange={this.handleSelectAll}
+      />
     );
   }
 
@@ -403,7 +448,12 @@ class MembershipTable extends React.PureComponent {
     const onClick = () =>
       isChecked ? this.handleRowDeselect(row) : this.handleRowSelect(row);
     return (
-      <input type="checkbox" checked={isChecked} onChange={onClick} disabled={isDisabled} />
+      <input
+        type="checkbox"
+        checked={isChecked}
+        onChange={onClick}
+        disabled={isDisabled}
+      />
     );
   }
 
@@ -419,7 +469,7 @@ class MembershipTable extends React.PureComponent {
           fontSize: '.8em',
           fontWeight: 'normal',
         }}
-        onMouseUp={event => {
+        onMouseUp={(event) => {
           event.stopPropagation();
         }}
       >
@@ -440,9 +490,21 @@ class MembershipTable extends React.PureComponent {
 
   renderCountHeading1(qualifier) {
     return (
-      <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div
+        style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}
+      >
         <div>{qualifier}</div>
-        <div style={{marginLeft: '.6ex', maxWidth: '6em', overflow: 'hidden', textOverflow: 'ellipsis', fontStyle: 'italic'}}>{this.props.displayName}</div>
+        <div
+          style={{
+            marginLeft: '.6ex',
+            maxWidth: '6em',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            fontStyle: 'italic',
+          }}
+        >
+          {this.props.displayName}
+        </div>
       </div>
     );
   }
@@ -451,7 +513,11 @@ class MembershipTable extends React.PureComponent {
     return (
       <div>
         {internalsCount.toLocaleString()}
-        <small style={{ display: 'inline-block', width: '50%', textAlign: 'center' }}>(100%)</small>
+        <small
+          style={{ display: 'inline-block', width: '50%', textAlign: 'center' }}
+        >
+          (100%)
+        </small>
       </div>
     );
   }
@@ -462,8 +528,18 @@ class MembershipTable extends React.PureComponent {
         {value.toLocaleString()}
         &nbsp;
         {internalsCount != null && (
-          <small style={{ display: 'inline-block', width: '50%', textAlign: 'center' }}>
-            ({value === 0 || internalsCount ===  0 ? 0 : toPercentage(value,internalsCount)}%)
+          <small
+            style={{
+              display: 'inline-block',
+              width: '50%',
+              textAlign: 'center',
+            }}
+          >
+            (
+            {value === 0 || internalsCount === 0
+              ? 0
+              : toPercentage(value, internalsCount)}
+            %)
           </small>
         )}
       </div>
@@ -475,11 +551,16 @@ class MembershipTable extends React.PureComponent {
   }
 
   renderFilteredCountHeading2() {
-    return this.renderCountHeading2(this.props.activeFieldState.summary.internalsFilteredCount);
+    return this.renderCountHeading2(
+      this.props.activeFieldState.summary.internalsFilteredCount
+    );
   }
 
   renderFilteredCountCell({ value }) {
-    return this.renderCountCell(value, this.props.activeFieldState.summary.internalsFilteredCount);
+    return this.renderCountCell(
+      value,
+      this.props.activeFieldState.summary.internalsFilteredCount
+    );
   }
 
   renderUnfilteredCountHeading1() {
@@ -487,11 +568,16 @@ class MembershipTable extends React.PureComponent {
   }
 
   renderUnfilteredCountHeading2() {
-    return this.renderCountHeading2(this.props.activeFieldState.summary.internalsCount);
+    return this.renderCountHeading2(
+      this.props.activeFieldState.summary.internalsCount
+    );
   }
 
   renderUnfilteredCountCell({ value }) {
-    return this.renderCountCell(value, this.props.activeFieldState.summary.internalsCount);
+    return this.renderCountCell(
+      value,
+      this.props.activeFieldState.summary.internalsCount
+    );
   }
 
   renderDistributionCell({ row }) {
@@ -499,7 +585,10 @@ class MembershipTable extends React.PureComponent {
       <StackedBar
         count={row.count}
         filteredCount={row.filteredCount}
-        populationSize={this.props.activeFieldState.summary.internalsCount || this.props.dataCount}
+        populationSize={
+          this.props.activeFieldState.summary.internalsCount ||
+          this.props.dataCount
+        }
         fillBarColor={this.props.fillBarColor}
         fillFilteredBarColor={this.props.fillFilteredBarColor}
       />
@@ -509,7 +598,7 @@ class MembershipTable extends React.PureComponent {
   renderPrecentageCell({ row }) {
     return (
       <small title={`Remaining "${row.value}" / All "${row.value}"`}>
-        ({Math.round(row.filteredCount / row.count * 100)}%)
+        ({Math.round((row.filteredCount / row.count) * 100)}%)
       </small>
     );
   }
@@ -518,37 +607,37 @@ class MembershipTable extends React.PureComponent {
     var useSort = this.isSortEnabled();
     var useSearch = this.isSearchEnabled();
     var usePagination = this.isPaginationEnabled();
-    const {currentPage, rowsPerPage, searchTerm, ...uiStateOther} = this.props.activeFieldState;
+    const { currentPage, rowsPerPage, searchTerm, ...uiStateOther } =
+      this.props.activeFieldState;
 
     const rows = this.getRows();
     let filteredRows = this.getRows();
 
-    if (useSearch){
+    if (useSearch) {
       filteredRows = filterBySearchTerm(filteredRows, searchTerm);
     }
 
     const totalRowsForPagination = Math.max(1, filteredRows.length);
 
-    if (usePagination){
+    if (usePagination) {
       filteredRows = selectPage(filteredRows, currentPage, rowsPerPage);
     }
 
-    const uiState = Object.assign({},
+    const uiState = Object.assign(
+      {},
       uiStateOther,
-      useSearch && searchTerm
-      ? {searchTerm}
-      : {},
+      useSearch && searchTerm ? { searchTerm } : {},
       usePagination
-      ? {
-        pagination:  {
-          currentPage,
-          rowsPerPage,
-          totalRows: totalRowsForPagination,
-          rowsPerPageOptions: [50, 100, 200, 500, 1000],
-          totalPages: Math.ceil(totalRowsForPagination / rowsPerPage)
-        }
-      }
-      : {}
+        ? {
+            pagination: {
+              currentPage,
+              rowsPerPage,
+              totalRows: totalRowsForPagination,
+              rowsPerPageOptions: [50, 100, 200, 500, 1000],
+              totalPages: Math.ceil(totalRowsForPagination / rowsPerPage),
+            },
+          }
+        : {}
     );
 
     const eventHandlers = Object.assign(
@@ -556,12 +645,14 @@ class MembershipTable extends React.PureComponent {
         // onRowSelect: this.handleRowSelect,
         // onRowDeselect: this.handleRowDeselect,
         // onMultipleRowSelect: this.handleSelectAll,
-        onSort: this.handleSort
+        onSort: this.handleSort,
       },
-      usePagination ? {
-        onPageChange: this.handleChangeCurrentPage,
-        onRowsPerPageChange: this.handleChangeRowsPerPage
-      } : {}
+      usePagination
+        ? {
+            onPageChange: this.handleChangeCurrentPage,
+            onRowsPerPageChange: this.handleChangeRowsPerPage,
+          }
+        : {}
     );
     return (
       <Mesa
@@ -570,7 +661,7 @@ class MembershipTable extends React.PureComponent {
           deriveRowClassName: this.deriveRowClassName,
           onRowClick: this.handleRowClick,
           useStickyHeader: true,
-          tableBodyMaxHeight: '80vh'
+          tableBodyMaxHeight: '80vh',
         }}
         uiState={uiState}
         actions={[]}
@@ -583,7 +674,7 @@ class MembershipTable extends React.PureComponent {
             sortable: false,
             width: '32px',
             renderHeading: this.renderCheckboxHeading,
-            renderCell: this.renderCheckboxCell
+            renderCell: this.renderCheckboxCell,
           },
           {
             key: 'value',
@@ -593,7 +684,7 @@ class MembershipTable extends React.PureComponent {
             renderHeading: useSearch
               ? [this.renderValueHeading, this.renderValueHeadingSearch]
               : this.renderValueHeading,
-            renderCell: this.renderValueCell
+            renderCell: this.renderValueCell,
           },
           {
             key: 'filteredCount',
@@ -601,15 +692,24 @@ class MembershipTable extends React.PureComponent {
             width: '12em',
             helpText: (
               <div>
-                The number of <em>{this.props.displayName}</em> that match the filters applied for other variables<br />
-                and have the given <em>{this.props.activeField.display}</em> value
+                The number of <em>{this.props.displayName}</em> that match the
+                filters applied for other variables
+                <br />
+                and have the given <em>
+                  {this.props.activeField.display}
+                </em>{' '}
+                value
               </div>
             ),
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
-            renderHeading: this.props.activeFieldState.summary.internalsFilteredCount != null
-              ? [this.renderFilteredCountHeading1, this.renderFilteredCountHeading2]
-              : this.renderFilteredCountHeading1,
-            renderCell: this.renderFilteredCountCell
+            renderHeading:
+              this.props.activeFieldState.summary.internalsFilteredCount != null
+                ? [
+                    this.renderFilteredCountHeading1,
+                    this.renderFilteredCountHeading2,
+                  ]
+                : this.renderFilteredCountHeading1,
+            renderCell: this.renderFilteredCountCell,
           },
           {
             key: 'count',
@@ -617,14 +717,20 @@ class MembershipTable extends React.PureComponent {
             width: '12em',
             helpText: (
               <div>
-                The number of <em>{this.props.displayName}</em> in the dataset that have the given <em>{this.props.activeField.display}</em> value
+                The number of <em>{this.props.displayName}</em> in the dataset
+                that have the given <em>{this.props.activeField.display}</em>{' '}
+                value
               </div>
             ),
             wrapCustomHeadings: ({ headingRowIndex }) => headingRowIndex === 0,
-            renderHeading: this.props.activeFieldState.summary.internalsCount != null
-              ? [this.renderUnfilteredCountHeading1, this.renderUnfilteredCountHeading2]
-              : this.renderUnfilteredCountHeading1,
-            renderCell: this.renderUnfilteredCountCell
+            renderHeading:
+              this.props.activeFieldState.summary.internalsCount != null
+                ? [
+                    this.renderUnfilteredCountHeading1,
+                    this.renderUnfilteredCountHeading2,
+                  ]
+                : this.renderUnfilteredCountHeading1,
+            renderCell: this.renderUnfilteredCountCell,
           },
           {
             key: 'distribution',
@@ -632,10 +738,12 @@ class MembershipTable extends React.PureComponent {
             width: '30%',
             helpText: (
               <div>
-                The subset of <em>{this.props.displayName}</em> that have the given <em>{this.props.activeField.display}</em> value when other filters have been applied
+                The subset of <em>{this.props.displayName}</em> that have the
+                given <em>{this.props.activeField.display}</em> value when other
+                filters have been applied
               </div>
             ),
-            renderCell: this.renderDistributionCell
+            renderCell: this.renderDistributionCell,
           },
           {
             key: '%',
@@ -643,20 +751,20 @@ class MembershipTable extends React.PureComponent {
             width: '4em',
             helpText: (
               <div>
-                The subset of <em>{this.props.displayName}</em> out of all <em>{this.props.displayName}</em> that have the given <em>{this.props.activeField.display}</em> value
+                The subset of <em>{this.props.displayName}</em> out of all{' '}
+                <em>{this.props.displayName}</em> that have the given{' '}
+                <em>{this.props.activeField.display}</em> value
               </div>
             ),
-            renderCell: this.renderPrecentageCell
-          }
+            renderCell: this.renderPrecentageCell,
+          },
         ]}
-      >
-      </Mesa>
+      ></Mesa>
     );
   }
-
 }
 
-export default MembershipField
+export default MembershipField;
 
 /** @param {HTMLElement} element */
 function isDisabledRow(element) {

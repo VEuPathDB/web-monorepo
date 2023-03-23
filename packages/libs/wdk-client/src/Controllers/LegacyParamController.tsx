@@ -5,49 +5,47 @@ import ReactDOM from 'react-dom';
 import {
   updateActiveQuestion,
   unloadQuestion,
-  updateParamValue
-} from 'wdk-client/Actions/QuestionActions';
-import ViewController from 'wdk-client/Core/Controllers/ViewController';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { preorder } from 'wdk-client/Utils/TreeUtils';
-import { EnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+  updateParamValue,
+} from '../Actions/QuestionActions';
+import ViewController from '../Core/Controllers/ViewController';
+import { Seq } from '../Utils/IterableUtils';
+import { preorder } from '../Utils/TreeUtils';
+import { EnumParam, Parameter } from '../Utils/WdkModel';
+import { QuestionState } from '../StoreModules/QuestionStoreModule';
 
-import * as ParamModules from 'wdk-client/Views/Question/Params';
-import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import TreeBoxEnumParam from 'wdk-client/Views/Question/Params/TreeBoxEnumParam';
-import { Context } from 'wdk-client/Views/Question/Params/Utils';
+import * as ParamModules from '../Views/Question/Params';
+import { isEnumParam } from '../Views/Question/Params/EnumParamUtils';
+import TreeBoxEnumParam from '../Views/Question/Params/TreeBoxEnumParam';
+import { Context } from '../Views/Question/Params/Utils';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { RootState } from '../Core/State/Types';
 
 const ActionCreators = {
   setActiveQuestion: updateActiveQuestion,
-  updateParamValue
-}
+  updateParamValue,
+};
 
 type OwnProps = {
   searchName: string;
   paramName: string;
   paramValues: Record<string, string>;
   stepId: number | undefined;
-}
+};
 
 type StateProps = QuestionState;
 
 type DispatchProps = {
   eventHandlers: typeof ActionCreators;
   dispatch: Dispatch;
-}
+};
 
-type Props = { own: OwnProps, mapped: StateProps & DispatchProps };
+type Props = { own: OwnProps; mapped: StateProps & DispatchProps };
 
 class LegacyParamController extends ViewController<Props> {
-
   static readonly UNRECOVERABLE_PARAM_ERROR_EVENT = 'unrecoverable-param-error';
   static readonly PARAM_VALID_EVENT = 'param-valid';
   static readonly PARAM_INVALID_EVENT = 'param-invalid';
-
 
   paramModules = ParamModules;
 
@@ -66,23 +64,26 @@ class LegacyParamController extends ViewController<Props> {
         autoRun: false,
         prepopulateWithLastParamValues: false,
         initialParamData: this.props.own.paramValues,
-        stepId: this.props.own.stepId
+        stepId: this.props.own.stepId,
       });
-    }
-
-    else if (prevProps != null) {
+    } else if (prevProps != null) {
       let prevParamValues = prevProps.own.paramValues || {};
       let paramValues = this.props.own.paramValues || {};
-      let changedParams = Object.entries(paramValues)
-        .filter(([name, value]) => (
+      let changedParams = Object.entries(paramValues).filter(
+        ([name, value]) =>
           prevParamValues[name] !== value &&
           this.props.mapped.paramValues[name] !== value
-        ));
+      );
       if (changedParams.length > 1) {
-        console.warn('Received multiple changed param values: %o', changedParams);
+        console.warn(
+          'Received multiple changed param values: %o',
+          changedParams
+        );
       }
       changedParams.forEach(([name, paramValue]) => {
-        let parameter = this.props.mapped.question.parameters.find(p => p.name === name);
+        let parameter = this.props.mapped.question.parameters.find(
+          (p) => p.name === name
+        );
         if (parameter) {
           this.props.mapped.eventHandlers.updateParamValue({
             ...this.getContext(parameter),
@@ -101,7 +102,10 @@ class LegacyParamController extends ViewController<Props> {
       this.props.own.paramValues != null
     ) {
       if (node) {
-        const event = new CustomEvent(LegacyParamController.UNRECOVERABLE_PARAM_ERROR_EVENT, { bubbles: true, cancelable: false });
+        const event = new CustomEvent(
+          LegacyParamController.UNRECOVERABLE_PARAM_ERROR_EVENT,
+          { bubbles: true, cancelable: false }
+        );
         node.dispatchEvent(event);
       }
     }
@@ -110,11 +114,17 @@ class LegacyParamController extends ViewController<Props> {
     const parameter = this.getParameter();
 
     if (parameter != null && node != null) {
-      const eventType = ParamModules.isParamValueValid(this.getContext(parameter), this.props.mapped.paramUIState[parameter.name])
+      const eventType = ParamModules.isParamValueValid(
+        this.getContext(parameter),
+        this.props.mapped.paramUIState[parameter.name]
+      )
         ? LegacyParamController.PARAM_VALID_EVENT
         : LegacyParamController.PARAM_INVALID_EVENT;
-        const event = new CustomEvent(eventType, { bubbles: true, cancelable: false });
-        node.dispatchEvent(event);
+      const event = new CustomEvent(eventType, {
+        bubbles: true,
+        cancelable: false,
+      });
+      node.dispatchEvent(event);
     }
   }
 
@@ -132,7 +142,9 @@ class LegacyParamController extends ViewController<Props> {
 
   getParameter() {
     return this.isRenderDataLoaded()
-      ? this.props.mapped.question.parameters.find(p => p.name === this.props.own.paramName)
+      ? this.props.mapped.question.parameters.find(
+          (p) => p.name === this.props.own.paramName
+        )
       : undefined;
   }
 
@@ -140,14 +152,17 @@ class LegacyParamController extends ViewController<Props> {
     return {
       searchName: this.props.mapped.question.urlSegment,
       parameter: parameter,
-      paramValues: this.props.mapped.paramValues
-    }
+      paramValues: this.props.mapped.paramValues,
+    };
   }
 
   renderDataLoadError() {
     const isProbablyRevise = this.props.own.paramValues != null;
-    const errorMessage = 'Data for this parameter could not be loaded.' +
-      (isProbablyRevise ? ' The strategy this search belongs to will have to recreated.' : '');
+    const errorMessage =
+      'Data for this parameter could not be loaded.' +
+      (isProbablyRevise
+        ? ' The strategy this search belongs to will have to recreated.'
+        : '');
 
     return (
       <div>
@@ -156,10 +171,18 @@ class LegacyParamController extends ViewController<Props> {
         </div>
 
         {isProbablyRevise && [
-          <div style={{ fontWeight: 'bold', padding: '1em 0' }}>Current value:</div>,
-          <div style={{ maxHeight: 300, overflow: 'auto', background: '#f3f3f3' }}>
-            <pre>{prettyPrintRawValue(this.props.own.paramValues[this.props.own.paramName])}</pre>
-          </div>
+          <div style={{ fontWeight: 'bold', padding: '1em 0' }}>
+            Current value:
+          </div>,
+          <div
+            style={{ maxHeight: 300, overflow: 'auto', background: '#f3f3f3' }}
+          >
+            <pre>
+              {prettyPrintRawValue(
+                this.props.own.paramValues[this.props.own.paramName]
+              )}
+            </pre>
+          </div>,
         ]}
       </div>
     );
@@ -175,25 +198,37 @@ class LegacyParamController extends ViewController<Props> {
     if (this.props.mapped.paramErrors[parameter.name]) {
       return (
         <div>
-          <div style={{ color: 'red', fontSize: '2em', fontStyle: 'italic', margin: '1em 0' }}>
+          <div
+            style={{
+              color: 'red',
+              fontSize: '2em',
+              fontStyle: 'italic',
+              margin: '1em 0',
+            }}
+          >
             Oops... something went wrong.
           </div>
-          <p>Not all of the data could be loaded. Support staff have been notified of the problem and are looking into it.</p>
+          <p>
+            Not all of the data could be loaded. Support staff have been
+            notified of the problem and are looking into it.
+          </p>
         </div>
-      )
+      );
     }
 
-    const paramInput = isEnumParam(parameter)
-      ? <EnumParameterInput
-          name={this.props.own.paramName}
-          value={this.props.mapped.paramValues[this.props.own.paramName]}
-          parameter={parameter}
-        />
-      : <SimpleParamterInput
-          name={this.props.own.paramName}
-          value={this.props.mapped.paramValues[this.props.own.paramName]}
-          parameter={parameter}
-        />
+    const paramInput = isEnumParam(parameter) ? (
+      <EnumParameterInput
+        name={this.props.own.paramName}
+        value={this.props.mapped.paramValues[this.props.own.paramName]}
+        parameter={parameter}
+      />
+    ) : (
+      <SimpleParamterInput
+        name={this.props.own.paramName}
+        value={this.props.mapped.paramValues[this.props.own.paramName]}
+        parameter={parameter}
+      />
+    );
 
     return (
       <div>
@@ -212,23 +247,21 @@ class LegacyParamController extends ViewController<Props> {
         />
         {paramInput}
       </div>
-    )
+    );
   }
-
 }
 
 type ParameterInputProps = {
   name: string;
   value: string;
   parameter: Parameter;
-}
+};
 
 /**
  * Input element that emits change events so that it can participate in classic
  * question page (see wdk/js/components/paramterHandlers.js).
  */
 class SimpleParamterInput extends React.Component<ParameterInputProps> {
-
   input: HTMLInputElement | null = null;
 
   dispatchChangeEvent = debounce(this._dispatchChangeEvent, 1000);
@@ -241,7 +274,7 @@ class SimpleParamterInput extends React.Component<ParameterInputProps> {
 
   _dispatchChangeEvent() {
     if (this.input == null) {
-      console.warn("Input field is not defined. Skipping event dispatch.");
+      console.warn('Input field is not defined. Skipping event dispatch.');
       return;
     }
     this.input.dispatchEvent(new CustomEvent('change', { bubbles: true }));
@@ -250,7 +283,7 @@ class SimpleParamterInput extends React.Component<ParameterInputProps> {
   render() {
     return (
       <input
-        ref={el => this.input = el}
+        ref={(el) => (this.input = el)}
         type="hidden"
         id={this.props.name}
         name={`value(${this.props.name})`}
@@ -258,29 +291,38 @@ class SimpleParamterInput extends React.Component<ParameterInputProps> {
       />
     );
   }
-
 }
 
 type EnumParameterInputProps = {
   name: string;
   value: string;
   parameter: EnumParam;
-}
+};
 
 class EnumParameterInput extends React.Component<EnumParameterInputProps> {
   render() {
-    const options = this.props.parameter.displayType === 'treeBox'
-      ? Seq.from(preorder(this.props.parameter.vocabulary, node => node.children))
-        .filter(node => node.children.length == 0)
-        .map(node => node.data.term)
-        .toArray()
-      : this.props.parameter.vocabulary.map(entry => entry[0])
-    const selected = this.props.value ? new Set(this.props.value.split(',')) : new Set();
+    const options =
+      this.props.parameter.displayType === 'treeBox'
+        ? Seq.from(
+            preorder(this.props.parameter.vocabulary, (node) => node.children)
+          )
+            .filter((node) => node.children.length == 0)
+            .map((node) => node.data.term)
+            .toArray()
+        : this.props.parameter.vocabulary.map((entry) => entry[0]);
+    const selected = this.props.value
+      ? new Set(this.props.value.split(','))
+      : new Set();
     return (
       <React.Fragment>
-        {options.map(value =>
-          <EnumCheckbox key={value} checked={selected.has(value)} name={this.props.name} value={value}/>
-        )}
+        {options.map((value) => (
+          <EnumCheckbox
+            key={value}
+            checked={selected.has(value)}
+            name={this.props.name}
+            value={value}
+          />
+        ))}
       </React.Fragment>
     );
   }
@@ -290,7 +332,7 @@ type EnumCheckboxProps = {
   name: string;
   value: string;
   checked: boolean;
-}
+};
 
 class EnumCheckbox extends React.Component<EnumCheckboxProps> {
   input: HTMLInputElement | null = null;
@@ -305,7 +347,7 @@ class EnumCheckbox extends React.Component<EnumCheckboxProps> {
 
   _dispatchChangeEvent() {
     if (this.input == null) {
-      console.warn("Input field is not defined. Skipping event dispatch.");
+      console.warn('Input field is not defined. Skipping event dispatch.');
       return;
     }
     this.input.dispatchEvent(new CustomEvent('change', { bubbles: true }));
@@ -314,7 +356,7 @@ class EnumCheckbox extends React.Component<EnumCheckboxProps> {
   render() {
     return (
       <input
-        ref={el => this.input = el}
+        ref={(el) => (this.input = el)}
         style={{ display: 'none' }}
         type="checkbox"
         checked={this.props.checked}
@@ -324,23 +366,27 @@ class EnumCheckbox extends React.Component<EnumCheckboxProps> {
       />
     );
   }
-
 }
 
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
-  (state, props) => state.question.questions[props.searchName] || {} as QuestionState,
-  dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
-  (stateProps, dispatchProps, ownProps) => ({ mapped: { ...stateProps, ...dispatchProps }, own: ownProps})
-)
+  (state, props) =>
+    state.question.questions[props.searchName] || ({} as QuestionState),
+  (dispatch) => ({
+    dispatch,
+    eventHandlers: bindActionCreators(ActionCreators, dispatch),
+  }),
+  (stateProps, dispatchProps, ownProps) => ({
+    mapped: { ...stateProps, ...dispatchProps },
+    own: ownProps,
+  })
+);
 
 export default enhance(LegacyParamController);
-
 
 function prettyPrintRawValue(value: string) {
   try {
     return JSON.stringify(JSON.parse(value), null, 4);
-  }
-  catch (e) {
+  } catch (e) {
     return value;
   }
 }

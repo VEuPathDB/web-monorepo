@@ -1,9 +1,9 @@
-import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
+import HelpIcon from '../../Components/Icon/HelpIcon';
 import React, { ReactNode } from 'react';
-import { getValueOrDefault, wrappable } from 'wdk-client/Utils/ComponentUtils';
-import 'wdk-client/Components/InputControls/RadioList.css';
+import { getValueOrDefault, wrappable } from '../../Utils/ComponentUtils';
+import '../../Components/InputControls/RadioList.css';
 
-const baseClassName = "wdk-RadioList";
+const baseClassName = 'wdk-RadioList';
 
 type Props = {
   /** Value to use for "name" attribute of radio form input elements **/
@@ -30,10 +30,9 @@ type Props = {
    * radio list.
    */
   className?: string;
-}
+};
 
 class RadioList extends React.Component<Props> {
-
   constructor(props: Props) {
     super(props);
     this.onChange = this.onChange.bind(this);
@@ -47,34 +46,33 @@ class RadioList extends React.Component<Props> {
   }
 
   render() {
-    let className = baseClassName + " " + getValueOrDefault(this.props, "className", "");
+    let className =
+      baseClassName + ' ' + getValueOrDefault(this.props, 'className', '');
     const { required = false } = this.props;
     return (
       <ul className={className}>
-        {this.props.items.map(item => (
+        {this.props.items.map((item) => (
           <li key={item.value} className={item.disabled ? 'disabled' : ''}>
             <label>
-              <input type="radio"
+              <input
+                type="radio"
                 name={this.props.name}
                 value={item.value}
                 checked={item.value === this.props.value}
                 onChange={this.onChange}
                 required={required}
                 disabled={item.disabled}
-              />
-              {' '}{item.display}{' '}
-              {item.description != null &&
-                <HelpIcon>
-                  {item.description}
-                </HelpIcon>
-              }
+              />{' '}
+              {item.display}{' '}
+              {item.description != null && (
+                <HelpIcon>{item.description}</HelpIcon>
+              )}
             </label>
           </li>
         ))}
       </ul>
     );
   }
-
 }
 
-export default wrappable(RadioList)
+export default wrappable(RadioList);

@@ -6,22 +6,22 @@
 
 import React, { TextareaHTMLAttributes } from 'react';
 
-import { Omit } from 'wdk-client/Core/CommonTypes';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Omit } from '../../Core/CommonTypes';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 type InputProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
 type InputPropsWithoutOnChange = Omit<InputProps, 'onChange'>;
 type Props = InputPropsWithoutOnChange & {
-  onChange: (value: string) => void
+  onChange: (value: string) => void;
 };
 
-let TextArea: React.SFC<Props> = function(props) {
+let TextArea: React.SFC<Props> = function (props) {
   return (
-    <textarea 
+    <textarea
       {...props}
       onChange={(event) => props.onChange(event.target.value)}
-    /> 
+    />
   );
-}
+};
 
 export default wrappable(TextArea);
