@@ -203,10 +203,18 @@ export default function FloatingVizManagement({
     <>
       <div>
         <FilledButton
-          text="Add a plot"
+          text="Add a Plot"
+          textTransform="none"
           onPress={() => setIsVizSelectorVisible(true)}
         />
-        <ul>
+        <ul
+          style={{
+            // This will handle the (edge) case where a user's
+            // plot is extremely length.
+            maxWidth: 500,
+            marginTop: '1rem',
+          }}
+        >
           {analysisState.analysis?.descriptor.computations.map(
             (computation) => (
               <li key={computation.computationId}>
@@ -217,6 +225,7 @@ export default function FloatingVizManagement({
                   {computation.visualizations.map((viz) => (
                     <li key={viz.visualizationId}>
                       <button
+                        style={{ textAlign: 'left' }}
                         type="button"
                         className="link"
                         onClick={() => {
