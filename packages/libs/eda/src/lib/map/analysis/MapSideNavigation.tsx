@@ -47,7 +47,7 @@ export function MapSideNavigation({
         // it needs to be or it's 0px (and 0px padding).
         width: isExpanded ? 'max-content' : 0,
         padding: isExpanded ? '5px 10px' : 0,
-        marginTop: '2rem',
+        marginTop: '4rem',
         // The parent of this element probably had its pointer-events
         // set to "none". This restores the default behavior. Without
         // this, users cannot interact with the side menu via cursor.
