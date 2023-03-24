@@ -14,7 +14,7 @@ import { DownloadClient } from '../../core/api/DownloadClient';
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import StudyCitation from './StudyCitation';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -23,13 +23,11 @@ import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
 import { H5, Paragraph } from '@veupathdb/coreui';
 import { useDispatch } from 'react-redux';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import { useHistory } from 'react-router';
 import { parsePath } from 'history';
-import { string } from 'fp-ts';
 
 type DownloadsTabProps = {
   downloadClient: DownloadClient;
@@ -63,7 +61,7 @@ export default function DownloadTab({
   const studyAuthor = useWdkService(
     async (wdkService) =>
       await wdkService
-        .getRecord('dataset', studyRecord.id)
+        .getRecord('dataset', studyRecord.id, { attributes: ['contact'] })
         .then((record) => record.attributes.contact),
     []
   );
@@ -166,7 +164,7 @@ export default function DownloadTab({
   }, [shouldFetchStudyReleases, downloadClient, studyMetadata]);
 
   /**
-   * One we have information from both services on available releases
+   * Once we have information from both services on available releases
    * let's merge them together into something more useful.
    *
    * Important note: We take the information on releases from the WDKService
@@ -206,11 +204,23 @@ export default function DownloadTab({
     <div style={{ display: 'flex', paddingTop: 10 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
         {dataAccessDeclaration ?? ''}
-        <MySubset
-          datasetId={datasetId}
-          entities={enhancedEntityData}
-          analysisState={analysisState}
-        />
+        {mergedReleaseData[0] && (
+          <MySubset
+            datasetId={datasetId}
+            entities={enhancedEntityData}
+            analysisState={analysisState}
+            citation={
+              <StudyCitation
+                studyAuthor={studyAuthor ?? ''}
+                studyDisplayName={studyRecord.displayName}
+                projectDisplayName={projectDisplayName ?? ''}
+                downloadUrl={window.location.href}
+                // use current release
+                release={mergedReleaseData[0]}
+              />
+            }
+          />
+        )}
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
             <CurrentRelease
@@ -219,12 +229,15 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
-              citationDetails={{
-                studyAuthor: studyAuthor?.toString() ?? '',
-                studyDisplayName: studyRecord.displayName,
-                projectDisplayName: projectDisplayName ?? '',
-                href: window.location.href,
-              }}
+              citation={
+                <StudyCitation
+                  studyAuthor={studyAuthor ?? ''}
+                  studyDisplayName={studyRecord.displayName}
+                  projectDisplayName={projectDisplayName ?? ''}
+                  downloadUrl={window.location.href}
+                  release={release}
+                />
+              }
             />
           ) : (
             <PastRelease
@@ -233,6 +246,15 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
+              citation={
+                <StudyCitation
+                  studyAuthor={studyAuthor ?? ''}
+                  studyDisplayName={studyRecord.displayName}
+                  projectDisplayName={projectDisplayName ?? ''}
+                  downloadUrl={window.location.href}
+                  release={release}
+                />
+              }
             />
           )
         )}

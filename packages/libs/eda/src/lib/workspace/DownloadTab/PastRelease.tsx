@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { Column } from 'react-table';
 
 // Components
-import { colors, DataGrid, Download } from '@veupathdb/coreui';
+import { colors, DataGrid, Download, Paragraph } from '@veupathdb/coreui';
 
 // Definitions
 import { DownloadClient } from '../../core/api/DownloadClient';
@@ -19,6 +19,7 @@ export type PastReleaseProps = {
   datasetId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
+  citation: ReactNode;
 };
 
 export default function PastRelease({
@@ -26,6 +27,7 @@ export default function PastRelease({
   datasetId,
   release,
   downloadClient,
+  citation,
 }: PastReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
 
@@ -96,6 +98,9 @@ export default function PastRelease({
       id={`Past Release Dataset - ${release.releaseNumber}`}
       style={{ marginBottom: 35 }}
     >
+      {/**
+       * debt: change string types to ReactNode types as appropriate
+       */}
       <ExpandablePanel
         stylePreset="floating"
         themeRole="primary"
@@ -106,6 +111,14 @@ export default function PastRelease({
         }}
       >
         <div style={{ padding: 15, paddingLeft: 35 }}>
+          <Paragraph
+            color={colors.gray[600]}
+            styleOverrides={{ margin: '0 0 10px 0' }}
+            textSize="medium"
+          >
+            <span style={{ fontWeight: 500 }}>Citation: </span>
+            {citation}
+          </Paragraph>
           {releaseFiles.length ? (
             <DataGrid
               columns={exampleGridColumns}
