@@ -62,3 +62,15 @@ You will need to configure the server with a `packages/libs/eda/.env.local` file
 
 For more documentation see the link:packages/libs/eda/README.md[package README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
 
+## IDE hints
+
+### emacs tide
+
+If it is showing errors for tsx imports (especially in `eda`) and
+`tide-verify-setup` mentions tsserver version 3.x then it is time to
+upgrade emacs tide (to, at time of writing 4.5.4):
+
+```
+M-x package-reinstall <ret> tide <ret>
+```
+
