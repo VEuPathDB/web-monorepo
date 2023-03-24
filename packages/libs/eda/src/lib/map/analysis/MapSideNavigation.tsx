@@ -33,7 +33,7 @@ export function MapSideNavigation({
   onToggleIsExpanded,
   siteInformationProps,
 }: MapSideNavigationProps) {
-  const sideMenuExpandButtonWidth = 50;
+  const sideMenuExpandButtonWidth = 20;
 
   return (
     <nav
@@ -72,7 +72,8 @@ export function MapSideNavigation({
           background: mapNavigationBackgroundColor,
           border: mapNavigationBorder,
           borderLeft: 'none',
-          height: 50,
+          borderRadius: '0px 5px 5px 0px',
+          height: 60,
           width: sideMenuExpandButtonWidth,
           // These styles pin the expand/collapse to the right of
           // the lefthand side menu at the nav's vertical center.
@@ -90,14 +91,17 @@ export function MapSideNavigation({
         }}
         onClick={() => onToggleIsExpanded()}
       >
-        <ChevronRight
+        <div
+          aria-hidden
           style={{
             transform: `rotate(${isExpanded ? -180 : 0}deg)`,
-            height: 30,
-            width: 40,
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize: 20,
           }}
-          aria-hidden
-        />
+        >
+          <ChevronRight />
+        </div>
         <span className="screenReaderOnly">
           {isExpanded ? 'Close' : 'Open'} {siteInformationProps.siteName} side
           menu

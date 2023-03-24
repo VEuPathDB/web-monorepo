@@ -11,10 +11,12 @@
   padding: 7px 0px;
 
   &--collapsed {
-    // The header gets out of the way by tucking itself
-    background: none;
+    // The header gets out of the way by tucking itself. It accomplishes
+    // this by decreasing height (and padding) to 0px. You just can't see
+    // 0px things, can you?
     top: -1px;
     height: 0px;
+    padding: 0px;
   }
 
   &__Contents {
@@ -96,7 +98,7 @@
   position: absolute;
   // Stick the expand button in the viewport's center.
   // and beneath
-  bottom: -23px;
+  bottom: -10px;
   left: 50%;
   transform: translate(-50%, -50%);
 
@@ -106,9 +108,11 @@
     justify-content: center;
     margin-right: 0;
     position: absolute;
-    width: 50px;
+    height: 20px;
+    width: 60px;
     z-index: 10;
     padding: 0;
+    border-radius: 0 0 3px 3px;
 
     &--collapsed {
       margin-top: 50px;
@@ -125,8 +129,7 @@
 
   &__ArrowIcon {
     transform: rotate(-90deg);
-    width: 30px;
-    height: 40px;
+    font-size: 20px;
 
     &--collapsed {
       transform: rotate(90deg);
