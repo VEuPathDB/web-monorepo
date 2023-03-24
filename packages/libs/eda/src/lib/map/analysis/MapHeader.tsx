@@ -7,7 +7,11 @@ import {
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './MapHeader.scss';
-import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
+import {
+  mapNavigationBackgroundColor,
+  mapNavigationBorder,
+  SiteInformationProps,
+} from '..';
 
 export type MapNavigationProps = {
   analysisName?: string;
@@ -46,7 +50,12 @@ export function MapHeader({
 
   return (
     <header
-      style={{ background: mapNavigationBackgroundColor }}
+      style={{
+        background: mapNavigationBackgroundColor,
+        border: mapNavigationBorder,
+        borderLeft: 'none',
+        borderRight: 'none',
+      }}
       className={`${mapHeader()} ${
         !isExpanded ? mapHeader('--collapsed') : ''
       }`}
@@ -175,7 +184,13 @@ function OpenCloseToggleButton({
   return (
     <div className={expandToggleContainer()}>
       <button
-        style={{ background: mapNavigationBackgroundColor }}
+        style={{
+          background: mapNavigationBackgroundColor,
+          border: mapNavigationBorder,
+          // If we have a top border, it'll look like
+          // the button is distinct from the header.
+          borderTop: '2px solid white',
+        }}
         className={`Button ${
           isExpanded ? '' : expandToggleContainer('--collapsed')
         }`}

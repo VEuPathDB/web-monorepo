@@ -8,7 +8,6 @@
   transition: top 0.1s ease;
   width: 100%;
   z-index: 10;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 4px;
 
   &--collapsed {
     // The header gets out of the way by tucking itself
@@ -96,13 +95,12 @@
   position: absolute;
   // Stick the expand button in the viewport's center.
   // and beneath
-  bottom: -21px;
+  bottom: -23px;
   left: 50%;
   transform: translate(-50%, -50%);
 
   .Button {
     align-items: center;
-    border: none;
     display: flex;
     justify-content: center;
     margin-right: 0;

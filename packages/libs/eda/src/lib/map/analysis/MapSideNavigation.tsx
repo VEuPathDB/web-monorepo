@@ -1,6 +1,10 @@
 import { ChevronRight } from '@veupathdb/coreui';
 import { Launch, LockOpen } from '@material-ui/icons';
-import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
+import {
+  mapNavigationBackgroundColor,
+  mapNavigationBorder,
+  SiteInformationProps,
+} from '..';
 
 export type MapSideNavigationProps = {
   /** The navigation is stateless. */
@@ -38,6 +42,9 @@ export function MapSideNavigation({
         // including its width, height, and location on the
         // page (which depends on the `isExpanded` piece of state.
         background: mapNavigationBackgroundColor,
+        border: mapNavigationBorder,
+        borderLeft: 'none',
+        borderBottom: 'none',
         // height: 'calc(100% - 150px)',
         height: '100%',
         minHeight: 125,
@@ -63,7 +70,8 @@ export function MapSideNavigation({
           // This makes the button users will click to open/close
           // the side navigation.
           background: mapNavigationBackgroundColor,
-          borderColor: 'transparent',
+          border: mapNavigationBorder,
+          borderLeft: 'none',
           height: 50,
           width: sideMenuExpandButtonWidth,
           // These styles pin the expand/collapse to the right of
