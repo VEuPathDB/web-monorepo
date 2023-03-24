@@ -1,10 +1,11 @@
-import React, { ReactNode } from "react";
-import { makeClassNameHelper } from "wdk-client/Utils/ComponentUtils";
-import { NavLink, NavLinkProps } from "react-router-dom";
+import React, { ReactNode } from 'react';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 
 import './WorkspaceNavigation.scss';
 
-interface WorkspaceNavigationItem extends Pick<NavLinkProps, 'isActive' | 'replace'> {
+interface WorkspaceNavigationItem
+  extends Pick<NavLinkProps, 'isActive' | 'replace'> {
   display: ReactNode;
   route: string;
   state?: any;
@@ -34,7 +35,7 @@ export default function WorkspaceNavigation(props: Props) {
           replace={item.replace}
           to={{
             pathname: routeBase + item.route,
-            state: { scrollToTop: false, ...item.state }
+            state: { scrollToTop: false, ...item.state },
           }}
         >
           {item.display}

@@ -2,16 +2,19 @@ import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkbox
 import { includes, memoize, throttle, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
-import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
-import { getId, getTargetType, isIndividual } from 'wdk-client/Utils/CategoryUtils';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { preorderSeq, pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
-import RecordNavigationItem from 'wdk-client/Views/Records/RecordNavigation/RecordNavigationItem';
+import CategoriesCheckboxTree from '../../../Components/CheckboxTree/CategoriesCheckboxTree';
+import {
+  getId,
+  getTargetType,
+  isIndividual,
+} from '../../../Utils/CategoryUtils';
+import { wrappable } from '../../../Utils/ComponentUtils';
+import { Seq } from '../../../Utils/IterableUtils';
+import { preorderSeq, pruneDescendantNodes } from '../../../Utils/TreeUtils';
+import RecordNavigationItem from '../../../Views/Records/RecordNavigation/RecordNavigationItem';
 
 /** Navigation panel for record page */
 class RecordNavigationSection extends React.PureComponent {
-
   constructor(props) {
     super(props);
     this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
@@ -20,16 +23,22 @@ class RecordNavigationSection extends React.PureComponent {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.setActiveCategory, { passive: true });
+    window.addEventListener('scroll', this.setActiveCategory, {
+      passive: true,
+    });
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.setActiveCategory, { passive: true });
+    window.removeEventListener('scroll', this.setActiveCategory, {
+      passive: true,
+    });
   }
 
   componentDidUpdate(previousProps) {
-    if (this.props.collapsedSections !== previousProps.collapsedSections ||
-        this.props.showChildren !== previousProps.showChildren ) {
+    if (
+      this.props.collapsedSections !== previousProps.collapsedSections ||
+      this.props.showChildren !== previousProps.showChildren
+    ) {
       this.setActiveCategory();
     }
   }
@@ -39,14 +48,14 @@ class RecordNavigationSection extends React.PureComponent {
     let activeCategory = Seq.from(removeFields(categoryTree).children)
       // transform each top-level node into a list of all nodes of that branch
       // of the tree that are visible in this section
-      .flatMap(topLevelNode => [
+      .flatMap((topLevelNode) => [
         topLevelNode,
         ...preorderSeq(topLevelNode)
-          .filter(node => navigationCategoriesExpanded.includes(getId(node)))
-          .flatMap(node => node.children)
+          .filter((node) => navigationCategoriesExpanded.includes(getId(node)))
+          .flatMap((node) => node.children),
       ])
       // find the category whose content is near the top of the viewport
-      .findLast(node => {
+      .findLast((node) => {
         let id = getId(node);
         let domNode = document.getElementById(id);
         if (domNode == null) return;
@@ -70,13 +79,13 @@ class RecordNavigationSection extends React.PureComponent {
       navigationCategoriesExpanded,
       onNavigationCategoryExpansionChange,
       onSectionToggle,
-      visibilityFilter = stubTrue
+      visibilityFilter = stubTrue,
     } = this.props;
 
     return (
       <div className="wdk-RecordNavigationSection">
         <h2 className="wdk-RecordNavigationSectionHeader">
-          <span dangerouslySetInnerHTML={{__html: heading}}/>
+          <span dangerouslySetInnerHTML={{ __html: heading }} />
         </h2>
         <CategoriesCheckboxTree
           disableHelp
@@ -89,7 +98,7 @@ class RecordNavigationSection extends React.PureComponent {
           onUiChange={onNavigationCategoryExpansionChange}
           searchTerm={navigationQuery}
           onSearchTermChange={this.handleSearchTermChange}
-          renderNode={(node, path) =>
+          renderNode={(node, path) => (
             <RecordNavigationItem
               node={node}
               path={path}
@@ -97,13 +106,13 @@ class RecordNavigationSection extends React.PureComponent {
               activeCategory={this.state.activeCategory}
               checked={!includes(collapsedSections, getId(node))}
             />
-          }
+          )}
           linksPosition={LinksPosition.Top}
           styleOverrides={{
             treeSection: {
               ul: {
                 padding: '0 0 0 1.5em',
-              }
+              },
             },
           }}
         />
@@ -115,15 +124,16 @@ class RecordNavigationSection extends React.PureComponent {
 RecordNavigationSection.propTypes = {
   collapsedSections: PropTypes.array,
   onSectionToggle: PropTypes.func,
-  heading: PropTypes.node
+  heading: PropTypes.node,
 };
 
 RecordNavigationSection.defaultProps = {
   onSectionToggle: function noop() {},
-  heading: 'Contents'
+  heading: 'Contents',
 };
 
 export default wrappable(RecordNavigationSection);
 
-const removeFields = memoize(root =>
-  pruneDescendantNodes(node => !isIndividual(node), root));
+const removeFields = memoize((root) =>
+  pruneDescendantNodes((node) => !isIndividual(node), root)
+);

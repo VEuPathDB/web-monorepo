@@ -1,18 +1,22 @@
 import React from 'react';
-import { siteSearchServiceUrl } from 'ebrc-client/config';
-import SiteMenu from 'ebrc-client/App/SiteMenu';
-import UserMenu from 'ebrc-client/App/UserMenu';
-import { formatReleaseDate } from 'ebrc-client/util/formatters';
-import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { siteSearchServiceUrl } from '../../config';
+import SiteMenu from '../../App/SiteMenu';
+import UserMenu from '../../App/UserMenu';
+import { formatReleaseDate } from '../../util/formatters';
+import {
+  IconAlt as Icon,
+  Link,
+  Mesa,
+} from '@veupathdb/wdk-client/lib/Components';
 import partofveupath from '../../../images/partofveupath.png';
-import { SiteSearchInput } from 'ebrc-client/components';
+import { SiteSearchInput } from '../../components';
 
 import './HeaderNav.scss';
 
 class HeaderNav extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
-    this.state = { stickyHeaderVisible: false }
+    this.state = { stickyHeaderVisible: false };
 
     this.onScroll = this.onScroll.bind(this);
     this.getIconByType = this.getIconByType.bind(this);
@@ -25,15 +29,15 @@ class HeaderNav extends React.Component {
     this.componentWillUnmount = this.componentWillUnmount.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.scrollListener = Mesa.Events.add('scroll', this.onScroll);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     Mesa.Events.remove(this.scrollListener);
   }
 
-  onScroll () {
+  onScroll() {
     const threshold = 98;
     const { pageYOffset } = window;
     const { stickyHeaderVisible } = this.state;
@@ -43,13 +47,24 @@ class HeaderNav extends React.Component {
       this.setState({ stickyHeaderVisible: false });
   }
 
-  renderStickyHeader () {
-    const { headerMenuItems, siteConfig, user, actions, titleWithoutDB, logoUrl, heroImageUrl } = this.props;
+  renderStickyHeader() {
+    const {
+      headerMenuItems,
+      siteConfig,
+      user,
+      actions,
+      titleWithoutDB,
+      logoUrl,
+      heroImageUrl,
+    } = this.props;
     const { webAppUrl } = siteConfig;
     const { mainMenu, iconMenu } = headerMenuItems;
     const IconMenu = this.renderIconMenu;
     return (
-      <div className="HeaderNav-Sticky" style={{ backgroundImage: `url(${heroImageUrl})` }}>
+      <div
+        className="HeaderNav-Sticky"
+        style={{ backgroundImage: `url(${heroImageUrl})` }}
+      >
         <div>
           <img src={logoUrl} className="HeaderNav-Sticky-Logo" />
         </div>
@@ -61,10 +76,23 @@ class HeaderNav extends React.Component {
           </h2>
         </div>
         <div style={{ display: 'flex', flexGrow: 1 }}>
-          <SiteMenu items={mainMenu} config={siteConfig}  actions={actions} user={user}/>
+          <SiteMenu
+            items={mainMenu}
+            config={siteConfig}
+            actions={actions}
+            user={user}
+          />
           {siteSearchServiceUrl && (
-            <div style={{ color: 'black', marginLeft: 'auto', alignSelf: 'center', flexGrow: 1, maxWidth: '35em' }}>
-              <SiteSearchInput/>
+            <div
+              style={{
+                color: 'black',
+                marginLeft: 'auto',
+                alignSelf: 'center',
+                flexGrow: 1,
+                maxWidth: '35em',
+              }}
+            >
+              <SiteSearchInput />
             </div>
           )}
         </div>
@@ -72,15 +100,15 @@ class HeaderNav extends React.Component {
           <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
         </div>
       </div>
-    )
+    );
   }
 
-  renderBranding ({ config = {}, titleWithoutDB, subTitle, logoUrl }) {
+  renderBranding({ config = {}, titleWithoutDB, subTitle, logoUrl }) {
     const { buildNumber, releaseDate } = config;
 
     return (
       <div className="box row HeaderNav-Branding">
-        <Link to="/" className="box" >
+        <Link to="/" className="box">
           <img src={logoUrl} className="HeaderNav-Logo" />
         </Link>
         <div className="box stack">
@@ -97,41 +125,49 @@ class HeaderNav extends React.Component {
     );
   }
 
-  getIconByType (type = '') {
+  getIconByType(type = '') {
     if (typeof type !== 'string' || !type.length) return 'globe';
     switch (type.toLowerCase()) {
-      case 'facebook': return 'facebook-official';
-      case 'twitter': return 'twitter';
-      case 'youtube': return 'youtube-play';
-      case 'vimeo': return 'vimeo-square';
-      default: return type;
+      case 'facebook':
+        return 'facebook-official';
+      case 'twitter':
+        return 'twitter';
+      case 'youtube':
+        return 'youtube-play';
+      case 'vimeo':
+        return 'vimeo-square';
+      default:
+        return type;
     }
   }
 
-  renderIconMenuItem ({ type, url = '', name, text }) {
+  renderIconMenuItem({ type, url = '', name, text }) {
     const icon = this.getIconByType(type);
     return (
       <a
         href={url}
         target="_blank"
         name={name ? name : `Visit us on ${type}`}
-        className="HeaderNav-Social-Link">
+        className="HeaderNav-Social-Link"
+      >
         <Icon fa={icon} />
         {!text ? null : text}
       </a>
     );
   }
 
-  renderIconMenu ({ items }) {
+  renderIconMenu({ items }) {
     const IconMenuItem = this.renderIconMenuItem;
     return (
       <div className="row HeaderNav-Social nowrap">
-        {items.map((props, index) => <IconMenuItem {...props} key={index} />)}
+        {items.map((props, index) => (
+          <IconMenuItem {...props} key={index} />
+        ))}
       </div>
     );
   }
 
-  render () {
+  render() {
     const { stickyHeaderVisible } = this.state;
     const { headerMenuItems, siteConfig, user, actions, tagline } = this.props;
     const { webAppUrl } = siteConfig;
@@ -153,23 +189,36 @@ class HeaderNav extends React.Component {
           <div>
             <Branding {...this.props} />
           </div>
-          <div style={{ marginRight: 'auto', alignSelf: 'center', }}><h3 dangerouslySetInnerHTML={{ __html: tagline }} /></div>
+          <div style={{ marginRight: 'auto', alignSelf: 'center' }}>
+            <h3 dangerouslySetInnerHTML={{ __html: tagline }} />
+          </div>
           <a href="https://veupathdb.org" target="_blank">
             <img src={partofveupath} id="VEuPathLogo" />
           </a>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center'}}>
-          <SiteMenu items={mainMenu} config={siteConfig} actions={actions} user={user} />
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <SiteMenu
+            items={mainMenu}
+            config={siteConfig}
+            actions={actions}
+            user={user}
+          />
           {siteSearchServiceUrl && (
-            <div style={{ width: '30em',  color: 'black', marginLeft: 'auto', fontSize: '1.2em' }}>
-              <SiteSearchInput/>
+            <div
+              style={{
+                width: '30em',
+                color: 'black',
+                marginLeft: 'auto',
+                fontSize: '1.2em',
+              }}
+            >
+              <SiteSearchInput />
             </div>
           )}
           <div style={{ display: 'flex' }}>
             <IconMenu items={iconMenu} />
             <UserMenu webAppUrl={webAppUrl} actions={actions} user={user} />
           </div>
-
         </div>
       </div>
     );

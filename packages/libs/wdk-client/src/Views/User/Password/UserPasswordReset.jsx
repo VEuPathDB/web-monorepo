@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import TextBox from 'wdk-client/Components/InputControls/TextBox';
+import { wrappable } from '../../../Utils/ComponentUtils';
+import TextBox from '../../../Components/InputControls/TextBox';
 
 /**
  * This React stateless function provides a link to the password change form inside a password change fieldset
@@ -9,24 +9,28 @@ import TextBox from 'wdk-client/Components/InputControls/TextBox';
  * @returns {XML}
  * @constructor
  */
-const UserPasswordReset = props => {
-  let { emailText, message, updatePasswordResetEmail, submitPasswordReset } = props;
-  let submitHandler = event => {
+const UserPasswordReset = (props) => {
+  let { emailText, message, updatePasswordResetEmail, submitPasswordReset } =
+    props;
+  let submitHandler = (event) => {
     event.preventDefault();
     submitPasswordReset(emailText);
   };
   return (
-    <div style={{marginBottom:"2em"}}>
+    <div style={{ marginBottom: '2em' }}>
       <form onSubmit={submitHandler}>
         <h1>Reset Password</h1>
-        { !message ? '' : <span style={{color:"red"}}>{message}</span> }
+        {!message ? '' : <span style={{ color: 'red' }}>{message}</span>}
         <p>
-          Please enter your registration username or email below and click 'Submit'.  An
-          email containing a new, temporary password will be sent shortly.
-        </p><p>
-          <TextBox value={emailText} onChange={updatePasswordResetEmail}/>
-        </p><p>
-          <input type="submit" value="Submit"/>
+          Please enter your registration username or email below and click
+          'Submit'. An email containing a new, temporary password will be sent
+          shortly.
+        </p>
+        <p>
+          <TextBox value={emailText} onChange={updatePasswordResetEmail} />
+        </p>
+        <p>
+          <input type="submit" value="Submit" />
         </p>
       </form>
     </div>
@@ -34,7 +38,6 @@ const UserPasswordReset = props => {
 };
 
 UserPasswordReset.propTypes = {
-
   /** current email typed in textbox */
   emailText: PropTypes.string.isRequired,
 
@@ -45,7 +48,7 @@ UserPasswordReset.propTypes = {
   updatePasswordResetEmail: PropTypes.func.isRequired,
 
   /** event handler to call when form is submitted */
-  submitPasswordReset: PropTypes.func.isRequired
+  submitPasswordReset: PropTypes.func.isRequired,
 };
 
 export default wrappable(UserPasswordReset);

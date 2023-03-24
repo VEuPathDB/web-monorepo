@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 class Main extends Component {
   render() {
-    return <div className={this.props.className}>
-      {this.props.children}
-    </div>
+    return <div className={this.props.className}>{this.props.children}</div>;
   }
 }
 

@@ -1,21 +1,21 @@
 import { stubTrue as isParamValueValid } from 'lodash';
 import React from 'react';
 
-import TextArea from 'wdk-client/Components/InputControls/TextArea';
-import TextBox from 'wdk-client/Components/InputControls/TextBox';
-import { StringParam, Parameter } from 'wdk-client/Utils/WdkModel';
+import TextArea from '../../../Components/InputControls/TextArea';
+import TextBox from '../../../Components/InputControls/TextBox';
+import { StringParam, Parameter } from '../../../Utils/WdkModel';
 
-import { createParamModule, Props } from 'wdk-client/Views/Question/Params/Utils';
+import { createParamModule, Props } from '../../../Views/Question/Params/Utils';
 
 export default createParamModule({
   isType,
   isParamValueValid,
-  Component
-})
+  Component,
+});
 
 export const DEFAULT_COLS = 45;
 export const calculateRows = (parameter: StringParam, cols: number) =>
-  Math.min(20, Math.ceil(parameter.length / cols ));
+  Math.min(20, Math.ceil(parameter.length / cols));
 
 function isType(param: Parameter): param is StringParam {
   return param.type === 'string';

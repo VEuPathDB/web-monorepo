@@ -6,27 +6,27 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { lazy, wrappable } from '../../Utils/ComponentUtils';
 
 let defaultOptions = {
   position: {
-    my: "top left",
-    at: "bottom left"
+    my: 'top left',
+    at: 'bottom left',
   },
   hide: {
     fixed: true,
-    delay: 250
+    delay: 250,
   },
   show: {
     solo: true,
-    delay: 1000
-  }
+    delay: 1000,
+  },
 };
 
 export interface TooltipPosition {
   my?: string;
   at?: string;
-};
+}
 
 // FIXME Add `renderContent` props that is a function that returns `typeof content`
 type Props = {
@@ -43,10 +43,9 @@ type Props = {
   children: React.ReactChild;
   onShow?: (e: Event) => void;
   onHide?: (e: Event) => void;
-}
+};
 
 class Tooltip extends React.PureComponent<Props> {
-
   api?: QTip2.Api;
 
   contentContainer = document.createElement('div');
@@ -70,11 +69,17 @@ class Tooltip extends React.PureComponent<Props> {
     }
 
     if (nextProps.showEvent != null) {
-      this.api.set('show.event', nextProps.open == null ? nextProps.showEvent : false);
+      this.api.set(
+        'show.event',
+        nextProps.open == null ? nextProps.showEvent : false
+      );
     }
 
     if (nextProps.hideEvent != null) {
-      this.api.set('hide.event', nextProps.open == null ? nextProps.hideEvent : false);
+      this.api.set(
+        'hide.event',
+        nextProps.open == null ? nextProps.hideEvent : false
+      );
     }
 
     if (nextProps.position != null) {
@@ -100,31 +105,46 @@ class Tooltip extends React.PureComponent<Props> {
       classes = 'qtip-wdk',
       position = defaultOptions.position,
       solo = true,
-      showTip = true
+      showTip = true,
     } = props;
 
-    if (content == null) { return; }
-
-    if (open != null && (showEvent != null || hideEvent != null)) {
-      console.warn('Tooltip was passed props `open` and either `showEvent` or `hideEvent`. ' +
-        'Since `open` was provided, `showEvent` and `hideEvent` will be ignored.');
+    if (content == null) {
+      return;
     }
 
-    this.api = $(ReactDOM.findDOMNode(this) as HTMLElement).qtip({
-      content: { text: $(this.contentContainer) },
-      style: { classes, tip: { corner: showTip } },
-      show: { ...defaultOptions.show, solo, event: open == null ? showEvent : false, delay: showDelay },
-      hide: { ...defaultOptions.hide, event: open == null ? hideEvent : false, delay: hideDelay },
-      position,
-      events: {
-        show: event => {
-          if (props.onShow) props.onShow(event);
+    if (open != null && (showEvent != null || hideEvent != null)) {
+      console.warn(
+        'Tooltip was passed props `open` and either `showEvent` or `hideEvent`. ' +
+          'Since `open` was provided, `showEvent` and `hideEvent` will be ignored.'
+      );
+    }
+
+    this.api = $(ReactDOM.findDOMNode(this) as HTMLElement)
+      .qtip({
+        content: { text: $(this.contentContainer) },
+        style: { classes, tip: { corner: showTip } },
+        show: {
+          ...defaultOptions.show,
+          solo,
+          event: open == null ? showEvent : false,
+          delay: showDelay,
         },
-        hide: event => {
-          if (props.onHide) props.onHide(event);
-        }
-      }
-    }).qtip('api');
+        hide: {
+          ...defaultOptions.hide,
+          event: open == null ? hideEvent : false,
+          delay: hideDelay,
+        },
+        position,
+        events: {
+          show: (event) => {
+            if (props.onShow) props.onShow(event);
+          },
+          hide: (event) => {
+            if (props.onHide) props.onHide(event);
+          },
+        },
+      })
+      .qtip('api');
 
     if (open != null) this.api.toggle(open);
   }
@@ -139,9 +159,8 @@ class Tooltip extends React.PureComponent<Props> {
         {React.Children.only(this.props.children)}
         {ReactDOM.createPortal(this.props.content, this.contentContainer)}
       </React.Fragment>
-    )
+    );
   }
-
 }
 
 export const EagerlyLoadedTooltip = wrappable(Tooltip);

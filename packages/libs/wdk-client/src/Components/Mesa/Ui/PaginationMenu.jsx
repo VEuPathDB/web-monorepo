@@ -2,16 +2,16 @@ import { range } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
-import RowsPerPageMenu from 'wdk-client/Components/Mesa/Ui/RowsPerPageMenu';
+import Icon from '../../../Components/Mesa/Components/Icon';
+import RowsPerPageMenu from '../../../Components/Mesa/Ui/RowsPerPageMenu';
 
 const settings = {
   overflowPoint: 8,
-  innerRadius: 2
-}
+  innerRadius: 2,
+};
 
 class PaginationMenu extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.renderEllipsis = this.renderEllipsis.bind(this);
     this.renderPageLink = this.renderPageLink.bind(this);
@@ -20,7 +20,7 @@ class PaginationMenu extends React.PureComponent {
     this.renderRelativeLink = this.renderRelativeLink.bind(this);
   }
 
-  renderEllipsis (key = '') {
+  renderEllipsis(key = '') {
     return (
       <div key={'ellipsis-' + key} className="ellipsis">
         ...
@@ -28,10 +28,15 @@ class PaginationMenu extends React.PureComponent {
     );
   }
 
-  renderPageLink (page, current) {
+  renderPageLink(page, current) {
     let handler = () => this.goToPage(page);
     return (
-      <button type="button" onClick={handler} key={page} className={current === page ? 'active' : 'inactive'}>
+      <button
+        type="button"
+        onClick={handler}
+        key={page}
+        className={current === page ? 'active' : 'inactive'}
+      >
         {page.toLocaleString()}
       </button>
     );
@@ -42,7 +47,7 @@ class PaginationMenu extends React.PureComponent {
     return totalPages || Math.ceil(totalRows / rowsPerPage);
   }
 
-  getRelativePageNumber (relative) {
+  getRelativePageNumber(relative) {
     const { currentPage } = this.props;
     const totalPages = this.getTotalPages();
     switch (relative.toLowerCase()) {
@@ -62,7 +67,7 @@ class PaginationMenu extends React.PureComponent {
     }
   }
 
-  getRelativeIcon (relative) {
+  getRelativeIcon(relative) {
     switch (relative.toLowerCase()) {
       case 'first':
       case 'start':
@@ -80,25 +85,29 @@ class PaginationMenu extends React.PureComponent {
     }
   }
 
-  goToPage (page) {
+  goToPage(page) {
     let { onPageChange } = this.props;
     if (onPageChange) onPageChange(page);
   }
 
-  renderRelativeLink ({ relative }) {
+  renderRelativeLink({ relative }) {
     const page = this.getRelativePageNumber(relative);
     const icon = this.getRelativeIcon(relative);
 
-    return (!page || !icon) ? null : (
+    return !page || !icon ? null : (
       <span className="Pagination-Nav">
-        <button type="button" onClick={() => this.goToPage(page)} title={'Jump to the ' + relative + ' page'}>
+        <button
+          type="button"
+          onClick={() => this.goToPage(page)}
+          title={'Jump to the ' + relative + ' page'}
+        >
           <Icon fa={icon} />
         </button>
       </span>
-    )
+    );
   }
 
-  renderPageList () {
+  renderPageList() {
     const { innerRadius } = settings;
     const { currentPage } = this.props;
     const totalPages = this.getTotalPages();
@@ -111,14 +120,14 @@ class PaginationMenu extends React.PureComponent {
       <span className="Pagination-Nav">
         {left > 1 && this.renderPageLink(1, currentPage)}
         {left > 2 && this.renderEllipsis(2)}
-        {pageList.map(page => this.renderPageLink(page, currentPage))}
+        {pageList.map((page) => this.renderPageLink(page, currentPage))}
         {right < totalPages - 1 && this.renderEllipsis(totalPages - 1)}
         {right < totalPages && this.renderPageLink(totalPages, currentPage)}
       </span>
     );
   }
 
-  renderPerPageMenu () {
+  renderPerPageMenu() {
     const { rowsPerPage, rowsPerPageOptions, onRowsPerPageChange } = this.props;
     if (!onRowsPerPageChange) return null;
     return (
@@ -129,10 +138,10 @@ class PaginationMenu extends React.PureComponent {
           onRowsPerPageChange={onRowsPerPageChange}
         />
       </span>
-    )
+    );
   }
 
-  render () {
+  render() {
     const { currentPage, rowsPerPage, totalRows } = this.props;
     const totalPages = this.getTotalPages();
 
@@ -163,7 +172,7 @@ PaginationMenu.propTypes = {
   rowsPerPage: PropTypes.number,
   onPageChange: PropTypes.func,
   rowsPerPageOptions: PropTypes.array,
-  onRowsPerPageChange: PropTypes.func
+  onRowsPerPageChange: PropTypes.func,
 };
 
 export default PaginationMenu;

@@ -1,4 +1,4 @@
-import {Action} from 'wdk-client/Actions';
+import { Action } from '../Actions';
 import {
   requestAttributeReport,
   fulfillAttributeReport,
@@ -10,17 +10,17 @@ import {
   searchTable,
   sortTable,
   selectTab,
-} from 'wdk-client/Actions/AttributeAnalysisActions';
-import {EpicDependencies} from 'wdk-client/Core/Store';
-import {combineReducers} from 'redux';
-import {StateObservable} from 'redux-observable';
+} from '../Actions/AttributeAnalysisActions';
+import { EpicDependencies } from '../Core/Store';
+import { combineReducers } from 'redux';
+import { StateObservable } from 'redux-observable';
 import {
   InferAction,
   switchMapRequestActionsToEpic,
   takeEpicInWindow,
-} from 'wdk-client/Utils/ActionCreatorUtils';
-import { RootState } from 'wdk-client/Core/State/Types';
-import {ResultType, getCustomReport} from 'wdk-client/Utils/WdkResult';
+} from '../Utils/ActionCreatorUtils';
+import { RootState } from '../Core/State/Types';
+import { ResultType, getCustomReport } from '../Utils/WdkResult';
 
 export const key = 'attributeAnalysis';
 
@@ -33,7 +33,7 @@ interface ReportState {
   loading: boolean;
   activeAnalysis?: {
     resultType: ResultType;
-    reporterName: string
+    reporterName: string;
   };
 }
 
@@ -45,20 +45,20 @@ const initialReportState: ReportState = {
 
 function reportReducer(
   state: ReportState = initialReportState,
-  action: Action,
+  action: Action
 ): ReportState {
   switch (action.type) {
     case openAttributeAnalysis.type:
-      return {...state, activeAnalysis: action.payload};
+      return { ...state, activeAnalysis: action.payload };
 
     case requestAttributeReport.type:
-      return {...state, loading: true};
+      return { ...state, loading: true };
 
     case fulfillAttributeReport.type:
-      return {...state, loading: false, resource: action.payload.report};
+      return { ...state, loading: false, resource: action.payload.report };
 
     case errorAttributeReport.type:
-      return {...state, loading: false, error: action.payload.error};
+      return { ...state, loading: false, error: action.payload.error };
 
     case closeAttributeAnalysis.type:
       return initialReportState;
@@ -69,14 +69,14 @@ function reportReducer(
 }
 
 interface TableState {
-  sort: {key: string; direction: 'asc' | 'desc'};
+  sort: { key: string; direction: 'asc' | 'desc' };
   search: string;
   currentPage: number;
   rowsPerPage: number;
 }
 
 const initialTableState: TableState = {
-  sort: {key: 'value', direction: 'asc'},
+  sort: { key: 'value', direction: 'asc' },
   search: '',
   currentPage: 1,
   rowsPerPage: 100,
@@ -84,20 +84,20 @@ const initialTableState: TableState = {
 
 function tableReducer(
   state: TableState = initialTableState,
-  action: Action,
+  action: Action
 ): TableState {
   switch (action.type) {
     case changeTablePage.type:
-      return {...state, currentPage: action.payload.page};
+      return { ...state, currentPage: action.payload.page };
 
     case changeTableRowsPerPage.type:
-      return {...state, rowsPerPage: action.payload.rowsPerPage};
+      return { ...state, rowsPerPage: action.payload.rowsPerPage };
 
     case searchTable.type:
-      return {...state, search: action.payload.searchString };
+      return { ...state, search: action.payload.searchString };
 
     case sortTable.type:
-      return {...state, sort: action.payload};
+      return { ...state, sort: action.payload };
 
     case closeAttributeAnalysis.type:
       return initialTableState;
@@ -113,7 +113,7 @@ const initialTabsState: TabsState = 'visualization';
 
 function tabsReducer(
   state: TabsState = initialTabsState,
-  action: Action,
+  action: Action
 ): TabsState {
   switch (action.type) {
     case selectTab.type:
@@ -147,19 +147,24 @@ export const reduce = combineReducers<State, Action>({
 async function getAttributeReport(
   [requestReportAction]: [InferAction<typeof requestAttributeReport>],
   state$: StateObservable<RootState>,
-  {wdkService}: EpicDependencies,
+  { wdkService }: EpicDependencies
 ) {
-  const {reporterName, resultType, config} = requestReportAction.payload;
+  const { reporterName, resultType, config } = requestReportAction.payload;
   try {
-    const report = await getCustomReport(wdkService, resultType, {format: reporterName, formatConfig: config});
+    const report = await getCustomReport(wdkService, resultType, {
+      format: reporterName,
+      formatConfig: config,
+    });
     return fulfillAttributeReport(reporterName, resultType, report);
-  }
-  catch (error) {
+  } catch (error) {
     return errorAttributeReport(reporterName, resultType, error);
   }
 }
 
 export const observe = takeEpicInWindow(
-  { startActionCreator: openAttributeAnalysis, endActionCreator: closeAttributeAnalysis },
+  {
+    startActionCreator: openAttributeAnalysis,
+    endActionCreator: closeAttributeAnalysis,
+  },
   switchMapRequestActionsToEpic([requestAttributeReport], getAttributeReport)
 );

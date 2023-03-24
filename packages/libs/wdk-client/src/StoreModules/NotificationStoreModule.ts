@@ -1,8 +1,4 @@
-import {
-  OptionsObject,
-  SnackbarMessage,
-  SnackbarKey,
-} from 'notistack';
+import { OptionsObject, SnackbarMessage, SnackbarKey } from 'notistack';
 
 import {
   Action,
@@ -10,7 +6,7 @@ import {
   _dequeueSnackbar,
   _displaySnackbar,
   enqueueSnackbar,
-} from 'wdk-client/Actions/NotificationActions';
+} from '../Actions/NotificationActions';
 
 export const key = 'notification';
 
@@ -21,10 +17,7 @@ interface KeyedSnackbarOptions extends OptionsObject {
 interface EnqueuedSnackbar {
   message: SnackbarMessage;
   options: KeyedSnackbarOptions;
-  status:
-    | 'enqueued'
-    | 'displayed'
-    | 'dismissed';
+  status: 'enqueued' | 'displayed' | 'dismissed';
 }
 
 export interface State {
@@ -32,11 +25,11 @@ export interface State {
 }
 
 const defaultState: State = {
-  enqueuedSnackbars: []
+  enqueuedSnackbars: [],
 };
 
 export function reduce(state = defaultState, action: Action): State {
-  switch(action.type) {
+  switch (action.type) {
     case enqueueSnackbar.type:
       return {
         ...state,
@@ -45,50 +38,45 @@ export function reduce(state = defaultState, action: Action): State {
           {
             ...action.payload,
             status: 'enqueued',
-          }
-        ]
+          },
+        ],
       };
 
     case _displaySnackbar.type:
       return {
         ...state,
-        enqueuedSnackbars: state.enqueuedSnackbars.map(
-          enqueuedSnackbar => (
-            enqueuedSnackbar.status === 'enqueued' &&
-            enqueuedSnackbar.options.key === action.payload.key
-          )
+        enqueuedSnackbars: state.enqueuedSnackbars.map((enqueuedSnackbar) =>
+          enqueuedSnackbar.status === 'enqueued' &&
+          enqueuedSnackbar.options.key === action.payload.key
             ? {
                 ...enqueuedSnackbar,
                 status: 'displayed',
               }
             : enqueuedSnackbar
-        )
+        ),
       };
 
     case closeSnackbar.type:
       return {
         ...state,
-        enqueuedSnackbars: state.enqueuedSnackbars.map(
-          enqueuedSnackbar => (
-            action.payload.key == null ||
-            enqueuedSnackbar.options.key === action.payload.key
-          )
+        enqueuedSnackbars: state.enqueuedSnackbars.map((enqueuedSnackbar) =>
+          action.payload.key == null ||
+          enqueuedSnackbar.options.key === action.payload.key
             ? {
                 ...enqueuedSnackbar,
                 status: 'dismissed',
               }
             : enqueuedSnackbar
-        )
+        ),
       };
 
     case _dequeueSnackbar.type:
       return {
         ...state,
         enqueuedSnackbars: state.enqueuedSnackbars.filter(
-          enqueuedSnackbar => (
+          (enqueuedSnackbar) =>
             enqueuedSnackbar.options.key !== action.payload.key
-          )
-        )
+        ),
       };
 
     default:

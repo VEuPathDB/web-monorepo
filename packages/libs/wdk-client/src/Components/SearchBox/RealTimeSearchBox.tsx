@@ -1,10 +1,9 @@
-import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
+import HelpIcon from '../../Components/Icon/HelpIcon';
 import { debounce } from 'lodash';
 import React, { Component } from 'react';
-import 'wdk-client/Components/SearchBox/RealTimeSearchBox.css';
+import '../../Components/SearchBox/RealTimeSearchBox.css';
 // use safeHtml for enabling html (e.g., italic) at helpText
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-
+import { safeHtml } from '../../Utils/ComponentUtils';
 
 /** classNames used by component */
 const baseClassName = 'wdk-RealTimeSearchBox';
@@ -16,7 +15,6 @@ const cancelIconClassName = baseClassName + 'CancelIcon';
 const searchIconClassName = baseClassName + 'SearchIcon';
 
 type Props = {
-
   /** Class name to include with default class name */
   className?: string;
 
@@ -43,13 +41,12 @@ type Props = {
 
   /** Additional right positioning for the "cancel" button when used in DataTable's column filters */
   cancelBtnRightMargin?: React.CSSProperties['right'];
-}
+};
 
 type State = {
-
   /** local reference to search term for rendering */
   searchTerm: string;
-}
+};
 
 /**
  * A 'real time' search box.  Changes are throttled by 'debounce' so text
@@ -58,8 +55,6 @@ type State = {
  * user types in the box.  Also provides reset button to clear the box.
  */
 export default class RealTimeSearchBox extends Component<Props, State> {
-
-
   static defaultProps = {
     className: '',
     autoFocus: false,
@@ -68,10 +63,12 @@ export default class RealTimeSearchBox extends Component<Props, State> {
     placeholderText: '',
     helpText: '',
     delayMs: 250,
-    iconName: 'search'
+    iconName: 'search',
   };
 
-  emitSearchTermChange = debounce((searchTerm: string) => this.props.onSearchTermChange!(searchTerm));
+  emitSearchTermChange = debounce((searchTerm: string) =>
+    this.props.onSearchTermChange!(searchTerm)
+  );
 
   input: HTMLInputElement | null = null;
 
@@ -89,8 +86,9 @@ export default class RealTimeSearchBox extends Component<Props, State> {
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.searchTerm !== this.state.searchTerm) {
-      this.setState({ searchTerm: nextProps.searchTerm! },
-        () => this.emitSearchTermChange(nextProps.searchTerm!));
+      this.setState({ searchTerm: nextProps.searchTerm! }, () =>
+        this.emitSearchTermChange(nextProps.searchTerm!)
+      );
     }
   }
 
@@ -129,28 +127,47 @@ export default class RealTimeSearchBox extends Component<Props, State> {
   }
 
   render() {
-    let { className, helpText, placeholderText, autoFocus, iconName, cancelBtnRightMargin } = this.props;
+    let {
+      className,
+      helpText,
+      placeholderText,
+      autoFocus,
+      iconName,
+      cancelBtnRightMargin,
+    } = this.props;
     let searchTerm = this.state.searchTerm;
     let isActiveSearch = searchTerm.length > 0;
     let activeModifier = isActiveSearch ? 'active' : 'inactive';
     let helpModifier = helpText ? 'withHelp' : '';
     return (
-      <div className={classname(baseClassName, activeModifier, helpModifier)
-        + ' ' + classname(className!, activeModifier, helpModifier)}>
+      <div
+        className={
+          classname(baseClassName, activeModifier, helpModifier) +
+          ' ' +
+          classname(className!, activeModifier, helpModifier)
+        }
+      >
         <label className={labelClassName}>
-          <input type="search"
+          <input
+            type="search"
             autoFocus={autoFocus}
-            ref={node => this.input = node}
+            ref={(node) => (this.input = node)}
             className={inputClassName}
             onChange={this.handleSearchTermChange}
             onKeyDown={this.handleKeyDown}
             placeholder={placeholderText}
             value={searchTerm}
           />
-          <i className={`fa fa-${iconName} ${searchIconClassName}`}/>
-          <button className={cancelBtnClassName} style={cancelBtnRightMargin ? {right: cancelBtnRightMargin} : undefined}
-            type="button" onClick={this.handleResetClick}>
-            <i className={"fa fa-close " + cancelIconClassName}/>
+          <i className={`fa fa-${iconName} ${searchIconClassName}`} />
+          <button
+            className={cancelBtnClassName}
+            style={
+              cancelBtnRightMargin ? { right: cancelBtnRightMargin } : undefined
+            }
+            type="button"
+            onClick={this.handleResetClick}
+          >
+            <i className={'fa fa-close ' + cancelIconClassName} />
           </button>
         </label>
         {/* use safeHtml for helpText to allow italic */}

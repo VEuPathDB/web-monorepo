@@ -1,13 +1,7 @@
-import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import {
-    RecordInstance,
-    Favorite,
-    PrimaryKey,
-} from 'wdk-client/Utils/WdkModel';
-
+import { ServiceBase } from '../../Service/ServiceBase';
+import { RecordInstance, Favorite, PrimaryKey } from '../../Utils/WdkModel';
 
 export default (base: ServiceBase) => {
-
   /**
    * Gets favorite ID of a single record, or undefined if record is not a
    * favorite of the current user.  Thus can be used to check whether a record
@@ -15,15 +9,20 @@ export default (base: ServiceBase) => {
    *
    * @param record Record instance to search for
    */
-  async function getFavoriteId (recordId: PrimaryKey, recordClassUrlSegment: string) {
-    let data = [{
-      recordClassName: recordClassUrlSegment,
-      primaryKey: recordId
-    }];
+  async function getFavoriteId(
+    recordId: PrimaryKey,
+    recordClassUrlSegment: string
+  ) {
+    let data = [
+      {
+        recordClassName: recordClassUrlSegment,
+        primaryKey: recordId,
+      },
+    ];
     let url = '/users/current/favorites/query';
     return base
       ._fetchJson<Array<number>>('post', url, JSON.stringify(data))
-      .then(data => data.length ? data[0] : undefined);
+      .then((data) => (data.length ? data[0] : undefined));
   }
 
   /**
@@ -32,12 +31,18 @@ export default (base: ServiceBase) => {
    *
    * @param record Record to add as a favorite
    */
-  async function addFavorite (recordId: PrimaryKey, recordClassUrlSegment: string) {
-    const favorite = { recordClassName: recordClassUrlSegment, primaryKey: recordId };
+  async function addFavorite(
+    recordId: PrimaryKey,
+    recordClassUrlSegment: string
+  ) {
+    const favorite = {
+      recordClassName: recordClassUrlSegment,
+      primaryKey: recordId,
+    };
     const url = '/users/current/favorites';
     return base
       ._fetchJson<Favorite>('post', url, JSON.stringify(favorite))
-      .then(data => data.id);
+      .then((data) => data.id);
   }
 
   /**
@@ -46,17 +51,15 @@ export default (base: ServiceBase) => {
    *
    * @param id id of favorite to delete
    */
-  function deleteFavorite (id: number) {
+  function deleteFavorite(id: number) {
     let url = '/users/current/favorites/' + id;
-    return base
-      ._fetchJson<void>('delete', url)
-      .then(() => undefined);
+    return base._fetchJson<void>('delete', url).then(() => undefined);
   }
 
   /**
    * Returns an array of the current user's favorites
    */
-  function getCurrentFavorites () {
+  function getCurrentFavorites() {
     return base._fetchJson<Favorite[]>('get', '/users/current/favorites');
   }
 
@@ -65,22 +68,25 @@ export default (base: ServiceBase) => {
    *
    * @param favorite
    */
-  function saveFavorite (favorite: Favorite) {
+  function saveFavorite(favorite: Favorite) {
     let url = '/users/current/favorites/' + favorite.id;
     favorite.group = favorite.group ? favorite.group : '';
     favorite.description = favorite.description ? favorite.description : '';
     return base._fetchJson<void>('patch', url, JSON.stringify(favorite));
   }
 
-  function deleteFavorites (ids: Array<number>) {
+  function deleteFavorites(ids: Array<number>) {
     return runBulkFavoritesAction('delete', ids);
   }
 
-  function undeleteFavorites (ids: Array<number>) {
+  function undeleteFavorites(ids: Array<number>) {
     return runBulkFavoritesAction('undelete', ids);
   }
 
-  function runBulkFavoritesAction (operation: 'delete' | 'undelete', ids: Array<number>) {
+  function runBulkFavoritesAction(
+    operation: 'delete' | 'undelete',
+    ids: Array<number>
+  ) {
     let url = '/users/current/favorites';
     let data = { action: operation, primaryKeys: ids };
     return base._fetchJson<void>('patch', url, JSON.stringify(data));
@@ -93,6 +99,6 @@ export default (base: ServiceBase) => {
     deleteFavorites,
     getCurrentFavorites,
     saveFavorite,
-    undeleteFavorites
-  }
-}
+    undeleteFavorites,
+  };
+};

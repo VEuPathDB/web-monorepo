@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { makeEdaRoute } from 'ebrc-client/routes';
+import { makeEdaRoute } from '../../routes';
 import './AnalysisCard.scss';
 
 interface Props {
@@ -12,11 +12,12 @@ interface Props {
     description: string;
     analysisId: string;
     studyId: string;
-  }
+  };
 }
 
 export function AnalysisCard(props: Props) {
-  const { displayName, studyDisplayName, description, studyId, analysisId } = props.card;
+  const { displayName, studyDisplayName, description, studyId, analysisId } =
+    props.card;
 
   const link = `/${analysisId}/import`;
 

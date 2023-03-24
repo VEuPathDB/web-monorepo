@@ -1,8 +1,8 @@
 import stringify from 'json-stable-stringify';
 import { difference } from 'lodash';
 
-import { ServiceBase } from 'wdk-client/Service/ServiceBase';
-import { PrimaryKey, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { ServiceBase } from '../../Service/ServiceBase';
+import { PrimaryKey, RecordInstance } from '../../Utils/WdkModel';
 
 interface RecordRequest {
   attributes: string[];
@@ -11,8 +11,10 @@ interface RecordRequest {
 }
 
 export default (base: ServiceBase) => {
-
-  const cache: Map<string, {request: RecordRequest; response: Promise<RecordInstance>}> = new Map;
+  const cache: Map<
+    string,
+    { request: RecordRequest; response: Promise<RecordInstance> }
+  > = new Map();
 
   /**
    * Get a record instance identified by the provided record class and primary
@@ -23,7 +25,11 @@ export default (base: ServiceBase) => {
    *
    * XXX Use _getFromCache with key of "recordInstance" so the most recent record is saved??
    */
-  function getRecord(recordClassUrlSegment: string, primaryKey: PrimaryKey, options: {attributes?: string[]; tables?: string[];} = {}) {
+  function getRecord(
+    recordClassUrlSegment: string,
+    primaryKey: PrimaryKey,
+    options: { attributes?: string[]; tables?: string[] } = {}
+  ) {
     let cacheKey = recordClassUrlSegment + ':' + stringify(primaryKey);
     let method = 'post';
     let url = '/record-types/' + recordClassUrlSegment + '/records';
@@ -34,7 +40,11 @@ export default (base: ServiceBase) => {
     // if we don't have the record, fetch whatever is requested
     if (cacheEntry == null) {
       let request = { attributes, tables, primaryKey };
-      let response = base._fetchJson<RecordInstance>(method, url, stringify(request));
+      let response = base._fetchJson<RecordInstance>(
+        method,
+        url,
+        stringify(request)
+      );
       cacheEntry = { request, response };
       cache.set(cacheKey, cacheEntry);
     }
@@ -54,24 +64,35 @@ export default (base: ServiceBase) => {
         let newRequest = {
           primaryKey,
           attributes: reqAttributes,
-          tables: reqTables
+          tables: reqTables,
         };
-        let newResponse = base._fetchJson<RecordInstance>(method, url, stringify(newRequest));
+        let newResponse = base._fetchJson<RecordInstance>(
+          method,
+          url,
+          stringify(newRequest)
+        );
 
         let finalRequest = {
           primaryKey,
           attributes: request.attributes.concat(newRequest.attributes),
-          tables: request.tables.concat(newRequest.tables)
+          tables: request.tables.concat(newRequest.tables),
         };
         // merge old record attributes and tables with new record
-        let finalResponse = Promise.all([ response, newResponse ])
-        .then(([record, newRecord]) => {
-          return Object.assign({}, record, {
-            attributes: Object.assign({}, record.attributes, newRecord.attributes),
-            tables: Object.assign({}, record.tables, newRecord.tables),
-            tableErrors: difference(record.tableErrors, reqTables).concat(newRecord.tableErrors)
-          });
-        });
+        let finalResponse = Promise.all([response, newResponse]).then(
+          ([record, newRecord]) => {
+            return Object.assign({}, record, {
+              attributes: Object.assign(
+                {},
+                record.attributes,
+                newRecord.attributes
+              ),
+              tables: Object.assign({}, record.tables, newRecord.tables),
+              tableErrors: difference(record.tableErrors, reqTables).concat(
+                newRecord.tableErrors
+              ),
+            });
+          }
+        );
         cacheEntry = { request: finalRequest, response: finalResponse };
         cache.set(cacheKey, cacheEntry);
       }
@@ -81,6 +102,6 @@ export default (base: ServiceBase) => {
   }
 
   return {
-    getRecord
-  }
-}
+    getRecord,
+  };
+};

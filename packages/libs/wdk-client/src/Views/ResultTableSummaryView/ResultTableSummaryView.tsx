@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Answer, RecordClass, Question } from 'wdk-client/Utils/WdkModel';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import { Answer, RecordClass, Question } from '../../Utils/WdkModel';
+import { CategoryTreeNode } from '../../Utils/CategoryUtils';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import ResultTable from '../../Views/ResultTableSummaryView/ResultTable';
 import {
   Action,
   BasketStatusArray,
@@ -19,16 +19,16 @@ import {
   OpenAttributeAnalysis,
   CloseAttributeAnalysis,
   UpdateSelectedIds,
-  ShowLoginWarning
-} from 'wdk-client/Views/ResultTableSummaryView/Types';
-import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
-import { LoadingOverlay } from 'wdk-client/Components';
+  ShowLoginWarning,
+} from '../../Views/ResultTableSummaryView/Types';
+import ResultTableAddColumnsDialog from '../../Views/ResultTableSummaryView/ResultTableAddColumnsDialog';
+import { LoadingOverlay } from '../../Components';
 
 import './ResultTableSummaryView.scss';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ResultType } from '../../Utils/WdkResult';
 
 // Export this for convenience
-export { Action };
+export type { Action };
 
 interface Props {
   answer?: Answer;
