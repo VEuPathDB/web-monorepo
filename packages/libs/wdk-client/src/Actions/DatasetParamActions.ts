@@ -1,6 +1,6 @@
-import { Context } from 'wdk-client/Views/Question/Params/Utils';
-import { DatasetParam } from 'wdk-client/Utils/WdkModel';
-import { StrategySummary } from "wdk-client/Utils/WdkUser";
+import { Context } from '../Views/Question/Params/Utils';
+import { DatasetParam } from '../Utils/WdkModel';
+import { StrategySummary } from '../Utils/WdkUser';
 
 type Payload<T> = Context<DatasetParam> & T;
 
@@ -14,7 +14,7 @@ export type Action =
   | SetStrategyIdAction
   | SetStrategyListAction
   | SetUrlAction
-  | SetUrlParserAction
+  | SetUrlParserAction;
 
 //==============================================================================
 
@@ -23,20 +23,17 @@ export const SET_SOURCE_TYPE = 'dataset-param/set-source-type';
 export interface SetSourceTypeAction {
   type: typeof SET_SOURCE_TYPE;
   payload: Payload<{
-    sourceType:
-      | 'idList'
-      | 'file'
-      | 'basket'
-      | 'strategy'
-      | 'url';
+    sourceType: 'idList' | 'file' | 'basket' | 'strategy' | 'url';
   }>;
 }
 
-export function setSourceType(payload: SetSourceTypeAction['payload']): SetSourceTypeAction {
+export function setSourceType(
+  payload: SetSourceTypeAction['payload']
+): SetSourceTypeAction {
   return {
     type: SET_SOURCE_TYPE,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -50,11 +47,13 @@ export interface SetIdListAction {
   }>;
 }
 
-export function setIdList(payload: SetIdListAction['payload']): SetIdListAction {
+export function setIdList(
+  payload: SetIdListAction['payload']
+): SetIdListAction {
   return {
     type: SET_ID_LIST,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -68,11 +67,13 @@ export interface SetLoadingIdListAction {
   }>;
 }
 
-export function setLoadingIdList(payload: SetLoadingIdListAction['payload']): SetLoadingIdListAction {
+export function setLoadingIdList(
+  payload: SetLoadingIdListAction['payload']
+): SetLoadingIdListAction {
   return {
     type: SET_LOADING_ID_LIST,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -82,15 +83,15 @@ export const SET_FILE = 'dataset-param/set-file';
 export interface SetFileAction {
   type: typeof SET_FILE;
   payload: Payload<{
-    file?: File | null
+    file?: File | null;
   }>;
 }
 
 export function setFile(payload: SetFileAction['payload']): SetFileAction {
   return {
     type: SET_FILE,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -104,11 +105,13 @@ export interface SetStrategyListAction {
   }>;
 }
 
-export function setStrategyList(payload: SetStrategyListAction['payload']): SetStrategyListAction {
+export function setStrategyList(
+  payload: SetStrategyListAction['payload']
+): SetStrategyListAction {
   return {
     type: SET_STRATEGY_LIST,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -122,11 +125,13 @@ export interface SetStrategyIdAction {
   }>;
 }
 
-export function setStrategyId(payload: SetStrategyIdAction['payload']): SetStrategyIdAction {
+export function setStrategyId(
+  payload: SetStrategyIdAction['payload']
+): SetStrategyIdAction {
   return {
     type: SET_STRATEGY_ID,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -140,10 +145,12 @@ export interface SetBasketCountAction {
   }>;
 }
 
-export function setBasketCount(payload: SetBasketCountAction['payload']): SetBasketCountAction {
+export function setBasketCount(
+  payload: SetBasketCountAction['payload']
+): SetBasketCountAction {
   return {
     type: SET_BASKET_COUNT,
-    payload
+    payload,
   };
 }
 
@@ -158,11 +165,13 @@ export interface SetFileParserAction {
   }>;
 }
 
-export function setFileParser(payload: SetFileParserAction['payload']): SetFileParserAction {
+export function setFileParser(
+  payload: SetFileParserAction['payload']
+): SetFileParserAction {
   return {
     type: SET_FILE_PARSER,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -179,8 +188,8 @@ export interface SetUrlAction {
 export function setUrl(payload: SetUrlAction['payload']): SetUrlAction {
   return {
     type: SET_URL,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -194,11 +203,13 @@ export interface SetUrlParserAction {
   }>;
 }
 
-export function setUrlParser(payload: SetUrlParserAction['payload']): SetUrlParserAction {
+export function setUrlParser(
+  payload: SetUrlParserAction['payload']
+): SetUrlParserAction {
   return {
     type: SET_URL_PARSER,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================

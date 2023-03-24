@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 const iconClassNames = {
   warning: 'fa fa-warning',
   info: 'fa fa-info-circle',
   help: 'fa fa-question-circle',
   close: 'fa fa-close',
-}
+};
 
 type Props = {
   type: keyof typeof iconClassNames;
@@ -14,9 +14,7 @@ type Props = {
 };
 
 function Icon(props: Props) {
-  return (
-    <i className={makeClassName(props.type, props.className)}/>
-  );
+  return <i className={makeClassName(props.type, props.className)} />;
 }
 
 export default wrappable(Icon);

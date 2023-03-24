@@ -3,18 +3,18 @@ import { connect } from 'react-redux';
 
 import { orderBy } from 'lodash';
 
-import { Loading, RealTimeSearchBox } from 'wdk-client/Components';
-import Mesa, { MesaState } from 'wdk-client/Components/Mesa'
-import { MesaSortObject, MesaColumn } from 'wdk-client/Core/CommonTypes';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import WdkService from 'wdk-client/Service/WdkService';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StrategySummary, StrategyDetails } from 'wdk-client/Utils/WdkUser';
-import { OverflowingTextCell } from 'wdk-client/Views/Strategy/OverflowingTextCell';
+import { Loading, RealTimeSearchBox } from '../../Components';
+import Mesa, { MesaState } from '../../Components/Mesa';
+import { MesaSortObject, MesaColumn } from '../../Core/CommonTypes';
+import { RootState } from '../../Core/State/Types';
+import { useWdkService } from '../../Hooks/WdkServiceHook';
+import WdkService from '../../Service/WdkService';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { RecordClass } from '../../Utils/WdkModel';
+import { StrategySummary, StrategyDetails } from '../../Utils/WdkUser';
+import { OverflowingTextCell } from '../../Views/Strategy/OverflowingTextCell';
 
-import 'wdk-client/Views/Strategy/StrategyInputSelector.scss';
+import '../../Views/Strategy/StrategyInputSelector.scss';
 
 const cx = makeClassNameHelper('StrategyInputSelector');
 
@@ -23,26 +23,34 @@ type StateProps = {
 };
 
 type OwnProps = {
-  onStrategySelected: (strategyId: number, strategyName: string, recordClassUrlSegment: string) => void,
-  primaryInput: StrategyDetails,
-  secondaryInputRecordClasses: RecordClass[],
-  recordClassesByUrlSegment: Record<string, RecordClass>
+  onStrategySelected: (
+    strategyId: number,
+    strategyName: string,
+    recordClassUrlSegment: string
+  ) => void;
+  primaryInput: StrategyDetails;
+  secondaryInputRecordClasses: RecordClass[];
+  recordClassesByUrlSegment: Record<string, RecordClass>;
 };
 
 type Props = StateProps & OwnProps;
 
-type StrategyInputColumnKey = 'dataType'| 'name' | 'description';
+type StrategyInputColumnKey = 'dataType' | 'name' | 'description';
 type StrategyInputColumn = MesaColumn<StrategyInputColumnKey>;
 
 type OptionalMesaSortObject = MesaSortObject | null;
 
-type StrategySummaryWithRecordClass = StrategySummary & { recordClassName: string } & { dataType: string };
+type StrategySummaryWithRecordClass = StrategySummary & {
+  recordClassName: string;
+} & { dataType: string };
 
-type StrategySummaryWithDataType = StrategySummaryWithRecordClass & { dataType: string };
+type StrategySummaryWithDataType = StrategySummaryWithRecordClass & {
+  dataType: string;
+};
 
 type StrategyInputCellProps<T> = {
-  value: T,
-  row: StrategySummaryWithDataType
+  value: T;
+  row: StrategySummaryWithDataType;
 };
 
 const StrategyInputSelectorView = ({
@@ -50,77 +58,82 @@ const StrategyInputSelectorView = ({
   onStrategySelected,
   primaryInput,
   recordClassesByUrlSegment,
-  secondaryInputRecordClasses
+  secondaryInputRecordClasses,
 }: Props) => {
   const strategies = useWdkService(getStrategies, []);
 
   // FIXME: Find a nicer way of dealing with the "equivalence" of genes and transcripts.
-  const homogeneousSecondaryInputRecordClasses = useMemo(() => secondaryInputRecordClasses.flatMap(
-      secondaryInputRecordClass => ['gene', 'transcript']
-        .includes(secondaryInputRecordClass.urlSegment)
-          ? [ 'gene', 'transcript' ]
-          : [ secondaryInputRecordClass.urlSegment ]
-    ),
-    [ secondaryInputRecordClasses ]
+  const homogeneousSecondaryInputRecordClasses = useMemo(
+    () =>
+      secondaryInputRecordClasses.flatMap((secondaryInputRecordClass) =>
+        ['gene', 'transcript'].includes(secondaryInputRecordClass.urlSegment)
+          ? ['gene', 'transcript']
+          : [secondaryInputRecordClass.urlSegment]
+      ),
+    [secondaryInputRecordClasses]
   );
 
   const strategyChoices = useMemo(
-    () => (
+    () =>
       strategies &&
       openedStrategies &&
       [...strategies]
         .filter(
           // We only provide opened and saved strategies as choices
-          (strategy): strategy is StrategySummaryWithRecordClass => (
+          (strategy): strategy is StrategySummaryWithRecordClass =>
             strategy.recordClassName != null &&
-            homogeneousSecondaryInputRecordClasses.includes(strategy.recordClassName) &&
+            homogeneousSecondaryInputRecordClasses.includes(
+              strategy.recordClassName
+            ) &&
             (openedStrategies.has(strategy.strategyId) || strategy.isSaved) &&
             strategy.strategyId !== primaryInput.strategyId
-          )
         )
-        .map(
-          entryWithNoRecordClassDisplayName => ({
-            ...entryWithNoRecordClassDisplayName,
-            dataType: entryWithNoRecordClassDisplayName.recordClassName
-              ? recordClassesByUrlSegment[entryWithNoRecordClassDisplayName.recordClassName].displayNamePlural
-              : '',
-          })
-        )
+        .map((entryWithNoRecordClassDisplayName) => ({
+          ...entryWithNoRecordClassDisplayName,
+          dataType: entryWithNoRecordClassDisplayName.recordClassName
+            ? recordClassesByUrlSegment[
+                entryWithNoRecordClassDisplayName.recordClassName
+              ].displayNamePlural
+            : '',
+        }))
         .sort(
           // Opened strategies are sorted to the top
           ({ strategyId: strategyIdA }, { strategyId: strategyIdB }) =>
-            openedStrategies.has(strategyIdA) === openedStrategies.has(strategyIdB)
+            openedStrategies.has(strategyIdA) ===
+            openedStrategies.has(strategyIdB)
               ? 0
               : openedStrategies.has(strategyIdA)
               ? -1
               : 1
-        )
-    ),
-    [ homogeneousSecondaryInputRecordClasses, strategies, openedStrategies ]
+        ),
+    [homogeneousSecondaryInputRecordClasses, strategies, openedStrategies]
   );
 
-  const noAvailableStrategiesMessage = 'You have no compatible open or saved strategies';
+  const noAvailableStrategiesMessage =
+    'You have no compatible open or saved strategies';
 
-  return strategyChoices == null || openedStrategies == null
-    ? <Loading />
-    : <div className={cx()}>
-        {
-          strategyChoices.length === 0
-            ? <div className={cx('--NoAvailableStrategies')}>
-                {noAvailableStrategiesMessage}
-              </div>
-            : <div className={cx('--StrategyChoices')}>
-                <StrategyInputSelectorTable
-                  tableTitle="Opened & Saved Strategies"
-                  strategyChoices={strategyChoices}
-                  onStrategySelected={onStrategySelected}
-                  openedStrategies={openedStrategies}
-                  showFilter={strategyChoices.length > 10}
-                  showDataTypeColumn={secondaryInputRecordClasses.length > 1}
-                />
-              </div>
-        }
-      </div>;
+  return strategyChoices == null || openedStrategies == null ? (
+    <Loading />
+  ) : (
+    <div className={cx()}>
+      {strategyChoices.length === 0 ? (
+        <div className={cx('--NoAvailableStrategies')}>
+          {noAvailableStrategiesMessage}
+        </div>
+      ) : (
+        <div className={cx('--StrategyChoices')}>
+          <StrategyInputSelectorTable
+            tableTitle="Opened & Saved Strategies"
+            strategyChoices={strategyChoices}
+            onStrategySelected={onStrategySelected}
+            openedStrategies={openedStrategies}
+            showFilter={strategyChoices.length > 10}
+            showDataTypeColumn={secondaryInputRecordClasses.length > 1}
+          />
+        </div>
+      )}
+    </div>
+  );
 };
 
 function getStrategies(wdkService: WdkService) {
@@ -128,19 +141,23 @@ function getStrategies(wdkService: WdkService) {
 }
 
 const mapStateToProps = ({ strategyWorkspace }: RootState): StateProps => ({
-  openedStrategies: strategyWorkspace.openedStrategies && new Set(strategyWorkspace.openedStrategies)
+  openedStrategies:
+    strategyWorkspace.openedStrategies &&
+    new Set(strategyWorkspace.openedStrategies),
 });
 
-export const StrategyInputSelector = connect(mapStateToProps)(StrategyInputSelectorView);
+export const StrategyInputSelector = connect(mapStateToProps)(
+  StrategyInputSelectorView
+);
 
 type StrategyInputSelectorTableProps = {
-  tableTitle: string,
-  strategyChoices: StrategySummaryWithDataType[],
-  onStrategySelected: OwnProps['onStrategySelected'],
-  openedStrategies: Set<number>,
-  showFilter: boolean,
-  showDataTypeColumn: boolean
-}
+  tableTitle: string;
+  strategyChoices: StrategySummaryWithDataType[];
+  onStrategySelected: OwnProps['onStrategySelected'];
+  openedStrategies: Set<number>;
+  showFilter: boolean;
+  showDataTypeColumn: boolean;
+};
 
 const StrategyInputSelectorTable = ({
   tableTitle,
@@ -148,22 +165,34 @@ const StrategyInputSelectorTable = ({
   onStrategySelected,
   openedStrategies,
   showFilter,
-  showDataTypeColumn
+  showDataTypeColumn,
 }: StrategyInputSelectorTableProps) => {
-  const [ sort, setSort ] = useState<OptionalMesaSortObject>(null);
-  const [ searchTerm, setSearchTerm ] = useState('');
+  const [sort, setSort] = useState<OptionalMesaSortObject>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const mesaColumns = useMemo(() => makeMesaColumns(onStrategySelected, showDataTypeColumn), [ onStrategySelected, showDataTypeColumn ]);
-  const mesaRows = useMemo(() => makeMesaRows(strategyChoices, sort), [ strategyChoices, sort ]);
+  const mesaColumns = useMemo(
+    () => makeMesaColumns(onStrategySelected, showDataTypeColumn),
+    [onStrategySelected, showDataTypeColumn]
+  );
+  const mesaRows = useMemo(
+    () => makeMesaRows(strategyChoices, sort),
+    [strategyChoices, sort]
+  );
   const mesaFilteredRows = useMemo(
     () => makeMesaFilteredRows(mesaRows, mesaColumns, searchTerm),
-    [ mesaRows, mesaColumns, searchTerm ]
+    [mesaRows, mesaColumns, searchTerm]
   );
 
-  const mesaOptions = useMemo(() => makeMesaOptions(openedStrategies), [ openedStrategies ]);
+  const mesaOptions = useMemo(
+    () => makeMesaOptions(openedStrategies),
+    [openedStrategies]
+  );
   const mesaActions = useMemo(() => makeMesaActions(), []);
-  const mesaEventHandlers = useMemo(() => makeMesaEventHandlers(setSort), [ setSort ]);
-  const mesaUiState = useMemo(() => makeMesaUiState(sort), [ sort ]);
+  const mesaEventHandlers = useMemo(
+    () => makeMesaEventHandlers(setSort),
+    [setSort]
+  );
+  const mesaUiState = useMemo(() => makeMesaUiState(sort), [sort]);
 
   const mesaState = MesaState.create({
     columns: mesaColumns,
@@ -172,19 +201,21 @@ const StrategyInputSelectorTable = ({
     options: mesaOptions,
     actions: mesaActions,
     eventHandlers: mesaEventHandlers,
-    uiState: mesaUiState
+    uiState: mesaUiState,
   });
 
   return (
     <Mesa state={mesaState}>
       <div className={cx('--SearchGroup')}>
-      <h3 className={cx('--SearchTitle')}>{`${tableTitle} (${strategyChoices.length})`}</h3>
-      <RealTimeSearchBox
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        placeholderText="Filter strategies"
-        className={cx('--SearchBox', !showFilter && 'hide')}
-      />
+        <h3
+          className={cx('--SearchTitle')}
+        >{`${tableTitle} (${strategyChoices.length})`}</h3>
+        <RealTimeSearchBox
+          searchTerm={searchTerm}
+          onSearchTermChange={setSearchTerm}
+          placeholderText="Filter strategies"
+          className={cx('--SearchBox', !showFilter && 'hide')}
+        />
       </div>
     </Mesa>
   );
@@ -198,42 +229,45 @@ function makeMesaColumns(
     key: 'dataType' as StrategyInputColumnKey,
     name: 'Data Type',
     width: '8em',
-    sortable: true
+    sortable: true,
   };
 
   const nameColumn = {
     key: 'name' as StrategyInputColumnKey,
     name: 'Strategy',
     width: '18em',
-    renderCell: (cellProps: StrategyInputCellProps<string>) =>
-      <a onClick={(e) => {
-        e.preventDefault();
-        onStrategySelected(cellProps.row.strategyId, cellProps.row.name, cellProps.row.recordClassName);
-      }} href="#">
-          {cellProps.row.name}{cellProps.row.isSaved ? '' : ' *'}
-      </a>,
-    sortable: true
+    renderCell: (cellProps: StrategyInputCellProps<string>) => (
+      <a
+        onClick={(e) => {
+          e.preventDefault();
+          onStrategySelected(
+            cellProps.row.strategyId,
+            cellProps.row.name,
+            cellProps.row.recordClassName
+          );
+        }}
+        href="#"
+      >
+        {cellProps.row.name}
+        {cellProps.row.isSaved ? '' : ' *'}
+      </a>
+    ),
+    sortable: true,
   };
 
   const descriptionColumn = {
     key: 'description' as StrategyInputColumnKey,
     name: 'Description',
     width: '22em',
-    renderCell: (cellProps: StrategyInputCellProps<string | undefined>) =>
-      <OverflowingTextCell {...cellProps} key={cellProps.row.strategyId} />,
-    sortable: true
+    renderCell: (cellProps: StrategyInputCellProps<string | undefined>) => (
+      <OverflowingTextCell {...cellProps} key={cellProps.row.strategyId} />
+    ),
+    sortable: true,
   };
 
   return showDataTypeColumn
-    ? [
-        dataTypeColumn,
-        nameColumn,
-        descriptionColumn
-      ]
-    : [
-        nameColumn,
-        descriptionColumn
-      ];
+    ? [dataTypeColumn, nameColumn, descriptionColumn]
+    : [nameColumn, descriptionColumn];
 }
 
 function makeMesaRows(
@@ -242,7 +276,7 @@ function makeMesaRows(
 ) {
   return sort === null
     ? strategyChoices
-    : orderBy(strategyChoices, [ sort.columnKey ], [ sort.direction ]);
+    : orderBy(strategyChoices, [sort.columnKey], [sort.direction]);
 }
 
 function makeMesaFilteredRows(
@@ -254,9 +288,10 @@ function makeMesaFilteredRows(
 
   return !normalizedSearchTerm
     ? rows
-    : rows.filter(
-        row => columns.some(({ key: columnKey }) => 
-          (row[columnKey] || '').toLowerCase().includes(normalizedSearchTerm))
+    : rows.filter((row) =>
+        columns.some(({ key: columnKey }) =>
+          (row[columnKey] || '').toLowerCase().includes(normalizedSearchTerm)
+        )
       );
 }
 
@@ -266,26 +301,29 @@ function makeMesaOptions(openedStrategies: Set<number>) {
     useStickyHeader: true,
     tableBodyMaxHeight: '40vh',
     deriveRowClassName: (strategy: StrategySummary) =>
-      openedStrategies.has(strategy.strategyId) ? cx('--OpenedRow') : undefined
+      openedStrategies.has(strategy.strategyId) ? cx('--OpenedRow') : undefined,
   };
 }
 
 function makeMesaActions() {
-  return [
-
-  ];
+  return [];
 }
 
-function makeMesaEventHandlers(onSortChange: (sort: OptionalMesaSortObject) => void) {
+function makeMesaEventHandlers(
+  onSortChange: (sort: OptionalMesaSortObject) => void
+) {
   return {
-    onSort: ({ key }: { key: string }, direction: MesaSortObject['direction']) => {
+    onSort: (
+      { key }: { key: string },
+      direction: MesaSortObject['direction']
+    ) => {
       onSortChange({ columnKey: key, direction });
-    }
+    },
   };
-};
+}
 
 function makeMesaUiState(sort: OptionalMesaSortObject) {
-  return { 
-    sort 
+  return {
+    sort,
   };
 }

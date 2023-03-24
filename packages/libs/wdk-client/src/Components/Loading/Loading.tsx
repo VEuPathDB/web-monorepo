@@ -2,17 +2,17 @@ import { flow } from 'lodash';
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { Spinner } from 'spin.js';
-import { delay, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { delay, wrappable } from '../../Utils/ComponentUtils';
 
 import 'spin.js/spin.css';
-import 'wdk-client/Components/Loading/Loading.css';
+import '../../Components/Loading/Loading.css';
 
 type Props = {
   /** Additional class name to use for container element */
   className?: string;
 
   /** Additional style properties to apply */
-  style?: React.CSSProperties,
+  style?: React.CSSProperties;
 
   /** Radius in pixels of the inner circle */
   radius?: number;
@@ -24,14 +24,12 @@ type Props = {
   left?: string;
 
   children?: React.ReactNode;
-}
-
+};
 
 /**
  * See http://fgnass.github.io/spin.js/
  */
 class Loading extends React.Component<Props> {
-
   private spinner?: Spinner;
 
   componentDidMount() {
@@ -52,7 +50,7 @@ class Loading extends React.Component<Props> {
       className: 'spinner', // The CSS class to assign to the spinner
       zIndex: 2e9, // The z-index (defaults to 2000000000)
       top, // Top position relative to parent
-      left // Left position relative to parent
+      left, // Left position relative to parent
     };
     const node = findDOMNode(this) as HTMLElement;
     this.spinner = new Spinner(opts).spin(node);
@@ -70,9 +68,8 @@ class Loading extends React.Component<Props> {
       </div>
     );
   }
-
 }
 
-const enhance = flow(delay<Props>(200), wrappable)
+const enhance = flow(delay<Props>(200), wrappable);
 
 export default enhance(Loading);

@@ -1,18 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import BodyLayer from 'wdk-client/Components/Mesa/Components/BodyLayer';
-import { EventsFactory } from 'wdk-client/Components/Mesa/Utils/Events';
+import BodyLayer from '../../../Components/Mesa/Components/BodyLayer';
+import { EventsFactory } from '../../../Components/Mesa/Utils/Events';
 
 class Tooltip extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
       isShown: false,
       isFocus: false,
       isHovered: false,
-      isDisengaged: true
+      isDisengaged: true,
     };
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -29,7 +29,7 @@ class Tooltip extends React.Component {
 
   /* -=-=-=-=-=-=-=-=-=-=-=-= Lifecycle -=-=-=-=-=-=-=-=-=-=-=-= */
 
-  componentDidMount () {
+  componentDidMount() {
     if (!this.el) {
       console.error(`
         Tooltip Error: Can't setup focusIn/focusOut events.
@@ -48,7 +48,7 @@ class Tooltip extends React.Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     if (this.events) this.events.clearAll();
     clearTimeout(this.hideTimeout);
     clearTimeout(this.showTimeout);
@@ -56,55 +56,58 @@ class Tooltip extends React.Component {
 
   /* -=-=-=-=-=-=-=-=-=-=-=-= Utilities -=-=-=-=-=-=-=-=-=-=-=-= */
 
-  static getOffset (node) {
+  static getOffset(node) {
     return node.getBoundingClientRect();
   }
 
-  getShowDelay () {
+  getShowDelay() {
     const { showDelay } = this.props;
-    return typeof showDelay === 'number'
-      ? showDelay
-      : 250;
+    return typeof showDelay === 'number' ? showDelay : 250;
   }
-  getHideDelay () {
+  getHideDelay() {
     let { hideDelay } = this.props;
-    return typeof hideDelay === 'number'
-      ? hideDelay
-      : 500;
+    return typeof hideDelay === 'number' ? hideDelay : 500;
   }
 
-  getCornerClass () {
+  getCornerClass() {
     const { corner } = this.props;
     if (typeof corner !== 'string' || !corner.length) return 'no-corner';
-    return corner.split(' ').filter(s => s).join('-');
+    return corner
+      .split(' ')
+      .filter((s) => s)
+      .join('-');
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-= Show/Hide -=-=-=-=-=-=-=-=-=-=-=-= */
 
-  showTooltip () {
+  showTooltip() {
     // compute position, or get from props
     if (this.props.position && this.props.getPosition) {
-      console.error('Warning: Tooltip expected either `props.position` or `props.getPosition`, but both were provided. '
-        + 'Please update your render method to use one or the other. Using `props.position`.');
+      console.error(
+        'Warning: Tooltip expected either `props.position` or `props.getPosition`, but both were provided. ' +
+          'Please update your render method to use one or the other. Using `props.position`.'
+      );
     }
 
-    const position = this.props.position ? this.props.position
-                   : this.props.getPosition ? this.props.getPosition()
-                   : undefined;
+    const position = this.props.position
+      ? this.props.position
+      : this.props.getPosition
+      ? this.props.getPosition()
+      : undefined;
 
     this.setState({ isShown: true, position });
 
     if (this.hideTimeout) clearTimeout(this.hideTimeout);
   }
 
-  hideTooltip () {
+  hideTooltip() {
     if (!this.state.isDisengaged) return;
     this.setState({ isShown: false });
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-= Engage/Disengage -=-=-=-=-=-=-=-=-=-=-=-= */
 
-  engageTooltip () {
+  engageTooltip() {
     this.setState({ isDisengaged: false });
     this.showTimeout = setTimeout(() => {
       this.showTooltip();
@@ -112,7 +115,7 @@ class Tooltip extends React.Component {
     }, this.getShowDelay());
   }
 
-  disengageTooltip () {
+  disengageTooltip() {
     this.setState({ isDisengaged: true });
     if (this.showTimeout) clearTimeout(this.showTimeout);
     this.hideTimeout = setTimeout(this.hideTooltip, this.getHideDelay());
@@ -120,40 +123,51 @@ class Tooltip extends React.Component {
 
   /* -=-=-=-=-=-=-=-=-=-=-=-= Renderers -=-=-=-=-=-=-=-=-=-=-=-= */
 
-  renderTooltipContent () {
+  renderTooltipContent() {
     const { isDisengaged, position } = this.state;
     const { content, style, renderHtml } = this.props;
 
     const opacity = isDisengaged ? 0.01 : 1;
     const { top, left } = Object.assign({ top: 0, left: 0 }, position);
     const existingStyle = style && Object.keys(style).length ? style : {};
-    const contentStyle = Object.assign({}, { top, left, opacity }, existingStyle);
+    const contentStyle = Object.assign(
+      {},
+      { top, left, opacity },
+      existingStyle
+    );
 
     const cornerClass = this.getCornerClass();
     const disengagedClass = isDisengaged ? ' Tooltip-Content--Disengaged' : '';
-    const className = ['Tooltip-Content', cornerClass, disengagedClass].join(' ');
+    const className = ['Tooltip-Content', cornerClass, disengagedClass].join(
+      ' '
+    );
 
     return (
       <div
         style={contentStyle}
         className={className}
         onMouseEnter={this.engageTooltip}
-        onMouseLeave={this.disengageTooltip}>
-        {renderHtml
-          ? <div dangerouslySetInnerHTML={{ __html: content }} />
-          : content
-        }
+        onMouseLeave={this.disengageTooltip}
+      >
+        {renderHtml ? (
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        ) : (
+          content
+        )}
       </div>
     );
   }
 
-  render () {
+  render() {
     const { isShown } = this.state;
     const TooltipContent = this.renderTooltipContent;
 
     const { children, className } = this.props;
     return (
-      <div className={'Tooltip' + (className ? ' ' + className : '')} ref={(el) => this.el = el}>
+      <div
+        className={'Tooltip' + (className ? ' ' + className : '')}
+        ref={(el) => (this.el = el)}
+      >
         {!isShown ? null : (
           <BodyLayer className="Tooltip-Wrapper">
             <TooltipContent />
@@ -161,7 +175,7 @@ class Tooltip extends React.Component {
         )}
         {children}
       </div>
-    )
+    );
   }
 }
 
@@ -173,7 +187,7 @@ Tooltip.propTypes = {
   corner: PropTypes.string,
   fadeOut: PropTypes.bool,
   position: PropTypes.object,
-  getPosition: PropTypes.func
+  getPosition: PropTypes.func,
 };
 
 export default Tooltip;

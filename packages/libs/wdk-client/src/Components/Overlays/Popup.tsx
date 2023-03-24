@@ -3,8 +3,7 @@
 import $ from 'jquery';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import TabbableContainer from 'wdk-client/Components/Display/TabbableContainer';
-
+import TabbableContainer from '../../Components/Display/TabbableContainer';
 
 type Props = {
   /** Should the popup be visible or not? */
@@ -37,7 +36,7 @@ type Props = {
 
   /** Content of popup */
   children: React.ReactElement<any>;
-}
+};
 
 // TODO Replace jQueryUI plugin with react-dnd
 /**
@@ -75,7 +74,6 @@ type Props = {
  * ```
  */
 class Popup extends React.Component<Props> {
-
   static defaultProps = {
     draggable: false,
   };
@@ -87,7 +85,10 @@ class Popup extends React.Component<Props> {
   componentDidMount() {
     // Create container node and attatch it to the parent node.
     this.containerNode = document.createElement('div');
-    const parent = this.props.parentSelector == null ? document.body : this.props.parentSelector();
+    const parent =
+      this.props.parentSelector == null
+        ? document.body
+        : this.props.parentSelector();
     if (parent !== this.containerNode.parentNode) {
       parent.appendChild(this.containerNode);
     }
@@ -112,37 +113,40 @@ class Popup extends React.Component<Props> {
     const $node = $(this.popupNode)
       .draggable({
         addClasses: false,
-        containment: this.props.containerSelector == null ? 'document' : this.props.containerSelector(),
-        handle: this.props.dragHandleSelector == null ? false : this.props.dragHandleSelector()
+        containment:
+          this.props.containerSelector == null
+            ? 'document'
+            : this.props.containerSelector(),
+        handle:
+          this.props.dragHandleSelector == null
+            ? false
+            : this.props.dragHandleSelector(),
       })
       .toggle(this.props.open);
 
-      if (this.props.resizable) {
-        $node.resizable({
-          handles: 'all',
-          minWidth: 100,
-          minHeight: 100
-        });
-      }
+    if (this.props.resizable) {
+      $node.resizable({
+        handles: 'all',
+        minWidth: 100,
+        minHeight: 100,
+      });
+    }
   }
-
 
   render() {
     const children = React.cloneElement(this.props.children, {
       ref: (c: React.ReactInstance | null) =>
-        this.popupNode = c && ReactDOM.findDOMNode(c) as HTMLElement
+        (this.popupNode = c && (ReactDOM.findDOMNode(c) as HTMLElement)),
     });
     const content = (
-      <TabbableContainer
-        autoFocus
-        className={this.props.className || ''}
-      >
+      <TabbableContainer autoFocus className={this.props.className || ''}>
         {children}
       </TabbableContainer>
     );
-    return this.containerNode ? ReactDOM.createPortal(content, this.containerNode) : null;
+    return this.containerNode
+      ? ReactDOM.createPortal(content, this.containerNode)
+      : null;
   }
-
 }
 
 export default Popup;

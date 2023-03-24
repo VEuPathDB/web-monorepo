@@ -1,4 +1,4 @@
-import { ServiceBase } from 'wdk-client/Service/ServiceBase';
+import { ServiceBase } from '../../Service/ServiceBase';
 
 export default (base: ServiceBase) => {
   function getOauthStateToken() {

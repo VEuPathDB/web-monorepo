@@ -1,10 +1,16 @@
-import { getTree, removeIntermediateNodesWithSingleChild, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
-import { Field, FieldTreeNode } from 'wdk-client/Components/AttributeFilter/Types';
+import {
+  getTree,
+  removeIntermediateNodesWithSingleChild,
+  findAncestorFields,
+} from '../../../Components/AttributeFilter/AttributeFilterUtils';
+import {
+  Field,
+  FieldTreeNode,
+} from '../../../Components/AttributeFilter/Types';
 
-const ontology = require('wdk-client/Components/AttributeFilter/__tests__/TestOntology.json');
+const ontology = require('../../../Components/AttributeFilter/__tests__/TestOntology.json');
 
 describe('getTree', () => {
-
   it('Should create a tree', () => {
     const tree = getTree(ontology);
     expect(tree).toMatchSnapshot();
@@ -16,8 +22,7 @@ describe('getTree', () => {
 
     expect(modifiedTree).toMatchSnapshot();
   });
-
-})
+});
 
 describe('findAncestorFields', () => {
   it('Should return the correct path of ancestor terms', () => {
@@ -33,7 +38,17 @@ describe('findAncestorFields', () => {
 
     const tree = getTree(fields);
 
-    expect(findAncestorFields(tree, '3').toArray()).toEqual([fields[0], fields[2], fields[3]]);
-    expect(findAncestorFields(tree, '6').toArray()).toEqual([fields[0], fields[2], fields[4], fields[5], fields[6]]);
-  })
-})
+    expect(findAncestorFields(tree, '3').toArray()).toEqual([
+      fields[0],
+      fields[2],
+      fields[3],
+    ]);
+    expect(findAncestorFields(tree, '6').toArray()).toEqual([
+      fields[0],
+      fields[2],
+      fields[4],
+      fields[5],
+      fields[6],
+    ]);
+  });
+});

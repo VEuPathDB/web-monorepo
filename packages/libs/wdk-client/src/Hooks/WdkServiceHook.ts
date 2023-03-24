@@ -1,7 +1,7 @@
-import WdkService, { useWdkEffect } from "wdk-client/Service/WdkService";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { notifyUnhandledError } from "wdk-client/Actions/UnhandledErrorActions";
+import WdkService, { useWdkEffect } from '../Service/WdkService';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { notifyUnhandledError } from '../Actions/UnhandledErrorActions';
 
 export interface ServiceCallback<S extends WdkService, T> {
   (service: S): Promise<T>;
@@ -10,28 +10,34 @@ export interface ServiceCallback<S extends WdkService, T> {
 type WdkServiceCallback<T> = ServiceCallback<WdkService, T>;
 
 function wdkServiceHookFactory(clearValueBeforeServiceCallback: boolean) {
-  return function<T>(callback: WdkServiceCallback<T>, deps?: any[]): T | undefined {
-    const [ value, setValue ] = useState<T>();
+  return function <T>(
+    callback: WdkServiceCallback<T>,
+    deps?: any[]
+  ): T | undefined {
+    const [value, setValue] = useState<T>();
     const dispatch = useDispatch();
-    useWdkEffect(wdkService => {
+    useWdkEffect((wdkService) => {
       let doSetValue = true;
       if (clearValueBeforeServiceCallback) {
         setValue(undefined);
       }
       callback(wdkService).then(
-        value => {
+        (value) => {
           if (doSetValue) setValue(value);
         },
-        error => {
+        (error) => {
           if (doSetValue) {
             wdkService.submitErrorIfNot500(error);
             dispatch(notifyUnhandledError(error));
           }
-        });
-      return () => { doSetValue = false; }
-    }, deps)
+        }
+      );
+      return () => {
+        doSetValue = false;
+      };
+    }, deps);
     return value;
-  }
+  };
 }
 
 /**

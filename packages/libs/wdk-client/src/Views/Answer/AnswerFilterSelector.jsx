@@ -2,15 +2,20 @@ import $ from 'jquery';
 import { includes } from 'lodash';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import TabbableContainer from 'wdk-client/Components/Display/TabbableContainer';
-import { wrappable, lazy } from 'wdk-client/Utils/ComponentUtils';
+import TabbableContainer from '../../Components/Display/TabbableContainer';
+import { wrappable, lazy } from '../../Utils/ComponentUtils';
 
 /** Filter text input */
 function renderFilterField(field, isChecked, handleChange) {
   return (
     <div key={field.name}>
       <label>
-        <input type="checkbox" value={field.name} checked={isChecked} onChange={handleChange}/>
+        <input
+          type="checkbox"
+          value={field.name}
+          checked={isChecked}
+          onChange={handleChange}
+        />
         {' ' + field.displayName}
       </label>
     </div>
@@ -19,15 +24,14 @@ function renderFilterField(field, isChecked, handleChange) {
 
 /** Record fields to match filter expression against */
 class AnswerFilterSelector extends Component {
-
   constructor(props) {
     super(props);
-    this.handleKeyPress = e => {
+    this.handleKeyPress = (e) => {
       if (e.key === 'Escape') {
         this.props.onClose();
       }
     };
-    this.handleDocumentClick = e => {
+    this.handleDocumentClick = (e) => {
       // close if the click target is not contained by this node
       let node = ReactDOM.findDOMNode(this);
       if ($(e.target).closest(node).length === 0) {
@@ -67,27 +71,31 @@ class AnswerFilterSelector extends Component {
       clearAll,
       onClose,
       toggleAttribute,
-      toggleTable
+      toggleTable,
     } = this.props;
 
     return (
       <TabbableContainer
         autoFocus
         onKeyDown={this.handleKeyPress}
-        className="wdk-Answer-filterFieldSelector">
-
+        className="wdk-Answer-filterFieldSelector"
+      >
         <p>
-          <a href="#" onClick={selectAll}>select all</a>
+          <a href="#" onClick={selectAll}>
+            select all
+          </a>
           {' | '}
-          <a href="#" onClick={clearAll}>clear all</a>
+          <a href="#" onClick={clearAll}>
+            clear all
+          </a>
         </p>
 
-        {attributes.map(attr => {
+        {attributes.map((attr) => {
           let isChecked = includes(filterAttributes, attr.name);
           return renderFilterField(attr, isChecked, toggleAttribute);
         })}
 
-        {tables.map(table => {
+        {tables.map((table) => {
           let isChecked = includes(filterTables, table.name);
           return renderFilterField(table, isChecked, toggleTable);
         })}
@@ -98,11 +106,9 @@ class AnswerFilterSelector extends Component {
             onClick={onClose}
           />
         </div>
-
       </TabbableContainer>
     );
   }
-
 }
 
 export default wrappable(AnswerFilterSelector);

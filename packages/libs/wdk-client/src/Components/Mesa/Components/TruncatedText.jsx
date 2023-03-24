@@ -1,33 +1,36 @@
 import React from 'react';
 
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import Icon from '../../../Components/Mesa/Components/Icon';
 
 class TruncatedText extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = { expanded: false };
     this.toggleExpansion = this.toggleExpansion.bind(this);
   }
 
-  wordCount (text) {
+  wordCount(text) {
     if (typeof text !== 'string') return undefined;
-    return text.trim().split(' ').filter(x => x.length).length;
+    return text
+      .trim()
+      .split(' ')
+      .filter((x) => x.length).length;
   }
 
-  reverseText (text) {
+  reverseText(text) {
     if (typeof text !== 'string' || !text.length) return text;
     return text.split('').reverse().join('');
   }
 
-  trimInitialPunctuation (text) {
+  trimInitialPunctuation(text) {
     if (typeof text !== 'string' || !text.length) return text;
     while (text.search(/[a-zA-Z0-9]/) !== 0) {
       text = text.substring(1);
-    };
+    }
     return text;
   }
 
-  trimPunctuation (text) {
+  trimPunctuation(text) {
     if (typeof text !== 'string' || !text.length) return text;
 
     text = this.trimInitialPunctuation(text);
@@ -38,24 +41,27 @@ class TruncatedText extends React.Component {
     return text;
   }
 
-  truncate (text, cutoff) {
+  truncate(text, cutoff) {
     if (typeof text !== 'string' || typeof cutoff !== 'number') return text;
     let count = this.wordCount(text);
     if (count < cutoff) return text;
 
-    let words = text.trim().split(' ').filter(x => x.length);
+    let words = text
+      .trim()
+      .split(' ')
+      .filter((x) => x.length);
     let threshold = Math.ceil(cutoff * 0.66);
     let short = words.slice(0, threshold).join(' ');
 
     return this.trimPunctuation(short) + '...';
   }
 
-  toggleExpansion () {
+  toggleExpansion() {
     let { expanded } = this.state;
     this.setState({ expanded: !expanded });
   }
 
-  render () {
+  render() {
     let { expanded } = this.state;
     let { className, cutoff, text } = this.props;
     cutoff = typeof cutoff === 'number' ? cutoff : 100;
@@ -68,7 +74,10 @@ class TruncatedText extends React.Component {
       <div className={className}>
         {text}
         {expandable && (
-          <button className="TruncatedText-Toggle" onClick={this.toggleExpansion}>
+          <button
+            className="TruncatedText-Toggle"
+            onClick={this.toggleExpansion}
+          >
             {expanded ? 'Show Less' : 'Show More'}
             <Icon fa={expanded ? 'angle-double-up' : 'angle-double-down'} />
           </button>
@@ -76,6 +85,6 @@ class TruncatedText extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default TruncatedText;

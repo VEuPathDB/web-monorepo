@@ -1,5 +1,5 @@
-@import '~wdk-client/Core/Style/palette.scss';
-@import '~wdk-client/Core/Style/mixins.scss';
+@import '~../../Core/Style/palette.scss';
+@import '~../../Core/Style/mixins.scss';
 
 .wdk-Favorites {
   width: 960px;
@@ -21,9 +21,12 @@
     padding-bottom: 10px;
   }
 
-  a { cursor: pointer; }
+  a {
+    cursor: pointer;
+  }
 
-  textarea, input[type] {
+  textarea,
+  input[type] {
     border-color: #ddd !important;
   }
 
@@ -84,7 +87,8 @@
     width: 100%;
     @include flex;
 
-    textarea, input[type="text"] {
+    textarea,
+    input[type='text'] {
       margin: 5px 0;
       padding: 5px;
       border-radius: 2px;
@@ -96,7 +100,7 @@
       display: block;
       clear: both;
     }
-    input[type="submit"] {
+    input[type='submit'] {
       margin: 3px 0;
       font-size: 0.9em;
     }
@@ -113,11 +117,15 @@
 
       &.save-icon {
         color: $green;
-        &:hover { color: darken($green, 10%); }
+        &:hover {
+          color: darken($green, 10%);
+        }
       }
       &.cancel-icon {
         color: $red;
-        &:hover { color: darken($red, 10%); }
+        &:hover {
+          color: darken($red, 10%);
+        }
       }
     }
   }

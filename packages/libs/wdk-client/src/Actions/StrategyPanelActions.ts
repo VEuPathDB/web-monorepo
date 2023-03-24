@@ -1,5 +1,5 @@
-import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { AddType } from 'wdk-client/Views/Strategy/Types';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
+import { AddType } from '../Views/Strategy/Types';
 
 export const openStrategyPanel = makeActionCreator(
   'strategyPanel/open',
@@ -34,7 +34,7 @@ export const setInsertStepWizardVisibility = makeActionCreator(
 export const setReviseFormVisibility = makeActionCreator(
   'strategyPanel/setReviseFormVisibility',
   (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
-)
+);
 
 export const setDeleteStepDialogVisibilty = makeActionCreator(
   'strategyPanel/setDeleteStepDialogVisibilty',
@@ -49,12 +49,12 @@ export const setStrategyPanelHeightOverride = makeActionCreator(
 export const nestStrategy = makeActionCreator(
   'strategyPanel/nestStrategy',
   (viewId: string, branchStepId: number) => ({ viewId, branchStepId })
-)
+);
 
 export const unnestStrategy = makeActionCreator(
   'strategyPanel/unnestStrategy',
   (viewId: string, branchStepId: number) => ({ viewId, branchStepId })
-)
+);
 
 /*
 setDidYouKnowVisibility
@@ -73,4 +73,4 @@ export type Action =
   | InferAction<typeof setDeleteStepDialogVisibilty>
   | InferAction<typeof setStrategyPanelHeightOverride>
   | InferAction<typeof nestStrategy>
-  | InferAction<typeof unnestStrategy>
+  | InferAction<typeof unnestStrategy>;

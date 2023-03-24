@@ -1,13 +1,13 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import {RootState} from 'wdk-client/Core/State/Types';
-import {User} from 'wdk-client/Utils/WdkUser';
-import {connect} from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RootState } from '../../Core/State/Types';
+import { User } from '../../Utils/WdkUser';
+import { connect } from 'react-redux';
 
 interface OwnProps {
   toDoWhatMessage?: string;
   extraParagraphContent?: JSX.Element;
-  children?: React.ReactChild
+  children?: React.ReactChild;
 }
 
 interface MappedProps {
@@ -23,8 +23,8 @@ const style: React.CSSProperties = {
   alignItems: 'center',
   fontSize: '1.35em',
   height: '100%',
-  maxHeight: '500px'
-}
+  maxHeight: '500px',
+};
 
 function LoginRequiredDisclaimer(props: Props) {
   const { user, toDoWhatMessage, extraParagraphContent, children } = props;
@@ -37,16 +37,25 @@ function LoginRequiredDisclaimer(props: Props) {
   return (
     <div style={style}>
       <h3>It looks like you are not logged in.</h3>
-      <p><i className="fa fa-user-o fa-5x"/></p>
-      <p>{toDoWhatMessage || 'To use this page'}, please <Link to={`/user/login?destination=${destination}`}>log in</Link> or <Link to={`/user/registration`}>register</Link>.</p>
-      { extraParagraphContent }
+      <p>
+        <i className="fa fa-user-o fa-5x" />
+      </p>
+      <p>
+        {toDoWhatMessage || 'To use this page'}, please{' '}
+        <Link to={`/user/login?destination=${destination}`}>log in</Link> or{' '}
+        <Link to={`/user/registration`}>register</Link>.
+      </p>
+      {extraParagraphContent}
     </div>
   );
 }
 
 function mapStateToProps(state: RootState) {
   const { user } = state.globalData;
-  return { user }
+  return { user };
 }
 
-export default connect(mapStateToProps, null)(LoginRequiredDisclaimer as React.ComponentType<Props>);
+export default connect(
+  mapStateToProps,
+  null
+)(LoginRequiredDisclaimer as React.ComponentType<Props>);

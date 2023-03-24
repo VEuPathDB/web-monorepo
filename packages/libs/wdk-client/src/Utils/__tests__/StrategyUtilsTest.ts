@@ -1,5 +1,5 @@
-import { removeStep, addStep } from 'wdk-client/Utils/StrategyUtils';
-import { StepTree } from 'wdk-client/Utils/WdkUser';
+import { removeStep, addStep } from '../../Utils/StrategyUtils';
+import { StepTree } from '../../Utils/WdkUser';
 
 // NOTE:
 // - *N* is calculated by adding the number of primary inputs, plus one (for the root step).
@@ -9,43 +9,42 @@ import { StepTree } from 'wdk-client/Utils/WdkUser';
 // - Step A is an *immediate downstream* step of B if B is a primary of secondary input to A.
 
 describe('removeStep', () => {
-
   describe('with a stepTree of any size', () => {
     it('should return the same step tree structure, if an unknown step id is provided', () => {
       const stepTree: StepTree = {
-        stepId: 1
-      }
+        stepId: 1,
+      };
       expect(removeStep(stepTree, 2)).toEqual(stepTree);
     });
     it('should return the primary input of the root step, if the root step is removed', () => {
       const stepTree: StepTree = {
         stepId: 1,
         primaryInput: {
-          stepId: 2
+          stepId: 2,
         },
         secondaryInput: {
-          stepId: 3
-        }
+          stepId: 3,
+        },
       };
-      expect(removeStep(stepTree, 1)).toEqual({stepId: 2});
+      expect(removeStep(stepTree, 1)).toEqual({ stepId: 2 });
     });
-  })
+  });
 
   describe('with a stepTree of N=1', () => {
     it('should return undefined, if the single step is removed', () => {
       const stepTree: StepTree = {
-        stepId: 1
-      }
+        stepId: 1,
+      };
       expect(removeStep(stepTree, 1)).toBe(undefined);
     });
-  })
+  });
 
   describe('with a stepTree of N=2', () => {
     it('should return a step tree with the secondary input of the root step as the new root step, if the second step is removed', () => {
       const stepTree: StepTree = {
         stepId: 1,
         primaryInput: { stepId: 2 },
-        secondaryInput: { stepId: 3 }
+        secondaryInput: { stepId: 3 },
       };
       expect(removeStep(stepTree, 2)).toEqual({ stepId: 3 });
     });
@@ -53,16 +52,15 @@ describe('removeStep', () => {
       const stepTree: StepTree = {
         stepId: 1,
         primaryInput: {
-          stepId: 2
-        }
+          stepId: 2,
+        },
       };
       expect(removeStep(stepTree, 2)).toEqual(undefined);
     });
-  })
-  
+  });
+
   describe('with a stepTree of N>2', () => {
     it('should return a step tree with the primary input of the target step as the new primary input of the immediate downstream step of the target step', () => {
-
       //      7    6    5
       //      |    |    |
       //      v    v    v
@@ -74,15 +72,15 @@ describe('removeStep', () => {
           primaryInput: {
             stepId: 3,
             primaryInput: {
-              stepId: 4
+              stepId: 4,
             },
             secondaryInput: {
-              stepId: 7
-            }
+              stepId: 7,
+            },
           },
-          secondaryInput: { stepId: 6 }
+          secondaryInput: { stepId: 6 },
         },
-        secondaryInput: { stepId: 5 }
+        secondaryInput: { stepId: 5 },
       };
 
       //      7    5
@@ -94,16 +92,16 @@ describe('removeStep', () => {
         primaryInput: {
           stepId: 3,
           primaryInput: {
-            stepId: 4
+            stepId: 4,
           },
           secondaryInput: {
-            stepId: 7
-          }
+            stepId: 7,
+          },
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      };
       expect(removeStep(stepTree, 2)).toEqual(resultStepTree1);
       expect(removeStep(stepTree, 6)).toEqual(resultStepTree1);
 
@@ -116,16 +114,16 @@ describe('removeStep', () => {
         primaryInput: {
           stepId: 2,
           primaryInput: {
-            stepId: 4
+            stepId: 4,
           },
           secondaryInput: {
-            stepId: 6
-          }
+            stepId: 6,
+          },
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      };
       expect(removeStep(stepTree, 3)).toEqual(resultStepTree2);
       expect(removeStep(stepTree, 7)).toEqual(resultStepTree2);
 
@@ -140,12 +138,11 @@ describe('removeStep', () => {
           primaryInput: {
             stepId: 7,
           },
-          secondaryInput: { stepId: 6 }
+          secondaryInput: { stepId: 6 },
         },
-        secondaryInput: { stepId: 5 }
+        secondaryInput: { stepId: 5 },
       };
       expect(removeStep(stepTree, 4)).toEqual(resultStepTree3);
-
     });
   });
 
@@ -162,24 +159,24 @@ describe('removeStep', () => {
       primaryInput: {
         stepId: 2,
         primaryInput: {
-          stepId: 3
+          stepId: 3,
         },
         secondaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 8
-          }
-        }
+            stepId: 8,
+          },
+        },
       },
       secondaryInput: {
         stepId: 5,
         primaryInput: {
-          stepId: 6
+          stepId: 6,
         },
         secondaryInput: {
-          stepId: 9
-        }
-      }
+          stepId: 9,
+        },
+      },
     };
 
     it('should remove the entire nested strategy, if deleteSubtree is true', () => {
@@ -190,14 +187,14 @@ describe('removeStep', () => {
       const resultStepTree1: StepTree = {
         stepId: 2,
         primaryInput: {
-          stepId: 3
+          stepId: 3,
         },
         secondaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 8
-          }
-        }
+            stepId: 8,
+          },
+        },
       };
       expect(removeStep(stepTree, 5, true)).toEqual(resultStepTree1);
 
@@ -211,17 +208,17 @@ describe('removeStep', () => {
       const resultStepTree2: StepTree = {
         stepId: 1,
         primaryInput: {
-          stepId: 3
+          stepId: 3,
         },
         secondaryInput: {
           stepId: 5,
           primaryInput: {
-            stepId: 6
+            stepId: 6,
           },
           secondaryInput: {
-            stepId: 9
-          }
-        }
+            stepId: 9,
+          },
+        },
       };
       expect(removeStep(stepTree, 7, true)).toEqual(resultStepTree2);
     });
@@ -236,18 +233,18 @@ describe('removeStep', () => {
         primaryInput: {
           stepId: 2,
           primaryInput: {
-            stepId: 3
+            stepId: 3,
           },
           secondaryInput: {
             stepId: 7,
             primaryInput: {
-              stepId: 8
-            }
-          }
+              stepId: 8,
+            },
+          },
         },
         secondaryInput: {
-          stepId: 6
-        }
+          stepId: 6,
+        },
       };
       expect(removeStep(stepTree, 5, false)).toEqual(resultStepTree1);
 
@@ -263,60 +260,62 @@ describe('removeStep', () => {
         primaryInput: {
           stepId: 2,
           primaryInput: {
-            stepId: 3
+            stepId: 3,
           },
           secondaryInput: {
-            stepId: 8
-          }
+            stepId: 8,
+          },
         },
         secondaryInput: {
           stepId: 5,
           primaryInput: {
-            stepId: 6
+            stepId: 6,
           },
           secondaryInput: {
-            stepId: 9
-          }
-        }
+            stepId: 9,
+          },
+        },
       };
       expect(removeStep(stepTree, 7, false)).toEqual(resultStepTree2);
-
     });
   });
-})
+});
 
 describe('addStep', () => {
-
   it('should return the same step tree structure, if an unknown step id is provided in the AddType', () => {
     const stepTree: StepTree = {
-      stepId: 1
-    }
-    expect(addStep(stepTree, { type: 'append', stepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
-    expect(addStep(stepTree, { type: 'insert-before', stepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
+      stepId: 1,
+    };
+    expect(
+      addStep(stepTree, { type: 'append', stepId: 2 }, 3, { stepId: 4 })
+    ).toEqual(stepTree);
+    expect(
+      addStep(stepTree, { type: 'insert-before', stepId: 2 }, 3, { stepId: 4 })
+    ).toEqual(stepTree);
   });
 
-  it('should insert a step between the append point and the append point\'s output, if trying to append a step to a non-head step', () => {
+  it("should insert a step between the append point and the append point's output, if trying to append a step to a non-head step", () => {
     //          5
     //          |
     //          v
     //     4 -> 3
     //          |
     //          v
-    // 2 -----> 1    
+    // 2 -----> 1
     const stepTree: StepTree = {
       stepId: 1,
       primaryInput: {
-        stepId: 2
+        stepId: 2,
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
 
     //              5
@@ -325,29 +324,31 @@ describe('addStep', () => {
     //      7  4 -> 3
     //      |       |
     //      v       v
-    // 2 -> 6 ----> 1    
+    // 2 -> 6 ----> 1
     const resultStepTree1: StepTree = {
       stepId: 1,
       primaryInput: {
         stepId: 6,
         primaryInput: {
-          stepId: 2
+          stepId: 2,
         },
         secondaryInput: {
-          stepId: 7
-        }
+          stepId: 7,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
-    expect(addStep(stepTree, { type: 'append', stepId: 2 }, 6, { stepId: 7 })).toEqual(resultStepTree1);
+    expect(
+      addStep(stepTree, { type: 'append', stepId: 2 }, 6, { stepId: 7 })
+    ).toEqual(resultStepTree1);
 
     //          7    5
     //          |    |
@@ -355,29 +356,31 @@ describe('addStep', () => {
     //     4 -> 6 -> 3
     //               |
     //               v
-    // 2 ----------> 1    
+    // 2 ----------> 1
     const resultStepTree2: StepTree = {
       stepId: 1,
       primaryInput: {
-        stepId: 2
+        stepId: 2,
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
           stepId: 6,
           primaryInput: {
-            stepId: 4
+            stepId: 4,
           },
           secondaryInput: {
-            stepId: 7
-          }
+            stepId: 7,
+          },
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
-    };    
-    expect(addStep(stepTree, { type: 'append', stepId: 4 }, 6, { stepId: 7 })).toEqual(resultStepTree2);
+          stepId: 5,
+        },
+      },
+    };
+    expect(
+      addStep(stepTree, { type: 'append', stepId: 4 }, 6, { stepId: 7 })
+    ).toEqual(resultStepTree2);
   });
 
   it('should return a step tree with a properly appended step, if trying to append a step to a head step', () => {
@@ -387,21 +390,21 @@ describe('addStep', () => {
     //      4 -> 3
     //           |
     //           v
-    // 2 ------> 1        
+    // 2 ------> 1
     const stepTree: StepTree = {
       stepId: 1,
       primaryInput: {
-        stepId: 2
+        stepId: 2,
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
 
     //           5
@@ -410,92 +413,98 @@ describe('addStep', () => {
     //      4 -> 3        7
     //           |        |
     //           v        v
-    // 2 ------> 1 -----> 6      
+    // 2 ------> 1 -----> 6
     const resultStepTree1: StepTree = {
       stepId: 6,
       primaryInput: {
         stepId: 1,
         primaryInput: {
-          stepId: 2
+          stepId: 2,
         },
         secondaryInput: {
           stepId: 3,
           primaryInput: {
-            stepId: 4
+            stepId: 4,
           },
           secondaryInput: {
-            stepId: 5
-          }
-        }        
+            stepId: 5,
+          },
+        },
       },
       secondaryInput: {
-        stepId: 7
-      }
+        stepId: 7,
+      },
     };
-    expect(addStep(stepTree, { type: 'append', stepId: 1 }, 6, { stepId: 7 })).toEqual(resultStepTree1);
- 
+    expect(
+      addStep(stepTree, { type: 'append', stepId: 1 }, 6, { stepId: 7 })
+    ).toEqual(resultStepTree1);
+
     //      5    7
     //      |    |
     //      v    v
     // 4 -> 3 -> 6
-    //           | 
+    //           |
     //           v
-    // 2 ------> 1   
+    // 2 ------> 1
     const resultStepTree2: StepTree = {
       stepId: 1,
       primaryInput: {
-        stepId: 2
+        stepId: 2,
       },
       secondaryInput: {
         stepId: 6,
         primaryInput: {
           stepId: 3,
           primaryInput: {
-            stepId: 4
+            stepId: 4,
           },
           secondaryInput: {
-            stepId: 5
-          }
+            stepId: 5,
+          },
         },
         secondaryInput: {
-          stepId: 7
-        }
-      }
+          stepId: 7,
+        },
+      },
     };
-    expect(addStep(stepTree, { type: 'append', stepId: 3 }, 6, { stepId: 7 })).toEqual(resultStepTree2);    
+    expect(
+      addStep(stepTree, { type: 'append', stepId: 3 }, 6, { stepId: 7 })
+    ).toEqual(resultStepTree2);
 
     //           7
     //           |
     //           v
-    //      5 -> 6 
+    //      5 -> 6
     //           |
     //           v
     //      4 -> 3
     //           |
     //           v
-    // 2 ------> 1        
+    // 2 ------> 1
     const resultStepTree3: StepTree = {
       stepId: 1,
       primaryInput: {
-        stepId: 2
+        stepId: 2,
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
           stepId: 6,
           primaryInput: {
-            stepId: 5
+            stepId: 5,
           },
           secondaryInput: {
-            stepId: 7
-          }
-        }
-      }
+            stepId: 7,
+          },
+        },
+      },
     };
-    expect(addStep(stepTree, { type: 'append', stepId: 5 }, 6, { stepId: 7 })).toEqual(resultStepTree3);    
+    expect(
+      addStep(stepTree, { type: 'append', stepId: 5 }, 6, { stepId: 7 })
+    ).toEqual(resultStepTree3);
   });
 
   it('should return a step tree with a properly inserted step, if trying to insert a step before Step >= 2', () => {
@@ -505,24 +514,24 @@ describe('addStep', () => {
     //                4 -> 3
     //                     |
     //                     v
-    // 6 ------> 2 ------> 1        
+    // 6 ------> 2 ------> 1
     const stepTree: StepTree = {
       stepId: 1,
       primaryInput: {
         stepId: 2,
         primaryInput: {
-          stepId: 6
-        }
+          stepId: 6,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
 
     //                       5
@@ -531,7 +540,7 @@ describe('addStep', () => {
     //       8          4 -> 3
     //       |               |
     //       v               v
-    // 6 --> 7 --> 2 ------> 1        
+    // 6 --> 7 --> 2 ------> 1
     const resultStepTree1: StepTree = {
       stepId: 1,
       primaryInput: {
@@ -539,24 +548,26 @@ describe('addStep', () => {
         primaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 6
+            stepId: 6,
           },
           secondaryInput: {
-            stepId: 8
-          }
-        }
+            stepId: 8,
+          },
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
-    expect(addStep(stepTree, { type: 'insert-before', stepId: 2 }, 7, { stepId: 8 })).toEqual(resultStepTree1);   
+    expect(
+      addStep(stepTree, { type: 'insert-before', stepId: 2 }, 7, { stepId: 8 })
+    ).toEqual(resultStepTree1);
 
     //                             5
     //                             |
@@ -564,7 +575,7 @@ describe('addStep', () => {
     //                    8   4 -> 3
     //                    |        |
     //                    v        v
-    // 6 ------> 2 -----> 7 -----> 1        
+    // 6 ------> 2 -----> 7 -----> 1
     const resultStepTree2: StepTree = {
       stepId: 1,
       primaryInput: {
@@ -572,63 +583,67 @@ describe('addStep', () => {
         primaryInput: {
           stepId: 2,
           primaryInput: {
-            stepId: 6
-          }
+            stepId: 6,
+          },
         },
         secondaryInput: {
-          stepId: 8
-        }
+          stepId: 8,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
-    expect(addStep(stepTree, { type: 'insert-before', stepId: 1 }, 7, { stepId: 8 })).toEqual(resultStepTree2);
-    
+    expect(
+      addStep(stepTree, { type: 'insert-before', stepId: 1 }, 7, { stepId: 8 })
+    ).toEqual(resultStepTree2);
+
     //                     8    5
     //                     |    |
     //                     v    v
     //                4 -> 7 -> 3
     //                          |
     //                          v
-    // 6 ------> 2 -----------> 1            
+    // 6 ------> 2 -----------> 1
     const resultStepTree3: StepTree = {
       stepId: 1,
       primaryInput: {
         stepId: 2,
         primaryInput: {
-          stepId: 6
-        }
+          stepId: 6,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 4
+            stepId: 4,
           },
           secondaryInput: {
-            stepId: 8
-          }
+            stepId: 8,
+          },
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
-    expect(addStep(stepTree, { type: 'insert-before', stepId: 3 }, 7, { stepId: 8 })).toEqual(resultStepTree3);
+    expect(
+      addStep(stepTree, { type: 'insert-before', stepId: 3 }, 7, { stepId: 8 })
+    ).toEqual(resultStepTree3);
   });
 
   it('should return a step tree with a properly inserted step, if trying to insert a step before Step 1', () => {
     // 1
     const stepTree1: StepTree = {
-      stepId: 1
+      stepId: 1,
     };
 
     //      1
@@ -638,13 +653,15 @@ describe('addStep', () => {
     const resultStepTree1: StepTree = {
       stepId: 2,
       primaryInput: {
-        stepId: 3
+        stepId: 3,
       },
       secondaryInput: {
-        stepId: 1
-      }
+        stepId: 1,
+      },
     };
-    expect(addStep(stepTree1, { type: 'insert-before', stepId: 1 }, 2, { stepId: 3 })).toEqual(resultStepTree1);
+    expect(
+      addStep(stepTree1, { type: 'insert-before', stepId: 1 }, 2, { stepId: 3 })
+    ).toEqual(resultStepTree1);
 
     //                     5
     //                     |
@@ -652,24 +669,24 @@ describe('addStep', () => {
     //                4 -> 3
     //                     |
     //                     v
-    // 6 ------> 2 ------> 1        
+    // 6 ------> 2 ------> 1
     const stepTree2: StepTree = {
       stepId: 1,
       primaryInput: {
         stepId: 2,
         primaryInput: {
-          stepId: 6
-        }
+          stepId: 6,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
 
     //                               5
@@ -678,7 +695,7 @@ describe('addStep', () => {
     //           6              4 -> 3
     //           |                   |
     //           V                   v
-    // 8 ------> 7 ------> 2 ------> 1        
+    // 8 ------> 7 ------> 2 ------> 1
     const resultStepTree2: StepTree = {
       stepId: 1,
       primaryInput: {
@@ -686,24 +703,26 @@ describe('addStep', () => {
         primaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 8
+            stepId: 8,
           },
           secondaryInput: {
-            stepId: 6
-          }
-        }
+            stepId: 6,
+          },
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
-    };    
-    expect(addStep(stepTree2, { type: 'insert-before', stepId: 6 }, 7, { stepId: 8 })).toEqual(resultStepTree2);
+          stepId: 5,
+        },
+      },
+    };
+    expect(
+      addStep(stepTree2, { type: 'insert-before', stepId: 6 }, 7, { stepId: 8 })
+    ).toEqual(resultStepTree2);
 
     //                4    5
     //                |    |
@@ -711,32 +730,34 @@ describe('addStep', () => {
     //           8 -> 7 -> 3
     //                     |
     //                     v
-    // 6 ------> 2 ------> 1        
+    // 6 ------> 2 ------> 1
     const resultStepTree3: StepTree = {
       stepId: 1,
       primaryInput: {
         stepId: 2,
         primaryInput: {
-          stepId: 6
-        }
+          stepId: 6,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 8
+            stepId: 8,
           },
           secondaryInput: {
-            stepId: 4
-          }
+            stepId: 4,
+          },
         },
         secondaryInput: {
-          stepId: 5
-        }
-      }
+          stepId: 5,
+        },
+      },
     };
-    expect(addStep(stepTree2, { type: 'insert-before', stepId: 4 }, 7, { stepId: 8 })).toEqual(resultStepTree3);
+    expect(
+      addStep(stepTree2, { type: 'insert-before', stepId: 4 }, 7, { stepId: 8 })
+    ).toEqual(resultStepTree3);
 
     //                     5
     //                     |
@@ -747,31 +768,33 @@ describe('addStep', () => {
     //                4 -> 3
     //                     |
     //                     v
-    // 6 ------> 2 ------> 1        
+    // 6 ------> 2 ------> 1
     const resultStepTree4: StepTree = {
       stepId: 1,
       primaryInput: {
         stepId: 2,
         primaryInput: {
-          stepId: 6
-        }
+          stepId: 6,
+        },
       },
       secondaryInput: {
         stepId: 3,
         primaryInput: {
-          stepId: 4
+          stepId: 4,
         },
         secondaryInput: {
           stepId: 7,
           primaryInput: {
-            stepId: 8
+            stepId: 8,
           },
           secondaryInput: {
-            stepId: 5
-          }
-        }
-      }
+            stepId: 5,
+          },
+        },
+      },
     };
-    expect(addStep(stepTree2, { type: 'insert-before', stepId: 5 }, 7, { stepId: 8 })).toEqual(resultStepTree4);
+    expect(
+      addStep(stepTree2, { type: 'insert-before', stepId: 5 }, 7, { stepId: 8 })
+    ).toEqual(resultStepTree4);
   });
 });

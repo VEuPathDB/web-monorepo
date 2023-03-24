@@ -1,20 +1,21 @@
 import React from 'react';
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
-import AnchoredTooltip from 'wdk-client/Components/Mesa/Components/AnchoredTooltip';
+import Icon from '../../../Components/Mesa/Components/Icon';
+import AnchoredTooltip from '../../../Components/Mesa/Components/AnchoredTooltip';
 
 class HelpTrigger extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
   }
 
-  render () {
+  render() {
     const { props } = this;
     const content = props.children;
-    const className = 'Trigger HelpTrigger' + (props.className ? ' ' + props.className : '');
+    const className =
+      'Trigger HelpTrigger' + (props.className ? ' ' + props.className : '');
     const children = <Icon fa="question-circle" />;
     const newProps = { ...props, content, children, className };
     return <AnchoredTooltip {...newProps} />;
   }
-};
+}
 
 export default HelpTrigger;

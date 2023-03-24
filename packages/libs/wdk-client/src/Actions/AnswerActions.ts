@@ -1,38 +1,36 @@
 import { pick } from 'lodash';
-import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
+import { ActionThunk } from '../Core/WdkMiddleware';
 import {
   AttributeField,
   RecordClass,
   Question,
   Answer,
   ParameterValues,
-  AnswerSpec
-} from "wdk-client/Utils/WdkModel";
-import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import { isQualifying, getId } from 'wdk-client/Utils/CategoryUtils';
-
+  AnswerSpec,
+} from '../Utils/WdkModel';
+import { preorderSeq } from '../Utils/TreeUtils';
+import { isQualifying, getId } from '../Utils/CategoryUtils';
 
 // Shared types
 // ------------
 
 export type DisplayInfo = {
   customName: string;
-  pagination: { offset: number, numRecords: number};
+  pagination: { offset: number; numRecords: number };
   attributes: string[];
   tables: string[];
   sorting: Sorting[];
-}
+};
 
 export type Sorting = {
   attributeName: string;
   direction: 'ASC' | 'DESC';
-}
+};
 
 export type AnswerOptions = {
   parameters?: ParameterValues;
   displayInfo: DisplayInfo;
-}
-
+};
 
 // Actions
 // -------
@@ -43,7 +41,7 @@ export type Action =
   | ChangeVisibleColumnsAction
   | EndLoadingWithAnswerAction
   | EndLoadingWithErrorAction
-  | StartLoadingAction
+  | StartLoadingAction;
 
 //==============================================================================
 
@@ -54,7 +52,7 @@ export interface StartLoadingAction {
 }
 
 export function startLoading(): StartLoadingAction {
-  return { type: START_LOADING }
+  return { type: START_LOADING };
 }
 
 //==============================================================================
@@ -65,14 +63,14 @@ export interface EndLoadingWithErrorAction {
   type: typeof END_LOADING_WITH_ERROR;
   payload: {
     error: Error;
-  }
+  };
 }
 
 export function endLoadingWithError(error: Error): EndLoadingWithErrorAction {
   return {
     type: END_LOADING_WITH_ERROR,
-    payload: { error }
-  }
+    payload: { error },
+  };
 }
 
 //==============================================================================
@@ -80,23 +78,25 @@ export function endLoadingWithError(error: Error): EndLoadingWithErrorAction {
 export const END_LOADING_WITH_ANSWER = 'answer/end-loading-with-answer';
 
 interface AnswerData {
-  answer: Answer,
-  question: Question,
-  recordClass: RecordClass,
-  displayInfo: DisplayInfo,
-  parameters: ParameterValues,
+  answer: Answer;
+  question: Question;
+  recordClass: RecordClass;
+  displayInfo: DisplayInfo;
+  parameters: ParameterValues;
 }
 
 export interface EndLoadingWithAnswerAction {
   type: typeof END_LOADING_WITH_ANSWER;
-  payload: AnswerData
+  payload: AnswerData;
 }
 
-export function endLoadingWithAnswer(payload: AnswerData): EndLoadingWithAnswerAction {
+export function endLoadingWithAnswer(
+  payload: AnswerData
+): EndLoadingWithAnswerAction {
   return {
     type: END_LOADING_WITH_ANSWER,
-    payload
-  }
+    payload,
+  };
 }
 
 //==============================================================================
@@ -107,14 +107,14 @@ export interface ChangeSortingAction {
   type: typeof CHANGE_SORTING;
   payload: {
     sorting: Sorting[];
-  }
+  };
 }
 
 export function changeSorting(sorting: Sorting[]): ChangeSortingAction {
   return {
     type: CHANGE_SORTING,
-    payload: { sorting }
-  }
+    payload: { sorting },
+  };
 }
 
 //==============================================================================
@@ -126,17 +126,20 @@ export interface ChangeColumnPositionAction {
   payload: {
     columnName: string;
     newPosition: number;
-  }
+  };
 }
 
-export function changeColumnPosition(columnName: string, newPosition: number): ChangeColumnPositionAction {
+export function changeColumnPosition(
+  columnName: string,
+  newPosition: number
+): ChangeColumnPositionAction {
   return {
     type: CHANGE_COLUMN_POSITION,
     payload: {
       columnName,
-      newPosition
-    }
-  }
+      newPosition,
+    },
+  };
 }
 
 //==============================================================================
@@ -147,18 +150,19 @@ export interface ChangeVisibleColumnsAction {
   type: typeof CHANGE_VISIBLE_COLUMNS;
   payload: {
     attributes: AttributeField[];
-  }
+  };
 }
 
-export function changeVisibleColumns(attributes: AttributeField[]): ChangeVisibleColumnsAction {
+export function changeVisibleColumns(
+  attributes: AttributeField[]
+): ChangeVisibleColumnsAction {
   return {
     type: CHANGE_VISIBLE_COLUMNS,
-    payload: { attributes }
-  }
+    payload: { attributes },
+  };
 }
 
 //==============================================================================
-
 
 // Thunks
 // ------
@@ -166,7 +170,7 @@ export function changeVisibleColumns(attributes: AttributeField[]): ChangeVisibl
 type LoadAction =
   | StartLoadingAction
   | EndLoadingWithErrorAction
-  | EndLoadingWithAnswerAction
+  | EndLoadingWithAnswerAction;
 
 /**
  * Retrieve's an Answer resource from the WDK REST Service and dispatches an
@@ -215,22 +219,28 @@ export function loadAnswer(
         try {
           const { parameters = {}, displayInfo } = opts;
           const question = await wdkService.findQuestion(questionUrlSegment);
-          const recordClass = await wdkService.findRecordClass(recordClassUrlSegment);
+          const recordClass = await wdkService.findRecordClass(
+            recordClassUrlSegment
+          );
           const ontology = await wdkService.getCategoriesOntology();
           const attributes = preorderSeq(ontology.tree)
-            .filter(isQualifying({
-              scope: 'results',
-              targetType: 'attribute',
-              recordClassName: recordClass.fullName
-            }))
+            .filter(
+              isQualifying({
+                scope: 'results',
+                targetType: 'attribute',
+                recordClassName: recordClass.fullName,
+              })
+            )
             .map(getId)
             .toArray();
           const tables = preorderSeq(ontology.tree)
-            .filter(isQualifying({
-              scope: 'results',
-              targetType: 'table',
-              recordClassName: recordClass.fullName
-            }))
+            .filter(
+              isQualifying({
+                scope: 'results',
+                targetType: 'table',
+                recordClassName: recordClass.fullName,
+              })
+            )
             .map(getId)
             .toArray();
 
@@ -241,24 +251,31 @@ export function loadAnswer(
           const answerSpec: AnswerSpec = {
             searchName: question.urlSegment,
             searchConfig: {
-              parameters
-            }
+              parameters,
+            },
           };
-          const formatConfig = pick(displayInfo, ['attributes', 'tables', 'pagination', 'sorting']);
-          const answer = await wdkService.getAnswerJson(answerSpec, formatConfig);
+          const formatConfig = pick(displayInfo, [
+            'attributes',
+            'tables',
+            'pagination',
+            'sorting',
+          ]);
+          const answer = await wdkService.getAnswerJson(
+            answerSpec,
+            formatConfig
+          );
 
           return endLoadingWithAnswer({
             answer,
             question,
             recordClass,
             displayInfo,
-            parameters
+            parameters,
           });
+        } catch (error) {
+          return endLoadingWithError(error);
         }
-        catch(error) {
-          return endLoadingWithError(error)
-        }
-      }
-    ]
-  }
+      },
+    ];
+  };
 }

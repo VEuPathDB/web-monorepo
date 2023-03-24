@@ -1,8 +1,8 @@
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
-let PrimaryKeySpan = props => {
-  return ( <span>{props.primaryKeyString}</span> );
+let PrimaryKeySpan = (props) => {
+  return <span>{props.primaryKeyString}</span>;
 };
 
 export default wrappable(PrimaryKeySpan);

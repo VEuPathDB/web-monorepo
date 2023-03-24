@@ -1,16 +1,22 @@
-
 import React, { useCallback, useMemo } from 'react';
 
 import { fromPairs } from 'lodash';
 import { Epic } from 'redux-observable';
 import { EMPTY } from 'rxjs';
 
-import { Action } from 'wdk-client/Actions';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { EpicDependencies } from 'wdk-client/Core/Store';
-import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { Parameter, ParameterValues, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
-import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Action } from '../../../Actions';
+import { DispatchAction } from '../../../Core/CommonTypes';
+import { EpicDependencies } from '../../../Core/Store';
+import {
+  State,
+  QuestionState,
+} from '../../../StoreModules/QuestionStoreModule';
+import {
+  Parameter,
+  ParameterValues,
+  QuestionWithParameters,
+} from '../../../Utils/WdkModel';
+import { Props as FormProps } from '../../../Views/Question/DefaultQuestionForm';
 
 // Types
 // -----
@@ -21,7 +27,7 @@ export type Context<T extends Parameter> = {
   searchName: string;
   parameter: T;
   paramValues: ParameterValues;
-}
+};
 
 export type Props<T extends Parameter, S = void> = {
   ctx: Context<T>;
@@ -31,8 +37,7 @@ export type Props<T extends Parameter, S = void> = {
   uiState: S;
   dispatch: DispatchAction;
   onParamValueChange: (value: string) => void;
-
-}
+};
 
 export type ParamModule<T extends Parameter = Parameter, S = any> = {
   isType: (parameter: Parameter) => parameter is T;
@@ -48,19 +53,25 @@ export type ParamModule<T extends Parameter = Parameter, S = any> = {
   /**
    * React to submit events. The Question will not be submitted until this is complete.
    */
-  getValueFromState: (context: Context<T>, state: QuestionState, services: EpicDependencies) => string | Promise<string>;
-}
+  getValueFromState: (
+    context: Context<T>,
+    state: QuestionState,
+    services: EpicDependencies
+  ) => string | Promise<string>;
+};
 
-type ParamModuleSpec<T extends Parameter, S> =
-  Partial<ParamModule<T, S>> & Pick<ParamModule<T, S>, 'isParamValueValid' | 'Component' | 'isType'>
+type ParamModuleSpec<T extends Parameter, S> = Partial<ParamModule<T, S>> &
+  Pick<ParamModule<T, S>, 'isParamValueValid' | 'Component' | 'isType'>;
 
-export function createParamModule<T extends Parameter, S>(spec: ParamModuleSpec<T, S>): ParamModule<T, S> {
+export function createParamModule<T extends Parameter, S>(
+  spec: ParamModuleSpec<T, S>
+): ParamModule<T, S> {
   return {
     ...spec,
     reduce: spec.reduce || defaultReduce,
     observeParam: spec.observeParam || defaultObserve,
-    getValueFromState: spec.getValueFromState || defaultGetValueFromState
-  }
+    getValueFromState: spec.getValueFromState || defaultGetValueFromState,
+  };
 }
 
 function defaultReduce<S>(state: S, action: Action): S {
@@ -74,7 +85,6 @@ function defaultObserve() {
 function defaultGetValueFromState(context: Context<Parameter>) {
   return context.paramValues[context.parameter.name];
 }
-
 
 // Type guards (see https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards)
 // -----------------------------------------------------------------------------------------------------------
@@ -94,18 +104,25 @@ export function isContextType<T extends Parameter>(
 }
 
 // Hook for making custom parameter-updating callbacks
-export const useChangeParamValue = (parameter: Parameter, state: QuestionState, updateParamValue: FormProps['eventHandlers']['updateParamValue']) => {
+export const useChangeParamValue = (
+  parameter: Parameter,
+  state: QuestionState,
+  updateParamValue: FormProps['eventHandlers']['updateParamValue']
+) => {
   const searchName = state.question.urlSegment;
   const paramValues = state.paramValues;
 
-  const changeParamValue = useCallback((paramValue: string) => {
-    updateParamValue({
-      searchName,
-      parameter,
-      paramValues,
-      paramValue
-    });
-  }, [ updateParamValue, searchName, parameter, paramValues ]);
+  const changeParamValue = useCallback(
+    (paramValue: string) => {
+      updateParamValue({
+        searchName,
+        parameter,
+        paramValues,
+        paramValue,
+      });
+    },
+    [updateParamValue, searchName, parameter, paramValues]
+  );
 
   return changeParamValue;
 };
@@ -120,7 +137,7 @@ export function useDependentParamsAreUpdating(
   );
 
   return useMemo(
-    () => Object.values(paramDependenciesUpdating).some(x => x),
+    () => Object.values(paramDependenciesUpdating).some((x) => x),
     [paramDependenciesUpdating]
   );
 }
@@ -130,10 +147,7 @@ export function useParamDependenciesUpdating(
   paramsUpdatingDependencies: Record<string, boolean>
 ) {
   return useMemo(
-    () => makeParamDependenciesUpdating(
-      question,
-      paramsUpdatingDependencies
-    ),
+    () => makeParamDependenciesUpdating(question, paramsUpdatingDependencies),
     [question, paramsUpdatingDependencies]
   );
 }
@@ -143,12 +157,8 @@ export function makeParamDependenciesUpdating(
   paramsUpdatingDependencies: Record<string, boolean>
 ): Record<string, boolean> {
   return fromPairs(
-    question.parameters.filter(
-      parameter => paramsUpdatingDependencies[parameter.name]
-    ).flatMap(
-      parameter => parameter.dependentParams.map(
-        pn => [pn, true]
-      )
-    )
+    question.parameters
+      .filter((parameter) => paramsUpdatingDependencies[parameter.name])
+      .flatMap((parameter) => parameter.dependentParams.map((pn) => [pn, true]))
   );
 }

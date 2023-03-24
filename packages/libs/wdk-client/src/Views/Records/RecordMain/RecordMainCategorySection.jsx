@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import RecordAttributeSection from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
-import RecordTableSection from 'wdk-client/Views/Records/RecordTable/RecordTableSection';
-import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { getId, getTargetType, getDisplayName } from 'wdk-client/Utils/CategoryUtils';
+import RecordAttributeSection from '../../../Views/Records/RecordAttributes/RecordAttributeSection';
+import RecordTableSection from '../../../Views/Records/RecordTable/RecordTableSection';
+import CollapsibleSection from '../../../Components/Display/CollapsibleSection';
+import { wrappable } from '../../../Utils/ComponentUtils';
+import {
+  getId,
+  getTargetType,
+  getDisplayName,
+} from '../../../Utils/CategoryUtils';
 
 /**
  * Content for a node of a record category tree, or a record field.
@@ -37,33 +41,35 @@ class RecordMainCategorySection extends React.PureComponent {
       isCollapsed,
       enumeration,
       children,
-      requestPartialRecord
+      requestPartialRecord,
     } = this.props;
 
     switch (getTargetType(category)) {
-      case 'attribute': return (
-        <RecordAttributeSection
-          attribute={category.wdkReference}
-          ontologyProperties={category.properties}
-          record={record}
-          recordClass={recordClass}
-          isCollapsed={isCollapsed}
-          onCollapsedChange={this.toggleCollapse}
-          requestPartialRecord={requestPartialRecord}
-        />
-      );
+      case 'attribute':
+        return (
+          <RecordAttributeSection
+            attribute={category.wdkReference}
+            ontologyProperties={category.properties}
+            record={record}
+            recordClass={recordClass}
+            isCollapsed={isCollapsed}
+            onCollapsedChange={this.toggleCollapse}
+            requestPartialRecord={requestPartialRecord}
+          />
+        );
 
-      case 'table': return (
-        <RecordTableSection
-          table={category.wdkReference}
-          ontologyProperties={category.properties}
-          record={record}
-          recordClass={recordClass}
-          isCollapsed={isCollapsed}
-          onCollapsedChange={this.toggleCollapse}
-          requestPartialRecord={requestPartialRecord}
-        />
-      )
+      case 'table':
+        return (
+          <RecordTableSection
+            table={category.wdkReference}
+            ontologyProperties={category.properties}
+            record={record}
+            recordClass={recordClass}
+            isCollapsed={isCollapsed}
+            onCollapsedChange={this.toggleCollapse}
+            requestPartialRecord={requestPartialRecord}
+          />
+        );
 
       default: {
         let id = getId(category);
@@ -71,14 +77,23 @@ class RecordMainCategorySection extends React.PureComponent {
         let Header = 'h' + Math.min(depth + 2, 6);
         let headerContent = (
           <span>
-            <span className="wdk-RecordSectionEnumeration">{enumeration}</span> {categoryName}
-            <a className="wdk-RecordSectionLink" onClick={e => e.stopPropagation()} href={'#' + id}>&sect;</a>
+            <span className="wdk-RecordSectionEnumeration">{enumeration}</span>{' '}
+            {categoryName}
+            <a
+              className="wdk-RecordSectionLink"
+              onClick={(e) => e.stopPropagation()}
+              href={'#' + id}
+            >
+              &sect;
+            </a>
           </span>
         );
         return (
           <CollapsibleSection
             id={id}
-            className={depth === 0 ? 'wdk-RecordSection' : 'wdk-RecordSubsection'}
+            className={
+              depth === 0 ? 'wdk-RecordSection' : 'wdk-RecordSubsection'
+            }
             headerComponent={Header}
             headerContent={headerContent}
             isCollapsed={isCollapsed}
@@ -100,7 +115,7 @@ RecordMainCategorySection.propTypes = {
   onSectionToggle: PropTypes.func.isRequired,
   record: PropTypes.object.isRequired,
   recordClass: PropTypes.object.isRequired,
-  children: PropTypes.element
+  children: PropTypes.element,
 };
 
 export default wrappable(RecordMainCategorySection);

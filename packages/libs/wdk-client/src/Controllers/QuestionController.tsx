@@ -1,97 +1,115 @@
 import { isEqual, mapValues } from 'lodash';
-import React, { useEffect, useCallback, FunctionComponent, useMemo } from 'react';
+import React, {
+  useEffect,
+  useCallback,
+  FunctionComponent,
+  useMemo,
+} from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { IconAlt, Loading } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { IconAlt, Loading } from '../Components';
+import { RootState } from '../Core/State/Types';
+import { wrappable } from '../Utils/ComponentUtils';
+import { Plugin } from '../Utils/ClientPlugin';
 import {
   Action,
   SubmissionMetadata,
   changeGroupVisibility,
   updateActiveQuestion,
-  updateParamValue
-} from 'wdk-client/Actions/QuestionActions';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import Error from 'wdk-client/Components/PageStatus/Error';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { ResetFormConfig } from 'wdk-client/Components/Shared/ResetFormButton';
-import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { ParameterValues, RecordClass, Question } from 'wdk-client/Utils/WdkModel';
+  updateParamValue,
+} from '../Actions/QuestionActions';
+import { QuestionState } from '../StoreModules/QuestionStoreModule';
+import Error from '../Components/PageStatus/Error';
+import NotFound from '../Views/NotFound/NotFound';
+import { Props as FormProps } from '../Views/Question/DefaultQuestionForm';
+import { ResetFormConfig } from '../Components/Shared/ResetFormButton';
+import { GlobalData } from '../StoreModules/GlobalData';
+import { ParameterValues, RecordClass, Question } from '../Utils/WdkModel';
 
 const ActionCreators = {
   updateParamValue,
-  setGroupVisibility: changeGroupVisibility
-}
+  setGroupVisibility: changeGroupVisibility,
+};
 
 export type OwnProps = {
-  question: string, 
-  recordClass: string, 
-  FormComponent?: (props: FormProps) => JSX.Element, 
-  submissionMetadata: SubmissionMetadata,
-  submitButtonText?: string,
-  shouldChangeDocumentTitle?: boolean,
+  question: string;
+  recordClass: string;
+  FormComponent?: (props: FormProps) => JSX.Element;
+  submissionMetadata: SubmissionMetadata;
+  submitButtonText?: string;
+  shouldChangeDocumentTitle?: boolean;
   /**
    * Data to provide to parameters upon initialization. Data can be parameter
    * values, or it can be other content that the parameter can access and use
    * for initializing ui state.
-   * 
+   *
    * If a property's key is the same as a parameter name, then its value will
    * be used as that parameter's initial value.
-   * 
+   *
    * The entire object is also made available in the payload of the initParam
    * action, so that a param can interrogate the object for other special
    * keys.
    */
-  initialParamData?: Record<string, string>,
+  initialParamData?: Record<string, string>;
   /**
    * If true, the form will be submitted automatically, and the browser will be
    * directed to the new strategy. Any errors will appear above the search form
    * and the user will be able to correct the errors.
    */
-  autoRun?: boolean,
+  autoRun?: boolean;
   /**
    * If true, the form will be prepopulated with the param value
    * selections from the user's last visit to the form
    */
-  prepopulateWithLastParamValues?: boolean
+  prepopulateWithLastParamValues?: boolean;
 };
-type StateProps = QuestionState & { recordClasses: GlobalData['recordClasses'] };
-type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
-type Props = DispatchProps & StateProps & {
-  searchName: string,
-  recordClassName: string,
-  FormComponent?: FunctionComponent<FormProps>,
-  submissionMetadata: SubmissionMetadata,
-  submitButtonText?: string,
-  shouldChangeDocumentTitle?: boolean,
-  initialParamData?: Record<string, string>,
-  autoRun: boolean,
-  prepopulateWithLastParamValues: boolean
+type StateProps = QuestionState & {
+  recordClasses: GlobalData['recordClasses'];
 };
+type DispatchProps = {
+  eventHandlers: typeof ActionCreators;
+  dispatch: Dispatch;
+};
+type Props = DispatchProps &
+  StateProps & {
+    searchName: string;
+    recordClassName: string;
+    FormComponent?: FunctionComponent<FormProps>;
+    submissionMetadata: SubmissionMetadata;
+    submitButtonText?: string;
+    shouldChangeDocumentTitle?: boolean;
+    initialParamData?: Record<string, string>;
+    autoRun: boolean;
+    prepopulateWithLastParamValues: boolean;
+  };
 
 function QuestionController(props: Props) {
-  const { 
-    dispatch, 
-    eventHandlers, 
-    searchName, 
-    recordClassName, 
-    submissionMetadata, 
-    FormComponent, 
-    submitButtonText, 
+  const {
+    dispatch,
+    eventHandlers,
+    searchName,
+    recordClassName,
+    submissionMetadata,
+    FormComponent,
+    submitButtonText,
     recordClasses,
-    shouldChangeDocumentTitle, 
+    shouldChangeDocumentTitle,
     initialParamData,
     autoRun,
     prepopulateWithLastParamValues,
-    ...state } = props;
-  const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
+    ...state
+  } = props;
+  const stepId =
+    submissionMetadata.type === 'edit-step' ||
+    submissionMetadata.type === 'submit-custom-form'
+      ? submissionMetadata.stepId
+      : undefined;
 
   const recordClass = useMemo(
-    () => recordClasses && recordClasses.find(({ urlSegment }) => urlSegment === recordClassName), 
-    [ recordClasses, recordClassName ]
+    () =>
+      recordClasses &&
+      recordClasses.find(({ urlSegment }) => urlSegment === recordClassName),
+    [recordClasses, recordClassName]
   );
 
   const DefaultRenderForm: FunctionComponent<FormProps> = useCallback(
@@ -101,24 +119,27 @@ function QuestionController(props: Props) {
           type: 'questionForm',
           name: searchName,
           searchName,
-          recordClassName
+          recordClassName,
         }}
         pluginProps={props}
         fallback={<Loading />}
       />
     ),
-    [ searchName, recordClassName ] 
+    [searchName, recordClassName]
   );
 
   useEffect(() => {
-    props.dispatch(updateActiveQuestion({
-      searchName,
-      autoRun,
-      initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
-      prepopulateWithLastParamValues,
-      stepId,
-      submissionMetadata,
-    }))
+    props.dispatch(
+      updateActiveQuestion({
+        searchName,
+        autoRun,
+        initialParamData:
+          autoRun && initialParamData == null ? {} : initialParamData,
+        prepopulateWithLastParamValues,
+        stepId,
+        submissionMetadata,
+      })
+    );
   }, [searchName, stepId, submissionMetadata]);
 
   // useEffect(() => {
@@ -134,7 +155,13 @@ function QuestionController(props: Props) {
   //   }
   // }, [state.questionStatus]);
 
-  useSetSearchDocumentTitle(state.question, state.questionStatus, recordClasses, recordClass, shouldChangeDocumentTitle);
+  useSetSearchDocumentTitle(
+    state.question,
+    state.questionStatus,
+    recordClasses,
+    recordClass,
+    shouldChangeDocumentTitle
+  );
 
   const resetFormConfig = useResetFormConfig(
     searchName,
@@ -145,39 +172,42 @@ function QuestionController(props: Props) {
     dispatch,
     submissionMetadata
   );
-  
-  if (state.questionStatus === 'error') return <Error/>;
+
+  if (state.questionStatus === 'error') return <Error />;
   if (
     (recordClass === undefined && recordClasses !== undefined) ||
     state.questionStatus === 'not-found'
-  ) return <NotFound/>;
-  if (recordClass === undefined || state.questionStatus === 'loading') return <Loading/>;
+  )
+    return <NotFound />;
+  if (recordClass === undefined || state.questionStatus === 'loading')
+    return <Loading />;
 
-  if ( autoRun && state.submitting ) return (
-    <React.Fragment>
-      <h1>Searching {recordClass.displayNamePlural}...</h1>
-      <Loading/>
-    </React.Fragment>
-  );
+  if (autoRun && state.submitting)
+    return (
+      <React.Fragment>
+        <h1>Searching {recordClass.displayNamePlural}...</h1>
+        <Loading />
+      </React.Fragment>
+    );
 
   if (state.questionStatus !== 'complete') return null;
 
   const parameterElements = mapValues(
     state.question.parametersByName,
-    parameter => (
+    (parameter) => (
       <Plugin
         context={{
           type: 'questionFormParameter',
           name: parameter.name,
           paramName: parameter.name,
           searchName,
-          recordClassName
+          recordClassName,
         }}
         pluginProps={{
           ctx: {
             searchName,
             parameter,
-            paramValues: state.paramValues
+            paramValues: state.paramValues,
           },
           parameter: parameter,
           value: state.paramValues[parameter.name],
@@ -187,36 +217,38 @@ function QuestionController(props: Props) {
               searchName,
               parameter,
               paramValues: state.paramValues,
-              paramValue
-            })
+              paramValue,
+            });
           },
-          dispatch: dispatch
+          dispatch: dispatch,
         }}
       />
     )
   );
 
-  return FormComponent
-    ? <FormComponent
-        parameterElements={parameterElements}
-        state={state}
-        eventHandlers={eventHandlers}
-        dispatchAction={dispatch}
-        submissionMetadata={submissionMetadata}
-        submitButtonText={submitButtonText}
-        recordClass={recordClass}
-        resetFormConfig={resetFormConfig}
-      />
-    : <DefaultRenderForm
-        parameterElements={parameterElements}
-        state={state}
-        eventHandlers={eventHandlers}
-        dispatchAction={dispatch}
-        submissionMetadata={submissionMetadata}
-        submitButtonText={submitButtonText}
-        recordClass={recordClass}
-        resetFormConfig={resetFormConfig}
-      />;
+  return FormComponent ? (
+    <FormComponent
+      parameterElements={parameterElements}
+      state={state}
+      eventHandlers={eventHandlers}
+      dispatchAction={dispatch}
+      submissionMetadata={submissionMetadata}
+      submitButtonText={submitButtonText}
+      recordClass={recordClass}
+      resetFormConfig={resetFormConfig}
+    />
+  ) : (
+    <DefaultRenderForm
+      parameterElements={parameterElements}
+      state={state}
+      eventHandlers={eventHandlers}
+      dispatchAction={dispatch}
+      submissionMetadata={submissionMetadata}
+      submitButtonText={submitButtonText}
+      recordClass={recordClass}
+      resetFormConfig={resetFormConfig}
+    />
+  );
 }
 
 function useResetFormConfig(
@@ -226,54 +258,49 @@ function useResetFormConfig(
   paramValues: ParameterValues,
   defaultParamValues: ParameterValues,
   dispatch: Dispatch<Action>,
-  submissionMetadata: SubmissionMetadata,
+  submissionMetadata: SubmissionMetadata
 ): ResetFormConfig {
-  const reloadFormWithSystemDefaults = useCallback(
-    () => {
-      dispatch(updateActiveQuestion({
+  const reloadFormWithSystemDefaults = useCallback(() => {
+    dispatch(
+      updateActiveQuestion({
         autoRun: false,
         searchName,
         prepopulateWithLastParamValues: false,
         initialParamData: {},
         stepId,
-        submissionMetadata
-      }));
-    },
-    [ searchName, stepId, submissionMetadata ]
-  );
+        submissionMetadata,
+      })
+    );
+  }, [searchName, stepId, submissionMetadata]);
 
   return useMemo(
-    () => (
+    () =>
       prepopulateWithLastParamValues
         ? {
             offered: true,
-            disabled: isEqual(
-              defaultParamValues,
-              paramValues
-            ),
+            disabled: isEqual(defaultParamValues, paramValues),
             onResetForm: reloadFormWithSystemDefaults,
             resetFormContent: (
               <React.Fragment>
                 <IconAlt fa="refresh" />
                 Reset values to default
               </React.Fragment>
-            )
+            ),
           }
         : {
-            offered: false
-          }
-    ),
+            offered: false,
+          },
     [
       defaultParamValues,
       paramValues,
       prepopulateWithLastParamValues,
-      reloadFormWithSystemDefaults
+      reloadFormWithSystemDefaults,
     ]
   );
-};
+}
 
 export const useSetSearchDocumentTitle = (
-  question: Question | undefined, 
+  question: Question | undefined,
   questionStatus: 'complete' | 'loading' | 'not-found' | 'error',
   recordClasses: RecordClass[] | undefined,
   outputRecordClass: RecordClass | undefined,
@@ -281,7 +308,11 @@ export const useSetSearchDocumentTitle = (
 ) => {
   useEffect(() => {
     if (shouldChangeDocumentTitle) {
-      if (question === undefined || recordClasses === undefined || questionStatus === 'loading') {
+      if (
+        question === undefined ||
+        recordClasses === undefined ||
+        questionStatus === 'loading'
+      ) {
         document.title = 'Loading...';
       } else if (questionStatus === 'error') {
         document.title = 'Error';
@@ -294,18 +325,27 @@ export const useSetSearchDocumentTitle = (
 
     return shouldChangeDocumentTitle
       ? () => {
-          document.title = ''
+          document.title = '';
         }
       : () => {};
-  }, [ question, questionStatus, recordClasses, outputRecordClass, shouldChangeDocumentTitle ])
+  }, [
+    question,
+    questionStatus,
+    recordClasses,
+    outputRecordClass,
+    shouldChangeDocumentTitle,
+  ]);
 };
 
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
-  (state, props) =>({
-    ...(state.question.questions[props.question] || {}) as QuestionState,
-    recordClasses: state.globalData.recordClasses
+  (state, props) => ({
+    ...((state.question.questions[props.question] || {}) as QuestionState),
+    recordClasses: state.globalData.recordClasses,
   }),
-  (dispatch) => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
+  (dispatch) => ({
+    dispatch,
+    eventHandlers: bindActionCreators(ActionCreators, dispatch),
+  }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
@@ -317,8 +357,9 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     shouldChangeDocumentTitle: ownProps.shouldChangeDocumentTitle,
     initialParamData: ownProps.initialParamData,
     autoRun: ownProps.autoRun === true,
-    prepopulateWithLastParamValues: ownProps.prepopulateWithLastParamValues === true
+    prepopulateWithLastParamValues:
+      ownProps.prepopulateWithLastParamValues === true,
   })
-)
+);
 
 export default enhance(wrappable(QuestionController));
