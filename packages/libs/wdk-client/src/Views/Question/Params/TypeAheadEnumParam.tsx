@@ -1,66 +1,70 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import Select from 'react-select';
-import { TypeAheadEnumParam } from 'wdk-client/Utils/WdkModel';
-import { Props } from 'wdk-client/Views/Question/Params/Utils';
+import { TypeAheadEnumParam } from '../../../Utils/WdkModel';
+import { Props } from '../../../Views/Question/Params/Utils';
 import { ValueType, InputActionMeta } from 'react-select/src/types';
-import { isMultiPick } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { isMultiPick } from '../../../Views/Question/Params/EnumParamUtils';
+import { safeHtml } from '../../../Utils/ComponentUtils';
 
 type TypeAheadParamProps = {
   parameter: TypeAheadEnumParam;
   selectedValues: string[];
   onChange: (newValue: string[]) => void;
-}
+};
 
 type Option = {
-  value: string,
-  label: string
+  value: string;
+  label: string;
 };
 
 export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
   const vocabularyByValue = useMemo(
-    () => props.parameter.vocabulary.reduce(
-        (memo, entry) => {
-          memo[entry[0]] = entry;
-          return memo;
-        },
-        {} as Record<string, [string, string, null]>
-      ),
-    [ props.parameter.vocabulary ]
+    () =>
+      props.parameter.vocabulary.reduce((memo, entry) => {
+        memo[entry[0]] = entry;
+        return memo;
+      }, {} as Record<string, [string, string, null]>),
+    [props.parameter.vocabulary]
   );
 
   const options = useMemo(
-    () => props.parameter.vocabulary.map(([ value, label ]) => ({ value, label })),
-    [ props.parameter.vocabulary ]
+    () =>
+      props.parameter.vocabulary.map(([value, label]) => ({ value, label })),
+    [props.parameter.vocabulary]
   );
 
-  const [ searchTerm, setSearchTerm ] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const selection = useMemo(
-    () => {
-      return props.selectedValues.map(
-        value => ({ value, label: vocabularyByValue[value][1] })
-      );
+  const selection = useMemo(() => {
+    return props.selectedValues.map((value) => ({
+      value,
+      label: vocabularyByValue[value][1],
+    }));
+  }, [props.selectedValues, isMultiPick(props.parameter)]);
+
+  const onInputChange = useCallback(
+    (inputValue: string, { action }: InputActionMeta) => {
+      if (action === 'input-change') {
+        setSearchTerm(inputValue);
+      }
     },
-    [ props.selectedValues, isMultiPick(props.parameter) ]
+    []
   );
 
-  const onInputChange = useCallback((inputValue: string, { action }: InputActionMeta) => {
-    if (action === 'input-change') {
-      setSearchTerm(inputValue);
-    }
-  }, []);
+  const onChange = useCallback(
+    (newSelection: ValueType<Option, any>) => {
+      const newSelectionArray =
+        newSelection == null
+          ? []
+          : Array.isArray(newSelection)
+          ? (newSelection as Option[])
+          : [newSelection as Option];
 
-  const onChange = useCallback((newSelection: ValueType<Option, any>) => {
-    const newSelectionArray = newSelection == null
-      ? []
-      : Array.isArray(newSelection)
-      ? (newSelection as Option[])
-      : [newSelection as Option];
-
-    props.onChange(newSelectionArray.map(({ value }) => value));
-    setSearchTerm('');
-  }, [ props.onChange ]);
+      props.onChange(newSelectionArray.map(({ value }) => value));
+      setSearchTerm('');
+    },
+    [props.onChange]
+  );
 
   const filterOption = useCallback(
     (option: Option, inputValue: string) =>
@@ -70,7 +74,7 @@ export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
   );
 
   const noOptionsMessage = useCallback(
-    ({ inputValue }: { inputValue: string } ) =>
+    ({ inputValue }: { inputValue: string }) =>
       inputValue.length === 0
         ? 'Please input at least 3 characters'
         : inputValue.length === 1
@@ -92,7 +96,7 @@ export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
       onChange={onChange}
       inputValue={searchTerm}
       onInputChange={onInputChange}
-      formatOptionLabel={option => safeHtml(option.label)}
+      formatOptionLabel={(option) => safeHtml(option.label)}
     />
   );
 };

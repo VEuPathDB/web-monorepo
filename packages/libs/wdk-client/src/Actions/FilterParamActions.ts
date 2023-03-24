@@ -1,18 +1,17 @@
-import { Filter } from 'wdk-client/Components/AttributeFilter/Types';
-import { FilterParamNew } from 'wdk-client/Utils/WdkModel';
+import { Filter } from '../Components/AttributeFilter/Types';
+import { FilterParamNew } from '../Utils/WdkModel';
 
-import { Context } from 'wdk-client/Views/Question/Params/Utils';
-import { FieldState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { Context } from '../Views/Question/Params/Utils';
+import { FieldState } from '../Views/Question/Params/FilterParamNew/State';
 
-type Ctx = Context<FilterParamNew>
+type Ctx = Context<FilterParamNew>;
 
 export type Action =
   | SetActiveFieldAction
   | SummaryCountsLoadedAction
   | UpdateFieldStateAction
   | UpdateFiltersAction
-  | InvalidateOntologyTermsAction
-
+  | InvalidateOntologyTermsAction;
 
 // Actions
 // -------
@@ -28,10 +27,12 @@ export interface SetActiveFieldAction {
   };
 }
 
-export function setActiveField(payload: SetActiveFieldAction['payload']): SetActiveFieldAction {
+export function setActiveField(
+  payload: SetActiveFieldAction['payload']
+): SetActiveFieldAction {
   return {
     type: SET_ACTIVE_FIELD,
-    payload
+    payload,
   };
 }
 
@@ -49,10 +50,12 @@ export interface SummaryCountsLoadedAction {
   };
 }
 
-export function summaryCountsLoaded(payload: SummaryCountsLoadedAction['payload']): SummaryCountsLoadedAction {
+export function summaryCountsLoaded(
+  payload: SummaryCountsLoadedAction['payload']
+): SummaryCountsLoadedAction {
   return {
     type: SUMMARY_COUNTS_LOADED,
-    payload
+    payload,
   };
 }
 
@@ -68,10 +71,12 @@ export interface UpdateFieldStateAction {
   };
 }
 
-export function updateFieldState(payload: UpdateFieldStateAction['payload']): UpdateFieldStateAction {
+export function updateFieldState(
+  payload: UpdateFieldStateAction['payload']
+): UpdateFieldStateAction {
   return {
     type: UPDATE_FIELD_STATE,
-    payload
+    payload,
   };
 }
 
@@ -87,16 +92,19 @@ export interface UpdateFiltersAction {
   };
 }
 
-export function updateFilters(payload: UpdateFiltersAction['payload']): UpdateFiltersAction {
+export function updateFilters(
+  payload: UpdateFiltersAction['payload']
+): UpdateFiltersAction {
   return {
     type: UPDATE_FILTERS,
-    payload
+    payload,
   };
 }
 
 //==============================================================================
 
-export const INVALIDATE_ONTOLOGY_TERMS = 'filter-param-new/invalidate-ontology-terms';
+export const INVALIDATE_ONTOLOGY_TERMS =
+  'filter-param-new/invalidate-ontology-terms';
 
 export interface InvalidateOntologyTermsAction {
   type: typeof INVALIDATE_ONTOLOGY_TERMS;
@@ -106,10 +114,12 @@ export interface InvalidateOntologyTermsAction {
   };
 }
 
-export function invalidateOntologyTerms(payload: InvalidateOntologyTermsAction['payload']): InvalidateOntologyTermsAction {
+export function invalidateOntologyTerms(
+  payload: InvalidateOntologyTermsAction['payload']
+): InvalidateOntologyTermsAction {
   return {
     type: INVALIDATE_ONTOLOGY_TERMS,
-    payload
+    payload,
   };
 }
 

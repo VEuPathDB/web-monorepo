@@ -1,30 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
-import FieldList from 'wdk-client/Components/AttributeFilter/FieldList';
-import FilterList from 'wdk-client/Components/AttributeFilter/FilterList';
-import FieldFilter from 'wdk-client/Components/AttributeFilter/FieldFilter';
+import FieldList from '../../Components/AttributeFilter/FieldList';
+import FilterList from '../../Components/AttributeFilter/FilterList';
+import FieldFilter from '../../Components/AttributeFilter/FieldFilter';
 
 /**
  * Filtering UI for server-side filtering.
  */
-function ServerSideAttributeFilter (props) {
+function ServerSideAttributeFilter(props) {
   var { displayName, fieldTree, hideFilterPanel, hideFieldPanel } = props;
 
   if (fieldTree == null) {
-    return (
-      <h3>Data is not available for {displayName}.</h3>
-    );
+    return <h3>Data is not available for {displayName}.</h3>;
   }
 
   return (
-    <div style={{overflowX: 'auto', marginRight: '1em'}}>
-      {hideFilterPanel || <FilterList {...props} /> }
+    <div style={{ overflowX: 'auto', marginRight: '1em' }}>
+      {hideFilterPanel || <FilterList {...props} />}
 
       {/* Main selection UI */}
       <div className="filters ui-helper-clearfix">
-        { hideFieldPanel || (
+        {hideFieldPanel || (
           <FieldList
             autoFocus={props.autoFocus}
             fieldTree={props.fieldTree}
@@ -33,7 +31,7 @@ function ServerSideAttributeFilter (props) {
             valuesMap={props.valuesMap}
           />
         )}
-        <FieldFilter {...props } />
+        <FieldFilter {...props} />
       </div>
     </div>
   );
@@ -42,11 +40,11 @@ function ServerSideAttributeFilter (props) {
 const fieldTreePropType = PropTypes.shape({
   field: FieldFilter.propTypes.activeField.isRequired,
   // use a function below to allow for recursive prop type
-  children: PropTypes.arrayOf((...args) => fieldTreePropType(...args)).isRequired
-})
+  children: PropTypes.arrayOf((...args) => fieldTreePropType(...args))
+    .isRequired,
+});
 
 ServerSideAttributeFilter.propTypes = {
-
   // options
   displayName: PropTypes.string,
   autoFocus: PropTypes.bool,
@@ -61,7 +59,8 @@ ServerSideAttributeFilter.propTypes = {
   // state
   fieldTree: fieldTreePropType,
   filters: PropTypes.array.isRequired,
-  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired).isRequired,
+  valuesMap: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string).isRequired)
+    .isRequired,
   dataCount: PropTypes.number,
   filteredDataCount: PropTypes.number,
   loadingFilteredCount: PropTypes.bool,
@@ -77,8 +76,7 @@ ServerSideAttributeFilter.propTypes = {
   onFiltersChange: PropTypes.func.isRequired,
   onMemberSort: PropTypes.func.isRequired,
   onMemberSearch: PropTypes.func.isRequired,
-  onRangeScaleChange: PropTypes.func.isRequired
-
+  onRangeScaleChange: PropTypes.func.isRequired,
 };
 
 ServerSideAttributeFilter.defaultProps = {
@@ -95,6 +93,6 @@ export default wrappable(ServerSideAttributeFilter);
 
 export function withOptions(options) {
   return function ServerSideAttributeFilterWithOptions(props) {
-    return <ServerSideAttributeFilter {...options} {...props}/>
-  }
+    return <ServerSideAttributeFilter {...options} {...props} />;
+  };
 }

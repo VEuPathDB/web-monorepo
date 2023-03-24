@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { clamp, debounce, get } from 'lodash';
 
-import Histogram from 'wdk-client/Components/AttributeFilter/Histogram';
-import FilterLegend from 'wdk-client/Components/AttributeFilter/FilterLegend';
-import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
+import Histogram from '../../Components/AttributeFilter/Histogram';
+import FilterLegend from '../../Components/AttributeFilter/FilterLegend';
+import UnknownCount from '../../Components/AttributeFilter/UnknownCount';
 
 /**
  * Generic Histogram field component
@@ -14,14 +14,14 @@ import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
  * TODO Interval snapping
  */
 export default class HistogramField extends React.Component {
-
   static getHelpContent(props) {
     return (
       <div>
-        Select a range of {props.activeField.display} values with the graph below.
+        Select a range of {props.activeField.display} values with the graph
+        below.
       </div>
     );
-   /*
+    /*
    return (
       <div>
         <div>
@@ -39,26 +39,31 @@ export default class HistogramField extends React.Component {
 
   constructor(props) {
     super(props);
-    this.updateFilterValueFromSelection = debounce(this.updateFilterValueFromSelection.bind(this), 50);
+    this.updateFilterValueFromSelection = debounce(
+      this.updateFilterValueFromSelection.bind(this),
+      50
+    );
     this.handleMinInputBlur = this.handleMinInputBlur.bind(this);
     this.handleMinInputKeyPress = this.handleMinInputKeyPress.bind(this);
-    this.handleMinInputChange = this.handleMinInputChange.bind(this)
+    this.handleMinInputChange = this.handleMinInputChange.bind(this);
     this.handleMaxInputBlur = this.handleMaxInputBlur.bind(this);
     this.handleMaxInputKeyPress = this.handleMaxInputKeyPress.bind(this);
-    this.handleMaxInputChange = this.handleMaxInputChange.bind(this)
-    this.handleUnknownCheckboxChange = this.handleUnknownCheckboxChange.bind(this)
+    this.handleMaxInputChange = this.handleMaxInputChange.bind(this);
+    this.handleUnknownCheckboxChange =
+      this.handleUnknownCheckboxChange.bind(this);
     this.handleRangeScaleChange = this.handleRangeScaleChange.bind(this);
     this.cacheDistributionOperations(this.props);
 
     this.state = {
       includeUnknown: get(props.filter, 'includeUnknown', false),
       minInputValue: get(props.filter, 'value.min', ''),
-      maxInputValue: get(props.filter, 'value.max', '')
+      maxInputValue: get(props.filter, 'value.max', ''),
     };
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    let distributionChanged = this.props.distribution !== nextProps.distribution;
+    let distributionChanged =
+      this.props.distribution !== nextProps.distribution;
     let filterChanged = this.props.filter !== nextProps.filter;
 
     if (distributionChanged) this.cacheDistributionOperations(nextProps);
@@ -67,24 +72,32 @@ export default class HistogramField extends React.Component {
       this.setState({
         includeUnknown: get(nextProps.filter, 'includeUnknown', false),
         minInputValue: get(nextProps.filter, 'value.min', ''),
-        maxInputValue: get(nextProps.filter, 'value.max', '')
+        maxInputValue: get(nextProps.filter, 'value.max', ''),
       });
     }
   }
 
   cacheDistributionOperations(props) {
-    this.convertedDistribution = props.distribution.map(entry =>
-      Object.assign({}, entry, { value: props.toHistogramValue(entry.value)}));
-    var values = this.convertedDistribution.map(entry => entry.value);
+    this.convertedDistribution = props.distribution.map((entry) =>
+      Object.assign({}, entry, { value: props.toHistogramValue(entry.value) })
+    );
+    var values = this.convertedDistribution.map((entry) => entry.value);
     var min = Math.min(...values);
     var max = Math.max(...values);
     this.convertedDistributionRange = { min, max };
-    this.distributionRange = { min: props.toFilterValue(min), max: props.toFilterValue(max) };
+    this.distributionRange = {
+      min: props.toFilterValue(min),
+      max: props.toFilterValue(max),
+    };
   }
 
   formatRangeValue(value) {
     const { min, max } = this.convertedDistributionRange;
-    return value ? this.props.toFilterValue(clamp(this.props.toHistogramValue(value), min, max)) : null;
+    return value
+      ? this.props.toFilterValue(
+          clamp(this.props.toHistogramValue(value), min, max)
+        )
+      : null;
   }
 
   handleMinInputChange(event) {
@@ -147,18 +160,21 @@ export default class HistogramField extends React.Component {
   rangeIsDifferent({ min, max }) {
     if (this.props.filter == null) return min != null || max != null;
     return (
-      min !== this.props.filter.value.min ||
-      max !== this.props.filter.value.max
+      min !== this.props.filter.value.min || max !== this.props.filter.value.max
     );
   }
 
   emitChange(range, includeUnknown = this.state.includeUnknown) {
-    this.props.onChange(this.props.activeField, range, includeUnknown,
-      this.props.activeFieldState.summary.valueCounts);
+    this.props.onChange(
+      this.props.activeField,
+      range,
+      includeUnknown,
+      this.props.activeFieldState.summary.valueCounts
+    );
 
     this.setState({
       minInputValue: get(range, 'min', ''),
-      maxInputValue: get(range, 'max', '')
+      maxInputValue: get(range, 'max', ''),
     });
   }
 
@@ -169,7 +185,7 @@ export default class HistogramField extends React.Component {
       displayName,
       unknownCount,
       activeFieldState,
-      selectByDefault
+      selectByDefault,
     } = this.props;
 
     var distMin = this.distributionRange.min;
@@ -177,33 +193,39 @@ export default class HistogramField extends React.Component {
 
     var filterValue = get(filter, 'value');
 
-    var min = filterValue == null
-      ? (selectByDefault ? distMin : null)
-      : filterValue.min;
+    var min =
+      filterValue == null
+        ? selectByDefault
+          ? distMin
+          : null
+        : filterValue.min;
 
-    var max = filterValue == null
-      ? (selectByDefault ? distMax : null)
-      : filterValue.max;
+    var max =
+      filterValue == null
+        ? selectByDefault
+          ? distMax
+          : null
+        : filterValue.max;
 
-    var includeUnknown = get(filter, 'includeUnknown', this.state.includeUnknown);
+    var includeUnknown = get(
+      filter,
+      'includeUnknown',
+      this.state.includeUnknown
+    );
 
     var selectedMin = min == null ? null : this.props.toHistogramValue(min);
     var selectedMax = max == null ? null : this.props.toHistogramValue(max);
 
     var selectionTotal = filter && filter.selection && filter.selection.length;
 
-    var selection = selectionTotal != null
-      ? " (" + selectionTotal + " selected) "
-      : null;
+    var selection =
+      selectionTotal != null ? ' (' + selectionTotal + ' selected) ' : null;
 
     return (
       <div className="range-filter">
-
         <div className="head">
           <div>
-            <div className="overview">
-              {this.props.overview}
-            </div>
+            <div className="overview">{this.props.overview}</div>
 
             <div>
               {'Select ' + activeField.display + ' from '}
@@ -231,7 +253,8 @@ export default class HistogramField extends React.Component {
                     type="checkbox"
                     checked={includeUnknown}
                     onChange={this.handleUnknownCheckboxChange}
-                  /> Include {unknownCount} Unknown
+                  />{' '}
+                  Include {unknownCount} Unknown
                 </label>
               )}
               <span className="selection-total">{selection}</span>
@@ -258,11 +281,9 @@ export default class HistogramField extends React.Component {
         />
 
         <FilterLegend {...this.props} />
-
       </div>
     );
   }
-
 }
 
 HistogramField.propTypes = {
@@ -278,5 +299,5 @@ HistogramField.propTypes = {
   displayName: PropTypes.string.isRequired,
   unknownCount: PropTypes.number.isRequired,
   timeformat: PropTypes.string,
-  onRangeScaleChange: PropTypes.func
+  onRangeScaleChange: PropTypes.func,
 };

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import 'wdk-client/Components/InputControls/wdk-NumberRangeSelector.scss';
-import NumberSelector from 'wdk-client/Components/InputControls/NumberSelector';
+import '../../Components/InputControls/wdk-NumberRangeSelector.scss';
+import NumberSelector from '../../Components/InputControls/NumberSelector';
 
 type Value = {
   min: number;
   max: number;
-}
+};
 
 type Props = {
   start: number;
@@ -18,32 +18,30 @@ type Props = {
   required?: boolean;
 };
 
-
 /**
  * Widget for selecting a numeric range.
  */
 class NumberRangeSelector extends React.Component<Props> {
-
   static propTypes = {
     start: PropTypes.number,
     end: PropTypes.number,
     value: PropTypes.shape({
       min: PropTypes.number,
-      max: PropTypes.number
+      max: PropTypes.number,
     }),
     onChange: PropTypes.func,
     step: PropTypes.number,
-    required: PropTypes.bool
+    required: PropTypes.bool,
   };
 
-  constructor (props: Props) {
+  constructor(props: Props) {
     super(props);
 
     this.handleMinChange = this.handleMinChange.bind(this);
     this.handleMaxChange = this.handleMaxChange.bind(this);
   }
 
-  handleMinChange (min: number) {
+  handleMinChange(min: number) {
     let { value, onChange } = this.props;
     let { max } = value;
     max = max * 1;
@@ -53,7 +51,7 @@ class NumberRangeSelector extends React.Component<Props> {
     if (onChange) onChange({ min, max });
   }
 
-  handleMaxChange (max: number) {
+  handleMaxChange(max: number) {
     let { value, onChange } = this.props;
     let { min } = value;
     max = max * 1;
@@ -63,16 +61,30 @@ class NumberRangeSelector extends React.Component<Props> {
     if (onChange) onChange({ min, max });
   }
 
-  render () {
+  render() {
     let { start, end, value, step, required = false } = this.props;
     if (typeof value.min === 'string') value.min = value.min * 1;
     if (typeof value.max === 'string') value.max = value.max * 1;
 
     return (
       <div className="wdk-NumberRangeSelector">
-        <NumberSelector start={start} end={end} step={step} onChange={this.handleMinChange} value={value.min} required={required} />
+        <NumberSelector
+          start={start}
+          end={end}
+          step={step}
+          onChange={this.handleMinChange}
+          value={value.min}
+          required={required}
+        />
         <label>&nbsp; to &nbsp;</label>
-        <NumberSelector start={start} end={end} step={step} onChange={this.handleMaxChange} value={value.max} required={required} />
+        <NumberSelector
+          start={start}
+          end={end}
+          step={step}
+          onChange={this.handleMaxChange}
+          value={value.max}
+          required={required}
+        />
       </div>
     );
   }

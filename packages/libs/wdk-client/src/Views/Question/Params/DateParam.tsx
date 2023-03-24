@@ -1,16 +1,16 @@
 import { stubTrue as isParamValueValid } from 'lodash';
 import React from 'react';
 
-import DateSelector from 'wdk-client/Components/InputControls/DateSelector';
-import { DateParam, Parameter } from 'wdk-client/Utils/WdkModel';
+import DateSelector from '../../../Components/InputControls/DateSelector';
+import { DateParam, Parameter } from '../../../Utils/WdkModel';
 
-import { createParamModule, Props } from 'wdk-client/Views/Question/Params/Utils';
+import { createParamModule, Props } from '../../../Views/Question/Params/Utils';
 
 export default createParamModule({
   isType,
   isParamValueValid,
-  Component
-})
+  Component,
+});
 
 function isType(param: Parameter): param is DateParam {
   return param.type === 'date';
@@ -26,5 +26,5 @@ function Component(props: Props<DateParam, undefined>) {
       onChange={onParamValueChange}
       required={!parameter.allowEmptyValue}
     />
-  )
+  );
 }

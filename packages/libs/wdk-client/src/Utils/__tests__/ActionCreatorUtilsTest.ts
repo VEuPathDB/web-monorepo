@@ -1,7 +1,6 @@
-import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeActionCreator } from '../../Utils/ActionCreatorUtils';
 
 describe('makeActionCreator', () => {
-
   it('should accept only a type string', () => {
     expect(() => {
       const ac = makeActionCreator('test');
@@ -18,23 +17,23 @@ describe('makeActionCreator', () => {
     const ac = makeActionCreator('test');
     expect(ac.type).toBe('test');
   });
-
 });
 
 describe('ActionCreator', () => {
+  const acWithoutPayload = makeActionCreator('no payload');
 
-  const acWithoutPayload = makeActionCreator(
-    'no payload'
-  );
-
-  const acWithPayload = makeActionCreator(
-    'payload',
-    (name: string) => ({ name })
-  );
+  const acWithPayload = makeActionCreator('payload', (name: string) => ({
+    name,
+  }));
 
   it('should return the expected action', () => {
-    expect(acWithoutPayload()).toEqual({ type: 'no payload', payload: undefined });
-    expect(acWithPayload('foo')).toEqual({ type: 'payload', payload: { name: 'foo' } });
+    expect(acWithoutPayload()).toEqual({
+      type: 'no payload',
+      payload: undefined,
+    });
+    expect(acWithPayload('foo')).toEqual({
+      type: 'payload',
+      payload: { name: 'foo' },
+    });
   });
-
 });

@@ -1,4 +1,7 @@
-import { makeCommonProxyConfig, makeLegacyWebAppProxyConfig } from './proxy-reqs.js';
+import {
+  makeCommonProxyConfig,
+  makeLegacyWebAppProxyConfig,
+} from './proxy-reqs.js';
 
 export function makeCommonDevServerConfig({
   rootClientUrl,
@@ -8,7 +11,10 @@ export function makeCommonDevServerConfig({
 }) {
   return {
     output: {
-      publicPath: '/'
+      publicPath: '/',
+    },
+    watchOptions: {
+      ignored: '**/packages/*/*/src/**',
     },
     devServer: {
       https: true,
@@ -29,16 +35,16 @@ export function makeCommonDevServerConfig({
         },
       },
       historyApiFallback: {
-        disableDotRule: true
+        disableDotRule: true,
       },
       proxy: {
         ...makeCommonProxyConfig(proxies),
         [legacyWebAppEndpoint]: makeLegacyWebAppProxyConfig({
           endpoint: legacyWebAppEndpoint,
           target: legacyWebAppUrl,
-          rootClientUrl
-        })
-      }
-    }
+          rootClientUrl,
+        }),
+      },
+    },
   };
 }

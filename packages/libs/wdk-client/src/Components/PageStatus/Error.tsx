@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 export interface Props {
   message?: React.ReactNode;
@@ -18,7 +18,7 @@ export const ErrorStatus = wrappable(function ErrorStatus(props: Props) {
         </p>
       )}
     </div>
-  )
+  );
 });
 
 export default ErrorStatus;

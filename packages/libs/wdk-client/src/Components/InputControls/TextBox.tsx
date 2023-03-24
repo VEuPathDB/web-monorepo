@@ -7,21 +7,23 @@
 
 import React from 'react';
 
-import { Omit } from 'wdk-client/Core/CommonTypes';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Omit } from '../../Core/CommonTypes';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 type InputWithoutOnChange = Omit<InputProps, 'onChange'>;
 type Props = InputWithoutOnChange & {
   onChange: (value: string) => void;
-}
+};
 
 let TextBox = function (originalProps: Props) {
   const { onChange, ...props } = originalProps;
-  let changeHandler = function(event: React.ChangeEvent<HTMLInputElement>): void {
+  let changeHandler = function (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void {
     onChange(event.target.value);
   };
-  return ( <input type="text" {...props} onChange={changeHandler}/> );
-}
+  return <input type="text" {...props} onChange={changeHandler} />;
+};
 
 export default wrappable(TextBox);

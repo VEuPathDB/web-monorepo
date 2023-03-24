@@ -3,10 +3,10 @@ import {
   AttributeField,
   Question,
   RecordClass,
-  RecordInstance
-} from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
-import { Action } from 'wdk-client/Actions';
+  RecordInstance,
+} from '../Utils/WdkModel';
+import { ServiceError } from '../Service/ServiceError';
+import { Action } from '../Actions';
 import {
   START_LOADING,
   END_LOADING_WITH_ANSWER,
@@ -18,13 +18,13 @@ import {
   ChangeColumnPositionAction,
   ChangeVisibleColumnsAction,
   ChangeSortingAction,
-  AnswerOptions
-} from 'wdk-client/Actions/AnswerActions';
+  AnswerOptions,
+} from '../Actions/AnswerActions';
 
-type EndLoadingWithAnswerPayload = EndLoadingWithAnswerAction['payload']
-type ChangeColumnPositionPayload = ChangeColumnPositionAction['payload']
-type ChangeVisibleColumnsPayload = ChangeVisibleColumnsAction['payload']
-type ChangeSortingPayload = ChangeSortingAction['payload']
+type EndLoadingWithAnswerPayload = EndLoadingWithAnswerAction['payload'];
+type ChangeColumnPositionPayload = ChangeColumnPositionAction['payload'];
+type ChangeVisibleColumnsPayload = ChangeVisibleColumnsAction['payload'];
+type ChangeSortingPayload = ChangeSortingAction['payload'];
 
 export const key = 'answerView';
 
@@ -34,15 +34,19 @@ export type FilterState = {
   filterTables: string[];
 };
 
-export type State = Partial<Answer & AnswerOptions & FilterState & {
-  question: Question;
-  recordClass: RecordClass;
-  allAttributes: AttributeField[];
-  visibleAttributes: AttributeField[];
-  unfilteredRecords: RecordInstance[];
-  isLoading: boolean;
-  error?: Error | ServiceError;
-}>;
+export type State = Partial<
+  Answer &
+    AnswerOptions &
+    FilterState & {
+      question: Question;
+      recordClass: RecordClass;
+      allAttributes: AttributeField[];
+      visibleAttributes: AttributeField[];
+      unfilteredRecords: RecordInstance[];
+      isLoading: boolean;
+      error?: Error | ServiceError;
+    }
+>;
 
 const initialState = {};
 
@@ -65,7 +69,7 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 }
 
-function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
+function addAnswer(state: State, payload: EndLoadingWithAnswerPayload) {
   let { answer, displayInfo, question, recordClass, parameters } = payload;
 
   // need to filter wdk_weight from multiple places;
@@ -74,17 +78,20 @@ function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
 
   // collect attributes from recordClass and question
   let allAttributes = recordClass.attributes
-    .filter(attr => displayInfo.attributes.includes(attr.name))
+    .filter((attr) => displayInfo.attributes.includes(attr.name))
     .concat(question.dynamicAttributes)
     .filter(isNotWeight);
 
   // use previously selected visible attributes unless they don't exist or the question changed
   let visibleAttributes = state.visibleAttributes;
-  if (!visibleAttributes || state.meta && state.question?.urlSegment !== question.urlSegment) {
+  if (
+    !visibleAttributes ||
+    (state.meta && state.question?.urlSegment !== question.urlSegment)
+  ) {
     // need to populate attribute details for visible attributes
     visibleAttributes = question.defaultAttributes
-      .map(attrName => allAttributes.find(attr => attr.name ===  attrName))
-      .filter((attr): attr is AttributeField => attr != null)
+      .map((attrName) => allAttributes.find((attr) => attr.name === attrName))
+      .filter((attr): attr is AttributeField => attr != null);
   }
 
   // Remove search weight from answer meta since it doens't apply to non-Step answers
@@ -103,7 +110,7 @@ function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
     visibleAttributes,
     unfilteredRecords: answer.records,
     isLoading: false,
-    displayInfo
+    displayInfo,
   });
 }
 
@@ -113,12 +120,15 @@ function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
  * @param {string} columnName The name of the attribute being moved.
  * @param {number} newPosition The 0-based index to move the attribute to.
  */
-function moveTableColumn(state: State, { columnName, newPosition }: ChangeColumnPositionPayload) {
+function moveTableColumn(
+  state: State,
+  { columnName, newPosition }: ChangeColumnPositionPayload
+) {
   /* make a copy of list of attributes we will be altering */
-  let attributes = [ ...(state.visibleAttributes || []) ];
+  let attributes = [...(state.visibleAttributes || [])];
 
   /* The current position of the attribute being moved */
-  let currentPosition = attributes.findIndex(function(attribute) {
+  let currentPosition = attributes.findIndex(function (attribute) {
     return attribute.name === columnName;
   });
 
@@ -134,7 +144,10 @@ function moveTableColumn(state: State, { columnName, newPosition }: ChangeColumn
   return Object.assign({}, state, { visibleAttributes: attributes });
 }
 
-function updateVisibleAttributes(state: State, { attributes }: ChangeVisibleColumnsPayload) {
+function updateVisibleAttributes(
+  state: State,
+  { attributes }: ChangeVisibleColumnsPayload
+) {
   // Create a new copy of visibleAttributes
   let visibleAttributes = attributes.slice(0);
 
@@ -144,6 +157,6 @@ function updateVisibleAttributes(state: State, { attributes }: ChangeVisibleColu
 
 function updateSorting(state: State, { sorting }: ChangeSortingPayload) {
   return Object.assign({}, state, {
-    displayInfo: Object.assign({}, state.displayInfo, { sorting })
+    displayInfo: Object.assign({}, state.displayInfo, { sorting }),
   });
 }

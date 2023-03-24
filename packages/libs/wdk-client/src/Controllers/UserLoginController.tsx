@@ -1,6 +1,6 @@
-import {useEffect} from 'react';
-import {connect} from 'react-redux';
-import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
+import { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { showLoginForm } from '../Actions/UserSessionActions';
 
 interface Props {
   destination?: string;

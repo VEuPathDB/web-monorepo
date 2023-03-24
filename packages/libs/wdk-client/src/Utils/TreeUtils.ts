@@ -1,8 +1,8 @@
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { Seq } from '../Utils/IterableUtils';
 
 export type Node<T> = T & {
   children: Array<Node<T>>;
-}
+};
 
 export interface ChildrenGetter<T> {
   (t: T): T[];
@@ -11,12 +11,12 @@ export interface ChildrenGetter<T> {
 // Helper function to push values into an array, and to return that array.
 // `push` returns the value added, so this is useful when we want the array
 // back. This is more performant than using `concat` which creates a new array.
-function pushInto <T>(array: T[], ...values: T[]) {
-  return (array.push(...values), array);
+function pushInto<T>(array: T[], ...values: T[]) {
+  return array.push(...values), array;
 }
 
 // Shallow comparison of two arrays
-function shallowEqual <T>(array1: T[], array2: T[]) {
+function shallowEqual<T>(array1: T[], array2: T[]) {
   if (array1.length !== array2.length) return false;
   for (let i = 0; i < array1.length; i++) {
     if (array1[i] !== array2[i]) return false;
@@ -25,7 +25,10 @@ function shallowEqual <T>(array1: T[], array2: T[]) {
 }
 
 /** top-down tree node iterator */
-export function* preorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable<T> {
+export function* preorder<T>(
+  root: T,
+  getChildren: ChildrenGetter<T>
+): Iterable<T> {
   yield root;
   let children = getChildren(root);
   let length = children.length;
@@ -35,7 +38,10 @@ export function* preorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable<
 }
 
 /** bottom-up tree node iterator */
-export function* postorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable<T> {
+export function* postorder<T>(
+  root: T,
+  getChildren: ChildrenGetter<T>
+): Iterable<T> {
   let children = getChildren(root);
   let length = children.length;
   for (let i = 0; i < length; i++) {
@@ -43,7 +49,6 @@ export function* postorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable
   }
   yield root;
 }
-
 
 /**
  * Create a Seq of tree nodes in preorder sequence.
@@ -64,7 +69,7 @@ export function* postorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable
  * @return {Seq}
  */
 export function preorderSeq<T>(root: Node<T>) {
-  return Seq.from(preorder(root, n => n.children));
+  return Seq.from(preorder(root, (n) => n.children));
 }
 
 /**
@@ -86,7 +91,7 @@ export function preorderSeq<T>(root: Node<T>) {
  * @return {Seq}
  */
 export function postorderSeq<T>(root: Node<T>) {
-  return Seq.from(postorder(root, n => n.children));
+  return Seq.from(postorder(root, (n) => n.children));
 }
 
 /**
@@ -99,10 +104,14 @@ export function postorderSeq<T>(root: Node<T>) {
  * @param {Function} getChildren A function that returns an iterable object over a node's children.
  * @param {any} root The root node of the tree whose structure is being mapped.
  */
-export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
+export function mapStructure<T, U>(
+  mapFn: (node: T, mappedChildren: U[]) => U,
+  getChildren: ChildrenGetter<T>,
+  root: T
+): U {
   let mappedChildren = Seq.from(getChildren(root))
-  .map(child => mapStructure(mapFn, getChildren, child))
-  .toArray();
+    .map((child) => mapStructure(mapFn, getChildren, child))
+    .toArray();
   return mapFn(root, mappedChildren);
 }
 
@@ -110,8 +119,18 @@ export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, g
  * Convert a tree into a new structure, much like array.reduce. The tree is
  * traversed bottom-up.
  */
-export const foldStructure = <T, U>(reducer: (value: U, node: Node<T>) => U, seed: U, root: Node<T>): U =>
-  reducer(root.children.reduce((acc: U, next: Node<T>) => foldStructure(reducer, acc, next), seed) as U, root)
+export const foldStructure = <T, U>(
+  reducer: (value: U, node: Node<T>) => U,
+  seed: U,
+  root: Node<T>
+): U =>
+  reducer(
+    root.children.reduce(
+      (acc: U, next: Node<T>) => foldStructure(reducer, acc, next),
+      seed
+    ) as U,
+    root
+  );
 
 /**
  * For any node in a tree that does not pass `nodePredicate`, replace it with
@@ -122,13 +141,16 @@ export const foldStructure = <T, U>(reducer: (value: U, node: Node<T>) => U, see
  * @param {Object} root Root node of a tree.
  * @return {Object}
  */
-export function pruneDescendantNodes<T>(fn: (node: Node<T>) => boolean, root: Node<T>) {
+export function pruneDescendantNodes<T>(
+  fn: (node: Node<T>) => boolean,
+  root: Node<T>
+) {
   let prunedChildren = pruneNodes(fn, root.children);
   return prunedChildren === root.children
     ? root
     : Object.assign({}, root, {
-      children: prunedChildren
-    })
+        children: prunedChildren,
+      });
 }
 
 /**
@@ -141,7 +163,10 @@ export function pruneDescendantNodes<T>(fn: (node: Node<T>) => boolean, root: No
  * of a node in a tree.
  * @return {Array}
  */
-export function pruneNodes <T>(fn: (node: Node<T>) => boolean, nodes: Node<T>[]): Node<T>[] {
+export function pruneNodes<T>(
+  fn: (node: Node<T>) => boolean,
+  nodes: Node<T>[]
+): Node<T>[] {
   let prunedNodes = nodes.reduce((prunedNodes, node) => {
     let prunedNode = pruneDescendantNodes(fn, node);
     return fn(prunedNode)
@@ -157,21 +182,26 @@ export function pruneNodes <T>(fn: (node: Node<T>) => boolean, nodes: Node<T>[])
  * @param {Object} root Root node of a tree
  * @return {Object} Tree
  */
-export function compactRootNodes <T>(root: Node<T>): Node<T> {
-  return root.children.length === 1 ? compactRootNodes(root.children[0])
-  : root
+export function compactRootNodes<T>(root: Node<T>): Node<T> {
+  return root.children.length === 1 ? compactRootNodes(root.children[0]) : root;
 }
 
-export function mapNodes <T>(nodeTransform: (root: Node<T>) => Node<T>, root: Node<T>): Node<T> {
+export function mapNodes<T>(
+  nodeTransform: (root: Node<T>) => Node<T>,
+  root: Node<T>
+): Node<T> {
   return Object.assign({}, nodeTransform(root), {
-    children: root.children.map(child => mapNodes(nodeTransform, child))
+    children: root.children.map((child) => mapNodes(nodeTransform, child)),
   });
 }
 
 /**
  * Get an array of nodes that satisfy nodePredicate
  */
-export function filterNodes <T>(nodePredicate: (node: Node<T>) => boolean, node: Node<T>) {
+export function filterNodes<T>(
+  nodePredicate: (node: Node<T>) => boolean,
+  node: Node<T>
+) {
   return preorderSeq(node).filter(nodePredicate).toArray();
 }
 
@@ -180,8 +210,8 @@ export function filterNodes <T>(nodePredicate: (node: Node<T>) => boolean, node:
  * @param {Object} node representing root of subtree (possibly a leaf)
  * @return {Boolean} indicates true if the node is a leaf and false otherwise
  */
-export function isLeaf <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
-   return getNodeChildren(node).length === 0;
+export function isLeaf<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+  return getNodeChildren(node).length === 0;
 }
 
 /**
@@ -199,8 +229,10 @@ export function isBranch<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
  * @param {Array} initial list of leaf nodes (optional)
  * @return {Array} updated list of leaf nodes
  */
-export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
-  return Seq.from(preorder(node, getNodeChildren)).filter(node => isLeaf(node, getNodeChildren)).toArray();
+export function getLeaves<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+  return Seq.from(preorder(node, getNodeChildren))
+    .filter((node) => isLeaf(node, getNodeChildren))
+    .toArray();
 }
 
 /**
@@ -209,6 +241,12 @@ export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
  * @param {Array} initial list of branch nodes (optional)
  * @return {Array} updated list of branch nodes
  */
-export function getBranches <T>(node: T, getNodeChildren: ChildrenGetter<T>, branches: T[] = []) {
-  return Seq.from(preorder(node, getNodeChildren)).filter(node => isBranch(node, getNodeChildren)).toArray();
+export function getBranches<T>(
+  node: T,
+  getNodeChildren: ChildrenGetter<T>,
+  branches: T[] = []
+) {
+  return Seq.from(preorder(node, getNodeChildren))
+    .filter((node) => isBranch(node, getNodeChildren))
+    .toArray();
 }

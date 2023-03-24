@@ -1,32 +1,31 @@
-import { Action } from 'wdk-client/Actions';
+import { Action } from '../Actions';
 import {
   SiteMapOntology,
   LOADING,
   INITIALIZE,
   UPDATE_EXPANSION,
   SET_SEARCH_TEXT,
-  SITEMAP_ERROR
-} from 'wdk-client/Actions/SiteMapActions';
+  SITEMAP_ERROR,
+} from '../Actions/SiteMapActions';
 
 export const key = 'siteMap';
 
-
 export type State = {
-  tree?: SiteMapOntology,
-  isLoading: boolean,
-  expandedList: string[],
-  searchText: string
+  tree?: SiteMapOntology;
+  isLoading: boolean;
+  expandedList: string[];
+  searchText: string;
 };
 
 const initialState = {
   tree: undefined,
   isLoading: false,
-  expandedList : [],
-  searchText: ''
+  expandedList: [],
+  searchText: '',
 };
 
 export function reduce(state: State = initialState, action: Action): State {
-  switch(action.type) {
+  switch (action.type) {
     case LOADING:
       return setSiteMapLoading(state, true);
 

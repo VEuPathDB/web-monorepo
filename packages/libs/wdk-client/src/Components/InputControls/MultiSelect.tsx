@@ -1,16 +1,15 @@
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 type Props = {
-
   /** Size attribute for select element */
-  size?: number,
+  size?: number;
 
   /** Value to use for "name" attribute of the select form input **/
-  name?: string,
+  name?: string;
 
   /** Array of items to display in the list **/
-  items: { value: string; display: string; disabled?: boolean; }[];
+  items: { value: string; display: string; disabled?: boolean }[];
 
   /** Value of the option elements that should be selected **/
   value: string[];
@@ -35,7 +34,7 @@ function MultiSelect(props: Props) {
       size={size}
       multiple
       value={value}
-      onChange={event => {
+      onChange={(event) => {
         let options = event.target.options;
         let value: string[] = [];
         for (let i = 0; i < options.length; i++) {
@@ -47,11 +46,13 @@ function MultiSelect(props: Props) {
       }}
       required={required}
     >
-      {items.map(item =>
-        ( <option key={item.value} disabled={item.disabled} value={item.value}>{item.display}</option> )
-      )}
+      {items.map((item) => (
+        <option key={item.value} disabled={item.disabled} value={item.value}>
+          {item.display}
+        </option>
+      ))}
     </select>
   );
 }
 
-export default wrappable(MultiSelect)
+export default wrappable(MultiSelect);

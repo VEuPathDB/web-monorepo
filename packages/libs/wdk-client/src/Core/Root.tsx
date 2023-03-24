@@ -7,21 +7,21 @@ import {
   ClientPluginRegistryEntry,
   PluginContext,
   makeCompositePluginComponent,
-} from 'wdk-client/Utils/ClientPlugin';
-import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
-import LoginFormController from 'wdk-client/Controllers/LoginFormController';
-import Page from 'wdk-client/Components/Layout/Page';
+} from '../Utils/ClientPlugin';
+import ErrorBoundary from '../Core/Controllers/ErrorBoundary';
+import LoginFormController from '../Controllers/LoginFormController';
+import Page from '../Components/Layout/Page';
 
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import { RouteEntry } from 'wdk-client/Core/RouteEntry';
-import WdkRoute from 'wdk-client/Core/WdkRoute';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import UnhandledErrorsController from 'wdk-client/Controllers/UnhandledErrorsController';
+import { RouteEntry } from '../Core/RouteEntry';
+import WdkRoute from '../Core/WdkRoute';
+import { safeHtml } from '../Utils/ComponentUtils';
+import UnhandledErrorsController from '../Controllers/UnhandledErrorsController';
 import {
   WdkDependencies,
   WdkDependenciesContext,
-} from 'wdk-client/Hooks/WdkDependenciesEffect';
+} from '../Hooks/WdkDependenciesEffect';
 
 type Props = {
   requireLogin: boolean;

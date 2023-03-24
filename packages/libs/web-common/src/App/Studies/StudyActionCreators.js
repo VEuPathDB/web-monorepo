@@ -1,10 +1,10 @@
 import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
+import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils';
 
-import { showUnreleasedData } from 'ebrc-client/config';
-import { isDiyWdkRecordId } from 'ebrc-client/util/diyDatasets';
+import { showUnreleasedData } from '../../config';
+import { isDiyWdkRecordId } from '../../util/diyDatasets';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
 export const STUDIES_RECEIVED = 'studies/studies-received';
@@ -14,12 +14,8 @@ export const STUDIES_ERROR = 'studies/studies-error';
  * Load studies
  */
 export function requestStudies() {
-  return [
-    studiesRequested(),
-    loadStudies()
-  ]
+  return [studiesRequested(), loadStudies()];
 }
-
 
 // Action creators
 // ---------------
@@ -34,16 +30,22 @@ function studiesReceived([studies, invalidRecords]) {
     invalidRecords.length === 0
       ? emptyAction
       : ({ wdkService }) =>
-        wdkService.submitError(new Error('The following studies could not be parsed:\n    '
-          + invalidRecords.map(r => JSON.stringify(r.record.id) + ' => ' + r.error).join('\n')))
-          .then(() => emptyAction)
+          wdkService
+            .submitError(
+              new Error(
+                'The following studies could not be parsed:\n    ' +
+                  invalidRecords
+                    .map((r) => JSON.stringify(r.record.id) + ' => ' + r.error)
+                    .join('\n')
+              )
+            )
+            .then(() => emptyAction),
   ];
 }
 
 function studiesError(error) {
   return { type: STUDIES_ERROR, payload: { error: error.message } };
 }
-
 
 const requiredAttributes = [
   'card_headline',
@@ -56,26 +58,22 @@ const requiredAttributes = [
   'bulk_download_url',
 ];
 
-
 // Action thunks
 // -------------
 
 function loadStudies() {
   return function run({ wdkService }) {
-    return fetchStudies(wdkService)
-      .then(studiesReceived, studiesError);
-  }
+    return fetchStudies(wdkService).then(studiesReceived, studiesError);
+  };
 }
-
 
 export function fetchStudies(wdkService) {
   return Promise.all([
     wdkService.getQuestions(),
     wdkService.getRecordClasses(),
-    wdkService.getStudies('__ALL_ATTRIBUTES__', '__ALL_TABLES__')
-  ]).then(spread(formatStudies))
+    wdkService.getStudies('__ALL_ATTRIBUTES__', '__ALL_TABLES__'),
+  ]).then(spread(formatStudies));
 }
-
 
 // Helpers
 //
@@ -83,83 +81,91 @@ export function fetchStudies(wdkService) {
 const parseStudy = mapProps({
   name: ['attributes.display_name'],
   id: ['attributes.dataset_id'],
-  route: ['attributes.dataset_id', id => `/record/dataset/${id}`],
-  categories: [record => 'disease' in record.attributes
-    ? (record.attributes.disease || 'Unknown').split(/,\s*/g)
-    : JSON.parse(record.attributes.study_categories)],
+  route: ['attributes.dataset_id', (id) => `/record/dataset/${id}`],
+  categories: [
+    (record) =>
+      'disease' in record.attributes
+        ? (record.attributes.disease || 'Unknown').split(/,\s*/g)
+        : JSON.parse(record.attributes.study_categories),
+  ],
   // TODO Remove .toLowerCase() when attribute display value is updated
-  access: ['attributes.study_access', access => access && access.toLowerCase()],
-  isReleased: ['attributes.is_public', str => str === 'true'],
+  access: [
+    'attributes.study_access',
+    (access) => access && access.toLowerCase(),
+  ],
+  isReleased: ['attributes.is_public', (str) => str === 'true'],
   email: ['attributes.email'],
   policyUrl: ['attributes.policy_url'],
   requestNeedsApproval: ['attributes.request_needs_approval'],
   downloadUrl: ['attributes.bulk_download_url'],
   headline: ['attributes.card_headline'],
   points: ['attributes.card_points', JSON.parse],
-  searches: ['attributes.card_questions', JSON.parse]
+  searches: ['attributes.card_questions', JSON.parse],
 });
 
 function formatStudies(questions, recordClasses, answer) {
   const questionsByName = keyBy(questions, 'fullName');
   const recordClassesByName = keyBy(recordClasses, 'urlSegment');
 
-  const records = answer.records.reduce((records, record) => {
+  const records = answer.records.reduce(
+    (records, record) => {
+      try {
+        const missingAttributes = requiredAttributes.filter(
+          (attr) => record.attributes[attr] == null
+        );
+        if (missingAttributes.length > 0) {
+          throw new Error(
+            `Missing data for attributes: ${missingAttributes.join(', ')}.`
+          );
+        }
+        records.valid.push({
+          ...parseStudy(record),
+          searchString: getSearchableString([], [], record),
+        });
 
-    try {
-      const missingAttributes = requiredAttributes.filter(attr => record.attributes[attr] == null);
-      if (missingAttributes.length > 0) {
-        throw new Error(`Missing data for attributes: ${missingAttributes.join(", ")}.`)
+        // Our presenters use a build number of 0 to convey studies
+        // which should appear first...
+        // (1) in the cards and...
+        // (2) in the "Search a study" menu
+        if (record.attributes.build_number_introduced === '0') {
+          records.appearFirst.add(record.attributes.dataset_id);
+        }
+
+        return records;
+      } catch (error) {
+        records.invalid.push({ record, error });
+        return records;
       }
-      records.valid.push({
-        ...parseStudy(record),
-        searchString: getSearchableString(
-          [],
-          [],
-          record
-        )
-      });
-
-      // Our presenters use a build number of 0 to convey studies
-      // which should appear first...
-      // (1) in the cards and...
-      // (2) in the "Search a study" menu
-      if (record.attributes.build_number_introduced === '0') {
-        records.appearFirst.add(record.attributes.dataset_id);
-      }
-
-      return records;
-    }
-
-    catch (error) {
-      records.invalid.push({ record, error });
-      return records;
-    }
-
-  }, { valid: [], invalid: [], appearFirst: new Set() });
+    },
+    { valid: [], invalid: [], appearFirst: new Set() }
+  );
 
   const validRecords = records.valid
     // remove unreleased studies, unless `showUnreleasedData = true`
     // also, remove DIY studies
     .filter(
-      study =>
-        (study.isReleased || showUnreleasedData) &&
-        !isDiyWdkRecordId(study.id)
+      (study) =>
+        (study.isReleased || showUnreleasedData) && !isDiyWdkRecordId(study.id)
     )
-    .map(study => Object.assign(study, {
-      disabled: false,
-      searches: Object.values(study.searches)
-        .map(questionName => questionsByName[questionName])
-        .filter(question => question != null)
-        .map(question => {
-          const recordClass = recordClassesByName[question.outputRecordClassName];
-          return {
-            icon: question.iconName || recordClass.iconName || 'fa fa-database',
-            name: question.fullName,
-            path: `${recordClass.urlSegment}/${question.urlSegment}`,
-            displayName: recordClass.shortDisplayNamePlural,
-          };
-        })
-    }));
+    .map((study) =>
+      Object.assign(study, {
+        disabled: false,
+        searches: Object.values(study.searches)
+          .map((questionName) => questionsByName[questionName])
+          .filter((question) => question != null)
+          .map((question) => {
+            const recordClass =
+              recordClassesByName[question.outputRecordClassName];
+            return {
+              icon:
+                question.iconName || recordClass.iconName || 'fa fa-database',
+              name: question.fullName,
+              path: `${recordClass.urlSegment}/${question.urlSegment}`,
+              displayName: recordClass.shortDisplayNamePlural,
+            };
+          }),
+      })
+    );
 
   return [validRecords, records.invalid];
 }
@@ -176,12 +182,12 @@ function mapProps(propMap) {
   return function mapper(source) {
     return mapValues(propMap, ([sourcePath, valueMapper = identity]) => {
       try {
-        if (typeof sourcePath === 'function') return valueMapper(sourcePath(source));
-        return valueMapper(get(source, sourcePath))
-      }
-      catch (error) {
+        if (typeof sourcePath === 'function')
+          return valueMapper(sourcePath(source));
+        return valueMapper(get(source, sourcePath));
+      } catch (error) {
         throw new Error(`Parsing error at ${sourcePath}: ${error.message}`);
       }
     });
-  }
+  };
 }

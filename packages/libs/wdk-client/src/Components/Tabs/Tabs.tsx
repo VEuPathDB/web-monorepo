@@ -1,9 +1,9 @@
-import 'wdk-client/Components/Tabs/Tabs.scss';
+import '../../Components/Tabs/Tabs.scss';
 
 import React, { Fragment } from 'react';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
-import { Loading } from 'wdk-client/Components';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import DeferredDiv from '../../Components/Display/DeferredDiv';
+import { Loading } from '../../Components';
 
 const cx = makeClassNameHelper('wdk-Tab');
 
@@ -55,11 +55,18 @@ export type TabConfig<TabKey extends string> = {
 };
 
 export default function Tabs<T extends string>(props: Props<T>) {
-  const showEmptyPanel = !props.loadingTabs && props.tabs.every(tab => tab.key !== props.activeTab);
+  const showEmptyPanel =
+    !props.loadingTabs &&
+    props.tabs.every((tab) => tab.key !== props.activeTab);
   return (
-    <div className={cx('sContainer') + (props.containerClassName ? ` ${props.containerClassName}` : '')}>
+    <div
+      className={
+        cx('sContainer') +
+        (props.containerClassName ? ` ${props.containerClassName}` : '')
+      }
+    >
       <div className={cx('s')}>
-        {props.tabs.map(tab => (
+        {props.tabs.map((tab) => (
           <button
             type="button"
             key={tab.key}
@@ -68,11 +75,10 @@ export default function Tabs<T extends string>(props: Props<T>) {
             tabIndex={props.displayIsNavigable ? -1 : undefined}
           >
             {tab.display}
-            {
-              tab.removable &&
+            {tab.removable && (
               <Fragment>
                 {' '}
-                <a 
+                <a
                   href="#"
                   onClick={(event) => {
                     event.preventDefault();
@@ -80,23 +86,28 @@ export default function Tabs<T extends string>(props: Props<T>) {
                     if (props.onTabRemoved) {
                       props.onTabRemoved(tab.key);
                     }
-                  }}>
+                  }}
+                >
                   <i className="fa fa-times" />
                 </a>
               </Fragment>
-            }
+            )}
           </button>
         ))}
         {props.headerContent}
       </div>
-      {props.tabs.map(tab => (
-        <DeferredDiv visible={tab.key === props.activeTab} className={cx('Content')} key={tab.key}>
+      {props.tabs.map((tab) => (
+        <DeferredDiv
+          visible={tab.key === props.activeTab}
+          className={cx('Content')}
+          key={tab.key}
+        >
           {tab.content}
         </DeferredDiv>
       ))}
       {showEmptyPanel && (
         <div className={cx('Content')}>
-          <div style={{fontSize: '2em'}}>Select a tab to see content</div>
+          <div style={{ fontSize: '2em' }}>Select a tab to see content</div>
         </div>
       )}
     </div>
