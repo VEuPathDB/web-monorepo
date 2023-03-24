@@ -51,3 +51,14 @@ yarn build-npm-modules
 **Note: You may need to manually reload your website to see the changes the first time.**
 
 _Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`) has proven inadequate in this scenario._
+
+## Notes on individual packages
+
+### EDA dev server
+
+Directory: `packages/libs/eda`
+
+You will need to configure the server with a `packages/libs/eda/.env.local` file that sets various environment variables.
+
+For more documentation see the link:packages/libs/eda/README.md[package README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
+
