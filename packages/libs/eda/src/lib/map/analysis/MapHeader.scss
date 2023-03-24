@@ -8,6 +8,7 @@
   transition: top 0.1s ease;
   width: 100%;
   z-index: 10;
+  padding: 7px 0px;
 
   &--collapsed {
     // The header gets out of the way by tucking itself
