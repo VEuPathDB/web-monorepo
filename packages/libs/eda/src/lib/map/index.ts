@@ -7,4 +7,4 @@ export type SiteInformationProps = {
   siteLogoSrc: string;
 };
 
-export const mapNavigationBackgroundColor = 'rgba(255, 255, 255, 0.5)';
+export const mapNavigationBackgroundColor = 'rgba(255, 255, 255, 1)';
