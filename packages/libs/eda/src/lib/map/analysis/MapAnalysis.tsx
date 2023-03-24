@@ -34,7 +34,7 @@ import {
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
-import { SemiTransparentHeader } from './SemiTransparentHeader';
+import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
@@ -376,7 +376,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     pointerEvents: 'none',
                   }}
                 >
-                  <SemiTransparentHeader
+                  <MapHeader
                     analysisName={analysisState.analysis?.displayName}
                     entityDisplayName={
                       outputEntity?.displayNamePlural || 'Samples'

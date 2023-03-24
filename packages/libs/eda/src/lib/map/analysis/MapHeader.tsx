@@ -6,7 +6,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
-import './SemiTransparentHeader.scss';
+import './MapHeader.scss';
 import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
 
 export type MapNavigationProps = {
@@ -24,12 +24,12 @@ export type MapNavigationProps = {
 };
 
 /**
- * <SemiTransparentHeader /> has the following responsibilities:
+ * <MapHeader /> has the following responsibilities:
  *  - Worrying about being collapsed/expanded.
  *  - Presenting the smallest amount of information to allow the user
  *    to make sense of a map analysis.
  */
-export function SemiTransparentHeader({
+export function MapHeader({
   analysisName,
   entityDisplayName,
   filterList,
@@ -42,21 +42,21 @@ export function SemiTransparentHeader({
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
 }: MapNavigationProps) {
-  const semiTransparentHeader = makeClassNameHelper('SemiTransparentHeader');
+  const mapHeader = makeClassNameHelper('MapHeader');
 
   return (
     <header
       style={{ background: mapNavigationBackgroundColor }}
-      className={`${semiTransparentHeader()} ${
-        !isExpanded ? semiTransparentHeader('--collapsed') : ''
+      className={`${mapHeader()} ${
+        !isExpanded ? mapHeader('--collapsed') : ''
       }`}
     >
       <div
-        className={`${semiTransparentHeader('__Contents')} ${
+        className={`${mapHeader('__Contents')} ${
           isExpanded ? '' : 'screenReaderOnly'
         }`}
       >
-        <div className={semiTransparentHeader('__LogoContainer')}>
+        <div className={mapHeader('__LogoContainer')}>
           <a href={siteInformation.siteHomeUrl}>
             <img
               src={siteInformation.siteLogoSrc}
@@ -72,7 +72,7 @@ export function SemiTransparentHeader({
         />
       </div>
       <div
-        className={`${semiTransparentHeader('__SampleCounter')} ${
+        className={`${mapHeader('__SampleCounter')} ${
           isExpanded ? '' : 'screenReaderOnly'
         }`}
       >
