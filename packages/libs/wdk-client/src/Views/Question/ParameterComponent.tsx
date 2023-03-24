@@ -1,2 +1,2 @@
-import { ParamComponent } from 'wdk-client/Views/Question/Params';
+import { ParamComponent } from '../../Views/Question/Params';
 export default ParamComponent;

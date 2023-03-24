@@ -1,17 +1,15 @@
-import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
+import { StrategySummary } from '../Utils/WdkUser';
+import { MesaSortObject } from '../Core/CommonTypes';
 
-export const openStrategiesListView = makeActionCreator(
-  'strategiesList/open',
-);
+export const openStrategiesListView = makeActionCreator('strategiesList/open');
 
 export const closeStrategiesListView = makeActionCreator(
-  'strategiesList/close',
+  'strategiesList/close'
 );
 
 export const requestStrategiesList = makeActionCreator(
-  'strategiesList/requestStrategiesList',
+  'strategiesList/requestStrategiesList'
 );
 
 export const fulfillStrategiesList = makeActionCreator(
@@ -22,7 +20,7 @@ export const fulfillStrategiesList = makeActionCreator(
 export const setActiveTab = makeActionCreator(
   'strategiesList/setActiveTab',
   (tabId: string) => ({ tabId })
-)
+);
 
 export const setSearchTerm = makeActionCreator(
   'strategiesList/setSearchTerm',
@@ -42,7 +40,7 @@ export const removeFromStrategyListSelection = makeActionCreator(
 export const setStrategyListSort = makeActionCreator(
   'strategiesList/setStrategyListSort',
   (tableId: string, sort: MesaSortObject) => ({ tableId, sort })
-)
+);
 
 export type Action =
   | InferAction<typeof openStrategiesListView>
@@ -53,4 +51,4 @@ export type Action =
   | InferAction<typeof setSearchTerm>
   | InferAction<typeof addToStrategyListSelection>
   | InferAction<typeof removeFromStrategyListSelection>
-  | InferAction<typeof setStrategyListSort>
+  | InferAction<typeof setStrategyListSort>;

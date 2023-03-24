@@ -1,7 +1,18 @@
 import { memoize } from 'lodash';
-import { Decoder, arrayOf, oneOf, number, string, boolean, decode, constant, combine, field } from 'wdk-client/Utils/Json';
-import WdkService, {useWdkEffect} from 'wdk-client/Service/WdkService';
-import {useState} from 'react';
+import {
+  Decoder,
+  arrayOf,
+  oneOf,
+  number,
+  string,
+  boolean,
+  decode,
+  constant,
+  combine,
+  field,
+} from './Utils/Json';
+import WdkService, { useWdkEffect } from './Service/WdkService';
+import { useState } from 'react';
 
 /**
  * Configuration of available preferences used by the system.
@@ -10,37 +21,44 @@ import {useState} from 'react';
  * The persistence level can be configured (see PersistenceLevel).
  */
 export const preferences = {
+  navigationVisible: memoize((recordClassUrlSegment: string) =>
+    makePreference(
+      'navigationVisible',
+      boolean,
+      PersistenceLevel.Local,
+      `wdk/navigationVisible/${recordClassUrlSegment}`
+    )
+  ),
 
-  navigationVisible: memoize((recordClassUrlSegment: string) => makePreference(
-    'navigationVisible',
-    boolean,
-    PersistenceLevel.Local,
-    `wdk/navigationVisible/${recordClassUrlSegment}`
-  )),
+  openedStrategiesVisibility: memoize(() =>
+    makePreference(
+      'openedStrategiesVisibility',
+      boolean,
+      PersistenceLevel.Session,
+      'wdk/openedStrategiesVisibility'
+    )
+  ),
 
-  openedStrategiesVisibility: memoize(() => makePreference(
-    'openedStrategiesVisibility',
-    boolean,
-    PersistenceLevel.Session,
-    'wdk/openedStrategiesVisibility'
-  )),
+  openedStrategies: memoize(() =>
+    makePreference(
+      'openedStrategies',
+      arrayOf(number),
+      PersistenceLevel.Local,
+      'wdk/openedStrategies'
+    )
+  ),
 
-  openedStrategies: memoize(() => makePreference(
-    'openedStrategies',
-    arrayOf(number),
-    PersistenceLevel.Local,
-    'wdk/openedStrategies'
-  )),
-
-  saveAsSort: memoize(() => makePreference(
-    'saveAsSort',
-    combine(
-      field('columnKey', string),
-      field('direction', oneOf(constant('asc'), constant('desc')))
-    ),
-    PersistenceLevel.Session,
-    'wdk/saveAsSort'
-  )),
+  saveAsSort: memoize(() =>
+    makePreference(
+      'saveAsSort',
+      combine(
+        field('columnKey', string),
+        field('direction', oneOf(constant('asc'), constant('desc')))
+      ),
+      PersistenceLevel.Session,
+      'wdk/saveAsSort'
+    )
+  ),
 
   /* this is currently handled in a different file. here for reference.
   searchColumns: memoize((searchName: string) => makePreference(
@@ -50,8 +68,7 @@ export const preferences = {
     `${searchName}_summary`
   ))
    */
-
-}
+};
 
 /**
  * Persistence levels
@@ -62,7 +79,7 @@ export const enum PersistenceLevel {
   /** BrowseinghHistory lifetime */
   Local = 'local',
   Project = 'project',
-  Global = 'global'
+  Global = 'global',
 }
 
 export interface Preference<T extends string, S> {
@@ -73,24 +90,34 @@ export interface Preference<T extends string, S> {
   /** Level of persistence. Determines the persistence store. */
   persistenceLevel: PersistenceLevel;
   /** Parse string value into javascript value */
-  parse: (rawValue: string) => S
+  parse: (rawValue: string) => S;
 }
 
 export type Preferences = typeof preferences;
 export type PreferenceEntry = ReturnType<Preferences[keyof Preferences]>;
-export type PreferenceType<T> = T extends Preference<infer R, infer S> ? S : never;
+export type PreferenceType<T> = T extends Preference<infer R, infer S>
+  ? S
+  : never;
 
-function makePreference<T extends string, S>(type: T, decoder: Decoder<S>, persistenceLevel: PersistenceLevel, persistenceKey: string = type): Preference<T, S> {
+function makePreference<T extends string, S>(
+  type: T,
+  decoder: Decoder<S>,
+  persistenceLevel: PersistenceLevel,
+  persistenceKey: string = type
+): Preference<T, S> {
   const parse = memoize((rawValue: string) => decode(decoder, rawValue));
   return {
     type,
     parse,
     persistenceLevel,
-    persistenceKey
-  }
+    persistenceKey,
+  };
 }
 
-export async function getValue<T extends PreferenceEntry>(wdkService: WdkService, preference: T): Promise<PreferenceType<T> | undefined> {
+export async function getValue<T extends PreferenceEntry>(
+  wdkService: WdkService,
+  preference: T
+): Promise<PreferenceType<T> | undefined> {
   switch (preference.persistenceLevel) {
     case PersistenceLevel.Session: {
       const rawValue = window.sessionStorage.getItem(preference.persistenceKey);
@@ -119,32 +146,41 @@ export async function getValue<T extends PreferenceEntry>(wdkService: WdkService
   function tryParse(rawValue: string) {
     try {
       return preference.parse(rawValue) as PreferenceType<T>;
-    }
-    catch(error) {
+    } catch (error) {
       return undefined;
     }
   }
 }
 
-export async function setValue<T extends PreferenceEntry>(wdkService: WdkService, preference: T, value: PreferenceType<PreferenceEntry>): Promise<void> {
+export async function setValue<T extends PreferenceEntry>(
+  wdkService: WdkService,
+  preference: T,
+  value: PreferenceType<PreferenceEntry>
+): Promise<void> {
   switch (preference.persistenceLevel) {
     case PersistenceLevel.Session: {
-      window.sessionStorage.setItem(preference.persistenceKey, JSON.stringify(value));
+      window.sessionStorage.setItem(
+        preference.persistenceKey,
+        JSON.stringify(value)
+      );
       return;
     }
     case PersistenceLevel.Local: {
-      window.localStorage.setItem(preference.persistenceKey, JSON.stringify(value));
+      window.localStorage.setItem(
+        preference.persistenceKey,
+        JSON.stringify(value)
+      );
       return;
     }
     case PersistenceLevel.Project: {
       wdkService.patchScopedUserPreferences('project', {
-        [preference.persistenceKey]: JSON.stringify(value)
+        [preference.persistenceKey]: JSON.stringify(value),
       });
       return;
     }
     case PersistenceLevel.Global: {
       wdkService.patchScopedUserPreferences('global', {
-        [preference.persistenceKey]: JSON.stringify(value)
+        [preference.persistenceKey]: JSON.stringify(value),
       });
       return;
     }
@@ -152,17 +188,31 @@ export async function setValue<T extends PreferenceEntry>(wdkService: WdkService
 }
 
 /** React hook to use preferences in components */
-export function usePreference<T extends PreferenceEntry>(preference: T, defaultValue?: PreferenceType<T>) {
-  const [ preferenceValue, setPreferenceValue ] = useState<PreferenceType<T>>();
-  useWdkEffect(wdkService => {
-    (async () => {
-      setPreferenceValue((await getValue(wdkService, preference)) || defaultValue);
-    })();
-  }, [preference]);
+export function usePreference<T extends PreferenceEntry>(
+  preference: T,
+  defaultValue?: PreferenceType<T>
+) {
+  const [preferenceValue, setPreferenceValue] = useState<PreferenceType<T>>();
+  useWdkEffect(
+    (wdkService) => {
+      (async () => {
+        setPreferenceValue(
+          (await getValue(wdkService, preference)) || defaultValue
+        );
+      })();
+    },
+    [preference]
+  );
 
-  useWdkEffect(wdkService => {
-    if (preferenceValue) setValue(wdkService, preference, preferenceValue);
-  }, [preferenceValue]);
+  useWdkEffect(
+    (wdkService) => {
+      if (preferenceValue) setValue(wdkService, preference, preferenceValue);
+    },
+    [preferenceValue]
+  );
 
-  return [ preferenceValue, setPreferenceValue ] as [ typeof preferenceValue, typeof setPreferenceValue ];
+  return [preferenceValue, setPreferenceValue] as [
+    typeof preferenceValue,
+    typeof setPreferenceValue
+  ];
 }

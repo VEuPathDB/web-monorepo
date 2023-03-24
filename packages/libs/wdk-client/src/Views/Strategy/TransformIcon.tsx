@@ -1,16 +1,20 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
-import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
+import { cxStepBoxes as cx } from '../../Views/Strategy/ClassNames';
 
-export const TransformIcon = ({ isPreview = false }: { isPreview?: boolean }) => {
+export const TransformIcon = ({
+  isPreview = false,
+}: {
+  isPreview?: boolean;
+}) => {
   const ref = useRef<SVGSVGElement>(null);
-  const [ height, setHeight ] = useState(0);
+  const [height, setHeight] = useState(0);
 
   const resizeTransformIcon = useCallback(() => {
     if (ref.current) {
       setHeight(ref.current.clientHeight);
     }
-  }, [ ref.current ]);
+  }, [ref.current]);
 
   // Resize the transform icon whenever the window is resized
   useLayoutEffect(() => {
@@ -19,11 +23,11 @@ export const TransformIcon = ({ isPreview = false }: { isPreview?: boolean }) =>
     return () => {
       window.removeEventListener('resize', resizeTransformIcon);
     };
-  }, [ resizeTransformIcon ]);
+  }, [resizeTransformIcon]);
 
   useLayoutEffect(() => {
     resizeTransformIcon();
-  }, [ resizeTransformIcon ]);
+  }, [resizeTransformIcon]);
 
   return (
     <div className={cx('--TransformIconContainer')}>

@@ -1,13 +1,18 @@
-import { getTree } from 'wdk-client/Utils/OntologyUtils';
+import { getTree } from '../../Utils/OntologyUtils';
 import {
   addSearchSpecificSubtree,
   getAllLeafIds,
   isQualifying,
-  CategoryOntology
-} from 'wdk-client/Utils/CategoryUtils';
-import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
-import { AttributeField, Question, RecordClass, TableField } from 'wdk-client/Utils/WdkModel';
-import { UserPreferences } from 'wdk-client/Utils/WdkUser';
+  CategoryOntology,
+} from '../../Utils/CategoryUtils';
+import { prefSpecs } from '../../Utils/UserPreferencesUtils';
+import {
+  AttributeField,
+  Question,
+  RecordClass,
+  TableField,
+} from '../../Utils/WdkModel';
+import { UserPreferences } from '../../Utils/WdkUser';
 
 import { compose } from 'lodash/fp';
 
@@ -17,15 +22,15 @@ export const STANDARD_REPORTER_NAME = 'standard';
  * Typical attachment type vocabulary for reporter forms
  */
 export let attachmentTypes = [
-  { value: "text", display: "Text File" },
-  { value: "plain", display: "Show in Browser" }
+  { value: 'text', display: 'Text File' },
+  { value: 'plain', display: 'Show in Browser' },
 ];
 
 export let tabularAttachmentTypes = [
-  { value: "text", display: "Tab-delimited (.txt) file" },
-  { value: "csv", display: "Comma-delimited (.csv) file*" },
+  { value: 'text', display: 'Tab-delimited (.txt) file' },
+  { value: 'csv', display: 'Comma-delimited (.csv) file*' },
   /*{ value: "excel", display: "Excel file*" },*/
-  { value: "plain", display: "Show in browser"}
+  { value: 'plain', display: 'Show in browser' },
 ];
 
 /**
@@ -40,10 +45,15 @@ export function isInReport(obj: { isInReport: boolean }) {
  * the predicate and appends any reporter dynamic attribute metadata (that pass
  * the predicate) from the question.
  */
-export function getAllAttributes(recordClass: RecordClass, question: Question, predicate: (attr: AttributeField) => boolean) {
+export function getAllAttributes(
+  recordClass: RecordClass,
+  question: Question,
+  predicate: (attr: AttributeField) => boolean
+) {
   let attributes = recordClass.attributes.filter(predicate);
-  question.dynamicAttributes.filter(predicate)
-    .forEach(reportAttr => { attributes.push(reportAttr); });
+  question.dynamicAttributes.filter(predicate).forEach((reportAttr) => {
+    attributes.push(reportAttr);
+  });
   return attributes;
 }
 
@@ -51,7 +61,10 @@ export function getAllAttributes(recordClass: RecordClass, question: Question, p
  * Retrieves table metadata objects from the passed record class that pass the
  * predicate.
  */
-export function getAllTables(recordClass: RecordClass, predicate: (table: TableField) => boolean) {
+export function getAllTables(
+  recordClass: RecordClass,
+  predicate: (table: TableField) => boolean
+) {
   return recordClass.tables.filter(predicate);
 }
 
@@ -61,35 +74,55 @@ export function getAllTables(recordClass: RecordClass, predicate: (table: TableF
  *   2. default columns for the question
  * Then must trim off any non-download-scope attributes
  */
-export function getAttributeSelections(userPrefs: UserPreferences, question: Question, allReportScopedAttrs: string[] = []) {
+export function getAttributeSelections(
+  userPrefs: UserPreferences,
+  question: Question,
+  allReportScopedAttrs: string[] = []
+) {
   // try initializing based on user prefs
-  let [ userPrefScope, userPrefKey ] = prefSpecs.summary(question.fullName);
+  let [userPrefScope, userPrefKey] = prefSpecs.summary(question.fullName);
   let userPrefAttrs = userPrefs[userPrefScope][userPrefKey]?.split(',');
 
-  let initialAttrs = (userPrefAttrs != null ?
-      // if available, use user-preferred attributes
-      userPrefAttrs :
-      // otherwise, use default attribs from question
-      question.defaultAttributes);
+  let initialAttrs =
+    userPrefAttrs != null
+      ? // if available, use user-preferred attributes
+        userPrefAttrs
+      : // otherwise, use default attribs from question
+        question.defaultAttributes;
   // now must trim off any that do not appear in the tree (probably results-page scoped)
-  return initialAttrs.filter(attr => allReportScopedAttrs.indexOf(attr) != -1);
+  return initialAttrs.filter(
+    (attr) => allReportScopedAttrs.indexOf(attr) != -1
+  );
 }
 
-export function getAttributeTree(categoriesOntology: CategoryOntology, recordClassFullName: string, question: Question) {
-  let categoryTree = getTree(categoriesOntology, isQualifying({
-    targetType: 'attribute',
-    recordClassName: recordClassFullName,
-    scope: 'download'
-  }));
+export function getAttributeTree(
+  categoriesOntology: CategoryOntology,
+  recordClassFullName: string,
+  question: Question
+) {
+  let categoryTree = getTree(
+    categoriesOntology,
+    isQualifying({
+      targetType: 'attribute',
+      recordClassName: recordClassFullName,
+      scope: 'download',
+    })
+  );
   return addSearchSpecificSubtree(question, categoryTree);
 }
 
-export function getTableTree(categoriesOntology: CategoryOntology, recordClassFullName: string) {
-  let categoryTree = getTree(categoriesOntology, isQualifying({
-    targetType: 'table',
-    recordClassName: recordClassFullName,
-    scope: 'download'
-  }));
+export function getTableTree(
+  categoriesOntology: CategoryOntology,
+  recordClassFullName: string
+) {
+  let categoryTree = getTree(
+    categoriesOntology,
+    isQualifying({
+      targetType: 'table',
+      recordClassName: recordClassFullName,
+      scope: 'download',
+    })
+  );
   return categoryTree;
 }
 
@@ -109,7 +142,11 @@ export function getAttributesChangeHandler<T extends {}>(
   recordClass: RecordClass
 ) {
   return (newAttribsArray: string[]) => {
-    onParentChange(Object.assign({}, previousState, { [inputName]: addPk(newAttribsArray, recordClass) }));
+    onParentChange(
+      Object.assign({}, previousState, {
+        [inputName]: addPk(newAttribsArray, recordClass),
+      })
+    );
   };
 }
 
@@ -130,5 +167,5 @@ export function prependAttrib(attribName: string, attributesArray: string[]) {
     attributesArray.splice(currentIndex, 1);
   }
   // prepend clean array with passed attrib name
-  return [ attribName ].concat(attributesArray);
+  return [attribName].concat(attributesArray);
 }

@@ -1,8 +1,8 @@
-import { Action } from 'wdk-client/Actions';
+import { Action } from '../Actions';
 import {
   PASSWORD_FORM_UPDATE,
-  PASSWORD_FORM_SUBMISSION_STATUS
-} from 'wdk-client/Actions/UserActions';
+  PASSWORD_FORM_SUBMISSION_STATUS,
+} from '../Actions/UserActions';
 
 export const key = 'passwordChange';
 
@@ -13,13 +13,13 @@ export type State = {
     oldPassword: string;
     newPassword: string;
     confirmPassword: string;
-  }
-}
+  };
+};
 
 const defaultState: State = {
   passwordForm: getEmptyForm(),
   formStatus: 'new', // Values: [ 'new', 'modified', 'pending', 'success', 'error' ]
-  errorMessage: undefined
+  errorMessage: undefined,
 };
 
 export function reduce(state: State = defaultState, action: Action): State {
@@ -28,7 +28,7 @@ export function reduce(state: State = defaultState, action: Action): State {
       return {
         ...state,
         passwordForm: action.payload,
-        formStatus: 'modified'
+        formStatus: 'modified',
       };
     case PASSWORD_FORM_SUBMISSION_STATUS:
       return {
@@ -47,6 +47,6 @@ function getEmptyForm() {
   return {
     oldPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
 }

@@ -1,9 +1,12 @@
-import {makeActionCreator, InferAction} from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
 
 export const requestImportStrategy = makeActionCreator(
   'requestImportStrategy',
-  (strategySignature: string, selectedTab?: string) => ({ strategySignature, selectedTab })
-)
+  (strategySignature: string, selectedTab?: string) => ({
+    strategySignature,
+    selectedTab,
+  })
+);
 
 export const fulfillImportStrategy = makeActionCreator(
   'fulfillImportStrategy',
@@ -11,6 +14,5 @@ export const fulfillImportStrategy = makeActionCreator(
 );
 
 export type Action = InferAction<
-  | typeof requestImportStrategy
-  | typeof fulfillImportStrategy
-  >
+  typeof requestImportStrategy | typeof fulfillImportStrategy
+>;

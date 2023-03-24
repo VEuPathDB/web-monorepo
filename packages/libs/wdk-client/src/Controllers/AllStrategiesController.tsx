@@ -1,16 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { closeStrategiesListView, openStrategiesListView, setActiveTab, setSearchTerm, addToStrategyListSelection, removeFromStrategyListSelection, setStrategyListSort } from 'wdk-client/Actions/StrategyListActions';
-import { Loading } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import AllStrategies from 'wdk-client/Views/Strategy/AllStrategies';
-import { propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
-import { addToOpenedStrategies, removeFromOpenedStrategies } from 'wdk-client/Actions/StrategyWorkspaceActions';
-import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
-import { requestPatchStrategyProperties, requestDeleteOrRestoreStrategies } from 'wdk-client/Actions/StrategyActions';
-import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import {
+  closeStrategiesListView,
+  openStrategiesListView,
+  setActiveTab,
+  setSearchTerm,
+  addToStrategyListSelection,
+  removeFromStrategyListSelection,
+  setStrategyListSort,
+} from '../Actions/StrategyListActions';
+import { Loading } from '../Components';
+import { RootState } from '../Core/State/Types';
+import { RecordClass } from '../Utils/WdkModel';
+import { StrategySummary } from '../Utils/WdkUser';
+import AllStrategies from '../Views/Strategy/AllStrategies';
+import { propertyIsNonNull } from '../Utils/ComponentUtils';
+import {
+  addToOpenedStrategies,
+  removeFromOpenedStrategies,
+} from '../Actions/StrategyWorkspaceActions';
+import { MesaSortObject } from '../Core/CommonTypes';
+import {
+  requestPatchStrategyProperties,
+  requestDeleteOrRestoreStrategies,
+} from '../Actions/StrategyActions';
+import { transitionToInternalPage } from '../Actions/RouterActions';
 
 interface OwnProps {
   strategies?: StrategySummary[];
@@ -44,19 +58,16 @@ interface DispatchProps {
 type Props = OwnProps & StateProps & DispatchProps;
 
 function AllStrategiesController(props: Props) {
-  const {
-    openStrategiesListView,
-    closeStrategiesListView,
-    ...restProps
-  } = props;
+  const { openStrategiesListView, closeStrategiesListView, ...restProps } =
+    props;
 
-  if (!propertyIsNonNull(restProps, 'strategies') || !propertyIsNonNull(restProps, 'recordClasses')) return <Loading/>;
-
-  return (
-    <AllStrategies
-      {...restProps}
-    />
+  if (
+    !propertyIsNonNull(restProps, 'strategies') ||
+    !propertyIsNonNull(restProps, 'recordClasses')
   )
+    return <Loading />;
+
+  return <AllStrategies {...restProps} />;
 }
 
 function mapStateToProps(state: RootState): StateProps {
@@ -67,8 +78,8 @@ function mapStateToProps(state: RootState): StateProps {
     selectionByTableId: viewState.selectedStrategiesByTableId,
     openedStrategies: state.strategyWorkspace.openedStrategies,
     sortByTableId: viewState.sortByTableId,
-    searchTermsByTableId: viewState.searchTermsByTableId
-  }
+    searchTermsByTableId: viewState.searchTermsByTableId,
+  };
 }
 
 const dispatchProps: DispatchProps = {
@@ -85,8 +96,12 @@ const dispatchProps: DispatchProps = {
   addToOpenedStrategies,
   removeFromOpenedStrategies,
   onSort: setStrategyListSort,
-  updatePublicStatus: (id: number, isPublic: boolean) => requestPatchStrategyProperties(id, { isPublic }),
-  deleteStrategies: (ids: number[]) => requestDeleteOrRestoreStrategies(ids.map(strategyId => ({ strategyId, isDeleted: true })))
-}
+  updatePublicStatus: (id: number, isPublic: boolean) =>
+    requestPatchStrategyProperties(id, { isPublic }),
+  deleteStrategies: (ids: number[]) =>
+    requestDeleteOrRestoreStrategies(
+      ids.map((strategyId) => ({ strategyId, isDeleted: true }))
+    ),
+};
 
 export default connect(mapStateToProps, dispatchProps)(AllStrategiesController);

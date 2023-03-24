@@ -1,7 +1,7 @@
-import React from "react";
-import { RecordInstance, RecordClass } from "wdk-client/Utils/WdkModel";
-import { RecordLink } from "wdk-client/Components";
-import { renderAttributeValue } from "wdk-client/Utils/ComponentUtils";
+import React from 'react';
+import { RecordInstance, RecordClass } from '../../Utils/WdkModel';
+import { RecordLink } from '../../Components';
+import { renderAttributeValue } from '../../Utils/ComponentUtils';
 
 interface PrimaryKeyCellProps {
   recordInstance: RecordInstance;

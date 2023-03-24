@@ -1,6 +1,6 @@
 import { get, kebabCase } from 'lodash';
 import * as React from 'react';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { safeHtml } from '../Utils/ComponentUtils';
 import {
   getTree,
   nodeHasChildren,
@@ -9,20 +9,26 @@ import {
   getPropertyValue,
   getPropertyValues,
   OntologyNode,
-  Ontology
-} from 'wdk-client/Utils/OntologyUtils';
-import {areTermsInString} from 'wdk-client/Utils/SearchUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import {preorderSeq, getBranches} from 'wdk-client/Utils/TreeUtils';
-import {Question, RecordClass} from 'wdk-client/Utils/WdkModel';
+  Ontology,
+} from '../Utils/OntologyUtils';
+import { areTermsInString } from '../Utils/SearchUtils';
+import { Seq } from '../Utils/IterableUtils';
+import { preorderSeq, getBranches } from '../Utils/TreeUtils';
+import { Question, RecordClass } from '../Utils/WdkModel';
 // import {Tooltip} from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 export type Dict<T> = {
   [key: string]: T;
 };
 
-export type TargetType = 'search'|'attribute'|'table';
-export type Scope = 'record' | 'record-internal' | 'results' | 'results-internal' | 'download' | 'download-internal';
+export type TargetType = 'search' | 'attribute' | 'table';
+export type Scope =
+  | 'record'
+  | 'record-internal'
+  | 'results'
+  | 'results-internal'
+  | 'download'
+  | 'download-internal';
 
 export interface CategoryNodeProperties {
   targetType?: [TargetType];
@@ -40,7 +46,7 @@ export interface CategoryNodeProperties {
 export type CategoryNode = OntologyNode<{
   children: CategoryTreeNode[];
   properties: CategoryNodeProperties;
-}>
+}>;
 
 export type IndividualNode = OntologyNode<{
   children: CategoryTreeNode[]; // note, this is always empty for an individual
@@ -52,20 +58,20 @@ export type IndividualNode = OntologyNode<{
     summary?: string;
     description?: string;
   };
-}>
+}>;
 
 export type CategoryTreeNode = CategoryNode | IndividualNode;
-export type CategoryOntology = Ontology<CategoryTreeNode>
+export type CategoryOntology = Ontology<CategoryTreeNode>;
 
 export const EMPTY_CATEGORY_TREE_NODE: CategoryTreeNode = {
   children: [],
-  properties: {}
+  properties: {},
 };
 
 export function getId(node: CategoryTreeNode): string {
   return isIndividual(node)
-    // FIXME Remove `fullName` hack when the urlSegment/name/fullName saga is resolved.
-    ? node.wdkReference.name || (node.wdkReference as any).fullName
+    ? // FIXME Remove `fullName` hack when the urlSegment/name/fullName saga is resolved.
+      node.wdkReference.name || (node.wdkReference as any).fullName
     : `category:${kebabCase(getLabel(node))}`;
 }
 
@@ -94,32 +100,35 @@ export function getRecordClassUrlSegment(node: CategoryTreeNode) {
 }
 
 export function getDisplayName(node: CategoryTreeNode) {
-  return isIndividual(node) ? node.wdkReference.displayName
-       : getPropertyValue('EuPathDB alternative term', node);
+  return isIndividual(node)
+    ? node.wdkReference.displayName
+    : getPropertyValue('EuPathDB alternative term', node);
 }
 
 export function getDescription(node: CategoryTreeNode) {
-  return isIndividual(node) ? node.wdkReference.help
-       : getPropertyValue('hasDefinition', node);
+  return isIndividual(node)
+    ? node.wdkReference.help
+    : getPropertyValue('hasDefinition', node);
 }
 
 export function getTooltipContent(node: CategoryTreeNode) {
-  return isIndividual(node) && nodeHasProperty('targetType', 'search', node) ? node.wdkReference.summary
-       : isIndividual(node) && nodeHasProperty('targetType', 'table', node) ? node.wdkReference.description
-       : getDescription(node);
+  return isIndividual(node) && nodeHasProperty('targetType', 'search', node)
+    ? node.wdkReference.summary
+    : isIndividual(node) && nodeHasProperty('targetType', 'table', node)
+    ? node.wdkReference.description
+    : getDescription(node);
 }
 
 export function getFormattedTooltipContent(node: CategoryTreeNode) {
   const tooltipContent = getTooltipContent(node);
 
-  return tooltipContent == null
-    ? tooltipContent
-    : safeHtml(tooltipContent);
+  return tooltipContent == null ? tooltipContent : safeHtml(tooltipContent);
 }
 
 export function getSynonyms(node: CategoryTreeNode) {
-  return getPropertyValues('hasNarrowSynonym', node)
-  .concat(getPropertyValues('hasExactSynonym', node));
+  return getPropertyValues('hasNarrowSynonym', node).concat(
+    getPropertyValues('hasExactSynonym', node)
+  );
 }
 
 export function getChildren(node: CategoryTreeNode) {
@@ -135,26 +144,33 @@ export function getChildren(node: CategoryTreeNode) {
  * @param description - tooltip
  * @returns {{properties: {targetType: string[], name: *[]}, wdkReference: {displayName: *, help: *}, children: Array}}
  */
-export function createNode(id: string, displayName: string, description?: string, children: CategoryTreeNode[] = []): CategoryTreeNode {
-  return children.length > 0 ? {
-    properties: {
-      label: [id],
-      hasDefinition: description ? [description]: [],
-      'EuPathDB alternative term': [displayName]
-    },
-    children
-  } : {
-    properties : {
-      targetType : ['attribute'],
-      name : [id]
-    },
-    wdkReference : {
-      name: id,
-      displayName : displayName,
-      help : description
-    },
-    children
-  }
+export function createNode(
+  id: string,
+  displayName: string,
+  description?: string,
+  children: CategoryTreeNode[] = []
+): CategoryTreeNode {
+  return children.length > 0
+    ? {
+        properties: {
+          label: [id],
+          hasDefinition: description ? [description] : [],
+          'EuPathDB alternative term': [displayName],
+        },
+        children,
+      }
+    : {
+        properties: {
+          targetType: ['attribute'],
+          name: [id],
+        },
+        wdkReference: {
+          name: id,
+          displayName: displayName,
+          help: description,
+        },
+        children,
+      };
 }
 
 /**
@@ -165,22 +181,30 @@ export function createNode(id: string, displayName: string, description?: string
  * @param question question whose dynamic attributes should be added
  * @param categoryTree root node of a categories ontology tree to modify
  */
-export function addSearchSpecificSubtree(question: Question, categoryTree: CategoryTreeNode): CategoryTreeNode {
+export function addSearchSpecificSubtree(
+  question: Question,
+  categoryTree: CategoryTreeNode
+): CategoryTreeNode {
   if (question.dynamicAttributes.length > 0) {
     let questionNodes = question.dynamicAttributes
-      .filter(attribute => attribute.isDisplayable)
-      .map(attribute => {
-        return createNode(attribute.name, attribute.displayName, attribute.help, []);
+      .filter((attribute) => attribute.isDisplayable)
+      .map((attribute) => {
+        return createNode(
+          attribute.name,
+          attribute.displayName,
+          attribute.help,
+          []
+        );
       });
     let subtree = createNode(
-      "search_specific_subtree",
-      "Search Specific",
-      "Information about the records returned that is specific to the search you ran, and the parameters you specified",
+      'search_specific_subtree',
+      'Search Specific',
+      'Information about the records returned that is specific to the search you ran, and the parameters you specified',
       questionNodes
     );
     return Object.assign({}, categoryTree, {
-      children: [ subtree ].concat(categoryTree.children)
-    })
+      children: [subtree].concat(categoryTree.children),
+    });
   }
   return categoryTree;
 }
@@ -197,7 +221,7 @@ export function getNodeId(node: CategoryTreeNode): string {
 
 type QualifyingSpec = {
   [K in keyof CategoryNodeProperties]: string;
-}
+};
 
 /**
  * Create a predicate function to filter out of the Categories ontology tree those items appropriate for the given
@@ -205,18 +229,22 @@ type QualifyingSpec = {
  * distinction is made depending on whether the summary view applies to transcripts or genes.
  */
 export function isQualifying(spec: QualifyingSpec) {
-  return function(node: CategoryTreeNode) {
+  return function (node: CategoryTreeNode) {
     // We have to cast spec as Record<string, string> to avoid an implicitAny error
     // See http://stackoverflow.com/questions/32968332/how-do-i-prevent-the-error-index-signature-of-object-type-implicitly-has-an-an
-    return Object.keys(spec).every(prop => nodeHasProperty(prop, (spec as Record<string, string>)[prop] as any, node));
+    return Object.keys(spec).every((prop) =>
+      nodeHasProperty(prop, (spec as Record<string, string>)[prop] as any, node)
+    );
   };
 }
 
 export function isIndividual(node: CategoryTreeNode): node is IndividualNode {
   const targetType = getTargetType(node);
-  return targetType === 'search'
-      || targetType === 'table'
-      || targetType === 'attribute';
+  return (
+    targetType === 'search' ||
+    targetType === 'table' ||
+    targetType === 'attribute'
+  );
 }
 
 /**
@@ -224,13 +252,13 @@ export function isIndividual(node: CategoryTreeNode): node is IndividualNode {
  * @param node - given node
  * @returns {React.Element} - React element
  */
-export function BasicNodeComponent(props: {node: CategoryTreeNode}) {
+export function BasicNodeComponent(props: { node: CategoryTreeNode }) {
   return (
-      /** Remove Tooltip for now as performance improvements are underway */ 
-      // <Tooltip title={getDescription(props.node) ?? ''}>
-        <span>{getDisplayName(props.node)}</span>
-      // </Tooltip>
-    );
+    /** Remove Tooltip for now as performance improvements are underway */
+    // <Tooltip title={getDescription(props.node) ?? ''}>
+    <span>{getDisplayName(props.node)}</span>
+    // </Tooltip>
+  );
 }
 
 /**
@@ -241,9 +269,14 @@ export function BasicNodeComponent(props: {node: CategoryTreeNode}) {
  * @param searchText search text to match against
  * @returns true if node 'matches' the passed search text
  */
-export function nodeSearchPredicate(node: CategoryTreeNode, searchQueryTerms: string[]): boolean {
-  return areTermsInString(searchQueryTerms, getDisplayName(node) + ' ' +
-                          getTooltipContent(node));
+export function nodeSearchPredicate(
+  node: CategoryTreeNode,
+  searchQueryTerms: string[]
+): boolean {
+  return areTermsInString(
+    searchQueryTerms,
+    getDisplayName(node) + ' ' + getTooltipContent(node)
+  );
 }
 
 /**
@@ -251,7 +284,9 @@ export function nodeSearchPredicate(node: CategoryTreeNode, searchQueryTerms: st
  */
 export function findFirstLeafId(ontologyTreeRoot: CategoryTreeNode): string {
   if (nodeHasChildren(ontologyTreeRoot)) {
-    return findFirstLeafId(getNodeChildren(ontologyTreeRoot)[0] as CategoryTreeNode);
+    return findFirstLeafId(
+      getNodeChildren(ontologyTreeRoot)[0] as CategoryTreeNode
+    );
   }
   return getNodeId(ontologyTreeRoot);
 }
@@ -261,7 +296,9 @@ export function findFirstLeafId(ontologyTreeRoot: CategoryTreeNode): string {
  * root has no children, this function assumes a "null" tree, and returns an empty array.
  */
 export function getAllLeafIds(ontologyTreeRoot: CategoryTreeNode): string[] {
-  return (!nodeHasChildren(ontologyTreeRoot) ? [] : getAllLeafIdsNoCheck(ontologyTreeRoot));
+  return !nodeHasChildren(ontologyTreeRoot)
+    ? []
+    : getAllLeafIdsNoCheck(ontologyTreeRoot);
 }
 
 /**
@@ -269,15 +306,18 @@ export function getAllLeafIds(ontologyTreeRoot: CategoryTreeNode): string[] {
  */
 function getAllLeafIdsNoCheck(ontologyTreeRoot: CategoryTreeNode): string[] {
   let collectIds = (leafIds: string[], node: CategoryTreeNode): string[] =>
-    (!nodeHasChildren(node) ? leafIds.concat(getNodeId(node)) :
-      getNodeChildren(node).reduce(collectIds, leafIds));
+    !nodeHasChildren(node)
+      ? leafIds.concat(getNodeId(node))
+      : getNodeChildren(node).reduce(collectIds, leafIds);
   return collectIds([], ontologyTreeRoot);
 }
 
 export function getAllBranchIds(categoryTree: CategoryTreeNode): string[] {
-  return getBranches(categoryTree, (node: CategoryTreeNode) => node.children).map(getNodeId);
+  return getBranches(
+    categoryTree,
+    (node: CategoryTreeNode) => node.children
+  ).map(getNodeId);
 }
-
 
 // Utility functions for pruning categories
 
@@ -290,14 +330,17 @@ export function pruneUnknownPaths(
   ontology: CategoryOntology
 ) {
   return Object.assign({}, ontology, {
-    tree: getTree(ontology, isIndividualKnownWith(recordClasses, questions))
+    tree: getTree(ontology, isIndividualKnownWith(recordClasses, questions)),
   });
 }
 
-export function isIndividualKnownWith(recordClasses: Dict<RecordClass>, questions: Dict<Question>) {
+export function isIndividualKnownWith(
+  recordClasses: Dict<RecordClass>,
+  questions: Dict<Question>
+) {
   return function isIndividualKnown(node: OntologyNode<{}>) {
     return getModelEntity(recordClasses, questions, node) !== undefined;
-  }
+  };
 }
 
 /**
@@ -311,13 +354,15 @@ export function resolveWdkReferences(
   questions: Dict<Question>,
   ontology: CategoryOntology
 ) {
-  preorderSeq(ontology.tree).forEach(node => {
+  preorderSeq(ontology.tree).forEach((node) => {
     if (isIndividual(node)) {
       Object.assign(node, {
         wdkReference: getModelEntity(recordClasses, questions, node),
         properties: Object.assign(node.properties, {
-          recordClassUrlSegment: [findRecordClassUrlSegment(recordClasses, node)]
-        })
+          recordClassUrlSegment: [
+            findRecordClassUrlSegment(recordClasses, node),
+          ],
+        }),
       });
     }
   });
@@ -334,7 +379,7 @@ export function sortOntology(
   ontology: CategoryOntology
 ) {
   const comparator = makeComparator(recordClasses, questions);
-  preorderSeq(ontology.tree).forEach(node => node.children.sort(comparator))
+  preorderSeq(ontology.tree).forEach((node) => node.children.sort(comparator));
   return ontology;
 }
 
@@ -357,7 +402,10 @@ interface NodeComparator {
  * compare based on displayName.
  *
  */
-function makeComparator(recordClasses: Dict<RecordClass>, questions: Dict<Question>) {
+function makeComparator(
+  recordClasses: Dict<RecordClass>,
+  questions: Dict<Question>
+) {
   return composeComparators(
     compareByChildren,
     compareBySortNumber,
@@ -366,11 +414,16 @@ function makeComparator(recordClasses: Dict<RecordClass>, questions: Dict<Questi
 }
 
 function composeComparators(...comparators: NodeComparator[]): NodeComparator {
-  return function compareNodes(nodeA: CategoryTreeNode, nodeB: CategoryTreeNode) {
-    return Seq.from(comparators)
-    .map(comparator => comparator(nodeA, nodeB))
-    .find(n => n !== 0) || 0;
-  }
+  return function compareNodes(
+    nodeA: CategoryTreeNode,
+    nodeB: CategoryTreeNode
+  ) {
+    return (
+      Seq.from(comparators)
+        .map((comparator) => comparator(nodeA, nodeB))
+        .find((n) => n !== 0) || 0
+    );
+  };
 }
 
 /**
@@ -378,29 +431,46 @@ function composeComparators(...comparators: NodeComparator[]): NodeComparator {
  * This makes the current record page section numbering system work
  */
 function compareByChildren(nodeA: CategoryTreeNode, nodeB: CategoryTreeNode) {
-    return nodeA.children.length === 0 && nodeB.children.length !== 0 ? 1
-         : nodeB.children.length === 0 && nodeA.children.length !== 0 ? -1
-         : 0;
+  return nodeA.children.length === 0 && nodeB.children.length !== 0
+    ? 1
+    : nodeB.children.length === 0 && nodeA.children.length !== 0
+    ? -1
+    : 0;
 }
 
 function compareBySortNumber(nodeA: CategoryTreeNode, nodeB: CategoryTreeNode) {
   let sortOrderA = getPropertyValue('display order', nodeA);
   let sortOrderB = getPropertyValue('display order', nodeB);
-  return sortOrderA && sortOrderB ? Number(sortOrderA) - Number(sortOrderB)
-       : sortOrderA ? -1
-       : sortOrderB ? 1
-       : 0;
+  return sortOrderA && sortOrderB
+    ? Number(sortOrderA) - Number(sortOrderB)
+    : sortOrderA
+    ? -1
+    : sortOrderB
+    ? 1
+    : 0;
 }
 
-function makeCompareBySortName(recordClasses: Dict<RecordClass>, questions: Dict<Question>) {
-  return function compareBySortName(nodeA: CategoryTreeNode, nodeB: CategoryTreeNode) {
+function makeCompareBySortName(
+  recordClasses: Dict<RecordClass>,
+  questions: Dict<Question>
+) {
+  return function compareBySortName(
+    nodeA: CategoryTreeNode,
+    nodeB: CategoryTreeNode
+  ) {
     // attempt to sort by displayName
     let entityA = getModelEntity(recordClasses, questions, nodeA);
     let entityB = getModelEntity(recordClasses, questions, nodeB);
-    let nameA = get(entityA, 'displayName') || getPropertyValue('EuPathDB alternative term', nodeA) || '';
-    let nameB = get(entityB, 'displayName') || getPropertyValue('EuPathDB alternative term', nodeA) || '';
+    let nameA =
+      get(entityA, 'displayName') ||
+      getPropertyValue('EuPathDB alternative term', nodeA) ||
+      '';
+    let nameB =
+      get(entityB, 'displayName') ||
+      getPropertyValue('EuPathDB alternative term', nodeA) ||
+      '';
     return nameA.toLowerCase() < nameB.toLowerCase() ? -1 : 1;
-  }
+  };
 }
 
 function getModelEntity(
@@ -412,15 +482,21 @@ function getModelEntity(
   if (recordClass !== undefined) {
     const name = getRefName(node as CategoryTreeNode);
     switch (getTargetType(node as CategoryTreeNode)) {
-      case 'attribute': return recordClass.attributesMap[name];
-      case 'table': return recordClass.tablesMap[name];
-      case 'search': return questions[name];
+      case 'attribute':
+        return recordClass.attributesMap[name];
+      case 'table':
+        return recordClass.tablesMap[name];
+      case 'search':
+        return questions[name];
     }
   }
   return undefined;
 }
 
-function findRecordClassUrlSegment(recordClasses: Record<string, RecordClass>, node: OntologyNode<{}>): string | undefined {
+function findRecordClassUrlSegment(
+  recordClasses: Record<string, RecordClass>,
+  node: OntologyNode<{}>
+): string | undefined {
   const recordClass = recordClasses[getRecordClassName(node)];
   return recordClass && recordClass.urlSegment;
 }

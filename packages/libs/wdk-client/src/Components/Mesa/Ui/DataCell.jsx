@@ -1,21 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Templates from 'wdk-client/Components/Mesa/Templates';
-import { makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
+import Templates from '../../../Components/Mesa/Templates';
+import { makeClassifier } from '../../../Components/Mesa/Utils/Utils';
 
 const dataCellClass = makeClassifier('DataCell');
 
 class DataCell extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.renderContent = this.renderContent.bind(this);
   }
 
-  renderContent () {
+  renderContent() {
     const { row, column, rowIndex, columnIndex, inline } = this.props;
     const { key, getValue } = column;
-    const value = typeof getValue === 'function' ? getValue({ row, key }) : row[key];
+    const value =
+      typeof getValue === 'function' ? getValue({ row, key }) : row[key];
     const cellProps = { key, value, row, column, rowIndex, columnIndex };
 
     if ('renderCell' in column) {
@@ -37,36 +38,37 @@ class DataCell extends React.PureComponent {
       case 'text':
       default:
         return Templates.textCell(cellProps);
-    };
+    }
   }
 
-  render () {
+  render() {
     let { column, row, inline } = this.props;
     let { style, width, className, key } = column;
 
+    let whiteSpace = !inline
+      ? {}
+      : {
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          maxWidth: options.inlineMaxWidth ? options.inlineMaxWidth : '20vw',
+          maxHeight: options.inlineMaxHeight ? options.inlineMaxHeight : '2em',
+        };
 
-    let whiteSpace = !inline ? {} : {
-      textOverflow: 'ellipsis',
-      overflow: 'hidden',
-      maxWidth: options.inlineMaxWidth ? options.inlineMaxWidth : '20vw',
-      maxHeight: options.inlineMaxHeight ? options.inlineMaxHeight : '2em',
-    };
-
-    width = (typeof width === 'number' ? width + 'px' : width);
+    width = typeof width === 'number' ? width + 'px' : width;
     width = width ? { width, maxWidth: width, minWidth: width } : {};
     style = Object.assign({}, style, width, whiteSpace);
     className = dataCellClass() + (className ? ' ' + className : '');
     const children = this.renderContent();
     const props = { style, children, key, className };
 
-    return column.hidden ? null : <td {...props} />
+    return column.hidden ? null : <td {...props} />;
   }
-};
+}
 
 DataCell.propTypes = {
   column: PropTypes.object,
   row: PropTypes.object,
-  inline: PropTypes.bool
+  inline: PropTypes.bool,
 };
 
 export default DataCell;

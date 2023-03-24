@@ -1,11 +1,9 @@
-import { Context } from 'wdk-client/Views/Question/Params/Utils';
-import { TreeBoxEnumParam } from 'wdk-client/Utils/WdkModel';
+import { Context } from '../Views/Question/Params/Utils';
+import { TreeBoxEnumParam } from '../Utils/WdkModel';
 
 type Ctx = Context<TreeBoxEnumParam>;
 
-export type Action =
-  | SetExpandedListAction
-  | SetSearchTermAction
+export type Action = SetExpandedListAction | SetSearchTermAction;
 
 //==============================================================================
 
@@ -18,10 +16,12 @@ export interface SetExpandedListAction {
   };
 }
 
-export function setExpandedList(payload: SetExpandedListAction['payload']): SetExpandedListAction {
+export function setExpandedList(
+  payload: SetExpandedListAction['payload']
+): SetExpandedListAction {
   return {
     type: SET_EXPANDED_LIST,
-    payload
+    payload,
   };
 }
 
@@ -36,10 +36,12 @@ export interface SetSearchTermAction {
   };
 }
 
-export function setSearchTerm(payload: SetSearchTermAction['payload']): SetSearchTermAction {
+export function setSearchTerm(
+  payload: SetSearchTermAction['payload']
+): SetSearchTermAction {
   return {
     type: SET_SEARCH_TERM,
-    payload
+    payload,
   };
 }
 

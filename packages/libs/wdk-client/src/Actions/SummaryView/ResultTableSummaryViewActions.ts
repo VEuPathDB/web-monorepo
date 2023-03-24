@@ -1,16 +1,13 @@
-import {
-  InferAction,
-  makeActionCreator
-} from 'wdk-client/Utils/ActionCreatorUtils';
+import { InferAction, makeActionCreator } from '../../Utils/ActionCreatorUtils';
 import {
   Answer,
   AttributesConfig,
   AttributeSortingSpec,
   Pagination,
   PrimaryKey,
-  SearchConfig
-} from 'wdk-client/Utils/WdkModel';
-import {ResultType, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
+  SearchConfig,
+} from '../../Utils/WdkModel';
+import { ResultType, ResultTypeDetails } from '../../Utils/WdkResult';
 
 export const openResultTableSummaryView = makeActionCreator(
   'resultTableSummaryView/open',
@@ -29,7 +26,10 @@ export const requestResultTypeDetails = makeActionCreator(
 
 export const fulfillResultTypeDetails = makeActionCreator(
   'resultTableSummaryView/fulfillResultTypeDetails',
-  (viewId: string, resultTypeDetails: ResultTypeDetails) => ({ viewId, resultTypeDetails })
+  (viewId: string, resultTypeDetails: ResultTypeDetails) => ({
+    viewId,
+    resultTypeDetails,
+  })
 );
 
 export const showHideAddColumnsDialog = makeActionCreator(
@@ -63,7 +63,7 @@ export const requestSortingUpdate = makeActionCreator(
   (viewId: string, sorting: AttributeSortingSpec[], searchName: string) => ({
     sorting,
     searchName,
-    viewId
+    viewId,
   })
 );
 
@@ -72,7 +72,7 @@ export const fulfillSorting = makeActionCreator(
   (viewId: string, sorting: AttributeSortingSpec[], searchName: string) => ({
     sorting,
     searchName,
-    viewId
+    viewId,
   })
 );
 
@@ -83,12 +83,20 @@ export const requestColumnsChoicePreference = makeActionCreator(
 
 export const requestColumnsChoiceUpdate = makeActionCreator(
   'resultTableSummaryView/requestColumnsChoiceUpdate',
-  (viewId: string, columns: string[], searchName: string) => ({ columns, searchName, viewId })
+  (viewId: string, columns: string[], searchName: string) => ({
+    columns,
+    searchName,
+    viewId,
+  })
 );
 
 export const fulfillColumnsChoice = makeActionCreator(
   'resultTableSummaryView/fulfillColumnsChoice',
-  (viewId: string, columns: string[], searchName: string) => ({ columns, searchName, viewId })
+  (viewId: string, columns: string[], searchName: string) => ({
+    columns,
+    searchName,
+    viewId,
+  })
 );
 
 export const requestPageSize = makeActionCreator(
@@ -118,7 +126,7 @@ export const requestAnswer = makeActionCreator(
     resultType: ResultType,
     columnsConfig: AttributesConfig,
     pagination: Pagination,
-    viewFilters?: SearchConfig['viewFilters'],
+    viewFilters?: SearchConfig['viewFilters']
   ) => ({ resultType, columnsConfig, pagination, viewFilters, viewId })
 );
 
@@ -136,10 +144,7 @@ export const fulfillAnswer = makeActionCreator(
 
 export const reportAnswerFulfillmentError = makeActionCreator(
   'requestTableSummaryView/reportAnswerFulfillmentError',
-  (
-    viewId: string,
-    message: string
-  ) => ({ viewId, message })
+  (viewId: string, message: string) => ({ viewId, message })
 );
 
 export const requestRecordsBasketStatus = makeActionCreator(
@@ -175,19 +180,27 @@ export const requestGlobalViewFilters = makeActionCreator(
 
 export const updateGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/updateGlobalViewFilters',
-  (viewId: string, recordClassName: string, viewFilters: SearchConfig['viewFilters']) => ({
+  (
+    viewId: string,
+    recordClassName: string,
+    viewFilters: SearchConfig['viewFilters']
+  ) => ({
     recordClassName,
     viewFilters,
-    viewId
+    viewId,
   })
 );
 
 export const fulfillGlobalViewFilters = makeActionCreator(
   'resultTableSummaryView/fulfillGlobalViewFilters',
-  (viewId: string, recordClassName: string, viewFilters: SearchConfig['viewFilters']) => ({
+  (
+    viewId: string,
+    recordClassName: string,
+    viewFilters: SearchConfig['viewFilters']
+  ) => ({
     recordClassName,
     viewFilters,
-    viewId
+    viewId,
   })
 );
 
@@ -218,4 +231,4 @@ export type Action = InferAction<
   | typeof requestGlobalViewFilters
   | typeof updateGlobalViewFilters
   | typeof fulfillGlobalViewFilters
-  >
+>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from '../Utils/ComponentUtils';
+import PageController from '../Core/Controllers/PageController';
 import {
   updateSearchTerm,
   updateTableSelection,
@@ -13,12 +13,12 @@ import {
   saveCellData,
   cancelCellEdit,
   undeleteFavorites,
-  loadFavoritesList
-} from 'wdk-client/Actions/FavoritesActions';
-import _FavoritesList from 'wdk-client/Views/Favorites/FavoritesList';
-import { State } from 'wdk-client/StoreModules/FavoritesListStoreModule';
-import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { RootState } from 'wdk-client/Core/State/Types';
+  loadFavoritesList,
+} from '../Actions/FavoritesActions';
+import _FavoritesList from '../Views/Favorites/FavoritesList';
+import { State } from '../StoreModules/FavoritesListStoreModule';
+import { GlobalData } from '../StoreModules/GlobalData';
+import { RootState } from '../Core/State/Types';
 
 // FIXME Convert FavoritesList to TypeScript
 const FavoritesList: any = _FavoritesList;
@@ -37,9 +37,10 @@ const ActionCreators = {
   updateSelection: updateTableSelection,
   sortColumn: sortTable,
   changeCell: changeCellValue,
-}
+};
 
-type StateProps = Pick<State,
+type StateProps = Pick<
+  State,
   | 'tableState'
   | 'tableSelection'
   | 'favoritesLoading'
@@ -50,17 +51,18 @@ type StateProps = Pick<State,
   | 'searchText'
   | 'filterByType'
   | 'deletedFavorite'
-> & Pick<GlobalData, 'user' | 'recordClasses'>;
+> &
+  Pick<GlobalData, 'user' | 'recordClasses'>;
 
 type DispatchProps = typeof ActionCreators;
 
 type Props = {
-  stateProps: StateProps,
-  dispatchProps: DispatchProps
+  stateProps: StateProps;
+  dispatchProps: DispatchProps;
 };
 
 class FavoritesListController extends PageController<Props> {
-  getTitle () {
+  getTitle() {
     return 'Favorites';
   }
 
@@ -70,28 +72,20 @@ class FavoritesListController extends PageController<Props> {
   }
 
   isRenderDataLoaded() {
-    const {
-      user,
-      tableState
-    } = this.props.stateProps;
+    const { user, tableState } = this.props.stateProps;
 
     return user != null && tableState != null;
   }
 
   isRenderDataLoadError() {
-    const {
-      loadError
-    } = this.props.stateProps;
+    const { loadError } = this.props.stateProps;
 
     return loadError != null;
   }
 
   renderView() {
-    const {
-      stateProps,
-      dispatchProps
-    } = this.props;
- 
+    const { stateProps, dispatchProps } = this.props;
+
     return (
       <FavoritesList
         {...stateProps}
@@ -114,13 +108,10 @@ const mapStateToProps = (state: RootState): StateProps => {
     editValue,
     searchText,
     filterByType,
-    deletedFavorite
+    deletedFavorite,
   } = state.favorites;
 
-  const {
-    user,
-    recordClasses
-  } = state.globalData;
+  const { user, recordClasses } = state.globalData;
 
   return {
     tableState,
@@ -134,7 +125,7 @@ const mapStateToProps = (state: RootState): StateProps => {
     editValue,
     searchText,
     filterByType,
-    deletedFavorite
+    deletedFavorite,
   };
 };
 
@@ -142,7 +133,7 @@ const mapDispatchToProps = ActionCreators;
 
 const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps) => ({
   stateProps,
-  dispatchProps
+  dispatchProps,
 });
 
 export default connect(

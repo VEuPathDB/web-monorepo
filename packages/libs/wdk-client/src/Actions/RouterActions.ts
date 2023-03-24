@@ -5,15 +5,14 @@
  * propagate router state to stores.
  */
 import { Location } from 'history';
-import {InferAction, makeActionCreator} from 'wdk-client/Utils/ActionCreatorUtils';
-import {TransitionOptions} from 'wdk-client/Utils/PageTransitioner';
+import { InferAction, makeActionCreator } from '../Utils/ActionCreatorUtils';
+import { TransitionOptions } from '../Utils/PageTransitioner';
 
 export type Action = InferAction<
   | typeof updateLocation
   | typeof transitionToInternalPage
   | typeof transitionToExternalPage
-  >
-
+>;
 
 export const updateLocation = makeActionCreator(
   'router-update-loading',

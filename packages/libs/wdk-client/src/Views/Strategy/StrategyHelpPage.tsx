@@ -1,5 +1,5 @@
 import React from 'react';
-import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 function StrategyHelpPage() {
   return (
@@ -9,8 +9,9 @@ function StrategyHelpPage() {
       src="https://www.youtube.com/embed/hmTzUUibSeY"
       frameBorder="0"
       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen></iframe>
+      allowFullScreen
+    ></iframe>
   );
 }
 
-export default wrappable(StrategyHelpPage)
+export default wrappable(StrategyHelpPage);

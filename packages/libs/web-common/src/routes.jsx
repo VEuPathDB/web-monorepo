@@ -3,20 +3,25 @@ import React, { Suspense, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { communitySite, edaEnableFullScreenApps } from 'ebrc-client/config';
+import { communitySite, edaEnableFullScreenApps } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import ContactUsController from './controllers/ContactUsController';
 import GalaxyTermsController from './controllers/GalaxyTermsController';
-import ExternalContentController from 'ebrc-client/controllers/ExternalContentController';
-import { ResetSessionController } from 'ebrc-client/controllers/ResetSessionController';
+import ExternalContentController from './controllers/ExternalContentController';
+import { ResetSessionController } from './controllers/ResetSessionController';
 
 import StudyAccessController from '@veupathdb/study-data-access/lib/study-access/components/StudyAccessController';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { showLoginForm as showLoginFormAction } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 
-import { edaExampleAnalysesAuthor, edaServiceUrl, edaSingleAppMode, showUnreleasedData } from './config';
+import {
+  edaExampleAnalysesAuthor,
+  edaServiceUrl,
+  edaSingleAppMode,
+  showUnreleasedData,
+} from './config';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
@@ -27,19 +32,17 @@ export function makeEdaRoute(studyId) {
 const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
 const EdaMap = React.lazy(() => import('@veupathdb/eda/lib/map'));
 
-
 /**
  * Wrap WDK Routes
  * Jan 9 2019: routes here connect to a react component that is mostly shared across websites.
  * For example: the route '/about' is not here because the content (in About.jsx) is not shared.
  */
-export const wrapRoutes = wdkRoutes => [
-
+export const wrapRoutes = (wdkRoutes) => [
   // FIXME: Should this be a ClinEpi-level route?
-  { 
+  {
     path: '/study-access/:datasetId',
-    component: props => <StudyAccessController {...props.match.params}/>,
-    requiresLogin: true
+    component: (props) => <StudyAccessController {...props.match.params} />,
+    requiresLogin: true,
   },
 
   {
@@ -49,10 +52,10 @@ export const wrapRoutes = wdkRoutes => [
       const dispatch = useDispatch();
       const showLoginForm = useCallback(() => {
         dispatch(showLoginFormAction());
-      }, [ dispatch ]);
+      }, [dispatch]);
 
       return (
-        <Suspense fallback={<Loading/>}>
+        <Suspense fallback={<Loading />}>
           <EdaWorkspace
             showUnreleasedData={showUnreleasedData}
             edaServiceUrl={edaServiceUrl}
@@ -64,7 +67,7 @@ export const wrapRoutes = wdkRoutes => [
           />
         </Suspense>
       );
-    }
+    },
   },
 
   {
@@ -72,77 +75,93 @@ export const wrapRoutes = wdkRoutes => [
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
-    component: ()  => (
-      <Suspense fallback={<Loading/>}>
-        <EdaMap singleAppMode={edaSingleAppMode} edaServiceUrl={edaServiceUrl}/>
+    component: () => (
+      <Suspense fallback={<Loading />}>
+        <EdaMap
+          singleAppMode={edaSingleAppMode}
+          edaServiceUrl={edaServiceUrl}
+        />
       </Suspense>
-    )
+    ),
   },
 
   {
     path: '/eda',
     exact: false,
-    component: ({ location }) =>
+    component: ({ location }) => (
       <Redirect
         to={{
           ...location,
-          pathname: location.pathname.replace(/^\/eda/, makeEdaRoute())
+          pathname: location.pathname.replace(/^\/eda/, makeEdaRoute()),
         }}
       />
+    ),
   },
-
 
   {
     path: '/tree-data-view',
-    component: () => <TreeDataViewerController/>
+    component: () => <TreeDataViewerController />,
   },
 
   {
     path: '/galaxy-orientation',
-    component: () => <GalaxyTermsController/>
+    component: () => <GalaxyTermsController />,
   },
 
   {
     path: '/galaxy-orientation/sign-up',
-    component: () => <GalaxyTermsController signUp />
+    component: () => <GalaxyTermsController signUp />,
   },
 
   {
     path: '/contact-us',
     component: (props) => {
       const params = new URLSearchParams(props.location.search);
-      return <ContactUsController context={params.get('ctx')}/>
-    }
+      return <ContactUsController context={params.get('ctx')} />;
+    },
   },
 
   {
     path: `${STATIC_ROUTE_PATH}/:path*`,
-    component: props =>
+    component: (props) => (
       <ExternalContentController
-        url={communitySite + props.match.params.path + props.location.search + props.location.hash}
+        url={
+          communitySite +
+          props.match.params.path +
+          props.location.search +
+          props.location.hash
+        }
       />
+    ),
   },
 
   {
     path: '/downloads/:path*',
-    component: props =>
+    component: (props) => (
       <iframe
-        src={`/common/downloads/${(props.match.params.path || '') + props.location.search + props.location.hash}`}
+        src={`/common/downloads/${
+          (props.match.params.path || '') +
+          props.location.search +
+          props.location.hash
+        }`}
         style={{
           width: '100%',
           height: '100%',
-          border: 'none'
+          border: 'none',
         }}
-        onLoad={event => {
+        onLoad={(event) => {
           window.scrollTo(0, 0);
           const iframe = event.target;
-          const pathname = iframe.contentWindow.location.pathname.replace(/^\/common/, '');
+          const pathname = iframe.contentWindow.location.pathname.replace(
+            /^\/common/,
+            ''
+          );
           const { search, hash } = iframe.contentWindow.location;
           const href = props.history.createHref({
             ...props.location,
             pathname,
             search,
-            hash
+            hash,
           });
           window.history.replaceState({}, '', href);
           iframe.style.height = iframe.contentDocument.body.scrollHeight + 'px';
@@ -158,12 +177,13 @@ export const wrapRoutes = wdkRoutes => [
           }
         }}
       />
+    ),
   },
 
   {
     path: '/reset-session',
-    component: ResetSessionController
+    component: ResetSessionController,
   },
 
-  ...wdkRoutes
+  ...wdkRoutes,
 ];

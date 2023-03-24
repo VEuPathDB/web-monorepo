@@ -1,19 +1,41 @@
 import { castArray, isArray } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useHistory } from 'react-router';
-import SiteSearch from 'ebrc-client/components/SiteSearch/SiteSearch';
-import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { useOrganismTree } from 'ebrc-client/hooks/organisms';
-import { useQueryParams } from 'ebrc-client/hooks/queryParams';
-import { Loading, Error as ErrorPage } from '@veupathdb/wdk-client/lib/Components';
+import SiteSearch from '../components/SiteSearch/SiteSearch';
+import {
+  getLeaves,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { useOrganismTree } from '../hooks/organisms';
+import { useQueryParams } from '../hooks/queryParams';
+import {
+  Loading,
+  Error as ErrorPage,
+} from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { SiteSearchResponse, SiteSearchRequest, siteSearchResponse } from 'ebrc-client/SiteSearch/Types';
-import { siteSearchServiceUrl } from 'ebrc-client/config';
+import {
+  SiteSearchResponse,
+  SiteSearchRequest,
+  siteSearchResponse,
+} from '../SiteSearch/Types';
+import { siteSearchServiceUrl } from '../config';
 import { decode } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { SEARCH_TERM_PARAM, OFFSET_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, FILTERS_PARAM } from 'ebrc-client/components/SiteSearch/SiteSearchConstants';
+import {
+  SEARCH_TERM_PARAM,
+  OFFSET_PARAM,
+  DOCUMENT_TYPE_PARAM,
+  ORGANISM_PARAM,
+  FILTERS_PARAM,
+} from '../components/SiteSearch/SiteSearchConstants';
 
 interface Props {
   offerOrganismFilter?: boolean;
@@ -30,51 +52,75 @@ export default function SiteSearchController({
   referenceStrains,
   hasUserSetPreferredOrganisms,
 }: Props) {
-  const [ params, updateParams ] = useQueryParams(
+  const [params, updateParams] = useQueryParams(
     SEARCH_TERM_PARAM,
     OFFSET_PARAM,
     DOCUMENT_TYPE_PARAM,
     ORGANISM_PARAM,
     FILTERS_PARAM
   );
-  const searchString = useMemo(() => isArray(params.q) ? params.q[0] : params.q || '', [ params.q ]);
-  const offset = useMemo(() => Number(isArray(params.offset) ? params.offset[0] : params.offset) || 0, [ params.offset]);
-  const documentType = useMemo(() => isArray(params.documentType) ? params.documentType[0] : params.documentType, [ params.documentType ]);
-  const organisms = useMemo(() => castArray(params.organisms || []), [ params.organisms ]);
-  const filters = useMemo(() => castArray(params.filters || []), [ params.filters ]);
+  const searchString = useMemo(
+    () => (isArray(params.q) ? params.q[0] : params.q || ''),
+    [params.q]
+  );
+  const offset = useMemo(
+    () =>
+      Number(isArray(params.offset) ? params.offset[0] : params.offset) || 0,
+    [params.offset]
+  );
+  const documentType = useMemo(
+    () =>
+      isArray(params.documentType)
+        ? params.documentType[0]
+        : params.documentType,
+    [params.documentType]
+  );
+  const organisms = useMemo(
+    () => castArray(params.organisms || []),
+    [params.organisms]
+  );
+  const filters = useMemo(
+    () => castArray(params.filters || []),
+    [params.filters]
+  );
   const numRecords = 20;
 
   // Organism Tree, set selectedOrganims
   const fullOrganismTree = useOrganismTree(offerOrganismFilter);
 
-  const organismTree = useMemo(
-    () => {
-      if (
-        fullOrganismTree == null ||
-        preferredOrganisms == null ||
-        preferredOrganismsEnabled !== true
-      ) {
-        return fullOrganismTree;
-      }
+  const organismTree = useMemo(() => {
+    if (
+      fullOrganismTree == null ||
+      preferredOrganisms == null ||
+      preferredOrganismsEnabled !== true
+    ) {
+      return fullOrganismTree;
+    }
 
-      const preferredOrganismsSet = new Set(preferredOrganisms);
-      const selectedOrganismsSet = new Set(organisms);
+    const preferredOrganismsSet = new Set(preferredOrganisms);
+    const selectedOrganismsSet = new Set(organisms);
 
-      return pruneDescendantNodes(
-        node => (
-          node.children.length > 0 ||
-          preferredOrganismsSet.has(node.data.term) ||
-          selectedOrganismsSet.has(node.data.term)
-        ),
-        fullOrganismTree
-      );
-    },
-    [ fullOrganismTree, preferredOrganisms, preferredOrganismsEnabled, organisms ]
-  );
+    return pruneDescendantNodes(
+      (node) =>
+        node.children.length > 0 ||
+        preferredOrganismsSet.has(node.data.term) ||
+        selectedOrganismsSet.has(node.data.term),
+      fullOrganismTree
+    );
+  }, [
+    fullOrganismTree,
+    preferredOrganisms,
+    preferredOrganismsEnabled,
+    organisms,
+  ]);
 
   const allOrganisms = useMemo(
-    () => organismTree && getLeaves(organismTree, node => node.children).map(node => node.data.term),
-    [ organismTree ]
+    () =>
+      organismTree &&
+      getLeaves(organismTree, (node) => node.children).map(
+        (node) => node.data.term
+      ),
+    [organismTree]
   );
 
   const { value, loading } = useSiteSearchResponse(
@@ -84,71 +130,89 @@ export default function SiteSearchController({
       allOrganisms,
       organisms,
       documentType,
-      filters
+      filters,
     },
     { offset, numRecords }
   );
 
-  useSetDocumentTitle(`Search${searchString ? (` - ${searchString}`) : ''}`)
+  useSetDocumentTitle(`Search${searchString ? ` - ${searchString}` : ''}`);
 
-  const setSearchString = useCallback((searchString: string) => {
-    updateParams({
-      [SEARCH_TERM_PARAM]: searchString,
-      [DOCUMENT_TYPE_PARAM]: documentType,
-      [ORGANISM_PARAM]: organisms
-    });
-  }, [ updateParams, documentType, organisms ]);
+  const setSearchString = useCallback(
+    (searchString: string) => {
+      updateParams({
+        [SEARCH_TERM_PARAM]: searchString,
+        [DOCUMENT_TYPE_PARAM]: documentType,
+        [ORGANISM_PARAM]: organisms,
+      });
+    },
+    [updateParams, documentType, organisms]
+  );
 
-  const setOffset = useCallback((offset: number) => {
-    updateParams({
-      [SEARCH_TERM_PARAM]: searchString,
-      [DOCUMENT_TYPE_PARAM]: documentType,
-      [ORGANISM_PARAM]: organisms,
-      [FILTERS_PARAM]: filters,
-      [OFFSET_PARAM]: String(offset)
-    })
-  }, [ updateParams, searchString, documentType, organisms, filters ]);
+  const setOffset = useCallback(
+    (offset: number) => {
+      updateParams({
+        [SEARCH_TERM_PARAM]: searchString,
+        [DOCUMENT_TYPE_PARAM]: documentType,
+        [ORGANISM_PARAM]: organisms,
+        [FILTERS_PARAM]: filters,
+        [OFFSET_PARAM]: String(offset),
+      });
+    },
+    [updateParams, searchString, documentType, organisms, filters]
+  );
 
-  const setDocumentType = useCallback((newDocumentType?: string) => {
-    const nextDocumentType = newDocumentType === documentType ? undefined : newDocumentType;
-    updateParams({
-      [SEARCH_TERM_PARAM]: searchString,
-      [DOCUMENT_TYPE_PARAM]: nextDocumentType,
-      [ORGANISM_PARAM]: organisms
-    })
-  }, [ updateParams, searchString, organisms, documentType ]);
+  const setDocumentType = useCallback(
+    (newDocumentType?: string) => {
+      const nextDocumentType =
+        newDocumentType === documentType ? undefined : newDocumentType;
+      updateParams({
+        [SEARCH_TERM_PARAM]: searchString,
+        [DOCUMENT_TYPE_PARAM]: nextDocumentType,
+        [ORGANISM_PARAM]: organisms,
+      });
+    },
+    [updateParams, searchString, organisms, documentType]
+  );
 
-  const setOrganisms = useCallback((organisms: string[]) => {
-    updateParams({
-      [SEARCH_TERM_PARAM]: searchString,
-      [DOCUMENT_TYPE_PARAM]: documentType,
-      [ORGANISM_PARAM]: organisms,
-      [FILTERS_PARAM]: filters
-    });
-  }, [ updateParams, searchString, documentType, filters ]);
+  const setOrganisms = useCallback(
+    (organisms: string[]) => {
+      updateParams({
+        [SEARCH_TERM_PARAM]: searchString,
+        [DOCUMENT_TYPE_PARAM]: documentType,
+        [ORGANISM_PARAM]: organisms,
+        [FILTERS_PARAM]: filters,
+      });
+    },
+    [updateParams, searchString, documentType, filters]
+  );
 
   const clearFilters = useCallback(() => {
     updateParams({
       [SEARCH_TERM_PARAM]: searchString,
       [DOCUMENT_TYPE_PARAM]: undefined,
       [ORGANISM_PARAM]: undefined,
-      [FILTERS_PARAM]: undefined
+      [FILTERS_PARAM]: undefined,
     });
-  }, [ updateParams, searchString ]);
+  }, [updateParams, searchString]);
 
-  const setFilters = useCallback((filters: string[]) => {
-    const effectiveFilter = value && value.type === 'success' ? value.effectiveFilter : undefined;
-    if (
-      (documentType == null || documentType == '') &&
-      effectiveFilter == null
-    ) return;
-    updateParams({
-      [SEARCH_TERM_PARAM]: searchString,
-      [DOCUMENT_TYPE_PARAM]: documentType || effectiveFilter,
-      [ORGANISM_PARAM]: organisms,
-      [FILTERS_PARAM]: filters
-    });
-  }, [ updateParams, searchString, documentType, organisms, value ]);
+  const setFilters = useCallback(
+    (filters: string[]) => {
+      const effectiveFilter =
+        value && value.type === 'success' ? value.effectiveFilter : undefined;
+      if (
+        (documentType == null || documentType == '') &&
+        effectiveFilter == null
+      )
+        return;
+      updateParams({
+        [SEARCH_TERM_PARAM]: searchString,
+        [DOCUMENT_TYPE_PARAM]: documentType || effectiveFilter,
+        [ORGANISM_PARAM]: organisms,
+        [FILTERS_PARAM]: filters,
+      });
+    },
+    [updateParams, searchString, documentType, organisms, value]
+  );
 
   useResetOffsetWhenOrgTreeChanges(organismTree, setOffset);
 
@@ -157,32 +221,30 @@ export default function SiteSearchController({
       <div>
         <h1>Oops... Search is unavailable!</h1>
         <div>
-          This site is not configured to use search. Please contact an administrator.
+          This site is not configured to use search. Please contact an
+          administrator.
         </div>
       </div>
-    )
+    );
   }
 
   if (value == null && searchString === '') {
     return (
       <div>
         <h1>No results</h1>
-        <div>Type a search expression in the box above to begin searching...</div>
+        <div>
+          Type a search expression in the box above to begin searching...
+        </div>
       </div>
     );
   }
 
   if (value && value.type === 'error') {
-    return (
-      <ErrorPage message={value.error.message}/>
-    )
+    return <ErrorPage message={value.error.message} />;
   }
 
-  if (
-    value == null ||
-    (offerOrganismFilter && organismTree == null)
-  ) {
-    return <Loading/>;
+  if (value == null || (offerOrganismFilter && organismTree == null)) {
+    return <Loading />;
   }
 
   return (
@@ -208,12 +270,18 @@ export default function SiteSearchController({
       onPageOffsetChange={setOffset}
       referenceStrains={referenceStrains}
     />
-  )
+  );
 }
 
 type Value =
-  | { type: 'error', error: Error }
-  | { type: 'success', response: SiteSearchResponse, searchSettings: SearchSettings, resultSettings: ResultSettings, effectiveFilter?: string };
+  | { type: 'error'; error: Error }
+  | {
+      type: 'success';
+      response: SiteSearchResponse;
+      searchSettings: SearchSettings;
+      resultSettings: ResultSettings;
+      effectiveFilter?: string;
+    };
 
 type SearchSettings = {
   searchString: string;
@@ -222,18 +290,30 @@ type SearchSettings = {
   allOrganisms?: string[];
   documentType?: string;
   filters?: string[];
-}
+};
 
 type ResultSettings = {
   offset: number;
   numRecords: number;
-}
+};
 
-function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: ResultSettings) {
-  const { searchString, offerOrganismFilter, allOrganisms, organisms, documentType, filters } = searchSettings;
-  const { numRecords, offset } = resultSettings
+function useSiteSearchResponse(
+  searchSettings: SearchSettings,
+  resultSettings: ResultSettings
+) {
+  const {
+    searchString,
+    offerOrganismFilter,
+    allOrganisms,
+    organisms,
+    documentType,
+    filters,
+  } = searchSettings;
+  const { numRecords, offset } = resultSettings;
 
-  const [ lastSearchSubmissionTime, setLastSearchSubmissionTime ] = useState(Date.now());
+  const [lastSearchSubmissionTime, setLastSearchSubmissionTime] = useState(
+    Date.now()
+  );
 
   const history = useHistory();
 
@@ -245,21 +325,16 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
     return stopListening;
   }, []);
 
-  const projectId = useWdkService(async wdkService => {
+  const projectId = useWdkService(async (wdkService) => {
     const { projectId } = await wdkService.getConfig();
     return projectId;
   }, []);
 
-  return usePromise(async (): Promise<Value|undefined> => {
-    if (!siteSearchServiceUrl || searchString === '' || projectId == null) return undefined;
+  return usePromise(async (): Promise<Value | undefined> => {
+    if (!siteSearchServiceUrl || searchString === '' || projectId == null)
+      return undefined;
 
-    if (
-      offerOrganismFilter &&
-      (
-        organisms == null ||
-        allOrganisms == null
-      )
-    ) {
+    if (offerOrganismFilter && (organisms == null || allOrganisms == null)) {
       return undefined;
     }
 
@@ -268,9 +343,9 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
         searchText: searchString,
         pagination: {
           offset,
-          numRecords
+          numRecords,
         },
-        restrictToProject: (projectId === 'EuPathDB' ? 'VEuPathDB' : projectId),
+        restrictToProject: projectId === 'EuPathDB' ? 'VEuPathDB' : projectId,
         restrictMetadataToOrganisms: !offerOrganismFilter
           ? undefined
           : allOrganisms,
@@ -279,10 +354,13 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
           : organisms?.length === 0
           ? allOrganisms
           : organisms,
-        documentTypeFilter: documentType == null ? undefined : {
-          documentType,
-          foundOnlyInFields: filters
-        }
+        documentTypeFilter:
+          documentType == null
+            ? undefined
+            : {
+                documentType,
+                foundOnlyInFields: filters,
+              },
       };
       const responseText = await runRequest(requestBody);
       const validatedResponse = decode(siteSearchResponse, responseText);
@@ -296,16 +374,17 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
       //
       //   2.  resets the offset to 0 if the current offset is greater than or equal to the number of search results
 
-      const docTypesWithCounts = validatedResponse.documentTypes.filter(d => d.count > 0);
+      const docTypesWithCounts = validatedResponse.documentTypes.filter(
+        (d) => d.count > 0
+      );
 
-      const needToApplyEffectiveFilter = documentType == null && docTypesWithCounts.length === 1;
+      const needToApplyEffectiveFilter =
+        documentType == null && docTypesWithCounts.length === 1;
 
-      const needToAdjustOffset = resultSettings.offset >= validatedResponse.searchResults.totalCount;
+      const needToAdjustOffset =
+        resultSettings.offset >= validatedResponse.searchResults.totalCount;
 
-      if (
-        !needToApplyEffectiveFilter &&
-        !needToAdjustOffset
-      ) {
+      if (!needToApplyEffectiveFilter && !needToAdjustOffset) {
         return {
           type: 'success',
           response: validatedResponse,
@@ -318,18 +397,19 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
         ? undefined
         : docTypesWithCounts[0].id;
 
-      const documentTypeFilter = effectiveFilter == null
-        ? requestBody.documentTypeFilter
-        : {
-            documentType: effectiveFilter,
-            foundOnlyInFields: []
-          };
+      const documentTypeFilter =
+        effectiveFilter == null
+          ? requestBody.documentTypeFilter
+          : {
+              documentType: effectiveFilter,
+              foundOnlyInFields: [],
+            };
 
       const adjustedResultSettings = !needToAdjustOffset
         ? resultSettings
         : {
             ...resultSettings,
-            offset: 0
+            offset: 0,
           };
 
       // If an effective filter is to be applied...
@@ -339,7 +419,7 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
       const requestBody2 = {
         ...requestBody,
         documentTypeFilter,
-        pagination: adjustedResultSettings
+        pagination: adjustedResultSettings,
       };
       const responseText2 = await runRequest(requestBody2);
       const validatedResponse2 = decode(siteSearchResponse, responseText2);
@@ -348,15 +428,23 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
         response: validatedResponse2,
         searchSettings,
         resultSettings: adjustedResultSettings,
-        effectiveFilter
+        effectiveFilter,
       };
-    }
-
-    catch(error) {
+    } catch (error) {
       return { type: 'error', error };
     }
-
-  }, [ searchString, offset, numRecords, offerOrganismFilter, organisms, allOrganisms, documentType, filters, projectId, lastSearchSubmissionTime ]);
+  }, [
+    searchString,
+    offset,
+    numRecords,
+    offerOrganismFilter,
+    organisms,
+    allOrganisms,
+    documentType,
+    filters,
+    projectId,
+    lastSearchSubmissionTime,
+  ]);
 }
 
 async function runRequest(requestBody: SiteSearchRequest): Promise<string> {
@@ -364,10 +452,10 @@ async function runRequest(requestBody: SiteSearchRequest): Promise<string> {
     method: 'POST',
     body: JSON.stringify(requestBody),
     headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
-    mode: 'cors'
+    mode: 'cors',
   });
 
   if (!response.ok) {
@@ -378,7 +466,7 @@ async function runRequest(requestBody: SiteSearchRequest): Promise<string> {
 
 function useResetOffsetWhenOrgTreeChanges(
   organismTree: TreeBoxVocabNode | undefined,
-  setOffset: (newOffset: number) => void,
+  setOffset: (newOffset: number) => void
 ) {
   const previousOrgTree = useRef<TreeBoxVocabNode | undefined>(undefined);
 
@@ -399,5 +487,5 @@ function useResetOffsetWhenOrgTreeChanges(
     }
 
     previousOrgTree.current = organismTree;
-  }, [ organismTree, setOffset ]);
+  }, [organismTree, setOffset]);
 }

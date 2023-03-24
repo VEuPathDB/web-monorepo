@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { isEqual } from 'lodash';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import { wrappable } from '../Utils/ComponentUtils';
+import PageController from '../Core/Controllers/PageController';
 import {
   loadPageDataFromRecord,
   loadPageDataFromBasketName,
@@ -10,10 +10,10 @@ import {
   selectReporter,
   updateForm,
   updateFormUi,
-  submitForm
-} from 'wdk-client/Actions/DownloadFormActions';
-import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
-import { RootState } from 'wdk-client/Core/State/Types';
+  submitForm,
+} from '../Actions/DownloadFormActions';
+import DownloadFormContainer from '../Views/ReporterForm/DownloadFormContainer';
+import { RootState } from '../Core/State/Types';
 
 const DownloadFormActionCreators = {
   loadPageDataFromRecord,
@@ -22,7 +22,7 @@ const DownloadFormActionCreators = {
   selectReporter,
   submitForm,
   updateFormState: updateForm,
-  updateFormUiState: updateFormUi
+  updateFormUiState: updateFormUi,
 };
 
 type Options = Partial<{
@@ -32,8 +32,8 @@ type Options = Partial<{
 
 type OwnProps =
   | ({ basketName: string } & Options)
-  | ({ recordClass: string; primaryKey: string; } & Options)
-  | ({ stepId: number; } & Options)
+  | ({ recordClass: string; primaryKey: string } & Options)
+  | ({ stepId: number } & Options);
 
 type StateProps = RootState['downloadForm'];
 
@@ -42,9 +42,8 @@ type DispatchProps = typeof DownloadFormActionCreators;
 type Props = { ownProps: OwnProps } & DispatchProps & StateProps;
 
 class DownloadFormController extends PageController<Props> {
-
   isRenderDataLoaded() {
-    return (this.props.resultType != null && !this.props.isLoading);
+    return this.props.resultType != null && !this.props.isLoading;
   }
 
   isRenderDataLoadError() {
@@ -56,27 +55,26 @@ class DownloadFormController extends PageController<Props> {
   }
 
   isRenderDataNotFound() {
-    return (
-      this.props.error != null &&
-      this.props.error.status === 404
-    );
+    return this.props.error != null && this.props.error.status === 404;
   }
 
   isRenderDataPermissionDenied() {
-    return (
-      this.props.error != null &&
-      this.props.error.status === 403
-    );
+    return this.props.error != null && this.props.error.status === 403;
   }
 
   getTitle() {
     const { resultType } = this.props;
-    const displayName = resultType == null ? 'Results'
-      : resultType.type === 'step' ? resultType.step.displayName
-      : resultType.type === 'basket' ? 'Basket'
-      : 'Results';
-    return (!this.isRenderDataLoaded() ? "Loading..." :
-      "Download: " + displayName);
+    const displayName =
+      resultType == null
+        ? 'Results'
+        : resultType.type === 'step'
+        ? resultType.step.displayName
+        : resultType.type === 'basket'
+        ? 'Basket'
+        : 'Results';
+    return !this.isRenderDataLoaded()
+      ? 'Loading...'
+      : 'Download: ' + displayName;
   }
 
   renderView() {
@@ -84,38 +82,56 @@ class DownloadFormController extends PageController<Props> {
     let formProps = {
       ...this.props,
     };
-    return ( <DownloadFormContainer {...formProps} includeTitle={true} includeSubmit={true}/> );
+    return (
+      <DownloadFormContainer
+        {...formProps}
+        includeTitle={true}
+        includeSubmit={true}
+      />
+    );
   }
 
   loadData(prevProps: Props) {
-
-    const { ownProps, loadPageDataFromRecord, loadPageDataFromStepId, loadPageDataFromBasketName } = this.props;
+    const {
+      ownProps,
+      loadPageDataFromRecord,
+      loadPageDataFromStepId,
+      loadPageDataFromBasketName,
+    } = this.props;
 
     if (prevProps && isEqual(ownProps, prevProps.ownProps)) return;
 
     // must reinitialize with every new props
     if ('stepId' in ownProps) {
       loadPageDataFromStepId(ownProps.stepId, ownProps.format);
-    }
-    else if ('recordClass' in ownProps) {
+    } else if ('recordClass' in ownProps) {
       loadPageDataFromRecord(
-          ownProps.recordClass, ownProps.primaryKey.split('/').join(','), ownProps.format);
-    }
-    else if ('basketName' in ownProps) {
+        ownProps.recordClass,
+        ownProps.primaryKey.split('/').join(','),
+        ownProps.format
+      );
+    } else if ('basketName' in ownProps) {
       loadPageDataFromBasketName(ownProps.basketName, ownProps.format);
-    }
-    else {
-      console.error("Neither stepId nor recordClass param was passed " +
-          "to StepDownloadFormController component");
+    } else {
+      console.error(
+        'Neither stepId nor recordClass param was passed ' +
+          'to StepDownloadFormController component'
+      );
     }
   }
 }
 
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
-  state => state.downloadForm,
+  (state) => state.downloadForm,
   DownloadFormActionCreators,
-  (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
-    ...stateProps, ...dispatchProps, ownProps
+  (
+    stateProps: StateProps,
+    dispatchProps: DispatchProps,
+    ownProps: OwnProps
+  ) => ({
+    ...stateProps,
+    ...dispatchProps,
+    ownProps,
   })
 );
 

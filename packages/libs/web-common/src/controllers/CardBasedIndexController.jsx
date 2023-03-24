@@ -2,9 +2,9 @@ import { connect } from 'react-redux';
 import React from 'react';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
-import { requestNews } from 'ebrc-client/App/NewsSidebar/NewsModule';
-import { loadSearches } from 'ebrc-client/App/Searches/SearchCardActionCreators';
-import { requestStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
+import { requestNews } from '../App/NewsSidebar/NewsModule';
+import { loadSearches } from '../App/Searches/SearchCardActionCreators';
+import { requestStudies } from '../App/Studies/StudyActionCreators';
 import CardBasedIndex from '../components/CardBasedIndex';
 
 const enhance = connect(
@@ -21,8 +21,7 @@ const enhance = connect(
 );
 
 class ClinEpiIndexController extends PageController {
-
-  getTitle () {
+  getTitle() {
     return this.props.displayName || '';
   }
 
@@ -33,10 +32,8 @@ class ClinEpiIndexController extends PageController {
     this.props.requestStudies();
   }
 
-  renderView () {
-    return (
-      <CardBasedIndex {...this.props} />
-    )
+  renderView() {
+    return <CardBasedIndex {...this.props} />;
   }
 }
 

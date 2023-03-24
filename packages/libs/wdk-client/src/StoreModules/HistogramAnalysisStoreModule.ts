@@ -3,17 +3,21 @@ import {
   enableLogScaleXAxis,
   enableLogScaleYAxis,
   openView,
-  closeView
-} from 'wdk-client/Actions/HistogramAnalysisActions';
-import { Action } from 'wdk-client/Actions';
-import { InferAction, takeEpicInWindow, switchMapRequestActionsToEpic } from 'wdk-client/Utils/ActionCreatorUtils';
-import { requestAttributeReport } from 'wdk-client/Actions/AttributeAnalysisActions';
+  closeView,
+} from '../Actions/HistogramAnalysisActions';
+import { Action } from '../Actions';
+import {
+  InferAction,
+  takeEpicInWindow,
+  switchMapRequestActionsToEpic,
+} from '../Utils/ActionCreatorUtils';
+import { requestAttributeReport } from '../Actions/AttributeAnalysisActions';
 
 type HistogramState = {
   binSize?: number;
   logXAxis: boolean;
   logYAxis: boolean;
-}
+};
 
 export const key = 'histogramAnalysis';
 
@@ -21,10 +25,13 @@ export type State = HistogramState;
 
 const defaultState: HistogramState = {
   logXAxis: false,
-  logYAxis: false
-}
+  logYAxis: false,
+};
 
-export function reduce(state: HistogramState = defaultState, action: Action): HistogramState {
+export function reduce(
+  state: HistogramState = defaultState,
+  action: Action
+): HistogramState {
   switch (action.type) {
     case openView.type:
       return defaultState;
@@ -39,11 +46,15 @@ export function reduce(state: HistogramState = defaultState, action: Action): Hi
   }
 }
 
-async function getReport([{ payload: { reporterName, resultType }}]: [InferAction<typeof openView>]) {
+async function getReport([
+  {
+    payload: { reporterName, resultType },
+  },
+]: [InferAction<typeof openView>]) {
   return requestAttributeReport(reporterName, resultType, {});
 }
 
 export const observe = takeEpicInWindow(
   { startActionCreator: openView, endActionCreator: closeView },
   switchMapRequestActionsToEpic([openView], getReport)
-)
+);
