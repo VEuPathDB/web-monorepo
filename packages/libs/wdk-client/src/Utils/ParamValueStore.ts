@@ -1,8 +1,8 @@
 import { memoize } from 'lodash';
 import localforage from 'localforage';
 
-import { WdkService } from 'wdk-client/Core';
-import { ParameterValues } from 'wdk-client/Utils/WdkModel';
+import { WdkService } from '../Core';
+import { ParameterValues } from '../Utils/WdkModel';
 
 const SERVICE_VERSION_STORE_KEY = '__service-version';
 const USER_ID_STORE_KEY = '__user-id';
@@ -20,11 +20,14 @@ export interface ParamValueStore {
   ) => Promise<ParameterValues>;
 }
 
-export const getInstance = memoize(makeInstance, serviceUrl => serviceUrl);
+export const getInstance = memoize(makeInstance, (serviceUrl) => serviceUrl);
 
-function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueStore {
+function makeInstance(
+  serviceUrl: string,
+  wdkService: WdkService
+): ParamValueStore {
   const _store = localforage.createInstance({
-    name: `ParamValueStore/${serviceUrl}`
+    name: `ParamValueStore/${serviceUrl}`,
   });
 
   function _fetchServiceVersion(): Promise<number | null> {
@@ -35,23 +38,26 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
     return _store.getItem(USER_ID_STORE_KEY);
   }
 
-  async function _checkServiceVersionAndUserId(options: { forceUser?: boolean } = {}): Promise<[number, number]> {
-    const [ storeServiceVersion, storeUserId, currentServiceVersion, { id: currentUserId } ] = await Promise.all([
+  async function _checkServiceVersionAndUserId(
+    options: { forceUser?: boolean } = {}
+  ): Promise<[number, number]> {
+    const [
+      storeServiceVersion,
+      storeUserId,
+      currentServiceVersion,
+      { id: currentUserId },
+    ] = await Promise.all([
       _fetchServiceVersion(),
       _fetchUserId(),
       wdkService.getVersion(),
-      wdkService.getCurrentUser({ force: options.forceUser })
+      wdkService.getCurrentUser({ force: options.forceUser }),
     ] as const);
 
-    const serviceChanged = (
+    const serviceChanged =
       storeServiceVersion != null &&
-      storeServiceVersion !== currentServiceVersion
-    );
+      storeServiceVersion !== currentServiceVersion;
 
-    const userChanged = (
-      storeUserId != null &&
-      storeUserId !== currentUserId
-    );
+    const userChanged = storeUserId != null && storeUserId !== currentUserId;
 
     if (serviceChanged || userChanged) {
       await _store.clear();
@@ -67,7 +73,7 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
     clearParamValues: () => {
       return _store.clear();
     },
-    fetchParamValues: async paramContext => {
+    fetchParamValues: async (paramContext) => {
       await _checkServiceVersionAndUserId({ forceUser: true });
 
       const storeKey = makeParamStoreKey(paramContext);
@@ -85,7 +91,7 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
       const storeKey = makeParamStoreKey(paramContext);
 
       return _store.setItem(storeKey, newParamValues);
-    }
+    },
   };
 }
 

@@ -3,44 +3,50 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { SubmissionMetadata, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { Loading } from 'wdk-client/Components';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
-import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { BooleanSelect } from 'wdk-client/Views/Strategy/BooleanSelect';
-import { BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
+import {
+  SubmissionMetadata,
+  updateParamValue,
+} from '../../Actions/QuestionActions';
+import { RootState } from '../../Core/State/Types';
+import { Loading } from '../../Components';
+import { QuestionState } from '../../StoreModules/QuestionStoreModule';
+import { Plugin } from '../../Utils/ClientPlugin';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { Parameter } from '../../Utils/WdkModel';
+import { AddStepOperationFormProps } from '../../Views/Strategy/AddStepPanel';
+import { BooleanSelect } from '../../Views/Strategy/BooleanSelect';
+import {
+  BOOLEAN_OPERATOR_PARAM_NAME,
+  CombineOperator,
+} from '../../Views/Strategy/StrategyUtils';
 
-import 'wdk-client/Views/Strategy/CombineStepForm.scss';
+import '../../Views/Strategy/CombineStepForm.scss';
 
 const cx = makeClassNameHelper('CombineStepForm');
 
 type StateProps = {
-  booleanSearchUrlSegment: string,
-  booleanSearchState?: QuestionState,
-  booleanOperatorParameter?: Parameter
+  booleanSearchUrlSegment: string;
+  booleanSearchState?: QuestionState;
+  booleanOperatorParameter?: Parameter;
 };
 
 type DispatchProps = {
   updateParamValue: (payload: {
-    searchName: string,
-    parameter: Parameter, 
-    paramValues: Record<string, string>, 
-    paramValue: string
-  }) => void
+    searchName: string;
+    parameter: Parameter;
+    paramValues: Record<string, string>;
+    paramValue: string;
+  }) => void;
 };
 
 const recordClassSegment = createSelector(
   (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
-  recordClass => recordClass && recordClass.fullName.replace('.', '_')
+  (recordClass) => recordClass && recordClass.fullName.replace('.', '_')
 );
 
 const booleanSearchUrlSegment = createSelector(
   recordClassSegment,
-  recordClassSegment => `boolean_question_${recordClassSegment}`
+  (recordClassSegment) => `boolean_question_${recordClassSegment}`
 );
 
 const booleanSearchState = createSelector(
@@ -51,12 +57,16 @@ const booleanSearchState = createSelector(
 
 const booleanOperatorParameter = createSelector(
   booleanSearchState,
-  booleanSearchState => {
-    if (!booleanSearchState || booleanSearchState.questionStatus === 'loading') {
+  (booleanSearchState) => {
+    if (
+      !booleanSearchState ||
+      booleanSearchState.questionStatus === 'loading'
+    ) {
       return undefined;
     }
 
-    const booleanOperatorEntry = booleanSearchState.question.parametersByName[BOOLEAN_OPERATOR_PARAM_NAME];
+    const booleanOperatorEntry =
+      booleanSearchState.question.parametersByName[BOOLEAN_OPERATOR_PARAM_NAME];
 
     if (!booleanOperatorEntry) {
       return undefined;
@@ -69,7 +79,7 @@ const booleanOperatorParameter = createSelector(
 type OwnProps = AddStepOperationFormProps;
 
 type CombineStepFormViewProps = StateProps & {
-  updateBooleanOperator: (newBooleanOperator: CombineOperator) => void
+  updateBooleanOperator: (newBooleanOperator: CombineOperator) => void;
 } & OwnProps;
 
 const CombineStepFormView = ({
@@ -80,11 +90,14 @@ const CombineStepFormView = ({
   inputRecordClass,
   strategy,
   updateBooleanOperator,
-  stepsCompletedNumber
+  stepsCompletedNumber,
 }: CombineStepFormViewProps) => {
   const question = useMemo(
-    () => inputRecordClass.searches.find(({ urlSegment }) => urlSegment === currentPage), 
-    [ inputRecordClass, currentPage ]
+    () =>
+      inputRecordClass.searches.find(
+        ({ urlSegment }) => urlSegment === currentPage
+      ),
+    [inputRecordClass, currentPage]
   );
 
   const submissionMetadata: SubmissionMetadata = useMemo(
@@ -92,68 +105,85 @@ const CombineStepFormView = ({
       type: 'add-binary-step',
       strategyId: strategy.strategyId,
       operatorSearchName: booleanSearchUrlSegment,
-      addType
+      addType,
     }),
     [addType, booleanSearchUrlSegment, strategy.strategyId]
   );
-  
-  return !booleanSearchState || booleanSearchState.questionStatus === 'loading' 
-    ? <Loading />
-    : <div className={cx()}>
-        <div className={cx('--Header')}>
-          <h2>
-            Search for {inputRecordClass.shortDisplayNamePlural} {question && `by ${question.displayName}`}
-          </h2>
 
-          <div className={cx('--BooleanOperatorMenu')}>
-            The results will be{' '}
-            <BooleanSelect
-              addType={addType}
-              value={booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] as CombineOperator}
-              onChange={updateBooleanOperator}
-            />
-            {' '}the results of Step {stepsCompletedNumber}.
-          </div>
+  return !booleanSearchState ||
+    booleanSearchState.questionStatus === 'loading' ? (
+    <Loading />
+  ) : (
+    <div className={cx()}>
+      <div className={cx('--Header')}>
+        <h2>
+          Search for {inputRecordClass.shortDisplayNamePlural}{' '}
+          {question && `by ${question.displayName}`}
+        </h2>
+
+        <div className={cx('--BooleanOperatorMenu')}>
+          The results will be{' '}
+          <BooleanSelect
+            addType={addType}
+            value={
+              booleanSearchState.paramValues[
+                BOOLEAN_OPERATOR_PARAM_NAME
+              ] as CombineOperator
+            }
+            onChange={updateBooleanOperator}
+          />{' '}
+          the results of Step {stepsCompletedNumber}.
         </div>
-        <div className={cx('--Body')}>
-          <Plugin
-            context={{
-              type: 'questionController',
-              searchName: currentPage,
-              recordClassName: inputRecordClass.urlSegment
-            }}
-            pluginProps={{
-              question: currentPage,
-              recordClass: inputRecordClass.urlSegment,
-              submissionMetadata
-            }}
-            fallback={<Loading />}
-          />  
-        </div>
-      </div>;
+      </div>
+      <div className={cx('--Body')}>
+        <Plugin
+          context={{
+            type: 'questionController',
+            searchName: currentPage,
+            recordClassName: inputRecordClass.urlSegment,
+          }}
+          pluginProps={{
+            question: currentPage,
+            recordClass: inputRecordClass.urlSegment,
+            submissionMetadata,
+          }}
+          fallback={<Loading />}
+        />
+      </div>
+    </div>
+  );
 };
 
-export const CombineStepForm = connect<StateProps, DispatchProps, OwnProps, CombineStepFormViewProps, RootState>(
+export const CombineStepForm = connect<
+  StateProps,
+  DispatchProps,
+  OwnProps,
+  CombineStepFormViewProps,
+  RootState
+>(
   (state, ownProps) => ({
     booleanSearchUrlSegment: booleanSearchUrlSegment(state, ownProps),
     booleanSearchState: booleanSearchState(state, ownProps),
-    booleanOperatorParameter: booleanOperatorParameter(state, ownProps)
+    booleanOperatorParameter: booleanOperatorParameter(state, ownProps),
   }),
-  dispatch => ({
-    updateParamValue: compose(dispatch, updateParamValue)
+  (dispatch) => ({
+    updateParamValue: compose(dispatch, updateParamValue),
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     updateBooleanOperator: (newBooleanOperator: CombineOperator) => {
-      if (stateProps.booleanSearchState && stateProps.booleanOperatorParameter) {
+      if (
+        stateProps.booleanSearchState &&
+        stateProps.booleanOperatorParameter
+      ) {
         dispatchProps.updateParamValue({
           searchName: stateProps.booleanSearchUrlSegment,
           parameter: stateProps.booleanOperatorParameter,
           paramValues: stateProps.booleanSearchState.paramValues,
-          paramValue: newBooleanOperator
+          paramValue: newBooleanOperator,
         });
       }
     },
-    ...ownProps
+    ...ownProps,
   })
 )(CombineStepFormView);

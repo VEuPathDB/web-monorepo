@@ -1,6 +1,14 @@
-import { Question, RecordClass, RecordInstance, getSingleRecordQuestionName, getSingleRecordAnswerSpec, SearchConfig, AnswerSpec } from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Service/WdkService';
-import { Step, StepValidationLevel } from 'wdk-client/Utils/WdkUser';
+import {
+  Question,
+  RecordClass,
+  RecordInstance,
+  getSingleRecordQuestionName,
+  getSingleRecordAnswerSpec,
+  SearchConfig,
+  AnswerSpec,
+} from '../Utils/WdkModel';
+import WdkService from '../Service/WdkService';
+import { Step, StepValidationLevel } from '../Utils/WdkUser';
 
 export interface StepBundle {
   step: Step;
@@ -20,24 +28,28 @@ export interface AnswerSpecBundle {
  * for that step using the passed service.  Returns a promise whose value is an
  * object with properties { step, question, recordClass }.
  */
-export function getStepBundlePromise(stepId: number, service: WdkService): Promise<StepBundle> {
-
+export function getStepBundlePromise(
+  stepId: number,
+  service: WdkService
+): Promise<StepBundle> {
   let stepPromise = service.findStep(stepId);
-  let questionPromise = stepPromise.then(step => {
-    return service.findQuestion( step.searchName )
-    .then(question => {
+  let questionPromise = stepPromise.then((step) => {
+    return service.findQuestion(step.searchName).then((question) => {
       if (question == null) {
-        throw new Error("The question `" + step.searchName + "` could not be found.");
+        throw new Error(
+          'The question `' + step.searchName + '` could not be found.'
+        );
       }
       return question;
-    })
+    });
   });
-  let recordClassPromise = questionPromise.then(question =>
-    service.findRecordClass( question.outputRecordClassName )
+  let recordClassPromise = questionPromise.then((question) =>
+    service.findRecordClass(question.outputRecordClassName)
   );
 
-  return Promise.all([ stepPromise, questionPromise, recordClassPromise ])
-    .then(([ step, question, recordClass ]) => ({ step, question, recordClass }));
+  return Promise.all([stepPromise, questionPromise, recordClassPromise]).then(
+    ([step, question, recordClass]) => ({ step, question, recordClass })
+  );
 }
 
 /**
@@ -46,20 +58,34 @@ export function getStepBundlePromise(stepId: number, service: WdkService): Promi
  * whose value is an object with properties { answerSpec, question, recordClass }.
  */
 export function getSingleRecordStepBundlePromise(wdkService: WdkService) {
-  return function([ recordClass, recordInstance ]: [ RecordClass, RecordInstance ]): Promise<AnswerSpecBundle> {
-
+  return function ([recordClass, recordInstance]: [
+    RecordClass,
+    RecordInstance
+  ]): Promise<AnswerSpecBundle> {
     // create single-record question and step for this record class
-    let questionPromise: Promise<Question> = wdkService.findQuestion(getSingleRecordQuestionName(recordClass.fullName));
+    let questionPromise: Promise<Question> = wdkService.findQuestion(
+      getSingleRecordQuestionName(recordClass.fullName)
+    );
     let answerSpec = getSingleRecordAnswerSpec(recordInstance);
-    let displayName = String(recordInstance.attributes[recordClass.recordIdAttributeName]) ||
-      recordInstance.id.map(pk => pk.value).reduce((s, val) => (s == null ? val : '/' + val));
+    let displayName =
+      String(recordInstance.attributes[recordClass.recordIdAttributeName]) ||
+      recordInstance.id
+        .map((pk) => pk.value)
+        .reduce((s, val) => (s == null ? val : '/' + val));
 
     // return a promise containing our generated bundle
-    return questionPromise.then(question => Promise.resolve({ recordClass, question, answerSpec, displayName }));
+    return questionPromise.then((question) =>
+      Promise.resolve({ recordClass, question, answerSpec, displayName })
+    );
   };
 }
 
-export function getStubbedStep(question: Question, displayName: string, estimatedSize: number, searchConfig: SearchConfig): Step {
+export function getStubbedStep(
+  question: Question,
+  displayName: string,
+  estimatedSize: number,
+  searchConfig: SearchConfig
+): Step {
   return {
     // fill primary key string so we know which single record this question is
     id: -1,
@@ -76,10 +102,10 @@ export function getStubbedStep(question: Question, displayName: string, estimate
     hasCompleteStepAnalyses: false,
     searchName: question.urlSegment,
     searchConfig: searchConfig,
-    displayPreferences: { } as Step['displayPreferences'],
+    displayPreferences: {} as Step['displayPreferences'],
     validation: {
       isValid: true,
-      level: StepValidationLevel.Runnable
-    }
+      level: StepValidationLevel.Runnable,
+    },
   };
 }

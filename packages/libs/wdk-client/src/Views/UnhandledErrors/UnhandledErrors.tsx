@@ -1,12 +1,12 @@
 import { capitalize } from 'lodash';
-import React, { ReactNode } from "react";
-import { wrappable, makeClassNameHelper } from "wdk-client/Utils/ComponentUtils";
-import Modal from "wdk-client/Components/Overlays/Modal";
-import Icon from "wdk-client/Components/Icon/Icon";
-import { UnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
-import ErrorStatus from 'wdk-client/Components/PageStatus/Error';
-import { record, string, boolean, arrayOf, objectOf } from 'wdk-client/Utils/Json';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import React, { ReactNode } from 'react';
+import { wrappable, makeClassNameHelper } from '../../Utils/ComponentUtils';
+import Modal from '../../Components/Overlays/Modal';
+import Icon from '../../Components/Icon/Icon';
+import { UnhandledError } from '../../Actions/UnhandledErrorActions';
+import ErrorStatus from '../../Components/PageStatus/Error';
+import { record, string, boolean, arrayOf, objectOf } from '../../Utils/Json';
+import { Seq } from '../../Utils/IterableUtils';
 
 import './UnhandledErrors.scss';
 
@@ -22,30 +22,32 @@ function UnhandledErrors(props: Props) {
   const { clearErrors, errors, showStackTraces } = props;
   const errorsToDisplay = Seq.from(errors || [])
     // .orderBy(error => error.type)
-    .groupBy(error => error.message)
-    .map(([message, errors]) =>
+    .groupBy((error) => error.message)
+    .map(([message, errors]) => (
       <div key={message}>
         <h3>{message}</h3>
         <pre className={cx('--Message')}>
-          {errors.map(({ id }) =>
+          {errors.map(({ id }) => (
             <li key={id}>{id}</li>
-          )}
+          ))}
         </pre>
       </div>
-    );
+    ));
 
   return errors && errors.length > 0 ? (
     <Modal>
       <div className={cx()}>
         <button type="button" onClick={clearErrors}>
-          <Icon type="close"/>
+          <Icon type="close" />
         </button>
         <ErrorStatus
-          message={!errorsToDisplay.isEmpty() &&
-            <details className={cx('--Details')}>
-              <summary>Error details</summary>
-              {errorsToDisplay}
-            </details>
+          message={
+            !errorsToDisplay.isEmpty() && (
+              <details className={cx('--Details')}>
+                <summary>Error details</summary>
+                {errorsToDisplay}
+              </details>
+            )
           }
         />
       </div>
@@ -53,16 +55,28 @@ function UnhandledErrors(props: Props) {
   ) : null;
 }
 
-function ErrorDetail(props: { error: unknown, id: string, showStackTraces: boolean, message: string, type: string }) {
+function ErrorDetail(props: {
+  error: unknown;
+  id: string;
+  showStackTraces: boolean;
+  message: string;
+  type: string;
+}) {
   const { error, id, showStackTraces, message, type } = props;
   return (
     <div>
-      <div><code>{type.split('-').map(capitalize).join('-')} error ({id})</code></div>
-      {message && <div className={cx('--Message')}>{formatInputErrorMessage(message)}</div>}
+      <div>
+        <code>
+          {type.split('-').map(capitalize).join('-')} error ({id})
+        </code>
+      </div>
+      {message && (
+        <div className={cx('--Message')}>
+          {formatInputErrorMessage(message)}
+        </div>
+      )}
       {showStackTraces && (
-        <pre className={cx('--Stack')}>
-          {getStackTrace(error)}
-        </pre>
+        <pre className={cx('--Stack')}>{getStackTrace(error)}</pre>
       )}
     </div>
   );
@@ -79,9 +93,9 @@ const inputErrorDecoder = record({
   isValid: boolean,
   errors: record({
     general: arrayOf(string),
-    byKey: objectOf(arrayOf(string))
-  })
-})
+    byKey: objectOf(arrayOf(string)),
+  }),
+});
 
 function formatInputErrorMessage(message: string): ReactNode {
   try {
@@ -90,14 +104,19 @@ function formatInputErrorMessage(message: string): ReactNode {
     const { value } = result;
     return (
       <ul>
-        {value.errors.general.map((message, index) => <li key={index}>{message}</li>)}
-        {Object.entries(value.errors.byKey).map(([key, messages]) => messages.map((message, index) => (
-          <li key={`${key}_${index}`}><strong>{key}:</strong> {message}</li>
-        )))}
+        {value.errors.general.map((message, index) => (
+          <li key={index}>{message}</li>
+        ))}
+        {Object.entries(value.errors.byKey).map(([key, messages]) =>
+          messages.map((message, index) => (
+            <li key={`${key}_${index}`}>
+              <strong>{key}:</strong> {message}
+            </li>
+          ))
+        )}
       </ul>
     );
-  }
-  catch {
+  } catch {
     return message;
   }
 }

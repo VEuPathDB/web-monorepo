@@ -2,59 +2,87 @@ import React, { ReactNode, useContext, useMemo, useCallback } from 'react';
 
 import { pick, toUpper } from 'lodash/fp';
 
-import { Question, RecordClass, SearchConfig } from 'wdk-client/Utils/WdkModel';
-import { Step, StrategyDetails, NewStepSpec } from 'wdk-client/Utils/WdkUser';
-import { AddStepOperationMenuProps, AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
-import { ReviseOperatorMenuItem } from 'wdk-client/Views/Strategy/CombineStepDetails';
-import { CombineStepMenu } from 'wdk-client/Views/Strategy/CombineStepMenu';
-import { ConvertStepMenu, isValidTransformFactory } from 'wdk-client/Views/Strategy/ConvertStepMenu';
-import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
-import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithStrategyForm';
-import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
-import { PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator, IgnoreOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { LeafPreview, BooleanPreview, TransformPreview } from 'wdk-client/Views/Strategy/StepBoxes';
+import { Question, RecordClass, SearchConfig } from '../Utils/WdkModel';
+import { Step, StrategyDetails, NewStepSpec } from '../Utils/WdkUser';
+import {
+  AddStepOperationMenuProps,
+  AddStepOperationFormProps,
+} from '../Views/Strategy/AddStepPanel';
+import { cxStepBoxes as cxOperator } from '../Views/Strategy/ClassNames';
+import { ReviseOperatorMenuItem } from '../Views/Strategy/CombineStepDetails';
+import { CombineStepMenu } from '../Views/Strategy/CombineStepMenu';
+import {
+  ConvertStepMenu,
+  isValidTransformFactory,
+} from '../Views/Strategy/ConvertStepMenu';
+import { CombineStepForm } from '../Views/Strategy/CombineStepForm';
+import { CombineWithStrategyForm } from '../Views/Strategy/CombineWithStrategyForm';
+import { ConvertStepForm } from '../Views/Strategy/ConvertStepForm';
+import { PartialUiStepTree } from '../Views/Strategy/Types';
+import {
+  BOOLEAN_OPERATOR_PARAM_NAME,
+  CombineOperator,
+  IgnoreOperator,
+} from '../Views/Strategy/StrategyUtils';
+import {
+  LeafPreview,
+  BooleanPreview,
+  TransformPreview,
+} from '../Views/Strategy/StepBoxes';
 
 type OperatorMenuItem = {
-  radioDisplay: (stepALabel: ReactNode, stepBLabel: ReactNode) => ReactNode,
-  value: string
-}
+  radioDisplay: (stepALabel: ReactNode, stepBLabel: ReactNode) => ReactNode;
+  value: string;
+};
 
 type OperatorMenuGroup = {
-  name: string,
-  display: string,
-  items: OperatorMenuItem[]
-}
+  name: string;
+  display: string;
+  items: OperatorMenuItem[];
+};
 
 export type ReviseOperationFormProps = {
-  uiStepTree: PartialUiStepTree,
-  searchName?: string,
-  step: Step,
-  strategy: StrategyDetails,
-  primaryInputRecordClass?: RecordClass,
-  primaryInputQuestion?: Question,
-  secondaryInputRecordClass?: RecordClass
-  secondaryInputQuestion?: Question,
-  questions: Question[],
-  onClose: () => void,
-  requestUpdateStepSearchConfig: (strategyId: number, stepId: number, searchConfig: SearchConfig) => void,
-  requestReplaceStep: (strategyId: number, stepId: number, newStepSpec: NewStepSpec) => void
+  uiStepTree: PartialUiStepTree;
+  searchName?: string;
+  step: Step;
+  strategy: StrategyDetails;
+  primaryInputRecordClass?: RecordClass;
+  primaryInputQuestion?: Question;
+  secondaryInputRecordClass?: RecordClass;
+  secondaryInputQuestion?: Question;
+  questions: Question[];
+  onClose: () => void;
+  requestUpdateStepSearchConfig: (
+    strategyId: number,
+    stepId: number,
+    searchConfig: SearchConfig
+  ) => void;
+  requestReplaceStep: (
+    strategyId: number,
+    stepId: number,
+    newStepSpec: NewStepSpec
+  ) => void;
 };
 
 export type ReviseOperationParameterConfiguration =
-  | { type: 'form', FormComponent: React.ComponentType<ReviseOperationFormProps> }
+  | {
+      type: 'form';
+      FormComponent: React.ComponentType<ReviseOperationFormProps>;
+    }
   | { type: 'inline' };
 
 export type BinaryOperation = {
-  name: string,
-  AddStepMenuComponent: React.ComponentType<AddStepOperationMenuProps>,
-  addStepFormComponents: Record<string, React.ComponentType<AddStepOperationFormProps>>,
-  isOperationSearchName: (searchName: string) => boolean,
-  baseClassName: string,
-  operatorParamName: string,
-  reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration,
-  operatorMenuGroup: OperatorMenuGroup,
+  name: string;
+  AddStepMenuComponent: React.ComponentType<AddStepOperationMenuProps>;
+  addStepFormComponents: Record<
+    string,
+    React.ComponentType<AddStepOperationFormProps>
+  >;
+  isOperationSearchName: (searchName: string) => boolean;
+  baseClassName: string;
+  operatorParamName: string;
+  reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration;
+  operatorMenuGroup: OperatorMenuGroup;
   isCompatibleAddStepSearch: (
     search: Question,
     questionsByUrlSegment: Record<string, Question>,
@@ -62,10 +90,12 @@ export type BinaryOperation = {
     primaryOperandStep: Step,
     previousStep?: Step,
     outputStep?: Step
-  ) => boolean,
-  AddStepHeaderComponent: React.ComponentType<{ inputRecordClass: RecordClass }>,
-  AddStepNewInputComponent: React.ComponentType<{}>,
-  AddStepNewOperationComponent: React.ComponentType<{}>
+  ) => boolean;
+  AddStepHeaderComponent: React.ComponentType<{
+    inputRecordClass: RecordClass;
+  }>;
+  AddStepNewInputComponent: React.ComponentType<{}>;
+  AddStepNewOperationComponent: React.ComponentType<{}>;
 };
 
 export const defaultBinaryOperations: BinaryOperation[] = [
@@ -74,9 +104,10 @@ export const defaultBinaryOperations: BinaryOperation[] = [
     AddStepMenuComponent: CombineStepMenu,
     addStepFormComponents: {
       'combine-with-new-search': CombineStepForm,
-      'combine-with-strategy': CombineWithStrategyForm
+      'combine-with-strategy': CombineWithStrategyForm,
     },
-    isOperationSearchName: searchName => searchName.startsWith('boolean_question'),
+    isOperationSearchName: (searchName) =>
+      searchName.startsWith('boolean_question'),
     baseClassName: 'CombineOperator',
     operatorParamName: BOOLEAN_OPERATOR_PARAM_NAME,
     reviseOperatorParamConfiguration: { type: 'inline' },
@@ -85,26 +116,38 @@ export const defaultBinaryOperations: BinaryOperation[] = [
       display: 'Revise as a boolean operation',
       items: [
         {
-          radioDisplay: (stepALabel, stepBLabel) =>
-            <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>,
-          value: CombineOperator.Intersect
+          radioDisplay: (stepALabel, stepBLabel) => (
+            <React.Fragment>
+              {stepALabel} <strong>INTERSECT</strong> {stepBLabel}
+            </React.Fragment>
+          ),
+          value: CombineOperator.Intersect,
         },
         {
-          radioDisplay: (stepALabel, stepBLabel) =>
-            <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>,
-          value: CombineOperator.Union
+          radioDisplay: (stepALabel, stepBLabel) => (
+            <React.Fragment>
+              {stepALabel} <strong>UNION</strong> {stepBLabel}
+            </React.Fragment>
+          ),
+          value: CombineOperator.Union,
         },
         {
-          radioDisplay: (stepALabel, stepBLabel) =>
-            <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>,
-          value: CombineOperator.LeftMinus
+          radioDisplay: (stepALabel, stepBLabel) => (
+            <React.Fragment>
+              {stepALabel} <strong>MINUS</strong> {stepBLabel}
+            </React.Fragment>
+          ),
+          value: CombineOperator.LeftMinus,
         },
         {
-          radioDisplay: (stepALabel, stepBLabel) =>
-            <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>,
-          value: CombineOperator.RightMinus
-        }
-      ]
+          radioDisplay: (stepALabel, stepBLabel) => (
+            <React.Fragment>
+              {stepBLabel} <strong>MINUS</strong> {stepALabel}
+            </React.Fragment>
+          ),
+          value: CombineOperator.RightMinus,
+        },
+      ],
     },
     isCompatibleAddStepSearch: (
       search: Question,
@@ -114,16 +157,19 @@ export const defaultBinaryOperations: BinaryOperation[] = [
     ) =>
       search.outputRecordClassName === primaryOperandStep.recordClassName &&
       search.urlSegment.startsWith('boolean_question'),
-    AddStepHeaderComponent: ({ inputRecordClass }) =>
+    AddStepHeaderComponent: ({ inputRecordClass }) => (
       <React.Fragment>
         <strong>Combine</strong> with other {inputRecordClass.displayNamePlural}
-      </React.Fragment>,
+      </React.Fragment>
+    ),
     AddStepNewInputComponent: LeafPreview,
-    AddStepNewOperationComponent: BooleanPreview
-  }
+    AddStepNewOperationComponent: BooleanPreview,
+  },
 ];
 
-export const BinaryOperationsContext = React.createContext<BinaryOperation[]>(defaultBinaryOperations);
+export const BinaryOperationsContext = React.createContext<BinaryOperation[]>(
+  defaultBinaryOperations
+);
 
 export const useBinaryOperations = () => useContext(BinaryOperationsContext);
 
@@ -139,49 +185,67 @@ export type AddStepMenuConfig = Pick<
 >;
 
 export type OperatorMetadata = {
-  operatorName: string,
-  searchName: string,
-  baseClassName: string,
-  paramName: string,
-  paramValue: string,
-  reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration
+  operatorName: string;
+  searchName: string;
+  baseClassName: string;
+  paramName: string;
+  paramValue: string;
+  reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration;
 };
 
-export const useCompatibleOperatorMetadata = (questions: Question[] | undefined, uiStepTree: PartialUiStepTree): Record<string, OperatorMetadata> | undefined => {
-  const { outputRecordClass, primaryInputRecordClass, secondaryInputRecordClass } = makeStepRecordClassNames(uiStepTree);
+export const useCompatibleOperatorMetadata = (
+  questions: Question[] | undefined,
+  uiStepTree: PartialUiStepTree
+): Record<string, OperatorMetadata> | undefined => {
+  const {
+    outputRecordClass,
+    primaryInputRecordClass,
+    secondaryInputRecordClass,
+  } = makeStepRecordClassNames(uiStepTree);
 
   const binaryOperations = useBinaryOperations();
 
-  const compatibleOperatorMetadata = useMemo(
-    () => {
-      if (!questions) {
-        return undefined;
-      }
+  const compatibleOperatorMetadata = useMemo(() => {
+    if (!questions) {
+      return undefined;
+    }
 
-      const compatibleOperatorMetadata = binaryOperations.reduce(
-        (memo, { name, isOperationSearchName, operatorParamName, baseClassName, operatorMenuGroup, reviseOperatorParamConfiguration }) => {
-          const operationQuestion = questions.find(
-            question =>
-              isOperationSearchName(question.urlSegment) &&
-              (
-                (
-                  !!primaryInputRecordClass &&
-                  !!secondaryInputRecordClass &&
-                  !!question.allowedPrimaryInputRecordClassNames &&
-                  !!question.allowedSecondaryInputRecordClassNames &&
-                  question.outputRecordClassName === outputRecordClass &&
-                  question.allowedPrimaryInputRecordClassNames.includes(primaryInputRecordClass) &&
-                  question.allowedSecondaryInputRecordClassNames.includes(secondaryInputRecordClass)
-                )
-              )
-          );
+    const compatibleOperatorMetadata = binaryOperations.reduce(
+      (
+        memo,
+        {
+          name,
+          isOperationSearchName,
+          operatorParamName,
+          baseClassName,
+          operatorMenuGroup,
+          reviseOperatorParamConfiguration,
+        }
+      ) => {
+        const operationQuestion = questions.find(
+          (question) =>
+            isOperationSearchName(question.urlSegment) &&
+            !!primaryInputRecordClass &&
+            !!secondaryInputRecordClass &&
+            !!question.allowedPrimaryInputRecordClassNames &&
+            !!question.allowedSecondaryInputRecordClassNames &&
+            question.outputRecordClassName === outputRecordClass &&
+            question.allowedPrimaryInputRecordClassNames.includes(
+              primaryInputRecordClass
+            ) &&
+            question.allowedSecondaryInputRecordClassNames.includes(
+              secondaryInputRecordClass
+            )
+        );
 
-          const parameterValues = [
-            ...operatorMenuGroup.items.map(({ value }) => value),
-            ...(name === 'combine' ? [ 'LONLY', 'RONLY' ] : [])
-          ];
+        const parameterValues = [
+          ...operatorMenuGroup.items.map(({ value }) => value),
+          ...(name === 'combine' ? ['LONLY', 'RONLY'] : []),
+        ];
 
-          const newMetadataEntries = operationQuestion && parameterValues.reduce(
+        const newMetadataEntries =
+          operationQuestion &&
+          parameterValues.reduce(
             (memo, itemValue) => ({
               ...memo,
               [itemValue]: {
@@ -190,52 +254,68 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
                 paramName: operatorParamName,
                 baseClassName,
                 paramValue: itemValue,
-                reviseOperatorParamConfiguration
-              }
+                reviseOperatorParamConfiguration,
+              },
             }),
             {} as Record<string, OperatorMetadata>
           );
 
-          return {
-            ...memo,
-            ...newMetadataEntries
-          };
-        },
-        {} as Record<string, OperatorMetadata>
-      );
+        return {
+          ...memo,
+          ...newMetadataEntries,
+        };
+      },
+      {} as Record<string, OperatorMetadata>
+    );
 
-      return compatibleOperatorMetadata;
-    },
-    [ binaryOperations, outputRecordClass, primaryInputRecordClass, secondaryInputRecordClass, questions ]
-  );
+    return compatibleOperatorMetadata;
+  }, [
+    binaryOperations,
+    outputRecordClass,
+    primaryInputRecordClass,
+    secondaryInputRecordClass,
+    questions,
+  ]);
 
   return compatibleOperatorMetadata;
 };
 
 export type ReviseOperatorMenuGroup = {
-  name: string,
-  display: string,
-  items: ReviseOperatorMenuItem[]
-}
+  name: string;
+  display: string;
+  items: ReviseOperatorMenuItem[];
+};
 
-const ignoreOperators = (stepALabel: string, stepBLabel: string): ReviseOperatorMenuItem[] => [
+const ignoreOperators = (
+  stepALabel: string,
+  stepBLabel: string
+): ReviseOperatorMenuItem[] => [
   {
-    display: <React.Fragment><strong>IGNORE</strong> {stepBLabel}</React.Fragment>,
+    display: (
+      <React.Fragment>
+        <strong>IGNORE</strong> {stepBLabel}
+      </React.Fragment>
+    ),
     value: IgnoreOperator.LeftOnly,
-    iconClassName: cxOperator('--CombineOperator', 'LONLY')
+    iconClassName: cxOperator('--CombineOperator', 'LONLY'),
   },
   {
-    display: <React.Fragment><strong>IGNORE</strong> {stepALabel}</React.Fragment>,
+    display: (
+      <React.Fragment>
+        <strong>IGNORE</strong> {stepALabel}
+      </React.Fragment>
+    ),
     value: IgnoreOperator.RightOnly,
-    iconClassName: cxOperator('--CombineOperator', 'RONLY')
-  }
+    iconClassName: cxOperator('--CombineOperator', 'RONLY'),
+  },
 ];
 
 export const useReviseOperatorConfigs = (
-  questions: Question[] | undefined, 
-  uiStepTree: PartialUiStepTree,
+  questions: Question[] | undefined,
+  uiStepTree: PartialUiStepTree
 ) => {
-  const { primaryInputRecordClass, secondaryInputRecordClass } = makeStepRecordClassNames(uiStepTree);
+  const { primaryInputRecordClass, secondaryInputRecordClass } =
+    makeStepRecordClassNames(uiStepTree);
 
   const binaryOperations = useBinaryOperations();
   const operatorMetadata = useCompatibleOperatorMetadata(questions, uiStepTree);
@@ -244,48 +324,51 @@ export const useReviseOperatorConfigs = (
   const stepBLabel = `${uiStepTree.slotNumber}`;
 
   const reviseOperatorConfigsWithoutIgnore = useMemo(
-    () => operatorMetadata && binaryOperations.reduce(
-      (memo, { baseClassName, operatorMenuGroup }) => {
-        return operatorMenuGroup.items.some(menuItem => !operatorMetadata[menuItem.value])
+    () =>
+      operatorMetadata &&
+      binaryOperations.reduce((memo, { baseClassName, operatorMenuGroup }) => {
+        return operatorMenuGroup.items.some(
+          (menuItem) => !operatorMetadata[menuItem.value]
+        )
           ? memo
           : [
               ...memo,
               {
                 name: operatorMenuGroup.name,
                 display: operatorMenuGroup.display,
-                items: operatorMenuGroup.items.map(
-                  (menuItem) => ({
-                    display: menuItem.radioDisplay(stepALabel, stepBLabel),
-                    iconClassName: cxOperator(`--${baseClassName}`, toUpper(menuItem.value)),
-                    value: menuItem.value
-                  })
-                )
-              }
-          ]
-      },
-      [] as ReviseOperatorMenuGroup[]
-    ),
-    [ binaryOperations, operatorMetadata ]
+                items: operatorMenuGroup.items.map((menuItem) => ({
+                  display: menuItem.radioDisplay(stepALabel, stepBLabel),
+                  iconClassName: cxOperator(
+                    `--${baseClassName}`,
+                    toUpper(menuItem.value)
+                  ),
+                  value: menuItem.value,
+                })),
+              },
+            ];
+      }, [] as ReviseOperatorMenuGroup[]),
+    [binaryOperations, operatorMetadata]
   );
 
   const reviseOperatorConfigs = useMemo(
-    () => !reviseOperatorConfigsWithoutIgnore
-      ? undefined
-      : primaryInputRecordClass !== secondaryInputRecordClass
-      ? reviseOperatorConfigsWithoutIgnore
-      : [
-          ...reviseOperatorConfigsWithoutIgnore,
-          {
-            name: 'ignore_boolean_operators',
-            display: 'Ignore one of the inputs',
-            items: ignoreOperators(stepALabel, stepBLabel)
-          }
-        ],
+    () =>
+      !reviseOperatorConfigsWithoutIgnore
+        ? undefined
+        : primaryInputRecordClass !== secondaryInputRecordClass
+        ? reviseOperatorConfigsWithoutIgnore
+        : [
+            ...reviseOperatorConfigsWithoutIgnore,
+            {
+              name: 'ignore_boolean_operators',
+              display: 'Ignore one of the inputs',
+              items: ignoreOperators(stepALabel, stepBLabel),
+            },
+          ],
     [
       reviseOperatorConfigsWithoutIgnore,
       ignoreOperators,
       primaryInputRecordClass,
-      secondaryInputRecordClass
+      secondaryInputRecordClass,
     ]
   );
 
@@ -296,27 +379,26 @@ const makeStepRecordClassNames = (uiStepTree: PartialUiStepTree) => {
   return {
     outputRecordClass: uiStepTree.step.recordClassName,
     primaryInputRecordClass: uiStepTree.primaryInput?.recordClass?.urlSegment,
-    secondaryInputRecordClass: uiStepTree.secondaryInput?.recordClass?.urlSegment
+    secondaryInputRecordClass:
+      uiStepTree.secondaryInput?.recordClass?.urlSegment,
   };
 };
 
-const toAddStepMenuConfig = pick<BinaryOperation, keyof AddStepMenuConfig>(
-  [
-    'name',
-    'AddStepMenuComponent',
-    'addStepFormComponents',
-    'isCompatibleAddStepSearch',
-    'AddStepHeaderComponent',
-    'AddStepNewInputComponent',
-    'AddStepNewOperationComponent'
-  ]
-);
+const toAddStepMenuConfig = pick<BinaryOperation, keyof AddStepMenuConfig>([
+  'name',
+  'AddStepMenuComponent',
+  'addStepFormComponents',
+  'isCompatibleAddStepSearch',
+  'AddStepHeaderComponent',
+  'AddStepNewInputComponent',
+  'AddStepNewOperationComponent',
+]);
 
 const convertConfig: AddStepMenuConfig = {
   name: 'convert',
   AddStepMenuComponent: ConvertStepMenu,
   addStepFormComponents: {
-    'convert': ConvertStepForm
+    convert: ConvertStepForm,
   },
   isCompatibleAddStepSearch: (
     search: Question,
@@ -331,12 +413,13 @@ const convertConfig: AddStepMenuConfig = {
       recordClassesByUrlSegment[previousStep.recordClassName],
       outputStep && questionsByUrlSegment[outputStep.recordClassName]
     )(search),
-  AddStepHeaderComponent: () =>
+  AddStepHeaderComponent: () => (
     <React.Fragment>
       <strong>Transform</strong> into related records
-    </React.Fragment>,
+    </React.Fragment>
+  ),
   AddStepNewInputComponent: () => null,
-  AddStepNewOperationComponent: TransformPreview
+  AddStepNewOperationComponent: TransformPreview,
 };
 
 export const useAddStepMenuConfigs = (
@@ -349,14 +432,21 @@ export const useAddStepMenuConfigs = (
   const binaryOperations = useBinaryOperations();
 
   const menuConfigs = useMemo(
-    () => questionsByUrlSegment && recordClassesByUrlSegment && primaryOperandStep && [
-      ...binaryOperations.filter(({ name }) => name === 'combine').map(toAddStepMenuConfig),
-      convertConfig,
-      ...binaryOperations.filter(({ name }) => name !== 'combine').map(toAddStepMenuConfig)
-    ].filter(
-      ({ isCompatibleAddStepSearch }) =>
-        Object.values(questionsByUrlSegment)
-          .some(search => isCompatibleAddStepSearch(
+    () =>
+      questionsByUrlSegment &&
+      recordClassesByUrlSegment &&
+      primaryOperandStep &&
+      [
+        ...binaryOperations
+          .filter(({ name }) => name === 'combine')
+          .map(toAddStepMenuConfig),
+        convertConfig,
+        ...binaryOperations
+          .filter(({ name }) => name !== 'combine')
+          .map(toAddStepMenuConfig),
+      ].filter(({ isCompatibleAddStepSearch }) =>
+        Object.values(questionsByUrlSegment).some((search) =>
+          isCompatibleAddStepSearch(
             search,
             questionsByUrlSegment,
             recordClassesByUrlSegment,
@@ -365,14 +455,14 @@ export const useAddStepMenuConfigs = (
             outputStep
           )
         )
-    ),
+      ),
     [
       binaryOperations,
       questionsByUrlSegment,
       recordClassesByUrlSegment,
       primaryOperandStep,
       previousStep,
-      outputStep
+      outputStep,
     ]
   );
 
@@ -396,27 +486,35 @@ export const useSelectedAddStepFormComponent = (
   );
 
   const operationFormsByName = useMemo(
-    () => menuConfigs && menuConfigs.reduce(
-      (memo, { addStepFormComponents }) => ({ ...memo, ...addStepFormComponents }),
-      {} as Record<string, React.ComponentType<AddStepOperationFormProps>>
-    ),
-    [ menuConfigs ]
+    () =>
+      menuConfigs &&
+      menuConfigs.reduce(
+        (memo, { addStepFormComponents }) => ({
+          ...memo,
+          ...addStepFormComponents,
+        }),
+        {} as Record<string, React.ComponentType<AddStepOperationFormProps>>
+      ),
+    [menuConfigs]
   );
 
-  const DefaultFormComponent = useCallback(
-    () => null,
-    []
-  );
+  const DefaultFormComponent = useCallback(() => null, []);
 
-  return (formName && operationFormsByName && operationFormsByName[formName]) || DefaultFormComponent;
+  return (
+    (formName && operationFormsByName && operationFormsByName[formName]) ||
+    DefaultFormComponent
+  );
 };
 
 export const useBinaryStepBoxClassName = (step: Step) => {
   const binaryOperations = useBinaryOperations();
 
   const binaryOperation = useMemo(
-    () => binaryOperations.find(({ isOperationSearchName }) => isOperationSearchName(step.searchName)),
-    [ binaryOperations, step ]
+    () =>
+      binaryOperations.find(({ isOperationSearchName }) =>
+        isOperationSearchName(step.searchName)
+      ),
+    [binaryOperations, step]
   );
 
   if (!binaryOperation) {
@@ -425,7 +523,9 @@ export const useBinaryStepBoxClassName = (step: Step) => {
 
   const { baseClassName, operatorParamName } = binaryOperation;
 
-  const classNameModifier = toUpper(step.searchConfig.parameters[operatorParamName])
+  const classNameModifier = toUpper(
+    step.searchConfig.parameters[operatorParamName]
+  );
 
   return classNameModifier
     ? cxOperator(`--${baseClassName}`, classNameModifier)

@@ -1,25 +1,25 @@
-import 'wdk-client/Components/Mesa/style/Mesa.scss';
+import '../../Components/Mesa/style/Mesa.scss';
 
-import Mesa from 'wdk-client/Components/Mesa/Ui/Mesa';
-import DataTable from 'wdk-client/Components/Mesa/Ui/DataTable';
-import RowCounter from 'wdk-client/Components/Mesa/Ui/RowCounter';
-import TableSearch from 'wdk-client/Components/Mesa/Ui/TableSearch';
-import TableToolbar from 'wdk-client/Components/Mesa/Ui/TableToolbar';
-import ActionToolbar from 'wdk-client/Components/Mesa/Ui/ActionToolbar';
-import PaginationMenu from 'wdk-client/Components/Mesa/Ui/PaginationMenu';
-import MesaController from 'wdk-client/Components/Mesa/Ui/MesaController';
+import Mesa from '../../Components/Mesa/Ui/Mesa';
+import DataTable from '../../Components/Mesa/Ui/DataTable';
+import RowCounter from '../../Components/Mesa/Ui/RowCounter';
+import TableSearch from '../../Components/Mesa/Ui/TableSearch';
+import TableToolbar from '../../Components/Mesa/Ui/TableToolbar';
+import ActionToolbar from '../../Components/Mesa/Ui/ActionToolbar';
+import PaginationMenu from '../../Components/Mesa/Ui/PaginationMenu';
+import MesaController from '../../Components/Mesa/Ui/MesaController';
 
-import Tooltip from 'wdk-client/Components/Mesa/Components/Tooltip';
-import Checkbox from 'wdk-client/Components/Mesa/Components/Checkbox';
-import BodyLayer from 'wdk-client/Components/Mesa/Components/BodyLayer';
-import HelpTrigger from 'wdk-client/Components/Mesa/Components/HelpTrigger';
-import ModalBoundary from 'wdk-client/Components/Mesa/Components/ModalBoundary';
-import AnchoredTooltip from 'wdk-client/Components/Mesa/Components/AnchoredTooltip';
+import Tooltip from '../../Components/Mesa/Components/Tooltip';
+import Checkbox from '../../Components/Mesa/Components/Checkbox';
+import BodyLayer from '../../Components/Mesa/Components/BodyLayer';
+import HelpTrigger from '../../Components/Mesa/Components/HelpTrigger';
+import ModalBoundary from '../../Components/Mesa/Components/ModalBoundary';
+import AnchoredTooltip from '../../Components/Mesa/Components/AnchoredTooltip';
 
-import Events, { EventsFactory } from 'wdk-client/Components/Mesa/Utils/Events';
-import * as Utils from 'wdk-client/Components/Mesa/Utils/Utils';
-import * as MesaState from 'wdk-client/Components/Mesa/Utils/MesaState';
-import * as MesaSelection from 'wdk-client/Components/Mesa/Utils/MesaSelection';
+import Events, { EventsFactory } from '../../Components/Mesa/Utils/Events';
+import * as Utils from '../../Components/Mesa/Utils/Utils';
+import * as MesaState from '../../Components/Mesa/Utils/MesaState';
+import * as MesaSelection from '../../Components/Mesa/Utils/MesaSelection';
 
 export default Mesa;
 
@@ -31,7 +31,6 @@ export {
   TableToolbar,
   ActionToolbar,
   PaginationMenu,
-
   Tooltip,
   Checkbox,
   BodyLayer,
@@ -39,9 +38,9 @@ export {
   ModalBoundary,
   MesaController,
   AnchoredTooltip,
-
-  Events, EventsFactory,
+  Events,
+  EventsFactory,
   Utils,
   MesaState,
-  MesaSelection
+  MesaSelection,
 };

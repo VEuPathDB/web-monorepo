@@ -1,8 +1,11 @@
-import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
 
 export const showLoginWarning = makeActionCreator(
   'user-session/show-login-warning',
-  (attemptedAction: string, destination?: string) => ({ attemptedAction, destination })
+  (attemptedAction: string, destination?: string) => ({
+    attemptedAction,
+    destination,
+  })
 );
 
 export const showLoginForm = makeActionCreator(
@@ -17,20 +20,18 @@ export const showLoginModal = makeActionCreator(
 
 export const hideLoginModal = makeActionCreator(
   'user-session/hide-login-modal'
-)
+);
 
 export const submitLoginForm = makeActionCreator(
   'user-session/submit-login-form',
   (email: string, password: string, destination: string) => ({
     email,
     password,
-    destination
+    destination,
   })
 );
 
-export const loginSuccess = makeActionCreator(
-  'user-session/login-success'
-);
+export const loginSuccess = makeActionCreator('user-session/login-success');
 
 export const loginError = makeActionCreator(
   'user-session/login-error',
@@ -64,5 +65,4 @@ export type Action =
   | InferAction<typeof logoutDismissed>
   | InferAction<typeof navigateToLogin>
   | InferAction<typeof loginSuccess>
-  | InferAction<typeof loginError>
-
+  | InferAction<typeof loginError>;

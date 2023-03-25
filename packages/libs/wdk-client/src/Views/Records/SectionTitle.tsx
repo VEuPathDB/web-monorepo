@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { IconAlt, Tooltip } from 'wdk-client/Components';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { IconAlt, Tooltip } from '../../Components';
+import { safeHtml } from '../../Utils/ComponentUtils';
 
 interface Props {
   displayName: string;
@@ -12,8 +12,7 @@ export function DefaultSectionTitle({ displayName, help }: Props) {
   return (
     <>
       {displayName}
-      {
-        help &&
+      {help && (
         <>
           &nbsp;
           <Tooltip content={safeHtml(help)}>
@@ -22,8 +21,7 @@ export function DefaultSectionTitle({ displayName, help }: Props) {
             </div>
           </Tooltip>
         </>
-      }
+      )}
     </>
   );
 }
-

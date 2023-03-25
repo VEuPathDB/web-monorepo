@@ -22,5 +22,12 @@
   "prettier": "@veupathdb/prettier-config",
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
+  },
+  "volta": {
+    "node": "16.17.1",
+    "yarn": "3.3.1"
+  },
+  "engines": {
+    "node": "<=16.17.1"
   }
 }

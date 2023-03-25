@@ -1,2 +1,2 @@
-import Loading from 'wdk-client/Components/Loading/Loading';
+import Loading from '../../Components/Loading/Loading';
 export default Loading;

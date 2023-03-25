@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { uid, makeClassifier } from 'wdk-client/Components/Mesa/Utils/Utils';
+import { uid, makeClassifier } from '../../../Components/Mesa/Utils/Utils';
 
 const modalBoundaryClass = makeClassifier('ModalBoundary');
 
 class ModalBoundary extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = { modals: [] };
@@ -17,15 +17,18 @@ class ModalBoundary extends React.Component {
     this.renderModalWrapper = this.renderModalWrapper.bind(this);
     this.triggerModalRefresh = this.triggerModalRefresh.bind(this);
 
-    console.error(`
+    console.error(
+      `
       <ModalBoundary> is Deprecated!
       Now declaratively render your modals inside a <BodyLayer>.
       Stop using ModalBoundary.
       Props Received:
-    `, { props });
+    `,
+      { props }
+    );
   }
 
-  addModal (modal) {
+  addModal(modal) {
     let { modals } = this.state;
     modal._id = uid();
     modals.push(modal);
@@ -33,24 +36,24 @@ class ModalBoundary extends React.Component {
     return modal._id;
   }
 
-  triggerModalRefresh () {
+  triggerModalRefresh() {
     this.forceUpdate();
   }
 
-  removeModal (id) {
+  removeModal(id) {
     let { modals } = this.state;
-    let index = modals.findIndex(modal => modal._id === id);
+    let index = modals.findIndex((modal) => modal._id === id);
     if (index < 0) return;
     modals.splice(index, 1);
     this.setState({ modals });
   }
 
-  getChildContext () {
+  getChildContext() {
     const { addModal, removeModal, triggerModalRefresh } = this;
     return { addModal, removeModal, triggerModalRefresh };
   }
 
-  renderModalWrapper () {
+  renderModalWrapper() {
     const { modals } = this.state;
     const style = {
       top: 0,
@@ -58,41 +61,44 @@ class ModalBoundary extends React.Component {
       width: '100vw',
       height: '100vh',
       position: 'fixed',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
     };
     return !modals.length ? null : (
       <div style={style} className={modalBoundaryClass('Wrapper')}>
         {modals.map((modal, index) => {
           const Element = modal.render;
-          return <Element key={index} {...modal} />
+          return <Element key={index} {...modal} />;
         })}
       </div>
     );
   }
 
-  render () {
+  render() {
     const { children, style } = this.props;
     const ModalWrapper = this.renderModalWrapper;
-    const fullStyle = Object.assign({}, style ? style : {}, { position: 'relative' });
+    const fullStyle = Object.assign({}, style ? style : {}, {
+      position: 'relative',
+    });
     const zIndex = (z) => ({ position: 'relative', zIndex: z });
 
     return (
-      <div className={modalBoundaryClass() + ' MesaComponent'} style={fullStyle}>
-        <div style={zIndex(1)}>
-          {children}
-        </div>
+      <div
+        className={modalBoundaryClass() + ' MesaComponent'}
+        style={fullStyle}
+      >
+        <div style={zIndex(1)}>{children}</div>
         <div style={zIndex(2)}>
           <ModalWrapper />
         </div>
       </div>
     );
   }
-};
+}
 
 ModalBoundary.childContextTypes = {
   addModal: PropTypes.func,
   removeModal: PropTypes.func,
-  triggerModalRefresh: PropTypes.func
+  triggerModalRefresh: PropTypes.func,
 };
 
 export default ModalBoundary;

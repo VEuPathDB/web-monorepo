@@ -1,6 +1,6 @@
-import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { makeActionCreator, InferAction } from '../Utils/ActionCreatorUtils';
+import { ServiceError } from '../Service/ServiceError';
+import { ResultType } from '../Utils/WdkResult';
 
 // Actions
 // -------
@@ -15,26 +15,25 @@ export type Action =
   | InferAction<typeof changeTableRowsPerPage>
   | InferAction<typeof sortTable>
   | InferAction<typeof searchTable>
-  | InferAction<typeof selectTab>
+  | InferAction<typeof selectTab>;
 
 // Open view
 export const openAttributeAnalysis = makeActionCreator(
   'attribute-analysis/open',
   (reporterName: string, resultType: ResultType) => ({
     reporterName,
-    resultType
+    resultType,
   })
-)
-
+);
 
 // Close view
 export const closeAttributeAnalysis = makeActionCreator(
   'attribute-analysis/close',
   (reporterName: string, resultType: ResultType) => ({
     reporterName,
-    resultType
+    resultType,
   })
-)
+);
 
 // Request report
 export const requestAttributeReport = makeActionCreator(
@@ -42,9 +41,9 @@ export const requestAttributeReport = makeActionCreator(
   (reporterName: string, resultType: ResultType, config: object) => ({
     reporterName,
     resultType,
-    config
+    config,
   })
-)
+);
 
 // Fulfill report
 export const fulfillAttributeReport = makeActionCreator(
@@ -52,9 +51,9 @@ export const fulfillAttributeReport = makeActionCreator(
   (reporterName: string, resultType: ResultType, report: any) => ({
     reporterName,
     resultType,
-    report
+    report,
   })
-)
+);
 
 // Fail report
 export const errorAttributeReport = makeActionCreator(
@@ -62,31 +61,31 @@ export const errorAttributeReport = makeActionCreator(
   (reporterName: string, resultType: ResultType, error: ServiceError) => ({
     reporterName,
     resultType,
-    error
+    error,
   })
-)
+);
 
 export const changeTablePage = makeActionCreator(
   'attribute-analysis/change-table-page',
   (page: number) => ({ page })
-)
+);
 
 export const changeTableRowsPerPage = makeActionCreator(
   'attribute-analysis-change-tables-rows-per-page',
   (rowsPerPage: number) => ({ rowsPerPage })
-)
+);
 
 export const sortTable = makeActionCreator(
   'attribute-analysis/sort-table',
   (key: string, direction: 'asc' | 'desc') => ({ key, direction })
-)
+);
 
 export const searchTable = makeActionCreator(
   'attribute-analysis/search-table',
   (searchString: string) => ({ searchString })
-)
+);
 
 export const selectTab = makeActionCreator(
   'attribute-analysis/select-tab',
   (tab: 'table' | 'visualization') => ({ tab })
-)
+);

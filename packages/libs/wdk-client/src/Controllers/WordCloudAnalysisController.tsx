@@ -3,22 +3,22 @@ import { identity } from 'lodash/fp';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Loading } from 'wdk-client/Components';
+import { Loading } from '../Components';
 
-import { RootState } from 'wdk-client/Core/State/Types';
-import AttributeAnalysisTabs from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisTabs';
+import { RootState } from '../Core/State/Types';
+import AttributeAnalysisTabs from '../Views/AttributeAnalysis/AttributeAnalysisTabs';
 import {
   WordCloud,
-  Tag
-} from 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis';
+  Tag,
+} from '../Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis';
 import {
   changeRankRange,
   changeSort,
   openView,
-  closeView
-} from 'wdk-client/Actions/WordCloudAnalysisActions';
+  closeView,
+} from '../Actions/WordCloudAnalysisActions';
 import { Dispatch } from 'redux';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ResultType } from '../Utils/WdkResult';
 
 const DEFAULT_RANK_RANGE_MAX = 50;
 
@@ -59,7 +59,7 @@ class WordCloudAnalysisController extends React.PureComponent<Props> {
       wordCloudAnalysis,
       dispatch,
       changeRankRange,
-      changeSort
+      changeSort,
     } = this.props;
 
     const { report, table, activeTab } = attributeAnalysis;
@@ -74,9 +74,9 @@ class WordCloudAnalysisController extends React.PureComponent<Props> {
     const {
       rankRange = {
         min: 1,
-        max: Math.min(DEFAULT_RANK_RANGE_MAX, tags.length)
+        max: Math.min(DEFAULT_RANK_RANGE_MAX, tags.length),
       },
-      wordCloudSort: sort = 'rank'
+      wordCloudSort: sort = 'rank',
     } = wordCloudAnalysis;
 
     return (
@@ -87,9 +87,9 @@ class WordCloudAnalysisController extends React.PureComponent<Props> {
         tableConfig={{
           columns: [
             { key: 'word', display: 'Word' },
-            { key: 'count', display: 'Occurrence' }
+            { key: 'count', display: 'Occurrence' },
           ],
-          data: tags
+          data: tags,
         }}
         visualizationConfig={{
           display: 'Word Cloud',
@@ -101,7 +101,7 @@ class WordCloudAnalysisController extends React.PureComponent<Props> {
               onRankRangeChange={changeRankRange}
               onSortChange={changeSort}
             />
-          )
+          ),
         }}
       />
     );
@@ -118,7 +118,7 @@ const mapDispatchToProps = {
   openView,
   closeView,
   changeRankRange,
-  changeSort
+  changeSort,
 };
 
 export default connect(

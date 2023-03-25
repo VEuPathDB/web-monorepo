@@ -1,6 +1,6 @@
 import { Location } from 'history';
-import { Action } from 'wdk-client/Actions';
-import { updateLocation } from 'wdk-client/Actions/RouterActions';
+import { Action } from '../Actions';
+import { updateLocation } from '../Actions/RouterActions';
 import {
   questionsLoaded,
   configLoaded,
@@ -8,22 +8,22 @@ import {
   recordClassesLoaded,
   userLoaded,
   preferencesLoaded,
-  allDataLoaded
-} from 'wdk-client/Actions/StaticDataActions';
+  allDataLoaded,
+} from '../Actions/StaticDataActions';
 import {
   USER_UPDATE,
   PREFERENCE_UPDATE,
-  PREFERENCES_UPDATE
-} from 'wdk-client/Actions/UserActions';
-import { 
+  PREFERENCES_UPDATE,
+} from '../Actions/UserActions';
+import {
   showLoginModal,
   hideLoginModal,
-  loginError
-} from 'wdk-client/Actions/UserSessionActions';
-import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
-import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { UserPreferences, User } from 'wdk-client/Utils/WdkUser';
-import { ServiceConfig } from 'wdk-client/Service/ServiceBase';
+  loginError,
+} from '../Actions/UserSessionActions';
+import { CategoryOntology } from '../Utils/CategoryUtils';
+import { Question, RecordClass } from '../Utils/WdkModel';
+import { UserPreferences, User } from '../Utils/WdkUser';
+import { ServiceConfig } from '../Service/ServiceBase';
 
 export const key = 'globalData';
 
@@ -40,20 +40,23 @@ export type GlobalData = Partial<{
     isOpen: boolean;
     message?: string;
     destination?: string;
-  }
-}>
+  };
+}>;
 
 const initialState: GlobalData = {
   loginForm: {
-    isOpen: false
-  }
-}
-  /**
-   * Handles requested static data item loads and passes remaining actions to
-   * handleAction(), which will usually be overridden by the subclass
-   */
-export function reduce(state: GlobalData | undefined = initialState, action: Action): GlobalData {
-  switch(action.type) {
+    isOpen: false,
+  },
+};
+/**
+ * Handles requested static data item loads and passes remaining actions to
+ * handleAction(), which will usually be overridden by the subclass
+ */
+export function reduce(
+  state: GlobalData | undefined = initialState,
+  action: Action
+): GlobalData {
+  switch (action.type) {
     // static data actions
     case configLoaded.type:
     case ontologyLoaded.type:
@@ -72,10 +75,15 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
     // user actions
     case PREFERENCE_UPDATE:
       // incorporate new preference values into existing preference object
-      let { global: oldGlobal, project: oldProject } = state.preferences || {} as UserPreferences;
+      let { global: oldGlobal, project: oldProject } =
+        state.preferences || ({} as UserPreferences);
       let { global: newGlobal, project: newProject } = action.payload;
-      let combinedGlobal = newGlobal == null ? oldGlobal : Object.assign({}, oldGlobal, newGlobal);
-      let combinedProject = newProject == null ? oldProject : Object.assign({}, oldProject, newProject);
+      let combinedGlobal =
+        newGlobal == null ? oldGlobal : Object.assign({}, oldGlobal, newGlobal);
+      let combinedProject =
+        newProject == null
+          ? oldProject
+          : Object.assign({}, oldProject, newProject);
       let combinedPrefs = { global: combinedGlobal, project: combinedProject };
       // treat preference object as if it has just been loaded (with new values present)
       return { ...state, preferences: combinedPrefs };
@@ -86,7 +94,6 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
       // treat preference object as if it has just been loaded (with new values present)
       return { ...state, preferences: replacementPrefs };
 
-
     // loginForm actions
     case showLoginModal.type:
       return {
@@ -94,16 +101,16 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
         loginForm: {
           ...state.loginForm,
           isOpen: true,
-          destination: action.payload.destination
-        }
+          destination: action.payload.destination,
+        },
       };
 
     case hideLoginModal.type:
       return {
         ...state,
         loginForm: {
-          isOpen: false
-        }
+          isOpen: false,
+        },
       };
 
     case loginError.type:
@@ -112,8 +119,8 @@ export function reduce(state: GlobalData | undefined = initialState, action: Act
         loginForm: {
           ...state.loginForm,
           isOpen: Boolean(state.loginForm && state.loginForm.isOpen),
-          message: action.payload.message
-        }
+          message: action.payload.message,
+        },
       };
 
     default:
