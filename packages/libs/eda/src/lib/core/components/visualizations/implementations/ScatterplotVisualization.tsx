@@ -510,6 +510,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? true
       : false;
 
+  // set a condition to show Banner for continuous overlayVariable if plot option is not 'Raw'
+  const showContinousOverlayBanner: boolean =
+    overlayVariable != null &&
+    overlayVariable.dataShape === 'continuous' &&
+    (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
+      vizConfig.valueSpecConfig === 'Best fit line with raw');
+
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
       // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
@@ -554,12 +561,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         return undefined;
 
       // prevent data request for the case of  plot option != Raw when using continuous overlayVariable
-      if (
-        overlayVariable != null &&
-        overlayVariable.dataShape === 'continuous' &&
-        (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
-          vizConfig.valueSpecConfig === 'Best fit line with raw')
-      ) {
+      if (showContinousOverlayBanner) {
         return undefined;
       }
 
@@ -715,6 +717,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       computeJobStatus,
       providedOverlayVariable,
       showLogScaleBanner,
+      showContinousOverlayBanner,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])
@@ -1437,42 +1440,38 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           )}
 
         {/* show Banner for continuous overlayVariable if plot option is not 'Raw' */}
-        {!data.pending &&
-          overlayVariable != null &&
-          overlayVariable.dataShape === 'continuous' &&
-          (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
-            vizConfig.valueSpecConfig === 'Best fit line with raw') && (
-            <div>
-              <Banner
-                banner={{
-                  type: 'warning',
-                  message:
-                    'Plot modes with fitted lines are not available when continuous overlay variables are selected.',
-                  pinned: true,
-                  intense: false,
-                  // additionalMessage is shown next to message when clicking showMoreLinkText.
-                  // disappears when clicking showLess link
-                  // note that this additionalMessage prop is used to determine show more/less behavior or not
-                  // if undefined, then just show normal banner with message
-                  additionalMessage:
-                    'Continuous overlay variable values are not binned.',
-                  // text for showMore link
-                  showMoreLinkText: 'Why?',
-                  // text for showless link
-                  showLessLinkText: 'Read less',
-                  // color for show more links
-                  showMoreLinkColor: '#006699',
-                  spacing: {
-                    margin: '0.3125em 0 0 0',
-                    padding: '0.3125em 0.625em',
-                  },
-                  fontSize: '1em',
-                  showBanner: showBanner,
-                  setShowBanner: setShowBanner,
-                }}
-              />
-            </div>
-          )}
+        {!data.pending && showContinousOverlayBanner && (
+          <div>
+            <Banner
+              banner={{
+                type: 'warning',
+                message:
+                  'Plot modes with fitted lines are not available when continuous overlay variables are selected.',
+                pinned: true,
+                intense: false,
+                // additionalMessage is shown next to message when clicking showMoreLinkText.
+                // disappears when clicking showLess link
+                // note that this additionalMessage prop is used to determine show more/less behavior or not
+                // if undefined, then just show normal banner with message
+                additionalMessage:
+                  'Continuous overlay variable values are not binned.',
+                // text for showMore link
+                showMoreLinkText: 'Why?',
+                // text for showless link
+                showLessLinkText: 'Read less',
+                // color for show more links
+                showMoreLinkColor: '#006699',
+                spacing: {
+                  margin: '0.3125em 0 0 0',
+                  padding: '0.3125em 0.625em',
+                },
+                fontSize: '1em',
+                showBanner: showBanner,
+                setShowBanner: setShowBanner,
+              }}
+            />
+          </div>
+        )}
 
         {/* show log scale related Banner message unless plot mode of 'Raw' */}
         {showLogScaleBanner && (
