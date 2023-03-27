@@ -12,7 +12,8 @@ export function numberDateDefaultAxisRange(
   observedMax: number | string | undefined,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full'
+  axisRangeSpec = 'Full',
+  isNonZeroBaseline: boolean = false
 ): NumberOrDateRange | undefined {
   if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
@@ -29,50 +30,33 @@ export function numberDateDefaultAxisRange(
                   defaults.displayRangeMin <= 0 ||
                   defaults.rangeMin <= 0)
                   ? (observedMinPos as number)
-                  : observedMin != null
-                  ? Math.min(
-                      // add zero as an origin
-                      0,
+                  : (min([
+                      isNonZeroBaseline ? undefined : 0,
                       defaults.displayRangeMin,
                       defaults.rangeMin,
-                      observedMin as number
-                    )
-                  : // add zero as an origin
-                    Math.min(0, defaults.displayRangeMin, defaults.rangeMin),
-              max:
-                observedMax != null
-                  ? Math.max(
-                      defaults.displayRangeMax,
-                      defaults.rangeMax,
-                      observedMax as number
-                    )
-                  : Math.max(defaults.displayRangeMax, defaults.rangeMax),
+                      observedMin as number,
+                    ]) as number),
+              max: max([
+                defaults.displayRangeMax,
+                defaults.rangeMax,
+                observedMax,
+              ]) as number,
             }
           : {
               min: logScale
                 ? (observedMinPos as number)
-                : observedMin != null
-                ? // add zero as an origin
-                  Math.min(0, defaults.rangeMin, observedMin as number)
-                : // add zero as an origin
-                  Math.min(0, defaults.rangeMin),
-              max:
-                observedMax != null
-                  ? Math.max(defaults.rangeMax, observedMax as number)
-                  : defaults.rangeMax,
+                : (min([
+                    isNonZeroBaseline ? undefined : 0,
+                    defaults.rangeMin,
+                    observedMin as number,
+                  ]) as number),
+              max: max([defaults.rangeMax, observedMax]) as number,
             }
         : {
             min: logScale
               ? (observedMinPos as number)
-              : observedMin != null
-              ? Math.min(observedMin as number)
-              : // just leave this or set to be undefined
-                Math.min(defaults.rangeMin),
-            max:
-              observedMax != null
-                ? (observedMax as number)
-                : // just leave this or set to be undefined
-                  defaults.rangeMax,
+              : (observedMin as number),
+            max: observedMax as number,
           };
     } else if (variable.type === 'date') {
       const defaults = variable.distributionDefaults;
