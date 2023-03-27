@@ -45,6 +45,7 @@ export function MapSideNavigation({
         border: mapNavigationBorder,
         borderLeft: 'none',
         borderBottom: 'none',
+        borderTop: 'none',
         // height: 'calc(100% - 150px)',
         height: '100%',
         minHeight: 125,
