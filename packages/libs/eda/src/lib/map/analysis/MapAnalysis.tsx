@@ -38,7 +38,7 @@ import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
-import { SiteInformationProps } from '..';
+import { mapNavigationBorder, SiteInformationProps } from '..';
 import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
@@ -416,11 +416,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'flex-start',
-                                padding: '0.25rem',
                                 width: '100%',
                                 transition: 'background 0.2s ease',
-                                // An example of an active state style.
-                                fontWeight: isActive ? 'bold' : 'inherit',
+                                marginBottom: 10,
+                                background: isActive
+                                  ? 'rgba(0, 0, 0, 0.15)'
+                                  : 'inherit',
                               }}
                             >
                               {item}
