@@ -19,7 +19,8 @@ export type PastReleaseProps = {
   datasetId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
-  citation: ReactNode;
+  citationComponent: ReactNode;
+  citationString: string;
 };
 
 export default function PastRelease({
@@ -27,7 +28,8 @@ export default function PastRelease({
   datasetId,
   release,
   downloadClient,
-  citation,
+  citationComponent,
+  citationString,
 }: PastReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
 
@@ -108,6 +110,7 @@ export default function PastRelease({
         subTitle={{
           Date: release.date ?? '',
           'Change Log': release.description ?? '',
+          Citation: citationString,
         }}
       >
         <div style={{ padding: 15, paddingLeft: 35 }}>
@@ -117,7 +120,7 @@ export default function PastRelease({
             textSize="medium"
           >
             <span style={{ fontWeight: 500 }}>Citation: </span>
-            {citation}
+            {citationComponent}
           </Paragraph>
           {releaseFiles.length ? (
             <DataGrid

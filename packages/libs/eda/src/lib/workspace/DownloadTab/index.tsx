@@ -7,6 +7,9 @@ import {
   useStudyRecord,
 } from '../../core';
 
+// Utils
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+
 // Definitions
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { DownloadClient } from '../../core/api/DownloadClient';
@@ -14,7 +17,7 @@ import { DownloadClient } from '../../core/api/DownloadClient';
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
-import StudyCitation from './StudyCitation';
+import StudyCitation, { getCitationString } from './StudyCitation';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -200,6 +203,16 @@ export default function DownloadTab({
     );
   }, [WDKStudyReleases, downloadServiceStudyReleases]);
 
+  const partialCitationData = useMemo(
+    () => ({
+      studyAuthor: studyAuthor ?? '',
+      studyDisplayName: studyRecord.displayName,
+      projectDisplayName: projectDisplayName ?? '',
+      downloadUrl: window.location.href,
+    }),
+    [studyAuthor, studyRecord.displayName, projectDisplayName]
+  );
+
   return (
     <div style={{ display: 'flex', paddingTop: 10 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
@@ -211,10 +224,7 @@ export default function DownloadTab({
             analysisState={analysisState}
             citation={
               <StudyCitation
-                studyAuthor={studyAuthor ?? ''}
-                studyDisplayName={studyRecord.displayName}
-                projectDisplayName={projectDisplayName ?? ''}
-                downloadUrl={window.location.href}
+                partialCitationData={partialCitationData}
                 // use current release
                 release={mergedReleaseData[0]}
               />
@@ -231,10 +241,7 @@ export default function DownloadTab({
               downloadClient={downloadClient}
               citation={
                 <StudyCitation
-                  studyAuthor={studyAuthor ?? ''}
-                  studyDisplayName={studyRecord.displayName}
-                  projectDisplayName={projectDisplayName ?? ''}
-                  downloadUrl={window.location.href}
+                  partialCitationData={partialCitationData}
                   release={release}
                 />
               }
@@ -246,15 +253,18 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
-              citation={
+              citationComponent={
                 <StudyCitation
-                  studyAuthor={studyAuthor ?? ''}
-                  studyDisplayName={studyRecord.displayName}
-                  projectDisplayName={projectDisplayName ?? ''}
-                  downloadUrl={window.location.href}
+                  partialCitationData={partialCitationData}
                   release={release}
                 />
               }
+              citationString={stripHTML(
+                getCitationString({
+                  partialCitationData,
+                  release,
+                })
+              )}
             />
           )
         )}
