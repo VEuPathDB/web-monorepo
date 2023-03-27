@@ -177,7 +177,7 @@ export function MapSideNavigation({
         }}
         className={isExpanded ? '' : 'screenReaderOnly'}
       >
-        {activeNavigationMenu && activeNavigationMenu}
+        {activeNavigationMenu}
       </div>
     </nav>
   );
