@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - github-action-publish ## just for testing... delete before merging
 jobs:
 
   # Cache yarn install command
