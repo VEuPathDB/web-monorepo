@@ -46,7 +46,13 @@ import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
-import { BarChartTwoTone } from '@material-ui/icons';
+import {
+  BarChartSharp,
+  EditLocation,
+  InfoSharp,
+  Save,
+  Share,
+} from '@material-ui/icons';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -273,18 +279,38 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const sideNavigationItemObjs = [
     {
       isButton: true,
-      labelText: 'Add a Plot',
-      icon: <BarChartTwoTone />,
+      labelText: 'Paint',
+      icon: <EditLocation />,
     },
     {
       isButton: true,
-      labelText: 'Filter Data',
+      labelText: 'Filter',
       icon: <Filter />,
     },
     {
       isButton: true,
-      labelText: 'Download Map',
+      labelText: 'Plot',
+      icon: <BarChartSharp />,
+    },
+    {
+      isButton: true,
+      labelText: 'Download',
       icon: <Download />,
+    },
+    {
+      isButton: true,
+      labelText: 'Share',
+      icon: <Share />,
+    },
+    {
+      isButton: true,
+      labelText: 'Save',
+      icon: <Save />,
+    },
+    {
+      isButton: true,
+      labelText: 'Show Study Information',
+      icon: <InfoSharp />,
     },
   ];
 
@@ -338,7 +364,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     <PromiseResult state={appPromiseState}>
       {(app) => {
         const activeNavigationItemMenu =
-          activeSideMenuIndex === 0 ? (
+          activeSideMenuIndex === 2 ? (
             <FloatingVizManagement
               analysisState={analysisState}
               setActiveVisualizationId={setActiveVisualizationId}
