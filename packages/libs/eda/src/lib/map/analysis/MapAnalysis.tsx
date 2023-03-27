@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
@@ -63,6 +63,47 @@ interface Props {
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
+
+type App = {
+  // This is what VSCode told me. Is there a better way to get the type?
+  name: string;
+  displayName: string;
+} & {
+  description?: string | undefined;
+} & {
+  visualizations: ({
+    name: string;
+    displayName: string;
+  } & {
+    description?: string | undefined;
+  } & {
+    dataElementConstraints?:
+      | {
+          [x: string]: {
+            isRequired: boolean;
+            minNumVars: number;
+            maxNumVars: number;
+          } & {
+            isTemporal?: boolean | undefined;
+            allowedTypes?:
+              | ('string' | 'number' | 'longitude' | 'integer' | 'date')[]
+              | undefined;
+            allowedShapes?:
+              | ('categorical' | 'ordinal' | 'binary' | 'continuous')[]
+              | undefined;
+            minNumValues?: number | undefined;
+            maxNumValues?: number | undefined;
+            allowMultiValued?: boolean | undefined;
+            description?: string | undefined;
+          };
+        }[]
+      | undefined;
+    dataElementDependencyOrder?: string[][] | undefined;
+  })[];
+  projects: string[];
+} & {
+  computeName?: string | undefined;
+};
 
 export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(props.analysisId, 'pass-through');
@@ -276,61 +317,97 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);
 
-  const sideNavigationItemObjs = [
-    {
-      isButton: true,
-      labelText: 'Paint',
-      icon: <EditLocation />,
-    },
-    {
-      isButton: true,
-      labelText: 'Filter',
-      icon: <Filter />,
-    },
-    {
-      isButton: true,
-      labelText: 'Plot',
-      icon: <BarChartSharp />,
-    },
-    {
-      isButton: true,
-      labelText: 'Download',
-      icon: <Download />,
-    },
-    {
-      isButton: true,
-      labelText: 'Share',
-      icon: <Share />,
-    },
-    {
-      isButton: true,
-      labelText: 'Save',
-      icon: <Save />,
-    },
-    {
-      isButton: true,
-      labelText: 'Show Study Information',
-      icon: <InfoSharp />,
-    },
-  ];
-
-  const sideNavigationItems = sideNavigationItemObjs.map((item, index) => {
-    return (
-      <button
-        style={buttonStyles}
-        onClick={() => {
-          setActiveSideMenuIndex((currentIndex) =>
-            currentIndex === index ? undefined : index
-          );
-        }}
-      >
-        <span style={iconStyles} aria-hidden>
-          {item.icon}
-        </span>
-        <span style={labelStyles}>{item.labelText}</span>
-      </button>
+  type SideNavigationItemConfigurationObject = {
+    isButton: boolean;
+    labelText: string;
+    icon: ReactNode;
+    renderWithApp: (app: App) => ReactNode;
+  };
+  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderWithApp'] =
+    (_) => (
+      <div style={{ padding: '2rem' }}>
+        <p>Not Implemented!</p>
+      </div>
     );
-  });
+  const sideNavigationConfigurationObject: SideNavigationItemConfigurationObject[] =
+    [
+      {
+        isButton: true,
+        labelText: 'Paint',
+        icon: <EditLocation />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        isButton: true,
+        labelText: 'Filter',
+        icon: <Filter />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        isButton: true,
+        labelText: 'Plot',
+        icon: <BarChartSharp />,
+        renderWithApp: (app) => {
+          return (
+            <FloatingVizManagement
+              analysisState={analysisState}
+              setActiveVisualizationId={setActiveVisualizationId}
+              appState={appState}
+              app={app}
+              geoConfigs={geoConfigs}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              toggleStarredVariable={toggleStarredVariable}
+              filters={filtersIncludingViewport}
+            />
+          );
+        },
+      },
+      {
+        isButton: true,
+        labelText: 'Download',
+        icon: <Download />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        isButton: true,
+        labelText: 'Share',
+        icon: <Share />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        isButton: true,
+        labelText: 'Save',
+        icon: <Save />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        isButton: true,
+        labelText: 'Show Study Information',
+        icon: <InfoSharp />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+    ];
+
+  const sideNavigationItems = sideNavigationConfigurationObject.map(
+    (item, index) => {
+      return (
+        <button
+          style={buttonStyles}
+          onClick={() => {
+            setActiveSideMenuIndex((currentIndex) =>
+              currentIndex === index ? undefined : index
+            );
+          }}
+        >
+          <span style={iconStyles} aria-hidden>
+            {item.icon}
+          </span>
+          <span style={labelStyles}>{item.labelText}</span>
+        </button>
+      );
+    }
+  );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -362,21 +439,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   return (
     <PromiseResult state={appPromiseState}>
-      {(app) => {
-        const activeNavigationItemMenu =
-          activeSideMenuIndex === 2 ? (
-            <FloatingVizManagement
-              analysisState={analysisState}
-              setActiveVisualizationId={setActiveVisualizationId}
-              appState={appState}
-              app={app}
-              geoConfigs={geoConfigs}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              toggleStarredVariable={toggleStarredVariable}
-              filters={filtersIncludingViewport}
-            />
-          ) : null;
+      {(app: App) => {
+        const activeSideNavigationItemMenu =
+          activeSideMenuIndex != null &&
+          sideNavigationConfigurationObject[activeSideMenuIndex].renderWithApp(
+            app
+          );
 
         return (
           <ShowHideVariableContextProvider>
@@ -429,7 +497,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }
                     siteInformationProps={props.siteInformationProps}
-                    activeNavigationMenu={activeNavigationItemMenu}
+                    activeNavigationMenu={activeSideNavigationItemMenu}
                   >
                     <div>
                       <ul style={{ margin: 0, padding: 0 }}>
