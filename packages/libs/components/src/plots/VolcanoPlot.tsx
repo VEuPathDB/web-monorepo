@@ -7,12 +7,21 @@ import {
   AxisTruncationAddon,
   independentAxisLogScaleAddon,
   DependentAxisLogScaleAddon,
-  ScatterPlotData,
 } from '../types/plots';
-import { VolcanoPlotData } from '../types/plots/volcanoplot';
+import {
+  VolcanoPlotData,
+  VolcanoPlotDataSeries,
+} from '../types/plots/volcanoplot';
 // add Shape for truncation
-import { Layout, Shape } from 'plotly.js';
 import { NumberRange } from '../types/general';
+import {
+  XYChart,
+  Tooltip,
+  Axis,
+  Grid,
+  GlyphSeries,
+  LineSeries,
+} from '@visx/xychart';
 
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
@@ -21,7 +30,7 @@ import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
 
 export interface VolcanoPlotProps
-  extends PlotProps<ScatterPlotData>,
+  extends PlotProps<VolcanoPlotData>,
     // truncation
     OrientationAddon,
     independentAxisLogScaleAddon,
@@ -40,231 +49,99 @@ export interface VolcanoPlotProps
   markerBodyOpacity?: number;
 }
 
-const EmptyVolcanoPlotData: ScatterPlotData = {
-  series: [],
+const EmptyVolcanoPlotData: VolcanoPlotData = {
+  data: [],
 };
 
 /**
  * This component handles several plots such as marker, line, confidence interval,
  * density, and combinations of plots like marker + line + confidence interval
  */
-const VolcanoPlot = makePlotlyPlotComponent(
-  'VolcanoPlot',
-  (props: VolcanoPlotProps) => {
-    const {
-      data = EmptyVolcanoPlotData,
-      independentAxisRange,
-      dependentAxisRange,
-      // independentAxisLabel,
-      // dependentAxisLabel,
-      // independentValueType,
-      // dependentValueType,
-      // truncation
-      orientation = OrientationDefault,
-      axisTruncationConfig,
-      independentAxisLogScale = false,
-      dependentAxisLogScale = false,
-      markerBodyOpacity,
-      adjustedPValueGate,
-      foldChangeGates,
-      ...restProps
-    } = props;
-
-    // truncation axis range
-    const standardIndependentAxisRange = independentAxisRange;
-    const extendedIndependentAxisRange = extendAxisRangeForTruncations(
-      standardIndependentAxisRange,
-      axisTruncationConfig?.independentAxis,
-      'number',
-      true, // addPadding
-      independentAxisLogScale
-    );
-
+function VolcanoPlot(props: VolcanoPlotProps) {
+  const {
+    data = EmptyVolcanoPlotData,
+    independentAxisRange,
+    dependentAxisRange,
+    // independentAxisLabel,
+    // dependentAxisLabel,
+    // independentValueType,
+    // dependentValueType,
     // truncation
-    const standardDependentAxisRange = dependentAxisRange;
-    const extendedDependentAxisRange = extendAxisRangeForTruncations(
-      standardDependentAxisRange,
-      axisTruncationConfig?.dependentAxis,
-      'number',
-      true, // addPadding
-      dependentAxisLogScale
-    );
+    orientation = OrientationDefault,
+    axisTruncationConfig,
+    independentAxisLogScale = false,
+    dependentAxisLogScale = false,
+    markerBodyOpacity,
+    adjustedPValueGate,
+    foldChangeGates,
+    ...restProps
+  } = props;
 
-    // make rectangular layout shapes for truncated axis/missing data
-    const truncatedAxisHighlighting: Partial<Shape>[] | undefined =
-      useMemo(() => {
-        if (data.series.length > 0) {
-          const filteredTruncationLayoutShapes = truncationLayoutShapes(
-            orientation,
-            standardIndependentAxisRange, // send undefined for independentAxisRange
-            standardDependentAxisRange,
-            extendedIndependentAxisRange, // send undefined for independentAxisRange
-            extendedDependentAxisRange,
-            axisTruncationConfig
-          );
+  // add truncation
 
-          return filteredTruncationLayoutShapes;
-        } else {
-          return [];
-        }
-      }, [
-        standardDependentAxisRange,
-        extendedDependentAxisRange,
-        orientation,
-        data,
-        axisTruncationConfig,
-      ]);
+  // process the data. unzip and zip
+  function formatData(series: VolcanoPlotDataSeries) {
+    // data: [
+    //   {
+    //     foldChange: ['2', '3'],
+    //     pValue: ['0.001', '0.0001'],
+    //     adjustedPValue: ['0.01', '0.001'],
+    //     pointId: ['a', 'b'],
+    //     overlayValue: 'positive',
+    //     id: 'id1',
+    //   },
 
-    const layout: Partial<Layout> = {
-      hovermode: 'closest',
-      xaxis: {
-        title: 'log2 Fold Change',
-        // truncation
-        range: data.series.length
-          ? [
-              extendedIndependentAxisRange?.min,
-              extendedIndependentAxisRange?.max,
-            ].map((val) =>
-              independentAxisLogScale && val != null
-                ? Math.log10(val as number)
-                : val
-            )
-          : undefined,
-        zeroline: false, // disable yaxis line
-        // make plot border
-        mirror: true,
-        // date or number type (from variable.type): no log scale for date
-        type: undefined,
-        tickfont: data.series.length ? {} : { color: 'transparent' },
-        ...tickSettings(
-          independentAxisLogScale,
-          extendedIndependentAxisRange,
-          'number'
-        ),
-      },
-      yaxis: {
-        title: '-log10 P Value',
-        // with the truncated axis, negative values need to be checked for log scale
-        range: data.series.length
-          ? [
-              extendedDependentAxisRange?.min,
-              extendedDependentAxisRange?.max,
-            ].map((val) =>
-              dependentAxisLogScale && val != null
-                ? Math.log10(val as number)
-                : val
-            )
-          : undefined,
-        // range: undefined,
-        zeroline: false, // disable xaxis line
-        // make plot border
-        mirror: true,
-        // date or number type (from variable.type): no log scale for date
-        type: undefined,
-        tickfont: data.series.length ? {} : { color: 'transparent' },
-        ...tickSettings(
-          dependentAxisLogScale,
-          extendedDependentAxisRange,
-          'number'
-        ),
-      },
-      // add truncatedAxisHighlighting for layout.shapes
-      // shapes: truncatedAxisHighlighting,
-      shapes: [
-        {
-          type: 'line',
-          x0: 0,
-          y0: adjustedPValueGate,
-          x1: 1,
-          y1: adjustedPValueGate,
-          line: {
-            color: 'rgb(0.3.0.35.0.35)',
-            width: 1,
-            dash: 'dash',
-          },
-          xref: 'paper',
-          layer: 'below',
-        },
-        {
-          type: 'line',
-          x0: foldChangeGates![0],
-          y0: 0,
-          x1: foldChangeGates![0],
-          y1: 1,
-          line: {
-            color: 'rgb(0.3.0.35.0.35)',
-            width: 1,
-            dash: 'dash',
-          },
-          yref: 'paper',
-          layer: 'below',
-        },
-        {
-          type: 'line',
-          x0: foldChangeGates![1],
-          y0: 0,
-          x1: foldChangeGates![1],
-          y1: 1,
-          line: {
-            color: 'rgb(0.3.0.35.0.35)',
-            width: 1,
-            dash: 'dash',
-          },
-          yref: 'paper',
-          layer: 'below',
-        },
-      ],
-    };
-
-    // change data here for marker opacity
-    const finalData = useMemo(() => {
-      return data.series.map((d: any) => ({
-        ...d,
-        marker: {
-          ...d.marker,
-          color:
-            d.marker == null
-              ? undefined
-              : markerBodyOpacity != null
-              ? Array.isArray(d.marker.color)
-                ? d.marker.color.map((color: string) =>
-                    ColorMath.evaluate(
-                      color +
-                        ' @a ' +
-                        (markerBodyOpacity * 100).toString() +
-                        '%'
-                    ).result.css()
-                  )
-                : ColorMath.evaluate(
-                    d.marker.color +
-                      ' @a ' +
-                      (markerBodyOpacity * 100).toString() +
-                      '%'
-                  ).result.css()
-              : d.marker.color,
-          // need to set marker.line for a transparent case (opacity != 1)
-          line:
-            d.marker == null
-              ? undefined
-              : {
-                  ...d.marker.line,
-                  width:
-                    markerBodyOpacity != null
-                      ? markerBodyOpacity === 0
-                        ? 1
-                        : 0
-                      : 1,
-                },
-        },
-      }));
-    }, [data, markerBodyOpacity]);
-
-    return {
-      data: finalData,
-      layout,
-      ...restProps,
-    };
+    // assume at least foldChange is there (should be type error if not!)
+    let seriesPoints = [];
   }
-);
+
+  // this should be -log2 etc.
+  const dataAccessors = {
+    xAccessor: (d: any) => {
+      return d.foldChange;
+    },
+    yAccessor: (d: any) => {
+      console.log('accessing ys');
+      return d.adjustedPValue;
+    },
+  };
+
+  const thresholdLineAccessors = {
+    xAccessor: (d: any) => {
+      return d.x;
+    },
+    yAccessor: (d: any) => {
+      return d.y;
+    },
+  };
+
+  console.log('data');
+  console.log(data);
+  console.log(data.data[0] as unknown as any[]);
+
+  // Issue is that the data needs to be like [{x1 y2}, {x2 y2}, ...]
+
+  return (
+    <XYChart
+      height={300}
+      xScale={{ type: 'linear', domain: [-7, 7] }}
+      yScale={{ type: 'linear', domain: [-2, 4] }}
+      width={300}
+    >
+      <Axis orientation="left" label="-log10 Raw P Value" />
+      <Grid columns={false} numTicks={4} />
+      <Axis orientation="bottom" label="log2 Fold Change" />
+      {/* {
+        data.data.map((series : any, index : any) => {
+          console.log(series);
+          return ( */}
+      <GlyphSeries
+        dataKey={'mydata1'}
+        data={data.data[0] as unknown as any[]}
+        {...dataAccessors}
+      />
+    </XYChart>
+  );
+}
 
 export default VolcanoPlot;

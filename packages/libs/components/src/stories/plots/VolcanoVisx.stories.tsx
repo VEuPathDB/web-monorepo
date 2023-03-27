@@ -86,11 +86,6 @@ interface TemplateProps {
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  const { dataSetProcess: datasetProcess } = processVolcanoData(
-    args.data,
-    highMedLowColors
-  );
-
   // Better to break into a high and low prop? Would be more clear
   const foldChangeGates = [-1.5, 1.5];
 
@@ -131,86 +126,11 @@ const Template: Story<TemplateProps> = (args) => {
     range: [-1, 8],
     nice: true,
   });
+  const volcanoPlotProps: VolcanoPlotProps = {
+    data: dataSetVolcano.volcanoplot,
+  };
 
-  return (
-    <XYChart
-      height={300}
-      xScale={{ type: 'linear', domain: [-7, 7] }}
-      yScale={{ type: 'linear', domain: [-2, 4] }}
-      width={300}
-    >
-      <Axis orientation="left" label="-log10 p value" />
-      <Grid columns={false} numTicks={4} />
-      <Axis orientation="bottom" label="log2 Fold Change" />
-      {datasetProcess.series.map((series, index) => {
-        console.log(String(index) + 'a');
-        return (
-          <GlyphSeries
-            dataKey={String(index) + 'a'}
-            data={series as unknown as any[]}
-            {...accessors}
-          />
-        );
-      })}
-      <LineSeries
-        className="pvalLine"
-        data={[
-          { x: -7, y: 1.5 },
-          { x: 7, y: 1.5 },
-        ]}
-        dataKey="pvalline"
-        fill="#000000"
-        stroke="#000000"
-        strokeWidth={1}
-        {...accessors}
-      />
-      <LineSeries
-        className="fcgatelow"
-        data={[
-          { x: -4.5, y: -2 },
-          { x: -4.5, y: 4 },
-        ]}
-        dataKey="fcgatelow"
-        fill="#000000"
-        stroke="#000000"
-        strokeWidth={1}
-        {...accessors}
-      />
-      <LineSeries
-        className="fcgatehigh"
-        data={[
-          { x: 0.5, y: -2 },
-          { x: 0.5, y: 4 },
-        ]}
-        dataKey="fcgatehigh"
-        fill="#000000"
-        stroke="#000000"
-        strokeWidth={1}
-        {...accessors}
-      />
-      <Tooltip
-        snapTooltipToDatumX
-        snapTooltipToDatumY
-        showVerticalCrosshair
-        showSeriesGlyphs
-        renderTooltip={({ tooltipData, colorScale }) => {
-          // console.log(tooltipData!.nearestDatum!);
-          return (
-            <div>
-              <div
-                style={{ color: colorScale!(tooltipData!.nearestDatum!.key) }}
-              >
-                {tooltipData!.nearestDatum!.key}
-              </div>
-              {accessors.xAccessor(tooltipData!.nearestDatum!.datum)}
-              {', '}
-              {accessors.yAccessor(tooltipData!.nearestDatum!.datum)}
-            </div>
-          );
-        }}
-      />
-    </XYChart>
-  );
+  return <VolcanoPlot {...volcanoPlotProps} />;
 };
 
 export const Default2 = Template.bind({});
