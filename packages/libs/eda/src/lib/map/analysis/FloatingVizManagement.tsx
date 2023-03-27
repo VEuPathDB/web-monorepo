@@ -211,7 +211,7 @@ export default function FloatingVizManagement({
           style={{
             // This will handle the (edge) case where a user's
             // plot is extremely length.
-            maxWidth: 500,
+            maxWidth: 250,
             marginTop: '1rem',
           }}
         >
