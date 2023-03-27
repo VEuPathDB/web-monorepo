@@ -38,7 +38,10 @@ import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
-import { mapNavigationBorder, SiteInformationProps } from '..';
+import {
+  mapSideNavigationActiveMenuItemBackground,
+  SiteInformationProps,
+} from '..';
 import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
@@ -420,7 +423,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 transition: 'background 0.2s ease',
                                 padding: '5px 10px',
                                 background: isActive
-                                  ? 'rgba(0, 0, 0, 0.15)'
+                                  ? mapSideNavigationActiveMenuItemBackground
                                   : 'inherit',
                               }}
                             >
