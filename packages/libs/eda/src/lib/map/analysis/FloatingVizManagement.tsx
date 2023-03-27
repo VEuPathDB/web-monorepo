@@ -37,6 +37,7 @@ import { boxplotVisualization } from '../../core/components/visualizations/imple
 import * as t from 'io-ts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
+import { Add } from '@material-ui/icons';
 
 interface Props {
   analysisState: AnalysisState;
@@ -203,7 +204,9 @@ export default function FloatingVizManagement({
     <>
       <div>
         <FilledButton
-          text="Add a Plot"
+          text="New plot"
+          size="small"
+          icon={Add}
           textTransform="none"
           onPress={() => setIsVizSelectorVisible(true)}
         />
