@@ -142,7 +142,7 @@ export function MapSideNavigation({
             // This handles short viewports. These styles allow
             // content inside the div to be scrollable when it exceeds the
             // height constraints of a short viewport.
-            marginLeft: '0.5rem',
+            margin: '0 0.5rem',
             // This pins the items to the bottom of the navigation
             display: 'flex',
             flexDirection: 'column',
