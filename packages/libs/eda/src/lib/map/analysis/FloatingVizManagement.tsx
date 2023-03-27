@@ -231,7 +231,6 @@ export default function FloatingVizManagement({
                       key={viz.visualizationId}
                     >
                       <button
-                        style={{ textAlign: 'left' }}
                         type="button"
                         className="link"
                         onClick={() => {
