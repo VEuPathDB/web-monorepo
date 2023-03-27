@@ -155,12 +155,10 @@ export function AnalysisPanel({
    * 2. split lastVarPath into an array structured as ['', entityId, variableId]
    */
   const isSubsetTabSelected = location.pathname.includes('variables');
-  const splitLastVarPath = lastVarPath.split('/');
-  const selectedEntityId = isSubsetTabSelected
-    ? splitLastVarPath[1]
-    : undefined;
+  const lastVarPathList = lastVarPath.split('/');
+  const selectedEntityId = isSubsetTabSelected ? lastVarPathList[1] : undefined;
   const selectedVariableId = isSubsetTabSelected
-    ? splitLastVarPath[2]
+    ? lastVarPathList[2]
     : undefined;
 
   const permissionsValue = usePermissions();
