@@ -446,7 +446,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 alignItems: 'center',
                                 justifyContent: 'flex-start',
                                 width: '100%',
-                                transition: 'background 0.2s ease',
+                                transition: 'background 0.1s ease',
                                 padding: '5px 10px',
                                 background: isActive
                                   ? mapSideNavigationActiveMenuItemBackground
