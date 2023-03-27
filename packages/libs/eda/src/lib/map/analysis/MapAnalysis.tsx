@@ -418,7 +418,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 justifyContent: 'flex-start',
                                 width: '100%',
                                 transition: 'background 0.2s ease',
-                                marginBottom: 10,
+                                padding: '5px 10px',
                                 background: isActive
                                   ? 'rgba(0, 0, 0, 0.15)'
                                   : 'inherit',
