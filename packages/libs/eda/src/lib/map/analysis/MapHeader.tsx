@@ -91,7 +91,6 @@ export function MapHeader({
             // Bring closer the content of the righthand side of
             // the bracket.
             marginLeft: 10,
-            marginRight: -5,
           }}
         />
         <table>
@@ -225,9 +224,9 @@ function LeftBracket(props: LeftBracketProps) {
   return (
     <div
       style={{
-        border: '2px solid black',
+        border: '1px solid black',
         borderRight: 'none',
-        height: '90%',
+        height: '75%',
         width: 5,
         ...props.styles,
       }}
