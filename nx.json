@@ -1,5 +1,9 @@
 {
   "extends": "nx/presets/npm.json",
+  "workspaceLayout": {
+    "appsDir": "packages/sites",
+    "libsDir": "packages/libs"
+  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
