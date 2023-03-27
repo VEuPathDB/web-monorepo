@@ -633,15 +633,13 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
           };
 
           return from(
-            wdkService
-              .getAnswerJson(answerSpec, formatConfig)
-              .then((answer) =>
-                groupCountLoaded({
-                  searchName,
-                  groupName: groupNameToLoadCountFor,
-                  filteredCount: answer.meta.totalCount,
-                })
-              )
+            wdkService.getAnswerJson(answerSpec, formatConfig).then((answer) =>
+              groupCountLoaded({
+                searchName,
+                groupName: groupNameToLoadCountFor,
+                filteredCount: answer.meta.totalCount,
+              })
+            )
           );
         })
       );
