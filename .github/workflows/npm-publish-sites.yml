@@ -25,7 +25,7 @@ jobs:
   # Gather the names of the sites directories and store it as an output variable 
   dirs:
     runs-on: ubuntu-latest
-    outpus:
+    outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v3
