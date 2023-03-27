@@ -1,0 +1,55 @@
+## Publish packages/sites/** to npm
+
+name: NPM Publish Sites
+on:
+  push:
+    branches:
+      - main
+jobs:
+
+  # Cache yarn install command
+  cache-yarn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: yarn
+      - uses: nrwl/nx-set-shas@v3
+      - run: yarn
+
+  # Gather the names of the sites directories and store it as an output variable 
+  dirs:
+    runs-on: ubuntu-latest
+    outpus:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')"
+  
+  publish:
+    name: Publish ${{ matrix.dir }}
+    needs:
+      - dirs
+      - cache
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: yarn
+      - run: yarn
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
