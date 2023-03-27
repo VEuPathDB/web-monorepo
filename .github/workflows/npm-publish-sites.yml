@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 14
@@ -30,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: set-matrix
-        run: echo "::set-output name=matrix::$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')"
+        run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
   
   publish:
     name: Publish ${{ matrix.dir }}
@@ -43,13 +41,12 @@ jobs:
         dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 14
           cache: yarn
       - run: yarn
+      - run: yarn nx run-many --target=build-npm-modules
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
