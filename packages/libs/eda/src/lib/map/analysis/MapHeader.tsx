@@ -111,7 +111,7 @@ export function MapHeader({
             <tr
               title={`${visibleEntityCount} samples of your subset samples visible at your current viewport.`}
             >
-              <td>Visible</td>
+              <td>View</td>
               <td>{visibleEntityCount}</td>
             </tr>
           </tbody>
