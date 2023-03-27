@@ -308,17 +308,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     marginLeft: '0.5rem',
   };
 
-  /** Again, for demonstration purposes. This is showing that we
-   * can keep track of the open panels and use that info to
-   * conditionally render some styles or something.
-   */
-  const [activeSideMenuIndex, setActiveSideMenuIndex] =
-    useState<number | undefined>();
-  const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
-    useState<boolean>(true);
-
   type SideNavigationItemConfigurationObject = {
-    isButton: boolean;
+    href?: string;
     labelText: string;
     icon: ReactNode;
     renderWithApp: (app: App) => ReactNode;
@@ -329,22 +320,19 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         <p>Not Implemented!</p>
       </div>
     );
-  const sideNavigationConfigurationObject: SideNavigationItemConfigurationObject[] =
+  const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        isButton: true,
         labelText: 'Paint',
         icon: <EditLocation />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
-        isButton: true,
         labelText: 'Filter',
         icon: <Filter />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
-        isButton: true,
         labelText: 'Plot',
         icon: <BarChartSharp />,
         renderWithApp: (app) => {
@@ -364,33 +352,27 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
-        isButton: true,
         labelText: 'Download',
         icon: <Download />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
-        isButton: true,
         labelText: 'Share',
         icon: <Share />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
-        isButton: true,
         labelText: 'Save',
         icon: <Save />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
-      {
-        isButton: true,
-        labelText: 'Show Study Information',
-        icon: <InfoSharp />,
-        renderWithApp: sideNavigationRenderPlaceholder,
-      },
     ];
 
-  const sideNavigationItems = sideNavigationConfigurationObject.map(
-    (item, index) => {
+  const [activeSideMenuIndex, setActiveSideMenuIndex] =
+    useState<number | undefined>();
+
+  const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
+    ({ labelText, icon }, index) => {
       return (
         <button
           style={buttonStyles}
@@ -401,9 +383,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           }}
         >
           <span style={iconStyles} aria-hidden>
-            {item.icon}
+            {icon}
           </span>
-          <span style={labelStyles}>{item.labelText}</span>
+          <span style={labelStyles}>{labelText}</span>
         </button>
       );
     }
@@ -437,14 +419,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     props.analysisState.analysis?.descriptor.subset.descriptor,
   ]);
 
+  const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
+    useState<boolean>(true);
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app: App) => {
         const activeSideNavigationItemMenu =
           activeSideMenuIndex != null &&
-          sideNavigationConfigurationObject[activeSideMenuIndex].renderWithApp(
-            app
-          );
+          sideNavigationButtonConfigurationObjects[
+            activeSideMenuIndex
+          ].renderWithApp(app);
 
         return (
           <ShowHideVariableContextProvider>
@@ -501,7 +486,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   >
                     <div>
                       <ul style={{ margin: 0, padding: 0 }}>
-                        {sideNavigationItems.map((item, itemIndex) => {
+                        {sideNavigationButtons.map((item, itemIndex) => {
                           const isActive = activeSideMenuIndex === itemIndex;
                           return (
                             <li
