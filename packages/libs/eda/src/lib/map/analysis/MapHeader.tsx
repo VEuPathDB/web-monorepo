@@ -52,9 +52,7 @@ export function MapHeader({
     <header
       style={{
         background: mapNavigationBackgroundColor,
-        border: mapNavigationBorder,
-        borderLeft: 'none',
-        borderRight: 'none',
+        borderBottom: mapNavigationBorder,
       }}
       className={`${mapHeader()} ${
         !isExpanded ? mapHeader('--collapsed') : ''
