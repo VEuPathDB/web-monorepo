@@ -47,6 +47,7 @@ export function MapHeader({
   visibleEntityCount = 0,
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
+  const { format } = new Intl.NumberFormat();
 
   return (
     <header
@@ -98,19 +99,19 @@ export function MapHeader({
           <tbody>
             <tr title={`There are X total samples.`}>
               <td>All</td>
-              <td>{totalEntityCount}</td>
+              <td>{format(totalEntityCount)}</td>
             </tr>
             <tr
               title={`You've subset all samples down to ${totalEntityInSubsetCount} entites.`}
             >
               <td>Subset</td>
-              <td>{totalEntityInSubsetCount}</td>
+              <td>{format(totalEntityInSubsetCount)}</td>
             </tr>
             <tr
               title={`${visibleEntityCount} samples of your subset samples visible at your current viewport.`}
             >
               <td>View</td>
-              <td>{visibleEntityCount}</td>
+              <td>{format(visibleEntityCount)}</td>
             </tr>
           </tbody>
         </table>
