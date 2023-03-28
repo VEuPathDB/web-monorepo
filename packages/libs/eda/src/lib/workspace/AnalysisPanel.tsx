@@ -54,6 +54,7 @@ import { FullScreenAppPlugin } from '../core/types/fullScreenApp';
 import FullScreenContainer from '../core/components/fullScreenApps/FullScreenContainer';
 import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
+import FilterChipList from '../core/components/FilterChipList';
 
 const AnalysisTabErrorBoundary = ({
   children,
@@ -143,10 +144,22 @@ export function AnalysisPanel({
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
-  const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
-  const [sharingModalVisible, setSharingModalVisible] = useState<boolean>(
-    false
-  );
+  // const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
+  const [sharingModalVisible, setSharingModalVisible] =
+    useState<boolean>(false);
+
+  /**
+   * Used in FilterChipList to highlight filter chip if/when an on-view Browse & Subset
+   * var matches a filter chip. Logic is:
+   * 1. check pathname to determine if Browse & Subset tab is selected
+   * 2. split lastVarPath into an array structured as ['', entityId, variableId]
+   */
+  const isSubsetTabSelected = location.pathname.includes('variables');
+  const lastVarPathList = lastVarPath.split('/');
+  const selectedEntityId = isSubsetTabSelected ? lastVarPathList[1] : undefined;
+  const selectedVariableId = isSubsetTabSelected
+    ? lastVarPathList[2]
+    : undefined;
 
   const permissionsValue = usePermissions();
   const approvalStatus: ApprovalStatus = permissionsValue.loading
@@ -253,17 +266,17 @@ export function AnalysisPanel({
             deleteAnalysis={
               hideSavedAnalysisButtons ? undefined : deleteAnalysis
             }
-            onFilterIconClick={() =>
-              setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
-            }
-            globalFiltersDialogOpen={globalFiltersDialogOpen}
+            // onFilterIconClick={() =>
+            //   setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
+            // }
+            // globalFiltersDialogOpen={globalFiltersDialogOpen}
             displaySharingModal={
               hideSavedAnalysisButtons
                 ? undefined
                 : () => setSharingModalVisible(true)
             }
           />
-          <GlobalFiltersDialog
+          {/* <GlobalFiltersDialog
             open={globalFiltersDialogOpen}
             setOpen={setGlobalFiltersDialogOpen}
             entities={entities}
@@ -277,7 +290,7 @@ export function AnalysisPanel({
               )
             }
             variableLinkConfig={variableLinkConfig}
-          />
+          /> */}
           <Route
             path={[
               `${routeBase}/variables/:entityId?/:variableId?`,
@@ -312,40 +325,59 @@ export function AnalysisPanel({
               </div>
             )}
           />
-          <WorkspaceNavigation
-            heading={<></>}
-            routeBase={routeBase}
-            items={[
-              {
-                display: 'View Study Details',
-                route: `/details`,
-                exact: false,
-              },
-              {
-                display: 'Browse and Subset',
-                route: `/variables${lastVarPath}`,
-                exact: false,
-              },
-              {
-                display: 'Visualize',
-                // check whether user is at viz
-                route: location.pathname
-                  .replace(routeBase, '')
-                  .startsWith('/visualizations')
-                  ? '/visualizations'
-                  : `/visualizations${lastVizPath}`,
-                exact: false,
-              },
-              {
-                display: 'Download',
-                route: '/download',
-              },
-              {
-                display: 'Record Notes',
-                route: '/notes',
-              },
-            ]}
-          />
+          <div className="EDAWorkspaceNavigation">
+            <div className="FilterChips">
+              <FilterChipList
+                filters={filters}
+                removeFilter={(filter) =>
+                  analysis &&
+                  setFilters(
+                    analysis.descriptor.subset.descriptor.filter(
+                      (f) => f !== filter
+                    )
+                  )
+                }
+                variableLinkConfig={variableLinkConfig}
+                entities={entities}
+                selectedEntityId={selectedEntityId}
+                selectedVariableId={selectedVariableId}
+              />
+            </div>
+            <WorkspaceNavigation
+              heading={<></>}
+              routeBase={routeBase}
+              items={[
+                {
+                  display: 'View Study Details',
+                  route: `/details`,
+                  exact: false,
+                },
+                {
+                  display: 'Browse and Subset',
+                  route: `/variables${lastVarPath}`,
+                  exact: false,
+                },
+                {
+                  display: 'Visualize',
+                  // check whether user is at viz
+                  route: location.pathname
+                    .replace(routeBase, '')
+                    .startsWith('/visualizations')
+                    ? '/visualizations'
+                    : `/visualizations${lastVizPath}`,
+                  exact: false,
+                },
+                {
+                  display: 'Download',
+                  route: '/download',
+                },
+                {
+                  display: 'Record Notes',
+                  route: '/notes',
+                },
+              ]}
+            />
+          </div>
           <Route
             path={routeBase}
             exact
@@ -432,10 +464,9 @@ export function AnalysisPanel({
             <Route
               path={`${routeBase}/fullscreen/:appName`}
               render={(props) => {
-                const plugin = (fullScreenAppPlugins as Record<
-                  string,
-                  FullScreenAppPlugin
-                >)[props.match.params.appName];
+                const plugin = (
+                  fullScreenAppPlugins as Record<string, FullScreenAppPlugin>
+                )[props.match.params.appName];
                 if (plugin == null) return <div>No full screen app found</div>;
                 return (
                   <FullScreenContainer
