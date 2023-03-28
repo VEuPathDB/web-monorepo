@@ -44,6 +44,8 @@ jobs:
         with:
           node-version: 14
           cache: yarn
+      - env:
+          NODE_OPTIONS: --max-old-space-size=4096
       - run: yarn
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
       - uses: JS-DevTools/npm-publish@v1
