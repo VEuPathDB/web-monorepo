@@ -2,7 +2,10 @@ import { useState, useCallback } from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 
 import { AnalysisState } from '../../core';
-import { NewVisualizationPickerModal } from '../../core/components/visualizations/VisualizationsContainer';
+import {
+  NewVisualizationPicker,
+  NewVisualizationPickerModal,
+} from '../../core/components/visualizations/VisualizationsContainer';
 import { useAppState } from './appState';
 import {
   ComputationAppOverview,
@@ -48,7 +51,7 @@ export default function FloatingVizManagement({
   );
 
   return (
-    <>
+    <div style={{ display: 'flex' }}>
       <div>
         <FilledButton
           text="New plot"
@@ -95,9 +98,8 @@ export default function FloatingVizManagement({
         </ul>
       </div>
 
-      <NewVisualizationPickerModal
-        visible={isVizSelectorVisible}
-        onVisibleChange={setIsVizSelectorVisible}
+      <NewVisualizationPicker
+        includeHeader={false}
         computation={computation!}
         updateVisualizations={updateVisualizations}
         visualizationPlugins={visualizationPlugins}
@@ -105,6 +107,6 @@ export default function FloatingVizManagement({
         geoConfigs={geoConfigs}
         onVisualizationCreated={onVisualizationCreated}
       />
-    </>
+    </div>
   );
 }
