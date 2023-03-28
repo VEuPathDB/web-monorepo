@@ -6,7 +6,6 @@ import { MultiFilterVariable, Variable } from '../../core';
 // Components
 import { VariableDetails } from '../Variable';
 import VariableTree from '../../core/components/variableTrees/VariableTree';
-import FilterChipList from '../../core/components/FilterChipList';
 
 // Hooks
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -53,8 +52,6 @@ export default function Subsetting({
   // What is the current variable?
   const variable = entity?.variables.find((v) => v.id === variableId);
 
-  const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   // Find multifilter parent. We will redirect to it later, if one is found.
@@ -91,23 +88,6 @@ export default function Subsetting({
           toggleStarredVariable={toggleStarredVariable}
           variableId={variable.id}
           variableLinkConfig={variableLinkConfig}
-        />
-      </div>
-      <div className="FilterChips">
-        <FilterChipList
-          filters={filters}
-          removeFilter={(filter) =>
-            analysisState.analysis &&
-            analysisState.setFilters(
-              analysisState.analysis.descriptor.subset.descriptor.filter(
-                (f) => f !== filter
-              )
-            )
-          }
-          variableLinkConfig={variableLinkConfig}
-          entities={entities}
-          selectedEntityId={entity.id}
-          selectedVariableId={variable.id}
         />
       </div>
 

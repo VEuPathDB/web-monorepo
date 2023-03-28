@@ -140,11 +140,12 @@
     }
   }
 
-  .WorkspaceNavigation {
+  .EDAWorkspaceNavigation {
     position: sticky;
     top: 0;
     z-index: 1050;
     background: white;
+    padding-top: 0.5em;
 
     h1 {
       font-size: 1em;
@@ -167,9 +168,6 @@
   .Entities::before,
   .Entities::after {
     content: '';
-  }
-
-  .expanded-diagram {
   }
 
   .MiniMapContainer {
