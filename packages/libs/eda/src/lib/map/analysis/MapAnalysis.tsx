@@ -63,7 +63,10 @@ import { lineplotVisualization } from '../../core/components/visualizations/impl
 import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
 import * as t from 'io-ts';
-import { Visualization } from '../../core/types/visualization';
+import {
+  ComputationAppOverview,
+  Visualization,
+} from '../../core/types/visualization';
 import FloatingVisualization from './FloatingVisualization';
 
 const mapStyle: React.CSSProperties = {
@@ -75,47 +78,6 @@ interface Props {
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
-
-type App = {
-  // This is what VSCode told me. Is there a better way to get the type?
-  name: string;
-  displayName: string;
-} & {
-  description?: string | undefined;
-} & {
-  visualizations: ({
-    name: string;
-    displayName: string;
-  } & {
-    description?: string | undefined;
-  } & {
-    dataElementConstraints?:
-      | {
-          [x: string]: {
-            isRequired: boolean;
-            minNumVars: number;
-            maxNumVars: number;
-          } & {
-            isTemporal?: boolean | undefined;
-            allowedTypes?:
-              | ('string' | 'number' | 'longitude' | 'integer' | 'date')[]
-              | undefined;
-            allowedShapes?:
-              | ('categorical' | 'ordinal' | 'binary' | 'continuous')[]
-              | undefined;
-            minNumValues?: number | undefined;
-            maxNumValues?: number | undefined;
-            allowMultiValued?: boolean | undefined;
-            description?: string | undefined;
-          };
-        }[]
-      | undefined;
-    dataElementDependencyOrder?: string[][] | undefined;
-  })[];
-  projects: string[];
-} & {
-  computeName?: string | undefined;
-};
 
 export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(props.analysisId, 'pass-through');
@@ -381,7 +343,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     href?: string;
     labelText: string;
     icon: ReactNode;
-    renderWithApp: (app: App) => ReactNode;
+    renderWithApp: (app: ComputationAppOverview) => ReactNode;
   };
   const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderWithApp'] =
     (_) => (
@@ -490,7 +452,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   return (
     <PromiseResult state={appPromiseState}>
-      {(app: App) => {
+      {(app: ComputationAppOverview) => {
         const activeSideNavigationItemMenu =
           activeSideMenuIndex != null &&
           sideNavigationButtonConfigurationObjects[
