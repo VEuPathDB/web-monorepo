@@ -17,7 +17,6 @@ jobs:
         with:
           node-version: 14
           cache: yarn
-      - uses: nrwl/nx-set-shas@v3
       - run: yarn
 
   # Gather the names of the sites directories and store it as an output variable 
@@ -46,7 +45,7 @@ jobs:
           node-version: 14
           cache: yarn
       - run: yarn
-      - run: yarn nx bundle:npm @veupathdb/{{matrix.dir}}
+      - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
