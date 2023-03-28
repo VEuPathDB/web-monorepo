@@ -3,6 +3,7 @@ import PopoverButton from '../buttons/PopoverButton/PopoverButton';
 import { Item } from './checkboxes/CheckboxList';
 import { css } from '@emotion/react';
 import { uniqueId } from 'lodash';
+import { CheckIcon } from '../icons';
 
 export interface SingleSelectProps<T> {
   /** An array of options to be used in the dropdown container */
@@ -18,6 +19,8 @@ export interface SingleSelectProps<T> {
   buttonDisplayContent: ReactNode;
   isDisabled?: boolean;
 }
+
+const checkIconContainer = { height: 16, width: 16 };
 
 export default function SingleSelect<T>({
   items,
@@ -77,7 +80,7 @@ export default function SingleSelect<T>({
         aria-label={'Menu of selectable options'}
         role="listbox"
         css={{
-          padding: 0,
+          padding: '0.125em',
           margin: 0,
           minWidth: '200px',
           listStyle: 'none',
@@ -125,6 +128,9 @@ function Option<T>({
       aria-selected={isSelected}
       ref={optionRef}
       css={css`
+        display: flex;
+        align-items: center;
+        gap: 0.25em;
         padding: 0.5em;
         line-height: 1.25;
         cursor: pointer;
@@ -134,12 +140,16 @@ function Option<T>({
         &:hover {
           background-color: #3375e1;
           color: white;
+          fill: white;
         }
       `}
       tabIndex={-1}
       onClick={() => onSelect(item.value)}
       onKeyDown={(e) => onKeyDown(e.key, item.value)}
     >
+      <span css={checkIconContainer}>
+        {isSelected ? <CheckIcon /> : undefined}
+      </span>
       {item.display}
     </li>
   );
