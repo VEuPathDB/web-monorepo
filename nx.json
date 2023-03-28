@@ -23,10 +23,10 @@
     "start": {
       "dependsOn": ["^build-npm-modules"]
     },
-    "bundle": {
+    "bundle:dev": {
       "dependsOn": ["^build-npm-modules"]
     },
-    "prepack": {
+    "bundle:npm": {
       "dependsOn": ["^build-npm-modules"]
     },
     "storybook": {
