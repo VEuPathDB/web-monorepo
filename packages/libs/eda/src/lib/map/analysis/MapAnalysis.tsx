@@ -46,13 +46,25 @@ import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
+import { BarChartSharp, EditLocation, Save, Share } from '@material-ui/icons';
+import { ComputationPlugin } from '../../core/components/computations/Types';
+import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
+import { LayoutOptions } from '../../core/components/layouts/types';
+import { OverlayOptions } from '../../core/components/visualizations/options/types';
+import { FloatingLayout } from '../../core/components/layouts/FloatingLayout';
+import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
+import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
 import {
-  BarChartSharp,
-  EditLocation,
-  InfoSharp,
-  Save,
-  Share,
-} from '@material-ui/icons';
+  contTableVisualization,
+  twoByTwoVisualization,
+} from '../../core/components/visualizations/implementations/MosaicVisualization';
+import { scatterplotVisualization } from '../../core/components/visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../../core/components/visualizations/implementations/LineplotVisualization';
+import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
+import * as t from 'io-ts';
+import { Visualization } from '../../core/types/visualization';
+import FloatingVisualization from './FloatingVisualization';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -191,6 +203,63 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
+  );
+
+  // Customise the visualization plugin
+  const plugin = useMemo((): ComputationPlugin => {
+    function vizWithOptions(
+      visualization: VisualizationPlugin<LayoutOptions & OverlayOptions>
+    ) {
+      return visualization.withOptions({
+        hideFacetInputs: true,
+        layoutComponent: FloatingLayout,
+        getOverlayVariable: (_) => appState.selectedOverlayVariable,
+        getOverlayVariableHelp: () =>
+          'The overlay variable can be selected via the top-right panel.',
+        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
+      });
+    }
+
+    return {
+      configurationComponent: ZeroConfigWithButton,
+      isConfigurationValid: t.undefined.is,
+      createDefaultConfiguration: () => undefined,
+      visualizationPlugins: {
+        histogram: vizWithOptions(histogramVisualization),
+        twobytwo: vizWithOptions(twoByTwoVisualization),
+        conttable: vizWithOptions(contTableVisualization),
+        scatterplot: vizWithOptions(scatterplotVisualization),
+        lineplot: vizWithOptions(lineplotVisualization),
+        // 'map-markers': vizWithOptions(mapVisualization), // disabling because of potential confusion between marker colors
+        barplot: vizWithOptions(barplotVisualization),
+        boxplot: vizWithOptions(boxplotVisualization),
+      },
+    };
+  }, [appState.selectedOverlayVariable]);
+
+  const computation = analysisState.analysis?.descriptor.computations[0];
+
+  const updateVisualizations = useCallback(
+    (
+      visualizations:
+        | Visualization[]
+        | ((visualizations: Visualization[]) => Visualization[])
+    ) => {
+      analysisState.setComputations((computations) =>
+        computations.map((c) =>
+          c.computationId !== computation?.computationId
+            ? c
+            : {
+                ...c,
+                visualizations:
+                  typeof visualizations === 'function'
+                    ? visualizations(c.visualizations)
+                    : visualizations,
+              }
+        )
+      );
+    },
+    [analysisState, computation?.computationId]
   );
 
   const fieldTree = useFieldTree(
@@ -339,14 +408,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <FloatingVizManagement
               analysisState={analysisState}
+              updateVisualizations={updateVisualizations}
               setActiveVisualizationId={setActiveVisualizationId}
-              appState={appState}
               app={app}
+              visualizationPlugins={plugin.visualizationPlugins}
               geoConfigs={geoConfigs}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              toggleStarredVariable={toggleStarredVariable}
-              filters={filtersIncludingViewport}
             />
           );
         },
@@ -591,6 +657,20 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     toggleStarredVariable={toggleStarredVariable}
                   />
                 </FloatingDiv>
+
+                <FloatingVisualization
+                  analysisState={analysisState}
+                  updateVisualizations={updateVisualizations}
+                  setActiveVisualizationId={setActiveVisualizationId}
+                  appState={appState}
+                  app={app}
+                  visualizationPlugins={plugin.visualizationPlugins}
+                  geoConfigs={geoConfigs}
+                  totalCounts={totalCounts}
+                  filteredCounts={filteredCounts}
+                  toggleStarredVariable={toggleStarredVariable}
+                  filters={filtersIncludingViewport}
+                />
 
                 {(basicMarkerError || overlayError) && (
                   <FloatingDiv
