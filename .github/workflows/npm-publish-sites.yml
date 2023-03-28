@@ -46,8 +46,9 @@ jobs:
           node-version: 14
           cache: yarn
       - run: yarn
-      - run: yarn nx run-many --target=build-npm-modules
+      - run: yarn nx bundle:npm @veupathdb/{{matrix.dir}}
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
+          package: packages/sites/${{ matrix.dir }}/package.json
