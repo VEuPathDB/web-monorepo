@@ -4,7 +4,7 @@ name: NPM Publish Sites
 on:
   push:
     branches:
-      - main
+      - 'main'
   paths:
       - 'packages/sites/*/package.json' ## Only run with package.json is updated
 jobs:
