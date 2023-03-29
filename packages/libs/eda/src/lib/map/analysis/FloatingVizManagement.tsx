@@ -2,10 +2,7 @@ import { useState, useCallback } from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 
 import { AnalysisState } from '../../core';
-import {
-  NewVisualizationPicker,
-  NewVisualizationPickerModal,
-} from '../../core/components/visualizations/VisualizationsContainer';
+import { NewVisualizationPicker } from '../../core/components/visualizations/VisualizationsContainer';
 import { useAppState } from './appState';
 import {
   ComputationAppOverview,
@@ -97,16 +94,17 @@ export default function FloatingVizManagement({
           )}
         </ul>
       </div>
-
-      <NewVisualizationPicker
-        includeHeader={false}
-        computation={computation!}
-        updateVisualizations={updateVisualizations}
-        visualizationPlugins={visualizationPlugins}
-        visualizationsOverview={app.visualizations}
-        geoConfigs={geoConfigs}
-        onVisualizationCreated={onVisualizationCreated}
-      />
+      {isVizSelectorVisible && (
+        <NewVisualizationPicker
+          includeHeader={false}
+          computation={computation!}
+          updateVisualizations={updateVisualizations}
+          visualizationPlugins={visualizationPlugins}
+          visualizationsOverview={app.visualizations}
+          geoConfigs={geoConfigs}
+          onVisualizationCreated={onVisualizationCreated}
+        />
+      )}
     </div>
   );
 }
