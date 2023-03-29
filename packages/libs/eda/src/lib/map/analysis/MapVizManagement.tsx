@@ -2,10 +2,7 @@ import { useState, useCallback } from 'react';
 import { FilledButton } from '@veupathdb/coreui';
 
 import { AnalysisState } from '../../core';
-import {
-  NewVisualizationPicker,
-  NewVisualizationPickerModal,
-} from '../../core/components/visualizations/VisualizationsContainer';
+import { NewVisualizationPicker } from '../../core/components/visualizations/VisualizationsContainer';
 import { useAppState } from './appState';
 import {
   ComputationAppOverview,
@@ -30,7 +27,7 @@ interface Props {
   geoConfigs: GeoConfig[];
 }
 
-export default function FloatingVizManagement({
+export default function MapVizManagement({
   analysisState,
   updateVisualizations,
   setActiveVisualizationId,

@@ -42,7 +42,7 @@ import {
   mapSideNavigationActiveMenuItemBackground,
   SiteInformationProps,
 } from '..';
-import FloatingVizManagement from './FloatingVizManagement';
+import MapVizManagement from './MapVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
@@ -368,7 +368,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         icon: <BarChartSharp />,
         renderWithApp: (app) => {
           return (
-            <FloatingVizManagement
+            <MapVizManagement
               analysisState={analysisState}
               updateVisualizations={updateVisualizations}
               setActiveVisualizationId={setActiveVisualizationId}
