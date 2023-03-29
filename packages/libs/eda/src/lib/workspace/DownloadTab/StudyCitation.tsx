@@ -9,6 +9,7 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 // Definitions
 import { DownloadTabStudyRelease } from './types';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { colors, Paragraph } from '@veupathdb/coreui';
 
 // Utils
 import {
@@ -23,7 +24,7 @@ export type CitationDetails = {
     studyAuthor: string | LinkAttributeValue;
     studyDisplayName: string;
     projectDisplayName: string;
-    downloadUrl: string;
+    citationUrl: string;
   };
   release: DownloadTabStudyRelease;
 };
@@ -32,7 +33,7 @@ export function getCitationString({
   partialCitationData,
   release,
 }: CitationDetails) {
-  const { studyAuthor, studyDisplayName, projectDisplayName, downloadUrl } =
+  const { studyAuthor, studyDisplayName, projectDisplayName, citationUrl } =
     partialCitationData;
   const parsedReleaseDate = parse(
     release.date ?? '',
@@ -47,7 +48,7 @@ export function getCitationString({
       ? studyAuthor.displayText
       : studyAuthor.url;
 
-  return `${typeGuardedStudyAuthor}. Study: ${studyDisplayName}. ${projectDisplayName}. ${citationDate}, ${release.releaseNumber} (${downloadUrl})`;
+  return `${typeGuardedStudyAuthor}. Dataset: ${studyDisplayName}. ${projectDisplayName}. ${citationDate}, Release ${release.releaseNumber} (${citationUrl})`;
 }
 
 const useStyles = makeStyles(() => ({
@@ -84,49 +85,65 @@ export default function StudyCitation({
       ...data,
       styles: {
         ...data.styles,
-        left: `${tooltipPosition.pageX + 10}px`,
-        top: `${tooltipPosition.pageY}px`,
+        left: `${tooltipPosition.pageX + 5}px`,
+        top: `${tooltipPosition.pageY + 5}px`,
       },
     };
   };
 
   return (
-    <Tooltip
-      title="Copy citation to clipboard"
-      onMouseMove={handleMouseMove}
-      classes={{ tooltip: classes.tooltip }}
-      PopperProps={{
-        modifiers: {
-          computeStyle: {
-            fn: computeStyleFn,
-            gpuAcceleration: true,
-          },
-        },
-      }}
+    <Paragraph
+      color={colors.gray[600]}
+      styleOverrides={{ margin: 0 }}
+      textSize="medium"
     >
-      <span
-        onMouseOver={() => (hoveredState ? undefined : setHoveredState(true))}
-        onMouseLeave={() =>
-          !hoveredState ? undefined : setHoveredState(false)
-        }
-        onClick={copyCitation}
-        style={{
-          cursor: 'copy',
-          textDecoration: hoveredState ? 'underline' : undefined,
+      <span style={{ fontWeight: 500 }}>Dataset Citation: </span>
+      <Tooltip
+        title="Copy citation to clipboard"
+        onMouseMove={handleMouseMove}
+        classes={{ tooltip: classes.tooltip }}
+        PopperProps={{
+          modifiers: {
+            computeStyle: {
+              fn: computeStyleFn,
+              gpuAcceleration: true,
+            },
+          },
         }}
       >
-        {safeHtml(citation)}
-        <div style={{ display: 'inline-block' }}>
-          <FloatingButton
-            icon={Copy}
-            text=""
-            onPress={copyCitation}
-            size="small"
-            tooltip=""
-            themeRole="primary"
-          />
-        </div>
-      </span>
-    </Tooltip>
+        <span
+          onMouseOver={() => (hoveredState ? undefined : setHoveredState(true))}
+          onMouseLeave={() =>
+            !hoveredState ? undefined : setHoveredState(false)
+          }
+          onClick={copyCitation}
+          style={{
+            cursor: 'pointer',
+            textDecoration: hoveredState ? 'underline' : undefined,
+          }}
+        >
+          {safeHtml(citation)}
+          <div
+            style={{ display: 'inline-block', position: 'relative', top: 3 }}
+          >
+            <FloatingButton
+              icon={Copy}
+              text=""
+              onPress={copyCitation}
+              size="small"
+              tooltip=""
+              themeRole="primary"
+              styleOverrides={{
+                container: {
+                  height: 17,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                },
+              }}
+            />
+          </div>
+        </span>
+      </Tooltip>
+    </Paragraph>
   );
 }
