@@ -6,7 +6,7 @@ on:
     branches:
       - 'main'
   paths:
-      - 'packages/sites/*/package.json' ## Only run with package.json is updated
+      - 'packages/sites/*/package.json'
 jobs:
 
   # Gather the names of the sites directories and store it as an output variable 
