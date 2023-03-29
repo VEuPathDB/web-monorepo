@@ -34,7 +34,6 @@ interface VEuPathDBVolcanoPlotData {
       adjustedPValue: string[];
       pointId: string[];
       overlayValue: string;
-      id: string;
     }>;
   };
 }
@@ -49,7 +48,6 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         adjustedPValue: ['0.01', '0.001'],
         pointId: ['a', 'b'],
         overlayValue: 'positive',
-        id: 'id1',
       },
       {
         foldChange: ['0.5', '0', '1', '0.5', '0.1', '4', '0.2'],
@@ -57,7 +55,6 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
         pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
         overlayValue: 'none',
-        id: 'id2',
       },
       {
         foldChange: ['0.01', '0.02', '0.03'],
@@ -65,7 +62,6 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         adjustedPValue: ['0.01', '0.001', '0.02'],
         pointId: ['j', 'k', 'l'],
         overlayValue: 'negative',
-        id: 'id3',
       },
     ],
   },

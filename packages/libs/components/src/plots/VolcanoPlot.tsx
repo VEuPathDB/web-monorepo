@@ -81,28 +81,34 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   // process the data. unzip and zip
   function formatData(series: VolcanoPlotDataSeries) {
-    // data: [
-    //   {
-    //     foldChange: ['2', '3'],
-    //     pValue: ['0.001', '0.0001'],
-    //     adjustedPValue: ['0.01', '0.001'],
-    //     pointId: ['a', 'b'],
-    //     overlayValue: 'positive',
-    //     id: 'id1',
-    //   },
-
     // assume at least foldChange is there (should be type error if not!)
-    let seriesPoints = [];
+    let seriesPoints: {
+      foldChange: string;
+      pValue: string;
+      adjustedPValue: string;
+      pointId: string;
+    }[] = [];
+    series.foldChange.forEach((value: string, index: number) => {
+      seriesPoints.push({
+        foldChange: value,
+        pValue: series.pValue[index],
+        adjustedPValue: series.adjustedPValue[index],
+        pointId: series.pointId[index],
+      });
+    });
+
+    return seriesPoints;
   }
+
+  const formattedData = data.data.map((series) => formatData(series));
 
   // this should be -log2 etc.
   const dataAccessors = {
     xAccessor: (d: any) => {
-      return d.foldChange;
+      return Math.log2(d.foldChange);
     },
     yAccessor: (d: any) => {
-      console.log('accessing ys');
-      return d.adjustedPValue;
+      return -Math.log10(d.adjustedPValue);
     },
   };
 
@@ -115,12 +121,6 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     },
   };
 
-  console.log('data');
-  console.log(data);
-  console.log(data.data[0] as unknown as any[]);
-
-  // Issue is that the data needs to be like [{x1 y2}, {x2 y2}, ...]
-
   return (
     <XYChart
       height={300}
@@ -131,15 +131,16 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       <Axis orientation="left" label="-log10 Raw P Value" />
       <Grid columns={false} numTicks={4} />
       <Axis orientation="bottom" label="log2 Fold Change" />
-      {/* {
-        data.data.map((series : any, index : any) => {
-          console.log(series);
-          return ( */}
-      <GlyphSeries
-        dataKey={'mydata1'}
-        data={data.data[0] as unknown as any[]}
-        {...dataAccessors}
-      />
+      {formattedData.map((series: any, index: any) => {
+        console.log(series);
+        return (
+          <GlyphSeries
+            dataKey={'mydata' + String(Math.random())}
+            data={series}
+            {...dataAccessors}
+          />
+        );
+      })}
     </XYChart>
   );
 }
