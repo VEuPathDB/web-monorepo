@@ -29,6 +29,7 @@ import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
 import { rgb } from 'd3';
+import { LineSubject } from '@visx/visx';
 
 export interface VolcanoPlotProps
   extends PlotProps<VolcanoPlotData>,
@@ -129,6 +130,11 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     strokeDasharray: 3,
   };
 
+  const axisStyles = {
+    stroke: '#bbbbbb',
+    strokeWidth: 1,
+  };
+
   const xMin = -7;
   const xMax = 7;
   const yMin = -2;
@@ -145,9 +151,12 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         yScale={{ type: 'linear', domain: [-2, 4] }}
         width={300}
       >
-        <Axis orientation="left" label="-log10 Raw P Value" />
-        <Axis orientation="bottom" label="log2 Fold Change" />
-        <Grid columns={false} numTicks={4} />
+        <Grid
+          numTicks={6}
+          lineStyle={{ stroke: '#dddddd', strokeWidth: 0.5 }}
+        />
+        <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
+        <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
         {/* Draw threshold lines below data points */}
         {adjustedPValueGate && (
