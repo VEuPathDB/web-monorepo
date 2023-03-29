@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { FilledButton } from '@veupathdb/coreui';
+import { FilledButton, FloatingButton } from '@veupathdb/coreui';
 
 import { AnalysisState } from '../../core';
 import { NewVisualizationPicker } from '../../core/components/visualizations/VisualizationsContainer';
@@ -9,7 +9,7 @@ import {
   Visualization,
 } from '../../core/types/visualization';
 import { GeoConfig } from '../../core/types/geoConfig';
-import { Add } from '@material-ui/icons';
+import { Add, CloseTwoTone } from '@material-ui/icons';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 
 interface Props {
@@ -95,15 +95,29 @@ export default function MapVizManagement({
         </ul>
       </div>
       {isVizSelectorVisible && (
-        <NewVisualizationPicker
-          includeHeader={false}
-          computation={computation!}
-          updateVisualizations={updateVisualizations}
-          visualizationPlugins={visualizationPlugins}
-          visualizationsOverview={app.visualizations}
-          geoConfigs={geoConfigs}
-          onVisualizationCreated={onVisualizationCreated}
-        />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+          }}
+        >
+          <FloatingButton
+            onPress={() => setIsVizSelectorVisible(false)}
+            ariaLabel="Close the visualization menu"
+            icon={CloseTwoTone}
+            themeRole="secondary"
+          />
+          <NewVisualizationPicker
+            includeHeader={false}
+            computation={computation!}
+            updateVisualizations={updateVisualizations}
+            visualizationPlugins={visualizationPlugins}
+            visualizationsOverview={app.visualizations}
+            geoConfigs={geoConfigs}
+            onVisualizationCreated={onVisualizationCreated}
+          />
+        </div>
       )}
     </div>
   );
