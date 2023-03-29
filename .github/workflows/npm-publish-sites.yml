@@ -10,17 +10,6 @@ on:
       - 'packages/sites/*/package.json' ## Only run with package.json is updated
 jobs:
 
-  # Cache yarn install command
-  cache-yarn:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 14
-          cache: yarn
-      - run: yarn
-
   # Gather the names of the sites directories and store it as an output variable 
   dirs:
     runs-on: ubuntu-latest
@@ -31,6 +20,7 @@ jobs:
       - id: set-matrix
         run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
   
+  # Publish sites packages to npm
   publish:
     name: Publish ${{ matrix.dir }}
     needs:
