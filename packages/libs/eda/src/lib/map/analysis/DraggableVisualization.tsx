@@ -127,11 +127,12 @@ export default function DraggableVisualization({
           showPanelTitle
           isOpen
           styleOverrides={{ zIndex: 10 }}
-          panelTitle={`Configure ${activeViz.displayName}`}
+          panelTitle={activeViz.descriptor.type}
           defaultPosition={{
             x: 451,
             y: 142,
           }}
+          onPanelDismiss={() => setActiveVisualizationId(undefined)}
         >
           <div
             style={{
@@ -139,7 +140,6 @@ export default function DraggableVisualization({
               resize: 'both',
               height: 300,
               width: 300,
-              transform: 'scale(0.8)',
             }}
           >
             <FullScreenVisualization
