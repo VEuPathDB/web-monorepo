@@ -1,8 +1,8 @@
-import { useState, ReactNode } from 'react';
+import { useState } from 'react';
 import { Column } from 'react-table';
 
 // Components
-import { colors, DataGrid, Download, Paragraph } from '@veupathdb/coreui';
+import { colors, DataGrid, Download } from '@veupathdb/coreui';
 
 // Definitions
 import { DownloadClient } from '../../core/api/DownloadClient';

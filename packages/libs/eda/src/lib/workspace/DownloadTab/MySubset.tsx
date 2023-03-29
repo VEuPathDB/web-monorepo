@@ -15,7 +15,7 @@ import {
   EnhancedEntityData,
   EnhancedEntityDatum,
 } from './hooks/useEnhancedEntityData';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import SubsetDownloadModal from '../Subsetting/SubsetDownloadModal';
 import { AnalysisState } from '../../core';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
