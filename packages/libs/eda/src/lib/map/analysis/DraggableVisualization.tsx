@@ -139,6 +139,7 @@ export default function DraggableVisualization({
               resize: 'both',
               height: 300,
               width: 300,
+              transform: 'scale(0.8)',
             }}
           >
             <FullScreenVisualization
