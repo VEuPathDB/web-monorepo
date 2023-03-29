@@ -6,6 +6,8 @@ on:
     branches:
       - main
       - github-action-publish ## just for testing... delete before merging
+    paths:
+      - 'packages/sites/*/package.json' ## Only run with package.json is updated
 jobs:
 
   # Cache yarn install command
