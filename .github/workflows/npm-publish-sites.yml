@@ -4,9 +4,11 @@ name: NPM Publish Sites
 on:
   push:
     branches:
-      - 'main'
+      - main
+
   paths:
       - 'packages/sites/*/package.json'
+
 jobs:
 
   # Gather the names of the sites directories and store it as an output variable 
