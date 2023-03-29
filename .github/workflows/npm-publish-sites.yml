@@ -25,7 +25,6 @@ jobs:
     name: Publish ${{ matrix.dir }}
     needs:
       - dirs
-      - cache-yarn
     runs-on: ubuntu-latest
     strategy:
       matrix:
