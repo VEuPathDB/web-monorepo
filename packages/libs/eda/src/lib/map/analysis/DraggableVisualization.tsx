@@ -36,7 +36,7 @@ interface Props {
   filters: Filter[];
 }
 
-export default function FloatingVisualization({
+export default function DraggableVisualization({
   analysisState,
   appState,
   updateVisualizations,

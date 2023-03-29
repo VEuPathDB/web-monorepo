@@ -67,7 +67,7 @@ import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
-import FloatingVisualization from './FloatingVisualization';
+import DraggableVisualization from './DraggableVisualization';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -620,7 +620,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </FloatingDiv>
 
-                <FloatingVisualization
+                <DraggableVisualization
                   analysisState={analysisState}
                   updateVisualizations={updateVisualizations}
                   setActiveVisualizationId={setActiveVisualizationId}
