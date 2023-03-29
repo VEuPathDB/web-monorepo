@@ -26,7 +26,7 @@ import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { H5, Paragraph } from '@veupathdb/coreui';
+import { colors, H5, Paragraph } from '@veupathdb/coreui';
 import { useDispatch } from 'react-redux';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import { useHistory } from 'react-router';
@@ -61,11 +61,18 @@ export default function DownloadTab({
       await wdkService.getConfig().then((config) => config.displayName),
     []
   );
-  const studyAuthor = useWdkService(
+  const studyContacts = useWdkService(
     async (wdkService) =>
       await wdkService
-        .getRecord('dataset', studyRecord.id, { attributes: ['contact'] })
-        .then((record) => record.attributes.contact),
+        .getRecord('dataset', studyRecord.id, { tables: ['Contacts'] })
+        .then((record) => {
+          const contactsArray = record.tables['Contacts'].map(
+            (contact) => contact['contact_name']
+          );
+          return contactsArray.length > 3
+            ? contactsArray.slice(0, 3).join(', ') + ', et al'
+            : contactsArray.join(', ');
+        }),
     []
   );
   const history = useHistory();
@@ -205,12 +212,12 @@ export default function DownloadTab({
 
   const partialCitationData = useMemo(
     () => ({
-      studyAuthor: studyAuthor ?? '',
+      studyContacts: studyContacts ?? '',
       studyDisplayName: studyRecord.displayName,
       projectDisplayName: projectDisplayName ?? '',
-      downloadUrl: window.location.href,
+      citationUrl: window.location.href.replace('download', ''),
     }),
-    [studyAuthor, studyRecord.displayName, projectDisplayName]
+    [studyContacts, studyRecord.displayName, projectDisplayName]
   );
 
   return (
@@ -218,17 +225,17 @@ export default function DownloadTab({
       <div key="Column One" style={{ marginRight: 75 }}>
         {dataAccessDeclaration ?? ''}
         {mergedReleaseData[0] && (
+          <StudyCitation
+            partialCitationData={partialCitationData}
+            // use current release
+            release={mergedReleaseData[0]}
+          />
+        )}
+        {mergedReleaseData[0] && (
           <MySubset
             datasetId={datasetId}
             entities={enhancedEntityData}
             analysisState={analysisState}
-            citation={
-              <StudyCitation
-                partialCitationData={partialCitationData}
-                // use current release
-                release={mergedReleaseData[0]}
-              />
-            }
           />
         )}
         {mergedReleaseData.map((release, index) =>
@@ -239,12 +246,6 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
-              citation={
-                <StudyCitation
-                  partialCitationData={partialCitationData}
-                  release={release}
-                />
-              }
             />
           ) : (
             <PastRelease
@@ -253,12 +254,6 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
-              citationComponent={
-                <StudyCitation
-                  partialCitationData={partialCitationData}
-                  release={release}
-                />
-              }
               citationString={stripHTML(
                 getCitationString({
                   partialCitationData,
@@ -309,7 +304,11 @@ function getDataAccessDeclaration(
         Data Accessibility:{' '}
         <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
       </H5>
-      <Paragraph styleOverrides={{ margin: '0.5em 0 0 0' }}>
+      <Paragraph
+        color={colors.gray[600]}
+        styleOverrides={{ margin: '0.5em 0 0 0' }}
+        textSize="medium"
+      >
         {isGuest === undefined || hasPermission === undefined ? (
           <AnimatedLoadingText text="Getting permissions" />
         ) : studyAccess === 'Public' ? (
