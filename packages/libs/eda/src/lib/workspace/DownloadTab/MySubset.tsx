@@ -26,14 +26,12 @@ type MySubsetProps = {
   datasetId: string;
   entities: EnhancedEntityData;
   analysisState: AnalysisState;
-  citation: ReactNode;
 };
 
 export default function MySubset({
   datasetId,
   entities,
   analysisState,
-  citation,
 }: MySubsetProps) {
   const theme = useUITheme();
 
@@ -66,19 +64,11 @@ export default function MySubset({
       <H5 text="My Subset" additionalStyles={{ margin: 0 }} />
       <Paragraph
         color={colors.gray[600]}
-        styleOverrides={{ margin: 0 }}
+        styleOverrides={{ margin: '0 0 15px 0' }}
         textSize="medium"
       >
         Configure and download one or more tabular files of the filtered
         dataset.
-      </Paragraph>
-      <Paragraph
-        color={colors.gray[600]}
-        styleOverrides={{ margin: '0px 0px 10px 0px' }}
-        textSize="medium"
-      >
-        <span style={{ fontWeight: 500 }}>Citation: </span>
-        {citation}
       </Paragraph>
       {Object.values(entities).map((data, index) => (
         <FloatingButton

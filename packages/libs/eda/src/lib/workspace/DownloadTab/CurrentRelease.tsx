@@ -18,7 +18,6 @@ export type CurrentReleaseProps = {
   studyId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
-  citation: ReactNode;
 };
 
 export default function CurrentRelease({
@@ -26,7 +25,6 @@ export default function CurrentRelease({
   studyId,
   release,
   downloadClient,
-  citation,
 }: CurrentReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
 
@@ -93,7 +91,7 @@ export default function CurrentRelease({
 
   return (
     <div id="Current Release Dataset" style={{ marginBottom: 35 }}>
-      <div style={{ marginBottom: 10 }}>
+      <div style={{ marginBottom: 15 }}>
         <H5
           text={`Full Dataset (Release ${release.releaseNumber})`}
           additionalStyles={{ margin: 0 }}
@@ -113,14 +111,6 @@ export default function CurrentRelease({
         >
           <span style={{ fontWeight: 500 }}>Change Log: </span>
           {release.description}
-        </Paragraph>
-        <Paragraph
-          color={colors.gray[600]}
-          styleOverrides={{ margin: 0 }}
-          textSize="medium"
-        >
-          <span style={{ fontWeight: 500 }}>Citation: </span>
-          {citation}
         </Paragraph>
       </div>
       {releaseFiles.length ? (
