@@ -28,6 +28,7 @@ import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-trun
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
+import { rgb } from 'd3';
 
 export interface VolcanoPlotProps
   extends PlotProps<VolcanoPlotData>,
@@ -40,7 +41,7 @@ export interface VolcanoPlotProps
   independentAxisRange?: NumberRange;
   /** y-axis range: required for confidence interval */
   dependentAxisRange?: NumberRange;
-  foldChangeGates?: Array<number>;
+  foldChangeGate?: number;
   comparisonLabels?: Array<string>;
   adjustedPValueGate?: number;
   plotTitle?: string;
@@ -73,7 +74,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     dependentAxisLogScale = false,
     markerBodyOpacity,
     adjustedPValueGate,
-    foldChangeGates,
+    foldChangeGate,
     ...restProps
   } = props;
 
@@ -120,28 +121,84 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       return d.y;
     },
   };
+  console.log(adjustedPValueGate);
+
+  const thresholdLineStyles = {
+    stroke: '#cccccc',
+    strokeWidth: 1,
+    strokeDasharray: 3,
+  };
+
+  const xMin = -7;
+  const xMax = 7;
+  const yMin = -2;
+  const yMax = 4;
+  const volcanoColors = ['#fa1122', '#cccccc', '#2211fa'];
 
   return (
-    <XYChart
-      height={300}
-      xScale={{ type: 'linear', domain: [-7, 7] }}
-      yScale={{ type: 'linear', domain: [-2, 4] }}
-      width={300}
-    >
-      <Axis orientation="left" label="-log10 Raw P Value" />
-      <Grid columns={false} numTicks={4} />
-      <Axis orientation="bottom" label="log2 Fold Change" />
-      {formattedData.map((series: any, index: any) => {
-        console.log(series);
-        return (
-          <GlyphSeries
-            dataKey={'mydata' + String(Math.random())}
-            data={series}
-            {...dataAccessors}
+    // From docs " For correct tooltip positioning, it is important to wrap your
+    // component in an element (e.g., div) with relative positioning."
+    <div style={{ position: 'relative' }}>
+      <XYChart
+        height={300}
+        xScale={{ type: 'linear', domain: [-7, 7] }}
+        yScale={{ type: 'linear', domain: [-2, 4] }}
+        width={300}
+      >
+        <Axis orientation="left" label="-log10 Raw P Value" />
+        <Axis orientation="bottom" label="log2 Fold Change" />
+        <Grid columns={false} numTicks={4} />
+
+        {/* Draw threshold lines below data points */}
+        {adjustedPValueGate && (
+          <LineSeries
+            className="pvalLine"
+            data={[
+              { x: xMin, y: -Math.log10(Number(adjustedPValueGate)) },
+              { x: xMax, y: -Math.log10(Number(adjustedPValueGate)) },
+            ]}
+            dataKey="pvalline"
+            {...thresholdLineStyles}
+            {...thresholdLineAccessors}
           />
-        );
-      })}
-    </XYChart>
+        )}
+        {foldChangeGate && (
+          <LineSeries
+            data={[
+              { x: -Math.log2(foldChangeGate), y: yMin },
+              { x: -Math.log2(foldChangeGate), y: yMax },
+            ]}
+            dataKey="foldChangeLineLow"
+            {...thresholdLineStyles}
+            {...thresholdLineAccessors}
+          />
+        )}
+        {foldChangeGate && (
+          <LineSeries
+            data={[
+              { x: Math.log2(foldChangeGate), y: yMin },
+              { x: Math.log2(foldChangeGate), y: yMax },
+            ]}
+            dataKey="foldChangeLineHigh"
+            {...thresholdLineStyles}
+            {...thresholdLineAccessors}
+          />
+        )}
+        {formattedData.map((series: any, index: any) => {
+          console.log(series);
+          return (
+            <GlyphSeries
+              dataKey={'mydata' + String(Math.random())}
+              data={series}
+              {...dataAccessors}
+              colorAccessor={(d) => {
+                return volcanoColors[index];
+              }}
+            />
+          );
+        })}
+      </XYChart>
+    </div>
   );
 }
 
