@@ -122,26 +122,23 @@ export default function DraggableVisualization({
   return (
     <>
       {activeViz && (
-        // <FloatingDiv
-        //   style={{
-        //     bottom: 10,
-        //     left: 500,
-        //     transformOrigin: 'bottom left',
-        //     transform: 'scale(0.8)',
-        //   }}
-        // >
         <DraggablePanel
+          confineToParentContainer
           showPanelTitle
           isOpen
           styleOverrides={{ zIndex: 10 }}
           panelTitle={`Configure ${activeViz.displayName}`}
+          defaultPosition={{
+            x: 451,
+            y: 142,
+          }}
         >
           <div
             style={{
               overflow: 'scroll',
               resize: 'both',
-
-              transform: 'scale(0.8)',
+              height: 300,
+              width: 300,
             }}
           >
             <FullScreenVisualization
@@ -165,7 +162,6 @@ export default function DraggableVisualization({
               actions={fullScreenActions}
             />
           </div>
-          {/* </FloatingDiv> */}
         </DraggablePanel>
       )}
     </>
