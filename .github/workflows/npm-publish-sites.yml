@@ -5,8 +5,8 @@ on:
   push:
     branches:
       - main
-  paths:
-    - 'packages/sites/*/package.json'
+    paths:
+      - 'packages/sites/*/package.json'
 
 jobs:
   # Gather the names of the sites directories and store it as an output variable
