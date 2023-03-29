@@ -15,6 +15,7 @@ import { EntityCounts } from '../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
+import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 interface Props {
   analysisState: AnalysisState;
@@ -121,35 +122,51 @@ export default function DraggableVisualization({
   return (
     <>
       {activeViz && (
-        <FloatingDiv
-          style={{
-            bottom: 10,
-            left: 500,
-            transformOrigin: 'bottom left',
-            transform: 'scale(0.8)',
-          }}
+        // <FloatingDiv
+        //   style={{
+        //     bottom: 10,
+        //     left: 500,
+        //     transformOrigin: 'bottom left',
+        //     transform: 'scale(0.8)',
+        //   }}
+        // >
+        <DraggablePanel
+          showPanelTitle
+          isOpen
+          styleOverrides={{ zIndex: 10 }}
+          panelTitle={`Configure ${activeViz.displayName}`}
         >
-          <FullScreenVisualization
-            analysisState={analysisState}
-            computation={computation!}
-            updateVisualizations={updateVisualizations}
-            visualizationPlugins={visualizationPlugins}
-            visualizationsOverview={app.visualizations}
-            geoConfigs={geoConfigs}
-            computationAppOverview={app}
-            filters={filters}
-            starredVariables={
-              analysisState.analysis?.descriptor.starredVariables ?? []
-            }
-            toggleStarredVariable={toggleStarredVariable}
-            totalCounts={totalCounts}
-            filteredCounts={filteredCounts}
-            isSingleAppMode
-            disableThumbnailCreation
-            id={activeViz.visualizationId}
-            actions={fullScreenActions}
-          />
-        </FloatingDiv>
+          <div
+            style={{
+              overflow: 'scroll',
+              resize: 'both',
+
+              transform: 'scale(0.8)',
+            }}
+          >
+            <FullScreenVisualization
+              analysisState={analysisState}
+              computation={computation!}
+              updateVisualizations={updateVisualizations}
+              visualizationPlugins={visualizationPlugins}
+              visualizationsOverview={app.visualizations}
+              geoConfigs={geoConfigs}
+              computationAppOverview={app}
+              filters={filters}
+              starredVariables={
+                analysisState.analysis?.descriptor.starredVariables ?? []
+              }
+              toggleStarredVariable={toggleStarredVariable}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              isSingleAppMode
+              disableThumbnailCreation
+              id={activeViz.visualizationId}
+              actions={fullScreenActions}
+            />
+          </div>
+          {/* </FloatingDiv> */}
+        </DraggablePanel>
       )}
     </>
   );
