@@ -1,3 +1,5 @@
+import { CSSProperties } from 'react';
+
 export { MapVeuContainer as default } from './MapVeuContainer';
 
 export type SiteInformationProps = {
@@ -7,4 +9,7 @@ export type SiteInformationProps = {
   siteLogoSrc: string;
 };
 
-export const mapNavigationBackgroundColor = 'rgba(255, 255, 255, 0.5)';
+export const mapNavigationBackgroundColor = 'white';
+export const mapNavigationBorder: CSSProperties['border'] = '1px solid #D9D9D9';
+export const mapSideNavigationActiveMenuItemBackground: CSSProperties['background'] =
+  '#E1F5FF';
