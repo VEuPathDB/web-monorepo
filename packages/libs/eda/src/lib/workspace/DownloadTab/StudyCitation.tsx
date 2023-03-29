@@ -8,7 +8,6 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 // Definitions
 import { DownloadTabStudyRelease } from './types';
-import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { colors, Paragraph } from '@veupathdb/coreui';
 
 // Utils
@@ -21,7 +20,7 @@ import { makeStyles } from '@material-ui/core';
 
 export type CitationDetails = {
   partialCitationData: {
-    studyAuthor: string | LinkAttributeValue;
+    studyContacts: string;
     studyDisplayName: string;
     projectDisplayName: string;
     citationUrl: string;
@@ -33,7 +32,7 @@ export function getCitationString({
   partialCitationData,
   release,
 }: CitationDetails) {
-  const { studyAuthor, studyDisplayName, projectDisplayName, citationUrl } =
+  const { studyContacts, studyDisplayName, projectDisplayName, citationUrl } =
     partialCitationData;
   const parsedReleaseDate = parse(
     release.date ?? '',
@@ -41,14 +40,7 @@ export function getCitationString({
     new Date()
   );
   const citationDate = format(parsedReleaseDate, 'dd MMMM yyyy');
-  const typeGuardedStudyAuthor =
-    typeof studyAuthor == 'string'
-      ? studyAuthor
-      : 'displayText' in studyAuthor
-      ? studyAuthor.displayText
-      : studyAuthor.url;
-
-  return `${typeGuardedStudyAuthor}. Dataset: ${studyDisplayName}. ${projectDisplayName}. ${citationDate}, Release ${release.releaseNumber} (${citationUrl})`;
+  return `${studyContacts}. Dataset: ${studyDisplayName}. ${projectDisplayName}. ${citationDate}, Release ${release.releaseNumber} (${citationUrl})`;
 }
 
 const useStyles = makeStyles(() => ({
