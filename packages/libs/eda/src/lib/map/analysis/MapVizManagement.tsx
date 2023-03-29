@@ -94,16 +94,17 @@ export default function MapVizManagement({
           )}
         </ul>
       </div>
-
-      <NewVisualizationPicker
-        includeHeader={false}
-        computation={computation!}
-        updateVisualizations={updateVisualizations}
-        visualizationPlugins={visualizationPlugins}
-        visualizationsOverview={app.visualizations}
-        geoConfigs={geoConfigs}
-        onVisualizationCreated={onVisualizationCreated}
-      />
+      {isVizSelectorVisible && (
+        <NewVisualizationPicker
+          includeHeader={false}
+          computation={computation!}
+          updateVisualizations={updateVisualizations}
+          visualizationPlugins={visualizationPlugins}
+          visualizationsOverview={app.visualizations}
+          geoConfigs={geoConfigs}
+          onVisualizationCreated={onVisualizationCreated}
+        />
+      )}
     </div>
   );
 }
