@@ -20,38 +20,29 @@ export function numberDateDefaultAxisRange(
       const defaults = variable.distributionDefaults;
       if (logScale && observedMinPos == null) return undefined; // return nothing - there will be no plottable data anyway
       // set default range of Custom to be Auto-zoom
+      // lodash.min/.max are being used because they are tolerant of undefined values
       return axisRangeSpec === 'Full'
-        ? defaults.displayRangeMin != null && defaults.displayRangeMax != null
-          ? {
-              min:
-                logScale &&
-                observedMin != null &&
-                (observedMin <= 0 ||
-                  defaults.displayRangeMin <= 0 ||
-                  defaults.rangeMin <= 0)
-                  ? (observedMinPos as number)
-                  : (min([
-                      isNonZeroBaseline ? undefined : 0,
-                      defaults.displayRangeMin,
-                      defaults.rangeMin,
-                      observedMin as number,
-                    ]) as number),
-              max: max([
-                defaults.displayRangeMax,
-                defaults.rangeMax,
-                observedMax,
-              ]) as number,
-            }
-          : {
-              min: logScale
+        ? {
+            min:
+              logScale &&
+              observedMin != null &&
+              (observedMin <= 0 ||
+                (defaults.displayRangeMin != null &&
+                  defaults.displayRangeMin <= 0) ||
+                defaults.rangeMin <= 0)
                 ? (observedMinPos as number)
                 : (min([
                     isNonZeroBaseline ? undefined : 0,
+                    defaults.displayRangeMin,
                     defaults.rangeMin,
                     observedMin as number,
                   ]) as number),
-              max: max([defaults.rangeMax, observedMax]) as number,
-            }
+            max: max([
+              defaults.displayRangeMax,
+              defaults.rangeMax,
+              observedMax,
+            ]) as number,
+          }
         : {
             min: logScale
               ? (observedMinPos as number)
