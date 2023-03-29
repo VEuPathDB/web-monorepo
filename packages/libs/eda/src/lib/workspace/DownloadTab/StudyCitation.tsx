@@ -34,12 +34,22 @@ export function getCitationString({
 }: CitationDetails) {
   const { studyContacts, studyDisplayName, projectDisplayName, citationUrl } =
     partialCitationData;
-  const parsedReleaseDate = parse(
-    release.date ?? '',
-    'yyyy-MMM-dd',
-    new Date()
-  );
-  const citationDate = format(parsedReleaseDate, 'dd MMMM yyyy');
+
+  /**
+   * In the event an error occurs while parsing or formatting the date, we fall back
+   * on the release date format provided from the backend
+   */
+  let citationDate;
+  try {
+    const parsedReleaseDate = parse(
+      release.date ?? '',
+      'yyyy-MMM-dd',
+      new Date()
+    );
+    citationDate = format(parsedReleaseDate, 'dd MMMM yyyy');
+  } catch {
+    citationDate = release.date ?? 'date unknown';
+  }
   return `${studyContacts}. Dataset: ${studyDisplayName}. ${projectDisplayName}. ${citationDate}, Release ${release.releaseNumber} (${citationUrl})`;
 }
 
