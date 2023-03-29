@@ -1,25 +1,31 @@
 import { isEqual } from 'lodash';
 import QueryString from 'querystring';
 import * as React from 'react';
-import PageController from 'wdk-client/Core/Controllers/PageController';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import PageController from '../Core/Controllers/PageController';
+import { RootState } from '../Core/State/Types';
+import { wrappable } from '../Utils/ComponentUtils';
 import { isEmpty, ListIteratee } from 'lodash';
 import {
   loadAnswer,
   changeColumnPosition,
   changeVisibleColumns,
   changeSorting,
-  Sorting
-} from 'wdk-client/Actions/AnswerActions';
-import Answer from 'wdk-client/Views/Answer/Answer';
-import Loading from 'wdk-client/Components/Loading/Loading';
-import { State } from 'wdk-client/StoreModules/AnswerViewStoreModule';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
+  Sorting,
+} from '../Actions/AnswerActions';
+import Answer from '../Views/Answer/Answer';
+import Loading from '../Components/Loading/Loading';
+import { State } from '../StoreModules/AnswerViewStoreModule';
+import NotFound from '../Views/NotFound/NotFound';
 import { connect } from 'react-redux';
-import { AttributeField, TableField, AttributeValue, RecordInstance, RecordClass } from 'wdk-client/Utils/WdkModel';
+import {
+  AttributeField,
+  TableField,
+  AttributeValue,
+  RecordInstance,
+  RecordClass,
+} from '../Utils/WdkModel';
 import { History } from 'history';
-import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
+import { filterRecords } from '../Views/Records/RecordUtils';
 
 const MAXROWS = 4000;
 
@@ -42,7 +48,7 @@ interface CellContentProps {
   attribute: AttributeField;
   record: RecordInstance;
   recordClass: RecordClass;
-};
+}
 
 interface RenderCellProps extends CellContentProps {
   CellContent: React.ComponentType<CellContentProps>;
@@ -51,11 +57,11 @@ interface RenderCellProps extends CellContentProps {
 interface RowClassNameProps {
   record: RecordInstance;
   recordClass: RecordClass;
-};
+}
 
 interface TableAction {
   key: string;
-  display: React.ReactNode
+  display: React.ReactNode;
 }
 
 type Options = {
@@ -74,7 +80,7 @@ type OwnProps = {
   filterAttributes?: string[];
   filterTables?: string[];
   history: History;
-}
+};
 
 export type Props = {
   stateProps: StateProps;
@@ -83,11 +89,16 @@ export type Props = {
 } & Options;
 
 export const DEFAULT_PAGINATION = { numRecords: MAXROWS, offset: 0 };
-export const DEFAULT_SORTING = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
+export const DEFAULT_SORTING = [
+  { attributeName: 'primary_key', direction: 'ASC' } as Sorting,
+];
 
 class AnswerController extends PageController<Props> {
-
-  changeFilter = (filterTerm: string, filterAttributes?: string[], filterTables?: string[]) => {
+  changeFilter = (
+    filterTerm: string,
+    filterAttributes?: string[],
+    filterTables?: string[]
+  ) => {
     const { history } = this.props.ownProps;
     const currentParams = QueryString.parse(history.location.search.slice(1));
 
@@ -102,17 +113,33 @@ class AnswerController extends PageController<Props> {
       return;
     }
 
-    const queryParams: { filterTerm: string, filterAttributes?: string[], filterTables?: string[] } = { ...currentParams, filterTerm };
-    if (!isEmpty(filterAttributes)) queryParams.filterAttributes = filterAttributes;
+    const queryParams: {
+      filterTerm: string;
+      filterAttributes?: string[];
+      filterTables?: string[];
+    } = { ...currentParams, filterTerm };
+    if (!isEmpty(filterAttributes))
+      queryParams.filterAttributes = filterAttributes;
     if (!isEmpty(filterTables)) queryParams.filterTables = filterTables;
     const queryString = QueryString.stringify(queryParams);
     this.props.ownProps.history.replace(`?${queryString}`);
-  }
+  };
 
   loadData(prevProps?: Props) {
     // incoming values from the router
-    let { question, recordClass: recordClassName, parameters, filterTerm, filterAttributes, filterTables } = this.props.ownProps;
-    let [ , searchName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
+    let {
+      question,
+      recordClass: recordClassName,
+      parameters,
+      filterTerm,
+      filterAttributes,
+      filterTables,
+    } = this.props.ownProps;
+    let [, searchName, customName] = question.match(/([^:]+):?(.*)/) || [
+      '',
+      question,
+      '',
+    ];
 
     const { dispatchProps } = this.props;
 
@@ -124,16 +151,27 @@ class AnswerController extends PageController<Props> {
     ) {
       let pagination = DEFAULT_PAGINATION;
       let sorting = DEFAULT_SORTING;
-      let displayInfo = { pagination, sorting, customName, attributes: [], tables: [] };
-      let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
+      let displayInfo = {
+        pagination,
+        sorting,
+        customName,
+        attributes: [],
+        tables: [],
+      };
+      let opts = {
+        displayInfo,
+        parameters,
+        filterTerm,
+        filterAttributes,
+        filterTables,
+      };
       dispatchProps.loadAnswer(searchName, recordClassName, opts);
     }
-
   }
 
   isRenderDataLoaded() {
     const {
-      stateProps: { isLoading }
+      stateProps: { isLoading },
     } = this.props;
 
     return isLoading === false;
@@ -141,50 +179,41 @@ class AnswerController extends PageController<Props> {
 
   isRenderDataLoadError() {
     const {
-      stateProps: { error }
+      stateProps: { error },
     } = this.props;
 
-    return (
-      error != null &&
-      ( 'status' in error
-        ? error.status !== 404
-        : true )
-    )
+    return error != null && ('status' in error ? error.status !== 404 : true);
   }
 
   isRenderDataNotFound() {
     const {
-      stateProps: { error }
+      stateProps: { error },
     } = this.props;
 
-    return (
-      error != null &&
-      'status' in error &&
-      error.status === 404
-    )
+    return error != null && 'status' in error && error.status === 404;
   }
 
   getTitle() {
     const {
-      stateProps: { 
-        displayInfo = { customName: '' }, 
-        error, 
-        question = { displayName: '' }, 
-        records 
-      }
+      stateProps: {
+        displayInfo = { customName: '' },
+        error,
+        question = { displayName: '' },
+        records,
+      },
     } = this.props;
 
-    return error ? 'Error loading results'
-         : records ? displayInfo.customName || question.displayName
-         : 'Loading...';
+    return error
+      ? 'Error loading results'
+      : records
+      ? displayInfo.customName || question.displayName
+      : 'Loading...';
   }
 
   renderLoading() {
-    const {
-      isLoading
-    } = this.props.stateProps;
+    const { isLoading } = this.props.stateProps;
 
-    return isLoading && <Loading/>;
+    return isLoading && <Loading />;
   }
 
   renderDataNotFound() {
@@ -192,7 +221,7 @@ class AnswerController extends PageController<Props> {
       <NotFound>
         <p>The search you requested does not exist.</p>
       </NotFound>
-    )
+    );
   }
 
   renderAnswer() {
@@ -203,25 +232,25 @@ class AnswerController extends PageController<Props> {
       allAttributes,
       visibleAttributes,
       question,
-      recordClass = { 
+      recordClass = {
         attributes: [] as AttributeField[],
-        tables: [] as TableField[]
-      }
+        tables: [] as TableField[],
+      },
     } = this.props.stateProps;
 
-    let { 
+    let {
       filterTerm,
       filterAttributes = [],
       filterTables = [],
     } = this.props.ownProps;
 
-    const {
-      changeSorting,
-      changeColumnPosition,
-      changeVisibleColumns
-    } = this.props.dispatchProps;
+    const { changeSorting, changeColumnPosition, changeVisibleColumns } =
+      this.props.dispatchProps;
 
-    const filteredRecords = records && filterTerm ? filterRecords(records, { filterTerm, filterAttributes, filterTables }) : records;
+    const filteredRecords =
+      records && filterTerm
+        ? filterRecords(records, { filterTerm, filterAttributes, filterTables })
+        : records;
 
     return (
       <CastAnswer
@@ -256,17 +285,20 @@ class AnswerController extends PageController<Props> {
       </div>
     );
   }
-
 }
 
 const mapStateToProps = (state: RootState) => state.answerView;
 
 const mapDispatchToProps = ActionCreators;
 
-const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
+const mergeProps = (
+  stateProps: StateProps,
+  dispatchProps: DispatchProps,
+  ownProps: OwnProps
+) => ({
   stateProps,
   dispatchProps,
-  ownProps
+  ownProps,
 });
 
 export default connect(

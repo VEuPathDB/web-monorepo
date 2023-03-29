@@ -1,33 +1,33 @@
-import * as AnswerActions from 'wdk-client/Actions/AnswerActions';
-import * as AttributeAnalysisActions from 'wdk-client/Actions/AttributeAnalysisActions';
-import * as DownloadFormActions from 'wdk-client/Actions/DownloadFormActions';
-import * as BasketActions from 'wdk-client/Actions/BasketActions';
-import * as FavoritesActions from 'wdk-client/Actions/FavoritesActions';
-import * as RouterActions from 'wdk-client/Actions/RouterActions';
-import * as QuestionActions from 'wdk-client/Actions/QuestionActions';
-import * as QuestionWithParametersActions from 'wdk-client/Actions/QuestionWithParametersActions';
-import * as FilterParamActions from 'wdk-client/Actions/FilterParamActions';
-import * as DatasetParamActions from 'wdk-client/Actions/DatasetParamActions';
-import * as TreeBoxEnumParamActions from 'wdk-client/Actions/TreeBoxEnumParamActions';
-import * as UserActions from 'wdk-client/Actions/UserActions';
-import * as RecordActions from 'wdk-client/Actions/RecordActions';
-import * as StaticDataActions from 'wdk-client/Actions/StaticDataActions';
-import * as SiteMapActions from 'wdk-client/Actions/SiteMapActions';
-import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
-import * as ImportStrategyActions from 'wdk-client/Actions/ImportStrategyActions';
-import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
-import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
-import * as StrategyWorkspaceActions from 'wdk-client/Actions/StrategyWorkspaceActions';
-import * as StrategyListActions from 'wdk-client/Actions/StrategyListActions';
-import * as PublicStrategyActions from 'wdk-client/Actions/PublicStrategyActions';
-import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
-import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
-import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
-import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
-import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
-import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
-import { StepAnalysisAction } from 'wdk-client/Actions/StepAnalysis/StepAnalysisActions';
-import * as NotificationActions from 'wdk-client/Actions/NotificationActions';
+import * as AnswerActions from './Actions/AnswerActions';
+import * as AttributeAnalysisActions from './Actions/AttributeAnalysisActions';
+import * as DownloadFormActions from './Actions/DownloadFormActions';
+import * as BasketActions from './Actions/BasketActions';
+import * as FavoritesActions from './Actions/FavoritesActions';
+import * as RouterActions from './Actions/RouterActions';
+import * as QuestionActions from './Actions/QuestionActions';
+import * as QuestionWithParametersActions from './Actions/QuestionWithParametersActions';
+import * as FilterParamActions from './Actions/FilterParamActions';
+import * as DatasetParamActions from './Actions/DatasetParamActions';
+import * as TreeBoxEnumParamActions from './Actions/TreeBoxEnumParamActions';
+import * as UserActions from './Actions/UserActions';
+import * as RecordActions from './Actions/RecordActions';
+import * as StaticDataActions from './Actions/StaticDataActions';
+import * as SiteMapActions from './Actions/SiteMapActions';
+import * as ResultTableSummaryViewActions from './Actions/SummaryView/ResultTableSummaryViewActions';
+import * as ImportStrategyActions from './Actions/ImportStrategyActions';
+import * as StrategyPanelActions from './Actions/StrategyPanelActions';
+import * as StrategyActions from './Actions/StrategyActions';
+import * as StrategyWorkspaceActions from './Actions/StrategyWorkspaceActions';
+import * as StrategyListActions from './Actions/StrategyListActions';
+import * as PublicStrategyActions from './Actions/PublicStrategyActions';
+import * as WordCloudAnalysisActions from './Actions/WordCloudAnalysisActions';
+import * as HistogramAnalysisActions from './Actions/HistogramAnalysisActions';
+import * as MatchedTranscriptsFilterActions from './Actions/MatchedTranscriptsFilterActions';
+import * as ResultPanelActions from './Actions/ResultPanelActions';
+import * as UnhandledErrorActions from './Actions/UnhandledErrorActions';
+import * as UserSessionActions from './Actions/UserSessionActions';
+import { StepAnalysisAction } from './Actions/StepAnalysis/StepAnalysisActions';
+import * as NotificationActions from './Actions/NotificationActions';
 
 export {
   AnswerActions,
@@ -90,4 +90,4 @@ export type Action =
   | MatchedTranscriptsFilterActions.Action
   | UserSessionActions.Action
   | StepAnalysisAction
-  | NotificationActions.Action
+  | NotificationActions.Action;

@@ -1,7 +1,11 @@
 import React from 'react';
-import { Answer } from 'wdk-client/Utils/WdkModel';
-import BasketIconButton from 'wdk-client/Views/ResultTableSummaryView/BasketIconButton';
-import { BasketStatusArray, RequestUpdateBasket, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import { Answer } from '../../Utils/WdkModel';
+import BasketIconButton from '../../Views/ResultTableSummaryView/BasketIconButton';
+import {
+  BasketStatusArray,
+  RequestUpdateBasket,
+  ShowLoginWarning,
+} from '../../Views/ResultTableSummaryView/Types';
 
 interface BasketHeadingProps {
   answer: Answer;
@@ -16,7 +20,7 @@ export default function BasketHeading({
   basketStatusArray,
   requestUpdateBasket,
   userIsGuest,
-  showLoginWarning
+  showLoginWarning,
 }: BasketHeadingProps) {
   const values = new Set(basketStatusArray);
   const status = values.has('no')
@@ -30,7 +34,7 @@ export default function BasketHeading({
     <BasketIconButton
       tooltipContext="the current page of rows"
       status={status}
-      idsToToggle={answer.records.map(record => record.id)}
+      idsToToggle={answer.records.map((record) => record.id)}
       recordClassName={answer.meta.recordClassName}
       requestUpdateBasket={requestUpdateBasket}
       userIsGuest={userIsGuest}

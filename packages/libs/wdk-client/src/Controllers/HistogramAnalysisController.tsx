@@ -2,24 +2,24 @@ import { identity } from 'lodash/fp';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Loading } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import AttributeAnalysisTabs from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisTabs';
+import { Loading } from '../Components';
+import { RootState } from '../Core/State/Types';
+import AttributeAnalysisTabs from '../Views/AttributeAnalysis/AttributeAnalysisTabs';
 import {
   openView,
   setBinSize,
   enableLogScaleXAxis,
   enableLogScaleYAxis,
-  closeView
-} from 'wdk-client/Actions/HistogramAnalysisActions';
+  closeView,
+} from '../Actions/HistogramAnalysisActions';
 import { Dispatch } from 'redux';
-import { Histogram } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysis';
+import { Histogram } from '../Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysis';
 import {
   getReportSummary,
   getDefaultBinSize,
-  HistogramReport
-} from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+  HistogramReport,
+} from '../Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
+import { ResultType } from '../Utils/WdkResult';
 
 interface OwnProps {
   resultType: ResultType;
@@ -60,7 +60,7 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
       dispatch,
       setBinSize,
       enableLogScaleXAxis,
-      enableLogScaleYAxis
+      enableLogScaleYAxis,
     } = this.props;
 
     const { report, table, activeTab } = attributeAnalysis;
@@ -77,7 +77,7 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
       histogramAnalysis.logXAxis
     );
     const {
-      binSize = getDefaultBinSize(histogramReport, histogramAnalysis.logXAxis)
+      binSize = getDefaultBinSize(histogramReport, histogramAnalysis.logXAxis),
     } = histogramAnalysis;
 
     const tableData = Object.entries(histogramReport.data).map(
@@ -86,7 +86,7 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
           histogramReport.type === 'category'
             ? String(attrValue)
             : Number(attrValue),
-        recordCount: recordCount
+        recordCount: recordCount,
       })
     );
 
@@ -98,9 +98,9 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
         tableConfig={{
           columns: [
             { key: 'attrValue', display: histogramReport.attrLabel },
-            { key: 'recordCount', display: histogramReport.recordCountLabel }
+            { key: 'recordCount', display: histogramReport.recordCountLabel },
           ],
-          data: tableData
+          data: tableData,
         }}
         visualizationConfig={{
           display: 'Histogram',
@@ -121,7 +121,7 @@ class HistogramAnalysisController extends React.PureComponent<Props> {
               onLogScaleXAxisChange={enableLogScaleXAxis}
               onLogScaleYAxisChange={enableLogScaleYAxis}
             />
-          )
+          ),
         }}
       />
     );
@@ -139,7 +139,7 @@ const mapDispatchToProps = {
   closeView,
   setBinSize,
   enableLogScaleXAxis,
-  enableLogScaleYAxis
+  enableLogScaleYAxis,
 };
 
 export default connect(

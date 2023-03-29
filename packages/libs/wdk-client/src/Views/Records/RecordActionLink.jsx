@@ -1,23 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Link from 'wdk-client/Components/Link/Link';
-import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import Link from '../../Components/Link/Link';
+import { wrappable } from '../../Utils/ComponentUtils';
 
-let RecordActionLink = props => {
+let RecordActionLink = (props) => {
   let className = 'wdk-RecordActionLink ' + props.className;
   let LinkComponent = props.external ? 'a' : Link;
   let linkProps = {
     [props.external ? 'href' : 'to']: props.href,
     title: props.label,
     className: className,
-    onClick: props.onClick
+    onClick: props.onClick,
   };
   return (
     <LinkComponent {...linkProps}>
-      {props.showLabel ? props.label : ''} <i className={props.iconClassName}/>
+      {props.showLabel ? props.label : ''} <i className={props.iconClassName} />
     </LinkComponent>
   );
-}
+};
 
 RecordActionLink.propTypes = {
   record: PropTypes.object.isRequired,
@@ -27,8 +27,8 @@ RecordActionLink.propTypes = {
   onClick: PropTypes.func,
   href: PropTypes.string,
   label: PropTypes.string,
-  showLabel: PropTypes.bool
-}
+  showLabel: PropTypes.bool,
+};
 
 RecordActionLink.defaultProps = {
   href: '#',
@@ -36,7 +36,7 @@ RecordActionLink.defaultProps = {
   className: '',
   label: 'Record action',
   iconClassName: 'fa fa-bolt',
-  showLabel: true
-}
+  showLabel: true,
+};
 
 export default wrappable(RecordActionLink);

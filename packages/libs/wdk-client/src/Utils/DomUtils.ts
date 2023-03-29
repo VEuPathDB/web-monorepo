@@ -1,6 +1,6 @@
 import { flow } from 'lodash';
-import { preorder } from 'wdk-client/Utils/TreeUtils';
-import { find } from 'wdk-client/Utils/IterableUtils';
+import { preorder } from '../Utils/TreeUtils';
+import { find } from '../Utils/IterableUtils';
 
 export function findAncestorNode(
   targetNode: Node | null,
@@ -30,7 +30,7 @@ export function containsAncestorNode(
  * Track scroll position of `element` and if height or width of `element`
  * changes, scroll to tracked position.
  */
-export const addScrollAnchor = addScrollAnchor__loop
+export const addScrollAnchor = addScrollAnchor__loop;
 
 /*
  * Loop-based algorithm for scroll anchoring.
@@ -50,12 +50,11 @@ function addScrollAnchor__loop(
   let animId: number;
 
   function loop() {
-    animId = requestAnimationFrame(function() {
+    animId = requestAnimationFrame(function () {
       loop();
       if (parentSizeChanged() || containerHasResized()) {
         scrollToAnchor();
-      }
-      else if (pageHasScrolled()) {
+      } else if (pageHasScrolled()) {
         updateAnchor();
       }
       scrollY = window.scrollY;
@@ -100,14 +99,16 @@ function addScrollAnchor__loop(
 
   return function cancel() {
     cancelAnimationFrame(animId);
-  }
+  };
 }
-
 
 /**
  * Event-based algorithm for scroll anchoring.
  */
-function addScrollAnchor__events(element: Element, anchorNode = findAnchorNode(element)) {
+function addScrollAnchor__events(
+  element: Element,
+  anchorNode = findAnchorNode(element)
+) {
   let anchorNodeRect = anchorNode && anchorNode.getBoundingClientRect();
   let scrollingToAnchor = false;
 
@@ -126,9 +127,11 @@ function addScrollAnchor__events(element: Element, anchorNode = findAnchorNode(e
 
     scrollingToAnchor = true;
     anchorNode.scrollIntoView();
-    window.scrollBy(0, (anchorNodeRect.top * -1) + 1);
+    window.scrollBy(0, anchorNodeRect.top * -1 + 1);
     console.debug(Date.now(), 'scrolled to anchorNode', anchorNode);
-    setTimeout(() => { scrollingToAnchor = false });
+    setTimeout(() => {
+      scrollingToAnchor = false;
+    });
   }
 
   // return composite cancellation function
@@ -141,7 +144,11 @@ function addScrollAnchor__events(element: Element, anchorNode = findAnchorNode(e
 /**
  * When properties of the client rectangle of `element` change, invoke callback.
  */
-function monitorRectChange(element: Element, trackedProps: Array<keyof ClientRect>, callback: () => void) {
+function monitorRectChange(
+  element: Element,
+  trackedProps: Array<keyof ClientRect>,
+  callback: () => void
+) {
   // FIXME Don't monitor while user is scrolling
   let rect = element.getBoundingClientRect();
   let rafId: number;
@@ -150,13 +157,13 @@ function monitorRectChange(element: Element, trackedProps: Array<keyof ClientRec
 
   return function cancel() {
     cancelAnimationFrame(rafId);
-  }
+  };
 
   function checkWidth() {
-    rafId = requestAnimationFrame(function() {
+    rafId = requestAnimationFrame(function () {
       checkWidth();
       let newRect = element.getBoundingClientRect();
-      if (trackedProps.some(prop => rect[prop] !== newRect[prop])) {
+      if (trackedProps.some((prop) => rect[prop] !== newRect[prop])) {
         callback();
       }
       rect = newRect;
@@ -171,7 +178,7 @@ function monitorScroll(scrollHandler: () => void) {
   window.addEventListener('scroll', scrollHandler);
   return function cancel() {
     window.removeEventListener('scroll', scrollHandler);
-  }
+  };
 }
 
 /**
@@ -193,16 +200,17 @@ function getElementChildren(el: Element) {
 
 /**
  * Is the top of the element visible in the element's scroll parent?
- * @param element 
+ * @param element
  */
 export function isElementInViewport(element: HTMLElement) {
   const scrollParent = findScrollParent(element);
   return (
     scrollParent != null &&
     // top of element above top of scroll parent
-    ((scrollParent.scrollTop > element.offsetTop) ||
-    // bottom of element below bottom of scroll parent
-    ((scrollParent.scrollTop + scrollParent.clientHeight) <= (element.offsetTop + element.clientHeight)))
+    (scrollParent.scrollTop > element.offsetTop ||
+      // bottom of element below bottom of scroll parent
+      scrollParent.scrollTop + scrollParent.clientHeight <=
+        element.offsetTop + element.clientHeight)
   );
 }
 
@@ -211,16 +219,15 @@ export function scrollIntoView(element: HTMLElement) {
 }
 
 export function findScrollParent(element: HTMLElement) {
-  const scrollParentNode = findAncestorNode(
-    element,
-    node => {
-      if (!(node instanceof HTMLElement)) return false;
-      const { overflowY } = window.getComputedStyle(node);
-      const isScrollable = overflowY !== 'visible' && overflowY !== 'hidden';
-      return isScrollable && node.scrollHeight >= node.clientHeight;
-    }
-  );
-  return scrollParentNode instanceof HTMLElement ? scrollParentNode : document.documentElement;
+  const scrollParentNode = findAncestorNode(element, (node) => {
+    if (!(node instanceof HTMLElement)) return false;
+    const { overflowY } = window.getComputedStyle(node);
+    const isScrollable = overflowY !== 'visible' && overflowY !== 'hidden';
+    return isScrollable && node.scrollHeight >= node.clientHeight;
+  });
+  return scrollParentNode instanceof HTMLElement
+    ? scrollParentNode
+    : document.documentElement;
 }
 
 /**
@@ -241,8 +248,7 @@ export function copyContent(node: HTMLElement) {
     selection.addRange(range);
     document.execCommand('copy');
     selection.removeAllRanges();
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
   }
 }
@@ -260,25 +266,24 @@ export function writeTextToClipboard(str: string) {
 // See https://github.com/lgarron/clipboard-polyfill for a more robust solution.
 // License: public domain
 function writeText(str: string): Promise<void> {
-  return new Promise(function(resolve, reject) {
-
+  return new Promise(function (resolve, reject) {
     const range = document.createRange();
     range.selectNodeContents(document.body);
     document.getSelection()?.addRange(range);
 
     let success = false;
     function listener(e: ClipboardEvent) {
-      e.clipboardData?.setData("text/plain", str);
+      e.clipboardData?.setData('text/plain', str);
       e.preventDefault();
       success = true;
     }
-    document.addEventListener("copy", listener);
-    document.execCommand("copy");
-    document.removeEventListener("copy", listener);
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
 
     document.getSelection()?.removeAllRanges();
 
-    success ? resolve(): reject();
+    success ? resolve() : reject();
   });
 }
 

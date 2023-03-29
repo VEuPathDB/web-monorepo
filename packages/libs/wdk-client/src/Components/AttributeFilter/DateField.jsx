@@ -1,14 +1,17 @@
 import React from 'react';
 import { partition, sortBy } from 'lodash';
 
-import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField';
-import { getFormatFromDateString, formatDate, parseDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import HistogramField from '../../Components/AttributeFilter/HistogramField';
+import {
+  getFormatFromDateString,
+  formatDate,
+  parseDate,
+} from '../../Components/AttributeFilter/AttributeFilterUtils';
 
 /**
  * Date field component
  */
 export default class DateField extends React.Component {
-
   static getHelpContent(props) {
     return HistogramField.getHelpContent(props);
   }
@@ -28,11 +31,13 @@ export default class DateField extends React.Component {
   }
 
   setDateFormat(distribution) {
-    const firstDateEntry = distribution.find(entry => entry.value != null);
+    const firstDateEntry = distribution.find((entry) => entry.value != null);
     if (firstDateEntry == null) {
-      console.warn('Could not determine date format. No non-null distribution entry.', distribution);
-    }
-    else {
+      console.warn(
+        'Could not determine date format. No non-null distribution entry.',
+        distribution
+      );
+    } else {
       this.timeformat = getFormatFromDateString(firstDateEntry.value);
     }
   }
@@ -44,27 +49,34 @@ export default class DateField extends React.Component {
 
   toFilterValue(value) {
     switch (typeof value) {
-      case 'number': return formatDate(this.timeformat, new Date(value));
-      default: return value;
+      case 'number':
+        return formatDate(this.timeformat, new Date(value));
+      default:
+        return value;
     }
   }
 
   render() {
-    var [ knownDist, unknownDist ] = partition(this.props.activeFieldState.summary.valueCounts, function(entry) {
-      return entry.value !== null;
-    });
+    var [knownDist, unknownDist] = partition(
+      this.props.activeFieldState.summary.valueCounts,
+      function (entry) {
+        return entry.value !== null;
+      }
+    );
 
-
-    var values = sortBy(knownDist
-      .filter(entry => entry.filteredCount > 0)
-      .map(entry => entry.value), value => parseDate(value).getTime());
+    var values = sortBy(
+      knownDist
+        .filter((entry) => entry.filteredCount > 0)
+        .map((entry) => entry.value),
+      (value) => parseDate(value).getTime()
+    );
     var distMin = values[0];
     var distMax = values[values.length - 1];
 
-    var dateDist = knownDist.map(function(entry) {
+    var dateDist = knownDist.map(function (entry) {
       // convert value to time in ms
       return Object.assign({}, entry, {
-        value: parseDate(entry.value).getTime()
+        value: parseDate(entry.value).getTime(),
       });
     });
 
@@ -91,5 +103,4 @@ export default class DateField extends React.Component {
       />
     );
   }
-
 }

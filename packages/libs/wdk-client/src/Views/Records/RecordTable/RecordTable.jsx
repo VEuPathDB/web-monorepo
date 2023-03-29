@@ -2,11 +2,15 @@ import { chunk, property, orderBy, toLower } from 'lodash';
 import React, { Component } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
-import DataTable from 'wdk-client/Components/DataTable/DataTable';
-import { renderAttributeValue, pure, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import DataTable from '../../../Components/DataTable/DataTable';
+import {
+  renderAttributeValue,
+  pure,
+  wrappable,
+} from '../../../Utils/ComponentUtils';
 
-const mapAttributeType = type => {
-  switch(type) {
+const mapAttributeType = (type) => {
+  switch (type) {
     case 'number':
       return 'num';
     default:
@@ -20,20 +24,21 @@ const maxColumns = 4;
 const defaultSortId = '@@defaultSortIndex@@';
 const defaultSortColumn = [{ name: defaultSortId, isDisplayable: false }];
 
-const getSortIndex = (rowData) =>
-  rowData[defaultSortId];
+const getSortIndex = (rowData) => rowData[defaultSortId];
 
 const addDefaultSortId = (row, index) =>
   Object.assign({}, row, { [defaultSortId]: index });
 
 const getColumns = (tableField) =>
-  defaultSortColumn.concat(tableField.attributes.map(attr => ({
-    ...attr,
-    sortType: mapAttributeType(attr.type)
-  })));
+  defaultSortColumn.concat(
+    tableField.attributes.map((attr) => ({
+      ...attr,
+      sortType: mapAttributeType(attr.type),
+    }))
+  );
 
 const getDisplayableAttributes = (tableField) =>
-  tableField.attributes.filter(attr => attr.isDisplayable);
+  tableField.attributes.filter((attr) => attr.isDisplayable);
 
 const getOrderedData = (tableValue, tableField) =>
   orderBy(
@@ -48,17 +53,14 @@ const getOrderedData = (tableValue, tableField) =>
 class RecordTable extends Component {
   constructor(props) {
     super(props);
-    this.getColumns = createSelector(
-      props => props.table,
-      getColumns
-    );
+    this.getColumns = createSelector((props) => props.table, getColumns);
     this.getDisplayableAttributes = createSelector(
-      props => props.table,
+      (props) => props.table,
       getDisplayableAttributes
     );
     this.getOrderedData = createSelector(
-      props => props.value,
-      props => props.table,
+      (props) => props.value,
+      (props) => props.table,
       getOrderedData
     );
   }
@@ -80,7 +82,9 @@ class RecordTable extends Component {
 
     if (value.length === 0 || columns.length === 0) {
       return (
-        <p><em>No data available</em></p>
+        <p>
+          <em>No data available</em>
+        </p>
       );
     }
 
@@ -89,13 +93,13 @@ class RecordTable extends Component {
       let attributeName = displayableAttributes[0].name;
       return (
         <div className={className}>
-          {chunk(value, listColumnSize).map((tableChunk, index) =>
+          {chunk(value, listColumnSize).map((tableChunk, index) => (
             <ul key={index} className="wdk-RecordTableList">
-              {tableChunk.map((row, index) =>
+              {tableChunk.map((row, index) => (
                 <li key={index}>{renderAttributeValue(row[attributeName])}</li>
-              )}
+              ))}
             </ul>
-          )}
+          ))}
         </div>
       );
     }
@@ -122,10 +126,7 @@ class RecordTable extends Component {
 RecordTable.propTypes = {
   value: PropTypes.array.isRequired,
   table: PropTypes.object.isRequired,
-  childRow: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.func
-  ]),
+  childRow: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   expandedRows: PropTypes.arrayOf(PropTypes.number),
   onExpandedRowsChange: PropTypes.func,
   className: PropTypes.string,

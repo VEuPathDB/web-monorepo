@@ -7,9 +7,12 @@
  */
 
 import React, { useCallback } from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 
-type BaseProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'disabled' | 'onChange' | 'type' | 'value' | 'checked'>;
+type BaseProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'disabled' | 'onChange' | 'type' | 'value' | 'checked'
+>;
 
 interface Props extends BaseProps {
   value: boolean;
@@ -17,15 +20,13 @@ interface Props extends BaseProps {
   isDisabled?: boolean;
 }
 const Checkbox = (props: Props) => {
-  let {
-    onChange,
-    value,
-    isDisabled = false,
-    ...otherProps
-  } = props;
-  let changeHandler = useCallback((_event: React.FormEvent<HTMLInputElement>) => {
-    onChange(!value);
-  }, [ value, onChange ]);
+  let { onChange, value, isDisabled = false, ...otherProps } = props;
+  let changeHandler = useCallback(
+    (_event: React.FormEvent<HTMLInputElement>) => {
+      onChange(!value);
+    },
+    [value, onChange]
+  );
 
   return (
     <input
@@ -36,6 +37,6 @@ const Checkbox = (props: Props) => {
       {...otherProps}
     />
   );
-}
+};
 
 export default wrappable(Checkbox);

@@ -1,5 +1,5 @@
-import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
-import { Step } from 'wdk-client/Utils/WdkUser';
+import { RecordClass, Question } from '../../Utils/WdkModel';
+import { Step } from '../../Utils/WdkUser';
 
 export interface PartialUiStepTree {
   color?: string;
@@ -14,7 +14,9 @@ export interface PartialUiStepTree {
   slotNumber: number;
 }
 
-export function isCompleteUiStepTree(stepTree: PartialUiStepTree): stepTree is UiStepTree {
+export function isCompleteUiStepTree(
+  stepTree: PartialUiStepTree
+): stepTree is UiStepTree {
   return stepTree.recordClass != null && stepTree.question != null;
 }
 
@@ -38,7 +40,9 @@ export interface PartialLeafUiStepTree extends PartialUiStepTree {
   secondaryInput: undefined;
 }
 
-export function isPartialCombineUiStepTree(stepTree: PartialUiStepTree): stepTree is PartialLeafUiStepTree {
+export function isPartialCombineUiStepTree(
+  stepTree: PartialUiStepTree
+): stepTree is PartialLeafUiStepTree {
   return stepTree.primaryInput != null && stepTree.secondaryInput != null;
 }
 
@@ -47,7 +51,9 @@ export interface LeafUiStepTree extends UiStepTree {
   secondaryInput: undefined;
 }
 
-export function isLeafUiStepTree(stepTree: UiStepTree): stepTree is LeafUiStepTree {
+export function isLeafUiStepTree(
+  stepTree: UiStepTree
+): stepTree is LeafUiStepTree {
   return stepTree.primaryInput == null && stepTree.secondaryInput == null;
 }
 
@@ -56,7 +62,9 @@ export interface TransformUiStepTree extends UiStepTree {
   secondaryInput: undefined;
 }
 
-export function isTransformUiStepTree(stepTree: UiStepTree): stepTree is TransformUiStepTree {
+export function isTransformUiStepTree(
+  stepTree: UiStepTree
+): stepTree is TransformUiStepTree {
   return stepTree.primaryInput != null && stepTree.secondaryInput == null;
 }
 
@@ -65,7 +73,9 @@ export interface CombineUiStepTree extends UiStepTree {
   secondaryInput: PartialUiStepTree;
 }
 
-export function isCombineUiStepTree(stepTree: UiStepTree): stepTree is CombineUiStepTree {
+export function isCombineUiStepTree(
+  stepTree: UiStepTree
+): stepTree is CombineUiStepTree {
   return stepTree.primaryInput != null && stepTree.secondaryInput != null;
 }
 
@@ -100,7 +110,10 @@ export interface StepBoxProps<T extends UiStepTree = UiStepTree> {
   expandNestedStrategy: () => void;
   showNewAnalysisTab: () => void;
   showReviseForm: () => void;
-  insertStepBefore: (selectedOperation?: string, pageHistory?: string[]) => void;
+  insertStepBefore: (
+    selectedOperation?: string,
+    pageHistory?: string[]
+  ) => void;
   insertStepAfter: (selectedOperation?: string, pageHistory?: string[]) => void;
   deleteStep: () => void;
 }
@@ -113,7 +126,7 @@ export interface StepDetailProps<T extends UiStepTree> extends StepBoxProps<T> {
 
 interface BaseAddType {
   selectedOperation?: string;
-  pageHistory?: string[]
+  pageHistory?: string[];
 }
 
 export interface InsertBefore extends BaseAddType {
@@ -126,6 +139,6 @@ export interface Append extends BaseAddType {
   type: 'append';
   /** The primary input step id of the new step */
   stepId: number;
-};
+}
 
 export type AddType = InsertBefore | Append;

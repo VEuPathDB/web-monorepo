@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 
-import { Loading } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Loading } from '../../Components';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
 
-import 'wdk-client/Views/Strategy/ImportStrategy.scss';
+import '../../Views/Strategy/ImportStrategy.scss';
 
 const cx = makeClassNameHelper('ImportStrategy');
 
@@ -12,10 +12,13 @@ interface Props {
   requestImportStrategy: (strategySignature: string) => void;
 }
 
-export const ImportStrategy = ({ strategySignature, requestImportStrategy }: Props) => {
+export const ImportStrategy = ({
+  strategySignature,
+  requestImportStrategy,
+}: Props) => {
   useEffect(() => {
     requestImportStrategy(strategySignature);
-  }, [ strategySignature ]);
+  }, [strategySignature]);
 
   return (
     <div className={cx()}>
@@ -24,4 +27,3 @@ export const ImportStrategy = ({ strategySignature, requestImportStrategy }: Pro
     </div>
   );
 };
-

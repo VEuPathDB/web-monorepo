@@ -1,5 +1,5 @@
 import React from 'react';
-import * as persistence from 'ebrc-client/util/persistence';
+import * as persistence from '../util/persistence';
 
 // Store user consent in browser storage
 // -------------------------------------
@@ -8,12 +8,10 @@ const USER_AGREED_KEY = 'agreed-to-cookie-usage';
 
 const UserAgreedStore = {
   get: () => persistence.get(USER_AGREED_KEY, false),
-  set: (value) => persistence.set(USER_AGREED_KEY, Boolean(value))
+  set: (value) => persistence.set(USER_AGREED_KEY, Boolean(value)),
 };
 
-
 const privacyPolicyLink = '/a/app/static-content/privacyPolicy.html';
-
 
 // Styles
 // ------
@@ -31,31 +29,30 @@ const bannerStyle = {
   background: 'black',
   color: 'white',
   boxShadow: 'rgb(114, 114, 114) 0px -1px 1px',
-  zIndex: 1000
+  zIndex: 1000,
 };
 
 const linkStyle = {
   color: '#96b1e9',
   textDecoration: 'underline',
-  whiteSpace: 'nowrap'
+  whiteSpace: 'nowrap',
 };
 
 const positStyle = {
   position: 'relative',
   bottom: '0.75em',
-  marginLeft: '1em'
+  marginLeft: '1em',
 };
 
 /**
  * Inform user of cookie usage. Display banner until user clicks agree button.
  */
 export default class CookieBanner extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       userAgreed: undefined,
-      loading: true
+      loading: true,
     };
 
     this.handleButtonClick = this.handleButtonClick.bind(this);
@@ -64,7 +61,7 @@ export default class CookieBanner extends React.Component {
   componentDidMount() {
     this.setState({
       userAgreed: UserAgreedStore.get(),
-      loading: false
+      loading: false,
     });
   }
 
@@ -80,10 +77,21 @@ export default class CookieBanner extends React.Component {
         <div>
           This website requires cookies &amp; limited processing of your
           personal data in order to function properly. By clicking any link on
-          this page you are giving your consent to this as outlined in our <a style={linkStyle} target="_blank" href={privacyPolicyLink}>Privacy Policy</a>.
+          this page you are giving your consent to this as outlined in our{' '}
+          <a style={linkStyle} target="_blank" href={privacyPolicyLink}>
+            Privacy Policy
+          </a>
+          .
         </div>
         <div style={positStyle}>
-          <button style={linkStyle} type="button" onClick={this.handleButtonClick} className="wdk-Link">I agree, close this banner.</button>
+          <button
+            style={linkStyle}
+            type="button"
+            onClick={this.handleButtonClick}
+            className="wdk-Link"
+          >
+            I agree, close this banner.
+          </button>
         </div>
       </div>
     );

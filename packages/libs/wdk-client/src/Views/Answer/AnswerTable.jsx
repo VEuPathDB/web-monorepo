@@ -2,9 +2,9 @@ import { pick, property } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { withRouter } from 'react-router';
-import DataTable from 'wdk-client/Components/DataTable/DataTable';
-import Dialog from 'wdk-client/Components/Overlays/Dialog';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import DataTable from '../../Components/DataTable/DataTable';
+import Dialog from '../../Components/Overlays/Dialog';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 /**
  * Generic table with UI features:
@@ -38,22 +38,29 @@ function AttributeSelector(props) {
         <button>Update Columns</button>
       </div>
       <ul className="wdk-AnswerTable-AttributeSelector">
-        {props.allAttributes.filter(attrib => attrib.isDisplayable).map(attribute => {
-          return (
-            <li key={attribute.name}>
-              <input
-                type="checkbox"
-                id={'column-select-' + attribute.name}
-                name="pendingAttribute"
-                value={attribute.name}
-                disabled={!attribute.isRemovable}
-                checked={props.selectedAttributes.includes(attribute)}
-                onChange={e => props.onChange(e.target.value, e.target.checked)}
-              />
-              <label htmlFor={'column-select-' + attribute.name}> {attribute.displayName} </label>
-            </li>
-          );
-        })}
+        {props.allAttributes
+          .filter((attrib) => attrib.isDisplayable)
+          .map((attribute) => {
+            return (
+              <li key={attribute.name}>
+                <input
+                  type="checkbox"
+                  id={'column-select-' + attribute.name}
+                  name="pendingAttribute"
+                  value={attribute.name}
+                  disabled={!attribute.isRemovable}
+                  checked={props.selectedAttributes.includes(attribute)}
+                  onChange={(e) =>
+                    props.onChange(e.target.value, e.target.checked)
+                  }
+                />
+                <label htmlFor={'column-select-' + attribute.name}>
+                  {' '}
+                  {attribute.displayName}{' '}
+                </label>
+              </li>
+            );
+          })}
       </ul>
       <div className="wdk-AnswerTable-AttributeSelectorButtonWrapper">
         <button>Update Columns</button>
@@ -62,50 +69,73 @@ function AttributeSelector(props) {
   );
 }
 
-
 class AnswerTable extends React.Component {
-
   constructor(props) {
     super(props);
     this.handleSort = this.handleSort.bind(this);
-    this.handleOpenAttributeSelectorClick = this.handleOpenAttributeSelectorClick.bind(this);
-    this.handleAttributeSelectorClose = this.handleAttributeSelectorClose.bind(this);
-    this.handleAttributeSelectorSubmit = this.handleAttributeSelectorSubmit.bind(this);
+    this.handleOpenAttributeSelectorClick =
+      this.handleOpenAttributeSelectorClick.bind(this);
+    this.handleAttributeSelectorClose =
+      this.handleAttributeSelectorClose.bind(this);
+    this.handleAttributeSelectorSubmit =
+      this.handleAttributeSelectorSubmit.bind(this);
     this.togglePendingAttribute = this.togglePendingAttribute.bind(this);
 
     // If this is changed, be sure to update handleAttributeSelectorClose()
     this.state = Object.assign({}, this._getInitialAttributeSelectorState(), {
-      columns: setVisibilityFlag(this.props.recordClass.attributes, this.props.visibleAttributes),
-      data: getDataFromRecords(this.props.records, this.props.recordClass, this.props.history),
-      sorting: getDataTableSorting(this.props.displayInfo.sorting)
+      columns: setVisibilityFlag(
+        this.props.recordClass.attributes,
+        this.props.visibleAttributes
+      ),
+      data: getDataFromRecords(
+        this.props.records,
+        this.props.recordClass,
+        this.props.history
+      ),
+      sorting: getDataTableSorting(this.props.displayInfo.sorting),
     });
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      pendingVisibleAttributes: nextProps.visibleAttributes
+      pendingVisibleAttributes: nextProps.visibleAttributes,
     });
     if (this.props.records !== nextProps.records) {
-      this.setState({ data: getDataFromRecords(nextProps.records, nextProps.recordClass, nextProps.history) });
+      this.setState({
+        data: getDataFromRecords(
+          nextProps.records,
+          nextProps.recordClass,
+          nextProps.history
+        ),
+      });
     }
     if (this.props.visibleAttributes !== nextProps.visibleAttributes) {
-      this.setState({ columns: setVisibilityFlag(nextProps.recordClass.attributes, nextProps.visibleAttributes) });
+      this.setState({
+        columns: setVisibilityFlag(
+          nextProps.recordClass.attributes,
+          nextProps.visibleAttributes
+        ),
+      });
     }
     if (this.props.displayInfo.sorting !== nextProps.displayInfo.sorting) {
-      this.setState({ sorting: getDataTableSorting(nextProps.displayInfo.sorting) });
+      this.setState({
+        sorting: getDataTableSorting(nextProps.displayInfo.sorting),
+      });
     }
   }
 
   handleSort(datatableSorting) {
-    this.props.onSort(datatableSorting.map(entry => ({
-      attributeName: entry.name,
-      direction: entry.direction
-    })));
+    this.props.onSort(
+      datatableSorting.map((entry) => ({
+        attributeName: entry.name,
+        direction: entry.direction,
+      }))
+    );
   }
 
   handleOpenAttributeSelectorClick() {
     this.setState({
-      attributeSelectorOpen: !this.state.attributeSelectorOpen
+      attributeSelectorOpen: !this.state.attributeSelectorOpen,
     });
   }
 
@@ -118,7 +148,7 @@ class AnswerTable extends React.Component {
     e.stopPropagation();
     this.props.onChangeColumns(this.state.pendingVisibleAttributes);
     this.setState({
-      attributeSelectorOpen: false
+      attributeSelectorOpen: false,
     });
   }
 
@@ -126,10 +156,13 @@ class AnswerTable extends React.Component {
    * Filter unchecked checkboxes and map to attributes
    */
   togglePendingAttribute(attributeName, isVisible) {
-    let pending = new Set(this.state.pendingVisibleAttributes.map(attr => attr.name));
+    let pending = new Set(
+      this.state.pendingVisibleAttributes.map((attr) => attr.name)
+    );
 
-    let pendingVisibleAttributes = this.props.allAttributes
-      .filter(attr => attr.name === attributeName ? isVisible : pending.has(attr.name));
+    let pendingVisibleAttributes = this.props.allAttributes.filter((attr) =>
+      attr.name === attributeName ? isVisible : pending.has(attr.name)
+    );
 
     this.setState({ pendingVisibleAttributes });
   }
@@ -137,7 +170,7 @@ class AnswerTable extends React.Component {
   _getInitialAttributeSelectorState() {
     return {
       pendingVisibleAttributes: this.props.visibleAttributes,
-      attributeSelectorOpen: false
+      attributeSelectorOpen: false,
     };
   }
 
@@ -148,16 +181,18 @@ class AnswerTable extends React.Component {
 
     return (
       <div className="wdk-AnswerTable">
-
         <p className="wdk-AnswerTable-AttributeSelectorOpenButton">
-          <button onClick={this.handleOpenAttributeSelectorClick}>Add / Remove Columns</button>
+          <button onClick={this.handleOpenAttributeSelectorClick}>
+            Add / Remove Columns
+          </button>
         </p>
 
         <Dialog
           modal={true}
           open={this.state.attributeSelectorOpen}
           onClose={this.handleAttributeSelectorClose}
-          title="Select Columns">
+          title="Select Columns"
+        >
           <AttributeSelector
             allAttributes={allAttributes}
             selectedAttributes={pendingVisibleAttributes}
@@ -178,7 +213,6 @@ class AnswerTable extends React.Component {
       </div>
     );
   }
-
 }
 
 AnswerTable.propTypes = {
@@ -194,7 +228,7 @@ AnswerTable.propTypes = {
   onMoveColumn: PropTypes.func,
   onChangeColumns: PropTypes.func,
   onNewPage: PropTypes.func,
-  onRecordClick: PropTypes.func
+  onRecordClick: PropTypes.func,
 };
 
 AnswerTable.defaultProps = {
@@ -202,7 +236,7 @@ AnswerTable.defaultProps = {
   onMoveColumn: noop,
   onChangeColumns: noop,
   onNewPage: noop,
-  onRecordClick: noop
+  onRecordClick: noop,
 };
 
 export default wrappable(withRouter(AnswerTable));
@@ -210,25 +244,26 @@ export default wrappable(withRouter(AnswerTable));
 /** Convert records array to DataTable format */
 function getDataFromRecords(records, recordClass, history) {
   let attributeNames = recordClass.attributes
-    .filter(attr => attr.isDisplayable)
-    .map(attr => attr.name);
+    .filter((attr) => attr.isDisplayable)
+    .map((attr) => attr.name);
 
-  return records.map(record => {
+  return records.map((record) => {
     let trimmedAttrs = pick(record.attributes, attributeNames);
     let recordUrl = history.createHref({
-      pathname: `/record/${recordClass.urlSegment}/${record.id.map(property('value')).join('/')}`
+      pathname: `/record/${recordClass.urlSegment}/${record.id
+        .map(property('value'))
+        .join('/')}`,
     });
-    trimmedAttrs.primary_key =
-      `<a href="${recordUrl}">${trimmedAttrs.primary_key}</a>`;
+    trimmedAttrs.primary_key = `<a href="${recordUrl}">${trimmedAttrs.primary_key}</a>`;
     return trimmedAttrs;
   });
 }
 
 /** Convert sorting to DataTable format */
 function getDataTableSorting(wdkSorting) {
-  return wdkSorting.map(entry => ({
+  return wdkSorting.map((entry) => ({
     name: entry.attributeName,
-    direction: entry.direction
+    direction: entry.direction,
   }));
 }
 
@@ -236,8 +271,10 @@ function getDataTableSorting(wdkSorting) {
 function setVisibilityFlag(attributes, visibleAttributes) {
   let visibleSet = new Set(visibleAttributes);
   return attributes
-    .filter(attr => attr.isDisplayable)
-    .map(attr => Object.assign({}, attr, {
-      isDisplayable: visibleSet.has(attr)
-    }));
+    .filter((attr) => attr.isDisplayable)
+    .map((attr) =>
+      Object.assign({}, attr, {
+        isDisplayable: visibleSet.has(attr),
+      })
+    );
 }
