@@ -22,6 +22,7 @@ import {
   GlyphSeries,
   LineSeries,
 } from '@visx/xychart';
+import { max, min } from 'lodash';
 
 // import truncation util functions
 import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-truncations';
@@ -38,9 +39,9 @@ export interface VolcanoPlotProps
     independentAxisLogScaleAddon,
     DependentAxisLogScaleAddon,
     AxisTruncationAddon {
-  /** x-axis range: required for confidence interval - not really */
+  /** x-axis range:  */
   independentAxisRange?: NumberRange;
-  /** y-axis range: required for confidence interval */
+  /** y-axis range: */
   dependentAxisRange?: NumberRange;
   foldChangeGate?: number;
   comparisonLabels?: Array<string>;
@@ -81,6 +82,55 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   // add truncation
 
+  // Axis ranges
+  // Let's do something dumb for now...
+  let xMin: number | undefined;
+  let xMax: number | undefined;
+  let yMin: number | undefined;
+  let yMax: number | undefined;
+
+  data.data.forEach((series, index: number) => {
+    if (index == 0) {
+      xMin = min(series.foldChange.map((fc) => Math.log2(Number(fc))));
+      xMax = max(series.foldChange.map((fc) => Math.log2(Number(fc))));
+      yMin = min(series.adjustedPValue.map((apv) => -Math.log10(Number(apv))));
+      yMax = max(series.adjustedPValue.map((apv) => -Math.log10(Number(apv))));
+    } else {
+      xMin = min([
+        xMin,
+        min(series.foldChange.map((fc) => Math.log2(Number(fc)))),
+      ]);
+      xMax = max([
+        xMax,
+        max(series.foldChange.map((fc) => Math.log2(Number(fc)))),
+      ]);
+      yMin = min([
+        yMin,
+        min(series.adjustedPValue.map((apv) => -Math.log10(Number(apv)))),
+      ]);
+      yMax = max([
+        yMax,
+        max(series.adjustedPValue.map((apv) => -Math.log10(Number(apv)))),
+      ]);
+    }
+  });
+
+  // Add a little margin for axes
+  if (xMin && xMax) {
+    xMin = xMin - (xMax - xMin) * 0.05;
+    xMax = xMax + (xMax - xMin) * 0.05;
+  } else {
+    xMin = 0;
+    xMax = 0;
+  }
+  if (yMin && yMax) {
+    yMin = yMin - (yMax - yMin) * 0.05;
+    yMax = yMax + (yMax - yMin) * 0.05;
+  } else {
+    yMin = 0;
+    yMax = 0;
+  }
+
   // process the data. unzip and zip
   function formatData(series: VolcanoPlotDataSeries) {
     // assume at least foldChange is there (should be type error if not!)
@@ -90,7 +140,9 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       adjustedPValue: string;
       pointId: string;
     }[] = [];
+
     series.foldChange.forEach((value: string, index: number) => {
+      // Find axis ranges
       seriesPoints.push({
         foldChange: value,
         pValue: series.pValue[index],
@@ -122,10 +174,9 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       return d.y;
     },
   };
-  console.log(adjustedPValueGate);
 
   const thresholdLineStyles = {
-    stroke: '#cccccc',
+    stroke: '#aaaaaa',
     strokeWidth: 1,
     strokeDasharray: 3,
   };
@@ -135,10 +186,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     strokeWidth: 1,
   };
 
-  const xMin = -7;
-  const xMax = 7;
-  const yMin = -2;
-  const yMax = 4;
+  // move the following to addOns? maybe leave here until needed in another plot
   const volcanoColors = ['#fa1122', '#cccccc', '#2211fa'];
 
   return (
@@ -147,8 +195,8 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     <div style={{ position: 'relative' }}>
       <XYChart
         height={300}
-        xScale={{ type: 'linear', domain: [-7, 7] }}
-        yScale={{ type: 'linear', domain: [-2, 4] }}
+        xScale={{ type: 'linear', domain: [xMin!, xMax!] }}
+        yScale={{ type: 'linear', domain: [yMin!, yMax!] }}
         width={300}
       >
         <Grid

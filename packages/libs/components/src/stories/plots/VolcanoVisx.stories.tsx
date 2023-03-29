@@ -50,7 +50,7 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
         overlayValue: 'positive',
       },
       {
-        foldChange: ['0.5', '0', '1', '0.5', '0.1', '4', '0.2'],
+        foldChange: ['0.5', '0.8', '1', '0.5', '0.1', '4', '0.2'],
         pValue: ['0.001', '0.0001', '0.2', '0.1', '0.7', '0.1', '0.4'],
         adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
         pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
