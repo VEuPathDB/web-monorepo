@@ -1,5 +1,9 @@
 {
   "extends": "nx/presets/npm.json",
+  "workspaceLayout": {
+    "appsDir": "packages/sites",
+    "libsDir": "packages/libs"
+  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
@@ -19,10 +23,10 @@
     "start": {
       "dependsOn": ["^build-npm-modules"]
     },
-    "bundle": {
+    "bundle:dev": {
       "dependsOn": ["^build-npm-modules"]
     },
-    "prepack": {
+    "bundle:npm": {
       "dependsOn": ["^build-npm-modules"]
     },
     "storybook": {
