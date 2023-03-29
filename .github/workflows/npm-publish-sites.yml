@@ -5,13 +5,11 @@ on:
   push:
     branches:
       - main
-
   paths:
-      - 'packages/sites/*/package.json'
+    - 'packages/sites/*/package.json'
 
 jobs:
-
-  # Gather the names of the sites directories and store it as an output variable 
+  # Gather the names of the sites directories and store it as an output variable
   dirs:
     runs-on: ubuntu-latest
     outputs:
@@ -20,7 +18,7 @@ jobs:
       - uses: actions/checkout@v3
       - id: set-matrix
         run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
-  
+
   # Publish sites packages to npm
   publish:
     name: Publish ${{ matrix.dir }}
