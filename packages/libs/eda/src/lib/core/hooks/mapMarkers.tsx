@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/components/lib/map/Types';
 import { MapConfig } from '../components/visualizations/implementations/MapVisualization';
 import { GeoConfig } from '../types/geoConfig';
-import { NumberVariable, StudyEntity, Variable } from '../types/study';
+import { StudyEntity, Variable } from '../types/study';
 import DataClient, {
   CompleteCasesTable,
   MapMarkersOverlayRequestParams,
@@ -35,9 +35,6 @@ import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/m
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../types/variable';
 import { leastAncestralEntity } from '../utils/data-element-constraints';
-
-// TO DO: move to configuration somewhere?
-const numContinuousBins = 8;
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -293,9 +290,6 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
    * Now get the overlay data
    */
 
-  const defaultOverlayRange = useDefaultAxisRange(
-    xAxisVariableAndEntity?.variable
-  );
   const proportionMode = markerType === 'proportion';
 
   const overlayResponse = usePromise<MapMarkersOverlayResponse | undefined>(
