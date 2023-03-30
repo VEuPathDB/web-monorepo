@@ -21,7 +21,7 @@ import {
   useFindEntityAndVariable,
   useStudyEntities,
 } from './workspace';
-import { BinSpec, NumberRange } from '../types/general';
+import { NumberRange } from '../types/general';
 import { useDefaultAxisRange } from './computeDefaultAxisRange';
 import { zip, sum, values, some } from 'lodash';
 import {
@@ -316,23 +316,6 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
-      // For now, just calculate a static binSpec from variable metadata for numeric continous only
-      // TO DO: date variables when we have testable data (UMSP has them but difficult to test, and back end was giving 500s)
-      // date variables need special date maths for calculating the width, and probably rounding aggressively to whole months/years etc - not trivial.
-      const binSpec: BinSpec | undefined =
-        NumberVariable.is(xAxisVariableAndEntity?.variable) &&
-        defaultOverlayRange != null &&
-        NumberRange.is(defaultOverlayRange)
-          ? {
-              range: defaultOverlayRange,
-              type: 'binWidth',
-              value:
-                (defaultOverlayRange.max - defaultOverlayRange.min) /
-                numContinuousBins,
-            }
-          : // : DateVariable.is(xAxisVariable) && DateRange.is(defaultOverlayRange) ? ... TO DO
-            undefined;
-
       // prepare request
       const requestParams: MapMarkersOverlayRequestParams = {
         studyId,
@@ -381,12 +364,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   // This ensures that for low cardinality categoricals, the colours are always the same.
   // Otherwise use the overlayValues from the back end (which are either bins or a Top7+Other)
   const xAxisVariableType = xAxisVariableAndEntity?.variable.type;
-  const vocabulary =
-    xAxisVariableType === 'string' &&
-    xAxisVariableAndEntity?.variable.vocabulary != null &&
-    xAxisVariableAndEntity?.variable.vocabulary.length <= 8
-      ? xAxisVariableAndEntity?.variable.vocabulary
-      : overlayResponse.value?.mapMarkers.config.overlayValues;
+  const vocabulary = xAxisVariableAndEntity?.variable.vocabulary;
 
   const completeCasesAllVars =
     overlayResponse.value?.mapMarkers.config.completeCasesAllVars;

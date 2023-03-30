@@ -688,8 +688,6 @@ export type MapMarkersOverlayConfig = TypeOf<typeof mapMarkersOverlayConfig>;
 const mapMarkersOverlayConfig = intersection([
   plotConfig,
   type({
-    rankedValues: array(string),
-    overlayValues: array(string),
     viewport: type({
       latitude: type({
         xMin: number,
