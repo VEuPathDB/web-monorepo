@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
+
 // truncation
 import {
   OrientationAddon,
@@ -22,6 +23,7 @@ import {
   GlyphSeries,
   LineSeries,
 } from '@visx/xychart';
+import { useTooltip } from '@visx/tooltip';
 import { max, min } from 'lodash';
 
 // import truncation util functions
@@ -30,7 +32,6 @@ import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
 import { rgb } from 'd3';
-import { LineSubject } from '@visx/visx';
 
 export interface VolcanoPlotProps
   extends PlotProps<VolcanoPlotData>,
@@ -156,22 +157,21 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   const formattedData = data.data.map((series) => formatData(series));
 
-  // this should be -log2 etc.
   const dataAccessors = {
     xAccessor: (d: any) => {
-      return Math.log2(d.foldChange);
+      return Math.log2(d?.foldChange);
     },
     yAccessor: (d: any) => {
-      return -Math.log10(d.adjustedPValue);
+      return -Math.log10(d?.adjustedPValue);
     },
   };
 
   const thresholdLineAccessors = {
     xAccessor: (d: any) => {
-      return d.x;
+      return d?.x;
     },
     yAccessor: (d: any) => {
-      return d.y;
+      return d?.y;
     },
   };
 
@@ -188,6 +188,19 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   // move the following to addOns? maybe leave here until needed in another plot
   const volcanoColors = ['#fa1122', '#cccccc', '#2211fa'];
+
+  // tooltip??
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip();
+
+  console.log('tooltipdata');
+  console.log(tooltipData);
 
   return (
     // From docs " For correct tooltip positioning, it is important to wrap your
@@ -209,12 +222,12 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         {/* Draw threshold lines below data points */}
         {adjustedPValueGate && (
           <LineSeries
-            className="pvalLine"
             data={[
               { x: xMin, y: -Math.log10(Number(adjustedPValueGate)) },
               { x: xMax, y: -Math.log10(Number(adjustedPValueGate)) },
             ]}
-            dataKey="pvalline"
+            dataKey="pvalLine"
+            enableEvents={false}
             {...thresholdLineStyles}
             {...thresholdLineAccessors}
           />
@@ -226,6 +239,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
               { x: -Math.log2(foldChangeGate), y: yMax },
             ]}
             dataKey="foldChangeLineLow"
+            enableEvents={false}
             {...thresholdLineStyles}
             {...thresholdLineAccessors}
           />
@@ -237,6 +251,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
               { x: Math.log2(foldChangeGate), y: yMax },
             ]}
             dataKey="foldChangeLineHigh"
+            enableEvents={false}
             {...thresholdLineStyles}
             {...thresholdLineAccessors}
           />
@@ -245,7 +260,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           console.log(series);
           return (
             <GlyphSeries
-              dataKey={'mydata' + String(Math.random())}
+              dataKey={'mydata' + String(index)}
               data={series}
               {...dataAccessors}
               colorAccessor={(d) => {
@@ -254,6 +269,34 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             />
           );
         })}
+        <Tooltip
+          snapTooltipToDatumX={false}
+          snapTooltipToDatumY={false}
+          showVerticalCrosshair={true}
+          showHorizontalCrosshair={true}
+          showSeriesGlyphs={false}
+          renderTooltip={({ tooltipData }) => {
+            console.log(tooltipData);
+            const isThresholdLine =
+              tooltipData?.nearestDatum?.key.includes('Line');
+            return (
+              <div>
+                <div style={{ color: '#229911' }}>
+                  {tooltipData?.nearestDatum?.key}
+                </div>
+                {isThresholdLine ? (
+                  'thresholdline!'
+                ) : (
+                  <div>
+                    {dataAccessors.xAccessor(tooltipData?.nearestDatum?.datum)}
+                    {', '}
+                    {dataAccessors.yAccessor(tooltipData?.nearestDatum?.datum)}
+                  </div>
+                )}
+              </div>
+            );
+          }}
+        />
       </XYChart>
     </div>
   );
