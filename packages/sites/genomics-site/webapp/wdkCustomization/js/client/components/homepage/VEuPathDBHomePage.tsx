@@ -800,11 +800,8 @@ const useHeaderMenuItems = (
             {
               key: 'submission-policy',
               display: 'Data submission and release policies',
-              type: 'externalLink',
-              url: makeExternalStaticPageUrl(
-                communitySite,
-                '/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf'
-              )
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/dataSubmissionReleasePolicy.html')
             }
           ]
         },
