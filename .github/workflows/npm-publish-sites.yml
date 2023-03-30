@@ -25,7 +25,6 @@ jobs:
       - dirs
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 2
       matrix:
         dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
     steps:
@@ -38,7 +37,7 @@ jobs:
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF#refs/tags/v}
         env:
-          NODE_OPTIONS: '--max-old-space-size=4096'
+          NODE_OPTIONS: '--max-old-space-size=2048'
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
