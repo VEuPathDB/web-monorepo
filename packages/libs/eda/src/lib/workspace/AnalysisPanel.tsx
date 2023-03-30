@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
 import {
@@ -15,6 +15,7 @@ import { cx } from './Utils';
 
 // Definitions
 import { Status, useStudyEntities } from '../core';
+import { isUserDatasetsCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
 
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
@@ -23,6 +24,7 @@ import { isStubEntity } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useStudyMetadata, useStudyRecord } from '../core';
 import { useGeoConfig } from '../core/hooks/geoConfig';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -168,6 +170,57 @@ export function AnalysisPanel({
         .subsetting
     ? 'approved'
     : 'not-approved';
+
+  const currentUser = useWdkService(
+    (wdkService) => wdkService.getCurrentUser(),
+    []
+  );
+
+  const currentUserDatasets = useWdkService(
+    async (wdkService) => {
+      if (!isUserDatasetsCompatibleWdkService(wdkService)) {
+        return [];
+      }
+      if (currentUser == null || currentUser.isGuest) {
+        return [];
+      }
+      const projectId = await wdkService
+        .getConfig()
+        .then((config) => config.projectId);
+      // will this work? if so, then it greatly simplifies thing because we can:
+      // A) get the current userDataset, if exists
+      // B) check if current user owns the dataset
+      // --> wdkService.getUserDataset(Number(studyId)); ???
+
+      return await wdkService
+        .getCurrentUserDatasets()
+        .then((datasets) =>
+          datasets.filter((dataset) => dataset.projects.includes(projectId))
+        );
+    },
+    [currentUser]
+  );
+  console.log({ currentUserDatasets });
+
+  /**
+   * check if dataset is a user study
+   *  - N: enable sharing
+   *  - Y: continue
+   *
+   * check if user study is owned by current user
+   *  - N: disable sharing
+   *  - Y: enable sharing
+   */
+  const shouldDisableShareAnalysis = useMemo(() => {
+    if (permissionsValue.loading) return true;
+    if (!permissionsValue.permissions.perDataset[studyId]?.isUserStudy)
+      return false;
+    if (!currentUserDatasets || !currentUserDatasets.length) return true;
+    return;
+    // console.log(userDatasets.userDatasetsById[studyId])
+    // console.log(userDatasets.userDatasetsById[Number(studyId)]?.resource.ownerUserId)
+    // return userId === userDatasets.userDatasetsById[Number(studyId)].resource.ownerUserId
+  }, [permissionsValue, currentUserDatasets]);
 
   const previousAnalysisId = usePrevious(analysisId);
 
