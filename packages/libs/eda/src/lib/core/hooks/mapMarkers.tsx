@@ -284,11 +284,10 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
   const totalEntityCount = basicMarkerData.value?.completeCasesGeoVar;
 
-  const totalVisibleEntityCount:
-    | number
-    | undefined = basicMarkerData.value?.markerData.reduce((acc, curr) => {
-    return acc + curr.entityCount;
-  }, 0);
+  const totalVisibleEntityCount: number | undefined =
+    basicMarkerData.value?.markerData.reduce((acc, curr) => {
+      return acc + curr.entityCount;
+    }, 0);
 
   /**
    * Now get the overlay data
@@ -346,7 +345,6 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
           geoAggregateVariable: geoAggregateVariable,
           showMissingness: 'noVariables', // current back end 'showMissing' behaviour applies to facet variable
           valueSpec: proportionMode ? 'proportion' : 'count',
-          binSpec: binSpec ?? {},
           viewport: {
             latitude: {
               xMin,

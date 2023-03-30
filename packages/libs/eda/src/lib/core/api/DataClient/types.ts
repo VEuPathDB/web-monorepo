@@ -671,12 +671,6 @@ export interface MapMarkersOverlayRequestParams {
     longitudeVariable: VariableDescriptor;
     geoAggregateVariable: VariableDescriptor;
     valueSpec: 'count' | 'proportion';
-    binSpec: {
-      type?: 'binWidth' | 'numBins';
-      value?: NumberOrNull;
-      units?: TimeUnit;
-      range?: NumberOrDateRange;
-    };
     viewport: {
       latitude: {
         xMin: number;
