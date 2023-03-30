@@ -210,15 +210,28 @@ export default function DownloadTab({
     );
   }, [WDKStudyReleases, downloadServiceStudyReleases]);
 
-  const partialCitationData = useMemo(
-    () => ({
+  const partialCitationData = useMemo(() => {
+    let citationUrl;
+    if (analysisState.analysis && 'analysisId' in analysisState.analysis) {
+      citationUrl = window.location.href.replace(
+        `${analysisState.analysis.analysisId}/download`,
+        'new'
+      );
+    } else {
+      citationUrl = window.location.href.replace('/download', '');
+    }
+    return {
       studyContacts: studyContacts ?? '',
       studyDisplayName: studyRecord.displayName,
       projectDisplayName: projectDisplayName ?? '',
-      citationUrl: window.location.href.replace('download', ''),
-    }),
-    [studyContacts, studyRecord.displayName, projectDisplayName]
-  );
+      citationUrl: citationUrl,
+    };
+  }, [
+    studyContacts,
+    studyRecord.displayName,
+    projectDisplayName,
+    analysisState,
+  ]);
 
   return (
     <div style={{ display: 'flex', paddingTop: 10 }}>
