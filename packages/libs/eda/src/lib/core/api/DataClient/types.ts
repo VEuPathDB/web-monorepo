@@ -672,12 +672,6 @@ export interface MapMarkersOverlayRequestParams {
     longitudeVariable: VariableDescriptor;
     geoAggregateVariable: VariableDescriptor;
     valueSpec: 'count' | 'proportion';
-    binSpec: {
-      type?: 'binWidth' | 'numBins';
-      value?: NumberOrNull;
-      units?: TimeUnit;
-      range?: NumberOrDateRange;
-    };
     viewport: {
       latitude: {
         xMin: number;
@@ -695,8 +689,6 @@ export type MapMarkersOverlayConfig = TypeOf<typeof mapMarkersOverlayConfig>;
 const mapMarkersOverlayConfig = intersection([
   plotConfig,
   type({
-    rankedValues: array(string),
-    overlayValues: array(string),
     viewport: type({
       latitude: type({
         xMin: number,
