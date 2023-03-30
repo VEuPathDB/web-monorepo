@@ -3,21 +3,17 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
   Action,
-  actionCategories
+  actionCategories,
 } from '../data-restriction/DataRestrictionUiActions';
 
 import {
   ApprovalStatus,
   DatasetPermissionEntry,
-  PermissionsResponse
+  PermissionsResponse,
 } from './EntityTypes';
-import {
-  StudyAccessApi
-} from './api';
+import { StudyAccessApi } from './api';
 
-export type UserPermissions =
-  | StaffPermissions
-  | ExternalUserPermissions;
+export type UserPermissions = StaffPermissions | ExternalUserPermissions;
 
 export interface StaffPermissions {
   type: 'staff';
@@ -29,7 +25,9 @@ export interface ExternalUserPermissions {
   perDataset: Record<string, DatasetPermissionEntry | undefined>;
 }
 
-export function permissionsResponseToUserPermissions(permissionsResponse: PermissionsResponse): UserPermissions {
+export function permissionsResponseToUserPermissions(
+  permissionsResponse: PermissionsResponse
+): UserPermissions {
   if (
     permissionsResponse.isStaff === true ||
     permissionsResponse.isOwner === true
@@ -37,12 +35,12 @@ export function permissionsResponseToUserPermissions(permissionsResponse: Permis
     return {
       type: 'staff',
       isOwner: !!permissionsResponse.isOwner,
-      perDataset: permissionsResponse.perDataset
+      perDataset: permissionsResponse.perDataset,
     };
   } else {
     return {
       type: 'external',
-      perDataset: permissionsResponse.perDataset
+      perDataset: permissionsResponse.perDataset,
     };
   }
 }
@@ -63,32 +61,34 @@ export function isManager(userPermissions: UserPermissions, datasetId: string) {
   const datasetPermissions = userPermissions.perDataset[datasetId];
 
   return (
-    datasetPermissions?.type === 'provider' &&
-    datasetPermissions.isManager
+    datasetPermissions?.type === 'provider' && datasetPermissions.isManager
   );
 }
 
-export function isProvider(userPermissions: UserPermissions, datasetId: string) {
+export function isProvider(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
   return (
     userPermissions.type === 'external' &&
     userPermissions.perDataset[datasetId]?.type === 'provider'
   );
 }
 
-export function canAccessDashboard(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    isStaff(userPermissions) ||
-    isProvider(userPermissions, datasetId)
-  );
+export function canAccessDashboard(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
+  return isStaff(userPermissions) || isProvider(userPermissions, datasetId);
 }
 
-export function shouldOfferLinkToDashboard(userPermissions: UserPermissions, datasetId?: string) {
+export function shouldOfferLinkToDashboard(
+  userPermissions: UserPermissions,
+  datasetId?: string
+) {
   return (
     isOwner(userPermissions) ||
-    (
-      datasetId != null &&
-      isManager(userPermissions, datasetId)
-    )
+    (datasetId != null && isManager(userPermissions, datasetId))
   );
 }
 
@@ -104,51 +104,54 @@ export function canUpdateStaff(userPermissions: UserPermissions) {
   return isOwner(userPermissions);
 }
 
-export function shouldDisplayProvidersTable(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    isStaff(userPermissions) ||
-    isProvider(userPermissions, datasetId)
-  );
+export function shouldDisplayProvidersTable(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
+  return isStaff(userPermissions) || isProvider(userPermissions, datasetId);
 }
 
-export function canAddProviders(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    isOwner(userPermissions) ||
-    isManager(userPermissions, datasetId)
-  );
+export function canAddProviders(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
+  return isOwner(userPermissions) || isManager(userPermissions, datasetId);
 }
 
 export function canRemoveProviders(userPermissions: UserPermissions) {
   return isOwner(userPermissions);
 }
 
-export function canUpdateProviders(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    isOwner(userPermissions) ||
-    isManager(userPermissions, datasetId)
-  );
+export function canUpdateProviders(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
+  return isOwner(userPermissions) || isManager(userPermissions, datasetId);
 }
 
-export function shouldDisplayEndUsersTable(userPermissions: UserPermissions, datasetId: string) {
+export function shouldDisplayEndUsersTable(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
   return canAccessDashboard(userPermissions, datasetId);
 }
 
-export function canAddEndUsers(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    isOwner(userPermissions) ||
-    isManager(userPermissions, datasetId)
-  );
+export function canAddEndUsers(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
+  return isOwner(userPermissions) || isManager(userPermissions, datasetId);
 }
 
 export function canRemoveEndUsers(userPermissions: UserPermissions) {
   return isOwner(userPermissions);
 }
 
-export function canUpdateApprovalStatus(userPermissions: UserPermissions, datasetId: string) {
-  return (
-    isOwner(userPermissions) ||
-    isProvider(userPermissions, datasetId)
-  );
+export function canUpdateApprovalStatus(
+  userPermissions: UserPermissions,
+  datasetId: string
+) {
+  return isOwner(userPermissions) || isProvider(userPermissions, datasetId);
 }
 
 export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
@@ -158,9 +161,8 @@ export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
 export function isUserApprovedForAction(
   userPermissions: UserPermissions,
   datasetId: string,
-  action: Action,
+  action: Action
 ) {
-
   const actionAuthorization =
     userPermissions.perDataset[datasetId]?.actionAuthorization;
 
@@ -175,7 +177,6 @@ export function isUserFullyApprovedForStudy(
   userPermissions: UserPermissions,
   datasetId: string
 ) {
-
   const actionAuthorization =
     userPermissions.perDataset[datasetId]?.actionAuthorization;
 
@@ -201,18 +202,20 @@ export async function checkPermissions(
   return await fetchPermissions(studyAccessApi);
 }
 
-export function permittedApprovalStatusChanges(oldApprovalStatus: ApprovalStatus): ApprovalStatus[] {
+export function permittedApprovalStatusChanges(
+  oldApprovalStatus: ApprovalStatus
+): ApprovalStatus[] {
   return oldApprovalStatus === 'requested'
-    ? [ 'requested', 'approved', 'denied']
+    ? ['requested', 'approved', 'denied']
     : oldApprovalStatus === 'approved'
-    ? [ 'approved', 'denied' ]
-    : [ 'requested', 'approved', 'denied'];
+    ? ['approved', 'denied']
+    : ['requested', 'approved', 'denied'];
 }
 
-// The following is used for legacy sites (such as MicrobiomeDB) 
+// The following is used for legacy sites (such as MicrobiomeDB)
 // that would return an empty perDataset obj
 
-const stubbedPermissionEntry: DatasetPermissionEntry = {
+const stubbedPermissionEntry: Omit<DatasetPermissionEntry, 'isUserStudy'> = {
   type: 'end-user',
   studyId: 'stub',
   sha1Hash: 'stub-hash',
@@ -225,14 +228,14 @@ const stubbedPermissionEntry: DatasetPermissionEntry = {
   },
 };
 
-export const stubbedPerDataset: Record<string, DatasetPermissionEntry> = new Proxy(
-  {},
-  {
-    get(target, property, receiver) {
-      // Always return the stubbed permission entry,
-      // regardless of which property (dataset id) is requested
-      return stubbedPermissionEntry;
-    },
-  }
-);
-
+export const stubbedPerDataset: Record<string, DatasetPermissionEntry> =
+  new Proxy(
+    {},
+    {
+      get(target, property, receiver) {
+        // Always return the stubbed permission entry,
+        // regardless of which property (dataset id) is requested
+        return stubbedPermissionEntry;
+      },
+    }
+  );
