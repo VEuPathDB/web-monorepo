@@ -7,10 +7,16 @@ import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 // Definitions
 import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
-type ConfirmShareAnalysisProps = { sharingURL: string };
+type ConfirmShareAnalysisProps = {
+  showContextForOwnedUserDataset: boolean;
+  sharingUrl: string;
+  sharingDatasetUrl: string | undefined;
+};
 
 export default function ConfirmShareAnalysis({
-  sharingURL,
+  showContextForOwnedUserDataset,
+  sharingUrl,
+  sharingDatasetUrl,
 }: ConfirmShareAnalysisProps) {
   const theme = useUITheme();
 
@@ -27,7 +33,7 @@ export default function ConfirmShareAnalysis({
       <div style={{ flex: 1 }}>
         <H5
           text="Sharing URL"
-          additionalStyles={{ marginTop: 25, marginBottom: 0 }}
+          additionalStyles={{ marginTop: 15, marginBottom: 0 }}
         />
 
         <div
@@ -39,7 +45,7 @@ export default function ConfirmShareAnalysis({
             borderRadius: 10,
             padding: 10,
             marginTop: 10,
-            marginBottom: 20,
+            marginBottom: 10,
             borderColor: theme?.palette.primary.hue[500],
           }}
         >
@@ -52,8 +58,25 @@ export default function ConfirmShareAnalysis({
                 maxWidth: 500,
               }}
             >
-              Anyone with the link below will be able to get a copy of this
-              analysis.
+              {showContextForOwnedUserDataset && sharingDatasetUrl ? (
+                <>
+                  <span
+                    style={{
+                      color: theme?.palette.primary.hue[600] ?? gray[600],
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    This is a user dataset.
+                  </span>{' '}
+                  You must first{' '}
+                  <a href={sharingDatasetUrl} target="_blank" rel="noreferrer">
+                    share the dataset
+                  </a>{' '}
+                  before a user can view your analysis.
+                </>
+              ) : (
+                'Anyone with the link below will be able to get a copy of this analysis.'
+              )}
             </p>
 
             <p
@@ -115,7 +138,7 @@ export default function ConfirmShareAnalysis({
             ariaLabel="Copy URL to Clipboard"
             icon={Copy}
             tooltip="Copy URL to Clipboard"
-            onPress={() => navigator.clipboard.writeText(sharingURL)}
+            onPress={() => navigator.clipboard.writeText(sharingUrl)}
             styleOverrides={{
               container: { marginLeft: 10, marginRight: 5, padding: 0 },
               hover: { color: 'transparent' },
@@ -128,7 +151,7 @@ export default function ConfirmShareAnalysis({
               },
             }}
           />
-          <p style={{ margin: 0, flex: 1 }}>{sharingURL}</p>
+          <p style={{ margin: 0, flex: 1 }}>{sharingUrl}</p>
         </div>
       </div>
     </div>

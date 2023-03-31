@@ -1,6 +1,3 @@
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Modal } from '@veupathdb/coreui';
-
 // Definitions
 import { AnalysisState } from '../../core';
 
@@ -8,12 +5,19 @@ import { AnalysisState } from '../../core';
 import NameAnalysis from './NameAnalysis';
 import Login from './Login';
 import ConfirmShareAnalysis from './ConfirmShareAnalysis';
+import { Modal } from '@veupathdb/coreui';
 
 // Utilities
 import { getAnalysisId } from '../../core/utils/analysis';
+import {
+  isDiyWdkRecordId,
+  wdkRecordIdToDiyUserDatasetId,
+} from '@veupathdb/web-common/lib/util/diyDatasets';
 
 // Hooks
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useLoginCallbacks } from './hooks';
+import { useMemo } from 'react';
 
 type ShareFromAnalyisProps = {
   visible: boolean;
@@ -25,6 +29,8 @@ type ShareFromAnalyisProps = {
   sharingUrlPrefix: string;
   /** A callback to open a login form. */
   showLoginForm: () => void;
+  /** Used to amend Sharing URL modal text */
+  showContextForOwnedUserDataset: boolean;
 };
 
 export default function ShareFromAnalysis({
@@ -33,6 +39,7 @@ export default function ShareFromAnalysis({
   showLoginForm,
   analysisState,
   sharingUrlPrefix,
+  showContextForOwnedUserDataset = false,
 }: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
@@ -44,6 +51,18 @@ export default function ShareFromAnalysis({
     `/analysis/${getAnalysisId(analysisState.analysis)}`,
     sharingUrlPrefix
   ).href;
+
+  const sharingDatasetUrl = useMemo(() => {
+    if (!analysisState.analysis) return;
+    if (!isDiyWdkRecordId(analysisState.analysis.studyId)) return;
+    const datasetUrlHelper = window.location.pathname.split('/analyses')[0];
+    return new URL(
+      `${datasetUrlHelper}/datasets/${wdkRecordIdToDiyUserDatasetId(
+        analysisState.analysis.studyId
+      )}`,
+      sharingUrlPrefix
+    ).href;
+  }, [analysisState.analysis]);
 
   return (
     <Modal
@@ -57,7 +76,7 @@ export default function ShareFromAnalysis({
         content: {
           padding: {
             top: 0,
-            right: 50,
+            right: 25,
             bottom: 0,
             left: 25,
           },
@@ -72,7 +91,11 @@ export default function ShareFromAnalysis({
           updateName={analysisState.setName}
         />
       ) : (
-        <ConfirmShareAnalysis sharingURL={sharingUrl} />
+        <ConfirmShareAnalysis
+          showContextForOwnedUserDataset={showContextForOwnedUserDataset}
+          sharingUrl={sharingUrl}
+          sharingDatasetUrl={sharingDatasetUrl}
+        />
       )}
     </Modal>
   );
