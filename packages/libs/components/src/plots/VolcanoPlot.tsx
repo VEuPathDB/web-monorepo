@@ -26,6 +26,7 @@ import {
   Annotation,
   AnnotationLineSubject,
 } from '@visx/xychart';
+import { Group } from '@visx/group';
 import { useTooltip } from '@visx/tooltip';
 import { max, min } from 'lodash';
 
@@ -284,21 +285,24 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             </Annotation>
           </>
         )}
-        {/* <g opacity={1}> */}
-        {/* {formattedData.map((series: any, index: any) => {
+        {/* Didn't find a nice way to pass opacity to the GlyphSeries, so 
+        instead just wrapping the series in a group and taking care of it there. */}
+        <Group opacity={markerBodyOpacity ?? 1}>
+          {/* {formattedData.map((series: any, index: any) => {
           console.log(series);
           return ( */}
-        <GlyphSeries
-          dataKey={'mydata'}
-          data={seriesPoints}
-          {...dataAccessors}
-          colorAccessor={(d) => {
-            return volcanoColors[d.colorNum];
-          }}
-        />
-        {/* );
+          <GlyphSeries
+            dataKey={'mydata'}
+            data={seriesPoints}
+            {...dataAccessors}
+            colorAccessor={(d) => {
+              return volcanoColors[d.colorNum];
+            }}
+            // {...{'opacity': '0.2'}} didn't work :(
+          />
+          {/* );
         })} */}
-        {/* </g> */}
+        </Group>
         <Tooltip
           snapTooltipToDatumX={false}
           snapTooltipToDatumY={false}
