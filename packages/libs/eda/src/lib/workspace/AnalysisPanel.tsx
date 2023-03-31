@@ -15,7 +15,6 @@ import { cx } from './Utils';
 
 // Definitions
 import { Status, useStudyEntities } from '../core';
-import { isUserDatasetsCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
 
 // Hooks
 import { useEntityCounts } from '../core/hooks/entityCounts';
@@ -24,7 +23,6 @@ import { isStubEntity } from '../core/hooks/study';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useStudyMetadata, useStudyRecord } from '../core';
 import { useGeoConfig } from '../core/hooks/geoConfig';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 // Components
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
@@ -171,56 +169,31 @@ export function AnalysisPanel({
     ? 'approved'
     : 'not-approved';
 
-  const currentUser = useWdkService(
-    (wdkService) => wdkService.getCurrentUser(),
-    []
-  );
+  const isDatasetAUserStudy = useMemo(() => {
+    if (permissionsValue.loading || hideSavedAnalysisButtons) return false;
+    if (permissionsValue.permissions.perDataset[studyId]?.isUserStudy)
+      return true;
+    return false;
+  }, [permissionsValue, hideSavedAnalysisButtons, studyId]);
 
-  const currentUserDatasets = useWdkService(
-    async (wdkService) => {
-      if (!isUserDatasetsCompatibleWdkService(wdkService)) {
-        return [];
-      }
-      if (currentUser == null || currentUser.isGuest) {
-        return [];
-      }
-      const projectId = await wdkService
-        .getConfig()
-        .then((config) => config.projectId);
-      // will this work? if so, then it greatly simplifies thing because we can:
-      // A) get the current userDataset, if exists
-      // B) check if current user owns the dataset
-      // --> wdkService.getUserDataset(Number(studyId)); ???
+  const isCurrentUserStudyManager = useMemo(() => {
+    if (permissionsValue.loading || hideSavedAnalysisButtons) return false;
+    if (permissionsValue.permissions.perDataset[studyId]?.isManager)
+      return true;
+    return false;
+  }, [permissionsValue, hideSavedAnalysisButtons, studyId]);
 
-      return await wdkService
-        .getCurrentUserDatasets()
-        .then((datasets) =>
-          datasets.filter((dataset) => dataset.projects.includes(projectId))
-        );
-    },
-    [currentUser]
-  );
-  console.log({ currentUserDatasets });
-
-  /**
-   * check if dataset is a user study
-   *  - N: enable sharing
-   *  - Y: continue
-   *
-   * check if user study is owned by current user
-   *  - N: disable sharing
-   *  - Y: enable sharing
-   */
   const shouldDisableShareAnalysis = useMemo(() => {
-    if (permissionsValue.loading) return true;
-    if (!permissionsValue.permissions.perDataset[studyId]?.isUserStudy)
-      return false;
-    if (!currentUserDatasets || !currentUserDatasets.length) return true;
-    return;
-    // console.log(userDatasets.userDatasetsById[studyId])
-    // console.log(userDatasets.userDatasetsById[Number(studyId)]?.resource.ownerUserId)
-    // return userId === userDatasets.userDatasetsById[Number(studyId)].resource.ownerUserId
-  }, [permissionsValue, currentUserDatasets]);
+    if (permissionsValue.loading || hideSavedAnalysisButtons) return true;
+    if (isDatasetAUserStudy && !isCurrentUserStudyManager) return true;
+    return false;
+  }, [
+    permissionsValue,
+    hideSavedAnalysisButtons,
+    studyId,
+    isDatasetAUserStudy,
+    isCurrentUserStudyManager,
+  ]);
 
   const previousAnalysisId = usePrevious(analysisId);
 
@@ -296,6 +269,9 @@ export function AnalysisPanel({
           analysisState={analysisState}
           sharingUrlPrefix={sharingUrlPrefix}
           showLoginForm={showLoginForm}
+          showContextForOwnedUserDataset={
+            isDatasetAUserStudy && isCurrentUserStudyManager
+          }
         />
         <div
           css={
@@ -322,6 +298,7 @@ export function AnalysisPanel({
                 ? undefined
                 : () => setSharingModalVisible(true)
             }
+            shouldDisableSharing={shouldDisableShareAnalysis}
           />
           <Route
             path={[
