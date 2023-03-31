@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useContext } from 'react';
 import { makePlotlyPlotComponent, PlotProps } from './PlotlyPlot';
 
 // truncation
@@ -22,6 +22,9 @@ import {
   Grid,
   GlyphSeries,
   LineSeries,
+  DataContext,
+  Annotation,
+  AnnotationLineSubject,
 } from '@visx/xychart';
 import { useTooltip } from '@visx/tooltip';
 import { max, min } from 'lodash';
@@ -31,7 +34,7 @@ import { extendAxisRangeForTruncations } from '../utils/extended-axis-range-trun
 import { truncationLayoutShapes } from '../utils/truncation-layout-shapes';
 import { tickSettings } from '../utils/tick-settings';
 import * as ColorMath from 'color-math';
-import { rgb } from 'd3';
+import { scaleOrdinal } from 'd3';
 
 export interface VolcanoPlotProps
   extends PlotProps<VolcanoPlotData>,
@@ -89,6 +92,13 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   let xMax: number | undefined;
   let yMin: number | undefined;
   let yMax: number | undefined;
+  let seriesPoints: {
+    foldChange: string;
+    pValue: string;
+    adjustedPValue: string;
+    pointId: string;
+    colorNum: number;
+  }[] = [];
 
   data.data.forEach((series, index: number) => {
     if (index == 0) {
@@ -114,6 +124,15 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         max(series.adjustedPValue.map((apv) => -Math.log10(Number(apv)))),
       ]);
     }
+    series.foldChange.forEach((v: string, ind: number) => {
+      seriesPoints.push({
+        foldChange: series.foldChange[ind],
+        pValue: series.pValue[ind],
+        adjustedPValue: series.adjustedPValue[ind],
+        pointId: series.pointId[ind],
+        colorNum: index,
+      });
+    });
   });
 
   // Add a little margin for axes
@@ -131,6 +150,11 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     yMin = 0;
     yMax = 0;
   }
+
+  // const colorScale = scaleOrdinal({
+  //   domain: ['0', '1', '2'],
+  //   range: ['#00ee00', '#888811', '#88800']
+  // });
 
   // process the data. unzip and zip
   function formatData(series: VolcanoPlotDataSeries) {
@@ -202,6 +226,10 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   console.log('tooltipdata');
   console.log(tooltipData);
 
+  // data context?
+  const { theme, width, height } = useContext(DataContext);
+  console.log(width);
+
   return (
     // From docs " For correct tooltip positioning, it is important to wrap your
     // component in an element (e.g., div) with relative positioning."
@@ -221,54 +249,56 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
         {/* Draw threshold lines below data points */}
         {adjustedPValueGate && (
-          <LineSeries
-            data={[
-              { x: xMin, y: -Math.log10(Number(adjustedPValueGate)) },
-              { x: xMax, y: -Math.log10(Number(adjustedPValueGate)) },
-            ]}
-            dataKey="pvalLine"
-            enableEvents={false}
-            {...thresholdLineStyles}
+          <Annotation
+            datum={{
+              x: 0,
+              y: -Math.log10(Number(adjustedPValueGate)),
+            }}
             {...thresholdLineAccessors}
-          />
-        )}
-        {foldChangeGate && (
-          <LineSeries
-            data={[
-              { x: -Math.log2(foldChangeGate), y: yMin },
-              { x: -Math.log2(foldChangeGate), y: yMax },
-            ]}
-            dataKey="foldChangeLineLow"
-            enableEvents={false}
-            {...thresholdLineStyles}
-            {...thresholdLineAccessors}
-          />
-        )}
-        {foldChangeGate && (
-          <LineSeries
-            data={[
-              { x: Math.log2(foldChangeGate), y: yMin },
-              { x: Math.log2(foldChangeGate), y: yMax },
-            ]}
-            dataKey="foldChangeLineHigh"
-            enableEvents={false}
-            {...thresholdLineStyles}
-            {...thresholdLineAccessors}
-          />
-        )}
-        {formattedData.map((series: any, index: any) => {
-          console.log(series);
-          return (
-            <GlyphSeries
-              dataKey={'mydata' + String(index)}
-              data={series}
-              {...dataAccessors}
-              colorAccessor={(d) => {
-                return volcanoColors[index];
-              }}
+          >
+            <AnnotationLineSubject
+              orientation="horizontal"
+              {...thresholdLineStyles}
             />
-          );
-        })}
+          </Annotation>
+        )}
+        {foldChangeGate && (
+          <>
+            <Annotation
+              datum={{
+                x: -Math.log2(foldChangeGate),
+                y: 0, // any number since it's a vertical line
+              }}
+              {...thresholdLineAccessors}
+            >
+              <AnnotationLineSubject {...thresholdLineStyles} />
+            </Annotation>
+            <Annotation
+              datum={{
+                x: Math.log2(foldChangeGate),
+                y: 0, // any number since it's a vertical line
+              }}
+              {...thresholdLineAccessors}
+            >
+              <AnnotationLineSubject {...thresholdLineStyles} />
+            </Annotation>
+          </>
+        )}
+        {/* <g opacity={1}> */}
+        {/* {formattedData.map((series: any, index: any) => {
+          console.log(series);
+          return ( */}
+        <GlyphSeries
+          dataKey={'mydata'}
+          data={seriesPoints}
+          {...dataAccessors}
+          colorAccessor={(d) => {
+            return volcanoColors[d.colorNum];
+          }}
+        />
+        {/* );
+        })} */}
+        {/* </g> */}
         <Tooltip
           snapTooltipToDatumX={false}
           snapTooltipToDatumY={false}
