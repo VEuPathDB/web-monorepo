@@ -240,13 +240,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateThumbnail,
     filters,
     dataElementConstraints,
-    dataElementDependencyOrder,
+    // dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
     computeJobStatus,
   } = props;
+  const dataElementDependencyOrder = [
+    ['yAxisVariable', 'xAxisVariable'],
+    ['overlayVariable', 'facetVariable'],
+  ];
+
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useMemo(
@@ -280,9 +285,32 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [computation.descriptor.configuration, options]
   );
 
+  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
+  // just like native vars (for example, in the variable coverage table).
+  const computedXAxisDescriptor = computedXAxisDetails
+    ? {
+        entityId: computedXAxisDetails.entityId,
+        variableId:
+          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
+
+  // When we only have a computed y axis (and no provided overlay) then the y axis var
+  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
+  const computedYAxisDescriptor =
+    !computedOverlayVariableDescriptor && computedYAxisDetails
+      ? {
+          entityId: computedYAxisDetails.entityId,
+          variableId:
+            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+        }
+      : null;
+
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
-    yAxisVariable: vizConfig.yAxisVariable,
+    yAxisVariable: computedYAxisDescriptor
+      ? computedYAxisDescriptor
+      : vizConfig.yAxisVariable,
     overlayVariable: vizConfig.overlayVariable,
     facetVariable: vizConfig.facetVariable,
   });
@@ -1093,27 +1121,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             ),
     [data]
   );
-
-  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
-  // just like native vars (for example, in the variable coverage table).
-  const computedXAxisDescriptor = computedXAxisDetails
-    ? {
-        entityId: computedXAxisDetails.entityId,
-        variableId:
-          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-      }
-    : null;
-
-  // When we only have a computed y axis (and no provided overlay) then the y axis var
-  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
-  const computedYAxisDescriptor =
-    !computedOverlayVariableDescriptor && computedYAxisDetails
-      ? {
-          entityId: computedYAxisDetails.entityId,
-          variableId:
-            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-        }
-      : null;
 
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
