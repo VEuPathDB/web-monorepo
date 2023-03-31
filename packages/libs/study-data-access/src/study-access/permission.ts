@@ -215,7 +215,10 @@ export function permittedApprovalStatusChanges(
 // The following is used for legacy sites (such as MicrobiomeDB)
 // that would return an empty perDataset obj
 
-const stubbedPermissionEntry: Omit<DatasetPermissionEntry, 'isUserStudy'> = {
+const stubbedPermissionEntry: Omit<
+  DatasetPermissionEntry,
+  'isUserStudy' | 'isManager'
+> = {
   type: 'end-user',
   studyId: 'stub',
   sha1Hash: 'stub-hash',

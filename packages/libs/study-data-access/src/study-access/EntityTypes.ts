@@ -252,6 +252,7 @@ export const permissionEntryBase = type({
   studyId: string,
   sha1Hash: string,
   isUserStudy: boolean,
+  isManager: boolean,
   actionAuthorization,
 });
 
@@ -261,7 +262,6 @@ export const providerPermissionEntry = intersection([
   permissionEntryBase,
   type({
     type: literal('provider'),
-    isManager: boolean,
   }),
 ]);
 
