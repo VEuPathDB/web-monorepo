@@ -34,6 +34,7 @@
     "@veupathdb/components": "workspace:^",
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/eda": "workspace:^",
+    "@veupathdb/eslint-config": "workspace:^",
     "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/multi-blast": "workspace:^",
     "@veupathdb/preferred-organisms": "workspace:^",
