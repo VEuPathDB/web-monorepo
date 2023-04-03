@@ -128,7 +128,6 @@ export default function DraggableVisualization({
           isOpen
           styleOverrides={{ zIndex: 10 }}
           panelTitle={activeViz.descriptor.type}
-          onPanelResize={console.log}
           defaultPosition={{
             x: 451,
             y: 142,
@@ -139,9 +138,12 @@ export default function DraggableVisualization({
             style={{
               overflow: 'scroll',
               resize: 'both',
-              // Initial height & width
+              // Initial height & width.
               height: 547,
               width: 779,
+              // This prevents the panel from collapsing aburdly.
+              minWidth: 400,
+              minHeight: 200,
             }}
           >
             <FullScreenVisualization
