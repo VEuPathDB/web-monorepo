@@ -66,11 +66,11 @@ export default function ConfirmShareAnalysis({
                       fontWeight: 'bold',
                     }}
                   >
-                    This is a user dataset.
+                    This is a User Study.
                   </span>{' '}
                   You must first{' '}
                   <a href={sharingDatasetUrl} target="_blank" rel="noreferrer">
-                    share the dataset
+                    share the study
                   </a>{' '}
                   before the recipient can view your analysis.
                 </>

@@ -110,7 +110,7 @@ export function AnalysisSummary(props: Props) {
              * when in the button is in the disabled state. Therefore, I needed to wrap the button in a span and use
              * the MUI Tooltip component.
              */
-            <Tooltip title="Only owners of a user dataset can share analyses">
+            <Tooltip title="Only owners of a user study can share analyses">
               <span>
                 <FilledButton
                   disabled={shouldDisableSharing}
