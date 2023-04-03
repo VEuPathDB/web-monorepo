@@ -12,7 +12,7 @@ import { getAnalysisId } from '../../core/utils/analysis';
 import {
   isDiyWdkRecordId,
   wdkRecordIdToDiyUserDatasetId,
-} from '@veupathdb/web-common/lib/util/diyDatasets';
+} from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
 
 // Hooks
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
