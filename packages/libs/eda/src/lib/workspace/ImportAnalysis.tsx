@@ -92,12 +92,11 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
                 <button className="link" onClick={handleClick}>
                   Please login
                 </button>{' '}
-                or{' '}
+                and try again.
               </>
             ) : (
-              <>Please</>
-            )}{' '}
-            request access from the owner of the study.
+              <>Please request access from the owner of the study.</>
+            )}
           </p>
         </>
       ) : (
@@ -112,7 +111,7 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
   return (
     <div>
       <h1>{error == null ? 'Importing Analysis...' : 'Import Unsuccessful'}</h1>
-      {errorMessage}
+      {error && errorMessage}
     </div>
   );
 }
