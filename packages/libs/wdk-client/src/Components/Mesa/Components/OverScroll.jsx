@@ -1,20 +1,20 @@
 import React from 'react';
 
-import Defaults from 'wdk-client/Components/Mesa/Defaults';
+import Defaults from '../../../Components/Mesa/Defaults';
 
 class OverScroll extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
   }
 
-  render () {
+  render() {
     let { className, height } = this.props;
     className = 'OverScroll' + (className ? ' ' + className : '');
     height = typeof height === 'number' ? height + 'px' : 'none';
 
     const style = {
       maxHeight: height,
-      overflowY: 'auto'
+      overflowY: 'auto',
     };
 
     return (
@@ -25,6 +25,6 @@ class OverScroll extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default OverScroll;

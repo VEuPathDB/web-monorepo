@@ -1,25 +1,23 @@
 import React, { useMemo } from 'react';
-import { 
-  CategoryTreeNode, 
+import {
+  CategoryTreeNode,
   getId,
-  getChildren as getNodeChildren 
-} from 'wdk-client/Utils/CategoryUtils';
-import { pure } from 'wdk-client/Utils/ComponentUtils';
-import Dialog from 'wdk-client/Components/Overlays/Dialog';
-import CategoriesCheckboxTree from 'wdk-client/Components/CheckboxTree/CategoriesCheckboxTree';
-import { Answer, Question } from 'wdk-client/Utils/WdkModel';
-import { flatMap, concat } from 'wdk-client/Utils/IterableUtils';
+  getChildren as getNodeChildren,
+} from '../../Utils/CategoryUtils';
+import { pure } from '../../Utils/ComponentUtils';
+import Dialog from '../../Components/Overlays/Dialog';
+import CategoriesCheckboxTree from '../../Components/CheckboxTree/CategoriesCheckboxTree';
+import { Answer, Question } from '../../Utils/WdkModel';
+import { flatMap, concat } from '../../Utils/IterableUtils';
 import {
   ShowHideAddColumnsDialog,
   UpdateColumnsDialogSelection,
   UpdateColumnsDialogSearchString,
   UpdateColumnsDialogExpandedNodes,
-  RequestColumnsChoiceUpdate
-} from 'wdk-client/Views/ResultTableSummaryView/Types';
-import { 
-  LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
-import { getLeaves } from 'wdk-client/Utils/TreeUtils';
+  RequestColumnsChoiceUpdate,
+} from '../../Views/ResultTableSummaryView/Types';
+import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { getLeaves } from '../../Utils/TreeUtils';
 import { differenceWith } from 'lodash';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
@@ -59,34 +57,43 @@ function ResultTableAddColumnsDialog({
 
   /**
    * This logic returns an accurate count of the checkboxes selected in the Dialog component.
-   * Since columnsDialogSelection includes ids for non-selectable columns, the ids in columnsDialogSelection 
+   * Since columnsDialogSelection includes ids for non-selectable columns, the ids in columnsDialogSelection
    * that do not correspond with a checkbox are filtered out.
    */
   const numberOfColumnsSelected = useMemo(() => {
-    const checkboxIds = getLeaves(columnsTree, getNodeChildren).map(node => getId(node));
-    const filteredCheckboxIds = differenceWith(checkboxIds, columnsDialogSelection ?? []);
-    return Math.abs(checkboxIds.length - filteredCheckboxIds.length)
-  }, [columnsDialogSelection, columnsTree])
+    const checkboxIds = getLeaves(columnsTree, getNodeChildren).map((node) =>
+      getId(node)
+    );
+    const filteredCheckboxIds = differenceWith(
+      checkboxIds,
+      columnsDialogSelection ?? []
+    );
+    return Math.abs(checkboxIds.length - filteredCheckboxIds.length);
+  }, [columnsDialogSelection, columnsTree]);
 
-  const areMaxColumnsExceeded = columnsDialogSelection && columnsDialogSelection?.length > MAX_COLUMNS_ALLOWED;
+  const areMaxColumnsExceeded =
+    columnsDialogSelection &&
+    columnsDialogSelection?.length > MAX_COLUMNS_ALLOWED;
 
   const selectedColumnsMessage = (
-    <div style={{
-      fontStyle: 'italic',
-      textAlign: 'center',
-      fontSize: '1.1em',
-      margin: '0.5em',
-    }}>
-      <span 
-        style={{ 
+    <div
+      style={{
+        fontStyle: 'italic',
+        textAlign: 'center',
+        fontSize: '1.1em',
+        margin: '0.5em',
+      }}
+    >
+      <span
+        style={{
           color: '#c00',
         }}
       >
         {numberOfColumnsSelected} columns selected
       </span>
-      ,  out of {MAX_COLUMNS_ALLOWED} columns allowed
+      , out of {MAX_COLUMNS_ALLOWED} columns allowed
     </div>
-  )
+  );
 
   const updateButton = (
     <button
@@ -95,7 +102,10 @@ function ResultTableAddColumnsDialog({
       disabled={areMaxColumnsExceeded ? true : false}
       onClick={() => {
         if (columnsDialogSelection) {
-          requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
+          requestColumnsChoiceUpdate(
+            columnsDialogSelection,
+            question.urlSegment
+          );
         }
         showHideAddColumnsDialog(false);
       }}
@@ -103,15 +113,20 @@ function ResultTableAddColumnsDialog({
       Update Columns
     </button>
   );
-  
+
   const buttonWithTooltip = (
     <div style={{ textAlign: 'center' }}>
-      {areMaxColumnsExceeded ?
-        <Tooltip title={'Please select no more than ' + MAX_COLUMNS_ALLOWED + ' columns'}>
+      {areMaxColumnsExceeded ? (
+        <Tooltip
+          title={
+            'Please select no more than ' + MAX_COLUMNS_ALLOWED + ' columns'
+          }
+        >
           {updateButton}
-        </Tooltip> :
+        </Tooltip>
+      ) : (
         updateButton
-      } 
+      )}
     </div>
   );
 
@@ -127,7 +142,9 @@ function ResultTableAddColumnsDialog({
         showHideAddColumnsDialog(false);
         if (answer && columnsTree) {
           updateColumnsDialogSelection(answer.meta.attributes);
-          updateColumnsDialogExpandedNodes(getExpandedBranches(answer, columnsTree));
+          updateColumnsDialogExpandedNodes(
+            getExpandedBranches(answer, columnsTree)
+          );
         }
       }}
     >
@@ -141,7 +158,11 @@ function ResultTableAddColumnsDialog({
           selectedLeaves={columnsDialogSelection || answer.meta.attributes}
           currentSelection={answer.meta.attributes}
           defaultSelection={question.defaultAttributes}
-          expandedBranches={getExpandedBranches(answer, columnsTree, columnsDialogExpandedNodes)}
+          expandedBranches={getExpandedBranches(
+            answer,
+            columnsTree,
+            columnsDialogExpandedNodes
+          )}
           searchTerm={columnsDialogSearchString}
           onChange={updateColumnsDialogSelection}
           onUiChange={updateColumnsDialogExpandedNodes}
@@ -152,7 +173,7 @@ function ResultTableAddColumnsDialog({
               container: {
                 margin: '0 1em',
                 textAlign: 'center',
-              }
+              },
             },
             searchBox: {
               container: {
@@ -161,11 +182,11 @@ function ResultTableAddColumnsDialog({
             },
             treeSection: {
               container: {
-                margin: '0.5em 0 0.5em 1em'
+                margin: '0.5em 0 0.5em 1em',
               },
               ul: {
                 padding: 0,
-              }
+              },
             },
           }}
         />
@@ -195,10 +216,13 @@ function findAncestors(
   const id = getId(root);
   return leaves.has(id)
     ? []
-    : root.children.some(child => leaves.has(getId(child)))
-    ? [ id ]
+    : root.children.some((child) => leaves.has(getId(child)))
+    ? [id]
     : concat(
-        flatMap(child => findAncestors(leaves, child, ancestors), root.children),
+        flatMap(
+          (child) => findAncestors(leaves, child, ancestors),
+          root.children
+        ),
         ancestors
       );
 }

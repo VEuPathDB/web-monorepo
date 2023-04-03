@@ -4,8 +4,20 @@ import { noop } from 'lodash';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { twitterUrl, twitterUrl2, facebookUrl, youtubeUrl, redditUrl } from 'ebrc-client/config';
-import { AnnouncementsToggle, Twitter, Facebook, YouTube, Reddit } from './SocialMediaIcons';
+import {
+  twitterUrl,
+  twitterUrl2,
+  facebookUrl,
+  youtubeUrl,
+  redditUrl,
+} from '../../config';
+import {
+  AnnouncementsToggle,
+  Twitter,
+  Facebook,
+  YouTube,
+  Reddit,
+} from './SocialMediaIcons';
 
 import './SocialMediaLinks.scss';
 
@@ -20,20 +32,27 @@ interface Props {
 
 export const SocialMediaLinks = ({
   showAnnouncementsToggle = false,
-  onShowAnnouncements = noop
+  onShowAnnouncements = noop,
 }: Props) => {
-  const onClickAnnouncementsToggle = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    onShowAnnouncements();
-  }, [ showAnnouncementsToggle ]);
+  const onClickAnnouncementsToggle = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      onShowAnnouncements();
+    },
+    [showAnnouncementsToggle]
+  );
 
   return (
     <div className={cx()}>
       {
         <a
           title="Reopen announcements you have closed"
-          className={cx('--AnnouncementsToggle', showAnnouncementsToggle ? 'shown' : 'hidden')}
-          href="#" onClick={onClickAnnouncementsToggle}
+          className={cx(
+            '--AnnouncementsToggle',
+            showAnnouncementsToggle ? 'shown' : 'hidden'
+          )}
+          href="#"
+          onClick={onClickAnnouncementsToggle}
         >
           <AnnouncementsToggle />
         </a>

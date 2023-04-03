@@ -1,13 +1,21 @@
 import React, { createContext, useContext } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import Dialog from 'wdk-client/Components/Overlays/Dialog';
-import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
-import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
-import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
-import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
-import { getStepUrl, makeStepDetailsDisplayName } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { SaveableTextEditor } from 'wdk-client/Components';
+import Dialog from '../../Components/Overlays/Dialog';
+import { cxStepBoxes as cx } from '../../Views/Strategy/ClassNames';
+import CombineStepDetails from '../../Views/Strategy/CombineStepDetails';
+import NestedStepDetails from '../../Views/Strategy/NestedStepDetails';
+import StepDetails from '../../Views/Strategy/StepDetails';
+import {
+  getStepUrl,
+  makeStepDetailsDisplayName,
+} from '../../Views/Strategy/StrategyUtils';
+import {
+  isCombineUiStepTree,
+  isLeafUiStepTree,
+  StepDetailProps,
+  UiStepTree,
+} from '../../Views/Strategy/Types';
+import { SaveableTextEditor } from '../../Components';
 
 type Props = RouteComponentProps<any> & StepDetailProps<UiStepTree>;
 
@@ -35,23 +43,25 @@ export const defaultActions: StepAction[] = [
     onClick: ({ history, stepTree }) => {
       history.push(getStepUrl(stepTree.step));
     },
-    isDisabled: ({ location, stepTree }) => location.pathname.startsWith(getStepUrl(stepTree.step)),
-    tooltip: () => 'View the results of this search'
+    isDisabled: ({ location, stepTree }) =>
+      location.pathname.startsWith(getStepUrl(stepTree.step)),
+    tooltip: () => 'View the results of this search',
   },
   {
     key: 'analyze',
     display: () => <React.Fragment>Analyze</React.Fragment>,
     onClick: ({ showNewAnalysisTab }) => showNewAnalysisTab(),
-    isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step)),
+    isDisabled: ({ location, stepTree }) =>
+      !location.pathname.startsWith(getStepUrl(stepTree.step)),
     isHidden: ({ isAnalyzable }) => !isAnalyzable,
-    tooltip: () => 'Analyze the results of this search'
+    tooltip: () => 'Analyze the results of this search',
   },
   {
     key: 'revise',
     display: () => <React.Fragment>Revise</React.Fragment>,
     onClick: ({ showReviseForm }) => showReviseForm(),
     isHidden: ({ allowRevise = true }) => !allowRevise,
-    tooltip: () => 'Modify the configuration of this search'
+    tooltip: () => 'Modify the configuration of this search',
   },
   {
     key: 'nest',
@@ -59,12 +69,11 @@ export const defaultActions: StepAction[] = [
     onClick: ({ makeNestedStrategy }) => {
       makeNestedStrategy();
     },
-    isHidden: ({ stepTree, isNested }) => (
+    isHidden: ({ stepTree, isNested }) =>
       !isLeafUiStepTree(stepTree) ||
       stepTree.nestedControlStep == null ||
-      isNested
-    ),
-    tooltip: () => 'Create a non-linear search strategy'
+      isNested,
+    tooltip: () => 'Create a non-linear search strategy',
   },
   {
     key: 'unnest',
@@ -72,82 +81,115 @@ export const defaultActions: StepAction[] = [
     onClick: ({ makeUnnestStrategy }) => makeUnnestStrategy(),
     isDisabled: ({ stepTree }) => isCombineUiStepTree(stepTree),
     isHidden: ({ isNested }) => !isNested,
-    tooltip: ({ stepTree }) => isCombineUiStepTree(stepTree)
-      ? 'Nested strategies with more than one step cannot be unnested'
-      : 'Convert nested strategy into a single step'
+    tooltip: ({ stepTree }) =>
+      isCombineUiStepTree(stepTree)
+        ? 'Nested strategies with more than one step cannot be unnested'
+        : 'Convert nested strategy into a single step',
   },
   {
     key: 'toggleNested',
-    display: ({ stepTree }) => <React.Fragment>{
-      stepTree.nestedControlStep && stepTree.nestedControlStep.expanded
-        ? 'Hide nested'
-        : 'Show nested'
-      }</React.Fragment>,
+    display: ({ stepTree }) => (
+      <React.Fragment>
+        {stepTree.nestedControlStep && stepTree.nestedControlStep.expanded
+          ? 'Hide nested'
+          : 'Show nested'}
+      </React.Fragment>
+    ),
     onClick: ({ isExpanded, collapseNestedStrategy, expandNestedStrategy }) => {
       if (isExpanded) collapseNestedStrategy();
       else expandNestedStrategy();
     },
     isHidden: ({ isNested }) => !isNested,
-    tooltip: ({ isExpanded }) => isExpanded ? 'Hide nested strategy details' : 'Show nested strategy details'
+    tooltip: ({ isExpanded }) =>
+      isExpanded
+        ? 'Hide nested strategy details'
+        : 'Show nested strategy details',
   },
   {
     key: 'insertBefore',
     display: () => <React.Fragment>Insert step before</React.Fragment>,
     onClick: ({ insertStepBefore }) => insertStepBefore(),
-    tooltip: () => 'Insert a search into your search strategy before this search'
+    tooltip: () =>
+      'Insert a search into your search strategy before this search',
   },
   {
     key: 'delete',
     display: () => <React.Fragment>Delete</React.Fragment>,
     onClick: ({ deleteStep }) => deleteStep(),
     isDisabled: ({ isDeleteable }) => !isDeleteable,
-    tooltip: ({ isDeleteable }) => isDeleteable ? 'Delete this search from your strategy' : 'Deleting this step will yield an invalid search strategy'
-  }
+    tooltip: ({ isDeleteable }) =>
+      isDeleteable
+        ? 'Delete this search from your strategy'
+        : 'Deleting this step will yield an invalid search strategy',
+  },
 ];
 
 export const StepDetailsActionContext = createContext(defaultActions);
 
 export default withRouter(function StepDetailsDialog(props: Props) {
-  const {
-    isNested,
-    isOpen,
-    stepTree,
-    onClose,
-    renameStep,
-  } = props;
+  const { isNested, isOpen, stepTree, onClose, renameStep } = props;
   const { step, nestedControlStep, recordClass } = stepTree;
-  const displayName = makeStepDetailsDisplayName(step, isCombineUiStepTree(stepTree), nestedControlStep);
+  const displayName = makeStepDetailsDisplayName(
+    step,
+    isCombineUiStepTree(stepTree),
+    nestedControlStep
+  );
   const actions = useContext(StepDetailsActionContext);
 
   return (
     <Dialog
-      className={cx("--StepDetails")}
-      title={(
-        <div className={cx("--StepActions")}>
+      className={cx('--StepDetails')}
+      title={
+        <div className={cx('--StepActions')}>
           {actions
-          .filter(action => action.isHidden == null || !action.isHidden(props))
-          .map(action => (
-            <div key={action.key}>
-              <button type="button" className="link" onClick={() => {
-                if (action.onClick) action.onClick(props);
-                if (action.closeOnClick !== false) onClose();
-              }}
-              disabled={action.isDisabled ? action.isDisabled(props) : false}
-              title={action.tooltip && action.tooltip(props)}
-            ><action.display {...props}/></button>
-            </div>
-          ))}
+            .filter(
+              (action) => action.isHidden == null || !action.isHidden(props)
+            )
+            .map((action) => (
+              <div key={action.key}>
+                <button
+                  type="button"
+                  className="link"
+                  onClick={() => {
+                    if (action.onClick) action.onClick(props);
+                    if (action.closeOnClick !== false) onClose();
+                  }}
+                  disabled={
+                    action.isDisabled ? action.isDisabled(props) : false
+                  }
+                  title={action.tooltip && action.tooltip(props)}
+                >
+                  <action.display {...props} />
+                </button>
+              </div>
+            ))}
         </div>
-      )}
+      }
       open={isOpen}
       onClose={onClose}
     >
       <React.Fragment>
-        <div className={cx('--StepDetailsHeading')}>Details for step <SaveableTextEditor value={displayName} onSave={renameStep} className={cx('--StepDetailsName')}/></div>
-        <div className={cx('--StepDetailsCount')}>{step.estimatedSize == null ? '?' : step.estimatedSize} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}</div>
-        { isNested ? <NestedStepDetails {...props}/>
-        : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} stepTree={stepTree} />
-        : <StepDetails {...props} /> }
+        <div className={cx('--StepDetailsHeading')}>
+          Details for step{' '}
+          <SaveableTextEditor
+            value={displayName}
+            onSave={renameStep}
+            className={cx('--StepDetailsName')}
+          />
+        </div>
+        <div className={cx('--StepDetailsCount')}>
+          {step.estimatedSize == null ? '?' : step.estimatedSize}{' '}
+          {step.estimatedSize === 1
+            ? recordClass.displayName
+            : recordClass.displayNamePlural}
+        </div>
+        {isNested ? (
+          <NestedStepDetails {...props} />
+        ) : isCombineUiStepTree(stepTree) ? (
+          <CombineStepDetails {...props} stepTree={stepTree} />
+        ) : (
+          <StepDetails {...props} />
+        )}
       </React.Fragment>
     </Dialog>
   );

@@ -1,16 +1,19 @@
 // import { compose, curryN, set, update } from 'lodash/fp';
-import { SITE_CONFIG_LOADED, BASKETS_LOADED, QUICK_SEARCH_LOADED } from './actioncreators/GlobalActionCreators';
+import {
+  SITE_CONFIG_LOADED,
+  BASKETS_LOADED,
+  QUICK_SEARCH_LOADED,
+} from './actioncreators/GlobalActionCreators';
 import * as contactUs from './store-modules/ContactUsStoreModule';
-import {getSearchMenuCategoryTree} from './util/category';
+import { getSearchMenuCategoryTree } from './util/category';
 import { selectReporterComponent } from './util/reporter';
 
 import * as galaxyTerms from './store-modules/GalaxyTerms';
 
-import reduceStudies from 'ebrc-client/App/Studies/StudyReducer';
+import reduceStudies from './App/Studies/StudyReducer';
 import reduceDataRestriction from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionReducer';
-import reduceSearchCards from 'ebrc-client/App/Searches/SearchCardReducer';
-import { newsReducer } from 'ebrc-client/App/NewsSidebar/NewsModule';
-
+import reduceSearchCards from './App/Searches/SearchCardReducer';
+import { newsReducer } from './App/NewsSidebar/NewsModule';
 
 /** Compose reducer functions from right to left */
 // const composeReducers = (...reducers) => (state, action) =>
@@ -18,23 +21,23 @@ import { newsReducer } from 'ebrc-client/App/NewsSidebar/NewsModule';
 
 // const composeReducerWith = curryN(2, composeReducers);
 
-export default storeModules => ({
+export default (storeModules) => ({
   ...storeModules,
   searchCards: {
     key: 'searchCards',
-    reduce: reduceSearchCards
+    reduce: reduceSearchCards,
   },
   studies: {
     key: 'studies',
-    reduce: reduceStudies
+    reduce: reduceStudies,
   },
   dataRestriction: {
     key: 'dataRestriction',
-    reduce: reduceDataRestriction
+    reduce: reduceDataRestriction,
   },
   newsSidebar: {
     key: 'newsSidebar',
-    reduce: newsReducer
+    reduce: newsReducer,
   },
   galaxyTerms,
   contactUs,
@@ -43,13 +46,13 @@ export default storeModules => ({
     reduce: (state, action) => {
       state = storeModules.globalData.reduce(state, action);
       return ebrcGlobalData(state, action);
-    }
+    },
   },
   downloadForm: {
     ...storeModules.downloadForm,
-    reduce: storeModules.downloadForm.makeReducer(selectReporterComponent)
-  }
-})
+    reduce: storeModules.downloadForm.makeReducer(selectReporterComponent),
+  },
+});
 
 // export default compose(
 //   set('searchCards', { key: 'searchCards', reduce: reduceSearchCards }),
@@ -63,25 +66,33 @@ export default storeModules => ({
 // );
 
 function ebrcGlobalData(state, { type, payload }) {
-  switch(type) {
-    case SITE_CONFIG_LOADED: return Object.assign({}, state, {
-      siteConfig: payload.siteConfig
-    });
+  switch (type) {
+    case SITE_CONFIG_LOADED:
+      return Object.assign({}, state, {
+        siteConfig: payload.siteConfig,
+      });
 
-    case BASKETS_LOADED: return Object.assign({}, state, {
-      basketCounts: payload.basketCounts
-    });
+    case BASKETS_LOADED:
+      return Object.assign({}, state, {
+        basketCounts: payload.basketCounts,
+      });
 
-    case QUICK_SEARCH_LOADED: return Object.assign({}, state, {
-      quickSearches: payload.questions,
-      quickSearchesLoading: false
-    });
+    case QUICK_SEARCH_LOADED:
+      return Object.assign({}, state, {
+        quickSearches: payload.questions,
+        quickSearchesLoading: false,
+      });
 
-    case 'static/all-data-loaded': return {
-      ...state,
-      searchTree: getSearchMenuCategoryTree(state.ontology, state.recordClasses)
-    };
+    case 'static/all-data-loaded':
+      return {
+        ...state,
+        searchTree: getSearchMenuCategoryTree(
+          state.ontology,
+          state.recordClasses
+        ),
+      };
 
-    default: return state;
+    default:
+      return state;
   }
 }

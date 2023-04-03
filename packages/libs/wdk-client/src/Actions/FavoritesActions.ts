@@ -1,7 +1,7 @@
-import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
-import { Favorite, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
-import { MesaState } from 'wdk-client/Components/Mesa';
+import { ActionThunk } from '../Core/WdkMiddleware';
+import { Favorite, RecordClass } from '../Utils/WdkModel';
+import { ServiceError } from '../Service/ServiceError';
+import { MesaState } from '../Components/Mesa';
 
 // Types
 // -----
@@ -30,7 +30,7 @@ export type Action =
   | EndDeleteWithErrorAction
   | EndUndeleteWithSuccessAction
   | UpdateSearchTermAction
-  | FilterByTypeAction
+  | FilterByTypeAction;
 
 //==============================================================================
 
@@ -39,17 +39,19 @@ export const UPDATE_TABLE_STATE = 'favorites/update-table-state';
 export interface UpdateTableStateAction {
   type: typeof UPDATE_TABLE_STATE;
   payload: {
-    tableState: TableState
-  }
+    tableState: TableState;
+  };
 }
 
-export function updateTableState(tableState: TableState): UpdateTableStateAction {
+export function updateTableState(
+  tableState: TableState
+): UpdateTableStateAction {
   return {
     type: UPDATE_TABLE_STATE,
     payload: {
-      tableState
-    }
-  }
+      tableState,
+    },
+  };
 }
 
 //==============================================================================
@@ -64,13 +66,16 @@ export interface SortTableAction {
   };
 }
 
-export function sortTable(sortKey: string, sortDirection: 'ASC' | 'DESC'): SortTableAction {
+export function sortTable(
+  sortKey: string,
+  sortDirection: 'ASC' | 'DESC'
+): SortTableAction {
   return {
     type: SORT_TABLE,
     payload: {
       sortKey,
-      sortDirection
-    }
+      sortDirection,
+    },
   };
 }
 
@@ -83,13 +88,15 @@ export interface UpdateTableSelectionAction {
   payload: {
     selectIds: number[];
     deselectIds: number[];
-  }
+  };
 }
 
-export function updateTableSelection(payload: UpdateTableSelectionAction['payload']): UpdateTableSelectionAction {
+export function updateTableSelection(
+  payload: UpdateTableSelectionAction['payload']
+): UpdateTableSelectionAction {
   return {
     type: UPDATE_TABLE_SELECTION,
-    payload
+    payload,
   };
 }
 
@@ -104,12 +111,14 @@ export interface CreateTypeGetterAction {
   };
 }
 
-export function createTypeGetter(recordClasses: RecordClass[]): CreateTypeGetterAction {
+export function createTypeGetter(
+  recordClasses: RecordClass[]
+): CreateTypeGetterAction {
   return {
     type: TYPE_GETTER,
     payload: {
-      recordClasses
-    }
+      recordClasses,
+    },
   };
 }
 
@@ -118,38 +127,42 @@ export function createTypeGetter(recordClasses: RecordClass[]): CreateTypeGetter
 export const START_FAVORITES_REQUEST = 'favorites/start-request';
 
 export interface StartFavoritesRequestAction {
-  type: typeof START_FAVORITES_REQUEST
+  type: typeof START_FAVORITES_REQUEST;
 }
 
 export function startFavoritesRequest(): StartFavoritesRequestAction {
   return {
-    type: START_FAVORITES_REQUEST
-  }
+    type: START_FAVORITES_REQUEST,
+  };
 }
 
 //==============================================================================
 
-export const END_FAVORITES_REQUEST_WITH_ERROR = 'favorites/end-request-with-error';
+export const END_FAVORITES_REQUEST_WITH_ERROR =
+  'favorites/end-request-with-error';
 
 export interface EndFavoritesRequestWithErrorAction {
   type: typeof END_FAVORITES_REQUEST_WITH_ERROR;
   payload: {
-    error: ServiceError
+    error: ServiceError;
   };
 }
 
-export function endFavoritesRequestWithError(error: ServiceError): EndFavoritesRequestWithErrorAction {
+export function endFavoritesRequestWithError(
+  error: ServiceError
+): EndFavoritesRequestWithErrorAction {
   return {
     type: END_FAVORITES_REQUEST_WITH_ERROR,
     payload: {
-      error
-    }
-  }
+      error,
+    },
+  };
 }
 
 //==============================================================================
 
-export const END_FAVORITES_REQUEST_WITH_SUCCESS = 'favorites/end-request-with-success';
+export const END_FAVORITES_REQUEST_WITH_SUCCESS =
+  'favorites/end-request-with-success';
 
 export interface EndFavoritesRequestWithSucessAction {
   type: typeof END_FAVORITES_REQUEST_WITH_SUCCESS;
@@ -158,12 +171,14 @@ export interface EndFavoritesRequestWithSucessAction {
   };
 }
 
-export function endFavoritesRequestWithSucess(tableState: TableState): EndFavoritesRequestWithSucessAction {
+export function endFavoritesRequestWithSucess(
+  tableState: TableState
+): EndFavoritesRequestWithSucessAction {
   return {
     type: END_FAVORITES_REQUEST_WITH_SUCCESS,
     payload: {
-      tableState
-    }
+      tableState,
+    },
   };
 }
 
@@ -185,7 +200,7 @@ export interface EditCellAction {
 export function editCell(payload: EditCellAction['payload']): EditCellAction {
   return {
     type: EDIT_CELL,
-    payload
+    payload,
   };
 }
 
@@ -201,7 +216,7 @@ export interface ChangeCellValueAction {
 export function changeCellValue(value: string): ChangeCellValueAction {
   return {
     type: CHANGE_CELL_VALUE,
-    payload: value
+    payload: value,
   };
 }
 
@@ -215,13 +230,14 @@ export interface StartSaveCellDataAction {
 
 export function startSaveCellData(): StartSaveCellDataAction {
   return {
-    type: START_SAVE_CELL_DATA
+    type: START_SAVE_CELL_DATA,
   };
 }
 
 //==============================================================================
 
-export const END_SAVE_CELL_WITH_SUCCESS = 'favorites/end-save-cell-with-success';
+export const END_SAVE_CELL_WITH_SUCCESS =
+  'favorites/end-save-cell-with-success';
 
 export interface EndSaveCellWithSuccessAction {
   type: typeof END_SAVE_CELL_WITH_SUCCESS;
@@ -230,12 +246,14 @@ export interface EndSaveCellWithSuccessAction {
   };
 }
 
-export function endSaveCellWithSuccess(tableState: TableState): EndSaveCellWithSuccessAction {
+export function endSaveCellWithSuccess(
+  tableState: TableState
+): EndSaveCellWithSuccessAction {
   return {
     type: END_SAVE_CELL_WITH_SUCCESS,
     payload: {
-      tableState
-    }
+      tableState,
+    },
   };
 }
 
@@ -250,12 +268,14 @@ export interface EndSaveCellWithErrorAction {
   };
 }
 
-export function endSaveCellWithError(error: ServiceError): EndSaveCellWithErrorAction {
+export function endSaveCellWithError(
+  error: ServiceError
+): EndSaveCellWithErrorAction {
   return {
     type: END_SAVE_CELL_WITH_ERROR,
     payload: {
-      error
-    }
+      error,
+    },
   };
 }
 
@@ -269,7 +289,7 @@ export interface CancelCellEditAction {
 
 export function cancelCellEdit(): CancelCellEditAction {
   return {
-    type: CANCEL_CELL_EDIT
+    type: CANCEL_CELL_EDIT,
   };
 }
 
@@ -283,8 +303,8 @@ export interface StartDeleteAction {
 
 export function startDelete(): StartDeleteAction {
   return {
-    type: START_DELETE
-  }
+    type: START_DELETE,
+  };
 }
 
 //==============================================================================
@@ -298,12 +318,14 @@ export interface EndDeleteWithErrorAction {
   };
 }
 
-export function endDeleteWithError(error: ServiceError): EndDeleteWithErrorAction {
+export function endDeleteWithError(
+  error: ServiceError
+): EndDeleteWithErrorAction {
   return {
     type: END_DELETE_WITH_ERROR,
     payload: {
-      error
-    }
+      error,
+    },
   };
 }
 
@@ -317,7 +339,7 @@ export interface StartUndeleteAction {
 
 export function startUndelete(): StartUndeleteAction {
   return {
-    type: START_UNDELETE
+    type: START_UNDELETE,
   };
 }
 
@@ -332,12 +354,14 @@ export interface EndUndeleteWithSuccessAction {
   };
 }
 
-export function endUndeleteWithSuccess(undeletedFavorites: Favorite[]): EndUndeleteWithSuccessAction {
+export function endUndeleteWithSuccess(
+  undeletedFavorites: Favorite[]
+): EndUndeleteWithSuccessAction {
   return {
     type: END_UNDELETE_WITH_SUCCESS,
     payload: {
-      undeletedFavorites
-    }
+      undeletedFavorites,
+    },
   };
 }
 
@@ -348,16 +372,18 @@ export const END_ADD_WITH_SUCCESS = 'favorites/end-add-with-success';
 export interface EndAddWithSuccessAction {
   type: typeof END_ADD_WITH_SUCCESS;
   payload: {
-    addedFavorite: Favorite
+    addedFavorite: Favorite;
   };
 }
 
-export function endAddWithSuccess(addedFavorite: Favorite): EndAddWithSuccessAction {
+export function endAddWithSuccess(
+  addedFavorite: Favorite
+): EndAddWithSuccessAction {
   return {
     type: END_ADD_WITH_SUCCESS,
     payload: {
-      addedFavorite
-    }
+      addedFavorite,
+    },
   };
 }
 
@@ -376,8 +402,8 @@ export function endAddWithError(error: ServiceError): EndAddWithErrorAction {
   return {
     type: END_ADD_WITH_ERROR,
     payload: {
-      error
-    }
+      error,
+    },
   };
 }
 
@@ -393,7 +419,7 @@ export interface UpdateSearchTermAction {
 export function updateSearchTerm(searchTerm: string): UpdateSearchTermAction {
   return {
     type: UPDATE_SEARCH_TERM,
-    payload: searchTerm
+    payload: searchTerm,
   };
 }
 
@@ -409,12 +435,11 @@ export interface FilterByTypeAction {
 export function filterByType(typeName: string | null): FilterByTypeAction {
   return {
     type: FILTER_BY_TYPE,
-    payload: typeName
+    payload: typeName,
   };
 }
 
 //==============================================================================
-
 
 // Thunks
 // -------
@@ -423,44 +448,48 @@ type ListAction =
   | StartFavoritesRequestAction
   | EndFavoritesRequestWithSucessAction
   | EndFavoritesRequestWithErrorAction
-  | UpdateTableStateAction
+  | UpdateTableStateAction;
 
 type SaveAction =
   | StartSaveCellDataAction
   | EndSaveCellWithSuccessAction
   | EndSaveCellWithErrorAction
-  | UpdateTableStateAction
+  | UpdateTableStateAction;
 
 type DeleteAction =
   | StartDeleteAction
   | EndDeleteWithErrorAction
-  | UpdateTableStateAction
+  | UpdateTableStateAction;
 
 type AddAction =
   | StartUndeleteAction
   | EndAddWithErrorAction
-  | UpdateTableStateAction
+  | UpdateTableStateAction;
 
-
-export function loadFavoritesList (): ActionThunk<ListAction>{
-  return function run ({ wdkService }) {
+export function loadFavoritesList(): ActionThunk<ListAction> {
+  return function run({ wdkService }) {
     return [
       startFavoritesRequest(),
-      wdkService.getCurrentFavorites()
-        .then(rows => {
-            const newTableState = MesaState.create({ rows });
-            return endFavoritesRequestWithSucess(newTableState);
-          },
-          (error: ServiceError) => endFavoritesRequestWithError(error)
-        )
-      ];
-  }
+      wdkService.getCurrentFavorites().then(
+        (rows) => {
+          const newTableState = MesaState.create({ rows });
+          return endFavoritesRequestWithSucess(newTableState);
+        },
+        (error: ServiceError) => endFavoritesRequestWithError(error)
+      ),
+    ];
+  };
 }
 
-export function saveCellData (tableState: {}, updatedFavorite: Favorite): ActionThunk<SaveAction> {
+export function saveCellData(
+  tableState: {},
+  updatedFavorite: Favorite
+): ActionThunk<SaveAction> {
   return ({ wdkService }) => {
     const rows = MesaState.getRows(tableState);
-    const updatedRows = rows.map((fav: Favorite) => fav.id === updatedFavorite.id ? updatedFavorite : fav);
+    const updatedRows = rows.map((fav: Favorite) =>
+      fav.id === updatedFavorite.id ? updatedFavorite : fav
+    );
     const updatedTableState = MesaState.setRows(tableState, updatedRows);
 
     return [
@@ -468,16 +497,21 @@ export function saveCellData (tableState: {}, updatedFavorite: Favorite): Action
       wdkService.saveFavorite(updatedFavorite).then(
         () => endSaveCellWithSuccess(updatedTableState),
         (error: ServiceError) => endSaveCellWithError(error)
-      )
+      ),
     ];
   };
 }
 
-export function deleteFavorites (tableState: {}, deletedFavorites: Favorite[]): ActionThunk <DeleteAction> {
+export function deleteFavorites(
+  tableState: {},
+  deletedFavorites: Favorite[]
+): ActionThunk<DeleteAction> {
   return ({ wdkService }) => {
     const deletedIds = deletedFavorites.map((fav: Favorite) => fav.id);
     const rows = MesaState.getRows(tableState);
-    const updatedRows = rows.filter((fav: Favorite) => !deletedIds.includes(fav.id));
+    const updatedRows = rows.filter(
+      (fav: Favorite) => !deletedIds.includes(fav.id)
+    );
     const updatedTableState = MesaState.setRows(tableState, updatedRows);
 
     return [
@@ -485,23 +519,29 @@ export function deleteFavorites (tableState: {}, deletedFavorites: Favorite[]): 
       wdkService.deleteFavorites(deletedIds).then(
         () => updateTableState(updatedTableState),
         (error: ServiceError) => endDeleteWithError(error)
-      )
-    ]
-  }
+      ),
+    ];
+  };
 }
 
-export function undeleteFavorites (tableState: {}, undeletedFavorites: Favorite[]): ActionThunk<AddAction> {
+export function undeleteFavorites(
+  tableState: {},
+  undeletedFavorites: Favorite[]
+): ActionThunk<AddAction> {
   return ({ wdkService }) => {
     const ids = undeletedFavorites.map((favorite) => favorite.id);
     const rows = MesaState.getRows(tableState);
-    const updatedTableState = MesaState.setRows(tableState, [...rows, ...undeletedFavorites]);
+    const updatedTableState = MesaState.setRows(tableState, [
+      ...rows,
+      ...undeletedFavorites,
+    ]);
 
     return [
       startUndelete(),
       wdkService.undeleteFavorites(ids).then(
         () => updateTableState(updatedTableState),
         (error: ServiceError) => endAddWithError(error)
-      )
+      ),
     ];
   };
 }

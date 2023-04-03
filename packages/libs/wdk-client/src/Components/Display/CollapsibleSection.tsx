@@ -7,7 +7,7 @@
 
 import { zipWith } from 'lodash';
 import React, { useState, useEffect, useCallback } from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '../../Utils/ComponentUtils';
 import './CollapsibleSection.css';
 
 interface Props {
@@ -30,13 +30,22 @@ const buttonStyle: React.CSSProperties = {
   display: 'block',
   width: '100%',
   textAlign: 'left',
-  padding: 0
-}
+  padding: 0,
+};
 
 function CollapsibleSection(props: Props) {
-  const { className, id, isCollapsed = true, headerContent, children, onCollapsedChange } = props;
-  const [ shouldRenderChildren, setShouldRenderChildren ] = useState(!isCollapsed);
-  const [ containerClassName, headerClassName, contentClassName ] =
+  const {
+    className,
+    id,
+    isCollapsed = true,
+    headerContent,
+    children,
+    onCollapsedChange,
+  } = props;
+  const [shouldRenderChildren, setShouldRenderChildren] = useState(
+    !isCollapsed
+  );
+  const [containerClassName, headerClassName, contentClassName] =
     makeClassNames(isCollapsed, defaultClassName, className);
   const Header = props.headerComponent || 'div';
   const contentStyle = isCollapsed ? { display: 'none' } : undefined;
@@ -44,46 +53,51 @@ function CollapsibleSection(props: Props) {
   useEffect(() => {
     if (shouldRenderChildren || isCollapsed) return;
     setShouldRenderChildren(true);
-  }, [ isCollapsed, shouldRenderChildren ])
+  }, [isCollapsed, shouldRenderChildren]);
 
-  const handleCollapsedChange = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    event.currentTarget.blur();
-    onCollapsedChange(!isCollapsed);
-  }, [ isCollapsed ]);
+  const handleCollapsedChange = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      event.currentTarget.blur();
+      onCollapsedChange(!isCollapsed);
+    },
+    [isCollapsed]
+  );
 
   return (
     <div id={id} className={containerClassName}>
       <button style={buttonStyle} type="button" onClick={handleCollapsedChange}>
-        <Header className={headerClassName}>
-          {headerContent}
-        </Header>
+        <Header className={headerClassName}>{headerContent}</Header>
       </button>
       <div style={contentStyle} className={contentClassName}>
         {shouldRenderChildren ? children : null}
       </div>
     </div>
-  )
+  );
 }
-
 
 // Helper to generate class names based on an array of baseNames,
 // and then to zip them into a space-separated array of class names.
 //
 // This will add suffixes to baseNames for the header and content container
 // elements.
-function makeClassNames(isCollapsed: boolean, ...baseNames: (string|undefined)[]) {
+function makeClassNames(
+  isCollapsed: boolean,
+  ...baseNames: (string | undefined)[]
+) {
   let classNames = baseNames
-  .filter(baseName => baseName != null)
-  .map(function(baseName) {
-    return ['', 'Header', 'Content']
-    .map(function(suffix) {
-      return baseName + suffix;
-    })
-    .map(function(className) {
-      return className + (isCollapsed ? ' ' + className + '__collapsed' : '');
+    .filter((baseName) => baseName != null)
+    .map(function (baseName) {
+      return ['', 'Header', 'Content']
+        .map(function (suffix) {
+          return baseName + suffix;
+        })
+        .map(function (className) {
+          return (
+            className + (isCollapsed ? ' ' + className + '__collapsed' : '')
+          );
+        });
     });
-  });
-  return zipWith(...classNames, function(...args) {
+  return zipWith(...classNames, function (...args) {
     return args.slice(0, classNames.length).join(' ');
   });
 }

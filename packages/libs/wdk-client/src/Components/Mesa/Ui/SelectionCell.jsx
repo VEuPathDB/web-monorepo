@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Checkbox from 'wdk-client/Components/Mesa/Components/Checkbox';
+import Checkbox from '../../../Components/Mesa/Components/Checkbox';
 
 class SelectionCell extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.selectAllRows = this.selectAllRows.bind(this);
     this.deselectAllRows = this.deselectAllRows.bind(this);
@@ -11,16 +11,16 @@ class SelectionCell extends React.PureComponent {
     this.renderRowCheckbox = this.renderRowCheckbox.bind(this);
   }
 
-  selectAllRows () {
+  selectAllRows() {
     const { rows, options, eventHandlers } = this.props;
     const { isRowSelected } = options;
     const { onRowSelect, onMultipleRowSelect } = eventHandlers;
-    const unselectedRows = rows.filter(row => !isRowSelected(row));
+    const unselectedRows = rows.filter((row) => !isRowSelected(row));
     if (onMultipleRowSelect) return onMultipleRowSelect(unselectedRows);
     return unselectedRows.forEach(onRowSelect);
   }
 
-  deselectAllRows () {
+  deselectAllRows() {
     const { rows, options, eventHandlers } = this.props;
     const { isRowSelected } = options;
     const { onRowDeselect, onMultipleRowDeselect } = eventHandlers;
@@ -29,35 +29,31 @@ class SelectionCell extends React.PureComponent {
     return selection.forEach(onRowDeselect);
   }
 
-  renderPageCheckbox () {
+  renderPageCheckbox() {
     const { rows, isRowSelected, eventHandlers, inert } = this.props;
     const selection = rows.filter(isRowSelected);
     const checked = rows.length && rows.every(isRowSelected);
 
     let handler = (e) => {
       e.stopPropagation();
-      return checked
-        ? this.deselectAllRows()
-        : this.selectAllRows();
+      return checked ? this.deselectAllRows() : this.selectAllRows();
     };
 
     return (
       <th className="SelectionCell" onClick={handler}>
         {inert ? null : <Checkbox checked={checked} />}
       </th>
-    )
+    );
   }
 
-  renderRowCheckbox () {
+  renderRowCheckbox() {
     const { row, isRowSelected, eventHandlers, inert } = this.props;
     const { onRowSelect, onRowDeselect } = eventHandlers;
     const checked = isRowSelected(row);
 
     let handler = (e) => {
       e.stopPropagation();
-      return checked
-        ? onRowDeselect(row)
-        : onRowSelect(row);
+      return checked ? onRowDeselect(row) : onRowSelect(row);
     };
 
     return (
@@ -67,10 +63,10 @@ class SelectionCell extends React.PureComponent {
     );
   }
 
-  render () {
+  render() {
     let { heading } = this.props;
     return heading ? this.renderPageCheckbox() : this.renderRowCheckbox();
   }
-};
+}
 
 export default SelectionCell;

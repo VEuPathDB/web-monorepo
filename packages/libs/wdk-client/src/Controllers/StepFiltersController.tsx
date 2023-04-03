@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { Step } from 'wdk-client/Utils/WdkUser';
-import { Question } from 'wdk-client/Utils/WdkModel';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { RootState } from '../Core/State/Types';
+import { Step } from '../Utils/WdkUser';
+import { Question } from '../Utils/WdkModel';
+import { Plugin } from '../Utils/ClientPlugin';
+import { wrappable } from '../Utils/ComponentUtils';
 
 interface OwnProps {
   step: Step;
@@ -23,28 +23,31 @@ function StepFiltersController(props: Props) {
   if (step == null || question == null) return null;
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      {question.filters.map(filter =>
+      {question.filters.map((filter) => (
         <Plugin
           key={filter.name}
           context={{
-            type: "questionFilter",
+            type: 'questionFilter',
             name: filter.name,
             searchName: question.urlSegment,
-            recordClassName: question.outputRecordClassName
+            recordClassName: question.outputRecordClassName,
           }}
           pluginProps={{
             step: step,
-            filterName: filter.name
+            filterName: filter.name,
           }}
         />
-      )}
+      ))}
     </div>
-  )
+  );
 }
 
 function mapPropsToState(state: RootState, props: OwnProps): StateProps {
-  const question = state.globalData.questions && 
-  state.globalData.questions.find(({ urlSegment }) => urlSegment === props.step.searchName)
+  const question =
+    state.globalData.questions &&
+    state.globalData.questions.find(
+      ({ urlSegment }) => urlSegment === props.step.searchName
+    );
   return { question };
 }
 

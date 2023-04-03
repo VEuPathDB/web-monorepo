@@ -1,27 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Icon from 'wdk-client/Components/Mesa/Components/Icon';
+import Icon from '../../../Components/Mesa/Components/Icon';
 
 class TableSearch extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.handleQueryChange = this.handleQueryChange.bind(this);
     this.clearSearchQuery = this.clearSearchQuery.bind(this);
   }
 
-  handleQueryChange (e) {
+  handleQueryChange(e) {
     const query = e.target.value;
     const { onSearch } = this.props;
     if (onSearch) onSearch(query);
   }
 
-  clearSearchQuery () {
+  clearSearchQuery() {
     const query = null;
     const { onSearch } = this.props;
     if (onSearch) onSearch(query);
   }
 
-  render () {
+  render() {
     const { options = {}, searchQuery = '' } = this.props;
     const { searchPlaceholder } = options;
     const { handleQueryChange, clearSearchQuery } = this;
@@ -45,12 +45,12 @@ class TableSearch extends React.PureComponent {
       </div>
     );
   }
-};
+}
 
 TableSearch.propTypes = {
   query: PropTypes.string,
   options: PropTypes.object,
-  onSearch: PropTypes.func
+  onSearch: PropTypes.func,
 };
 
 export default TableSearch;

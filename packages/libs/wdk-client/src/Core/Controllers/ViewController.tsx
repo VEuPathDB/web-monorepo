@@ -1,49 +1,50 @@
 import * as React from 'react';
 
-import Loading from 'wdk-client/Components/Loading/Loading';
-import Error from 'wdk-client/Components/PageStatus/Error';
-import LoadError from 'wdk-client/Components/PageStatus/LoadError';
-import PermissionDenied from 'wdk-client/Components/PageStatus/PermissionDenied';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import Loading from '../../Components/Loading/Loading';
+import Error from '../../Components/PageStatus/Error';
+import LoadError from '../../Components/PageStatus/LoadError';
+import PermissionDenied from '../../Components/PageStatus/PermissionDenied';
+import NotFound from '../../Views/NotFound/NotFound';
 
-import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
+import ErrorBoundary from '../../Core/Controllers/ErrorBoundary';
 
 /**
  * Base class for all ViewContoller classes in WDK. This base class is
  * responsible for:
  * - providing render hooks based on state predicates
  */
-export default class ViewController<Props = {}, State = {}> extends React.PureComponent<Props, State> {
-
-
+export default class ViewController<
+  Props = {},
+  State = {}
+> extends React.PureComponent<Props, State> {
   /*--------------- Methods to override to display content ---------------*/
 
   /**
    * Renders the highest page component below the Page tag.
    */
   renderView(): JSX.Element | null {
-    return ( <span>Page for View Controller: {this.constructor.name}</span> );
+    return <span>Page for View Controller: {this.constructor.name}</span>;
   }
 
   /**
    * Renders data load error message
    */
   renderDataLoadError() {
-    return ( <LoadError/> );
+    return <LoadError />;
   }
 
   /**
    * Renders data not found message
    */
   renderDataNotFound() {
-    return ( <NotFound/> );
+    return <NotFound />;
   }
 
   /**
    * Renders data permission denied
    */
   renderDataPermissionDenied() {
-    return ( <PermissionDenied/> );
+    return <PermissionDenied />;
   }
 
   /**
@@ -58,9 +59,8 @@ export default class ViewController<Props = {}, State = {}> extends React.PureCo
   }
 
   renderError() {
-    return ( <Error/> );
+    return <Error />;
   }
-
 
   /*-------- Methods to override to call ACs and load initial data --------*/
 
@@ -120,7 +120,6 @@ export default class ViewController<Props = {}, State = {}> extends React.PureCo
     this.loadData(prevProps);
   }
 
-
   /**
    * Renders the page of this controller.  Subclasses may override, but may
    * save effort by overriding renderView() instead.  This method will call that
@@ -130,22 +129,14 @@ export default class ViewController<Props = {}, State = {}> extends React.PureCo
   render() {
     if (this.isRenderDataLoadError()) {
       return this.renderDataLoadError();
-    }
-    else if (this.isRenderDataNotFound()) {
+    } else if (this.isRenderDataNotFound()) {
       return this.renderDataNotFound();
-    }
-    else if (this.isRenderDataPermissionDenied()) {
+    } else if (this.isRenderDataPermissionDenied()) {
       return this.renderDataPermissionDenied();
-    }
-    else if (!this.isRenderDataLoaded()) {
+    } else if (!this.isRenderDataLoaded()) {
       return this.renderDataLoading();
-    }
-    else {
-      return (
-        <ErrorBoundary>
-          {this.renderView()}
-        </ErrorBoundary>
-      );
+    } else {
+      return <ErrorBoundary>{this.renderView()}</ErrorBoundary>;
     }
   }
 }

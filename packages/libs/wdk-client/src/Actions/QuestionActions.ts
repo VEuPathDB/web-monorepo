@@ -4,13 +4,12 @@ import {
   QuestionWithParameters,
   RecordClass,
   ParameterValue,
-  SearchConfig
-} from 'wdk-client/Utils/WdkModel';
-import { AddType } from 'wdk-client/Views/Strategy/Types';
-import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
-import { WdkService } from 'wdk-client/Core';
-import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
-
+  SearchConfig,
+} from '../Utils/WdkModel';
+import { AddType } from '../Views/Strategy/Types';
+import { NewStepSpec, Step } from '../Utils/WdkUser';
+import { WdkService } from '../Core';
+import { makeActionCreator } from '../Utils/ActionCreatorUtils';
 
 export type Action =
   | UpdateActiveQuestionAction
@@ -28,12 +27,11 @@ export type Action =
   | UpdateParamStateAction
   | ChangeGroupVisibilityAction
   | GroupCountLoadedAction
-  | EnableSubmissionAction
+  | EnableSubmissionAction;
 
-
-type QuestionPayload<T>  = T & {
+type QuestionPayload<T> = T & {
   searchName: string;
-}
+};
 
 //==============================================================================
 
@@ -46,21 +44,21 @@ export interface UpdateActiveQuestionAction {
     prepopulateWithLastParamValues: boolean;
     initialParamData?: Record<string, string>;
     stepId: number | undefined;
-    submissionMetadata?: SubmissionMetadata; 
-  }>
+    submissionMetadata?: SubmissionMetadata;
+  }>;
 }
 
 export function updateActiveQuestion(payload: {
   searchName: string;
-  autoRun: boolean,
-  prepopulateWithLastParamValues: boolean,
-  initialParamData?: Record<string, string>,
-  stepId: number | undefined,
-  submissionMetadata?: SubmissionMetadata,
+  autoRun: boolean;
+  prepopulateWithLastParamValues: boolean;
+  initialParamData?: Record<string, string>;
+  stepId: number | undefined;
+  submissionMetadata?: SubmissionMetadata;
 }): UpdateActiveQuestionAction {
   return {
     type: UPDATE_ACTIVE_QUESTION,
-    payload
+    payload,
   };
 }
 
@@ -82,13 +80,15 @@ export interface QuestionLoadedAction {
     customName?: string;
     stepValidation?: Step['validation'];
     submissionMetadata?: SubmissionMetadata;
-  }>
+  }>;
 }
 
-export function questionLoaded(payload: QuestionLoadedAction['payload']): QuestionLoadedAction {
+export function questionLoaded(
+  payload: QuestionLoadedAction['payload']
+): QuestionLoadedAction {
   return {
     type: QUESTION_LOADED,
-    payload
+    payload,
   };
 }
 
@@ -101,10 +101,12 @@ export interface UnloadQuestionAction {
   payload: QuestionPayload<{}>;
 }
 
-export function unloadQuestion(payload: QuestionPayload<{}>): UnloadQuestionAction {
+export function unloadQuestion(
+  payload: QuestionPayload<{}>
+): UnloadQuestionAction {
   return {
     type: UNLOAD_QUESTION,
-    payload
+    payload,
   };
 }
 
@@ -114,13 +116,15 @@ export const QUESTION_ERROR = 'question/question-error';
 
 export interface QuestionErrorAction {
   type: typeof QUESTION_ERROR;
-  payload: QuestionPayload<{}>
+  payload: QuestionPayload<{}>;
 }
 
-export function questionError(payload: QuestionErrorAction['payload']): QuestionErrorAction {
+export function questionError(
+  payload: QuestionErrorAction['payload']
+): QuestionErrorAction {
   return {
     type: QUESTION_ERROR,
-    payload
+    payload,
   };
 }
 
@@ -130,13 +134,15 @@ export const QUESTION_NOT_FOUND = 'question/question-not-found';
 
 export interface QuestionNotFoundAction {
   type: typeof QUESTION_NOT_FOUND;
-  payload: QuestionPayload<{}>
+  payload: QuestionPayload<{}>;
 }
 
-export function questionNotFound(payload: QuestionNotFoundAction['payload']): QuestionNotFoundAction {
+export function questionNotFound(
+  payload: QuestionNotFoundAction['payload']
+): QuestionNotFoundAction {
   return {
     type: QUESTION_NOT_FOUND,
-    payload
+    payload,
   };
 }
 
@@ -151,10 +157,12 @@ export interface UpdateCustomQuestionName {
   }>;
 }
 
-export function updateCustomQuestionName(payload: UpdateCustomQuestionName['payload']): UpdateCustomQuestionName {
+export function updateCustomQuestionName(
+  payload: UpdateCustomQuestionName['payload']
+): UpdateCustomQuestionName {
   return {
     type: UPDATE_CUSTOM_QUESTION_NAME,
-    payload
+    payload,
   };
 }
 
@@ -169,10 +177,12 @@ export interface UpdateQuestionWeightAction {
   }>;
 }
 
-export function updateQuestionWeight(payload: UpdateQuestionWeightAction['payload']): UpdateQuestionWeightAction {
+export function updateQuestionWeight(
+  payload: UpdateQuestionWeightAction['payload']
+): UpdateQuestionWeightAction {
   return {
     type: UPDATE_QUESTION_WEIGHT,
-    payload
+    payload,
   };
 }
 
@@ -182,38 +192,46 @@ export const SUBMIT_QUESTION = 'question/submit-question';
 
 // TODO Consider breaking these into multiple actions
 type NewStrategy = {
-  type: 'create-strategy',
-  webServicesTutorialSubmission?: boolean
+  type: 'create-strategy';
+  webServicesTutorialSubmission?: boolean;
   strategyName?: string;
-}
+};
 
 type AddBinaryStep = {
-  type: 'add-binary-step',
-  strategyId: number,
-  operatorSearchName: string,
-  addType: AddType
-}
+  type: 'add-binary-step';
+  strategyId: number;
+  operatorSearchName: string;
+  addType: AddType;
+};
 
 type AddUnaryStep = {
-  type: 'add-unary-step',
-  strategyId: number,
-  addType: AddType
-}
+  type: 'add-unary-step';
+  strategyId: number;
+  addType: AddType;
+};
 
 type SubmitCustomForm = {
-  type: 'submit-custom-form',
-  stepId?: number,
-  onStepSubmitted: (wdkService: WdkService, submissionSpec: NewStepSpec) => void
-}
+  type: 'submit-custom-form';
+  stepId?: number;
+  onStepSubmitted: (
+    wdkService: WdkService,
+    submissionSpec: NewStepSpec
+  ) => void;
+};
 
 type EditStep = {
-  type: 'edit-step',
-  strategyId: number,
-  stepId: number,
-  previousSearchConfig: SearchConfig
-}
+  type: 'edit-step';
+  strategyId: number;
+  stepId: number;
+  previousSearchConfig: SearchConfig;
+};
 
-export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | SubmitCustomForm | EditStep
+export type SubmissionMetadata =
+  | NewStrategy
+  | AddBinaryStep
+  | AddUnaryStep
+  | SubmitCustomForm
+  | EditStep;
 
 export interface SubmitQuestionAction {
   type: typeof SUBMIT_QUESTION;
@@ -225,11 +243,13 @@ export interface SubmitQuestionAction {
 
 export const submitQuestion = makeActionCreator(
   SUBMIT_QUESTION,
-  (payload: QuestionPayload<{
-    submissionMetadata: SubmissionMetadata,
-    autoRun?: boolean
-  }>) => payload
-)
+  (
+    payload: QuestionPayload<{
+      submissionMetadata: SubmissionMetadata;
+      autoRun?: boolean;
+    }>
+  ) => payload
+);
 
 //==============================================================================
 
@@ -244,10 +264,12 @@ export interface UpdateParamValueAction {
   }>;
 }
 
-export function updateParamValue(payload: UpdateParamValueAction['payload']): UpdateParamValueAction {
+export function updateParamValue(
+  payload: UpdateParamValueAction['payload']
+): UpdateParamValueAction {
   return {
     type: UPDATE_PARAM_VALUE,
-    payload
+    payload,
   };
 }
 
@@ -263,10 +285,12 @@ export interface ParamErrorAction {
   }>;
 }
 
-export function paramError(payload: ParamErrorAction['payload']): ParamErrorAction {
+export function paramError(
+  payload: ParamErrorAction['payload']
+): ParamErrorAction {
   return {
     type: PARAM_ERROR,
-    payload
+    payload,
   };
 }
 
@@ -277,15 +301,17 @@ export const UPDATE_DEPENDENT_PARAMS = 'question/update-dependent-params';
 export interface UpdateDependentParamsAction {
   type: typeof UPDATE_DEPENDENT_PARAMS;
   payload: QuestionPayload<{
-    updatedParameter: Parameter,
+    updatedParameter: Parameter;
     refreshedDependentParameters: Parameter[];
   }>;
 }
 
-export function updateDependentParams(payload: UpdateDependentParamsAction['payload']): UpdateDependentParamsAction {
+export function updateDependentParams(
+  payload: UpdateDependentParamsAction['payload']
+): UpdateDependentParamsAction {
   return {
     type: UPDATE_DEPENDENT_PARAMS,
-    payload
+    payload,
   };
 }
 
@@ -302,10 +328,12 @@ export interface InitParamAction {
   }>;
 }
 
-export function initParam(payload: InitParamAction['payload']): InitParamAction {
+export function initParam(
+  payload: InitParamAction['payload']
+): InitParamAction {
   return {
     type: INIT_PARAM,
-    payload
+    payload,
   };
 }
 
@@ -321,10 +349,12 @@ export interface UpdateParamStateAction {
   }>;
 }
 
-export function updateParamState(payload: UpdateParamStateAction['payload']): UpdateParamStateAction {
+export function updateParamState(
+  payload: UpdateParamStateAction['payload']
+): UpdateParamStateAction {
   return {
     type: UPDATE_PARAM_STATE,
-    payload
+    payload,
   };
 }
 
@@ -340,10 +370,12 @@ export interface ChangeGroupVisibilityAction {
   }>;
 }
 
-export function changeGroupVisibility(payload: ChangeGroupVisibilityAction['payload']): ChangeGroupVisibilityAction {
+export function changeGroupVisibility(
+  payload: ChangeGroupVisibilityAction['payload']
+): ChangeGroupVisibilityAction {
   return {
     type: CHANGE_GROUP_VISIBILITY,
-    payload
+    payload,
   };
 }
 
@@ -360,10 +392,12 @@ export interface GroupCountLoadedAction {
   };
 }
 
-export function groupCountLoaded(payload: GroupCountLoadedAction['payload']): GroupCountLoadedAction {
+export function groupCountLoaded(
+  payload: GroupCountLoadedAction['payload']
+): GroupCountLoadedAction {
   return {
     type: GROUP_COUNT_LOADED,
-    payload
+    payload,
   };
 }
 
@@ -376,16 +410,25 @@ export interface EnableSubmissionAction {
   payload: QuestionPayload<{ stepValidation?: Step['validation'] }>;
 }
 
-function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSubmissionAction {
+function enableSubmission(
+  payload: EnableSubmissionAction['payload']
+): EnableSubmissionAction {
   return {
     type: ENABLE_SUBMISSION,
-    payload
+    payload,
   };
 }
 
-export const reportSubmissionError = (searchName: string, error: any, wdkService: WdkService): EnableSubmissionAction => {
-  const isValidationError = 'status' in error && 'response' in error && error.status === 422;
-  const stepValidation = isValidationError ? JSON.parse(error.response) : undefined;
+export const reportSubmissionError = (
+  searchName: string,
+  error: any,
+  wdkService: WdkService
+): EnableSubmissionAction => {
+  const isValidationError =
+    'status' in error && 'response' in error && error.status === 422;
+  const stepValidation = isValidationError
+    ? JSON.parse(error.response)
+    : undefined;
 
   if (!isValidationError) {
     throw error;

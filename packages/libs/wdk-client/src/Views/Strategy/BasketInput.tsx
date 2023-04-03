@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Loading } from 'wdk-client/Components';
+import { Loading } from '../../Components';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { makeClassNameHelper } from '../../Utils/ComponentUtils';
+import { RecordClass } from '../../Utils/WdkModel';
 
 import { inputResultSetDescription } from './AddStepUtils';
 
@@ -14,11 +14,11 @@ const cx = makeClassNameHelper('BasketInput');
 type BasketInputStatus = 'is-guest' | 'loading' | 'enabled';
 
 type Props = {
-  basketCounts: Record<string, number> | undefined,
-  inputRecordClasses: RecordClass[],
-  isGuest: boolean,
-  onSelectBasket: (recordClassUrlSegment: string) => void,
-  selectBasketButtonText: string
+  basketCounts: Record<string, number> | undefined;
+  inputRecordClasses: RecordClass[];
+  isGuest: boolean;
+  onSelectBasket: (recordClassUrlSegment: string) => void;
+  selectBasketButtonText: string;
 };
 
 export const BasketInput = ({
@@ -26,7 +26,7 @@ export const BasketInput = ({
   basketCounts,
   isGuest,
   onSelectBasket,
-  selectBasketButtonText
+  selectBasketButtonText,
 }: Props) => {
   const status: BasketInputStatus = isGuest
     ? 'is-guest'
@@ -36,37 +36,33 @@ export const BasketInput = ({
 
   return (
     <div className={cx('', status)}>
-      {
-        status === 'is-guest' &&
-        <div>
-          You must log in to access your basket.
-        </div>
-      }
-      {
-        status === 'loading' &&
-        <Loading />
-      }
-      {
-        status === 'enabled' &&
+      {status === 'is-guest' && (
+        <div>You must log in to access your basket.</div>
+      )}
+      {status === 'loading' && <Loading />}
+      {status === 'enabled' && (
         <React.Fragment>
-          {
-            inputRecordClasses.map(inputRecordClass =>
-              <button
-                key={inputRecordClass.urlSegment}
-                disabled={basketCounts && !basketCounts[inputRecordClass.urlSegment]}
-                title={basketCounts && !basketCounts[inputRecordClass.urlSegment]
+          {inputRecordClasses.map((inputRecordClass) => (
+            <button
+              key={inputRecordClass.urlSegment}
+              disabled={
+                basketCounts && !basketCounts[inputRecordClass.urlSegment]
+              }
+              title={
+                basketCounts && !basketCounts[inputRecordClass.urlSegment]
                   ? `Your ${inputRecordClass.displayNamePlural} basket is empty`
                   : undefined
-                }
-                type="button"
-                onClick={() => {
-                  onSelectBasket(inputRecordClass.urlSegment)
-                }}>{`${selectBasketButtonText} with your ${inputRecordClass.displayNamePlural} basket`}
-              </button>
-            )
-          }
+              }
+              type="button"
+              onClick={() => {
+                onSelectBasket(inputRecordClass.urlSegment);
+              }}
+            >
+              {`${selectBasketButtonText} with your ${inputRecordClass.displayNamePlural} basket`}
+            </button>
+          ))}
         </React.Fragment>
-      }
+      )}
     </div>
-  )
+  );
 };

@@ -7,8 +7,8 @@
 
 import React from 'react';
 
-import { Omit } from 'wdk-client/Core/CommonTypes';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Omit } from '../../Core/CommonTypes';
+import { wrappable } from '../../Utils/ComponentUtils';
 
 type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 type InputWithoutOnChangeAndValue = Omit<InputProps, ['onChange', 'value']>;
@@ -19,11 +19,20 @@ type Props = InputWithoutOnChangeAndValue & {
 
 const TextBoxMultivalued = function (originalProps: Props) {
   const { onChange, value, ...props } = originalProps;
-  const changeHandler = function(event: React.ChangeEvent<HTMLInputElement>): void {
+  const changeHandler = function (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): void {
     onChange(event.target.value.split(/\s*,\s*/g));
   };
   const stringValue = value.join(', ');
-  return ( <input type="text" {...props} onChange={changeHandler} value={stringValue}/> );
+  return (
+    <input
+      type="text"
+      {...props}
+      onChange={changeHandler}
+      value={stringValue}
+    />
+  );
 };
 
 export default wrappable(TextBoxMultivalued);

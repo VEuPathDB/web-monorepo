@@ -2,14 +2,19 @@ import React, { useEffect, useCallback } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
-import { OptionsObject, SnackbarKey, SnackbarMessage, useSnackbar } from 'notistack';
+import {
+  OptionsObject,
+  SnackbarKey,
+  SnackbarMessage,
+  useSnackbar,
+} from 'notistack';
 
 import DismissButton from '@veupathdb/coreui/dist/components/notifications/DismissButton';
 
-import { enqueueSnackbar } from 'wdk-client/Actions/NotificationActions';
-import { Link } from 'wdk-client/Components';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { Step } from 'wdk-client/Utils/WdkUser';
+import { enqueueSnackbar } from '../../Actions/NotificationActions';
+import { Link } from '../../Components';
+import { RecordClass } from '../../Utils/WdkModel';
+import { Step } from '../../Utils/WdkUser';
 
 import './StrategyNotifications.css';
 
@@ -19,15 +24,12 @@ export function enqueueAddStepToBasketNotificationAction(
 ) {
   return enqueueStrategyNotificationAction(
     <div>
-      The {step.estimatedSize === 1
+      The{' '}
+      {step.estimatedSize === 1
         ? recordClass.displayName
-        : recordClass.displayNamePlural
-      } in step "{step.customName}" {
-        step.estimatedSize === 1 ? 'was' : 'were'
-      } added to{' '}
-      <Link to="/workspace/basket">
-        My Baskets
-      </Link>
+        : recordClass.displayNamePlural}{' '}
+      in step "{step.customName}" {step.estimatedSize === 1 ? 'was' : 'were'}{' '}
+      added to <Link to="/workspace/basket">My Baskets</Link>
     </div>,
     {
       key: `add-step-${step.id}-to-basket-${Date.now()}`,
@@ -39,7 +41,7 @@ export function enqueueAddStepToBasketNotificationAction(
 
 export function enqueueStrategyNotificationAction(
   message: SnackbarMessage,
-  options: OptionsObject,
+  options: OptionsObject
 ) {
   const defaultOptions: OptionsObject = {
     anchorOrigin: {
@@ -54,13 +56,10 @@ export function enqueueStrategyNotificationAction(
     ),
   };
 
-  return enqueueSnackbar(
-    message,
-    {
-      ...defaultOptions,
-      ...options,
-    }
-  );
+  return enqueueSnackbar(message, {
+    ...defaultOptions,
+    ...options,
+  });
 }
 
 interface StrategyNotificationActionProps {
@@ -88,11 +87,11 @@ function StrategyNotificationAction({
     });
   }, [closeAssociatedSnackbar]);
 
-  return offerDismissButton
-    ? <DismissButton
-        className="link"
-        onClick={closeAssociatedSnackbar}
-        buttonText='Dismiss notification'
-      />
-    : null;
+  return offerDismissButton ? (
+    <DismissButton
+      className="link"
+      onClick={closeAssociatedSnackbar}
+      buttonText="Dismiss notification"
+    />
+  ) : null;
 }
