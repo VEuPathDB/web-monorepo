@@ -31,6 +31,7 @@ type ShareFromAnalyisProps = {
   showLoginForm: () => void;
   /** Used to amend Sharing URL modal text */
   showContextForOwnedUserDataset: boolean;
+  studyId: string;
 };
 
 export default function ShareFromAnalysis({
@@ -40,6 +41,7 @@ export default function ShareFromAnalysis({
   analysisState,
   sharingUrlPrefix,
   showContextForOwnedUserDataset = false,
+  studyId,
 }: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
@@ -95,6 +97,7 @@ export default function ShareFromAnalysis({
           showContextForOwnedUserDataset={showContextForOwnedUserDataset}
           sharingUrl={sharingUrl}
           sharingDatasetUrl={sharingDatasetUrl}
+          studyId={studyId}
         />
       )}
     </Modal>

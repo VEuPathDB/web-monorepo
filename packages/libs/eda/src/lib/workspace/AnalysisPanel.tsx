@@ -272,6 +272,7 @@ export function AnalysisPanel({
           showContextForOwnedUserDataset={
             isDatasetAUserStudy && isCurrentUserStudyManager
           }
+          studyId={studyId}
         />
         <div
           css={
