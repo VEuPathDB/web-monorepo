@@ -78,6 +78,7 @@ export default function MapVizManagement({
                       key={viz.visualizationId}
                     >
                       <button
+                        style={{ textAlign: 'left' }}
                         type="button"
                         className="link"
                         onClick={() => {
