@@ -129,7 +129,7 @@ export default function DraggableVisualization({
           styleOverrides={{ zIndex: 10 }}
           panelTitle={activeViz.descriptor.type}
           defaultPosition={{
-            x: 451,
+            x: 465,
             y: 142,
           }}
           onPanelDismiss={() => setActiveVisualizationId(undefined)}
