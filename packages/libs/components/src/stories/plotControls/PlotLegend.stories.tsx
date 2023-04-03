@@ -222,7 +222,7 @@ const legendItems = [
 const longLegendItems = [
   {
     label: 'Bangladesh',
-    marker: 'circle',
+    marker: 'lineWithCircleFilled',
     markerColor: 'rgb(136,34,85)',
     hasData: true,
     group: 1,
@@ -230,7 +230,7 @@ const longLegendItems = [
   },
   {
     label: 'India',
-    marker: 'circle',
+    marker: 'circleFilled',
     markerColor: 'rgb(136,204,238)',
     hasData: true,
     group: 1,

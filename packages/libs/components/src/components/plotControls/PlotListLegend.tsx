@@ -18,8 +18,6 @@ export interface PlotListLegendProps {
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
   // add a condition to show legend for single overlay data
   showOverlayLegend?: boolean;
-  // define markerBodyOpaciy prop
-  markerBodyOpacity?: number;
 }
 
 export default function PlotListLegend({
@@ -27,7 +25,6 @@ export default function PlotListLegend({
   checkedLegendItems,
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
-  markerBodyOpacity = 1,
 }: PlotListLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -49,8 +46,20 @@ export default function PlotListLegend({
   // set some default sizes
   const defaultMarkerSize = '0.8em';
   const legendTextSize = '1.0em';
-  const circleMarkerSize = '0.7em';
+  const circleMarkerSizeNum = 0.7;
+  const circleMarkerSize = circleMarkerSizeNum.toString() + 'em';
   const scatterMarkerSpace = '2em';
+
+  const Line = (props: { color?: string }) => (
+    <div
+      style={{
+        height: '0.15em',
+        width: scatterMarkerSpace,
+        borderWidth: '0',
+        backgroundColor: props.color,
+      }}
+    />
+  );
 
   return (
     <>
@@ -134,21 +143,24 @@ export default function PlotListLegend({
                           borderWidth: '0.15em',
                           borderStyle: 'solid',
                           borderRadius: '0.6em',
-                          borderColor:
-                            markerBodyOpacity === 0
-                              ? item.markerColor
-                              : // we don't need borderColor with marker opacity except opacity = 0
-                                'transparent',
-                          // add backgroundColor with marker opacity
-                          backgroundColor:
-                            markerBodyOpacity === 0
-                              ? 'transparent'
-                              : ColorMath.evaluate(
-                                  item.markerColor +
-                                    ' @a ' +
-                                    (markerBodyOpacity * 100).toString() +
-                                    '%'
-                                ).result.css(),
+                          borderColor: item.markerColor,
+                        }}
+                      />
+                    </div>
+                  )}
+                  {item.marker === 'circleFilled' && (
+                    <div style={{ width: scatterMarkerSpace }}>
+                      <div
+                        style={{
+                          height: circleMarkerSize,
+                          width: circleMarkerSize,
+                          margin: 'auto',
+                          borderWidth:
+                            (circleMarkerSizeNum / 2).toString() + 'em',
+                          borderStyle: 'solid',
+                          borderRadius:
+                            (circleMarkerSizeNum / 2).toString() + 'em',
+                          borderColor: item.markerColor,
                         }}
                       />
                     </div>
@@ -156,12 +168,32 @@ export default function PlotListLegend({
                   {/* for scatter plot: smoothed mean or best fit line */}
                   {item.marker === 'line' && (
                     <div style={{ width: scatterMarkerSpace }}>
+                      <Line color={item.markerColor} />
+                    </div>
+                  )}
+                  {item.marker === 'lineWithCircleFilled' && (
+                    <div
+                      style={{
+                        width: scatterMarkerSpace,
+                        position: 'relative',
+                      }}
+                    >
+                      <Line color={item.markerColor} />
                       <div
                         style={{
-                          height: '0.15em',
-                          width: scatterMarkerSpace,
-                          borderWidth: '0',
-                          backgroundColor: item.markerColor,
+                          position: 'absolute',
+                          left: '50%',
+                          top: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          height: circleMarkerSize,
+                          width: circleMarkerSize,
+                          margin: 'auto',
+                          borderWidth:
+                            (circleMarkerSizeNum / 2).toString() + 'em',
+                          borderStyle: 'solid',
+                          borderRadius:
+                            (circleMarkerSizeNum / 2).toString() + 'em',
+                          borderColor: item.markerColor,
                         }}
                       />
                     </div>
