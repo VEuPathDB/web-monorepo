@@ -72,7 +72,7 @@ export default function ConfirmShareAnalysis({
                   <a href={sharingDatasetUrl} target="_blank" rel="noreferrer">
                     share the dataset
                   </a>{' '}
-                  before a user can view your analysis.
+                  before the recipient can view your analysis.
                 </>
               ) : (
                 'Anyone with the link below will be able to get a copy of this analysis.'
