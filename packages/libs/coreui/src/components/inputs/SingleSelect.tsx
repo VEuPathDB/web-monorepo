@@ -56,16 +56,19 @@ export default function SingleSelect<T>({
 
   const onKeyDown = (key: string, newValue: T) => {
     if (!isPopoverOpen) return;
+
     if (key === 'Enter') {
       handleSelection(newValue);
-    } else if (key === 'ArrowUp') {
-      indexOfFocusedElement !== 0
-        ? setIndexOfFocusedElement((prev) => prev - 1)
-        : null;
-    } else if (key === 'ArrowDown') {
-      indexOfFocusedElement !== items.length - 1
-        ? setIndexOfFocusedElement((prev) => prev + 1)
-        : null;
+    }
+
+    const hasNextUpIndex = indexOfFocusedElement !== 0;
+    if (key === 'ArrowUp' && hasNextUpIndex) {
+      setIndexOfFocusedElement((prev) => prev - 1);
+    }
+
+    const hasNextDownIndex = indexOfFocusedElement !== items.length - 1;
+    if (key === 'ArrowDown' && hasNextDownIndex) {
+      setIndexOfFocusedElement((prev) => prev + 1);
     }
   };
 
