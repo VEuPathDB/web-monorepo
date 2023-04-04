@@ -722,3 +722,60 @@ export const MapMarkersOverlayResponse = type({
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
 });
+
+// Standalone Map
+
+// OverlayConfig will be used for next-gen 'pass' app visualizations
+type OverlayConfig = {
+  overlayType: 'continuous' | 'categorical';
+  overlayVariable: VariableDescriptor;
+};
+
+export interface StandaloneMapMarkersRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    geoAggregateVariable: VariableDescriptor;
+    latitudeVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
+    overlayConfig?: OverlayConfig;
+    valueSpec: 'count' | 'proportion';
+    viewport: {
+      latitude: {
+        xMin: number;
+        xMax: number;
+      };
+      longitude: {
+        left: number;
+        right: number;
+      };
+    };
+  };
+}
+
+export type StandaloneMapMarkersResponse = TypeOf<
+  typeof StandaloneMapMarkersResponse
+>;
+export const StandaloneMapMarkersResponse = type({
+  mapElements: array(
+    type({
+      geoAggregateValue: string,
+      entityCount: number,
+      overlayValues: array(
+        type({
+          binStart: string,
+          binEnd: string,
+          binLabel: string,
+          value: number,
+        })
+      ),
+      avgLat: number,
+      avgLon: number,
+      minLat: number,
+      minLon: number,
+      maxLat: number,
+      maxLon: number,
+    })
+  ),
+});

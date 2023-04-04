@@ -13,7 +13,6 @@ import {
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
-import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import {
   Close,
@@ -68,6 +67,7 @@ import {
   Visualization,
 } from '../../core/types/visualization';
 import FloatingVisualization from './FloatingVisualization';
+import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -129,21 +129,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const {
     markers,
     pending,
+    error,
     legendItems,
-    basicMarkerError,
     outputEntity,
-    overlayError,
-    totalEntityCount,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
-  } = useMapMarkers({
-    requireOverlay: false,
+  } = useStandaloneMapMarkers({
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters: analysisState.analysis?.descriptor.subset.descriptor,
-    xAxisVariable: selectedVariables.overlay,
-    computationType: 'pass',
+    overlayVariable: selectedVariables.overlay,
+    computationType: 'standalone-map',
     markerType: 'pie',
     checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
@@ -498,7 +495,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
                     studyName={studyRecord.displayName}
                     totalEntityCount={outputEntityTotalCount}
-                    totalEntityInSubsetCount={totalEntityCount}
+                    totalEntityInSubsetCount={42}
                     visibleEntityCount={
                       totalVisibleWithOverlayEntityCount ??
                       totalVisibleEntityCount
@@ -634,7 +631,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   filters={filtersIncludingViewport}
                 />
 
-                {(basicMarkerError || overlayError) && (
+                {error && (
                   <FloatingDiv
                     style={{
                       top: undefined,
@@ -643,8 +640,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       right: 100,
                     }}
                   >
-                    {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-                    {overlayError && <div>{String(overlayError)}</div>}
+                    <div>{String(error)}</div>
                   </FloatingDiv>
                 )}
               </div>

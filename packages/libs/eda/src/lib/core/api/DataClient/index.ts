@@ -25,6 +25,8 @@ import {
   MapMarkersRequestParams,
   MapMarkersOverlayRequestParams,
   MapMarkersOverlayResponse,
+  StandaloneMapMarkersResponse,
+  StandaloneMapMarkersRequestParams,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -166,6 +168,19 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers-overlay',
       params,
       MapMarkersOverlayResponse
+    );
+  }
+
+  // standalone map-markers
+  getStandaloneMapMarkers(
+    computationName: string,
+    params: StandaloneMapMarkersRequestParams
+  ): Promise<StandaloneMapMarkersResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers',
+      params,
+      StandaloneMapMarkersResponse
     );
   }
 }
