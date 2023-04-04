@@ -6,8 +6,12 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
-import './SemiTransparentHeader.scss';
-import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
+import './MapHeader.scss';
+import {
+  mapNavigationBackgroundColor,
+  mapNavigationBorder,
+  SiteInformationProps,
+} from '..';
 
 export type MapNavigationProps = {
   analysisName?: string;
@@ -24,12 +28,12 @@ export type MapNavigationProps = {
 };
 
 /**
- * <SemiTransparentHeader /> has the following responsibilities:
+ * <MapHeader /> has the following responsibilities:
  *  - Worrying about being collapsed/expanded.
  *  - Presenting the smallest amount of information to allow the user
  *    to make sense of a map analysis.
  */
-export function SemiTransparentHeader({
+export function MapHeader({
   analysisName,
   entityDisplayName,
   filterList,
@@ -42,21 +46,25 @@ export function SemiTransparentHeader({
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
 }: MapNavigationProps) {
-  const semiTransparentHeader = makeClassNameHelper('SemiTransparentHeader');
+  const mapHeader = makeClassNameHelper('MapHeader');
+  const { format } = new Intl.NumberFormat();
 
   return (
     <header
-      style={{ background: mapNavigationBackgroundColor }}
-      className={`${semiTransparentHeader()} ${
-        !isExpanded ? semiTransparentHeader('--collapsed') : ''
+      style={{
+        background: mapNavigationBackgroundColor,
+        borderBottom: mapNavigationBorder,
+      }}
+      className={`${mapHeader()} ${
+        !isExpanded ? mapHeader('--collapsed') : ''
       }`}
     >
       <div
-        className={`${semiTransparentHeader('__Contents')} ${
+        className={`${mapHeader('__Contents')} ${
           isExpanded ? '' : 'screenReaderOnly'
         }`}
       >
-        <div className={semiTransparentHeader('__LogoContainer')}>
+        <div className={mapHeader('__LogoContainer')}>
           <a href={siteInformation.siteHomeUrl}>
             <img
               src={siteInformation.siteLogoSrc}
@@ -72,7 +80,7 @@ export function SemiTransparentHeader({
         />
       </div>
       <div
-        className={`${semiTransparentHeader('__SampleCounter')} ${
+        className={`${mapHeader('__SampleCounter')} ${
           isExpanded ? '' : 'screenReaderOnly'
         }`}
       >
@@ -82,7 +90,6 @@ export function SemiTransparentHeader({
             // Bring closer the content of the righthand side of
             // the bracket.
             marginLeft: 10,
-            marginRight: -5,
           }}
         />
         <table>
@@ -92,19 +99,19 @@ export function SemiTransparentHeader({
           <tbody>
             <tr title={`There are X total samples.`}>
               <td>All</td>
-              <td>{totalEntityCount}</td>
+              <td>{format(totalEntityCount)}</td>
             </tr>
             <tr
               title={`You've subset all samples down to ${totalEntityInSubsetCount} entites.`}
             >
               <td>Subset</td>
-              <td>{totalEntityInSubsetCount}</td>
+              <td>{format(totalEntityInSubsetCount)}</td>
             </tr>
             <tr
               title={`${visibleEntityCount} samples of your subset samples visible at your current viewport.`}
             >
-              <td>Visible</td>
-              <td>{visibleEntityCount}</td>
+              <td>View</td>
+              <td>{format(visibleEntityCount)}</td>
             </tr>
           </tbody>
         </table>
@@ -175,7 +182,13 @@ function OpenCloseToggleButton({
   return (
     <div className={expandToggleContainer()}>
       <button
-        style={{ background: mapNavigationBackgroundColor }}
+        style={{
+          background: mapNavigationBackgroundColor,
+          border: mapNavigationBorder,
+          // If we have a top border, it'll look like
+          // the button is distinct from the header.
+          borderTop: '2px solid white',
+        }}
         className={`Button ${
           isExpanded ? '' : expandToggleContainer('--collapsed')
         }`}
@@ -210,9 +223,9 @@ function LeftBracket(props: LeftBracketProps) {
   return (
     <div
       style={{
-        border: '2px solid black',
+        border: '1px solid black',
         borderRight: 'none',
-        height: '90%',
+        height: '75%',
         width: 5,
         ...props.styles,
       }}
