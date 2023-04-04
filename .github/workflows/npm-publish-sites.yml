@@ -1,0 +1,45 @@
+## Publish packages/sites/** to npm
+## This assumed tags will be prefixed with a "v" (e.g., v1.0.0)
+
+name: NPM Publish Sites
+on:
+  release:
+    types: [published]
+
+jobs:
+  # Gather the names of the sites directories and store it as an output variable
+  dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: set-matrix
+        run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
+
+  # Publish sites packages to npm
+  publish:
+    name: Publish ${{ matrix.dir }}
+    if: ${{ startsWith(github.event.release.tag_name, 'v') }}
+    needs:
+      - dirs
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: ${{fromJSON(needs.dirs.outputs.matrix)}}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: yarn
+      - run: yarn
+      - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+      - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF#refs/tags/v}
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
+          package: packages/sites/${{ matrix.dir }}/package.json

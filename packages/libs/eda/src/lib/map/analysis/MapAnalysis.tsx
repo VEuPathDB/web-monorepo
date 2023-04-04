@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
@@ -34,15 +34,40 @@ import {
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
-import { SemiTransparentHeader } from './SemiTransparentHeader';
+import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
-import { SiteInformationProps } from '..';
+import {
+  mapSideNavigationActiveMenuItemBackground,
+  SiteInformationProps,
+} from '..';
 import FloatingVizManagement from './FloatingVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
+import { BarChartSharp, EditLocation, Save, Share } from '@material-ui/icons';
+import { ComputationPlugin } from '../../core/components/computations/Types';
+import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
+import { LayoutOptions } from '../../core/components/layouts/types';
+import { OverlayOptions } from '../../core/components/visualizations/options/types';
+import { FloatingLayout } from '../../core/components/layouts/FloatingLayout';
+import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
+import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
+import {
+  contTableVisualization,
+  twoByTwoVisualization,
+} from '../../core/components/visualizations/implementations/MosaicVisualization';
+import { scatterplotVisualization } from '../../core/components/visualizations/implementations/ScatterplotVisualization';
+import { lineplotVisualization } from '../../core/components/visualizations/implementations/LineplotVisualization';
+import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
+import * as t from 'io-ts';
+import {
+  ComputationAppOverview,
+  Visualization,
+} from '../../core/types/visualization';
+import FloatingVisualization from './FloatingVisualization';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -140,6 +165,63 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(
     analysisState.analysis?.descriptor.subset.descriptor
+  );
+
+  // Customise the visualization plugin
+  const plugin = useMemo((): ComputationPlugin => {
+    function vizWithOptions(
+      visualization: VisualizationPlugin<LayoutOptions & OverlayOptions>
+    ) {
+      return visualization.withOptions({
+        hideFacetInputs: true,
+        layoutComponent: FloatingLayout,
+        getOverlayVariable: (_) => appState.selectedOverlayVariable,
+        getOverlayVariableHelp: () =>
+          'The overlay variable can be selected via the top-right panel.',
+        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
+      });
+    }
+
+    return {
+      configurationComponent: ZeroConfigWithButton,
+      isConfigurationValid: t.undefined.is,
+      createDefaultConfiguration: () => undefined,
+      visualizationPlugins: {
+        histogram: vizWithOptions(histogramVisualization),
+        twobytwo: vizWithOptions(twoByTwoVisualization),
+        conttable: vizWithOptions(contTableVisualization),
+        scatterplot: vizWithOptions(scatterplotVisualization),
+        lineplot: vizWithOptions(lineplotVisualization),
+        // 'map-markers': vizWithOptions(mapVisualization), // disabling because of potential confusion between marker colors
+        barplot: vizWithOptions(barplotVisualization),
+        boxplot: vizWithOptions(boxplotVisualization),
+      },
+    };
+  }, [appState.selectedOverlayVariable]);
+
+  const computation = analysisState.analysis?.descriptor.computations[0];
+
+  const updateVisualizations = useCallback(
+    (
+      visualizations:
+        | Visualization[]
+        | ((visualizations: Visualization[]) => Visualization[])
+    ) => {
+      analysisState.setComputations((computations) =>
+        computations.map((c) =>
+          c.computationId !== computation?.computationId
+            ? c
+            : {
+                ...c,
+                visualizations:
+                  typeof visualizations === 'function'
+                    ? visualizations(c.visualizations)
+                    : visualizations,
+              }
+        )
+      );
+    },
+    [analysisState, computation?.computationId]
   );
 
   const fieldTree = useFieldTree(
@@ -257,44 +339,85 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     marginLeft: '0.5rem',
   };
 
-  /** Again, for demonstration purposes. This is showing that we
-   * can keep track of the open panels and use that info to
-   * conditionally render some styles or something.
-   */
-  const [activeSideMenuItems, setActiveSideMenuItems] = useState<Set<number>>(
-    new Set()
-  );
-
-  const sideNavigationItems = [
-    {
-      isButton: true,
-      labelText: 'Filter Data',
-      icon: <Filter />,
-    },
-    {
-      isButton: true,
-      labelText: 'Download Map',
-      icon: <Download />,
-    },
-  ].map((item, index) => {
-    return (
-      <button
-        style={buttonStyles}
-        onClick={() => {
-          setActiveSideMenuItems((currentSet) => {
-            const newSet = new Set(currentSet);
-            newSet.has(index) ? newSet.delete(index) : newSet.add(index);
-            return newSet;
-          });
-        }}
-      >
-        <span style={iconStyles} aria-hidden>
-          {item.icon}
-        </span>
-        <span style={labelStyles}>{item.labelText}</span>
-      </button>
+  type SideNavigationItemConfigurationObject = {
+    href?: string;
+    labelText: string;
+    icon: ReactNode;
+    renderWithApp: (app: ComputationAppOverview) => ReactNode;
+  };
+  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderWithApp'] =
+    (_) => (
+      <div style={{ padding: '2rem' }}>
+        <p>Not Implemented!</p>
+      </div>
     );
-  });
+  const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
+    [
+      {
+        labelText: 'Paint',
+        icon: <EditLocation />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        labelText: 'Filter',
+        icon: <Filter />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        labelText: 'Plot',
+        icon: <BarChartSharp />,
+        renderWithApp: (app) => {
+          return (
+            <FloatingVizManagement
+              analysisState={analysisState}
+              updateVisualizations={updateVisualizations}
+              setActiveVisualizationId={setActiveVisualizationId}
+              app={app}
+              visualizationPlugins={plugin.visualizationPlugins}
+              geoConfigs={geoConfigs}
+            />
+          );
+        },
+      },
+      {
+        labelText: 'Download',
+        icon: <Download />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        labelText: 'Share',
+        icon: <Share />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        labelText: 'Save',
+        icon: <Save />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+    ];
+
+  const [activeSideMenuIndex, setActiveSideMenuIndex] =
+    useState<number | undefined>();
+
+  const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
+    ({ labelText, icon }, index) => {
+      return (
+        <button
+          style={buttonStyles}
+          onClick={() => {
+            setActiveSideMenuIndex((currentIndex) =>
+              currentIndex === index ? undefined : index
+            );
+          }}
+        >
+          <span style={iconStyles} aria-hidden>
+            {icon}
+          </span>
+          <span style={labelStyles}>{labelText}</span>
+        </button>
+      );
+    }
+  );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -324,226 +447,250 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     props.analysisState.analysis?.descriptor.subset.descriptor,
   ]);
 
+  const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
+    useState<boolean>(true);
+
   return (
     <PromiseResult state={appPromiseState}>
-      {(app) => (
-        <ShowHideVariableContextProvider>
-          <DocumentationContainer>
-            <div
-              style={{
-                height: '100%',
-                position: 'relative',
-              }}
-            >
+      {(app: ComputationAppOverview) => {
+        const activeSideNavigationItemMenu =
+          activeSideMenuIndex != null &&
+          sideNavigationButtonConfigurationObjects[
+            activeSideMenuIndex
+          ].renderWithApp(app);
+
+        return (
+          <ShowHideVariableContextProvider>
+            <DocumentationContainer>
               <div
                 style={{
-                  // Make a div that completely fills its parent. Have it
-                  // layout its children with flexbox.
-                  display: 'flex',
-                  flexDirection: 'column',
                   height: '100%',
-                  width: '100%',
-                  // Attach this div container to it's parent.
-                  position: 'absolute',
-                  // Remember that just about everything in the DOM is box.
-                  // This div is sitting on top of the map. By disabling
-                  // pointer events we are saying: hey, div, become porous.
-                  // If a user clicks you, don't capture it, but let it go
-                  // to the map you're covering.
-                  pointerEvents: 'none',
+                  position: 'relative',
                 }}
               >
-                <SemiTransparentHeader
-                  analysisName={analysisState.analysis?.displayName}
-                  entityDisplayName={
-                    outputEntity?.displayNamePlural || 'Samples'
-                  }
-                  filterList={<FilterChipListForHeader />}
-                  isExpanded={mapHeaderIsExpanded}
-                  siteInformation={props.siteInformationProps}
-                  onAnalysisNameEdit={analysisState.setName}
-                  onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
-                  studyName={studyRecord.displayName}
-                  totalEntityCount={outputEntityTotalCount}
-                  totalEntityInSubsetCount={totalEntityCount}
-                  visibleEntityCount={
-                    totalVisibleWithOverlayEntityCount ??
-                    totalVisibleEntityCount
-                  }
-                />
-                <MapSideNavigation
-                  siteInformationProps={props.siteInformationProps}
+                <div
+                  style={{
+                    // Make a div that completely fills its parent. Have it
+                    // layout its children with flexbox.
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    width: '100%',
+                    // Attach this div container to it's parent.
+                    position: 'absolute',
+                    // Remember that just about everything in the DOM is box.
+                    // This div is sitting on top of the map. By disabling
+                    // pointer events we are saying: hey, div, become porous.
+                    // If a user clicks you, don't capture it, but let it go
+                    // to the map you're covering.
+                    pointerEvents: 'none',
+                  }}
                 >
-                  <div style={{ width: '100%' }}>
-                    <ul style={{ margin: 0, padding: 0 }}>
-                      {sideNavigationItems.map((item, itemIndex) => {
-                        const isActive = activeSideMenuItems.has(itemIndex);
-                        return (
-                          <li
-                            key={itemIndex}
-                            style={{
-                              // These styles format the lefthand side menu items.
-                              // Nothing special here. We can conditionally apply
-                              // styles based on in/active states, if we like.
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'flex-start',
-                              padding: '0.25rem',
-                              width: '100%',
-                              transition: 'background 0.2s ease',
-                              // An example of an active state style.
-                              borderRight: `5px solid ${
-                                isActive ? 'black' : 'transparent'
-                              }`,
-                            }}
-                          >
-                            {item}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </MapSideNavigation>
-              </div>
-              <MapVEuMap
-                height="100%"
-                width="100%"
-                style={mapStyle}
-                showMouseToolbar={false}
-                showZoomControl={false}
-                showLayerSelector={false}
-                showSpinner={pending}
-                animation={null}
-                viewport={appState.viewport}
-                markers={finalMarkers}
-                mouseMode={appState.mouseMode}
-                flyToMarkers={false}
-                flyToMarkersDelay={500}
-                onBoundsChanged={setBoundsZoomLevel}
-                onViewportChanged={setViewport}
-                onMouseModeChange={setMouseMode}
-                showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
-                zoomLevelToGeohashLevel={geoConfig?.zoomLevelToAggregationLevel}
-              />
-              <FloatingDiv
-                style={{
-                  top: 350,
-                  right: 50,
-                }}
-              >
-                {legendItems.length > 0 && (
-                  <MapLegend
-                    legendItems={legendItems}
-                    title={overlayVariable?.displayName}
+                  <MapHeader
+                    analysisName={analysisState.analysis?.displayName}
+                    entityDisplayName={
+                      outputEntity?.displayNamePlural || 'Samples'
+                    }
+                    filterList={<FilterChipListForHeader />}
+                    isExpanded={mapHeaderIsExpanded}
+                    siteInformation={props.siteInformationProps}
+                    onAnalysisNameEdit={analysisState.setName}
+                    onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
+                    studyName={studyRecord.displayName}
+                    totalEntityCount={outputEntityTotalCount}
+                    totalEntityInSubsetCount={totalEntityCount}
+                    visibleEntityCount={
+                      totalVisibleWithOverlayEntityCount ??
+                      totalVisibleEntityCount
+                    }
                   />
-                )}
-              </FloatingDiv>
-              {/* <FloatingDiv
-                style={{
-                  top: 250,
-                  left: 500,
-                  left: 100,
-                }}
-              >
-                <div>
-                  {safeHtml(studyRecord.displayName)} ({totalEntityCount})
+                  <MapSideNavigation
+                    isExpanded={sideNavigationIsExpanded}
+                    onToggleIsExpanded={() =>
+                      setSideNavigationIsExpanded((isExpanded) => !isExpanded)
+                    }
+                    siteInformationProps={props.siteInformationProps}
+                    activeNavigationMenu={activeSideNavigationItemMenu}
+                  >
+                    <div>
+                      <ul style={{ margin: 0, padding: 0 }}>
+                        {sideNavigationButtons.map((item, itemIndex) => {
+                          const isActive = activeSideMenuIndex === itemIndex;
+                          return (
+                            <li
+                              key={itemIndex}
+                              style={{
+                                // These styles format the lefthand side menu items.
+                                // Nothing special here. We can conditionally apply
+                                // styles based on in/active states, if we like.
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-start',
+                                width: '100%',
+                                transition: 'background 0.1s ease',
+                                padding: '5px 10px',
+                                background: isActive
+                                  ? mapSideNavigationActiveMenuItemBackground
+                                  : 'inherit',
+                              }}
+                            >
+                              {item}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </MapSideNavigation>
                 </div>
-                <div>
-                  Showing {entity?.displayName} variable {variable?.displayName}
-                </div>
-                <div>
-                  <FilledButton
-                    text="Open Filters"
-                    onPress={() => setIsSubsetPanelOpen(true)}
-                  />
-                </div>
-		*/}
-              <FloatingDiv
-                style={{
-                  top: 150,
-                  right: 50,
-                }}
-              >
-                <span style={{ backgroundColor: 'yellow' }}>
-                  temporary - remove me
-                </span>
-                <InputVariables
-                  inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                  entities={studyEntities}
-                  selectedVariables={selectedVariables}
-                  onChange={(selectedVariables) =>
-                    setSelectedOverlayVariable(selectedVariables.overlay)
+                <MapVEuMap
+                  height="100%"
+                  width="100%"
+                  style={mapStyle}
+                  showMouseToolbar={false}
+                  showZoomControl={false}
+                  showLayerSelector={false}
+                  showSpinner={pending}
+                  animation={null}
+                  viewport={appState.viewport}
+                  markers={finalMarkers}
+                  mouseMode={appState.mouseMode}
+                  flyToMarkers={false}
+                  flyToMarkersDelay={500}
+                  onBoundsChanged={setBoundsZoomLevel}
+                  onViewportChanged={setViewport}
+                  onMouseModeChange={setMouseMode}
+                  showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
+                  zoomLevelToGeohashLevel={
+                    geoConfig?.zoomLevelToAggregationLevel
                   }
-                  starredVariables={
-                    analysisState.analysis?.descriptor.starredVariables ?? []
-                  }
-                  toggleStarredVariable={toggleStarredVariable}
                 />
-              </FloatingDiv>
-
-              <FloatingVizManagement
-                analysisState={analysisState}
-                setActiveVisualizationId={setActiveVisualizationId}
-                appState={appState}
-                app={app}
-                geoConfigs={geoConfigs}
-                totalCounts={totalCounts}
-                filteredCounts={filteredCounts}
-                toggleStarredVariable={toggleStarredVariable}
-                filters={filtersIncludingViewport}
-              />
-
-              {(basicMarkerError || overlayError) && (
                 <FloatingDiv
-                  style={{ top: undefined, bottom: 50, left: 100, right: 100 }}
+                  style={{
+                    top: 350,
+                    right: 50,
+                  }}
                 >
-                  {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-                  {overlayError && <div>{String(overlayError)}</div>}
+                  {legendItems.length > 0 && (
+                    <MapLegend
+                      legendItems={legendItems}
+                      title={overlayVariable?.displayName}
+                    />
+                  )}
                 </FloatingDiv>
-              )}
-            </div>
-            <FloatingDiv
-              style={{
-                top: 100,
-                left: 100,
-                right: 100,
-                bottom: 10,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              {appState.isSubsetPanelOpen && (
-                <>
-                  <FloatingButton
-                    text=""
-                    icon={Close}
-                    onPress={() => setIsSubsetPanelOpen(false)}
-                    styleOverrides={{
-                      container: {
-                        display: 'flex',
-                        marginLeft: 'auto',
-                      },
-                    }}
-                  />
-                  <div style={{ overflow: 'auto' }}>
-                    <Subsetting
-                      variableLinkConfig={{
-                        type: 'button',
-                        onClick: setSubsetVariableAndEntity,
-                      }}
-                      entityId={subsetVariableAndEntity?.entityId ?? ''}
-                      variableId={subsetVariableAndEntity?.variableId ?? ''}
-                      analysisState={analysisState}
-                      totalCounts={totalCounts.value}
-                      filteredCounts={filteredCounts.value}
+                {/* <FloatingDiv
+                  style={{
+                    top: 250,
+                    left: 500,
+                    left: 100,
+                  }}
+                >
+                  <div>
+                    {safeHtml(studyRecord.displayName)} ({totalEntityCount})
+                  </div>
+                  <div>
+                    Showing {entity?.displayName} variable {variable?.displayName}
+                  </div>
+                  <div>
+                    <FilledButton
+                      text="Open Filters"
+                      onPress={() => setIsSubsetPanelOpen(true)}
                     />
                   </div>
-                </>
-              )}
-            </FloatingDiv>
-          </DocumentationContainer>
-        </ShowHideVariableContextProvider>
-      )}
+      */}
+                <FloatingDiv
+                  style={{
+                    top: 150,
+                    right: 50,
+                  }}
+                >
+                  <span style={{ backgroundColor: 'yellow' }}>
+                    temporary - remove me
+                  </span>
+                  <InputVariables
+                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    selectedVariables={selectedVariables}
+                    onChange={(selectedVariables) =>
+                      setSelectedOverlayVariable(selectedVariables.overlay)
+                    }
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                  />
+                </FloatingDiv>
+
+                <FloatingVisualization
+                  analysisState={analysisState}
+                  updateVisualizations={updateVisualizations}
+                  setActiveVisualizationId={setActiveVisualizationId}
+                  appState={appState}
+                  app={app}
+                  visualizationPlugins={plugin.visualizationPlugins}
+                  geoConfigs={geoConfigs}
+                  totalCounts={totalCounts}
+                  filteredCounts={filteredCounts}
+                  toggleStarredVariable={toggleStarredVariable}
+                  filters={filtersIncludingViewport}
+                />
+
+                {(basicMarkerError || overlayError) && (
+                  <FloatingDiv
+                    style={{
+                      top: undefined,
+                      bottom: 50,
+                      left: 100,
+                      right: 100,
+                    }}
+                  >
+                    {basicMarkerError && <div>{String(basicMarkerError)}</div>}
+                    {overlayError && <div>{String(overlayError)}</div>}
+                  </FloatingDiv>
+                )}
+              </div>
+              <FloatingDiv
+                style={{
+                  top: 100,
+                  left: 100,
+                  right: 100,
+                  bottom: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                {appState.isSubsetPanelOpen && (
+                  <>
+                    <FloatingButton
+                      text=""
+                      icon={Close}
+                      onPress={() => setIsSubsetPanelOpen(false)}
+                      styleOverrides={{
+                        container: {
+                          display: 'flex',
+                          marginLeft: 'auto',
+                        },
+                      }}
+                    />
+                    <div style={{ overflow: 'auto' }}>
+                      <Subsetting
+                        variableLinkConfig={{
+                          type: 'button',
+                          onClick: setSubsetVariableAndEntity,
+                        }}
+                        entityId={subsetVariableAndEntity?.entityId ?? ''}
+                        variableId={subsetVariableAndEntity?.variableId ?? ''}
+                        analysisState={analysisState}
+                        totalCounts={totalCounts.value}
+                        filteredCounts={filteredCounts.value}
+                      />
+                    </div>
+                  </>
+                )}
+              </FloatingDiv>
+            </DocumentationContainer>
+          </ShowHideVariableContextProvider>
+        );
+      }}
     </PromiseResult>
   );
 }
