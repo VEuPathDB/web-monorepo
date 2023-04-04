@@ -240,17 +240,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     updateThumbnail,
     filters,
     dataElementConstraints,
-    // dataElementDependencyOrder,
+    dataElementDependencyOrder,
     starredVariables,
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
     computeJobStatus,
   } = props;
-  const dataElementDependencyOrder = [
-    ['yAxisVariable', 'xAxisVariable'],
-    ['overlayVariable', 'facetVariable'],
-  ];
 
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
