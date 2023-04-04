@@ -353,14 +353,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   ]);
 
   // set the state of truncation warning message
-  const [
-    truncatedIndependentAxisWarning,
-    setTruncatedIndependentAxisWarning,
-  ] = useState<string>('');
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -370,12 +366,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         vizConfig.xAxisVariable
       );
 
-      const {
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
+      const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
+        selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -518,6 +510,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? true
       : false;
 
+  // set a condition to show Banner for continuous overlayVariable if plot option is not 'Raw'
+  const showContinousOverlayBanner: boolean =
+    overlayVariable != null &&
+    overlayVariable.dataShape === 'continuous' &&
+    (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
+      vizConfig.valueSpecConfig === 'Best fit line with raw');
+
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
       // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
@@ -560,6 +559,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         (vizConfig.yAxisVariable == null || yAxisVariable == null)
       )
         return undefined;
+
+      // prevent data request for the case of  plot option != Raw when using continuous overlayVariable
+      if (showContinousOverlayBanner) {
+        return undefined;
+      }
 
       // Convert valueSpecConfig to valueSpecValue for the data client request.
       let valueSpecValue = 'raw';
@@ -713,6 +717,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       computeJobStatus,
       providedOverlayVariable,
       showLogScaleBanner,
+      showContinousOverlayBanner,
       // // get data when changing independentAxisRange
       // vizConfig.independentAxisRange,
     ])
@@ -778,28 +783,27 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
 
   // gradient colorscale legend
-  const gradientLegendProps:
-    | PlotLegendGradientProps
-    | undefined = useMemo(() => {
-    if (
-      data.value?.overlayMax !== undefined &&
-      data.value?.overlayMin !== undefined &&
-      data.value?.gradientColorscaleType
-    ) {
-      return {
-        legendMax: data.value?.overlayMax,
-        legendMin: data.value?.overlayMin,
-        gradientColorscaleType: data.value?.gradientColorscaleType,
-        // MUST be odd! Probably should be a clever function of the box size
-        // and font or something...
-        nTicks: 5,
-        showMissingness: vizConfig.showMissingness,
-        legendTitle,
-      };
-    } else {
-      return undefined;
-    }
-  }, [data, vizConfig.showMissingness, legendTitle]);
+  const gradientLegendProps: PlotLegendGradientProps | undefined =
+    useMemo(() => {
+      if (
+        data.value?.overlayMax !== undefined &&
+        data.value?.overlayMin !== undefined &&
+        data.value?.gradientColorscaleType
+      ) {
+        return {
+          legendMax: data.value?.overlayMax,
+          legendMin: data.value?.overlayMin,
+          gradientColorscaleType: data.value?.gradientColorscaleType,
+          // MUST be odd! Probably should be a clever function of the box size
+          // and font or something...
+          nTicks: 5,
+          showMissingness: vizConfig.showMissingness,
+          legendTitle,
+        };
+      } else {
+        return undefined;
+      }
+    }, [data, vizConfig.showMissingness, legendTitle]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
@@ -1434,6 +1438,41 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
               />
             </div>
           )}
+
+        {/* show Banner for continuous overlayVariable if plot option is not 'Raw' */}
+        {!data.pending && showContinousOverlayBanner && (
+          <div>
+            <Banner
+              banner={{
+                type: 'warning',
+                message:
+                  'Plot modes with fitted lines are not available when continuous overlay variables are selected.',
+                pinned: true,
+                intense: false,
+                // additionalMessage is shown next to message when clicking showMoreLinkText.
+                // disappears when clicking showLess link
+                // note that this additionalMessage prop is used to determine show more/less behavior or not
+                // if undefined, then just show normal banner with message
+                additionalMessage:
+                  'Continuous overlay variable values are not binned.',
+                // text for showMore link
+                showMoreLinkText: 'Why?',
+                // text for showless link
+                showLessLinkText: 'Read less',
+                // color for show more links
+                showMoreLinkColor: '#006699',
+                spacing: {
+                  margin: '0.3125em 0 0 0',
+                  padding: '0.3125em 0.625em',
+                },
+                fontSize: '1em',
+                showBanner: showBanner,
+                setShowBanner: setShowBanner,
+              }}
+            />
+          </div>
+        )}
+
         {/* show log scale related Banner message unless plot mode of 'Raw' */}
         {showLogScaleBanner && (
           // <div style={{ width: 750, marginLeft: '1em', height: '2.8em' }}>
@@ -2045,41 +2084,34 @@ export function scatterplotResponseToData(
   const fallbackFacetVocabulary = keys(facetGroupedResponseData);
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const {
-      dataSetProcess,
-      xMin,
-      xMinPos,
-      xMax,
-      yMin,
-      yMinPos,
-      yMax,
-    } = processInputData(
-      reorderResponseScatterplotData(
-        // reorder by overlay var within each facet
-        group,
-        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-        overlayVariable
-      ),
-      modeValue,
-      response.scatterplot.config.variables.find(
-        (mapping) => mapping.plotReference === 'xAxis'
-      )?.dataType ?? '',
-      response.scatterplot.config.variables.find(
-        (mapping) => mapping.plotReference === 'yAxis'
-      )?.dataType ?? '',
-      showMissingOverlay,
-      hasMissingData,
-      overlayVariable,
-      overlayMin,
-      overlayMax,
-      gradientColorscaleType,
-      // pass facetVariable to determine either scatter or scattergl
-      facetVariable,
-      // pass computation here to add conditions for apps
-      computation,
-      entities,
-      colorPaletteOverride
-    );
+    const { dataSetProcess, xMin, xMinPos, xMax, yMin, yMinPos, yMax } =
+      processInputData(
+        reorderResponseScatterplotData(
+          // reorder by overlay var within each facet
+          group,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          overlayVariable
+        ),
+        modeValue,
+        response.scatterplot.config.variables.find(
+          (mapping) => mapping.plotReference === 'xAxis'
+        )?.dataType ?? '',
+        response.scatterplot.config.variables.find(
+          (mapping) => mapping.plotReference === 'yAxis'
+        )?.dataType ?? '',
+        showMissingOverlay,
+        hasMissingData,
+        overlayVariable,
+        overlayMin,
+        overlayMax,
+        gradientColorscaleType,
+        // pass facetVariable to determine either scatter or scattergl
+        facetVariable,
+        // pass computation here to add conditions for apps
+        computation,
+        entities,
+        colorPaletteOverride
+      );
 
     return {
       dataSetProcess: dataSetProcess,

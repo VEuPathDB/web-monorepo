@@ -1,10 +1,18 @@
-import { useState } from 'react';
 import { ChevronRight } from '@veupathdb/coreui';
 import { Launch, LockOpen } from '@material-ui/icons';
-import { mapNavigationBackgroundColor, SiteInformationProps } from '..';
+import {
+  mapNavigationBackgroundColor,
+  mapNavigationBorder,
+  SiteInformationProps,
+} from '..';
 
 export type MapSideNavigationProps = {
+  /** The navigation is stateless. */
+  isExpanded: boolean;
   children: React.ReactNode;
+  /** This fires when the user expands/collapses the nav. */
+  onToggleIsExpanded: () => void;
+  activeNavigationMenu?: React.ReactNode;
   siteInformationProps: SiteInformationProps;
 };
 
@@ -19,13 +27,13 @@ const bottomLinkStyles: React.CSSProperties = {
 };
 
 export function MapSideNavigation({
-  siteInformationProps,
+  activeNavigationMenu,
   children,
+  isExpanded,
+  onToggleIsExpanded,
+  siteInformationProps,
 }: MapSideNavigationProps) {
-  const [isExpanded, setIsExpanded] = useState<boolean>(true);
-
-  const sideMenuWidth = 200;
-  const sideMenuExpandButtonWidth = 50;
+  const sideMenuExpandButtonWidth = 20;
 
   return (
     <nav
@@ -34,14 +42,19 @@ export function MapSideNavigation({
         // including its width, height, and location on the
         // page (which depends on the `isExpanded` piece of state.
         background: mapNavigationBackgroundColor,
+        border: mapNavigationBorder,
+        borderLeft: 'none',
+        borderBottom: 'none',
+        borderTop: 'none',
         // height: 'calc(100% - 150px)',
         height: '100%',
-        left: isExpanded ? 0 : -sideMenuWidth,
         minHeight: 125,
         position: 'relative',
         transition: 'left 0.1s ease',
-        width: sideMenuWidth,
-        marginTop: '2rem',
+        // Zero always makes math easy. Either the menu is as big as
+        // it needs to be or it's 0px (and 0px padding).
+        width: isExpanded ? 'max-content' : 0,
+        marginTop: '4rem',
         // The parent of this element probably had its pointer-events
         // set to "none". This restores the default behavior. Without
         // this, users cannot interact with the side menu via cursor.
@@ -49,6 +62,7 @@ export function MapSideNavigation({
         // Just as with the map header, we need to set a z-index to
         // ensure that the side menu sits atop the map.
         zIndex: 10,
+        display: 'flex',
       }}
     >
       <button
@@ -56,8 +70,10 @@ export function MapSideNavigation({
           // This makes the button users will click to open/close
           // the side navigation.
           background: mapNavigationBackgroundColor,
-          borderColor: 'transparent',
-          height: 50,
+          border: mapNavigationBorder,
+          borderLeft: 'none',
+          borderRadius: '0px 5px 5px 0px',
+          height: 60,
           width: sideMenuExpandButtonWidth,
           // These styles pin the expand/collapse to the right of
           // the lefthand side menu at the nav's vertical center.
@@ -73,22 +89,26 @@ export function MapSideNavigation({
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onClick={() => setIsExpanded((current) => !current)}
+        onClick={() => onToggleIsExpanded()}
       >
-        <ChevronRight
+        <div
+          aria-hidden
           style={{
             transform: `rotate(${isExpanded ? -180 : 0}deg)`,
-            height: 30,
-            width: 40,
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize: 20,
           }}
-          aria-hidden
-        />
+        >
+          <ChevronRight />
+        </div>
         <span className="screenReaderOnly">
           {isExpanded ? 'Close' : 'Open'} {siteInformationProps.siteName} side
           menu
         </span>
       </button>
       <div
+        className={isExpanded ? '' : 'screenReaderOnly'}
         style={{
           position: 'relative',
           // Ensures that the div takes up all the available height.
@@ -109,19 +129,20 @@ export function MapSideNavigation({
         <hr
           style={{
             // Styles for the <hr />
-            backgroundColor: `rgba(0, 0, 0,0.25)`,
+            backgroundColor: `rgba(0, 0, 0,0.15)`,
             border: 0,
-            height: '1px',
+            height: '2px',
             marginBottom: '1.5rem',
-            width: '90%',
+            width: '50%',
           }}
         />
         <div
+          className={isExpanded ? '' : 'screenReaderOnly'}
           style={{
             // This handles short viewports. These styles allow
             // content inside the div to be scrollable when it exceeds the
             // height constraints of a short viewport.
-            marginLeft: '0.5rem',
+            margin: '0 0.5rem',
             // This pins the items to the bottom of the navigation
             display: 'flex',
             flexDirection: 'column',
@@ -149,6 +170,14 @@ export function MapSideNavigation({
             </li>
           </ul>
         </div>
+      </div>
+      <div
+        style={{
+          borderLeft: activeNavigationMenu ? mapNavigationBorder : 'none',
+        }}
+        className={isExpanded ? '' : 'screenReaderOnly'}
+      >
+        {activeNavigationMenu}
       </div>
     </nav>
   );
