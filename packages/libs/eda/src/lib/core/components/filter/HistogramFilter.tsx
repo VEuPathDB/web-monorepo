@@ -838,6 +838,7 @@ function tidyBinLabel(
 //
 // TODO [2022-08-10] - Consider using numberSignificantFiguresRoundUp/Down
 //                     (but the date exception thing is useful)
+// UPDATE [2023-04-04] - Introduced scientific notation, Handling year variable
 function formatStatValue(
   value: string | number | undefined,
   type: HistogramVariable['type']
@@ -845,6 +846,11 @@ function formatStatValue(
   if (value == null) return 'N/A';
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
+    : // check a possible year variable
+    type === 'integer' && Number(value) >= 1900 && Number(value) <= 2100
+    ? Number.isInteger(value)
+      ? Number(value)
+      : Number(value).toFixed(4)
     : Number(value).toExponential(4);
 }
 
