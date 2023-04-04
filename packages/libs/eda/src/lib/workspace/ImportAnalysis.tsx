@@ -10,6 +10,7 @@ import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActi
 
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 interface Props {
   analysisClient: AnalysisClient;
@@ -25,8 +26,7 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
   const history = useHistory();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const dispatch = useDispatch();
-  const [error, setError] =
-    useState<string | ImportAnalysisError | undefined>();
+  const [error, setError] = useState<string | ImportAnalysisError | null>(null);
 
   useSetDocumentTitle(
     error == null ? 'Importing Analysis' : 'Import Unsuccessful'
@@ -56,6 +56,13 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
           history.replace(newLocation);
         },
         (error) => {
+          /**
+           * 'error' may be an Error object or a JSON string so let's
+           * 1. "normalize" the error to be an Error object
+           * 2. set the error
+           *    - try to parse the error message as if it's JSON
+           *    - if above fails, error will be the Error object's message
+           */
           const enforcedErrorObject =
             error instanceof Error ? error : new Error(String(error));
           const errorMessageList = enforcedErrorObject.message.split('\n');
@@ -76,12 +83,30 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
         dispatch(showLoginForm());
       }
     },
-    [history, user, dispatch]
+    [user, dispatch]
   );
 
-  const errorMessage =
-    error && typeof error === 'object' ? (
-      error.status === 'forbidden' ? (
+  return (
+    <div>
+      <h1>{error == null ? 'Importing Analysis...' : 'Import Unsuccessful'}</h1>
+      {error && (
+        <ErrorMessage error={error} user={user} handleLogin={handleClick} />
+      )}
+    </div>
+  );
+}
+
+type ErrorMessageProps = {
+  error: string | ImportAnalysisError | null;
+  user?: User;
+  handleLogin: (event: React.MouseEvent<HTMLButtonElement>) => void;
+};
+
+function ErrorMessage({ error, user, handleLogin }: ErrorMessageProps) {
+  if (!error) return null;
+  if (typeof error === 'object') {
+    if (error.status === 'forbidden') {
+      return (
         <>
           <p>
             Unable to import this analysis. You do not have access to the study.
@@ -89,7 +114,7 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
           <p>
             {user === undefined || user.isGuest ? (
               <>
-                <button className="link" onClick={handleClick}>
+                <button className="link" onClick={handleLogin}>
                   Please login
                 </button>{' '}
                 and try again.
@@ -99,19 +124,15 @@ export function ImportAnalysis({ analysisClient, analysisId }: Props) {
             )}
           </p>
         </>
-      ) : (
+      );
+    } else {
+      return (
         <pre>
           status: {error.status}; message: {error.message}
         </pre>
-      )
-    ) : (
-      <pre>{error}</pre>
-    );
-
-  return (
-    <div>
-      <h1>{error == null ? 'Importing Analysis...' : 'Import Unsuccessful'}</h1>
-      {error && errorMessage}
-    </div>
-  );
+      );
+    }
+  } else {
+    return <pre>{error}</pre>;
+  }
 }
