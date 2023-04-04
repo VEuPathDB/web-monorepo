@@ -103,7 +103,7 @@ export interface Props {
    * In other words, the currently selected variables.
    */
   selectedVariables: VariablesByInputName;
-  allVariables?: VariablesByInputName;
+  variablesForConstraints?: VariablesByInputName;
   /**
    * Change handler that is called when any input value is changed.
    */
@@ -134,8 +134,6 @@ export interface Props {
   onShowMissingnessChange?: (newState: boolean) => void;
   /** output entity, required for toggle switch label */
   outputEntity?: StudyEntity;
-  /** provided/computed variables and their plot refs */
-  computeEntity?: StudyEntity;
 }
 
 export function InputVariables(props: Props) {
@@ -143,6 +141,7 @@ export function InputVariables(props: Props) {
     inputs,
     entities,
     selectedVariables,
+    variablesForConstraints,
     onChange,
     constraints,
     dataElementDependencyOrder,
@@ -153,7 +152,6 @@ export function InputVariables(props: Props) {
     onShowMissingnessChange,
     outputEntity,
     customSections,
-    allVariables,
   } = props;
   const classes = useInputStyles();
   const handleChange = (
@@ -184,7 +182,7 @@ export function InputVariables(props: Props) {
             entities,
             filteredConstraints,
             dataElementDependencyOrder,
-            allVariables ?? selectedVariables
+            variablesForConstraints ?? selectedVariables
           );
 
           return map;

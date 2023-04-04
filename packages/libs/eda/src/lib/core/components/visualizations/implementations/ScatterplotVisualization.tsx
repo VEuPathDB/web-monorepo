@@ -297,14 +297,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   // When we only have a computed y axis (and no provided overlay) then the y axis var
   // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
-  const computedYAxisDescriptor =
-    !computedOverlayVariableDescriptor && computedYAxisDetails
-      ? {
-          entityId: computedYAxisDetails.entityId,
-          variableId:
-            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-        }
-      : null;
+  const computedYAxisDescriptor = computedYAxisDetails
+    ? {
+        entityId: computedYAxisDetails.entityId,
+        variableId:
+          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
 
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
@@ -313,13 +312,16 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const allVariables = useDeepValue({
+  // variablesForConstraints includes selected vars, computed vars, and
+  // those collection vars that we want to use in constraining the available
+  // variables within a viz. Computed overlay was left out intentionally to retain
+  // desired behavior (see PR #38).
+  const variablesForConstraints = useDeepValue({
     xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
     yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
     overlayVariable: vizConfig.overlayVariable,
     facetVariable: vizConfig.facetVariable,
   });
-  console.log(allVariables);
 
   const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
@@ -1896,7 +1898,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             role: 'Y-axis',
             required: !computedOverlayVariableDescriptor?.variableId,
             display: dependentAxisLabel,
-            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+            variable:
+              !computedOverlayVariableDescriptor && computedYAxisDescriptor
+                ? computedYAxisDescriptor
+                : vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
@@ -2000,7 +2005,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ]}
           entities={entities}
           selectedVariables={selectedVariables}
-          allVariables={allVariables}
+          variablesForConstraints={variablesForConstraints}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
