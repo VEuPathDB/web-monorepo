@@ -308,12 +308,18 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
-    yAxisVariable: computedYAxisDescriptor
-      ? computedYAxisDescriptor
-      : vizConfig.yAxisVariable,
+    yAxisVariable: vizConfig.yAxisVariable,
     overlayVariable: vizConfig.overlayVariable,
     facetVariable: vizConfig.facetVariable,
   });
+
+  const allVariables = useDeepValue({
+    xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
+    yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+  console.log(allVariables);
 
   const filteredConstraints = useFilteredConstraints(
     dataElementConstraints,
@@ -1994,6 +2000,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ]}
           entities={entities}
           selectedVariables={selectedVariables}
+          allVariables={allVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
