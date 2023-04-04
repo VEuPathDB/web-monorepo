@@ -103,6 +103,10 @@ export interface Props {
    * In other words, the currently selected variables.
    */
   selectedVariables: VariablesByInputName;
+  /**
+   * The complete set of variables we should use when considering
+   * constraints on entities. Usually the union of computed and selected vars.
+   */
   variablesForConstraints?: VariablesByInputName;
   /**
    * Change handler that is called when any input value is changed.
