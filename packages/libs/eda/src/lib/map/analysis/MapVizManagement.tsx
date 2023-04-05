@@ -11,8 +11,11 @@ import {
 import { GeoConfig } from '../../core/types/geoConfig';
 import { Add, CloseTwoTone } from '@material-ui/icons';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
+import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
+import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
 
 interface Props {
+  activeVisualizationId: string | undefined;
   analysisState: AnalysisState;
   updateVisualizations: (
     visualizations:
@@ -28,6 +31,7 @@ interface Props {
 }
 
 export default function MapVizManagement({
+  activeVisualizationId,
   analysisState,
   updateVisualizations,
   setActiveVisualizationId,
@@ -50,42 +54,55 @@ export default function MapVizManagement({
   return (
     <div style={{ display: 'flex' }}>
       <div>
-        <FilledButton
-          text="New plot"
-          size="small"
-          icon={Add}
-          textTransform="none"
-          onPress={() => setIsVizSelectorVisible(true)}
-        />
         <ul
           style={{
-            // This will handle the (edge) case where a user's
-            // plot is extremely length.
-            maxWidth: 250,
-            marginTop: '1rem',
+            margin: 0,
+            listStyle: 'none',
           }}
         >
           {analysisState.analysis?.descriptor.computations.map(
             (computation) => (
-              <li style={{ marginTop: '1rem' }} key={computation.computationId}>
-                <strong>
-                  {computation.displayName} ({computation.descriptor.type})
-                </strong>
-                <ul>
+              <li key={computation.computationId}>
+                <ul style={{ listStyle: 'none', margin: 0 }}>
                   {computation.visualizations.map((viz) => (
                     <li
                       style={{ marginTop: '0.25rem' }}
                       key={viz.visualizationId}
                     >
                       <button
-                        style={{ textAlign: 'left' }}
-                        type="button"
-                        className="link"
+                        style={{
+                          background:
+                            activeVisualizationId === viz.visualizationId
+                              ? 'red'
+                              : 'unset',
+                          display: 'flex',
+                          justifyContent: 'flex-start',
+                          alignItems: 'center',
+                          width: '100%',
+                        }}
                         onClick={() => {
                           setActiveVisualizationId(viz.visualizationId);
                         }}
                       >
-                        {viz.displayName} ({viz.descriptor.type})
+                        {
+                          <VizIconOrPlaceholder
+                            type={viz.descriptor.type}
+                            visualizationPlugins={visualizationPlugins}
+                            iconProps={{
+                              width: 20,
+                            }}
+                          />
+                        }
+                        <span
+                          style={{
+                            maxWidth: 250,
+                            textAlign: 'left',
+                            // Gives space between the icon and the viz name
+                            marginLeft: 10,
+                          }}
+                        >
+                          {viz.displayName}
+                        </span>
                       </button>
                     </li>
                   ))}
@@ -94,6 +111,19 @@ export default function MapVizManagement({
             )
           )}
         </ul>
+
+        <button
+          style={{
+            background: 'none',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+          }}
+          onClick={() => setIsVizSelectorVisible(true)}
+        >
+          + Add plot
+        </button>
       </div>
       {isVizSelectorVisible && (
         <div
@@ -119,6 +149,22 @@ export default function MapVizManagement({
             onVisualizationCreated={onVisualizationCreated}
           />
         </div>
+      )}
+    </div>
+  );
+}
+
+function VizIconOrPlaceholder({ type, visualizationPlugins }: any) {
+  const colors = useVizIconColors();
+
+  const enabledPlugin = visualizationPlugins[type];
+
+  return (
+    <div style={{ width: 60 }} aria-label={type}>
+      {enabledPlugin ? (
+        <enabledPlugin.selectorIcon {...colors} />
+      ) : (
+        <PlaceholderIcon name={type} />
       )}
     </div>
   );

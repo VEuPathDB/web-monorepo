@@ -97,15 +97,13 @@ export function VisualizationsContainer(props: Props) {
     'DS_81ef25b6ac',
   ];
   const SHOULD_SHOW_WARNING_KEY = `shouldShowWarning-${currentStudyRecordId}`;
-  const [
-    shouldShowWarning,
-    setShouldShowWarning,
-  ] = useLocalBackedState<boolean>(
-    true,
-    SHOULD_SHOW_WARNING_KEY,
-    (boolean) => String(boolean),
-    (string) => string !== 'false'
-  );
+  const [shouldShowWarning, setShouldShowWarning] =
+    useLocalBackedState<boolean>(
+      true,
+      SHOULD_SHOW_WARNING_KEY,
+      (boolean) => String(boolean),
+      (string) => string !== 'false'
+    );
 
   const handleCloseWarning = () => {
     setShouldShowWarning(false);

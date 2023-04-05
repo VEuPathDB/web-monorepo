@@ -373,6 +373,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               updateVisualizations={updateVisualizations}
               setActiveVisualizationId={setActiveVisualizationId}
               app={app}
+              activeVisualizationId={appState.activeVisualizationId}
               visualizationPlugins={plugin.visualizationPlugins}
               geoConfigs={geoConfigs}
             />
