@@ -2402,25 +2402,17 @@ function processInputData<T extends number | string>(
               );
             } else if (gradientColorscaleType === 'sequential reversed') {
               // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
-              // this needs to be changed to reflect overlayMax's color in the colormap
-              normalize.domain([overlayMin, 0]).range([1, 0]);
+              normalize.domain([overlayMin, overlayMax]).range([1, 0]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientSequentialColorscaleMap(normalize(a))
-              );
-              markerColorsGradientMinMax = [overlayMin, overlayMax].map(
-                (a: number) => gradientSequentialColorscaleMap(normalize(a))
               );
               gradientColorscaleType = 'sequential';
             } else {
               // Then we use the sequential (from 0 to inf) colorscale.
               // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-              // this needs to be changed to reflect overlayMin's color in the colormap
-              normalize.domain([0, overlayMax]).range([0, 1]);
+              normalize.domain([overlayMin, overlayMax]).range([0, 1]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientSequentialColorscaleMap(normalize(a))
-              );
-              markerColorsGradientMinMax = [overlayMin, overlayMax].map(
-                (a: number) => gradientSequentialColorscaleMap(normalize(a))
               );
               gradientColorscaleType = 'sequential';
             }
