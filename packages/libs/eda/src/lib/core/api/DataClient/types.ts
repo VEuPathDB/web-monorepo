@@ -726,10 +726,22 @@ export const MapMarkersOverlayResponse = type({
 // Standalone Map
 
 // OverlayConfig will be used for next-gen 'pass' app visualizations
-type OverlayConfig = {
-  overlayType: 'continuous' | 'categorical';
+export type OverlayConfig = {
   overlayVariable: VariableDescriptor;
-};
+} & (
+  | {
+      overlayType: 'categorical';
+      overlayValues: string[];
+    }
+  | {
+      overlayType: 'continuous';
+      overlayValues: {
+        binStart: string;
+        binEnd: string;
+        binLabel: string;
+      }[];
+    }
+);
 
 export interface StandaloneMapMarkersRequestParams {
   studyId: string;
@@ -763,12 +775,16 @@ export const StandaloneMapMarkersResponse = type({
       geoAggregateValue: string,
       entityCount: number,
       overlayValues: array(
-        type({
-          binStart: string,
-          binEnd: string,
-          binLabel: string,
-          value: number,
-        })
+        intersection([
+          type({
+            binLabel: string,
+            value: number,
+          }),
+          partial({
+            binStart: string,
+            binEnd: string,
+          }),
+        ])
       ),
       avgLat: number,
       avgLon: number,

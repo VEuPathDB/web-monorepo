@@ -13,6 +13,7 @@ import DataClient, {
   MapMarkersOverlayRequestParams,
   MapMarkersOverlayResponse,
   MapMarkersRequestParams,
+  OverlayConfig,
   StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
 } from '../../../core/api/DataClient';
@@ -160,6 +161,30 @@ export function useStandaloneMapMarkers(
     };
   }, [boundsZoomLevel, geoConfig, overlayVariable]);
 
+  // determine the default overlayConfig (TO DO: allow user overrides)
+  // this will require a call to the distribution endpoint for categoricals (TO DO: continuous)
+  const overlayConfigPromise = usePromise<OverlayConfig | undefined>(
+    useCallback(async () => {
+      if (overlayVariableAndEntity != null && overlayVariable != null) {
+        const vocabulary = overlayVariableAndEntity.variable.vocabulary ?? [];
+
+        // If the variable has "too many" values, get the top 7 from the distribution service
+        const overlayValues =
+          vocabulary.length <= ColorPaletteDefault.length
+            ? vocabulary
+            : makeARequestToDistributionEndpointAndTakeTop7();
+
+        return {
+          overlayType: 'categorical',
+          overlayVariable,
+          overlayValues,
+        };
+      } else {
+        return undefined;
+      }
+    }, [overlayVariable, overlayVariableAndEntity])
+  );
+
   const markerData = usePromise<StandaloneMapMarkersResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -169,7 +194,8 @@ export function useStandaloneMapMarkers(
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        outputEntity == null
+        outputEntity == null ||
+        overlayConfigPromise.pending
       )
         return undefined;
 
@@ -187,14 +213,7 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          ...(overlayVariable != null
-            ? {
-                overlayConfig: {
-                  overlayType: 'categorical',
-                  overlayVariable: overlayVariable,
-                },
-              }
-            : {}),
+          overlayConfig: overlayConfigPromise.value,
           valueSpec: 'count', // TO DO: or proportion!
           viewport: {
             latitude: {
@@ -247,7 +266,7 @@ export function useStandaloneMapMarkers(
       studyId,
       filters,
       dataClient,
-      overlayVariable,
+      overlayConfigPromise,
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
