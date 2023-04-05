@@ -1,14 +1,12 @@
-import { MouseEventHandler, useState } from 'react';
 import { format, parse } from 'date-fns';
 
 // Components
 import { Copy } from '@veupathdb/coreui';
 import { FloatingButton } from '@veupathdb/coreui';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 // Definitions
 import { DownloadTabStudyRelease } from './types';
-import { colors, Paragraph } from '@veupathdb/coreui';
+import { colors, Paragraph, H5 } from '@veupathdb/coreui';
 
 // Utils
 import {
@@ -61,13 +59,6 @@ export default function StudyCitation({
   partialCitationData,
   release,
 }: CitationDetails) {
-  const [hoveredState, setHoveredState] = useState<boolean>(false);
-  const [tooltipPosition, setTooltipPosition] = useState({
-    pageX: 0,
-    pageY: 0,
-  });
-  const classes = useStyles();
-
   const citation = getCitationString({
     partialCitationData,
     release,
@@ -77,54 +68,28 @@ export default function StudyCitation({
     writeTextToClipboard(stripHTML(citation));
   };
 
-  const handleMouseMove: MouseEventHandler<HTMLDivElement> = (event) => {
-    const { pageX, pageY } = event;
-    setTooltipPosition({ pageX, pageY });
-  };
-
-  const computeStyleFn = (data: any) => {
-    return {
-      ...data,
-      styles: {
-        ...data.styles,
-        left: `${tooltipPosition.pageX + 5}px`,
-        top: `${tooltipPosition.pageY + 5}px`,
-      },
-    };
-  };
-
   return (
-    <Paragraph
-      color={colors.gray[600]}
-      styleOverrides={{ margin: 0 }}
-      textSize="medium"
-    >
-      <span style={{ fontWeight: 500 }}>Dataset Citation: </span>
-      <Tooltip
-        title="Copy citation to clipboard"
-        onMouseMove={handleMouseMove}
-        classes={{ tooltip: classes.tooltip }}
-        PopperProps={{
-          modifiers: {
-            computeStyle: {
-              fn: computeStyleFn,
-              gpuAcceleration: true,
-            },
-          },
-        }}
+    <>
+      <H5 additionalStyles={{ marginBottom: 0, marginTop: 20 }}>
+        Dataset Citation:{' '}
+      </H5>
+      <Paragraph
+        color={colors.gray[600]}
+        styleOverrides={{ margin: 0 }}
+        textSize="medium"
       >
-        <span
-          onMouseOver={() => (hoveredState ? undefined : setHoveredState(true))}
-          onMouseLeave={() =>
-            !hoveredState ? undefined : setHoveredState(false)
-          }
-          onClick={copyCitation}
-          style={{
-            cursor: 'pointer',
-            textDecoration: hoveredState ? 'underline' : undefined,
-          }}
-        >
-          {safeHtml(citation)}
+        Please cite that you accessed data via{' '}
+        {partialCitationData.projectDisplayName}. The citation below can be used
+        to reference the latest version of the data. Citations for previous data
+        versions can be found under each release.
+      </Paragraph>
+      <Paragraph
+        color={colors.gray[600]}
+        styleOverrides={{ margin: 0 }}
+        textSize="medium"
+      >
+        <span>
+          <i>{safeHtml(citation)}</i>
           <div
             style={{ display: 'inline-block', position: 'relative', top: 3 }}
           >
@@ -133,7 +98,7 @@ export default function StudyCitation({
               text=""
               onPress={copyCitation}
               size="small"
-              tooltip=""
+              tooltip="Copy citation to clipboard"
               themeRole="primary"
               styleOverrides={{
                 container: {
@@ -145,7 +110,7 @@ export default function StudyCitation({
             />
           </div>
         </span>
-      </Tooltip>
-    </Paragraph>
+      </Paragraph>
+    </>
   );
 }
