@@ -1,16 +1,11 @@
 import React from 'react';
 import { range } from 'd3';
 
-import {
-  SequentialGradientColorscale,
-  DivergingGradientColorscale,
-} from '../../types/plots/addOns';
-
 // set props for custom legend function
 export interface PlotLegendGradientProps {
   legendMax: number;
   legendMin: number;
-  gradientColorscaleType?: 'sequential' | 'divergent';
+  valueToColorMapper: (a: number) => string;
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
 }
@@ -26,36 +21,34 @@ const legendEllipsis = (label: string, ellipsisLength: number) => {
 export default function PlotGradientLegend({
   legendMax,
   legendMin,
-  gradientColorscaleType,
-  nTicks,
+  valueToColorMapper,
+  nTicks = 5,
   showMissingness,
 }: PlotLegendGradientProps) {
   // Declare constants
   const gradientBoxHeight = 150;
   const gradientBoxWidth = 20;
   const tickLength = 4;
-  const defaultNTicks = 5;
   const tickFontSize = '0.8em';
   const legendTextSize = '1.0em';
 
-  nTicks = nTicks || defaultNTicks;
-
-  let gradientColorscale =
-    gradientColorscaleType == 'divergent'
-      ? DivergingGradientColorscale
-      : SequentialGradientColorscale;
-
-  // Create gradient stop points from the colorscale
-  const stopPoints = gradientColorscale.map((color: string, index: number) => {
-    let stopPercentage = (100 * index) / (gradientColorscale.length - 1) + '%';
-    return (
-      <stop
-        offset={stopPercentage}
-        stopColor={color}
-        key={'gradientStop' + index}
-      />
-    );
-  });
+  // Create gradient stop points from the colorscale from values [legendMin TO legendMax] at nTicks steps
+  // Do we need to use more than 5 stop points to accurately reproduce the original color gradient?
+  const legendStep = (legendMax - legendMin) / nTicks;
+  const fudge = legendStep / 10; // to get an inclusive range from d3 we have to make a slightly too-large max
+  const stopPoints = range(legendMin, legendMax + fudge, legendStep).map(
+    (value: number, index: number) => {
+      const stopPercentage = (100 * index) / nTicks + '%';
+      const color = valueToColorMapper(value);
+      return (
+        <stop
+          offset={stopPercentage}
+          stopColor={color}
+          key={'gradientStop' + index}
+        />
+      );
+    }
+  );
 
   // Create ticks
   const ticks = range(nTicks).map((a: number) => {
