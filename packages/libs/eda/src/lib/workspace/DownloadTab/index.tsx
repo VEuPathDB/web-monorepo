@@ -125,8 +125,7 @@ export default function DownloadTab({
           studyAccess,
           requestElement,
           user?.isGuest,
-          hasPermission,
-          projectDisplayName
+          hasPermission
         )}
       </span>
     );
@@ -289,8 +288,7 @@ function getDataAccessDeclaration(
   studyAccess: string,
   requestElement: JSX.Element,
   isGuest?: boolean,
-  hasPermission?: boolean,
-  projectDisplayName?: string
+  hasPermission?: boolean
 ): JSX.Element {
   const accessIsControlled = studyAccess === 'Controlled';
   const accessIsProtected = studyAccess === 'Protected';
@@ -309,7 +307,6 @@ function getDataAccessDeclaration(
     ' Data will be available upon study team review and approval.';
   const ACCESS_GRANTED_STUB =
     ' You have been granted access to download the data.';
-  const CITATION_STUB = ` Please cite that you accessed data via ${projectDisplayName}.`;
 
   return (
     <div>
@@ -325,10 +322,7 @@ function getDataAccessDeclaration(
         {isGuest === undefined || hasPermission === undefined ? (
           <AnimatedLoadingText text="Getting permissions" />
         ) : studyAccess === 'Public' ? (
-          <span>
-            {PUBLIC_ACCESS_STUB}
-            {CITATION_STUB}
-          </span>
+          <span>{PUBLIC_ACCESS_STUB}</span>
         ) : requestIsRequired ? (
           isGuest || !hasPermission ? (
             <span>
@@ -339,22 +333,15 @@ function getDataAccessDeclaration(
                   : accessIsProtected
                   ? PROTECTED_ACCESS_STUB
                   : ''}
-                {CITATION_STUB}
               </span>
             </span>
           ) : (
-            <span>
-              {ACCESS_GRANTED_STUB}
-              {CITATION_STUB}
-            </span>
+            <span>{ACCESS_GRANTED_STUB}</span>
           )
         ) : studyAccess === 'Prerelease' ? (
-          <span>
-            {PRERELEASE_STUB}
-            {CITATION_STUB}
-          </span>
+          <span>{PRERELEASE_STUB}</span>
         ) : (
-          <span>Unknown study accessibility value.{CITATION_STUB}</span>
+          <span>Unknown study accessibility value.</span>
         )}
       </Paragraph>
     </div>
