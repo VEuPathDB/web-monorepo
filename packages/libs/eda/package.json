@@ -7,6 +7,7 @@
     "@veupathdb/http-utils": "workspace:^",
     "@veupathdb/study-data-access": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
+    "date-fns": "^2.29.3",
     "debounce-promise": "^3.1.2",
     "fp-ts": "^2.11.5",
     "io-ts": "^2.2.16",
