@@ -1,5 +1,3 @@
-import { startCase } from 'lodash';
-
 // Components
 import {
   FloatingButton,
@@ -38,9 +36,8 @@ export default function MySubset({
   const theme = useUITheme();
 
   const [mySubsetModalOpen, setMySubsetModalOpen] = useState(false);
-  const [currentEntity, setCurrentEntity] = useState<
-    EnhancedEntityDatum | undefined
-  >(undefined);
+  const [currentEntity, setCurrentEntity] =
+    useState<EnhancedEntityDatum | undefined>(undefined);
 
   const attemptAction = useAttemptActionCallback();
 
@@ -48,7 +45,7 @@ export default function MySubset({
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   return (
-    <div key="My Subset" style={{ marginTop: 10, marginBottom: 35 }}>
+    <div key="My Subset" style={{ marginTop: 20, marginBottom: 35 }}>
       {currentEntity ? (
         <SubsetDownloadModal
           displayModal={mySubsetModalOpen}
@@ -67,10 +64,11 @@ export default function MySubset({
       <H5 text="My Subset" additionalStyles={{ margin: 0 }} />
       <Paragraph
         color={colors.gray[600]}
-        styleOverrides={{ margin: '0px 0px 10px 0px' }}
-        textSize="small"
+        styleOverrides={{ margin: '0 0 15px 0' }}
+        textSize="medium"
       >
-        Configure and download one or more tabular files of the filtered dataset
+        Configure and download one or more tabular files of the filtered
+        dataset.
       </Paragraph>
       {Object.values(entities).map((data, index) => (
         <FloatingButton

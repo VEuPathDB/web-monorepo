@@ -71,13 +71,8 @@ export const UIState = intersection([
 ]);
 
 export function HistogramFilter(props: Props) {
-  const {
-    variable,
-    entity,
-    analysisState,
-    studyMetadata,
-    totalEntityCount,
-  } = props;
+  const { variable, entity, analysisState, studyMetadata, totalEntityCount } =
+    props;
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const otherFilters = useDeepValue(
@@ -194,13 +189,15 @@ export function HistogramFilter(props: Props) {
         variable.type,
         dataParams.independentAxisRange
       );
-      const binWidthRange = (NumberVariable.is(variable)
-        ? { min, max }
-        : {
-            min,
-            max,
-            unit: (binWidth as TimeDelta).unit,
-          }) as NumberOrTimeDeltaRange;
+      const binWidthRange = (
+        NumberVariable.is(variable)
+          ? { min, max }
+          : {
+              min,
+              max,
+              unit: (binWidth as TimeDelta).unit,
+            }
+      ) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
       const hasDataEntitiesCount =
@@ -430,14 +427,10 @@ function HistogramPlotWithControls({
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // set the state of truncation warning message
-  const [
-    truncatedIndependentAxisWarning,
-    setTruncatedIndependentAxisWarning,
-  ] = useState<string>('');
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   const handleBinWidthChange = useCallback(
     (newBinWidth: NumberOrTimeDelta) => {
@@ -845,6 +838,7 @@ function tidyBinLabel(
 //
 // TODO [2022-08-10] - Consider using numberSignificantFiguresRoundUp/Down
 //                     (but the date exception thing is useful)
+// UPDATE [2023-04-04] - Introduced scientific notation, Handling year variable
 function formatStatValue(
   value: string | number | undefined,
   type: HistogramVariable['type']
@@ -852,10 +846,12 @@ function formatStatValue(
   if (value == null) return 'N/A';
   return type === 'date'
     ? String(value).replace(/T.*$/, '')
-    : Number(value).toLocaleString(undefined, {
-        maximumFractionDigits: 4,
-        useGrouping: !(Number(value) >= 1900 && Number(value) <= 2100),
-      });
+    : // check a possible year variable
+    type === 'integer' && Number(value) >= 1900 && Number(value) <= 2100
+    ? Number.isInteger(value)
+      ? Number(value)
+      : Number(value).toFixed(4)
+    : Number(value).toExponential(4);
 }
 
 function computeBinSlider(
