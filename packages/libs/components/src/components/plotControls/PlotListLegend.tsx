@@ -6,6 +6,7 @@ import * as ColorMath from 'color-math';
 export interface LegendItemsProps {
   label: string;
   marker: string;
+  italicizeLabel?: boolean;
   markerColor?: string;
   hasData: boolean;
   group?: number;
@@ -155,8 +156,9 @@ export default function PlotListLegend({
                           height: circleMarkerSize,
                           width: circleMarkerSize,
                           margin: 'auto',
+                          // 1.95 untested
                           borderWidth:
-                            (circleMarkerSizeNum / 2).toString() + 'em',
+                            (circleMarkerSizeNum / 1.95).toString() + 'em',
                           borderStyle: 'solid',
                           borderRadius:
                             (circleMarkerSizeNum / 2).toString() + 'em',
@@ -239,7 +241,8 @@ export default function PlotListLegend({
                   }}
                 >
                   {item.label === 'No data' ||
-                  item.label.includes('No data,') ? (
+                  item.label.includes('No data,') ||
+                  item.italicizeLabel ? (
                     <i>{item.label}</i>
                   ) : (
                     item.label
