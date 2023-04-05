@@ -13,6 +13,7 @@ export interface PlotLegendGradientProps {
   gradientColorscaleType?: 'sequential' | 'divergent';
   nTicks?: number; // MUST be odd!
   showMissingness?: boolean;
+  markerColorsGradientMinMax?: string[];
 }
 
 // legend ellipsis function for legend title and legend items (from custom legend work)
@@ -29,6 +30,7 @@ export default function PlotGradientLegend({
   gradientColorscaleType,
   nTicks,
   showMissingness,
+  markerColorsGradientMinMax = ['0', '0'],
 }: PlotLegendGradientProps) {
   // Declare constants
   const gradientBoxHeight = 150;
@@ -40,10 +42,67 @@ export default function PlotGradientLegend({
 
   nTicks = nTicks || defaultNTicks;
 
-  let gradientColorscale =
+  const originalGradientColorscale =
     gradientColorscaleType == 'divergent'
       ? DivergingGradientColorscale
       : SequentialGradientColorscale;
+
+  // find index among ranges
+  const indexValue = [...Array(originalGradientColorscale.length).keys()]
+    .map((el) =>
+      gradientColorscaleType == 'divergent'
+        ? Math.abs(legendMax) > Math.abs(legendMin)
+          ? -Math.abs(legendMax) +
+            ((2 * Math.abs(legendMax)) /
+              (originalGradientColorscale.length - 1)) *
+              el
+          : -Math.abs(legendMin) +
+            ((2 * Math.abs(legendMin)) /
+              (originalGradientColorscale.length - 1)) *
+              el
+        : // sequential or sequential reversed
+        legendMin >= 0 && legendMax >= 0
+        ? // sequential
+          legendMin +
+          ((0 + Math.abs(legendMax)) /
+            (originalGradientColorscale.length - 1)) *
+            el
+        : // sequential reversed
+          legendMin +
+          ((Math.abs(legendMin) + 0) /
+            (originalGradientColorscale.length - 1)) *
+            el
+    )
+    .findIndex(
+      (value) =>
+        value >
+        (gradientColorscaleType == 'divergent'
+          ? Math.abs(legendMax) > Math.abs(legendMin)
+            ? legendMin
+            : legendMax
+          : // : 0 // temporarily set to 0: need to think about sequential and sequential reversed cases
+          legendMin >= 0 && legendMax >= 0
+          ? // sequential
+            legendMin
+          : // sequential reversed
+            legendMax)
+    );
+
+  // make the gradientColorScale with specified range
+  const gradientColorscale =
+    Math.abs(legendMax) > Math.abs(legendMin)
+      ? new Array(
+          markerColorsGradientMinMax[0],
+          ...originalGradientColorscale.filter(
+            (el, index) => index >= indexValue
+          )
+        )
+      : new Array(
+          ...originalGradientColorscale.filter(
+            (el, index) => index < indexValue
+          ),
+          markerColorsGradientMinMax[1]
+        );
 
   // Create gradient stop points from the colorscale
   const stopPoints = gradientColorscale.map((color: string, index: number) => {

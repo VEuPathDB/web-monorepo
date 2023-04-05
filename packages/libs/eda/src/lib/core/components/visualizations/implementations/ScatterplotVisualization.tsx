@@ -174,6 +174,7 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   overlayMin: number | undefined;
   overlayMax: number | undefined;
   gradientColorscaleType: 'sequential' | 'divergent' | undefined;
+  markerColorsGradientMinMax: string[] | undefined;
   // add computedVariableMetadata for computation apps such as alphadiv and abundance
   computedVariableMetadata?: VariableMapping[];
 }
@@ -789,6 +790,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           nTicks: 5,
           showMissingness: vizConfig.showMissingness,
           legendTitle,
+          markerColorsGradientMinMax: data.value?.markerColorsGradientMinMax,
         };
       } else {
         return undefined;
@@ -2074,34 +2076,42 @@ export function scatterplotResponseToData(
   const fallbackFacetVocabulary = keys(facetGroupedResponseData);
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const { dataSetProcess, xMin, xMinPos, xMax, yMin, yMinPos, yMax } =
-      processInputData(
-        reorderResponseScatterplotData(
-          // reorder by overlay var within each facet
-          group,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          overlayVariable
-        ),
-        modeValue,
-        response.scatterplot.config.variables.find(
-          (mapping) => mapping.plotReference === 'xAxis'
-        )?.dataType ?? '',
-        response.scatterplot.config.variables.find(
-          (mapping) => mapping.plotReference === 'yAxis'
-        )?.dataType ?? '',
-        showMissingOverlay,
-        hasMissingData,
-        overlayVariable,
-        overlayMin,
-        overlayMax,
-        gradientColorscaleType,
-        // pass facetVariable to determine either scatter or scattergl
-        facetVariable,
-        // pass computation here to add conditions for apps
-        computation,
-        entities,
-        colorPaletteOverride
-      );
+    const {
+      dataSetProcess,
+      xMin,
+      xMinPos,
+      xMax,
+      yMin,
+      yMinPos,
+      yMax,
+      markerColorsGradientMinMax,
+    } = processInputData(
+      reorderResponseScatterplotData(
+        // reorder by overlay var within each facet
+        group,
+        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+        overlayVariable
+      ),
+      modeValue,
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'xAxis'
+      )?.dataType ?? '',
+      response.scatterplot.config.variables.find(
+        (mapping) => mapping.plotReference === 'yAxis'
+      )?.dataType ?? '',
+      showMissingOverlay,
+      hasMissingData,
+      overlayVariable,
+      overlayMin,
+      overlayMax,
+      gradientColorscaleType,
+      // pass facetVariable to determine either scatter or scattergl
+      facetVariable,
+      // pass computation here to add conditions for apps
+      computation,
+      entities,
+      colorPaletteOverride
+    );
 
     return {
       dataSetProcess: dataSetProcess,
@@ -2114,6 +2124,7 @@ export function scatterplotResponseToData(
       yMin,
       yMinPos,
       yMax,
+      markerColorsGradientMinMax,
     };
   });
 
@@ -2123,6 +2134,10 @@ export function scatterplotResponseToData(
   const yMin = min(map(processedData, ({ yMin }) => yMin));
   const yMinPos = minPos(map(processedData, ({ yMinPos }) => yMinPos));
   const yMax = max(map(processedData, ({ yMax }) => yMax));
+  const markerColorsGradientMinMax = map(
+    processedData,
+    ({ markerColorsGradientMinMax }) => markerColorsGradientMinMax
+  )[0];
 
   const dataSetProcess =
     size(processedData) === 1 && head(keys(processedData)) === '__NO_FACET__'
@@ -2152,6 +2167,7 @@ export function scatterplotResponseToData(
     overlayMin,
     overlayMax,
     gradientColorscaleType,
+    markerColorsGradientMinMax,
     // CoverageStatistics
     completeCases: response.completeCasesTable,
     completeCasesAllVars: response.scatterplot.config.completeCasesAllVars,
@@ -2189,6 +2205,9 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined;
   let yMinPos: number | string | undefined;
   let yMax: number | string | undefined;
+
+  let markerColorsGradientMinMax: string[] | undefined;
+  // let markerColorsGradientMax: string | undefined;
 
   // catch the case when the back end has returned valid but completely empty data
   if (
@@ -2378,19 +2397,30 @@ function processInputData<T extends number | string>(
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientDivergingColorscaleMap(normalize(a))
               );
-            } else if (gradientColorscaleType === 'sequntial reverse') {
+              markerColorsGradientMinMax = [overlayMin, overlayMax].map(
+                (a: number) => gradientDivergingColorscaleMap(normalize(a))
+              );
+            } else if (gradientColorscaleType === 'sequential reversed') {
               // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
-              normalize.domain([overlayMin, overlayMax]).range([1, 0]);
+              // this needs to be changed to reflect overlayMax's color in the colormap
+              normalize.domain([overlayMin, 0]).range([1, 0]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientSequentialColorscaleMap(normalize(a))
+              );
+              markerColorsGradientMinMax = [overlayMin, overlayMax].map(
+                (a: number) => gradientSequentialColorscaleMap(normalize(a))
               );
               gradientColorscaleType = 'sequential';
             } else {
               // Then we use the sequential (from 0 to inf) colorscale.
               // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-              normalize.domain([overlayMin, overlayMax]).range([0, 1]);
+              // this needs to be changed to reflect overlayMin's color in the colormap
+              normalize.domain([0, overlayMax]).range([0, 1]);
               markerColorsGradient = seriesGradientColorscale.map((a: number) =>
                 gradientSequentialColorscaleMap(normalize(a))
+              );
+              markerColorsGradientMinMax = [overlayMin, overlayMax].map(
+                (a: number) => gradientSequentialColorscaleMap(normalize(a))
               );
               gradientColorscaleType = 'sequential';
             }
@@ -2672,6 +2702,7 @@ function processInputData<T extends number | string>(
     yMin,
     yMinPos,
     yMax,
+    markerColorsGradientMinMax,
   };
 }
 
