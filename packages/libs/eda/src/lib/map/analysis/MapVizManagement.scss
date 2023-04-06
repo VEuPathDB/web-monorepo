@@ -1,0 +1,90 @@
+.MapVizManagement {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  overflow: scroll;
+  width: 365px;
+  padding-bottom: 10px;
+
+  &vizButton {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: none;
+    color: inherit;
+    transition: background 0.05s ease;
+    border: none;
+    width: 100%;
+    padding: 5px;
+
+    &__add {
+      justify-content: center;
+      padding: 1rem;
+    }
+  }
+  &vizList {
+    margin: 0;
+    list-style: none;
+  }
+  &vizButtonItem {
+    padding-left: 10px;
+    display: flex;
+    &:hover {
+      background: lighten(#ecf7f9, 2%);
+    }
+    &__active {
+      background: #ecf7f9;
+      font-weight: bold;
+    }
+  }
+  &vizButtonItem:hover &__copyAndDeleteButtons {
+    opacity: 1;
+  }
+
+  &__copyAndDeleteButtons {
+    display: flex;
+    opacity: 0;
+    &__active {
+      opacity: 1;
+    }
+    button {
+      height: 30px;
+      width: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      & i {
+        font-size: 16px;
+      }
+    }
+  }
+
+  &vizName {
+    max-width: 225px;
+    // word-wrap: break-word;
+    overflow: scroll;
+    text-align: left;
+    margin-left: 10px;
+    font-size: 15px;
+  }
+  &NewVizPicker {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    overflow: scroll;
+    height: 100%;
+  }
+  &emptyState {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  &vizListHeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+}

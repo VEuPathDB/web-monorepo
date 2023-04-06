@@ -397,8 +397,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
     ];
 
+  const plotNavItemIndex: number | undefined = appState.activeVisualizationId
+    ? sideNavigationButtonConfigurationObjects.findIndex(
+        (config) => config.labelText === 'Plot'
+      )
+    : undefined;
   const [activeSideMenuIndex, setActiveSideMenuIndex] =
-    useState<number | undefined>();
+    useState<number | undefined>(plotNavItemIndex);
 
   const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
     ({ labelText, icon }, index) => {

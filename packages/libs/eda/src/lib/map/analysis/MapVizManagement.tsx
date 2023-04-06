@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { FilledButton, FloatingButton } from '@veupathdb/coreui';
+import { FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
+import { v4 as uuid } from 'uuid';
 
 import { AnalysisState } from '../../core';
 import { NewVisualizationPicker } from '../../core/components/visualizations/VisualizationsContainer';
@@ -13,6 +14,9 @@ import { Add, CloseTwoTone } from '@material-ui/icons';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import './MapVizManagement.scss';
+import { Tooltip } from '@material-ui/core';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -29,6 +33,8 @@ interface Props {
   visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
 }
+
+const MapVizManagementClassName = makeClassNameHelper('MapVizManagement');
 
 export default function MapVizManagement({
   activeVisualizationId,
@@ -51,88 +57,145 @@ export default function MapVizManagement({
     [setActiveVisualizationId, setIsVizSelectorVisible]
   );
 
+  const activeVisualization = computation?.visualizations.find(
+    (viz) => viz.visualizationId === activeVisualizationId
+  );
+
+  const computations = analysisState.analysis?.descriptor.computations;
+  const hasSomeVisualizations =
+    computations && computations[0].visualizations.length > 0;
+
+  function UiWhenUserHasNoVisualizations() {
+    return (
+      <div className={MapVizManagementClassName('emptyState')}>
+        <div className={MapVizManagementClassName('emptyStateHeadline')}></div>
+        <H5>No plots to show yet.</H5>
+        <Paragraph>
+          Use plot tools, to make histograms, bar plots, box plots, scatter
+          plots, 2x2 contingency tables, and mosaic plots for RxC contingency
+          tables.
+        </Paragraph>
+        <Paragraph>
+          You can also stratify by another variable. If you update your subset,
+          no worries, your plot will update too when you reopen them.
+        </Paragraph>
+      </div>
+    );
+  }
+  const totalVisualizationCount = computations?.reduce((acc, curr) => {
+    return acc + curr.visualizations.length;
+  }, 0);
   return (
-    <div style={{ display: 'flex' }}>
-      <div>
-        <ul
-          style={{
-            margin: 0,
-            listStyle: 'none',
-          }}
-        >
-          {analysisState.analysis?.descriptor.computations.map(
-            (computation) => (
-              <li key={computation.computationId}>
-                <ul style={{ listStyle: 'none', margin: 0 }}>
-                  {computation.visualizations.map((viz) => (
-                    <li
-                      style={{ marginTop: '0.25rem' }}
-                      key={viz.visualizationId}
+    <div className={MapVizManagementClassName()}>
+      <div className={MapVizManagementClassName('vizListHeaderContainer')}>
+        <FloatingButton
+          text="New plot"
+          size="medium"
+          icon={Add}
+          textTransform="none"
+          onPress={() => setIsVizSelectorVisible(true)}
+        />
+      </div>
+      {totalVisualizationCount && (
+        <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
+          Plots ({totalVisualizationCount}):
+        </H5>
+      )}
+      {!hasSomeVisualizations && <UiWhenUserHasNoVisualizations />}
+      <ul className={MapVizManagementClassName('vizList')}>
+        {computations?.map((computation) => (
+          <li key={computation.computationId}>
+            <ul className={MapVizManagementClassName('vizList')}>
+              {computation.visualizations.map((viz) => {
+                const vizIsActive =
+                  activeVisualizationId === viz.visualizationId;
+
+                return (
+                  <li
+                    className={MapVizManagementClassName(
+                      'vizButtonItem',
+                      vizIsActive ? 'active' : ''
+                    )}
+                    key={viz.visualizationId}
+                  >
+                    <button
+                      className={MapVizManagementClassName('vizButton')}
+                      onClick={() => {
+                        setActiveVisualizationId(viz.visualizationId);
+                      }}
                     >
-                      <button
-                        style={{
-                          background:
-                            activeVisualizationId === viz.visualizationId
-                              ? 'red'
-                              : 'unset',
-                          display: 'flex',
-                          justifyContent: 'flex-start',
-                          alignItems: 'center',
-                          width: '100%',
-                        }}
-                        onClick={() => {
-                          setActiveVisualizationId(viz.visualizationId);
-                        }}
-                      >
-                        {
-                          <VizIconOrPlaceholder
-                            type={viz.descriptor.type}
-                            visualizationPlugins={visualizationPlugins}
-                            iconProps={{
-                              width: 20,
-                            }}
-                          />
-                        }
-                        <span
-                          style={{
-                            maxWidth: 250,
-                            textAlign: 'left',
-                            // Gives space between the icon and the viz name
-                            marginLeft: 10,
+                      {
+                        <VizIconOrPlaceholder
+                          type={viz.descriptor.type}
+                          visualizationPlugins={visualizationPlugins}
+                          iconProps={{
+                            width: 20,
+                          }}
+                        />
+                      }
+                      <span className={MapVizManagementClassName('vizName')}>
+                        {viz.displayName}
+                      </span>
+                    </button>
+                    <div
+                      className={MapVizManagementClassName(
+                        '__copyAndDeleteButtons',
+                        vizIsActive ? 'active' : ''
+                      )}
+                    >
+                      <Tooltip title="Delete visualization">
+                        <button
+                          aria-label={`Delete ${
+                            activeVisualization?.displayName || 'visualization.'
+                          }`}
+                          type="button"
+                          className="link"
+                          onClick={() => {
+                            updateVisualizations((visualizations) =>
+                              visualizations.filter(
+                                (v) => v.visualizationId !== viz.visualizationId
+                              )
+                            );
+                            setActiveVisualizationId(undefined);
                           }}
                         >
-                          {viz.displayName}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            )
-          )}
-        </ul>
-
-        <button
-          style={{
-            background: 'none',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '100%',
-          }}
-          onClick={() => setIsVizSelectorVisible(true)}
-        >
-          + Add plot
-        </button>
-      </div>
+                          <i aria-hidden className="fa fa-trash"></i>
+                        </button>
+                      </Tooltip>
+                      <Tooltip title="Copy visualization">
+                        <button
+                          aria-label={`Create a copy of ${
+                            viz.displayName || 'visualization.'
+                          }`}
+                          type="button"
+                          className="link"
+                          onClick={() => {
+                            const vizCopyId = uuid();
+                            updateVisualizations((visualizations) =>
+                              visualizations.concat({
+                                ...viz,
+                                visualizationId: vizCopyId,
+                                displayName:
+                                  'Copy of ' +
+                                  (viz.displayName || 'unnamed visualization'),
+                              })
+                            );
+                            setActiveVisualizationId(vizCopyId);
+                          }}
+                        >
+                          <i aria-hidden className="fa fa-clone"></i>
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        ))}
+      </ul>
       {isVizSelectorVisible && (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-          }}
-        >
+        <div className={MapVizManagementClassName('NewVizPicker')}>
           <FloatingButton
             onPress={() => setIsVizSelectorVisible(false)}
             ariaLabel="Close the visualization menu"
@@ -160,7 +223,7 @@ function VizIconOrPlaceholder({ type, visualizationPlugins }: any) {
   const enabledPlugin = visualizationPlugins[type];
 
   return (
-    <div style={{ width: 60 }} aria-label={type}>
+    <div style={{ width: 40 }} aria-label={type}>
       {enabledPlugin ? (
         <enabledPlugin.selectorIcon {...colors} />
       ) : (

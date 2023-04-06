@@ -320,6 +320,10 @@ interface NewVisualizationPickerProps
   includeHeader?: boolean;
 }
 
+export function NewVisualizationPickerGrouped(
+  props: NewVisualizationPickerProps
+) {}
+
 export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
   const {
     visualizationPlugins,

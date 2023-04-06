@@ -1,6 +1,3 @@
-import { Tooltip } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import { v4 as uuid } from 'uuid';
 import { AnalysisState, PromiseHookState } from '../../core';
 
 import { AppState, useAppState } from './appState';
@@ -8,7 +5,6 @@ import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
-import { FloatingDiv } from './FloatingDiv';
 import { FullScreenVisualization } from '../../core/components/visualizations/VisualizationsContainer';
 import { GeoConfig } from '../../core/types/geoConfig';
 import { EntityCounts } from '../../core/hooks/entityCounts';
@@ -54,69 +50,6 @@ export default function DraggableVisualization({
     .flatMap((c) => c.visualizations)
     .find((v) => v.visualizationId === appState.activeVisualizationId);
 
-  const fullScreenActions = (
-    <>
-      <div>
-        <Tooltip title="Delete visualization">
-          <button
-            aria-label={`Delete ${activeViz?.displayName || 'visualization.'}`}
-            type="button"
-            className="link"
-            onClick={() => {
-              if (activeViz == null) return;
-              updateVisualizations((visualizations) =>
-                visualizations.filter(
-                  (v) => v.visualizationId !== activeViz.visualizationId
-                )
-              );
-              setActiveVisualizationId(undefined);
-            }}
-          >
-            <i aria-hidden className="fa fa-trash"></i>
-          </button>
-        </Tooltip>
-      </div>
-      <div>
-        <Tooltip title="Copy visualization">
-          <button
-            aria-label={`Create a copy of ${
-              activeViz?.displayName || 'visualization.'
-            }`}
-            type="button"
-            className="link"
-            onClick={() => {
-              if (activeViz == null) return;
-              const vizCopyId = uuid();
-              updateVisualizations((visualizations) =>
-                visualizations.concat({
-                  ...activeViz,
-                  visualizationId: vizCopyId,
-                  displayName:
-                    'Copy of ' +
-                    (activeViz.displayName || 'unnamed visualization'),
-                })
-              );
-              setActiveVisualizationId(vizCopyId);
-            }}
-          >
-            <i aria-hidden className="fa fa-clone"></i>
-          </button>
-        </Tooltip>
-      </div>
-      <Tooltip title="Minimize visualization">
-        <Link
-          to=""
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveVisualizationId(undefined);
-          }}
-        >
-          <i aria-hidden className="fa fa-window-minimize" />
-        </Link>
-      </Tooltip>
-    </>
-  );
-
   const computation = analysisState.analysis?.descriptor.computations[0];
 
   return (
@@ -129,7 +62,7 @@ export default function DraggableVisualization({
           styleOverrides={{ zIndex: 10 }}
           panelTitle={activeViz.descriptor.type}
           defaultPosition={{
-            x: 465,
+            x: 565,
             y: 142,
           }}
           onPanelDismiss={() => setActiveVisualizationId(undefined)}
@@ -164,7 +97,7 @@ export default function DraggableVisualization({
               isSingleAppMode
               disableThumbnailCreation
               id={activeViz.visualizationId}
-              actions={fullScreenActions}
+              actions={<></>}
             />
           </div>
         </DraggablePanel>

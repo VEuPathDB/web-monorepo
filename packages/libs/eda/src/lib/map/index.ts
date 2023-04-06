@@ -12,4 +12,4 @@ export type SiteInformationProps = {
 export const mapNavigationBackgroundColor = 'white';
 export const mapNavigationBorder: CSSProperties['border'] = '1px solid #D9D9D9';
 export const mapSideNavigationActiveMenuItemBackground: CSSProperties['background'] =
-  '#E1F5FF';
+  '#ECF7F9';
