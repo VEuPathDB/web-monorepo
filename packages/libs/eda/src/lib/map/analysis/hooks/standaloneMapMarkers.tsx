@@ -22,6 +22,7 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useStudyEntities,
+  useSubsettingClient,
 } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
@@ -40,6 +41,9 @@ import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/m
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
+import { SubsettingClient } from '../../../core/api';
+
+const TOKEN_UNSELECTED = '__UNSELECTED__';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -163,6 +167,8 @@ export function useStandaloneMapMarkers(
 
   // determine the default overlayConfig (TO DO: allow user overrides)
   // this will require a call to the distribution endpoint for categoricals (TO DO: continuous)
+  const subsettingClient = useSubsettingClient();
+
   const overlayConfigPromise = usePromise<OverlayConfig | undefined>(
     useCallback(async () => {
       if (overlayVariableAndEntity != null && overlayVariable != null) {
@@ -172,18 +178,37 @@ export function useStandaloneMapMarkers(
         const overlayValues =
           vocabulary.length <= ColorPaletteDefault.length
             ? vocabulary
-            : makeARequestToDistributionEndpointAndTakeTop7();
+            : await getMostFrequentValues({
+                studyId: studyId,
+                ...overlayVariable,
+                numValues: ColorPaletteDefault.length - 1,
+                subsettingClient,
+              });
 
         return {
-          overlayType: 'categorical',
+          overlayType: 'categorical', // TO DO: handle continuous!!
           overlayVariable,
           overlayValues,
         };
       } else {
         return undefined;
       }
-    }, [overlayVariable, overlayVariableAndEntity])
+    }, [
+      overlayVariable,
+      overlayVariableAndEntity,
+      filters,
+      studyId,
+      subsettingClient,
+    ])
   );
+
+  const overlayType = overlayConfigPromise.value?.overlayType;
+  const vocabulary =
+    overlayType === 'categorical' // switch statement style guide time!!
+      ? overlayConfigPromise.value?.overlayValues
+      : overlayType === 'continuous'
+      ? overlayConfigPromise.value?.overlayValues.map((ov) => ov.binLabel)
+      : undefined;
 
   const markerData = usePromise<StandaloneMapMarkersResponse | undefined>(
     useCallback(async () => {
@@ -277,8 +302,6 @@ export function useStandaloneMapMarkers(
     ])
   );
 
-  const proportionMode = markerType === 'proportion';
-
   const totalVisibleEntityCount: number | undefined =
     markerData.value?.mapElements.reduce((acc, curr) => {
       return acc + curr.entityCount;
@@ -342,38 +365,42 @@ export function useStandaloneMapMarkers(
         const position = { lat: avgLat, lng: avgLon };
 
         const donutData =
-          overlayValues && overlayValues.length
-            ? overlayValues.map((ov) => ({
-                label: ov.binLabel,
-                value: ov.value,
-                color: 'purple',
+          vocabulary && overlayValues && overlayValues.length
+            ? overlayValues.map(({ binLabel, value }) => ({
+                label: binLabel,
+                value: value,
+                color:
+                  overlayType === 'categorical'
+                    ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
+                    : gradientSequentialColorscaleMap(
+                        vocabulary.indexOf(binLabel) / (vocabulary.length - 1)
+                      ),
               }))
-            : [{ label: 'none', value: 100, color: 'orange' }]; // TO DO: sort out!
+            : [];
 
         // TO DO: sort out colorscale / palette
 
         // now reorder the data, adding zeroes if necessary.
-        const reorderedData = donutData;
-
-        //          vocabulary != null
-        //            ? vocabulary.map(
-        //                (
-        //                  overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
-        //                ) =>
-        //                  donutData.find(({ label }) => label === overlayLabel) ?? {
-        //                    label: overlayLabel,
-        //                    value: 0,
-        //                  }
-        //              )
-        //            : // however, if there is no overlay data
-        //              // provide a simple entity count marker in the palette's first colour
-        //              [
-        //                {
-        //                  label: 'unknown',
-        //                  value: entityCount,
-        //                  color: ColorPaletteDefault[0],
-        //                },
-        //              ];
+        const reorderedData =
+          vocabulary != null
+            ? vocabulary.map(
+                (
+                  overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
+                ) =>
+                  donutData.find(({ label }) => label === overlayLabel) ?? {
+                    label: fixLabelForOtherValues(overlayLabel),
+                    value: 0,
+                  }
+              )
+            : // however, if there is no overlay data
+              // provide a simple entity count marker in the palette's first colour
+              [
+                {
+                  label: 'unknown',
+                  value: entityCount,
+                  color: '#333',
+                },
+              ];
 
         const MarkerComponent =
           markerType == null || markerType === 'pie'
@@ -439,34 +466,35 @@ export function useStandaloneMapMarkers(
    * create custom legend data
    */
 
-  const legendItems: LegendItemsProps[] = [];
+  const legendItems: LegendItemsProps[] = useMemo(() => {
+    if (vocabulary == null) return [];
 
-  //  useMemo(() => {
-  //    if (vocabulary == null) return [];
-  //
-  //    return vocabulary.map((label) => ({
-  //      label,
-  //      marker: 'square',
-  //      markerColor:
-  //        xAxisVariableType === 'string'
-  //          ? ColorPaletteDefault[vocabulary.indexOf(label)]
-  //          : gradientSequentialColorscaleMap(
-  //              vocabulary.indexOf(label) / (vocabulary.length - 1)
-  //            ),
-  //      // has any geo-facet got an array of overlay data
-  //      // containing at least one element that satisfies label==label
-  //      // (do not check that value > 0, because the back end doesn't return
-  //      // zero counts, but does sometimes return near-zero counts that get
-  //      // rounded to zero)
-  //      hasData: overlayData
-  //        ? some(overlayData, (pieData) =>
-  //            some(pieData.data, (data) => data.label === label)
-  //          )
-  //        : false,
-  //      group: 1,
-  //      rank: 1,
-  //    }));
-  //  }, [xAxisVariable, vocabulary, overlayData]);
+    return vocabulary.map((label) => ({
+      label: fixLabelForOtherValues(label),
+      marker: 'square',
+      markerColor:
+        overlayType === 'categorical'
+          ? ColorPaletteDefault[vocabulary.indexOf(label)]
+          : overlayType === 'continuous'
+          ? gradientSequentialColorscaleMap(
+              vocabulary.indexOf(label) / (vocabulary.length - 1)
+            )
+          : undefined,
+      // has any geo-facet got an array of overlay data
+      // containing at least one element that satisfies label==label
+      // (do not check that value > 0, because the back end doesn't return
+      // zero counts, but does sometimes return near-zero counts that get
+      // rounded to zero)
+      // TO DO: Check this near-zero issue in new back end
+      hasData: markerData
+        ? some(markerData.value?.mapElements, (el) =>
+            el.overlayValues.some((ov) => ov.binLabel === label)
+          )
+        : false,
+      group: 1,
+      rank: 1,
+    }));
+  }, [markerData, vocabulary, overlayType]);
 
   return {
     markers,
@@ -479,4 +507,48 @@ export function useStandaloneMapMarkers(
     pending: markerData.pending,
     error: markerData.error,
   };
+}
+
+type GetMostFrequentValuesProps = {
+  studyId: string;
+  variableId: string;
+  entityId: string;
+  numValues: number;
+  subsettingClient: SubsettingClient;
+};
+
+// get the most frequent values for the entire dataset, no filters at all
+// (for now at least)
+async function getMostFrequentValues({
+  studyId,
+  variableId,
+  entityId,
+  numValues,
+  subsettingClient,
+}: GetMostFrequentValuesProps): Promise<string[]> {
+  const distributionResponse = await subsettingClient.getDistribution(
+    studyId,
+    entityId,
+    variableId,
+    {
+      valueSpec: 'count',
+      filters: [],
+    }
+  );
+
+  const sortedValues = distributionResponse.histogram
+    .sort((bin1, bin2) => bin2.value - bin1.value)
+    .map((bin) => bin.binLabel);
+  if (sortedValues.length < numValues) {
+    // console logging message because the throw didn't seem to bring up the usual dialogue on the screen
+    const message =
+      'standaloneMapMarkers: getMostFrequentValues was called for a low-cardinality variable';
+    console.log({ message, sortedValues });
+    throw new Error(message);
+  }
+  return [...sortedValues.slice(0, numValues), TOKEN_UNSELECTED];
+}
+
+function fixLabelForOtherValues(input: string): string {
+  return input === TOKEN_UNSELECTED ? 'All other values' : input;
 }
