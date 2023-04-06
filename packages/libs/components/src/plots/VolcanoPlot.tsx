@@ -191,6 +191,10 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     stroke: '#bbbbbb',
     strokeWidth: 1,
   };
+  const gridStyles = {
+    stroke: '#dddddd',
+    strokeWidth: 0.5,
+  };
 
   return (
     // From docs " For correct tooltip positioning, it is important to wrap your
@@ -198,22 +202,19 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     <div style={{ position: 'relative' }}>
       <XYChart
         height={300}
-        xScale={{ type: 'linear', domain: [xMin!, xMax!] }}
-        yScale={{ type: 'linear', domain: [yMin!, yMax!] }}
+        xScale={{ type: 'linear', domain: [xMin, xMax] }}
+        yScale={{ type: 'linear', domain: [yMin, yMax] }}
         width={300}
       >
-        <Grid
-          numTicks={6}
-          lineStyle={{ stroke: '#dddddd', strokeWidth: 0.5 }}
-        />
+        <Grid numTicks={6} lineStyle={gridStyles} />
         <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
         <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
-        {/* Draw threshold lines below data points */}
+        {/* Draw threshold lines as annotations below the data points */}
         {significanceThreshold && (
           <Annotation
             datum={{
-              x: 0,
+              x: 0, // horizontal line so x could be anything
               y: -Math.log10(Number(significanceThreshold)),
             }}
             {...thresholdLineAccessors}
@@ -229,7 +230,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             <Annotation
               datum={{
                 x: -Math.log2(foldChangeThreshold),
-                y: 0, // any number since it's a vertical line
+                y: 0, // vertical line so y could be anything
               }}
               {...thresholdLineAccessors}
             >
@@ -238,7 +239,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             <Annotation
               datum={{
                 x: Math.log2(foldChangeThreshold),
-                y: 0, // any number since it's a vertical line
+                y: 0, // vertical line so y could be anything
               }}
               {...thresholdLineAccessors}
             >
@@ -246,6 +247,8 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             </Annotation>
           </>
         )}
+
+        {/* The data itself */}
         <Group opacity={markerBodyOpacity ?? 1}>
           {formattedData.map((series: any, index: any) => {
             return (
