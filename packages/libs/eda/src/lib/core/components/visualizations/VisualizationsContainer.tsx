@@ -42,7 +42,7 @@ import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
-import { Modal, H5 } from '@veupathdb/coreui';
+import { Modal, H5, Paragraph } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import {
@@ -322,7 +322,99 @@ interface NewVisualizationPickerProps
 
 export function NewVisualizationPickerGrouped(
   props: NewVisualizationPickerProps
-) {}
+) {
+  const {
+    visualizationPlugins,
+    visualizationsOverview,
+    updateVisualizations,
+    computation,
+    geoConfigs,
+    onVisualizationCreated = function (visualizationId, computationId) {
+      history.replace(`../${computationId}/${visualizationId}`);
+    },
+  } = props;
+  const colors = useVizIconColors();
+  const history = useHistory();
+  const { computationId } = computation;
+  return (
+    <>
+      {groupVisualizations(visualizationsOverview).map((vizGroup) => (
+        <div className={cx('-GroupedPickerContainer')} key={vizGroup.groupName}>
+          <div className={cx('-GroupedPickerEntryHeadline')}>
+            <H5>{vizGroup.groupName}</H5>
+            <Paragraph styleOverrides={{ margin: '5px 0' }}>
+              {vizGroup.groupDescription}
+            </Paragraph>
+          </div>
+          <div className={cx('-GroupedPickerEntryList')}>
+            {vizGroup.groupVisualizationsList.map((vizOverview) => {
+              const vizPlugin = visualizationPlugins[vizOverview.name!];
+              const disabled =
+                vizPlugin == null ||
+                (vizPlugin.isEnabledInPicker != null &&
+                  vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
+              return (
+                <div
+                  className={`${cx(
+                    '-PickerEntry',
+                    disabled && 'disabled'
+                  )} ${cx('-PickerEntrySmall')}`}
+                  key={`vizType${vizOverview.name}`}
+                >
+                  <Tooltip title={<>{vizOverview.description}</>}>
+                    <span>
+                      <button
+                        style={{
+                          cursor: disabled ? 'not-allowed' : 'cursor',
+                        }}
+                        type="button"
+                        disabled={disabled}
+                        onClick={async () => {
+                          const visualizationId = uuid();
+                          updateVisualizations((visualizations) =>
+                            visualizations.concat({
+                              visualizationId,
+                              displayName: 'Unnamed visualization',
+                              descriptor: {
+                                type: vizOverview.name!,
+                                configuration: vizPlugin?.createDefaultConfig(),
+                              },
+                            })
+                          );
+                          onVisualizationCreated(
+                            visualizationId,
+                            computationId
+                          );
+                        }}
+                      >
+                        {vizPlugin ? (
+                          <vizPlugin.selectorIcon {...colors} />
+                        ) : (
+                          <PlaceholderIcon name={vizOverview.name} />
+                        )}
+                      </button>
+                    </span>
+                  </Tooltip>
+                  <div className={cx('-PickerEntryName')}>
+                    <div>
+                      {vizOverview.displayName
+                        ?.split(/(, )/g)
+                        .map((str) => (str === ', ' ? <br /> : str))}
+                    </div>
+                    {vizPlugin == null && <i>(Coming soon!)</i>}
+                    {vizPlugin != null && disabled && (
+                      <i>(Not applicable to this study)</i>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
 
 export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
   const {
@@ -872,4 +964,48 @@ function deleteComputationWithNoVisualizations(
       ...computations.filter((c) => c.computationId !== computationId),
     ]);
   }
+}
+
+type VisualizationGroup = {
+  groupName: string;
+  groupDescription: string;
+  groupVisualizationsList: VisualizationOverview[];
+};
+function groupVisualizations(
+  visualizations: VisualizationOverview[]
+): VisualizationGroup[] {
+  return [
+    {
+      groupName: 'Distributions',
+      groupDescription: 'Plot the spread of any continuous variable.',
+      groupVisualizationsList: ['boxplot', 'histogram'],
+    },
+    {
+      groupName: 'Counts and Proportions',
+      groupDescription: 'Compare frequencies of categorical variable(s).',
+      groupVisualizationsList: ['barplot', 'twobytwo', 'conttable'],
+    },
+    {
+      groupName: 'X-Y Relationships',
+      groupDescription:
+        'Visualize the relationship between two continuous variables.',
+      groupVisualizationsList: ['scatterplot', 'lineplot'],
+    },
+    {
+      groupName: 'Geolocation Maps',
+      groupDescription: 'See the distribution of data on a map',
+      groupVisualizationsList: ['map-markers', 'map-markers-overlay'],
+    },
+    // {
+    //   groupName: 'Individual-level plots',
+    //   groupDescription:
+    //     'Visualize data over time, with separate plots for each identifier (ie, Household ID, Participant ID, etc).',
+    //   groupVisualizationsList: ['timelineplot', 'stripplots'],
+    // },
+  ].map((group) => ({
+    ...group,
+    groupVisualizationsList: visualizations.filter(({ name }) =>
+      group.groupVisualizationsList.includes(name)
+    ),
+  }));
 }
