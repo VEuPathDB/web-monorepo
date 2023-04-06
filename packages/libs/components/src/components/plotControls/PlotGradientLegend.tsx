@@ -32,13 +32,13 @@ export default function PlotGradientLegend({
   const tickFontSize = '0.8em';
   const legendTextSize = '1.0em';
 
-  // Create gradient stop points from the colorscale from values [legendMin TO legendMax] at nTicks steps
-  // Do we need to use more than 5 stop points to accurately reproduce the original color gradient?
-  const legendStep = (legendMax - legendMin) / nTicks;
+  // Create gradient stop points from the colorscale from values [legendMin TO legendMax] at an arbitrary 50 step resolution
+  const numStopPoints = 50;
+  const legendStep = (legendMax - legendMin) / (numStopPoints - 1);
   const fudge = legendStep / 10; // to get an inclusive range from d3 we have to make a slightly too-large max
   const stopPoints = range(legendMin, legendMax + fudge, legendStep).map(
     (value: number, index: number) => {
-      const stopPercentage = (100 * index) / nTicks + '%';
+      const stopPercentage = (100 * index) / (numStopPoints - 1) + '%';
       const color = valueToColorMapper(value);
       return (
         <stop
