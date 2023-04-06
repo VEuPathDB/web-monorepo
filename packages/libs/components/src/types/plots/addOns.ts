@@ -283,6 +283,9 @@ export const gradientConvergingColorscaleMap = scaleLinear<string>()
   .range(ConvergingGradientColorscale)
   .interpolate(interpolateLab);
 
+// Significance colors
+export const significanceColors = ['#AC3B4E', '#B5B8B4', '#0E8FAB'];
+
 /** truncated axis flags */
 export type AxisTruncationAddon = {
   /** truncation config (flags) to show truncated axis (true) or not (false) */

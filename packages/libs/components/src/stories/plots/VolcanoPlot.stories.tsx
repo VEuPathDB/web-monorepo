@@ -10,7 +10,7 @@ export default {
 
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
-    data: Array<{
+    series: Array<{
       foldChange: string[];
       pValue: string[];
       adjustedPValue: string[];
@@ -23,7 +23,7 @@ interface VEuPathDBVolcanoPlotData {
 // Let's make some fake data!
 const dataSetVolcano: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    data: [
+    series: [
       {
         foldChange: ['2', '3'],
         pValue: ['0.001', '0.0001'],
@@ -60,16 +60,14 @@ interface TemplateProps {
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  // Better to break into a high and low prop? Would be more clear
-  const foldChangeGates = [-1.5, 1.5];
-
-  const comparisonLabels = ['group a', 'group b'];
+  const comparisonLabels = ['up in group a', 'up in group b'];
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: dataSetVolcano.volcanoplot,
-    adjustedPValueGate: 0.1,
-    foldChangeGate: 2,
+    significanceThreshold: 0.1,
+    foldChangeThreshold: 2,
     markerBodyOpacity: args.markerBodyOpacity,
+    comparisonLabels: comparisonLabels,
   };
 
   return <VolcanoPlot {...volcanoPlotProps} />;
