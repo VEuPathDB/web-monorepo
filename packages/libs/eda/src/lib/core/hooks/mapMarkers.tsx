@@ -183,7 +183,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       xAxisVariableAndEntity,
       findEntityAndVariable,
     };
-  }, [boundsZoomLevel, geoConfig, xAxisVariable]);
+  }, [boundsZoomLevel, geoConfig, xAxisVariable, entities]);
 
   // now do the first request
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(

@@ -68,9 +68,17 @@ import {
 } from '../../core/types/visualization';
 import FloatingVisualization from './FloatingVisualization';
 import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
+};
+
+export const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
 };
 
 interface Props {
@@ -547,7 +555,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   showZoomControl={false}
                   showLayerSelector={false}
                   showSpinner={pending}
-                  animation={null}
+                  animation={defaultAnimation}
                   viewport={appState.viewport}
                   markers={finalMarkers}
                   mouseMode={appState.mouseMode}

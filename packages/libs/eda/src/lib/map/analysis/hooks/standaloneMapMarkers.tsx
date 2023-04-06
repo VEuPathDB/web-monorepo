@@ -119,16 +119,10 @@ export function useStandaloneMapMarkers(
   const {
     latitudeVariable,
     longitudeVariable,
-    geoAggregateVariable,
     outputEntity,
     overlayVariableAndEntity,
   } = useMemo(() => {
-    if (
-      boundsZoomLevel == null ||
-      geoConfig == null ||
-      geoConfig.entity.id == null
-    )
-      return {};
+    if (geoConfig == null || geoConfig.entity.id == null) return {};
 
     const latitudeVariable = {
       entityId: geoConfig.entity.id,
@@ -137,13 +131,6 @@ export function useStandaloneMapMarkers(
     const longitudeVariable = {
       entityId: geoConfig.entity.id,
       variableId: geoConfig.longitudeVariableId,
-    };
-    const geoAggregateVariable = {
-      entityId: geoConfig.entity.id,
-      variableId:
-        geoConfig.aggregationVariableIds[
-          geoConfig.zoomLevelToAggregationLevel(boundsZoomLevel.zoomLevel) - 1
-        ],
     };
 
     const overlayVariableAndEntity = findEntityAndVariable(overlayVariable);
@@ -158,12 +145,32 @@ export function useStandaloneMapMarkers(
     return {
       latitudeVariable,
       longitudeVariable,
-      geoAggregateVariable,
       outputEntity,
       overlayVariableAndEntity,
       findEntityAndVariable,
+      entities,
     };
-  }, [boundsZoomLevel, geoConfig, overlayVariable]);
+  }, [geoConfig, overlayVariable]);
+
+  // handle the geoAggregateVariable separately because it changes with zoom level
+  // and we don't want that to change overlayVariableAndEntity etc because that invalidates
+  // the overlayConfigPromise
+
+  const geoAggregateVariable = useMemo(
+    () =>
+      geoConfig != null && boundsZoomLevel?.zoomLevel != null
+        ? {
+            entityId: geoConfig.entity.id,
+            variableId:
+              geoConfig.aggregationVariableIds[
+                geoConfig.zoomLevelToAggregationLevel(
+                  boundsZoomLevel?.zoomLevel
+                ) - 1
+              ],
+          }
+        : undefined,
+    [boundsZoomLevel?.zoomLevel, geoConfig]
+  );
 
   // determine the default overlayConfig (TO DO: allow user overrides)
   // this will require a call to the distribution endpoint for categoricals (TO DO: continuous)
@@ -193,13 +200,7 @@ export function useStandaloneMapMarkers(
       } else {
         return undefined;
       }
-    }, [
-      overlayVariable,
-      overlayVariableAndEntity,
-      filters,
-      studyId,
-      subsettingClient,
-    ])
+    }, [overlayVariable, overlayVariableAndEntity, studyId, subsettingClient])
   );
 
   const overlayType = overlayConfigPromise.value?.overlayType;
@@ -219,8 +220,7 @@ export function useStandaloneMapMarkers(
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        outputEntity == null ||
-        overlayConfigPromise.pending
+        outputEntity == null
       )
         return undefined;
 
@@ -254,39 +254,10 @@ export function useStandaloneMapMarkers(
       };
 
       // now get the data
-      const response = await dataClient.getStandaloneMapMarkers(
+      return await dataClient.getStandaloneMapMarkers(
         computationType,
         requestParams
       );
-
-      return response;
-
-      //      return {
-      //        markerData: response.mapElements.map(
-      //          ({
-      //            avgLat,
-      //            avgLon,
-      //            minLat,
-      //            minLon,
-      //            maxLat,
-      //            maxLon,
-      //            entityCount,
-      //            geoAggregateValue,
-      //          }) => {
-      //            const isAtomic = false; // TO DO: work with Danielle to get this info from back end
-      //            return {
-      //              geoAggregateValue,
-      //              entityCount: entityCount,
-      //              position: { lat: avgLat, lng: avgLon },
-      //              bounds: {
-      //                southWest: { lat: minLat, lng: minLon },
-      //                northEast: { lat: maxLat, lng: maxLon },
-      //              },
-      //              isAtomic,
-      //            };
-      //          }
-      //        ),
-      //      };
     }, [
       studyId,
       filters,
@@ -455,7 +426,6 @@ export function useStandaloneMapMarkers(
     );
   }, [
     markerData.value,
-    checkedLegendItems,
     markerType,
     overlayVariable,
     outputEntity,
@@ -541,6 +511,7 @@ async function getMostFrequentValues({
     .map((bin) => bin.binLabel);
   if (sortedValues.length < numValues) {
     // console logging message because the throw didn't seem to bring up the usual dialogue on the screen
+    // TO DO: understand/fix this
     const message =
       'standaloneMapMarkers: getMostFrequentValues was called for a low-cardinality variable';
     console.log({ message, sortedValues });
