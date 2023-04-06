@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { scaleLinear } from '@visx/scale';
+import { range } from 'lodash';
+import { AreaSeries } from '@visx/xychart';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -10,42 +12,64 @@ export default {
 
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
-    series: Array<{
+    series: {
       foldChange: string[];
       pValue: string[];
       adjustedPValue: string[];
       pointId: string[];
-      overlayValue: string;
-    }>;
+    };
   };
 }
 
 // Let's make some fake data!
 const dataSetVolcano: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    series: [
-      {
-        foldChange: ['2', '3'],
-        pValue: ['0.001', '0.0001'],
-        adjustedPValue: ['0.01', '0.001'],
-        pointId: ['a', 'b'],
-        overlayValue: 'positive',
-      },
-      {
-        foldChange: ['0.5', '0.8', '1', '0.5', '0.1', '4', '0.2'],
-        pValue: ['0.001', '0.0001', '0.2', '0.1', '0.7', '0.1', '0.4'],
-        adjustedPValue: ['0.01', '0.001', '2', '1', '7', '1', '4'],
-        pointId: ['c', 'd', 'e', 'f', 'g', 'h', 'i'],
-        overlayValue: 'none',
-      },
-      {
-        foldChange: ['0.01', '0.02', '0.03'],
-        pValue: ['0.001', '0.0001', '0.002'],
-        adjustedPValue: ['0.01', '0.001', '0.02'],
-        pointId: ['j', 'k', 'l'],
-        overlayValue: 'negative',
-      },
-    ],
+    series: {
+      foldChange: [
+        '2',
+        '3',
+        '0.5',
+        '0.8',
+        '1',
+        '0.5',
+        '0.1',
+        '4',
+        '0.2',
+        '0.01',
+        '0.02',
+        '0.03',
+      ],
+      pValue: [
+        '0.001',
+        '0.0001',
+        '0.01',
+        '0.001',
+        '2',
+        '1',
+        '7',
+        '1',
+        '4',
+        '0.001',
+        '0.0001',
+        '0.002',
+      ],
+      adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
+      pointId: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
+    },
+  },
+};
+
+const nPoints = 300;
+const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
+  volcanoplot: {
+    series: {
+      foldChange: range(1, nPoints).map((p) => String(6 * Math.random() + 3)),
+      pValue: range(1, nPoints).map((p) => String(Math.random())),
+      adjustedPValue: range(1, nPoints).map((p) =>
+        String(nPoints * Math.random())
+      ),
+      pointId: range(1, nPoints).map((p) => String(p)),
+    },
   },
 };
 
@@ -63,7 +87,7 @@ const Template: Story<TemplateProps> = (args) => {
   const comparisonLabels = ['up in group a', 'up in group b'];
 
   const volcanoPlotProps: VolcanoPlotProps = {
-    data: dataSetVolcano.volcanoplot,
+    data: args.data.volcanoplot.series,
     significanceThreshold: 0.1,
     foldChangeThreshold: 2,
     markerBodyOpacity: args.markerBodyOpacity,
@@ -73,17 +97,21 @@ const Template: Story<TemplateProps> = (args) => {
   return <VolcanoPlot {...volcanoPlotProps} />;
 };
 
-export const Basic = Template.bind({});
-Basic.args = {
+export const Simple = Template.bind({});
+Simple.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.8,
 };
 
+export const ManyPoints = Template.bind({});
+ManyPoints.args = {
+  data: dataSetVolcanoManyPoints,
+  markerBodyOpacity: 0.5,
+};
+
+// Add story for truncation
 // export const Truncation = Template.bind({})
 // Truncation.args = {
 //   data: dataSetVolcano,
 //   independentAxisRange: []
 // }
-
-// this process input data function is similar to scatter's but not the same.
-// would probably be worth revisiting what is in common and factoring accordingly

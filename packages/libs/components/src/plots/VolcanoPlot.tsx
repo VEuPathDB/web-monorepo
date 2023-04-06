@@ -1,10 +1,7 @@
 import { PlotProps } from './PlotlyPlot';
 
 import { significanceColors } from '../types/plots';
-import {
-  VolcanoPlotData,
-  VolcanoPlotDataSeries,
-} from '../types/plots/volcanoplot';
+import { VolcanoPlotData } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
 import {
   XYChart,
@@ -43,11 +40,15 @@ export interface VolcanoPlotProps extends PlotProps<VolcanoPlotData> {
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = {
-  series: [],
+  foldChange: [],
+  pValue: [],
+  adjustedPValue: [],
+  pointId: [],
 };
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
+ * It also colors the points based on their significance and magnitude change.
  */
 function VolcanoPlot(props: VolcanoPlotProps) {
   const {
@@ -61,75 +62,18 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   } = props;
 
   /**
-   * Find mins, maxes, and format data while we're at it.
-   * These are all lumped together so that we only have to go
-   * through the data once. */
-  function formatData(data: VolcanoPlotData) {
-    // Prep
-    let dataXMin: number | undefined;
-    let dataXMax: number | undefined;
-    let dataYMin: number | undefined;
-    let dataYMax: number | undefined;
-
-    // Loop through the data and format. While we're here, might
-    // as well also get the data mins and maxes for the axes.
-    const formattedData = data.series.map((series, index: number) => {
-      let seriesPoints: {
-        foldChange: string;
-        pValue: string;
-        adjustedPValue: string;
-        pointId: string;
-        colorNum: number;
-      }[] = [];
-
-      if (index == 0) {
-        dataXMin = min(series.foldChange.map((fc) => Number(fc)));
-        dataXMax = max(series.foldChange.map((fc) => Number(fc)));
-        dataYMin = min(series.adjustedPValue.map((apv) => Number(apv)));
-        dataYMax = max(series.adjustedPValue.map((apv) => Number(apv)));
-      } else {
-        dataXMin = min([
-          dataXMin,
-          min(series.foldChange.map((fc) => Number(fc))),
-        ]);
-        dataXMax = max([
-          dataXMax,
-          max(series.foldChange.map((fc) => Number(fc))),
-        ]);
-        dataYMin = min([
-          dataYMin,
-          min(series.adjustedPValue.map((apv) => Number(apv))),
-        ]);
-        dataYMax = max([
-          dataYMax,
-          max(series.adjustedPValue.map((apv) => Number(apv))),
-        ]);
-      }
-      series.foldChange.forEach((v: string, ind: number) => {
-        seriesPoints.push({
-          foldChange: series.foldChange[ind],
-          pValue: series.pValue[ind],
-          adjustedPValue: series.adjustedPValue[ind],
-          pointId: series.pointId[ind],
-          colorNum: index,
-        });
-      });
-
-      return seriesPoints;
-    });
-
-    return { formattedData, dataXMin, dataXMax, dataYMin, dataYMax };
-  }
-
-  const { formattedData, dataXMin, dataXMax, dataYMin, dataYMax } =
-    formatData(data);
-  console.log(formattedData);
-
-  /**
-   * Determine mins, maxes of axes in the plot.
-   * These are different than the data mins/maxes because
-   * of the log transform and the little bit of padding.
+   * Find mins and maxes of the data and for the plot
    */
+
+  const dataXMin = min(data.foldChange.map(Number));
+  const dataXMax = max(data.foldChange.map(Number));
+  const dataYMin = min(data.pValue.map(Number));
+  const dataYMax = max(data.pValue.map(Number));
+
+  // Determine mins, maxes of axes in the plot.
+  // These are different than the data mins/maxes because
+  // of the log transform and the little bit of padding.
+  //
 
   let xMin: number;
   let xMax: number;
@@ -157,7 +101,31 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   }
 
   /**
-   * Accessors
+   * Turn the data (array of arrays) into data points (array of points)
+   */
+
+  let dataPoints: {
+    foldChange: string;
+    pValue: string;
+    adjustedPValue: string;
+    pointId: string;
+    colorNum: number;
+  }[] = [];
+
+  // Loop through the data and return points. Doesn't really matter
+  // which var of the data we map over.
+  data.foldChange.forEach((fc, ind: number) => {
+    dataPoints.push({
+      foldChange: fc,
+      pValue: data.pValue[ind],
+      adjustedPValue: data.adjustedPValue[ind],
+      pointId: data.pointId[ind],
+      colorNum: 1, // ANN NEED TO FIX HERE
+    });
+  });
+
+  /**
+   * Accessors - tell visx which value of each points we should use and where.
    */
 
   const dataAccessors = {
@@ -165,7 +133,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       return Math.log2(d?.foldChange);
     },
     yAccessor: (d: any) => {
-      return -Math.log10(d?.adjustedPValue);
+      return -Math.log10(d?.pValue);
     },
   };
 
@@ -250,18 +218,14 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
         {/* The data itself */}
         <Group opacity={markerBodyOpacity ?? 1}>
-          {formattedData.map((series: any, index: any) => {
-            return (
-              <GlyphSeries
-                dataKey={'data' + String(index)}
-                data={series}
-                {...dataAccessors}
-                colorAccessor={(d) => {
-                  return significanceColors[d.colorNum];
-                }}
-              />
-            );
-          })}
+          <GlyphSeries
+            dataKey={'data'}
+            data={dataPoints}
+            {...dataAccessors}
+            colorAccessor={(d) => {
+              return significanceColors[d.colorNum];
+            }}
+          />
         </Group>
       </XYChart>
     </div>
