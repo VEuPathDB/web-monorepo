@@ -132,7 +132,11 @@ export default function MapVizManagement({
                       <button
                         className={MapVizManagementClassName('vizButton')}
                         onClick={() => {
-                          setActiveVisualizationId(viz.visualizationId);
+                          setActiveVisualizationId(
+                            viz.visualizationId === activeVisualizationId
+                              ? undefined
+                              : viz.visualizationId
+                          );
                         }}
                       >
                         {

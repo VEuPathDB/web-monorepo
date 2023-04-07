@@ -4,6 +4,7 @@ import { AppState, useAppState } from './appState';
 import {
   ComputationAppOverview,
   Visualization,
+  VisualizationOverview,
 } from '../../core/types/visualization';
 import { FullScreenVisualization } from '../../core/components/visualizations/VisualizationsContainer';
 import { GeoConfig } from '../../core/types/geoConfig';
@@ -50,6 +51,9 @@ export default function DraggableVisualization({
     .flatMap((c) => c.visualizations)
     .find((v) => v.visualizationId === appState.activeVisualizationId);
 
+  const activeVizOverview: VisualizationOverview | undefined =
+    app.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
+
   const computation = analysisState.analysis?.descriptor.computations[0];
 
   return (
@@ -60,7 +64,7 @@ export default function DraggableVisualization({
           showPanelTitle
           isOpen
           styleOverrides={{ zIndex: 10 }}
-          panelTitle={activeViz.descriptor.type}
+          panelTitle={activeVizOverview?.displayName || ''}
           defaultPosition={{
             x: 565,
             y: 142,

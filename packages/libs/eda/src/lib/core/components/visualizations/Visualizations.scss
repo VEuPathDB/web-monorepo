@@ -109,9 +109,9 @@
   }
   &-GroupedPickerContainer {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+
     &:last-child {
       margin-bottom: 0;
     }
