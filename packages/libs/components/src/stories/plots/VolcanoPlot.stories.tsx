@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { scaleLinear } from '@visx/scale';
 import { range } from 'lodash';
-import { AreaSeries } from '@visx/xychart';
+import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -71,8 +69,10 @@ const nPoints = 300;
 const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
     series: {
-      foldChange: range(1, nPoints).map((p) => String(6 * Math.random() + 3)),
-      pValue: range(1, nPoints).map((p) => String(Math.random())),
+      foldChange: range(1, nPoints).map((p) =>
+        String(Math.abs(getNormallyDistributedRandomNumber(0, 5)))
+      ),
+      pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
       adjustedPValue: range(1, nPoints).map((p) =>
         String(nPoints * Math.random())
       ),
@@ -118,6 +118,8 @@ export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: dataSetVolcanoManyPoints,
   markerBodyOpacity: 0.5,
+  log2FoldChangeThreshold: 3,
+  significanceThreshold: 0.01,
 };
 
 // Add story for truncation
