@@ -19,6 +19,7 @@ export type PastReleaseProps = {
   datasetId: string;
   release: DownloadTabStudyRelease;
   downloadClient: DownloadClient;
+  citationString: string;
 };
 
 export default function PastRelease({
@@ -26,6 +27,7 @@ export default function PastRelease({
   datasetId,
   release,
   downloadClient,
+  citationString,
 }: PastReleaseProps) {
   const [releaseFiles, setReleaseFiles] = useState<Array<ReleaseFile>>([]);
 
@@ -96,6 +98,9 @@ export default function PastRelease({
       id={`Past Release Dataset - ${release.releaseNumber}`}
       style={{ marginBottom: 35 }}
     >
+      {/**
+       * debt: change string types to ReactNode types as appropriate
+       */}
       <ExpandablePanel
         stylePreset="floating"
         themeRole="primary"
@@ -103,6 +108,7 @@ export default function PastRelease({
         subTitle={{
           Date: release.date ?? '',
           'Change Log': release.description ?? '',
+          'Dataset Citation': citationString,
         }}
       >
         <div style={{ padding: 15, paddingLeft: 35 }}>

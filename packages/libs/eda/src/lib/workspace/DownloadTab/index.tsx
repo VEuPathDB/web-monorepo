@@ -7,6 +7,9 @@ import {
   useStudyRecord,
 } from '../../core';
 
+// Utils
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+
 // Definitions
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { DownloadClient } from '../../core/api/DownloadClient';
@@ -14,7 +17,7 @@ import { DownloadClient } from '../../core/api/DownloadClient';
 // Components
 import MySubset from './MySubset';
 import CurrentRelease from './CurrentRelease';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import StudyCitation, { getCitationString } from './StudyCitation';
 
 // Hooks
 import { useWdkStudyReleases } from '../../core/hooks/study';
@@ -23,8 +26,7 @@ import { DownloadTabStudyReleases } from './types';
 import PastRelease from './PastRelease';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { useLocalBackedState } from '@veupathdb/wdk-client/lib/Hooks/LocalBackedState';
-import { H5, Paragraph } from '@veupathdb/coreui';
+import { colors, H5, Paragraph } from '@veupathdb/coreui';
 import { useDispatch } from 'react-redux';
 import { showLoginForm } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
 import { useHistory } from 'react-router';
@@ -54,6 +56,25 @@ export default function DownloadTab({
   const datasetId = studyRecord.id[0].value;
   const permission = usePermissions();
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
+  const projectDisplayName = useWdkService(
+    async (wdkService) =>
+      await wdkService.getConfig().then((config) => config.displayName),
+    []
+  );
+  const studyContacts = useWdkService(
+    async (wdkService) =>
+      await wdkService
+        .getRecord('dataset', studyRecord.id, { tables: ['Contacts'] })
+        .then((record) => {
+          const contactsArray = record.tables['Contacts'].map(
+            (contact) => contact['contact_name']
+          );
+          return contactsArray.length > 3
+            ? contactsArray.slice(0, 3).join(', ') + ', et al'
+            : contactsArray.join(', ');
+        }),
+    []
+  );
   const history = useHistory();
   const dispatch = useDispatch();
 
@@ -96,7 +117,6 @@ export default function DownloadTab({
     return (
       <span
         style={{
-          lineHeight: '150%',
           fontWeight: 300,
           fontSize: '1.4em',
         }}
@@ -109,7 +129,14 @@ export default function DownloadTab({
         )}
       </span>
     );
-  }, [user, permission, studyRecord, handleClick, datasetId]);
+  }, [
+    user,
+    permission,
+    studyRecord,
+    handleClick,
+    datasetId,
+    projectDisplayName,
+  ]);
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -124,10 +151,8 @@ export default function DownloadTab({
    * We'll merge the info together later, but for now, that's why
    * you have two different variables for study releases here.
    */
-  const [
-    downloadServiceStudyReleases,
-    setDownloadServiceStudyReleases,
-  ] = useState<Array<string>>([]);
+  const [downloadServiceStudyReleases, setDownloadServiceStudyReleases] =
+    useState<Array<string>>([]);
   const WDKStudyReleases = useWdkStudyReleases();
 
   // Only fetch study releases if they are expected to be available
@@ -148,7 +173,7 @@ export default function DownloadTab({
   }, [shouldFetchStudyReleases, downloadClient, studyMetadata]);
 
   /**
-   * One we have information from both services on available releases
+   * Once we have information from both services on available releases
    * let's merge them together into something more useful.
    *
    * Important note: We take the information on releases from the WDKService
@@ -184,15 +209,47 @@ export default function DownloadTab({
     );
   }, [WDKStudyReleases, downloadServiceStudyReleases]);
 
+  const partialCitationData = useMemo(() => {
+    let citationUrl;
+    if (analysisState.analysis && 'analysisId' in analysisState.analysis) {
+      citationUrl = window.location.href.replace(
+        `${analysisState.analysis.analysisId}/download`,
+        'new'
+      );
+    } else {
+      citationUrl = window.location.href.replace('/download', '');
+    }
+    return {
+      studyContacts: studyContacts ?? '',
+      studyDisplayName: studyRecord.displayName,
+      projectDisplayName: projectDisplayName ?? '',
+      citationUrl: citationUrl,
+    };
+  }, [
+    studyContacts,
+    studyRecord.displayName,
+    projectDisplayName,
+    analysisState,
+  ]);
+
   return (
     <div style={{ display: 'flex', paddingTop: 10 }}>
       <div key="Column One" style={{ marginRight: 75 }}>
         {dataAccessDeclaration ?? ''}
-        <MySubset
-          datasetId={datasetId}
-          entities={enhancedEntityData}
-          analysisState={analysisState}
-        />
+        {mergedReleaseData[0] && (
+          <StudyCitation
+            partialCitationData={partialCitationData}
+            // use current release
+            release={mergedReleaseData[0]}
+          />
+        )}
+        {mergedReleaseData[0] && (
+          <MySubset
+            datasetId={datasetId}
+            entities={enhancedEntityData}
+            analysisState={analysisState}
+          />
+        )}
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
             <CurrentRelease
@@ -209,6 +266,12 @@ export default function DownloadTab({
               studyId={studyMetadata.id}
               release={release}
               downloadClient={downloadClient}
+              citationString={stripHTML(
+                getCitationString({
+                  partialCitationData,
+                  release,
+                })
+              )}
             />
           )
         )}
@@ -251,7 +314,11 @@ function getDataAccessDeclaration(
         Data Accessibility:{' '}
         <span style={{ fontWeight: 'normal' }}>{studyAccess}</span>
       </H5>
-      <Paragraph styleOverrides={{ margin: 0 }}>
+      <Paragraph
+        color={colors.gray[600]}
+        styleOverrides={{ margin: '0.5em 0 0 0' }}
+        textSize="medium"
+      >
         {isGuest === undefined || hasPermission === undefined ? (
           <AnimatedLoadingText text="Getting permissions" />
         ) : studyAccess === 'Public' ? (
@@ -274,7 +341,7 @@ function getDataAccessDeclaration(
         ) : studyAccess === 'Prerelease' ? (
           <span>{PRERELEASE_STUB}</span>
         ) : (
-          <span>Unknown study accessibility value</span>
+          <span>Unknown study accessibility value.</span>
         )}
       </Paragraph>
     </div>
