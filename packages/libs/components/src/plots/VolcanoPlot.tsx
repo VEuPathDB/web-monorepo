@@ -91,9 +91,9 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   // Log transform for plotting, and add a little margin for axes
   if (dataXMin && dataXMax) {
     xMin = Math.log2(dataXMin);
-    xMin = xMin - (xMin - xMin) * 0.05;
     xMax = Math.log2(dataXMax);
-    xMax = xMax + (xMax - xMax) * 0.05;
+    xMin = xMin - (xMax - xMin) * 0.05;
+    xMax = xMax + (xMax - xMin) * 0.05;
   } else {
     xMin = 0;
     xMax = 0;
@@ -101,12 +101,13 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   if (dataYMin && dataYMax) {
     yMin = -Math.log10(dataYMax);
     yMax = -Math.log10(dataYMin);
-    yMin = yMin - (yMin - yMin) * 0.05;
-    yMax = yMax + (yMax - yMax) * 0.05;
+    yMin = yMin - (yMax - yMin) * 0.05;
+    yMax = yMax + (yMax - yMin) * 0.05;
   } else {
     yMin = 0;
     yMax = 0;
   }
+  console.log(yMin);
 
   /**
    * Turn the data (array of arrays) into data points (array of points)
@@ -171,6 +172,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     stroke: '#dddddd',
     strokeWidth: 0.5,
   };
+  console.log(yMin);
 
   return (
     // From docs " For correct tooltip positioning, it is important to wrap your
@@ -179,7 +181,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       <XYChart
         height={300}
         xScale={{ type: 'linear', domain: [xMin, xMax] }}
-        yScale={{ type: 'linear', domain: [yMin, yMax] }}
+        yScale={{ type: 'linear', domain: [yMin, yMax], zero: false }}
         width={300}
       >
         <Grid numTicks={6} lineStyle={gridStyles} />
