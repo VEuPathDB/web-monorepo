@@ -1,25 +1,23 @@
 import { useState, useCallback } from 'react';
-import { FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
+import { FloatingButton, H5, Modal, Paragraph } from '@veupathdb/coreui';
 import { v4 as uuid } from 'uuid';
 
 import { AnalysisState } from '../../core';
-import {
-  NewVisualizationPicker,
-  NewVisualizationPickerGrouped,
-} from '../../core/components/visualizations/VisualizationsContainer';
+import { NewVisualizationPickerGrouped } from '../../core/components/visualizations/VisualizationsContainer';
 import { useAppState } from './appState';
 import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
 import { GeoConfig } from '../../core/types/geoConfig';
-import { Add, CloseTwoTone } from '@material-ui/icons';
+import { Add } from '@material-ui/icons';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import './MapVizManagement.scss';
 import { Tooltip } from '@material-ui/core';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -88,11 +86,15 @@ export default function MapVizManagement({
   const totalVisualizationCount = computations?.reduce((acc, curr) => {
     return acc + curr.visualizations.length;
   }, 0);
+
+  const theme = useUITheme();
+
   return (
     <div className={MapVizManagementClassName()}>
       <div>
         <div className={MapVizManagementClassName('vizListHeaderContainer')}>
           <FloatingButton
+            themeRole="primary"
             text="New plot"
             size="medium"
             icon={Add}
@@ -120,6 +122,11 @@ export default function MapVizManagement({
                         'vizButtonItem',
                         vizIsActive ? 'active' : ''
                       )}
+                      style={{
+                        background: vizIsActive
+                          ? theme?.palette.primary.hue[100]
+                          : 'inherit',
+                      }}
                       key={viz.visualizationId}
                     >
                       <button
@@ -204,21 +211,33 @@ export default function MapVizManagement({
       </div>
       {isVizSelectorVisible && (
         <div className={MapVizManagementClassName('NewVizPicker')}>
-          <FloatingButton
-            onPress={() => setIsVizSelectorVisible(false)}
-            ariaLabel="Close the visualization menu"
-            icon={CloseTwoTone}
-            themeRole="secondary"
-          />
-          <NewVisualizationPickerGrouped
-            includeHeader
-            computation={computation!}
-            updateVisualizations={updateVisualizations}
-            visualizationPlugins={visualizationPlugins}
-            visualizationsOverview={app.visualizations}
-            geoConfigs={geoConfigs}
-            onVisualizationCreated={onVisualizationCreated}
-          />
+          <Modal
+            themeRole="primary"
+            title="Select a visualization"
+            styleOverrides={{
+              content: {
+                padding: {
+                  top: 20,
+                  right: 30,
+                  bottom: 20,
+                  left: 30,
+                },
+              },
+            }}
+            visible={isVizSelectorVisible}
+            toggleVisible={setIsVizSelectorVisible}
+            includeCloseButton
+          >
+            <NewVisualizationPickerGrouped
+              includeHeader
+              computation={computation!}
+              updateVisualizations={updateVisualizations}
+              visualizationPlugins={visualizationPlugins}
+              visualizationsOverview={app.visualizations}
+              geoConfigs={geoConfigs}
+              onVisualizationCreated={onVisualizationCreated}
+            />
+          </Modal>
         </div>
       )}
     </div>

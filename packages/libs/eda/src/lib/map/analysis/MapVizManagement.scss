@@ -27,11 +27,7 @@
   &vizButtonItem {
     padding-left: 10px;
     display: flex;
-    &:hover {
-      background: lighten(#ecf7f9, 2%);
-    }
     &__active {
-      background: #ecf7f9;
       font-weight: bold;
     }
   }

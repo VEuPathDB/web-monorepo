@@ -38,10 +38,7 @@ import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
-import {
-  mapSideNavigationActiveMenuItemBackground,
-  SiteInformationProps,
-} from '..';
+import { SiteInformationProps } from '..';
 import MapVizManagement from './MapVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
@@ -68,6 +65,8 @@ import {
   Visualization,
 } from '../../core/types/visualization';
 import DraggableVisualization from './DraggableVisualization';
+import { useTheme } from '@material-ui/core';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -114,6 +113,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyEntities = useStudyEntities();
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
+  const theme = useUITheme();
 
   const selectedVariables = useMemo(
     () => ({
@@ -280,6 +280,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         className="FilterChips"
       >
         <FilledButton
+          themeRole="primary"
           text="Add filters"
           onPress={() => setIsSubsetPanelOpen(true)}
           size="small"
@@ -535,8 +536,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 width: '100%',
                                 transition: 'background 0.1s ease',
                                 padding: '5px 10px',
+                                fontWeight: isActive ? 'bold' : 'normal',
                                 background: isActive
-                                  ? mapSideNavigationActiveMenuItemBackground
+                                  ? theme?.palette.primary.hue[100]
                                   : 'inherit',
                               }}
                             >
