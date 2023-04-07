@@ -284,7 +284,7 @@ export const gradientConvergingColorscaleMap = scaleLinear<string>()
   .interpolate(interpolateLab);
 
 // Significance colors
-export const significanceColors = ['#AC3B4E', '#B5B8B4', '#0E8FAB'];
+export const significanceColors = ['#AC3B4E', '#0E8FAB', '#B5B8B4'];
 
 /** truncated axis flags */
 export type AxisTruncationAddon = {

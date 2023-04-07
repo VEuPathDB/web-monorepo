@@ -8,6 +8,14 @@ import { AreaSeries } from '@visx/xychart';
 export default {
   title: 'Plots/VolcanoPlot',
   component: VolcanoPlot,
+  argTypes: {
+    log2FoldChangeThreshold: {
+      control: { type: 'range', min: 0.5, max: 10, step: 0.5 },
+    },
+    significanceThreshold: {
+      control: { type: 'range', min: 0.001, max: 0.1, step: 0.001 },
+    },
+  },
 } as Meta;
 
 interface VEuPathDBVolcanoPlotData {
@@ -78,18 +86,18 @@ const plotTitle = 'Volcano erupt!';
 interface TemplateProps {
   data: VEuPathDBVolcanoPlotData;
   markerBodyOpacity: number;
-  // foldChangeHighGate: number;
-  // foldChangeLowGate: number; // we can't have gates unless we mimic the backend updating the data format when we change gates
+  log2FoldChangeThreshold: number;
+  significanceThreshold: number;
   adjustedPValueGate: number;
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  const comparisonLabels = ['up in group a', 'up in group b'];
+  const comparisonLabels = ['up in group a', 'up in group b']; // not yet used
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: args.data.volcanoplot.series,
-    significanceThreshold: 0.1,
-    foldChangeThreshold: 2,
+    significanceThreshold: args.significanceThreshold,
+    log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
     comparisonLabels: comparisonLabels,
   };
@@ -97,10 +105,13 @@ const Template: Story<TemplateProps> = (args) => {
   return <VolcanoPlot {...volcanoPlotProps} />;
 };
 
+// Stories!
 export const Simple = Template.bind({});
 Simple.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.8,
+  log2FoldChangeThreshold: 1,
+  significanceThreshold: 0.01,
 };
 
 export const ManyPoints = Template.bind({});

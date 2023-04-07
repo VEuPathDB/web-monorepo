@@ -16,17 +16,17 @@ import { Group } from '@visx/group';
 import { max, min } from 'lodash';
 
 export interface VolcanoPlotProps extends PlotProps<VolcanoPlotData> {
+  /**
+   * Used to set the fold change thresholds. Will
+   * set two thresholds at +/- this number.
+   */
+  log2FoldChangeThreshold: number;
+  /** Set the threshold for significance. */
+  significanceThreshold: number;
   /** x-axis range:  */
   independentAxisRange?: NumberRange;
   /** y-axis range: */
   dependentAxisRange?: NumberRange;
-  /**
-   * Used to set the fold change thresholds. Will
-   * set two thresholds at +/- this number
-   */
-  foldChangeThreshold?: number;
-  /** Set the threshold for significance. */
-  significanceThreshold?: number;
   /**
    * Array of size 2 that contains a label for the left and right side
    * of the x axis. (Not yet implemented). Expect this to be passed by the viz based
@@ -46,6 +46,14 @@ const EmptyVolcanoPlotData: VolcanoPlotData = {
   pointId: [],
 };
 
+interface DataPoint {
+  foldChange: string;
+  pValue: string;
+  adjustedPValue: string;
+  pointId: string;
+  color: string;
+}
+
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
  * It also colors the points based on their significance and magnitude change.
@@ -55,9 +63,9 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     data = EmptyVolcanoPlotData,
     independentAxisRange,
     dependentAxisRange,
-    markerBodyOpacity,
     significanceThreshold,
-    foldChangeThreshold,
+    log2FoldChangeThreshold,
+    markerBodyOpacity,
     ...restProps
   } = props;
 
@@ -104,13 +112,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
    * Turn the data (array of arrays) into data points (array of points)
    */
 
-  let dataPoints: {
-    foldChange: string;
-    pValue: string;
-    adjustedPValue: string;
-    pointId: string;
-    colorNum: number;
-  }[] = [];
+  let dataPoints: DataPoint[] = [];
 
   // Loop through the data and return points. Doesn't really matter
   // which var of the data we map over.
@@ -120,7 +122,13 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       pValue: data.pValue[ind],
       adjustedPValue: data.adjustedPValue[ind],
       pointId: data.pointId[ind],
-      colorNum: 1, // ANN NEED TO FIX HERE
+      color: assignSignificanceColor(
+        Math.log2(Number(fc)),
+        Number(data.pValue[ind]),
+        significanceThreshold,
+        log2FoldChangeThreshold,
+        significanceColors
+      ),
     });
   });
 
@@ -193,11 +201,11 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             />
           </Annotation>
         )}
-        {foldChangeThreshold && (
+        {log2FoldChangeThreshold && (
           <>
             <Annotation
               datum={{
-                x: -Math.log2(foldChangeThreshold),
+                x: -log2FoldChangeThreshold,
                 y: 0, // vertical line so y could be anything
               }}
               {...thresholdLineAccessors}
@@ -206,7 +214,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             </Annotation>
             <Annotation
               datum={{
-                x: Math.log2(foldChangeThreshold),
+                x: log2FoldChangeThreshold,
                 y: 0, // vertical line so y could be anything
               }}
               {...thresholdLineAccessors}
@@ -223,13 +231,42 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             data={dataPoints}
             {...dataAccessors}
             colorAccessor={(d) => {
-              return significanceColors[d.colorNum];
+              return d.color;
             }}
           />
         </Group>
       </XYChart>
     </div>
   );
+}
+
+/**
+ * Assign color to point based on significance and magnitude change thresholds
+ */
+function assignSignificanceColor(
+  xValue: number, // has already been log2 transformed
+  yValue: number, // the raw pvalue
+  significanceThreshold: number,
+  log2FoldChangeThreshold: number,
+  significanceColors: string[] // Assuming the order is [high, low, not significant]
+) {
+  // Test 1. If the y value is higher than the significance threshold, just return not significant
+  if (yValue >= significanceThreshold) {
+    return significanceColors[2];
+  }
+
+  // Test 2. So the y is significant. Is the x larger than the positive foldChange threshold?
+  if (xValue >= log2FoldChangeThreshold) {
+    return significanceColors[0];
+  }
+
+  // Test 3. Is the x value lower than the negative foldChange threshold?
+  if (xValue <= -log2FoldChangeThreshold) {
+    return significanceColors[1];
+  }
+
+  // If we're still here, it must be a non significant point.
+  return significanceColors[2];
 }
 
 export default VolcanoPlot;
