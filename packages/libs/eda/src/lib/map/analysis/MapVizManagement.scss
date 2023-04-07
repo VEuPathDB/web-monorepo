@@ -1,5 +1,6 @@
 .MapVizManagement {
   display: flex;
+  justify-content: flex-end;
   height: 100%;
   overflow: scroll;
   padding-bottom: 10px;
@@ -27,6 +28,7 @@
   &vizButtonItem {
     padding-left: 10px;
     display: flex;
+    border-right: 1px solid transparent;
     &__active {
       font-weight: bold;
     }
@@ -56,7 +58,6 @@
 
   &vizName {
     max-width: 225px;
-    // word-wrap: break-word;
     overflow: scroll;
     text-align: left;
     margin-left: 10px;
@@ -65,15 +66,14 @@
   &NewVizPicker {
     // This constraint will leverage the picker's
     // flex wrapping.
-    max-width: 300px;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-  }
-  &emptyState {
+    align-items: start;
+    width: 400px;
     padding: 5px 10px;
-    display: flex;
-    flex-direction: column;
+  }
+  &vizListContainer {
+    width: 300px;
   }
   &vizListHeaderContainer {
     display: flex;

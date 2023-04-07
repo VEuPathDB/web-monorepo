@@ -109,7 +109,8 @@
   }
   &-GroupedPickerContainer {
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+    justify-content: flex-start;
     margin-bottom: 30px;
 
     &:last-child {
@@ -117,16 +118,17 @@
     }
   }
   &-GroupedPickerEntryHeadline {
-    flex: 33%;
     margin-right: 15px;
   }
   &-GroupedPickerEntryList {
-    flex: 66%;
     display: flex;
     flex-wrap: wrap;
+    justify-content: flex-start;
     button {
       margin-right: 15px;
     }
+    font-size: 0.75em;
+    margin-top: 15px;
   }
   &-PickerActions {
     padding: 2em 0;

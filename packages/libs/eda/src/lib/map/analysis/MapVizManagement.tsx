@@ -1,5 +1,12 @@
 import { useState, useCallback } from 'react';
-import { FloatingButton, H5, Modal, Paragraph } from '@veupathdb/coreui';
+import {
+  Close,
+  FloatingButton,
+  H4,
+  H5,
+  Modal,
+  Paragraph,
+} from '@veupathdb/coreui';
 import { v4 as uuid } from 'uuid';
 
 import { AnalysisState } from '../../core';
@@ -18,6 +25,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import './MapVizManagement.scss';
 import { Tooltip } from '@material-ui/core';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { mapNavigationBorder } from '..';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -63,14 +71,22 @@ export default function MapVizManagement({
   );
 
   const computations = analysisState.analysis?.descriptor.computations;
-  const hasSomeVisualizations =
-    computations && computations[0].visualizations.length > 0;
 
-  function UiWhenUserHasNoVisualizations() {
+  const totalVisualizationCount = (computations || []).reduce((acc, curr) => {
+    return acc + curr.visualizations.length;
+  }, 0);
+
+  const theme = useUITheme();
+
+  if (totalVisualizationCount === 0)
     return (
-      <div className={MapVizManagementClassName('emptyState')}>
+      <div className={MapVizManagementClassName('NewVizPicker')}>
+        <H5>Select a visualization</H5>
+        <Paragraph>
+          Pick a visualization type to get started! If you update your subset,
+          your visualizations will update when you reopen them.
+        </Paragraph>
         <NewVisualizationPickerGrouped
-          includeHeader
           computation={computation!}
           updateVisualizations={updateVisualizations}
           visualizationPlugins={visualizationPlugins}
@@ -80,32 +96,28 @@ export default function MapVizManagement({
         />
       </div>
     );
-  }
-  const totalVisualizationCount = (computations || []).reduce((acc, curr) => {
-    return acc + curr.visualizations.length;
-  }, 0);
-
-  const theme = useUITheme();
 
   return (
     <div className={MapVizManagementClassName()}>
-      <div>
+      <div className={MapVizManagementClassName('vizListContainer')}>
         <div className={MapVizManagementClassName('vizListHeaderContainer')}>
-          <FloatingButton
-            themeRole="primary"
-            text="New plot"
-            size="medium"
-            icon={Add}
-            textTransform="none"
-            onPress={() => setIsVizSelectorVisible(true)}
-          />
+          {totalVisualizationCount > 0 && (
+            // The user is given the "Select a visualization" flow
+            // if they have no existing visualizations.
+            <FloatingButton
+              disabled={isVizSelectorVisible}
+              themeRole="primary"
+              text="New plot"
+              size="medium"
+              icon={Add}
+              textTransform="none"
+              onPress={() => setIsVizSelectorVisible(true)}
+            />
+          )}
         </div>
-        {totalVisualizationCount > 0 && (
-          <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
-            Plots ({totalVisualizationCount}):
-          </H5>
-        )}
-        {!hasSomeVisualizations && <UiWhenUserHasNoVisualizations />}
+        <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
+          Plots ({totalVisualizationCount}):
+        </H5>
         <ul className={MapVizManagementClassName('vizList')}>
           {computations?.map((computation) => (
             <li key={computation.computationId}>
@@ -211,9 +223,14 @@ export default function MapVizManagement({
           ))}
         </ul>
       </div>
-      {isVizSelectorVisible && (
-        <div className={MapVizManagementClassName('NewVizPicker')}>
-          <Modal
+      {isVizSelectorVisible && totalVisualizationCount > 0 && (
+        <div
+          style={{
+            borderLeft: mapNavigationBorder,
+          }}
+          className={MapVizManagementClassName('NewVizPicker')}
+        >
+          {/* <Modal
             themeRole="primary"
             title="Select a visualization"
             styleOverrides={{
@@ -229,7 +246,22 @@ export default function MapVizManagement({
             visible={isVizSelectorVisible}
             toggleVisible={setIsVizSelectorVisible}
             includeCloseButton
+          > */}
+          <div
+            style={{
+              alignSelf: 'flex-end',
+            }}
           >
+            <FloatingButton
+              icon={Close}
+              onPress={() => setIsVizSelectorVisible(false)}
+              themeRole="secondary"
+              text=""
+              ariaLabel="Close visualization picker"
+              size="small"
+            />
+          </div>
+          <div>
             <NewVisualizationPickerGrouped
               includeHeader
               computation={computation!}
@@ -239,7 +271,8 @@ export default function MapVizManagement({
               geoConfigs={geoConfigs}
               onVisualizationCreated={onVisualizationCreated}
             />
-          </Modal>
+          </div>
+          {/* </Modal> */}
         </div>
       )}
     </div>

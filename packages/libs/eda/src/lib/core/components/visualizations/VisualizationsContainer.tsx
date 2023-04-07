@@ -42,7 +42,7 @@ import { plugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
-import { Modal, H5, Paragraph } from '@veupathdb/coreui';
+import { Modal, H6, Paragraph, H5 } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import {
@@ -332,6 +332,7 @@ export function NewVisualizationPickerGrouped(
     onVisualizationCreated = function (visualizationId, computationId) {
       history.replace(`../${computationId}/${visualizationId}`);
     },
+    includeHeader,
   } = props;
   const colors = useVizIconColors();
   const history = useHistory();
@@ -340,8 +341,17 @@ export function NewVisualizationPickerGrouped(
     <>
       {groupVisualizations(visualizationsOverview).map((vizGroup) => (
         <div className={cx('-GroupedPickerContainer')} key={vizGroup.groupName}>
+          {includeHeader && (
+            <H5
+              additionalStyles={{
+                marginBottom: 10,
+              }}
+            >
+              Select a visualization
+            </H5>
+          )}
           <div className={cx('-GroupedPickerEntryHeadline')}>
-            <H5>{vizGroup.groupName}</H5>
+            <H6>{vizGroup.groupName}</H6>
             <Paragraph styleOverrides={{ margin: '5px 0' }}>
               {vizGroup.groupDescription}
             </Paragraph>
@@ -359,38 +369,33 @@ export function NewVisualizationPickerGrouped(
                   key={`vizType${vizOverview.name}`}
                 >
                   <Tooltip title={<>{vizOverview.description}</>}>
-                    <span>
-                      <button
-                        style={{
-                          cursor: disabled ? 'not-allowed' : 'cursor',
-                        }}
-                        type="button"
-                        disabled={disabled}
-                        onClick={async () => {
-                          const visualizationId = uuid();
-                          updateVisualizations((visualizations) =>
-                            visualizations.concat({
-                              visualizationId,
-                              displayName: 'Unnamed visualization',
-                              descriptor: {
-                                type: vizOverview.name!,
-                                configuration: vizPlugin?.createDefaultConfig(),
-                              },
-                            })
-                          );
-                          onVisualizationCreated(
+                    <button
+                      style={{
+                        cursor: disabled ? 'not-allowed' : 'cursor',
+                      }}
+                      type="button"
+                      disabled={disabled}
+                      onClick={async () => {
+                        const visualizationId = uuid();
+                        updateVisualizations((visualizations) =>
+                          visualizations.concat({
                             visualizationId,
-                            computationId
-                          );
-                        }}
-                      >
-                        {vizPlugin ? (
-                          <vizPlugin.selectorIcon {...colors} />
-                        ) : (
-                          <PlaceholderIcon name={vizOverview.name} />
-                        )}
-                      </button>
-                    </span>
+                            displayName: 'Unnamed visualization',
+                            descriptor: {
+                              type: vizOverview.name!,
+                              configuration: vizPlugin?.createDefaultConfig(),
+                            },
+                          })
+                        );
+                        onVisualizationCreated(visualizationId, computationId);
+                      }}
+                    >
+                      {vizPlugin ? (
+                        <vizPlugin.selectorIcon {...colors} />
+                      ) : (
+                        <PlaceholderIcon name={vizOverview.name} />
+                      )}
+                    </button>
                   </Tooltip>
                   <div className={cx('-PickerEntryName')}>
                     <div>
