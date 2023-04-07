@@ -176,9 +176,20 @@ export function useStandaloneMapMarkers(
   // this will require a call to the distribution endpoint for categoricals (TO DO: continuous)
   const subsettingClient = useSubsettingClient();
 
-  const overlayConfigPromise = usePromise<OverlayConfig | undefined>(
+  type OverlayRequestProps = {
+    overlayConfig: OverlayConfig;
+    outputEntityId: string;
+  };
+
+  const overlayRequestPropsPromise = usePromise<
+    OverlayRequestProps | undefined
+  >(
     useCallback(async () => {
-      if (overlayVariableAndEntity != null && overlayVariable != null) {
+      if (
+        overlayVariableAndEntity != null &&
+        overlayVariable != null &&
+        outputEntity != null
+      ) {
         const vocabulary = overlayVariableAndEntity.variable.vocabulary ?? [];
 
         // If the variable has "too many" values, get the top 7 from the distribution service
@@ -193,22 +204,34 @@ export function useStandaloneMapMarkers(
               });
 
         return {
-          overlayType: 'categorical', // TO DO: handle continuous!!
-          overlayVariable,
-          overlayValues,
+          overlayConfig: {
+            overlayType: 'categorical', // TO DO: handle continuous!!
+            overlayVariable,
+            overlayValues,
+          },
+          outputEntityId: outputEntity.id,
         };
       } else {
         return undefined;
       }
-    }, [overlayVariable, overlayVariableAndEntity, studyId, subsettingClient])
+    }, [
+      overlayVariable,
+      outputEntity,
+      overlayVariableAndEntity,
+      studyId,
+      subsettingClient,
+    ])
   );
 
-  const overlayType = overlayConfigPromise.value?.overlayType;
+  const overlayType =
+    overlayRequestPropsPromise.value?.overlayConfig.overlayType;
   const vocabulary =
     overlayType === 'categorical' // switch statement style guide time!!
-      ? overlayConfigPromise.value?.overlayValues
+      ? overlayRequestPropsPromise.value?.overlayConfig.overlayValues
       : overlayType === 'continuous'
-      ? overlayConfigPromise.value?.overlayValues.map((ov) => ov.binLabel)
+      ? overlayRequestPropsPromise.value?.overlayConfig.overlayValues.map(
+          (ov) => ov.binLabel
+        )
       : undefined;
 
   const markerData = usePromise<StandaloneMapMarkersResponse | undefined>(
@@ -238,7 +261,7 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          overlayConfig: overlayConfigPromise.value,
+          ...overlayRequestPropsPromise.value, // intentionally overwrites outputEntityId
           valueSpec: 'count', // TO DO: or proportion!
           viewport: {
             latitude: {
@@ -262,7 +285,7 @@ export function useStandaloneMapMarkers(
       studyId,
       filters,
       dataClient,
-      overlayConfigPromise,
+      overlayRequestPropsPromise.value,
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
