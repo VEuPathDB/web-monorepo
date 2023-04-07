@@ -69,21 +69,19 @@ export default function MapVizManagement({
   function UiWhenUserHasNoVisualizations() {
     return (
       <div className={MapVizManagementClassName('emptyState')}>
-        <div className={MapVizManagementClassName('emptyStateHeadline')}></div>
-        <H5>No plots to show yet.</H5>
-        <Paragraph>
-          Use plot tools, to make histograms, bar plots, box plots, scatter
-          plots, 2x2 contingency tables, and mosaic plots for RxC contingency
-          tables.
-        </Paragraph>
-        <Paragraph>
-          You can also stratify by another variable. If you update your subset,
-          no worries, your plot will update too when you reopen them.
-        </Paragraph>
+        <NewVisualizationPickerGrouped
+          includeHeader
+          computation={computation!}
+          updateVisualizations={updateVisualizations}
+          visualizationPlugins={visualizationPlugins}
+          visualizationsOverview={app.visualizations}
+          geoConfigs={geoConfigs}
+          onVisualizationCreated={onVisualizationCreated}
+        />
       </div>
     );
   }
-  const totalVisualizationCount = computations?.reduce((acc, curr) => {
+  const totalVisualizationCount = (computations || []).reduce((acc, curr) => {
     return acc + curr.visualizations.length;
   }, 0);
 
@@ -102,7 +100,7 @@ export default function MapVizManagement({
             onPress={() => setIsVizSelectorVisible(true)}
           />
         </div>
-        {totalVisualizationCount && (
+        {totalVisualizationCount > 0 && (
           <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
             Plots ({totalVisualizationCount}):
           </H5>
