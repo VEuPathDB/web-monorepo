@@ -116,22 +116,25 @@ export function useStandaloneMapMarkers(
   const entities = useStudyEntities();
 
   // prepare some info that the map-markers and overlay requests both need
-  const {
-    latitudeVariable,
-    longitudeVariable,
-    outputEntity,
-    overlayVariableAndEntity,
-  } = useMemo(() => {
-    if (geoConfig == null || geoConfig.entity.id == null) return {};
+  const { latitudeVariable, longitudeVariable } = useMemo(
+    () =>
+      geoConfig == null || geoConfig.entity.id == null
+        ? {}
+        : {
+            latitudeVariable: {
+              entityId: geoConfig.entity.id,
+              variableId: geoConfig.latitudeVariableId,
+            },
+            longitudeVariable: {
+              entityId: geoConfig.entity.id,
+              variableId: geoConfig.longitudeVariableId,
+            },
+          },
+    [geoConfig]
+  );
 
-    const latitudeVariable = {
-      entityId: geoConfig.entity.id,
-      variableId: geoConfig.latitudeVariableId,
-    };
-    const longitudeVariable = {
-      entityId: geoConfig.entity.id,
-      variableId: geoConfig.longitudeVariableId,
-    };
+  const { outputEntity, overlayVariableAndEntity } = useMemo(() => {
+    if (geoConfig == null || geoConfig.entity.id == null) return {};
 
     const overlayVariableAndEntity = findEntityAndVariable(overlayVariable);
     // output entity needs to be the least ancestral of the two entities (if both are non-null)
@@ -143,14 +146,10 @@ export function useStandaloneMapMarkers(
       : geoConfig.entity;
 
     return {
-      latitudeVariable,
-      longitudeVariable,
       outputEntity,
       overlayVariableAndEntity,
-      findEntityAndVariable,
-      entities,
     };
-  }, [geoConfig, overlayVariable]);
+  }, [geoConfig, overlayVariable, entities]);
 
   // handle the geoAggregateVariable separately because it changes with zoom level
   // and we don't want that to change overlayVariableAndEntity etc because that invalidates
@@ -176,13 +175,22 @@ export function useStandaloneMapMarkers(
   // this will require a call to the distribution endpoint for categoricals (TO DO: continuous)
   const subsettingClient = useSubsettingClient();
 
-  type OverlayRequestProps = {
-    overlayConfig: OverlayConfig;
+  // So we bundle the overlayConfig and the outputEntity together in the usePromise payload. Why?
+  // The issue is that when changing variables, the outputEntity changes instantaneously, while
+  // the overlayConfig has to wait for a back end response. The great thing about usePromise is
+  // that the previous value is kept until the new value is available.
+  // If we bundle them together in the payload then, from the markerData fetch's perspective,
+  // they will **change at the same time**.  If you don't do this, the instantaneous outputEntity
+  // change triggers a back end request (which can fail because old-variable + new-entity can be illegal).
+  // Then when the overlay variable data comes back, a second request is triggered with a consistent
+  // payload of data.
+  type MarkerVariableBundle = {
     outputEntityId: string;
+    overlayConfig?: OverlayConfig;
   };
 
-  const overlayRequestPropsPromise = usePromise<
-    OverlayRequestProps | undefined
+  const markerVariableBundlePromise = usePromise<
+    MarkerVariableBundle | undefined
   >(
     useCallback(async () => {
       if (
@@ -211,6 +219,10 @@ export function useStandaloneMapMarkers(
           },
           outputEntityId: outputEntity.id,
         };
+      } else if (outputEntity != null) {
+        return {
+          outputEntityId: outputEntity.id,
+        };
       } else {
         return undefined;
       }
@@ -223,13 +235,13 @@ export function useStandaloneMapMarkers(
     ])
   );
 
-  const overlayType =
-    overlayRequestPropsPromise.value?.overlayConfig.overlayType;
+  const markerVariableBundle = markerVariableBundlePromise.value;
+  const overlayType = markerVariableBundle?.overlayConfig?.overlayType;
   const vocabulary =
     overlayType === 'categorical' // switch statement style guide time!!
-      ? overlayRequestPropsPromise.value?.overlayConfig.overlayValues
+      ? markerVariableBundle?.overlayConfig?.overlayValues
       : overlayType === 'continuous'
-      ? overlayRequestPropsPromise.value?.overlayConfig.overlayValues.map(
+      ? markerVariableBundle?.overlayConfig?.overlayValues.map(
           (ov) => ov.binLabel
         )
       : undefined;
@@ -243,7 +255,7 @@ export function useStandaloneMapMarkers(
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        outputEntity == null
+        markerVariableBundle?.outputEntityId == null
       )
         return undefined;
 
@@ -257,11 +269,10 @@ export function useStandaloneMapMarkers(
         studyId,
         filters: filters || [],
         config: {
-          outputEntityId: outputEntity.id,
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          ...overlayRequestPropsPromise.value, // intentionally overwrites outputEntityId
+          ...markerVariableBundle, // also includes outputEntityId
           valueSpec: 'count', // TO DO: or proportion!
           viewport: {
             latitude: {
@@ -285,11 +296,10 @@ export function useStandaloneMapMarkers(
       studyId,
       filters,
       dataClient,
-      overlayRequestPropsPromise.value,
+      markerVariableBundle,
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
-      outputEntity,
       boundsZoomLevel,
       computationType,
       geoConfig,
