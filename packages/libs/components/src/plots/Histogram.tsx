@@ -337,44 +337,43 @@ const Histogram = makePlotlyPlotComponent(
       }
     }, [selectingRange, selectedRange, orientation, data.series]);
 
-    const standardIndependentAxisRange:
-      | NumberOrDateRange
-      | undefined = useMemo(() => {
-      if (binSummaries.length === 0) return undefined;
+    const standardIndependentAxisRange: NumberOrDateRange | undefined =
+      useMemo(() => {
+        if (binSummaries.length === 0) return undefined;
 
-      // If independentAxisRange (x-axis) is provided
-      // adjust the min of the range to the binStart of the bin that contains that value.
-      // Likewise, adjust the max of the range to the binEnd of the bin that contains it.
-      // This avoids partial bins being displayed.
-      return {
-        min:
-          independentAxisRange?.min != null
-            ? (
-                findLast(binSummaries, (bs) =>
-                  binStartType === 'inclusive'
-                    ? independentAxisRange?.min >= bs.binStart
-                    : independentAxisRange?.min > bs.binStart
-                ) ?? { binStart: independentAxisRange?.min }
-              )?.binStart
-            : first(binSummaries)?.binStart,
-        max:
-          independentAxisRange?.max != null
-            ? (
-                find(binSummaries, (bs) =>
-                  binEndType === 'inclusive'
-                    ? independentAxisRange?.max <= bs.binEnd
-                    : independentAxisRange?.max < bs.binEnd
-                ) ?? { binEnd: independentAxisRange?.max }
-              )?.binEnd
-            : last(binSummaries)?.binEnd,
-      } as NumberOrDateRange;
-    }, [
-      data?.binWidthSlider?.valueType,
-      independentAxisRange,
-      binSummaries,
-      binStartType,
-      binEndType,
-    ]);
+        // If independentAxisRange (x-axis) is provided
+        // adjust the min of the range to the binStart of the bin that contains that value.
+        // Likewise, adjust the max of the range to the binEnd of the bin that contains it.
+        // This avoids partial bins being displayed.
+        return {
+          min:
+            independentAxisRange?.min != null
+              ? (
+                  findLast(binSummaries, (bs) =>
+                    binStartType === 'inclusive'
+                      ? independentAxisRange?.min >= bs.binStart
+                      : independentAxisRange?.min > bs.binStart
+                  ) ?? { binStart: independentAxisRange?.min }
+                )?.binStart
+              : first(binSummaries)?.binStart,
+          max:
+            independentAxisRange?.max != null
+              ? (
+                  find(binSummaries, (bs) =>
+                    binEndType === 'inclusive'
+                      ? independentAxisRange?.max <= bs.binEnd
+                      : independentAxisRange?.max < bs.binEnd
+                  ) ?? { binEnd: independentAxisRange?.max }
+                )?.binEnd
+              : last(binSummaries)?.binEnd,
+        } as NumberOrDateRange;
+      }, [
+        data?.binWidthSlider?.valueType,
+        independentAxisRange,
+        binSummaries,
+        binStartType,
+        binEndType,
+      ]);
 
     // truncation axis range
     const extendedIndependentAxisRange = extendAxisRangeForTruncations(
@@ -447,6 +446,11 @@ const Histogram = makePlotlyPlotComponent(
         numBins != null && numBins <= SMALL_NUMBER_OF_BINS
           ? numBins + 1
           : undefined,
+      ...tickSettings(
+        false,
+        extendedIndependentAxisRange,
+        data?.binWidthSlider?.valueType
+      ),
     };
 
     // if at least one bin.count is 0 < x < 1 then these are probably fractions/proportions
@@ -472,32 +476,31 @@ const Histogram = makePlotlyPlotComponent(
     ) as NumberRange | undefined;
 
     // make rectangular layout shapes for truncated axis/missing data
-    const truncatedAxisHighlighting:
-      | Partial<Shape>[]
-      | undefined = useMemo(() => {
-      if (data.series.length > 0) {
-        const filteredTruncationLayoutShapes = truncationLayoutShapes(
-          orientation,
-          standardIndependentAxisRange,
-          standardDependentAxisRange,
-          extendedIndependentAxisRange,
-          extendedDependentAxisRange,
-          axisTruncationConfig
-        );
+    const truncatedAxisHighlighting: Partial<Shape>[] | undefined =
+      useMemo(() => {
+        if (data.series.length > 0) {
+          const filteredTruncationLayoutShapes = truncationLayoutShapes(
+            orientation,
+            standardIndependentAxisRange,
+            standardDependentAxisRange,
+            extendedIndependentAxisRange,
+            extendedDependentAxisRange,
+            axisTruncationConfig
+          );
 
-        return filteredTruncationLayoutShapes;
-      } else {
-        return [];
-      }
-    }, [
-      standardIndependentAxisRange,
-      standardDependentAxisRange,
-      extendedIndependentAxisRange,
-      extendedDependentAxisRange,
-      orientation,
-      data.series,
-      axisTruncationConfig,
-    ]);
+          return filteredTruncationLayoutShapes;
+        } else {
+          return [];
+        }
+      }, [
+        standardIndependentAxisRange,
+        standardDependentAxisRange,
+        extendedIndependentAxisRange,
+        extendedDependentAxisRange,
+        orientation,
+        data.series,
+        axisTruncationConfig,
+      ]);
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       type: dependentAxisLogScale ? 'log' : 'linear',
