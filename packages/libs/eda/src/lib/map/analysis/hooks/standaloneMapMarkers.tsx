@@ -312,6 +312,7 @@ export function useStandaloneMapMarkers(
     }, 0);
 
   // calculate minPos, max and sum for chart marker dependent axis
+  // assumes the value is a count! (so never negative)
   const { valueMax, valueMinPos, valueSum } = useMemo(
     () =>
       markerData.value
@@ -325,15 +326,15 @@ export function useStandaloneMapMarkers(
                   (valueMinPos == null || elem.value < valueMinPos)
                     ? elem.value
                     : valueMinPos,
-                valueSum: valueSum + elem.value,
+                valueSum: (valueSum ?? 0) + elem.value,
               }),
               {
                 valueMax: 0,
                 valueMinPos: undefined as number | undefined,
-                valueSum: 0,
+                valueSum: undefined as number | undefined,
               }
             )
-        : { valueMax: 0, valueMinPos: undefined, valueSum: 0 },
+        : { valueMax: undefined, valueMinPos: undefined, valueSum: undefined },
     [markerData]
   );
 
@@ -411,22 +412,13 @@ export function useStandaloneMapMarkers(
             ? DonutMarker
             : ChartMarker;
 
-        const count = entityCount;
-        // TO DO: resurrect this...
-        //          overlayData != null
-        //            ? markerType == null || markerType === 'pie'
-        //              ? // pies always show sum of legend checked items (donutData is already filtered on checkboxes)
-        //                donutData.reduce((sum, item) => (sum = sum + item.value), 0)
-        //              : // the bar/histogram charts always show the constant entity count
-        //                // however, if there is no data at all we can safely infer a zero
-        //
-        //                // TO DO/WARNING: for (literal) edge cases in proportion mode
-        //                // this is buggy - see explanation here
-        //                // https://github.com/VEuPathDB/web-eda/issues/1674 (the bit about viewport)
-        //                // wait for new back end before addressing it
-        //
-        //                overlayData[geoAggregateValue]?.entityCount ?? 0
-        //            : entityCount;
+        // TO DO: this will sum to 1 when we allow proportion mode
+        // maybe ask for the counts to come along site the values in the back end response
+        // (the way we did it in the old viz wasn't 100% accurate)
+        const count = reorderedData.reduce(
+          (sum, item) => (sum = sum + item.value),
+          0
+        );
 
         const formattedCount =
           MarkerComponent === ChartMarker
@@ -503,7 +495,7 @@ export function useStandaloneMapMarkers(
     markers,
     overlayVariable: overlayVariableAndEntity?.variable,
     outputEntity,
-    totalVisibleWithOverlayEntityCount: valueSum ?? totalVisibleEntityCount,
+    totalVisibleWithOverlayEntityCount: valueSum,
     totalVisibleEntityCount,
     //    vocabulary,
     legendItems,
