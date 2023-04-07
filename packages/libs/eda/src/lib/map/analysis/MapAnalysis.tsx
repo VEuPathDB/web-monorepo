@@ -258,6 +258,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const outputEntityTotalCount =
     totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
 
+  const outputEntityFilteredCount =
+    filteredCounts.value && outputEntity
+      ? filteredCounts.value[outputEntity.id]
+      : 0;
+
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
 
   const FilterChipListForHeader = () => {
@@ -493,9 +498,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 >
                   <MapHeader
                     analysisName={analysisState.analysis?.displayName}
-                    entityDisplayName={
-                      outputEntity?.displayNamePlural || 'Samples'
-                    }
+                    outputEntity={outputEntity}
                     filterList={<FilterChipListForHeader />}
                     isExpanded={mapHeaderIsExpanded}
                     siteInformation={props.siteInformationProps}
@@ -503,11 +506,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
                     studyName={studyRecord.displayName}
                     totalEntityCount={outputEntityTotalCount}
-                    totalEntityInSubsetCount={42}
+                    totalEntityInSubsetCount={outputEntityFilteredCount}
                     visibleEntityCount={
                       totalVisibleWithOverlayEntityCount ??
                       totalVisibleEntityCount
                     }
+                    overlayActive={overlayVariable != null}
                   />
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}

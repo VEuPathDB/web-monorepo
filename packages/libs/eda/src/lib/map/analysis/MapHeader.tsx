@@ -12,10 +12,12 @@ import {
   mapNavigationBorder,
   SiteInformationProps,
 } from '..';
+import { StudyEntity } from '../../core';
+import { makeEntityDisplayName } from '../../core/utils/study-metadata';
 
 export type MapNavigationProps = {
   analysisName?: string;
-  entityDisplayName: string;
+  outputEntity?: StudyEntity;
   filterList?: ReactElement;
   isExpanded: boolean;
   siteInformation: SiteInformationProps;
@@ -25,6 +27,7 @@ export type MapNavigationProps = {
   totalEntityCount: number | undefined;
   totalEntityInSubsetCount: number | undefined;
   visibleEntityCount: number | undefined;
+  overlayActive: boolean;
 };
 
 /**
@@ -35,7 +38,7 @@ export type MapNavigationProps = {
  */
 export function MapHeader({
   analysisName,
-  entityDisplayName,
+  outputEntity,
   filterList,
   isExpanded,
   siteInformation,
@@ -45,6 +48,7 @@ export function MapHeader({
   totalEntityCount = 0,
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
+  overlayActive,
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
   const { format } = new Intl.NumberFormat();
@@ -79,43 +83,64 @@ export function MapHeader({
           onAnalysisNameEdit={onAnalysisNameEdit}
         />
       </div>
-      <div
-        className={`${mapHeader('__SampleCounter')} ${
-          isExpanded ? '' : 'screenReaderOnly'
-        }`}
-      >
-        <p>{entityDisplayName}</p>
-        <LeftBracket
-          styles={{
-            // Bring closer the content of the righthand side of
-            // the bracket.
-            marginLeft: 10,
-          }}
-        />
-        <table>
-          <thead>
-            <tr>{/* <th colSpan={2}>{entityDisplayName}</th> */}</tr>
-          </thead>
-          <tbody>
-            <tr title={`There are X total samples.`}>
-              <td>All</td>
-              <td>{format(totalEntityCount)}</td>
-            </tr>
-            <tr
-              title={`You've subset all samples down to ${totalEntityInSubsetCount} entites.`}
-            >
-              <td>Subset</td>
-              <td>{format(totalEntityInSubsetCount)}</td>
-            </tr>
-            <tr
-              title={`${visibleEntityCount} samples of your subset samples visible at your current viewport.`}
-            >
-              <td>View</td>
-              <td>{format(visibleEntityCount)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      {outputEntity && (
+        <div
+          className={`${mapHeader('__SampleCounter')} ${
+            isExpanded ? '' : 'screenReaderOnly'
+          }`}
+        >
+          <p>{makeEntityDisplayName(outputEntity, true)}</p>
+          <LeftBracket
+            styles={{
+              // Bring closer the content of the righthand side of
+              // the bracket.
+              marginLeft: 10,
+            }}
+          />
+          <table>
+            <thead>
+              <tr>{/* <th colSpan={2}>{entityDisplayName}</th> */}</tr>
+            </thead>
+            <tbody>
+              <tr
+                title={`There are ${format(
+                  totalEntityCount
+                )} ${makeEntityDisplayName(
+                  outputEntity,
+                  totalEntityCount > 1
+                )} in the dataset.`}
+              >
+                <td>All</td>
+                <td>{format(totalEntityCount)}</td>
+              </tr>
+              <tr
+                title={`After filtering, there are ${format(
+                  totalEntityInSubsetCount
+                )} ${makeEntityDisplayName(
+                  outputEntity,
+                  totalEntityInSubsetCount > 1
+                )} in the subset.`}
+              >
+                <td>Subset</td>
+                <td>{format(totalEntityInSubsetCount)}</td>
+              </tr>
+              <tr
+                title={`${format(visibleEntityCount)} ${makeEntityDisplayName(
+                  outputEntity,
+                  visibleEntityCount > 1
+                )} are in the current viewport${
+                  overlayActive
+                    ? ', and have data for the painted variable'
+                    : ''
+                }.`}
+              >
+                <td>View</td>
+                <td>{format(visibleEntityCount)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
       <OpenCloseToggleButton
         isExpanded={isExpanded}
         onToggleExpand={onToggleExpand}
