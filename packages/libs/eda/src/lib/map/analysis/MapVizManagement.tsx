@@ -1,26 +1,25 @@
-import { useState, useCallback } from 'react';
 import { Close, FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
+import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { AnalysisState, Status } from '../../core';
+import { Tooltip } from '@material-ui/core';
+import { Add } from '@material-ui/icons';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { mapNavigationBorder } from '..';
+import { AnalysisState } from '../../core';
+import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
+import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { NewVisualizationPickerGrouped } from '../../core/components/visualizations/VisualizationsContainer';
-import { useAppState } from './appState';
+import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
+import { GeoConfig } from '../../core/types/geoConfig';
 import {
   Computation,
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
-import { GeoConfig } from '../../core/types/geoConfig';
-import { Add } from '@material-ui/icons';
-import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
-import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
-import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import './MapVizManagement.scss';
-import { Theme, Tooltip } from '@material-ui/core';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
-import { mapNavigationBorder } from '..';
-import { Error } from '@veupathdb/wdk-client/lib/Components';
+import { useAppState } from './appState';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -43,10 +42,10 @@ const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
 export default function MapVizManagement({
   activeVisualizationId,
   analysisState,
-  updateVisualizations,
-  setActiveVisualizationId,
-  geoConfigs,
   app,
+  geoConfigs,
+  setActiveVisualizationId,
+  updateVisualizations,
   visualizationPlugins,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
@@ -58,12 +57,13 @@ export default function MapVizManagement({
   if (!analysisState.analysis) return null;
 
   const computations = analysisState.analysis.descriptor.computations;
-
   const totalVisualizationCount = computations.reduce((count, computation) => {
     return computation.visualizations.length + count;
   }, 0);
 
   if (totalVisualizationCount === 0)
+    // When the user has no visualizations, they're presented with the Select a viz
+    // picker in addition to some explanatory text.
     return (
       <div className={mapVizManagementClassName('-NewVizPicker')}>
         <H5>Select a visualization</H5>
@@ -87,8 +87,6 @@ export default function MapVizManagement({
       <div className={mapVizManagementClassName('-VizListContainer')}>
         <div className={mapVizManagementClassName('-VizListHeaderContainer')}>
           {totalVisualizationCount > 0 && (
-            // The user is given the "Select a visualization" flow
-            // if they have no existing visualizations.
             <FloatingButton
               disabled={isVizSelectorVisible}
               themeRole="primary"
@@ -123,7 +121,7 @@ export default function MapVizManagement({
         >
           <div
             style={{
-              // Pin the button to the right of the viz picker.
+              // Pin the dismiss button to the right of the viz picker.
               alignSelf: 'flex-end',
             }}
           >
@@ -153,35 +151,19 @@ export default function MapVizManagement({
   );
 }
 
-function VizIconOrPlaceholder({ type, visualizationPlugins }: any) {
-  const colors = useVizIconColors();
-
-  const enabledPlugin = visualizationPlugins[type];
-
-  return (
-    <div style={{ width: 40 }} aria-label={type}>
-      {enabledPlugin ? (
-        <enabledPlugin.selectorIcon {...colors} />
-      ) : (
-        <PlaceholderIcon name={type} />
-      )}
-    </div>
-  );
-}
-
 type VisualizationsListProps = {
-  computations: Computation[];
   activeVisualizationId: Props['activeVisualizationId'];
+  computations: Computation[];
   setActiveVisualizationId: Props['setActiveVisualizationId'];
   updateVisualizations: Props['updateVisualizations'];
   visualizationPlugins: Props['visualizationPlugins'];
 };
 function VisualizationsList({
-  visualizationPlugins,
-  computations,
   activeVisualizationId,
+  computations,
   setActiveVisualizationId,
   updateVisualizations,
+  visualizationPlugins,
 }: VisualizationsListProps) {
   const theme = useUITheme();
   const activeVisualization = computations[0].visualizations.find(
@@ -220,12 +202,9 @@ function VisualizationsList({
                     }}
                   >
                     {
-                      <VizIconOrPlaceholder
+                      <VisualizationIconOrPlaceholder
                         type={viz.descriptor.type}
                         visualizationPlugins={visualizationPlugins}
-                        iconProps={{
-                          width: 20,
-                        }}
                       />
                     }
                     <span className={mapVizManagementClassName('-VizName')}>
@@ -289,5 +268,27 @@ function VisualizationsList({
         </li>
       ))}
     </ul>
+  );
+}
+interface VisualizationIconOrPlaceholderProps {
+  type: string;
+  visualizationPlugins: Props['visualizationPlugins'];
+}
+function VisualizationIconOrPlaceholder({
+  type,
+  visualizationPlugins,
+}: VisualizationIconOrPlaceholderProps) {
+  const colors = useVizIconColors();
+
+  const enabledPlugin = visualizationPlugins[type];
+
+  return (
+    <div style={{ width: 40 }} aria-label={type}>
+      {enabledPlugin ? (
+        <enabledPlugin.selectorIcon {...colors} />
+      ) : (
+        <PlaceholderIcon name={type} />
+      )}
+    </div>
   );
 }

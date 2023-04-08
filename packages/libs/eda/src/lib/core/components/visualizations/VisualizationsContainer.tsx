@@ -339,17 +339,17 @@ export function NewVisualizationPickerGrouped(
   const { computationId } = computation;
   return (
     <>
+      {includeHeader && (
+        <H5
+          additionalStyles={{
+            marginBottom: 10,
+          }}
+        >
+          Select a visualization
+        </H5>
+      )}
       {groupVisualizations(visualizationsOverview).map((vizGroup) => (
         <div className={cx('-GroupedPickerContainer')} key={vizGroup.groupName}>
-          {includeHeader && (
-            <H5
-              additionalStyles={{
-                marginBottom: 10,
-              }}
-            >
-              Select a visualization
-            </H5>
-          )}
           <div className={cx('-GroupedPickerEntryHeadline')}>
             <H6>{vizGroup.groupName}</H6>
             <Paragraph styleOverrides={{ margin: '5px 0' }}>
