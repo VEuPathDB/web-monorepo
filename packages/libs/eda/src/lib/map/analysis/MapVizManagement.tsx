@@ -111,7 +111,10 @@ export default function MapVizManagement({
               size="medium"
               icon={Add}
               textTransform="none"
-              onPress={() => setIsVizSelectorVisible(true)}
+              onPress={() => {
+                setActiveVisualizationId(undefined);
+                setIsVizSelectorVisible(true);
+              }}
             />
           )}
         </div>
