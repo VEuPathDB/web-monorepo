@@ -515,21 +515,17 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
       vizConfig.valueSpecConfig === 'Best fit line with raw');
 
-  // non-zero baseline for continuous overlay variable
-  const defaultOverlayMinMax = useDefaultAxisRange(
-    overlayVariable,
-    undefined,
-    undefined,
-    undefined,
-    vizConfig.dependentAxisLogScale,
-    'Full',
-    // non-zero baseline
-    true
-  );
-
   // If numeric overlay, record the min and max and make a value to color map function
-  const overlayMin: number | undefined = defaultOverlayMinMax?.min as number;
-  const overlayMax: number | undefined = defaultOverlayMinMax?.max as number;
+  // assign 0 to avoid undefined
+  const overlayMin: number | undefined =
+    overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
+      ? overlayVariable?.distributionDefaults?.rangeMin
+      : 0;
+  const overlayMax: number | undefined =
+    overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
+      ? overlayVariable?.distributionDefaults?.rangeMax
+      : 0;
+
   // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
   const maxAbsOverlay =
     Math.abs(overlayMin) > overlayMax ? Math.abs(overlayMin) : overlayMax;
@@ -545,7 +541,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ? 'sequential reversed'
         : 'divergent'
       : undefined;
-  let overlayValueToColorMapper: ((a: number) => string) | undefined;
 
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
@@ -646,6 +641,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           filteredCounts.value,
           response.completeCasesTable
         );
+
+      let overlayValueToColorMapper: ((a: number) => string) | undefined;
 
       if (
         response.scatterplot.data.every(
