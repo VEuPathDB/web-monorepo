@@ -1,12 +1,5 @@
 import { useState, useCallback } from 'react';
-import {
-  Close,
-  FloatingButton,
-  H4,
-  H5,
-  Modal,
-  Paragraph,
-} from '@veupathdb/coreui';
+import { Close, FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
 import { v4 as uuid } from 'uuid';
 
 import { AnalysisState } from '../../core';
@@ -43,7 +36,7 @@ interface Props {
   geoConfigs: GeoConfig[];
 }
 
-const MapVizManagementClassName = makeClassNameHelper('MapVizManagement');
+const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
 
 export default function MapVizManagement({
   activeVisualizationId,
@@ -58,14 +51,6 @@ export default function MapVizManagement({
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
-  const onVisualizationCreated = useCallback(
-    (visualizationId: string) => {
-      setIsVizSelectorVisible(false);
-      setActiveVisualizationId(visualizationId);
-    },
-    [setActiveVisualizationId, setIsVizSelectorVisible]
-  );
-
   const activeVisualization = computation?.visualizations.find(
     (viz) => viz.visualizationId === activeVisualizationId
   );
@@ -77,10 +62,14 @@ export default function MapVizManagement({
   }, 0);
 
   const theme = useUITheme();
+  function onVisualizationCreated(visualizationId: string) {
+    setIsVizSelectorVisible(false);
+    setActiveVisualizationId(visualizationId);
+  }
 
   if (totalVisualizationCount === 0)
     return (
-      <div className={MapVizManagementClassName('NewVizPicker')}>
+      <div className={mapVizManagementClassName('-NewVizPicker')}>
         <H5>Select a visualization</H5>
         <Paragraph>
           Pick a visualization type to get started! If you update your subset,
@@ -98,9 +87,9 @@ export default function MapVizManagement({
     );
 
   return (
-    <div className={MapVizManagementClassName()}>
-      <div className={MapVizManagementClassName('vizListContainer')}>
-        <div className={MapVizManagementClassName('vizListHeaderContainer')}>
+    <div className={mapVizManagementClassName()}>
+      <div className={mapVizManagementClassName('-VizListContainer')}>
+        <div className={mapVizManagementClassName('-VizListHeaderContainer')}>
           {totalVisualizationCount > 0 && (
             // The user is given the "Select a visualization" flow
             // if they have no existing visualizations.
@@ -121,18 +110,18 @@ export default function MapVizManagement({
         <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
           Plots ({totalVisualizationCount}):
         </H5>
-        <ul className={MapVizManagementClassName('vizList')}>
+        <ul className={mapVizManagementClassName('-VizList')}>
           {computations?.map((computation) => (
             <li key={computation.computationId}>
-              <ul className={MapVizManagementClassName('vizList')}>
+              <ul className={mapVizManagementClassName('-VizList')}>
                 {computation.visualizations.map((viz) => {
                   const vizIsActive =
                     activeVisualizationId === viz.visualizationId;
 
                   return (
                     <li
-                      className={MapVizManagementClassName(
-                        'vizButtonItem',
+                      className={mapVizManagementClassName(
+                        '-VizButtonItem',
                         vizIsActive ? 'active' : ''
                       )}
                       style={{
@@ -143,7 +132,7 @@ export default function MapVizManagement({
                       key={viz.visualizationId}
                     >
                       <button
-                        className={MapVizManagementClassName('vizButton')}
+                        className={mapVizManagementClassName('-VizButton')}
                         onClick={() => {
                           setActiveVisualizationId(
                             viz.visualizationId === activeVisualizationId
@@ -161,12 +150,12 @@ export default function MapVizManagement({
                             }}
                           />
                         }
-                        <span className={MapVizManagementClassName('vizName')}>
+                        <span className={mapVizManagementClassName('-VizName')}>
                           {viz.displayName}
                         </span>
                       </button>
                       <div
-                        className={MapVizManagementClassName(
+                        className={mapVizManagementClassName(
                           '__copyAndDeleteButtons',
                           vizIsActive ? 'active' : ''
                         )}
@@ -231,27 +220,11 @@ export default function MapVizManagement({
           style={{
             borderLeft: mapNavigationBorder,
           }}
-          className={MapVizManagementClassName('NewVizPicker')}
+          className={mapVizManagementClassName('-NewVizPicker')}
         >
-          {/* <Modal
-            themeRole="primary"
-            title="Select a visualization"
-            styleOverrides={{
-              content: {
-                padding: {
-                  top: 20,
-                  right: 30,
-                  bottom: 20,
-                  left: 30,
-                },
-              },
-            }}
-            visible={isVizSelectorVisible}
-            toggleVisible={setIsVizSelectorVisible}
-            includeCloseButton
-          > */}
           <div
             style={{
+              // Pin the button to the right of the viz picker.
               alignSelf: 'flex-end',
             }}
           >
@@ -275,7 +248,6 @@ export default function MapVizManagement({
               onVisualizationCreated={onVisualizationCreated}
             />
           </div>
-          {/* </Modal> */}
         </div>
       )}
     </div>
