@@ -2,10 +2,11 @@ import { useState, useCallback } from 'react';
 import { Close, FloatingButton, H5, Paragraph } from '@veupathdb/coreui';
 import { v4 as uuid } from 'uuid';
 
-import { AnalysisState } from '../../core';
+import { AnalysisState, Status } from '../../core';
 import { NewVisualizationPickerGrouped } from '../../core/components/visualizations/VisualizationsContainer';
 import { useAppState } from './appState';
 import {
+  Computation,
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
@@ -16,9 +17,10 @@ import { useVizIconColors } from '../../core/components/visualizations/implement
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import './MapVizManagement.scss';
-import { Tooltip } from '@material-ui/core';
+import { Theme, Tooltip } from '@material-ui/core';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { mapNavigationBorder } from '..';
+import { Error } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -48,24 +50,18 @@ export default function MapVizManagement({
   visualizationPlugins,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
-
-  const computation = analysisState.analysis?.descriptor.computations[0];
-
-  const activeVisualization = computation?.visualizations.find(
-    (viz) => viz.visualizationId === activeVisualizationId
-  );
-
-  const computations = analysisState.analysis?.descriptor.computations;
-
-  const totalVisualizationCount = (computations || []).reduce((acc, curr) => {
-    return acc + curr.visualizations.length;
-  }, 0);
-
-  const theme = useUITheme();
   function onVisualizationCreated(visualizationId: string) {
     setIsVizSelectorVisible(false);
     setActiveVisualizationId(visualizationId);
   }
+
+  if (!analysisState.analysis) return null;
+
+  const computations = analysisState.analysis.descriptor.computations;
+
+  const totalVisualizationCount = computations.reduce((count, computation) => {
+    return computation.visualizations.length + count;
+  }, 0);
 
   if (totalVisualizationCount === 0)
     return (
@@ -76,7 +72,7 @@ export default function MapVizManagement({
           your visualizations will update when you reopen them.
         </Paragraph>
         <NewVisualizationPickerGrouped
-          computation={computation!}
+          computation={computations[0]}
           updateVisualizations={updateVisualizations}
           visualizationPlugins={visualizationPlugins}
           visualizationsOverview={app.visualizations}
@@ -110,110 +106,13 @@ export default function MapVizManagement({
         <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
           Plots ({totalVisualizationCount}):
         </H5>
-        <ul className={mapVizManagementClassName('-VizList')}>
-          {computations?.map((computation) => (
-            <li key={computation.computationId}>
-              <ul className={mapVizManagementClassName('-VizList')}>
-                {computation.visualizations.map((viz) => {
-                  const vizIsActive =
-                    activeVisualizationId === viz.visualizationId;
-
-                  return (
-                    <li
-                      className={mapVizManagementClassName(
-                        '-VizButtonItem',
-                        vizIsActive ? 'active' : ''
-                      )}
-                      style={{
-                        background: vizIsActive
-                          ? theme?.palette.primary.hue[100]
-                          : 'inherit',
-                      }}
-                      key={viz.visualizationId}
-                    >
-                      <button
-                        className={mapVizManagementClassName('-VizButton')}
-                        onClick={() => {
-                          setActiveVisualizationId(
-                            viz.visualizationId === activeVisualizationId
-                              ? undefined
-                              : viz.visualizationId
-                          );
-                        }}
-                      >
-                        {
-                          <VizIconOrPlaceholder
-                            type={viz.descriptor.type}
-                            visualizationPlugins={visualizationPlugins}
-                            iconProps={{
-                              width: 20,
-                            }}
-                          />
-                        }
-                        <span className={mapVizManagementClassName('-VizName')}>
-                          {viz.displayName}
-                        </span>
-                      </button>
-                      <div
-                        className={mapVizManagementClassName(
-                          '__copyAndDeleteButtons',
-                          vizIsActive ? 'active' : ''
-                        )}
-                      >
-                        <Tooltip title="Delete visualization">
-                          <button
-                            aria-label={`Delete ${
-                              activeVisualization?.displayName ||
-                              'visualization.'
-                            }`}
-                            type="button"
-                            className="link"
-                            onClick={() => {
-                              updateVisualizations((visualizations) =>
-                                visualizations.filter(
-                                  (v) =>
-                                    v.visualizationId !== viz.visualizationId
-                                )
-                              );
-                              setActiveVisualizationId(undefined);
-                            }}
-                          >
-                            <i aria-hidden className="fa fa-trash"></i>
-                          </button>
-                        </Tooltip>
-                        <Tooltip title="Copy visualization">
-                          <button
-                            aria-label={`Create a copy of ${
-                              viz.displayName || 'visualization.'
-                            }`}
-                            type="button"
-                            className="link"
-                            onClick={() => {
-                              const vizCopyId = uuid();
-                              updateVisualizations((visualizations) =>
-                                visualizations.concat({
-                                  ...viz,
-                                  visualizationId: vizCopyId,
-                                  displayName:
-                                    'Copy of ' +
-                                    (viz.displayName ||
-                                      'unnamed visualization'),
-                                })
-                              );
-                              setActiveVisualizationId(vizCopyId);
-                            }}
-                          >
-                            <i aria-hidden className="fa fa-clone"></i>
-                          </button>
-                        </Tooltip>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </li>
-          ))}
-        </ul>
+        <VisualizationsList
+          activeVisualizationId={activeVisualizationId}
+          computations={computations}
+          setActiveVisualizationId={setActiveVisualizationId}
+          updateVisualizations={updateVisualizations}
+          visualizationPlugins={visualizationPlugins}
+        />
       </div>
       {isVizSelectorVisible && totalVisualizationCount > 0 && (
         <div
@@ -240,7 +139,7 @@ export default function MapVizManagement({
           <div>
             <NewVisualizationPickerGrouped
               includeHeader
-              computation={computation!}
+              computation={computations[0]}
               updateVisualizations={updateVisualizations}
               visualizationPlugins={visualizationPlugins}
               visualizationsOverview={app.visualizations}
@@ -267,5 +166,128 @@ function VizIconOrPlaceholder({ type, visualizationPlugins }: any) {
         <PlaceholderIcon name={type} />
       )}
     </div>
+  );
+}
+
+type VisualizationsListProps = {
+  computations: Computation[];
+  activeVisualizationId: Props['activeVisualizationId'];
+  setActiveVisualizationId: Props['setActiveVisualizationId'];
+  updateVisualizations: Props['updateVisualizations'];
+  visualizationPlugins: Props['visualizationPlugins'];
+};
+function VisualizationsList({
+  visualizationPlugins,
+  computations,
+  activeVisualizationId,
+  setActiveVisualizationId,
+  updateVisualizations,
+}: VisualizationsListProps) {
+  const theme = useUITheme();
+  const activeVisualization = computations[0].visualizations.find(
+    (viz) => viz.visualizationId === activeVisualizationId
+  );
+
+  return (
+    <ul className={mapVizManagementClassName('-VizList')}>
+      {computations.map((computation) => (
+        <li key={computation.computationId}>
+          <ul className={mapVizManagementClassName('-VizList')}>
+            {computation.visualizations.map((viz) => {
+              const vizIsActive = activeVisualizationId === viz.visualizationId;
+
+              return (
+                <li
+                  className={mapVizManagementClassName(
+                    '-VizButtonItem',
+                    vizIsActive ? 'active' : ''
+                  )}
+                  style={{
+                    background: vizIsActive
+                      ? theme?.palette.primary.hue[100]
+                      : 'inherit',
+                  }}
+                  key={viz.visualizationId}
+                >
+                  <button
+                    className={mapVizManagementClassName('-VizButton')}
+                    onClick={() => {
+                      setActiveVisualizationId(
+                        viz.visualizationId === activeVisualizationId
+                          ? undefined
+                          : viz.visualizationId
+                      );
+                    }}
+                  >
+                    {
+                      <VizIconOrPlaceholder
+                        type={viz.descriptor.type}
+                        visualizationPlugins={visualizationPlugins}
+                        iconProps={{
+                          width: 20,
+                        }}
+                      />
+                    }
+                    <span className={mapVizManagementClassName('-VizName')}>
+                      {viz.displayName}
+                    </span>
+                  </button>
+                  <div
+                    className={mapVizManagementClassName(
+                      '__copyAndDeleteButtons',
+                      vizIsActive ? 'active' : ''
+                    )}
+                  >
+                    <Tooltip title="Delete visualization">
+                      <button
+                        aria-label={`Delete ${
+                          activeVisualization?.displayName || 'visualization.'
+                        }`}
+                        type="button"
+                        className="link"
+                        onClick={() => {
+                          updateVisualizations((visualizations) =>
+                            visualizations.filter(
+                              (v) => v.visualizationId !== viz.visualizationId
+                            )
+                          );
+                          setActiveVisualizationId(undefined);
+                        }}
+                      >
+                        <i aria-hidden className="fa fa-trash"></i>
+                      </button>
+                    </Tooltip>
+                    <Tooltip title="Copy visualization">
+                      <button
+                        aria-label={`Create a copy of ${
+                          viz.displayName || 'visualization.'
+                        }`}
+                        type="button"
+                        className="link"
+                        onClick={() => {
+                          const vizCopyId = uuid();
+                          updateVisualizations((visualizations) =>
+                            visualizations.concat({
+                              ...viz,
+                              visualizationId: vizCopyId,
+                              displayName:
+                                'Copy of ' +
+                                (viz.displayName || 'unnamed visualization'),
+                            })
+                          );
+                          setActiveVisualizationId(vizCopyId);
+                        }}
+                      >
+                        <i aria-hidden className="fa fa-clone"></i>
+                      </button>
+                    </Tooltip>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </li>
+      ))}
+    </ul>
   );
 }
