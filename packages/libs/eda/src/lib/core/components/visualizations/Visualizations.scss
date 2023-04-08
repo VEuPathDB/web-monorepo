@@ -124,9 +124,6 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    button {
-      margin-right: 15px;
-    }
     font-size: 0.75em;
     margin-top: 15px;
   }
@@ -141,6 +138,9 @@
   &-PickerEntry {
     &__disabled {
       opacity: 0.75;
+    }
+    &__marginRight {
+      margin-right: 15px;
     }
     display: flex;
     flex-direction: column;

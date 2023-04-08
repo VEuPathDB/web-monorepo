@@ -71,6 +71,8 @@
     align-items: start;
     width: 400px;
     padding: 5px 10px;
+    overflow: scroll;
+    height: 100%;
   }
   &vizListContainer {
     width: 300px;

@@ -365,7 +365,11 @@ export function NewVisualizationPickerGrouped(
                   vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
               return (
                 <div
-                  className={cx('-PickerEntry', disabled && 'disabled')}
+                  className={cx(
+                    '-PickerEntry',
+                    disabled && 'disabled',
+                    'marginRight'
+                  )}
                   key={`vizType${vizOverview.name}`}
                 >
                   <Tooltip title={<>{vizOverview.description}</>}>
