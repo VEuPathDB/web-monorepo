@@ -5,7 +5,7 @@
   overflow: scroll;
   padding-bottom: 10px;
 
-  &vizButton {
+  &-VizButton {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -21,11 +21,11 @@
       padding: 1rem;
     }
   }
-  &vizList {
+  &-VizList {
     margin: 0;
     list-style: none;
   }
-  &vizButtonItem {
+  &-VizButtonItem {
     padding-left: 10px;
     display: flex;
     border-right: 1px solid transparent;
@@ -33,7 +33,7 @@
       font-weight: bold;
     }
   }
-  &vizButtonItem:hover &__copyAndDeleteButtons {
+  &-VizButtonItem:hover &__copyAndDeleteButtons {
     opacity: 1;
   }
 
@@ -56,14 +56,14 @@
     }
   }
 
-  &vizName {
+  &-VizName {
     max-width: 225px;
     overflow: scroll;
     text-align: left;
     margin-left: 10px;
     font-size: 15px;
   }
-  &NewVizPicker {
+  &-NewVizPicker {
     // This constraint will leverage the picker's
     // flex wrapping.
     display: flex;
@@ -74,10 +74,10 @@
     overflow: scroll;
     height: 100%;
   }
-  &vizListContainer {
+  &-VizListContainer {
     width: 300px;
   }
-  &vizListHeaderContainer {
+  &-VizListHeaderContainer {
     display: flex;
     align-items: center;
     justify-content: flex-end;
