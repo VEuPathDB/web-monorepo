@@ -99,7 +99,7 @@ export default function CurrentRelease({
         <Paragraph
           color={colors.gray[600]}
           styleOverrides={{ margin: 0 }}
-          textSize="small"
+          textSize="medium"
         >
           <span style={{ fontWeight: 500 }}>Date: </span>
           {release.date}
@@ -107,7 +107,7 @@ export default function CurrentRelease({
         <Paragraph
           color={colors.gray[600]}
           styleOverrides={{ margin: 0 }}
-          textSize="small"
+          textSize="medium"
         >
           <span style={{ fontWeight: 500 }}>Change Log: </span>
           {release.description}

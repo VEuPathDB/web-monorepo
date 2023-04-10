@@ -3,7 +3,11 @@ import React, { Suspense } from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { RecoilRoot } from 'recoil';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { ResultTableSummaryViewPlugin } from '@veupathdb/wdk-client/lib/Plugins';
+import {
+  BlastSummaryViewPlugin,
+  GenomeSummaryViewPlugin,
+  ResultTableSummaryViewPlugin,
+} from '@veupathdb/wdk-client/lib/Plugins';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
@@ -12,9 +16,6 @@ import {
   isOrganismParam,
 } from '@veupathdb/preferred-organisms/lib/components/OrganismParam';
 import { PreferredOrganismsConfigController } from '@veupathdb/preferred-organisms/lib/controllers/PreferredOrganismsConfigController';
-
-import BlastSummaryViewController from '@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController';
-import * as blastSummaryViewStoreModule from '@veupathdb/blast-summary-view/lib/StoreModules/BlastSummaryViewStoreModule';
 
 import Header from './Header';
 import Home from './Home';
@@ -69,11 +70,12 @@ initialize({
   ],
   componentWrappers: {
     SiteHeader: () => Header,
-    Page: (DefaultComponent: React.ComponentType) => (props: any) => (
-      <RecoilRoot>
-        <DefaultComponent {...props} />
-      </RecoilRoot>
-    ),
+    Page: (DefaultComponent: React.ComponentType) => (props: any) =>
+      (
+        <RecoilRoot>
+          <DefaultComponent {...props} />
+        </RecoilRoot>
+      ),
   },
   pluginConfig: [
     {
@@ -93,8 +95,13 @@ initialize({
     },
     {
       type: 'summaryView',
+      name: 'genomic-view',
+      component: GenomeSummaryViewPlugin,
+    },
+    {
+      type: 'summaryView',
       name: 'blast-view',
-      component: BlastSummaryViewController,
+      component: BlastSummaryViewPlugin,
     },
     {
       type: 'questionFormParameter',
@@ -102,10 +109,6 @@ initialize({
       component: OrganismParam,
     },
   ] as ClientPluginRegistryEntry<any>[],
-  wrapStoreModules: (storeModules: any) => ({
-    ...storeModules,
-    [blastSummaryViewStoreModule.key]: blastSummaryViewStoreModule,
-  }),
   wrapWdkService,
   endpoint,
 } as any);
