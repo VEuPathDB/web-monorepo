@@ -8,8 +8,8 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
-import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import { useBlastApi } from '../hooks/api';
 import {
@@ -23,13 +23,9 @@ import {
   ApiResultError,
   ApiResultSuccess,
   ErrorDetails,
-  IoBlastFormat,
-  LongJobResponse,
-  LongReportResponse,
+  multiQueryReportJson,
   MultiQueryReportJson,
-  Target,
 } from '../utils/ServiceTypes';
-import { BlastApi } from '../utils/api';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
 import { TargetMetadataByDataType } from '../utils/targetTypes';
@@ -39,6 +35,13 @@ import { BlastRequestError } from './BlastRequestError';
 import { ResultContainer } from './ResultContainer';
 
 import './BlastWorkspaceResult.scss';
+import { BlastReportClient } from '../utils/api/BlastReportClient';
+import { IOBlastOutFormat } from '../utils/api/report/blast/blast-config-format';
+import { IOReportJobDetails } from '../utils/api/report/types/ep-job-by-id';
+import { BlastQueryClient } from '../utils/api/BlastQueryClient';
+import { IOQueryJobDetails } from '../utils/api/query/types/ep-jobs-by-id';
+import { IOJobTarget } from '../utils/api/query/types/common';
+import { ioTransformer } from '@veupathdb/http-utils';
 
 interface Props {
   jobId: string;
@@ -52,107 +55,165 @@ export function BlastWorkspaceResult(props: Props) {
 
   const blastApi = useBlastApi();
 
-  const queryResult = usePromise(
-    () => blastApi.fetchQuery(props.jobId),
+  const [queryResultState, setQueryResultState] = useState<
+    ApiResult<string, ErrorDetails>
+  >();
+
+  useEffect(
+    () =>
+      Task.fromPromise(() => blastApi.queryAPI.fetchJobQuery(props.jobId)).run(
+        setQueryResultState
+      ),
     [blastApi, props.jobId]
   );
 
-  const jobResult = usePromise(
-    () => makeJobPollingPromise(blastApi, props.jobId),
-    [blastApi, props.jobId]
-  );
+  const [jobResultState, setJobResultState] = useState<QueryJobPollingState>({
+    status: 'job-pending',
+    jobId: props.jobId,
+  });
 
-  const reportResult = usePromise(
-    async () =>
-      jobResult.value?.status !== 'job-completed'
-        ? undefined
-        : makeReportPollingPromise(blastApi, props.jobId, 'single-file-json'),
-    [blastApi, jobResult.value?.status]
-  );
-
-  const multiQueryReportResult = usePromise(
-    async () =>
-      reportResult.value?.status !== 'report-completed'
-        ? undefined
-        : blastApi.fetchSingleFileJsonReport(
-            reportResult.value.report.reportID
-          ),
-    [blastApi, reportResult.value]
-  );
-
-  const individualQueriesResult = usePromise(async () => {
-    if (jobResult.value?.status !== 'job-completed') {
-      return undefined;
+  useEffect(() => {
+    if (
+      jobResultState.status !== 'job-pending' &&
+      jobResultState.jobId === props.jobId
+    ) {
+      return;
     }
 
-    const childJobIds = jobResult.value.job?.childJobs?.map(({ id }) => id);
+    return Task.fromPromise(() =>
+      makeQueryJobPollingPromise(blastApi.queryAPI, props.jobId)
+    ).run(setJobResultState);
+  }, [blastApi, props.jobId, jobResultState]);
 
-    const subJobIds =
-      childJobIds == null || childJobIds.length === 0
-        ? [jobResult.value.job.id]
-        : childJobIds;
+  const [
+    reportResultState,
+    setReportResultState,
+  ] = useState<ReportJobPollingState>({
+    status: 'report-pending',
+    jobId: props.jobId,
+  });
 
-    const queryResults = await Promise.all(
-      subJobIds.map((id) =>
-        blastApi.fetchQuery(id).then((queryResult) =>
-          queryResult.status === 'error'
-            ? queryResult
-            : {
-                status: 'ok',
-                value: {
-                  jobId: id,
-                  query: queryResult.value,
-                },
-              }
-        )
+  useEffect(() => {
+    if (
+      jobResultState.status !== 'job-completed' ||
+      (reportResultState.status !== 'report-pending' &&
+        reportResultState.jobId === props.jobId)
+    ) {
+      return;
+    }
+
+    return Task.fromPromise(() =>
+      makeReportPollingPromise(
+        blastApi.reportAPI,
+        props.jobId,
+        'single-file-blast-json'
       )
-    );
+    ).run(setReportResultState);
+  }, [blastApi, props.jobId, jobResultState, reportResultState]);
 
-    const invalidQueryResult = queryResults.find(
-      ({ status }) => status === 'error'
-    );
+  const [multiQueryReportState, setMultiQueryReportState] = useState<
+    ApiResult<MultiQueryReportJson, ErrorDetails>
+  >();
 
-    return invalidQueryResult != null
-      ? (invalidQueryResult as ApiResultError<ErrorDetails>)
-      : ({
-          status: 'ok',
-          value: (
-            queryResults as {
-              status: 'ok';
-              value: IndividualQuery;
-            }[]
-          ).map((queryResult) => queryResult.value),
-        } as ApiResultSuccess<IndividualQuery[]>);
-  }, [jobResult.value]);
+  useEffect(
+    () =>
+      Task.fromPromise(async () =>
+        reportResultState?.status !== 'report-completed'
+          ? undefined
+          : blastApi.reportAPI.fetchJobFileAs(
+              reportResultState.report.reportJobID,
+              'report.json',
+              (res) =>
+                ioTransformer(multiQueryReportJson)(JSON.parse(res as any))
+            )
+      ).run(setMultiQueryReportState),
+    [blastApi, reportResultState]
+  );
 
-  return jobResult.value != null &&
-    jobResult.value.status === 'request-error' ? (
-    <BlastRequestError errorDetails={jobResult.value.details} />
-  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your job." />
-  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={queryResult.value.details} />
-  ) : reportResult.value != null &&
-    reportResult.value.status === 'request-error' ? (
-    <BlastRequestError errorDetails={reportResult.value.details} />
-  ) : reportResult.value != null &&
-    reportResult.value.status === 'queueing-error' ? (
+  const [
+    individualQueriesResultState,
+    setIndividualQueriesResultState,
+  ] = useState<ApiResult<IndividualQuery[], ErrorDetails>>();
+
+  useEffect(
+    () =>
+      Task.fromPromise(async () => {
+        if (jobResultState.status !== 'job-completed') {
+          return undefined;
+        }
+
+        const childJobIds = jobResultState.job?.subJobs;
+        const subJobIds =
+          childJobIds == null || childJobIds.length === 0
+            ? [jobResultState.job.queryJobID]
+            : childJobIds;
+
+        const queryResults = await Promise.all(
+          subJobIds.map((id) =>
+            blastApi.queryAPI.fetchJobQuery(id).then((queryResult) =>
+              queryResult.status === 'error'
+                ? queryResult
+                : {
+                    status: 'ok',
+                    value: {
+                      jobId: id,
+                      query: queryResult.value,
+                    },
+                  }
+            )
+          )
+        );
+
+        const invalidQueryResult = queryResults.find(
+          ({ status }) => status === 'error'
+        );
+
+        return invalidQueryResult != null
+          ? (invalidQueryResult as ApiResultError<ErrorDetails>)
+          : ({
+              status: 'ok',
+              value: (queryResults as {
+                status: 'ok';
+                value: IndividualQuery;
+              }[]).map((queryResult) => queryResult.value),
+            } as ApiResultSuccess<IndividualQuery[]>);
+      }).run(setIndividualQueriesResultState),
+    [blastApi, jobResultState]
+  );
+
+  return jobResultState.status === 'request-error' ? (
+    <BlastRequestError errorDetails={jobResultState.details} />
+  ) : jobResultState.status === 'queueing-error' ? (
+    <ErrorPage
+      message={
+        <code>
+          {jobResultState.errorMessage ?? 'We were unable to queue your job.'}
+        </code>
+      }
+    />
+  ) : queryResultState != null && queryResultState.status === 'error' ? (
+    <BlastRequestError errorDetails={queryResultState.details} />
+  ) : reportResultState != null &&
+    reportResultState.status === 'request-error' ? (
+    <BlastRequestError errorDetails={reportResultState.details} />
+  ) : reportResultState != null &&
+    reportResultState.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your combined results report." />
-  ) : individualQueriesResult.value != null &&
-    individualQueriesResult.value.status === 'error' ? (
-    <BlastRequestError errorDetails={individualQueriesResult.value.details} />
-  ) : queryResult.value == null ||
-    jobResult.value == null ||
-    reportResult.value == null ||
-    individualQueriesResult.value == null ? (
+  ) : individualQueriesResultState != null &&
+    individualQueriesResultState.status === 'error' ? (
+    <BlastRequestError errorDetails={individualQueriesResultState.details} />
+  ) : queryResultState == null ||
+    jobResultState.status === 'job-pending' ||
+    reportResultState.status === 'report-pending' ||
+    individualQueriesResultState == null ? (
     <LoadingBlastResult {...props} />
   ) : (
     <CompleteBlastResult
       {...props}
-      individualQueries={individualQueriesResult.value.value}
-      jobDetails={jobResult.value.job}
-      query={queryResult.value.value}
-      multiQueryReportResult={multiQueryReportResult}
+      individualQueries={individualQueriesResultState.value}
+      jobDetails={jobResultState.job}
+      query={queryResultState.value}
+      multiQueryReportResult={multiQueryReportState}
     />
   );
 }
@@ -182,14 +243,14 @@ function LoadingBlastResult(props: Props) {
   );
 }
 
-export interface MultiQueryReportResult {
-  value?: ApiResult<MultiQueryReportJson, ErrorDetails>;
-  loading: boolean;
-}
+export type MultiQueryReportResult = ApiResult<
+  MultiQueryReportJson,
+  ErrorDetails
+>;
 
 interface CompleteBlastResultProps extends Props {
   individualQueries: IndividualQuery[];
-  jobDetails: LongJobResponse;
+  jobDetails: IOQueryJobDetails;
   multiQueryReportResult?: MultiQueryReportResult;
   query: string;
 }
@@ -201,10 +262,11 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
 
   const queryCount = props.individualQueries.length;
 
-  const targets = props.jobDetails.targets;
+  const targets = props.jobDetails.jobConfig.targets;
 
-  const { targetTypeTerm, wdkRecordType } =
-    useTargetTypeTermAndWdkRecordType(targets);
+  const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
+    targets
+  );
 
   const organismToFilenameMapsResult = useBlastCompatibleWdkService(
     async (wdkService) =>
@@ -252,8 +314,8 @@ function CompleteBlastResult(props: CompleteBlastResultProps) {
 
 interface BlastSummaryProps {
   filesToOrganisms: Record<string, string>;
-  jobDetails: LongJobResponse;
-  targets: Target[];
+  jobDetails: IOQueryJobDetails;
+  targets: IOJobTarget[];
   multiQueryReportResult?: MultiQueryReportResult;
   query: string;
   individualQueries: IndividualQuery[];
@@ -276,14 +338,16 @@ function BlastSummary({
   const queryCount = individualQueries.length;
 
   const databases = useMemo(
-    () => targets.map(({ target }) => target),
+    () => targets.map(({ targetDisplayName: target }) => target),
     [targets]
   );
 
   const databasesStr = useMemo(() => databases.join(', '), [databases]);
 
-  const { hitTypeDisplayName, hitTypeDisplayNamePlural } =
-    useHitTypeDisplayNames(wdkRecordType, targetTypeTerm);
+  const {
+    hitTypeDisplayName,
+    hitTypeDisplayNamePlural,
+  } = useHitTypeDisplayNames(wdkRecordType, targetTypeTerm);
 
   const multiQueryParamValues = useMemo(
     () =>
@@ -297,10 +361,12 @@ function BlastSummary({
     [targets, filesToOrganisms, jobDetails, targetTypeTerm, query]
   );
 
-  const [lastSelectedIndividualResult, setLastSelectedIndividualResult] =
-    useState(
-      selectedResult.type === 'combined' ? 1 : selectedResult.resultIndex
-    );
+  const [
+    lastSelectedIndividualResult,
+    setLastSelectedIndividualResult,
+  ] = useState(
+    selectedResult.type === 'combined' ? 1 : selectedResult.resultIndex
+  );
 
   useEffect(() => {
     if (selectedResult.type === 'individual') {
@@ -318,7 +384,7 @@ function BlastSummary({
         <div className="ConfigDetails">
           <span className="InlineHeader">Job Id:</span>
           <span className="JobId">
-            {jobDetails.id}
+            {jobDetails.queryJobID}
             {multiQueryParamValues && (
               <Link
                 className="EditJob"
@@ -333,18 +399,28 @@ function BlastSummary({
               </Link>
             )}
           </span>
-          {jobDetails.description != null && (
+          {jobDetails.userMeta?.summary != null && (
             <Fragment>
               <span className="InlineHeader">Description:</span>
-              <span>{jobDetails.description}</span>
+              <span>{jobDetails.userMeta.summary}</span>
             </Fragment>
           )}
           <span className="InlineHeader">Program:</span>
           <span>
-            {jobDetails.config.tool === 'tblastx' ||
-            jobDetails.config.task == null
-              ? jobDetails.config.tool
-              : jobDetails.config.task}
+            {
+              /* Try and show the specific task that was selected, if possible.
+                If not possible, fall back to just showing the tool.
+                (Big "or" block as Most blastConfig types don't have a 'task'
+                property) */
+              jobDetails.blastConfig.tool === 'deltablast' ||
+              jobDetails.blastConfig.tool === 'psiblast' ||
+              jobDetails.blastConfig.tool === 'rpsblast' ||
+              jobDetails.blastConfig.tool === 'rpstblastn' ||
+              jobDetails.blastConfig.tool === 'tblastx' ||
+              jobDetails.blastConfig.task == null
+                ? jobDetails.blastConfig.tool
+                : jobDetails.blastConfig.task
+            }
           </span>
           <span className="InlineHeader">Target Type:</span>
           <span>{hitTypeDisplayName}</span>
@@ -357,7 +433,7 @@ function BlastSummary({
       {queryCount > 1 && (
         <WorkspaceNavigation
           heading={null}
-          routeBase={`/workspace/blast/result/${jobDetails.id}`}
+          routeBase={`/workspace/blast/result/${jobDetails.queryJobID}`}
           items={[
             {
               display: 'Combined Result',
@@ -379,7 +455,7 @@ function BlastSummary({
         filesToOrganisms={filesToOrganisms}
         hitTypeDisplayName={hitTypeDisplayName}
         hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
-        jobId={jobDetails.id}
+        jobId={jobDetails.queryJobID}
         lastSelectedIndividualResult={lastSelectedIndividualResult}
         multiQueryParamValues={multiQueryParamValues}
         individualQueries={individualQueries}
@@ -391,115 +467,171 @@ function BlastSummary({
   );
 }
 
-type JobPollingResult = JobPollingSuccess | JobPollingError;
+type QueryJobPollingState =
+  | QueryJobPollingInProgress
+  | QueryJobPollingSuccess
+  | QueryJobPollingQueueingError
+  | QueryJobPollingRequestError;
 
-interface JobPollingSuccess {
-  status: 'job-completed' | 'queueing-error';
-  job: LongJobResponse;
+interface JobPollingBase {
+  jobId: string;
 }
 
-interface JobPollingError {
+interface QueryJobPollingInProgress extends JobPollingBase {
+  status: 'job-pending';
+}
+
+interface QueryJobPollingSuccess extends JobPollingBase {
+  status: 'job-completed';
+  job: IOQueryJobDetails;
+}
+
+interface QueryJobPollingQueueingError extends JobPollingBase {
+  status: 'queueing-error';
+  job: IOQueryJobDetails;
+  errorMessage?: string;
+}
+
+interface QueryJobPollingRequestError extends JobPollingBase {
   status: 'request-error';
   details: ErrorDetails;
 }
 
-async function makeJobPollingPromise(
-  blastApi: BlastApi,
+async function makeQueryJobPollingPromise(
+  blastApi: BlastQueryClient,
   jobId: string
-): Promise<JobPollingResult> {
+): Promise<QueryJobPollingState> {
   const jobRequest = await blastApi.fetchJob(jobId);
 
   if (jobRequest.status === 'ok') {
     const job = jobRequest.value;
 
-    if (job.status === 'completed' || job.status === 'errored') {
+    if (job.status === 'complete') {
       return {
-        status: job.status === 'completed' ? 'job-completed' : 'queueing-error',
+        status: 'job-completed',
+        jobId,
         job,
       };
     }
 
+    if (job.status === 'failed') {
+      const queueingErrorMessageRequest = await blastApi.fetchJobStdErr(
+        job.queryJobID
+      );
+
+      return {
+        status: 'queueing-error',
+        jobId,
+        job,
+        errorMessage:
+          queueingErrorMessageRequest.status === 'ok'
+            ? queueingErrorMessageRequest.value
+            : undefined,
+      };
+    }
+
     if (job.status === 'expired') {
-      await blastApi.rerunJob(job.id);
+      await blastApi.rerunJob(job.queryJobID);
     }
 
     await waitForNextPoll();
 
-    return makeJobPollingPromise(blastApi, jobId);
+    return {
+      status: 'job-pending',
+      jobId: job.queryJobID,
+    };
   } else {
     return {
       ...jobRequest,
+      jobId,
       status: 'request-error',
     };
   }
 }
 
-type ReportPollingResult = ReportPollingSuccess | ReportPollingError;
+export type ReportJobPollingState =
+  | ReportJobPollingInProgress
+  | ReportJobPollingSuccess
+  | ReportJobPollingError;
 
-interface ReportPollingSuccess {
-  status: 'report-completed' | 'queueing-error';
-  report: LongReportResponse;
+interface ReportPollingBase {
+  jobId: string;
+  reportId?: string;
 }
 
-interface ReportPollingError {
+interface ReportJobPollingInProgress extends ReportPollingBase {
+  status: 'report-pending';
+}
+
+interface ReportJobPollingSuccess extends ReportPollingBase {
+  status: 'report-completed' | 'queueing-error';
+  report: IOReportJobDetails;
+}
+
+interface ReportJobPollingError extends ReportPollingBase {
   status: 'request-error';
   details: ErrorDetails;
 }
 
 export async function makeReportPollingPromise(
-  blastApi: BlastApi,
-  jobId: string,
-  format: IoBlastFormat,
+  blastApi: BlastReportClient,
+  queryJobID: string,
+  format: IOBlastOutFormat,
   reportId?: string
-): Promise<ReportPollingResult> {
+): Promise<ReportJobPollingState> {
   if (reportId == null) {
-    const reportRequest = await blastApi.createReport(jobId, {
-      format,
+    const reportRequest = await blastApi.createJob({
+      queryJobID,
+      blastConfig: { formatType: format },
+      addToUserCollection: true,
     });
 
     if (reportRequest.status === 'ok') {
       return makeReportPollingPromise(
         blastApi,
-        jobId,
-        'single-file-json',
-        reportRequest.value.reportID
+        queryJobID,
+        format,
+        reportRequest.value.reportJobID
       );
     } else {
       return {
         ...reportRequest,
+        jobId: queryJobID,
         status: 'request-error',
       };
     }
   }
 
-  const reportRequest = await blastApi.fetchReport(reportId);
+  const reportRequest = await blastApi.fetchJob(reportId);
 
   if (reportRequest.status === 'ok') {
     const report = reportRequest.value;
 
-    if (report.status === 'completed' || report.status === 'errored') {
+    if (report.status === 'complete' || report.status === 'failed') {
       return {
         status:
-          report.status === 'completed' ? 'report-completed' : 'queueing-error',
+          report.status === 'complete' ? 'report-completed' : 'queueing-error',
+        jobId: queryJobID,
         report,
       };
     }
 
     if (report.status === 'expired') {
-      await blastApi.rerunReport(report.reportID);
+      await blastApi.rerunJob(report.reportJobID);
     }
 
     await waitForNextPoll();
 
-    return makeReportPollingPromise(
-      blastApi,
-      jobId,
-      'single-file-json',
-      report.reportID
-    );
+    return {
+      status: 'report-pending',
+      jobId: queryJobID,
+      reportId,
+    };
   } else {
     return {
       ...reportRequest,
+      jobId: queryJobID,
+      reportId,
       status: 'request-error',
     };
   }
