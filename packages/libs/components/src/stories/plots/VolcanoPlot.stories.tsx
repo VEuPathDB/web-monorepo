@@ -18,66 +18,60 @@ export default {
 
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
-    series: {
-      foldChange: string[];
-      pValue: string[];
-      adjustedPValue: string[];
-      pointId: string[];
-    };
+    foldChange: string[];
+    pValue: string[];
+    adjustedPValue: string[];
+    pointId: string[];
   };
 }
 
 // Let's make some fake data!
 const dataSetVolcano: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    series: {
-      foldChange: [
-        '2',
-        '3',
-        '0.5',
-        '0.8',
-        '1',
-        '0.5',
-        '0.1',
-        '4',
-        '0.2',
-        '0.01',
-        '0.02',
-        '0.03',
-      ],
-      pValue: [
-        '0.001',
-        '0.0001',
-        '0.01',
-        '0.001',
-        '2',
-        '1',
-        '7',
-        '1',
-        '4',
-        '0.001',
-        '0.0001',
-        '0.002',
-      ],
-      adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
-      pointId: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
-    },
+    foldChange: [
+      '2',
+      '3',
+      '0.5',
+      '0.8',
+      '1',
+      '0.5',
+      '0.1',
+      '4',
+      '0.2',
+      '0.01',
+      '0.02',
+      '0.03',
+    ],
+    pValue: [
+      '0.001',
+      '0.0001',
+      '0.01',
+      '0.001',
+      '2',
+      '1',
+      '7',
+      '1',
+      '4',
+      '0.001',
+      '0.0001',
+      '0.002',
+    ],
+    adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
+    pointId: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
   },
 };
 
 const nPoints = 300;
 const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    series: {
-      foldChange: range(1, nPoints).map((p) =>
-        String(Math.abs(getNormallyDistributedRandomNumber(0, 5)))
-      ),
-      pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
-      adjustedPValue: range(1, nPoints).map((p) =>
-        String(nPoints * Math.random())
-      ),
-      pointId: range(1, nPoints).map((p) => String(p)),
-    },
+    foldChange: range(1, nPoints).map((p) =>
+      String(Math.abs(getNormallyDistributedRandomNumber(0, 5)))
+    ),
+    pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
+    adjustedPValue: range(1, nPoints).map((p) =>
+      String(nPoints * Math.random())
+    ),
+    pointId: range(1, nPoints).map((p) => String(p)),
   },
 };
 
@@ -95,7 +89,7 @@ const Template: Story<TemplateProps> = (args) => {
   const comparisonLabels = ['up in group a', 'up in group b']; // not yet used
 
   const volcanoPlotProps: VolcanoPlotProps = {
-    data: args.data.volcanoplot.series,
+    data: args.data.volcanoplot,
     significanceThreshold: args.significanceThreshold,
     log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,

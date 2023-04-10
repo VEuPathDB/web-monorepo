@@ -107,7 +107,6 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     yMin = 0;
     yMax = 0;
   }
-  console.log(yMin);
 
   /**
    * Turn the data (array of arrays) into data points (array of points)
@@ -172,7 +171,6 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     stroke: '#dddddd',
     strokeWidth: 0.5,
   };
-  console.log(yMin);
 
   return (
     // From docs " For correct tooltip positioning, it is important to wrap your
