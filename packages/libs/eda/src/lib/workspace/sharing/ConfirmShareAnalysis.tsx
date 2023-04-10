@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 // Components
 import { FloatingButton, H5, Warning, Copy, colors } from '@veupathdb/coreui';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -41,17 +39,11 @@ export default function ConfirmShareAnalysis({
     },
     [studyId, showContextForOwnedUserDataset]
   );
-  console.log(userStudy);
 
-  const isLoading = useMemo(
-    () => showContextForOwnedUserDataset && !userStudy,
-    [showContextForOwnedUserDataset, userStudy]
-  );
-  const showUrl = useMemo(() => {
-    if (isLoading) return false;
-    if (userStudy && !userStudy.sharedWith?.length) return false;
-    return true;
-  }, [isLoading, userStudy]);
+  const isLoading = showContextForOwnedUserDataset && !userStudy;
+  const showUrl =
+    !showContextForOwnedUserDataset ||
+    (userStudy && Boolean(userStudy.sharedWith?.length));
 
   return (
     <div
@@ -105,47 +97,52 @@ export default function ConfirmShareAnalysis({
                       >
                         This is a User Study.
                       </span>{' '}
-                      You must first{' '}
-                      <a
-                        href={sharingDatasetUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        share the study
-                      </a>{' '}
-                      before the recipient can view your analysis.
+                      {!showUrl && (
+                        <span>
+                          Our records indicate that you have not shared this
+                          study before.{' '}
+                        </span>
+                      )}
+                      <span>
+                        You must <a href={sharingDatasetUrl}>share the study</a>{' '}
+                        with whomever you share this analysis before the
+                        recipient can view the analysis.
+                      </span>
                     </>
                   ) : (
                     'Anyone with the link below will be able to get a copy of this analysis.'
                   )}
                 </p>
-
-                <p
-                  style={{
-                    fontSize: '.9rem',
-                    color: gray[600],
-                    maxWidth: 500,
-                  }}
-                >
-                  When a recipient clicks the link, they receive a <em>copy</em>{' '}
-                  of the <em>latest version</em>.
-                </p>
-                <p
-                  style={{
-                    fontSize: '.9rem',
-                    color: theme?.palette.primary.hue[600] ?? gray[600],
-                    maxWidth: 500,
-                    fontWeight: 'bold',
-                    marginTop: 0,
-                  }}
-                >
-                  If you update or delete your analysis, preexisting copies will
-                  not be affected.
-                </p>
+                {showUrl && (
+                  <>
+                    <p
+                      style={{
+                        fontSize: '.9rem',
+                        color: gray[600],
+                        maxWidth: 500,
+                      }}
+                    >
+                      When a recipient clicks the link, they receive a{' '}
+                      <em>copy</em> of the <em>latest version</em>.
+                    </p>
+                    <p
+                      style={{
+                        fontSize: '.9rem',
+                        color: theme?.palette.primary.hue[600] ?? gray[600],
+                        maxWidth: 500,
+                        fontWeight: 'bold',
+                        marginTop: 0,
+                      }}
+                    >
+                      If you update or delete your analysis, preexisting copies
+                      will not be affected.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
-          {showUrl ? (
+          {showUrl && (
             <div style={{ flex: 1 }}>
               <p
                 style={{
@@ -196,11 +193,6 @@ export default function ConfirmShareAnalysis({
                 <p style={{ margin: 0, flex: 1 }}>{sharingUrl}</p>
               </div>
             </div>
-          ) : (
-            <>
-              This study has not been shared before. Please share the study in
-              order to generate a Sharing URL.
-            </>
           )}
         </>
       )}
