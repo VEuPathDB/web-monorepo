@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { uniq } from 'lodash';
 import Path from 'path';
 import {
@@ -169,31 +169,16 @@ export function AnalysisPanel({
     ? 'approved'
     : 'not-approved';
 
-  const isDatasetAUserStudy = useMemo(() => {
-    if (permissionsValue.loading || hideSavedAnalysisButtons) return false;
-    if (permissionsValue.permissions.perDataset[studyId]?.isUserStudy)
-      return true;
-    return false;
-  }, [permissionsValue, hideSavedAnalysisButtons, studyId]);
-
-  const isCurrentUserStudyManager = useMemo(() => {
-    if (permissionsValue.loading || hideSavedAnalysisButtons) return false;
-    if (permissionsValue.permissions.perDataset[studyId]?.isManager)
-      return true;
-    return false;
-  }, [permissionsValue, hideSavedAnalysisButtons, studyId]);
-
-  const shouldDisableShareAnalysis = useMemo(() => {
-    if (permissionsValue.loading || hideSavedAnalysisButtons) return true;
-    if (isDatasetAUserStudy && !isCurrentUserStudyManager) return true;
-    return false;
-  }, [
-    permissionsValue,
-    hideSavedAnalysisButtons,
-    studyId,
-    isDatasetAUserStudy,
-    isCurrentUserStudyManager,
-  ]);
+  const isDatasetAUserStudy = Boolean(
+    !permissionsValue.loading &&
+      !hideSavedAnalysisButtons &&
+      permissionsValue.permissions.perDataset[studyId]?.isUserStudy
+  );
+  const isCurrentUserStudyManager = Boolean(
+    !permissionsValue.loading &&
+      !hideSavedAnalysisButtons &&
+      permissionsValue.permissions.perDataset[studyId]?.isManager
+  );
 
   const previousAnalysisId = usePrevious(analysisId);
 
@@ -299,7 +284,6 @@ export function AnalysisPanel({
                 ? undefined
                 : () => setSharingModalVisible(true)
             }
-            shouldDisableSharing={shouldDisableShareAnalysis}
           />
           <Route
             path={[

@@ -13,8 +13,6 @@ import {
   Trash,
 } from '@veupathdb/coreui/dist/components/icons';
 import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
-import { Tooltip } from '@material-ui/core';
 
 interface Props {
   analysis: Analysis | NewAnalysis;
@@ -25,7 +23,6 @@ interface Props {
   onFilterIconClick?: () => void;
   globalFiltersDialogOpen?: boolean;
   displaySharingModal?: () => void;
-  shouldDisableSharing?: boolean;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -37,7 +34,6 @@ export function AnalysisSummary(props: Props) {
     onFilterIconClick,
     globalFiltersDialogOpen,
     displaySharingModal,
-    shouldDisableSharing = false,
   } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -102,40 +98,17 @@ export function AnalysisSummary(props: Props) {
         )}
       </div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', flex: 1 }}>
-        {displaySharingModal &&
-          (shouldDisableSharing ? (
-            /**
-             * I opted for the MUI Tooltip since its default styling better matches the tooltips used in the adjacent
-             * Copy and Trash buttons. While the FilledButton accepts a tooltip prop, the tooltip does not render
-             * when in the button is in the disabled state. Therefore, I needed to wrap the button in a span and use
-             * the MUI Tooltip component.
-             */
-            <Tooltip title="Only owners of a user study can share analyses">
-              <span>
-                <FilledButton
-                  disabled={shouldDisableSharing}
-                  text="Share Analysis"
-                  onPress={displaySharingModal}
-                  icon={Share}
-                  themeRole="primary"
-                  styleOverrides={{
-                    container: { textTransform: 'none', marginRight: 10 },
-                    disabled: { textColor: gray[200] },
-                  }}
-                />
-              </span>
-            </Tooltip>
-          ) : (
-            <FilledButton
-              text="Share Analysis"
-              onPress={displaySharingModal}
-              icon={Share}
-              themeRole="primary"
-              styleOverrides={{
-                container: { textTransform: 'none', marginRight: 10 },
-              }}
-            />
-          ))}
+        {displaySharingModal && (
+          <FilledButton
+            text="Share Analysis"
+            onPress={displaySharingModal}
+            icon={Share}
+            themeRole="primary"
+            styleOverrides={{
+              container: { textTransform: 'none', marginRight: 10 },
+            }}
+          />
+        )}
         {handleCopy && (
           <FloatingButton
             ariaLabel="Copy Analysis"
