@@ -48,6 +48,7 @@ export function MapSideNavigation({
         borderTop: 'none',
         // height: 'calc(100% - 150px)',
         height: '100%',
+        overflow: 'scroll',
         minHeight: 125,
         position: 'relative',
         transition: 'left 0.1s ease',
