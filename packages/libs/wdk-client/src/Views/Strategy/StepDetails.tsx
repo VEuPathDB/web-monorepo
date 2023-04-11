@@ -251,16 +251,47 @@ function formatRangeParameterValue(value: string) {
   }
 }
 
+const CUTOFF_LENGTH = 500;
+
 function formatEnumParameterValue(parameter: EnumParam, value: string) {
   const valueSet = new Set(
     isMultiPick(parameter) ? toMultiValueArray(value) : [value]
   );
   const termDisplayPairs = makeTermDisplayPairs(parameter.vocabulary);
-
-  return termDisplayPairs
+  const finalTermDisplayPairsString = termDisplayPairs
     .filter(([term]) => valueSet.has(term))
     .map(([, display]) => display)
     .join(', ');
+
+  const [showMore, setShowMore] = useState<boolean>(false);
+
+  return finalTermDisplayPairsString.length > CUTOFF_LENGTH ? (
+    <CollapsibleSection
+      isCollapsed={!showMore}
+      onCollapsedChange={() => setShowMore(!showMore)}
+      headerContent={
+        <>
+          {!showMore ? (
+            <span>
+              {finalTermDisplayPairsString.slice(0, CUTOFF_LENGTH)}...{' '}
+              <span className="link">Show more</span>
+            </span>
+          ) : (
+            <div
+              style={{
+                height: '2em',
+              }}
+            >
+              <span className="link">Show less</span>
+            </div>
+          )}
+        </>
+      }
+      children={finalTermDisplayPairsString}
+    />
+  ) : (
+    finalTermDisplayPairsString
+  );
 }
 
 const makeTermDisplayPairs = memoize((vocabulary: EnumParam['vocabulary']): [
