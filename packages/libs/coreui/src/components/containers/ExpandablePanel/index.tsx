@@ -102,9 +102,7 @@ export default function ExpandablePanel({
       case 'object':
         return Object.entries(subTitle).map((entry, index) => (
           <p css={subtitleStyle} key={`SubtitleItem-${index}`}>
-            <span css={{ fontWeight: 600, textTransform: 'capitalize' }}>
-              {entry[0]}:{' '}
-            </span>
+            <span css={{ fontWeight: 600 }}>{entry[0]}: </span>
             {entry[1]}
           </p>
         ));
@@ -116,7 +114,7 @@ export default function ExpandablePanel({
 
   return (
     <div
-      role='region'
+      role="region"
       aria-label={title}
       css={{
         outlineWidth: componentStyle[styleState].border?.width,
@@ -128,7 +126,7 @@ export default function ExpandablePanel({
       }}
     >
       <div
-        role='button'
+        role="button"
         tabIndex={0}
         css={{
           cursor: 'pointer',
@@ -178,7 +176,7 @@ export default function ExpandablePanel({
         {renderSubtitle()}
       </div>
       <div
-        key='content'
+        key="content"
         css={{
           overflow: internalComponentState === 'open' ? 'initial' : 'hidden',
           height: internalComponentState === 'open' ? undefined : 0,

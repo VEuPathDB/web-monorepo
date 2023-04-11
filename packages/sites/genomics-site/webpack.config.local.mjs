@@ -20,6 +20,7 @@ export default configure({
       [process.env.WDK_SERVICE_ENDPOINT]: process.env.WDK_SERVICE_URL,
       [process.env.SITE_SEARCH_SERVICE_ENDPOINT]: process.env.SITE_SEARCH_SERVICE_URL,
       [process.env.EDA_SERVICE_ENDPOINT]: process.env.EDA_SERVICE_URL,
+      [process.env.MULTI_BLAST_ENDPOINT]: process.env.MULTI_BLAST_URL,
       [process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_ENDPOINT]: process.env.USER_DATASETS_WORKSPACE_IMPORT_SERVICE_URL,
       [process.env.DOCUMENTS_ENDPOINT]: process.env.DOCUMENTS_URL,
       [process.env.ASSETS_ENDPOINT]: process.env.ASSETS_URL,

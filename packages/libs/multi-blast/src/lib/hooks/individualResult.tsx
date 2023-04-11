@@ -22,7 +22,7 @@ import {
 import { Props as ResultContainerProps } from '../components/ResultContainer';
 import { IndividualQuery } from '../utils/CommonTypes';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
-import { ParamNames } from '../utils/params';
+import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from '../utils/params';
 
 export type AnswerSpecResultTypeConfig =
   | { status: 'loading' }
@@ -107,7 +107,7 @@ export function useIndividualResultProps({
                   ...baseAnswerSpec.value.searchConfig,
                   parameters: {
                     ...baseAnswerSpec.value.searchConfig.parameters,
-                    [ParamNames.BlastQuerySequence]: querySequence.query,
+                    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: querySequence.query,
                   },
                 },
               },
@@ -276,8 +276,8 @@ function useIndividualQuerySequence(
   individualQueries: IndividualQuery[],
   resultIndex: number
 ) {
-  return useMemo(() => individualQueries[resultIndex - 1], [
-    individualQueries,
-    resultIndex,
-  ]);
+  return useMemo(
+    () => individualQueries[resultIndex - 1],
+    [individualQueries, resultIndex]
+  );
 }
