@@ -47,6 +47,7 @@ import {
   BarChartSharp,
   EditLocation,
   FormatAlignLeft,
+  InfoOutlined,
   Share,
 } from '@material-ui/icons';
 import { ComputationPlugin } from '../../core/components/computations/Types';
@@ -399,6 +400,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: 'Notes',
         icon: <FormatAlignLeft />,
+        renderWithApp: sideNavigationRenderPlaceholder,
+      },
+      {
+        labelText: 'View Study Details',
+        icon: <InfoOutlined />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
     ];
