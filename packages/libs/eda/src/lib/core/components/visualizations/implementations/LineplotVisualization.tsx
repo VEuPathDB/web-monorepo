@@ -148,7 +148,6 @@ const modalPlotContainerStyles = {
 
 type LinePlotDataSeriesWithType = LinePlotDataSeries & {
   seriesType?: 'standard' | 'zeroOverZero';
-  showInLegend?: boolean;
 };
 
 type LinePlotDataWithType = Omit<LinePlotData, 'series'> & {
@@ -786,38 +785,36 @@ function LineplotViz(props: VisualizationProps<Options>) {
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
         (legendData
           .map((dataItem: LinePlotDataSeriesWithType, index: number) => {
-            return dataItem.showInLegend
-              ? {
-                  label: dataItem.name ?? '',
-                  italicizeLabel: dataItem.seriesType === 'zeroOverZero',
-                  // maing marker info appropriately
-                  marker:
-                    dataItem.seriesType === 'zeroOverZero'
-                      ? 'circle'
-                      : 'lineWithCircleFilled',
-                  // set marker colors appropriately
-                  markerColor:
-                    dataItem?.name === 'No data'
-                      ? '#E8E8E8'
-                      : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
-                  // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
-                  hasData: !isFaceted(allData)
-                    ? dataItem.y != null && dataItem.y.length > 0
-                      ? true
-                      : false
-                    : allData.facets
-                        .map((facet) => facet.data)
-                        .filter((data): data is LinePlotData => data != null)
-                        .map(
-                          (data) =>
-                            data.series[index]?.y != null &&
-                            data.series[index].y.length > 0
-                        )
-                        .includes(true),
-                  group: 1,
-                  rank: 1,
-                }
-              : null;
+            return {
+              label: dataItem.name ?? '',
+              italicizeLabel: dataItem.seriesType === 'zeroOverZero',
+              // maing marker info appropriately
+              marker:
+                dataItem.seriesType === 'zeroOverZero'
+                  ? 'circle'
+                  : 'lineWithCircleFilled',
+              // set marker colors appropriately
+              markerColor:
+                dataItem?.name === 'No data'
+                  ? '#E8E8E8'
+                  : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
+              // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
+              hasData: !isFaceted(allData)
+                ? dataItem.y != null && dataItem.y.length > 0
+                  ? true
+                  : false
+                : allData.facets
+                    .map((facet) => facet.data)
+                    .filter((data): data is LinePlotData => data != null)
+                    .map(
+                      (data) =>
+                        data.series[index]?.y != null &&
+                        data.series[index].y.length > 0
+                    )
+                    .includes(true),
+              group: 1,
+              rank: 1,
+            };
           })
           .filter((legendItem) => legendItem !== null) as LegendItemsProps[])
       : [];
@@ -2323,23 +2320,17 @@ function processInputData(
                 el.overlayVariableDetails.value,
                 overlayVariable
               )
-            : zeroSeriesAdded
-            ? ''
             : 'Data') +
           (el.seriesType === 'zeroOverZero'
-            ? (el.overlayVariableDetails ? ', ' : '') +
-              'Undefined Y (denominator of 0)'
+            ? ', Undefined Y (denominator of 0)'
             : ''),
-        showInLegend:
-          el.overlayVariableDetails !== undefined ||
-          (zeroSeriesAdded && index > 0),
         mode: modeValue,
         fill: fillAreaValue,
         opacity: 0.7,
         marker: {
           color: markerColor(index, el),
           // Can make this an array to specify symbols for specific points
-          symbol: markerSymbol(index, el) as any,
+          symbol: markerSymbol(index, el),
         },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color: markerColor(index, el), shape: 'linear' },
@@ -2477,11 +2468,6 @@ function reorderResponseLineplotData(
   }
 }
 
-type ArrayTypesGeneral = Omit<
-  PickByType<LineplotResponse['lineplot']['data'][number], any[]>,
-  'facetVariableDetails'
->;
-
 interface ZeroOverZeroData {
   zeroSeriesAdded: boolean;
   zeroSplitLineplotData: (LineplotResponse['lineplot']['data'][number] & {
@@ -2522,19 +2508,39 @@ function processZeroOverZeroData(
       ? lineplotData.length - 1
       : lineplotData.length;
 
+    // Keys of LinePlotData that are arrays but not tuples
+    // The size of these arrays SHOULD be identical, indicating the number of
+    // data points in the series
+    const arrayKeys = [
+      'seriesX',
+      'seriesY',
+      'binStart',
+      'binEnd',
+      'errorBars',
+      'binSampleSize',
+    ] as const;
+
+    // All other keys
+    const otherKeys = [
+      'overlayVariableDetails',
+      'facetVariableDetails',
+    ] as const;
+
     for (let seriesIndex = 0; seriesIndex < stopIndex; seriesIndex++) {
       const series = lineplotData[seriesIndex];
 
-      // which are the arrays in the series object?
-      // (assumption: the lengths of all arrays are all the same)
-      const arrayKeys = Object.keys(series)
-        .filter(
-          (_): _ is keyof LineplotResponse['lineplot']['data'][number] => true
+      Object.keys(series).forEach((key) => {
+        // The odd key typecasting here is necessary because of a quirk of the
+        // Array.includes function type
+        if (
+          !arrayKeys.includes(key as typeof arrayKeys[number]) &&
+          !otherKeys.includes(key as typeof otherKeys[number])
         )
-        .filter(
-          (key): key is keyof ArrayTypesGeneral =>
-            Array.isArray(series[key]) && key !== 'facetVariableDetails'
-        );
+          throw new Error(
+            'Unexpected key in linePlotData series. If this is a new valid key, add it to one of the two key set  in the code where this error is thrown.'
+          );
+      });
+
       const binSampleSize = series.binSampleSize as {
         numeratorN: number;
         denominatorN: number;
@@ -2551,6 +2557,7 @@ function processZeroOverZeroData(
 
       const nonZeroSeries = makeEmptySeries('standard');
       const zeroSeries = makeEmptySeries('zeroOverZero');
+      delete zeroSeries['errorBars'];
 
       for (
         let dataPointIndex = 0;
@@ -2569,9 +2576,13 @@ function processZeroOverZeroData(
         }
 
         arrayKeys.forEach((key) => {
-          const array = series[key]!;
-          const value = array[dataPointIndex]!;
-          destinationSeries[key]!.push(value as any);
+          const array = series[key];
+          const destinationArray = destinationSeries[key];
+
+          if (array !== undefined && destinationArray !== undefined) {
+            const value = array[dataPointIndex];
+            (destinationArray as typeof value[]).push(value);
+          }
         });
       }
 
