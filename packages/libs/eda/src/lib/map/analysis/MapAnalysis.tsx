@@ -43,7 +43,12 @@ import MapVizManagement from './MapVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
-import { BarChartSharp, EditLocation, Save, Share } from '@material-ui/icons';
+import {
+  BarChartSharp,
+  EditLocation,
+  FormatAlignLeft,
+  Share,
+} from '@material-ui/icons';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { LayoutOptions } from '../../core/components/layouts/types';
@@ -392,8 +397,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Save',
-        icon: <Save />,
+        labelText: 'Notes',
+        icon: <FormatAlignLeft />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
     ];
