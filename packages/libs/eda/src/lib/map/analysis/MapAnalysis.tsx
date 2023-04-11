@@ -46,8 +46,8 @@ import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import {
   BarChartSharp,
   EditLocation,
-  FormatAlignLeft,
   InfoOutlined,
+  Notes,
   Share,
 } from '@material-ui/icons';
 import { ComputationPlugin } from '../../core/components/computations/Types';
@@ -398,7 +398,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
       {
         labelText: 'Notes',
-        icon: <FormatAlignLeft />,
+        icon: <Notes />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
