@@ -71,7 +71,6 @@ import {
   Visualization,
 } from '../../core/types/visualization';
 import DraggableVisualization from './DraggableVisualization';
-import { useTheme } from '@material-ui/core';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 const mapStyle: React.CSSProperties = {
