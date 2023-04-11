@@ -40,9 +40,9 @@ export function ResultContainer(props: Props) {
   const individualResultProps = useIndividualResultProps({
     ...props,
     combinedResult:
-      props.multiQueryReportResult?.status !== 'ok'
+      props.multiQueryReportResult?.value?.status !== 'ok'
         ? undefined
-        : props.multiQueryReportResult.value,
+        : props.multiQueryReportResult.value.value,
   });
 
   return (
@@ -67,6 +67,7 @@ function CombinedResultContainer(
   }
 ) {
   return props.multiQueryReportResult == null ||
+    props.multiQueryReportResult.value == null ||
     props.projectUrls == null ||
     props.organismToProject == null ? (
     <Loading>
@@ -75,7 +76,7 @@ function CombinedResultContainer(
   ) : (
     <LoadedCombinedResultContainer
       {...props}
-      combinedResult={props.multiQueryReportResult}
+      combinedResult={props.multiQueryReportResult.value}
       organismToProject={props.organismToProject}
       projectUrls={props.projectUrls}
     />
