@@ -36,7 +36,17 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
+import {
+  at,
+  groupBy,
+  mapValues,
+  size,
+  head,
+  map,
+  values,
+  keys,
+  isEqual,
+} from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -189,20 +199,20 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   );
 
   // set the state of truncation warning message
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
+      // check yAxisVariable is changed
+      const keepDependentAxisSettings = isEqual(
+        selectedVariables.yAxisVariable,
+        vizConfig.yAxisVariable
+      );
+
+      const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
+        selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -210,8 +220,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        dependentAxisRange: undefined,
-        dependentAxisValueSpec: 'Full',
+        dependentAxisRange: keepDependentAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
+        dependentAxisValueSpec: keepDependentAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : 'Full',
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');

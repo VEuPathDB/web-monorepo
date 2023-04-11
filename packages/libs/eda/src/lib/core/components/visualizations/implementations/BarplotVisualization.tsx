@@ -55,7 +55,16 @@ import {
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
-import { groupBy, mapValues, size, map, head, values, keys } from 'lodash';
+import {
+  groupBy,
+  mapValues,
+  size,
+  map,
+  head,
+  values,
+  keys,
+  isEqual,
+} from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
@@ -189,28 +198,35 @@ function BarplotViz(props: VisualizationProps<Options>) {
   );
 
   // set the state of truncation warning message here
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
+      // check xAxisVariable is changed
+      const keepMainAxisSettings = isEqual(
+        selectedVariables.xAxisVariable,
+        vizConfig.xAxisVariable
+      );
+
+      const { xAxisVariable, overlayVariable, facetVariable } =
+        selectedVariables;
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        dependentAxisRange: undefined,
-        dependentAxisLogScale: false,
-        dependentAxisValueSpec: 'Full',
+        dependentAxisRange: keepMainAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
+        dependentAxisLogScale: keepMainAxisSettings
+          ? vizConfig.dependentAxisLogScale
+          : false,
+        dependentAxisValueSpec: keepMainAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : 'Full',
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
@@ -258,9 +274,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
   );
 
   // for custom legend: vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange = onChangeHandlerFactory<string[]>(
-    'checkedLegendItems'
-  );
+  const onCheckedLegendItemsChange =
+    onChangeHandlerFactory<string[]>('checkedLegendItems');
 
   const providedOverlayVariableDescriptor = useMemo(
     () => options?.getOverlayVariable?.(computation.descriptor.configuration),
@@ -504,9 +519,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
   ) as NumberRange;
 
   // axis range control
-  const handleDependentAxisRangeChange = onChangeHandlerFactory<NumberRange>(
-    'dependentAxisRange'
-  );
+  const handleDependentAxisRangeChange =
+    onChangeHandlerFactory<NumberRange>('dependentAxisRange');
 
   const handleDependentAxisSettingsReset = useCallback(() => {
     updateVizConfig({

@@ -334,14 +334,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.denominatorValues.length > 0;
 
   // axis range control: set the state of truncation warning message
-  const [
-    truncatedIndependentAxisWarning,
-    setTruncatedIndependentAxisWarning,
-  ] = useState<string>('');
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
@@ -349,7 +345,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
-      const keepValues = isEqual(
+      const keepDependentAxisSettings = isEqual(
         selectedVariables.yAxisVariable,
         vizConfig.yAxisVariable
       );
@@ -379,8 +375,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
         independentAxisRange: keepIndependentAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
-        dependentAxisRange: undefined,
-        ...(keepValues
+        dependentAxisRange: keepDependentAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
+        ...(keepDependentAxisSettings
           ? {}
           : {
               numeratorValues: undefined,
@@ -388,16 +386,19 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 yAxisVar != null ? yAxisVar.vocabulary : undefined,
             }),
         independentAxisLogScale: false,
-        dependentAxisLogScale: false,
+        dependentAxisLogScale: keepDependentAxisSettings
+          ? vizConfig.dependentAxisLogScale
+          : undefined,
         independentAxisValueSpec: keepIndependentAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
-        dependentAxisValueSpec:
-          yAxisVar != null
-            ? isSuitableCategoricalVariable(yAxisVar)
-              ? 'Full'
-              : 'Auto-zoom'
-            : 'Full',
+        dependentAxisValueSpec: keepDependentAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : yAxisVar != null
+          ? isSuitableCategoricalVariable(yAxisVar)
+            ? 'Full'
+            : 'Auto-zoom'
+          : 'Full',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -528,12 +529,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
     false
   );
 
-  const onNumeratorValuesChange = onChangeHandlerFactory<string[]>(
-    'numeratorValues'
-  );
-  const onDenominatorValuesChange = onChangeHandlerFactory<string[]>(
-    'denominatorValues'
-  );
+  const onNumeratorValuesChange =
+    onChangeHandlerFactory<string[]>('numeratorValues');
+  const onDenominatorValuesChange =
+    onChangeHandlerFactory<string[]>('denominatorValues');
 
   const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
     'independentAxisLogScale',
@@ -1852,35 +1851,28 @@ export function lineplotResponseToData(
   );
 
   const processedData = mapValues(facetGroupedResponseData, (group) => {
-    const {
-      dataSetProcess,
-      yMin,
-      yMinPos,
-      yMax,
-      xMin,
-      xMinPos,
-      xMax,
-    } = processInputData(
-      reorderResponseLineplotData(
-        // reorder by overlay var within each facet
-        group,
+    const { dataSetProcess, yMin, yMinPos, yMax, xMin, xMinPos, xMax } =
+      processInputData(
+        reorderResponseLineplotData(
+          // reorder by overlay var within each facet
+          group,
+          categoricalMode,
+          xAxisVocabulary,
+          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+          overlayVariable
+        ),
         categoricalMode,
-        xAxisVocabulary,
-        vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-        overlayVariable
-      ),
-      categoricalMode,
-      vizType,
-      modeValue,
-      independentValueType,
-      dependentValueType,
-      showMissingOverlay,
-      hasMissingData,
-      response.lineplot.config.binSpec,
-      response.lineplot.config.binSlider,
-      overlayVariable,
-      colorPaletteOverride
-    );
+        vizType,
+        modeValue,
+        independentValueType,
+        dependentValueType,
+        showMissingOverlay,
+        hasMissingData,
+        response.lineplot.config.binSpec,
+        response.lineplot.config.binSlider,
+        overlayVariable,
+        colorPaletteOverride
+      );
 
     return {
       dataSetProcess: dataSetProcess,
