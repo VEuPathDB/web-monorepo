@@ -1547,14 +1547,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   const legendTitle = variableDisplayWithUnit(overlayVariable);
+  const isZeroOverZeroSeries = (series: LinePlotDataSeriesWithType) =>
+    series.seriesType === 'zeroOverZero';
   const zeroSeriesAdded = !isFaceted(data.value?.dataSetProcess)
-    ? data.value?.dataSetProcess.series.some(
-        (series) => series.seriesType === 'zeroOverZero'
-      )
+    ? data.value?.dataSetProcess.series.some(isZeroOverZeroSeries)
     : data.value?.dataSetProcess.facets.some((facet) =>
-        facet.data?.series.some(
-          (series) => series.seriesType === 'zeroOverZero'
-        )
+        facet.data?.series.some(isZeroOverZeroSeries)
       );
   const showOverlayLegend =
     legendItems.length > 0 &&
