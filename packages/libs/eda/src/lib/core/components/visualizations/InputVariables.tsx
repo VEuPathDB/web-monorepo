@@ -161,40 +161,38 @@ export function InputVariables(props: Props) {
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
-  const disabledVariablesByInputName: Record<
-    string,
-    VariableDescriptor[]
-  > = useMemo(
-    () =>
-      inputs.reduce((map, input) => {
-        // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
-        const filteredConstraints =
-          constraints &&
-          filterConstraints(
-            selectedVariables,
+  const disabledVariablesByInputName: Record<string, VariableDescriptor[]> =
+    useMemo(
+      () =>
+        inputs.reduce((map, input) => {
+          // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
+          const filteredConstraints =
+            constraints &&
+            filterConstraints(
+              selectedVariables,
+              entities,
+              constraints,
+              input.name
+            );
+
+          map[input.name] = disabledVariablesForInput(
+            input.name,
             entities,
-            constraints,
-            input.name
+            filteredConstraints,
+            dataElementDependencyOrder,
+            selectedVariables
           );
 
-        map[input.name] = disabledVariablesForInput(
-          input.name,
-          entities,
-          filteredConstraints,
-          dataElementDependencyOrder,
-          selectedVariables
-        );
-
-        return map;
-      }, {} as Record<string, VariableDescriptor[]>),
-    [
-      dataElementDependencyOrder,
-      entities,
-      constraints,
-      inputs,
-      selectedVariables,
-    ]
-  );
+          return map;
+        }, {} as Record<string, VariableDescriptor[]>),
+      [
+        dataElementDependencyOrder,
+        entities,
+        constraints,
+        inputs,
+        selectedVariables,
+      ]
+    );
 
   const hasMultipleStratificationValues =
     inputs.filter((input) => input.role === 'stratification').length > 1;
@@ -249,11 +247,7 @@ export function InputVariables(props: Props) {
                             : undefined
                         }
                       >
-                        {input.label +
-                          (input.readonlyValue &&
-                          !input.providedOptionalVariable
-                            ? ' (fixed)'
-                            : '')}
+                        {input.label}
                         {!input.readonlyValue &&
                         constraints &&
                         constraints.length &&
@@ -270,10 +264,9 @@ export function InputVariables(props: Props) {
                       // and disable radio input if needed
                       <RadioButtonGroup
                         disabledList={
-                          disabledVariablesByInputName[
-                            input.name
-                          ].find((variable) =>
-                            isEqual(variable, input.providedOptionalVariable)
+                          disabledVariablesByInputName[input.name].find(
+                            (variable) =>
+                              isEqual(variable, input.providedOptionalVariable)
                           )
                             ? ['provided']
                             : []
