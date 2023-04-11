@@ -29,6 +29,7 @@
     padding-left: 10px;
     display: flex;
     border-right: 1px solid transparent;
+    position: relative;
     &__active {
       font-weight: bold;
     }
@@ -40,6 +41,12 @@
   &__copyAndDeleteButtons {
     display: flex;
     opacity: 0;
+    // Pin the copy & delete viz buttons
+    // to the top-right of the list item button.
+    position: absolute;
+    top: 0;
+    right: 0;
+
     &__active {
       opacity: 1;
     }
