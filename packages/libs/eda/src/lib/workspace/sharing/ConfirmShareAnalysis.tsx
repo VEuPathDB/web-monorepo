@@ -1,49 +1,27 @@
 // Components
-import { FloatingButton, H5, Warning, Copy, colors } from '@veupathdb/coreui';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { FloatingButton, Warning, Copy, colors } from '@veupathdb/coreui';
 
 // Hooks
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 // Definitions
 import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
-import { isUserDatasetsCompatibleWdkService } from '@veupathdb/user-datasets/lib/Service/UserDatasetWrappers';
-import { wdkRecordIdToDiyUserDatasetId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
-
 type ConfirmShareAnalysisProps = {
-  showContextForOwnedUserDataset: boolean;
+  contextForUserDataset: {
+    isUserStudy: boolean;
+    isCurrentUserStudyManager: boolean;
+  };
   sharingUrl: string;
   sharingDatasetUrl: string | undefined;
-  studyId: string;
 };
 
 export default function ConfirmShareAnalysis({
-  showContextForOwnedUserDataset,
+  contextForUserDataset,
   sharingUrl,
   sharingDatasetUrl,
-  studyId,
 }: ConfirmShareAnalysisProps) {
   const theme = useUITheme();
-  const userStudy = useWdkService(
-    async (wdkService) => {
-      if (
-        isUserDatasetsCompatibleWdkService(wdkService) &&
-        showContextForOwnedUserDataset
-      ) {
-        return wdkService.getUserDataset(
-          wdkRecordIdToDiyUserDatasetId(studyId)
-        );
-      }
-    },
-    [studyId, showContextForOwnedUserDataset]
-  );
-
-  const isLoading = showContextForOwnedUserDataset && !userStudy;
-  const showUrl =
-    !showContextForOwnedUserDataset ||
-    (userStudy && Boolean(userStudy.sharedWith?.length));
 
   return (
     <div
@@ -55,147 +33,143 @@ export default function ConfirmShareAnalysis({
         paddingBottom: 25,
       }}
     >
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <>
-          <div style={{ flex: 1 }}>
-            <H5
-              text="Sharing URL"
-              additionalStyles={{ marginTop: 15, marginBottom: 0 }}
-            />
-
-            <div
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            borderStyle: 'solid',
+            borderWidth: 2,
+            borderRadius: 10,
+            padding: 10,
+            marginTop: 10,
+            marginBottom: 10,
+            borderColor: theme?.palette.primary.hue[500],
+          }}
+        >
+          <Warning fontSize={48} fill={colors.orange[500]} />
+          <div style={{ marginLeft: 15 }}>
+            <p
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                borderStyle: 'solid',
-                borderWidth: 2,
-                borderRadius: 10,
-                padding: 10,
-                marginTop: 10,
-                marginBottom: 10,
-                borderColor: theme?.palette.primary.hue[500],
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
               }}
             >
-              <Warning fontSize={48} fill={colors.orange[500]} />
-              <div style={{ marginLeft: 15 }}>
-                <p
-                  style={{
-                    fontSize: '.9rem',
-                    color: gray[600],
-                    maxWidth: 500,
-                  }}
-                >
-                  {showContextForOwnedUserDataset && sharingDatasetUrl ? (
-                    <>
-                      <span
+              {contextForUserDataset.isUserStudy && sharingDatasetUrl ? (
+                <>
+                  <span
+                    style={{
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {contextForUserDataset.isCurrentUserStudyManager
+                      ? 'You own this study.'
+                      : 'Another user owns this study.'}
+                  </span>{' '}
+                  <span>
+                    {contextForUserDataset.isCurrentUserStudyManager
+                      ? 'This analysis is only viewable to users who have been granted access to your study data.'
+                      : 'The owner must grant all recipients of this shared analysis access to the study data for the URL to work.'}
+                  </span>{' '}
+                  {contextForUserDataset.isCurrentUserStudyManager && (
+                    <span>
+                      To grant users access to your study data,{' '}
+                      <a
+                        href={sharingDatasetUrl}
+                        target="StudyDatasetPage"
+                        title="Study page will open in a new tab"
                         style={{
-                          color: theme?.palette.primary.hue[600] ?? gray[600],
                           fontWeight: 'bold',
                         }}
                       >
-                        This is a User Study.
-                      </span>{' '}
-                      {!showUrl && (
-                        <span>
-                          Our records indicate that you have not shared this
-                          study before.{' '}
-                        </span>
-                      )}
-                      <span>
-                        You must <a href={sharingDatasetUrl}>share the study</a>{' '}
-                        with whomever you share this analysis before the
-                        recipient can view the analysis.
-                      </span>
-                    </>
-                  ) : (
-                    'Anyone with the link below will be able to get a copy of this analysis.'
+                        go to your study's status page
+                      </a>{' '}
+                      and click the share button in the upper right.
+                    </span>
                   )}
-                </p>
-                {showUrl && (
-                  <>
-                    <p
-                      style={{
-                        fontSize: '.9rem',
-                        color: gray[600],
-                        maxWidth: 500,
-                      }}
-                    >
-                      When a recipient clicks the link, they receive a{' '}
-                      <em>copy</em> of the <em>latest version</em>.
-                    </p>
-                    <p
-                      style={{
-                        fontSize: '.9rem',
-                        color: theme?.palette.primary.hue[600] ?? gray[600],
-                        maxWidth: 500,
-                        fontWeight: 'bold',
-                        marginTop: 0,
-                      }}
-                    >
-                      If you update or delete your analysis, preexisting copies
-                      will not be affected.
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
+                </>
+              ) : (
+                'Anyone with the link below will be able to get a copy of this analysis.'
+              )}
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+              }}
+            >
+              {contextForUserDataset.isUserStudy &&
+                'The URL below can be used to share this analysis.'}{' '}
+              When a recipient clicks the link, they receive a <em>copy</em> of
+              the <em>latest version</em>.
+            </p>
+            <p
+              style={{
+                fontSize: '.9rem',
+                color: gray[600],
+                maxWidth: 500,
+                fontWeight: 'bold',
+                marginTop: 0,
+              }}
+            >
+              If you update or delete your analysis, preexisting copies will not
+              be affected.
+            </p>
           </div>
-          {showUrl && (
-            <div style={{ flex: 1 }}>
-              <p
-                style={{
-                  marginBottom: 3,
-                  fontSize: 13,
-                  fontFamily: 'Inter',
-                  fontWeight: 500,
-                  color: gray[600],
-                }}
-              >
-                To share, copy and paste the URL below
-              </p>
-              <div
-                style={{
-                  fontFamily: '"Roboto",sans-serif',
-                  fontStyle: 'normal',
-                  fontSize: '0.8rem',
-                  fontWeight: 400,
-                  borderWidth: 1,
-                  borderStyle: 'solid',
-                  borderRadius: 5,
-                  maxWidth: '65%',
-                  color: gray[500],
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <FloatingButton
-                  themeRole="secondary"
-                  ariaLabel="Copy URL to Clipboard"
-                  icon={Copy}
-                  tooltip="Copy URL to Clipboard"
-                  onPress={() => navigator.clipboard.writeText(sharingUrl)}
-                  styleOverrides={{
-                    container: { marginLeft: 10, marginRight: 5, padding: 0 },
-                    hover: { color: 'transparent' },
-                    pressed: {
-                      color: 'transparent',
-                      textColor:
-                        theme?.palette.secondary.hue[
-                          theme?.palette.secondary.level + 100
-                        ],
-                    },
-                  }}
-                />
-                <p style={{ margin: 0, flex: 1 }}>{sharingUrl}</p>
-              </div>
-            </div>
-          )}
-        </>
-      )}
+        </div>
+      </div>
+      <div style={{ flex: 1 }}>
+        <p
+          style={{
+            marginBottom: 3,
+            fontSize: 13,
+            fontFamily: 'Inter',
+            fontWeight: 500,
+            color: gray[600],
+          }}
+        >
+          To share this analysis, copy and paste the URL below
+        </p>
+        <div
+          style={{
+            fontFamily: '"Roboto",sans-serif',
+            fontStyle: 'normal',
+            fontSize: '0.8rem',
+            fontWeight: 400,
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderRadius: 5,
+            maxWidth: '65%',
+            color: gray[500],
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <FloatingButton
+            themeRole="secondary"
+            ariaLabel="Copy URL to Clipboard"
+            icon={Copy}
+            tooltip="Copy URL to Clipboard"
+            onPress={() => navigator.clipboard.writeText(sharingUrl)}
+            styleOverrides={{
+              container: { marginLeft: 10, marginRight: 5, padding: 0 },
+              hover: { color: 'transparent' },
+              pressed: {
+                color: 'transparent',
+                textColor:
+                  theme?.palette.secondary.hue[
+                    theme?.palette.secondary.level + 100
+                  ],
+              },
+            }}
+          />
+          <p style={{ margin: 0, flex: 1 }}>{sharingUrl}</p>
+        </div>
+      </div>
     </div>
   );
 }

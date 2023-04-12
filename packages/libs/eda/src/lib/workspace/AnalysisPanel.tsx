@@ -254,10 +254,10 @@ export function AnalysisPanel({
           analysisState={analysisState}
           sharingUrlPrefix={sharingUrlPrefix}
           showLoginForm={showLoginForm}
-          showContextForOwnedUserDataset={
-            isDatasetAUserStudy && isCurrentUserStudyManager
-          }
-          studyId={studyId}
+          contextForUserDataset={{
+            isUserStudy: isDatasetAUserStudy,
+            isCurrentUserStudyManager,
+          }}
         />
         <div
           css={

@@ -30,8 +30,10 @@ type ShareFromAnalyisProps = {
   /** A callback to open a login form. */
   showLoginForm: () => void;
   /** Used to amend Sharing URL modal text */
-  showContextForOwnedUserDataset: boolean;
-  studyId: string;
+  contextForUserDataset: {
+    isUserStudy: boolean;
+    isCurrentUserStudyManager: boolean;
+  };
 };
 
 export default function ShareFromAnalysis({
@@ -40,8 +42,7 @@ export default function ShareFromAnalysis({
   showLoginForm,
   analysisState,
   sharingUrlPrefix,
-  showContextForOwnedUserDataset = false,
-  studyId,
+  contextForUserDataset,
 }: ShareFromAnalyisProps) {
   const userLoggedIn = useWdkService((wdkService) =>
     wdkService.getCurrentUser().then((user) => !user.isGuest)
@@ -94,10 +95,9 @@ export default function ShareFromAnalysis({
         />
       ) : (
         <ConfirmShareAnalysis
-          showContextForOwnedUserDataset={showContextForOwnedUserDataset}
+          contextForUserDataset={contextForUserDataset}
           sharingUrl={sharingUrl}
           sharingDatasetUrl={sharingDatasetUrl}
-          studyId={studyId}
         />
       )}
     </Modal>
