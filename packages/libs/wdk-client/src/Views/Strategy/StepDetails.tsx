@@ -338,11 +338,44 @@ function formatDatasetValue(
   parameter: DatasetParam,
   datasetParamItems: Record<string, DatasetItem[]> | undefined
 ) {
-  return !datasetParamItems ? (
-    <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />
-  ) : (
-    datasetParamItems[parameter.name].map(datasetItemToString).join(', ')
-  );
+  if (!datasetParamItems) {
+    return <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />;
+  }
+
+  const [showMore, setShowMore] = useState<boolean>(false);
+  const datasetValueString = datasetParamItems[parameter.name]
+    .map(datasetItemToString)
+    .join(', ');
+
+  if (datasetValueString.length > CUTOFF_LENGTH) {
+    return (
+      <CollapsibleSection
+        isCollapsed={!showMore}
+        onCollapsedChange={() => setShowMore(!showMore)}
+        headerContent={
+          <>
+            {!showMore ? (
+              <span>
+                {datasetValueString.slice(0, CUTOFF_LENGTH)}...{' '}
+                <span className="link">Show more</span>
+              </span>
+            ) : (
+              <div
+                style={{
+                  height: '2em',
+                }}
+              >
+                <span className="link">Show less</span>
+              </div>
+            )}
+          </>
+        }
+        children={datasetValueString}
+      />
+    );
+  } else {
+    return datasetValueString;
+  }
 }
 
 function mapDispatchToProps(
