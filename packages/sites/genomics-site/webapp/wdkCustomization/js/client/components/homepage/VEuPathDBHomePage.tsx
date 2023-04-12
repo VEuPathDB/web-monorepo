@@ -654,7 +654,7 @@ const useHeaderMenuItems = (
           key: 'data-files-eupathdb',
           display: 'Download data files',
           type: 'reactRoute',
-          url: '/downloads/',
+          url: '/downloads',
           metadata: {
             exclude: [EuPathDB],
           },
