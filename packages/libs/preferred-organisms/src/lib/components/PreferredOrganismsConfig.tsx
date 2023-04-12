@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { noop } from 'lodash';
 
@@ -29,6 +29,8 @@ import { getNodeChildren, getNodeId } from '../utils/organismNodes';
 import { PreferredOrganismsToggleHelp } from './PreferredOrganismsToggleHelp';
 
 import './PreferredOrganismsConfig.scss';
+import { Tooltip } from '@material-ui/core';
+import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 
 export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
@@ -120,6 +122,15 @@ export function PreferredOrganismsConfig({
   );
 
   const [describeNewOrganisms, setDescribeNewOrganisms] = useState(true);
+  const [persistButtons, setPersistButtons] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!persistButtons && !configIsUnchanged) {
+      setPersistButtons(true);
+    }
+  }, [configIsUnchanged]);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   return (
     <div className={cx()}>
@@ -194,27 +205,51 @@ export function PreferredOrganismsConfig({
               <div
                 className={cx(
                   '--ConfigButtons',
-                  configIsUnchanged ? 'hidden' : 'visible'
+                  configIsUnchanged && !persistButtons ? 'hidden' : 'visible'
                 )}
               >
                 {
                   <>
-                    <button
-                      type="button"
-                      className={`btn ${cx('--ApplyButton')}`}
-                      disabled={!savingPreferredOrganismsEnabled}
-                      onClick={savePreferredOrganisms}
+                    <Tooltip
+                      title={
+                        configIsUnchanged
+                          ? 'No changes to apply'
+                          : !configSelection.length
+                          ? 'Please select at least one organism'
+                          : ''
+                      }
                     >
-                      Apply
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn ${cx('--CancelButton')}`}
-                      onClick={revertConfigSelection}
-                      disabled={configIsUnchanged}
+                      <button
+                        type="button"
+                        className={`btn ${cx('--ApplyButton')}`}
+                        disabled={!savingPreferredOrganismsEnabled}
+                        onClick={function handleApplyPrefOrgsChanges() {
+                          setPersistButtons(false);
+                          enqueueSnackbar(
+                            'Your preferred organisms have been updated.',
+                            { variant: 'success' }
+                          );
+                          savePreferredOrganisms();
+                        }}
+                      >
+                        Apply
+                      </button>
+                    </Tooltip>
+                    <Tooltip
+                      title={configIsUnchanged ? 'No changes to cancel' : ''}
                     >
-                      X
-                    </button>
+                      <button
+                        type="button"
+                        className={`btn ${cx('--CancelButton')}`}
+                        onClick={function handleCancelPrefOrgsChanges() {
+                          setPersistButtons(false);
+                          revertConfigSelection();
+                        }}
+                        disabled={configIsUnchanged}
+                      >
+                        X
+                      </button>
+                    </Tooltip>
                   </>
                 }
               </div>
