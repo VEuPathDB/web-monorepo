@@ -72,6 +72,7 @@ import {
 } from '../../core/types/visualization';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import NotesTab from '../../workspace/NotesTab';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -399,7 +400,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: 'Notes',
         icon: <Notes />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderWithApp: (app) => {
+          return (
+            <div
+              style={{
+                // This matches the `marginTop` applied by `<NotesTab />`
+                padding: '0 35px',
+              }}
+            >
+              <NotesTab analysisState={analysisState} />
+            </div>
+          );
+        },
       },
       {
         labelText: 'View Study Details',
