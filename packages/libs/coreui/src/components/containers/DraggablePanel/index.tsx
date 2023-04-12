@@ -1,12 +1,12 @@
-import { CSSProperties, ReactNode, useEffect, useState } from "react";
-import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
-import { css } from "@emotion/react";
-import useResizeObserver from "use-resize-observer";
-import { gray } from "../../../definitions/colors";
-import { screenReaderOnly } from "../../../styleDefinitions/typography";
-import { useUITheme } from "../../theming";
-import DismissButton from "../../notifications/DismissButton";
-import { H6 } from "../../typography";
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
+import { css } from '@emotion/react';
+import useResizeObserver from 'use-resize-observer';
+import { gray } from '../../../definitions/colors';
+import { screenReaderOnly } from '../../../styleDefinitions/typography';
+import { useUITheme } from '../../theming';
+import DismissButton from '../../notifications/DismissButton';
+import { H6 } from '../../typography';
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -14,15 +14,15 @@ export type DraggablePanelCoordinatePair = {
 };
 
 export type DraggablePanelStyleOverrides = {
-  boxShadow?: CSSProperties["boxShadow"];
-  height?: CSSProperties["height"];
-  margin?: CSSProperties["margin"];
-  minHeight?: CSSProperties["minHeight"];
-  minWidth?: CSSProperties["minWidth"];
-  padding?: CSSProperties["padding"];
-  resize?: CSSProperties["resize"];
-  width?: CSSProperties["width"];
-  zIndex?: CSSProperties["zIndex"];
+  boxShadow?: CSSProperties['boxShadow'];
+  height?: CSSProperties['height'];
+  margin?: CSSProperties['margin'];
+  minHeight?: CSSProperties['minHeight'];
+  minWidth?: CSSProperties['minWidth'];
+  padding?: CSSProperties['padding'];
+  resize?: CSSProperties['resize'];
+  width?: CSSProperties['width'];
+  zIndex?: CSSProperties['zIndex'];
 };
 
 export type HeightAndWidthInPixels = {
@@ -112,7 +112,7 @@ export default function DraggablePanel({
 
   return (
     <Draggable
-      bounds={confineToParentContainer ? "parent" : false}
+      bounds={confineToParentContainer ? 'parent' : false}
       defaultPosition={defaultPosition || { x: 0, y: 0 }}
       handle=".dragHandle"
       onDrag={handleDrag}
@@ -124,7 +124,7 @@ export default function DraggablePanel({
         ref={ref}
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
-        data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
+        data-testid={`${panelTitle} ${wasDragged ? 'dragged' : 'not dragged'}`}
         css={css`
           background: white;
           border-radius: 7px;
@@ -133,17 +133,17 @@ export default function DraggablePanel({
           rgba(0, 0, 0, 0.3) 0px 1px 3px -1px`};
           position: absolute;
           top: 0;
-          visibility: ${isOpen === false ? "hidden" : "visible"};
-          z-index: ${styleOverrides?.zIndex ?? "auto"};
-          margin: ${styleOverrides?.margin ?? "margin"};
+          visibility: ${isOpen === false ? 'hidden' : 'visible'};
+          z-index: ${styleOverrides?.zIndex ?? 'auto'};
+          margin: ${styleOverrides?.margin ?? 'margin'};
           // If resize is set, you can consider these two values as
           // initial heights and widths.
-          height: ${styleOverrides?.height ?? "fit-content"};
-          width: ${styleOverrides?.width ?? "fit-content"};
+          height: ${styleOverrides?.height ?? 'fit-content'};
+          width: ${styleOverrides?.width ?? 'fit-content'};
           // Hey, so you need to explicitly set overflow wherever
           // you plan to use resize.
           overflow: scroll;
-          resize: ${styleOverrides?.resize ?? "none"};
+          resize: ${styleOverrides?.resize ?? 'none'};
           min-height: ${styleOverrides?.minHeight ?? 0};
           min-width: ${styleOverrides?.minWidth ?? 0};
         `}
@@ -154,7 +154,7 @@ export default function DraggablePanel({
             align-items: center;
             border-radius: 7px 7px 0 0;
             background: ${theme?.palette?.primary?.hue[100] ?? gray[100]};
-            cursor: ${isDragging ? "grabbing" : "grab"};
+            cursor: ${isDragging ? 'grabbing' : 'grab'};
             display: flex;
             height: 2rem;
             justify-content: center;
@@ -167,7 +167,7 @@ export default function DraggablePanel({
             width: 100%;
           `}
         >
-          <H6 additionalStyles={{ fontWeight: "bold" }}>
+          <H6 additionalStyles={{ fontWeight: 'bold' }}>
             <span css={showPanelTitle ? null : screenReaderOnly}>
               {panelTitle}
             </span>
