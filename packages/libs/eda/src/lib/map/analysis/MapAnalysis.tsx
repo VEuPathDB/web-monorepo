@@ -72,6 +72,11 @@ import {
 } from '../../core/types/visualization';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import ShareFromAnalysis from '../../workspace/sharing/ShareFromAnalysis';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import Login from '../../workspace/sharing/Login';
+import { useLoginCallbacks } from '../../workspace/sharing/hooks';
+import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -157,6 +162,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+
+  const userLoggedIn = useWdkService((wdkService) => {
+    return wdkService.getCurrentUser().then((user) => !user.isGuest);
+  });
+  function showLoginForm() {
+    console.log('showLoginForm');
+  }
+  function toggleVisible() {
+    console.log('toggleVisible');
+  }
+  const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
   const appPromiseState = usePromise(
     useCallback(async () => {
@@ -394,7 +410,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: 'Share',
         icon: <Share />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderWithApp: () => {
+          if (!analysisState.analysis) return null;
+
+          return !userLoggedIn ? (
+            <Login {...loginCallbacks} />
+          ) : (
+            <NameAnalysis
+              currentName={analysisState.analysis.displayName}
+              updateName={analysisState.setName}
+            />
+          );
+        },
       },
       {
         labelText: 'Notes',
