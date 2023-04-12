@@ -12,28 +12,46 @@ import React, { useMemo } from 'react';
 
 interface Props {
   searchConfig: SearchConfig;
-  searchName: string;
+  /** Search name used for table */
+  tableSearchName: string;
+  /** Search name used for bulk download */
+  bulkSearchName: string;
 }
 
 export function DownloadsTable(props: Props) {
-  const { searchConfig, searchName } = props;
+  const { searchConfig, tableSearchName, bulkSearchName } = props;
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-  const resultType: ResultType = useMemo(
+  const tableResultType: ResultType = useMemo(
     () => ({
       type: 'answerSpec',
       displayName: 'Download Files',
       answerSpec: {
-        searchName,
+        searchName: tableSearchName,
         searchConfig,
       },
     }),
-    [searchConfig, searchName]
+    [searchConfig, tableSearchName]
   );
 
   const tableActions = useMemo((): Action[] => {
     return [
       {
         element: (selectedRecords) => {
+          const resultType: ResultType = {
+            type: 'answerSpec',
+            displayName: 'Zipped Files',
+            answerSpec: {
+              searchName: bulkSearchName,
+              searchConfig: {
+                parameters: {
+                  fileIds: JSON.stringify(
+                    selectedRecords.map((record) => record.id[0].value)
+                  ),
+                },
+              },
+            },
+          };
+
           return (
             <button
               className="btn"
@@ -57,13 +75,14 @@ export function DownloadsTable(props: Props) {
         },
       },
     ];
-  }, [resultType, wdkService]);
+  }, [bulkSearchName, wdkService]);
 
   return (
     <ResultTableSummaryViewController
       tableActions={tableActions}
       viewId="DownloadPage"
-      resultType={resultType}
+      resultType={tableResultType}
+      showIdAttributeColumn={false}
     />
   );
 }
