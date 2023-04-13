@@ -75,6 +75,16 @@ import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import NotesTab from '../../workspace/NotesTab';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
+const MapSideNavItemLabels = {
+  Download: 'Download',
+  Filter: 'Filter',
+  Notes: 'Notes',
+  Paint: 'Paint',
+  Plot: 'Plot',
+  Share: 'Share',
+  StudyDetails: 'View Study Details',
+};
+
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
 };
@@ -369,7 +379,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: 'Paint',
+        labelText: MapSideNavItemLabels.Paint,
         icon: <EditLocation />,
         renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
@@ -382,7 +392,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
-        labelText: 'Plot',
+        labelText: MapSideNavItemLabels.Plot,
         icon: <BarChartSharp />,
         renderSideNavigationPanel: (app) => {
           return (
@@ -399,17 +409,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
-        labelText: 'Download',
+        labelText: MapSideNavItemLabels.Download,
         icon: <Download />,
         renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Share',
+        labelText: MapSideNavItemLabels.Share,
         icon: <Share />,
         renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Notes',
+        labelText: MapSideNavItemLabels.Notes,
         icon: <Notes />,
         renderSideNavigationPanel: (app) => {
           return (
@@ -425,7 +435,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
-        labelText: 'View Study Details',
+        labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
         renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
@@ -433,10 +443,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const filterSideMenuIndex =
     sideNavigationButtonConfigurationObjects.findIndex(
-      (config) => config.labelText === 'Filter'
+      (config) => config.labelText === MapSideNavItemLabels.Filter
     );
   const plotSideMenuIndex = sideNavigationButtonConfigurationObjects.findIndex(
-    (config) => config.labelText === 'Plot'
+    (config) => config.labelText === MapSideNavItemLabels.Plot
   );
 
   const initialActiveNavItemIndex: number | undefined = (() => {
