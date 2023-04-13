@@ -1843,7 +1843,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         legendTitle={legendTitle}
         showOverlayLegend={showOverlayLegend}
         // pass markerBodyOpacity to PlotLegend to control legend color opacity
-        // markerBodyOpacity={vizConfig.markerBodyOpacity}
+        markerBodyOpacity={vizConfig.markerBodyOpacity}
       />
     ));
 

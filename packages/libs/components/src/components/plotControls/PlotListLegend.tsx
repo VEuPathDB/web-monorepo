@@ -19,6 +19,7 @@ export interface PlotListLegendProps {
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
   // add a condition to show legend for single overlay data
   showOverlayLegend?: boolean;
+  markerBodyOpacity?: number;
 }
 
 export default function PlotListLegend({
@@ -26,6 +27,7 @@ export default function PlotListLegend({
   checkedLegendItems,
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
+  markerBodyOpacity = 1,
 }: PlotListLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -133,8 +135,9 @@ export default function PlotListLegend({
                       }}
                     />
                   )}
-                  {/* for scatter plot: marker */}
-                  {item.marker === 'circle' && (
+                  {/* for scatter plot marker and lineplot 0/0 case */}
+                  {(item.marker === 'circle' ||
+                    item.marker === 'circleZero') && (
                     <div style={{ width: scatterMarkerSpace }}>
                       <div
                         style={{
@@ -144,7 +147,23 @@ export default function PlotListLegend({
                           borderWidth: '0.15em',
                           borderStyle: 'solid',
                           borderRadius: '0.6em',
-                          borderColor: item.markerColor,
+                          borderColor:
+                            item.marker === 'circleZero'
+                              ? item.markerColor
+                              : markerBodyOpacity === 0
+                              ? item.markerColor
+                              : 'transparent',
+                          backgroundColor:
+                            item.marker === 'circleZero'
+                              ? ''
+                              : markerBodyOpacity === 0
+                              ? 'transparent'
+                              : ColorMath.evaluate(
+                                  item.markerColor +
+                                    ' @a ' +
+                                    (markerBodyOpacity * 100).toString() +
+                                    '%'
+                                ).result.css(),
                         }}
                       />
                     </div>
