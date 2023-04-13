@@ -11,8 +11,11 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';
 import { ApiResult, ErrorDetails } from '../utils/ServiceTypes';
-import { entityStatusToReadableStatus } from '../utils/allJobs';
-import { BlastQueryClient } from '../utils/api/BlastQueryClient';
+import {
+  entityStatusToReadableStatus,
+  shouldIncludeInJobsTable,
+} from '../utils/allJobs';
+import { BlastApi } from '../utils/api';
 
 export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
   return useMemo(
@@ -26,9 +29,9 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
         sortable: true,
       },
       {
-        key: 'summary',
-        name: 'Summary',
-        renderCell: ({ row }: { row: JobRow }) => row.summary ?? 'Untitled',
+        key: 'description',
+        name: 'Description',
+        renderCell: ({ row }: { row: JobRow }) => row.description ?? 'Untitled',
         sortable: true,
       },
       {
@@ -60,27 +63,29 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
 }
 
 export function useRawJobRows(
-  blastApi: BlastQueryClient
+  blastApi: BlastApi
 ): ApiResult<JobRow[], ErrorDetails> | undefined {
   return useWdkService(async (wdkService) => {
+    const jobEntities = await blastApi.fetchJobEntities();
     const { projectId } = await wdkService.getConfig();
-    const jobEntities = await blastApi.listJobs(projectId);
 
-    if (jobEntities == null) {
-      return undefined;
-    } else {
-      return jobEntities.status === 'error'
-        ? jobEntities
-        : {
-            status: 'ok',
-            value: jobEntities.value.map((jobEntity) => ({
-              jobId: jobEntity.queryJobID,
-              summary: jobEntity.userMeta?.summary ?? null,
-              created: jobEntity.createdOn,
+    return jobEntities == null
+      ? undefined
+      : jobEntities.status === 'error'
+      ? jobEntities
+      : {
+          status: 'ok',
+          value: jobEntities.value
+            .filter((jobEntity) =>
+              shouldIncludeInJobsTable(jobEntity, projectId)
+            )
+            .map((jobEntity) => ({
+              jobId: jobEntity.id,
+              description: jobEntity.description ?? null,
+              created: jobEntity.created,
               status: entityStatusToReadableStatus(jobEntity.status),
             })),
-          };
-    }
+        };
   }, []);
 }
 
