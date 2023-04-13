@@ -453,7 +453,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   useEffect(
     function syncIsSubsetPanelOpenWithActiveSideMenuIndex() {
       if (
-        !appState.isSubsetPanelOpen &&
+        appState.isSubsetPanelOpen &&
         filterSideMenuIndex === activeSideMenuIndex
       ) {
         // If we're here, then we have the condition where the subsetting panel
