@@ -617,7 +617,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {appState.isSubsetPanelOpen && (
                   <DraggablePanel
                     isOpen
-                    panelTitle="Yogurt"
+                    panelTitle="Filter"
                     showPanelTitle
                     onPanelDismiss={() => {
                       setIsSubsetPanelOpen(false);
