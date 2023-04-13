@@ -262,7 +262,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
 
-  function openSubsetPanel() {
+  function openSubsetPanelAndSetActiveSideMenuIndex() {
     setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
     setActiveSideMenuIndex(filterSideMenuIndex);
   }
@@ -272,7 +272,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       type: 'button',
       onClick(value) {
         setSubsetVariableAndEntity(value);
-        openSubsetPanel();
+        openSubsetPanelAndSetActiveSideMenuIndex();
       },
     };
 
@@ -294,7 +294,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         <FilledButton
           themeRole="primary"
           text="Add filters"
-          onPress={openSubsetPanel}
+          onPress={openSubsetPanelAndSetActiveSideMenuIndex}
           size="small"
           textTransform="unset"
           styleOverrides={{
