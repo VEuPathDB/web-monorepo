@@ -156,13 +156,9 @@ export default function PlotListLegend({
                           height: circleMarkerSize,
                           width: circleMarkerSize,
                           margin: 'auto',
-                          // 1.95 untested
-                          borderWidth:
-                            (circleMarkerSizeNum / 1.95).toString() + 'em',
-                          borderStyle: 'solid',
+                          backgroundColor: item.markerColor,
                           borderRadius:
                             (circleMarkerSizeNum / 2).toString() + 'em',
-                          borderColor: item.markerColor,
                         }}
                       />
                     </div>
@@ -190,12 +186,9 @@ export default function PlotListLegend({
                           height: circleMarkerSize,
                           width: circleMarkerSize,
                           margin: 'auto',
-                          borderWidth:
-                            (circleMarkerSizeNum / 2).toString() + 'em',
-                          borderStyle: 'solid',
+                          backgroundColor: item.markerColor,
                           borderRadius:
                             (circleMarkerSizeNum / 2).toString() + 'em',
-                          borderColor: item.markerColor,
                         }}
                       />
                     </div>

@@ -390,6 +390,73 @@ const longLegendItems = [
   },
 ];
 
+const iconDemoLegendItems = [
+  {
+    label: 'square',
+    marker: 'square',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'lightSquareBorder',
+    marker: 'lightSquareBorder',
+    markerColor: 'rgb(136,204,238)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'circle',
+    marker: 'circle',
+    markerColor: 'rgb(153,153,51)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'circleFilled',
+    marker: 'circleFilled',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'line',
+    marker: 'line',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'lineWithCircleFilled',
+    marker: 'lineWithCircleFilled',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'fainted',
+    marker: 'fainted',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'x',
+    marker: 'x',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+];
+
 // set some default props
 const plotWidth = 1000;
 const plotHeight = 600;
@@ -474,6 +541,22 @@ export const TestLongLegendItems = () => {
         onCheckedLegendItemsChange={setCheckedLongLegendItems}
         // pass legend title
         legendTitle={'Country'}
+      />
+    </div>
+  );
+};
+
+// custom legend with histogram
+export const LegendIconsDemo = () => {
+  return (
+    <div>
+      <h5># Legend Icons</h5>
+      <PlotLegend
+        type="list"
+        legendItems={iconDemoLegendItems}
+        checkedLegendItems={undefined}
+        // pass legend title
+        legendTitle={'Icon name'}
       />
     </div>
   );
