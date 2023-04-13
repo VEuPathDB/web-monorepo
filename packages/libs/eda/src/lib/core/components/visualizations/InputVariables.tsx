@@ -249,11 +249,18 @@ export function InputVariables(props: Props) {
                             ? requiredInputLabelStyle
                             : input.role === 'stratification' &&
                               hasMultipleStratificationValues
-                            ? multipleStratificationVariableLabelStyle
+                            ? input.readonlyValue &&
+                              !input.providedOptionalVariable
+                              ? undefined
+                              : multipleStratificationVariableLabelStyle
                             : undefined
                         }
                       >
-                        {input.label}
+                        {input.label +
+                          (input.readonlyValue &&
+                          !input.providedOptionalVariable
+                            ? ' (fixed)'
+                            : '')}
                         {!input.readonlyValue &&
                         constraints &&
                         constraints.length &&
