@@ -104,6 +104,11 @@ export interface Props {
    */
   selectedVariables: VariablesByInputName;
   /**
+   * The complete set of variables we should use when considering
+   * constraints on entities. Usually the union of computed and selected vars.
+   */
+  variablesForConstraints?: VariablesByInputName;
+  /**
    * Change handler that is called when any input value is changed.
    */
   onChange: (selectedVariables: VariablesByInputName) => void;
@@ -140,6 +145,7 @@ export function InputVariables(props: Props) {
     inputs,
     entities,
     selectedVariables,
+    variablesForConstraints,
     onChange,
     constraints,
     dataElementDependencyOrder,
@@ -180,7 +186,7 @@ export function InputVariables(props: Props) {
             entities,
             filteredConstraints,
             dataElementDependencyOrder,
-            selectedVariables
+            variablesForConstraints ?? selectedVariables
           );
 
           return map;
