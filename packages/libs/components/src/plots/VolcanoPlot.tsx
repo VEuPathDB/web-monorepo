@@ -92,15 +92,19 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   if (dataXMin && dataXMax) {
     xMin = Math.log2(dataXMin);
     xMax = Math.log2(dataXMax);
-    xMin = xMin - (xMax - xMin) * 0.05;
-    xMax = xMax + (xMax - xMin) * 0.05;
+    // Adding the extra buffer
+    // Could extract into a function? Shared with scatterplot
+    xMin = xMin - (xMax - xMin) * 0.05; //ANN add descriptive comment
+    xMax = xMax + (xMax - xMin) * 0.05; // Mention the problem it solves (preventing data points from being clipped)
   } else {
     xMin = 0;
     xMax = 0;
   }
   if (dataYMin && dataYMax) {
+    // note that negative log because it's standard practice!
     yMin = -Math.log10(dataYMax);
     yMax = -Math.log10(dataYMin);
+    // add more commments here
     yMin = yMin - (yMax - yMin) * 0.05;
     yMax = yMax + (yMax - yMin) * 0.05;
   } else {
@@ -110,12 +114,16 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   /**
    * Turn the data (array of arrays) into data points (array of points)
+   * NOT TRUE ANYMORE!
    */
 
   let dataPoints: DataPoint[] = [];
 
   // Loop through the data and return points. Doesn't really matter
   // which var of the data we map over.
+  // const dataPoints = data.foldChange.map(...) or .transform
+  // return the datapoint object
+  // note that this also signals that we're not going to update dataPoints
   data.foldChange.forEach((fc, ind: number) => {
     dataPoints.push({
       foldChange: fc,
@@ -137,8 +145,11 @@ function VolcanoPlot(props: VolcanoPlotProps) {
    */
 
   const dataAccessors = {
-    xAccessor: (d: any) => {
-      return Math.log2(d?.foldChange);
+    // Can we make the type better???
+    // Can we annotate the type of data accessor? Use some generic type here??
+    xAccessor: (d: DataPoint) => {
+      // ANN improve types for all these accessors
+      return Math.log2(Number(d?.foldChange));
     },
     yAccessor: (d: any) => {
       return -Math.log10(d?.pValue);
@@ -175,6 +186,9 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   return (
     // From docs " For correct tooltip positioning, it is important to wrap your
     // component in an element (e.g., div) with relative positioning."
+    // ANN add comments about why i put things in particular places or
+    // any magic i learned. Describing how i did things and why (since there's not
+    // a lot of docs on that)
     <div style={{ position: 'relative' }}>
       <XYChart
         height={300}
@@ -248,8 +262,10 @@ function assignSignificanceColor(
   yValue: number, // the raw pvalue
   significanceThreshold: number,
   log2FoldChangeThreshold: number,
-  significanceColors: string[] // Assuming the order is [high, low, not significant]
+  significanceColors: string[] // Assuming the order is [high (up regulated), low (down regulated), not significant]
 ) {
+  // Look at Sam's comment for improving readability
+
   // Test 1. If the y value is higher than the significance threshold, just return not significant
   if (yValue >= significanceThreshold) {
     return significanceColors[2];
