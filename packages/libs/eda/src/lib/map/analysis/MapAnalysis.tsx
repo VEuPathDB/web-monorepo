@@ -454,7 +454,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     function syncIsSubsetPanelOpenWithActiveSideMenuIndex() {
       if (
         appState.isSubsetPanelOpen &&
-        filterSideMenuIndex === activeSideMenuIndex
+        filterSideMenuIndex !== activeSideMenuIndex
       ) {
         // If we're here, then we have the condition where the subsetting panel
         // is open, but the user has selected another side menu item.
