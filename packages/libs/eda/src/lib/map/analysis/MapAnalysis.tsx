@@ -38,15 +38,18 @@ import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
-import {
-  mapSideNavigationActiveMenuItemBackground,
-  SiteInformationProps,
-} from '..';
-import FloatingVizManagement from './FloatingVizManagement';
+import { SiteInformationProps } from '..';
+import MapVizManagement from './MapVizManagement';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
-import { BarChartSharp, EditLocation, Save, Share } from '@material-ui/icons';
+import {
+  BarChartSharp,
+  EditLocation,
+  InfoOutlined,
+  Notes,
+  Share,
+} from '@material-ui/icons';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { LayoutOptions } from '../../core/components/layouts/types';
@@ -67,7 +70,9 @@ import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
-import FloatingVisualization from './FloatingVisualization';
+import DraggableVisualization from './DraggableVisualization';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import NotesTab from '../../workspace/NotesTab';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -114,6 +119,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyEntities = useStudyEntities();
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
+  const theme = useUITheme();
 
   const selectedVariables = useMemo(
     () => ({
@@ -280,6 +286,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         className="FilterChips"
       >
         <FilledButton
+          themeRole="primary"
           text="Add filters"
           onPress={() => setIsSubsetPanelOpen(true)}
           size="small"
@@ -368,11 +375,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         icon: <BarChartSharp />,
         renderWithApp: (app) => {
           return (
-            <FloatingVizManagement
+            <MapVizManagement
               analysisState={analysisState}
               updateVisualizations={updateVisualizations}
               setActiveVisualizationId={setActiveVisualizationId}
               app={app}
+              activeVisualizationId={appState.activeVisualizationId}
               visualizationPlugins={plugin.visualizationPlugins}
               geoConfigs={geoConfigs}
             />
@@ -390,14 +398,35 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         renderWithApp: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Save',
-        icon: <Save />,
+        labelText: 'Notes',
+        icon: <Notes />,
+        renderWithApp: (app) => {
+          return (
+            <div
+              style={{
+                // This matches the `marginTop` applied by `<NotesTab />`
+                padding: '0 35px',
+              }}
+            >
+              <NotesTab analysisState={analysisState} />
+            </div>
+          );
+        },
+      },
+      {
+        labelText: 'View Study Details',
+        icon: <InfoOutlined />,
         renderWithApp: sideNavigationRenderPlaceholder,
       },
     ];
 
+  const plotNavItemIndex: number | undefined = appState.activeVisualizationId
+    ? sideNavigationButtonConfigurationObjects.findIndex(
+        (config) => config.labelText === 'Plot'
+      )
+    : undefined;
   const [activeSideMenuIndex, setActiveSideMenuIndex] =
-    useState<number | undefined>();
+    useState<number | undefined>(plotNavItemIndex);
 
   const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
     ({ labelText, icon }, index) => {
@@ -529,8 +558,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                                 width: '100%',
                                 transition: 'background 0.1s ease',
                                 padding: '5px 10px',
+                                fontWeight: isActive ? 'bold' : 'normal',
                                 background: isActive
-                                  ? mapSideNavigationActiveMenuItemBackground
+                                  ? theme?.palette.primary.hue[100]
                                   : 'inherit',
                               }}
                             >
@@ -620,7 +650,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </FloatingDiv>
 
-                <FloatingVisualization
+                <DraggableVisualization
                   analysisState={analysisState}
                   updateVisualizations={updateVisualizations}
                   setActiveVisualizationId={setActiveVisualizationId}
