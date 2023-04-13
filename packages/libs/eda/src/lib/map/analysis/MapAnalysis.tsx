@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
@@ -73,6 +73,7 @@ import {
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import NotesTab from '../../workspace/NotesTab';
+import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -261,12 +262,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
 
+  function openSubsetPanel() {
+    setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
+    setActiveSideMenuIndex(filterSideMenuIndex);
+  }
+
   const FilterChipListForHeader = () => {
     const filterChipConfig: VariableLinkConfig = {
       type: 'button',
       onClick(value) {
-        setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
         setSubsetVariableAndEntity(value);
+        openSubsetPanel();
       },
     };
 
@@ -288,7 +294,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         <FilledButton
           themeRole="primary"
           text="Add filters"
-          onPress={() => setIsSubsetPanelOpen(true)}
+          onPress={openSubsetPanel}
           size="small"
           textTransform="unset"
           styleOverrides={{
@@ -350,30 +356,35 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     href?: string;
     labelText: string;
     icon: ReactNode;
-    renderWithApp: (app: ComputationAppOverview) => ReactNode;
+    renderSideNavigationPanel: (app: ComputationAppOverview) => ReactNode;
+    onToggleSideMenuItem?: (isActive: boolean) => void;
   };
-  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderWithApp'] =
+  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderSideNavigationPanel'] =
     (_) => (
       <div style={{ padding: '2rem' }}>
         <p>Not Implemented!</p>
       </div>
     );
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
         labelText: 'Paint',
         icon: <EditLocation />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
         labelText: 'Filter',
         icon: <Filter />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {},
+        onToggleSideMenuItem: (isActive) => {
+          setIsSubsetPanelOpen(!isActive);
+        },
       },
       {
         labelText: 'Plot',
         icon: <BarChartSharp />,
-        renderWithApp: (app) => {
+        renderSideNavigationPanel: (app) => {
           return (
             <MapVizManagement
               analysisState={analysisState}
@@ -390,17 +401,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: 'Download',
         icon: <Download />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
         labelText: 'Share',
         icon: <Share />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
         labelText: 'Notes',
         icon: <Notes />,
-        renderWithApp: (app) => {
+        renderSideNavigationPanel: (app) => {
           return (
             <div
               style={{
@@ -416,27 +427,58 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: 'View Study Details',
         icon: <InfoOutlined />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
     ];
 
-  const plotNavItemIndex: number | undefined = appState.activeVisualizationId
-    ? sideNavigationButtonConfigurationObjects.findIndex(
-        (config) => config.labelText === 'Plot'
-      )
-    : undefined;
-  const [activeSideMenuIndex, setActiveSideMenuIndex] =
-    useState<number | undefined>(plotNavItemIndex);
+  const filterSideMenuIndex =
+    sideNavigationButtonConfigurationObjects.findIndex(
+      (config) => config.labelText === 'Filter'
+    );
+  const plotSideMenuIndex = sideNavigationButtonConfigurationObjects.findIndex(
+    (config) => config.labelText === 'Plot'
+  );
+
+  const initialActiveNavItemIndex: number | undefined = (() => {
+    if (appState.isSubsetPanelOpen) return filterSideMenuIndex;
+    if (appState.activeVisualizationId) return plotSideMenuIndex;
+
+    return undefined;
+  })();
+
+  const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
+    number | undefined
+  >(initialActiveNavItemIndex);
+
+  useEffect(
+    function syncIsSubsetPanelOpenWithActiveSideMenuIndex() {
+      if (
+        !appState.isSubsetPanelOpen &&
+        filterSideMenuIndex === activeSideMenuIndex
+      ) {
+        // If we're here, then we have the condition where the subsetting panel
+        // is open, but the user has selected another side menu item.
+        setIsSubsetPanelOpen(false);
+      }
+    },
+    [
+      activeSideMenuIndex,
+      appState.isSubsetPanelOpen,
+      filterSideMenuIndex,
+      setIsSubsetPanelOpen,
+    ]
+  );
 
   const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
-    ({ labelText, icon }, index) => {
+    ({ labelText, icon, onToggleSideMenuItem = () => {} }, index) => {
       return (
         <button
           style={buttonStyles}
           onClick={() => {
-            setActiveSideMenuIndex((currentIndex) =>
-              currentIndex === index ? undefined : index
-            );
+            onToggleSideMenuItem(activeSideMenuIndex === index);
+            setActiveSideMenuIndex((currentIndex) => {
+              return currentIndex === index ? undefined : index;
+            });
           }}
         >
           <span style={iconStyles} aria-hidden>
@@ -486,7 +528,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           activeSideMenuIndex != null &&
           sideNavigationButtonConfigurationObjects[
             activeSideMenuIndex
-          ].renderWithApp(app);
+          ].renderSideNavigationPanel(app);
 
         return (
           <ShowHideVariableContextProvider>
@@ -572,6 +614,56 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     </div>
                   </MapSideNavigation>
                 </div>
+                {appState.isSubsetPanelOpen && (
+                  <DraggablePanel
+                    isOpen
+                    panelTitle="Yogurt"
+                    showPanelTitle
+                    onPanelDismiss={() => {
+                      setIsSubsetPanelOpen(false);
+
+                      const subsetPanelIndex =
+                        sideNavigationButtonConfigurationObjects.findIndex(
+                          (config) => config.labelText === 'Filter'
+                        );
+                      setActiveSideMenuIndex((currentIndex) =>
+                        currentIndex === subsetPanelIndex
+                          ? undefined
+                          : currentIndex
+                      );
+                    }}
+                    confineToParentContainer
+                    defaultPosition={{
+                      x: 216,
+                      y: 143,
+                    }}
+                    styleOverrides={{ zIndex: 100 }}
+                    onDragComplete={console.log}
+                  >
+                    <div
+                      style={{
+                        maxWidth: 1200,
+                        width: 1200,
+                        maxHeight: 650,
+                        padding: '0 15px',
+                        overflow: 'scroll',
+                        resize: 'both',
+                      }}
+                    >
+                      <Subsetting
+                        variableLinkConfig={{
+                          type: 'button',
+                          onClick: setSubsetVariableAndEntity,
+                        }}
+                        entityId={subsetVariableAndEntity?.entityId ?? ''}
+                        variableId={subsetVariableAndEntity?.variableId ?? ''}
+                        analysisState={analysisState}
+                        totalCounts={totalCounts.value}
+                        filteredCounts={filteredCounts.value}
+                      />
+                    </div>
+                  </DraggablePanel>
+                )}
                 <MapVEuMap
                   height="100%"
                   width="100%"
@@ -650,19 +742,21 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </FloatingDiv>
 
-                <DraggableVisualization
-                  analysisState={analysisState}
-                  updateVisualizations={updateVisualizations}
-                  setActiveVisualizationId={setActiveVisualizationId}
-                  appState={appState}
-                  app={app}
-                  visualizationPlugins={plugin.visualizationPlugins}
-                  geoConfigs={geoConfigs}
-                  totalCounts={totalCounts}
-                  filteredCounts={filteredCounts}
-                  toggleStarredVariable={toggleStarredVariable}
-                  filters={filtersIncludingViewport}
-                />
+                {activeSideMenuIndex === plotSideMenuIndex && (
+                  <DraggableVisualization
+                    analysisState={analysisState}
+                    updateVisualizations={updateVisualizations}
+                    setActiveVisualizationId={setActiveVisualizationId}
+                    appState={appState}
+                    app={app}
+                    visualizationPlugins={plugin.visualizationPlugins}
+                    geoConfigs={geoConfigs}
+                    totalCounts={totalCounts}
+                    filteredCounts={filteredCounts}
+                    toggleStarredVariable={toggleStarredVariable}
+                    filters={filtersIncludingViewport}
+                  />
+                )}
 
                 {(basicMarkerError || overlayError) && (
                   <FloatingDiv
@@ -678,45 +772,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   </FloatingDiv>
                 )}
               </div>
-              <FloatingDiv
-                style={{
-                  top: 100,
-                  left: 100,
-                  right: 100,
-                  bottom: 10,
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {appState.isSubsetPanelOpen && (
-                  <>
-                    <FloatingButton
-                      text=""
-                      icon={Close}
-                      onPress={() => setIsSubsetPanelOpen(false)}
-                      styleOverrides={{
-                        container: {
-                          display: 'flex',
-                          marginLeft: 'auto',
-                        },
-                      }}
-                    />
-                    <div style={{ overflow: 'auto' }}>
-                      <Subsetting
-                        variableLinkConfig={{
-                          type: 'button',
-                          onClick: setSubsetVariableAndEntity,
-                        }}
-                        entityId={subsetVariableAndEntity?.entityId ?? ''}
-                        variableId={subsetVariableAndEntity?.variableId ?? ''}
-                        analysisState={analysisState}
-                        totalCounts={totalCounts.value}
-                        filteredCounts={filteredCounts.value}
-                      />
-                    </div>
-                  </>
-                )}
-              </FloatingDiv>
             </DocumentationContainer>
           </ShowHideVariableContextProvider>
         );
