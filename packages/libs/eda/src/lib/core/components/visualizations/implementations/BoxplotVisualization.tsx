@@ -242,6 +242,17 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     computation.descriptor.configuration
   );
 
+  // When we only have a computed y axis (and no provided x axis) then the y axis var
+  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
+  // like any other continuous variable.
+  const computedYAxisDescriptor = computedYAxisDetails
+    ? {
+        entityId: computedYAxisDetails.entityId,
+        variableId:
+          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
+
   const providedOverlayVariableDescriptor = useMemo(
     () => options?.getOverlayVariable?.(computation.descriptor.configuration),
     [options?.getOverlayVariable, computation.descriptor.configuration]
@@ -250,6 +261,16 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
     yAxisVariable: vizConfig.yAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  // variablesForConstraints includes selected vars, computed vars, and
+  // those collection vars that we want to use in constraining the available
+  // variables within a viz.
+  const variablesForConstraints = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
     overlayVariable: vizConfig.overlayVariable,
     facetVariable: vizConfig.facetVariable,
   });
@@ -658,18 +679,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
-  // When we only have a computed y axis (and no provided x axis) then the y axis var
-  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
-  // like any other continuous variable.
-  const computedYAxisDescriptor =
-    !providedXAxisVariable && computedYAxisDetails
-      ? {
-          entityId: computedYAxisDetails.entityId,
-          variableId:
-            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-        }
-      : null;
-
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
   const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
@@ -722,7 +731,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             role: 'Y-axis',
             required: !providedXAxisVariable,
             display: dependentAxisLabel,
-            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+            variable:
+              !providedXAxisVariable && computedYAxisDescriptor
+                ? computedYAxisDescriptor
+                : vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
@@ -799,6 +811,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
           ]}
           entities={entities}
           selectedVariables={selectedVariables}
+          variablesForConstraints={variablesForConstraints}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
