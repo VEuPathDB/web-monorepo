@@ -50,7 +50,6 @@ const smartQuoteRegex = /\u{201c}|\u{201d}/gu;
 // This is a wrapper for the real SiteSearchController component.
 // It will check the search input for smart quotes and replace them
 // with ascii quotes.
-// XXX Are there legitimate use cases for smart quotes?
 export default function SiteSearchControllerWrapper(props: Props) {
   const [params, updateParams] = useQueryParams(SEARCH_TERM_PARAM);
   const searchString = Array.isArray(params.q) ? params.q[0] : params.q || '';
