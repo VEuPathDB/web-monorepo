@@ -267,7 +267,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
-    setActiveSideMenuIndex(indexOfFilterSideMenuItem);
+    setActiveSideMenuIndex(filterSideMenuItemIndex);
     setSideNavigationIsExpanded(true);
   }
 
@@ -300,7 +300,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             // You don't need this button if whenever the filter
             // section is active and expanded.
             sideNavigationIsExpanded &&
-            activeSideMenuIndex === indexOfFilterSideMenuItem
+            activeSideMenuIndex === filterSideMenuItemIndex
           }
           themeRole="primary"
           text="Add filters"
@@ -465,18 +465,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
     ];
 
-  const indexOfFilterSideMenuItem =
+  const filterSideMenuItemIndex =
     sideNavigationButtonConfigurationObjects.findIndex(
       (config) => config.labelText === MapSideNavItemLabels.Filter
     );
-  const indexOfPlotSideMenuItem =
+  const plotSideMenuItemIndex =
     sideNavigationButtonConfigurationObjects.findIndex(
       (config) => config.labelText === MapSideNavItemLabels.Plot
     );
 
   const indexOfInitialActiveItem: number | undefined = (() => {
-    if (appState.isSubsetPanelOpen) return indexOfFilterSideMenuItem;
-    if (appState.activeVisualizationId) return indexOfPlotSideMenuItem;
+    if (appState.isSubsetPanelOpen) return filterSideMenuItemIndex;
+    if (appState.activeVisualizationId) return plotSideMenuItemIndex;
 
     return undefined;
   })();
@@ -494,7 +494,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     function syncIsSubsetPanelOpenStateWithActiveNavItemState() {
       if (
         appState.isSubsetPanelOpen &&
-        indexOfFilterSideMenuItem !== activeSideMenuIndex
+        filterSideMenuItemIndex !== activeSideMenuIndex
       ) {
         // If we're here, then we have the condition where the subsetting panel
         // is open, but the user has selected another side menu item.
@@ -504,7 +504,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     [
       activeSideMenuIndex,
       appState.isSubsetPanelOpen,
-      indexOfFilterSideMenuItem,
+      filterSideMenuItemIndex,
       setIsSubsetPanelOpen,
     ]
   );
@@ -733,7 +733,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </FloatingDiv>
 
-                {activeSideMenuIndex === indexOfPlotSideMenuItem && (
+                {activeSideMenuIndex === plotSideMenuItemIndex && (
                   <DraggableVisualization
                     analysisState={analysisState}
                     updateVisualizations={updateVisualizations}
