@@ -303,7 +303,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         className="FilterChips"
       >
         <FilledButton
-          disabled={sideNavigationIsExpanded}
+          disabled={
+            // You don't need this button if whenever the filter
+            // section is active and expanded.
+            sideNavigationIsExpanded &&
+            activeSideMenuIndex === filterSideMenuIndex
+          }
           themeRole="primary"
           text="Add filters"
           onPress={openSubsetPanelAndSetActiveSideMenuIndex}
