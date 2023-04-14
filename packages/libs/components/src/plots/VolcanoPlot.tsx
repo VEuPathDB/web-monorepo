@@ -14,6 +14,12 @@ import {
 } from '@visx/xychart';
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
+import {
+  gridStyles,
+  thresholdLineStyles,
+  VisxPoint,
+  axisStyles,
+} from './visxVEuPathDB';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -44,29 +50,6 @@ export interface VolcanoPlotProps {
   /** Width of plot */
   width?: number;
 }
-
-/** moving to visx standard file... */
-type VisxPoint = {
-  x?: number;
-  y?: number;
-};
-/**
- * Plot styles
- * (can eventually be moved to a new file and applied as a visx theme)
- */
-const thresholdLineStyles = {
-  stroke: '#aaaaaa',
-  strokeWidth: 1,
-  strokeDasharray: 3,
-};
-const axisStyles = {
-  stroke: '#bbbbbb',
-  strokeWidth: 1,
-};
-const gridStyles = {
-  stroke: '#dddddd',
-  strokeWidth: 0.5,
-};
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
 
