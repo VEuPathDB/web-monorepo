@@ -46,8 +46,7 @@ class AnswerFilter extends React.Component {
     }
   }
 
-  toggleFilterFieldSelector(e) {
-    e.stopPropagation();
+  toggleFilterFieldSelector() {
     this.setState({
       showFilterFieldSelector: !this.state.showFilterFieldSelector,
     });
@@ -156,7 +155,10 @@ class AnswerFilter extends React.Component {
         <Tooltip content="Show search fields">
           <button
             className="fa fa-caret-down wdk-Answer-filterSelectFieldsIcon"
-            onClick={this.toggleFilterFieldSelector}
+            onClick={(e) => {
+              e.stopPropagation();
+              this.toggleFilterFieldSelector();
+            }}
           />
         </Tooltip>
         <HelpTrigger>{tooltipContent}</HelpTrigger>
