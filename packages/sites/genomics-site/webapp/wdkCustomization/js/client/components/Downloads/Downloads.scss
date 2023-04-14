@@ -1,5 +1,40 @@
 .Downloads {
-  .filter-param .DataTable-Body {
-    max-height: 20vh !important;
+  &-Instructions {
+    font-size: 1.4em;
+  }
+
+  &-Filter-Container {
+    outline: 2px solid #acacac;
+    margin: 3em auto 4em;
+    width: 60vw;
+    border-radius: 8px;
+    height: 30em;
+
+    .filter-param {
+      .DataTable-Body {
+        height: 14em;
+      }
+      .field-list > * {
+        &:nth-child(1),
+        &:nth-child(2) {
+          display: none;
+        }
+      }
+
+      .HeadingRow .HeadingCell,
+      .DataRow .DataCell {
+        &:nth-child(3),
+        &:nth-child(4),
+        &:nth-child(5),
+        &:nth-child(6) {
+          display: none;
+        }
+      }
+
+      .filters,
+      .filters-server-side {
+        min-height: auto;
+      }
+    }
   }
 }
