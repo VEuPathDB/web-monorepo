@@ -275,6 +275,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   function openSubsetPanelAndSetActiveSideMenuIndex() {
     setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
     setActiveSideMenuIndex(filterSideMenuIndex);
+    setSideNavigationIsExpanded(true);
   }
 
   const FilterChipListForHeader = () => {
@@ -302,6 +303,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         className="FilterChips"
       >
         <FilledButton
+          disabled={sideNavigationIsExpanded}
           themeRole="primary"
           text="Add filters"
           onPress={openSubsetPanelAndSetActiveSideMenuIndex}
@@ -384,9 +386,33 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Filter',
+        labelText: MapSideNavItemLabels.Filter,
         icon: <Filter />,
-        renderSideNavigationPanel: () => {},
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                width: 1000,
+                maxHeight: 650,
+                padding: '0 25px',
+                overflow: 'scroll',
+                resize: 'both',
+              }}
+            >
+              <Subsetting
+                variableLinkConfig={{
+                  type: 'button',
+                  onClick: setSubsetVariableAndEntity,
+                }}
+                entityId={subsetVariableAndEntity?.entityId ?? ''}
+                variableId={subsetVariableAndEntity?.variableId ?? ''}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </div>
+          );
+        },
         onToggleSideMenuItem: (isActive) => {
           setIsSubsetPanelOpen(!isActive);
         },
@@ -624,56 +650,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     </div>
                   </MapSideNavigation>
                 </div>
-                {appState.isSubsetPanelOpen && (
-                  <DraggablePanel
-                    isOpen
-                    panelTitle="Filter"
-                    showPanelTitle
-                    onPanelDismiss={() => {
-                      setIsSubsetPanelOpen(false);
 
-                      const subsetPanelIndex =
-                        sideNavigationButtonConfigurationObjects.findIndex(
-                          (config) => config.labelText === 'Filter'
-                        );
-                      setActiveSideMenuIndex((currentIndex) =>
-                        currentIndex === subsetPanelIndex
-                          ? undefined
-                          : currentIndex
-                      );
-                    }}
-                    confineToParentContainer
-                    defaultPosition={{
-                      x: 216,
-                      y: 143,
-                    }}
-                    styleOverrides={{ zIndex: 100 }}
-                    onDragComplete={console.log}
-                  >
-                    <div
-                      style={{
-                        maxWidth: 1200,
-                        width: 1200,
-                        maxHeight: 650,
-                        padding: '0 15px',
-                        overflow: 'scroll',
-                        resize: 'both',
-                      }}
-                    >
-                      <Subsetting
-                        variableLinkConfig={{
-                          type: 'button',
-                          onClick: setSubsetVariableAndEntity,
-                        }}
-                        entityId={subsetVariableAndEntity?.entityId ?? ''}
-                        variableId={subsetVariableAndEntity?.variableId ?? ''}
-                        analysisState={analysisState}
-                        totalCounts={totalCounts.value}
-                        filteredCounts={filteredCounts.value}
-                      />
-                    </div>
-                  </DraggablePanel>
-                )}
                 <MapVEuMap
                   height="100%"
                   width="100%"
