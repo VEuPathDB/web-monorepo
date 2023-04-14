@@ -15,13 +15,7 @@ import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import {
-  Close,
-  Download,
-  FilledButton,
-  Filter,
-  FloatingButton,
-} from '@veupathdb/coreui';
+import { Download, FilledButton, Filter } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
@@ -73,7 +67,6 @@ import {
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import NotesTab from '../../workspace/NotesTab';
-import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 const MapSideNavItemLabels = {
   Download: 'Download',
@@ -123,7 +116,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    setIsSubsetPanelOpen,
+    setIsSubsetPanelOpen = () => {},
   } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -272,9 +265,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
 
-  function openSubsetPanelAndSetActiveSideMenuIndex() {
-    setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
-    setActiveSideMenuIndex(filterSideMenuIndex);
+  function openSubsetPanelFromControlOutsideOfNavigation() {
+    setIsSubsetPanelOpen(true);
+    setActiveSideMenuIndex(indexOfFilterSideMenuItem);
     setSideNavigationIsExpanded(true);
   }
 
@@ -283,7 +276,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       type: 'button',
       onClick(value) {
         setSubsetVariableAndEntity(value);
-        openSubsetPanelAndSetActiveSideMenuIndex();
+        openSubsetPanelFromControlOutsideOfNavigation();
       },
     };
 
@@ -307,11 +300,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             // You don't need this button if whenever the filter
             // section is active and expanded.
             sideNavigationIsExpanded &&
-            activeSideMenuIndex === filterSideMenuIndex
+            activeSideMenuIndex === indexOfFilterSideMenuItem
           }
           themeRole="primary"
           text="Add filters"
-          onPress={openSubsetPanelAndSetActiveSideMenuIndex}
+          onPress={openSubsetPanelFromControlOutsideOfNavigation}
           size="small"
           textTransform="unset"
           styleOverrides={{
@@ -472,30 +465,36 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
     ];
 
-  const filterSideMenuIndex =
+  const indexOfFilterSideMenuItem =
     sideNavigationButtonConfigurationObjects.findIndex(
       (config) => config.labelText === MapSideNavItemLabels.Filter
     );
-  const plotSideMenuIndex = sideNavigationButtonConfigurationObjects.findIndex(
-    (config) => config.labelText === MapSideNavItemLabels.Plot
-  );
+  const indexOfPlotSideMenuItem =
+    sideNavigationButtonConfigurationObjects.findIndex(
+      (config) => config.labelText === MapSideNavItemLabels.Plot
+    );
 
-  const initialActiveNavItemIndex: number | undefined = (() => {
-    if (appState.isSubsetPanelOpen) return filterSideMenuIndex;
-    if (appState.activeVisualizationId) return plotSideMenuIndex;
+  const indexOfInitialActiveItem: number | undefined = (() => {
+    if (appState.isSubsetPanelOpen) return indexOfFilterSideMenuItem;
+    if (appState.activeVisualizationId) return indexOfPlotSideMenuItem;
 
     return undefined;
   })();
 
   const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
     number | undefined
-  >(initialActiveNavItemIndex);
+  >(indexOfInitialActiveItem);
 
   useEffect(
-    function syncIsSubsetPanelOpenWithActiveSideMenuIndex() {
+    /**
+     * Controls outside side navigation open subset panel. This effect synchronizes the
+     * subset panel open state with the active side navigation item state to avoid an
+     * open subset panel and an inactive navigation item.
+     */
+    function syncIsSubsetPanelOpenStateWithActiveNavItemState() {
       if (
         appState.isSubsetPanelOpen &&
-        filterSideMenuIndex !== activeSideMenuIndex
+        indexOfFilterSideMenuItem !== activeSideMenuIndex
       ) {
         // If we're here, then we have the condition where the subsetting panel
         // is open, but the user has selected another side menu item.
@@ -505,7 +504,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     [
       activeSideMenuIndex,
       appState.isSubsetPanelOpen,
-      filterSideMenuIndex,
+      indexOfFilterSideMenuItem,
       setIsSubsetPanelOpen,
     ]
   );
@@ -734,7 +733,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </FloatingDiv>
 
-                {activeSideMenuIndex === plotSideMenuIndex && (
+                {activeSideMenuIndex === indexOfPlotSideMenuItem && (
                   <DraggableVisualization
                     analysisState={analysisState}
                     updateVisualizations={updateVisualizations}
