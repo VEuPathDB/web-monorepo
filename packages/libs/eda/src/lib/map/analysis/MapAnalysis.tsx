@@ -68,15 +68,30 @@ import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import NotesTab from '../../workspace/NotesTab';
 
-const MapSideNavItemLabels = {
-  Download: 'Download',
-  Filter: 'Filter',
-  Notes: 'Notes',
-  Paint: 'Paint',
-  Plot: 'Plot',
-  Share: 'Share',
-  StudyDetails: 'View Study Details',
+enum MapSideNavItemLabels {
+  Download = 'Download',
+  Filter = 'Filter',
+  Notes = 'Notes',
+  Paint = 'Paint',
+  Plot = 'Plot',
+  Share = 'Share',
+  StudyDetails = 'View Study Details',
+}
+
+type SideNavigationItemConfigurationObject = {
+  href?: string;
+  labelText: MapSideNavItemLabels;
+  icon: ReactNode;
+  renderSideNavigationPanel: (app: ComputationAppOverview) => ReactNode;
+  onToggleSideMenuItem?: (isActive: boolean) => void;
 };
+
+function getSideNavItemIndexByLabel(
+  label: MapSideNavItemLabels,
+  navItems: SideNavigationItemConfigurationObject[]
+): number {
+  return navItems.findIndex((navItem) => navItem.labelText === label);
+}
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -362,13 +377,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     marginLeft: '0.5rem',
   };
 
-  type SideNavigationItemConfigurationObject = {
-    href?: string;
-    labelText: string;
-    icon: ReactNode;
-    renderSideNavigationPanel: (app: ComputationAppOverview) => ReactNode;
-    onToggleSideMenuItem?: (isActive: boolean) => void;
-  };
   const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderSideNavigationPanel'] =
     (_) => (
       <div style={{ padding: '2rem' }}>
@@ -465,16 +473,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
     ];
 
-  const filterSideMenuItemIndex =
-    sideNavigationButtonConfigurationObjects.findIndex(
-      (config) => config.labelText === MapSideNavItemLabels.Filter
-    );
-  const plotSideMenuItemIndex =
-    sideNavigationButtonConfigurationObjects.findIndex(
-      (config) => config.labelText === MapSideNavItemLabels.Plot
-    );
+  const filterSideMenuItemIndex = getSideNavItemIndexByLabel(
+    MapSideNavItemLabels.Filter,
+    sideNavigationButtonConfigurationObjects
+  );
+  const plotSideMenuItemIndex = getSideNavItemIndexByLabel(
+    MapSideNavItemLabels.Plot,
+    sideNavigationButtonConfigurationObjects
+  );
 
-  const indexOfInitialActiveItem: number | undefined = (() => {
+  const intialActiveSideMenuIndex: number | undefined = (() => {
     if (appState.isSubsetPanelOpen) return filterSideMenuItemIndex;
     if (appState.activeVisualizationId) return plotSideMenuItemIndex;
 
@@ -483,7 +491,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
     number | undefined
-  >(indexOfInitialActiveItem);
+  >(intialActiveSideMenuIndex);
 
   const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
     ({ labelText, icon, onToggleSideMenuItem = () => {} }, index) => {
