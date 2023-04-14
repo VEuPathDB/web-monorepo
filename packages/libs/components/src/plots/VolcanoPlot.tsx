@@ -55,13 +55,15 @@ const EmptyVolcanoPlotData: VolcanoPlotData = [];
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
- * It also colors the points based on their significance and magnitude change.
+ * The standard volcano plot has -log2(Fold Change) as the x axis and -log10(raw p value)
+ * on the y axis. The volcano plot also colors the points based on their
+ * significance and magnitude change to make it easy to spot significantly up or down-regulated genes or taxa.
  */
 function VolcanoPlot(props: VolcanoPlotProps) {
   const {
     data = EmptyVolcanoPlotData,
-    independentAxisRange,
-    dependentAxisRange,
+    independentAxisRange, // not yet implemented - expect this to be set by user
+    dependentAxisRange, // not yet implemented - expect this to be set by user
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
@@ -141,7 +143,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   };
 
   return (
-    // Relative positioning so that tooltips are positioned correctly (they are positioned absolutely)
+    // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div style={{ position: 'relative' }}>
       {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
@@ -164,7 +166,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             Another option would be to make Line with LineSeries, but the default hover response
             is on the points instead of the line connecting them. */}
 
-        {/* Horizontal significance threshold */}
+        {/* Draw horizontal significance threshold */}
         {significanceThreshold && (
           <Annotation
             datum={{
@@ -179,7 +181,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             />
           </Annotation>
         )}
-        {/* Both vertical log2 fold change threshold lines */}
+        {/* Draw both vertical log2 fold change threshold lines */}
         {log2FoldChangeThreshold && (
           <>
             <Annotation
@@ -204,7 +206,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         )}
 
         {/* The data itself */}
-        {/* Wrapping in a group in order to change the opacity. The GlyphSeries is somehow
+        {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
             down to those elements, but I haven't found it yet */}
         <Group opacity={markerBodyOpacity ?? 1}>
