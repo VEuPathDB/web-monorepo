@@ -39,7 +39,13 @@ export function reduce(state: State = initialState, action: Action): State {
 
 // TODO Allow this to be configured by .. consumer
 function ignoreError(message: string): boolean {
-  return /ResizeObserver loop limit exceeded/.test(message);
+  const messagesToIgnore = [
+    'ResizeObserver loop limit exceeded',
+    'empty textures are not allowed',
+  ];
+  return Boolean(
+    messagesToIgnore.find((msgToIgnore) => message.includes(msgToIgnore))
+  );
 }
 
 export function observe(
