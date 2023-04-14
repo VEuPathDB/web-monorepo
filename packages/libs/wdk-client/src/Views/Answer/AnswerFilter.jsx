@@ -46,7 +46,8 @@ class AnswerFilter extends React.Component {
     }
   }
 
-  toggleFilterFieldSelector() {
+  toggleFilterFieldSelector(e) {
+    e.stopPropagation();
     this.setState({
       showFilterFieldSelector: !this.state.showFilterFieldSelector,
     });
@@ -159,10 +160,6 @@ class AnswerFilter extends React.Component {
           />
         </Tooltip>
         <HelpTrigger>{tooltipContent}</HelpTrigger>
-        {/*<Tooltip content={tooltipContent}>
-          <i className="fa fa-question-circle fa-lg wdk-Answer-filterInfoIcon"/>
-        </Tooltip>*/}
-
         <AnswerFilterSelector
           attributes={attributes}
           tables={tables}
