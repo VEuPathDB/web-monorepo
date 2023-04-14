@@ -1,14 +1,13 @@
-export type VolcanoPlotData = {
-  foldChange: string[];
-  pValue: string[];
-  adjustedPValue: string[];
-  pointId: string[];
+export type VolcanoPlotDataPoint = {
+  // log2foldChange becomes the x axis. Also used for coloring points
+  log2foldChange: string;
+  // pValue will be negative log transformed for the y axis. Also
+  // needed as is (untransformed) in the tooltip and when coloring points
+  pValue: string;
+  // Used for thresholding and tooltip
+  adjustedPValue: string;
+  // Used for tooltip
+  pointId: string;
 };
 
-// would be more natural to have an array of objects, like an array of DataPoints
-// (this is even more general, so not visx specific yay!)
-// wouldn't have to worry about arrays having the same length
-// can plot.data return that type of structure?
-// Would be able to remove the whole data processing part
-// Think of visualizatoin component as an adapter to the specific application
-// Could the visualization do the processing?
+export type VolcanoPlotData = Array<VolcanoPlotDataPoint>;

@@ -1,11 +1,11 @@
-import { PlotProps } from './PlotlyPlot';
-
 import { significanceColors } from '../types/plots';
-import { VolcanoPlotData } from '../types/plots/volcanoplot';
+import {
+  VolcanoPlotData,
+  VolcanoPlotDataPoint,
+} from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
 import {
   XYChart,
-  Tooltip,
   Axis,
   Grid,
   GlyphSeries,
@@ -15,17 +15,19 @@ import {
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
 
-export interface VolcanoPlotProps extends PlotProps<VolcanoPlotData> {
+export interface VolcanoPlotProps {
+  /** Data for the plot. An array of VolcanoPlotDataPoints */
+  data: VolcanoPlotData;
   /**
    * Used to set the fold change thresholds. Will
-   * set two thresholds at +/- this number.
+   * set two thresholds at +/- this number. Affects point colors
    */
   log2FoldChangeThreshold: number;
-  /** Set the threshold for significance. */
+  /** Set the threshold for significance. Affects point colors */
   significanceThreshold: number;
-  /** x-axis range:  */
+  /** x-axis range  */
   independentAxisRange?: NumberRange;
-  /** y-axis range: */
+  /** y-axis range */
   dependentAxisRange?: NumberRange;
   /**
    * Array of size 2 that contains a label for the left and right side
@@ -33,26 +35,40 @@ export interface VolcanoPlotProps extends PlotProps<VolcanoPlotData> {
    * on the type of data we're using (genes vs taxa vs etc.)
    */
   comparisonLabels?: Array<string>;
-  /** What is this plot's name? */
+  /** Title of the plot */
   plotTitle?: string;
-  /** marker color opacity: range from 0 to 1 */
+  /** marker fill opacity: range from 0 to 1 */
   markerBodyOpacity?: number;
+  /** Height of plot */
+  height?: number;
+  /** Width of plot */
+  width?: number;
 }
 
-const EmptyVolcanoPlotData: VolcanoPlotData = {
-  foldChange: [],
-  pValue: [],
-  adjustedPValue: [],
-  pointId: [],
+/** moving to visx standard file... */
+type VisxPoint = {
+  x?: number;
+  y?: number;
+};
+/**
+ * Plot styles
+ * (can eventually be moved to a new file and applied as a visx theme)
+ */
+const thresholdLineStyles = {
+  stroke: '#aaaaaa',
+  strokeWidth: 1,
+  strokeDasharray: 3,
+};
+const axisStyles = {
+  stroke: '#bbbbbb',
+  strokeWidth: 1,
+};
+const gridStyles = {
+  stroke: '#dddddd',
+  strokeWidth: 0.5,
 };
 
-interface DataPoint {
-  foldChange: string;
-  pValue: string;
-  adjustedPValue: string;
-  pointId: string;
-  color: string;
-}
+const EmptyVolcanoPlotData: VolcanoPlotData = [];
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
@@ -66,141 +82,106 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
-    ...restProps
+    height,
+    width,
   } = props;
 
   /**
-   * Find mins and maxes of the data and for the plot
+   * Find mins and maxes of the data and for the plot.
+   * The standard x axis is the log2 fold change. The standard
+   * y axis is -log10 raw p value.
    */
 
-  const dataXMin = min(data.foldChange.map(Number));
-  const dataXMax = max(data.foldChange.map(Number));
-  const dataYMin = min(data.pValue.map(Number));
-  const dataYMax = max(data.pValue.map(Number));
+  // Find maxes and mins of the data itself
+  const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
+  const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
+  const dataYMin = min(data.map((d) => Number(d.pValue)));
+  const dataYMax = max(data.map((d) => Number(d.pValue)));
 
   // Determine mins, maxes of axes in the plot.
   // These are different than the data mins/maxes because
-  // of the log transform and the little bit of padding.
-  //
-
+  // of the log transform and the little bit of padding. The padding
+  // ensures we don't clip off part of the glyphs that represent
+  // the most extreme points
   let xMin: number;
   let xMax: number;
   let yMin: number;
   let yMax: number;
+  const AXIS_PADDING_FACTOR = 0.05;
 
-  // Log transform for plotting, and add a little margin for axes
+  // X axis
   if (dataXMin && dataXMax) {
-    xMin = Math.log2(dataXMin);
-    xMax = Math.log2(dataXMax);
-    // Adding the extra buffer
-    // Could extract into a function? Shared with scatterplot
-    xMin = xMin - (xMax - xMin) * 0.05; //ANN add descriptive comment
-    xMax = xMax + (xMax - xMin) * 0.05; // Mention the problem it solves (preventing data points from being clipped)
+    // We can use the dataMin and dataMax here because we don't have a further transform
+    xMin = dataXMin;
+    xMax = dataXMax;
+    // Add a little padding to prevent clipping the glyph representing the extreme points
+    xMin = xMin - (xMax - xMin) * AXIS_PADDING_FACTOR;
+    xMax = xMax + (xMax - xMin) * AXIS_PADDING_FACTOR;
   } else {
     xMin = 0;
     xMax = 0;
   }
+
+  // Y axis
   if (dataYMin && dataYMax) {
-    // note that negative log because it's standard practice!
+    // Standard volcano plots have -log10(raw p value) as the y axis
     yMin = -Math.log10(dataYMax);
     yMax = -Math.log10(dataYMin);
-    // add more commments here
-    yMin = yMin - (yMax - yMin) * 0.05;
-    yMax = yMax + (yMax - yMin) * 0.05;
+    // Add a little padding to prevent clipping the glyph representing the extreme points
+    yMin = yMin - (yMax - yMin) * AXIS_PADDING_FACTOR;
+    yMax = yMax + (yMax - yMin) * AXIS_PADDING_FACTOR;
   } else {
     yMin = 0;
     yMax = 0;
   }
 
   /**
-   * Turn the data (array of arrays) into data points (array of points)
-   * NOT TRUE ANYMORE!
-   */
-
-  let dataPoints: DataPoint[] = [];
-
-  // Loop through the data and return points. Doesn't really matter
-  // which var of the data we map over.
-  // const dataPoints = data.foldChange.map(...) or .transform
-  // return the datapoint object
-  // note that this also signals that we're not going to update dataPoints
-  data.foldChange.forEach((fc, ind: number) => {
-    dataPoints.push({
-      foldChange: fc,
-      pValue: data.pValue[ind],
-      adjustedPValue: data.adjustedPValue[ind],
-      pointId: data.pointId[ind],
-      color: assignSignificanceColor(
-        Math.log2(Number(fc)),
-        Number(data.pValue[ind]),
-        significanceThreshold,
-        log2FoldChangeThreshold,
-        significanceColors
-      ),
-    });
-  });
-
-  /**
-   * Accessors - tell visx which value of each points we should use and where.
+   * Accessors - tell visx which value of the data point we should use and where.
    */
 
   const dataAccessors = {
-    // Can we make the type better???
-    // Can we annotate the type of data accessor? Use some generic type here??
-    xAccessor: (d: DataPoint) => {
-      // ANN improve types for all these accessors
-      return Math.log2(Number(d?.foldChange));
+    xAccessor: (d: VolcanoPlotDataPoint) => {
+      return Number(d?.log2foldChange);
     },
-    yAccessor: (d: any) => {
-      return -Math.log10(d?.pValue);
+    yAccessor: (d: VolcanoPlotDataPoint) => {
+      return -Math.log10(Number(d?.pValue));
     },
   };
 
   const thresholdLineAccessors = {
-    xAccessor: (d: any) => {
+    xAccessor: (d: VisxPoint) => {
       return d?.x;
     },
-    yAccessor: (d: any) => {
+    yAccessor: (d: VisxPoint) => {
       return d?.y;
     },
   };
 
-  /**
-   * Plot styles
-   * (can eventually be moved to a new file and applied as a visx theme)
-   */
-  const thresholdLineStyles = {
-    stroke: '#aaaaaa',
-    strokeWidth: 1,
-    strokeDasharray: 3,
-  };
-  const axisStyles = {
-    stroke: '#bbbbbb',
-    strokeWidth: 1,
-  };
-  const gridStyles = {
-    stroke: '#dddddd',
-    strokeWidth: 0.5,
-  };
-
   return (
-    // From docs " For correct tooltip positioning, it is important to wrap your
-    // component in an element (e.g., div) with relative positioning."
-    // ANN add comments about why i put things in particular places or
-    // any magic i learned. Describing how i did things and why (since there's not
-    // a lot of docs on that)
+    // Relative positioning so that tooltips are positioned correctly (they are positioned absolutely)
     <div style={{ position: 'relative' }}>
+      {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
+          It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
+          so use caution when ordering the children (ex. draw axes before data).  */}
       <XYChart
-        height={300}
+        height={height ?? 300}
         xScale={{ type: 'linear', domain: [xMin, xMax] }}
         yScale={{ type: 'linear', domain: [yMin, yMax], zero: false }}
-        width={300}
+        width={width ?? 300}
       >
+        {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
         <Grid numTicks={6} lineStyle={gridStyles} />
         <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
         <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
-        {/* Draw threshold lines as annotations below the data points */}
+        {/* Draw threshold lines as annotations below the data points. The
+            annotations use XYChart's theme and dimension context.
+            The Annotation component holds the context for its children, which is why
+            we make a new Annotation component for each line.
+            Another option would be to make Line with LineSeries, but the default hover response
+            is on the points instead of the line connecting them. */}
+
+        {/* Horizontal significance threshold */}
         {significanceThreshold && (
           <Annotation
             datum={{
@@ -215,6 +196,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             />
           </Annotation>
         )}
+        {/* Both vertical log2 fold change threshold lines */}
         {log2FoldChangeThreshold && (
           <>
             <Annotation
@@ -239,13 +221,22 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         )}
 
         {/* The data itself */}
+        {/* Wrapping in a group in order to change the opacity. The GlyphSeries is somehow
+            a bunch of glyphs which are <circles> so there should be a way to pass opacity
+            down to those elements, but I haven't found it yet */}
         <Group opacity={markerBodyOpacity ?? 1}>
           <GlyphSeries
-            dataKey={'data'}
-            data={dataPoints}
+            dataKey={'data'} // unique key
+            data={data} // data as an array of obejcts (points). Accessed with dataAccessors
             {...dataAccessors}
             colorAccessor={(d) => {
-              return d.color;
+              return assignSignificanceColor(
+                Number(d.log2foldChange),
+                Number(d.pValue),
+                significanceThreshold,
+                log2FoldChangeThreshold,
+                significanceColors
+              );
             }}
           />
         </Group>
@@ -258,31 +249,34 @@ function VolcanoPlot(props: VolcanoPlotProps) {
  * Assign color to point based on significance and magnitude change thresholds
  */
 function assignSignificanceColor(
-  xValue: number, // has already been log2 transformed
-  yValue: number, // the raw pvalue
+  log2foldChange: number,
+  pValue: number,
   significanceThreshold: number,
   log2FoldChangeThreshold: number,
-  significanceColors: string[] // Assuming the order is [high (up regulated), low (down regulated), not significant]
+  significanceColors: string[] // Assuming the order is [high (up regulated), low (down regulated), insignificant]
 ) {
-  // Look at Sam's comment for improving readability
+  // Name indices of the significanceColors array for easier accessing.
+  const HIGH = 0;
+  const LOW = 1;
+  const INSIGNIFICANT = 2;
 
   // Test 1. If the y value is higher than the significance threshold, just return not significant
-  if (yValue >= significanceThreshold) {
-    return significanceColors[2];
+  if (pValue >= significanceThreshold) {
+    return significanceColors[INSIGNIFICANT];
   }
 
   // Test 2. So the y is significant. Is the x larger than the positive foldChange threshold?
-  if (xValue >= log2FoldChangeThreshold) {
-    return significanceColors[0];
+  if (log2foldChange >= log2FoldChangeThreshold) {
+    return significanceColors[HIGH];
   }
 
   // Test 3. Is the x value lower than the negative foldChange threshold?
-  if (xValue <= -log2FoldChangeThreshold) {
-    return significanceColors[1];
+  if (log2foldChange <= -log2FoldChangeThreshold) {
+    return significanceColors[LOW];
   }
 
   // If we're still here, it must be a non significant point.
-  return significanceColors[2];
+  return significanceColors[INSIGNIFICANT];
 }
 
 export default VolcanoPlot;
