@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
@@ -484,30 +484,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
     number | undefined
   >(indexOfInitialActiveItem);
-
-  useEffect(
-    /**
-     * Controls outside side navigation open subset panel. This effect synchronizes the
-     * subset panel open state with the active side navigation item state to avoid an
-     * open subset panel and an inactive navigation item.
-     */
-    function syncIsSubsetPanelOpenStateWithActiveNavItemState() {
-      if (
-        appState.isSubsetPanelOpen &&
-        filterSideMenuItemIndex !== activeSideMenuIndex
-      ) {
-        // If we're here, then we have the condition where the subsetting panel
-        // is open, but the user has selected another side menu item.
-        setIsSubsetPanelOpen(false);
-      }
-    },
-    [
-      activeSideMenuIndex,
-      appState.isSubsetPanelOpen,
-      filterSideMenuItemIndex,
-      setIsSubsetPanelOpen,
-    ]
-  );
 
   const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
     ({ labelText, icon, onToggleSideMenuItem = () => {} }, index) => {
