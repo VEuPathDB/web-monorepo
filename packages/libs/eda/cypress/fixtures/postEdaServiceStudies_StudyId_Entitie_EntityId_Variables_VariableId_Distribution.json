@@ -1,0 +1,395 @@
+{
+    "histogram": [
+        {
+            "value": 1,
+            "binStart": "Avocado",
+            "binEnd": "Avocado",
+            "binLabel": "Avocado"
+        },
+        {
+            "value": 6,
+            "binStart": "Artisan",
+            "binEnd": "Artisan",
+            "binLabel": "Artisan"
+        },
+        {
+            "value": 1,
+            "binStart": "Barber",
+            "binEnd": "Barber",
+            "binLabel": "Barber"
+        },
+        {
+            "value": 10,
+            "binStart": "Boda Boda Cyclist",
+            "binEnd": "Boda Boda Cyclist",
+            "binLabel": "Boda Boda Cyclist"
+        },
+        {
+            "value": 1742,
+            "binStart": "Business",
+            "binEnd": "Business",
+            "binLabel": "Business"
+        },
+        {
+            "value": 1,
+            "binStart": "Caregiver",
+            "binEnd": "Caregiver",
+            "binLabel": "Caregiver"
+        },
+        {
+            "value": 2,
+            "binStart": "Caretaker",
+            "binEnd": "Caretaker",
+            "binLabel": "Caretaker"
+        },
+        {
+            "value": 24,
+            "binStart": "Carpenter",
+            "binEnd": "Carpenter",
+            "binLabel": "Carpenter"
+        },
+        {
+            "value": 66,
+            "binStart": "Casual Labourer",
+            "binEnd": "Casual Labourer",
+            "binLabel": "Casual Labourer"
+        },
+        {
+            "value": 1,
+            "binStart": "Catering",
+            "binEnd": "Catering",
+            "binLabel": "Catering"
+        },
+        {
+            "value": 7,
+            "binStart": "Church",
+            "binEnd": "Church",
+            "binLabel": "Church"
+        },
+        {
+            "value": 108,
+            "binStart": "Chw",
+            "binEnd": "Chw",
+            "binLabel": "Chw"
+        },
+        {
+            "value": 5,
+            "binStart": "Civil Servant",
+            "binEnd": "Civil Servant",
+            "binLabel": "Civil Servant"
+        },
+        {
+            "value": 2,
+            "binStart": "Clerk",
+            "binEnd": "Clerk",
+            "binLabel": "Clerk"
+        },
+        {
+            "value": 3,
+            "binStart": "Cook",
+            "binEnd": "Cook",
+            "binLabel": "Cook"
+        },
+        {
+            "value": 1,
+            "binStart": "Counsellor",
+            "binEnd": "Counsellor",
+            "binLabel": "Counsellor"
+        },
+        {
+            "value": 2,
+            "binStart": "Dressmaker",
+            "binEnd": "Dressmaker",
+            "binLabel": "Dressmaker"
+        },
+        {
+            "value": 6,
+            "binStart": "Driver",
+            "binEnd": "Driver",
+            "binLabel": "Driver"
+        },
+        {
+            "value": 3,
+            "binStart": "Electrician",
+            "binEnd": "Electrician",
+            "binLabel": "Electrician"
+        },
+        {
+            "value": 2436,
+            "binStart": "Farmer",
+            "binEnd": "Farmer",
+            "binLabel": "Farmer"
+        },
+        {
+            "value": 1,
+            "binStart": "Farming And Business",
+            "binEnd": "Farming And Business",
+            "binLabel": "Farming And Business"
+        },
+        {
+            "value": 2,
+            "binStart": "Farming And Fishing",
+            "binEnd": "Farming And Fishing",
+            "binLabel": "Farming And Fishing"
+        },
+        {
+            "value": 17,
+            "binStart": "Fish Monger",
+            "binEnd": "Fish Monger",
+            "binLabel": "Fish Monger"
+        },
+        {
+            "value": 1431,
+            "binStart": "Fishing",
+            "binEnd": "Fishing",
+            "binLabel": "Fishing"
+        },
+        {
+            "value": 1,
+            "binStart": "Forest Attendant",
+            "binEnd": "Forest Attendant",
+            "binLabel": "Forest Attendant"
+        },
+        {
+            "value": 1,
+            "binStart": "Groundsman",
+            "binEnd": "Groundsman",
+            "binLabel": "Groundsman"
+        },
+        {
+            "value": 13,
+            "binStart": "Hairdresser",
+            "binEnd": "Hairdresser",
+            "binLabel": "Hairdresser"
+        },
+        {
+            "value": 9,
+            "binStart": "Hawker",
+            "binEnd": "Hawker",
+            "binLabel": "Hawker"
+        },
+        {
+            "value": 27,
+            "binStart": "Herdsman",
+            "binEnd": "Herdsman",
+            "binLabel": "Herdsman"
+        },
+        {
+            "value": 5,
+            "binStart": "Hotelier",
+            "binEnd": "Hotelier",
+            "binLabel": "Hotelier"
+        },
+        {
+            "value": 29,
+            "binStart": "Household Worker",
+            "binEnd": "Household Worker",
+            "binLabel": "Household Worker"
+        },
+        {
+            "value": 724,
+            "binStart": "Housewife",
+            "binEnd": "Housewife",
+            "binLabel": "Housewife"
+        },
+        {
+            "value": 15,
+            "binStart": "Juakali",
+            "binEnd": "Juakali",
+            "binLabel": "Juakali"
+        },
+        {
+            "value": 41,
+            "binStart": "Mansonry",
+            "binEnd": "Mansonry",
+            "binLabel": "Mansonry"
+        },
+        {
+            "value": 5,
+            "binStart": "Mat Maker",
+            "binEnd": "Mat Maker",
+            "binLabel": "Mat Maker"
+        },
+        {
+            "value": 1,
+            "binStart": "Midwife",
+            "binEnd": "Midwife",
+            "binLabel": "Midwife"
+        },
+        {
+            "value": 2,
+            "binStart": "Miller",
+            "binEnd": "Miller",
+            "binLabel": "Miller"
+        },
+        {
+            "value": 27,
+            "binStart": "Mining",
+            "binEnd": "Mining",
+            "binLabel": "Mining"
+        },
+        {
+            "value": 25,
+            "binStart": "Motor Cyclist",
+            "binEnd": "Motor Cyclist",
+            "binLabel": "Motor Cyclist"
+        },
+        {
+            "value": 1,
+            "binStart": "Nurse",
+            "binEnd": "Nurse",
+            "binLabel": "Nurse"
+        },
+        {
+            "value": 19,
+            "binStart": "Others",
+            "binEnd": "Others",
+            "binLabel": "Others"
+        },
+        {
+            "value": 3,
+            "binStart": "Painter",
+            "binEnd": "Painter",
+            "binLabel": "Painter"
+        },
+        {
+            "value": 3,
+            "binStart": "Papyrus Harvester",
+            "binEnd": "Papyrus Harvester",
+            "binLabel": "Papyrus Harvester"
+        },
+        {
+            "value": 4617,
+            "binStart": "Peasant",
+            "binEnd": "Peasant",
+            "binLabel": "Peasant"
+        },
+        {
+            "value": 1,
+            "binStart": "Peer Educator",
+            "binEnd": "Peer Educator",
+            "binLabel": "Peer Educator"
+        },
+        {
+            "value": 1,
+            "binStart": "Plumber",
+            "binEnd": "Plumber",
+            "binLabel": "Plumber"
+        },
+        {
+            "value": 10,
+            "binStart": "Sales And Retail",
+            "binEnd": "Sales And Retail",
+            "binLabel": "Sales And Retail"
+        },
+        {
+            "value": 5,
+            "binStart": "Saloon",
+            "binEnd": "Saloon",
+            "binLabel": "Saloon"
+        },
+        {
+            "value": 29,
+            "binStart": "Sand Harvestor",
+            "binEnd": "Sand Harvestor",
+            "binLabel": "Sand Harvestor"
+        },
+        {
+            "value": 1,
+            "binStart": "Secretary",
+            "binEnd": "Secretary",
+            "binLabel": "Secretary"
+        },
+        {
+            "value": 14,
+            "binStart": "Security",
+            "binEnd": "Security",
+            "binLabel": "Security"
+        },
+        {
+            "value": 1,
+            "binStart": "Self Employed",
+            "binEnd": "Self Employed",
+            "binLabel": "Self Employed"
+        },
+        {
+            "value": 1,
+            "binStart": "Social Worker",
+            "binEnd": "Social Worker",
+            "binLabel": "Social Worker"
+        },
+        {
+            "value": 1,
+            "binStart": "Soldier",
+            "binEnd": "Soldier",
+            "binLabel": "Soldier"
+        },
+        {
+            "value": 229,
+            "binStart": "Student",
+            "binEnd": "Student",
+            "binLabel": "Student"
+        },
+        {
+            "value": 27,
+            "binStart": "Tailor",
+            "binEnd": "Tailor",
+            "binLabel": "Tailor"
+        },
+        {
+            "value": 249,
+            "binStart": "Teacher",
+            "binEnd": "Teacher",
+            "binLabel": "Teacher"
+        },
+        {
+            "value": 1,
+            "binStart": "Technician",
+            "binEnd": "Technician",
+            "binLabel": "Technician"
+        },
+        {
+            "value": 1,
+            "binStart": "Trader",
+            "binEnd": "Trader",
+            "binLabel": "Trader"
+        },
+        {
+            "value": 1,
+            "binStart": "Transporter",
+            "binEnd": "Transporter",
+            "binLabel": "Transporter"
+        },
+        {
+            "value": 54,
+            "binStart": "Unemployed",
+            "binEnd": "Unemployed",
+            "binLabel": "Unemployed"
+        },
+        {
+            "value": 9,
+            "binStart": "Village Elder",
+            "binEnd": "Village Elder",
+            "binLabel": "Village Elder"
+        },
+        {
+            "value": 16,
+            "binStart": "Water Vendor",
+            "binEnd": "Water Vendor",
+            "binLabel": "Water Vendor"
+        },
+        {
+            "value": 32,
+            "binStart": "Weaving",
+            "binEnd": "Weaving",
+            "binLabel": "Weaving"
+        }
+    ],
+    "statistics": {
+        "subsetSize": 233000,
+        "numVarValues": 12129,
+        "numDistinctValues": 64,
+        "numDistinctEntityRecords": 12129,
+        "numMissingCases": 220871
+    }
+}

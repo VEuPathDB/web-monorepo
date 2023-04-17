@@ -1,0 +1,109 @@
+{
+    "displayName": "Needle in the haystack!",
+    "description": "",
+    "studyId": "DS_d6a1141fbf",
+    "studyVersion": "",
+    "apiVersion": "",
+    "isPublic": false,
+    "analysisId": "DwOotOy",
+    "creationTime": "2023-04-17T10:50:33",
+    "modificationTime": "2023-04-17T15:42:26",
+    "numFilters": 1,
+    "numComputations": 1,
+    "numVisualizations": 1,
+    "descriptor": {
+        "subset": {
+            "descriptor": [
+                {
+                    "entityId": "EUPATH_0035127",
+                    "variableId": "ENVO_00000009",
+                    "stringSet": [
+                        "Kenya"
+                    ],
+                    "type": "stringSet"
+                }
+            ],
+            "uiSettings": {
+                "@@mapApp@@": {
+                    "viewport": {
+                        "center": [
+                            12.811801316582619,
+                            -34.80468750000001
+                        ],
+                        "zoom": 3
+                    },
+                    "mouseMode": "default",
+                    "boundsZoomLevel": {
+                        "bounds": {
+                            "southWest": {
+                                "lat": -53.2257684357902,
+                                "lng": -122.69531250000001
+                            },
+                            "northEast": {
+                                "lat": 66.08936427047088,
+                                "lng": 53.08593750000001
+                            }
+                        },
+                        "zoomLevel": 3
+                    },
+                    "isSubsetPanelOpen": false,
+                    "subsetVariableAndEntity": {
+                        "entityId": "EUPATH_0035127",
+                        "variableId": "ENVO_00000009"
+                    }
+                }
+            }
+        },
+        "computations": [
+            {
+                "computationId": "vgksn",
+                "displayName": "Unnamed computation",
+                "descriptor": {
+                    "type": "pass"
+                },
+                "visualizations": [
+                    {
+                        "visualizationId": "4fd1f72f-a475-4fc1-a27b-c8120cc9e577",
+                        "displayName": "Unnamed visualization",
+                        "descriptor": {
+                            "type": "histogram",
+                            "configuration": {
+                                "dependentAxisLogScale": false,
+                                "valueSpec": "count",
+                                "independentAxisValueSpec": "Full",
+                                "dependentAxisValueSpec": "Full"
+                            },
+                            "currentPlotFilters": [
+                                {
+                                    "entityId": "EUPATH_0035127",
+                                    "variableId": "ENVO_00000009",
+                                    "stringSet": [
+                                        "Kenya"
+                                    ],
+                                    "type": "stringSet"
+                                },
+                                {
+                                    "type": "numberRange",
+                                    "variableId": "OBI_0001620",
+                                    "entityId": "EUPATH_0035127",
+                                    "min": -53.2257684357902,
+                                    "max": 66.08936427047088
+                                },
+                                {
+                                    "type": "longitudeRange",
+                                    "variableId": "OBI_0001621",
+                                    "entityId": "EUPATH_0035127",
+                                    "left": -167.69531250000003,
+                                    "right": 98.08593750000001
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ],
+        "starredVariables": [],
+        "dataTableConfig": {},
+        "derivedVariables": []
+    }
+}

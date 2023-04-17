@@ -1,0 +1,17 @@
+{
+    "tables": {},
+    "displayName": "SCORE <i>S. mansoni<\/i> Cluster Randomized Trial",
+    "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+    "attributes": {
+        "eda_study_id": "SCORECX01-1",
+        "dataset_id": "DS_d6a1141fbf",
+        "study_access": "Controlled"
+    },
+    "id": [
+        {
+            "name": "dataset_id",
+            "value": "DS_d6a1141fbf"
+        }
+    ],
+    "tableErrors": []
+}

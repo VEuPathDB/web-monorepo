@@ -1,0 +1,17 @@
+{
+    "mapElements": [
+        {
+            "minLon": 34.037618,
+            "entityCount": 225,
+            "maxLat": -0.039578,
+            "minLat": -0.55524945,
+            "geoAggregateValue": "kz",
+            "avgLat": -0.24773266404771663,
+            "maxLon": 35.574142,
+            "avgLon": 34.479621225840525
+        }
+    ],
+    "config": {
+        "completeCasesGeoVar": 225
+    }
+}
