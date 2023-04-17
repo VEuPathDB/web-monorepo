@@ -238,12 +238,12 @@ function assignSignificanceColor(
   pValue: number,
   significanceThreshold: number,
   log2FoldChangeThreshold: number,
-  significanceColors: string[] // Assuming the order is [high (up regulated), low (down regulated), insignificant]
+  significanceColors: string[] // Assuming the order is [insignificant, high (up regulated), low (down regulated)]
 ) {
   // Name indices of the significanceColors array for easier accessing.
-  const HIGH = 0;
-  const LOW = 1;
-  const INSIGNIFICANT = 2;
+  const INSIGNIFICANT = 0;
+  const HIGH = 1;
+  const LOW = 2;
 
   // Test 1. If the y value is higher than the significance threshold, just return not significant
   if (pValue >= significanceThreshold) {
