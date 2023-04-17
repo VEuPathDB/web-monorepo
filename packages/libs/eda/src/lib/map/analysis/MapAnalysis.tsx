@@ -401,8 +401,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 width: '80vw',
                 maxHeight: 650,
                 padding: '0 25px',
-                overflow: 'scroll',
-                resize: 'both',
               }}
             >
               <Subsetting
