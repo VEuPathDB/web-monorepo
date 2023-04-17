@@ -25,10 +25,7 @@ module.exports = {
       test: /\.(js|jsx)$/,
       loader: require.resolve('babel-loader'),
       options: {
-        plugins: [
-          '@babel/plugin-proposal-nullish-coalescing-operator',
-          '@babel/plugin-syntax-class-properties',
-        ],
+        plugins: ['@babel/plugin-proposal-nullish-coalescing-operator'],
         presets: ['@babel/preset-env', '@babel/preset-react'],
       },
     });
