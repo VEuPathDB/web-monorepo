@@ -398,7 +398,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                width: 1000,
+                width: '80vw',
                 maxHeight: 650,
                 padding: '0 25px',
                 overflow: 'scroll',
