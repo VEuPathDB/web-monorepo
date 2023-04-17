@@ -1179,12 +1179,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           // (e.g. false values will override just as much as true)
           ...(vizConfig.independentAxisLogScale &&
           xMinMaxDataRange?.min != null &&
-          xMinMaxDataRange.min <= 0
+          (xMinMaxDataRange.min as number) <= 0
             ? { truncationConfigIndependentAxisMin: true }
             : {}),
           ...(vizConfig.dependentAxisLogScale &&
           yMinMaxDataRange?.min != null &&
-          yMinMaxDataRange.min <= 0
+          (yMinMaxDataRange.min as number) <= 0
             ? { truncationConfigDependentAxisMin: true }
             : {}),
         }
@@ -1385,7 +1385,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const independentAllNegative =
     vizConfig.independentAxisLogScale &&
     xMinMaxDataRange?.max != null &&
-    xMinMaxDataRange.max < 0;
+    (xMinMaxDataRange.max as number) < 0;
 
   const [
     dismissedDependentAllNegativeWarning,
@@ -1394,7 +1394,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const dependentAllNegative =
     vizConfig.dependentAxisLogScale &&
     yMinMaxDataRange?.max != null &&
-    yMinMaxDataRange.max < 0;
+    (yMinMaxDataRange.max as number) < 0;
 
   // add showBanner prop in this Viz
   const [showBanner, setShowBanner] = useState(true);
@@ -1974,7 +1974,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 : undefined,
             },
             ...(computedOverlayVariableDescriptor
-              ? []
+              ? [
+                  {
+                    name: 'overlayVariable',
+                    label: 'Overlay',
+                    role: 'stratification',
+                    readonlyValue: legendTitle,
+                  } as const,
+                ]
               : [
                   {
                     name: 'overlayVariable',
