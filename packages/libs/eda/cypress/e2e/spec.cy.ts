@@ -1,18 +1,45 @@
 describe('Standalone Map Filter / Subset Panel', () => {
-  it('users can open the subset panel from filter chip', () => {
+  it.only('users can open the subset panel from filter chip', () => {
     mockRoutes();
-    cy.visit('https://localhost:3000/mapveu/DS_d6a1141fbf');
+    cy.visit('/mapveu/DS_d6a1141fbf');
     cy.findByText('The Coolest Study Ever').click();
     cy.findByText('Country').click();
     cy.findByText('Nice description!').should('exist');
   });
-  it.only('users can add filters to their analysis', () => {
+  it('users can add filters to their analysis', () => {
     mockRoutes();
-    cy.visit('https://localhost:3000/mapveu/DS_d6a1141fbf');
+    cy.visit('/mapveu/DS_d6a1141fbf');
     cy.findByText('The Coolest Study Ever').click();
     cy.findByText('Filter').click();
 
-    cy.findByText('Avocado').click();
+    cy.wait('@postEdaServiceAppsPassVisualizationsMapMarkers')
+      .then(({ request }) => {
+        const hasAvocado = request.body.filters[0].stringSet.some(
+          (string) => string === 'Avocado'
+        );
+        expect(hasAvocado).to.be.false;
+      })
+      .then(() => {
+        cy.findByText('Avocado').click();
+      })
+      .then(() => {
+        cy.wait('@postEdaServiceAppsPassVisualizationsMapMarkers').then(
+          ({ request }) => {
+            const hasAvocado = request.body.filters[0].stringSet.some(
+              (string) => string === 'Avocado'
+            );
+            expect(hasAvocado).to.be.falsew;
+          }
+        );
+      });
+
+    cy.findByText('Village administrative information').click();
+    cy.findByText('Village study arm').click();
+    cy.findByText('Barber').click();
+
+    cy.get('header').within(() => {
+      cy.findByText('Village study arm').should('exist');
+    });
   });
 });
 
