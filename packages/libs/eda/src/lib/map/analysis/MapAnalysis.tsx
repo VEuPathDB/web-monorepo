@@ -2,6 +2,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
+  DEFAULT_ANALYSIS_NAME,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -427,7 +428,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             if (!userLoggedIn) {
               return <Login {...loginCallbacks} />;
             }
-            if (analysisState?.analysis?.displayName === 'Unnamed Analysis') {
+            if (
+              analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
+            ) {
               return (
                 <NameAnalysis
                   currentName={analysisState.analysis.displayName}
