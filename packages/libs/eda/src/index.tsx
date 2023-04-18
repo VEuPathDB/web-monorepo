@@ -197,6 +197,7 @@ initialize({
           }}
           singleAppMode={singleAppMode}
           edaServiceUrl={edaEndpoint}
+          sharingUrl={window.location.href}
         />
       ),
       exact: false,

@@ -77,6 +77,7 @@ import Login from '../../workspace/sharing/Login';
 import { useLoginCallbacks } from '../../workspace/sharing/hooks';
 import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
+import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -84,6 +85,7 @@ const mapStyle: React.CSSProperties = {
 
 interface Props {
   analysisId: string;
+  sharingUrl: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
@@ -117,6 +119,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
     setIsSubsetPanelOpen,
+    sharingUrl,
   } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -415,6 +418,21 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         renderWithApp: () => {
           if (!analysisState.analysis) return null;
 
+          function getShareMenuContent() {
+            if (!userLoggedIn) {
+              return <Login {...loginCallbacks} />;
+            }
+            if (analysisState?.analysis?.displayName === 'Unnamed Analysis') {
+              return (
+                <NameAnalysis
+                  currentName={analysisState.analysis.displayName}
+                  updateName={analysisState.setName}
+                />
+              );
+            }
+            return <ConfirmShareAnalysis sharingURL={sharingUrl} />;
+          }
+
           return (
             <div
               style={{
@@ -424,14 +442,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 padding: '0 15px',
               }}
             >
-              {!userLoggedIn ? (
-                <Login {...loginCallbacks} />
-              ) : (
-                <NameAnalysis
-                  currentName={analysisState.analysis.displayName}
-                  updateName={analysisState.setName}
-                />
-              )}
+              {getShareMenuContent()}
             </div>
           );
         },
