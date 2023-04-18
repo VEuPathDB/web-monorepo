@@ -1,5 +1,4 @@
 import { ReactNode, useCallback, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import {
   AnalysisState,
@@ -168,11 +167,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
   });
 
-  const { push } = useHistory();
   function showLoginForm() {
-    push({
-      pathname: props.siteInformationProps.loginUrl,
-    });
+    window.location.href = props.siteInformationProps.loginUrl;
   }
   function toggleVisible() {
     setActiveSideMenuIndex(undefined);
@@ -418,13 +414,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         renderWithApp: () => {
           if (!analysisState.analysis) return null;
 
-          return !userLoggedIn ? (
-            <Login {...loginCallbacks} />
-          ) : (
-            <NameAnalysis
-              currentName={analysisState.analysis.displayName}
-              updateName={analysisState.setName}
-            />
+          return (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '0 15px',
+              }}
+            >
+              {!userLoggedIn ? (
+                <Login {...loginCallbacks} />
+              ) : (
+                <NameAnalysis
+                  currentName={analysisState.analysis.displayName}
+                  updateName={analysisState.setName}
+                />
+              )}
+            </div>
           );
         },
       },
