@@ -78,6 +78,7 @@ import { useLoginCallbacks } from '../../workspace/sharing/hooks';
 import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
+import { useHistory } from 'react-router';
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -170,9 +171,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
   });
 
+  const history = useHistory();
   function showLoginForm() {
     const currentUrl = window.location.href;
-    window.location.href = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
+    const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
+    history.push(loginUrl);
   }
   function toggleVisible() {
     setActiveSideMenuIndex(undefined);
