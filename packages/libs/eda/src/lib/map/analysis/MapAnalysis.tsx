@@ -167,7 +167,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
   });
   function showLoginForm() {
-    console.log('showLoginForm');
+    console.log('Go to login: ', props.siteInformationProps.loginUrl);
   }
   function toggleVisible() {
     setActiveSideMenuIndex(undefined);
