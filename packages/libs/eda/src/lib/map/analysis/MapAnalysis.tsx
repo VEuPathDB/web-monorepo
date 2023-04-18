@@ -170,7 +170,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     console.log('showLoginForm');
   }
   function toggleVisible() {
-    console.log('toggleVisible');
+    setActiveSideMenuIndex(undefined);
   }
   const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
