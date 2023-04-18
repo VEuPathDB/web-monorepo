@@ -85,7 +85,6 @@ const headerMenuItemStyleOverrides: CheckboxTreeStyleSpec = {
     optionalIcon: {
       fontSize: '1.25em',
       cursor: 'text',
-      top: '3px',
     },
   },
   treeSection: {

@@ -142,7 +142,8 @@
 
   .EDAWorkspaceNavigation {
     position: sticky;
-    top: 0;
+    // 40px represents the vertical height consumed by the "collapsed" sticky site header
+    top: 40px;
     z-index: 1050;
     background: white;
     padding-top: 0.5em;

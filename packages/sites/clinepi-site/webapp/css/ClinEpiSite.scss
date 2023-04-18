@@ -2,13 +2,19 @@
 @import url('https://fonts.googleapis.com/css?family=Rubik:300');
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&display=swap');
 
-
 @value hlColor: #9c242d;
 @value bgColor: #85b3c3;
 
-body, h1, h2, h3, h4, h5, h6 {
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   /* Some rules below are tailored to the current font. See FONT_RELATED section below */
-  font-family: 'Roboto', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica';
+  font-family: 'Roboto', 'San Francisco', 'Frutiger', 'Univers',
+    'Helvetica Neue', 'Helvetica';
   /* font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif; */
   text-rendering: optimizeLegibility;
 }
@@ -64,13 +70,9 @@ body {
   position: initial;
 }
 
-.eupathdb-Logo {
-
-}
-
 /* Alpha Release Badge */
 .eupathdb-Logo:after {
-  content: "Prototype";
+  content: 'Prototype';
   position: absolute;
   font-size: 1rem;
   border: 1px solid;
@@ -111,7 +113,8 @@ body {
   top: -7px;
 }
 
-.eupathdb-Menu, .eupathdb-SmallMenu {
+.eupathdb-Menu,
+.eupathdb-SmallMenu {
   font-size: 1.2em;
 }
 .eupathdb-MenuItem:hover {
@@ -160,7 +163,7 @@ a.eupathdb-MenuItemText,
 
 /* Fix for IE11 weirdness */
 
-@media all and (-ms-high-contrast:none) {
+@media all and (-ms-high-contrast: none) {
   #RightColumn {
     margin-left: -40px;
     position: relative;
@@ -261,7 +264,7 @@ img.WelcomeBanner {
 }
 
 .ImagePlaceholder:after {
-  content: "Image here";
+  content: 'Image here';
 }
 
 ul.ExampleSearches {
@@ -298,21 +301,21 @@ ul.ExampleSearches li {
   border-radius: 8px;
   transition: all 0.3s ease;
   border: none;
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
   border-bottom: 4px solid #b4b4b4;
   border-left: 1px solid #b5b5b5;
   border-right: 1px solid #b5b5b5;
 }
 
 .IconButton:hover {
-  box-shadow:
-    inset 0px -5px 30px rgba(100,170,230,0.7),
-    0px 0px 5px rgba(0,0,0,0.1);
+  box-shadow: inset 0px -5px 30px rgba(100, 170, 230, 0.7),
+    0px 0px 5px rgba(0, 0, 0, 0.1);
   transform: scale(0.98) translateY(4px);
   border-bottom: 1px solid #b5b4b4;
 }
 
-.SearchLink, .SearchLink-Caption:hover {
+.SearchLink,
+.SearchLink-Caption:hover {
   color: #069;
   text-decoration: none;
 }
@@ -337,7 +340,8 @@ ul.ExampleSearches li {
   opacity: 1;
 }
 
-.SearchLink-Caption, .AnalysisLink-Caption {
+.SearchLink-Caption,
+.AnalysisLink-Caption {
   text-align: center;
   display: block;
   width: 100%;
@@ -349,10 +353,12 @@ ul.ExampleSearches li {
   transition: all 0.4s;
   -webkit-transition: all 0.4s;
 }
-.SearchLink:hover, .AnalysisLink:hover {
+.SearchLink:hover,
+.AnalysisLink:hover {
   text-decoration: none;
 }
-.SearchLink:hover .SearchLink-Caption, .AnalysisLink:hover .AnalysisLink-Caption {
+.SearchLink:hover .SearchLink-Caption,
+.AnalysisLink:hover .AnalysisLink-Caption {
   color: #069;
   text-shadow: 0px 0px 10px rgba(0, 96, 143, 0.25);
 }
@@ -402,7 +408,9 @@ a.WelcomeBoxLink {
   margin: 0 5px;
 }
 
-.SearchAlt.disabled, .SearchLink.disabled, .AnalysisLink.disabled {
+.SearchAlt.disabled,
+.SearchLink.disabled,
+.AnalysisLink.disabled {
   opacity: 0.3;
   cursor: not-allowed;
   color: #444;
@@ -441,10 +449,6 @@ a.WelcomeBoxLink {
     display: flex;
     justify-content: space-between;
     margin-top: 1em;
-  }
-
-  .ExploreSection {
-    /*width: 45%;*/
   }
 }
 
@@ -507,7 +511,7 @@ a.WelcomeBoxLink {
 
 .ebrc-QuestionWizard div.clinepi-Summary {
   max-width: 75em;
-  font-size: 1.2em; 
+  font-size: 1.2em;
   margin: 0;
 }
 .ebrc-QuestionWizard div.clinepi-Summary span#prompt {
@@ -527,7 +531,6 @@ a.WelcomeBoxLink {
 .ebrc-QuestionWizardParamGroupCount {
   font-size: 1.2em;
 }
-
 
 button.ebrc-QuestionWizardParamGroupButton__active,
 button.ebrc-QuestionWizardParamGroupButton__active:active,
@@ -551,13 +554,12 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   width: 90vw;
 }
 
-
 /* filterParam.css  override for range warning */
 .filter-param .chart-controls .chart-controlsContent .range-warning {
-    color: #d32f2f;
-    font-size: 200%;
-    vertical-align: middle;
-    margin-right: 0.3em;
+  color: #d32f2f;
+  font-size: 200%;
+  vertical-align: middle;
+  margin-right: 0.3em;
 }
 
 .Padded {
@@ -625,7 +627,8 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 }
 
 /* Hide action links on Dataset page for now */
-.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
+.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
+  .wdk-RecordActions {
   display: none;
 }
 
@@ -638,7 +641,7 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   display: none;
 }
 .wdk-RecordActionItem {
-    padding: 0;
+  padding: 0;
 }
 
 /* wdk Record.css  overrides */
@@ -656,7 +659,7 @@ div.wdk-CollapsibleSectionContent li {
   background: #3c78d8;
   border-color: #0d47a2;
   color: white;
-  font-size: 130%; 
+  font-size: 130%;
   margin-left: 0;
 }
 .wdk-RecordContainer div.StudyRecordHeadingSearchLinksDashboardLink {
@@ -676,78 +679,82 @@ div.wdk-CollapsibleSectionContent li {
   max-width: 80em;
 }
 
-.wdk-RecordAttributeName, .wdk-RecordAttributeSectionItemHeader, .wdk-RecordTableContainerHeader {
+.wdk-RecordAttributeName,
+.wdk-RecordAttributeSectionItemHeader,
+.wdk-RecordTableContainerHeader {
   color: #3e3e3e;
   font-size: 130%;
 }
 
-.wdk-RecordAttributeValue, .wdk-RecordAttributeSectionItemContent, .wdk-RecordTableContainerContent {
+.wdk-RecordAttributeValue,
+.wdk-RecordAttributeSectionItemContent,
+.wdk-RecordTableContainerContent {
   font-size: 125%;
 }
 
-.wdk-RecordAttributeName, .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
+.wdk-RecordAttributeName,
+.wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
   font-size: 135%;
 }
 
 /* FONT_RELATED overrides */
-b, strong, th,
+b,
+strong,
+th,
 .filter-param .wdk-AttributeFilterFieldParent,
 .filter-param .wdk-AttributeFilterFieldItem {
   font-weight: 500;
 }
-
 
 /* Ensures that clicking a child of a .study-action button targets the button itself */
 button.study-action[data-study-id][data-args] * {
   pointer-events: none;
 }
 
-
 /* ========================================================================= */
 /* Static Content  pages                                                      */
 /* ========================================================================= */
-
-
 
 /* Data access and Use Policy  page */
 /* ========================================================================= */
 
 #ce-data-access {
-    padding: 0 3em;
+  padding: 0 3em;
 
-    p, ul, table {
-      font-size: 130%;
-      margin-bottom: 1em;
-    }
-
+  p,
+  ul,
+  table {
+    font-size: 130%;
+    margin-bottom: 1em;
+  }
 }
 
-/* Static Content  pages with div#ce-static-content wrapper */                                            
+/* Static Content  pages with div#ce-static-content wrapper */
 /* ========================================================================= */
 
 #ce-static-content {
-    padding: 0 3em;
+  padding: 0 3em;
 
-    h2 + div {
-      font-size: 130%;
-      margin-bottom: 1em;
-/*      padding-bottom: 2em;
+  h2 + div {
+    font-size: 130%;
+    margin-bottom: 1em;
+    /*      padding-bottom: 2em;
       border-bottom: 1px solid #eee;*/
-    }
-    h2 + div li {
-      font-size: 95%;
-      list-style: decimal;
-    }
-    h2 + div ol {
-      padding-left: 1.3em;
-    }
-    h2:last-of-type + div {
-      border-bottom: 0;
-    }
-    h2#how-was-it-made + div img{
-      width: 800px;
-      margin: 0 0 2em 10em;
-    }
+  }
+  h2 + div li {
+    font-size: 95%;
+    list-style: decimal;
+  }
+  h2 + div ol {
+    padding-left: 1.3em;
+  }
+  h2:last-of-type + div {
+    border-bottom: 0;
+  }
+  h2#how-was-it-made + div img {
+    width: 800px;
+    margin: 0 0 2em 10em;
+  }
 }
 
 div#ce-static-content summary {
@@ -762,7 +769,7 @@ div#ce-static-content li {
 
 div#ce-static-content li .fa {
   color: #333;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 
 /* Tutorials (#resources) and Resources (#external-resources) pages          */
@@ -770,21 +777,21 @@ div#ce-static-content li .fa {
 
 div#ce-static-content h1#resources ~ div summary.h2,
 div#ce-static-content h1#external-resources ~ div summary.h2 {
-  // size and weight like h2 in ebrc/client.scss 
+  // size and weight like h2 in ebrc/client.scss
   font-size: 1.8em;
   font-weight: 500;
-  // like h2 in allsites 
+  // like h2 in allsites
   margin: 0;
   padding: 12px 0 8px 0;
-  color: #222; 
+  color: #222;
 }
 
 div#ce-static-content h1#resources ~ div summary.h3,
 div#ce-static-content h1#external-resources ~ div summary.h3 {
-  // size and weight like h3 in ebrc/client.scss 
+  // size and weight like h3 in ebrc/client.scss
   font-size: 1.5em;
   font-weight: 500;
-  // like h3 in allsites 
+  // like h3 in allsites
   margin: 0;
   padding: 12px 0 8px 0;
   color: #222;
@@ -798,18 +805,18 @@ div#ce-static-content h1#external-resources ~ div details.h3 {
 div#ce-static-content h1#resources ~ div#clinepi-resources li,
 div#ce-static-content h1#news ~ section li {
   list-style: disc;
-  margin-left:  1em;
+  margin-left: 1em;
 }
 
 div#ce-static-content h1#news ~ h2 {
   color: maroon;
 }
 
-
 /* FAQ page */
 /* ========================================================================= */
 
-#FAQ ~ div li p, #FAQ ~ div li ol li {
+#FAQ ~ div li p,
+#FAQ ~ div li ol li {
   font-size: 90%;
   padding-left: 1em;
   list-style: decimal;
@@ -830,11 +837,10 @@ div.static-content section ul img {
   width: 55em;
   margin: 1em 1em;
 }
-div.static-content section ul li ul{
+div.static-content section ul li ul {
   font-size: 90%;
   margin: 1em 0 1em 3em;
 }
-
 
 /* ========================================================================= */
 /* All Studies page                                                        */
@@ -846,11 +852,10 @@ div.wdk-Answer tr.greyed-out {
   display: none;
 }
 
-ul.wdk-AnswerTable-AttributeSelector li input#column-select-description, ul.wdk-AnswerTable-AttributeSelector li input#column-select-description + label {
-  display:none;
-}
-
-
-.EDAWorkspace .WorkspaceNavigation {
-  top: 40px !important;
+ul.wdk-AnswerTable-AttributeSelector li input#column-select-description,
+ul.wdk-AnswerTable-AttributeSelector
+  li
+  input#column-select-description
+  + label {
+  display: none;
 }

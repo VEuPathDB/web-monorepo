@@ -1008,7 +1008,10 @@ function boxMullerTransform() {
   return { z0, z1 };
 }
 
-function getNormallyDistributedRandomNumber(mean: number, stddev: number) {
+export function getNormallyDistributedRandomNumber(
+  mean: number,
+  stddev: number
+) {
   const { z0, z1 } = boxMullerTransform();
 
   return z0 * stddev + mean;

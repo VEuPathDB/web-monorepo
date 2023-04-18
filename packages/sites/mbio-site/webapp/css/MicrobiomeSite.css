@@ -1,8 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700&display=swap');
 
-
-body, h1, h2, h3, h4, h5, h6 {
-  font-family: 'Roboto', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica', sans-serif;
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Roboto', 'San Francisco', 'Frutiger', 'Univers',
+    'Helvetica Neue', 'Helvetica', sans-serif;
   text-rendering: optimizeLegibility;
 }
 body {
@@ -10,9 +16,7 @@ body {
   font-size: 12px;
 }
 
-
 /******************************************************************************/
-
 
 /* MicrobiomeDB specific breakpoints */
 
@@ -38,7 +42,6 @@ body {
   }
 }
 
-
 /******************************************************************************/
 .StudyMenuItem-RecordLink.DS_all {
   font-weight: bold;
@@ -60,7 +63,6 @@ body {
 
 /******************************************************************************/
 
-
 div.analysis-menu-tab-pane li.wdk-tooltip {
   width: 109px;
   height: 153px;
@@ -68,9 +70,8 @@ div.analysis-menu-tab-pane li.wdk-tooltip {
 
 /* in AllSites.css is none so it does not affect other sites */
 div.step-analysis-usernotes {
-  display:block;
+  display: block;
 }
-
 
 /* =========================================================================  */
 /* Static Content  page - this should be moved to ebrc because it is a subset */
@@ -78,14 +79,14 @@ div.step-analysis-usernotes {
 /* =========================================================================  */
 
 #ce-static-content {
-    padding: 0 3em;
+  padding: 0 3em;
 }
 div#ce-static-content summary {
   color: #069;
 }
 div#ce-static-content li .fa {
   color: #333;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 div#ce-static-content li {
   font-size: 130%;
@@ -94,14 +95,14 @@ div#ce-static-content li {
 }
 div#ce-static-content h1#news ~ section li {
   list-style: disc;
-  margin-left:  1em;
+  margin-left: 1em;
 }
 div#ce-static-content h1#news ~ h2 {
   color: maroon;
 }
-           
 
-#FAQ ~ div li p, #FAQ ~ div li ol li {
+#FAQ ~ div li p,
+#FAQ ~ div li ol li {
   font-size: 90%;
   padding-left: 1em;
   list-style: decimal;
@@ -117,9 +118,5 @@ div#ce-static-content h1#news ~ h2 {
 
 /* for now, don't offer closeable banners in MicrobiomeDB */
 .eupathdb-Announcement button.link {
-  display: none
-}
-
-.EDAWorkspace .WorkspaceNavigation {
-  top: 40px !important;
+  display: none;
 }
