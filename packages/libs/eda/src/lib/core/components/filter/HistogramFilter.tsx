@@ -287,6 +287,12 @@ export function HistogramFilter(props: Props) {
 
   // stats from foreground
   const fgSummaryStats = data?.value?.series[1].summary;
+  const fgSummaryStatsMin = formatStatValue(fgSummaryStats?.min, variable.type);
+  const fgSummaryStatsMean = formatStatValue(
+    fgSummaryStats?.mean,
+    variable.type
+  );
+  const fgSummaryStatsMax = formatStatValue(fgSummaryStats?.max, variable.type);
 
   const minPosVal = useMemo(
     () =>
@@ -317,13 +323,6 @@ export function HistogramFilter(props: Props) {
     maxVal,
     uiState.dependentAxisLogScale
   ) as NumberRange;
-
-  const fgSummaryStatsMin = formatStatValue(fgSummaryStats?.min, variable.type);
-  const fgSummaryStatsMean = formatStatValue(
-    fgSummaryStats?.mean,
-    variable.type
-  );
-  const fgSummaryStatsMax = formatStatValue(fgSummaryStats?.max, variable.type);
 
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
@@ -841,11 +840,6 @@ function formatStatValue(
   let formattedValue: string | number | string[] =
     type === 'date'
       ? String(value).replace(/T.*$/, '')
-      : // check a possible year variable
-      type === 'integer' && Number(value) >= 1900 && Number(value) <= 2100
-      ? Number.isInteger(value)
-        ? Number(value)
-        : Number(value).toFixed(4)
       : // set conditions similar to plotly
       gt(Number(value), 100000) ||
         (Number(value) != 0 && lt(Math.abs(Number(value)), 0.0001))
