@@ -168,7 +168,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   });
 
   function showLoginForm() {
-    window.location.href = props.siteInformationProps.loginUrl;
+    const currentUrl = window.location.href;
+    window.location.href = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
   }
   function toggleVisible() {
     setActiveSideMenuIndex(undefined);
