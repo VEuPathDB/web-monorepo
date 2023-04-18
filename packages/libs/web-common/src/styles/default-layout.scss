@@ -7,10 +7,17 @@ $collapsed-header-height: 5.5em;
 
 body.vpdb-Body {
   background-image: unset;
-  font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-family: Roboto, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
+    sans-serif;
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: Roboto, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial,
+      freesans, sans-serif;
   }
 
   // FIXME: Find sensible values for these
@@ -21,15 +28,15 @@ body.vpdb-Body {
     display: grid;
 
     grid-template-areas:
-      "header"
-      "banner"
-      "content"
-      "footer";
+      'header'
+      'banner'
+      'content'
+      'footer';
 
     grid-template-rows: $expanded-header-height auto 1fr auto;
 
     @media screen and (max-width: $hamburger-width) {
-      grid-template-rows: auto auto 1fr auto;
+      grid-template-rows: auto auto 1fr auto !important;
     }
 
     grid-template-columns: 100%;
