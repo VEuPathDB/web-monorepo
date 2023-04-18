@@ -2514,48 +2514,52 @@ function processZeroOverZeroData(
           );
       });
 
-      const binSampleSizes = series.binSampleSize as BinSampleSize[];
+      const binSampleSizes = series.binSampleSize as
+        | BinSampleSize[]
+        | undefined;
 
-      const makeEmptySeries = (seriesType: 'standard' | 'zeroOverZero') => ({
-        seriesType,
-        ...series,
-        // Empty all of the arrays
-        ...arrayKeys.reduce((newObj, arrayKey) => {
-          newObj[arrayKey] = [];
-          return newObj;
-        }, {} as Pick<LineplotResponse['lineplot']['data'][number], typeof arrayKeys[number]>),
-      });
-
-      const nonZeroSeries = makeEmptySeries('standard');
-      const zeroSeries = makeEmptySeries('zeroOverZero');
-      // No need for error bars on 0/0 points
-      delete zeroSeries['errorBars'];
-
-      binSampleSizes.forEach((binSampleSize, dataPointIndex) => {
-        let destinationSeries: typeof nonZeroSeries;
-
-        if (
-          binSampleSize.numeratorN !== 0 ||
-          binSampleSize.denominatorN !== 0
-        ) {
-          destinationSeries = nonZeroSeries;
-        } else {
-          destinationSeries = zeroSeries;
-        }
-
-        arrayKeys.forEach((key) => {
-          const array = series[key];
-          const destinationArray = destinationSeries[key];
-
-          if (array !== undefined && destinationArray !== undefined) {
-            const value = array[dataPointIndex];
-            (destinationArray as typeof value[]).push(value);
-          }
+      if (binSampleSizes) {
+        const makeEmptySeries = (seriesType: 'standard' | 'zeroOverZero') => ({
+          seriesType,
+          ...series,
+          // Empty all of the arrays
+          ...arrayKeys.reduce((newObj, arrayKey) => {
+            newObj[arrayKey] = [];
+            return newObj;
+          }, {} as Pick<LineplotResponse['lineplot']['data'][number], typeof arrayKeys[number]>),
         });
-      });
 
-      allNonZeroSeries.push(nonZeroSeries);
-      allZeroSeries.push(zeroSeries);
+        const nonZeroSeries = makeEmptySeries('standard');
+        const zeroSeries = makeEmptySeries('zeroOverZero');
+        // No need for error bars on 0/0 points
+        delete zeroSeries['errorBars'];
+
+        binSampleSizes.forEach((binSampleSize, dataPointIndex) => {
+          let destinationSeries: typeof nonZeroSeries;
+
+          if (
+            binSampleSize.numeratorN !== 0 ||
+            binSampleSize.denominatorN !== 0
+          ) {
+            destinationSeries = nonZeroSeries;
+          } else {
+            destinationSeries = zeroSeries;
+          }
+
+          arrayKeys.forEach((key) => {
+            const array = series[key];
+            const destinationArray = destinationSeries[key];
+
+            if (array !== undefined && destinationArray !== undefined) {
+              const value = array[dataPointIndex];
+              (destinationArray as typeof value[]).push(value);
+            }
+          });
+        });
+
+        allNonZeroSeries.push(nonZeroSeries);
+        allZeroSeries.push(zeroSeries);
+      }
     }
 
     const newLineplotData = [...allNonZeroSeries, ...allZeroSeries];
