@@ -193,7 +193,7 @@ initialize({
             siteLogoSrc:
               'https://veupathdb.org/veupathdb/images/VEuPathDB/icons-footer/vectorbase.png',
             siteName: 'VectorBase',
-            loginUrl: 'https://eupathdb.org/oauth/assets/eupathdb-login.html',
+            loginUrl: 'https://veupathdb.org/veupath/app/user/login',
           }}
           singleAppMode={singleAppMode}
           edaServiceUrl={edaEndpoint}

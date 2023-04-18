@@ -1,4 +1,5 @@
 import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {
   AnalysisState,
@@ -166,8 +167,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
   });
+
+  const { push } = useHistory();
   function showLoginForm() {
-    console.log('Go to login: ', props.siteInformationProps.loginUrl);
+    push({
+      pathname: props.siteInformationProps.loginUrl,
+    });
   }
   function toggleVisible() {
     setActiveSideMenuIndex(undefined);
