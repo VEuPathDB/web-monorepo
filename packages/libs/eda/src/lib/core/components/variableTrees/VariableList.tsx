@@ -230,10 +230,8 @@ export default function VariableList({
   clearSelectionButton,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
-  const {
-    showOnlyCompatibleVariables,
-    setShowOnlyCompatibleVariablesHandler,
-  } = useContext(ShowHideVariableContext);
+  const { showOnlyCompatibleVariables, setShowOnlyCompatibleVariablesHandler } =
+    useContext(ShowHideVariableContext);
   const isMultiPick = mode === 'multiSelection';
 
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -364,9 +362,8 @@ export default function VariableList({
   const starredVariablesLoading = starredVariables == null;
 
   // moved this useState here
-  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
-    false
-  );
+  const [showOnlyStarredVariables, setShowOnlyStarredVariables] =
+    useState(false);
 
   // make visibleStarredVariableTerms state be used at MyVariable
   const visibleStarredVariableTerms = useMemo(() => {
@@ -393,9 +390,10 @@ export default function VariableList({
     return new Set(presentStarredVariableTerms);
   }, [availableVariableTerms, visibleStarredVariableTerms]);
 
-  const disabledFields = useMemo(() => new Set(disabledFieldIds), [
-    disabledFieldIds,
-  ]);
+  const disabledFields = useMemo(
+    () => new Set(disabledFieldIds),
+    [disabledFieldIds]
+  );
 
   const multiFilterDescendants = useMemo(() => {
     const children = new Map<string, string>();
@@ -489,7 +487,6 @@ export default function VariableList({
             }}
             type="button"
             onClick={toggleShowOnlyStarredVariables}
-            disabled={starredVariableToggleDisabled}
           >
             <Toggle
               value={showOnlyStarredVariables}
@@ -693,9 +690,10 @@ export default function VariableList({
               const checked = selectedFields.some((f) => f.term === field.term);
               const onChange = (node: any, checked: boolean) => {
                 if (onSelectedFieldsChange == null) return;
-                const nextSelectedFields = (checked
-                  ? selectedFields.concat(field)
-                  : selectedFields.filter((f) => f.term !== field.term)
+                const nextSelectedFields = (
+                  checked
+                    ? selectedFields.concat(field)
+                    : selectedFields.filter((f) => f.term !== field.term)
                 ).map((field) => field.term);
                 onSelectedFieldsChange(nextSelectedFields);
               };
