@@ -249,7 +249,10 @@ export function InputVariables(props: Props) {
                             ? requiredInputLabelStyle
                             : input.role === 'stratification' &&
                               hasMultipleStratificationValues
-                            ? multipleStratificationVariableLabelStyle
+                            ? input.readonlyValue &&
+                              !input.providedOptionalVariable
+                              ? undefined
+                              : multipleStratificationVariableLabelStyle
                             : undefined
                         }
                       >
