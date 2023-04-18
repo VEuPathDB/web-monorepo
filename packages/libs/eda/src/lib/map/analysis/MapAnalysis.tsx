@@ -177,9 +177,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
     history.push(loginUrl);
   }
+
   function toggleVisible() {
     setActiveSideMenuIndex(undefined);
   }
+
   const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
   const appPromiseState = usePromise(
