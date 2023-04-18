@@ -1,5 +1,5 @@
 describe('Standalone Map Filter / Subset Panel', () => {
-  it.only('users can open the subset panel from filter chip', () => {
+  it('users can open the subset panel from filter chip', () => {
     mockRoutes();
     cy.visit('/mapveu/DS_d6a1141fbf');
     cy.findByText('The Coolest Study Ever').click();
@@ -28,7 +28,7 @@ describe('Standalone Map Filter / Subset Panel', () => {
             const hasAvocado = request.body.filters[0].stringSet.some(
               (string) => string === 'Avocado'
             );
-            expect(hasAvocado).to.be.falsew;
+            expect(hasAvocado).to.be.true;
           }
         );
       });
