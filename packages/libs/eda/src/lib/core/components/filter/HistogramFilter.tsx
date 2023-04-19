@@ -43,7 +43,7 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
 import { useDefaultAxisRange } from '../../hooks/computeDefaultAxisRange';
-import { min, max } from 'lodash';
+import { min, max, gt, lt } from 'lodash';
 import { useDebounce } from '../../hooks/debouncing';
 import { useDeepValue } from '../../hooks/immutability';
 
@@ -287,6 +287,12 @@ export function HistogramFilter(props: Props) {
 
   // stats from foreground
   const fgSummaryStats = data?.value?.series[1].summary;
+  const fgSummaryStatsMin = formatStatValue(fgSummaryStats?.min, variable.type);
+  const fgSummaryStatsMean = formatStatValue(
+    fgSummaryStats?.mean,
+    variable.type
+  );
+  const fgSummaryStatsMax = formatStatValue(fgSummaryStats?.max, variable.type);
 
   const minPosVal = useMemo(
     () =>
@@ -338,24 +344,10 @@ export function HistogramFilter(props: Props) {
         >
           {fgSummaryStats && (
             <div className="histogram-summary-stats">
-              <>
-                <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
-                &emsp;
-              </>
-              <>
-                <b>Mean:</b>{' '}
-                {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
-              </>
-              {/*
-                <>
-                  <b>Median:</b>{' '}
-                  {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;
-                </>
-              */}
-              <>
-                <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}{' '}
-                &emsp;
-              </>
+              {/* display Min, Mean, and Max stats */}
+              <DisplayStats title={'Min'} stats={fgSummaryStatsMin} />
+              <DisplayStats title={'Mean'} stats={fgSummaryStatsMean} />
+              <DisplayStats title={'Max'} stats={fgSummaryStatsMax} />
             </div>
           )}
           {data.value?.hasDataEntitiesCount != null && (
@@ -842,16 +834,28 @@ function tidyBinLabel(
 function formatStatValue(
   value: string | number | undefined,
   type: HistogramVariable['type']
-) {
+): string | number | string[] {
   if (value == null) return 'N/A';
-  return type === 'date'
-    ? String(value).replace(/T.*$/, '')
-    : // check a possible year variable
-    type === 'integer' && Number(value) >= 1900 && Number(value) <= 2100
-    ? Number.isInteger(value)
+
+  let formattedValue: string | number | string[] =
+    type === 'date'
+      ? String(value).replace(/T.*$/, '')
+      : // set conditions similar to plotly
+      gt(Number(value), 100000) ||
+        (Number(value) != 0 && lt(Math.abs(Number(value)), 0.0001))
+      ? Number(value).toExponential(4)
+      : Number.isInteger(value)
       ? Number(value)
-      : Number(value).toFixed(4)
-    : Number(value).toExponential(4);
+      : Number(value).toFixed(4);
+
+  // treating negative exponent
+  if (typeof formattedValue === 'string' && formattedValue.includes('e')) {
+    formattedValue = formattedValue.includes('e-')
+      ? formattedValue.split('e')
+      : formattedValue.split('e+');
+  }
+
+  return formattedValue;
 }
 
 function computeBinSlider(
@@ -894,3 +898,23 @@ function enforceBounds(
     return range;
   }
 }
+
+interface DisplayStatsProps {
+  /* title: Min, Mean, Max */
+  title: string;
+  /* Min, Mean, Max */
+  stats: string | number | string[];
+}
+
+// component for displaying Min, Mean, and Max stats
+const DisplayStats = (props: DisplayStatsProps) => {
+  const { title, stats } = props;
+
+  return (
+    <>
+      <b>{title}:</b> {Array.isArray(stats) ? stats[0] : stats}
+      {Array.isArray(stats) ? <span>&#215;10</span> : ''}
+      {Array.isArray(stats) ? <sup>{stats[1]}</sup> : ''} &emsp;
+    </>
+  );
+};
