@@ -43,3 +43,8 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
           package: packages/sites/${{ matrix.dir }}/package.json
+      - run: ./tools/scripts/test-report
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Test report
+          path: ${{ github.workspace }}/test-report
