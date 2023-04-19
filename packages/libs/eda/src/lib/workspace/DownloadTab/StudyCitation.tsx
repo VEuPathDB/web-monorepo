@@ -14,7 +14,6 @@ import {
   stripHTML,
 } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { makeStyles } from '@material-ui/core';
 
 export type CitationDetails = {
   partialCitationData: {
@@ -51,10 +50,6 @@ export function getCitationString({
   return `${studyContacts}. Dataset: ${studyDisplayName}. ${projectDisplayName}. ${citationDate}, Release ${release.releaseNumber} (${citationUrl})`;
 }
 
-const useStyles = makeStyles(() => ({
-  tooltip: {},
-}));
-
 export default function StudyCitation({
   partialCitationData,
   release,
@@ -89,7 +84,7 @@ export default function StudyCitation({
         textSize="medium"
       >
         <span>
-          <i>{safeHtml(citation)}</i>
+          {safeHtml(citation)}
           <div
             style={{ display: 'inline-block', position: 'relative', top: 3 }}
           >
