@@ -1,0 +1,13 @@
+#!/bin/env bash
+
+## Current, we will only run a test repo for @veupathdb/wdk-client.
+## TODO Once all packages have a `test` script, we can run `yarn nx run-many --target=test`
+
+SCRIPT_DIR=$(dirname -- "${BASH_SOURCE[0]}")
+
+## Change to repo root
+cd $SCRIPT_DIR/../..
+
+rm -rf test-report
+mkdir test-report
+yarn workspace @veupathdb/wdk-client test | tee test-report/wdk-client-report.txt
