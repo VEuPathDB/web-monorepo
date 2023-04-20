@@ -17,8 +17,7 @@ const StyledTooltip = withStyles((theme: Theme) => ({
   },
 }))(Tooltip);
 
-type Props = {
-
+type SearchBoxProps = {
   /** Set the autofocus property of the underlying HTMLTextInputElement */
   autoFocus?: boolean;
 
@@ -41,7 +40,7 @@ type Props = {
   helpText?: string;
 
   styleOverrides?: SearchBoxStyleSpec;
-}
+};
 
 export type SearchBoxStyleSpec = {
   helpIcon?: React.CSSProperties;
@@ -50,23 +49,23 @@ export type SearchBoxStyleSpec = {
   input?: React.CSSProperties;
   container?: React.CSSProperties;
   clearSearchButton?: React.CSSProperties;
-}
+};
 
 const searchIconStyleSpec = {
   width: '0.7em',
   height: '0.7em',
   color: '#999999',
-  position: 'relative',
-  right: '25px',
-  top: '4px',
+  position: 'fixed',
+  right: '5px',
+  top: '2px',
 };
 
 const filterIconStyleSpec = {
   fill: '#999999',
-  position: 'relative',
+  position: 'fixed',
   top: '2px',
   fontSize: '1.5em',
-}
+};
 
 const defaultStyleSpec: SearchBoxStyleSpec = {
   helpIcon: {
@@ -104,11 +103,11 @@ const defaultStyleSpec: SearchBoxStyleSpec = {
     whiteSpace: 'nowrap',
     width: '100%',
     margin: '0 0.5em',
-  }
-}
+  },
+};
 
 /**
- * Consider using 'debounce' to throttle changes in parent component if 
+ * Consider using 'debounce' to throttle changes in parent component if
  * expensive operations are performed (e.g. search) in real time as the
  * user types in the box.
  */
@@ -121,21 +120,26 @@ export default function SearchBox({
   iconName = 'search',
   iconPosition = 'right',
   styleOverrides = {},
-}: Props) {
-
+}: SearchBoxProps) {
   const styleSpec: SearchBoxStyleSpec = useMemo(() => {
     const defaultStyleWithIconSpecs = {
       ...defaultStyleSpec,
       input: {
         ...defaultStyleSpec.input,
-        padding: iconPosition === 'right' ? '0.2em 2em 0.2em 1em' : '0.2em 1em 0.2em 2em',
+        padding:
+          iconPosition === 'right'
+            ? '0.2em 2em 0.2em 1em'
+            : '0.2em 1em 0.2em 2em',
       },
-      optionalIcon: 
-        iconName === 'search' ? {...searchIconStyleSpec} : 
-          iconPosition === 'right' ? {...filterIconStyleSpec, right: '25px'} : {...filterIconStyleSpec, left: '5px'}
-    }
-    return merge({}, defaultStyleWithIconSpecs, styleOverrides)
-  }, [styleOverrides, iconName, iconPosition])
+      optionalIcon:
+        iconName === 'search'
+          ? { ...searchIconStyleSpec }
+          : iconPosition === 'right'
+          ? { ...filterIconStyleSpec, right: '5px' }
+          : { ...filterIconStyleSpec, left: '5px' },
+    };
+    return merge({}, defaultStyleWithIconSpecs, styleOverrides);
+  }, [styleOverrides, iconName, iconPosition]);
 
   function handleSearchTermChange(e: React.ChangeEvent<HTMLInputElement>) {
     let searchTerm = e.currentTarget.value;
@@ -153,35 +157,33 @@ export default function SearchBox({
     onSearchTermChange!('');
   }
 
-  /** 
+  /**
    * At this point we only use two different icons in search bars: 'filter' and 'search'
-  */
-  const optionalIcon = iconName === 'search' ? (
-    <Search style={styleSpec.optionalIcon} />
-  ) : (
-    <Filter style={styleSpec.optionalIcon} />
-  );
+   */
+  const optionalIcon =
+    iconName === 'search' ? (
+      <Search style={styleSpec.optionalIcon} />
+    ) : (
+      <Filter style={styleSpec.optionalIcon} />
+    );
 
   return (
-    <div style={{
-      ...styleSpec.container
-    }}>
-      <label css={{
-        flexGrow: 1,
-      }}>
-        {iconPosition === 'left' && !searchTerm ?
-          <span style={{
-            position: 'absolute',
-            height: 0,
-            width: 0,
-          }}>
-            {optionalIcon}
-          </span>
-          : null
-        }
-        <input 
+    <div
+      style={{
+        ...styleSpec.container,
+      }}
+    >
+      <label
+        css={{
+          flexGrow: 1,
+          // this is a hack to fix the icon's position on the label instead of the viewport
+          transform: 'rotate(0)',
+        }}
+      >
+        {iconPosition === 'left' && !searchTerm ? optionalIcon : null}
+        <input
           style={{
-            ...styleSpec.input, 
+            ...styleSpec.input,
           }}
           type="search"
           autoFocus={autoFocus}
@@ -190,37 +192,26 @@ export default function SearchBox({
           placeholder={placeholderText}
           value={searchTerm}
         />
-        {searchTerm ?
+        {searchTerm ? (
           <button
             style={{
-              ...styleSpec.clearSearchButton
+              ...styleSpec.clearSearchButton,
             }}
-            type="button" 
+            type="button"
             onClick={handleResetClick}
           >
             <Close style={styleSpec.clearSearchIcon} />
-          </button> :
-          iconPosition === 'right' ?
-          <span style={{
-            position: 'absolute',
-            height: 0,
-            width: 0,
-          }}>
-            {optionalIcon}
-          </span>
-          : null
-        }
+          </button>
+        ) : iconPosition === 'right' ? (
+          optionalIcon
+        ) : null}
       </label>
       {/* use safeHtml for helpText to allow italic */}
-      {!helpText ? 
-        null : 
-        <StyledTooltip
-          title={safeHtml(helpText)}
-          interactive
-        >
-          <Help style={styleSpec.helpIcon}/>  
-        </StyledTooltip>}
+      {!helpText ? null : (
+        <StyledTooltip title={safeHtml(helpText)} interactive>
+          <Help style={styleSpec.helpIcon} />
+        </StyledTooltip>
+      )}
     </div>
   );
 }
-

@@ -245,6 +245,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
   } = props;
+
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useMemo(
@@ -278,9 +279,40 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [computation.descriptor.configuration, options]
   );
 
+  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
+  // just like native vars (for example, in the variable coverage table).
+  const computedXAxisDescriptor = computedXAxisDetails
+    ? {
+        entityId: computedXAxisDetails.entityId,
+        variableId:
+          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
+
+  // When we only have a computed y axis (and no provided overlay) then the y axis var
+  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
+  const computedYAxisDescriptor = computedYAxisDetails
+    ? {
+        entityId: computedYAxisDetails.entityId,
+        variableId:
+          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
+
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
     yAxisVariable: vizConfig.yAxisVariable,
+    overlayVariable: vizConfig.overlayVariable,
+    facetVariable: vizConfig.facetVariable,
+  });
+
+  // variablesForConstraints includes selected vars, computed vars, and
+  // those collection vars that we want to use in constraining the available
+  // variables within a viz. Computed overlay was left out intentionally to retain
+  // desired behavior (see PR #38).
+  const variablesForConstraints = useDeepValue({
+    xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
+    yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
     overlayVariable: vizConfig.overlayVariable,
     facetVariable: vizConfig.facetVariable,
   });
@@ -1106,27 +1138,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [data]
   );
 
-  // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
-  // just like native vars (for example, in the variable coverage table).
-  const computedXAxisDescriptor = computedXAxisDetails
-    ? {
-        entityId: computedXAxisDetails.entityId,
-        variableId:
-          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-      }
-    : null;
-
-  // When we only have a computed y axis (and no provided overlay) then the y axis var
-  // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
-  const computedYAxisDescriptor =
-    !computedOverlayVariableDescriptor && computedYAxisDetails
-      ? {
-          entityId: computedYAxisDetails.entityId,
-          variableId:
-            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-        }
-      : null;
-
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
   const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
@@ -1180,12 +1191,12 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           // (e.g. false values will override just as much as true)
           ...(vizConfig.independentAxisLogScale &&
           xMinMaxDataRange?.min != null &&
-          xMinMaxDataRange.min <= 0
+          (xMinMaxDataRange.min as number) <= 0
             ? { truncationConfigIndependentAxisMin: true }
             : {}),
           ...(vizConfig.dependentAxisLogScale &&
           yMinMaxDataRange?.min != null &&
-          yMinMaxDataRange.min <= 0
+          (yMinMaxDataRange.min as number) <= 0
             ? { truncationConfigDependentAxisMin: true }
             : {}),
         }
@@ -1386,7 +1397,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const independentAllNegative =
     vizConfig.independentAxisLogScale &&
     xMinMaxDataRange?.max != null &&
-    xMinMaxDataRange.max < 0;
+    (xMinMaxDataRange.max as number) < 0;
 
   const [
     dismissedDependentAllNegativeWarning,
@@ -1395,7 +1406,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const dependentAllNegative =
     vizConfig.dependentAxisLogScale &&
     yMinMaxDataRange?.max != null &&
-    yMinMaxDataRange.max < 0;
+    (yMinMaxDataRange.max as number) < 0;
 
   // add showBanner prop in this Viz
   const [showBanner, setShowBanner] = useState(true);
@@ -1895,7 +1906,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             role: 'Y-axis',
             required: !computedOverlayVariableDescriptor?.variableId,
             display: dependentAxisLabel,
-            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+            variable:
+              !computedOverlayVariableDescriptor && computedYAxisDescriptor
+                ? computedYAxisDescriptor
+                : vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
@@ -1972,7 +1986,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 : undefined,
             },
             ...(computedOverlayVariableDescriptor
-              ? []
+              ? [
+                  {
+                    name: 'overlayVariable',
+                    label: 'Overlay',
+                    role: 'stratification',
+                    readonlyValue: legendTitle,
+                  } as const,
+                ]
               : [
                   {
                     name: 'overlayVariable',
@@ -1999,6 +2020,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           ]}
           entities={entities}
           selectedVariables={selectedVariables}
+          variablesForConstraints={variablesForConstraints}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}

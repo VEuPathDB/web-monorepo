@@ -22,6 +22,9 @@ lib-cov
 coverage
 *.lcov
 
+# Directory written to by tools/scripts/test-report
+test-report/
+
 # nyc test coverage
 .nyc_output
 

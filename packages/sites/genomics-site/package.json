@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
-    "bundle:dev": "rm -rf dist && webpack",
+    "bundle:dev": "rm -rf dist && BROWSERSLIST_ENV=modern webpack --mode=development",
     "bundle:npm": "rm -rf dist && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
   },
   "browserslist": [

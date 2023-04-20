@@ -61,9 +61,8 @@ export function PreferredOrganismsConfig({
   revertConfigSelection,
   toggleHelpVisible,
 }: Props) {
-  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] = useState(
-    false
-  );
+  const [showOnlyReferenceOrganisms, setShowOnlyReferenceOrganisms] =
+    useState(false);
   const toggleShowOnlyReferenceOrganisms = useCallback(() => {
     setShowOnlyReferenceOrganisms((value) => !value);
   }, []);
@@ -250,11 +249,6 @@ export function PreferredOrganismsConfig({
                 container: {
                   justifyContent: 'flex-start',
                   marginLeft: '2em',
-                },
-              },
-              searchBox: {
-                optionalIcon: {
-                  top: '3px',
                 },
               },
             }}
