@@ -2278,18 +2278,7 @@ function processInputData(
               ),
             }
           : {}),
-        ...(el.binSampleSize != null
-          ? {
-              extraTooltipText: categoricalMode
-                ? el.binSampleSize.map(
-                    (bss) =>
-                      `n: ${(bss as { denominatorN: number }).denominatorN}`
-                  )
-                : el.binSampleSize.map(
-                    (bss) => `n: ${(bss as { N: number }).N}`
-                  ),
-            }
-          : {}),
+        binSampleSize: el.binSampleSize,
         name:
           (el.overlayVariableDetails?.value != null
             ? fixLabelForNumberVariables(
