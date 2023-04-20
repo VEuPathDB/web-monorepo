@@ -542,6 +542,21 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     dependentAxisLogScale,
   ]);
 
+  // calculate count per each overlay item
+  const legendCounts = useMemo(() => {
+    if (vocabulary == null) return undefined;
+    return vocabulary.map((voc) => {
+      /*  	return overlayResponse.reduce((acc,obj) => { */
+      return !overlayResponse.pending && overlayResponse.value
+        ? overlayResponse.value.mapMarkers.data.reduce((acc, obj) => {
+            const index = obj.label.findIndex((el) => el === voc);
+            const value = index >= 0 ? obj.value[index] : 0;
+            return acc + value;
+          }, 0)
+        : undefined;
+    });
+  }, [vocabulary, overlayResponse]);
+
   /**
    * create custom legend data
    */
@@ -549,7 +564,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
   const legendItems: LegendItemsProps[] = useMemo(() => {
     if (vocabulary == null) return [];
 
-    return vocabulary.map((label) => ({
+    return vocabulary.map((label, index) => ({
       label,
       marker: 'square',
       markerColor:
@@ -570,6 +585,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         : false,
       group: 1,
       rank: 1,
+      count: legendCounts != null ? legendCounts[index] : undefined,
     }));
   }, [xAxisVariable, vocabulary, overlayData]);
 

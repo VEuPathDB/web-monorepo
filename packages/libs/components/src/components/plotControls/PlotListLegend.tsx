@@ -10,6 +10,7 @@ export interface LegendItemsProps {
   hasData: boolean;
   group?: number;
   rank?: number;
+  count?: number;
 }
 
 export interface PlotListLegendProps {
@@ -20,6 +21,12 @@ export interface PlotListLegendProps {
   showOverlayLegend?: boolean;
   // define markerBodyOpaciy prop
   markerBodyOpacity?: number;
+  // show checkbox: defualt is true
+  showCheckbox?: boolean;
+  // show count: default is false
+  showCount?: boolean;
+  // show column title
+  columnTitle?: string;
 }
 
 export default function PlotListLegend({
@@ -28,6 +35,8 @@ export default function PlotListLegend({
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
   markerBodyOpacity = 1,
+  showCheckbox = true,
+  showCount = false,
 }: PlotListLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -58,162 +67,184 @@ export default function PlotListLegend({
       {(legendItems.length > 1 || showOverlayLegend) && (
         <div className="plotLegendCheckbox">
           {legendItems.map((item: LegendItemsProps, index: number) => (
-            <div key={item.label}>
-              {/* wrap checkbox with label so that label text is clickable */}
-              <label
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {/* conditionally set width of 80% */}
+              <div
                 key={item.label}
-                title={item.label}
-                style={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontSize: legendTextSize,
-                  color: '',
-                  // add this for general usage (e.g., story)
-                  margin: 0,
-                }}
+                style={{ width: showCount ? '80%' : undefined }}
               >
-                <Checkbox
+                {/* wrap checkbox with label so that label text is clickable */}
+                <label
                   key={item.label}
-                  id={item.label}
-                  value={item.label}
-                  // gray checkbox: default
-                  color={'default'}
-                  onChange={(e) => {
-                    handleLegendCheckboxClick(e.target.checked, item.label);
-                  }}
-                  checked={
-                    checkedLegendItems?.includes(item.label) ? true : false
-                  }
-                  style={{ padding: 0, width: '1em', height: '1em' }}
-                  // disable when hasData is false
-                  // but scatter plot needs further change due to smoothed mean and best fit
-                  disabled={!item.hasData}
-                />
-                &nbsp;&nbsp;
-                <div
+                  title={item.label}
                   style={{
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
+                    fontSize: legendTextSize,
+                    color: '',
+                    // add this for general usage (e.g., story)
+                    margin: 0,
+                    height: showCheckbox ? undefined : '1.5em',
                   }}
                 >
-                  {/* for histogram, barplot, Mosaic (2X2, RXC) - Mosaic does not use custom legend though */}
-                  {item.marker === 'square' && (
-                    <div
-                      style={{
-                        height: defaultMarkerSize,
-                        width: defaultMarkerSize,
-                        borderWidth: '0',
-                        backgroundColor: item.markerColor,
-                      }}
-                    />
-                  )}
-                  {/* for boxplot */}
-                  {item.marker === 'lightSquareBorder' && (
-                    <div
-                      style={{
-                        height: defaultMarkerSize,
-                        width: defaultMarkerSize,
-                        borderWidth: '0.125em',
-                        borderStyle: 'solid',
-                        borderColor: item.markerColor,
-                        backgroundColor: ColorMath.evaluate(
-                          item.markerColor + ' @a 50%'
-                        ).result.css(),
-                      }}
-                    />
-                  )}
-                  {/* for scatter plot: marker */}
-                  {item.marker === 'circle' && (
-                    <div style={{ width: scatterMarkerSpace }}>
-                      <div
-                        style={{
-                          height: circleMarkerSize,
-                          width: circleMarkerSize,
-                          margin: 'auto',
-                          borderWidth: '0.15em',
-                          borderStyle: 'solid',
-                          borderRadius: '0.6em',
-                          borderColor:
-                            markerBodyOpacity === 0
-                              ? item.markerColor
-                              : // we don't need borderColor with marker opacity except opacity = 0
-                                'transparent',
-                          // add backgroundColor with marker opacity
-                          backgroundColor:
-                            markerBodyOpacity === 0
-                              ? 'transparent'
-                              : ColorMath.evaluate(
-                                  item.markerColor +
-                                    ' @a ' +
-                                    (markerBodyOpacity * 100).toString() +
-                                    '%'
-                                ).result.css(),
+                  {showCheckbox && (
+                    <>
+                      <Checkbox
+                        key={item.label}
+                        id={item.label}
+                        value={item.label}
+                        // gray checkbox: default
+                        color={'default'}
+                        onChange={(e) => {
+                          handleLegendCheckboxClick(
+                            e.target.checked,
+                            item.label
+                          );
                         }}
+                        checked={
+                          checkedLegendItems?.includes(item.label)
+                            ? true
+                            : false
+                        }
+                        style={{ padding: 0, width: '1em', height: '1em' }}
+                        // disable when hasData is false
+                        // but scatter plot needs further change due to smoothed mean and best fit
+                        disabled={!item.hasData}
                       />
-                    </div>
+                      &nbsp;&nbsp;
+                    </>
                   )}
-                  {/* for scatter plot: smoothed mean or best fit line */}
-                  {item.marker === 'line' && (
-                    <div style={{ width: scatterMarkerSpace }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {/* for histogram, barplot, Mosaic (2X2, RXC) - Mosaic does not use custom legend though */}
+                    {item.marker === 'square' && (
                       <div
                         style={{
-                          height: '0.15em',
-                          width: scatterMarkerSpace,
+                          height: defaultMarkerSize,
+                          width: defaultMarkerSize,
                           borderWidth: '0',
                           backgroundColor: item.markerColor,
                         }}
                       />
-                    </div>
-                  )}
-                  {/* for scatter plot: confidence interval */}
-                  {item.marker === 'fainted' && (
-                    <div style={{ width: scatterMarkerSpace }}>
+                    )}
+                    {/* for boxplot */}
+                    {item.marker === 'lightSquareBorder' && (
                       <div
                         style={{
-                          height: '0.5em',
-                          width: scatterMarkerSpace,
-                          borderWidth: '0',
+                          height: defaultMarkerSize,
+                          width: defaultMarkerSize,
+                          borderWidth: '0.125em',
+                          borderStyle: 'solid',
+                          borderColor: item.markerColor,
                           backgroundColor: ColorMath.evaluate(
-                            item.markerColor + ' @a 30%'
+                            item.markerColor + ' @a 50%'
                           ).result.css(),
                         }}
                       />
-                    </div>
-                  )}
-                  {/* for scatter plot: No data marker, x */}
-                  {item.marker === 'x' && (
-                    <div style={{ width: scatterMarkerSpace }}>
-                      <div
-                        style={{
-                          textAlign: 'center',
-                          fontWeight: 'normal',
-                          fontSize: `calc(1.5 * ${legendTextSize})`,
-                          color: '#A6A6A6',
-                        }}
-                      >
-                        &times;
+                    )}
+                    {/* for scatter plot: marker */}
+                    {item.marker === 'circle' && (
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            height: circleMarkerSize,
+                            width: circleMarkerSize,
+                            margin: 'auto',
+                            borderWidth: '0.15em',
+                            borderStyle: 'solid',
+                            borderRadius: '0.6em',
+                            borderColor:
+                              markerBodyOpacity === 0
+                                ? item.markerColor
+                                : // we don't need borderColor with marker opacity except opacity = 0
+                                  'transparent',
+                            // add backgroundColor with marker opacity
+                            backgroundColor:
+                              markerBodyOpacity === 0
+                                ? 'transparent'
+                                : ColorMath.evaluate(
+                                    item.markerColor +
+                                      ' @a ' +
+                                      (markerBodyOpacity * 100).toString() +
+                                      '%'
+                                  ).result.css(),
+                          }}
+                        />
                       </div>
-                    </div>
-                  )}
+                    )}
+                    {/* for scatter plot: smoothed mean or best fit line */}
+                    {item.marker === 'line' && (
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            height: '0.15em',
+                            width: scatterMarkerSpace,
+                            borderWidth: '0',
+                            backgroundColor: item.markerColor,
+                          }}
+                        />
+                      </div>
+                    )}
+                    {/* for scatter plot: confidence interval */}
+                    {item.marker === 'fainted' && (
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            height: '0.5em',
+                            width: scatterMarkerSpace,
+                            borderWidth: '0',
+                            backgroundColor: ColorMath.evaluate(
+                              item.markerColor + ' @a 30%'
+                            ).result.css(),
+                          }}
+                        />
+                      </div>
+                    )}
+                    {/* for scatter plot: No data marker, x */}
+                    {item.marker === 'x' && (
+                      <div style={{ width: scatterMarkerSpace }}>
+                        <div
+                          style={{
+                            textAlign: 'center',
+                            fontWeight: 'normal',
+                            fontSize: `calc(1.5 * ${legendTextSize})`,
+                            color: '#A6A6A6',
+                          }}
+                        >
+                          &times;
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {/* below is legend label */}
+                  &nbsp;&nbsp;
+                  <div
+                    style={{
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {item.label === 'No data' ||
+                    item.label.includes('No data,') ? (
+                      <i>{item.label}</i>
+                    ) : (
+                      item.label
+                    )}
+                  </div>
+                </label>
+              </div>
+              {/* count area: set width of 20% */}
+              {showCount && (
+                <div style={{ width: '20%', textAlign: 'right' }}>
+                  {item.count}
                 </div>
-                {/* below is legend label */}
-                &nbsp;&nbsp;
-                <div
-                  style={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {item.label === 'No data' ||
-                  item.label.includes('No data,') ? (
-                    <i>{item.label}</i>
-                  ) : (
-                    item.label
-                  )}
-                </div>
-              </label>
+              )}
             </div>
           ))}
         </div>

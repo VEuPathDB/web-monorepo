@@ -5,10 +5,11 @@ import { LegendItemsProps } from '@veupathdb/components/lib/components/plotContr
 interface Props {
   legendItems: LegendItemsProps[];
   title?: string;
+  showCheckbox?: boolean;
 }
 
 export function MapLegend(props: Props) {
-  const { legendItems, title = 'Legend' } = props;
+  const { legendItems, title = 'Legend', showCheckbox } = props;
   return (
     <>
       <div>
@@ -25,6 +26,7 @@ export function MapLegend(props: Props) {
           padding: 0,
           width: 'auto',
         }}
+        showCheckbox={showCheckbox}
       />
     </>
   );

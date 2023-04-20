@@ -57,6 +57,13 @@ export default function PlotLegend({
           >
             {legendTitle}
           </div>
+          {/* showColumnTitle */}
+          {type === 'list' &&
+            (otherProps as PlotListLegendProps).columnTitle != null && (
+              <div style={{ marginTop: '-0.5em', textAlign: 'right' }}>
+                {(otherProps as PlotListLegendProps).columnTitle}
+              </div>
+            )}
           {type === 'list' && (
             <PlotListLegend {...(otherProps as PlotListLegendProps)} />
           )}

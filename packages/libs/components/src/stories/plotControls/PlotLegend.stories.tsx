@@ -199,6 +199,7 @@ const legendItems = [
     hasData: true,
     group: 1,
     rank: 1,
+    count: 1000000,
   },
   {
     label: '12-23 months',
@@ -207,6 +208,7 @@ const legendItems = [
     hasData: true,
     group: 1,
     rank: 1,
+    count: 2000000,
   },
   {
     label: '0-11 months',
@@ -215,6 +217,7 @@ const legendItems = [
     hasData: true,
     group: 1,
     rank: 1,
+    count: 3000000,
   },
 ];
 
@@ -433,6 +436,13 @@ export const HistogramPlotLegend = () => {
         onCheckedLegendItemsChange={setCheckedLegendItems}
         // pass legend title
         legendTitle={'Age group'}
+        // test legend props
+        // show checkbox: defualt is true
+        showCheckbox={false}
+        // show count: default is false
+        showCount={true}
+        // show column title: if exists, it would show column title for count column
+        columnTitle="Collection sites"
       />
     </div>
   );
