@@ -48,8 +48,6 @@ import {
   mapValues,
   map,
   keys,
-  get,
-  set,
 } from 'lodash';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
