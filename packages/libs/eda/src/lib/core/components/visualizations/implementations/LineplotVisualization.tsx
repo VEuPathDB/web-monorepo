@@ -788,7 +788,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
               // maing marker info appropriately
               marker:
                 dataItem.seriesType === 'zeroOverZero'
-                  ? 'circle'
+                  ? 'circleZero'
                   : 'lineWithCircleFilled',
               // set marker colors appropriately
               markerColor:
