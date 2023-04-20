@@ -727,6 +727,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     <MapLegend
                       legendItems={legendItems}
                       title={overlayVariable?.displayName}
+                      // control to show checkbox. default: true
+                      showCheckbox={false}
                     />
                   )}
                 </FloatingDiv>

@@ -20,6 +20,8 @@ export interface PlotListLegendProps {
   showOverlayLegend?: boolean;
   // define markerBodyOpaciy prop
   markerBodyOpacity?: number;
+  // show checkbox: defualt is true
+  showCheckbox?: boolean;
 }
 
 export default function PlotListLegend({
@@ -28,6 +30,7 @@ export default function PlotListLegend({
   onCheckedLegendItemsChange,
   showOverlayLegend = false,
   markerBodyOpacity = 1,
+  showCheckbox = true,
 }: PlotListLegendProps) {
   // change checkbox state by click
   const handleLegendCheckboxClick = (checked: boolean, id: string) => {
@@ -71,26 +74,32 @@ export default function PlotListLegend({
                   color: '',
                   // add this for general usage (e.g., story)
                   margin: 0,
+                  height: showCheckbox ? undefined : '1.5em',
                 }}
               >
-                <Checkbox
-                  key={item.label}
-                  id={item.label}
-                  value={item.label}
-                  // gray checkbox: default
-                  color={'default'}
-                  onChange={(e) => {
-                    handleLegendCheckboxClick(e.target.checked, item.label);
-                  }}
-                  checked={
-                    checkedLegendItems?.includes(item.label) ? true : false
-                  }
-                  style={{ padding: 0, width: '1em', height: '1em' }}
-                  // disable when hasData is false
-                  // but scatter plot needs further change due to smoothed mean and best fit
-                  disabled={!item.hasData}
-                />
-                &nbsp;&nbsp;
+                {/* control checkbox based on the showCheckbox */}
+                {showCheckbox && (
+                  <>
+                    <Checkbox
+                      key={item.label}
+                      id={item.label}
+                      value={item.label}
+                      // gray checkbox: default
+                      color={'default'}
+                      onChange={(e) => {
+                        handleLegendCheckboxClick(e.target.checked, item.label);
+                      }}
+                      checked={
+                        checkedLegendItems?.includes(item.label) ? true : false
+                      }
+                      style={{ padding: 0, width: '1em', height: '1em' }}
+                      // disable when hasData is false
+                      // but scatter plot needs further change due to smoothed mean and best fit
+                      disabled={!item.hasData}
+                    />
+                    &nbsp;&nbsp;
+                  </>
+                )}
                 <div
                   style={{
                     display: 'flex',
