@@ -958,7 +958,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     dependentAxisRange:
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
   };
-
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1975,60 +1974,64 @@ function nullZeroHack(
   if (dependentValueType === 'date') return dataSetProcess;
 
   return dataSetProcess.map((series) => {
-    // which are the arrays in the series object?
-    // (assumption: the lengths of all arrays are all the same)
-    const arrayKeys = Object.keys(series)
-      .filter((_): _ is keyof LinePlotDataSeries => true)
-      .filter((key): key is keyof ArrayTypes => Array.isArray(series[key]));
+    if (!(series.seriesType === 'zeroOverZero')) {
+      return series;
+    } else {
+      // which are the arrays in the series object?
+      // (assumption: the lengths of all arrays are all the same)
+      const arrayKeys = Object.keys(series)
+        .filter((_): _ is keyof LinePlotDataSeries => true)
+        .filter((key): key is keyof ArrayTypes => Array.isArray(series[key]));
 
-    const otherArrayKeys = arrayKeys.filter((key) => key !== 'y');
+      const otherArrayKeys = arrayKeys.filter((key) => key !== 'y');
 
-    // coersce type of y knowing that we're not dealing with dates (as string[])
-    const y = series.y as (number | null)[];
+      // coersce type of y knowing that we're not dealing with dates (as string[])
+      const y = series.y as (number | null)[];
 
-    return {
-      ...series,
-      // What does the reduce do?
-      // It goes through the series.y array makes a copy of it into the output (accum.y)
-      // However, when a null value is encountered, three values go into the output: null, 0 null.
-      // It also copies all the other arrays present in `series`, adding three identical values where
-      // the y array had a null value.
-      //
-      // The final value of accum has x, y, binLabel, yErrorBarUpper etc, and this is
-      // spread back into he return value for the map.
-      //
-      ...y.reduce((accum, current, index) => {
-        if (accum.y == null) accum.y = [];
+      return {
+        ...series,
+        // What does the reduce do?
+        // It goes through the series.y array makes a copy of it into the output (accum.y)
+        // However, when a null value is encountered, three values go into the output: null, 0 null.
+        // It also copies all the other arrays present in `series`, adding three identical values where
+        // the y array had a null value.
+        //
+        // The final value of accum has x, y, binLabel, yErrorBarUpper etc, and this is
+        // spread back into he return value for the map.
+        //
+        ...y.reduce((accum, current, index) => {
+          if (accum.y == null) accum.y = [];
 
-        const newY = accum.y as (number | null)[];
+          const newY = accum.y as (number | null)[];
 
-        if (current == null) {
-          newY.push(null);
-          newY.push(0);
-          newY.push(null);
-        } else {
-          newY.push(current);
-        }
-
-        otherArrayKeys.forEach(
-          // e.g. x, binLabel etc
-          (key) => {
-            // initialize empty array if needed
-            if (accum[key] == null) accum[key] = [];
-            // get the value of, e.g. x[i]
-            const value = series[key]![index];
-            // figure out if we're going to push one or three identical values
-            const oneOrThree = current == null ? 3 : 1;
-            // and do it
-            [...Array(oneOrThree)].forEach(() =>
-              (accum[key] as (number | null | string)[]).push(value)
-            );
+          if (current == null) {
+            newY.push(null);
+            newY.push(0);
+            newY.push(null);
+          } else {
+            newY.push(current);
           }
-        );
 
-        return accum;
-      }, {} as Partial<LinePlotDataSeries>),
-    };
+          otherArrayKeys.forEach(
+            // e.g. x, binLabel etc
+            (key) => {
+              // initialize empty array if needed
+              if (accum[key] == null) accum[key] = [];
+              // get the value of, e.g. x[i]
+              const value = series[key]![index];
+              // figure out if we're going to push one or three identical values
+              const oneOrThree = current == null ? 3 : 1;
+              // and do it
+              [...Array(oneOrThree)].forEach(() =>
+                (accum[key] as (number | null | string)[]).push(value)
+              );
+            }
+          );
+
+          return accum;
+        }, {} as Partial<LinePlotDataSeries>),
+      };
+    }
   });
 }
 
@@ -2133,7 +2136,7 @@ function processInputData(
   colorPaletteOverride?: string[],
   dependentIsProportion?: boolean
 ) {
-  const zeroSplitLineplotData = processZeroOverZeroData(
+  const zeroProcessedData = processZeroOverZeroData(
     responseLineplotData,
     hasMissingData,
     dependentIsProportion
@@ -2145,7 +2148,7 @@ function processInputData(
 
   // catch the case when the back end has returned valid but completely empty data
   if (
-    zeroSplitLineplotData.every(
+    zeroProcessedData.every(
       (data) => data.seriesX?.length === 0 && data.seriesY?.length === 0
     )
   ) {
@@ -2157,7 +2160,7 @@ function processInputData(
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number, el: ZeroOverZeroData[number]) => {
     const palette = colorPaletteOverride ?? ColorPaletteDefault;
-    if (showMissingness && index === zeroSplitLineplotData.length - 1) {
+    if (showMissingness && index === zeroProcessedData.length - 1) {
       return gray;
     } else {
       const seriesOverlayValue = el.overlayVariableDetails?.value;
@@ -2166,7 +2169,7 @@ function processInputData(
         (el?.seriesType === 'zeroOverZero'
           ? seriesOverlayValue
             ? palette[
-                zeroSplitLineplotData.findIndex(
+                zeroProcessedData.findIndex(
                   (series) =>
                     series.overlayVariableDetails?.value ===
                       seriesOverlayValue && series.seriesType === 'standard'
@@ -2185,7 +2188,7 @@ function processInputData(
     return (
       showMissingness &&
       !hasMissingData &&
-      index === zeroSplitLineplotData.length - 2
+      index === zeroProcessedData.length - 2
     );
   };
 
@@ -2193,7 +2196,7 @@ function processInputData(
     index: number,
     el: ZeroOverZeroData[number]
   ): string => {
-    return showMissingness && index === zeroSplitLineplotData.length - 1
+    return showMissingness && index === zeroProcessedData.length - 1
       ? 'x'
       : el?.seriesType === 'zeroOverZero'
       ? 'circle-open'
@@ -2234,9 +2237,9 @@ function processInputData(
         }
       : {};
 
-  let dataSetProcess: LinePlotDataSeriesWithType[] = [];
+  const dataSetProcessed: LinePlotDataSeriesWithType[] = [];
 
-  zeroSplitLineplotData.some(function (el, index) {
+  zeroProcessedData.some(function (el, index) {
     if (el.seriesX && el.seriesY) {
       if (el.seriesX.length !== el.seriesY.length) {
         throw new Error(
@@ -2263,7 +2266,7 @@ function processInputData(
           ? el.seriesY.map((val) => (val == null ? null : Number(val)))
           : (el.seriesY as string[]);
 
-      dataSetProcess.push({
+      dataSetProcessed.push({
         x: seriesX,
         y: seriesY,
         ...(binSpec?.value ? { binLabel: el.seriesX } : {}),
@@ -2309,7 +2312,7 @@ function processInputData(
     return false;
   });
 
-  const xValues = dataSetProcess
+  const xValues = dataSetProcessed
     .flatMap<string | number | null>((series) =>
       series.x.map((xValue, index) =>
         series.y[index] !== null ? xValue : null
@@ -2317,22 +2320,22 @@ function processInputData(
     )
     .filter((xValue) => xValue !== null) as (string | number)[];
   // get all values of y (including error bars if present) in a kind of clunky way...
-  const yValues = dataSetProcess
+  const yValues = dataSetProcessed
     .flatMap<string | number | null>((series) => series.y)
     .concat(
-      dataSetProcess
+      dataSetProcessed
         .flatMap((series) => series.yErrorBarLower ?? [])
         .filter((val): val is number | string => val != null)
     )
     .concat(
-      dataSetProcess
+      dataSetProcessed
         .flatMap((series) => series.yErrorBarUpper ?? [])
         .filter((val): val is number | string => val != null)
     );
 
   return {
     dataSetProcess: {
-      series: nullZeroHack(dataSetProcess, dependentValueType),
+      series: nullZeroHack(dataSetProcessed, dependentValueType),
       ...binWidthSliderData,
     },
     xMin: min(xValues),
@@ -2436,8 +2439,8 @@ type BinSampleSize = {
 };
 
 // If the dependent variable is a proportion, find all data points whose
-// dependent value is 0/0, and split these data points into their own new 0/0
-// series. There will be one new 0/0 series for each original series
+// dependent value is 0/0, and make a new series containing only these points.
+// There will be one new 0/0 series for each original series.
 function processZeroOverZeroData(
   lineplotData: LineplotResponse['lineplot']['data'],
   hasMissingData: boolean,
@@ -2446,16 +2449,11 @@ function processZeroOverZeroData(
   if (!dependentIsProportion) return lineplotData;
 
   // Check to see whether this data has any 0/0 points, so that we know whether
-  // we need to split it up
+  // we need to make new 0/0 series
   const addZeroSeries = lineplotData.some((series) =>
-    series.binSampleSize?.some((binSampleSize) => {
-      const binSampleSizeRecast = binSampleSize as BinSampleSize;
-
-      return (
-        binSampleSizeRecast.numeratorN === 0 &&
-        binSampleSizeRecast.denominatorN === 0
-      );
-    })
+    series.binSampleSize?.some(
+      (binSampleSize) => (binSampleSize as BinSampleSize).denominatorN === 0
+    )
   );
 
   if (!addZeroSeries) {
@@ -2464,7 +2462,7 @@ function processZeroOverZeroData(
     // Arrays that we'll add all the new series to as we create them
     const allZeroSeries: Array<LineplotResponse['lineplot']['data'][number]> =
       [];
-    const allNonZeroSeries: typeof allZeroSeries = [];
+    const allStandardSeries: typeof allZeroSeries = [];
 
     // Keys of LinePlotData that are arrays (but NOT tuples). The size of these
     // arrays SHOULD be identical, indicating the number of data points in the
@@ -2508,50 +2506,39 @@ function processZeroOverZeroData(
         | undefined;
 
       if (binSampleSizes) {
-        const makeEmptySeries = (seriesType: 'standard' | 'zeroOverZero') => ({
-          seriesType,
+        const standardSeries = { ...series, seriesType: 'standard' };
+        const zeroSeries = {
+          seriesType: 'zeroOverZero',
           ...series,
           // Empty all of the arrays
           ...arrayKeys.reduce((newObj, arrayKey) => {
             newObj[arrayKey] = [];
             return newObj;
           }, {} as Pick<LineplotResponse['lineplot']['data'][number], typeof arrayKeys[number]>),
-        });
-
-        const nonZeroSeries = makeEmptySeries('standard');
-        const zeroSeries = makeEmptySeries('zeroOverZero');
-        // No need for error bars on 0/0 points
+        };
+        // We don't want error bars on 0/0 points
         delete zeroSeries['errorBars'];
 
         binSampleSizes.forEach((binSampleSize, dataPointIndex) => {
-          let destinationSeries: typeof nonZeroSeries;
+          if (binSampleSize.denominatorN === 0) {
+            arrayKeys.forEach((key) => {
+              const array = series[key];
+              const destinationArray = zeroSeries[key];
 
-          if (
-            binSampleSize.numeratorN !== 0 ||
-            binSampleSize.denominatorN !== 0
-          ) {
-            destinationSeries = nonZeroSeries;
-          } else {
-            destinationSeries = zeroSeries;
+              if (array !== undefined && destinationArray !== undefined) {
+                const value = array[dataPointIndex];
+                (destinationArray as typeof value[]).push(value);
+              }
+            });
           }
-
-          arrayKeys.forEach((key) => {
-            const array = series[key];
-            const destinationArray = destinationSeries[key];
-
-            if (array !== undefined && destinationArray !== undefined) {
-              const value = array[dataPointIndex];
-              (destinationArray as typeof value[]).push(value);
-            }
-          });
         });
 
-        allNonZeroSeries.push(nonZeroSeries);
+        allStandardSeries.push(standardSeries);
         allZeroSeries.push(zeroSeries);
       }
     }
 
-    const newLineplotData = [...allNonZeroSeries, ...allZeroSeries];
+    const newLineplotData = [...allStandardSeries, ...allZeroSeries];
     if (hasMissingData) newLineplotData.push(...lineplotData.slice(-1));
 
     return newLineplotData;
