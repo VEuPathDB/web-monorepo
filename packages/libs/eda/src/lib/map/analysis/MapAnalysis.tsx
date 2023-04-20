@@ -3,6 +3,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
+  EntityDiagram,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -74,6 +75,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
+import { uniq } from 'lodash';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -160,6 +162,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariables.overlay) ?? {};
 
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
   const {
     markers,
     pending,
@@ -175,7 +179,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
-    filters: analysisState.analysis?.descriptor.subset.descriptor,
+    filters,
     xAxisVariable: selectedVariables.overlay,
     computationType: 'pass',
     markerType: 'pie',
@@ -313,6 +317,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   const FilterChipListForHeader = () => {
+    if (!studyEntities || !filters) return <></>;
+
     const filterChipConfig: VariableLinkConfig = {
       type: 'button',
       onClick(value) {
@@ -320,10 +326,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         openSubsetPanelFromControlOutsideOfNavigation();
       },
     };
-
-    const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
-    if (!studyEntities || !filters) return <></>;
 
     return (
       <div
@@ -410,6 +412,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       </div>
     );
 
+  const filteredEntities = uniq(filters?.map((f) => f.entityId));
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -429,6 +433,19 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 padding: '0 25px',
               }}
             >
+              <EntityDiagram
+                expanded
+                orientation="horizontal"
+                selectedEntity={subsetVariableAndEntity.entityId}
+                selectedVariable={subsetVariableAndEntity.variableId}
+                entityCounts={totalCounts.value}
+                filteredEntityCounts={filteredCounts.value}
+                filteredEntities={filteredEntities}
+                variableLinkConfig={{
+                  type: 'button',
+                  onClick: setSubsetVariableAndEntity,
+                }}
+              />
               <Subsetting
                 variableLinkConfig={{
                   type: 'button',
