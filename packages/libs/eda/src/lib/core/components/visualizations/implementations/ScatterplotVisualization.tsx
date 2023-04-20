@@ -172,8 +172,6 @@ export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   yMinPos: number | string | undefined;
   yMax: number | string | undefined;
   overlayValueToColorMapper: ((a: number) => string) | undefined;
-  overlayMin: number | undefined;
-  overlayMax: number | undefined;
   // add computedVariableMetadata for computation apps such as alphadiv and abundance
   computedVariableMetadata?: VariableMapping[];
 }
@@ -517,6 +515,33 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
       vizConfig.valueSpecConfig === 'Best fit line with raw');
 
+  // If numeric overlay, record the min and max and make a value to color map function
+  // assign 0 to avoid undefined
+  const overlayMin: number | undefined =
+    overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
+      ? overlayVariable?.distributionDefaults?.rangeMin
+      : 0;
+  const overlayMax: number | undefined =
+    overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
+      ? overlayVariable?.distributionDefaults?.rangeMax
+      : 0;
+
+  // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+  const maxAbsOverlay =
+    Math.abs(overlayMin) > overlayMax ? Math.abs(overlayMin) : overlayMax;
+  const gradientColorscaleType:
+    | 'sequential'
+    | 'sequential reversed'
+    | 'divergent'
+    | undefined =
+    overlayMin != null && overlayMax != null
+      ? overlayMin >= 0 && overlayMax >= 0
+        ? 'sequential'
+        : overlayMin <= 0 && overlayMax <= 0
+        ? 'sequential reversed'
+        : 'divergent'
+      : undefined;
+
   const data = usePromise(
     useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
       // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
@@ -617,14 +642,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      // If numeric overlay, record the min and max and make a value to color map function
-      let overlayMin: number | undefined;
-      let overlayMax: number | undefined;
-      let gradientColorscaleType:
-        | 'sequential'
-        | 'sequential reversed'
-        | 'divergent'
-        | undefined;
       let overlayValueToColorMapper: ((a: number) => string) | undefined;
 
       if (
@@ -634,51 +651,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         (overlayVariable?.type === 'integer' ||
           overlayVariable?.type === 'number')
       ) {
-        const defaultOverlayMin: number =
-          overlayVariable.distributionDefaults.displayRangeMin ||
-          overlayVariable.distributionDefaults.displayRangeMin === 0
-            ? overlayVariable.distributionDefaults.displayRangeMin
-            : overlayVariable.distributionDefaults.rangeMin;
-
-        const defaultOverlayMax: number = overlayVariable.distributionDefaults
-          .displayRangeMax
-          ? overlayVariable.distributionDefaults.displayRangeMax
-          : overlayVariable.distributionDefaults.rangeMax;
-
-        // Note overlayMin and/or overlayMax could be intentionally 0.
-        gradientColorscaleType =
-          defaultOverlayMin >= 0 && defaultOverlayMax >= 0
-            ? 'sequential'
-            : defaultOverlayMin <= 0 && defaultOverlayMax <= 0
-            ? 'sequential reversed'
-            : 'divergent';
-
-        // Update overlay min and max
-        if (gradientColorscaleType === 'divergent') {
-          overlayMin = -Math.max(
-            Math.abs(defaultOverlayMin),
-            Math.abs(defaultOverlayMax)
-          );
-          overlayMax = Math.max(
-            Math.abs(defaultOverlayMin),
-            Math.abs(defaultOverlayMax)
-          );
-        } else {
-          overlayMin = defaultOverlayMin;
-          overlayMax = defaultOverlayMax;
-        }
-
         // create the value to color mapper (continuous overlay)
         // Initialize normalization function.
         const normalize = scaleLinear();
 
         if (gradientColorscaleType === 'divergent') {
-          // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
-          const maxAbsOverlay =
-            Math.abs(overlayMin) > overlayMax
-              ? Math.abs(overlayMin)
-              : overlayMax;
-
           // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
           normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
           overlayValueToColorMapper = (a) =>
@@ -726,8 +703,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       );
       return {
         ...returnData,
-        overlayMin,
-        overlayMax,
         overlayValueToColorMapper,
       };
     }, [
@@ -823,13 +798,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const gradientLegendProps: PlotLegendGradientProps | undefined =
     useMemo(() => {
       if (
-        data.value?.overlayMax != null &&
-        data.value?.overlayMin != null &&
+        overlayMax != null &&
+        overlayMin != null &&
         data.value?.overlayValueToColorMapper != null
       ) {
         return {
-          legendMax: data.value?.overlayMax,
-          legendMin: data.value?.overlayMin,
+          legendMax: overlayMax,
+          legendMin: overlayMin,
           valueToColorMapper: data.value?.overlayValueToColorMapper,
           // MUST be odd! Probably should be a clever function of the box size
           // and font or something...
@@ -840,7 +815,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       } else {
         return undefined;
       }
-    }, [data, vizConfig.showMissingness, legendTitle]);
+    }, [data, vizConfig.showMissingness, legendTitle, overlayMin, overlayMax]);
 
   // custom legend list
   const legendItems: LegendItemsProps[] = useMemo(() => {
