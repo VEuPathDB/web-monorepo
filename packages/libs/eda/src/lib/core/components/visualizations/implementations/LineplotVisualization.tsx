@@ -797,18 +797,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
-              ? dataItem.y != null && dataItem.y.length > 0
-                ? true
-                : false
+              ? dataItem.y.length > 0 && dataItem.y[0] !== null
               : allData.facets
                   .map((facet) => facet.data)
                   .filter((data): data is LinePlotData => data != null)
-                  .map(
-                    (data) =>
-                      data.series[index]?.y != null &&
-                      data.series[index].y.length > 0
-                  )
-                  .includes(true),
+                  .some((data) => data.series[index].y.length > 0),
             group: 1,
             rank: 1,
           })
