@@ -20,14 +20,14 @@ import './BlastWorkspaceAll.scss';
 
 export interface JobRow {
   jobId: string;
-  summary: string | null;
+  description: string | null;
   created: string;
   status: 'queued' | 'running' | 'finished' | 'expired' | 'errored';
 }
 
 export function BlastWorkspaceAll() {
   const blastApi = useBlastApi();
-  const jobRows = useRawJobRows(blastApi.queryAPI);
+  const jobRows = useRawJobRows(blastApi);
 
   return (
     <div className="BlastWorkspaceAll">

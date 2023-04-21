@@ -155,14 +155,13 @@ class AnswerFilter extends React.Component {
         <Tooltip content="Show search fields">
           <button
             className="fa fa-caret-down wdk-Answer-filterSelectFieldsIcon"
-            onClick={this.toggleFilterFieldSelector}
+            onClick={(e) => {
+              e.stopPropagation();
+              this.toggleFilterFieldSelector();
+            }}
           />
         </Tooltip>
         <HelpTrigger>{tooltipContent}</HelpTrigger>
-        {/*<Tooltip content={tooltipContent}>
-          <i className="fa fa-question-circle fa-lg wdk-Answer-filterInfoIcon"/>
-        </Tooltip>*/}
-
         <AnswerFilterSelector
           attributes={attributes}
           tables={tables}

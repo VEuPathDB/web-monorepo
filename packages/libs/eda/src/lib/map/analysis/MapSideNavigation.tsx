@@ -173,7 +173,9 @@ export function MapSideNavigation({
       </div>
       <div
         style={{
-          borderLeft: activeNavigationMenu ? mapNavigationBorder : 'none',
+          minWidth: activeNavigationMenu ? 285 : 0,
+          borderLeft: activeNavigationMenu ? mapNavigationBorder : 'unset',
+          overflow: 'scroll',
         }}
         className={isExpanded ? '' : 'screenReaderOnly'}
       >

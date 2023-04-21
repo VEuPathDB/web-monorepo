@@ -594,11 +594,6 @@ function OrganismFilter(
               padding: 0,
             },
           },
-          searchBox: {
-            optionalIcon: {
-              top: '3px',
-            },
-          },
           additionalFilters: {
             container: {
               width: '125px',

@@ -38,8 +38,13 @@ jobs:
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF#refs/tags/v}
-      - uses: JS-DevTools/npm-publish@v1
+      - uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
           package: packages/sites/${{ matrix.dir }}/package.json
+      - run: ./tools/scripts/test-report
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Test report
+          path: ${{ github.workspace }}/test-report
