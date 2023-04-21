@@ -69,10 +69,7 @@ import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import {
-  LegendItemsProps,
-  LegendMarker,
-} from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
