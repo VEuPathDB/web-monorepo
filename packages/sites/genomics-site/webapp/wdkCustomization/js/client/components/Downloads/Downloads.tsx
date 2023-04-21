@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { DownloadsFilter } from './DownloadsFilter';
 import { DownloadsTable } from './DownloadsTable';
@@ -10,6 +12,13 @@ const BULK_QUESTION_NAME = 'GetFileRecordsByID';
 
 export function Downloads() {
   const [searchConfig, setSearchConfig] = useState<SearchConfig>();
+  const location = useLocation();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const initialParamData = useMemo(
+    () => parseQueryString({ location, history, match }),
+    [history, location, match]
+  );
 
   return (
     <div className="Downloads">
@@ -23,6 +32,7 @@ export function Downloads() {
           recordName={RECORD_NAME}
           questionName={TABLE_QUESTION_NAME}
           onChange={setSearchConfig}
+          initialParamData={initialParamData}
         />
       </div>
       {searchConfig && (

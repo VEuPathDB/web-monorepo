@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 interface Props {
   recordName: string;
   questionName: string;
+  initialParamData: Record<string, string>;
   onChange: (searchConfig: SearchConfig) => void;
 }
 
@@ -18,7 +19,7 @@ const submissionMetadata: SubmissionMetadata = {
 };
 
 export function DownloadsFilter(props: Props) {
-  const { recordName, questionName, onChange } = props;
+  const { recordName, questionName, initialParamData, onChange } = props;
   const paramValues = useSelector(
     (state: RootState) => state.question.questions[questionName]?.paramValues
   );
@@ -36,6 +37,7 @@ export function DownloadsFilter(props: Props) {
       recordClass={recordName}
       submissionMetadata={submissionMetadata}
       FormComponent={FormComponent}
+      initialParamData={initialParamData}
     />
   );
 }
