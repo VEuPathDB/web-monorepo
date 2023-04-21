@@ -2519,6 +2519,7 @@ function processZeroOverZeroData(
         const standardSeries = {
           ...series,
           seriesType: 'standard',
+          // With no overlay variable, we only want to show the 0/0 legend entry
           hideFromLegend: !hasOverlayVariable,
         };
         const zeroSeries = {
