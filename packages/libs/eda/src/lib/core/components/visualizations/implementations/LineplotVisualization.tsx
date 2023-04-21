@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 // load plot component
 import LinePlot, {
   LinePlotProps,
@@ -1667,7 +1666,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <Tooltip css={{}} title={'Required parameter'}>
+          <Tooltip title={'Required parameter'}>
             <div className={classes.label}>
               Function<sup>*</sup>
             </div>
@@ -1689,7 +1688,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             gridTemplateRows: 'repeat(3, auto)',
           }}
         >
-          <Tooltip css={{}} title={'Required parameter'}>
+          <Tooltip title={'Required parameter'}>
             <div
               className={classes.label}
               style={{
@@ -2030,7 +2029,7 @@ function nullZeroHack(
           );
 
           return accum;
-        }, {} as Partial<LinePlotDataSeries>),
+        }, {} as Partial<LinePlotDataSeriesWithType>),
       };
     }
   });
@@ -2162,24 +2161,32 @@ function processInputData(
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number, el: ZeroOverZeroData[number]) => {
     const palette = colorPaletteOverride ?? ColorPaletteDefault;
-    if (showMissingness && index === zeroProcessedData.length - 1) {
-      return gray;
-    } else {
-      const seriesOverlayValue = el.overlayVariableDetails?.value;
+    // TO DO: decide on overflow behaviour
+    const fallbackColor = 'black';
 
-      return (
-        (el?.seriesType === 'zeroOverZero'
-          ? seriesOverlayValue
-            ? palette[
-                zeroProcessedData.findIndex(
-                  (series) =>
-                    series.overlayVariableDetails?.value ===
-                      seriesOverlayValue && series.seriesType === 'standard'
-                )
-              ]
-            : palette[0]
-          : palette[index]) ?? 'black'
-      ); // TO DO: decide on overflow behaviour
+    if (showMissingness && index === zeroProcessedData.length - 1) {
+      // This is the no data series
+      return gray;
+    } else if (el?.seriesType !== 'zeroOverZero') {
+      // It's a standard series. Choose the corresponding palette color
+      return palette[index] ?? fallbackColor;
+    } else {
+      // It's a 0/0 series
+      const zeroSeriesOverlayValue = el.overlayVariableDetails?.value;
+
+      if (!zeroSeriesOverlayValue) {
+        // There's no overlay variable, so this is the only series (other than
+        // 'no data', maybe) that will be shown in the legend
+        return palette[0];
+      } else {
+        // Give it the same color as its corresponding standard series
+        const standardSeriesIndex = zeroProcessedData.findIndex(
+          (series) =>
+            series.seriesType === 'standard' &&
+            series.overlayVariableDetails?.value === zeroSeriesOverlayValue
+        );
+        return palette[standardSeriesIndex] ?? fallbackColor;
+      }
     }
   };
 
@@ -2268,6 +2275,8 @@ function processInputData(
           ? el.seriesY.map((val) => (val == null ? null : Number(val)))
           : (el.seriesY as string[]);
 
+      const color = markerColor(index, el);
+
       dataSetProcessed.push({
         x: seriesX,
         y: seriesY,
@@ -2301,14 +2310,11 @@ function processInputData(
         mode: modeValue,
         fill: fillAreaValue,
         opacity: 0.7,
-        marker: {
-          color: markerColor(index, el),
-          symbol: markerSymbol(index, el),
-        },
+        marker: { color, symbol: markerSymbol(index, el) },
         // this needs to be here for the case of markers with line or lineplot.
-        line: { color: markerColor(index, el), shape: 'linear' },
+        line: { color, shape: 'linear' },
         // for connecting points regardless of missing data
-        // note: removing this may cause other issues
+        // Note: connectgaps being commented out may cause other issues
         // connectgaps: true,
         seriesType: el.seriesType,
       });
@@ -2458,12 +2464,12 @@ function processZeroOverZeroData(
 
   // Check to see whether this data has any 0/0 points, so that we know whether
   // we need to make new 0/0 series
-  // Do I need to take account of the no data series here?
-  const addZeroSeries = lineplotData.some((series) =>
-    series.binSampleSize?.some(
+  const addZeroSeries = lineplotData.some((series, index) => {
+    if (hasMissingData && index === lineplotData.length - 1) return false;
+    return series.binSampleSize?.some(
       (binSampleSize) => (binSampleSize as BinSampleSize).denominatorN === 0
-    )
-  );
+    );
+  });
 
   if (!addZeroSeries) {
     return lineplotData;
