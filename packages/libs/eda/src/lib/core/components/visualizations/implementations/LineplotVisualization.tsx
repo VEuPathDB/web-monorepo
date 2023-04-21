@@ -801,7 +801,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
               : allData.facets
                   .map((facet) => facet.data)
                   .filter((data): data is LinePlotData => data != null)
-                  .some((data) => data.series[index].y.length > 0),
+                  .some(
+                    (data) =>
+                      data.series[index].y.length > 0 &&
+                      data.series[index].y[0] !== null
+                  ),
             group: 1,
             rank: 1,
           })
