@@ -85,7 +85,8 @@ export default function ConfirmShareAnalysis({
                       >
                         go to your study's status page
                       </a>{' '}
-                      and click the share button in the upper right.
+                      and click the "Grant Access to Study" button in the upper
+                      right.
                     </span>
                   )}
                 </>
