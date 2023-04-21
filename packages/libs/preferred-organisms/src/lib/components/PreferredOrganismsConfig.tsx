@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { noop } from 'lodash';
 
@@ -122,13 +122,6 @@ export function PreferredOrganismsConfig({
   );
 
   const [describeNewOrganisms, setDescribeNewOrganisms] = useState(true);
-  const [persistButtons, setPersistButtons] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!persistButtons && !configIsUnchanged) {
-      setPersistButtons(true);
-    }
-  }, [configIsUnchanged]);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -202,12 +195,7 @@ export function PreferredOrganismsConfig({
           <h2>
             Choose organisms to keep
             {
-              <div
-                className={cx(
-                  '--ConfigButtons',
-                  configIsUnchanged && !persistButtons ? 'hidden' : 'visible'
-                )}
-              >
+              <div className={cx('--ConfigButtons')}>
                 {
                   <>
                     <Tooltip
@@ -224,7 +212,6 @@ export function PreferredOrganismsConfig({
                         className={`btn ${cx('--ApplyButton')}`}
                         disabled={!savingPreferredOrganismsEnabled}
                         onClick={function handleApplyPrefOrgsChanges() {
-                          setPersistButtons(false);
                           enqueueSnackbar(
                             'Your preferred organisms have been updated.',
                             { variant: 'success' }
@@ -241,10 +228,7 @@ export function PreferredOrganismsConfig({
                       <button
                         type="button"
                         className={`btn ${cx('--CancelButton')}`}
-                        onClick={function handleCancelPrefOrgsChanges() {
-                          setPersistButtons(false);
-                          revertConfigSelection();
-                        }}
+                        onClick={revertConfigSelection}
                         disabled={configIsUnchanged}
                       >
                         X
