@@ -146,6 +146,7 @@ const modalPlotContainerStyles = {
 
 type LinePlotDataSeriesWithType = LinePlotDataSeries & {
   seriesType?: 'standard' | 'zeroOverZero';
+  hideFromLegend?: boolean;
 };
 
 type LinePlotDataWithType = Omit<LinePlotData, 'series'> & {
@@ -665,6 +666,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         visualization.descriptor.type,
         independentValueType,
         dependentValueType,
+        params.config.valueSpec === 'proportion',
         showMissingOverlay,
         xAxisVocabulary,
         overlayVocabulary,
@@ -672,8 +674,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        neutralPaletteProps.colorPalette,
-        params.config.valueSpec === 'proportion'
+        neutralPaletteProps.colorPalette
       );
     }, [
       studyId,
@@ -788,11 +789,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
               // maing marker info appropriately
               marker:
                 dataItem.seriesType === 'zeroOverZero'
-                  ? 'circleZero'
-                  : 'lineWithCircleFilled',
+                  ? 'circleOutline'
+                  : 'lineWithCircle',
               // set marker colors appropriately
               markerColor:
-                dataItem?.name === 'No data'
+                dataItem.name === 'No data'
                   ? '#E8E8E8'
                   : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
               // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
@@ -811,6 +812,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
                     .includes(true),
               group: 1,
               rank: 1,
+              hideFromLegend: dataItem.hideFromLegend,
             };
           })
           .filter((legendItem) => legendItem !== null) as LegendItemsProps[])
@@ -956,6 +958,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     dependentAxisRange:
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
   };
+
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
@@ -1848,6 +1851,7 @@ export function lineplotResponseToData(
   vizType: string,
   independentValueType: string,
   dependentValueType: string,
+  dependentIsProportion: boolean,
   showMissingOverlay: boolean = false,
   xAxisVocabulary: string[] = [],
   overlayVocabulary: string[] = [],
@@ -1855,8 +1859,7 @@ export function lineplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
-  colorPaletteOverride?: string[],
-  dependentIsProportion?: boolean
+  colorPaletteOverride?: string[]
 ): LinePlotDataWithCoverage {
   const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
@@ -1891,11 +1894,11 @@ export function lineplotResponseToData(
         dependentValueType,
         showMissingOverlay,
         hasMissingData,
+        dependentIsProportion,
         response.lineplot.config.binSpec,
         response.lineplot.config.binSlider,
         overlayVariable,
-        colorPaletteOverride,
-        dependentIsProportion
+        colorPaletteOverride
       );
 
     return {
@@ -2128,16 +2131,17 @@ function processInputData(
   dependentValueType: string,
   showMissingness: boolean,
   hasMissingData: boolean,
+  dependentIsProportion: boolean,
   binSpec?: BinSpec,
   binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable,
-  colorPaletteOverride?: string[],
-  dependentIsProportion?: boolean
+  colorPaletteOverride?: string[]
 ) {
   const zeroProcessedData = processZeroOverZeroData(
     responseLineplotData,
-    hasMissingData,
-    dependentIsProportion
+    dependentIsProportion,
+    overlayVariable !== undefined,
+    hasMissingData
   );
 
   // set fillAreaValue for densityplot
@@ -2286,10 +2290,14 @@ function processInputData(
                 el.overlayVariableDetails.value,
                 overlayVariable
               )
-            : 'Data') +
+            : el.seriesType !== 'zeroOverZero'
+            ? 'Data'
+            : '') +
           (el.seriesType === 'zeroOverZero'
-            ? ', Undefined Y (denominator of 0)'
+            ? (overlayVariable !== undefined ? ', ' : '') +
+              'Undefined Y (denominator of 0)'
             : ''),
+        hideFromLegend: el.hideFromLegend,
         mode: modeValue,
         fill: fillAreaValue,
         opacity: 0.7,
@@ -2429,6 +2437,7 @@ function reorderResponseLineplotData(
 
 type ZeroOverZeroData = (LineplotResponse['lineplot']['data'][number] & {
   seriesType?: 'standard' | 'zeroOverZero';
+  hideFromLegend?: boolean;
 })[];
 
 type BinSampleSize = {
@@ -2441,13 +2450,15 @@ type BinSampleSize = {
 // There will be one new 0/0 series for each original series.
 function processZeroOverZeroData(
   lineplotData: LineplotResponse['lineplot']['data'],
-  hasMissingData: boolean,
-  dependentIsProportion?: boolean
+  dependentIsProportion: boolean,
+  hasOverlayVariable: boolean,
+  hasMissingData: boolean
 ): ZeroOverZeroData {
   if (!dependentIsProportion) return lineplotData;
 
   // Check to see whether this data has any 0/0 points, so that we know whether
   // we need to make new 0/0 series
+  // Do I need to take account of the no data series here?
   const addZeroSeries = lineplotData.some((series) =>
     series.binSampleSize?.some(
       (binSampleSize) => (binSampleSize as BinSampleSize).denominatorN === 0
@@ -2504,7 +2515,11 @@ function processZeroOverZeroData(
         | undefined;
 
       if (binSampleSizes) {
-        const standardSeries = { ...series, seriesType: 'standard' };
+        const standardSeries = {
+          ...series,
+          seriesType: 'standard',
+          hideFromLegend: !hasOverlayVariable,
+        };
         const zeroSeries = {
           seriesType: 'zeroOverZero',
           ...series,

@@ -15,6 +15,7 @@ import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
+import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
 
 // A collection of stories for viewing our Diverging Gradient Colormap
 export default {
@@ -179,7 +180,7 @@ dataSetDivergingDiscrete.scatterplot.data[0].seriesGradientColorscale?.forEach(
   }
 );
 
-let legendItems = vocabularyEquidistant.map((label) => {
+let legendItems: LegendItemsProps[] = vocabularyEquidistant.map((label) => {
   return {
     label,
     marker: 'square',

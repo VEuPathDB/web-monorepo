@@ -4,6 +4,7 @@ import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
 import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
 import { HistogramData } from '../../types/plots';
+import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
 
 export default {
   title: 'Plot Controls/PlotLegend',
@@ -191,7 +192,7 @@ const data: HistogramData = {
 };
 
 // legend items processed from data.value
-const legendItems = [
+const legendItems: LegendItemsProps[] = [
   {
     label: '24-59 months',
     marker: 'square',
@@ -219,10 +220,10 @@ const legendItems = [
 ];
 
 // test data for long legend items: taken from Scatterplot with Smoothed mean
-const longLegendItems = [
+const longLegendItems: LegendItemsProps[] = [
   {
     label: 'Bangladesh',
-    marker: 'lineWithCircleFilled',
+    marker: 'circle',
     markerColor: 'rgb(136,34,85)',
     hasData: true,
     group: 1,
@@ -230,7 +231,7 @@ const longLegendItems = [
   },
   {
     label: 'India',
-    marker: 'circleFilled',
+    marker: 'circle',
     markerColor: 'rgb(136,204,238)',
     hasData: true,
     group: 1,
@@ -390,7 +391,7 @@ const longLegendItems = [
   },
 ];
 
-const iconDemoLegendItems = [
+const iconDemoLegendItems: LegendItemsProps[] = [
   {
     label: 'square',
     marker: 'square',
@@ -416,8 +417,8 @@ const iconDemoLegendItems = [
     rank: 1,
   },
   {
-    label: 'circleFilled',
-    marker: 'circleFilled',
+    label: 'circleOutline',
+    marker: 'circleOutline',
     markerColor: 'rgb(51,34,136)',
     hasData: true,
     group: 1,
@@ -432,8 +433,8 @@ const iconDemoLegendItems = [
     rank: 1,
   },
   {
-    label: 'lineWithCircleFilled',
-    marker: 'lineWithCircleFilled',
+    label: 'lineWithCircle',
+    marker: 'lineWithCircle',
     markerColor: 'rgb(221,204,119)',
     hasData: true,
     group: 1,
