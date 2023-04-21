@@ -780,41 +780,39 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
     return legendData != null
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
-        (legendData
-          .map((dataItem: LinePlotDataSeriesWithType, index: number) => {
-            return {
-              label: dataItem.name ?? '',
-              italicizeLabel: dataItem.seriesType === 'zeroOverZero',
-              // maing marker info appropriately
-              marker:
-                dataItem.seriesType === 'zeroOverZero'
-                  ? 'circleOutline'
-                  : 'lineWithCircle',
-              // set marker colors appropriately
-              markerColor:
-                dataItem.name === 'No data'
-                  ? '#E8E8E8'
-                  : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
-              // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
-              hasData: !isFaceted(allData)
-                ? dataItem.y != null && dataItem.y.length > 0
-                  ? true
-                  : false
-                : allData.facets
-                    .map((facet) => facet.data)
-                    .filter((data): data is LinePlotData => data != null)
-                    .map(
-                      (data) =>
-                        data.series[index]?.y != null &&
-                        data.series[index].y.length > 0
-                    )
-                    .includes(true),
-              group: 1,
-              rank: 1,
-              hideFromLegend: dataItem.hideFromLegend,
-            };
+        legendData.map(
+          (dataItem: LinePlotDataSeriesWithType, index: number) => ({
+            hideFromLegend: dataItem.hideFromLegend,
+            label: dataItem.name ?? '',
+            italicizeLabel: dataItem.seriesType === 'zeroOverZero',
+            // maing marker info appropriately
+            marker:
+              dataItem.seriesType === 'zeroOverZero'
+                ? 'circleOutline'
+                : 'lineWithCircle',
+            // set marker colors appropriately
+            markerColor:
+              dataItem.name === 'No data'
+                ? '#E8E8E8'
+                : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
+            // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
+            hasData: !isFaceted(allData)
+              ? dataItem.y != null && dataItem.y.length > 0
+                ? true
+                : false
+              : allData.facets
+                  .map((facet) => facet.data)
+                  .filter((data): data is LinePlotData => data != null)
+                  .map(
+                    (data) =>
+                      data.series[index]?.y != null &&
+                      data.series[index].y.length > 0
+                  )
+                  .includes(true),
+            group: 1,
+            rank: 1,
           })
-          .filter((legendItem) => legendItem !== null) as LegendItemsProps[])
+        )
       : [];
   }, [data, neutralPaletteProps]);
 
