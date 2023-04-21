@@ -23,6 +23,7 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
+  DataNoun,
   UserDataset,
   UserDatasetMeta,
   UserDatasetShare,
@@ -59,6 +60,7 @@ interface Props {
   ) => any;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
+  dataNoun: DataNoun;
 }
 
 interface State {
@@ -105,9 +107,8 @@ class UserDatasetList extends React.Component<Props, State> {
     this.getEventHandlers = this.getEventHandlers.bind(this);
     this.filterAndSortRows = this.filterAndSortRows.bind(this);
     this.onSearchTermChange = this.onSearchTermChange.bind(this);
-    this.onMetaAttributeSaveFactory = this.onMetaAttributeSaveFactory.bind(
-      this
-    );
+    this.onMetaAttributeSaveFactory =
+      this.onMetaAttributeSaveFactory.bind(this);
 
     this.renderOwnerCell = this.renderOwnerCell.bind(this);
     this.renderStatusCell = this.renderStatusCell.bind(this);
@@ -369,7 +370,8 @@ class UserDatasetList extends React.Component<Props, State> {
         },
         element: (
           <button className="btn btn-info">
-            Share Datasets <Icon fa="share-alt right-side" />
+            <Icon fa="share-alt left-side" />
+            Grant Access to {this.props.dataNoun.plural}
           </button>
         ),
         selectionRequired: true,
@@ -417,7 +419,8 @@ class UserDatasetList extends React.Component<Props, State> {
         },
         element: (
           <button className="btn btn-error">
-            Remove <Icon fa="trash-o right-side" />
+            <Icon fa="trash-o left-side" />
+            Delete
           </button>
         ),
         selectionRequired: true,
@@ -546,6 +549,7 @@ class UserDatasetList extends React.Component<Props, State> {
       unshareUserDatasets,
       filterByProject,
       quotaSize,
+      dataNoun,
     } = this.props;
     const { uiState, selectedRows, searchTerm, sharingModalOpen } = this.state;
 
@@ -599,13 +603,15 @@ class UserDatasetList extends React.Component<Props, State> {
                   />
                 ) : null}
                 <SearchBox
-                  placeholderText="Search Datasets"
+                  placeholderText={'Search ' + dataNoun.plural}
                   searchTerm={searchTerm}
                   onSearchTermChange={this.onSearchTermChange}
                 />
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
                   Showing {filteredRows.length} of {rows.length}{' '}
-                  {`data set${rows.length === 1 ? '' : 's'}`}
+                  {rows.length === 1
+                    ? dataNoun.singular.toLowerCase()
+                    : dataNoun.plural.toLowerCase()}
                 </div>
                 {offerProjectToggle && (
                   <div
@@ -620,7 +626,8 @@ class UserDatasetList extends React.Component<Props, State> {
                       onClick={() => toggleProjectScope(!filterByProject)}
                       style={{ display: 'inline-block' }}
                     >
-                      Only show data sets related to <b>{projectName}</b>
+                      Only show {dataNoun.plural.toLowerCase()} related to{' '}
+                      <b>{projectName}</b>
                     </div>
                   </div>
                 )}
