@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
-import { PlotLegendGradientProps } from '../../components/plotControls/PlotGradientLegend';
 import ScatterPlot from '../../plots/ScatterPlot';
 import { min, max } from 'lodash';
 import {
@@ -16,6 +15,7 @@ import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
 import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
+import { scaleLinear } from 'd3';
 
 // A collection of stories for viewing our Diverging Gradient Colormap
 export default {
@@ -137,17 +137,26 @@ const Template: Story<TemplateProps> = (args) => {
 // Showcase the continuous version of the diverging gradient colormap. Overlay values are drawn from
 // a continuous distribution
 
+const legendMax = max(
+  dataSetDivergingGradient.scatterplot.data[0]
+    .seriesGradientColorscale as number[]
+)!;
+const legendMin = min(
+  dataSetDivergingGradient.scatterplot.data[0]
+    .seriesGradientColorscale as number[]
+)!;
+const legendMaxAbs = max([Math.abs(legendMax), Math.abs(legendMin)])!;
+
+const normalize = scaleLinear();
+normalize.domain([-legendMaxAbs, legendMaxAbs]).range([-1, 1]);
+const valueToColorMapper = (a: number) =>
+  gradientDivergingColorscaleMap(normalize(a));
+
 // Setup gradient colorscale legend
 const gradientLegendProps = {
-  legendMax: max(
-    dataSetDivergingGradient.scatterplot.data[0]
-      .seriesGradientColorscale as number[]
-  ),
-  legendMin: min(
-    dataSetDivergingGradient.scatterplot.data[0]
-      .seriesGradientColorscale as number[]
-  ),
-  gradientColorscaleType: 'divergent',
+  legendMax,
+  legendMin,
+  valueToColorMapper,
   // MUST be odd!
   nTicks: 5,
   showMissingness: false,
@@ -159,7 +168,7 @@ Continuous.args = {
   data: dataSetDivergingGradient,
   plotLegendProps: {
     type: 'colorscale',
-    ...(gradientLegendProps as PlotLegendGradientProps),
+    ...gradientLegendProps,
   },
   nPoints: 120,
 };

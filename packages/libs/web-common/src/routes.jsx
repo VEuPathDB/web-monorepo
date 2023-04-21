@@ -3,7 +3,7 @@ import React, { Suspense, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { communitySite, edaEnableFullScreenApps } from './config';
+import { communitySite, edaEnableFullScreenApps, projectId } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import ContactUsController from './controllers/ContactUsController';
@@ -80,6 +80,12 @@ export const wrapRoutes = (wdkRoutes) => [
         <EdaMap
           singleAppMode={edaSingleAppMode}
           edaServiceUrl={edaServiceUrl}
+          siteInformationProps={{
+            loginUrl: '',
+            siteHomeUrl: '/',
+            siteLogoSrc: '',
+            siteName: projectId,
+          }}
         />
       </Suspense>
     ),

@@ -2,6 +2,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
+  DEFAULT_ANALYSIS_NAME,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -15,13 +16,7 @@ import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import {
-  Close,
-  Download,
-  FilledButton,
-  Filter,
-  FloatingButton,
-} from '@veupathdb/coreui';
+import { Download, FilledButton, Filter } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
@@ -72,7 +67,38 @@ import {
 } from '../../core/types/visualization';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import Login from '../../workspace/sharing/Login';
+import { useLoginCallbacks } from '../../workspace/sharing/hooks';
+import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
+import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
+import { useHistory } from 'react-router';
+
+enum MapSideNavItemLabels {
+  Download = 'Download',
+  Filter = 'Filter',
+  Notes = 'Notes',
+  Paint = 'Paint',
+  Plot = 'Plot',
+  Share = 'Share',
+  StudyDetails = 'View Study Details',
+}
+
+type SideNavigationItemConfigurationObject = {
+  href?: string;
+  labelText: MapSideNavItemLabels;
+  icon: ReactNode;
+  renderSideNavigationPanel: (app: ComputationAppOverview) => ReactNode;
+  onToggleSideMenuItem?: (isActive: boolean) => void;
+};
+
+function getSideNavItemIndexByLabel(
+  label: MapSideNavItemLabels,
+  navItems: SideNavigationItemConfigurationObject[]
+): number {
+  return navItems.findIndex((navItem) => navItem.labelText === label);
+}
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -80,6 +106,7 @@ const mapStyle: React.CSSProperties = {
 
 interface Props {
   analysisId: string;
+  sharingUrl: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
@@ -112,7 +139,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    setIsSubsetPanelOpen,
+    sharingUrl,
+    setIsSubsetPanelOpen = () => {},
   } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -158,6 +186,23 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+
+  const userLoggedIn = useWdkService((wdkService) => {
+    return wdkService.getCurrentUser().then((user) => !user.isGuest);
+  });
+
+  const history = useHistory();
+  function showLoginForm() {
+    const currentUrl = window.location.href;
+    const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
+    history.push(loginUrl);
+  }
+
+  function toggleVisible() {
+    setActiveSideMenuIndex(undefined);
+  }
+
+  const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
   const appPromiseState = usePromise(
     useCallback(async () => {
@@ -261,12 +306,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
 
+  function openSubsetPanelFromControlOutsideOfNavigation() {
+    setIsSubsetPanelOpen(true);
+    setActiveSideMenuIndex(filterSideMenuItemIndex);
+    setSideNavigationIsExpanded(true);
+  }
+
   const FilterChipListForHeader = () => {
     const filterChipConfig: VariableLinkConfig = {
       type: 'button',
       onClick(value) {
-        setIsSubsetPanelOpen && setIsSubsetPanelOpen(true);
         setSubsetVariableAndEntity(value);
+        openSubsetPanelFromControlOutsideOfNavigation();
       },
     };
 
@@ -286,9 +337,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         className="FilterChips"
       >
         <FilledButton
+          disabled={
+            // You don't need this button if whenever the filter
+            // section is active and expanded.
+            sideNavigationIsExpanded &&
+            activeSideMenuIndex === filterSideMenuItemIndex
+          }
           themeRole="primary"
           text="Add filters"
-          onPress={() => setIsSubsetPanelOpen(true)}
+          onPress={openSubsetPanelFromControlOutsideOfNavigation}
           size="small"
           textTransform="unset"
           styleOverrides={{
@@ -346,34 +403,54 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     marginLeft: '0.5rem',
   };
 
-  type SideNavigationItemConfigurationObject = {
-    href?: string;
-    labelText: string;
-    icon: ReactNode;
-    renderWithApp: (app: ComputationAppOverview) => ReactNode;
-  };
-  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderWithApp'] =
+  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderSideNavigationPanel'] =
     (_) => (
       <div style={{ padding: '2rem' }}>
         <p>Not Implemented!</p>
       </div>
     );
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: 'Paint',
+        labelText: MapSideNavItemLabels.Paint,
         icon: <EditLocation />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Filter',
+        labelText: MapSideNavItemLabels.Filter,
         icon: <Filter />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                width: '80vw',
+                maxHeight: 650,
+                padding: '0 25px',
+              }}
+            >
+              <Subsetting
+                variableLinkConfig={{
+                  type: 'button',
+                  onClick: setSubsetVariableAndEntity,
+                }}
+                entityId={subsetVariableAndEntity?.entityId ?? ''}
+                variableId={subsetVariableAndEntity?.variableId ?? ''}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </div>
+          );
+        },
+        onToggleSideMenuItem: (isActive) => {
+          setIsSubsetPanelOpen(!isActive);
+        },
       },
       {
-        labelText: 'Plot',
+        labelText: MapSideNavItemLabels.Plot,
         icon: <BarChartSharp />,
-        renderWithApp: (app) => {
+        renderSideNavigationPanel: (app) => {
           return (
             <MapVizManagement
               analysisState={analysisState}
@@ -388,19 +465,51 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
-        labelText: 'Download',
+        labelText: MapSideNavItemLabels.Download,
         icon: <Download />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
       {
-        labelText: 'Share',
+        labelText: MapSideNavItemLabels.Share,
         icon: <Share />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          if (!analysisState.analysis) return null;
+
+          function getShareMenuContent() {
+            if (!userLoggedIn) {
+              return <Login {...loginCallbacks} />;
+            }
+            if (
+              analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
+            ) {
+              return (
+                <NameAnalysis
+                  currentName={analysisState.analysis.displayName}
+                  updateName={analysisState.setName}
+                />
+              );
+            }
+            return <ConfirmShareAnalysis sharingURL={sharingUrl} />;
+          }
+
+          return (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '0 15px',
+              }}
+            >
+              {getShareMenuContent()}
+            </div>
+          );
+        },
       },
       {
-        labelText: 'Notes',
+        labelText: MapSideNavItemLabels.Notes,
         icon: <Notes />,
-        renderWithApp: (app) => {
+        renderSideNavigationPanel: (app) => {
           return (
             <div
               style={{
@@ -414,29 +523,42 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
-        labelText: 'View Study Details',
+        labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
-        renderWithApp: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
     ];
 
-  const plotNavItemIndex: number | undefined = appState.activeVisualizationId
-    ? sideNavigationButtonConfigurationObjects.findIndex(
-        (config) => config.labelText === 'Plot'
-      )
-    : undefined;
-  const [activeSideMenuIndex, setActiveSideMenuIndex] =
-    useState<number | undefined>(plotNavItemIndex);
+  const filterSideMenuItemIndex = getSideNavItemIndexByLabel(
+    MapSideNavItemLabels.Filter,
+    sideNavigationButtonConfigurationObjects
+  );
+  const plotSideMenuItemIndex = getSideNavItemIndexByLabel(
+    MapSideNavItemLabels.Plot,
+    sideNavigationButtonConfigurationObjects
+  );
+
+  const intialActiveSideMenuIndex: number | undefined = (() => {
+    if (appState.isSubsetPanelOpen) return filterSideMenuItemIndex;
+    if (appState.activeVisualizationId) return plotSideMenuItemIndex;
+
+    return undefined;
+  })();
+
+  const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
+    number | undefined
+  >(intialActiveSideMenuIndex);
 
   const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
-    ({ labelText, icon }, index) => {
+    ({ labelText, icon, onToggleSideMenuItem = () => {} }, index) => {
       return (
         <button
           style={buttonStyles}
           onClick={() => {
-            setActiveSideMenuIndex((currentIndex) =>
-              currentIndex === index ? undefined : index
-            );
+            onToggleSideMenuItem(activeSideMenuIndex === index);
+            setActiveSideMenuIndex((currentIndex) => {
+              return currentIndex === index ? undefined : index;
+            });
           }}
         >
           <span style={iconStyles} aria-hidden>
@@ -486,7 +608,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           activeSideMenuIndex != null &&
           sideNavigationButtonConfigurationObjects[
             activeSideMenuIndex
-          ].renderWithApp(app);
+          ].renderSideNavigationPanel(app);
 
         return (
           <ShowHideVariableContextProvider>
@@ -572,6 +694,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     </div>
                   </MapSideNavigation>
                 </div>
+
                 <MapVEuMap
                   height="100%"
                   width="100%"
@@ -650,19 +773,21 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </FloatingDiv>
 
-                <DraggableVisualization
-                  analysisState={analysisState}
-                  updateVisualizations={updateVisualizations}
-                  setActiveVisualizationId={setActiveVisualizationId}
-                  appState={appState}
-                  app={app}
-                  visualizationPlugins={plugin.visualizationPlugins}
-                  geoConfigs={geoConfigs}
-                  totalCounts={totalCounts}
-                  filteredCounts={filteredCounts}
-                  toggleStarredVariable={toggleStarredVariable}
-                  filters={filtersIncludingViewport}
-                />
+                {activeSideMenuIndex === plotSideMenuItemIndex && (
+                  <DraggableVisualization
+                    analysisState={analysisState}
+                    updateVisualizations={updateVisualizations}
+                    setActiveVisualizationId={setActiveVisualizationId}
+                    appState={appState}
+                    app={app}
+                    visualizationPlugins={plugin.visualizationPlugins}
+                    geoConfigs={geoConfigs}
+                    totalCounts={totalCounts}
+                    filteredCounts={filteredCounts}
+                    toggleStarredVariable={toggleStarredVariable}
+                    filters={filtersIncludingViewport}
+                  />
+                )}
 
                 {(basicMarkerError || overlayError) && (
                   <FloatingDiv
@@ -678,45 +803,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   </FloatingDiv>
                 )}
               </div>
-              <FloatingDiv
-                style={{
-                  top: 100,
-                  left: 100,
-                  right: 100,
-                  bottom: 10,
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                {appState.isSubsetPanelOpen && (
-                  <>
-                    <FloatingButton
-                      text=""
-                      icon={Close}
-                      onPress={() => setIsSubsetPanelOpen(false)}
-                      styleOverrides={{
-                        container: {
-                          display: 'flex',
-                          marginLeft: 'auto',
-                        },
-                      }}
-                    />
-                    <div style={{ overflow: 'auto' }}>
-                      <Subsetting
-                        variableLinkConfig={{
-                          type: 'button',
-                          onClick: setSubsetVariableAndEntity,
-                        }}
-                        entityId={subsetVariableAndEntity?.entityId ?? ''}
-                        variableId={subsetVariableAndEntity?.variableId ?? ''}
-                        analysisState={analysisState}
-                        totalCounts={totalCounts.value}
-                        filteredCounts={filteredCounts.value}
-                      />
-                    </div>
-                  </>
-                )}
-              </FloatingDiv>
             </DocumentationContainer>
           </ShowHideVariableContextProvider>
         );

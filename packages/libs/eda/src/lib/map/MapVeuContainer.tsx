@@ -26,10 +26,12 @@ interface Props {
   edaServiceUrl: string;
   singleAppMode?: string;
   siteInformationProps: SiteInformationProps;
+  sharingUrl: string;
 }
 
-export function MapVeuContainer(props: Props) {
-  const { singleAppMode, siteInformationProps, edaServiceUrl } = props;
+export function MapVeuContainer(mapVeuContainerProps: Props) {
+  const { singleAppMode, siteInformationProps, edaServiceUrl, sharingUrl } =
+    mapVeuContainerProps;
   const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
   const dataClient = useConfiguredDataClient(edaServiceUrl);
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
@@ -45,13 +47,13 @@ export function MapVeuContainer(props: Props) {
         <Route
           path={`${path}/:studyId/:analysisId`}
           render={(
-            props: RouteComponentProps<{
+            routeProps: RouteComponentProps<{
               analysisId: string;
               studyId: string;
             }>
           ) => (
             <EDAWorkspaceContainer
-              studyId={props.match.params.studyId}
+              studyId={routeProps.match.params.studyId}
               subsettingClient={edaClient}
               analysisClient={analysisClient}
               dataClient={dataClient}
@@ -60,9 +62,10 @@ export function MapVeuContainer(props: Props) {
               className="MapVEu"
             >
               <MapAnalysis
-                analysisId={props.match.params.analysisId}
+                analysisId={routeProps.match.params.analysisId}
                 siteInformationProps={siteInformationProps}
-                studyId={props.match.params.studyId}
+                studyId={routeProps.match.params.studyId}
+                sharingUrl={sharingUrl}
               />
             </EDAWorkspaceContainer>
           )}

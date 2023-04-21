@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
-import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
-import { HistogramData } from '../../types/plots';
 import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
+import {
+  gradientSequentialColorscaleMap,
+  HistogramData,
+} from '../../types/plots';
 
 export default {
   title: 'Plot Controls/PlotLegend',
@@ -514,8 +516,9 @@ export const GradientPlotLegend = () => {
         type="colorscale"
         legendMax={100}
         legendMin={5}
-        // Options are 'sequential' and 'divergent'
-        gradientColorscaleType={'divergent'}
+        valueToColorMapper={(a: number) =>
+          gradientSequentialColorscaleMap((a - 5) / (100 - 5))
+        }
         // pass legend title
         nTicks={5}
         showMissingness
