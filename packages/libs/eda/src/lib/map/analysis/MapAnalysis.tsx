@@ -2,6 +2,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
+  DEFAULT_ANALYSIS_NAME,
   PromiseResult,
   useAnalysis,
   useDataClient,
@@ -68,7 +69,13 @@ import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import Login from '../../workspace/sharing/Login';
+import { useLoginCallbacks } from '../../workspace/sharing/hooks';
+import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
+import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
+import { useHistory } from 'react-router';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -107,6 +114,7 @@ export const defaultAnimation = {
 
 interface Props {
   analysisId: string;
+  sharingUrl: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
@@ -139,6 +147,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
+    sharingUrl,
     setIsSubsetPanelOpen = () => {},
   } = props;
   const studyRecord = useStudyRecord();
@@ -182,6 +191,23 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+
+  const userLoggedIn = useWdkService((wdkService) => {
+    return wdkService.getCurrentUser().then((user) => !user.isGuest);
+  });
+
+  const history = useHistory();
+  function showLoginForm() {
+    const currentUrl = window.location.href;
+    const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
+    history.push(loginUrl);
+  }
+
+  function toggleVisible() {
+    setActiveSideMenuIndex(undefined);
+  }
+
+  const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
   const appPromiseState = usePromise(
     useCallback(async () => {
@@ -456,7 +482,39 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Share,
         icon: <Share />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          if (!analysisState.analysis) return null;
+
+          function getShareMenuContent() {
+            if (!userLoggedIn) {
+              return <Login {...loginCallbacks} />;
+            }
+            if (
+              analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
+            ) {
+              return (
+                <NameAnalysis
+                  currentName={analysisState.analysis.displayName}
+                  updateName={analysisState.setName}
+                />
+              );
+            }
+            return <ConfirmShareAnalysis sharingURL={sharingUrl} />;
+          }
+
+          return (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '0 15px',
+              }}
+            >
+              {getShareMenuContent()}
+            </div>
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Notes,

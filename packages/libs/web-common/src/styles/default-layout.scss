@@ -61,7 +61,7 @@ body.vpdb-Body {
     top: $collapsed-header-height;
 
     @media screen and (max-width: $hamburger-width) {
-      top: 0;
+      top: 0 !important;
     }
   }
 }
