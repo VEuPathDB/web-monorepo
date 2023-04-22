@@ -796,3 +796,31 @@ export const StandaloneMapMarkersResponse = type({
     })
   ),
 });
+
+export interface ContinousVariableMetadataRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    variable: VariableDescriptor;
+    metadata: ('binRanges' | 'median')[];
+  };
+}
+
+export type BinRange = TypeOf<typeof BinRange>;
+export const BinRange = type({
+  binStart: string,
+  binEnd: string,
+  binLabel: string,
+});
+
+export type ContinousVariableMetadataResponse = TypeOf<
+  typeof ContinousVariableMetadataResponse
+>;
+export const ContinousVariableMetadataResponse = partial({
+  binRanges: type({
+    equalInterval: array(BinRange),
+    quantile: array(BinRange),
+    standardDeviation: array(BinRange),
+  }),
+  median: number,
+});

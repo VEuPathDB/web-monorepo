@@ -9,6 +9,7 @@ import {
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { StudyEntity, Variable } from '../../../core/types/study';
 import DataClient, {
+  BinRange,
   CompleteCasesTable,
   MapMarkersOverlayRequestParams,
   MapMarkersOverlayResponse,
@@ -196,25 +197,45 @@ export function useStandaloneMapMarkers(
       ) {
         const vocabulary = overlayVariableAndEntity.variable.vocabulary ?? [];
 
-        // If the variable has "too many" values, get the top 7 from the distribution service
-        const overlayValues =
-          vocabulary.length <= ColorPaletteDefault.length
-            ? vocabulary
-            : await getMostFrequentValues({
-                studyId: studyId,
-                ...overlayVariable,
-                numValues: ColorPaletteDefault.length - 1,
-                subsettingClient,
-              });
+        if (vocabulary.length) {
+          // categorical
+          // If the variable has "too many" values, get the top 7 from the distribution service
+          const overlayValues =
+            vocabulary.length <= ColorPaletteDefault.length
+              ? vocabulary
+              : await getMostFrequentValues({
+                  studyId: studyId,
+                  ...overlayVariable,
+                  numValues: ColorPaletteDefault.length - 1,
+                  subsettingClient,
+                });
 
-        return {
-          overlayConfig: {
-            overlayType: 'categorical', // TO DO: handle continuous!!
-            overlayVariable,
-            overlayValues,
-          },
-          outputEntityId: outputEntity.id,
-        };
+          return {
+            overlayConfig: {
+              overlayType: 'categorical', // TO DO: handle continuous!!
+              overlayVariable,
+              overlayValues,
+            },
+            outputEntityId: outputEntity.id,
+          };
+        } else {
+          // continuous
+          const overlayBins = await getBinRanges({
+            studyId,
+            filters: filters ?? [],
+            ...overlayVariable,
+            dataClient,
+          });
+
+          return {
+            overlayConfig: {
+              overlayType: 'continuous',
+              overlayValues: overlayBins,
+              overlayVariable,
+            },
+            outputEntityId: outputEntity.id,
+          };
+        }
       } else if (outputEntity != null) {
         return {
           outputEntityId: outputEntity.id,
@@ -225,7 +246,9 @@ export function useStandaloneMapMarkers(
     }, [
       overlayVariable,
       outputEntity,
-      overlayVariableAndEntity,
+      // categorical overlay config changes when the vocabulary changes,
+      // while the continuous overlay is also filter-sensitive
+      overlayVariableAndEntity?.variable.vocabulary ?? filters,
       studyId,
       subsettingClient,
     ])
@@ -504,7 +527,7 @@ type GetMostFrequentValuesProps = {
   studyId: string;
   variableId: string;
   entityId: string;
-  numValues: number;
+  numValues: number; // the N of the top N most frequent values
   subsettingClient: SubsettingClient;
 };
 
@@ -539,6 +562,46 @@ async function getMostFrequentValues({
     throw new Error(message);
   }
   return [...sortedValues.slice(0, numValues), TOKEN_UNSELECTED];
+}
+
+type GetBinRangesProps = {
+  studyId: string;
+  variableId: string;
+  entityId: string;
+  dataClient: DataClient;
+  filters: Filter[];
+};
+
+// get the equal spaced bin definitions (for now at least)
+async function getBinRanges({
+  studyId,
+  variableId,
+  entityId,
+  dataClient,
+  filters,
+}: GetBinRangesProps): Promise<BinRange[]> {
+  const response = await dataClient.getContinousVariableMetadata({
+    studyId,
+    filters,
+    config: {
+      variable: {
+        entityId,
+        variableId,
+      },
+      metadata: ['binRanges'],
+    },
+  });
+
+  const binRanges = response.binRanges?.equalInterval!; // if asking for binRanges, the response WILL contain binRanges
+
+  // TO DO: remove when it's fixed
+  // minor processing to work-around https://github.com/VEuPathDB/plot.data/issues/219
+  // ignore the `value: null` props in response
+  return binRanges.map(({ binStart, binEnd, binLabel }) => ({
+    binStart,
+    binEnd,
+    binLabel,
+  }));
 }
 
 function fixLabelForOtherValues(input: string): string {
