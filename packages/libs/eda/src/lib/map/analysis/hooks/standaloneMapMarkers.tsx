@@ -61,9 +61,6 @@ export interface StandaloneMapMarkersProps {
   overlayVariable: VariableDescriptor | undefined; // formerly xAxisVariable in older EDA viz
   markerType: 'count' | 'proportion' | 'pie';
   dependentAxisLogScale?: boolean;
-  /** checked legend items - or undefined if not known */
-  // TO DO: disable checkbox functionality everywhere for map markers and their legends?
-  checkedLegendItems?: string[];
   /** mini markers - default = false */
   miniMarkers?: boolean;
   /** invisible markers (special use case related to minimap fly-to) - default = false */
@@ -106,7 +103,6 @@ export function useStandaloneMapMarkers(
     overlayVariable,
     markerType,
     dependentAxisLogScale = false,
-    checkedLegendItems = undefined,
     miniMarkers = false,
     invisibleMarkers = false,
   } = props;

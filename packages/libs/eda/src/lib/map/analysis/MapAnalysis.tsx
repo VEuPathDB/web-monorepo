@@ -184,7 +184,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     overlayVariable: selectedVariables.overlay,
     computationType: 'standalone-map',
     markerType: 'pie',
-    checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
   });
 
@@ -234,7 +233,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         getOverlayVariable: (_) => appState.selectedOverlayVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
-        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
 
