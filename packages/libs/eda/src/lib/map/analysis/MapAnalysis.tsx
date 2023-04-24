@@ -458,18 +458,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   filteredEntities={filteredEntities}
                   variableLinkConfig={{
                     type: 'button',
-                    onClick: (a) => {
-                      if (!a?.variableId) {
-                        setSubsetVariableAndEntity({
-                          entityId: a?.entityId,
-                          variableId: defaultVariableId,
-                        });
-                      } else {
-                        setSubsetVariableAndEntity({
-                          entityId: a.entityId,
-                          variableId: a.variableId,
-                        });
-                      }
+                    onClick: (variableValue) => {
+                      setSubsetVariableAndEntity({
+                        entityId: variableValue?.entityId,
+                        variableId: variableValue?.variableId
+                          ? variableValue.variableId
+                          : defaultVariableId,
+                      });
                     },
                   }}
                 />
