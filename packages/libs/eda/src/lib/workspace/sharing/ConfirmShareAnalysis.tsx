@@ -79,8 +79,6 @@ export default function ConfirmShareAnalysis({
                       To grant users access to your study data,{' '}
                       <a
                         href={sharingDatasetUrl}
-                        target="StudyDatasetPage"
-                        title="Study page will open in a new tab"
                         style={{
                           fontWeight: 'bold',
                         }}
