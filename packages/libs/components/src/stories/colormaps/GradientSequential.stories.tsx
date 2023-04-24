@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import PlotLegend from '../../components/plotControls/PlotLegend';
-import { PlotLegendGradientProps } from '../../components/plotControls/PlotGradientLegend';
 import ScatterPlot from '../../plots/ScatterPlot';
 import { min, max } from 'lodash';
 import {
@@ -15,6 +14,7 @@ import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
+import { scaleLinear } from 'd3';
 
 // A collection of stories for viewing our Sequential Gradient Colormap
 export default {
@@ -136,17 +136,25 @@ const Template: Story<TemplateProps> = (args) => {
 // Showcase the continuous version of the sequential gradient colormap. Overlay values are drawn from
 // a continuous distribution
 
+const legendMax = max(
+  dataSetSequentialGradient.scatterplot.data[0]
+    .seriesGradientColorscale as number[]
+)!;
+const legendMin = min(
+  dataSetSequentialGradient.scatterplot.data[0]
+    .seriesGradientColorscale as number[]
+)!;
+
+const normalize = scaleLinear();
+normalize.domain([legendMin, legendMax]).range([0, 1]);
+const valueToColorMapper = (a: number) =>
+  gradientSequentialColorscaleMap(normalize(a));
+
 // Setup gradient colorscale legend
 const gradientLegendProps = {
-  legendMax: max(
-    dataSetSequentialGradient.scatterplot.data[0]
-      .seriesGradientColorscale as number[]
-  ),
-  legendMin: min(
-    dataSetSequentialGradient.scatterplot.data[0]
-      .seriesGradientColorscale as number[]
-  ),
-  gradientColorscaleType: 'sequential',
+  legendMax,
+  legendMin,
+  valueToColorMapper,
   // MUST be odd!
   nTicks: 5,
   showMissingness: false,
@@ -158,7 +166,7 @@ Continuous.args = {
   data: dataSetSequentialGradient,
   plotLegendProps: {
     type: 'colorscale',
-    ...(gradientLegendProps as PlotLegendGradientProps),
+    ...gradientLegendProps,
   },
   nPoints: 120,
 };
