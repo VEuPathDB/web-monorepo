@@ -474,10 +474,11 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableOptions() {
     const { isRowSelected, toggleProjectScope } = this;
-    const { userDatasets, projectName, filterByProject } = this.props;
+    const { userDatasets, projectName, filterByProject, dataNoun } = this.props;
     const emptyMessage = !userDatasets.length ? (
       <p style={{ textAlign: 'center' }}>
-        This page is empty because you do not have any data sets.
+        This page is empty because you do not have any{' '}
+        {dataNoun.plural.toLowerCase()}.
       </p>
     ) : filterByProject ? (
       <React.Fragment>
@@ -489,7 +490,7 @@ class UserDatasetList extends React.Component<Props, State> {
           className="btn btn-info"
           onClick={() => toggleProjectScope(false)}
         >
-          Show All User Datasets
+          Show All User {dataNoun.plural}
         </button>
       </React.Fragment>
     ) : (
