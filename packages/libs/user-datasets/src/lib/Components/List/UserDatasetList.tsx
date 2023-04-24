@@ -37,6 +37,10 @@ import { normalizePercentage, textCell } from '../UserDatasetUtils';
 import './UserDatasetList.scss';
 import { DateTime } from '../DateTime';
 
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { MesaButton, Share, Trash } from '@veupathdb/coreui';
+import { gray, mutedRed } from '@veupathdb/coreui/dist/definitions/colors';
+
 interface Props {
   baseUrl: string;
   user: User;
@@ -362,17 +366,17 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset } = this.props;
+    const { removeUserDataset, dataNoun } = this.props;
     return [
       {
         callback: (rows: UserDataset[]) => {
           this.openSharingModal();
         },
         element: (
-          <button className="btn btn-info">
-            <Icon fa="share-alt left-side" />
-            Grant Access to {this.props.dataNoun.plural}
-          </button>
+          <ThemedGrantAccessButton
+            buttonText={`Grant Access to ${dataNoun.plural}`}
+            onPress={() => null}
+          />
         ),
         selectionRequired: true,
       },
@@ -418,10 +422,50 @@ class UserDatasetList extends React.Component<Props, State> {
           userDatasets.forEach((userDataset) => removeUserDataset(userDataset));
         },
         element: (
-          <button className="btn btn-error">
-            <Icon fa="trash-o left-side" />
-            Delete
-          </button>
+          <MesaButton
+            text="Delete"
+            textTransform="none"
+            onPress={() => null}
+            themeRole={undefined}
+            icon={Trash}
+            styleOverrides={{
+              default: {
+                color: gray[100],
+                textColor: '#4D4D4D',
+                dropShadow: {
+                  color: gray[200],
+                  blurRadius: '0px',
+                  offsetX: '0px',
+                  offsetY: '3px',
+                },
+                border: {
+                  color: gray[200],
+                  style: 'solid',
+                  width: 1,
+                },
+              },
+              hover: {
+                color: mutedRed[500],
+                textColor: 'white',
+                dropShadow: {
+                  color: mutedRed[700],
+                  blurRadius: '0px',
+                  offsetX: '0px',
+                  offsetY: '4px',
+                },
+              },
+              pressed: {
+                color: mutedRed[600],
+                textColor: 'white',
+                dropShadow: {
+                  color: mutedRed[700],
+                  blurRadius: '0px',
+                  offsetX: '0px',
+                  offsetY: '4px',
+                },
+              },
+            }}
+          />
         ),
         selectionRequired: true,
       },
@@ -646,3 +690,54 @@ class UserDatasetList extends React.Component<Props, State> {
 }
 
 export default UserDatasetList;
+
+type ThemedGrantAccessButtonProps = {
+  buttonText: string;
+  onPress: () => null;
+};
+
+export function ThemedGrantAccessButton({
+  buttonText,
+  onPress,
+}: ThemedGrantAccessButtonProps) {
+  const theme = useUITheme();
+  return (
+    <MesaButton
+      text={buttonText}
+      textTransform="none"
+      onPress={onPress}
+      themeRole="primary"
+      icon={Share}
+      styleOverrides={{
+        default: {
+          border: {
+            color:
+              theme?.palette.primary.hue[theme.palette.primary.level + 100],
+            style: 'solid',
+            width: 1,
+          },
+        },
+        hover: {
+          color: theme?.palette.primary.hue[theme.palette.primary.level + 100],
+          dropShadow: {
+            color:
+              theme?.palette.primary.hue[theme.palette.primary.level + 300],
+            blurRadius: '0px',
+            offsetX: '0px',
+            offsetY: '4px',
+          },
+        },
+        pressed: {
+          color: theme?.palette.primary.hue[theme.palette.primary.level + 200],
+          dropShadow: {
+            color:
+              theme?.palette.primary.hue[theme.palette.primary.level + 400],
+            blurRadius: '0px',
+            offsetX: '0px',
+            offsetY: '4px',
+          },
+        },
+      }}
+    />
+  );
+}
