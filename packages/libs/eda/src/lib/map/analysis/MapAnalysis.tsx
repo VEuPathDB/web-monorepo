@@ -441,31 +441,39 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 padding: '0 25px',
               }}
             >
-              <EntityDiagram
-                expanded
-                orientation="horizontal"
-                selectedEntity={subsetVariableAndEntity.entityId}
-                selectedVariable={selectedVariableId}
-                entityCounts={totalCounts.value}
-                filteredEntityCounts={filteredCounts.value}
-                filteredEntities={filteredEntities}
-                variableLinkConfig={{
-                  type: 'button',
-                  onClick: (a) => {
-                    if (!a?.variableId) {
-                      setSubsetVariableAndEntity({
-                        entityId: a?.entityId,
-                        variableId: defaultVariableId,
-                      });
-                    } else {
-                      setSubsetVariableAndEntity({
-                        entityId: a.entityId,
-                        variableId: a.variableId,
-                      });
-                    }
-                  },
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
-              />
+              >
+                <EntityDiagram
+                  expanded
+                  orientation="horizontal"
+                  selectedEntity={subsetVariableAndEntity.entityId}
+                  selectedVariable={selectedVariableId}
+                  entityCounts={totalCounts.value}
+                  filteredEntityCounts={filteredCounts.value}
+                  filteredEntities={filteredEntities}
+                  variableLinkConfig={{
+                    type: 'button',
+                    onClick: (a) => {
+                      if (!a?.variableId) {
+                        setSubsetVariableAndEntity({
+                          entityId: a?.entityId,
+                          variableId: defaultVariableId,
+                        });
+                      } else {
+                        setSubsetVariableAndEntity({
+                          entityId: a.entityId,
+                          variableId: a.variableId,
+                        });
+                      }
+                    },
+                  }}
+                />
+              </div>
               <Subsetting
                 variableLinkConfig={{
                   type: 'button',
