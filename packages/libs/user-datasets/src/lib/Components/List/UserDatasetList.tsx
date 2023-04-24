@@ -384,8 +384,8 @@ class UserDatasetList extends React.Component<Props, State> {
         callback: (userDatasets: UserDataset[]) => {
           const [noun, pronoun] =
             userDatasets.length === 1
-              ? ['this dataset', 'it']
-              : ['these datasets', 'them'];
+              ? [`this ${this.props.dataNoun.singular.toLowerCase()}`, 'it']
+              : [`these ${this.props.dataNoun.plural.toLowerCase()}`, 'them'];
 
           const affectedUsers: UserDatasetShare[] = userDatasets.reduce(
             (
@@ -644,6 +644,7 @@ class UserDatasetList extends React.Component<Props, State> {
                     shareUserDatasets={shareUserDatasets}
                     unshareUserDatasets={unshareUserDatasets}
                     onClose={this.closeSharingModal}
+                    dataNoun={dataNoun}
                   />
                 ) : null}
                 <SearchBox
