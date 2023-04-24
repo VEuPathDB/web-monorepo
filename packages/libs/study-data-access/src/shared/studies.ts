@@ -20,10 +20,10 @@ export async function fetchStudies(wdkService: WdkService) {
     attributeNames.DISPLAY_NAME,
     attributeNames.DATASET_ID,
     attributeNames.EMAIL,
-    attributeNames.BULK_DOWNLOAD_URL,
   ];
 
   const optionalAttributes = [
+    attributeNames.BULK_DOWNLOAD_URL,
     attributeNames.POLICY_URL,
     attributeNames.REQUEST_NEEDS_APPROVAL,
     attributeNames.STUDY_ACCESS,
@@ -56,7 +56,10 @@ export function getStudyName(record: RecordInstance) {
 }
 
 export function getStudyAccess(record: RecordInstance) {
-  return getStringAttributeValue(record, attributeNames.STUDY_ACCESS)?.toLowerCase();
+  return getStringAttributeValue(
+    record,
+    attributeNames.STUDY_ACCESS
+  )?.toLowerCase();
 }
 
 export function getStudyEmail(record: RecordInstance) {

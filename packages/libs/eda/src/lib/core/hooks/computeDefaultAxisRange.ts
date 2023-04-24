@@ -22,7 +22,9 @@ export function useDefaultAxisRange(
   max?: number | string,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full'
+  axisRangeSpec = 'Full',
+  // check non-zero baseline for continuous overlay variable
+  isNonZeroBaseline: boolean = false
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
     // Check here to make sure number ranges (min, minPos, max) came with number variables
@@ -45,7 +47,8 @@ export function useDefaultAxisRange(
         minPos,
         max,
         logScale,
-        axisRangeSpec
+        axisRangeSpec,
+        isNonZeroBaseline
       );
 
       // 4 significant figures
@@ -59,10 +62,13 @@ export function useDefaultAxisRange(
           typeof defaultRange?.min === 'number' &&
           typeof defaultRange?.max === 'number')
       )
-        return {
-          min: numberSignificantFigures(defaultRange.min, 4, 'down'),
-          max: numberSignificantFigures(defaultRange.max, 4, 'up'),
-        };
+        // check non-zero baseline for continuous overlay variable
+        return isNonZeroBaseline
+          ? defaultRange
+          : {
+              min: numberSignificantFigures(defaultRange.min, 4, 'down'),
+              max: numberSignificantFigures(defaultRange.max, 4, 'up'),
+            };
       else return defaultRange;
     } else if (
       variable == null &&
@@ -86,7 +92,7 @@ export function useDefaultAxisRange(
     } else {
       return undefined;
     }
-  }, [variable, min, minPos, max, logScale, axisRangeSpec]);
+  }, [variable, min, minPos, max, logScale, axisRangeSpec, isNonZeroBaseline]);
   return defaultAxisRange;
 }
 

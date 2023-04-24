@@ -9,7 +9,7 @@ body {
 }
 
 /** This image messes with layout */
-img[src*=awstats] {
+img[src*='awstats'] {
   position: absolute;
 }
 
@@ -32,7 +32,7 @@ html {
   border-radius: 10px;
 }
 .show-scrollbar *::-webkit-scrollbar-thumb {
-  background:#bbb;
+  background: #bbb;
   border: thin solid #eee;
   border-radius: 10px;
 }
@@ -70,15 +70,34 @@ html {
  Create three-row layout with footer at bottom of screen (when possible)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.main-stack, .wdk-RootContainer {
+.main-stack,
+.wdk-RootContainer {
   display: flex;
   flex-flow: column nowrap;
   height: 100vh;
-
 }
 
 .wdk-PageContent {
   flex: 1;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Map-specific css
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.wdk-RootContainer__MapVEu {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .wdk-PageContent {
+    flex-grow: 2;
+    padding: 0;
+  }
+
+  .MapVEu {
+    height: 100%;
+  }
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,12 +109,21 @@ html {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = Global rules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-a, div.divlink, .link, .wdk-Link, .HelpTrigger .fa {
-	color: #069;
+a,
+div.divlink,
+.link,
+.wdk-Link,
+.HelpTrigger .fa {
+  color: #069;
 }
 
-a:hover, a:active, a:focus, div.divlink:hover, .link:hover, .wdk-Link:hover {
-	text-decoration: underline;
+a:hover,
+a:active,
+a:focus,
+div.divlink:hover,
+.link:hover,
+.wdk-Link:hover {
+  text-decoration: underline;
 }
 
 h1 {
@@ -122,7 +150,10 @@ h4 {
   padding: 10px 0 8px 0;
 }
 
-.h2center, .h3left,.h3center, .h4left {
+.h2center,
+.h3left,
+.h3center,
+.h4left {
   color: #222;
 }
 
@@ -141,13 +172,16 @@ a[name] {
 :focus {
   outline: thin dotted;
 }
-a.eupathdb-BigButton,input[type="submit"] {
+a.eupathdb-BigButton,
+input[type='submit'] {
   color: #3e3e3e;
   text-decoration: none;
 }
 
 /* useful for embedding forms and making submit button look like a link */
-input.link, button.link, button.wdk-Link {
+input.link,
+button.link,
+button.wdk-Link {
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -156,14 +190,14 @@ input.link, button.link, button.wdk-Link {
 
 /* Search boxes */
 textarea,
-input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=hidden]):not([type=image]):not([type=radio]):not([type=range]):not([type=reset]):not([type=submit]):not([class~="select2-input"]):not([class~="wdk-RealTimeSearchBoxInput"]):not([class*=MuiInput]) {
+input[type]:not([type='button']):not([type='checkbox']):not([type='file']):not([type='hidden']):not([type='image']):not([type='radio']):not([type='range']):not([type='reset']):not([type='submit']):not([class~='select2-input']):not([class~='wdk-RealTimeSearchBoxInput']):not([class*='MuiInput']) {
   border: 1px solid #888;
 }
-input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=hidden]):not([type=image]):not([type=radio]):not([type=range]):not([type=reset]):not([type=submit]):not([class~="select2-input"]):not([class~="wdk-RealTimeSearchBoxInput"]):not([class*=MuiInput]):not([disabled]) {
+input[type]:not([type='button']):not([type='checkbox']):not([type='file']):not([type='hidden']):not([type='image']):not([type='radio']):not([type='range']):not([type='reset']):not([type='submit']):not([class~='select2-input']):not([class~='wdk-RealTimeSearchBoxInput']):not([class*='MuiInput']):not([disabled]) {
   background: #fafaf9;
 }
 textarea,
-input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=hidden]):not([type=image]):not([type=radio]):not([type=range]):not([type=reset]):not([type=submit]):not([class~="select2-input"]):not([class~="wdk-RealTimeSearchBoxInput"]):not([class*=MuiInput]):not([class~="wdk-Answer-filterInput"]) {
+input[type]:not([type='button']):not([type='checkbox']):not([type='file']):not([type='hidden']):not([type='image']):not([type='radio']):not([type='range']):not([type='reset']):not([type='submit']):not([class~='select2-input']):not([class~='wdk-RealTimeSearchBoxInput']):not([class*='MuiInput']):not([class~='wdk-Answer-filterInput']) {
   padding: 4px;
 }
 
@@ -171,20 +205,26 @@ input[type]:not([type=button]):not([type=checkbox]):not([type=file]):not([type=h
 .wdk-RealTimeSearchBoxInput {
   border: 1px solid #888;
   border-radius: 16px;
-  padding: 0.2em 1.5em .2em 1em;
+  padding: 0.2em 1.5em 0.2em 1em;
 }
 
-::-webkit-input-placeholder { color: #888; }
-:-ms-input-placeholder      { color: #888; }
+::-webkit-input-placeholder {
+  color: #888;
+}
+:-ms-input-placeholder {
+  color: #888;
+}
 /* firefox seems to lighten the color, so making it darker to compensate */
-::-moz-placeholder          { color: #333; }
-:-moz-placeholder           { color: #333; }
-
+::-moz-placeholder {
+  color: #333;
+}
+:-moz-placeholder {
+  color: #333;
+}
 
 ::placeholder {
   font-style: italic;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   =SEMANTIC: sematic-based rules, using HTML5 elements
@@ -207,35 +247,35 @@ article section {
 	 =MAIN structure: contentwrapper css provided by wdk
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #search-bubbles {
-	min-width: 780px;
-	margin: 0 5px 0 220px;
-	background-color: #FFFFFF;
-	background-repeat: repeat-x;
-	text-align: left;
+  min-width: 780px;
+  margin: 0 5px 0 220px;
+  background-color: #ffffff;
+  background-repeat: repeat-x;
+  text-align: left;
 }
 
 #contentcolumn {
-	min-width: 780px;
-	margin: 0 5px 0 220px;
-	/*background-color: #FFFFFF; */
-	background-repeat: repeat-x;
-	text-align: left;
+  min-width: 780px;
+  margin: 0 5px 0 220px;
+  /*background-color: #FFFFFF; */
+  background-repeat: repeat-x;
+  text-align: left;
 }
 
 #contentcolumn2 {
-	/*background-color: #FFFFFF; */
-	background-position: 0 -25px;
-	background-repeat: repeat-x;
-	margin: 0 5px 0 6px;
+  /*background-color: #FFFFFF; */
+  background-position: 0 -25px;
+  background-repeat: repeat-x;
+  margin: 0 5px 0 6px;
 }
 
 div.innertube #record-toolbox {
-    float: right;
-    border-style: double;
-    border-width: 3px;
-    margin: 3px;
-    padding: 5px;
-    text-align: center;
+  float: right;
+  border-style: double;
+  border-width: 3px;
+  margin: 3px;
+  padding: 5px;
+  text-align: center;
 }
 
 div.innertube #record-toolbox ul {
@@ -244,7 +284,7 @@ div.innertube #record-toolbox ul {
   list-style: none;
 }
 div.innertube #record-toolbox li {
-    margin-top: 2px;
+  margin-top: 2px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -279,26 +319,27 @@ div.innertube #record-toolbox li {
   border-radius: 13px 13px 0 0;
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-decoration: none;
   padding-right: 10px;
-  padding-left:  7px;
+  padding-left: 7px;
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: center;
 }
 
-
-#bubbles .info, #bubbles .tools {
+#bubbles .info,
+#bubbles .tools {
   text-align: left;
-  padding-right: 15px;  /* 19px; */
+  padding-right: 15px; /* 19px; */
   padding-bottom: 20px;
   padding-top: 6px;
-  padding-left: 15px;  /* 19px; */
+  padding-left: 15px; /* 19px; */
   line-height: 1.5em;
 }
 
-#bubbles .info ul, #bubbles .tools ul  {
+#bubbles .info ul,
+#bubbles .tools ul {
   height: 100%;
   padding: 0;
   margin: 0.5em 0;
@@ -312,7 +353,8 @@ div.innertube #record-toolbox li {
   margin-left: 7px;
 }
 
-#bubbles .info li ul, #bubbles .tools li ul  {
+#bubbles .info li ul,
+#bubbles .tools li ul {
   margin: 0 0 4px 0;
 }
 
@@ -321,7 +363,7 @@ div.innertube #record-toolbox li {
   list-style: disc;
   color: #aaa;
   line-height: 1.1em;
-  padding:1px;
+  padding: 1px;
   margin-left: 30px;
 }
 #bubbles .info li ul li .wdk-CheckboxTreeNodeContent {
@@ -330,10 +372,8 @@ div.innertube #record-toolbox li {
 
 #bubbles .tools li ul li {
   line-height: 1.1em;
-  padding:1px;
+  padding: 1px;
 }
-
-
 
 #bubbles .info .wdk-CheckboxTreeItem__expanded,
 #bubbles .info .wdk-CheckboxTreeItem__collapsed {
@@ -348,13 +388,22 @@ div.innertube #record-toolbox li {
   display: none;
 }
 
-#bubbles .info .wdk-CheckboxTree > .wdk-CheckboxTreeList > li.wdk-CheckboxTreeItem__leaf {
+#bubbles
+  .info
+  .wdk-CheckboxTree
+  > .wdk-CheckboxTreeList
+  > li.wdk-CheckboxTreeItem__leaf {
   list-style: disc inside;
   margin-left: 0px;
   color: #aaa;
 }
 
-#bubbles .info .wdk-CheckboxTree > .wdk-CheckboxTreeList > li.wdk-CheckboxTreeItem__leaf label {
+#bubbles
+  .info
+  .wdk-CheckboxTree
+  > .wdk-CheckboxTreeList
+  > li.wdk-CheckboxTreeItem__leaf
+  label {
   position: relative;
   left: -4px;
 }
@@ -365,45 +414,46 @@ div.innertube #record-toolbox li {
 
 /* Ortho only */
 #bubbles .infobottom {
-/* 	width: 209px; */
-	min-height: 35px;    /* trying to keep buckest same size */
-/* 	background-image: url(../images/bubble_bottom.png);
+  /* 	width: 209px; */
+  min-height: 35px; /* trying to keep buckest same size */
+  /* 	background-image: url(../images/bubble_bottom.png);
 	background-position: bottom;
 	background-repeat: no-repeat; */
-	text-align: center;
-	padding-top: 2px;
-	padding-right: 19px;
-	padding-bottom: 0px;
-	padding-left: 19px;
+  text-align: center;
+  padding-top: 2px;
+  padding-right: 19px;
+  padding-bottom: 0px;
+  padding-left: 19px;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-
-#sidebar, #menu_lefttop {
+#sidebar,
+#menu_lefttop {
   width: 220px;
   float: left;
   z-index: 10;
 }
 
-#sidebar a.heading:link, #sidebar a.heading:visited,
-#menu_lefttop a.heading:link, #menu_lefttop a.heading:visited {
-	color: #FFFFFF;
-	display: block;
+#sidebar a.heading:link,
+#sidebar a.heading:visited,
+#menu_lefttop a.heading:link,
+#menu_lefttop a.heading:visited {
+  color: #ffffff;
+  display: block;
 }
 
 #sidebar a.heading:hover,
 #menu_lefttop a.heading:hover {
-	color: #CCCCCC;
-	display: block;
+  color: #cccccc;
+  display: block;
 }
 
 #sidebar img,
 #menu_lefttop img {
-        display: block;
+  display: block;
 }
 
 #sidebar h3 {
@@ -411,40 +461,41 @@ div.innertube #record-toolbox li {
 }
 
 #sidebar h3.ui-state-active {
-  background:0;
-  border:0;
+  background: 0;
+  border: 0;
 }
 
 #sidebar h3.ui-state-default {
-  background:0;
-  border:0;
+  background: 0;
+  border: 0;
 }
 
 #sidebar div {
-   font-family: Arial, Helvetica, sans-serif;
-   font-size: 12px;
-   font-weight: normal;
-   padding: 6px;
-   line-height: 15px;
-   background-color: #FFFFFF;
-   margin: -5px 0px 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 6px;
+  line-height: 15px;
+  background-color: #ffffff;
+  margin: -5px 0px 5px;
 }
 
 #menu_lefttop div {
-	height: auto;
+  height: auto;
 }
 
-#menu_lefttop div ul{  /* second-level lists */
-/*	width: 179px; */
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: normal;
-	padding: 6px 6px 6px 4px;
-	line-height: 15px;
-	list-style-position: outside;  /* so bullet lists wrap under text */
-	list-style-type: square;
-	margin-left:  1em;
-	padding-left: 0;
+#menu_lefttop div ul {
+  /* second-level lists */
+  /*	width: 179px; */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 6px 6px 6px 4px;
+  line-height: 15px;
+  list-style-position: outside; /* so bullet lists wrap under text */
+  list-style-type: square;
+  margin-left: 1em;
+  padding-left: 0;
 }
 
 .menu_lefttop_drop {
@@ -454,11 +505,9 @@ div.innertube #record-toolbox li {
   padding: 6px;
   line-height: 15px;
   border: 1px solid grey;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   margin: -5px 0px 5px;
 }
-
-
 
 #sidebar a.heading,
 #menu_lefttop a.heading {
@@ -467,7 +516,7 @@ div.innertube #record-toolbox li {
   font-size: 14px;
   text-decoration: none;
   padding-right: 10px;
-  padding-left:  7px;
+  padding-left: 7px;
   padding-top: 12px;
   padding-bottom: 12px;
   margin-bottom: 5px;
@@ -478,20 +527,19 @@ div.innertube #record-toolbox li {
 #menu_lefttop div ul.related-sites,
 #menu_lefttop div ul#news,
 #menu_lefttop div ul#communityEventList {
-    border: 1px lightgrey solid;
-    max-height: 90px;
-    list-style-position: inside;
-    margin-left: 0;
-    overflow-y: auto;
+  border: 1px lightgrey solid;
+  max-height: 90px;
+  list-style-position: inside;
+  margin-left: 0;
+  overflow-y: auto;
 }
 
 #menu_lefttop div ul#news {
-		margin-bottom:5px;
+  margin-bottom: 5px;
 }
 iframe.twitter-timeline {
-		margin-top:8px;
+  margin-top: 8px;
 }
-
 
 div.twitter-footer {
   display: none;
@@ -500,17 +548,15 @@ div.twitter-footer {
 #menu_lefttop div ul.related-sites li,
 #menu_lefttop div ul#news li,
 #menu_lefttop div ul#communityEventList li {
-    padding-left: 1.7em;
-    text-indent: -1.5em;
+  padding-left: 1.7em;
+  text-indent: -1.5em;
 }
-
-
 
 /* newitems.js (highlight in yellow unread items) --  also adds warning sentence on side header, with how many items are unread*/
 p.unreadlabel {
-  color:yellow;
-  font-size:10px;
-  padding-left:7px;
+  color: yellow;
+  font-size: 10px;
+  padding-left: 7px;
   font-family: Verdana;
   margin: 0;
 }
@@ -519,7 +565,7 @@ p.unreadlabel {
 	 =News
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 table#news {
-  width:100%;
+  width: 100%;
 }
 table#news ul {
   list-style: disc;
@@ -532,10 +578,12 @@ table#news p {
   margin-top: 1em;
   margin-bottom: 1em;
 }
-table#news a[href]:link, table#news a[href]:visited {
+table#news a[href]:link,
+table#news a[href]:visited {
   text-decoration: underline;
 }
-table#news a[href]:hover, table#news a[href]:active {
+table#news a[href]:hover,
+table#news a[href]:active {
   text-decoration: none;
 }
 table#news aside {
@@ -557,35 +605,35 @@ table#news h2 {
   color: black;
   font-size: 110%;
 }
-table#news h3, table#news h4, table#news h5, table#news h6 {
+table#news h3,
+table#news h4,
+table#news h5,
+table#news h6 {
   color: black;
   font-size: 100%;
 }
 
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =BULLET LISTS    classic bullet list
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#cirbulletlist ol,#cirbulletlist ul {
-	list-style-type: disc;
-	margin-left:  1em;
-	padding-left: 1em;
-	list-style-position: outside;
+#cirbulletlist ol,
+#cirbulletlist ul {
+  list-style-type: disc;
+  margin-left: 1em;
+  padding-left: 1em;
+  list-style-position: outside;
 }
 #cirbulletlist ol {
-    list-style-type: decimal;
+  list-style-type: decimal;
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = classic bullet list with no padding: serviceList.jsp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 ul.cirbulletlist {
-	list-style-type: disc;
-	margin-left:  1em;
-	list-style-position: outside;
+  list-style-type: disc;
+  margin-left: 1em;
+  list-style-position: outside;
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER
@@ -594,7 +642,7 @@ ul.cirbulletlist {
   display: inline-block;
   padding: 0 5px;
   border-left: 1px solid #716e61;
-  line-height: .8;
+  line-height: 0.8;
   cursor: default;
 }
 
@@ -641,9 +689,10 @@ ul.cirbulletlist {
   line-height: 1;
 }
 
-#nav-top li ul {  /* second-level lists */
-  background-repeat: repeat-x;      /*was in AllSites, did not make it into WDK*/
-  width:13em;
+#nav-top li ul {
+  /* second-level lists */
+  background-repeat: repeat-x; /*was in AllSites, did not make it into WDK*/
+  width: 13em;
   padding: 6px 6px 6px 18px;
 }
 
@@ -668,35 +717,36 @@ div#quick-search td {
 }
 
 #header2 {
-	color: #666666;
-	font-size: 10px;  /*version,date*/
-	min-width: 1070px;
-	height: 104px;
-	background-repeat: no-repeat;
+  color: #666666;
+  font-size: 10px; /*version,date*/
+  min-width: 1070px;
+  height: 104px;
+  background-repeat: no-repeat;
 }
-
 
 #header_rt {
-   font-size: 12px;
-   float: right;
-   text-align: right;
-   margin-right: 12px;
-   margin-top: 26px;
+  font-size: 12px;
+  float: right;
+  text-align: right;
+  margin-right: 12px;
+  margin-top: 26px;
 }
 
-#header_rt a:link, #header_rt a:visited {
-   text-decoration: none;
+#header_rt a:link,
+#header_rt a:visited {
+  text-decoration: none;
 }
 
-#header_rt a:hover, #header_rt a:active {
-   color: #FFFFFF;
-   text-decoration: none;
+#header_rt a:hover,
+#header_rt a:active {
+  color: #ffffff;
+  text-decoration: none;
 }
 
 #header_rt #bottom {
-   width: 100%;
-   height: 50px;
-   margin-top: 18px;
+  width: 100%;
+  height: 50px;
+  margin-top: 18px;
 }
 
 #toplink {
@@ -706,14 +756,15 @@ div#quick-search td {
   right: 25px;
 }
 
-#toplink a:link, #toplink a:visited{
-	display: block;
-	text-align: right;
+#toplink a:link,
+#toplink a:visited {
+  display: block;
+  text-align: right;
 }
 
 #toplink a:hover {
-	display: block;
-	text-align: right;
+  display: block;
+  text-align: right;
 }
 
 .eupathdb-Logo {
@@ -726,18 +777,14 @@ div#quick-search td {
   display: inline-block;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =ABOUT  menu (in sidebar and header)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 span.smallTitle {
-	color:grey;
-	font-style:italic;
-	font-size:90%
+  color: grey;
+  font-style: italic;
+  font-size: 90%;
 }
-
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MENUBAR (horizontal bar, under header)
@@ -755,7 +802,6 @@ span.smallTitle {
 .wdk-RecordSidebar {
   margin-top: 7em; /* it depends on the header width  */
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Menu bar
@@ -810,9 +856,12 @@ span.smallTitle {
   opacity: 1;
 }
 
-.eupathdb-Menu:hover .eupathdb-MenuItem > .eupathdb-MenuItemText__parent + .eupathdb-Submenu,
+.eupathdb-Menu:hover
+  .eupathdb-MenuItem
+  > .eupathdb-MenuItemText__parent
+  + .eupathdb-Submenu,
 .eupathdb-MenuItem:hover > .eupathdb-MenuItemText__parent + .eupathdb-Submenu {
-  transition-delay: .5s;
+  transition-delay: 0.5s;
 }
 
 .eupathdb-Submenu {
@@ -834,7 +883,7 @@ a.eupathdb-MenuItemText {
   font-weight: 500;
   border-left: 1px solid #fff;
   border-top: none;
-  padding: .65em 1em;
+  padding: 0.65em 1em;
   display: inline-block;
   cursor: pointer;
   width: 100%;
@@ -892,7 +941,7 @@ a.eupathdb-MenuItemText {
 .eupathdb-MenuItemText__parent:after {
   content: '\f0d7';
   font-family: FontAwesome;
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
   padding-left: 8px;
 }
 
@@ -907,7 +956,6 @@ a.eupathdb-MenuItemText {
   content: url('~@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png');
   top: 0;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SOCIALMEDIA (about, help, etc.)
@@ -981,12 +1029,14 @@ a.eupathdb-MenuItemText {
 .sf-menu a {
   border-left: 1px solid #fff;
   border-top: none;
-  padding: .65em 1em;
+  padding: 0.65em 1em;
   text-decoration: none;
   display: inline-block;
 }
 
-.sf-menu a:link, .sf-menu a, .sf-menu a:visited  {
+.sf-menu a:link,
+.sf-menu a,
+.sf-menu a:visited {
   color: white;
   font-weight: 500;
 }
@@ -997,11 +1047,11 @@ a.eupathdb-MenuItemText {
 }
 
 .sf-menu li li {
-    background: #B7B7B7;
+  background: #b7b7b7;
 }
 
 .sf-menu li li li {
-    background: #A7A7A7;
+  background: #a7a7a7;
 }
 
 .sf-menu li:hover,
@@ -1010,12 +1060,14 @@ a.eupathdb-MenuItemText {
 .sf-menu a:focus,
 .sf-menu a:hover,
 .sf-menu a:active {
-	background:		#C7C7C7; /* on hover, lighter */
-	outline:		0;
+  background: #c7c7c7; /* on hover, lighter */
+  outline: 0;
 }
 
-.sf-menu li.sfHover a.back-to-top:link, .sf-menu li.sfHover a.back-to-top:visited, .sf-menu li.sfHover a.back-to-top:hover {
-  background-color: #ABABAB;
+.sf-menu li.sfHover a.back-to-top:link,
+.sf-menu li.sfHover a.back-to-top:visited,
+.sf-menu li.sfHover a.back-to-top:hover {
+  background-color: #ababab;
   color: white;
 }
 
@@ -1043,35 +1095,34 @@ a.eupathdb-MenuItemText {
 	 =Search Boxes (ORTHO: commmon.css)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.search-box{
-   width: 10em;
-   padding: 2px;
-   color: black;    /*   #5b5b5b;  */
-   font-size: 11px;
-   text-align: right;
+.search-box {
+  width: 10em;
+  padding: 2px;
+  color: black; /*   #5b5b5b;  */
+  font-size: 11px;
+  text-align: right;
 }
 
-.search-box input{
-	font-family: Arial, Helvetica, sans-serif;
+.search-box input {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.search-box .textbox{
-	color: #333333;
-	padding: 3px 5px;
+.search-box .textbox {
+  color: #333333;
+  padding: 3px 5px;
 }
 
-.search-box .submit{
-	padding: 3px 0;
-	color: white;
-	background-color: black;
+.search-box .submit {
+  padding: 3px 0;
+  color: white;
+  background-color: black;
 }
 
 .img_align_middle {
-	white-space: normal;
-	margin-bottom: -4px;
-	background-color: transparent; /* to override gbrowse background white  */
+  white-space: normal;
+  margin-bottom: -4px;
+  background-color: transparent; /* to override gbrowse background white  */
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =FOOTER       this allows to insert a div with version and date
@@ -1093,9 +1144,15 @@ a.eupathdb-MenuItemText {
   margin: 1em;
 }
 
-.site-icons li { display: inline; }
-.site-icons li.short-space { margin-left: 9px; }
-.site-icons li.long-space { margin-left: 15px; }
+.site-icons li {
+  display: inline;
+}
+.site-icons li.short-space {
+  margin-left: 9px;
+}
+.site-icons li.long-space {
+  margin-left: 15px;
+}
 .site-icons a {
   display: inline-block;
   width: 20px;
@@ -1103,7 +1160,7 @@ a.eupathdb-MenuItemText {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  margin: 0 .5em;
+  margin: 0 0.5em;
   color: transparent;
 }
 .site-icons .divider {
@@ -1113,7 +1170,6 @@ a.eupathdb-MenuItemText {
   background-color: #d3d3d3;
   margin: 0 0.5rem;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    =Fixed Footer
@@ -1164,7 +1220,7 @@ a.eupathdb-MenuItemText {
 }
 
 #fixed-footer .build-info {
-  padding: .5em 0;
+  padding: 0.5em 0;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1172,157 +1228,165 @@ a.eupathdb-MenuItemText {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #queryGrid td {
-	padding: 1px;
-	vertical-align: top;
+  padding: 1px;
+  vertical-align: top;
 }
 
-#queryGrid .queryGridBullet, #queryGrid .queryGridLink, #queryGrid .queryGridIcons {
-	vertical-align: middle;
+#queryGrid .queryGridBullet,
+#queryGrid .queryGridLink,
+#queryGrid .queryGridIcons {
+  vertical-align: middle;
 }
 
-.innertube2{
-	margin: 2px; /*Margins for inner DIV inside each column (to provide padding)*/
+.innertube2 {
+  margin: 2px; /*Margins for inner DIV inside each column (to provide padding)*/
 }
-tr.headerrow2 td, #queryGrid tr.headerrow2 td {
-	font-size: 14px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	background-repeat: repeat-x;
-	background-position: top;
-	padding: 4px;
-	background-color: #EEEEEE;
+tr.headerrow2 td,
+#queryGrid tr.headerrow2 td {
+  font-size: 14px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  background-repeat: repeat-x;
+  background-position: top;
+  padding: 4px;
+  background-color: #eeeeee;
 }
 
-tr.subheaderrow2 td, #queryGrid tr.subheaderrow2 td {
-	font-size: 12px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #474747;
-	background-repeat: repeat-x;
-	background-position: top;
-	font-weight: bold;
-	padding: 4px;
-	background-color: #EEEEEE;
+tr.subheaderrow2 td,
+#queryGrid tr.subheaderrow2 td {
+  font-size: 12px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  color: #474747;
+  background-repeat: repeat-x;
+  background-position: top;
+  font-weight: bold;
+  padding: 4px;
+  background-color: #eeeeee;
 }
-div.smallBlack { font-size: 8pt; color: black}
+div.smallBlack {
+  font-size: 8pt;
+  color: black;
+}
 a.queryGridInactive {
-        text-align:         center;
-        font-family:        Helvetica;
-        font-size:          10pt;
-        color:              #C8C8C8;
+  text-align: center;
+  font-family: Helvetica;
+  font-size: 10pt;
+  color: #c8c8c8;
 }
 a.queryGridActive {
-        text-align:         center;
-        font-family:        Helvetica;
-        font-size:          10pt;
+  text-align: center;
+  font-family: Helvetica;
+  font-size: 10pt;
 }
-td.lines2, #queryGrid td.lines2 {
-	padding-top: 3px;
+td.lines2,
+#queryGrid td.lines2 {
+  padding-top: 3px;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SUMMARY TABLES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /* used by Expression graphs (fix for text alignment bug) */
 td.centered {
-       vertical-align: middle;
-       padding: 20px;
+  vertical-align: middle;
+  padding: 20px;
 }
 td.top {
-       vertical-align: top;
+  vertical-align: top;
 }
 
-
 table.mytableStyle {
-	empty-cells:show;
-	border-width:1px;
-	border-style:solid;	   /* solid, none, inset, outset, dashed, solid, */
-	border-color:black;
-	border-collapse:collapse;  /*separate */
-/*	border-spacing:2px;  */    /* only makes sense when border-collapse is separate
+  empty-cells: show;
+  border-width: 1px;
+  border-style: solid; /* solid, none, inset, outset, dashed, solid, */
+  border-color: black;
+  border-collapse: collapse; /*separate */
+  /*	border-spacing:2px;  */ /* only makes sense when border-collapse is separate
 	table-layout: auto;        /* fixed */
 }
 tr.mytdStyle {
-	text-align:center;
-
+  text-align: center;
 }
 tr.mythStyle {
-	background-color:lightgrey;
-	text-align:center;
-	font-weight:bold;
+  background-color: lightgrey;
+  text-align: center;
+  font-weight: bold;
 }
-td.mythStyle,td.mytdStyle,th.mythStyle {
-	vertical-align:middle;
-	border-width:1px;
-	border-style:inset;
-	border-color:gray;
-	-moz-border-radius:0px;
-	padding:3px;
-	background-color:white;
+td.mythStyle,
+td.mytdStyle,
+th.mythStyle {
+  vertical-align: middle;
+  border-width: 1px;
+  border-style: inset;
+  border-color: gray;
+  -moz-border-radius: 0px;
+  padding: 3px;
+  background-color: white;
 }
 th.mythStyle {
-	font-weight:bold;
-	background-color:lightgrey;
-	border-bottom: 3px solid grey;
-	cursor: pointer;
-/*	if we add back the sort icons in data summary .....
+  font-weight: bold;
+  background-color: lightgrey;
+  border-bottom: 3px solid grey;
+  cursor: pointer;
+  /*	if we add back the sort icons in data summary .....
 	padding:0;
 	vertical-align:bottom; */
-
 }
 
-	#data-summary_info { font-weight:bold; }
-	#data-summary_filter { font-weight:bold; }
-	#gene-metrics_filter { font-weight:bold; }
-
-
-
+#data-summary_info {
+  font-weight: bold;
+}
+#data-summary_filter {
+  font-weight: bold;
+}
+#gene-metrics_filter {
+  font-weight: bold;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =WARNING BANNERS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .announcebox {
-	min-height: 35px;
+  min-height: 35px;
   /*  height:auto !important; */
-   /*  height:35px; */
-	margin: 12px 12px 0;
-	padding: 6px;
-	background-repeat: repeat-x;
-	text-align: left;
-	border: 1px solid #345d9b;
-	vertical-align: middle;
+  /*  height:35px; */
+  margin: 12px 12px 0;
+  padding: 6px;
+  background-repeat: repeat-x;
+  text-align: left;
+  border: 1px solid #345d9b;
+  vertical-align: middle;
 }
 
 .announcebox.home {
-        min-width: 770px;
-        margin: 5px 5px 0 230px;
+  min-width: 770px;
+  margin: 5px 5px 0 230px;
 }
 
-
 .announcebox img {
-	margin-right: 3px;
+  margin-right: 3px;
 }
 
 .announcebox td {
-	vertical-align:middle;
+  vertical-align: middle;
 }
 
 .announcebox.info {
-/*	background-image: url(../images/infobox.jpg); */
-	color: #093c8a;
-	background-color: #cdd9eb;
+  /*	background-image: url(../images/infobox.jpg); */
+  color: #093c8a;
+  background-color: #cdd9eb;
 }
 
 .announcebox.error {
-	color: #c4000e;
-	background-color: #eec1c2;
-/*	background-image: url(../images/errorbox.jpg); */
+  color: #c4000e;
+  background-color: #eec1c2;
+  /*	background-image: url(../images/errorbox.jpg); */
 }
 
 .announcebox.warn {
-	color: #c4000e;
-	background-color: #edf0ac;
-/*	background-image: url(../images/warnbox.jpg); */
+  color: #c4000e;
+  background-color: #edf0ac;
+  /*	background-image: url(../images/warnbox.jpg); */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1333,7 +1397,7 @@ table#geneFilters th.phylum {
   font-weight: bold;
 }
 table#geneFilters th.genus {
- font-size: 110%;
+  font-size: 110%;
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TOXO  advanced filters (should be moved to Toxo.css)
@@ -1428,25 +1492,27 @@ table#geneFilters th.genus {
 }
 
 @keyframes fade-in-out {
-  50% { opacity: 1; }
+  50% {
+    opacity: 1;
+  }
 }
 
 .search-section:target:before {
   animation: fade-in-out ease-in 3s;
   opacity: 0;
-  content: "\f0da";
+  content: '\f0da';
   position: absolute;
-  margin-left: -.6em;
+  margin-left: -0.6em;
   color: #046599;
   font-family: FontAwesome;
   font-size: 2.5em;
 }
 
 .search-section .group-title {
-  padding: .4em .5em;
+  padding: 0.4em 0.5em;
   margin-left: -1em;
-  margin-right: -.5em;
-  border-left: .5em solid transparent;
+  margin-right: -0.5em;
+  border-left: 0.5em solid transparent;
 }
 
 /* min width for Add Step question form */
@@ -1463,9 +1529,8 @@ table#geneFilters th.genus {
 }
 
 div.usererror {
-  color:red;
+  color: red;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SPANLOGIC POPUP?
@@ -1483,61 +1548,59 @@ div.usererror {
 	 in Project.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.jstree a[href]:link,.jstree a[href]:visited {
-	color:black;
+.jstree a[href]:link,
+.jstree a[href]:visited {
+  color: black;
 }
-.jstree a[href]:hover,.jstree a[href]:active {
-	color:black;
+.jstree a[href]:hover,
+.jstree a[href]:active {
+  color: black;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = SAMPLE STRATEGIES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.tableWithBorders table{
-	border-collapse: collapse;
+.tableWithBorders table {
+  border-collapse: collapse;
 }
-.tableWithBorders tr td{
-	padding: 3px 4px 3px 4px;
-	border: 1px solid black;
-        vertical-align: middle;
+.tableWithBorders tr td {
+  padding: 3px 4px 3px 4px;
+  border: 1px solid black;
+  vertical-align: middle;
 }
-
-
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	   RECORD (gene) PAGE: GBrowse button
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 a#gbView {
-/*    background: transparent url('../../images/button-design.gif') no-repeat scroll top right; */
-    display: block; 
-/*    float: left; */
-    height: 24px;
-    padding-left: 7px;
-    padding-right: 4px;
-    padding-top: 5px;
-    width: 140px;
-    margin: 0px auto;
-		margin-top:1em;
+  /*    background: transparent url('../../images/button-design.gif') no-repeat scroll top right; */
+  display: block;
+  /*    float: left; */
+  height: 24px;
+  padding-left: 7px;
+  padding-right: 4px;
+  padding-top: 5px;
+  width: 140px;
+  margin: 0px auto;
+  margin-top: 1em;
 }
 
 #gnCtx {
-    height: 500px;
-    overflow: auto;
+  height: 500px;
+  overflow: auto;
 }
 
 #gnCtx #imgMapDivId_loading {
   margin-top: 200px;
 }
 
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 BASKET
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #export-basket {
-    background-color: #EEEEEE;
-    padding: 1px;
+  background-color: #eeeeee;
+  padding: 1px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1545,114 +1608,114 @@ a#gbView {
          = in wdk/css/ui-custom-custom-theme/jquery-ui....custom.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .ui-tabs .ui-tabs-nav li a {
-	padding: 0.1em 1em;
+  padding: 0.1em 1em;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =RESULTS page, column names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 tr.headerrow th {
-	background-size: 9990%;
+  background-size: 9990%;
 }
 
 /* In sites.css we have as background image an image that is narrow for some cases where the th needs to stretch to hold 5 or 6 lines of text; this size forces the image to stretch with the container
 	it does not work on IE7/8 (do not support css3) but it does not hurt either. */
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     = RESULT PAGE: motif
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.motif { color: red; }
-
+.motif {
+  color: red;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = Download tab reporter (table.center in wdk)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 h4#tab-reporter-header {
-		font-size:120%;
-		margin:0 0 1em 1em;
+  font-size: 120%;
+  margin: 0 0 1em 1em;
 }
-table#download-columns table td#column-title{
-		border-width:2px 0;
-		border-color:black;
-		border-style:solid;
-		font-weight:bold;
-		text-align:center;
+table#download-columns table td#column-title {
+  border-width: 2px 0;
+  border-color: black;
+  border-style: solid;
+  font-weight: bold;
+  text-align: center;
 }
-table#download-columns input[type="submit"]{
-			margin-left: 4em;
+table#download-columns input[type='submit'] {
+  margin-left: 4em;
 }
-table#download-columns table div#overlay{
+table#download-columns table div#overlay {
   width: 23px;
   height: 30px;
   opacity: 0.2;
   filter: alpha(opacity=20);
   position: relative;
-  bottom:2em;
+  bottom: 2em;
   background-color: white;
 }
-table#download-columns table div#tree-column{
+table#download-columns table div#tree-column {
   position: relative;
-  bottom:3em;
+  bottom: 3em;
 }
-table#download-columns table div#tree-column div#treeLinks-top{
+table#download-columns table div#tree-column div#treeLinks-top {
   position: relative;
-  bottom:18px;
+  bottom: 18px;
 }
-table#download-columns table div#download-featureID{
+table#download-columns table div#download-featureID {
   position: relative;
-  top:25px;
+  top: 25px;
 }
-table#download-columns table div#download-featureID input{
-		opacity:0.7;
+table#download-columns table div#download-featureID input {
+  opacity: 0.7;
 }
-table#download-galaxy,table#download-columns {
-		margin-left:7em;
+table#download-galaxy,
+table#download-columns {
+  margin-left: 7em;
 }
 table#download-galaxy {
-		background-color: #FFFFCC;
-		border-color:#EAEAA8;
-		border-style:solid;
-		border-width:2px;
+  background-color: #ffffcc;
+  border-color: #eaeaa8;
+  border-style: solid;
+  border-width: 2px;
 }
-table#download-galaxy form{
-		float:right;
+table#download-galaxy form {
+  float: right;
 }
-table#download-galaxy td b{
-		position:relative;
-		bottom:1px;
+table#download-galaxy td b {
+  position: relative;
+  bottom: 1px;
 }
-table#download-galaxy td{
-		padding-bottom:1em;
-		padding-top:1em;
+table#download-galaxy td {
+  padding-bottom: 1em;
+  padding-top: 1em;
 }
-table#download-galaxy form{
-		margin-left: 26em;
+table#download-galaxy form {
+  margin-left: 26em;
 }
-span.galaxy,b.galaxy{
-		border-color:#EAEAA8;
-		border-style:solid;
-		border-width:2px;
-		padding:3px;
-		background-color:#FFFFCC;
+span.galaxy,
+b.galaxy {
+  border-color: #eaeaa8;
+  border-style: solid;
+  border-width: 2px;
+  padding: 3px;
+  background-color: #ffffcc;
 }
 span.galaxy {
-		border-width:2px 0;
+  border-width: 2px 0;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = Filter param
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-form[name="questionForm"] .filter-param-tabs {
+form[name='questionForm'] .filter-param-tabs {
   /*margin-left: -20em;*/
 }
 
 /* STEP ANALYSIS USER NOTES */
 div.step-analysis-usernotes {
-  display:none;
+  display: none;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       Search and Download pages: larger submit button
@@ -1669,7 +1732,6 @@ div.step-analysis-usernotes {
 /* ---------------------------------------------------------------
                     jbrowse
     -------------------------------------------------------------*/
-
 
 .wdk-PageContent__jbrowse {
   padding: 0;
@@ -1690,37 +1752,34 @@ a.wdkLinkCell {
   }
 }
 
-
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       Answer MESA datatable
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
-   display: block;
-   position: sticky;
-   background-color: #efefef;
-   z-index: 1;
+  display: block;
+  position: sticky;
+  background-color: #efefef;
+  z-index: 1;
 }
 
 /* ========================================================================= */
 /* Static Content  page                                                      */
 /* ========================================================================= */
 
-  div.static-content {
-    font-size: 1.2em; 
-    line-height: 1.35;
-    margin-bottom: 2em;
-    padding: 0 1em;
-  }
-
+div.static-content {
+  font-size: 1.2em;
+  line-height: 1.35;
+  margin-bottom: 2em;
+  padding: 0 1em;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       gitter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .gitter-open-chat-button {
-  visibility: hidden; 
+  visibility: hidden;
   background-color: #36bc98; //#e3f2fd;
-  color: white; 
+  color: white;
 }
 
 a.gitter-open-chat-button:hover {
@@ -1729,19 +1788,19 @@ a.gitter-open-chat-button:hover {
 }
 
 .gitter-open-chat-button:after {
-  content: "  Community Chat";
-  visibility: visible; 
-  background-color: #36bc98;// e3f2fd;
-  color: white; 
-  border-top-left-radius: .5em;
-  border-top-right-radius: .5em;
+  content: '  Community Chat';
+  visibility: visible;
+  background-color: #36bc98; // e3f2fd;
+  color: white;
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
   padding: 1em;
   font-size: 12px;
   padding-left: 2em;
 }
 
 .gitter-open-chat-button:before {
-  content: "\f086";
+  content: '\f086';
   font-family: FontAwesome;
   visibility: visible;
   color: white;
@@ -1750,10 +1809,8 @@ a.gitter-open-chat-button:hover {
   left: 7.2em;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = THE END
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /* under this, commented out */
-
