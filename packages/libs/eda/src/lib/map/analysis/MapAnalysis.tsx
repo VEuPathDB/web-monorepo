@@ -851,7 +851,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 }
 
-function useDefaultVariableId(entityId?: string) {
+/**
+ * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
+ * kind of test and refactor its logic.
+ */
+export function useDefaultVariableId(entityId?: string) {
   const entities = useStudyEntities();
   const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldTree = useFieldTree(flattenedFields);
