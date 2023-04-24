@@ -1,19 +1,11 @@
 import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
 import { ReactElement, useCallback, useMemo } from 'react';
 import { usePromise } from '../../../core/hooks/promise';
-import {
-  BoundsViewport,
-  Bounds,
-  LatLng,
-} from '@veupathdb/components/lib/map/Types';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import { StudyEntity, Variable } from '../../../core/types/study';
 import DataClient, {
   BinRange,
-  CompleteCasesTable,
-  MapMarkersOverlayRequestParams,
-  MapMarkersOverlayResponse,
-  MapMarkersRequestParams,
   OverlayConfig,
   StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
@@ -27,7 +19,7 @@ import {
 } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
-import { zip, sum, values, some } from 'lodash';
+import { some } from 'lodash';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
