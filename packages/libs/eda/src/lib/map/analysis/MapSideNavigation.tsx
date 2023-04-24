@@ -63,7 +63,6 @@ export function MapSideNavigation({
         // ensure that the side menu sits atop the map.
         zIndex: 10,
         display: 'flex',
-        overflow: 'scroll',
       }}
     >
       <button
@@ -114,19 +113,29 @@ export function MapSideNavigation({
           position: 'relative',
           // Ensures that the div takes up all the available height.
           height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
         }}
       >
         <div
           style={{
-            flex: 2,
-            flexShrink: 1,
+            // Ensures that these children nav items are contained to
+            // 70% of the navigation, leaving 30% for the navigation
+            // footer items.
+            height: '70%',
+            overflow: 'scroll',
           }}
         >
           {children}
         </div>
-
+        <hr
+          style={{
+            // Styles for the <hr />
+            backgroundColor: `rgba(0, 0, 0,0.15)`,
+            border: 0,
+            height: '2px',
+            marginBottom: '1.5rem',
+            width: '50%',
+          }}
+        />
         <div
           className={isExpanded ? '' : 'screenReaderOnly'}
           style={{
@@ -138,19 +147,8 @@ export function MapSideNavigation({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-end',
-            flex: 1,
           }}
         >
-          <hr
-            style={{
-              // Styles for the <hr />
-              backgroundColor: `rgba(0, 0, 0,0.15)`,
-              border: 0,
-              height: '2px',
-              marginBottom: '1.5rem',
-              width: '50%',
-            }}
-          />
           {/* For now these are more for demonstration purposes. */}
           <ul style={{ margin: 0, padding: 0, listStyleType: 'none' }}>
             <li>
@@ -177,6 +175,7 @@ export function MapSideNavigation({
         style={{
           minWidth: activeNavigationMenu ? 285 : 0,
           borderLeft: activeNavigationMenu ? mapNavigationBorder : 'unset',
+          overflow: 'scroll',
         }}
         className={isExpanded ? '' : 'screenReaderOnly'}
       >
