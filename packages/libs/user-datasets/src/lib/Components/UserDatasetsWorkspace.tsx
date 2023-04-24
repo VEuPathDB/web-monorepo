@@ -9,7 +9,7 @@ import UserDatasetAllUploadsController from '../Controllers/UserDatasetAllUpload
 import UserDatasetListController from '../Controllers/UserDatasetListController';
 import UserDatasetNewUploadController from '../Controllers/UserDatasetNewUploadController';
 
-import { DatasetUploadPageConfig } from '../Utils/types';
+import { DatasetUploadPageConfig, DataNoun } from '../Utils/types';
 
 interface Props {
   baseUrl: string;
@@ -18,6 +18,7 @@ interface Props {
   urlParams: Record<string, string>;
   workspaceTitle: string;
   helpTabContents?: ReactNode;
+  dataNoun: DataNoun;
 }
 
 function UserDatasetsWorkspace(props: Props) {
@@ -27,6 +28,7 @@ function UserDatasetsWorkspace(props: Props) {
     uploadPageConfig,
     workspaceTitle,
     helpTabContents,
+    dataNoun,
   } = props;
 
   return (
@@ -74,6 +76,7 @@ function UserDatasetsWorkspace(props: Props) {
               hasDirectUpload={uploadPageConfig.hasDirectUpload}
               helpRoute={helpRoute}
               workspaceTitle={workspaceTitle}
+              dataNoun={dataNoun}
             />
           )}
           disclaimerProps={{ toDoWhatMessage: 'To view your datasets' }}
