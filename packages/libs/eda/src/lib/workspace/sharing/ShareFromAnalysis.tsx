@@ -17,7 +17,6 @@ import {
 // Hooks
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useLoginCallbacks } from './hooks';
-import { useMemo } from 'react';
 
 type ShareFromAnalyisProps = {
   visible: boolean;
@@ -55,17 +54,16 @@ export default function ShareFromAnalysis({
     sharingUrlPrefix
   ).href;
 
-  const sharingDatasetUrl = useMemo(() => {
-    if (!analysisState.analysis) return;
-    if (!isDiyWdkRecordId(analysisState.analysis.studyId)) return;
-    const datasetUrlHelper = window.location.pathname.split('/analyses')[0];
-    return new URL(
-      `${datasetUrlHelper}/datasets/${wdkRecordIdToDiyUserDatasetId(
-        analysisState.analysis.studyId
-      )}`,
-      sharingUrlPrefix
-    ).href;
-  }, [analysisState.analysis]);
+  const datasetUrlHelper = window.location.pathname.split('/analyses')[0];
+  const sharingDatasetUrl =
+    !analysisState.analysis || !isDiyWdkRecordId(analysisState.analysis.studyId)
+      ? undefined
+      : new URL(
+          `${datasetUrlHelper}/datasets/${wdkRecordIdToDiyUserDatasetId(
+            analysisState.analysis.studyId
+          )}`,
+          sharingUrlPrefix
+        ).href;
 
   return (
     <Modal
