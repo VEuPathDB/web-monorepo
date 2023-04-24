@@ -858,7 +858,6 @@ function useDefaultVariableId(entityId?: string) {
 
   if (entityId || featuredFields.length === 0) {
     // Use the first variable in the entity
-
     const entity = entityId
       ? entities.find((e) => e.id === entityId)
       : entities[0];
