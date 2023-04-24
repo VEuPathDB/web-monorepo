@@ -492,7 +492,7 @@ class UserDatasetSharingModal extends React.Component {
       <Modal className="UserDataset-SharingModal">
         <div
           className="UserDataset-SharingModal-CloseBar"
-          title="CLose this window"
+          title="Close this window"
         >
           <Icon
             fa="window-close"
