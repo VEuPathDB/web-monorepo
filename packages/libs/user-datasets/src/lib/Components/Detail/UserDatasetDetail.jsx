@@ -522,8 +522,13 @@ class UserDatasetDetail extends React.Component {
   }
 
   render() {
-    const { user, userDataset, shareUserDatasets, unshareUserDatasets } =
-      this.props;
+    const {
+      user,
+      userDataset,
+      shareUserDatasets,
+      unshareUserDatasets,
+      dataNoun,
+    } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
       return (
@@ -546,6 +551,7 @@ class UserDatasetDetail extends React.Component {
             onClose={this.closeSharingModal}
             shareUserDatasets={shareUserDatasets}
             unshareUserDatasets={unshareUserDatasets}
+            dataNoun={dataNoun}
           />
         )}
       </div>
