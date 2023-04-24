@@ -169,7 +169,7 @@ export function useStandaloneMapMarkers(
   );
 
   // determine the default overlayConfig (TO DO: allow user overrides)
-  // this will require a call to the distribution endpoint for categoricals (TO DO: continuous)
+  // this will require a call to the distribution endpoint for categoricals and the new endpoint for continuous
   const subsettingClient = useSubsettingClient();
 
   // So we bundle the overlayConfig and the outputEntity together in the usePromise payload. Why?
@@ -212,7 +212,7 @@ export function useStandaloneMapMarkers(
 
           return {
             overlayConfig: {
-              overlayType: 'categorical', // TO DO: handle continuous!!
+              overlayType: 'categorical',
               overlayVariable,
               overlayValues,
             },
@@ -292,7 +292,7 @@ export function useStandaloneMapMarkers(
           latitudeVariable,
           longitudeVariable,
           ...markerVariableBundle, // also includes outputEntityId
-          valueSpec: 'count', // TO DO: or proportion!
+          valueSpec: 'count', // TO DO: or proportion when we have the UI and back-end fix https://github.com/VEuPathDB/EdaDataService/issues/261 for this
           viewport: {
             latitude: {
               xMin,
@@ -402,7 +402,7 @@ export function useStandaloneMapMarkers(
               }))
             : [];
 
-        // TO DO: sort out colorscale / palette
+        // TO DO: address diverging colorscale (especially if there are use-cases)
 
         // now reorder the data, adding zeroes if necessary.
         const reorderedData =
@@ -433,6 +433,7 @@ export function useStandaloneMapMarkers(
 
         // TO DO: this will sum to 1 when we allow proportion mode
         // maybe ask for the counts to come along site the values in the back end response
+        // https://github.com/VEuPathDB/EdaDataService/issues/261
         // (the way we did it in the old viz wasn't 100% accurate)
         const count = reorderedData.reduce(
           (sum, item) => (sum = sum + item.value),
@@ -496,10 +497,6 @@ export function useStandaloneMapMarkers(
           : undefined,
       // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label
-      // (do not check that value > 0, because the back end doesn't return
-      // zero counts, but does sometimes return near-zero counts that get
-      // rounded to zero)
-      // TO DO: Check this near-zero issue in new back end
       hasData: markerData
         ? some(markerData.value?.mapElements, (el) =>
             el.overlayValues.some((ov) => ov.binLabel === label)
@@ -597,9 +594,9 @@ async function getBinRanges({
   // TO DO: remove when it's fixed
   // minor processing to work-around https://github.com/VEuPathDB/plot.data/issues/219
   // ignore the `value: null` props in response
-  return binRanges.map(({ binStart, binEnd, binLabel }) => ({
+  return binRanges.map(({ binStart, binEnd, binLabel }, index) => ({
     binStart,
-    binEnd,
+    binEnd: index === binRanges.length - 1 ? binEnd + 1.0 : binEnd, // second TEMPORARY back end workaround
     binLabel,
   }));
 }
