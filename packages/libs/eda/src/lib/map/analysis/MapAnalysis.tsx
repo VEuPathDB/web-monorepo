@@ -27,6 +27,7 @@ import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
 import {
   useFeaturedFields,
+  useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
@@ -414,6 +415,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
+  const defaultVariableId = useDefaultVariableId(
+    subsetVariableAndEntity.entityId
+  );
+
+  const selectedVariableId =
+    defaultVariableId || subsetVariableAndEntity.variableId;
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -437,13 +445,25 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 expanded
                 orientation="horizontal"
                 selectedEntity={subsetVariableAndEntity.entityId}
-                selectedVariable={subsetVariableAndEntity.variableId}
+                selectedVariable={selectedVariableId}
                 entityCounts={totalCounts.value}
                 filteredEntityCounts={filteredCounts.value}
                 filteredEntities={filteredEntities}
                 variableLinkConfig={{
                   type: 'button',
-                  onClick: setSubsetVariableAndEntity,
+                  onClick: (a) => {
+                    if (!a?.variableId) {
+                      setSubsetVariableAndEntity({
+                        entityId: a?.entityId,
+                        variableId: defaultVariableId,
+                      });
+                    } else {
+                      setSubsetVariableAndEntity({
+                        entityId: a.entityId,
+                        variableId: a.variableId,
+                      });
+                    }
+                  },
                 }}
               />
               <Subsetting
@@ -452,7 +472,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   onClick: setSubsetVariableAndEntity,
                 }}
                 entityId={subsetVariableAndEntity?.entityId ?? ''}
-                variableId={subsetVariableAndEntity?.variableId ?? ''}
+                variableId={selectedVariableId ?? ''}
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
@@ -826,4 +846,29 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       }}
     </PromiseResult>
   );
+}
+
+function useDefaultVariableId(entityId?: string) {
+  const entities = useStudyEntities();
+  const flattenedFields = useFlattenedFields(entities, 'variableTree');
+  const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
+
+  let finalVariableId: string | undefined;
+
+  if (entityId || featuredFields.length === 0) {
+    // Use the first variable in the entity
+
+    const entity = entityId
+      ? entities.find((e) => e.id === entityId)
+      : entities[0];
+    finalVariableId =
+      entity &&
+      findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1];
+  } else {
+    // Use the first featured variable
+    [finalVariableId] = featuredFields[0].term.split('/');
+  }
+
+  return finalVariableId;
 }
