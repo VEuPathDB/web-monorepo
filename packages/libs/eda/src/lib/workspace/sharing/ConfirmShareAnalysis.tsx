@@ -8,12 +8,12 @@ import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { gray } from '@veupathdb/coreui/dist/definitions/colors';
 
 type ConfirmShareAnalysisProps = {
-  contextForUserDataset: {
+  contextForUserDataset?: {
     isUserStudy: boolean;
     isCurrentUserStudyManager: boolean;
   };
   sharingUrl: string;
-  sharingDatasetUrl: string | undefined;
+  sharingDatasetUrl?: string;
 };
 
 export default function ConfirmShareAnalysis({
@@ -56,7 +56,9 @@ export default function ConfirmShareAnalysis({
                 maxWidth: 500,
               }}
             >
-              {contextForUserDataset.isUserStudy && sharingDatasetUrl ? (
+              {contextForUserDataset &&
+              contextForUserDataset.isUserStudy &&
+              sharingDatasetUrl ? (
                 <>
                   <span
                     style={{
@@ -101,7 +103,8 @@ export default function ConfirmShareAnalysis({
                 maxWidth: 500,
               }}
             >
-              {contextForUserDataset.isUserStudy &&
+              {contextForUserDataset &&
+                contextForUserDataset.isUserStudy &&
                 'The URL below can be used to share this analysis.'}{' '}
               When a recipient clicks the link, they receive a <em>copy</em> of
               the <em>latest version</em>.
