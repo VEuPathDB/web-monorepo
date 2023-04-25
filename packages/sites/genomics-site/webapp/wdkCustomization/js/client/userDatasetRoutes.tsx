@@ -8,11 +8,11 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { communitySite } from '@veupathdb/web-common/lib/config';
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
-import {
-  uploadTypeConfig
-} from '@veupathdb/user-datasets/lib/Utils/upload-config';
+import { uploadTypeConfig } from '@veupathdb/user-datasets/lib/Utils/upload-config';
 
-const UserDatasetRouter = React.lazy(() => import('./controllers/UserDatasetRouter'));
+const UserDatasetRouter = React.lazy(
+  () => import('./controllers/UserDatasetRouter')
+);
 
 const availableUploadTypes = ['gene-list'];
 
@@ -26,12 +26,13 @@ export const userDatasetRoutes: RouteEntry[] = [
       const location = useLocation();
 
       const helpTabContentUrl = useMemo(
-        () => [
-          communitySite,
-          USER_DATASETS_HELP_PAGE,
-          location.search,
-          location.hash
-        ].join(''),
+        () =>
+          [
+            communitySite,
+            USER_DATASETS_HELP_PAGE,
+            location.search,
+            location.hash,
+          ].join(''),
         [location.search, location.hash]
       );
 
@@ -44,13 +45,12 @@ export const userDatasetRoutes: RouteEntry[] = [
             workspaceTitle="My Data Sets"
             uploadTypeConfig={uploadTypeConfig}
             helpTabContents={
-              <ExternalContentController
-                url={helpTabContentUrl}
-              />
+              <ExternalContentController url={helpTabContentUrl} />
             }
+            dataNoun={{ singular: 'Data Set', plural: 'Data Sets' }}
           />
         </Suspense>
-      )
+      );
     },
-  }
+  },
 ];
