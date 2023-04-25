@@ -21,6 +21,7 @@ import {
   findEntityAndVariable,
 } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
+import { DownloadClient } from '../api';
 
 /** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
@@ -37,6 +38,9 @@ export function useSubsettingClient(): SubsettingClient {
 }
 export function useDataClient(): DataClient {
   return useNonNullableContext(WorkspaceContext).dataClient;
+}
+export function useDownloadClient(): DownloadClient {
+  return useNonNullableContext(WorkspaceContext).downloadClient;
 }
 export function useAnalysisClient(): AnalysisClient {
   return useNonNullableContext(WorkspaceContext).analysisClient;
