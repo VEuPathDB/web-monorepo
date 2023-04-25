@@ -268,7 +268,7 @@ function makeHeaderMenuItemsFactory(
                   studies.entities?.length > 0
                     ? [
                         {
-                          text: <small>User studies</small>,
+                          text: <small>My studies</small>,
                         },
                       ]
                     : []
