@@ -414,13 +414,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     );
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
-
-  const defaultVariableId = useDefaultVariableId(
-    subsetVariableAndEntity.entityId
-  );
-
-  const selectedVariableId =
-    defaultVariableId || subsetVariableAndEntity.variableId;
+  const getDefaultVariableId = useGetDefaultVariableIdCallback();
 
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
@@ -452,7 +446,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   expanded
                   orientation="horizontal"
                   selectedEntity={subsetVariableAndEntity.entityId}
-                  selectedVariable={selectedVariableId}
+                  selectedVariable={subsetVariableAndEntity.variableId}
                   entityCounts={totalCounts.value}
                   filteredEntityCounts={filteredCounts.value}
                   filteredEntities={filteredEntities}
@@ -463,7 +457,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                         entityId: variableValue?.entityId,
                         variableId: variableValue?.variableId
                           ? variableValue.variableId
-                          : defaultVariableId,
+                          : getDefaultVariableId(variableValue?.entityId),
                       });
                     },
                   }}
@@ -475,7 +469,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   onClick: setSubsetVariableAndEntity,
                 }}
                 entityId={subsetVariableAndEntity?.entityId ?? ''}
-                variableId={selectedVariableId ?? ''}
+                variableId={subsetVariableAndEntity.variableId ?? ''}
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
@@ -853,28 +847,30 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
 /**
  * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
- * kind of test and refactor its logic.
+ * kind of test and simplify its logic.
  */
-export function useDefaultVariableId(entityId?: string) {
+export function useGetDefaultVariableIdCallback() {
   const entities = useStudyEntities();
   const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldTree = useFieldTree(flattenedFields);
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 
-  let finalVariableId: string | undefined;
+  return function getDefaultVariableIdCallback(entityId?: string) {
+    let finalVariableId: string | undefined;
 
-  if (entityId || featuredFields.length === 0) {
-    // Use the first variable in the entity
-    const entity = entityId
-      ? entities.find((e) => e.id === entityId)
-      : entities[0];
-    finalVariableId =
-      entity &&
-      findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1];
-  } else {
-    // Use the first featured variable
-    [finalVariableId] = featuredFields[0].term.split('/');
-  }
+    if (entityId || featuredFields.length === 0) {
+      // Use the first variable in the entity
+      const entity = entityId
+        ? entities.find((e) => e.id === entityId)
+        : entities[0];
+      finalVariableId =
+        entity &&
+        findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1];
+    } else {
+      // Use the first featured variable
+      [finalVariableId] = featuredFields[0].term.split('/');
+    }
 
-  return finalVariableId;
+    return finalVariableId;
+  };
 }
