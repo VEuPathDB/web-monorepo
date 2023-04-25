@@ -2308,10 +2308,9 @@ function processInputData(
         marker: { color, symbol: markerSymbol(index, el) },
         // this needs to be here for the case of markers with line or lineplot.
         line: { color, shape: 'linear' },
-        // for connecting points regardless of missing data
-        // Note: connectgaps being commented out may cause other issues
-        // connectgaps: true,
         seriesType: el.seriesType,
+        // for connecting points regardless of missing data
+        connectgaps: el.seriesType === 'standard' ? true : undefined,
       });
 
       return breakAfterThisSeries(index);
