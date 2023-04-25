@@ -142,7 +142,7 @@ export default function DraggablePanel({
           width: ${styleOverrides?.width ?? 'fit-content'};
           // Hey, so you need to explicitly set overflow wherever
           // you plan to use resize.
-          overflow: scroll;
+          overflow: auto;
           resize: ${styleOverrides?.resize ?? 'none'};
           min-height: ${styleOverrides?.minHeight ?? 0};
           min-width: ${styleOverrides?.minWidth ?? 0};
@@ -158,7 +158,7 @@ export default function DraggablePanel({
             display: flex;
             height: 2rem;
             justify-content: center;
-            // Because the panels are positioned absolutely and overflow scroll,
+            // Because the panels are positioned absolutely and overflow auto,
             // the handle will get lost when the user scrolls down. We can pin the
             // handle (which includes the panel title and dismiss button) to
             // the top of the panel with position sticky and top 0.
@@ -189,7 +189,6 @@ export default function DraggablePanel({
         <div
           css={css`
             border-radius: 7px;
-            overflow: scroll;
           `}
         >
           {children}
