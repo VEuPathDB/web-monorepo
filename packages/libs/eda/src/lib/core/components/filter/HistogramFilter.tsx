@@ -46,6 +46,8 @@ import { useDefaultAxisRange } from '../../hooks/computeDefaultAxisRange';
 import { min, max, gt, lt } from 'lodash';
 import { useDebounce } from '../../hooks/debouncing';
 import { useDeepValue } from '../../hooks/immutability';
+// reset to defaults button
+import { ResetButtonCoreUI } from '../ResetButton';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -646,122 +648,148 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="X-axis controls">
-          <BinWidthControl
-            binWidth={data?.binWidthSlider?.binWidth}
-            binWidthStep={data?.binWidthSlider?.binWidthStep}
-            binWidthRange={data?.binWidthSlider?.binWidthRange}
-            binUnit={uiState.binWidthTimeUnit ?? 'year'}
-            binUnitOptions={
-              data?.binWidthSlider?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
-            onBinWidthChange={handleBinWidthChange}
-            valueType={data?.binWidthSlider?.valueType}
-            containerStyles={{ minHeight: widgetHeight }}
-          />
-
-          <AxisRangeControl
-            label="Range"
-            range={uiState.independentAxisRange}
-            onRangeChange={handleIndependentAxisRangeChange}
-            valueType={data?.binWidthSlider?.valueType}
-            containerStyles={{ minWidth: '400px' }}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{
-                maxWidth:
-                  data?.binWidthSlider?.valueType === 'date'
-                    ? '34.5em'
-                    : '38.5em',
-              }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset X-axis to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-          />
-        </LabelledGroup>
+          >
+            <LabelledGroup label="X-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleIndependentAxisSettingsReset}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginLeft: '1em',
+              marginTop: '-0.5em',
+            }}
+          >
+            <BinWidthControl
+              binWidth={data?.binWidthSlider?.binWidth}
+              binWidthStep={data?.binWidthSlider?.binWidthStep}
+              binWidthRange={data?.binWidthSlider?.binWidthRange}
+              binUnit={uiState.binWidthTimeUnit ?? 'year'}
+              binUnitOptions={
+                data?.binWidthSlider?.valueType === 'date'
+                  ? ['day', 'week', 'month', 'year']
+                  : undefined
+              }
+              onBinWidthChange={handleBinWidthChange}
+              valueType={data?.binWidthSlider?.valueType}
+              containerStyles={{ minHeight: widgetHeight }}
+            />
+            <AxisRangeControl
+              label="Range"
+              range={uiState.independentAxisRange}
+              onRangeChange={handleIndependentAxisRangeChange}
+              valueType={data?.binWidthSlider?.valueType}
+              containerStyles={{ minWidth: '400px' }}
+            />
+            {/* truncation notification */}
+            {truncatedIndependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedIndependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedIndependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                containerStyles={{
+                  maxWidth: '36.7em',
+                }}
+              />
+            ) : null}
+          </div>
+        </div>
 
         {/* add vertical line in btw Y- and X- controls */}
         <div
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '13.6em',
+            height: '10.6em',
             position: 'relative',
-            marginLeft: '-1.2em',
+            marginLeft: '1.0em',
             top: '1.5em',
           }}
         >
           {' '}
         </div>
 
-        <LabelledGroup label="Y-axis controls">
-          <Toggle
-            label={'Log scale'}
-            value={uiState.dependentAxisLogScale}
-            onChange={handleDependentAxisLogScale}
-            styleOverrides={{
-              container: {
-                paddingBottom: '0.3125em',
-                minHeight: widgetHeight,
-              },
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-            themeRole="primary"
-          />
+          >
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
+            </div>
+          </div>
 
-          <NumberRangeInput
-            label="Range"
-            range={uiState.dependentAxisRange ?? defaultDependentAxisRange}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange as NumberRange);
-            }}
-            allowPartialRange={false}
-            containerStyles={{ minWidth: '400px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
+          <div style={{ marginLeft: '1em', marginTop: '-0.6em' }}>
+            <Toggle
+              label={'Log scale'}
+              value={uiState.dependentAxisLogScale}
+              onChange={handleDependentAxisLogScale}
+              styleOverrides={{
+                container: {
+                  paddingBottom: '0.3125em',
+                  minHeight: widgetHeight,
+                },
               }}
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '38.5em' }}
+              themeRole="primary"
             />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset Y-axis to defaults'}
-            onClick={handleDependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-            }}
-          />
-        </LabelledGroup>
+            <NumberRangeInput
+              label="Range"
+              range={uiState.dependentAxisRange ?? defaultDependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              containerStyles={{ minWidth: '400px' }}
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                containerStyles={{ maxWidth: '36.7em' }}
+              />
+            ) : null}
+          </div>
+        </div>
       </div>
     </div>
   );
