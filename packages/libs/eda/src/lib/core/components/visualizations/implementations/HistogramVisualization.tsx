@@ -205,23 +205,16 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   // set the state of truncation warning message here
-  const [
-    truncatedIndependentAxisWarning,
-    setTruncatedIndependentAxisWarning,
-  ] = useState<string>('');
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
+      const { xAxisVariable, overlayVariable, facetVariable } =
+        selectedVariables;
       const keepIndependentAxisSettings = isEqual(
         xAxisVariable,
         vizConfig.xAxisVariable
@@ -514,9 +507,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   // separate minPosMax from dependentMinPosMax
-  const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
-    data,
-  ]);
+  const minPosMax = useMemo(
+    () => histogramDefaultDependentAxisMinMax(data),
+    [data]
+  );
   const dependentMinPosMax = useMemo(() => {
     return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
@@ -554,7 +548,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
             return {
               label: dataItem.name,
               // histogram plot does not have mode, so set to square for now
-              marker: 'square',
+              marker: 'square' as const,
               markerColor:
                 dataItem.name === 'No data'
                   ? '#E8E8E8'
@@ -1255,13 +1249,15 @@ export function histogramResponseToData(
           unit: response.histogram.config.binSpec.units || 'month',
         };
   const { min, max, step } = response.histogram.config.binSlider;
-  const binWidthRange = (type === 'number' || type === 'integer'
-    ? { min, max }
-    : {
-        min,
-        max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
-        unit: (binWidth as TimeDelta).unit,
-      }) as NumberOrTimeDeltaRange;
+  const binWidthRange = (
+    type === 'number' || type === 'integer'
+      ? { min, max }
+      : {
+          min,
+          max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+          unit: (binWidth as TimeDelta).unit,
+        }
+  ) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
 
   // process data and overlay value within each facet grouping
