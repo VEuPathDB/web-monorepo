@@ -422,6 +422,7 @@ class UserDatasetSharingModal extends React.Component {
   renderSharingButtons() {
     const datasets = this.getShareableDatasets();
     const recipients = this.getValidRecipients();
+    const { dataNoun } = this.props;
 
     return (
       <div className="UserDatasetSharing-Buttons">
@@ -430,8 +431,10 @@ class UserDatasetSharingModal extends React.Component {
           disabled={!recipients.length || !datasets.length}
           onClick={this.submitShare}
         >
-          Share {this.props.dataNoun.plural} with {recipients.length} user
-          {recipients.length === 1 ? '' : 's'} <Icon fa="share right-side" />
+          <Icon fa="share left-side" />
+          Grant {recipients.length} Recipient
+          {recipients.length === 1 ? '' : 's'} Access to{' '}
+          {datasets.length === 1 ? dataNoun.singular : dataNoun.plural}
         </button>
       </div>
     );
@@ -484,7 +487,7 @@ class UserDatasetSharingModal extends React.Component {
             </div>
             <div className="UserDataset-SharingModal-RecipientSection">
               <h2 className="UserDatasetSharing-SectionName">
-                With The Following Collaborators:
+                With the following recipients:
               </h2>
               <RecipientForm />
               <RecipientList recipients={recipients} />
