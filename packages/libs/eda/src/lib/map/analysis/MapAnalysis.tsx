@@ -79,7 +79,7 @@ enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
   Notes = 'Notes',
-  Paint = 'Paint',
+  Markers = 'Markers',
   Plot = 'Plot',
   Share = 'Share',
   StudyDetails = 'View Study Details',
@@ -413,7 +413,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: MapSideNavItemLabels.Paint,
+        labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
         renderSideNavigationPanel: sideNavigationRenderPlaceholder,
       },
