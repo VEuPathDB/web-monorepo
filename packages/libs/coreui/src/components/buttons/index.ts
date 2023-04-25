@@ -41,7 +41,7 @@ type ButtonStateStyleSpec = {
     offsetX: string;
     offsetY: string;
     blurRadius: string;
-    color: string;
+    color: CSSProperties['color'];
   };
 };
 
