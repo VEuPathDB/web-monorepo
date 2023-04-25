@@ -22,7 +22,7 @@ export function MarkerConfigurationSelector({
   )?.renderConfigurationMenu;
 
   return (
-    <div>
+    <div style={{ display: 'flex' }}>
       <H6>Choose marker type:</H6>
       <ul>
         {markerConfigurations.map(({ name, icon }) => {

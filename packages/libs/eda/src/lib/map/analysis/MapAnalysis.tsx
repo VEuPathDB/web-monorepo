@@ -4,6 +4,7 @@ import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   PromiseResult,
+  Variable,
   useAnalysis,
   useDataClient,
   useFindEntityAndVariable,
@@ -74,6 +75,8 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
+import { MarkerConfigurationSelector } from './MarkerConfigurationSelector';
+import { DonutConfigurationMenu } from './MarkerConfiguration/DonutConfigurationMenu';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -410,12 +413,46 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       </div>
     );
 
+  const [selectedMarkerConfigurationName, setSelectedMarkerConfigurationName] =
+    useState('');
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
         labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: (app) => {
+          return (
+            <MarkerConfigurationSelector
+              selectedMarkerConfigurationName={selectedMarkerConfigurationName}
+              setSelectedMarkerConfigurationName={(nextMarkerName) => {
+                setSelectedMarkerConfigurationName((currentMarkerName) =>
+                  currentMarkerName === nextMarkerName ? '' : nextMarkerName
+                );
+              }}
+              markerConfigurations={[
+                {
+                  name: 'Donuts',
+                  renderConfigurationMenu: (
+                    <DonutConfigurationMenu
+                      inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                      entities={studyEntities}
+                      selectedVariables={selectedVariables}
+                      onChange={(selectedVariables) =>
+                        setSelectedOverlayVariable(selectedVariables.overlay)
+                      }
+                      starredVariables={
+                        analysisState.analysis?.descriptor.starredVariables ??
+                        []
+                      }
+                      toggleStarredVariable={toggleStarredVariable}
+                    />
+                  ),
+                },
+              ]}
+            />
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Filter,
@@ -750,29 +787,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     />
                   </div>
       */}
-                <FloatingDiv
-                  style={{
-                    top: 150,
-                    right: 50,
-                  }}
-                >
-                  <span style={{ backgroundColor: 'yellow' }}>
-                    temporary - remove me
-                  </span>
-                  <InputVariables
-                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                    entities={studyEntities}
-                    selectedVariables={selectedVariables}
-                    onChange={(selectedVariables) =>
-                      setSelectedOverlayVariable(selectedVariables.overlay)
-                    }
-                    starredVariables={
-                      analysisState.analysis?.descriptor.starredVariables ?? []
-                    }
-                    toggleStarredVariable={toggleStarredVariable}
-                  />
-                </FloatingDiv>
-
                 {activeSideMenuIndex === plotSideMenuItemIndex && (
                   <DraggableVisualization
                     analysisState={analysisState}
