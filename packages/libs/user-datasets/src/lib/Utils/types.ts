@@ -137,3 +137,12 @@ export interface NewUserDataset extends UserDatasetMeta {
         reportConfig: unknown;
       };
 }
+
+/**
+ * In EDA, data is referred to as "Study" or "Studies"
+ * In genomics, data is referred to as "Data Set" or "Data Sets"
+ */
+export type DataNoun = {
+  singular: string;
+  plural: string;
+};

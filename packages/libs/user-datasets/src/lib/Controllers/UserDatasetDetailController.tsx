@@ -24,6 +24,7 @@ import EmptyState from '../Components/EmptyState';
 import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
+import { DataNoun } from '../Utils/types';
 
 const ActionCreators = {
   showLoginForm,
@@ -47,6 +48,7 @@ type OwnProps = {
     string,
     ComponentType<UserDatasetDetailProps>
   >;
+  dataNoun: DataNoun;
 };
 type MergedProps = {
   ownProps: OwnProps;
@@ -67,9 +69,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   };
 
   getTitle() {
-    const entry = this.props.stateProps.userDatasetsById[
-      this.props.ownProps.id
-    ];
+    const entry =
+      this.props.stateProps.userDatasetsById[this.props.ownProps.id];
     if (entry && entry.resource) {
       return `${this.props.ownProps.detailsPageTitle} ${entry.resource.meta.name}`;
     }
@@ -147,12 +148,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   renderView() {
-    const {
-      baseUrl,
-      detailsPageTitle,
-      id,
-      workspaceTitle,
-    } = this.props.ownProps;
+    const { baseUrl, detailsPageTitle, id, workspaceTitle, dataNoun } =
+      this.props.ownProps;
     const {
       updateUserDatasetDetail,
       shareUserDatasets,
@@ -192,6 +189,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       questionMap: keyBy(questions, 'fullName'),
       workspaceTitle,
       detailsPageTitle,
+      dataNoun,
     };
 
     const DetailView = this.getDetailView(

@@ -523,7 +523,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 />
               );
             }
-            return <ConfirmShareAnalysis sharingURL={sharingUrl} />;
+            return <ConfirmShareAnalysis sharingUrl={sharingUrl} />;
           }
 
           return (

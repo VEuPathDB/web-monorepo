@@ -40,12 +40,10 @@ class UserDatasetDetail extends React.Component {
     this.renderHeaderSection = this.renderHeaderSection.bind(this);
     this.renderDatasetActions = this.renderDatasetActions.bind(this);
 
-    this.renderCompatibilitySection = this.renderCompatibilitySection.bind(
-      this
-    );
-    this.getCompatibilityTableColumns = this.getCompatibilityTableColumns.bind(
-      this
-    );
+    this.renderCompatibilitySection =
+      this.renderCompatibilitySection.bind(this);
+    this.getCompatibilityTableColumns =
+      this.getCompatibilityTableColumns.bind(this);
 
     this.openSharingModal = this.openSharingModal.bind(this);
     this.renderFileSection = this.renderFileSection.bind(this);
@@ -310,16 +308,16 @@ class UserDatasetDetail extends React.Component {
     const isOwner = this.isMyDataset();
     return (
       <div className={classify('Actions')}>
-        <button className="btn btn-error" onClick={this.handleDelete}>
-          {isOwner ? 'Delete' : 'Remove'}
-          <Icon fa="trash" className="right-side" />
-        </button>
         {!isOwner ? null : (
           <button className="btn btn-success" onClick={this.openSharingModal}>
-            Share
-            <Icon fa="share-alt" className="right-side" />
+            <Icon fa="share-alt" className="left-side" />
+            Grant Access to {this.props.dataNoun.singular}
           </button>
         )}
+        <button className="btn btn-error" onClick={this.handleDelete}>
+          <Icon fa="trash" className="left-side" />
+          Delete
+        </button>
       </div>
     );
   }
@@ -529,6 +527,7 @@ class UserDatasetDetail extends React.Component {
       userDataset,
       shareUserDatasets,
       unshareUserDatasets,
+      dataNoun,
     } = this.props;
     const AllDatasetsLink = this.renderAllDatasetsLink;
     if (!userDataset)
@@ -552,6 +551,7 @@ class UserDatasetDetail extends React.Component {
             onClose={this.closeSharingModal}
             shareUserDatasets={shareUserDatasets}
             unshareUserDatasets={unshareUserDatasets}
+            dataNoun={dataNoun}
           />
         )}
       </div>
