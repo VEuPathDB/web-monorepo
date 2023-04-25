@@ -75,7 +75,7 @@ const siteAnnouncements = [
   },
 */
 
-
+/*
 {   
     id: 'mbio-beta',
     renderDisplay: (props) => {
@@ -91,6 +91,8 @@ const siteAnnouncements = [
       return null;
     }
   },
+*/
+
 /*
 {  
     id: 'clinepiEDA',
