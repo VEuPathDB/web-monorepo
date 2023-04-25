@@ -54,7 +54,7 @@ import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
 import { VariableLink, VariableLinkConfig } from '../VariableLink';
 
 const baseFieldNodeLinkStyle = {
-  padding: '0.25em 0.5em',
+  padding: '0 0.5em',
   borderRadius: '0.5em',
   display: 'inline-block',
   cursor: 'pointer',
@@ -87,7 +87,11 @@ const useFieldNodeCssSelectors = () => {
         ...baseFieldNodeLinkStyle,
         ...activeFieldNodeLinkStyle,
       },
-      '.single-select-anchor-node': { marginLeft: '0.5em' },
+      '.single-select-anchor-node': {
+        marginLeft: '0.5em',
+        alignSelf: 'center',
+        padding: '0.25em 0.5em',
+      },
       '.dropdown-node-color': { color: '#2f2f2f' },
       '.base-node-color': {
         color: themePrimaryColor ?? '#069',
@@ -95,7 +99,7 @@ const useFieldNodeCssSelectors = () => {
       '.entity-node': {
         fontWeight: 'bold',
         cursor: 'pointer',
-        padding: '0.25em 0.5em',
+        padding: '0 0.5em',
       },
       '.starred-var-container': {
         display: 'flex',
@@ -787,6 +791,9 @@ export default function VariableList({
       treeNode: {
         nodeWrapper: {
           padding: 0,
+        },
+        topLevelNodeWrapper: {
+          padding: '0.25em 0.5em',
         },
       },
       treeLinks: {
