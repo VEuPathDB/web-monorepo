@@ -6,6 +6,7 @@ import {
   PromiseResult,
   useAnalysis,
   useDataClient,
+  useDownloadClient,
   useFindEntityAndVariable,
   usePromise,
   useStudyEntities,
@@ -74,6 +75,8 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
+import DownloadTab from '../../workspace/DownloadTab';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -186,6 +189,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+
+  const downloadClient = useDownloadClient();
 
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
@@ -424,7 +429,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                width: '80vw',
+                width: '70vw',
+                maxWidth: 1500,
                 maxHeight: 650,
                 padding: '0 25px',
               }}
@@ -467,7 +473,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Download,
         icon: <Download />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <DownloadTab
+                downloadClient={downloadClient}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </div>
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Share,
@@ -513,8 +536,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                // This matches the `marginTop` applied by `<NotesTab />`
-                padding: '0 35px',
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
               }}
             >
               <NotesTab analysisState={analysisState} />
@@ -525,7 +549,23 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+                fontSize: '.95em',
+              }}
+            >
+              <RecordController
+                recordClass="dataset"
+                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+              />
+            </div>
+          );
+        },
       },
     ];
 

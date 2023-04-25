@@ -23,6 +23,7 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
+  DataNoun,
   UserDataset,
   UserDatasetMeta,
   UserDatasetShare,
@@ -35,6 +36,9 @@ import { normalizePercentage, textCell } from '../UserDatasetUtils';
 
 import './UserDatasetList.scss';
 import { DateTime } from '../DateTime';
+
+import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
+import { ThemedDeleteButton } from '../ThemedDeleteButton';
 
 interface Props {
   baseUrl: string;
@@ -59,6 +63,7 @@ interface Props {
   ) => any;
   updateProjectFilter: (filterByProject: boolean) => any;
   quotaSize: number;
+  dataNoun: DataNoun;
 }
 
 interface State {
@@ -105,9 +110,8 @@ class UserDatasetList extends React.Component<Props, State> {
     this.getEventHandlers = this.getEventHandlers.bind(this);
     this.filterAndSortRows = this.filterAndSortRows.bind(this);
     this.onSearchTermChange = this.onSearchTermChange.bind(this);
-    this.onMetaAttributeSaveFactory = this.onMetaAttributeSaveFactory.bind(
-      this
-    );
+    this.onMetaAttributeSaveFactory =
+      this.onMetaAttributeSaveFactory.bind(this);
 
     this.renderOwnerCell = this.renderOwnerCell.bind(this);
     this.renderStatusCell = this.renderStatusCell.bind(this);
@@ -361,16 +365,17 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset } = this.props;
+    const { removeUserDataset, dataNoun } = this.props;
     return [
       {
         callback: (rows: UserDataset[]) => {
           this.openSharingModal();
         },
         element: (
-          <button className="btn btn-info">
-            Share Datasets <Icon fa="share-alt right-side" />
-          </button>
+          <ThemedGrantAccessButton
+            buttonText={`Grant Access to ${dataNoun.plural}`}
+            onPress={() => null}
+          />
         ),
         selectionRequired: true,
       },
@@ -378,8 +383,8 @@ class UserDatasetList extends React.Component<Props, State> {
         callback: (userDatasets: UserDataset[]) => {
           const [noun, pronoun] =
             userDatasets.length === 1
-              ? ['this dataset', 'it']
-              : ['these datasets', 'them'];
+              ? [`this ${this.props.dataNoun.singular.toLowerCase()}`, 'it']
+              : [`these ${this.props.dataNoun.plural.toLowerCase()}`, 'them'];
 
           const affectedUsers: UserDatasetShare[] = userDatasets.reduce(
             (
@@ -416,9 +421,7 @@ class UserDatasetList extends React.Component<Props, State> {
           userDatasets.forEach((userDataset) => removeUserDataset(userDataset));
         },
         element: (
-          <button className="btn btn-error">
-            Remove <Icon fa="trash-o right-side" />
-          </button>
+          <ThemedDeleteButton buttonText="Delete" onPress={() => null} />
         ),
         selectionRequired: true,
       },
@@ -427,10 +430,11 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableOptions() {
     const { isRowSelected, toggleProjectScope } = this;
-    const { userDatasets, projectName, filterByProject } = this.props;
+    const { userDatasets, projectName, filterByProject, dataNoun } = this.props;
     const emptyMessage = !userDatasets.length ? (
       <p style={{ textAlign: 'center' }}>
-        This page is empty because you do not have any data sets.
+        This page is empty because you do not have any{' '}
+        {dataNoun.plural.toLowerCase()}.
       </p>
     ) : filterByProject ? (
       <React.Fragment>
@@ -442,7 +446,7 @@ class UserDatasetList extends React.Component<Props, State> {
           className="btn btn-info"
           onClick={() => toggleProjectScope(false)}
         >
-          Show All User Datasets
+          Show All User {dataNoun.plural}
         </button>
       </React.Fragment>
     ) : (
@@ -546,6 +550,7 @@ class UserDatasetList extends React.Component<Props, State> {
       unshareUserDatasets,
       filterByProject,
       quotaSize,
+      dataNoun,
     } = this.props;
     const { uiState, selectedRows, searchTerm, sharingModalOpen } = this.state;
 
@@ -596,16 +601,19 @@ class UserDatasetList extends React.Component<Props, State> {
                     shareUserDatasets={shareUserDatasets}
                     unshareUserDatasets={unshareUserDatasets}
                     onClose={this.closeSharingModal}
+                    dataNoun={dataNoun}
                   />
                 ) : null}
                 <SearchBox
-                  placeholderText="Search Datasets"
+                  placeholderText={'Search ' + dataNoun.plural}
                   searchTerm={searchTerm}
                   onSearchTermChange={this.onSearchTermChange}
                 />
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
                   Showing {filteredRows.length} of {rows.length}{' '}
-                  {`data set${rows.length === 1 ? '' : 's'}`}
+                  {rows.length === 1
+                    ? dataNoun.singular.toLowerCase()
+                    : dataNoun.plural.toLowerCase()}
                 </div>
                 {offerProjectToggle && (
                   <div
@@ -620,7 +628,8 @@ class UserDatasetList extends React.Component<Props, State> {
                       onClick={() => toggleProjectScope(!filterByProject)}
                       style={{ display: 'inline-block' }}
                     >
-                      Only show data sets related to <b>{projectName}</b>
+                      Only show {dataNoun.plural.toLowerCase()} related to{' '}
+                      <b>{projectName}</b>
                     </div>
                   </div>
                 )}
