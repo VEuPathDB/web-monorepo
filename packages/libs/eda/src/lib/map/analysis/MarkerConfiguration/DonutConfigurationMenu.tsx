@@ -12,13 +12,13 @@ export function DonutConfigurationMenu({
   toggleStarredVariable,
 }: Props) {
   return (
-    <div>
+    <div style={{ minWidth: 300 }}>
       <H6>Configure Donuts</H6>
       <Paragraph
         styleOverrides={{
           padding: 0,
           margin: 0,
-          fontWeight: 'bold',
+          fontWeight: 500,
         }}
       >
         Color:
