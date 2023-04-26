@@ -9,7 +9,7 @@ import LegendListRadioButton from './LegendListRadioButton';
 // legend tutorial info
 import LegendListInfo from './LegendListInfo';
 // import legend css for positioning: place this at the end of other CSS to override pre-existing ones
-import './legend-style.css';
+import './styles/legend-style.css';
 
 // type def for legend: some are set to optional for now
 export interface LegendProps {

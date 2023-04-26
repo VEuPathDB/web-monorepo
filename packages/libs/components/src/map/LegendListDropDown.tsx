@@ -4,7 +4,7 @@ import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import legend css for positioning: place this at the end of other CSS to override pre-existing ones
-import './legend-style.css';
+import './styles/legend-style.css';
 
 interface LegendListDropDownProps {
   legendType: string;
