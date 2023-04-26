@@ -8,6 +8,7 @@ import {
 } from '@visx/hierarchy/lib/types';
 import { Line } from '@visx/shape';
 import { LinearGradient } from '@visx/gradient';
+import './diagram.css';
 
 interface CustomNodeProps {
   node: HierarchyPointNode<StudyData>;
@@ -420,20 +421,20 @@ export default function EntityDiagram({
         </defs>
         {/*Node background shading definitions*/}
         {entityCounts &&
-          Object.entries(
-            entityCounts
-          ).map(([entityId, { total, filtered }]) => (
-            <LinearGradient
-              key={entityId}
-              vertical={false}
-              x1={0}
-              x2={filtered / total}
-              fromOffset={1}
-              id={`rect-gradient-${entityId}`}
-              from={shadingColor}
-              to={isExpanded ? '#cccccc' : 'white'}
-            />
-          ))}
+          Object.entries(entityCounts).map(
+            ([entityId, { total, filtered }]) => (
+              <LinearGradient
+                key={entityId}
+                vertical={false}
+                x1={0}
+                x2={filtered / total}
+                fromOffset={1}
+                id={`rect-gradient-${entityId}`}
+                from={shadingColor}
+                to={isExpanded ? '#cccccc' : 'white'}
+              />
+            )
+          )}
         <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
             <Group left={treeLeft} top={treeTop}>
