@@ -10,22 +10,10 @@
   z-index: 10;
   padding: 7px 0px;
 
-  &--collapsed {
-    // The header gets out of the way by tucking itself. It accomplishes
-    // this by decreasing height (and padding) to 0px. You just can't see
-    // 0px things, can you?
-    top: -1px;
-    height: 0px;
-    padding: 0px;
-  }
-
   &__Contents {
     align-items: center;
     display: flex;
     justify-content: flex-start;
-    &--collapsed {
-      visibility: hidden;
-    }
   }
 
   &__LogoContainer {
@@ -88,66 +76,4 @@
     padding: 0;
     font-size: 19px;
   }
-}
-
-.OpenCloseToggleButton {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  // Stick the expand button in the viewport's center.
-  // and beneath
-  bottom: -10px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  .Button {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    margin-right: 0;
-    position: absolute;
-    height: 20px;
-    width: 60px;
-    z-index: 10;
-    padding: 0;
-    border-radius: 0 0 3px 3px;
-
-    &--collapsed {
-      margin-top: 50px;
-    }
-
-    &__SvgContainer {
-      border: none;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      fill: #000;
-    }
-  }
-
-  &__ArrowIcon {
-    transform: rotate(-90deg);
-    font-size: 20px;
-
-    &--collapsed {
-      transform: rotate(90deg);
-    }
-  }
-}
-
-.screenReaderOnly {
-  /* TLDR: The [aria-label] attribute isn’t announced consistently 
-  If text is not needed for sighted users, hide it this way. 
-  https://gomakethings.com/revisting-aria-label-versus-a-visually-hidden-class/#:~:text=In%20the%20posts%2C%20I%20recommended,visually%20shown%20to%20sighted%20users. */
-  border: 0;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  display: inline-block;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  padding: 0;
-  position: relative;
-  width: 1px;
 }
