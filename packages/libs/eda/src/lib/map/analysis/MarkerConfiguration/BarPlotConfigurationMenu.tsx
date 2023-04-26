@@ -50,7 +50,7 @@ export function BarPlotConfigurationMenu({
         containerStyles={{
           marginTop: 20,
         }}
-        label="Plot mode"
+        label="Y-axis"
         selectedOption={selectedPlotMode || 'count'}
         options={['count', 'proportion']}
         optionLabels={['Count', 'Proportion']}
