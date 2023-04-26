@@ -205,7 +205,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       // check xAxisVariable is changed
-      const keepMainAxisSettings = isEqual(
+      const keepDependentAxisSettings = isEqual(
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -218,13 +218,13 @@ function BarplotViz(props: VisualizationProps<Options>) {
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        dependentAxisRange: keepMainAxisSettings
+        dependentAxisRange: keepDependentAxisSettings
           ? vizConfig.dependentAxisRange
           : undefined,
-        dependentAxisLogScale: keepMainAxisSettings
+        dependentAxisLogScale: keepDependentAxisSettings
           ? vizConfig.dependentAxisLogScale
           : false,
-        dependentAxisValueSpec: keepMainAxisSettings
+        dependentAxisValueSpec: keepDependentAxisSettings
           ? vizConfig.dependentAxisValueSpec
           : 'Full',
       });

@@ -215,7 +215,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     (selectedVariables: VariablesByInputName) => {
       const { xAxisVariable, overlayVariable, facetVariable } =
         selectedVariables;
-      const keepIndependentAxisSettings = isEqual(
+      const keepMainAxisSettings = isEqual(
         xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -224,25 +224,25 @@ function HistogramViz(props: VisualizationProps<Options>) {
         xAxisVariable,
         overlayVariable,
         facetVariable,
-        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepIndependentAxisSettings
+        binWidth: keepMainAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepMainAxisSettings
           ? vizConfig.binWidthTimeUnit
           : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        independentAxisRange: keepIndependentAxisSettings
+        independentAxisRange: keepMainAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
-        dependentAxisRange: keepIndependentAxisSettings
+        dependentAxisRange: keepMainAxisSettings
           ? vizConfig.dependentAxisRange
           : undefined,
-        dependentAxisLogScale: keepIndependentAxisSettings
+        dependentAxisLogScale: keepMainAxisSettings
           ? vizConfig.dependentAxisLogScale
           : false,
-        independentAxisValueSpec: keepIndependentAxisSettings
+        independentAxisValueSpec: keepMainAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
-        dependentAxisValueSpec: keepIndependentAxisSettings
+        dependentAxisValueSpec: keepMainAxisSettings
           ? vizConfig.dependentAxisValueSpec
           : 'Full',
       });
