@@ -359,7 +359,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
-      const keepValues = isEqual(
+      const keepDependentAxisSettings = isEqual(
         selectedVariables.yAxisVariable,
         vizConfig.yAxisVariable
       );
@@ -389,8 +389,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
         independentAxisRange: keepIndependentAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
-        dependentAxisRange: undefined,
-        ...(keepValues
+        dependentAxisRange: keepDependentAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
+        ...(keepDependentAxisSettings
           ? {}
           : {
               numeratorValues: undefined,
@@ -398,16 +400,19 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 yAxisVar != null ? yAxisVar.vocabulary : undefined,
             }),
         independentAxisLogScale: false,
-        dependentAxisLogScale: false,
+        dependentAxisLogScale: keepDependentAxisSettings
+          ? vizConfig.dependentAxisLogScale
+          : undefined,
         independentAxisValueSpec: keepIndependentAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
-        dependentAxisValueSpec:
-          yAxisVar != null
-            ? isSuitableCategoricalVariable(yAxisVar)
-              ? 'Full'
-              : 'Auto-zoom'
-            : 'Full',
+        dependentAxisValueSpec: keepDependentAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : yAxisVar != null
+          ? isSuitableCategoricalVariable(yAxisVar)
+            ? 'Full'
+            : 'Auto-zoom'
+          : 'Full',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
