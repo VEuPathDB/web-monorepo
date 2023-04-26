@@ -164,6 +164,9 @@ export default function DraggablePanel({
             // the top of the panel with position sticky and top 0.
             position: sticky;
             top: 0;
+            // We give the drag handle a z-index of 2 and the content's container a
+            // z-index of 1, thereby ensuring the drag handle renders above the content.
+            z-index: 2;
             width: 100%;
           `}
         >
@@ -189,6 +192,12 @@ export default function DraggablePanel({
         <div
           css={css`
             border-radius: 7px;
+            // We want the content to render below the drag handle, so let's put this
+            // container in the same stacking context as the drag handle by giving it
+            // position: relative. Then, we'll give the drag handle a z-index of 2
+            // and the content's container a z-index of 1.
+            position: relative;
+            z-index: 1;
           `}
         >
           {children}
