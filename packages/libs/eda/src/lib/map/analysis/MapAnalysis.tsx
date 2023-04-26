@@ -83,6 +83,7 @@ import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
+import { useVizConfig } from '../../core/hooks/visualizations';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -419,6 +420,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
 
+  const [barPlotMode, setBarPlotMode] = useState('count');
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -467,6 +470,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                         []
                       }
                       toggleStarredVariable={toggleStarredVariable}
+                      onPlotSelected={setBarPlotMode}
+                      selectedPlotMode={barPlotMode}
                     />
                   ),
                 },

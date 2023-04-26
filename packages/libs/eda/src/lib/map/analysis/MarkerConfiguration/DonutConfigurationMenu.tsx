@@ -1,4 +1,4 @@
-import { H6, Paragraph } from '@veupathdb/coreui';
+import { H6 } from '@veupathdb/coreui';
 import {
   InputVariables,
   Props,
@@ -12,19 +12,26 @@ export function DonutConfigurationMenu({
   toggleStarredVariable,
 }: Props) {
   return (
-    <div style={{ minWidth: 300 }}>
-      <H6>Configure Donuts</H6>
-      <Paragraph
-        styleOverrides={{
-          padding: 0,
-          margin: 0,
-          fontWeight: 500,
+    <div>
+      <H6
+        additionalStyles={{
+          padding: '10px 25px 10px 25px',
+          textAlign: 'center',
+        }}
+      >
+        Configure Donuts:
+      </H6>
+      <p
+        style={{
+          paddingLeft: 7,
+          margin: '5px 0 0 0',
+          fontWeight: 'bold',
         }}
       >
         Color:
-      </Paragraph>
+      </p>
       <InputVariables
-        inputs={[{ name: 'overlay', label: 'Variable' }]}
+        inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
         entities={entities}
         selectedVariables={selectedVariables}
         onChange={onChange}
