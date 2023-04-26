@@ -38,7 +38,6 @@ import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
 import { SiteInformationProps } from '..';
 import MapVizManagement from './MapVizManagement';
-import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import {
@@ -83,7 +82,6 @@ import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
-import { useVizConfig } from '../../core/hooks/visualizations';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -417,10 +415,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const [selectedMarkerConfigurationName, setSelectedMarkerConfigurationName] =
     useState('');
+  const [barPlotMode, setBarPlotMode] = useState('count');
+
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
-
-  const [barPlotMode, setBarPlotMode] = useState('count');
 
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
@@ -665,7 +663,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const intialActiveSideMenuIndex: number | undefined = (() => {
-    if (appState.isSubsetPanelOpen) return filterSideMenuItemIndex;
     if (appState.activeVisualizationId) return plotSideMenuItemIndex;
 
     return undefined;
