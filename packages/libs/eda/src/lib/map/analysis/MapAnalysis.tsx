@@ -82,6 +82,7 @@ import { DonutConfigurationMenu } from './MarkerConfiguration/DonutConfiguration
 import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -437,6 +438,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   name: 'Donuts',
                   renderConfigurationMenu: (
                     <DonutConfigurationMenu
+                      inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                      entities={studyEntities}
+                      selectedVariables={selectedVariables}
+                      onChange={(selectedVariables) =>
+                        setSelectedOverlayVariable(selectedVariables.overlay)
+                      }
+                      starredVariables={
+                        analysisState.analysis?.descriptor.starredVariables ??
+                        []
+                      }
+                      toggleStarredVariable={toggleStarredVariable}
+                    />
+                  ),
+                },
+                {
+                  name: 'Bar plots',
+                  renderConfigurationMenu: (
+                    <BarPlotConfigurationMenu
                       inputs={[{ name: 'overlay', label: 'Overlay' }]}
                       entities={studyEntities}
                       selectedVariables={selectedVariables}
