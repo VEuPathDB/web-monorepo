@@ -89,7 +89,11 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = (props) => {
 const VEuPathDBHomePageViewFull: FunctionComponent<Props> = (props) => {
   const cx = makeClassNameHelper('wdk-RootContainer');
   return (
-    <div className={cx('', props.classNameModifier)}>{props.children}</div>
+    <VEuPathDBSnackbarProvider styleProps={{ headerExpanded: false }}>
+      <ReduxNotificationHandler>
+        <div className={cx('', props.classNameModifier)}>{props.children}</div>
+      </ReduxNotificationHandler>
+    </VEuPathDBSnackbarProvider>
   );
 };
 
@@ -531,11 +535,11 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'mapveu',
+          key: 'mapveu-alpha',
           display: 'MapVEu Alpha',
           tooltip: 'Population Biology map',
           type: 'reactRoute',
-          url: '/workspace/analyses/studies',
+          url: '/maps',
           metadata: {
             include: useEda ? [VectorBase] : [],
           },
