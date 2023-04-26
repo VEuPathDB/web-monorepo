@@ -554,7 +554,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
             return {
               label: dataItem.name,
               // histogram plot does not have mode, so set to square for now
-              marker: 'square',
+              marker: 'square' as const,
               markerColor:
                 dataItem.name === 'No data'
                   ? '#E8E8E8'

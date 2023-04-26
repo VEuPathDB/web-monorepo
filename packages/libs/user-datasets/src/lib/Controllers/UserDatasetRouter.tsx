@@ -7,7 +7,7 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 import UserDatasetsWorkspace from '../Components/UserDatasetsWorkspace';
 
 import { makeDatasetUploadPageConfig } from '../Utils/upload-config';
-import { DatasetUploadTypeConfig } from '../Utils/types';
+import { DatasetUploadTypeConfig, DataNoun } from '../Utils/types';
 
 import UserDatasetDetailController, {
   UserDatasetDetailProps,
@@ -24,6 +24,7 @@ interface Props<T1 extends string = string, T2 extends string = string> {
     string,
     ComponentType<UserDatasetDetailProps>
   >;
+  dataNoun: DataNoun;
 }
 
 export function UserDatasetRouter<T1 extends string, T2 extends string>({
@@ -34,6 +35,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   workspaceTitle,
   helpTabContents,
   detailComponentsByTypeName,
+  dataNoun,
 }: Props<T1, T2>) {
   const { path, url } = useRouteMatch();
 
@@ -54,6 +56,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               detailsPageTitle={detailsPageTitle}
               workspaceTitle={workspaceTitle}
               detailComponentsByTypeName={detailComponentsByTypeName}
+              dataNoun={dataNoun}
               {...props.match.params}
             />
           );
@@ -82,6 +85,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
               urlParams={urlParams}
               workspaceTitle={workspaceTitle}
               helpTabContents={helpTabContents}
+              dataNoun={dataNoun}
             />
           );
         }}

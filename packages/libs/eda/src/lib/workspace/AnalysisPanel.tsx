@@ -35,7 +35,6 @@ import {
   ErrorBoundary,
   RecordController,
 } from '@veupathdb/wdk-client/lib/Controllers';
-import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
@@ -144,7 +143,6 @@ export function AnalysisPanel({
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
-  // const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
   const [sharingModalVisible, setSharingModalVisible] =
     useState<boolean>(false);
 
@@ -170,6 +168,17 @@ export function AnalysisPanel({
         .subsetting
     ? 'approved'
     : 'not-approved';
+
+  const isDatasetAUserStudy = Boolean(
+    !permissionsValue.loading &&
+      !hideSavedAnalysisButtons &&
+      permissionsValue.permissions.perDataset[studyId]?.isUserStudy
+  );
+  const isCurrentUserStudyManager = Boolean(
+    !permissionsValue.loading &&
+      !hideSavedAnalysisButtons &&
+      permissionsValue.permissions.perDataset[studyId]?.isManager
+  );
 
   const previousAnalysisId = usePrevious(analysisId);
 
@@ -245,6 +254,10 @@ export function AnalysisPanel({
           analysisState={analysisState}
           sharingUrlPrefix={sharingUrlPrefix}
           showLoginForm={showLoginForm}
+          contextForUserDataset={{
+            isUserStudy: isDatasetAUserStudy,
+            isCurrentUserStudyManager,
+          }}
         />
         <div
           css={
@@ -266,31 +279,12 @@ export function AnalysisPanel({
             deleteAnalysis={
               hideSavedAnalysisButtons ? undefined : deleteAnalysis
             }
-            // onFilterIconClick={() =>
-            //   setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
-            // }
-            // globalFiltersDialogOpen={globalFiltersDialogOpen}
             displaySharingModal={
               hideSavedAnalysisButtons
                 ? undefined
                 : () => setSharingModalVisible(true)
             }
           />
-          {/* <GlobalFiltersDialog
-            open={globalFiltersDialogOpen}
-            setOpen={setGlobalFiltersDialogOpen}
-            entities={entities}
-            filters={analysis.descriptor.subset.descriptor}
-            setFilters={setFilters}
-            removeFilter={(filter) =>
-              setFilters(
-                analysis.descriptor.subset.descriptor.filter(
-                  (f) => f !== filter
-                )
-              )
-            }
-            variableLinkConfig={variableLinkConfig}
-          /> */}
           <Route
             path={[
               `${routeBase}/variables/:entityId?/:variableId?`,

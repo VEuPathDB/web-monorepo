@@ -3,9 +3,11 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
+  EntityDiagram,
   PromiseResult,
   useAnalysis,
   useDataClient,
+  useDownloadClient,
   useFindEntityAndVariable,
   usePromise,
   useStudyEntities,
@@ -26,6 +28,7 @@ import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
 import {
   useFeaturedFields,
+  useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
@@ -74,6 +77,9 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
+import { uniq } from 'lodash';
+import DownloadTab from '../../workspace/DownloadTab';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -160,6 +166,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariables.overlay) ?? {};
 
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
   const {
     markers,
     pending,
@@ -175,7 +183,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
-    filters: analysisState.analysis?.descriptor.subset.descriptor,
+    filters,
     xAxisVariable: selectedVariables.overlay,
     computationType: 'pass',
     markerType: 'pie',
@@ -186,6 +194,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+
+  const downloadClient = useDownloadClient();
 
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
@@ -313,6 +323,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   const FilterChipListForHeader = () => {
+    if (!studyEntities || !filters) return <></>;
+
     const filterChipConfig: VariableLinkConfig = {
       type: 'button',
       onClick(value) {
@@ -320,10 +332,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         openSubsetPanelFromControlOutsideOfNavigation();
       },
     };
-
-    const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
-    if (!studyEntities || !filters) return <></>;
 
     return (
       <div
@@ -410,6 +418,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       </div>
     );
 
+  const filteredEntities = uniq(filters?.map((f) => f.entityId));
+  const getDefaultVariableId = useGetDefaultVariableIdCallback();
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -424,18 +435,47 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                width: '80vw',
+                width: '70vw',
+                maxWidth: 1500,
                 maxHeight: 650,
                 padding: '0 25px',
               }}
             >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <EntityDiagram
+                  expanded
+                  orientation="horizontal"
+                  selectedEntity={subsetVariableAndEntity.entityId}
+                  selectedVariable={subsetVariableAndEntity.variableId}
+                  entityCounts={totalCounts.value}
+                  filteredEntityCounts={filteredCounts.value}
+                  filteredEntities={filteredEntities}
+                  variableLinkConfig={{
+                    type: 'button',
+                    onClick: (variableValue) => {
+                      setSubsetVariableAndEntity({
+                        entityId: variableValue?.entityId,
+                        variableId: variableValue?.variableId
+                          ? variableValue.variableId
+                          : getDefaultVariableId(variableValue?.entityId),
+                      });
+                    },
+                  }}
+                />
+              </div>
               <Subsetting
                 variableLinkConfig={{
                   type: 'button',
                   onClick: setSubsetVariableAndEntity,
                 }}
                 entityId={subsetVariableAndEntity?.entityId ?? ''}
-                variableId={subsetVariableAndEntity?.variableId ?? ''}
+                variableId={subsetVariableAndEntity.variableId ?? ''}
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
@@ -467,7 +507,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Download,
         icon: <Download />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <DownloadTab
+                downloadClient={downloadClient}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </div>
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Share,
@@ -489,7 +546,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 />
               );
             }
-            return <ConfirmShareAnalysis sharingURL={sharingUrl} />;
+            return <ConfirmShareAnalysis sharingUrl={sharingUrl} />;
           }
 
           return (
@@ -513,8 +570,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                // This matches the `marginTop` applied by `<NotesTab />`
-                padding: '0 35px',
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
               }}
             >
               <NotesTab analysisState={analysisState} />
@@ -525,7 +583,23 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+                fontSize: '.95em',
+              }}
+            >
+              <RecordController
+                recordClass="dataset"
+                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+              />
+            </div>
+          );
+        },
       },
     ];
 
@@ -727,6 +801,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     <MapLegend
                       legendItems={legendItems}
                       title={overlayVariable?.displayName}
+                      // control to show checkbox. default: true
+                      showCheckbox={false}
                     />
                   )}
                 </FloatingDiv>
@@ -809,4 +885,34 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       }}
     </PromiseResult>
   );
+}
+
+/**
+ * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
+ * kind of test and simplify its logic.
+ */
+export function useGetDefaultVariableIdCallback() {
+  const entities = useStudyEntities();
+  const flattenedFields = useFlattenedFields(entities, 'variableTree');
+  const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
+
+  return function getDefaultVariableIdCallback(entityId?: string) {
+    let finalVariableId: string | undefined;
+
+    if (entityId || featuredFields.length === 0) {
+      // Use the first variable in the entity
+      const entity = entityId
+        ? entities.find((e) => e.id === entityId)
+        : entities[0];
+      finalVariableId =
+        entity &&
+        findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1];
+    } else {
+      // Use the first featured variable
+      [finalVariableId] = featuredFields[0].term.split('/');
+    }
+
+    return finalVariableId;
+  };
 }

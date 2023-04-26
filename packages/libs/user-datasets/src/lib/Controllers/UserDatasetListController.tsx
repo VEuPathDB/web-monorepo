@@ -20,7 +20,7 @@ import { quotaSize } from '../Components/UserDatasetUtils';
 
 import { StateSlice } from '../StoreModules/types';
 
-import { UserDataset } from '../Utils/types';
+import { DataNoun, UserDataset } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
 
@@ -45,6 +45,7 @@ interface OwnProps extends RouteComponentProps<{}> {
   hasDirectUpload: boolean;
   helpRoute: string;
   workspaceTitle: string;
+  dataNoun: DataNoun;
 }
 type Props = {
   ownProps: OwnProps;
@@ -70,10 +71,8 @@ class UserDatasetListController extends PageController<Props> {
     if (config == null) {
       return true;
     }
-    const {
-      uploads,
-      badAllUploadsActionMessage,
-    } = this.props.stateProps.userDatasetUpload;
+    const { uploads, badAllUploadsActionMessage } =
+      this.props.stateProps.userDatasetUpload;
     return (
       hasDirectUpload && uploads == null && badAllUploadsActionMessage == null
     );
@@ -120,12 +119,8 @@ class UserDatasetListController extends PageController<Props> {
 
     const { projectId, displayName: projectName } = config;
 
-    const {
-      baseUrl,
-      hasDirectUpload,
-      helpRoute,
-      location,
-    } = this.props.ownProps;
+    const { baseUrl, hasDirectUpload, helpRoute, location, dataNoun } =
+      this.props.ownProps;
 
     const {
       userDatasetList: { userDatasets, userDatasetsById, filterByProject },
@@ -147,6 +142,7 @@ class UserDatasetListController extends PageController<Props> {
       baseUrl,
       user,
       location,
+      dataNoun,
       projectId,
       projectName,
       numOngoingUploads,
