@@ -7,7 +7,7 @@ import React from 'react';
 // import { MapComponent } from 'react-leaflet'
 
 //resize CSS
-import './sidebar-resize.css';
+import './styles/sidebar-resize.css';
 
 //re-resizable
 import { Resizable } from 're-resizable';
