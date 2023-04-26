@@ -14,7 +14,7 @@ export interface LegendItemsProps {
 
 export interface PlotListLegendProps {
   legendItems: LegendItemsProps[];
-  checkedLegendItems: string[] | undefined;
+  checkedLegendItems?: string[];
   onCheckedLegendItemsChange?: (checkedLegendItems: string[]) => void;
   // add a condition to show legend for single overlay data
   showOverlayLegend?: boolean;

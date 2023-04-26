@@ -19,7 +19,6 @@ export function MapLegend(props: Props) {
         type="list"
         legendItems={legendItems}
         showOverlayLegend
-        checkedLegendItems={legendItems.map((item) => item.label)}
         containerStyles={{
           border: 'none',
           boxShadow: 'none',
