@@ -138,7 +138,7 @@ export function useStandaloneMapMarkers(
       outputEntity,
       overlayVariableAndEntity,
     };
-  }, [geoConfig, overlayVariable, entities]);
+  }, [geoConfig, overlayVariable, entities, findEntityAndVariable]);
 
   // handle the geoAggregateVariable separately because it changes with zoom level
   // and we don't want that to change overlayVariableAndEntity etc because that invalidates
@@ -178,6 +178,13 @@ export function useStandaloneMapMarkers(
     overlayConfig?: OverlayConfig;
   };
 
+  // The categorical overlay config changes when the vocabulary changes,
+  // while the continuous overlay is filter-sensitive.
+  // But only one or the other is a dependency for the markerVariableBundlePromise
+  // so we combine them and "demultiplex" it inside the callback using type guards
+  const vocabularyOrFilters: string[] | Filter[] | undefined =
+    overlayVariableAndEntity?.variable.vocabulary ?? filters;
+
   const markerVariableBundlePromise = usePromise<
     MarkerVariableBundle | undefined
   >(
@@ -187,11 +194,10 @@ export function useStandaloneMapMarkers(
         overlayVariable != null &&
         outputEntity != null
       ) {
-        const vocabulary = overlayVariableAndEntity.variable.vocabulary ?? [];
-
-        if (vocabulary.length) {
+        if (isNonEmptyStringArray(vocabularyOrFilters)) {
           // categorical
           // If the variable has "too many" values, get the top 7 from the distribution service
+          const vocabulary = vocabularyOrFilters;
           const overlayValues =
             vocabulary.length <= ColorPaletteDefault.length
               ? vocabulary
@@ -210,8 +216,12 @@ export function useStandaloneMapMarkers(
             },
             outputEntityId: outputEntity.id,
           };
-        } else {
+        } else if (
+          isFilterArray(vocabularyOrFilters) ||
+          vocabularyOrFilters == null
+        ) {
           // continuous
+          const filters = vocabularyOrFilters;
           const overlayBins = await getBinRanges({
             studyId,
             filters: filters ?? [],
@@ -238,11 +248,10 @@ export function useStandaloneMapMarkers(
     }, [
       overlayVariable,
       outputEntity,
-      // categorical overlay config changes when the vocabulary changes,
-      // while the continuous overlay is also filter-sensitive
-      overlayVariableAndEntity?.variable.vocabulary ?? filters,
+      vocabularyOrFilters,
       studyId,
       subsettingClient,
+      dataClient,
     ])
   );
 
@@ -595,4 +604,18 @@ async function getBinRanges({
 
 function fixLabelForOtherValues(input: string): string {
   return input === TOKEN_UNSELECTED ? 'All other values' : input;
+}
+
+function isNonEmptyStringArray(
+  value: unknown[] | undefined
+): value is string[] {
+  return (
+    value != null &&
+    value.length > 0 &&
+    value.every((item) => typeof item === 'string')
+  );
+}
+
+function isFilterArray(value: unknown[] | undefined): value is Filter[] {
+  return value != null && value.every((item) => Filter.is(item));
 }
