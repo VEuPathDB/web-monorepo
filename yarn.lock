@@ -7989,6 +7989,7 @@ __metadata:
     "@veupathdb/browserslist-config": "workspace:^"
     "@veupathdb/coreui": "workspace:^"
     "@veupathdb/eslint-config": "workspace:^"
+    "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/tsconfig": "workspace:^"
     "@visx/axis": ^3.1.0
     "@visx/gradient": ^1.0.0
@@ -8227,6 +8228,7 @@ __metadata:
     "@veupathdb/components": "workspace:^"
     "@veupathdb/coreui": "workspace:^"
     "@veupathdb/eda": "workspace:^"
+    "@veupathdb/eslint-config": "workspace:^"
     "@veupathdb/http-utils": "workspace:^"
     "@veupathdb/multi-blast": "workspace:^"
     "@veupathdb/preferred-organisms": "workspace:^"
