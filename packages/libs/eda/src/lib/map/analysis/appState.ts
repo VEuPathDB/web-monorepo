@@ -21,6 +21,7 @@ export const AppState = t.intersection([
   }),
   t.partial({
     selectedOverlayVariable: VariableDescriptor,
+    /** markerconfigs [] define marker configs in iots & `activeMarkerType` */
     activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,

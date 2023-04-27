@@ -76,12 +76,19 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { MarkerConfigurationSelector } from './MarkerConfigurationSelector';
-import { DonutConfigurationMenu } from './MarkerConfiguration/DonutConfigurationMenu';
+import { MarkerConfigurationSelector } from './MarkerConfiguration';
+import {
+  DonutConfigurationMenu,
+  DonutMarkerConfiguration,
+} from './MarkerConfiguration/DonutConfigurationMenu';
 import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
+import {
+  BarPlotConfigurationMenu,
+  BarPlotMarkerConfiguration,
+} from './MarkerConfiguration/BarPlotConfigurationMenu';
+import { MarkerConfiguration } from './MarkerConfiguration';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -169,7 +176,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     findEntityAndVariable(selectedVariables.overlay) ?? {};
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
+  /**
+   * Keep track of which marker type is active. `markerType` -> activeMarkerType `xAxisVariable`: selectedVariables.overlay
+   */
   const {
     markers,
     pending,
@@ -413,13 +422,54 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     marginLeft: '0.5rem',
   };
 
-  const [selectedMarkerConfigurationName, setSelectedMarkerConfigurationName] =
-    useState('');
+  const [markerConfigurations, setMarkerConfigurations] = useState<
+    MarkerConfiguration[]
+  >([
+    {
+      type: 'pie',
+      selectedVariable: selectedVariables.overlay || {
+        entityId: '',
+        variableId: '',
+      },
+    },
+    {
+      type: 'barplot',
+      selectedPlotMode: 'count',
+      selectedVariable: selectedVariables.overlay || {
+        entityId: '',
+        variableId: '',
+      },
+    },
+  ]);
+
+  function updateMarkerConfigurations(
+    updatedConfiguration: MarkerConfiguration
+  ) {
+    setMarkerConfigurations((configurations) =>
+      configurations.map((configuration) => {
+        if (configuration.type === updatedConfiguration.type) {
+          return updatedConfiguration;
+        }
+        return configuration;
+      })
+    );
+  }
+
+  const [activeMarkerConfigurationType, setActiveMarkerConfigurationType] =
+    useState<MarkerConfiguration['type']>('barplot');
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
   const [barPlotMode, setBarPlotMode] = useState('count');
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
 
+  /**
+   *
+   * Do type narrowing for each marker configuration types.
+   */
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -428,50 +478,52 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         renderSideNavigationPanel: (app) => {
           return (
             <MarkerConfigurationSelector
-              selectedMarkerConfigurationName={selectedMarkerConfigurationName}
-              setSelectedMarkerConfigurationName={(nextMarkerName) => {
-                setSelectedMarkerConfigurationName((currentMarkerName) =>
-                  currentMarkerName === nextMarkerName ? '' : nextMarkerName
-                );
-              }}
+              activeMarkerConfigurationType={activeMarkerConfigurationType}
+              setActiveMarkerConfigurationType={
+                setActiveMarkerConfigurationType
+              }
               markerConfigurations={[
                 {
-                  name: 'Donuts',
-                  renderConfigurationMenu: (
-                    <DonutConfigurationMenu
-                      inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                      entities={studyEntities}
-                      selectedVariables={selectedVariables}
-                      onChange={(selectedVariables) =>
-                        setSelectedOverlayVariable(selectedVariables.overlay)
-                      }
-                      starredVariables={
-                        analysisState.analysis?.descriptor.starredVariables ??
-                        []
-                      }
-                      toggleStarredVariable={toggleStarredVariable}
-                    />
-                  ),
+                  type: 'pie',
+                  displayName: 'Donuts',
+                  renderConfigurationMenu:
+                    activeMarkerConfiguration?.type === 'pie' ? (
+                      <DonutConfigurationMenu
+                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        configuration={activeMarkerConfiguration}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                      />
+                    ) : (
+                      <></>
+                    ),
                 },
                 {
-                  name: 'Bar plots',
-                  renderConfigurationMenu: (
-                    <BarPlotConfigurationMenu
-                      inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                      entities={studyEntities}
-                      selectedVariables={selectedVariables}
-                      onChange={(selectedVariables) =>
-                        setSelectedOverlayVariable(selectedVariables.overlay)
-                      }
-                      starredVariables={
-                        analysisState.analysis?.descriptor.starredVariables ??
-                        []
-                      }
-                      toggleStarredVariable={toggleStarredVariable}
-                      onPlotSelected={setBarPlotMode}
-                      selectedPlotMode={barPlotMode}
-                    />
-                  ),
+                  type: 'barplot',
+                  displayName: 'Bar plots',
+                  renderConfigurationMenu:
+                    activeMarkerConfiguration?.type === 'barplot' ? (
+                      <BarPlotConfigurationMenu
+                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        onPlotSelected={setBarPlotMode}
+                        selectedPlotMode={barPlotMode}
+                        configuration={activeMarkerConfiguration}
+                      />
+                    ) : (
+                      <></>
+                    ),
                 },
               ]}
             />

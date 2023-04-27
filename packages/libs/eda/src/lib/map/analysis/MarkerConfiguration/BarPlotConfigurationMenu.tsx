@@ -4,21 +4,57 @@ import {
   Props as InputVariablesProps,
 } from '../../../core/components/visualizations/InputVariables';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { VariableDescriptor } from '../../../core/types/variable';
+import { useState } from 'react';
+import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 
-interface Props extends InputVariablesProps {
+interface MarkerConfiguration<T extends string> {
+  type: T;
+}
+
+export interface BarPlotMarkerConfiguration
+  extends MarkerConfiguration<'barplot'> {
+  selectedVariable: VariableDescriptor;
+  selectedPlotMode: 'count' | 'proportion';
+}
+
+interface Props
+  extends Omit<
+    InputVariablesProps,
+    'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
+  > {
   selectedPlotMode: string;
   onPlotSelected: (plotType: string) => void;
+  onChange: (configuration: BarPlotMarkerConfiguration) => void;
+  configuration: BarPlotMarkerConfiguration;
 }
 
 export function BarPlotConfigurationMenu({
   entities,
   onChange,
-  onPlotSelected,
-  selectedPlotMode,
-  selectedVariables,
   starredVariables,
   toggleStarredVariable,
+  configuration,
 }: Props) {
+  function handleInputVariablesOnChange(selection: VariablesByInputName) {
+    if (!selection.overlay) {
+      throw new Error(
+        `Expected overlay to defined but got ${typeof selection.overlay}`
+      );
+    }
+
+    onChange({
+      ...configuration,
+      selectedVariable: selection.overlay,
+    });
+  }
+  function handlePlotModeSelection(option: string) {
+    onChange({
+      ...configuration,
+      selectedPlotMode: option as 'count' | 'proportion',
+    });
+  }
+
   return (
     <div>
       <H6
@@ -41,8 +77,8 @@ export function BarPlotConfigurationMenu({
       <InputVariables
         inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
         entities={entities}
-        selectedVariables={selectedVariables}
-        onChange={onChange}
+        selectedVariables={{ overlay: configuration.selectedVariable }}
+        onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
       />
@@ -51,12 +87,12 @@ export function BarPlotConfigurationMenu({
           marginTop: 20,
         }}
         label="Y-axis"
-        selectedOption={selectedPlotMode || 'count'}
+        selectedOption={configuration.selectedPlotMode || 'count'}
         options={['count', 'proportion']}
         optionLabels={['Count', 'Proportion']}
         buttonColor={'primary'}
         margins={['0em', '0', '0', '1em']}
-        onOptionSelected={onPlotSelected}
+        onOptionSelected={handlePlotModeSelection}
       />
     </div>
   );

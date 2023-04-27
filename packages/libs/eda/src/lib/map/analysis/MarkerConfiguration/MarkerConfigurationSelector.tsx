@@ -1,16 +1,18 @@
-import { H6, Paragraph } from '@veupathdb/coreui';
+import { H6 } from '@veupathdb/coreui';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { MarkerConfiguration } from '.';
 
-export interface MarkerConfiguration {
-  name: string;
+export interface MarkerConfigurationOption {
+  displayName: string;
   icon?: JSX.Element;
   renderConfigurationMenu: JSX.Element;
+  type: MarkerConfiguration['type'];
 }
 
 interface Props {
-  markerConfigurations: MarkerConfiguration[];
-  selectedMarkerConfigurationName: string;
-  setSelectedMarkerConfigurationName: (name: string) => void;
+  activeMarkerConfigurationType: MarkerConfiguration['type'];
+  markerConfigurations: MarkerConfigurationOption[];
+  setActiveMarkerConfigurationType: (type: MarkerConfiguration['type']) => void;
 }
 
 const listItemStyles: React.CSSProperties = {
@@ -28,13 +30,13 @@ const buttonStyles: React.CSSProperties = {
 };
 
 export function MarkerConfigurationSelector({
+  activeMarkerConfigurationType,
   markerConfigurations,
-  selectedMarkerConfigurationName: selectedMarkerConfiguration,
-  setSelectedMarkerConfigurationName: setSelectedMarkerConfiguration,
+  setActiveMarkerConfigurationType,
 }: Props) {
   const theme = useUITheme();
   const activeMarkerConfigurationMenu = markerConfigurations.find(
-    ({ name }) => name === selectedMarkerConfiguration
+    ({ type }) => type === activeMarkerConfigurationType
   )?.renderConfigurationMenu;
 
   return (
@@ -49,8 +51,8 @@ export function MarkerConfigurationSelector({
           Choose marker type:
         </H6>
         <ul style={{ listStyle: 'none', margin: 0 }}>
-          {markerConfigurations.map(({ name, icon }) => {
-            const isActive = selectedMarkerConfiguration === name;
+          {markerConfigurations.map(({ displayName: name, icon, type }) => {
+            const isActive = activeMarkerConfigurationType === type;
 
             return (
               <li
@@ -64,7 +66,7 @@ export function MarkerConfigurationSelector({
               >
                 <button
                   style={buttonStyles}
-                  onClick={() => setSelectedMarkerConfiguration(name)}
+                  onClick={() => setActiveMarkerConfigurationType(type)}
                 >
                   <span
                     style={{

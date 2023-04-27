@@ -1,16 +1,46 @@
 import { H6 } from '@veupathdb/coreui';
 import {
   InputVariables,
-  Props,
+  Props as InputVariablesProps,
 } from '../../../core/components/visualizations/InputVariables';
+import { VariableDescriptor } from '../../../core/types/variable';
+import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
+
+interface MarkerConfiguration<T extends string> {
+  type: T;
+}
+export interface DonutMarkerConfiguration extends MarkerConfiguration<'pie'> {
+  selectedVariable: VariableDescriptor;
+}
+interface Props
+  extends Omit<
+    InputVariablesProps,
+    'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
+  > {
+  onChange: (configuration: DonutMarkerConfiguration) => void;
+  configuration: DonutMarkerConfiguration;
+}
 
 export function DonutConfigurationMenu({
   entities,
-  selectedVariables,
+  configuration,
   onChange,
   starredVariables,
   toggleStarredVariable,
 }: Props) {
+  function handleInputVariablesOnChange(selection: VariablesByInputName) {
+    if (!selection.overlay) {
+      throw new Error(
+        `Expected overlay to defined but got ${typeof selection.overlay}`
+      );
+    }
+
+    onChange({
+      ...configuration,
+      selectedVariable: selection.overlay,
+    });
+  }
+
   return (
     <div>
       <H6
@@ -33,8 +63,8 @@ export function DonutConfigurationMenu({
       <InputVariables
         inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
         entities={entities}
-        selectedVariables={selectedVariables}
-        onChange={onChange}
+        selectedVariables={{ overlay: configuration.selectedVariable }}
+        onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
       />
