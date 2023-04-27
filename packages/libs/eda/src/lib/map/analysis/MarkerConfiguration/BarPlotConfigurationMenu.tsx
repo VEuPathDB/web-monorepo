@@ -24,7 +24,6 @@ interface Props
     'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
   > {
   selectedPlotMode: string;
-  onPlotSelected: (plotType: string) => void;
   onChange: (configuration: BarPlotMarkerConfiguration) => void;
   configuration: BarPlotMarkerConfiguration;
 }

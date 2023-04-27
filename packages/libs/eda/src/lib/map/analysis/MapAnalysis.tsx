@@ -176,6 +176,58 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     findEntityAndVariable(selectedVariables.overlay) ?? {};
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
+  const [markerConfigurations, setMarkerConfigurations] = useState<
+    MarkerConfiguration[]
+  >([
+    {
+      type: 'pie',
+      selectedVariable: selectedVariables.overlay || {
+        entityId: '',
+        variableId: '',
+      },
+    },
+    {
+      type: 'barplot',
+      selectedPlotMode: 'count',
+      selectedVariable: selectedVariables.overlay || {
+        entityId: '',
+        variableId: '',
+      },
+    },
+  ]);
+
+  function updateMarkerConfigurations(
+    updatedConfiguration: MarkerConfiguration
+  ) {
+    setMarkerConfigurations((configurations) =>
+      configurations.map((configuration) => {
+        if (configuration.type === updatedConfiguration.type) {
+          return updatedConfiguration;
+        }
+        return configuration;
+      })
+    );
+  }
+
+  const [activeMarkerConfigurationType, setActiveMarkerConfigurationType] =
+    useState<MarkerConfiguration['type']>('pie');
+
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
+
+  const adaptedMarkerTypename = (() => {
+    if (!activeMarkerConfiguration?.type) return 'pie';
+
+    if (activeMarkerConfiguration.type === 'barplot') {
+      // The marker type is either 'barplot' or 'count'
+      return activeMarkerConfiguration.selectedPlotMode;
+    }
+
+    return activeMarkerConfiguration.type;
+  })();
+
   /**
    * Keep track of which marker type is active. `markerType` -> activeMarkerType `xAxisVariable`: selectedVariables.overlay
    */
@@ -195,9 +247,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters,
-    xAxisVariable: selectedVariables.overlay,
+    xAxisVariable:
+      activeMarkerConfiguration?.selectedVariable || selectedVariables.overlay,
     computationType: 'pass',
-    markerType: 'pie',
+    markerType: adaptedMarkerTypename,
     checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
   });
@@ -422,47 +475,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     marginLeft: '0.5rem',
   };
 
-  const [markerConfigurations, setMarkerConfigurations] = useState<
-    MarkerConfiguration[]
-  >([
-    {
-      type: 'pie',
-      selectedVariable: selectedVariables.overlay || {
-        entityId: '',
-        variableId: '',
-      },
-    },
-    {
-      type: 'barplot',
-      selectedPlotMode: 'count',
-      selectedVariable: selectedVariables.overlay || {
-        entityId: '',
-        variableId: '',
-      },
-    },
-  ]);
-
-  function updateMarkerConfigurations(
-    updatedConfiguration: MarkerConfiguration
-  ) {
-    setMarkerConfigurations((configurations) =>
-      configurations.map((configuration) => {
-        if (configuration.type === updatedConfiguration.type) {
-          return updatedConfiguration;
-        }
-        return configuration;
-      })
-    );
-  }
-
-  const [activeMarkerConfigurationType, setActiveMarkerConfigurationType] =
-    useState<MarkerConfiguration['type']>('barplot');
-
-  const activeMarkerConfiguration = markerConfigurations.find(
-    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-  );
-  const [barPlotMode, setBarPlotMode] = useState('count');
-
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
 
@@ -517,8 +529,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                           []
                         }
                         toggleStarredVariable={toggleStarredVariable}
-                        onPlotSelected={setBarPlotMode}
-                        selectedPlotMode={barPlotMode}
+                        selectedPlotMode={
+                          activeMarkerConfiguration.selectedPlotMode
+                        }
                         configuration={activeMarkerConfiguration}
                       />
                     ) : (
