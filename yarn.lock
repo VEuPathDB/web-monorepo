@@ -8146,6 +8146,7 @@ __metadata:
     "@veupathdb/tsconfig": "workspace:^"
     "@veupathdb/wdk-client": "workspace:^"
     assert: ^2.0.0
+    babel-loader: ^8.0.5
     bubleify: ^2.0.0
     buffer: ^6.0.3
     date-fns: ^2.29.3
