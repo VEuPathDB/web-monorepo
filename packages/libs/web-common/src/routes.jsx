@@ -22,6 +22,7 @@ import {
   edaSingleAppMode,
   showUnreleasedData,
 } from './config';
+import { EdaMapController } from './controllers/EdaMapController';
 
 export const STATIC_ROUTE_PATH = '/static-content';
 
@@ -30,7 +31,6 @@ export function makeEdaRoute(studyId) {
 }
 
 const EdaWorkspace = React.lazy(() => import('@veupathdb/eda/lib/workspace'));
-const EdaMap = React.lazy(() => import('@veupathdb/eda/lib/map'));
 
 /**
  * Wrap WDK Routes
@@ -75,20 +75,7 @@ export const wrapRoutes = (wdkRoutes) => [
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
-    component: () => (
-      <Suspense fallback={<Loading />}>
-        <EdaMap
-          singleAppMode={edaSingleAppMode}
-          edaServiceUrl={edaServiceUrl}
-          siteInformationProps={{
-            loginUrl: '',
-            siteHomeUrl: '/',
-            siteLogoSrc: '',
-            siteName: projectId,
-          }}
-        />
-      </Suspense>
-    ),
+    component: EdaMapController,
   },
 
   {
