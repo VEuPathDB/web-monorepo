@@ -216,16 +216,16 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
   const scale = props.markerScale ?? MarkerScaleDefault;
   const size = 40 * scale;
   // set outter white circle size to describe white boundary
-  const outerWhiteCircleSize = size / 2 + size / 16;
+  const backgroundWhiteCircleRadius = size / 2 + size / 16;
 
   let svgHTML: string = '';
 
   // set drawing area
   svgHTML +=
     '<svg width="' +
-    outerWhiteCircleSize * 2 +
+    backgroundWhiteCircleRadius * 2 +
     '" height="' +
-    outerWhiteCircleSize * 2 +
+    backgroundWhiteCircleRadius * 2 +
     '">'; // initiate svg marker icon
 
   // what value corresponds to 360 degrees of the circle?
@@ -245,11 +245,11 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
   // draw a larger white-filled circle
   svgHTML +=
     '<circle cx="' +
-    outerWhiteCircleSize +
+    backgroundWhiteCircleRadius +
     '" cy="' +
-    outerWhiteCircleSize +
+    backgroundWhiteCircleRadius +
     '" r="' +
-    outerWhiteCircleSize +
+    backgroundWhiteCircleRadius +
     '" stroke="green" stroke-width="0" fill="white" />';
 
   // set start point of arc = 0
@@ -277,10 +277,10 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
       svgHTML +=
         '<path fill="none" stroke="' +
         (el.color ?? 'silver') +
-        '" stroke-width="4" d="' +
+        '" stroke-width="5" d="' +
         makeArc(
-          outerWhiteCircleSize,
-          outerWhiteCircleSize,
+          backgroundWhiteCircleRadius,
+          backgroundWhiteCircleRadius,
           size / 2 - 2,
           startValue,
           startValue + arcValue * 2 * Math.PI
