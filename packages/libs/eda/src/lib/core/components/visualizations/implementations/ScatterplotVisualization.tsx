@@ -395,6 +395,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         selectedVariables.xAxisVariable,
         vizConfig.xAxisVariable
       );
+      const keepDependentAxisSettings = isEqual(
+        selectedVariables.yAxisVariable,
+        vizConfig.yAxisVariable
+      );
 
       const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
         selectedVariables;
@@ -415,15 +419,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         independentAxisRange: keepIndependentAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
-        dependentAxisRange: undefined,
+        dependentAxisRange: keepDependentAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
         independentAxisLogScale: keepIndependentAxisSettings
           ? vizConfig.independentAxisLogScale
           : false,
-        dependentAxisLogScale: false,
+        dependentAxisLogScale: keepDependentAxisSettings
+          ? vizConfig.dependentAxisLogScale
+          : undefined,
         independentAxisValueSpec: keepIndependentAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
-        dependentAxisValueSpec: 'Full',
+        dependentAxisValueSpec: keepDependentAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : 'Full',
       });
       // close truncation warnings here
       setTruncatedIndependentAxisWarning('');

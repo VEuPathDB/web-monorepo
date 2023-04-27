@@ -1,4 +1,4 @@
-import { keyBy, mapValues, toString } from 'lodash';
+import { keyBy, mapValues, pick, toString } from 'lodash';
 import { Seq } from '../Utils/IterableUtils';
 import {
   combineEpics,
@@ -57,6 +57,7 @@ import {
   QuestionWithParameters,
   RecordClass,
   ParameterValues,
+  Question,
 } from '../Utils/WdkModel';
 
 import {
@@ -1022,22 +1023,21 @@ async function loadQuestion(
   initialParamData?: ParameterValues,
   submissionMetadata?: SubmissionMetadata
 ) {
-  const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const initialParams = await fetchInitialParams(
-    searchName,
-    step,
-    initialParamData,
-    prepopulateWithLastParamValues,
-    paramValueStore
-  );
-
-  const atLeastOneInitialParamValueProvided =
-    Object.keys(initialParams).length > 0;
-
   try {
+    const step = stepId ? await wdkService.findStep(stepId) : undefined;
     const defaultQuestion = await wdkService.getQuestionAndParameters(
       searchName
     );
+    const initialParams = await fetchInitialParams(
+      defaultQuestion,
+      step,
+      initialParamData,
+      prepopulateWithLastParamValues,
+      paramValueStore
+    );
+
+    const atLeastOneInitialParamValueProvided =
+      Object.keys(initialParams).length > 0;
 
     const question = atLeastOneInitialParamValueProvided
       ? await wdkService.getQuestionGivenParameters(searchName, initialParams)
@@ -1084,7 +1084,7 @@ async function loadQuestion(
 }
 
 async function fetchInitialParams(
-  searchName: string,
+  question: Question,
   step: Step | undefined,
   initialParamData: ParameterValues | undefined,
   prepopulateWithLastParamValues: boolean,
@@ -1093,9 +1093,11 @@ async function fetchInitialParams(
   if (step != null) {
     return initialParamDataFromStep(step);
   } else if (initialParamData != null) {
-    return initialParamDataWithDatasetParamSpecialCase(initialParamData);
+    return extracParamValues(initialParamData, question.paramNames);
   } else if (prepopulateWithLastParamValues) {
-    return (await fetchLastParamValues(paramValueStore, searchName)) ?? {};
+    return (
+      (await fetchLastParamValues(paramValueStore, question.urlSegment)) ?? {}
+    );
   } else {
     return {};
   }
@@ -1114,18 +1116,12 @@ function initialParamDataFromStep(step: Step): ParameterValues {
   }, {});
 }
 
-function initialParamDataWithDatasetParamSpecialCase(
-  initialParamData: ParameterValues
-) {
-  return Object.keys(initialParamData).reduce(function (result, paramName) {
-    if (paramName.endsWith('.idList') || paramName.endsWith('.url')) {
-      return result;
-    }
-
-    return Object.assign(result, {
-      [paramName]: initialParamData[paramName],
-    });
-  }, {});
+/** Pick items from `initialParamData` that correspond to parameter names */
+function extracParamValues(
+  initialParamData: Record<string, string>,
+  paramNames: string[]
+): ParameterValues {
+  return pick(initialParamData, paramNames);
 }
 
 function updateLastParamValues(

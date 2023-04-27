@@ -10,6 +10,9 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
+// @ts-ignore
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+
 import makeSnackbarProvider, {
   SnackbarStyleProps,
 } from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
@@ -653,8 +656,21 @@ const useHeaderMenuItems = (
         {
           key: 'data-files-eupathdb',
           display: 'Download data files',
+          type: 'externalLink',
+          url: '/common/downloads',
+          metadata: {
+            exclude: [EuPathDB],
+          },
+        },
+        {
+          key: 'data-files-eupathdb-beta',
+          display: (
+            <>
+              Download data files <img alt="BETA" src={betaImage} />
+            </>
+          ),
           type: 'reactRoute',
-          url: '/downloads/',
+          url: '/downloads',
           metadata: {
             exclude: [EuPathDB],
           },
