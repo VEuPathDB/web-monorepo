@@ -452,7 +452,7 @@ export function useStandaloneMapMarkers(
             return (
               <ChartMarker
                 {...commonMarkerProps}
-                markerLabel={kFormatter(count)}
+                markerLabel={mFormatter(count)}
                 dependentAxisRange={defaultDependentAxisRange}
                 dependentAxisLogScale={dependentAxisLogScale}
               />
