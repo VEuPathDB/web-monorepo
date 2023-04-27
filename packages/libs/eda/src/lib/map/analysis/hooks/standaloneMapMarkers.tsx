@@ -56,10 +56,6 @@ export interface StandaloneMapMarkersProps {
   overlayVariable: VariableDescriptor | undefined; // formerly xAxisVariable in older EDA viz
   markerType: 'count' | 'proportion' | 'pie';
   dependentAxisLogScale?: boolean;
-  /** mini markers - default = false */
-  miniMarkers?: boolean;
-  /** invisible markers (special use case related to minimap fly-to) - default = false */
-  invisibleMarkers?: boolean;
 }
 
 // what this hook returns
@@ -97,8 +93,6 @@ export function useStandaloneMapMarkers(
     overlayVariable,
     markerType,
     dependentAxisLogScale = false,
-    miniMarkers = false,
-    invisibleMarkers = false,
   } = props;
 
   const dataClient: DataClient = useDataClient();
@@ -427,11 +421,6 @@ export function useStandaloneMapMarkers(
                 },
               ];
 
-        const MarkerComponent =
-          markerType == null || markerType === 'pie'
-            ? DonutMarker
-            : ChartMarker;
-
         // TO DO: this will sum to 1 when we allow proportion mode
         // maybe ask for the counts to come along site the values in the back end response
         // https://github.com/VEuPathDB/EdaDataService/issues/261
@@ -441,33 +430,35 @@ export function useStandaloneMapMarkers(
           0
         );
 
-        const formattedCount =
-          MarkerComponent === ChartMarker
-            ? mFormatter(count)
-            : kFormatter(count);
+        const commonMarkerProps = {
+          id: geoAggregateValue,
+          key: geoAggregateValue,
+          bounds: bounds,
+          position: position,
+          data: reorderedData,
+          duration: defaultAnimationDuration,
+        };
 
-        return (
-          <MarkerComponent
-            id={geoAggregateValue}
-            key={geoAggregateValue}
-            bounds={bounds}
-            position={position}
-            data={reorderedData}
-            duration={defaultAnimationDuration}
-            markerLabel={miniMarkers ? '' : formattedCount}
-            {...(markerType !== 'pie'
-              ? {
-                  dependentAxisRange: defaultDependentAxisRange,
-                  dependentAxisLogScale: dependentAxisLogScale,
-                }
-              : {})}
-            {...(miniMarkers && !invisibleMarkers
-              ? { markerScale: 0.5 }
-              : invisibleMarkers
-              ? { markerScale: 0 }
-              : {})}
-          />
-        );
+        switch (markerType) {
+          case 'pie': {
+            return (
+              <DonutMarker
+                {...commonMarkerProps}
+                markerLabel={kFormatter(count)}
+              />
+            );
+          }
+          default: {
+            return (
+              <ChartMarker
+                {...commonMarkerProps}
+                markerLabel={kFormatter(count)}
+                dependentAxisRange={defaultDependentAxisRange}
+                dependentAxisLogScale={dependentAxisLogScale}
+              />
+            );
+          }
+        }
       }
     );
   }, [
