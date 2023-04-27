@@ -77,3 +77,19 @@
     font-size: 19px;
   }
 }
+
+.screenReaderOnly {
+  /* TLDR: The [aria-label] attribute isn’t announced consistently 
+  If text is not needed for sighted users, hide it this way. 
+  https://gomakethings.com/revisting-aria-label-versus-a-visually-hidden-class/#:~:text=In%20the%20posts%2C%20I%20recommended,visually%20shown%20to%20sighted%20users. */
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  display: inline-block;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 1px;
+}
