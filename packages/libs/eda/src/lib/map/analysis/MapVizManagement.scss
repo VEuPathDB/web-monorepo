@@ -2,7 +2,7 @@
   display: flex;
   justify-content: flex-end;
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
   padding-bottom: 10px;
 
   &-VizButton {
@@ -65,7 +65,7 @@
 
   &-VizName {
     max-width: 225px;
-    overflow: scroll;
+    overflow: auto;
     text-align: left;
     margin-left: 10px;
     font-size: 15px;
@@ -78,7 +78,7 @@
     align-items: start;
     width: 400px;
     padding: 5px 10px;
-    overflow: scroll;
+    overflow: auto;
     height: 100%;
   }
   &-VizListContainer {
