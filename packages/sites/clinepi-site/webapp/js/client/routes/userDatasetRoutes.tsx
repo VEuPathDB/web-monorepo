@@ -6,25 +6,24 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import { makeEdaRoute } from '@veupathdb/web-common/lib/routes';
-import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/web-common/lib/util/diyDatasets';
+import { diyUserDatasetIdToWdkRecordId } from '@veupathdb/wdk-client/lib/Utils/diyDatasets';
 
-import {
-  UserDatasetDetailProps
-} from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
+import { UserDatasetDetailProps } from '@veupathdb/user-datasets/lib/Controllers/UserDatasetDetailController';
 
-import {
-  uploadTypeConfig
-} from '@veupathdb/user-datasets/lib/Utils/upload-config';
+import { uploadTypeConfig } from '@veupathdb/user-datasets/lib/Utils/upload-config';
 
 import { communitySite, projectId } from '@veupathdb/web-common/lib/config';
 
 import ExternalContentController from '@veupathdb/web-common/lib/controllers/ExternalContentController';
 
 const IsaDatasetDetail = React.lazy(
-  () => import('@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail')
+  () =>
+    import('@veupathdb/user-datasets/lib/Components/Detail/IsaDatasetDetail')
 );
 
-const UserDatasetRouter = React.lazy(() => import('../controllers/UserDatasetRouter'));
+const UserDatasetRouter = React.lazy(
+  () => import('../controllers/UserDatasetRouter')
+);
 
 const availableUploadTypes = ['isasimple'];
 
@@ -38,45 +37,50 @@ export const userDatasetRoutes: RouteEntry[] = [
       const location = useLocation();
 
       const helpTabContentUrl = useMemo(
-        () => [
-          communitySite,
-          USER_DATASETS_HELP_PAGE,
-          location.search,
-          location.hash
-        ].join(''),
+        () =>
+          [
+            communitySite,
+            USER_DATASETS_HELP_PAGE,
+            location.search,
+            location.hash,
+          ].join(''),
         [location.search, location.hash]
       );
 
-      const detailComponentsByTypeName = useMemo(() => ({
-        ISA: function ClinEpiIsaDatasetDetail(props: UserDatasetDetailProps) {
-          const wdkDatasetId = diyUserDatasetIdToWdkRecordId(props.userDataset.id);
+      const detailComponentsByTypeName = useMemo(
+        () => ({
+          ISA: function ClinEpiIsaDatasetDetail(props: UserDatasetDetailProps) {
+            const wdkDatasetId = diyUserDatasetIdToWdkRecordId(
+              props.userDataset.id
+            );
 
-          return (
-            <IsaDatasetDetail
-              {...props}
-              edaWorkspaceUrl={`${makeEdaRoute(wdkDatasetId)}/new`}
-            />
-          )
-        }
-      }), []);
+            return (
+              <IsaDatasetDetail
+                {...props}
+                edaWorkspaceUrl={`${makeEdaRoute(wdkDatasetId)}/new`}
+              />
+            );
+          },
+        }),
+        []
+      );
 
       return (
         <Suspense fallback={<Loading />}>
           <UserDatasetRouter
             availableUploadTypes={availableUploadTypes}
-            detailsPageTitle="My User Study"
+            detailsPageTitle="My Study"
             helpRoute="/workspace/datasets/help"
-            workspaceTitle="My User Studies"
+            workspaceTitle="My Studies"
             uploadTypeConfig={uploadTypeConfig}
             detailComponentsByTypeName={detailComponentsByTypeName}
             helpTabContents={
-              <ExternalContentController
-                url={helpTabContentUrl}
-              />
+              <ExternalContentController url={helpTabContentUrl} />
             }
+            dataNoun={{ singular: 'Study', plural: 'Studies' }}
           />
         </Suspense>
       );
     },
-  }
+  },
 ];

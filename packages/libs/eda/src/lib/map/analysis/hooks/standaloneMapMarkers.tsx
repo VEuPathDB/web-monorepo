@@ -591,15 +591,7 @@ async function getBinRanges({
   });
 
   const binRanges = response.binRanges?.equalInterval!; // if asking for binRanges, the response WILL contain binRanges
-
-  // TO DO: remove when it's fixed
-  // minor processing to work-around https://github.com/VEuPathDB/plot.data/issues/219
-  // ignore the `value: null` props in response
-  return binRanges.map(({ binStart, binEnd, binLabel }, index) => ({
-    binStart: index === 0 ? `${Number(binStart) - 1.0}` : binStart,
-    binEnd: index === binRanges.length - 1 ? `${Number(binEnd) + 1.0}` : binEnd, // second TEMPORARY back end workaround
-    binLabel,
-  }));
+  return binRanges;
 }
 
 function fixLabelForOtherValues(input: string): string {
