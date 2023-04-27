@@ -182,7 +182,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     studyId: studyMetadata.id,
     filters: analysisState.analysis?.descriptor.subset.descriptor,
     overlayVariable: selectedVariables.overlay,
-    computationType: 'standalone-map',
     markerType: 'pie',
     //TO DO: maybe dependentAxisLogScale
   });

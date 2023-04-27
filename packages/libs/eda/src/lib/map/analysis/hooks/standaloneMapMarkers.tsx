@@ -36,7 +36,10 @@ import { VariableDescriptor } from '../../../core/types/variable';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
 import { SubsettingClient } from '../../../core/api';
 
-const TOKEN_UNSELECTED = '__UNSELECTED__';
+// Back end overlay values contain a special token for the "Other" category:
+const UNSELECTED_TOKEN = '__UNSELECTED__';
+// This is what is displayed to the user instead:
+const UNSELECTED_DISPLAY_TEXT = 'All other values';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -50,7 +53,6 @@ export interface StandaloneMapMarkersProps {
   geoConfig: GeoConfig | undefined;
   studyId: string;
   filters: Filter[] | undefined;
-  computationType: string;
   overlayVariable: VariableDescriptor | undefined; // formerly xAxisVariable in older EDA viz
   markerType: 'count' | 'proportion' | 'pie';
   dependentAxisLogScale?: boolean;
@@ -92,7 +94,6 @@ export function useStandaloneMapMarkers(
     geoConfig,
     studyId,
     filters,
-    computationType,
     overlayVariable,
     markerType,
     dependentAxisLogScale = false,
@@ -309,7 +310,7 @@ export function useStandaloneMapMarkers(
 
       // now get the data
       return await dataClient.getStandaloneMapMarkers(
-        computationType,
+        'standalone-map',
         requestParams
       );
     }, [
@@ -321,7 +322,6 @@ export function useStandaloneMapMarkers(
       latitudeVariable,
       longitudeVariable,
       boundsZoomLevel,
-      computationType,
       geoConfig,
     ])
   );
@@ -340,7 +340,7 @@ export function useStandaloneMapMarkers(
             .flatMap((el) => el.overlayValues)
             .reduce(
               ({ valueMax, valueMinPos, valueSum }, elem) => ({
-                valueMax: elem.value > valueMax ? elem.value : valueMax,
+                valueMax: Math.max(elem.value, valueMax),
                 valueMinPos:
                   elem.value > 0 &&
                   (valueMinPos == null || elem.value < valueMinPos)
@@ -559,7 +559,7 @@ async function getMostFrequentValues({
     console.log({ message, sortedValues });
     throw new Error(message);
   }
-  return [...sortedValues.slice(0, numValues), TOKEN_UNSELECTED];
+  return [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
 }
 
 type GetBinRangesProps = {
@@ -596,14 +596,14 @@ async function getBinRanges({
   // minor processing to work-around https://github.com/VEuPathDB/plot.data/issues/219
   // ignore the `value: null` props in response
   return binRanges.map(({ binStart, binEnd, binLabel }, index) => ({
-    binStart,
-    binEnd: index === binRanges.length - 1 ? binEnd + 1.0 : binEnd, // second TEMPORARY back end workaround
+    binStart: index === 0 ? `${Number(binStart) - 1.0}` : binStart,
+    binEnd: index === binRanges.length - 1 ? `${Number(binEnd) + 1.0}` : binEnd, // second TEMPORARY back end workaround
     binLabel,
   }));
 }
 
 function fixLabelForOtherValues(input: string): string {
-  return input === TOKEN_UNSELECTED ? 'All other values' : input;
+  return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
 }
 
 function isNonEmptyStringArray(
