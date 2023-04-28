@@ -181,9 +181,14 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       geoAggregateVariable,
       outputEntity,
       xAxisVariableAndEntity,
-      findEntityAndVariable,
     };
-  }, [boundsZoomLevel, geoConfig, xAxisVariable]);
+  }, [
+    boundsZoomLevel,
+    geoConfig,
+    xAxisVariable,
+    entities,
+    findEntityAndVariable,
+  ]);
 
   // now do the first request
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(
@@ -300,8 +305,8 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         xAxisVariable == null ||
         geoAggregateVariable == null ||
         outputEntity == null ||
-        latitudeVariable == undefined ||
-        longitudeVariable == undefined
+        latitudeVariable == null ||
+        longitudeVariable == null
       )
         return undefined;
 
@@ -351,6 +356,8 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       outputEntity,
       filters,
       xAxisVariableAndEntity,
+      latitudeVariable,
+      longitudeVariable,
     ])
   );
 
@@ -540,6 +547,10 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     xAxisVariable,
     outputEntity,
     dependentAxisLogScale,
+    defaultDependentAxisRange,
+    invisibleMarkers,
+    miniMarkers,
+    xAxisVariableType,
   ]);
 
   /**
@@ -571,7 +582,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, vocabulary, overlayData]);
+  }, [xAxisVariable, vocabulary, overlayData, xAxisVariableType]);
 
   return {
     markers,
