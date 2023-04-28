@@ -499,7 +499,7 @@ export function Page() {
         <UIThemeProvider
           theme={{
             palette: {
-              primary: { hue: colors.gray, level: 100 },
+              primary: { hue: colors.mutedBlue, level: 600 },
               secondary: { hue: colors.mutedRed, level: 500 },
             },
           }}

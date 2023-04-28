@@ -1,11 +1,17 @@
-import { AttributeSortingSpec, PrimaryKey } from '../../Utils/WdkModel';
+import {
+  AttributeSortingSpec,
+  PrimaryKey,
+  RecordInstance,
+} from '../../Utils/WdkModel';
 import { ResultType } from '../../Utils/WdkResult';
 import { BasketPatchIdsOperation } from '../../Service/Mixins/BasketsService';
 
 // Types that are shared by ResultTableSummaryView Components
 
 export interface Action {
-  element: React.ReactType | ((selection: string[]) => React.ReactType);
+  element:
+    | React.ReactElement
+    | ((selection: RecordInstance[]) => React.ReactElement);
 }
 
 export type BasketStatus = 'yes' | 'no' | 'loading';

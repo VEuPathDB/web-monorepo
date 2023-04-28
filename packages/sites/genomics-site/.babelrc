@@ -1,4 +1,4 @@
 {
   "extends": "@veupathdb/site-babel-config",
-  "ignore": [ "cytoscapeweb.min.js" ]
+  "ignore": [ "cytoscapeweb.min.js", "vendored/**" ]
 }

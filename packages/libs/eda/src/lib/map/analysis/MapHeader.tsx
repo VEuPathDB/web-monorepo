@@ -1,5 +1,4 @@
 import { CSSProperties, ReactElement, ReactNode } from 'react';
-import ArrowRight from '@veupathdb/coreui/dist/components/icons/ChevronRight';
 import {
   makeClassNameHelper,
   safeHtml,
@@ -19,10 +18,8 @@ export type MapNavigationProps = {
   analysisName?: string;
   outputEntity?: StudyEntity;
   filterList?: ReactElement;
-  isExpanded: boolean;
   siteInformation: SiteInformationProps;
   onAnalysisNameEdit: (newName: string) => void;
-  onToggleExpand: () => void;
   studyName: string;
   totalEntityCount: number | undefined;
   totalEntityInSubsetCount: number | undefined;
@@ -32,7 +29,6 @@ export type MapNavigationProps = {
 
 /**
  * <MapHeader /> has the following responsibilities:
- *  - Worrying about being collapsed/expanded.
  *  - Presenting the smallest amount of information to allow the user
  *    to make sense of a map analysis.
  */
@@ -40,10 +36,8 @@ export function MapHeader({
   analysisName,
   outputEntity,
   filterList,
-  isExpanded,
   siteInformation,
   onAnalysisNameEdit,
-  onToggleExpand,
   studyName,
   totalEntityCount = 0,
   totalEntityInSubsetCount = 0,
@@ -59,15 +53,9 @@ export function MapHeader({
         background: mapNavigationBackgroundColor,
         borderBottom: mapNavigationBorder,
       }}
-      className={`${mapHeader()} ${
-        !isExpanded ? mapHeader('--collapsed') : ''
-      }`}
+      className={`${mapHeader()}`}
     >
-      <div
-        className={`${mapHeader('__Contents')} ${
-          isExpanded ? '' : 'screenReaderOnly'
-        }`}
-      >
+      <div className={`${mapHeader('__Contents')}`}>
         <div className={mapHeader('__LogoContainer')}>
           <a href={siteInformation.siteHomeUrl}>
             <img
@@ -84,11 +72,7 @@ export function MapHeader({
         />
       </div>
       {outputEntity && (
-        <div
-          className={`${mapHeader('__SampleCounter')} ${
-            isExpanded ? '' : 'screenReaderOnly'
-          }`}
-        >
+        <div className={`${mapHeader('__SampleCounter')}`}>
           <p>{makeEntityDisplayName(outputEntity, true)}</p>
           <LeftBracket
             styles={{
@@ -141,10 +125,6 @@ export function MapHeader({
           </table>
         </div>
       )}
-      <OpenCloseToggleButton
-        isExpanded={isExpanded}
-        onToggleExpand={onToggleExpand}
-      />
     </header>
   );
 }
@@ -191,51 +171,6 @@ function HeaderContent({
         />
       </div>
       {filterList}
-    </div>
-  );
-}
-
-type OpenCloseToggleButtonProps = {
-  isExpanded: boolean;
-  onToggleExpand: () => void;
-};
-function OpenCloseToggleButton({
-  isExpanded,
-  onToggleExpand,
-}: OpenCloseToggleButtonProps) {
-  const expandToggleContainer = makeClassNameHelper('OpenCloseToggleButton');
-  return (
-    <div className={expandToggleContainer()}>
-      <button
-        style={{
-          background: mapNavigationBackgroundColor,
-          border: mapNavigationBorder,
-          // If we have a top border, it'll look like
-          // the button is distinct from the header.
-          borderTop: '2px solid white',
-        }}
-        className={`Button ${
-          isExpanded ? '' : expandToggleContainer('--collapsed')
-        }`}
-        onClick={onToggleExpand}
-      >
-        <div
-          className={`${expandToggleContainer('__SvgContainer')} ${
-            isExpanded ? '' : expandToggleContainer('__SvgContainer--collapsed')
-          }`}
-          aria-hidden
-        >
-          <ArrowRight
-            className={`${expandToggleContainer('__ArrowIcon')} ${
-              isExpanded ? '' : expandToggleContainer('__ArrowIcon--collapsed')
-            }`}
-          />
-        </div>
-
-        <span className="screenReaderOnly">
-          {isExpanded ? 'Close' : 'Open'} header.
-        </span>
-      </button>
     </div>
   );
 }

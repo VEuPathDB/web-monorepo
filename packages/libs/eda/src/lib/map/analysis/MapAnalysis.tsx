@@ -321,8 +321,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       ? filteredCounts.value[outputEntity.id]
       : 0;
 
-  const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
-
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
     setActiveSideMenuIndex(filterSideMenuItemIndex);
@@ -722,10 +720,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     analysisName={analysisState.analysis?.displayName}
                     outputEntity={outputEntity}
                     filterList={<FilterChipListForHeader />}
-                    isExpanded={mapHeaderIsExpanded}
                     siteInformation={props.siteInformationProps}
                     onAnalysisNameEdit={analysisState.setName}
-                    onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
                     studyName={studyRecord.displayName}
                     totalEntityCount={outputEntityTotalCount}
                     totalEntityInSubsetCount={outputEntityFilteredCount}
