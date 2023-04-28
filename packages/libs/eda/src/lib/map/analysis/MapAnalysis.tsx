@@ -16,7 +16,6 @@ import {
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
-import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import { Download, FilledButton, Filter } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
@@ -68,6 +67,9 @@ import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
+import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -108,6 +110,12 @@ function getSideNavItemIndexByLabel(
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
+};
+
+export const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
 };
 
 interface Props {
@@ -171,23 +179,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const {
     markers,
     pending,
+    error,
     legendItems,
-    basicMarkerError,
     outputEntity,
-    overlayError,
-    totalEntityCount,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
-  } = useMapMarkers({
-    requireOverlay: false,
+  } = useStandaloneMapMarkers({
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters,
-    xAxisVariable: selectedVariables.overlay,
-    computationType: 'pass',
+    overlayVariable: selectedVariables.overlay,
     markerType: 'pie',
-    checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
   });
 
@@ -239,7 +242,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         getOverlayVariable: (_) => appState.selectedOverlayVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
-        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
 
@@ -313,6 +315,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const outputEntityTotalCount =
     totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
+
+  const outputEntityFilteredCount =
+    filteredCounts.value && outputEntity
+      ? filteredCounts.value[outputEntity.id]
+      : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
@@ -711,19 +718,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 >
                   <MapHeader
                     analysisName={analysisState.analysis?.displayName}
-                    entityDisplayName={
-                      outputEntity?.displayNamePlural || 'Samples'
-                    }
+                    outputEntity={outputEntity}
                     filterList={<FilterChipListForHeader />}
                     siteInformation={props.siteInformationProps}
                     onAnalysisNameEdit={analysisState.setName}
                     studyName={studyRecord.displayName}
                     totalEntityCount={outputEntityTotalCount}
-                    totalEntityInSubsetCount={totalEntityCount}
+                    totalEntityInSubsetCount={outputEntityFilteredCount}
                     visibleEntityCount={
                       totalVisibleWithOverlayEntityCount ??
                       totalVisibleEntityCount
                     }
+                    overlayActive={overlayVariable != null}
                   />
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
@@ -773,7 +779,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   showZoomControl={false}
                   showLayerSelector={false}
                   showSpinner={pending}
-                  animation={null}
+                  animation={defaultAnimation}
                   viewport={appState.viewport}
                   markers={finalMarkers}
                   mouseMode={appState.mouseMode}
@@ -861,7 +867,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 )}
 
-                {(basicMarkerError || overlayError) && (
+                {error && (
                   <FloatingDiv
                     style={{
                       top: undefined,
@@ -870,8 +876,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       right: 100,
                     }}
                   >
-                    {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-                    {overlayError && <div>{String(overlayError)}</div>}
+                    <div>{String(error)}</div>
                   </FloatingDiv>
                 )}
               </div>
