@@ -26,7 +26,7 @@ interface Props {
   >['setActiveVisualizationId'];
   appState: AppState;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
-  app: ComputationAppOverview;
+  apps: ComputationAppOverview[];
   geoConfigs: GeoConfig[];
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
@@ -40,25 +40,34 @@ export default function DraggableVisualization({
   updateVisualizations,
   setActiveVisualizationId,
   geoConfigs,
-  app,
+  apps,
   visualizationPlugins,
   totalCounts,
   filteredCounts,
   toggleStarredVariable,
   filters,
 }: Props) {
-  const activeViz = analysisState.analysis?.descriptor.computations
-    .flatMap((c) => c.visualizations)
-    .find((v) => v.visualizationId === appState.activeVisualizationId);
+  const activeComputation =
+    analysisState.analysis?.descriptor.computations.find((c) =>
+      c.visualizations.some(
+        (v) => v.visualizationId === appState.activeVisualizationId
+      )
+    );
+
+  const activeViz = activeComputation?.visualizations.find(
+    (v) => v.visualizationId === appState.activeVisualizationId
+  );
+
+  const app = apps.find(
+    (a) => a.computeName === activeComputation?.descriptor.type
+  );
 
   const activeVizOverview: VisualizationOverview | undefined =
-    app.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
-
-  const computation = analysisState.analysis?.descriptor.computations[0];
+    app?.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
 
   return (
     <>
-      {activeViz && (
+      {activeViz && app && (
         <DraggablePanel
           confineToParentContainer
           showPanelTitle
@@ -85,7 +94,7 @@ export default function DraggableVisualization({
           >
             <FullScreenVisualization
               analysisState={analysisState}
-              computation={computation!}
+              computation={activeComputation!}
               updateVisualizations={updateVisualizations}
               visualizationPlugins={visualizationPlugins}
               visualizationsOverview={app.visualizations}

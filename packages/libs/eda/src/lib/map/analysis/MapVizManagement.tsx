@@ -20,6 +20,7 @@ import {
 } from '../../core/types/visualization';
 import './MapVizManagement.scss';
 import { useAppState } from './appState';
+import { StartPage } from '../../core/components/computations/StartPage';
 
 interface Props {
   activeVisualizationId: string | undefined;
@@ -32,7 +33,7 @@ interface Props {
   setActiveVisualizationId: ReturnType<
     typeof useAppState
   >['setActiveVisualizationId'];
-  app: ComputationAppOverview;
+  apps: ComputationAppOverview[];
   visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
 }
@@ -42,7 +43,7 @@ const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
 export default function MapVizManagement({
   activeVisualizationId,
   analysisState,
-  app,
+  apps,
   geoConfigs,
   setActiveVisualizationId,
   updateVisualizations,
@@ -71,13 +72,11 @@ export default function MapVizManagement({
           Pick a visualization type to get started! If you update your subset,
           your visualizations will update when you reopen them.
         </Paragraph>
-        <NewVisualizationPickerGrouped
-          computation={computations[0]}
-          updateVisualizations={updateVisualizations}
-          visualizationPlugins={visualizationPlugins}
-          visualizationsOverview={app.visualizations}
-          geoConfigs={geoConfigs}
-          onVisualizationCreated={onVisualizationCreated}
+        <StartPage
+          analysisState={analysisState}
+          baseUrl={'/TO/DO/'}
+          apps={apps}
+          plugins={plugins}
         />
       </div>
     );
@@ -135,14 +134,11 @@ export default function MapVizManagement({
             />
           </div>
           <div>
-            <NewVisualizationPickerGrouped
-              includeHeader
-              computation={computations[0]}
-              updateVisualizations={updateVisualizations}
-              visualizationPlugins={visualizationPlugins}
-              visualizationsOverview={app.visualizations}
-              geoConfigs={geoConfigs}
-              onVisualizationCreated={onVisualizationCreated}
+            <StartPage
+              analysisState={analysisState}
+              baseUrl={'/TO/DO/'}
+              apps={apps}
+              plugins={plugins}
             />
           </div>
         </div>

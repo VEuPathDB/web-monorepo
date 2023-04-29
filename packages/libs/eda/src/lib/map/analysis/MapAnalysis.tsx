@@ -74,6 +74,13 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+
+/**
+ * used to filter suitable apps from the apps endpoint response
+ */
+const APP_CONTEXT = 'MapApp';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -89,7 +96,7 @@ type SideNavigationItemConfigurationObject = {
   href?: string;
   labelText: MapSideNavItemLabels;
   icon: ReactNode;
-  renderSideNavigationPanel: (app: ComputationAppOverview) => ReactNode;
+  renderSideNavigationPanel: (apps: ComputationAppOverview[]) => ReactNode;
   onToggleSideMenuItem?: (isActive: boolean) => void;
 };
 
@@ -186,6 +193,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
@@ -204,13 +212,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
 
-  const appPromiseState = usePromise(
+  const appsPromiseState = usePromise(
     useCallback(async () => {
       const { apps } = await dataClient.getApps();
-      const app = apps.find((a) => a.name === 'pass');
-      if (app == null) throw new Error('Could not find pass app.');
-      return app;
-    }, [dataClient])
+      return apps.filter((app) => app.name.startsWith('standalone-map')); // TO DO: remove this temporary hack
+      //      return apps.filter((app) => app.contexts.includes(APP_CONTEXT));
+    }, [dataClient, wdkService])
   );
 
   const totalCounts = useEntityCounts();
@@ -450,13 +457,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Plot,
         icon: <BarChartSharp />,
-        renderSideNavigationPanel: (app) => {
+        renderSideNavigationPanel: (apps) => {
           return (
             <MapVizManagement
               analysisState={analysisState}
               updateVisualizations={updateVisualizations}
               setActiveVisualizationId={setActiveVisualizationId}
-              app={app}
+              apps={apps}
               activeVisualizationId={appState.activeVisualizationId}
               visualizationPlugins={plugin.visualizationPlugins}
               geoConfigs={geoConfigs}
@@ -509,7 +516,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Notes,
         icon: <Notes />,
-        renderSideNavigationPanel: (app) => {
+        renderSideNavigationPanel: () => {
           return (
             <div
               style={{
@@ -602,13 +609,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     useState<boolean>(true);
 
   return (
-    <PromiseResult state={appPromiseState}>
-      {(app: ComputationAppOverview) => {
+    <PromiseResult state={appsPromiseState}>
+      {(apps: ComputationAppOverview[]) => {
         const activeSideNavigationItemMenu =
           activeSideMenuIndex != null &&
           sideNavigationButtonConfigurationObjects[
             activeSideMenuIndex
-          ].renderSideNavigationPanel(app);
+          ].renderSideNavigationPanel(apps);
 
         return (
           <ShowHideVariableContextProvider>
@@ -779,7 +786,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     updateVisualizations={updateVisualizations}
                     setActiveVisualizationId={setActiveVisualizationId}
                     appState={appState}
-                    app={app}
+                    apps={apps}
                     visualizationPlugins={plugin.visualizationPlugins}
                     geoConfigs={geoConfigs}
                     totalCounts={totalCounts}
