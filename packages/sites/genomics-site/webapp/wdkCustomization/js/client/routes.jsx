@@ -19,9 +19,7 @@ import {
   useAvailableOrganisms,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
-import {
-  useReferenceStrains
-} from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
+import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
 import { PageLoading } from './components/common/PageLoading';
 import SampleForm from './components/samples/SampleForm';
@@ -32,10 +30,11 @@ import { blastRoutes } from './blastRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 import { userCommentRoutes } from './userCommentRoutes';
 import { userDatasetRoutes } from './userDatasetRoutes';
+import Downloads from './components/Downloads';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
-const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'sample' ];
+const RECORD_CLASSES_WITHOUT_PROJECT_ID = ['dataset', 'sample'];
 
 const projectRegExp = new RegExp('/' + projectId + '$');
 
@@ -55,7 +54,7 @@ function addProjectIdPkValue(props) {
 
   // Append project id to request
   let params = Object.assign({}, props.match.params, {
-    primaryKey: `${primaryKey}/${projectId}`
+    primaryKey: `${primaryKey}/${projectId}`,
   });
 
   // Create new match object with updated primaryKey segment
@@ -82,30 +81,31 @@ function addProjectIdPkValueWrapper(Route) {
     removeProjectId() {
       if (this.hasProjectId()) {
         // Remove projectId from the url. This is like a redirect.
-        this.props.history.replace(this.props.location.pathname.replace(projectRegExp, ''));
+        this.props.history.replace(
+          this.props.location.pathname.replace(projectRegExp, '')
+        );
       }
     }
     render() {
       if (this.hasProjectId()) return null;
       // Add projectId back to props and call super's loadData
-      return (
-        <Route {...addProjectIdPkValue(this.props)} />
-      )
+      return <Route {...addProjectIdPkValue(this.props)} />;
     }
-  }
+  };
 }
 
 function SiteSearchRouteComponent() {
-  const [ preferredOrganisms ] = usePreferredOrganismsState();
+  const [preferredOrganisms] = usePreferredOrganismsState();
   const availableOrganisms = useAvailableOrganisms();
-  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+  const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
   const referenceStrains = useReferenceStrains();
-  
+
   /**
    * if user's preferred organisms is less than all available organisms, we can assume the user has
    * set their preferred organisms
    */
-  const hasUserSetPreferredOrganisms = preferredOrganisms.length < Array.from(availableOrganisms).length
+  const hasUserSetPreferredOrganisms =
+    preferredOrganisms.length < Array.from(availableOrganisms).length;
 
   return (
     <SiteSearchController
@@ -120,55 +120,64 @@ function SiteSearchRouteComponent() {
 /**
  * Wrap Ebrc Routes
  */
-export const wrapRoutes = ebrcRoutes => [
+export const wrapRoutes = (ebrcRoutes) => [
+  {
+    path: '/downloads',
+    component: Downloads,
+  },
+
   {
     path: '/record/organism/:id*',
-    component: (props) => <Redirect to={`/record/dataset/${props.match.params.id}`}/>
+    component: (props) => (
+      <Redirect to={`/record/dataset/${props.match.params.id}`} />
+    ),
   },
 
   {
     path: '/fasta-tool',
     exact: false,
-    component: () => <FastaConfigController/>
+    component: () => <FastaConfigController />,
   },
 
   {
     path: '/query-grid',
-    component: () => <QueryGridController/>
+    component: () => <QueryGridController />,
   },
 
   {
     path: '/sample-form',
-    component: () => <SampleForm/>
+    component: () => <SampleForm />,
   },
 
   {
     path: '/',
-    component: () =>
+    component: () => (
       <React.Fragment>
         <FeaturedTools />
         <hr />
         <WorkshopExercises />
       </React.Fragment>
+    ),
   },
 
   {
     path: '/jbrowse',
     component: JBrowseController,
-    rootClassNameModifier: 'jbrowse'
+    rootClassNameModifier: 'jbrowse',
   },
 
   {
     path: '/search',
-    component: () =>
+    component: () => (
       <Suspense fallback={<PageLoading />}>
         <SiteSearchRouteComponent />
       </Suspense>
+    ),
   },
 
   {
     path: '/plasmoap',
-    component: PlasmoApController
+    component: PlasmoApController,
   },
 
   ...blastRoutes,
@@ -177,14 +186,11 @@ export const wrapRoutes = ebrcRoutes => [
 
   ...userCommentRoutes,
 
-  ...(
-    useUserDatasetsWorkspace
-      ? userDatasetRoutes
-      : []
-  ),
+  ...(useUserDatasetsWorkspace ? userDatasetRoutes : []),
 
-  ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
-    ? { ...route, component: addProjectIdPkValueWrapper(route.component) }
-    : route
-  )
+  ...ebrcRoutes.map((route) =>
+    route.path.includes(':primaryKey+')
+      ? { ...route, component: addProjectIdPkValueWrapper(route.component) }
+      : route
+  ),
 ];

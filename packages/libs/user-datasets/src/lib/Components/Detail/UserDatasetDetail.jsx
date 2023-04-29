@@ -18,6 +18,8 @@ import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWra
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
+import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
+import { ThemedDeleteButton } from '../ThemedDeleteButton';
 
 import { DateTime } from '../DateTime';
 
@@ -90,13 +92,14 @@ class UserDatasetDetail extends React.Component {
   }
 
   handleDelete() {
-    const { baseUrl, isOwner, userDataset, removeUserDataset } = this.props;
+    const { baseUrl, isOwner, userDataset, removeUserDataset, dataNoun } =
+      this.props;
     const { sharedWith } = userDataset;
     const shareCount = !Array.isArray(sharedWith) ? null : sharedWith.length;
     const message =
       `Are you sure you want to ${
         isOwner ? 'delete' : 'remove'
-      } this data set? ` +
+      } this ${dataNoun.singular.toLowerCase()}? ` +
       (!isOwner || !shareCount
         ? ''
         : `${shareCount} collaborator${
@@ -309,15 +312,12 @@ class UserDatasetDetail extends React.Component {
     return (
       <div className={classify('Actions')}>
         {!isOwner ? null : (
-          <button className="btn btn-success" onClick={this.openSharingModal}>
-            <Icon fa="share-alt" className="left-side" />
-            Grant Access to {this.props.dataNoun.singular}
-          </button>
+          <ThemedGrantAccessButton
+            buttonText={`Grant Access to ${this.props.dataNoun.singular}`}
+            onPress={this.openSharingModal}
+          />
         )}
-        <button className="btn btn-error" onClick={this.handleDelete}>
-          <Icon fa="trash" className="left-side" />
-          Delete
-        </button>
+        <ThemedDeleteButton buttonText="Delete" onPress={this.handleDelete} />
       </div>
     );
   }
@@ -342,7 +342,7 @@ class UserDatasetDetail extends React.Component {
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderFileSection() {
-    const { userDataset, appUrl } = this.props;
+    const { userDataset, appUrl, dataNoun } = this.props;
     const fileTableState = MesaState.create({
       columns: this.getFileTableColumns({ userDataset, appUrl }),
       rows: userDataset.datafiles,
@@ -353,7 +353,7 @@ class UserDatasetDetail extends React.Component {
         <h2>Data Files</h2>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="files-o" />
-          Files in Data Set
+          Files in {dataNoun.singular}
         </h3>
         <Mesa state={fileTableState} />
       </section>
@@ -428,7 +428,7 @@ class UserDatasetDetail extends React.Component {
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
   renderCompatibilitySection() {
-    const { userDataset, config } = this.props;
+    const { userDataset, config, dataNoun } = this.props;
     const { projectId, displayName } = config;
 
     const compatibilityTableState = MesaState.create({
@@ -442,11 +442,15 @@ class UserDatasetDetail extends React.Component {
 
     return (
       <section id="dataset-compatibility">
-        <h2>Use This Data Set in {displayName}</h2>
+        <h2>
+          Use This {dataNoun.singular} in {displayName}
+        </h2>
         <h3 className={classify('SectionTitle')}>
           <Icon fa="puzzle-piece" />
           Compatibility Information &nbsp;
-          <AnchoredTooltip content="The data and genomes listed here are requisite for using the data in this user data set.">
+          <AnchoredTooltip
+            content={`The data and genomes listed here are requisite for using the data in this user ${dataNoun.singular.toLowerCase()}.`}
+          >
             <div className="HelpTrigger">
               <Icon fa="question-circle" />
             </div>
@@ -457,13 +461,15 @@ class UserDatasetDetail extends React.Component {
         </div>
         {isCompatibleProject && isCompatible ? (
           <p className="success">
-            This data set is compatible with the current release, build{' '}
-            {buildNumber}, of <b>{projectId}</b>. It is installed for use.
+            This {dataNoun.singular.toLowerCase()} is compatible with the
+            current release, build {buildNumber}, of <b>{projectId}</b>. It is
+            installed for use.
           </p>
         ) : (
           <p className="danger">
-            This data set is not compatible with the current release, build{' '}
-            {buildNumber}, of <b>{projectId}</b>. It is not installed for use.
+            This {dataNoun.singular.toLowerCase()} is not compatible with the
+            current release, build {buildNumber}, of <b>{projectId}</b>. It is
+            not installed for use.
           </p>
         )}
       </section>

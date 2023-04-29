@@ -46,6 +46,11 @@ module.exports = function override(config, env) {
           include: /node_modules/,
           loader: 'ify-loader',
         },
+        {
+          test: /\.(tsx)$/,
+          exclude: /node_modules/,
+          use: ['babel-loader'],
+        },
       ],
     },
     snapshot: {

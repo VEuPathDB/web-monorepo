@@ -363,7 +363,7 @@ export function HistogramFilter(props: Props) {
           )}
         </div>
         <HistogramPlotWithControls
-          key={filters?.length ?? 0}
+          key={otherFilters?.length ?? 0}
           filter={filter}
           data={
             data.value &&

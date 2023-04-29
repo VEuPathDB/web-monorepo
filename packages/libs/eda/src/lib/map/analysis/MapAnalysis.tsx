@@ -3,9 +3,11 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
+  EntityDiagram,
   PromiseResult,
   useAnalysis,
   useDataClient,
+  useDownloadClient,
   useFindEntityAndVariable,
   usePromise,
   useStudyEntities,
@@ -14,7 +16,6 @@ import {
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
-import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import { Download, FilledButton, Filter } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
@@ -26,6 +27,7 @@ import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
 import {
   useFeaturedFields,
+  useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
@@ -65,6 +67,9 @@ import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
+import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -77,10 +82,9 @@ import { useHistory } from 'react-router';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
-/**
- * used to filter suitable apps from the apps endpoint response
- */
-const APP_CONTEXT = 'MapApp';
+import { uniq } from 'lodash';
+import DownloadTab from '../../workspace/DownloadTab';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -109,6 +113,12 @@ function getSideNavItemIndexByLabel(
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
+};
+
+export const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
 };
 
 interface Props {
@@ -167,26 +177,23 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariables.overlay) ?? {};
 
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
   const {
     markers,
     pending,
+    error,
     legendItems,
-    basicMarkerError,
     outputEntity,
-    overlayError,
-    totalEntityCount,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
-  } = useMapMarkers({
-    requireOverlay: false,
+  } = useStandaloneMapMarkers({
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
-    filters: analysisState.analysis?.descriptor.subset.descriptor,
-    xAxisVariable: selectedVariables.overlay,
-    computationType: 'pass',
+    filters,
+    overlayVariable: selectedVariables.overlay,
     markerType: 'pie',
-    checkedLegendItems: undefined,
     //TO DO: maybe dependentAxisLogScale
   });
 
@@ -194,6 +201,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const dataClient = useDataClient();
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+
+  const downloadClient = useDownloadClient();
 
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
@@ -236,7 +245,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         getOverlayVariable: (_) => appState.selectedOverlayVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
-        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
 
@@ -311,7 +319,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const outputEntityTotalCount =
     totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
 
-  const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
+  const outputEntityFilteredCount =
+    filteredCounts.value && outputEntity
+      ? filteredCounts.value[outputEntity.id]
+      : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
@@ -320,6 +331,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   const FilterChipListForHeader = () => {
+    if (!studyEntities || !filters) return <></>;
+
     const filterChipConfig: VariableLinkConfig = {
       type: 'button',
       onClick(value) {
@@ -327,10 +340,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         openSubsetPanelFromControlOutsideOfNavigation();
       },
     };
-
-    const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
-    if (!studyEntities || !filters) return <></>;
 
     return (
       <div
@@ -417,6 +426,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       </div>
     );
 
+  const filteredEntities = uniq(filters?.map((f) => f.entityId));
+  const getDefaultVariableId = useGetDefaultVariableIdCallback();
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -431,18 +443,47 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                width: '80vw',
+                width: '70vw',
+                maxWidth: 1500,
                 maxHeight: 650,
                 padding: '0 25px',
               }}
             >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <EntityDiagram
+                  expanded
+                  orientation="horizontal"
+                  selectedEntity={subsetVariableAndEntity.entityId}
+                  selectedVariable={subsetVariableAndEntity.variableId}
+                  entityCounts={totalCounts.value}
+                  filteredEntityCounts={filteredCounts.value}
+                  filteredEntities={filteredEntities}
+                  variableLinkConfig={{
+                    type: 'button',
+                    onClick: (variableValue) => {
+                      setSubsetVariableAndEntity({
+                        entityId: variableValue?.entityId,
+                        variableId: variableValue?.variableId
+                          ? variableValue.variableId
+                          : getDefaultVariableId(variableValue?.entityId),
+                      });
+                    },
+                  }}
+                />
+              </div>
               <Subsetting
                 variableLinkConfig={{
                   type: 'button',
                   onClick: setSubsetVariableAndEntity,
                 }}
                 entityId={subsetVariableAndEntity?.entityId ?? ''}
-                variableId={subsetVariableAndEntity?.variableId ?? ''}
+                variableId={subsetVariableAndEntity.variableId ?? ''}
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
@@ -474,7 +515,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Download,
         icon: <Download />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <DownloadTab
+                downloadClient={downloadClient}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </div>
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Share,
@@ -520,8 +578,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                // This matches the `marginTop` applied by `<NotesTab />`
-                padding: '0 35px',
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
               }}
             >
               <NotesTab analysisState={analysisState} />
@@ -532,7 +591,23 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+                fontSize: '.95em',
+              }}
+            >
+              <RecordController
+                recordClass="dataset"
+                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+              />
+            </div>
+          );
+        },
       },
     ];
 
@@ -646,21 +721,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 >
                   <MapHeader
                     analysisName={analysisState.analysis?.displayName}
-                    entityDisplayName={
-                      outputEntity?.displayNamePlural || 'Samples'
-                    }
+                    outputEntity={outputEntity}
                     filterList={<FilterChipListForHeader />}
-                    isExpanded={mapHeaderIsExpanded}
                     siteInformation={props.siteInformationProps}
                     onAnalysisNameEdit={analysisState.setName}
-                    onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
                     studyName={studyRecord.displayName}
                     totalEntityCount={outputEntityTotalCount}
-                    totalEntityInSubsetCount={totalEntityCount}
+                    totalEntityInSubsetCount={outputEntityFilteredCount}
                     visibleEntityCount={
                       totalVisibleWithOverlayEntityCount ??
                       totalVisibleEntityCount
                     }
+                    overlayActive={overlayVariable != null}
                   />
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
@@ -710,7 +782,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   showZoomControl={false}
                   showLayerSelector={false}
                   showSpinner={pending}
-                  animation={null}
+                  animation={defaultAnimation}
                   viewport={appState.viewport}
                   markers={finalMarkers}
                   mouseMode={appState.mouseMode}
@@ -734,6 +806,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     <MapLegend
                       legendItems={legendItems}
                       title={overlayVariable?.displayName}
+                      // control to show checkbox. default: true
+                      showCheckbox={false}
                     />
                   )}
                 </FloatingDiv>
@@ -796,7 +870,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 )}
 
-                {(basicMarkerError || overlayError) && (
+                {error && (
                   <FloatingDiv
                     style={{
                       top: undefined,
@@ -805,8 +879,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       right: 100,
                     }}
                   >
-                    {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-                    {overlayError && <div>{String(overlayError)}</div>}
+                    <div>{String(error)}</div>
                   </FloatingDiv>
                 )}
               </div>
@@ -816,4 +889,34 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       }}
     </PromiseResult>
   );
+}
+
+/**
+ * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
+ * kind of test and simplify its logic.
+ */
+export function useGetDefaultVariableIdCallback() {
+  const entities = useStudyEntities();
+  const flattenedFields = useFlattenedFields(entities, 'variableTree');
+  const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
+
+  return function getDefaultVariableIdCallback(entityId?: string) {
+    let finalVariableId: string | undefined;
+
+    if (entityId || featuredFields.length === 0) {
+      // Use the first variable in the entity
+      const entity = entityId
+        ? entities.find((e) => e.id === entityId)
+        : entities[0];
+      finalVariableId =
+        entity &&
+        findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1];
+    } else {
+      // Use the first featured variable
+      [finalVariableId] = featuredFields[0].term.split('/');
+    }
+
+    return finalVariableId;
+  };
 }

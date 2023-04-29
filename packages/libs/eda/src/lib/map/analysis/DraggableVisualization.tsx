@@ -72,7 +72,7 @@ export default function DraggableVisualization({
           confineToParentContainer
           showPanelTitle
           isOpen
-          styleOverrides={{ zIndex: 10 }}
+          styleOverrides={{ zIndex: 10, resize: 'both' }}
           panelTitle={activeVizOverview?.displayName || ''}
           defaultPosition={{
             x: 535,
@@ -82,8 +82,6 @@ export default function DraggableVisualization({
         >
           <div
             style={{
-              overflow: 'scroll',
-              resize: 'both',
               // Initial height & width.
               height: 547,
               width: 779,
