@@ -30,9 +30,10 @@ export function DonutConfigurationMenu({
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlay) {
-      throw new Error(
+      console.error(
         `Expected overlay to defined but got ${typeof selection.overlay}`
       );
+      return;
     }
 
     onChange({
