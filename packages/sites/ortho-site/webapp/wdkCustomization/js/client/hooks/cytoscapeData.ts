@@ -75,15 +75,17 @@ export function useCytoscapeConfig(
   const initialCytoscapeConfig = {
     elements,
     stylesheet,
-    layout: { name: 'fcose', animate: false
-             },
+    layout: { name: 'fcose', 
+       animate: false,       
+       idealEdgeLength: function( edge ){ if(edge.data.score) {return edge.data.score + 500;} return 600; }
+       },
     panningEnabled: true,
     userPanningEnabled: true,
     zoom: 1,
     zoomingEnabled: true,
     userZoomingEnabled: true,
     boxSelectionEnabled: false,
-    autoungrabify: true,
+    autoungrabify: false,
     autounselectify: true
   };
 
