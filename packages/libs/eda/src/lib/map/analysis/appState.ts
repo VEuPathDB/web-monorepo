@@ -8,6 +8,27 @@ import { VariableDescriptor } from '../../core/types/variable';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
+const MarkerType = t.keyof({
+  barplot: null,
+  pie: null,
+});
+
+const MarkerConfiguration = t.intersection([
+  t.type({
+    type: MarkerType,
+    selectedVariable: VariableDescriptor,
+  }),
+  t.union([
+    t.type({
+      type: t.literal('barplot'),
+      selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
+    }),
+    t.type({
+      type: t.literal('pie'),
+    }),
+  ]),
+]);
+
 export const AppState = t.intersection([
   t.type({
     viewport: t.type({
@@ -20,8 +41,8 @@ export const AppState = t.intersection([
     }),
   }),
   t.partial({
-    selectedOverlayVariable: VariableDescriptor,
-    /** markerconfigs [] define marker configs in iots & `activeMarkerType` */
+    activeMarkerConfigurationType: MarkerType,
+    markerConfigurations: t.array(MarkerConfiguration),
     activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
@@ -47,6 +68,7 @@ const defaultAppState: AppState = {
     zoom: 4,
   },
   mouseMode: 'default',
+  activeMarkerConfigurationType: 'pie',
 };
 
 export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
@@ -90,12 +112,15 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
 
   return {
     appState,
-    setViewport: useSetter('viewport'),
-    setMouseMode: useSetter('mouseMode'),
-    setSelectedOverlayVariable: useSetter('selectedOverlayVariable'),
+    setActiveMarkerConfigurationType: useSetter(
+      'activeMarkerConfigurationType'
+    ),
+    setMarkerConfigurations: useSetter('markerConfigurations'),
     setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
-    setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
+    setMouseMode: useSetter('mouseMode'),
+    setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
+    setViewport: useSetter('viewport'),
   };
 }

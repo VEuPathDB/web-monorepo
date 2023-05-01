@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
@@ -149,13 +149,14 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     appState,
     analysisState,
     setMouseMode,
-    setSelectedOverlayVariable,
     setViewport,
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
     sharingUrl,
     setIsSubsetPanelOpen = () => {},
+    setActiveMarkerConfigurationType,
+    setMarkerConfigurations,
   } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -164,12 +165,36 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const geoConfig = geoConfigs[0];
   const theme = useUITheme();
 
-  const selectedVariables = useMemo(
-    () => ({
-      overlay: appState.selectedOverlayVariable,
-    }),
-    [appState.selectedOverlayVariable]
-  );
+  const getDefaultVariableId = useGetDefaultVariableIdCallback();
+  const selectedVariables = {
+    overlay: getDefaultVariableId(studyMetadata.rootEntity.id),
+  };
+
+  const {
+    activeMarkerConfigurationType = 'pie',
+    markerConfigurations: savedMarkerConfigurations,
+  } = appState;
+
+  const defautMarkerConfigurations: MarkerConfiguration[] = [
+    {
+      type: 'pie',
+      selectedVariable: selectedVariables.overlay,
+    },
+    {
+      type: 'barplot',
+      selectedPlotMode: 'count',
+      selectedVariable: selectedVariables.overlay,
+    },
+  ];
+
+  const markerConfigurations = savedMarkerConfigurations
+    ? savedMarkerConfigurations
+    : defautMarkerConfigurations;
+
+  const activeMarkerConfiguration =
+    markerConfigurations.find(
+      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    ) || defautMarkerConfigurations[0];
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -177,60 +202,32 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
-  const [markerConfigurations, setMarkerConfigurations] = useState<
-    MarkerConfiguration[]
-  >([
-    {
-      type: 'pie',
-      selectedVariable: selectedVariables.overlay || {
-        entityId: '',
-        variableId: '',
-      },
-    },
-    {
-      type: 'barplot',
-      selectedPlotMode: 'count',
-      selectedVariable: selectedVariables.overlay || {
-        entityId: '',
-        variableId: '',
-      },
-    },
-  ]);
-
   function updateMarkerConfigurations(
     updatedConfiguration: MarkerConfiguration
   ) {
-    setMarkerConfigurations((configurations) =>
-      configurations.map((configuration) => {
+    const nextMarkerConfigurations = markerConfigurations.map(
+      (configuration) => {
         if (configuration.type === updatedConfiguration.type) {
           return updatedConfiguration;
         }
         return configuration;
-      })
+      }
     );
+    setMarkerConfigurations(nextMarkerConfigurations);
   }
 
-  const [activeMarkerConfigurationType, setActiveMarkerConfigurationType] =
-    useState<MarkerConfiguration['type']>('pie');
-
-  const activeMarkerConfiguration = markerConfigurations.find(
-    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-  );
-
   const adaptedMarkerTypename = (() => {
-    if (!activeMarkerConfiguration?.type) return 'pie';
+    if (!activeMarkerConfiguration) return 'pie'; // The default marker type.
 
     if (activeMarkerConfiguration.type === 'barplot') {
-      // The marker type is either 'barplot' or 'count'
+      // The marker type for barplots is either `count` or `proportion`.
+      // `useMapMarkers` needs to know this.
       return activeMarkerConfiguration.selectedPlotMode;
     }
 
     return activeMarkerConfiguration.type;
   })();
 
-  /**
-   * Keep track of which marker type is active. `markerType` -> activeMarkerType `xAxisVariable`: selectedVariables.overlay
-   */
   const {
     markers,
     pending,
@@ -247,8 +244,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters,
-    xAxisVariable:
-      activeMarkerConfiguration?.selectedVariable || selectedVariables.overlay,
+    xAxisVariable: activeMarkerConfiguration.selectedVariable,
     computationType: 'pass',
     markerType: adaptedMarkerTypename,
     checkedLegendItems: undefined,
@@ -300,7 +296,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       return visualization.withOptions({
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => appState.selectedOverlayVariable,
+        getOverlayVariable: (_) => selectedVariables.overlay,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
         //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
@@ -322,7 +318,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [appState.selectedOverlayVariable]);
+  }, [selectedVariables.overlay]);
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
@@ -476,12 +472,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   };
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
-  const getDefaultVariableId = useGetDefaultVariableIdCallback();
 
-  /**
-   *
-   * Do type narrowing for each marker configuration types.
-   */
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -499,7 +490,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   type: 'pie',
                   displayName: 'Donuts',
                   renderConfigurationMenu:
-                    activeMarkerConfiguration?.type === 'pie' ? (
+                    activeMarkerConfiguration.type === 'pie' ? (
                       <DonutConfigurationMenu
                         inputs={[{ name: 'overlay', label: 'Overlay' }]}
                         entities={studyEntities}
@@ -519,7 +510,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   type: 'barplot',
                   displayName: 'Bar plots',
                   renderConfigurationMenu:
-                    activeMarkerConfiguration?.type === 'barplot' ? (
+                    activeMarkerConfiguration.type === 'barplot' ? (
                       <BarPlotConfigurationMenu
                         inputs={[{ name: 'overlay', label: 'Overlay' }]}
                         entities={studyEntities}
@@ -578,7 +569,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                         entityId: variableValue?.entityId,
                         variableId: variableValue?.variableId
                           ? variableValue.variableId
-                          : getDefaultVariableId(variableValue?.entityId),
+                          : getDefaultVariableId(variableValue?.entityId)
+                              .variableId,
                       });
                     },
                   }}
@@ -989,21 +981,24 @@ export function useGetDefaultVariableIdCallback() {
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 
   return function getDefaultVariableIdCallback(entityId?: string) {
-    let finalVariableId: string | undefined;
+    let finalEntityId = '';
+    let finalVariableId = '';
 
     if (entityId || featuredFields.length === 0) {
       // Use the first variable in the entity
       const entity = entityId
         ? entities.find((e) => e.id === entityId)
         : entities[0];
-      finalVariableId =
-        entity &&
-        findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1];
+      finalEntityId = entity?.id || '';
+      finalVariableId = entity
+        ? findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1] ||
+          ''
+        : '';
     } else {
       // Use the first featured variable
-      [finalVariableId] = featuredFields[0].term.split('/');
+      [finalEntityId, finalVariableId] = featuredFields[0].term.split('/');
     }
 
-    return finalVariableId;
+    return { entityId: finalEntityId, variableId: finalVariableId };
   };
 }
