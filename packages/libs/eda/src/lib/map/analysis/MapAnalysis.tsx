@@ -170,26 +170,35 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     overlay: getDefaultVariableId(studyMetadata.rootEntity.id),
   };
 
-  const {
-    activeMarkerConfigurationType = 'pie',
-    markerConfigurations: savedMarkerConfigurations,
-  } = appState;
+  const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
+    appState;
 
-  const defautMarkerConfigurations: MarkerConfiguration[] = [
-    {
-      type: 'pie',
-      selectedVariable: selectedVariables.overlay,
-    },
-    {
-      type: 'barplot',
-      selectedPlotMode: 'count',
-      selectedVariable: selectedVariables.overlay,
-    },
-  ];
+  const defautMarkerConfigurations: MarkerConfiguration[] = useMemo(() => {
+    return [
+      {
+        type: 'pie',
+        selectedVariable: selectedVariables.overlay,
+      },
+      {
+        type: 'barplot',
+        selectedPlotMode: 'count',
+        selectedVariable: selectedVariables.overlay,
+      },
+    ];
+  }, [selectedVariables.overlay]);
 
-  const markerConfigurations = savedMarkerConfigurations
-    ? savedMarkerConfigurations
-    : defautMarkerConfigurations;
+  useEffect(
+    function generateDefaultMarkerConfigurationsIfNeeded() {
+      if (markerConfigurations.length > 0) return;
+
+      setMarkerConfigurations(defautMarkerConfigurations);
+    },
+    [
+      defautMarkerConfigurations,
+      markerConfigurations.length,
+      setMarkerConfigurations,
+    ]
+  );
 
   const activeMarkerConfiguration =
     markerConfigurations.find(
