@@ -9,7 +9,7 @@ const disabledStyle: React.CSSProperties = {
   opacity: 0.5,
 };
 
-export type VariableValue = {
+type VariableValue = {
   entityId?: string;
   variableId?: string;
 };
