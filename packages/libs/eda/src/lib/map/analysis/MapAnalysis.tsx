@@ -219,8 +219,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   const adaptedMarkerTypename = (() => {
-    if (!activeMarkerConfiguration) return 'pie'; // The default marker type.
-
     if (activeMarkerConfiguration.type === 'barplot') {
       // The marker type for barplots is either `count` or `proportion`.
       // `useMapMarkers` needs to know this.
