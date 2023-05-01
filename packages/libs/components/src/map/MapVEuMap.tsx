@@ -37,7 +37,6 @@ import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
-import { propTypes } from 'react-bootstrap/esm/Image';
 
 // define Viewport type
 export type Viewport = {
@@ -264,76 +263,85 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   };
 
   return (
-    <MapContainer
-      center={viewport.center}
-      zoom={viewport.zoom}
-      style={{ height, width, ...style }}
-      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
-      minZoom={1}
-      worldCopyJump={false}
-      whenCreated={onCreated}
-      attributionControl={showAttribution}
-      zoomControl={showZoomControl}
-      {...(interactive ? {} : disabledInteractiveProps)}
+    <div
+      style={{
+        height,
+        width,
+        position: 'relative',
+        ...style,
+      }}
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
-
-      <SemanticMarkers
-        onBoundsChanged={onBoundsChanged}
-        markers={finalMarkers}
-        animation={animation}
-        recenterMarkers={recenterMarkers}
-      />
-
-      {showMouseToolbar && (
-        <MouseTools
-          mouseMode={mouseMode}
-          onMouseModeChange={onMouseModeChange}
+      <MapContainer
+        center={viewport.center}
+        zoom={viewport.zoom}
+        style={{ height: '100%', width: '100%' }}
+        className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
+        minZoom={1}
+        worldCopyJump={false}
+        whenCreated={onCreated}
+        attributionControl={showAttribution}
+        zoomControl={showZoomControl}
+        {...(interactive ? {} : disabledInteractiveProps)}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
-      )}
 
-      {showGrid && zoomLevelToGeohashLevel ? (
-        <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
-      ) : null}
-
-      {showLayerSelector && (
-        <LayersControl position="topleft">
-          {Object.entries(baseLayers).map(([name, layerProps], i) => (
-            <LayersControl.BaseLayer
-              name={name}
-              key={name}
-              checked={baseLayer ? name === baseLayer : i === 0}
-            >
-              <TileLayer {...layerProps} />
-            </LayersControl.BaseLayer>
-          ))}
-        </LayersControl>
-      )}
-
-      {showSpinner && <Spinner />}
-      {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
-      {/* add Scale in the map */}
-      {showScale && <ScaleControl position="bottomright" />}
-
-      {/* PerformFlyToMarkers component for flyTo functionality */}
-      {flyToMarkers && (
-        <PerformFlyToMarkers
-          markers={markers}
-          flyToMarkers={flyToMarkers}
-          flyToMarkersDelay={flyToMarkersDelay}
+        <SemanticMarkers
+          onBoundsChanged={onBoundsChanged}
+          markers={finalMarkers}
+          animation={animation}
+          recenterMarkers={recenterMarkers}
         />
-      )}
-      {/* component for map events */}
-      <MapVEuMapEvents
-        onViewportChanged={onViewportChanged}
-        onBaseLayerChanged={onBaseLayerChanged}
-      />
-      {/* set ScrollWheelZoom */}
-      <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
-    </MapContainer>
+
+        {showMouseToolbar && (
+          <MouseTools
+            mouseMode={mouseMode}
+            onMouseModeChange={onMouseModeChange}
+          />
+        )}
+
+        {showGrid && zoomLevelToGeohashLevel ? (
+          <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />
+        ) : null}
+
+        {showLayerSelector && (
+          <LayersControl position="topleft">
+            {Object.entries(baseLayers).map(([name, layerProps], i) => (
+              <LayersControl.BaseLayer
+                name={name}
+                key={name}
+                checked={baseLayer ? name === baseLayer : i === 0}
+              >
+                <TileLayer {...layerProps} />
+              </LayersControl.BaseLayer>
+            ))}
+          </LayersControl>
+        )}
+
+        {showSpinner && <Spinner />}
+        {showNoDataOverlay && <NoDataOverlay opacity={0.9} />}
+        {/* add Scale in the map */}
+        {showScale && <ScaleControl position="bottomright" />}
+
+        {/* PerformFlyToMarkers component for flyTo functionality */}
+        {flyToMarkers && (
+          <PerformFlyToMarkers
+            markers={markers}
+            flyToMarkers={flyToMarkers}
+            flyToMarkersDelay={flyToMarkersDelay}
+          />
+        )}
+        {/* component for map events */}
+        <MapVEuMapEvents
+          onViewportChanged={onViewportChanged}
+          onBaseLayerChanged={onBaseLayerChanged}
+        />
+        {/* set ScrollWheelZoom */}
+        <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
+      </MapContainer>
+    </div>
   );
 }
 

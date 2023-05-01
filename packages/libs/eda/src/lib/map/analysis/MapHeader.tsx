@@ -1,4 +1,10 @@
-import { CSSProperties, ReactElement, ReactNode } from 'react';
+import {
+  CSSProperties,
+  ReactElement,
+  ReactNode,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 import {
   makeClassNameHelper,
   safeHtml,
@@ -22,6 +28,7 @@ export type MapNavigationProps = {
   totalEntityCount: number | undefined;
   totalEntityInSubsetCount: number | undefined;
   visibleEntityCount: number | undefined;
+  setHeaderHeight: React.Dispatch<number>;
 };
 
 /**
@@ -39,9 +46,18 @@ export function MapHeader({
   totalEntityCount = 0,
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
+  setHeaderHeight,
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
   const { format } = new Intl.NumberFormat();
+
+  const mapHeaderWrapper = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    if (mapHeaderWrapper.current) {
+      const { height } = mapHeaderWrapper.current.getBoundingClientRect();
+      setHeaderHeight(height);
+    }
+  });
 
   return (
     <header
@@ -50,6 +66,7 @@ export function MapHeader({
         borderBottom: mapNavigationBorder,
       }}
       className={`${mapHeader()}`}
+      ref={mapHeaderWrapper}
     >
       <div className={`${mapHeader('__Contents')}`}>
         <div className={mapHeader('__LogoContainer')}>

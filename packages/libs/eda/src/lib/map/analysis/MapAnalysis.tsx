@@ -81,6 +81,8 @@ import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 
+const BASE_HEADER_HEIGHT = 80;
+
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
@@ -673,6 +675,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);
 
+  const [headerHeight, setHeaderHeight] = useState(BASE_HEADER_HEIGHT);
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app: ComputationAppOverview) => {
@@ -710,6 +714,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   }}
                 >
                   <MapHeader
+                    setHeaderHeight={setHeaderHeight}
                     analysisName={analysisState.analysis?.displayName}
                     entityDisplayName={
                       outputEntity?.displayNamePlural || 'Samples'
@@ -766,9 +771,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 </div>
 
                 <MapVEuMap
-                  height="100%"
                   width="100%"
-                  style={mapStyle}
+                  // We use the headerHeight to determine the height of the map's container
+                  // and its top offset so that no map content is hidden beneath the
+                  // map header.
+                  height={`calc(100% - ${headerHeight}px)`}
+                  style={{ top: headerHeight, ...mapStyle }}
                   showMouseToolbar={false}
                   showZoomControl={false}
                   showLayerSelector={false}
