@@ -1,2 +1,3 @@
 import { ReactComponent as Donut } from './donut.svg';
-export { Donut };
+import { ReactComponent as BarPlots } from './barplots.svg';
+export { Donut, BarPlots };

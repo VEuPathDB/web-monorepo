@@ -18,18 +18,18 @@ interface Props {
 const listItemStyles: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'flex-start',
-  width: '100%',
-  transition: 'background 0.1s ease',
   padding: '5px 10px',
+  transition: 'background 0.1s ease',
+  width: '100%',
 };
 const buttonStyles: React.CSSProperties = {
+  alignItems: 'center',
   background: 'none',
-  width: '100%',
   border: 'none',
-  padding: '5px 10px',
   display: 'flex',
   justifyContent: 'space-around',
-  alignItems: 'center',
+  padding: '5px 10px',
+  width: '100%',
 };
 
 export function MarkerConfigurationSelector({

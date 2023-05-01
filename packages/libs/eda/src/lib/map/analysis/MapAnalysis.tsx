@@ -83,7 +83,7 @@ import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
 import { MarkerConfiguration } from './MarkerConfiguration';
-import { Donut } from './MarkerConfiguration/icons';
+import { BarPlots, Donut } from './MarkerConfiguration/icons';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -450,22 +450,22 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
    * menu buttons and their associated panels for real.
    */
   const buttonStyles: React.CSSProperties = {
+    alignItems: 'center',
     background: 'transparent',
     borderColor: 'transparent',
+    display: 'flex',
     fontSize: 16,
+    justifyContent: 'flex-start',
     margin: 0,
     padding: 0,
     width: '100%',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
   };
   const iconStyles: React.CSSProperties = {
-    height: 25,
-    width: 25,
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
+    display: 'flex',
+    height: 25,
+    justifyContent: 'center',
+    width: 25,
   };
   const labelStyles: React.CSSProperties = {
     marginLeft: '0.5rem',
@@ -510,8 +510,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {
                   type: 'barplot',
                   displayName: 'Bar plots',
-                  // TBD: Waiting for the Barplot icon
-                  icon: <Donut style={{ height: 30 }} />,
+                  icon: <BarPlots style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'barplot' ? (
                       <BarPlotConfigurationMenu
