@@ -27,6 +27,9 @@ const buttonStyles: React.CSSProperties = {
   width: '100%',
   border: 'none',
   padding: '5px 10px',
+  display: 'flex',
+  justifyContent: 'space-around',
+  alignItems: 'center',
 };
 
 export function MarkerConfigurationSelector({
@@ -77,7 +80,7 @@ export function MarkerConfigurationSelector({
                   >
                     {name}
                   </span>
-                  <span aria-hidden>{icon}</span>
+                  {icon}
                 </button>
               </li>
             );

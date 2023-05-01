@@ -77,18 +77,13 @@ import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
 import { MarkerConfigurationSelector } from './MarkerConfiguration';
-import {
-  DonutConfigurationMenu,
-  DonutMarkerConfiguration,
-} from './MarkerConfiguration/DonutConfigurationMenu';
+import { DonutConfigurationMenu } from './MarkerConfiguration/DonutConfigurationMenu';
 import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import {
-  BarPlotConfigurationMenu,
-  BarPlotMarkerConfiguration,
-} from './MarkerConfiguration/BarPlotConfigurationMenu';
+import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
 import { MarkerConfiguration } from './MarkerConfiguration';
+import { Donut } from './MarkerConfiguration/icons';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -166,9 +161,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const theme = useUITheme();
 
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
-  const selectedVariables = {
-    overlay: getDefaultVariableId(studyMetadata.rootEntity.id),
-  };
+  const selectedVariables = getDefaultVariableId(studyMetadata.rootEntity.id);
 
   const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
     appState;
@@ -177,15 +170,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     return [
       {
         type: 'pie',
-        selectedVariable: selectedVariables.overlay,
+        selectedVariable: selectedVariables,
       },
       {
         type: 'barplot',
         selectedPlotMode: 'count',
-        selectedVariable: selectedVariables.overlay,
+        selectedVariable: selectedVariables,
       },
     ];
-  }, [selectedVariables.overlay]);
+  }, [selectedVariables]);
 
   useEffect(
     function generateDefaultMarkerConfigurationsIfNeeded() {
@@ -207,7 +200,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
-    findEntityAndVariable(selectedVariables.overlay) ?? {};
+    findEntityAndVariable(selectedVariables) ?? {};
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
@@ -305,7 +298,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       return visualization.withOptions({
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => selectedVariables.overlay,
+        getOverlayVariable: (_) => selectedVariables,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
         //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
@@ -327,7 +320,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [selectedVariables.overlay]);
+  }, [selectedVariables]);
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
@@ -498,6 +491,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {
                   type: 'pie',
                   displayName: 'Donuts',
+                  icon: <Donut style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'pie' ? (
                       <DonutConfigurationMenu
@@ -518,6 +512,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {
                   type: 'barplot',
                   displayName: 'Bar plots',
+                  // TBD: Waiting for the Barplot icon
+                  icon: <Donut style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'barplot' ? (
                       <BarPlotConfigurationMenu
