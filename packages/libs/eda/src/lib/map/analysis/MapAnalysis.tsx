@@ -731,6 +731,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     }
                   />
                   <MapSideNavigation
+                    mapHeaderHeight={headerHeight}
                     isExpanded={sideNavigationIsExpanded}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)

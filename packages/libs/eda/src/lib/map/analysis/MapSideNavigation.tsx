@@ -14,6 +14,7 @@ export type MapSideNavigationProps = {
   onToggleIsExpanded: () => void;
   activeNavigationMenu?: React.ReactNode;
   siteInformationProps: SiteInformationProps;
+  mapHeaderHeight: number;
 };
 
 const bottomLinkStyles: React.CSSProperties = {
@@ -26,10 +27,13 @@ const bottomLinkStyles: React.CSSProperties = {
   marginBottom: '1rem',
 };
 
+const navTopMargin = '1.5rem';
+
 export function MapSideNavigation({
   activeNavigationMenu,
   children,
   isExpanded,
+  mapHeaderHeight,
   onToggleIsExpanded,
   siteInformationProps,
 }: MapSideNavigationProps) {
@@ -46,15 +50,17 @@ export function MapSideNavigation({
         borderLeft: 'none',
         borderBottom: 'none',
         borderTop: 'none',
-        // height: 'calc(100% - 150px)',
-        height: '100%',
+        // height calculation positions nav menu such that there is equal
+        // space above it and below it rather than it extending all the
+        // way to the bottom of the page
+        height: `calc(100% - (2 * ${navTopMargin}) - ${mapHeaderHeight}px)`,
         minHeight: 125,
         position: 'relative',
         transition: 'left 0.1s ease',
         // Zero always makes math easy. Either the menu is as big as
         // it needs to be or it's 0px (and 0px padding).
         width: isExpanded ? 'max-content' : 0,
-        marginTop: '4rem',
+        marginTop: navTopMargin,
         // The parent of this element probably had its pointer-events
         // set to "none". This restores the default behavior. Without
         // this, users cannot interact with the side menu via cursor.
@@ -73,13 +79,13 @@ export function MapSideNavigation({
           border: mapNavigationBorder,
           borderLeft: 'none',
           borderRadius: '0px 5px 5px 0px',
-          height: 60,
+          height: 100,
           width: sideMenuExpandButtonWidth,
           // These styles pin the expand/collapse to the right of
           // the lefthand side menu at the nav's vertical center.
           position: 'absolute',
           right: -sideMenuExpandButtonWidth,
-          top: '50%',
+          top: '10%',
           transform: 'translate(0%, -50%)',
           transition: 'all 0.1s ease',
           // These styles make sure that the button's SVG
