@@ -992,11 +992,17 @@ export function useGetDefaultVariableIdCallback() {
       const entity = entityId
         ? entities.find((e) => e.id === entityId)
         : entities[0];
-      finalEntityId = entity?.id || '';
-      finalVariableId = entity
-        ? findFirstVariable(fieldTree, entity.id)?.field.term.split('/')[1] ||
-          ''
-        : '';
+
+      if (entity) {
+        finalEntityId = entity.id;
+
+        const firstVariable = findFirstVariable(
+          fieldTree,
+          entity.id
+        )?.field.term.split('/')[1];
+
+        finalVariableId = firstVariable || '';
+      }
     } else {
       // Use the first featured variable
       [finalEntityId, finalVariableId] = featuredFields[0].term.split('/');
