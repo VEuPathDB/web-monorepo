@@ -5,7 +5,6 @@ import {
 } from '../../../core/components/visualizations/InputVariables';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { VariableDescriptor } from '../../../core/types/variable';
-import { useState } from 'react';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 
 interface MarkerConfiguration<T extends string> {

@@ -9,7 +9,7 @@ import { VariablesByInputName } from '../../../core/utils/data-element-constrain
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
-export interface DonutMarkerConfiguration extends MarkerConfiguration<'pie'> {
+export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
   selectedVariable: VariableDescriptor;
 }
 interface Props
@@ -17,11 +17,11 @@ interface Props
     InputVariablesProps,
     'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
   > {
-  onChange: (configuration: DonutMarkerConfiguration) => void;
-  configuration: DonutMarkerConfiguration;
+  onChange: (configuration: PieMarkerConfiguration) => void;
+  configuration: PieMarkerConfiguration;
 }
 
-export function DonutConfigurationMenu({
+export function PieMarkerConfigurationMenu({
   entities,
   configuration,
   onChange,

@@ -3,17 +3,17 @@ import {
   BarPlotMarkerConfiguration,
 } from './BarPlotMarkerConfigurationMenu';
 import {
-  DonutConfigurationMenu,
-  DonutMarkerConfiguration,
-} from './DonutConfigurationMenu';
+  PieMarkerConfigurationMenu,
+  PieMarkerConfiguration,
+} from './PieMarkerConfigurationMenu';
 import { MarkerConfigurationSelector } from './MarkerConfigurationSelector';
 
 export {
   MarkerConfigurationSelector,
-  DonutConfigurationMenu,
+  PieMarkerConfigurationMenu,
   BarPlotMarkerConfigurationMenu,
 };
 
 export type MarkerConfiguration =
   | BarPlotMarkerConfiguration
-  | DonutMarkerConfiguration;
+  | PieMarkerConfiguration;

@@ -76,14 +76,14 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { MarkerConfigurationSelector } from './MarkerConfiguration';
-import { DonutConfigurationMenu } from './MarkerConfiguration/DonutConfigurationMenu';
 import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
-  MarkerConfiguration,
   BarPlotMarkerConfigurationMenu,
+  MarkerConfiguration,
+  MarkerConfigurationSelector,
+  PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import { BarPlots, Donut } from './MarkerConfiguration/icons';
 
@@ -494,7 +494,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   icon: <Donut style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'pie' ? (
-                      <DonutConfigurationMenu
+                      <PieMarkerConfigurationMenu
                         inputs={[{ name: 'overlay', label: 'Overlay' }]}
                         entities={studyEntities}
                         onChange={updateMarkerConfigurations}
