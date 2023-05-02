@@ -27,7 +27,7 @@ import {
 } from 'react-leaflet';
 import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
-import '../../dist/css/map_styles.css';
+import './styles/map-styles.css';
 import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
