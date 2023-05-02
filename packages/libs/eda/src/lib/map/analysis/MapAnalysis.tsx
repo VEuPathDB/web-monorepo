@@ -47,27 +47,12 @@ import {
   Notes,
   Share,
 } from '@material-ui/icons';
-import { ComputationPlugin } from '../../core/components/computations/Types';
-import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
-import { LayoutOptions } from '../../core/components/layouts/types';
-import { OverlayOptions } from '../../core/components/visualizations/options/types';
-import { FloatingLayout } from '../../core/components/layouts/FloatingLayout';
-import { ZeroConfigWithButton } from '../../core/components/computations/ZeroConfiguration';
-import { histogramVisualization } from '../../core/components/visualizations/implementations/HistogramVisualization';
-import {
-  contTableVisualization,
-  twoByTwoVisualization,
-} from '../../core/components/visualizations/implementations/MosaicVisualization';
-import { scatterplotVisualization } from '../../core/components/visualizations/implementations/ScatterplotVisualization';
-import { lineplotVisualization } from '../../core/components/visualizations/implementations/LineplotVisualization';
-import { barplotVisualization } from '../../core/components/visualizations/implementations/BarplotVisualization';
-import { boxplotVisualization } from '../../core/components/visualizations/implementations/BoxplotVisualization';
-import * as t from 'io-ts';
 import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
 import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
@@ -224,8 +209,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const appsPromiseState = usePromise(
     useCallback(async () => {
       const { apps } = await dataClient.getApps();
-      return apps.filter((app) => app.name.startsWith('standalone-map')); // TO DO: remove this temporary hack
-      //      return apps.filter((app) => app.contexts.includes(APP_CONTEXT));
+      return apps.filter((app) => app.name.startsWith('standalone-map-')); // TO DO: remove this temporary hack
     }, [dataClient, wdkService])
   );
 
@@ -234,36 +218,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     analysisState.analysis?.descriptor.subset.descriptor
   );
 
-  // Customise the visualization plugin
-  const plugin = useMemo((): ComputationPlugin => {
-    function vizWithOptions(
-      visualization: VisualizationPlugin<LayoutOptions & OverlayOptions>
-    ) {
-      return visualization.withOptions({
-        hideFacetInputs: true,
-        layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => appState.selectedOverlayVariable,
-        getOverlayVariableHelp: () =>
-          'The overlay variable can be selected via the top-right panel.',
-      });
-    }
-
-    return {
-      configurationComponent: ZeroConfigWithButton,
-      isConfigurationValid: t.undefined.is,
-      createDefaultConfiguration: () => undefined,
-      visualizationPlugins: {
-        histogram: vizWithOptions(histogramVisualization),
-        twobytwo: vizWithOptions(twoByTwoVisualization),
-        conttable: vizWithOptions(contTableVisualization),
-        scatterplot: vizWithOptions(scatterplotVisualization),
-        lineplot: vizWithOptions(lineplotVisualization),
-        // 'map-markers': vizWithOptions(mapVisualization), // disabling because of potential confusion between marker colors
-        barplot: vizWithOptions(barplotVisualization),
-        boxplot: vizWithOptions(boxplotVisualization),
-      },
-    };
-  }, [appState.selectedOverlayVariable]);
+  const plugins = useStandaloneVizPlugins({
+    selectedOverlayVariable: appState.selectedOverlayVariable,
+  });
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
@@ -506,7 +463,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               setActiveVisualizationId={setActiveVisualizationId}
               apps={apps}
               activeVisualizationId={appState.activeVisualizationId}
-              visualizationPlugins={plugin.visualizationPlugins}
+              plugins={plugins}
               geoConfigs={geoConfigs}
             />
           );
@@ -861,7 +818,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     setActiveVisualizationId={setActiveVisualizationId}
                     appState={appState}
                     apps={apps}
-                    visualizationPlugins={plugin.visualizationPlugins}
+                    plugins={plugins}
                     geoConfigs={geoConfigs}
                     totalCounts={totalCounts}
                     filteredCounts={filteredCounts}

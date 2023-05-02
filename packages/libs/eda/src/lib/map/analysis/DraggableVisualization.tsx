@@ -11,8 +11,8 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
-import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { ComputationPlugin } from '../../core/components/computations/Types';
 
 interface Props {
   analysisState: AnalysisState;
@@ -25,8 +25,8 @@ interface Props {
     typeof useAppState
   >['setActiveVisualizationId'];
   appState: AppState;
-  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   apps: ComputationAppOverview[];
+  plugins: Partial<Record<string, ComputationPlugin>>;
   geoConfigs: GeoConfig[];
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
@@ -41,7 +41,7 @@ export default function DraggableVisualization({
   setActiveVisualizationId,
   geoConfigs,
   apps,
-  visualizationPlugins,
+  plugins,
   totalCounts,
   filteredCounts,
   toggleStarredVariable,
@@ -58,16 +58,20 @@ export default function DraggableVisualization({
     (v) => v.visualizationId === appState.activeVisualizationId
   );
 
-  const app = apps.find(
-    (a) => a.computeName === activeComputation?.descriptor.type
-  );
+  const computationType = activeComputation?.descriptor.type;
+
+  const app = apps.find((a) => a.name === computationType);
 
   const activeVizOverview: VisualizationOverview | undefined =
     app?.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
 
+  const visualizationPlugins = computationType
+    ? plugins[computationType]?.visualizationPlugins
+    : null;
+  console.log({ visualizationPlugins, computationType, activeViz, apps });
   return (
     <>
-      {activeViz && app && (
+      {activeViz && app && visualizationPlugins && (
         <DraggablePanel
           confineToParentContainer
           showPanelTitle
@@ -109,6 +113,7 @@ export default function DraggableVisualization({
               disableThumbnailCreation
               id={activeViz.visualizationId}
               actions={<></>}
+              plugins={plugins}
             />
           </div>
         </DraggablePanel>

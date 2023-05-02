@@ -9,8 +9,6 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { mapNavigationBorder } from '..';
 import { AnalysisState } from '../../core';
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
-import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
-import { NewVisualizationPickerGrouped } from '../../core/components/visualizations/VisualizationsContainer';
 import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
 import { GeoConfig } from '../../core/types/geoConfig';
 import {
@@ -20,6 +18,8 @@ import {
 } from '../../core/types/visualization';
 import './MapVizManagement.scss';
 import { useAppState } from './appState';
+import { ComputationPlugin } from '../../core/components/computations/Types';
+import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { StartPage } from '../../core/components/computations/StartPage';
 
 interface Props {
@@ -34,7 +34,8 @@ interface Props {
     typeof useAppState
   >['setActiveVisualizationId'];
   apps: ComputationAppOverview[];
-  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
+  plugins: Partial<Record<string, ComputationPlugin>>;
+  //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
 }
 
@@ -47,9 +48,10 @@ export default function MapVizManagement({
   geoConfigs,
   setActiveVisualizationId,
   updateVisualizations,
-  visualizationPlugins,
+  plugins,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
+
   function onVisualizationCreated(visualizationId: string) {
     setIsVizSelectorVisible(false);
     setActiveVisualizationId(visualizationId);
@@ -62,6 +64,17 @@ export default function MapVizManagement({
     return computation.visualizations.length + count;
   }, 0);
 
+  const newVisualizationPicker = (
+    <StartPage
+      analysisState={analysisState}
+      apps={apps}
+      plugins={plugins}
+      onVisualizationCreated={onVisualizationCreated}
+      showHeading={false}
+      tightLayout={true}
+    />
+  );
+
   if (totalVisualizationCount === 0)
     // When the user has no visualizations, they're presented with the Select a viz
     // picker in addition to some explanatory text.
@@ -72,12 +85,7 @@ export default function MapVizManagement({
           Pick a visualization type to get started! If you update your subset,
           your visualizations will update when you reopen them.
         </Paragraph>
-        <StartPage
-          analysisState={analysisState}
-          baseUrl={'/TO/DO/'}
-          apps={apps}
-          plugins={plugins}
-        />
+        {newVisualizationPicker}
       </div>
     );
 
@@ -108,7 +116,7 @@ export default function MapVizManagement({
           computations={computations}
           setActiveVisualizationId={setActiveVisualizationId}
           updateVisualizations={updateVisualizations}
-          visualizationPlugins={visualizationPlugins}
+          plugins={plugins}
         />
       </div>
       {isVizSelectorVisible && totalVisualizationCount > 0 && (
@@ -133,14 +141,7 @@ export default function MapVizManagement({
               size="small"
             />
           </div>
-          <div>
-            <StartPage
-              analysisState={analysisState}
-              baseUrl={'/TO/DO/'}
-              apps={apps}
-              plugins={plugins}
-            />
-          </div>
+          <div>{newVisualizationPicker}</div>
         </div>
       )}
     </div>
@@ -152,14 +153,14 @@ type VisualizationsListProps = {
   computations: Computation[];
   setActiveVisualizationId: Props['setActiveVisualizationId'];
   updateVisualizations: Props['updateVisualizations'];
-  visualizationPlugins: Props['visualizationPlugins'];
+  plugins: Props['plugins'];
 };
 function VisualizationsList({
   activeVisualizationId,
   computations,
   setActiveVisualizationId,
   updateVisualizations,
-  visualizationPlugins,
+  plugins,
 }: VisualizationsListProps) {
   const theme = useUITheme();
   const activeVisualization = computations[0].visualizations.find(
@@ -173,91 +174,94 @@ function VisualizationsList({
           <ul className={mapVizManagementClassName('-VizList')}>
             {computation.visualizations.map((viz) => {
               const vizIsActive = activeVisualizationId === viz.visualizationId;
-
+              const visualizationPlugins =
+                plugins[computation.descriptor.type]?.visualizationPlugins;
               return (
-                <li
-                  className={mapVizManagementClassName(
-                    '-VizButtonItem',
-                    vizIsActive ? 'active' : ''
-                  )}
-                  style={{
-                    background: vizIsActive
-                      ? theme?.palette.primary.hue[100]
-                      : 'inherit',
-                  }}
-                  key={viz.visualizationId}
-                >
-                  <button
-                    className={mapVizManagementClassName('-VizButton')}
-                    onClick={() => {
-                      setActiveVisualizationId(
-                        viz.visualizationId === activeVisualizationId
-                          ? undefined
-                          : viz.visualizationId
-                      );
-                    }}
-                  >
-                    {
-                      <VisualizationIconOrPlaceholder
-                        type={viz.descriptor.type}
-                        visualizationPlugins={visualizationPlugins}
-                      />
-                    }
-                    <span className={mapVizManagementClassName('-VizName')}>
-                      {viz.displayName}
-                    </span>
-                  </button>
-                  <div
+                visualizationPlugins && (
+                  <li
                     className={mapVizManagementClassName(
-                      '__copyAndDeleteButtons',
+                      '-VizButtonItem',
                       vizIsActive ? 'active' : ''
                     )}
+                    style={{
+                      background: vizIsActive
+                        ? theme?.palette.primary.hue[100]
+                        : 'inherit',
+                    }}
+                    key={viz.visualizationId}
                   >
-                    <Tooltip title="Delete visualization">
-                      <button
-                        aria-label={`Delete ${
-                          activeVisualization?.displayName || 'visualization.'
-                        }`}
-                        type="button"
-                        className="link"
-                        onClick={() => {
-                          updateVisualizations((visualizations) =>
-                            visualizations.filter(
-                              (v) => v.visualizationId !== viz.visualizationId
-                            )
-                          );
-                          setActiveVisualizationId(undefined);
-                        }}
-                      >
-                        <i aria-hidden className="fa fa-trash"></i>
-                      </button>
-                    </Tooltip>
-                    <Tooltip title="Copy visualization">
-                      <button
-                        aria-label={`Create a copy of ${
-                          viz.displayName || 'visualization.'
-                        }`}
-                        type="button"
-                        className="link"
-                        onClick={() => {
-                          const vizCopyId = uuid();
-                          updateVisualizations((visualizations) =>
-                            visualizations.concat({
-                              ...viz,
-                              visualizationId: vizCopyId,
-                              displayName:
-                                'Copy of ' +
-                                (viz.displayName || 'unnamed visualization'),
-                            })
-                          );
-                          setActiveVisualizationId(vizCopyId);
-                        }}
-                      >
-                        <i aria-hidden className="fa fa-clone"></i>
-                      </button>
-                    </Tooltip>
-                  </div>
-                </li>
+                    <button
+                      className={mapVizManagementClassName('-VizButton')}
+                      onClick={() => {
+                        setActiveVisualizationId(
+                          viz.visualizationId === activeVisualizationId
+                            ? undefined
+                            : viz.visualizationId
+                        );
+                      }}
+                    >
+                      {
+                        <VisualizationIconOrPlaceholder
+                          type={viz.descriptor.type}
+                          visualizationPlugins={visualizationPlugins}
+                        />
+                      }
+                      <span className={mapVizManagementClassName('-VizName')}>
+                        {viz.displayName}
+                      </span>
+                    </button>
+                    <div
+                      className={mapVizManagementClassName(
+                        '__copyAndDeleteButtons',
+                        vizIsActive ? 'active' : ''
+                      )}
+                    >
+                      <Tooltip title="Delete visualization">
+                        <button
+                          aria-label={`Delete ${
+                            activeVisualization?.displayName || 'visualization.'
+                          }`}
+                          type="button"
+                          className="link"
+                          onClick={() => {
+                            updateVisualizations((visualizations) =>
+                              visualizations.filter(
+                                (v) => v.visualizationId !== viz.visualizationId
+                              )
+                            );
+                            setActiveVisualizationId(undefined);
+                          }}
+                        >
+                          <i aria-hidden className="fa fa-trash"></i>
+                        </button>
+                      </Tooltip>
+                      <Tooltip title="Copy visualization">
+                        <button
+                          aria-label={`Create a copy of ${
+                            viz.displayName || 'visualization.'
+                          }`}
+                          type="button"
+                          className="link"
+                          onClick={() => {
+                            const vizCopyId = uuid();
+                            updateVisualizations((visualizations) =>
+                              visualizations.concat({
+                                ...viz,
+                                visualizationId: vizCopyId,
+                                displayName:
+                                  'Copy of ' +
+                                  (viz.displayName || 'unnamed visualization'),
+                              })
+                            );
+                            setActiveVisualizationId(vizCopyId);
+                          }}
+                        >
+                          <i aria-hidden className="fa fa-clone"></i>
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </li>
+                )
               );
             })}
           </ul>
@@ -268,7 +272,7 @@ function VisualizationsList({
 }
 interface VisualizationIconOrPlaceholderProps {
   type: string;
-  visualizationPlugins: Props['visualizationPlugins'];
+  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
 }
 function VisualizationIconOrPlaceholder({
   type,

@@ -38,7 +38,7 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
-import { plugins } from '../computations/plugins';
+import { plugins as staticPlugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
@@ -52,6 +52,7 @@ import {
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 import RelaxMicrobeSVG from './relaxMicrobe';
 import EmptyPlotSVG from './emptyPlot';
+import { ComputationPlugin } from '../computations/Types';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -77,6 +78,8 @@ interface Props {
   disableThumbnailCreation?: boolean;
   computeJobStatus?: JobStatus;
   createComputeJob?: () => void;
+  /** optional dynamic plugins */
+  plugins?: Partial<Record<string, ComputationPlugin>>;
 }
 
 /**
@@ -155,12 +158,13 @@ function ConfiguredVisualizations(props: Props) {
     baseUrl,
     isSingleAppMode,
     computeJobStatus,
+    plugins = staticPlugins,
   } = props;
   const { url } = useRouteMatch();
   const plugin = computation && plugins[computation.descriptor.type];
   const isComputationConfigurationValid =
     computation &&
-    !!plugin.isConfigurationValid(computation.descriptor.configuration);
+    !!plugin?.isConfigurationValid(computation.descriptor.configuration);
 
   return (
     <>
@@ -309,7 +313,8 @@ type NewVisualizationPickerPropKeys =
   | 'visualizationsOverview'
   | 'updateVisualizations'
   | 'computation'
-  | 'geoConfigs';
+  | 'geoConfigs'
+  | 'plugins';
 
 interface NewVisualizationPickerProps
   extends Pick<Props, NewVisualizationPickerPropKeys> {
@@ -330,13 +335,13 @@ export function NewVisualizationPickerGrouped(
     computation,
     geoConfigs,
     onVisualizationCreated = function (visualizationId, computationId) {
-      history.replace(`../${computationId}/${visualizationId}`);
+      console.log(
+        `Shouldn't be here in NewVisualizationPickerGrouped with onVisualizationCreated(${visualizationId}, ${computationId})`
+      );
     },
     includeHeader,
   } = props;
   const colors = useVizIconColors();
-  const history = useHistory();
-  const { computationId } = computation;
   return (
     <>
       {includeHeader && (
@@ -391,7 +396,7 @@ export function NewVisualizationPickerGrouped(
                             },
                           })
                         );
-                        onVisualizationCreated(visualizationId, computationId);
+                        onVisualizationCreated(visualizationId, '__not_used__');
                       }}
                     >
                       {vizPlugin ? (
@@ -560,7 +565,8 @@ type FullScreenVisualizationPropKeys =
   | 'isSingleAppMode'
   | 'disableThumbnailCreation'
   | 'computeJobStatus'
-  | 'createComputeJob';
+  | 'createComputeJob'
+  | 'plugins';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -590,6 +596,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     actions,
     computeJobStatus,
     createComputeJob,
+    plugins = staticPlugins,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -658,8 +665,8 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   if (vizPlugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
-  const plugin = plugins[computation.descriptor.type] ?? undefined;
-  const isComputationConfigurationValid = !!plugin.isConfigurationValid(
+  const plugin = plugins[computation.descriptor.type];
+  const isComputationConfigurationValid = !!plugin?.isConfigurationValid(
     computation.descriptor.configuration
   );
 
