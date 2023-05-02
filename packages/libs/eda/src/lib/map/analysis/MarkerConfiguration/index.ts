@@ -1,7 +1,7 @@
 import {
-  BarPlotConfigurationMenu,
+  BarPlotMarkerConfigurationMenu,
   BarPlotMarkerConfiguration,
-} from './BarPlotConfigurationMenu';
+} from './BarPlotMarkerConfigurationMenu';
 import {
   DonutConfigurationMenu,
   DonutMarkerConfiguration,
@@ -11,7 +11,7 @@ import { MarkerConfigurationSelector } from './MarkerConfigurationSelector';
 export {
   MarkerConfigurationSelector,
   DonutConfigurationMenu,
-  BarPlotConfigurationMenu,
+  BarPlotMarkerConfigurationMenu,
 };
 
 export type MarkerConfiguration =

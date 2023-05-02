@@ -81,8 +81,10 @@ import { DonutConfigurationMenu } from './MarkerConfiguration/DonutConfiguration
 import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
-import { BarPlotConfigurationMenu } from './MarkerConfiguration/BarPlotConfigurationMenu';
-import { MarkerConfiguration } from './MarkerConfiguration';
+import {
+  MarkerConfiguration,
+  BarPlotMarkerConfigurationMenu,
+} from './MarkerConfiguration';
 import { BarPlots, Donut } from './MarkerConfiguration/icons';
 
 enum MapSideNavItemLabels {
@@ -513,7 +515,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   icon: <BarPlots style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'barplot' ? (
-                      <BarPlotConfigurationMenu
+                      <BarPlotMarkerConfigurationMenu
                         inputs={[{ name: 'overlay', label: 'Overlay' }]}
                         entities={studyEntities}
                         onChange={updateMarkerConfigurations}

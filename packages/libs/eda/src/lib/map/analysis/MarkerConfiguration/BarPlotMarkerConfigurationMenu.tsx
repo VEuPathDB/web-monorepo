@@ -28,7 +28,7 @@ interface Props
   configuration: BarPlotMarkerConfiguration;
 }
 
-export function BarPlotConfigurationMenu({
+export function BarPlotMarkerConfigurationMenu({
   entities,
   onChange,
   starredVariables,
