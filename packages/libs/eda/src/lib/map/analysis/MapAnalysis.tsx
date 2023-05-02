@@ -699,8 +699,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   height="100%"
                   width="100%"
                   style={mapStyle}
-                  showMouseToolbar={false}
-                  showZoomControl={false}
+                  showMouseToolbar={true}
                   showLayerSelector={false}
                   showSpinner={pending}
                   animation={null}
@@ -716,6 +715,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   zoomLevelToGeohashLevel={
                     geoConfig?.zoomLevelToAggregationLevel
                   }
+                  // check if SAM for using custom zoom control
+                  isStandAloneMap={true}
                 />
                 <FloatingDiv
                   style={{

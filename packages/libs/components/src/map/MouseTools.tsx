@@ -22,6 +22,8 @@ export type MouseMode = typeof mouseModesArray[number]; // Union of mode names
 export interface MouseToolsProps {
   mouseMode?: MouseMode;
   onMouseModeChange?: (mode: MouseMode) => void;
+  // check if SAM
+  isStandAloneMap?: boolean;
 }
 
 export default function MouseTools(props: MouseToolsProps) {
@@ -53,7 +55,15 @@ export default function MouseTools(props: MouseToolsProps) {
   return (
     <div className="leaflet-control-container">
       <div className="leaflet-top leaflet-right">
-        <span className="mouse-toolbar leaflet-bar mapveu-hori-bar leaflet-control leaflet-touch">
+        {/* different position depending on SAM */}
+        <span
+          className="mouse-toolbar leaflet-bar mapveu-hori-bar leaflet-control leaflet-touch"
+          style={{
+            position: props.isStandAloneMap ? 'relative' : undefined,
+            top: props.isStandAloneMap ? '90px' : undefined,
+            right: props.isStandAloneMap ? '40px' : undefined,
+          }}
+        >
           {buttons}
         </span>
       </div>

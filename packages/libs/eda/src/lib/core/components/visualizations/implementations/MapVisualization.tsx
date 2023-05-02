@@ -133,20 +133,21 @@ function MapViz(props: VisualizationProps<Options>) {
   if (geoConfigs.length === 1 && vizConfig.geoEntityId === undefined)
     updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
 
-  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
-    ({ center, zoom }) => {
-      if (center != null && center.length === 2 && zoom != null) {
-        updateVizConfig({
-          mapCenterAndZoom: {
-            latitude: center[0],
-            longitude: center[1],
-            zoomLevel: zoom,
-          },
-        });
-      }
-    },
-    [updateVizConfig]
-  );
+  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] =
+    useCallback(
+      ({ center, zoom }) => {
+        if (center != null && center.length === 2 && zoom != null) {
+          updateVizConfig({
+            mapCenterAndZoom: {
+              latitude: center[0],
+              longitude: center[1],
+              zoomLevel: zoom,
+            },
+          });
+        }
+      },
+      [updateVizConfig]
+    );
 
   // prettier-ignore
   const onChangeHandlerFactory = useCallback(
@@ -222,6 +223,11 @@ function MapViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  //DKDK: temporarily made a markerSum to set a flyTo condition at MapViz
+  const markerSum = markers
+    ?.map((value) => Number(value.props.markerLabel))
+    .reduce((acc, current) => acc + current, 0);
+
   const plotNode = (
     <>
       <MapVEuMap
@@ -239,13 +245,23 @@ function MapViz(props: VisualizationProps<Options>) {
         onBaseLayerChanged={(newBaseLayer) =>
           updateVizConfig({ baseLayer: newBaseLayer })
         }
+        //DKDK: temporarily set an additional condition for flyTo
+        // flyToMarkers={
+        //   markers &&
+        //   markers.length > 0 &&
+        //   isEqual(
+        //     vizConfig.mapCenterAndZoom,
+        //     createDefaultConfig().mapCenterAndZoom
+        //   )
+        // }
         flyToMarkers={
           markers &&
           markers.length > 0 &&
           isEqual(
             vizConfig.mapCenterAndZoom,
             createDefaultConfig().mapCenterAndZoom
-          )
+          ) &&
+          isEqual(completeCasesAllVars, markerSum)
         }
         flyToMarkersDelay={500}
         showSpinner={pending}
@@ -255,6 +271,8 @@ function MapViz(props: VisualizationProps<Options>) {
         showMouseToolbar={true}
         mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
         onMouseModeChange={onMouseModeChange}
+        //DKDK: temporarily set this for testing custom zoom control at MapViz
+        isStandAloneMap={true}
       />
     </>
   );

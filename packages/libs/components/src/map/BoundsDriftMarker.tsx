@@ -10,6 +10,8 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   duration: number;
   // A class to add to the popup element
   popupClass?: string;
+  //DKDK: this is required to set a markerSum at Mapviz
+  markerLabel?: string;
 }
 
 // Which direction the popup should come out from the marker
@@ -50,8 +52,6 @@ export default function BoundsDriftMarker({
     if (popupContent && map) {
       // Figure out if we're close to the map edge
       const mapRect = map.getContainer().getBoundingClientRect();
-      //DKDK need as ?
-      // const markerRect = markerRef.current.leafletElement._icon.getBoundingClientRect() as DOMRect;
       const markerRect = markerRef.current._icon.getBoundingClientRect();
       const markerCenterX = (markerRect.left + markerRect.right) / 2;
 
@@ -71,9 +71,6 @@ export default function BoundsDriftMarker({
   const orientPopup = (orientation: PopupOrientation) => {
     if (popupRef.current) {
       const popupDOMNode = popupRef.current._container;
-      //DKDK need as ?
-      // const popupDOMNode = popupRef.current.leafletElement
-      //   ._container as HTMLElement;
 
       if (popupDOMNode) {
         popupDOMNode.classList.remove(
