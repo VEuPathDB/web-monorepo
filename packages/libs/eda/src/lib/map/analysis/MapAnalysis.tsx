@@ -110,6 +110,7 @@ function getSideNavItemIndexByLabel(
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
+  pointerEvents: 'auto',
 };
 
 export const defaultAnimation = {
@@ -695,19 +696,34 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               <div
                 style={{
                   height: '100%',
+                  width: '100%',
                   position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
+                <MapHeader
+                  analysisName={analysisState.analysis?.displayName}
+                  outputEntity={outputEntity}
+                  filterList={<FilterChipListForHeader />}
+                  siteInformation={props.siteInformationProps}
+                  onAnalysisNameEdit={analysisState.setName}
+                  studyName={studyRecord.displayName}
+                  totalEntityCount={outputEntityTotalCount}
+                  totalEntityInSubsetCount={outputEntityFilteredCount}
+                  visibleEntityCount={
+                    totalVisibleWithOverlayEntityCount ??
+                    totalVisibleEntityCount
+                  }
+                  overlayActive={overlayVariable != null}
+                />
                 <div
                   style={{
-                    // Make a div that completely fills its parent. Have it
-                    // layout its children with flexbox.
-                    display: 'flex',
-                    flexDirection: 'column',
+                    // Make a div that completely fills its parent.
                     height: '100%',
                     width: '100%',
-                    // Attach this div container to it's parent.
-                    position: 'absolute',
+                    // Attach this div container to its parent.
+                    position: 'relative',
                     // Remember that just about everything in the DOM is box.
                     // This div is sitting on top of the map. By disabling
                     // pointer events we are saying: hey, div, become porous.
@@ -716,21 +732,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     pointerEvents: 'none',
                   }}
                 >
-                  <MapHeader
-                    analysisName={analysisState.analysis?.displayName}
-                    outputEntity={outputEntity}
-                    filterList={<FilterChipListForHeader />}
-                    siteInformation={props.siteInformationProps}
-                    onAnalysisNameEdit={analysisState.setName}
-                    studyName={studyRecord.displayName}
-                    totalEntityCount={outputEntityTotalCount}
-                    totalEntityInSubsetCount={outputEntityFilteredCount}
-                    visibleEntityCount={
-                      totalVisibleWithOverlayEntityCount ??
-                      totalVisibleEntityCount
-                    }
-                    overlayActive={overlayVariable != null}
-                  />
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
                     onToggleIsExpanded={() =>
@@ -769,30 +770,30 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       </ul>
                     </div>
                   </MapSideNavigation>
+                  <MapVEuMap
+                    height="100%"
+                    width="100%"
+                    style={mapStyle}
+                    showMouseToolbar={false}
+                    showZoomControl={false}
+                    showLayerSelector={false}
+                    showSpinner={pending}
+                    animation={defaultAnimation}
+                    viewport={appState.viewport}
+                    markers={finalMarkers}
+                    mouseMode={appState.mouseMode}
+                    flyToMarkers={false}
+                    flyToMarkersDelay={500}
+                    onBoundsChanged={setBoundsZoomLevel}
+                    onViewportChanged={setViewport}
+                    onMouseModeChange={setMouseMode}
+                    showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
+                    zoomLevelToGeohashLevel={
+                      geoConfig?.zoomLevelToAggregationLevel
+                    }
+                  />
                 </div>
 
-                <MapVEuMap
-                  height="100%"
-                  width="100%"
-                  style={mapStyle}
-                  showMouseToolbar={false}
-                  showZoomControl={false}
-                  showLayerSelector={false}
-                  showSpinner={pending}
-                  animation={defaultAnimation}
-                  viewport={appState.viewport}
-                  markers={finalMarkers}
-                  mouseMode={appState.mouseMode}
-                  flyToMarkers={false}
-                  flyToMarkersDelay={500}
-                  onBoundsChanged={setBoundsZoomLevel}
-                  onViewportChanged={setViewport}
-                  onMouseModeChange={setMouseMode}
-                  showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
-                  zoomLevelToGeohashLevel={
-                    geoConfig?.zoomLevelToAggregationLevel
-                  }
-                />
                 <FloatingDiv
                   style={{
                     top: 350,

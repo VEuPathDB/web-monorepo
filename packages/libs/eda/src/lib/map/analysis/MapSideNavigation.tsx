@@ -26,6 +26,8 @@ const bottomLinkStyles: React.CSSProperties = {
   marginBottom: '1rem',
 };
 
+const mapSideNavTopOffset = '1.5rem';
+
 export function MapSideNavigation({
   activeNavigationMenu,
   children,
@@ -46,15 +48,14 @@ export function MapSideNavigation({
         borderLeft: 'none',
         borderBottom: 'none',
         borderTop: 'none',
-        // height: 'calc(100% - 150px)',
-        height: '100%',
+        position: 'absolute',
+        top: mapSideNavTopOffset,
+        height: `calc(100% - (2 * ${mapSideNavTopOffset})`,
         minHeight: 125,
-        position: 'relative',
         transition: 'left 0.1s ease',
         // Zero always makes math easy. Either the menu is as big as
         // it needs to be or it's 0px (and 0px padding).
         width: isExpanded ? 'max-content' : 0,
-        marginTop: '4rem',
         // The parent of this element probably had its pointer-events
         // set to "none". This restores the default behavior. Without
         // this, users cannot interact with the side menu via cursor.
