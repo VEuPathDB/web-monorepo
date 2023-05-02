@@ -279,6 +279,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     dataElementConstraints,
     selectedVariables,
     entities,
+    filters,
     'overlayVariable'
   );
 
@@ -288,6 +289,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
+    filters,
     filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
@@ -1802,6 +1804,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             },
           ]}
           entities={entities}
+          filters={filters}
           selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}

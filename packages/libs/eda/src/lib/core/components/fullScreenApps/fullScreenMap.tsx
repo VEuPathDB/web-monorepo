@@ -410,6 +410,7 @@ function FullScreenMap(props: FullScreenComponentProps) {
         <InputVariables
           inputs={[{ name: 'overlay', label: 'Overlay' }]}
           entities={studyEntities}
+          filters={filters}
           selectedVariables={selectedVariables}
           onChange={setSelectedVariables}
           starredVariables={

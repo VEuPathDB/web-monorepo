@@ -107,6 +107,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import { getFilterSet } from '../../../utils/filter';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -356,6 +357,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     dataElementConstraints,
     selectedVariables,
     entities,
+    filters,
     'overlayVariable'
   );
 
@@ -365,6 +367,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
+    filters,
     filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
@@ -399,6 +402,21 @@ function HistogramViz(props: VisualizationProps<Options>) {
     vizConfig.facetVariable,
     providedOverlayVariableDescriptor,
   ]);
+
+  const overlayFilter =
+    vizConfig.overlayVariable &&
+    filters?.find(
+      (filter) =>
+        filter.entityId === vizConfig.overlayVariable?.entityId &&
+        filter.variableId === vizConfig.overlayVariable.variableId
+    );
+  const facetFilter =
+    vizConfig.facetVariable &&
+    filters?.find(
+      (filter) =>
+        filter.entityId === vizConfig.facetVariable?.entityId &&
+        filter.variableId === vizConfig.facetVariable.variableId
+    );
 
   const data = usePromise(
     useCallback(async (): Promise<
@@ -448,11 +466,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
         );
 
       const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
+        getFilterSet(overlayFilter)?.map((v) => String(v)) ??
+          overlayVariable?.vocabulary,
         overlayVariable
       );
       const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
+        getFilterSet(facetFilter)?.map((v) => String(v)) ??
+          facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
@@ -1184,6 +1204,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
+          filters={filters}
           selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}

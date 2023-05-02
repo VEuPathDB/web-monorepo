@@ -292,6 +292,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     dataElementConstraints,
     selectedVariables,
     entities,
+    filters,
     'overlayVariable'
   );
 
@@ -301,6 +302,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
+    filters,
     filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
@@ -853,6 +855,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
+          filters={filters}
           selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}

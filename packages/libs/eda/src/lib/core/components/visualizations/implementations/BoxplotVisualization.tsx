@@ -279,6 +279,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     dataElementConstraints,
     selectedVariables,
     entities,
+    filters,
     'overlayVariable'
   );
 
@@ -288,6 +289,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
+    filters,
     filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
@@ -810,6 +812,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
+          filters={filters}
           selectedVariables={selectedVariables}
           variablesForConstraints={variablesForConstraints}
           onChange={handleInputVariableChange}

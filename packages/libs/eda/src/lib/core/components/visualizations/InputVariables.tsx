@@ -16,6 +16,7 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
 import { red } from '@veupathdb/coreui/dist/definitions/colors';
+import { Filter } from '../../types/filter';
 
 export interface InputSpec {
   name: string;
@@ -117,6 +118,10 @@ export interface Props {
    */
   constraints?: DataElementConstraintRecord[];
   /**
+   * Analysis filters
+   */
+  filters: Filter[] | undefined;
+  /**
    * Order in which to apply entity-specific relationships between inputs.
    * The entity of a given element in the array must be of the same entity, or
    * lower in the tree, of the element to its right.
@@ -146,6 +151,7 @@ export function InputVariables(props: Props) {
     entities,
     selectedVariables,
     variablesForConstraints,
+    filters,
     onChange,
     constraints,
     dataElementDependencyOrder,
@@ -178,6 +184,7 @@ export function InputVariables(props: Props) {
               selectedVariables,
               entities,
               constraints,
+              filters,
               input.name
             );
 
@@ -185,6 +192,7 @@ export function InputVariables(props: Props) {
             input.name,
             entities,
             filteredConstraints,
+            filters,
             dataElementDependencyOrder,
             variablesForConstraints ?? selectedVariables
           );
@@ -192,11 +200,13 @@ export function InputVariables(props: Props) {
           return map;
         }, {} as Record<string, VariableDescriptor[]>),
       [
-        dataElementDependencyOrder,
-        entities,
-        constraints,
         inputs,
+        constraints,
         selectedVariables,
+        entities,
+        filters,
+        dataElementDependencyOrder,
+        variablesForConstraints,
       ]
     );
 

@@ -252,9 +252,8 @@ function MosaicViz(props: Props<Options>) {
     [updateVizConfig]
   );
 
-  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
-  );
+  const onShowMissingnessChange =
+    onChangeHandlerFactory<boolean>('showMissingness');
 
   const onXAxisReferenceValueChange = onChangeHandlerFactory<string>(
     'xAxisReferenceValue'
@@ -934,6 +933,7 @@ function MosaicViz(props: Props<Options>) {
               isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
             }
             entities={entities}
+            filters={filters}
             selectedVariables={{
               xAxisVariable: vizConfig.xAxisVariable,
               yAxisVariable: vizConfig.yAxisVariable,

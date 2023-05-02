@@ -133,20 +133,21 @@ function MapViz(props: VisualizationProps<Options>) {
   if (geoConfigs.length === 1 && vizConfig.geoEntityId === undefined)
     updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
 
-  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
-    ({ center, zoom }) => {
-      if (center != null && center.length === 2 && zoom != null) {
-        updateVizConfig({
-          mapCenterAndZoom: {
-            latitude: center[0],
-            longitude: center[1],
-            zoomLevel: zoom,
-          },
-        });
-      }
-    },
-    [updateVizConfig]
-  );
+  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] =
+    useCallback(
+      ({ center, zoom }) => {
+        if (center != null && center.length === 2 && zoom != null) {
+          updateVizConfig({
+            mapCenterAndZoom: {
+              latitude: center[0],
+              longitude: center[1],
+              zoomLevel: zoom,
+            },
+          });
+        }
+      },
+      [updateVizConfig]
+    );
 
   // prettier-ignore
   const onChangeHandlerFactory = useCallback(
@@ -415,6 +416,7 @@ function MapViz(props: VisualizationProps<Options>) {
             },
           ]}
           entities={entities}
+          filters={filters}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
           }}

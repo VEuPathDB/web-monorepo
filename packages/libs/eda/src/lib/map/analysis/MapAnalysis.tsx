@@ -840,6 +840,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   <InputVariables
                     inputs={[{ name: 'overlay', label: 'Overlay' }]}
                     entities={studyEntities}
+                    filters={filters}
                     selectedVariables={selectedVariables}
                     onChange={(selectedVariables) =>
                       setSelectedOverlayVariable(selectedVariables.overlay)

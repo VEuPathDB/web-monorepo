@@ -4,9 +4,11 @@ import {
   preorder,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { isEmpty, union, sortBy, isEqual } from 'lodash';
+import { Filter } from '../types/filter';
 import { StudyEntity, VariableTreeNode } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { DataElementConstraint } from '../types/visualization';
+import { getFilterSet } from './filter';
 import { findEntityAndVariable } from './study-metadata';
 
 /**
@@ -21,13 +23,15 @@ export function disabledVariablesForInput(
    */
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[] | undefined,
+  filters: Filter[] | undefined,
   dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName
 ): VariableDescriptor[] {
   const disabledVariables = excludedVariables(
     entities[0],
     inputName,
-    constraints
+    constraints,
+    filters
   );
   if (dataElementDependencyOrder == null) {
     return disabledVariables;
@@ -144,7 +148,8 @@ export function disabledVariablesForInput(
  */
 export function filterVariablesByConstraint(
   rootEntity: StudyEntity,
-  constraint?: DataElementConstraint
+  constraint: DataElementConstraint | undefined,
+  filters: Filter[] | undefined
 ): StudyEntity {
   if (
     constraint == null ||
@@ -159,9 +164,13 @@ export function filterVariablesByConstraint(
   return mapStructure(
     (entity, children) => ({
       ...entity,
-      variables: entity.variables.filter((variable) =>
-        variableConstraintPredicate(constraint, variable)
-      ),
+      variables: entity.variables.filter((variable) => {
+        const filter = filters?.find(
+          (filter) =>
+            filter.entityId === entity.id && filter.variableId === variable.id
+        );
+        return variableConstraintPredicate(constraint, variable, filter);
+      }),
       children,
     }),
     (e) => e.children ?? [],
@@ -176,19 +185,28 @@ export function filterVariablesByConstraint(
 export function excludedVariables(
   rootEntity: StudyEntity,
   inputName: string,
-  constraints?: DataElementConstraintRecord[]
+  constraints: DataElementConstraintRecord[] | undefined,
+  filters: Filter[] | undefined
 ): VariableDescriptor[] {
   if (constraints == null) return [];
 
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
       e.variables
-        .filter((variable) =>
-          constraints.every(
+        .filter((variable) => {
+          const filter = filters?.find(
+            (filter) =>
+              filter.entityId === e.id && filter.variableId === variable.id
+          );
+          return constraints.every(
             (constraint) =>
-              !variableConstraintPredicate(constraint[inputName], variable)
-          )
-        )
+              !variableConstraintPredicate(
+                constraint[inputName],
+                variable,
+                filter
+              )
+          );
+        })
         .map((v) => ({ entityId: e.id, variableId: v.id }))
     )
     .toArray();
@@ -199,7 +217,8 @@ export function excludedVariables(
  */
 function variableConstraintPredicate(
   constraint: DataElementConstraint | undefined,
-  variable: VariableTreeNode
+  variable: VariableTreeNode,
+  filter: Filter | undefined
 ) {
   if (constraint == null) return true;
   return (
@@ -209,9 +228,11 @@ function variableConstraintPredicate(
       (constraint.allowedTypes == null ||
         constraint.allowedTypes.includes(variable.type)) &&
       (constraint.minNumValues == null ||
-        constraint.minNumValues <= variable.distinctValuesCount) &&
+        constraint.minNumValues <=
+          (getFilterSet(filter)?.length ?? variable.distinctValuesCount)) &&
       (constraint.maxNumValues == null ||
-        constraint.maxNumValues >= variable.distinctValuesCount) &&
+        constraint.maxNumValues >=
+          (getFilterSet(filter)?.length ?? variable.distinctValuesCount)) &&
       (constraint.isTemporal == null ||
         constraint.isTemporal === variable.isTemporal) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
@@ -265,6 +286,7 @@ export function filterConstraints(
   variables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[],
+  filters: Filter[] | undefined,
   selectedVarReference: string // variable reference for which to determine constraints. Ex. xAxisVariable.
 ): DataElementConstraintRecord[] {
   // Find all compatible constraints
@@ -295,6 +317,11 @@ export function filterConstraints(
       const { variable } = entityAndVariable;
       if (variable.type === 'category')
         throw new Error('Categories are not allowed for variable constraints.');
+      const filter = filters?.find(
+        (filter) =>
+          filter.entityId === entityAndVariable.entity.id &&
+          filter.variableId === entityAndVariable.variable.id
+      );
       const typeIsValid =
         isEmpty(constraint.allowedTypes) ||
         constraint.allowedTypes?.includes(variable.type);
@@ -303,10 +330,12 @@ export function filterConstraints(
         constraint.allowedShapes?.includes(variable.dataShape!);
       const passesMinValuesConstraint =
         constraint.minNumValues === undefined ||
-        constraint.minNumValues <= variable.distinctValuesCount;
+        constraint.minNumValues <=
+          (getFilterSet(filter)?.length ?? variable.distinctValuesCount);
       const passesMaxValuesConstraint =
         constraint.maxNumValues === undefined ||
-        constraint.maxNumValues >= variable.distinctValuesCount;
+        constraint.maxNumValues >=
+          (getFilterSet(filter)?.length ?? variable.distinctValuesCount);
       const passesTemporalConstraint =
         isEmpty(constraint.isTemporal) ||
         constraint.isTemporal === variable.isTemporal;
@@ -323,10 +352,10 @@ export function filterConstraints(
     })
   );
 
-  if (compatibleConstraints.length === 0)
-    throw new Error(
-      'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
-    );
+  // if (compatibleConstraints.length === 0)
+  // throw new Error(
+  //   'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
+  //   );
 
   return compatibleConstraints;
 }

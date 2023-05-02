@@ -321,6 +321,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     dataElementConstraints,
     selectedVariables,
     entities,
+    filters,
     'overlayVariable'
   );
 
@@ -330,6 +331,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
+    filters,
     filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
@@ -2029,6 +2031,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
                 ]),
           ]}
           entities={entities}
+          filters={filters}
           selectedVariables={selectedVariables}
           variablesForConstraints={variablesForConstraints}
           onChange={handleInputVariableChange}
