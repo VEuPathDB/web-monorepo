@@ -74,6 +74,7 @@ export function BarPlotMarkerConfigurationMenu({
         Color:
       </p>
       <InputVariables
+        showClearSelectionButton={false}
         inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
         entities={entities}
         selectedVariables={{ overlay: configuration.selectedVariable }}

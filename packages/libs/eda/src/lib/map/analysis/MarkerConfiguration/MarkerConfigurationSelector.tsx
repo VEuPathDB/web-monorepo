@@ -43,7 +43,7 @@ export function MarkerConfigurationSelector({
   )?.renderConfigurationMenu;
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: 'flex', paddingRight: '10px' }}>
       <div>
         <H6
           additionalStyles={{
