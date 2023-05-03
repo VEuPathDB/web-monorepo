@@ -121,7 +121,7 @@ function MapViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -176,6 +176,15 @@ function MapViz(props: VisualizationProps<Options>) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
+  // get variable constraints for InputVariables
+  const pieOverview = otherVizOverviews.find(
+    (overview) => overview.name === 'map-markers-overlay'
+  );
+  if (pieOverview == null)
+    throw new Error('Map visualization cannot find map-markers-overlay helper');
+  const pieConstraints = pieOverview.dataElementConstraints;
+  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
+
   const {
     markers,
     totalEntityCount,
@@ -199,6 +208,7 @@ function MapViz(props: VisualizationProps<Options>) {
     markerType: vizConfig.markerType,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     checkedLegendItems: vizConfig.checkedLegendItems,
+    overlayDataElementConstraints: pieConstraints,
   });
 
   /**
@@ -333,15 +343,6 @@ function MapViz(props: VisualizationProps<Options>) {
     />
   );
 
-  // get variable constraints for InputVariables
-  const pieOverview = otherVizOverviews.find(
-    (overview) => overview.name === 'map-markers-overlay'
-  );
-  if (pieOverview == null)
-    throw new Error('Map visualization cannot find map-markers-overlay helper');
-  const pieConstraints = pieOverview.dataElementConstraints;
-  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
-
   const tableGroupNode = (
     <>
       <BirdsEyeView
@@ -416,7 +417,6 @@ function MapViz(props: VisualizationProps<Options>) {
             },
           ]}
           entities={entities}
-          filters={filters}
           selectedVariables={{
             xAxisVariable: vizConfig.xAxisVariable,
           }}

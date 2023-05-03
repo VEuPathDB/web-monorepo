@@ -4,11 +4,9 @@ import {
   preorder,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { isEmpty, union, sortBy, isEqual } from 'lodash';
-import { Filter } from '../types/filter';
 import { StudyEntity, VariableTreeNode } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { DataElementConstraint } from '../types/visualization';
-import { getFilterSet } from './filter';
 import { findEntityAndVariable } from './study-metadata';
 
 /**
@@ -23,15 +21,13 @@ export function disabledVariablesForInput(
    */
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[] | undefined,
-  filters: Filter[] | undefined,
   dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName
 ): VariableDescriptor[] {
   const disabledVariables = excludedVariables(
     entities[0],
     inputName,
-    constraints,
-    filters
+    constraints
   );
   if (dataElementDependencyOrder == null) {
     return disabledVariables;
@@ -148,8 +144,7 @@ export function disabledVariablesForInput(
  */
 export function filterVariablesByConstraint(
   rootEntity: StudyEntity,
-  constraint: DataElementConstraint | undefined,
-  filters: Filter[] | undefined
+  constraint: DataElementConstraint | undefined
 ): StudyEntity {
   if (
     constraint == null ||
@@ -165,11 +160,7 @@ export function filterVariablesByConstraint(
     (entity, children) => ({
       ...entity,
       variables: entity.variables.filter((variable) => {
-        const filter = filters?.find(
-          (filter) =>
-            filter.entityId === entity.id && filter.variableId === variable.id
-        );
-        return variableConstraintPredicate(constraint, variable, filter);
+        return variableConstraintPredicate(constraint, variable);
       }),
       children,
     }),
@@ -185,8 +176,7 @@ export function filterVariablesByConstraint(
 export function excludedVariables(
   rootEntity: StudyEntity,
   inputName: string,
-  constraints: DataElementConstraintRecord[] | undefined,
-  filters: Filter[] | undefined
+  constraints: DataElementConstraintRecord[] | undefined
 ): VariableDescriptor[] {
   if (constraints == null) return [];
 
@@ -194,17 +184,9 @@ export function excludedVariables(
     .flatMap((e) =>
       e.variables
         .filter((variable) => {
-          const filter = filters?.find(
-            (filter) =>
-              filter.entityId === e.id && filter.variableId === variable.id
-          );
           return constraints.every(
             (constraint) =>
-              !variableConstraintPredicate(
-                constraint[inputName],
-                variable,
-                filter
-              )
+              !variableConstraintPredicate(constraint[inputName], variable)
           );
         })
         .map((v) => ({ entityId: e.id, variableId: v.id }))
@@ -217,8 +199,7 @@ export function excludedVariables(
  */
 function variableConstraintPredicate(
   constraint: DataElementConstraint | undefined,
-  variable: VariableTreeNode,
-  filter: Filter | undefined
+  variable: VariableTreeNode
 ) {
   if (constraint == null) return true;
   return (
@@ -228,11 +209,9 @@ function variableConstraintPredicate(
       (constraint.allowedTypes == null ||
         constraint.allowedTypes.includes(variable.type)) &&
       (constraint.minNumValues == null ||
-        constraint.minNumValues <=
-          (getFilterSet(filter)?.length ?? variable.distinctValuesCount)) &&
+        constraint.minNumValues <= variable.distinctValuesCount) &&
       (constraint.maxNumValues == null ||
-        constraint.maxNumValues >=
-          (getFilterSet(filter)?.length ?? variable.distinctValuesCount)) &&
+        constraint.maxNumValues >= variable.distinctValuesCount) &&
       (constraint.isTemporal == null ||
         constraint.isTemporal === variable.isTemporal) &&
       (constraint.allowMultiValued || !variable.isMultiValued))
@@ -286,7 +265,6 @@ export function filterConstraints(
   variables: VariablesByInputName,
   entities: StudyEntity[],
   constraints: DataElementConstraintRecord[],
-  filters: Filter[] | undefined,
   selectedVarReference: string // variable reference for which to determine constraints. Ex. xAxisVariable.
 ): DataElementConstraintRecord[] {
   // Find all compatible constraints
@@ -317,11 +295,6 @@ export function filterConstraints(
       const { variable } = entityAndVariable;
       if (variable.type === 'category')
         throw new Error('Categories are not allowed for variable constraints.');
-      const filter = filters?.find(
-        (filter) =>
-          filter.entityId === entityAndVariable.entity.id &&
-          filter.variableId === entityAndVariable.variable.id
-      );
       const typeIsValid =
         isEmpty(constraint.allowedTypes) ||
         constraint.allowedTypes?.includes(variable.type);
@@ -330,12 +303,10 @@ export function filterConstraints(
         constraint.allowedShapes?.includes(variable.dataShape!);
       const passesMinValuesConstraint =
         constraint.minNumValues === undefined ||
-        constraint.minNumValues <=
-          (getFilterSet(filter)?.length ?? variable.distinctValuesCount);
+        constraint.minNumValues <= variable.distinctValuesCount;
       const passesMaxValuesConstraint =
         constraint.maxNumValues === undefined ||
-        constraint.maxNumValues >=
-          (getFilterSet(filter)?.length ?? variable.distinctValuesCount);
+        constraint.maxNumValues >= variable.distinctValuesCount;
       const passesTemporalConstraint =
         isEmpty(constraint.isTemporal) ||
         constraint.isTemporal === variable.isTemporal;

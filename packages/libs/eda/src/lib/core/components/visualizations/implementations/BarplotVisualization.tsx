@@ -37,7 +37,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
@@ -52,6 +52,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   hasIncompleteCases,
+  assertValidInputVariables,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -64,6 +65,7 @@ import {
   values,
   keys,
   isEqual,
+  pick,
 } from 'lodash';
 import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // for custom legend
@@ -186,7 +188,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
   // use useVizConfig hook
@@ -231,7 +233,13 @@ function BarplotViz(props: VisualizationProps<Options>) {
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
     },
-    [updateVizConfig]
+    [
+      updateVizConfig,
+      vizConfig.dependentAxisLogScale,
+      vizConfig.dependentAxisRange,
+      vizConfig.dependentAxisValueSpec,
+      vizConfig.xAxisVariable,
+    ]
   );
 
   // prettier-ignore
@@ -273,13 +281,11 @@ function BarplotViz(props: VisualizationProps<Options>) {
     true
   );
 
-  // for custom legend: vizconfig.checkedLegendItems
-  const onCheckedLegendItemsChange =
-    onChangeHandlerFactory<string[]>('checkedLegendItems');
+  const getOverlayVariable = options?.getOverlayVariable;
 
   const providedOverlayVariableDescriptor = useMemo(
-    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
-    [options?.getOverlayVariable, computation.descriptor.configuration]
+    () => getOverlayVariable?.(computation.descriptor.configuration),
+    [getOverlayVariable, computation.descriptor.configuration]
   );
 
   const selectedVariables = useDeepValue({
@@ -311,7 +317,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     'The new overlay variable is not compatible with this visualization and has been disabled.'
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const {
     variable,
     entity,
@@ -344,6 +350,48 @@ function BarplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
   ]);
 
+  const inputs = useMemo(
+    (): InputSpec[] => [
+      {
+        name: 'xAxisVariable',
+        label: 'Main',
+        role: 'axis',
+      },
+      {
+        name: 'overlayVariable',
+        label: 'Overlay',
+        role: 'stratification',
+        providedOptionalVariable: providedOverlayVariableDescriptor,
+        readonlyValue:
+          options?.getOverlayVariable != null
+            ? providedOverlayVariableDescriptor
+              ? variableDisplayWithUnit(providedOverlayVariable)
+              : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+            : undefined,
+      },
+      ...(options?.hideFacetInputs
+        ? []
+        : [
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            } as const,
+          ]),
+    ],
+    [options, providedOverlayVariable, providedOverlayVariableDescriptor]
+  );
+
+  const dataRequestConfig: DataRequestConfig = useDeepValue(
+    pick(vizConfig, [
+      'xAxisVariable',
+      'overlayVariable',
+      'facetVariable',
+      'valueSpec',
+      'showMissingness',
+    ])
+  );
+
   const data = usePromise(
     useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
       if (
@@ -357,7 +405,18 @@ function BarplotViz(props: VisualizationProps<Options>) {
       if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
-      const params = getRequestParams(studyId, filters ?? [], vizConfig);
+      assertValidInputVariables(
+        inputs,
+        selectedVariables,
+        entities,
+        dataElementConstraints
+      );
+
+      const params = getRequestParams(
+        studyId,
+        filters ?? [],
+        dataRequestConfig
+      );
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
@@ -367,7 +426,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       // figure out if we need to show the missing data for the stratification variables
       // if it has no incomplete cases we don't have to
       const showMissingOverlay =
-        vizConfig.showMissingness &&
+        dataRequestConfig.showMissingness &&
         hasIncompleteCases(
           overlayEntity,
           overlayVariable,
@@ -376,7 +435,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
       const showMissingFacet =
-        vizConfig.showMissingness &&
+        dataRequestConfig.showMissingness &&
         hasIncompleteCases(
           facetEntity,
           facetVariable,
@@ -413,22 +472,22 @@ function BarplotViz(props: VisualizationProps<Options>) {
         showMissingOverlay
       );
     }, [
-      // using vizConfig only causes issue with onCheckedLegendItemsChange
-      studyId,
-      filters,
-      filteredCounts,
-      dataClient,
-      vizConfig.xAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.valueSpec,
-      vizConfig.showMissingness,
       variable,
       entity,
+      filteredCounts.pending,
+      filteredCounts.value,
       overlayVariable,
-      overlayEntity,
       facetVariable,
+      inputs,
+      selectedVariables,
+      entities,
+      dataElementConstraints,
+      filters,
+      studyId,
+      dataRequestConfig,
+      dataClient,
       computation.descriptor.type,
+      overlayEntity,
       facetEntity,
     ])
   );
@@ -494,8 +553,11 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const minPos = useMemo(() => barplotDefaultDependentAxisMinPos(data), [data]);
   const max = useMemo(() => barplotDefaultDependentAxisMax(data), [data]);
-  const minPosMax =
-    minPos != null && max != null ? { min: minPos, max: max } : undefined;
+  const minPosMax = useMemo(
+    () =>
+      minPos != null && max != null ? { min: minPos, max: max } : undefined,
+    [max, minPos]
+  );
   const dependentMinPosMax = useMemo(() => {
     return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
@@ -508,7 +570,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
               : minPosMax.max,
         }
       : undefined;
-  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
+  }, [minPosMax, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
 
   // using custom hook
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -540,22 +602,15 @@ function BarplotViz(props: VisualizationProps<Options>) {
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = useMemo(
-    () =>
-      // barplot does not have independent axis range control so send undefined for defaultUIState
-      truncationConfig(
-        {
-          ...(minPosMax != null &&
-          minPosMax.min != null &&
-          minPosMax.max != null
-            ? { dependentAxisRange: minPosMax }
-            : {}),
-        },
-        vizConfig,
-        {}, // no overrides
-        true // use inclusive less than equal for the range min
-      ),
-    [vizConfig.dependentAxisRange, minPosMax]
+  } = truncationConfig(
+    {
+      ...(minPosMax != null && minPosMax.min != null && minPosMax.max != null
+        ? { dependentAxisRange: minPosMax }
+        : {}),
+    },
+    vizConfig,
+    {}, // no overrides
+    true // use inclusive less than equal for the range min
   );
 
   useEffect(() => {
@@ -813,12 +868,11 @@ function BarplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
-  const areRequiredInputsSelected = useMemo(() => {
-    if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
+  const areRequiredInputsSelected =
+    !dataElementConstraints ||
+    Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
-  }, [dataElementConstraints, vizConfig.xAxisVariable]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
@@ -826,36 +880,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
-          inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'Main',
-              role: 'axis',
-            },
-            {
-              name: 'overlayVariable',
-              label: 'Overlay',
-              role: 'stratification',
-              providedOptionalVariable: providedOverlayVariableDescriptor,
-              readonlyValue:
-                options?.getOverlayVariable != null
-                  ? providedOverlayVariableDescriptor
-                    ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
-                  : undefined,
-            },
-            ...(options?.hideFacetInputs
-              ? []
-              : [
-                  {
-                    name: 'facetVariable',
-                    label: 'Facet',
-                    role: 'stratification',
-                  } as const,
-                ]),
-          ]}
+          inputs={inputs}
           entities={entities}
-          filters={filters}
           selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
@@ -958,24 +984,33 @@ export function barplotResponseToData(
   } as BarplotDataWithStatistics; // sorry, but seemed necessary!
 }
 
+type DataRequestConfig = Pick<
+  BarplotConfig,
+  | 'xAxisVariable'
+  | 'overlayVariable'
+  | 'facetVariable'
+  | 'valueSpec'
+  | 'showMissingness'
+>;
+
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: BarplotConfig
+  config: DataRequestConfig
 ): BarplotRequestParams {
   return {
     studyId,
     filters,
     config: {
       // is outputEntityId correct?
-      outputEntityId: vizConfig.xAxisVariable!.entityId,
-      xAxisVariable: vizConfig.xAxisVariable!,
-      overlayVariable: vizConfig.overlayVariable,
-      facetVariable: vizConfig.facetVariable ? [vizConfig.facetVariable] : [],
+      outputEntityId: config.xAxisVariable!.entityId,
+      xAxisVariable: config.xAxisVariable!,
+      overlayVariable: config.overlayVariable,
+      facetVariable: config.facetVariable ? [config.facetVariable] : [],
       // valueSpec: manually inputted for now
-      valueSpec: vizConfig.valueSpec,
+      valueSpec: config.valueSpec,
       barMode: 'group', // or 'stack'
-      showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      showMissingness: config.showMissingness ? 'TRUE' : 'FALSE',
     },
   };
 }

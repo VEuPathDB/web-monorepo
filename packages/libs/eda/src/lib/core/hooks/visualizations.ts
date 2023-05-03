@@ -104,7 +104,6 @@ export function useProvidedOptionalVariable<ConfigType>(
         inputName as string,
         entities,
         constraints,
-        filters,
         dataElementDependencyOrder,
         selectedVariables
       ).find((variable) => isEqual(variable, providedVariableDescriptor))
@@ -151,16 +150,9 @@ export function useFilteredConstraints(
         selectedVariables,
         entities,
         dataElementConstraints,
-        filters,
         selectedVarReference
       ),
-    [
-      dataElementConstraints,
-      selectedVariables,
-      entities,
-      filters,
-      selectedVarReference,
-    ]
+    [dataElementConstraints, selectedVariables, entities, selectedVarReference]
   );
 }
 

@@ -319,7 +319,7 @@ export function HistogramFilter(props: Props) {
 
   // set defaultDependentAxisRange
   const defaultDependentAxisRange = useDefaultAxisRange(
-    null,
+    variable,
     0,
     minPosVal,
     maxVal,

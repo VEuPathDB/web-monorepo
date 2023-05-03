@@ -28,7 +28,11 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
+import {
+  InputSpec,
+  InputVariables,
+  requiredInputLabelStyle,
+} from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 
@@ -47,6 +51,7 @@ import {
   mapValues,
   map,
   keys,
+  omit,
 } from 'lodash';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -79,6 +84,7 @@ import {
   nonUniqueWarning,
   vocabularyWithMissingData,
   hasIncompleteCases,
+  assertValidInputVariables,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -115,7 +121,6 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions } from '../../layouts/types';
@@ -253,7 +258,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -265,7 +270,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const providedOverlayVariableDescriptor = useMemo(
     () => options?.getOverlayVariable?.(computation.descriptor.configuration),
-    [options?.getOverlayVariable, computation.descriptor.configuration]
+    [options, computation.descriptor.configuration]
   );
 
   const selectedVariables = useDeepValue({
@@ -303,7 +308,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const {
     xAxisVariable,
@@ -421,13 +426,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
       setTruncatedDependentAxisWarning('');
     },
     [
-      updateVizConfig,
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
       vizConfig.valueSpecConfig,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      vizConfig.dependentAxisLogScale,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
       findEntityAndVariable,
+      updateVizConfig,
     ]
   );
 
@@ -578,6 +588,58 @@ function LineplotViz(props: VisualizationProps<Options>) {
     'yAxisVariable'
   );
 
+  const dataRequestConfig: DataRequestConfig = useDeepValue({
+    ...omit(vizConfig, ['dependentAxisRange', 'checkedLegendItems']),
+    // the following looks nasty but it seems to work
+    // the back end only makes use of the x-axis viewport (aka independentAxisRange)
+    // when binning is in force, so no need to trigger a new request unless binning
+    independentAxisRange: vizConfig.useBinning
+      ? vizConfig.independentAxisRange
+      : undefined,
+    // same goes for changing from full to auto-zoom/custom
+    independentAxisValueSpec:
+      vizConfig.useBinning && vizConfig.independentAxisValueSpec === 'Full'
+        ? vizConfig.independentAxisValueSpec
+        : undefined,
+  });
+
+  const inputs = useMemo(
+    (): InputSpec[] => [
+      {
+        name: 'xAxisVariable',
+        label: 'X-axis',
+        role: 'axis',
+      },
+      {
+        name: 'yAxisVariable',
+        label: 'Y-axis',
+        role: 'axis',
+      },
+      {
+        name: 'overlayVariable',
+        label: 'Overlay',
+        role: 'stratification',
+        providedOptionalVariable: providedOverlayVariableDescriptor,
+        readonlyValue:
+          options?.getOverlayVariable != null
+            ? providedOverlayVariableDescriptor
+              ? variableDisplayWithUnit(providedOverlayVariable)
+              : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+            : undefined,
+      },
+      ...(options?.hideFacetInputs
+        ? []
+        : [
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            } as const,
+          ]),
+    ],
+    [options, providedOverlayVariable, providedOverlayVariableDescriptor]
+  );
+
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
@@ -603,15 +665,22 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
       if (categoricalMode && valuesAreSpecified) {
         if (
-          vizConfig.numeratorValues != null &&
-          !vizConfig.numeratorValues.every((value) =>
-            vizConfig.denominatorValues?.includes(value)
+          dataRequestConfig.numeratorValues != null &&
+          !dataRequestConfig.numeratorValues.every((value) =>
+            dataRequestConfig.denominatorValues?.includes(value)
           )
         )
           throw new Error(
             'To calculate a proportion, all selected numerator values must also be present in the denominator'
           );
       }
+
+      assertValidInputVariables(
+        inputs,
+        selectedVariables,
+        entities,
+        dataElementConstraints
+      );
 
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
@@ -623,7 +692,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       const params = getRequestParams(
         studyId,
         filters ?? [],
-        vizConfig,
+        dataRequestConfig,
         xAxisVariable,
         yAxisVariable,
         outputEntity
@@ -635,7 +704,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       );
 
       const showMissingOverlay =
-        vizConfig.showMissingness &&
+        dataRequestConfig.showMissingness &&
         hasIncompleteCases(
           overlayEntity,
           overlayVariable,
@@ -644,7 +713,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
       const showMissingFacet =
-        vizConfig.showMissingness &&
+        dataRequestConfig.showMissingness &&
         hasIncompleteCases(
           facetEntity,
           facetVariable,
@@ -683,44 +752,28 @@ function LineplotViz(props: VisualizationProps<Options>) {
         neutralPaletteProps.colorPalette
       );
     }, [
-      studyId,
-      filters,
-      dataClient,
+      outputEntity,
       xAxisVariable,
       yAxisVariable,
+      filteredCounts.pending,
+      filteredCounts.value,
       overlayVariable,
-      overlayEntity,
       facetVariable,
-      facetEntity,
-      // simply using vizConfig causes issue with onCheckedLegendItemsChange
-      // it is because vizConfig also contains vizConfig.checkedLegendItems
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.binWidth,
-      vizConfig.binWidthTimeUnit,
-      vizConfig.valueSpecConfig,
-      vizConfig.showMissingness,
-      vizConfig.useBinning,
-      vizConfig.showErrorBars,
-      vizConfig.numeratorValues,
-      vizConfig.denominatorValues,
-      computation.descriptor.type,
-      visualization.descriptor.type,
-      outputEntity,
-      filteredCounts,
       categoricalMode,
-      // the following looks nasty but it seems to work
-      // the back end only makes use of the x-axis viewport (aka independentAxisRange)
-      // when binning is in force, so no need to trigger a new request unless binning
-      vizConfig.useBinning ? vizConfig.independentAxisRange : undefined,
-      // same goes for changing from full to auto-zoom/custom
-      vizConfig.useBinning
-        ? vizConfig.independentAxisValueSpec === 'Full'
-        : undefined,
       valuesAreSpecified,
-      providedOverlayVariable,
+      inputs,
+      selectedVariables,
+      entities,
+      dataElementConstraints,
+      filters,
+      studyId,
+      dataRequestConfig,
+      dataClient,
+      computation.descriptor.type,
+      overlayEntity,
+      facetEntity,
+      visualization.descriptor.type,
+      neutralPaletteProps.colorPalette,
     ])
   );
 
@@ -755,7 +808,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         : data.value != null
         ? ({ min: data.value.xMin, max: data.value?.xMax } as NumberOrDateRange)
         : undefined,
-    [data, vizConfig.useBinning]
+    [data.value, defaultIndependentAxisRange, vizConfig.useBinning]
   );
   const yMinMaxDataRange = useMemo(
     () =>
@@ -846,14 +899,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     return Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
-  }, [
-    dataElementConstraints,
-    vizConfig.xAxisVariable,
-    vizConfig.yAxisVariable,
-    vizConfig.valueSpecConfig,
-    vizConfig.denominatorValues,
-    vizConfig.numeratorValues,
-  ]);
+  }, [dataElementConstraints, vizConfig]);
 
   // set truncation flags: will see if this is reusable with other application
   const {
@@ -883,14 +929,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             : {}),
         }
       ),
-    [
-      xMinMaxDataRange,
-      yMinMaxDataRange,
-      vizConfig.independentAxisRange,
-      vizConfig.dependentAxisRange,
-      vizConfig.independentAxisLogScale,
-      vizConfig.dependentAxisLogScale,
-    ]
+    [xMinMaxDataRange, yMinMaxDataRange, vizConfig]
   );
 
   const plotRef = useUpdateThumbnailEffect(
@@ -1094,7 +1133,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     });
     // add reset for truncation message as well
     setTruncatedDependentAxisWarning('');
-  }, [updateVizConfig, setTruncatedDependentAxisWarning]);
+  }, [updateVizConfig, categoricalMode]);
 
   // set useEffect for changing truncation warning message
   useEffect(() => {
@@ -1745,39 +1784,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
-          inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'X-axis',
-              role: 'axis',
-            },
-            {
-              name: 'yAxisVariable',
-              label: 'Y-axis',
-              role: 'axis',
-            },
-            {
-              name: 'overlayVariable',
-              label: 'Overlay',
-              role: 'stratification',
-              providedOptionalVariable: providedOverlayVariableDescriptor,
-              readonlyValue:
-                options?.getOverlayVariable != null
-                  ? providedOverlayVariableDescriptor
-                    ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
-                  : undefined,
-            },
-            ...(options?.hideFacetInputs
-              ? []
-              : [
-                  {
-                    name: 'facetVariable',
-                    label: 'Facet',
-                    role: 'stratification',
-                  } as const,
-                ]),
-          ]}
+          inputs={inputs}
           customSections={[
             {
               title: (
@@ -1804,7 +1811,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
             },
           ]}
           entities={entities}
-          filters={filters}
           selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
@@ -2038,6 +2044,11 @@ function nullZeroHack(
   });
 }
 
+type DataRequestConfig = Omit<
+  LineplotConfig,
+  'dependentAxisRange' | 'checkedLegendItems'
+>;
+
 /**
  * Passing the whole of `vizConfig` creates a problem with the TypeScript compiler warnings
  * for the dependencies of the `data = usePromise(...)` that calls this function. It warns
@@ -2049,7 +2060,7 @@ function nullZeroHack(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: Omit<LineplotConfig, 'dependentAxisRange' | 'checkedLegendItems'>,
+  vizConfig: DataRequestConfig,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
   outputEntity: StudyEntity
