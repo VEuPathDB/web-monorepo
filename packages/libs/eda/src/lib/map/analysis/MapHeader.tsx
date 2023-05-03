@@ -62,7 +62,9 @@ export function MapHeader({
           siteName === 'VectorBase'
             ? '#F5FAF1'
             : theme?.palette.primary.hue[100] ?? mapNavigationBackgroundColor,
-        borderBottom: mapNavigationBorder,
+        // Mimics shadow used in Google maps
+        boxShadow:
+          '0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
       }}
       className={`${mapHeader()}`}
     >
