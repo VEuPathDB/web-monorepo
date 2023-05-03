@@ -1,15 +1,9 @@
 $hamburger-width: 1013px;
 
 @mixin shadowed {
-  text-shadow:
-    1px 1px 1px #00000052,
-    -1px -1px 1px #00000052,
-    1px -1px 1px #00000052,
-    -1px 1px 1px #00000052,
-    2px 2px 2px #00000052,
-    -2px -2px 2px #00000052,
-    2px -2px 2px #00000052,
-    -2px 2px 2px #00000052;
+  text-shadow: 1px 1px 1px #00000052, -1px -1px 1px #00000052,
+    1px -1px 1px #00000052, -1px 1px 1px #00000052, 2px 2px 2px #00000052,
+    -2px -2px 2px #00000052, 2px -2px 2px #00000052, -2px 2px 2px #00000052;
 }
 
 .ebrc-Header {
@@ -19,9 +13,9 @@ $hamburger-width: 1013px;
 
   display: grid;
   grid-template-areas:
-    "site-branding .         project-branding project-branding"
-    "site-branding searchbar .                .     "
-    "site-branding menubar   social           login          ";
+    'site-branding .         project-branding project-branding'
+    'site-branding searchbar .                .     '
+    'site-branding menubar   social           login          ';
   grid-template-columns: auto 1fr auto;
 
   align-items: center;
@@ -69,7 +63,9 @@ $hamburger-width: 1013px;
     color: white;
     background: transparent;
 
-    &:focus, &:active, &:hover {
+    &:focus,
+    &:active,
+    &:hover {
       background: transparent;
       border: none;
     }
@@ -82,7 +78,6 @@ $hamburger-width: 1013px;
   &MenuBar {
     grid-area: menubar;
     justify-self: center;
-
 
     @media screen and (max-width: $hamburger-width) {
       display: none;
@@ -101,12 +96,15 @@ $hamburger-width: 1013px;
       padding: 0.5em;
       font-size: 1.2em;
 
-      > a, .ebrc-HeaderSubmenuGroup > a {
+      > a,
+      .ebrc-HeaderSubmenuGroup > a {
         @include shadowed;
-        color: #FAFAFA;
+        color: #fafafa;
         font-weight: bold;
 
-        &:focus, &:active, &:hover {
+        &:focus,
+        &:active,
+        &:hover {
           text-decoration: none;
         }
       }
@@ -137,7 +135,8 @@ $hamburger-width: 1013px;
         }
       }
 
-      &:focus, &:hover {
+      &:focus,
+      &:hover {
         outline: none;
       }
     }
@@ -161,7 +160,7 @@ $hamburger-width: 1013px;
         border-left: 1em solid transparent;
         border-right: 1em solid transparent;
         border-bottom: 1em solid #ededed;
-        content: "";
+        content: '';
         left: 50%;
         margin-left: -1em;
         top: 2em;
@@ -174,17 +173,17 @@ $hamburger-width: 1013px;
     }
 
     .ebrc-HeaderMenuItemGroupContainer {
-      position: absolute; 
+      position: absolute;
 
       .ebrc-HeaderMenuItemGroup {
         margin-top: 1.5em;
         background-color: #ededed;
         padding: 0.125em 0.25em;
-        box-shadow: 0 0 1em rgba(0,48,76,.5);
-        overflow-y: scroll;
+        box-shadow: 0 0 1em rgba(0, 48, 76, 0.5);
+        overflow-y: auto;
         max-height: 80vh;
       }
-  
+
       .ebrc-HeaderMenuItemContent {
         padding: 0.625em 1em;
       }
@@ -200,7 +199,7 @@ $hamburger-width: 1013px;
           color: #aaa;
         }
       }
-      
+
       @media screen and (max-width: $hamburger-width) {
         position: relative;
 
@@ -253,7 +252,7 @@ $hamburger-width: 1013px;
 
     &-Pane {
       background-color: #ededed;
-      box-shadow: 0 0 1em rgba(0,48,76,.5);
+      box-shadow: 0 0 1em rgba(0, 48, 76, 0.5);
       z-index: 10;
     }
 
