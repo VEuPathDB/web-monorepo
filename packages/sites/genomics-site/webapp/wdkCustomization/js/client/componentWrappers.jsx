@@ -29,6 +29,13 @@ import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Rec
 
 import './record-page-new-feature.scss';
 
+import {
+  createTheme as createMUITheme,
+  ThemeProvider as MUIThemeProvider,
+} from '@material-ui/core';
+
+import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/workspaceTheme';
+
 import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
 
@@ -489,6 +496,7 @@ export function Page() {
     const isHomePage = location.pathname === '/';
     const params = new URLSearchParams(location.search);
     const galaxyUrl = params.get('galaxy_url');
+    const MUITheme = createMUITheme(MUIThemeOptions);
 
     React.useEffect(() => {
       if (galaxyUrl != null) sessionStorage.setItem('galaxyUrl', galaxyUrl);
@@ -496,16 +504,18 @@ export function Page() {
 
     return (
       <RecoilRoot>
-        <UIThemeProvider
-          theme={{
-            palette: {
-              primary: { hue: colors.mutedBlue, level: 600 },
-              secondary: { hue: colors.mutedRed, level: 500 },
-            },
-          }}
-        >
-          <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
-        </UIThemeProvider>
+        <MUIThemeProvider theme={MUITheme}>
+          <UIThemeProvider
+            theme={{
+              palette: {
+                primary: { hue: colors.mutedBlue, level: 600 },
+                secondary: { hue: colors.mutedRed, level: 500 },
+              },
+            }}
+          >
+            <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
+          </UIThemeProvider>
+        </MUIThemeProvider>
       </RecoilRoot>
     );
   };

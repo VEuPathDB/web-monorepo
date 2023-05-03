@@ -4,7 +4,12 @@ import {
   Switch,
   useRouteMatch,
 } from 'react-router';
+import {
+  createTheme as createMUITheme,
+  ThemeProvider as MUIThemeProvider,
+} from '@material-ui/core';
 
+import { workspaceThemeOptions as MUIThemeOptions } from '../../workspaceTheme';
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
@@ -30,6 +35,7 @@ interface Props {
 }
 
 export function MapVeuContainer(mapVeuContainerProps: Props) {
+  const MUITheme = createMUITheme(MUIThemeOptions);
   const { singleAppMode, siteInformationProps, edaServiceUrl, sharingUrl } =
     mapVeuContainerProps;
   const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
@@ -42,7 +48,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
   return (
-    <>
+    <MUIThemeProvider theme={MUITheme}>
       <Switch>
         <Route
           path={`${path}/:studyId/:analysisId`}
@@ -92,6 +98,6 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
         />
         <Route path={path} component={StudyList} />
       </Switch>
-    </>
+    </MUIThemeProvider>
   );
 }
