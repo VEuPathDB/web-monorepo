@@ -13,6 +13,7 @@ import {
 } from '..';
 import { StudyEntity } from '../../core';
 import { makeEntityDisplayName } from '../../core/utils/study-metadata';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 export type MapNavigationProps = {
   analysisName?: string;
@@ -46,11 +47,21 @@ export function MapHeader({
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
   const { format } = new Intl.NumberFormat();
+  const { siteName } = siteInformation;
+  const theme = useUITheme();
 
   return (
     <header
       style={{
-        background: mapNavigationBackgroundColor,
+        /**
+         * If VectorBase => use light sage background color
+         * If theme is present => use lightest shade of primary theme color
+         * Default: mapNavigationBackgroundColor
+         */
+        background:
+          siteName === 'VectorBase'
+            ? '#F5FAF1'
+            : theme?.palette.primary.hue[100] ?? mapNavigationBackgroundColor,
         borderBottom: mapNavigationBorder,
       }}
       className={`${mapHeader()}`}
