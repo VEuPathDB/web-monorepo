@@ -5,8 +5,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
-    "bundle:dev": "rm -rf dist && BROWSERSLIST_ENV=modern webpack --mode=development",
-    "bundle:npm": "rm -rf dist && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
+    "clean": "rm -rf dist && mkdir dist",
+    "copy:webapp": "cp -r webapp/* dist",
+    "copy:images": "cp -r ../../../node_modules/@veupathdb/web-common/images dist",
+    "bundle:dev": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=development",
+    "bundle:npm": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
   },
   "keywords": [],
   "author": "",
@@ -51,6 +54,7 @@
     "ify-loader": "^1.1.0",
     "mini-css-extract-plugin": "^0.6.0",
     "notistack": "^1.0.10",
+    "npm-run-all": "^4.1.5",
     "react": "17",
     "react-dom": "17",
     "react-redux": "^7.1.3",

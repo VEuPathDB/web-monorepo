@@ -121,7 +121,7 @@ export function MapSideNavigation({
             // 70% of the navigation, leaving 30% for the navigation
             // footer items.
             height: '70%',
-            overflow: 'scroll',
+            overflow: 'auto',
           }}
         >
           {children}
@@ -174,7 +174,7 @@ export function MapSideNavigation({
       <div
         style={{
           borderLeft: activeNavigationMenu ? mapNavigationBorder : 'unset',
-          overflow: 'scroll',
+          overflow: 'auto',
         }}
         className={isExpanded ? '' : 'screenReaderOnly'}
       >

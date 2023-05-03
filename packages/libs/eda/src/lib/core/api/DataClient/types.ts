@@ -723,3 +723,104 @@ export const MapMarkersOverlayResponse = type({
   sampleSizeTable: sampleSizeTableArray,
   completeCasesTable: completeCasesTableArray,
 });
+
+// Standalone Map
+
+// OverlayConfig will be used for next-gen 'pass' app visualizations
+export type OverlayConfig = {
+  overlayVariable: VariableDescriptor;
+} & (
+  | {
+      overlayType: 'categorical';
+      overlayValues: string[];
+    }
+  | {
+      overlayType: 'continuous';
+      overlayValues: {
+        binStart: string;
+        binEnd: string;
+        binLabel: string;
+      }[];
+    }
+);
+
+export interface StandaloneMapMarkersRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    geoAggregateVariable: VariableDescriptor;
+    latitudeVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
+    overlayConfig?: OverlayConfig;
+    valueSpec: 'count' | 'proportion';
+    viewport: {
+      latitude: {
+        xMin: number;
+        xMax: number;
+      };
+      longitude: {
+        left: number;
+        right: number;
+      };
+    };
+  };
+}
+
+export type StandaloneMapMarkersResponse = TypeOf<
+  typeof StandaloneMapMarkersResponse
+>;
+export const StandaloneMapMarkersResponse = type({
+  mapElements: array(
+    type({
+      geoAggregateValue: string,
+      entityCount: number,
+      overlayValues: array(
+        intersection([
+          type({
+            binLabel: string,
+            value: number,
+          }),
+          partial({
+            binStart: string,
+            binEnd: string,
+          }),
+        ])
+      ),
+      avgLat: number,
+      avgLon: number,
+      minLat: number,
+      minLon: number,
+      maxLat: number,
+      maxLon: number,
+    })
+  ),
+});
+
+export interface ContinousVariableMetadataRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    variable: VariableDescriptor;
+    metadata: ('binRanges' | 'median')[];
+  };
+}
+
+export type BinRange = TypeOf<typeof BinRange>;
+export const BinRange = type({
+  binStart: string,
+  binEnd: string,
+  binLabel: string,
+});
+
+export type ContinousVariableMetadataResponse = TypeOf<
+  typeof ContinousVariableMetadataResponse
+>;
+export const ContinousVariableMetadataResponse = partial({
+  binRanges: type({
+    equalInterval: array(BinRange),
+    quantile: array(BinRange),
+    standardDeviation: array(BinRange),
+  }),
+  median: number,
+});

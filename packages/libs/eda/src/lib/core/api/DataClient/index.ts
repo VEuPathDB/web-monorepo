@@ -25,6 +25,10 @@ import {
   MapMarkersRequestParams,
   MapMarkersOverlayRequestParams,
   MapMarkersOverlayResponse,
+  StandaloneMapMarkersResponse,
+  StandaloneMapMarkersRequestParams,
+  ContinousVariableMetadataRequestParams,
+  ContinousVariableMetadataResponse,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -166,6 +170,33 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers-overlay',
       params,
       MapMarkersOverlayResponse
+    );
+  }
+
+  // standalone map-markers
+  getStandaloneMapMarkers(
+    computationName: string,
+    params: StandaloneMapMarkersRequestParams
+  ): Promise<StandaloneMapMarkersResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers',
+      params,
+      StandaloneMapMarkersResponse
+    );
+  }
+
+  // filter-aware continuous overlay variable metadata
+  getContinousVariableMetadata(
+    params: ContinousVariableMetadataRequestParams
+  ): Promise<ContinousVariableMetadataResponse> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: `/filter-aware-metadata/continuous-variable`,
+        body: params,
+        transformResponse: ioTransformer(ContinousVariableMetadataResponse),
+      })
     );
   }
 }

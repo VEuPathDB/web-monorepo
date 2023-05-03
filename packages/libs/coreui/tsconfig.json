@@ -5,6 +5,8 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     // "isolatedModules": true,
+    "sourceMap": true,
+    "declarationMap": true,
     "outDir": "dist",
     "esModuleInterop": true,
     "strict": true,
