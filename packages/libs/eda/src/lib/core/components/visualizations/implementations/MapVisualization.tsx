@@ -231,15 +231,13 @@ function MapViz(props: VisualizationProps<Options>) {
   useEffect(() => {
     if (pending) {
       setWillFlyTo(
-        !!markers &&
-          markers.length > 0 &&
-          isEqual(
-            vizConfig.mapCenterAndZoom,
-            createDefaultConfig().mapCenterAndZoom
-          )
+        isEqual(
+          vizConfig.mapCenterAndZoom,
+          createDefaultConfig().mapCenterAndZoom
+        )
       );
     }
-  }, [pending, markers, vizConfig.mapCenterAndZoom]);
+  }, [pending, vizConfig.mapCenterAndZoom]);
 
   const plotNode = (
     <>
@@ -267,7 +265,7 @@ function MapViz(props: VisualizationProps<Options>) {
         //     createDefaultConfig().mapCenterAndZoom
         //   )
         // }
-        flyToMarkers={willFlyTo && !pending}
+        flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
         flyToMarkersDelay={500}
         showSpinner={pending}
         // whether to show scale at map
