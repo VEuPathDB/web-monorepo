@@ -40,10 +40,12 @@ export const AppState = t.intersection([
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
 
-const defaultAppState: AppState = {
+// export defaultAppState to be used for flyTo
+export const defaultAppState: AppState = {
   viewport: {
     center: [0, 0],
-    zoom: 4,
+    // changing zoom level to like MapViz
+    zoom: 2,
   },
   mouseMode: 'default',
 };

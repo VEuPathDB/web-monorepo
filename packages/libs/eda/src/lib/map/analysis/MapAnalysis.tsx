@@ -21,7 +21,7 @@ import { Download, FilledButton, Filter } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
-import { AppState, useAppState } from './appState';
+import { AppState, useAppState, defaultAppState } from './appState';
 import { FloatingDiv } from './FloatingDiv';
 import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
@@ -79,7 +79,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { uniq } from 'lodash';
+import { uniq, isEqual } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 
@@ -777,13 +777,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   style={mapStyle}
                   showMouseToolbar={false}
                   showZoomControl={false}
-                  showLayerSelector={false}
+                  showLayerSelector={true}
                   showSpinner={pending}
                   animation={defaultAnimation}
                   viewport={appState.viewport}
                   markers={finalMarkers}
                   mouseMode={appState.mouseMode}
-                  flyToMarkers={false}
+                  // it is better to have additioanl condition for zoom to data function
+                  flyToMarkers={
+                    markers &&
+                    markers.length > 0 &&
+                    isEqual(appState.viewport, defaultAppState.viewport)
+                  }
                   flyToMarkersDelay={500}
                   onBoundsChanged={setBoundsZoomLevel}
                   onViewportChanged={setViewport}
