@@ -24,7 +24,8 @@ export function useDefaultAxisRange(
   logScale?: boolean,
   axisRangeSpec = 'Full',
   // check non-zero baseline for continuous overlay variable
-  isNonZeroBaseline: boolean = false
+  // but not used in any Viz yet, so change the default to true
+  isNonZeroBaseline: boolean = true
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
     // Check here to make sure number ranges (min, minPos, max) came with number variables
