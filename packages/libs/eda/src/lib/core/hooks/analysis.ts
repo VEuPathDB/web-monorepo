@@ -20,6 +20,7 @@ import { useAnalysisClient, useStudyRecord } from './workspace';
 import { createComputation } from '../components/computations/Utils';
 import { useHistory } from 'react-router-dom';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { Computation, Visualization } from '../types/visualization';
 
 /**
  * Type definition for function that will set an attribute of an Analysis.
@@ -51,6 +52,28 @@ export type AnalysisState = {
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
   setDataTableConfig: Setter<Analysis['descriptor']['dataTableConfig']>;
+
+  /** Convenience methods for manipulating visualizations nested inside computations.
+   * The getters return undefined if analysis is undefined...
+   */
+
+  /** get a flat list of all visualizations, regardless of computation, though you can optionally specify a computation */
+  getVisualizations: (computationId?: string) => Visualization[] | undefined;
+  /** get one visualization by Id */
+  getVisualization: (
+    visualizationId: string | undefined
+  ) => Visualization | undefined;
+  //  /** get one visualization and its computation by Id - maybe not needed? */
+  //  getVisualizationAndComputation: (visualizationId: string) => { visualization: Visualization, computation: Computation };
+  //  /** update visualization bu replacing existing visualization with same Id with the provided version */
+  //  updateVisualization: (visualization: Visualization) => void;
+  /** add a new visualization to a computation, removing it if necessary from a previous computation */
+  addVisualization: (
+    computation: Computation,
+    visualization: Visualization
+  ) => void;
+  /** delete a visualization */
+  deleteVisualization: (visualization: Visualization) => void;
 
   saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ analysisId: string }>;
@@ -229,6 +252,58 @@ export function useAnalysis(
   );
   const setDataTableConfig = useSetter(analysisToDataTableConfig);
 
+  // Visualization manipulations
+  const getVisualizations = useCallback(
+    (computationId?: string) =>
+      analysis?.descriptor.computations
+        .filter(
+          (computation) =>
+            computationId == null || computation.computationId === computationId
+        )
+        .flatMap((computation) => computation.visualizations),
+    [analysis]
+  );
+
+  // no-op if the visualization isn't there
+  // hope that's OK!
+  const deleteVisualization = useCallback(
+    (visualization: Visualization) =>
+      setComputations((computations) =>
+        computations.map((computation) => ({
+          ...computation,
+          visualizations: computation.visualizations.filter(
+            (viz) => viz.visualizationId !== visualization.visualizationId
+          ),
+        }))
+      ),
+    [setComputations]
+  );
+
+  // add or move a visualization (silently removes it before adding) to a computation
+  const addVisualization = useCallback(
+    (computation: Computation, visualization: Visualization) => {
+      deleteVisualization(visualization);
+      setComputations((computations) =>
+        computations.map((comp) => ({
+          ...comp,
+          visualizations:
+            comp.computationId === computation.computationId
+              ? [...comp.visualizations, visualization]
+              : comp.visualizations,
+        }))
+      );
+    },
+    [deleteVisualization, setComputations]
+  );
+
+  const getVisualization = useCallback(
+    (visualizationId: string | undefined) =>
+      analysis?.descriptor.computations
+        .flatMap((computation) => computation.visualizations)
+        .find((viz) => viz.visualizationId === visualizationId),
+    [analysis]
+  );
+
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
   useEffect(() => {
     setUpdateScheduled(false);
@@ -290,6 +365,10 @@ export function useAnalysis(
     copyAnalysis,
     deleteAnalysis,
     saveAnalysis,
+    getVisualizations,
+    deleteVisualization,
+    addVisualization,
+    getVisualization,
   };
 }
 
@@ -440,16 +519,13 @@ export function usePinnedAnalyses(analysisClient: AnalysisClient) {
   };
 }
 
-const analysisToNameLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'displayName'
-);
-const analysisToDescriptionLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'description'
-);
+const analysisToNameLens =
+  Lens.fromProp<NewAnalysis | Analysis>()('displayName');
+const analysisToDescriptionLens =
+  Lens.fromProp<NewAnalysis | Analysis>()('description');
 const analysisToNotesLens = Lens.fromProp<NewAnalysis | Analysis>()('notes');
-const analysisToIsPublicLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'isPublic'
-);
+const analysisToIsPublicLens =
+  Lens.fromProp<NewAnalysis | Analysis>()('isPublic');
 const analysisToFiltersLens = Lens.fromPath<NewAnalysis | Analysis>()([
   'descriptor',
   'subset',

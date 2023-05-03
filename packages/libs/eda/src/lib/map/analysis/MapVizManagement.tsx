@@ -59,10 +59,8 @@ export default function MapVizManagement({
 
   if (!analysisState.analysis) return null;
 
-  const computations = analysisState.analysis.descriptor.computations;
-  const totalVisualizationCount = computations.reduce((count, computation) => {
-    return computation.visualizations.length + count;
-  }, 0);
+  const visualizations = analysisState.getVisualizations();
+  const totalVisualizationCount = visualizations?.length ?? 0;
 
   const newVisualizationPicker = (
     <StartPage
@@ -113,9 +111,8 @@ export default function MapVizManagement({
         </H5>
         <VisualizationsList
           activeVisualizationId={activeVisualizationId}
-          computations={computations}
           setActiveVisualizationId={setActiveVisualizationId}
-          updateVisualizations={updateVisualizations}
+          analysisState={analysisState}
           plugins={plugins}
         />
       </div>
@@ -150,22 +147,22 @@ export default function MapVizManagement({
 
 type VisualizationsListProps = {
   activeVisualizationId: Props['activeVisualizationId'];
-  computations: Computation[];
   setActiveVisualizationId: Props['setActiveVisualizationId'];
-  updateVisualizations: Props['updateVisualizations'];
+  analysisState: AnalysisState;
   plugins: Props['plugins'];
 };
 function VisualizationsList({
   activeVisualizationId,
-  computations,
   setActiveVisualizationId,
-  updateVisualizations,
+  analysisState,
   plugins,
 }: VisualizationsListProps) {
   const theme = useUITheme();
-  const activeVisualization = computations[0].visualizations.find(
-    (viz) => viz.visualizationId === activeVisualizationId
+  if (analysisState.analysis == null) return null;
+  const activeVisualization = analysisState.getVisualization(
+    activeVisualizationId
   );
+  const computations = analysisState.analysis.descriptor.computations;
 
   return (
     <ul className={mapVizManagementClassName('-VizList')}>
@@ -224,11 +221,7 @@ function VisualizationsList({
                           type="button"
                           className="link"
                           onClick={() => {
-                            updateVisualizations((visualizations) =>
-                              visualizations.filter(
-                                (v) => v.visualizationId !== viz.visualizationId
-                              )
-                            );
+                            analysisState.deleteVisualization(viz);
                             setActiveVisualizationId(undefined);
                           }}
                         >
@@ -244,15 +237,14 @@ function VisualizationsList({
                           className="link"
                           onClick={() => {
                             const vizCopyId = uuid();
-                            updateVisualizations((visualizations) =>
-                              visualizations.concat({
-                                ...viz,
-                                visualizationId: vizCopyId,
-                                displayName:
-                                  'Copy of ' +
-                                  (viz.displayName || 'unnamed visualization'),
-                              })
-                            );
+                            const newViz = {
+                              ...viz,
+                              visualizationId: vizCopyId,
+                              displayName:
+                                'Copy of ' +
+                                (viz.displayName || 'unnamed visualization'),
+                            };
+                            analysisState.addVisualization(computation, newViz);
                             setActiveVisualizationId(vizCopyId);
                           }}
                         >
