@@ -222,8 +222,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     selectedOverlayVariable: appState.selectedOverlayVariable,
   });
 
-  const computation = analysisState.analysis?.descriptor.computations[0];
-
   const fieldTree = useFieldTree(
     useFlattenedFields(studyEntities, 'variableTree')
   );
