@@ -42,56 +42,54 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
   return (
-    <>
-      <Switch>
-        <Route
-          path={`${path}/:studyId/:analysisId`}
-          render={(
-            routeProps: RouteComponentProps<{
-              analysisId: string;
-              studyId: string;
-            }>
-          ) => (
-            <EDAWorkspaceContainer
+    <Switch>
+      <Route
+        path={`${path}/:studyId/:analysisId`}
+        render={(
+          routeProps: RouteComponentProps<{
+            analysisId: string;
+            studyId: string;
+          }>
+        ) => (
+          <EDAWorkspaceContainer
+            studyId={routeProps.match.params.studyId}
+            subsettingClient={edaClient}
+            analysisClient={analysisClient}
+            dataClient={dataClient}
+            downloadClient={downloadClient}
+            computeClient={computeClient}
+            className="MapVEu"
+          >
+            <MapAnalysis
+              analysisId={routeProps.match.params.analysisId}
+              siteInformationProps={siteInformationProps}
               studyId={routeProps.match.params.studyId}
-              subsettingClient={edaClient}
-              analysisClient={analysisClient}
-              dataClient={dataClient}
-              downloadClient={downloadClient}
-              computeClient={computeClient}
-              className="MapVEu"
-            >
-              <MapAnalysis
-                analysisId={routeProps.match.params.analysisId}
-                siteInformationProps={siteInformationProps}
-                studyId={routeProps.match.params.studyId}
-                sharingUrl={sharingUrl}
-              />
-            </EDAWorkspaceContainer>
-          )}
-        />
-        <Route
-          path={`${path}/:studyId`}
-          render={(props: RouteComponentProps<{ studyId: string }>) => (
-            <EDAAnalysisListContainer
+              sharingUrl={sharingUrl}
+            />
+          </EDAWorkspaceContainer>
+        )}
+      />
+      <Route
+        path={`${path}/:studyId`}
+        render={(props: RouteComponentProps<{ studyId: string }>) => (
+          <EDAAnalysisListContainer
+            studyId={props.match.params.studyId}
+            analysisClient={analysisClient}
+            subsettingClient={edaClient}
+            dataClient={dataClient}
+            downloadClient={downloadClient}
+            computeClient={computeClient}
+            className="MapVEu"
+          >
+            <AnalysisList
               studyId={props.match.params.studyId}
-              analysisClient={analysisClient}
-              subsettingClient={edaClient}
-              dataClient={dataClient}
-              downloadClient={downloadClient}
-              computeClient={computeClient}
-              className="MapVEu"
-            >
-              <AnalysisList
-                studyId={props.match.params.studyId}
-                analysisStore={analysisClient}
-                singleAppMode={singleAppMode}
-              />
-            </EDAAnalysisListContainer>
-          )}
-        />
-        <Route path={path} component={StudyList} />
-      </Switch>
-    </>
+              analysisStore={analysisClient}
+              singleAppMode={singleAppMode}
+            />
+          </EDAAnalysisListContainer>
+        )}
+      />
+      <Route path={path} component={StudyList} />
+    </Switch>
   );
 }
