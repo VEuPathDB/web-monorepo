@@ -178,7 +178,6 @@ export function MapSideNavigation({
       </div>
       <div
         style={{
-          minWidth: activeNavigationMenu ? 285 : 0,
           borderLeft: activeNavigationMenu ? mapNavigationBorder : 'unset',
           overflow: 'auto',
         }}
