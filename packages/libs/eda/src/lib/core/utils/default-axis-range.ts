@@ -29,9 +29,15 @@ export function numberDateDefaultAxisRange(
                   defaults.displayRangeMin <= 0) ||
                 defaults.rangeMin <= 0)
                 ? (observedMinPos as number)
-                : (min([
-                    // remove 0
-                    defaults.displayRangeMin,
+                : // For the min, we want to start at one of the following, in order of precedence:
+                  //
+                  // - `displayRangeMin`, if it is defined and smaller than `rangeMin`
+                  // - `rangeMin`, if it is smaller than `0`
+                  // - `0`, otherwise.
+                  //
+                  // This can be expressed as a `min` function.
+                  (min([
+                    defaults.displayRangeMin ?? 0,
                     defaults.rangeMin,
                     observedMin as number,
                   ]) as number),
