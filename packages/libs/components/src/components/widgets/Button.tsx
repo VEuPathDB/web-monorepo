@@ -1,5 +1,8 @@
 import React from 'react';
-import { createTheme, ThemeProvider } from '@material-ui/core/styles';
+import {
+  createTheme as createMUITheme,
+  ThemeProvider,
+} from '@material-ui/core/styles';
 import MaterialButton from '@material-ui/core/Button';
 
 import { LIGHT_BLUE } from '../../constants/colors';
@@ -36,7 +39,7 @@ export default function Button({
   disabled = false,
 }: ButtonProps) {
   // Override Material UI color scheme.
-  const theme = createTheme({
+  const theme = createMUITheme({
     palette: {
       primary: {
         main: color,
