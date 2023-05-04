@@ -4,12 +4,7 @@ import {
   Switch,
   useRouteMatch,
 } from 'react-router';
-import {
-  createTheme as createMUITheme,
-  ThemeProvider as MUIThemeProvider,
-} from '@material-ui/core';
 
-import { workspaceThemeOptions as MUIThemeOptions } from '../../workspaceTheme';
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
@@ -35,7 +30,6 @@ interface Props {
 }
 
 export function MapVeuContainer(mapVeuContainerProps: Props) {
-  const MUITheme = createMUITheme(MUIThemeOptions);
   const { singleAppMode, siteInformationProps, edaServiceUrl, sharingUrl } =
     mapVeuContainerProps;
   const edaClient = useConfiguredSubsettingClient(edaServiceUrl);
@@ -48,56 +42,54 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
   return (
-    <MUIThemeProvider theme={MUITheme}>
-      <Switch>
-        <Route
-          path={`${path}/:studyId/:analysisId`}
-          render={(
-            routeProps: RouteComponentProps<{
-              analysisId: string;
-              studyId: string;
-            }>
-          ) => (
-            <EDAWorkspaceContainer
+    <Switch>
+      <Route
+        path={`${path}/:studyId/:analysisId`}
+        render={(
+          routeProps: RouteComponentProps<{
+            analysisId: string;
+            studyId: string;
+          }>
+        ) => (
+          <EDAWorkspaceContainer
+            studyId={routeProps.match.params.studyId}
+            subsettingClient={edaClient}
+            analysisClient={analysisClient}
+            dataClient={dataClient}
+            downloadClient={downloadClient}
+            computeClient={computeClient}
+            className="MapVEu"
+          >
+            <MapAnalysis
+              analysisId={routeProps.match.params.analysisId}
+              siteInformationProps={siteInformationProps}
               studyId={routeProps.match.params.studyId}
-              subsettingClient={edaClient}
-              analysisClient={analysisClient}
-              dataClient={dataClient}
-              downloadClient={downloadClient}
-              computeClient={computeClient}
-              className="MapVEu"
-            >
-              <MapAnalysis
-                analysisId={routeProps.match.params.analysisId}
-                siteInformationProps={siteInformationProps}
-                studyId={routeProps.match.params.studyId}
-                sharingUrl={sharingUrl}
-              />
-            </EDAWorkspaceContainer>
-          )}
-        />
-        <Route
-          path={`${path}/:studyId`}
-          render={(props: RouteComponentProps<{ studyId: string }>) => (
-            <EDAAnalysisListContainer
+              sharingUrl={sharingUrl}
+            />
+          </EDAWorkspaceContainer>
+        )}
+      />
+      <Route
+        path={`${path}/:studyId`}
+        render={(props: RouteComponentProps<{ studyId: string }>) => (
+          <EDAAnalysisListContainer
+            studyId={props.match.params.studyId}
+            analysisClient={analysisClient}
+            subsettingClient={edaClient}
+            dataClient={dataClient}
+            downloadClient={downloadClient}
+            computeClient={computeClient}
+            className="MapVEu"
+          >
+            <AnalysisList
               studyId={props.match.params.studyId}
-              analysisClient={analysisClient}
-              subsettingClient={edaClient}
-              dataClient={dataClient}
-              downloadClient={downloadClient}
-              computeClient={computeClient}
-              className="MapVEu"
-            >
-              <AnalysisList
-                studyId={props.match.params.studyId}
-                analysisStore={analysisClient}
-                singleAppMode={singleAppMode}
-              />
-            </EDAAnalysisListContainer>
-          )}
-        />
-        <Route path={path} component={StudyList} />
-      </Switch>
-    </MUIThemeProvider>
+              analysisStore={analysisClient}
+              singleAppMode={singleAppMode}
+            />
+          </EDAAnalysisListContainer>
+        )}
+      />
+      <Route path={path} component={StudyList} />
+    </Switch>
   );
 }
