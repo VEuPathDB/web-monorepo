@@ -605,7 +605,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   onClick={() => {
                     if (viz == null) return;
                     const vizCopyId = uuid();
-                    analysisState.updateVisualization({
+                    analysisState.addVisualization(computation, {
                       ...viz,
                       visualizationId: vizCopyId,
                       displayName:
