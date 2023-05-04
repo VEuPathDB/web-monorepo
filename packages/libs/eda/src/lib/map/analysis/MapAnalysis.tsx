@@ -87,7 +87,7 @@ import {
   MarkerConfigurationSelector,
   PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
-import { BarPlots, Donut } from './MarkerConfiguration/icons';
+import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -499,7 +499,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {
                   type: 'pie',
                   displayName: 'Donuts',
-                  icon: <Donut style={{ height: 30 }} />,
+                  icon: <DonutMarkers style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'pie' ? (
                       <PieMarkerConfigurationMenu
@@ -520,7 +520,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {
                   type: 'barplot',
                   displayName: 'Bar plots',
-                  icon: <BarPlots style={{ height: 30 }} />,
+                  icon: <BarPlotMarkers style={{ height: 30 }} />,
                   renderConfigurationMenu:
                     activeMarkerConfiguration.type === 'barplot' ? (
                       <BarPlotMarkerConfigurationMenu
