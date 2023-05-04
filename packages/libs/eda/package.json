@@ -80,6 +80,7 @@
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/tsconfig": "workspace:^",
     "assert": "^2.0.0",
+    "babel-loader": "^8.0.5",
     "bubleify": "^2.0.0",
     "buffer": "^6.0.3",
     "http-proxy-middleware": "^2.0.6",
