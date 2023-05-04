@@ -22,10 +22,7 @@ export function useDefaultAxisRange(
   max?: number | string,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full',
-  // check non-zero baseline for continuous overlay variable
-  // but not used in any Viz yet, so change the default to true
-  isNonZeroBaseline: boolean = true
+  axisRangeSpec = 'Full'
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
     // Check here to make sure number ranges (min, minPos, max) came with number variables
@@ -48,8 +45,7 @@ export function useDefaultAxisRange(
         minPos,
         max,
         logScale,
-        axisRangeSpec,
-        isNonZeroBaseline
+        axisRangeSpec
       );
 
       // 4 significant figures
@@ -64,12 +60,10 @@ export function useDefaultAxisRange(
           typeof defaultRange?.max === 'number')
       )
         // check non-zero baseline for continuous overlay variable
-        return isNonZeroBaseline
-          ? defaultRange
-          : {
-              min: numberSignificantFigures(defaultRange.min, 4, 'down'),
-              max: numberSignificantFigures(defaultRange.max, 4, 'up'),
-            };
+        return {
+          min: numberSignificantFigures(defaultRange.min, 4, 'down'),
+          max: numberSignificantFigures(defaultRange.max, 4, 'up'),
+        };
       else return defaultRange;
     } else if (
       variable == null &&
@@ -93,7 +87,7 @@ export function useDefaultAxisRange(
     } else {
       return undefined;
     }
-  }, [variable, min, minPos, max, logScale, axisRangeSpec, isNonZeroBaseline]);
+  }, [variable, min, minPos, max, logScale, axisRangeSpec]);
   return defaultAxisRange;
 }
 
