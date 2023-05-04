@@ -224,29 +224,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
-  const updateVisualizations = useCallback(
-    (
-      visualizations:
-        | Visualization[]
-        | ((visualizations: Visualization[]) => Visualization[])
-    ) => {
-      analysisState.setComputations((computations) =>
-        computations.map((c) =>
-          c.computationId !== computation?.computationId
-            ? c
-            : {
-                ...c,
-                visualizations:
-                  typeof visualizations === 'function'
-                    ? visualizations(c.visualizations)
-                    : visualizations,
-              }
-        )
-      );
-    },
-    [analysisState, computation?.computationId]
-  );
-
   const fieldTree = useFieldTree(
     useFlattenedFields(studyEntities, 'variableTree')
   );
@@ -459,7 +436,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <MapVizManagement
               analysisState={analysisState}
-              updateVisualizations={updateVisualizations}
               setActiveVisualizationId={setActiveVisualizationId}
               apps={apps}
               activeVisualizationId={appState.activeVisualizationId}
@@ -814,7 +790,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 {activeSideMenuIndex === plotSideMenuItemIndex && (
                   <DraggableVisualization
                     analysisState={analysisState}
-                    updateVisualizations={updateVisualizations}
                     setActiveVisualizationId={setActiveVisualizationId}
                     appState={appState}
                     apps={apps}

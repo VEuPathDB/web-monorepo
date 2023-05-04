@@ -63,17 +63,21 @@ export type AnalysisState = {
   getVisualization: (
     visualizationId: string | undefined
   ) => Visualization | undefined;
-  //  /** get one visualization and its computation by Id - maybe not needed? */
-  //  getVisualizationAndComputation: (visualizationId: string) => { visualization: Visualization, computation: Computation };
-  //  /** update visualization bu replacing existing visualization with same Id with the provided version */
-  //  updateVisualization: (visualization: Visualization) => void;
+  /** get one visualization and its computation by Id all at once */
+  getVisualizationAndComputation: (
+    visualizationId: string | undefined
+  ) => { visualization: Visualization; computation: Computation } | undefined;
+  /** update visualization by replacing existing visualization with same Id with the provided version */
+  updateVisualization: (visualization: Visualization) => void;
   /** add a new visualization to a computation, removing it if necessary from a previous computation */
   addVisualization: (
     computation: Computation,
     visualization: Visualization
   ) => void;
-  /** delete a visualization */
+  /** TO DO: copyVisualization? */
+  /** delete a visualization, do not remove computation if it ends up empty */
   deleteVisualization: (visualization: Visualization) => void;
+  /** TO DO: add a deleteIfEmpty mode to deleteVisualization? - see `deleteComputationWithNoVisualizations` in VisualizationsContainer */
 
   saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ analysisId: string }>;
@@ -264,6 +268,30 @@ export function useAnalysis(
     [analysis]
   );
 
+  const getVisualization = useCallback(
+    (visualizationId: string | undefined) =>
+      analysis?.descriptor.computations
+        .flatMap((computation) => computation.visualizations)
+        .find((viz) => viz.visualizationId === visualizationId),
+    [analysis]
+  );
+
+  const getVisualizationAndComputation = useCallback(
+    (visualizationId: string | undefined) =>
+      analysis?.descriptor.computations.reduce((result, comp) => {
+        const foundViz = comp.visualizations.find(
+          (viz) => viz.visualizationId === visualizationId
+        );
+        return foundViz != null
+          ? {
+              computation: comp,
+              visualization: foundViz,
+            }
+          : result;
+      }, undefined as { computation: Computation; visualization: Visualization } | undefined),
+    [analysis]
+  );
+
   // no-op if the visualization isn't there
   // hope that's OK!
   const deleteVisualization = useCallback(
@@ -296,12 +324,19 @@ export function useAnalysis(
     [deleteVisualization, setComputations]
   );
 
-  const getVisualization = useCallback(
-    (visualizationId: string | undefined) =>
-      analysis?.descriptor.computations
-        .flatMap((computation) => computation.visualizations)
-        .find((viz) => viz.visualizationId === visualizationId),
-    [analysis]
+  const updateVisualization = useCallback(
+    (visualization: Visualization) =>
+      setComputations((computations) =>
+        computations.map((computation) => ({
+          ...computation,
+          visualizations: computation.visualizations.map((viz) =>
+            viz.visualizationId === visualization.visualizationId
+              ? visualization
+              : viz
+          ),
+        }))
+      ),
+    [setComputations]
   );
 
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
@@ -366,9 +401,11 @@ export function useAnalysis(
     deleteAnalysis,
     saveAnalysis,
     getVisualizations,
+    getVisualization,
+    getVisualizationAndComputation,
     deleteVisualization,
     addVisualization,
-    getVisualization,
+    updateVisualization,
   };
 }
 

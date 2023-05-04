@@ -16,11 +16,6 @@ import { ComputationPlugin } from '../../core/components/computations/Types';
 
 interface Props {
   analysisState: AnalysisState;
-  updateVisualizations: (
-    visualizations:
-      | Visualization[]
-      | ((visualizations: Visualization[]) => Visualization[])
-  ) => void;
   setActiveVisualizationId: ReturnType<
     typeof useAppState
   >['setActiveVisualizationId'];
@@ -37,7 +32,6 @@ interface Props {
 export default function DraggableVisualization({
   analysisState,
   appState,
-  updateVisualizations,
   setActiveVisualizationId,
   geoConfigs,
   apps,
@@ -47,16 +41,10 @@ export default function DraggableVisualization({
   toggleStarredVariable,
   filters,
 }: Props) {
-  const activeComputation =
-    analysisState.analysis?.descriptor.computations.find((c) =>
-      c.visualizations.some(
-        (v) => v.visualizationId === appState.activeVisualizationId
-      )
-    );
-
-  const activeViz = activeComputation?.visualizations.find(
-    (v) => v.visualizationId === appState.activeVisualizationId
-  );
+  const { computation: activeComputation, visualization: activeViz } =
+    analysisState.getVisualizationAndComputation(
+      appState.activeVisualizationId
+    ) ?? {};
 
   const computationType = activeComputation?.descriptor.type;
 
@@ -68,7 +56,7 @@ export default function DraggableVisualization({
   const visualizationPlugins = computationType
     ? plugins[computationType]?.visualizationPlugins
     : null;
-  console.log({ visualizationPlugins, computationType, activeViz, apps });
+
   return (
     <>
       {activeViz && app && visualizationPlugins && (
@@ -97,7 +85,6 @@ export default function DraggableVisualization({
             <FullScreenVisualization
               analysisState={analysisState}
               computation={activeComputation!}
-              updateVisualizations={updateVisualizations}
               visualizationPlugins={visualizationPlugins}
               visualizationsOverview={app.visualizations}
               geoConfigs={geoConfigs}

@@ -97,7 +97,6 @@ export function ComputationInstance(props: Props) {
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
         visualizationPlugins={visualizationPlugins}
-        updateVisualizations={updateVisualizations}
         filters={analysis.descriptor.subset.descriptor}
         starredVariables={analysis?.descriptor.starredVariables}
         toggleStarredVariable={toggleStarredVariable}

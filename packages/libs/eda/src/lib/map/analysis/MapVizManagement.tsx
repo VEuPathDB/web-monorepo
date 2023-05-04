@@ -25,11 +25,6 @@ import { StartPage } from '../../core/components/computations/StartPage';
 interface Props {
   activeVisualizationId: string | undefined;
   analysisState: AnalysisState;
-  updateVisualizations: (
-    visualizations:
-      | Visualization[]
-      | ((visualizations: Visualization[]) => Visualization[])
-  ) => void;
   setActiveVisualizationId: ReturnType<
     typeof useAppState
   >['setActiveVisualizationId'];
@@ -47,7 +42,6 @@ export default function MapVizManagement({
   apps,
   geoConfigs,
   setActiveVisualizationId,
-  updateVisualizations,
   plugins,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
