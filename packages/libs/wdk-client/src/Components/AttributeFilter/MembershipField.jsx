@@ -333,7 +333,7 @@ class MembershipTable extends React.PureComponent {
   }
 
   handleUnknownChange(addUnknown) {
-    this.setSelections(this.getValuesForFilter(), addUnknown);
+    this.setSelections(this.getValuesForFilter() ?? [], addUnknown);
   }
 
   handleSelectAll() {
@@ -349,11 +349,14 @@ class MembershipTable extends React.PureComponent {
       ) {
         // At least one row isn't selected. Select all rows.
         this.setSelections(
-          allRows.filter((row) => row.filteredCount > 0).map((row) => row.value)
+          allRows
+            .filter((row) => row.filteredCount > 0 && row.value != null)
+            .map((row) => row.value),
+          true
         );
       } else {
         // All rows are selected. Deselect all rows.
-        this.setSelections([]);
+        this.setSelections([], false);
       }
     } else {
       const selectableRows = allRows.filter((row) => row.filteredCount > 0);

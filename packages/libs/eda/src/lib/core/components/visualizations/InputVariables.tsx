@@ -134,6 +134,7 @@ export interface Props {
   enableShowMissingnessToggle?: boolean;
   /** controlled state of stratification variables' showMissingness toggle switch (optional) */
   showMissingness?: boolean;
+  showClearSelectionButton?: boolean;
   /** handler for showMissingness state change */
   onShowMissingnessChange?: (newState: boolean) => void;
   /** output entity, required for toggle switch label */
@@ -156,6 +157,7 @@ export function InputVariables(props: Props) {
     onShowMissingnessChange,
     outputEntity,
     customSections,
+    showClearSelectionButton,
   } = props;
   const classes = useInputStyles();
   const handleChange = (
@@ -315,6 +317,9 @@ export function InputVariables(props: Props) {
                       </span>
                     ) : (
                       <VariableTreeDropdown
+                        showClearSelectionButton={
+                          showClearSelectionButton ?? true
+                        }
                         scope="variableTree"
                         showMultiFilterDescendants
                         disabledVariables={
