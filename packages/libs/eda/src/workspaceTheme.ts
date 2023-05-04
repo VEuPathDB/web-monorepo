@@ -1,10 +1,13 @@
 import { ThemeOptions } from '@material-ui/core';
 
-export const workspaceTheme: ThemeOptions = {
+export const workspaceThemeOptions: ThemeOptions = {
   typography: {
     fontSize: 13,
     fontFamily:
       'Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif',
+    button: {
+      textTransform: 'none',
+    },
   },
   palette: {
     primary: {

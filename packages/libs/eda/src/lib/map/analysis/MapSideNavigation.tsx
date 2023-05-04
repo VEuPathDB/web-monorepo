@@ -26,6 +26,8 @@ const bottomLinkStyles: React.CSSProperties = {
   marginBottom: '1rem',
 };
 
+const mapSideNavTopOffset = '1.5rem';
+
 export function MapSideNavigation({
   activeNavigationMenu,
   children,
@@ -46,15 +48,14 @@ export function MapSideNavigation({
         borderLeft: 'none',
         borderBottom: 'none',
         borderTop: 'none',
-        // height: 'calc(100% - 150px)',
-        height: '100%',
+        position: 'absolute',
+        top: mapSideNavTopOffset,
+        height: `calc(100% - (2 * ${mapSideNavTopOffset})`,
         minHeight: 125,
-        position: 'relative',
         transition: 'left 0.1s ease',
         // Zero always makes math easy. Either the menu is as big as
         // it needs to be or it's 0px (and 0px padding).
         width: isExpanded ? 'max-content' : 0,
-        marginTop: '4rem',
         // The parent of this element probably had its pointer-events
         // set to "none". This restores the default behavior. Without
         // this, users cannot interact with the side menu via cursor.
@@ -63,6 +64,9 @@ export function MapSideNavigation({
         // ensure that the side menu sits atop the map.
         zIndex: 10,
         display: 'flex',
+        // Mimics shadow used in Google maps
+        boxShadow:
+          '0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
       }}
     >
       <button
@@ -73,13 +77,13 @@ export function MapSideNavigation({
           border: mapNavigationBorder,
           borderLeft: 'none',
           borderRadius: '0px 5px 5px 0px',
-          height: 60,
+          height: 100,
           width: sideMenuExpandButtonWidth,
           // These styles pin the expand/collapse to the right of
           // the lefthand side menu at the nav's vertical center.
           position: 'absolute',
           right: -sideMenuExpandButtonWidth,
-          top: '50%',
+          top: '10%',
           transform: 'translate(0%, -50%)',
           transition: 'all 0.1s ease',
           // These styles make sure that the button's SVG
@@ -88,6 +92,7 @@ export function MapSideNavigation({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          boxShadow: '2px 2px 2px rgba(60,64,67,0.15)',
         }}
         onClick={() => onToggleIsExpanded()}
       >
@@ -173,7 +178,6 @@ export function MapSideNavigation({
       </div>
       <div
         style={{
-          minWidth: activeNavigationMenu ? 285 : 0,
           borderLeft: activeNavigationMenu ? mapNavigationBorder : 'unset',
           overflow: 'auto',
         }}

@@ -35,6 +35,7 @@ import { LegendItemsProps } from '@veupathdb/components/lib/components/plotContr
 import { VariableDescriptor } from '../../../core/types/variable';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
 import { SubsettingClient } from '../../../core/api';
+import { useDeepValue } from '../../../core/hooks/immutability';
 
 // Back end overlay values contain a special token for the "Other" category:
 const UNSELECTED_TOKEN = '__UNSELECTED__';
@@ -90,7 +91,7 @@ export function useStandaloneMapMarkers(
     geoConfig,
     studyId,
     filters,
-    overlayVariable,
+    overlayVariable: rawOverlayVariable,
     markerType,
     dependentAxisLogScale = false,
   } = props;
@@ -98,6 +99,9 @@ export function useStandaloneMapMarkers(
   const dataClient: DataClient = useDataClient();
   const findEntityAndVariable = useFindEntityAndVariable();
   const entities = useStudyEntities();
+  // use deep value so it's quick to change between donut and bar
+  // if the overlay variable is the same
+  const overlayVariable = useDeepValue(rawOverlayVariable);
 
   // prepare some info that the map-markers and overlay requests both need
   const { latitudeVariable, longitudeVariable } = useMemo(

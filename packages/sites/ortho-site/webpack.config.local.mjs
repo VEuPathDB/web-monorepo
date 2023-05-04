@@ -44,7 +44,7 @@ export default configure({
     new HtmlWebpackPlugin({
       inject: 'head',
       template: 'index.local.html',
-      favicon: `${__dirname}/htdocs/favicon.ico`
+      favicon: `${__dirname}/webapp/images/OrthoMCL/favicon.ico`
     })
   ]
 });
