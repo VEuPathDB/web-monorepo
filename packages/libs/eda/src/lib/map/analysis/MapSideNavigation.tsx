@@ -92,6 +92,7 @@ export function MapSideNavigation({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          boxShadow: '2px 2px 2px rgba(60,64,67,0.15)',
         }}
         onClick={() => onToggleIsExpanded()}
       >
