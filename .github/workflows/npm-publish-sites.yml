@@ -37,12 +37,13 @@ jobs:
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
         env:
           NODE_OPTIONS: '--max-old-space-size=4096'
-      - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF#refs/tags/v}
+      - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF_NAME#v}
       - uses: JS-DevTools/npm-publish@v2
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
           package: packages/sites/${{ matrix.dir }}/package.json
+          tag: ${{ contains(github.ref_name, '-patch') && 'patch' || 'latest' }}
       - run: ./tools/scripts/test-report
       - uses: actions/upload-artifact@v3
         with:
