@@ -95,7 +95,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
-import { OverlayOptions, XAxisOptions } from '../options/types';
+import { OverlayOptions, RequestOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
@@ -132,7 +132,8 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     OverlayOptions,
-    XAxisOptions {
+    XAxisOptions,
+    RequestOptions<BoxplotConfig> {
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;
@@ -402,7 +403,12 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         throw new Error(nonUniqueWarning);
 
       // add visualization.type here. valueSpec too?
-      const params = {
+      const params = options?.getRequestParams?.(
+        studyId,
+        filters,
+        vizConfig,
+        computation
+      ) ?? {
         studyId,
         filters,
         config: {
