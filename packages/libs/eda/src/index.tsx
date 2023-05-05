@@ -19,6 +19,10 @@ import React, {
 } from 'react';
 
 import { partial } from 'lodash';
+import {
+  createTheme as createMUITheme,
+  ThemeProvider as MUIThemeProvider,
+} from '@material-ui/core';
 
 import {
   initialize,
@@ -43,7 +47,8 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import MapApp from './lib/map';
 import WorkspaceApp from './lib/workspace';
-import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
+import CoreUIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
+import { workspaceThemeOptions as MUIThemeOptions } from './workspaceTheme';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
@@ -81,8 +86,8 @@ export const DevLoginFormContext = createContext<DevLoginFormState>({
   setLoginFormVisible: () => {},
 });
 
-// snackbar
 const SnackbarProvider = makeSnackbarProvider();
+const MUITheme = createMUITheme(MUIThemeOptions);
 
 wrapComponents({
   Header: () => Header,
@@ -110,23 +115,25 @@ wrapComponents({
       useCoreUIFonts();
 
       return (
-        <DevLoginFormContext.Provider value={loginFormContext}>
-          <DataRestrictionDaemon
-            makeStudyPageRoute={(id: string) => `/eda/${id}`}
-          />
-          <UIThemeProvider
-            theme={{
-              palette: {
-                primary: { hue: colors.mutedCyan, level: 600 },
-                secondary: { hue: colors.mutedRed, level: 500 },
-              },
-            }}
-          >
-            <SnackbarProvider styleProps={{}}>
-              <DefaultComponent {...props} />
-            </SnackbarProvider>
-          </UIThemeProvider>
-        </DevLoginFormContext.Provider>
+        <MUIThemeProvider theme={MUITheme}>
+          <DevLoginFormContext.Provider value={loginFormContext}>
+            <DataRestrictionDaemon
+              makeStudyPageRoute={(id: string) => `/eda/${id}`}
+            />
+            <CoreUIThemeProvider
+              theme={{
+                palette: {
+                  primary: { hue: colors.mutedCyan, level: 600 },
+                  secondary: { hue: colors.mutedRed, level: 500 },
+                },
+              }}
+            >
+              <SnackbarProvider styleProps={{}}>
+                <DefaultComponent {...props} />
+              </SnackbarProvider>
+            </CoreUIThemeProvider>
+          </DevLoginFormContext.Provider>
+        </MUIThemeProvider>
       );
     };
   },
