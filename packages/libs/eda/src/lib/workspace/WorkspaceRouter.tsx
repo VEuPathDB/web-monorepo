@@ -1,4 +1,3 @@
-import { createTheme, ThemeProvider } from '@material-ui/core';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -11,8 +10,6 @@ import {
 } from 'react-router';
 import { Documentation } from '../core/components/docs/Documentation';
 import { DocumentationContainer } from '../core/components/docs/DocumentationContainer';
-import { workspaceTheme } from '../core/components/workspaceTheme';
-
 import {
   useConfiguredAnalysisClient,
   useConfiguredSubsettingClient,
@@ -28,8 +25,6 @@ import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { AnalysisPanel } from './AnalysisPanel';
 import { StandaloneStudyPage } from './StandaloneStudyPage';
-
-const theme = createTheme(workspaceTheme);
 
 type Props = {
   edaServiceUrl: string;
@@ -149,175 +144,172 @@ export function WorkspaceRouter({
   }, [locationKeys, history, path]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <DocumentationContainer>
-        <div
-          css={{
-            '& .wdk-SaveableTextEditor-Buttons .edit': {
-              color:
-                coreUIPrimaryColor &&
-                coreUIPrimaryColor.hue[coreUIPrimaryColor.level] +
-                  ' !important',
-            },
-          }}
-        >
-          <Switch>
-            <Route
-              path={path}
-              exact
-              render={() => (
-                <AllAnalyses
-                  analysisClient={analysisClient}
-                  subsettingClient={subsettingClient}
-                  exampleAnalysesAuthor={exampleAnalysesAuthor}
+    <DocumentationContainer>
+      <div
+        css={{
+          '& .wdk-SaveableTextEditor-Buttons .edit': {
+            color:
+              coreUIPrimaryColor &&
+              coreUIPrimaryColor.hue[coreUIPrimaryColor.level] + ' !important',
+          },
+        }}
+      >
+        <Switch>
+          <Route
+            path={path}
+            exact
+            render={() => (
+              <AllAnalyses
+                analysisClient={analysisClient}
+                subsettingClient={subsettingClient}
+                exampleAnalysesAuthor={exampleAnalysesAuthor}
+                showLoginForm={showLoginForm}
+              />
+            )}
+          />
+          {/* replacing/redirecting double slashes url with single slash one */}
+          <Route
+            exact
+            strict
+            path="(.*//+.*)"
+            render={({ location }) => (
+              <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
+            )}
+          />
+          <Route
+            path={`${path}/documentation/:name`}
+            exact
+            render={(props: RouteComponentProps<{ name: string }>) => (
+              <Documentation documentName={props.match.params.name} />
+            )}
+          />
+          <Route
+            path={`${path}/studies`}
+            exact
+            render={() => <StudyList baseUrl={url} />}
+          />
+          <Route
+            path={`${path}/public`}
+            render={() => (
+              <PublicAnalysesRoute
+                analysisClient={analysisClient}
+                exampleAnalysesAuthor={exampleAnalysesAuthor}
+              />
+            )}
+          />
+          <Route
+            path={`${path}/:studyId`}
+            exact
+            render={(props: RouteComponentProps<{ studyId: string }>) => (
+              <WorkspaceContainer
+                {...props.match.params}
+                subsettingClient={subsettingClient}
+                dataClient={dataClient}
+                analysisClient={analysisClient}
+                downloadClient={downloadClient}
+                computeClient={computeClient}
+              >
+                <StandaloneStudyPage
+                  studyId={props.match.params.studyId}
+                  showUnreleasedData={showUnreleasedData}
+                />
+              </WorkspaceContainer>
+            )}
+          />
+          <Route
+            path={`${path}/:studyId/new`}
+            render={(props: RouteComponentProps<{ studyId: string }>) => (
+              <WorkspaceContainer
+                {...props.match.params}
+                subsettingClient={subsettingClient}
+                dataClient={dataClient}
+                analysisClient={analysisClient}
+                downloadClient={downloadClient}
+                computeClient={computeClient}
+              >
+                <AnalysisPanel
+                  {...props.match.params}
+                  sharingUrlPrefix={sharingUrlPrefix}
                   showLoginForm={showLoginForm}
-                />
-              )}
-            />
-            {/* replacing/redirecting double slashes url with single slash one */}
-            <Route
-              exact
-              strict
-              path="(.*//+.*)"
-              render={({ location }) => (
-                <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
-              )}
-            />
-            <Route
-              path={`${path}/documentation/:name`}
-              exact
-              render={(props: RouteComponentProps<{ name: string }>) => (
-                <Documentation documentName={props.match.params.name} />
-              )}
-            />
-            <Route
-              path={`${path}/studies`}
-              exact
-              render={() => <StudyList baseUrl={url} />}
-            />
-            <Route
-              path={`${path}/public`}
-              render={() => (
-                <PublicAnalysesRoute
-                  analysisClient={analysisClient}
-                  exampleAnalysesAuthor={exampleAnalysesAuthor}
-                />
-              )}
-            />
-            <Route
-              path={`${path}/:studyId`}
-              exact
-              render={(props: RouteComponentProps<{ studyId: string }>) => (
-                <WorkspaceContainer
-                  {...props.match.params}
-                  subsettingClient={subsettingClient}
-                  dataClient={dataClient}
-                  analysisClient={analysisClient}
+                  hideSavedAnalysisButtons
                   downloadClient={downloadClient}
-                  computeClient={computeClient}
-                >
-                  <StandaloneStudyPage
-                    studyId={props.match.params.studyId}
-                    showUnreleasedData={showUnreleasedData}
-                  />
-                </WorkspaceContainer>
-              )}
-            />
-            <Route
-              path={`${path}/:studyId/new`}
-              render={(props: RouteComponentProps<{ studyId: string }>) => (
-                <WorkspaceContainer
+                  singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
+                  enableFullScreenApps={enableFullScreenApps}
+                />
+              </WorkspaceContainer>
+            )}
+          />
+          <Route
+            path={`${path}/:studyId/~latest`}
+            render={(props: RouteComponentProps<{ studyId: string }>) => (
+              <LatestAnalysis
+                {...props.match.params}
+                replaceRegexp={/~latest/}
+                analysisClient={analysisClient}
+              />
+            )}
+          />
+          <Route
+            exact
+            path={`${path}/:analysisId/import`}
+            render={(
+              props: RouteComponentProps<{
+                analysisId: string;
+              }>
+            ) => {
+              return (
+                <ImportAnalysis
                   {...props.match.params}
-                  subsettingClient={subsettingClient}
-                  dataClient={dataClient}
-                  analysisClient={analysisClient}
-                  downloadClient={downloadClient}
-                  computeClient={computeClient}
-                >
-                  <AnalysisPanel
-                    {...props.match.params}
-                    sharingUrlPrefix={sharingUrlPrefix}
-                    showLoginForm={showLoginForm}
-                    hideSavedAnalysisButtons
-                    downloadClient={downloadClient}
-                    singleAppMode={singleAppMode}
-                    showUnreleasedData={showUnreleasedData}
-                    enableFullScreenApps={enableFullScreenApps}
-                  />
-                </WorkspaceContainer>
-              )}
-            />
-            <Route
-              path={`${path}/:studyId/~latest`}
-              render={(props: RouteComponentProps<{ studyId: string }>) => (
-                <LatestAnalysis
-                  {...props.match.params}
-                  replaceRegexp={/~latest/}
                   analysisClient={analysisClient}
                 />
-              )}
-            />
-            <Route
-              exact
-              path={`${path}/:analysisId/import`}
-              render={(
-                props: RouteComponentProps<{
-                  analysisId: string;
-                }>
-              ) => {
-                return (
-                  <ImportAnalysis
-                    {...props.match.params}
-                    analysisClient={analysisClient}
-                  />
-                );
-              }}
-            />
-            <Route
-              exact
-              path={`${path}/:studyId/:analysisId/import`}
-              render={(
-                props: RouteComponentProps<{
-                  analysisId: string;
-                  studyId: string;
-                }>
-              ) => (
-                <Redirect
-                  to={`${path}/${props.match.params.analysisId}/import`}
-                />
-              )}
-            />
-            <Route
-              path={`${path}/:studyId/:analysisId`}
-              render={(
-                props: RouteComponentProps<{
-                  studyId: string;
-                  analysisId: string;
-                }>
-              ) => (
-                <WorkspaceContainer
+              );
+            }}
+          />
+          <Route
+            exact
+            path={`${path}/:studyId/:analysisId/import`}
+            render={(
+              props: RouteComponentProps<{
+                analysisId: string;
+                studyId: string;
+              }>
+            ) => (
+              <Redirect
+                to={`${path}/${props.match.params.analysisId}/import`}
+              />
+            )}
+          />
+          <Route
+            path={`${path}/:studyId/:analysisId`}
+            render={(
+              props: RouteComponentProps<{
+                studyId: string;
+                analysisId: string;
+              }>
+            ) => (
+              <WorkspaceContainer
+                {...props.match.params}
+                subsettingClient={subsettingClient}
+                dataClient={dataClient}
+                analysisClient={analysisClient}
+                downloadClient={downloadClient}
+                computeClient={computeClient}
+              >
+                <AnalysisPanel
                   {...props.match.params}
-                  subsettingClient={subsettingClient}
-                  dataClient={dataClient}
-                  analysisClient={analysisClient}
+                  sharingUrlPrefix={sharingUrlPrefix}
+                  showLoginForm={showLoginForm}
                   downloadClient={downloadClient}
-                  computeClient={computeClient}
-                >
-                  <AnalysisPanel
-                    {...props.match.params}
-                    sharingUrlPrefix={sharingUrlPrefix}
-                    showLoginForm={showLoginForm}
-                    downloadClient={downloadClient}
-                    singleAppMode={singleAppMode}
-                    showUnreleasedData={showUnreleasedData}
-                    enableFullScreenApps={enableFullScreenApps}
-                  />
-                </WorkspaceContainer>
-              )}
-            />
-          </Switch>
-        </div>
-      </DocumentationContainer>
-    </ThemeProvider>
+                  singleAppMode={singleAppMode}
+                  showUnreleasedData={showUnreleasedData}
+                  enableFullScreenApps={enableFullScreenApps}
+                />
+              </WorkspaceContainer>
+            )}
+          />
+        </Switch>
+      </div>
+    </DocumentationContainer>
   );
 }
