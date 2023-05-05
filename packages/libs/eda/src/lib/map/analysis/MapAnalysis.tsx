@@ -210,10 +210,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       (markerConfig) => markerConfig.type === activeMarkerConfigurationType
     ) || defautMarkerConfigurations[0];
 
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const { variable: overlayVariable } =
-    findEntityAndVariable(selectedVariables) ?? {};
-
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
   function updateMarkerConfigurations(
@@ -825,7 +821,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     totalVisibleWithOverlayEntityCount ??
                     totalVisibleEntityCount
                   }
-                  overlayActive={overlayVariable != null}
+                  overlayActive={
+                    activeMarkerConfiguration.selectedVariable != null
+                  }
                 />
                 <div
                   style={{
