@@ -172,7 +172,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const theme = useUITheme();
 
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
-  const selectedVariables = getDefaultVariableId(studyMetadata.rootEntity.id);
+  const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
 
   const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
     appState;
@@ -181,15 +181,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     return [
       {
         type: 'pie',
-        selectedVariable: selectedVariables,
+        selectedVariable: defaultVariable,
       },
       {
         type: 'barplot',
         selectedPlotMode: 'count',
-        selectedVariable: selectedVariables,
+        selectedVariable: defaultVariable,
       },
     ];
-  }, [selectedVariables]);
+  }, [defaultVariable]);
 
   useEffect(
     function generateDefaultMarkerConfigurationsIfNeeded() {
@@ -211,7 +211,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
-    findEntityAndVariable(selectedVariables) ?? {};
+    findEntityAndVariable(activeMarkerConfiguration.selectedVariable) ?? {};
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
