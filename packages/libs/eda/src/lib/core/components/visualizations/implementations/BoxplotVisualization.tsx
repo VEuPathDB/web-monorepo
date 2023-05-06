@@ -407,6 +407,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         studyId,
         filters,
         vizConfig,
+        outputEntity.id,
         computation
       ) ?? {
         studyId,

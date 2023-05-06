@@ -20,6 +20,7 @@ export interface RequestOptions<ConfigType> {
     studyId: string,
     filters: Filter[] | undefined,
     vizConfig: ConfigType,
+    outputEntityId: string,
     computation: Computation
   ) => unknown;
 }

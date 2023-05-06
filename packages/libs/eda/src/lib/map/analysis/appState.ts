@@ -3,7 +3,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect } from 'react';
-import { AnalysisState } from '../../core';
+import { AnalysisState, OverlayConfig } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
@@ -13,10 +13,13 @@ const MarkerType = t.keyof({
   pie: null,
 });
 
-const MarkerConfiguration = t.intersection([
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
+export const MarkerConfiguration = t.intersection([
   t.type({
     type: MarkerType,
     selectedVariable: VariableDescriptor,
+    overlayConfig: t.union([OverlayConfig, t.undefined]),
   }),
   t.union([
     t.type({

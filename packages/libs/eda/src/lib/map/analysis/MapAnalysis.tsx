@@ -13,6 +13,7 @@ import {
   useStudyEntities,
   useStudyMetadata,
   useStudyRecord,
+  useSubsettingClient,
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
@@ -21,7 +22,7 @@ import { Download, FilledButton, Filter } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
-import { AppState, useAppState } from './appState';
+import { AppState, MarkerConfiguration, useAppState } from './appState';
 import { FloatingDiv } from './FloatingDiv';
 import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
@@ -66,16 +67,17 @@ import { useHistory } from 'react-router';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
-import { uniq } from 'lodash';
+import { isEqual, uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BarPlotMarkerConfigurationMenu,
-  MarkerConfiguration,
   MarkerConfigurationSelector,
   PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
+import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
+import { getDefaultOverlayConfig } from './hooks/defaultOverlayConfig';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -154,6 +156,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
+  const studyId = studyMetadata.id;
   const studyEntities = useStudyEntities();
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
@@ -170,11 +173,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         type: 'pie',
         selectedVariable: defaultVariable,
+        overlayConfig: undefined, // will be fetched from back end
       },
       {
         type: 'barplot',
         selectedPlotMode: 'count',
         selectedVariable: defaultVariable,
+        overlayConfig: undefined, // fetched from back end
       },
     ];
   }, [defaultVariable]);
@@ -198,24 +203,75 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     ) || defautMarkerConfigurations[0];
 
   const findEntityAndVariable = useFindEntityAndVariable();
-  const { variable: overlayVariable } =
+  const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration.selectedVariable) ?? {};
+
+  const entities = useStudyEntities();
+  const outputEntity = useMemo(() => {
+    if (geoConfig == null || geoConfig.entity.id == null) return;
+
+    return overlayEntity
+      ? leastAncestralEntity([overlayEntity, geoConfig.entity], entities)
+      : geoConfig.entity;
+  }, [geoConfig, overlayEntity, entities]);
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
-  function updateMarkerConfigurations(
-    updatedConfiguration: MarkerConfiguration
-  ) {
-    const nextMarkerConfigurations = markerConfigurations.map(
-      (configuration) => {
-        if (configuration.type === updatedConfiguration.type) {
-          return updatedConfiguration;
+  const updateMarkerConfigurations = useCallback(
+    (updatedConfiguration: MarkerConfiguration) => {
+      const nextMarkerConfigurations = markerConfigurations.map(
+        (configuration) => {
+          if (configuration.type === updatedConfiguration.type) {
+            return updatedConfiguration;
+          }
+          return configuration;
         }
-        return configuration;
-      }
-    );
-    setMarkerConfigurations(nextMarkerConfigurations);
-  }
+      );
+      setMarkerConfigurations(nextMarkerConfigurations);
+    },
+    [markerConfigurations]
+  );
+
+  const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
+
+  // if the variable or filters have changed on the active marker config
+  // set the default overlay config
+  useEffect(() => {
+    async function updateOverlayConfig() {
+      const overlayConfig = await getDefaultOverlayConfig({
+        studyId,
+        filters,
+        overlayVariable,
+        overlayEntity,
+        dataClient,
+        subsettingClient,
+      });
+
+      updateMarkerConfigurations({
+        ...activeMarkerConfiguration,
+        overlayConfig,
+      });
+    }
+
+    if (
+      !isEqual(
+        activeMarkerConfiguration.selectedVariable,
+        activeMarkerConfiguration.overlayConfig?.overlayVariable
+      )
+    ) {
+      updateOverlayConfig();
+    }
+
+    // TO DO: return a cancel function?
+  }, [
+    activeMarkerConfiguration,
+    studyId,
+    filters,
+    overlayVariable,
+    overlayEntity,
+    updateMarkerConfigurations,
+  ]);
 
   const adaptedMarkerTypename = (() => {
     if (activeMarkerConfiguration.type === 'barplot') {
@@ -232,25 +288,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     pending,
     error,
     legendItems,
-    outputEntity,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
   } = useStandaloneMapMarkers({
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
-    studyId: studyMetadata.id,
+    studyId,
     filters,
     // xAxisVariable: activeMarkerConfiguration.selectedVariable,
     // computationType: 'pass',
     markerType: adaptedMarkerTypename,
     // checkedLegendItems: undefined,
-    overlayVariable: activeMarkerConfiguration.selectedVariable,
+    overlayConfig: activeMarkerConfiguration.overlayConfig,
+    outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
 
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
-  const dataClient = useDataClient();
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
 
   const downloadClient = useDownloadClient();
@@ -285,7 +340,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayVariable: activeMarkerConfiguration.selectedVariable,
+    selectedOverlayConfig: activeMarkerConfiguration.overlayConfig,
   });
 
   const fieldTree = useFieldTree(

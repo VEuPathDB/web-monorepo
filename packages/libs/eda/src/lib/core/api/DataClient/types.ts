@@ -14,6 +14,7 @@ import {
   nullType,
   keyof,
   boolean,
+  literal,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -726,23 +727,31 @@ export const MapMarkersOverlayResponse = type({
 
 // Standalone Map
 
-// OverlayConfig will be used for next-gen 'pass' app visualizations
-export type OverlayConfig = {
-  overlayVariable: VariableDescriptor;
-} & (
-  | {
-      overlayType: 'categorical';
-      overlayValues: string[];
-    }
-  | {
-      overlayType: 'continuous';
-      overlayValues: {
-        binStart: string;
-        binEnd: string;
-        binLabel: string;
-      }[];
-    }
-);
+// OverlayConfig will be used for all next-gen visualizations eventually
+
+export type OverlayConfig = TypeOf<typeof OverlayConfig>;
+export const OverlayConfig = intersection([
+  type({
+    overlayType: keyof({ categorical: null, continuous: null }),
+    overlayVariable: VariableDescriptor,
+  }),
+  union([
+    type({
+      overlayType: literal('categorical'),
+      overlayValues: array(string),
+    }),
+    type({
+      overlayType: literal('continuous'),
+      overlayValues: array(
+        type({
+          binStart: string,
+          binEnd: string,
+          binLabel: string,
+        })
+      ),
+    }),
+  ]),
+]);
 
 export interface StandaloneMapMarkersRequestParams {
   studyId: string;

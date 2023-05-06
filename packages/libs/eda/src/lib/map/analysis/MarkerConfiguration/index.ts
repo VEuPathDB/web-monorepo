@@ -1,11 +1,5 @@
-import {
-  BarPlotMarkerConfigurationMenu,
-  BarPlotMarkerConfiguration,
-} from './BarPlotMarkerConfigurationMenu';
-import {
-  PieMarkerConfigurationMenu,
-  PieMarkerConfiguration,
-} from './PieMarkerConfigurationMenu';
+import { BarPlotMarkerConfigurationMenu } from './BarPlotMarkerConfigurationMenu';
+import { PieMarkerConfigurationMenu } from './PieMarkerConfigurationMenu';
 import { MarkerConfigurationSelector } from './MarkerConfigurationSelector';
 
 export {
@@ -13,7 +7,3 @@ export {
   PieMarkerConfigurationMenu,
   BarPlotMarkerConfigurationMenu,
 };
-
-export type MarkerConfiguration =
-  | BarPlotMarkerConfiguration
-  | PieMarkerConfiguration;

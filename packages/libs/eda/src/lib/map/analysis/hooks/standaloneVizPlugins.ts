@@ -20,25 +20,17 @@ import {
   BoxplotConfig,
   boxplotVisualization,
 } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
+import { Filter, OverlayConfig } from '../../../core';
+import { Computation } from '../../../core/types/visualization';
 
 interface Props {
-  selectedOverlayVariable?: VariableDescriptor;
+  selectedOverlayConfig?: OverlayConfig;
 }
 
 type StandaloneVizOptions = LayoutOptions & OverlayOptions;
 
-function vizWithBoxplotRequest(
-  visualization: VisualizationPlugin<
-    StandaloneVizOptions & RequestOptions<BoxplotConfig>
-  >
-) {
-  return visualization.withOptions({
-    getRequestParams: () => ({ hello: 'world' }),
-  });
-}
-
 export function useStandaloneVizPlugins({
-  selectedOverlayVariable,
+  selectedOverlayConfig,
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
@@ -47,9 +39,40 @@ export function useStandaloneVizPlugins({
       return visualization.withOptions({
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => selectedOverlayVariable,
+        getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
+      });
+    }
+
+    function vizWithBoxplotRequest(
+      visualization: VisualizationPlugin<
+        StandaloneVizOptions & RequestOptions<BoxplotConfig>
+      >
+    ) {
+      return visualization.withOptions({
+        getRequestParams: (
+          studyId: string,
+          filters: Filter[] | undefined,
+          vizConfig: BoxplotConfig,
+          outputEntityId: string,
+          computation: Computation
+        ) => {
+          // process overlayConfig?
+          //      const activeMarkerConfig = vizConfig.
+
+          return {
+            studyId,
+            filters,
+            config: {
+              xAxisVariable: vizConfig.xAxisVariable,
+              yAxisVariable: vizConfig.yAxisVariable,
+              overlayConfig: selectedOverlayConfig,
+              outputEntityId,
+            },
+            //        computeConfig: computation.descriptor.configuration,
+          };
+        },
       });
     }
 
@@ -82,5 +105,5 @@ export function useStandaloneVizPlugins({
         },
       },
     };
-  }, [selectedOverlayVariable]);
+  }, [selectedOverlayConfig]);
 }
