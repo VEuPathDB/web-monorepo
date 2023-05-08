@@ -12,7 +12,7 @@ export function BarPlotMarkers(props: SVGProps<SVGSVGElement>) {
     >
       <style>
         {
-          '.st0{fill:none;stroke:#262626;stroke-miterlimit:10;}.st2{fill:#DBD9D9;}.st3{fill:#7F7F7F;}.st1{fill:#4D4D4E;}.st4{fill:#262626;}'
+          '.st0{fill:none;stroke:#262626;stroke-miterlimit:10;}.st2{fill:#C3C2C2;}.st3{fill:#7F7F7F;}.st1{fill:#4D4D4E;}.st4{fill:#262626;}'
         }
       </style>
       <polyline
