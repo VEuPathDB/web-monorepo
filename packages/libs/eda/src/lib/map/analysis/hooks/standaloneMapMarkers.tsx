@@ -17,7 +17,7 @@ import {
 } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
-import { some } from 'lodash';
+import { isEqual, some } from 'lodash';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
@@ -32,6 +32,7 @@ import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/m
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
 import { useDeepValue } from '../../../core/hooks/immutability';
+import { VariableDescriptor } from '../../../core/types/variable';
 
 // Back end overlay values contain a special token for the "Other" category:
 export const UNSELECTED_TOKEN = '__UNSELECTED__';
@@ -50,6 +51,11 @@ export interface StandaloneMapMarkersProps {
   geoConfig: GeoConfig | undefined;
   studyId: string;
   filters: Filter[] | undefined;
+  /** What has the user selected for the global overlay variable? */
+  selectedOverlayVariable: VariableDescriptor | undefined;
+  /** What is the full configuration for that overlay?
+   * This is (sometimes) determined asynchronously from back end requests.
+   */
   overlayConfig: OverlayConfig | undefined;
   outputEntityId: string | undefined;
   markerType: 'count' | 'proportion' | 'pie';
@@ -82,6 +88,7 @@ export function useStandaloneMapMarkers(
   const {
     boundsZoomLevel,
     geoConfig,
+    selectedOverlayVariable,
     overlayConfig,
     outputEntityId,
     studyId,
@@ -151,6 +158,16 @@ export function useStandaloneMapMarkers(
       )
         return undefined;
 
+      // Bail if overlayconfig hasn't been fully determined yet
+      // (e.g. async updateOverlayConfig in MapAnalysis)
+      // This prevents an extra unwanted back end request
+      // for "no overlay" just before the request for an overlay
+      if (
+        selectedOverlayVariable != null &&
+        !isEqual(selectedOverlayVariable, overlayConfig?.overlayVariable)
+      )
+        return undefined;
+
       const {
         northEast: { lat: xMax, lng: right },
         southWest: { lat: xMin, lng: left },
@@ -189,6 +206,7 @@ export function useStandaloneMapMarkers(
       studyId,
       filters,
       dataClient,
+      selectedOverlayVariable,
       overlayConfig,
       outputEntityId,
       geoAggregateVariable,

@@ -22,6 +22,7 @@ import {
 } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
 import { Filter, OverlayConfig } from '../../../core';
 import { Computation } from '../../../core/types/visualization';
+import { isEqual } from 'lodash';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -67,7 +68,13 @@ export function useStandaloneVizPlugins({
             config: {
               xAxisVariable: vizConfig.xAxisVariable,
               yAxisVariable: vizConfig.yAxisVariable,
-              overlayConfig: selectedOverlayConfig,
+              ...(vizConfig.overlayVariable &&
+              isEqual(
+                vizConfig.overlayVariable,
+                selectedOverlayConfig?.overlayVariable
+              )
+                ? { overlayConfig: selectedOverlayConfig }
+                : {}),
               outputEntityId,
             },
             //        computeConfig: computation.descriptor.configuration,

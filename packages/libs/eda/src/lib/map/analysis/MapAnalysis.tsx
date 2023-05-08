@@ -255,10 +255,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
 
     if (
+      // the overlay variable has changed
       !isEqual(
         activeMarkerConfiguration.selectedVariable,
         activeMarkerConfiguration.overlayConfig?.overlayVariable
       )
+      //      ||
+      //      // or the filters have changed TO DO: figure out what to do when filters change
+      //      // it will be related to https://github.com/VEuPathDB/web-monorepo/pull/139
+      //      !isEqual(
+      //	filters,
+      //	activeMarkerConfiguration.lastUsedFilters
+      //      )
     ) {
       updateOverlayConfig();
     }
@@ -299,6 +307,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     // computationType: 'pass',
     markerType: adaptedMarkerTypename,
     // checkedLegendItems: undefined,
+    selectedOverlayVariable: activeMarkerConfiguration.selectedVariable,
     overlayConfig: activeMarkerConfiguration.overlayConfig,
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale

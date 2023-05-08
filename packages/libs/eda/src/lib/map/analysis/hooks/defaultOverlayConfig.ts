@@ -119,15 +119,9 @@ async function getMostFrequentValues({
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
     .map((bin) => bin.binLabel);
-  if (sortedValues.length < numValues) {
-    // console logging message because the throw didn't seem to bring up the usual dialogue on the screen
-    // TO DO: understand/fix this
-    const message =
-      'standaloneMapMarkers: getMostFrequentValues was called for a low-cardinality variable';
-    console.log({ message, sortedValues });
-    throw new Error(message);
-  }
-  return [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
+  return sortedValues.length <= numValues
+    ? sortedValues
+    : [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
 }
 
 type GetBinRangesProps = {

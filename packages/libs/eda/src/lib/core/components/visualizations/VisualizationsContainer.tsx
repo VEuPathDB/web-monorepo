@@ -507,7 +507,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
 
   const updateConfiguration = useCallback(
     (configuration: unknown) => {
-      const v = vizRef.current;
+      const v = viz; // Ref.current; // TO DO: tidy up
       if (v != null) {
         analysisState.updateVisualization({
           ...v,
@@ -515,7 +515,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
         });
       }
     },
-    [analysisState.updateVisualization]
+    [analysisState.updateVisualization, viz]
   );
 
   // update currentPlotFilters with the latest filters at fullscreen mode
