@@ -25,6 +25,7 @@ export interface VariableTreeProps {
   variableLinkConfig: VariableLinkConfig;
   /** Indicate whether or not variables with children   */
   showMultiFilterDescendants?: boolean;
+  showClearSelectionButton?: boolean;
   /** The "scope" of variables which should be offered. */
   scope: VariableScope;
   asDropdown?: boolean;
@@ -38,6 +39,7 @@ export default function VariableTree({
   entityId,
   variableId,
   variableLinkConfig,
+  showClearSelectionButton,
   showMultiFilterDescendants = false,
   scope,
   asDropdown,
@@ -92,7 +94,9 @@ export default function VariableTree({
       toggleStarredVariable={toggleStarredVariable}
       asDropdown={asDropdown}
       dropdownLabel={label}
-      clearSelectionButton={clearSelectionButton}
+      clearSelectionButton={
+        showClearSelectionButton === false ? null : clearSelectionButton
+      }
     />
   );
 }
