@@ -1,6 +1,7 @@
 import { H6 } from '@veupathdb/coreui';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { MarkerConfiguration } from '.';
+import { mapNavigationBorder } from '../..';
 
 export interface MarkerConfigurationOption {
   displayName: string;
@@ -18,7 +19,6 @@ interface Props {
 const listItemStyles: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'flex-start',
-  padding: '5px 10px',
   transition: 'background 0.1s ease',
   width: '100%',
 };
@@ -27,7 +27,7 @@ const buttonStyles: React.CSSProperties = {
   background: 'none',
   border: 'none',
   display: 'flex',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
   padding: '5px 10px',
   width: '100%',
 };
@@ -43,12 +43,12 @@ export function MarkerConfigurationSelector({
   )?.renderConfigurationMenu;
 
   return (
-    <div style={{ display: 'flex', paddingRight: '10px' }}>
+    <div style={{ display: 'flex', paddingRight: '10px', height: '100%' }}>
       <div>
         <H6
           additionalStyles={{
-            padding: '10px 25px 10px 25px',
-            textAlign: 'center',
+            margin: 0,
+            padding: '0.75em 0.25em',
           }}
         >
           Choose marker type:
@@ -76,6 +76,7 @@ export function MarkerConfigurationSelector({
                       fontFamily: theme?.typography?.paragraphs?.fontFamily,
                       fontSize: 16,
                       fontWeight: isActive ? 'bold' : 'normal',
+                      marginRight: '5px',
                     }}
                   >
                     {name}
@@ -87,7 +88,14 @@ export function MarkerConfigurationSelector({
           })}
         </ul>
       </div>
-      <div>{activeMarkerConfigurationMenu}</div>
+      <div
+        style={{
+          borderLeft: mapNavigationBorder,
+          height: '100%',
+        }}
+      >
+        {activeMarkerConfigurationMenu}
+      </div>
     </div>
   );
 }

@@ -132,9 +132,11 @@ export interface Props {
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
   /** When false, disable (gray out) the showMissingness toggle */
   enableShowMissingnessToggle?: boolean;
+  showClearSelectionButton?: boolean;
   /** controlled state of stratification variables' showMissingness toggle switch (optional) */
   showMissingness?: boolean;
-  showClearSelectionButton?: boolean;
+  /** By default the component renders an element to the left of the dropdown.  */
+  showTitle?: boolean;
   /** handler for showMissingness state change */
   onShowMissingnessChange?: (newState: boolean) => void;
   /** output entity, required for toggle switch label */
@@ -158,6 +160,7 @@ export function InputVariables(props: Props) {
     outputEntity,
     customSections,
     showClearSelectionButton,
+    showTitle,
   } = props;
   const classes = useInputStyles();
   const handleChange = (
@@ -215,13 +218,16 @@ export function InputVariables(props: Props) {
               className={classes.inputGroup}
               style={{ order: sectionInfo[inputRole ?? 'default'].order }}
             >
-              <div className={classes.fullRow}>
-                <h4>
-                  {inputs.find(
-                    (input) => input.role === inputRole && input.titleOverride
-                  )?.titleOverride ?? sectionInfo[inputRole ?? 'default'].title}
-                </h4>
-              </div>
+              {showTitle !== false && (
+                <div className={classes.fullRow}>
+                  <h4>
+                    {inputs.find(
+                      (input) => input.role === inputRole && input.titleOverride
+                    )?.titleOverride ??
+                      sectionInfo[inputRole ?? 'default'].title}
+                  </h4>
+                </div>
+              )}
               {inputs
                 .filter((input) => input.role === inputRole)
                 .map((input) => (

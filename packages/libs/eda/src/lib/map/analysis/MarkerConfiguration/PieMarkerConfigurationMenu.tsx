@@ -46,8 +46,8 @@ export function PieMarkerConfigurationMenu({
     <div>
       <H6
         additionalStyles={{
-          padding: '10px 25px 10px 25px',
-          textAlign: 'center',
+          margin: 0,
+          padding: '0.75em 0.25em',
         }}
       >
         Configure Donuts:
@@ -62,11 +62,12 @@ export function PieMarkerConfigurationMenu({
         Color:
       </p>
       <InputVariables
-        showClearSelectionButton={false}
-        inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
         entities={entities}
-        selectedVariables={{ overlay: configuration.selectedVariable }}
+        inputs={[{ name: 'overlay', label: 'Variable' }]}
+        showTitle={false}
         onChange={handleInputVariablesOnChange}
+        selectedVariables={{ overlay: configuration.selectedVariable }}
+        showClearSelectionButton={false}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
       />
