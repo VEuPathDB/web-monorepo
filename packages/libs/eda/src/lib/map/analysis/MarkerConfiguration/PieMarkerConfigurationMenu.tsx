@@ -46,8 +46,7 @@ export function PieMarkerConfigurationMenu({
     <div>
       <H6
         additionalStyles={{
-          padding: '10px 25px 10px 25px',
-          textAlign: 'center',
+          margin: '1em 0.75em',
         }}
       >
         Configure Donuts:

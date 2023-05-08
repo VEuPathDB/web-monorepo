@@ -27,8 +27,7 @@ const buttonStyles: React.CSSProperties = {
   background: 'none',
   border: 'none',
   display: 'flex',
-  justifyContent: 'space-around',
-  padding: '5px 10px',
+  justifyContent: 'space-between',
   width: '100%',
 };
 
@@ -47,8 +46,7 @@ export function MarkerConfigurationSelector({
       <div>
         <H6
           additionalStyles={{
-            padding: '10px 25px 10px 25px',
-            textAlign: 'center',
+            margin: '1em 0.75em',
           }}
         >
           Choose marker type:
@@ -76,6 +74,7 @@ export function MarkerConfigurationSelector({
                       fontFamily: theme?.typography?.paragraphs?.fontFamily,
                       fontSize: 16,
                       fontWeight: isActive ? 'bold' : 'normal',
+                      marginRight: 5,
                     }}
                   >
                     {name}
