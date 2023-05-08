@@ -12,8 +12,7 @@ export function numberDateDefaultAxisRange(
   observedMax: number | string | undefined,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full',
-  isNonZeroBaseline: boolean = false
+  axisRangeSpec = 'Full'
 ): NumberOrDateRange | undefined {
   if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
@@ -30,9 +29,15 @@ export function numberDateDefaultAxisRange(
                   defaults.displayRangeMin <= 0) ||
                 defaults.rangeMin <= 0)
                 ? (observedMinPos as number)
-                : (min([
-                    isNonZeroBaseline ? undefined : 0,
-                    defaults.displayRangeMin,
+                : // For the min, we want to start at one of the following, in order of precedence:
+                  //
+                  // - `displayRangeMin`, if it is defined and smaller than `rangeMin`
+                  // - `rangeMin`, if it is smaller than `0`
+                  // - `0`, otherwise.
+                  //
+                  // This can be expressed as a `min` function.
+                  (min([
+                    defaults.displayRangeMin ?? 0,
                     defaults.rangeMin,
                     observedMin as number,
                   ]) as number),

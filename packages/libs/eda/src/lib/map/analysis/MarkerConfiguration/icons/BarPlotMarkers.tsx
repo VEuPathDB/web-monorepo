@@ -1,0 +1,104 @@
+import { SVGProps } from 'react';
+export function BarPlotMarkers(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      xmlSpace="preserve"
+      id="Layer_1"
+      x={0}
+      y={0}
+      viewBox="0 0 110.222 36.826"
+      {...props}
+    >
+      <style>
+        {
+          '.st0{fill:none;stroke:#262626;stroke-miterlimit:10;}.st2{fill:#C3C2C2;}.st3{fill:#7F7F7F;}.st1{fill:#4D4D4E;}.st4{fill:#262626;}'
+        }
+      </style>
+      <polyline
+        className="st0"
+        points="5.28,6.001 5.28,30.825 32.207,30.825 "
+      />
+      <rect x="8.562" y="8.178" className="st1" width="4.131" height="20.024" />
+      <rect
+        x="14.667"
+        y="15.995"
+        className="st2"
+        width="4.131"
+        height="12.206"
+      />
+      <rect
+        x="20.771"
+        y="12.263"
+        className="st3"
+        width="4.131"
+        height="15.939"
+      />
+      <rect
+        x="26.876"
+        y="9.238"
+        className="st4"
+        width="4.131"
+        height="18.964"
+      />
+      <polyline
+        className="st0"
+        points="42.115,6.001 42.115,30.825 69.312,30.825 "
+      />
+      <rect
+        x="45.665"
+        y="23.641"
+        className="st1"
+        width="4.131"
+        height="4.561"
+      />
+      <rect
+        x="51.77"
+        y="15.995"
+        className="st2"
+        width="4.131"
+        height="12.206"
+      />
+      <rect x="57.874" y="7.112" className="st3" width="4.131" height="21.09" />
+      <rect
+        x="63.979"
+        y="16.104"
+        className="st4"
+        width="4.131"
+        height="12.098"
+      />
+      <polyline
+        className="st0"
+        points="78.814,6.001 78.814,30.825 105.993,30.825 "
+      />
+      <rect
+        x="82.009"
+        y="6.706"
+        className="st1"
+        width="4.131"
+        height="21.495"
+      />
+      <rect
+        x="88.114"
+        y="11.678"
+        className="st2"
+        width="4.131"
+        height="16.523"
+      />
+      <rect
+        x="94.218"
+        y="20.463"
+        className="st3"
+        width="4.131"
+        height="7.739"
+      />
+      <rect
+        x="100.323"
+        y="16.104"
+        className="st4"
+        width="4.131"
+        height="12.098"
+      />
+    </svg>
+  );
+}
