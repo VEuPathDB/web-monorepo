@@ -178,6 +178,8 @@ export interface MapVEuMapProps {
   interactive?: boolean;
   /** is map scroll and zoom allowed? default true; will be overridden by `interactive: false` */
   scrollingEnabled?: boolean;
+  /** pass default viewport */
+  defaultViewport?: Viewport;
   /** is standalone map */
   isStandAloneMap?: boolean;
 }
@@ -211,6 +213,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     mouseMode,
     onMouseModeChange,
     interactive = true,
+    defaultViewport = { center: [0, 0], zoom: 2 },
     isStandAloneMap = false,
   } = props;
 
@@ -275,7 +278,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       worldCopyJump={false}
       whenCreated={onCreated}
       attributionControl={showAttribution}
-      // use custom zoom control if SAM
+      // use custom zoom control
       zoomControl={isStandAloneMap ? false : showZoomControl}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
@@ -338,7 +341,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
       {/* use custom zoom control if SAM */}
-      {isStandAloneMap && <CustomZoomControl />}
+      {isStandAloneMap && (
+        <CustomZoomControl defaultViewport={defaultViewport} />
+      )}
     </MapContainer>
   );
 }
@@ -432,7 +437,11 @@ function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
 }
 
 // custom zoom control
-function CustomZoomControl() {
+interface CustomZoomControlProps {
+  defaultViewport: Viewport;
+}
+
+function CustomZoomControl(props: CustomZoomControlProps) {
   const map = useMap();
 
   // zoom in
@@ -458,16 +467,14 @@ function CustomZoomControl() {
   // zoom to data: using flyTo function implicitly
   const zoomToData = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    map.setView([0, 0], 2);
+    map.setView(props.defaultViewport.center, props.defaultViewport.zoom);
   };
 
   return (
-    // <div className="leaflet-top leaflet-right" style={{ top: '200px', left: '200px' }}>
     <div
       className="leaflet-top leaflet-right"
-      style={{ top: '90px', right: '-3px' }}
+      style={{ top: '0px', right: '-3px' }}
     >
-      {/* <div className="leaflet-control-zoom leaflet-bar leaflet-control" style={{ top: '200px', right: '200px' }}> */}
       <div className="leaflet-control-zoom leaflet-bar leaflet-control">
         <a
           className="leaflet-control-zoom-in"

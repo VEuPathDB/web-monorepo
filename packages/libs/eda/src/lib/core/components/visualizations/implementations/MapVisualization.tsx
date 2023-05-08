@@ -256,15 +256,6 @@ function MapViz(props: VisualizationProps<Options>) {
         onBaseLayerChanged={(newBaseLayer) =>
           updateVizConfig({ baseLayer: newBaseLayer })
         }
-        //DKDK: temporarily set an additional condition for flyTo
-        // flyToMarkers={
-        //   markers &&
-        //   markers.length > 0 &&
-        //   isEqual(
-        //     vizConfig.mapCenterAndZoom,
-        //     createDefaultConfig().mapCenterAndZoom
-        //   )
-        // }
         flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
         flyToMarkersDelay={500}
         showSpinner={pending}
@@ -274,7 +265,15 @@ function MapViz(props: VisualizationProps<Options>) {
         showMouseToolbar={true}
         mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
         onMouseModeChange={onMouseModeChange}
-        //DKDK: temporarily set this for testing custom zoom control at MapViz
+        // pass defaultViewport
+        defaultViewport={{
+          center: [
+            createDefaultConfig().mapCenterAndZoom.latitude,
+            createDefaultConfig().mapCenterAndZoom.longitude,
+          ],
+          zoom: createDefaultConfig().mapCenterAndZoom.zoomLevel,
+        }}
+        // set this for positioning custom zoom control at MapViz
         isStandAloneMap={true}
       />
     </>
