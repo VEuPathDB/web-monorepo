@@ -497,26 +497,12 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
 
   // store a ref to the latest version of the visualization
-  // to avoid using the viz as a dependency in the updaters below
+  // to avoid using the viz as a dependency in the currentPlotFilters effect below
   const vizRef = useRef(viz);
-
   // whenever updateVisualizations changes, update the updateVisualizationsRef
   useEffect(() => {
     vizRef.current = viz;
   }, [viz]);
-
-  const updateConfiguration = useCallback(
-    (configuration: unknown) => {
-      const v = viz; // Ref.current; // TO DO: tidy up
-      if (v != null) {
-        analysisState.updateVisualization({
-          ...v,
-          descriptor: { ...v.descriptor, configuration },
-        });
-      }
-    },
-    [analysisState.updateVisualization, viz]
-  );
 
   // update currentPlotFilters with the latest filters at fullscreen mode
   useEffect(() => {
@@ -528,17 +514,29 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
       });
   }, [filters, analysisState.updateVisualization]);
 
+  // regular updater (no ref)
+  const updateConfiguration = useCallback(
+    (configuration: unknown) => {
+      if (viz != null) {
+        analysisState.updateVisualization({
+          ...viz,
+          descriptor: { ...viz.descriptor, configuration },
+        });
+      }
+    },
+    [analysisState.updateVisualization, viz]
+  );
+
   // Function to update the thumbnail on the configured viz selection page
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
-      const v = vizRef.current;
-      if (v != null)
+      if (viz != null)
         analysisState.updateVisualization({
-          ...v,
-          descriptor: { ...v.descriptor, thumbnail },
+          ...viz,
+          descriptor: { ...viz.descriptor, thumbnail },
         });
     },
-    [analysisState.updateVisualization]
+    [analysisState.updateVisualization, viz]
   );
 
   if (viz == null) return <div>Visualization not found.</div>;
