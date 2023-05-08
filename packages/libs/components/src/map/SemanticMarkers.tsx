@@ -68,11 +68,11 @@ export default function SemanticMarkers({
     debouncedUpdateBounds();
 
     // attach to leaflet events handler
-    map.on('resize dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
+    map.on('resize moveend dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
 
     return () => {
       // detach from leaflet events handler
-      map.off('resize dragend zoomend', debouncedUpdateBounds);
+      map.off('resize moveend dragend zoomend', debouncedUpdateBounds);
       debouncedUpdateBounds.cancel();
     };
   }, [map, onBoundsChanged]);

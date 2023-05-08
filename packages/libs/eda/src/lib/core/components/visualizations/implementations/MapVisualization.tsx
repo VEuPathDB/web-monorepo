@@ -21,7 +21,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useStudyEntities, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -223,10 +223,21 @@ function MapViz(props: VisualizationProps<Options>) {
     ]
   );
 
-  //DKDK: temporarily made a markerSum to set a flyTo condition at MapViz
-  const markerSum = markers
-    ?.map((value) => Number(value.props.markerLabel))
-    .reduce((acc, current) => acc + current, 0);
+  const [willFlyTo, setWillFlyTo] = useState(false);
+
+  // Only decide if we need to flyTo while we are waiting for marker data
+  // then only trigger the flyTo when no longer pending.
+  // This makes sure that the user sees the global location of the data before the flyTo happens.
+  useEffect(() => {
+    if (pending) {
+      setWillFlyTo(
+        isEqual(
+          vizConfig.mapCenterAndZoom,
+          createDefaultConfig().mapCenterAndZoom
+        )
+      );
+    }
+  }, [pending, vizConfig.mapCenterAndZoom]);
 
   const plotNode = (
     <>
@@ -254,15 +265,7 @@ function MapViz(props: VisualizationProps<Options>) {
         //     createDefaultConfig().mapCenterAndZoom
         //   )
         // }
-        flyToMarkers={
-          markers &&
-          markers.length > 0 &&
-          isEqual(
-            vizConfig.mapCenterAndZoom,
-            createDefaultConfig().mapCenterAndZoom
-          ) &&
-          isEqual(completeCasesAllVars, markerSum)
-        }
+        flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
         flyToMarkersDelay={500}
         showSpinner={pending}
         // whether to show scale at map
