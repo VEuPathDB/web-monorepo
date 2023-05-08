@@ -12,7 +12,7 @@ export function DonutMarkers(props: SVGProps<SVGSVGElement>) {
     >
       <style>
         {
-          '.st5,.st6,.st7,.st8{fill:none;stroke:#dbd9d9;stroke-width:5.4029;stroke-miterlimit:10}.st6,.st7,.st8{stroke:#7f7f7f}.st7,.st8{stroke:#4d4d4e}.st8{stroke:#262626}'
+          '.st5,.st6,.st7,.st8{fill:none;stroke:#C3C2C2;stroke-width:5.4029;stroke-miterlimit:10}.st6,.st7,.st8{stroke:#7f7f7f}.st7,.st8{stroke:#4d4d4e}.st8{stroke:#262626}'
         }
       </style>
       <circle cx={55.078} cy={17.749} r={11.374} className="st5" />
