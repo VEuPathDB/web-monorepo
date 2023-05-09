@@ -53,7 +53,8 @@
     "storybook": "start-storybook -s public",
     "build": "npm-run-all build-npm-modules",
     "build-storybook": "build-storybook -s public",
-    "build-npm-modules": "veupathdb-react-scripts prepare src"
+    "build-npm-modules": "veupathdb-react-scripts prepare src",
+    "clean": "rm -rf lib"
   },
   "eslintConfig": {
     "extends": [

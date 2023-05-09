@@ -228,48 +228,52 @@ export function TableFilter({
 
   const handleSort = useCallback(
     (_: unknown, sort: MultiFieldSortSpec) => {
-      analysisState.setVariableUISettings({
+      analysisState.setVariableUISettings((currentState) => ({
+        ...currentState,
         [uiStateKey]: {
           ...uiState,
           sort,
         },
-      });
+      }));
     },
     [analysisState, uiStateKey, uiState]
   );
 
   const handleSearch = useCallback(
     (_: unknown, searchTerm: string) => {
-      analysisState.setVariableUISettings({
+      analysisState.setVariableUISettings((currentState) => ({
+        ...currentState,
         [uiStateKey]: {
           ...uiState,
           searchTerm,
         },
-      });
+      }));
     },
     [analysisState, uiStateKey, uiState]
   );
 
   const handlePagination = useCallback(
     (_: unknown, currentPage: number) => {
-      analysisState.setVariableUISettings({
+      analysisState.setVariableUISettings((currentState) => ({
+        ...currentState,
         [uiStateKey]: {
           ...uiState,
           currentPage,
         },
-      });
+      }));
     },
     [analysisState, uiStateKey, uiState]
   );
 
   const handleRowsPerPage = useCallback(
     (_: unknown, rowsPerPage: number) => {
-      analysisState.setVariableUISettings({
+      analysisState.setVariableUISettings((currentState) => ({
+        ...currentState,
         [uiStateKey]: {
           ...uiState,
           rowsPerPage,
         },
-      });
+      }));
     },
     [analysisState, uiStateKey, uiState]
   );
