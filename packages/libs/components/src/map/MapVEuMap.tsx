@@ -234,6 +234,20 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     [sharedPlotCreation.run]
   );
 
+  useEffect(() => {
+    const gitterBtn: HTMLAnchorElement | null = document.querySelector(
+      '.gitter-open-chat-button'
+    );
+    if (gitterBtn) {
+      gitterBtn.style.display = 'none';
+    }
+    () => {
+      if (gitterBtn) {
+        gitterBtn.style.display = 'inline';
+      }
+    };
+  }, []);
+
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
     () => ({

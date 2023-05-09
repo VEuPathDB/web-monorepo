@@ -654,7 +654,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
           function getShareMenuContent() {
             if (!userLoggedIn) {
-              return <Login {...loginCallbacks} />;
+              return <Login {...loginCallbacks} showCloseButton={false} />;
             }
             if (
               analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
