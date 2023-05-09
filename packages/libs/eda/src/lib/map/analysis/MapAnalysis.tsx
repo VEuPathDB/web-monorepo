@@ -5,7 +5,6 @@ import {
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
   PromiseResult,
-  StudyEntity,
   useAnalysis,
   useDataClient,
   useDownloadClient,
@@ -210,6 +209,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       (markerConfig) => markerConfig.type === activeMarkerConfigurationType
     ) || defautMarkerConfigurations[0];
 
+  const findEntityAndVariable = useFindEntityAndVariable();
+  const { variable: overlayVariable } =
+    findEntityAndVariable(selectedVariables) ?? {};
+
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
   function updateMarkerConfigurations(
@@ -249,8 +252,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
     filters,
+    // xAxisVariable: activeMarkerConfiguration.selectedVariable,
+    // computationType: 'pass',
     markerType: adaptedMarkerTypename,
+    // checkedLegendItems: undefined,
     overlayVariable: activeMarkerConfiguration.selectedVariable,
+    //TO DO: maybe dependentAxisLogScale
   });
 
   const finalMarkers = useMemo(() => markers || [], [markers]);
@@ -833,9 +840,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     totalVisibleWithOverlayEntityCount ??
                     totalVisibleEntityCount
                   }
-                  overlayActive={
-                    activeMarkerConfiguration.selectedVariable != null
-                  }
+                  overlayActive={overlayVariable != null}
                 />
                 <div
                   style={{
@@ -927,10 +932,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   {legendItems.length > 0 && (
                     <MapLegend
                       legendItems={legendItems}
-                      title={getLegendTitleFromActiveMarkerConfiguration(
-                        studyEntities,
-                        activeMarkerConfiguration
-                      )}
+                      title={overlayVariable?.displayName}
                       // control to show checkbox. default: true
                       showCheckbox={false}
                     />
@@ -1030,14 +1032,4 @@ export function useGetDefaultVariableIdCallback() {
 
     return { entityId: finalEntityId, variableId: finalVariableId };
   };
-}
-
-function getLegendTitleFromActiveMarkerConfiguration(
-  studyEntities: StudyEntity[],
-  activeMarkerConfiguration: MarkerConfiguration
-) {
-  const { entityId, variableId } = activeMarkerConfiguration.selectedVariable;
-  const entity = studyEntities.find((e) => e.id === entityId);
-  const variable = entity?.variables.find((v) => v.id === variableId);
-  return variable?.displayName || 'Variable';
 }
