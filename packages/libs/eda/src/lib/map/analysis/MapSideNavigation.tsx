@@ -77,13 +77,13 @@ export function MapSideNavigation({
           border: mapNavigationBorder,
           borderLeft: 'none',
           borderRadius: '0px 5px 5px 0px',
-          height: 100,
+          height: 60,
           width: sideMenuExpandButtonWidth,
           // These styles pin the expand/collapse to the right of
           // the lefthand side menu at the nav's vertical center.
           position: 'absolute',
           right: -sideMenuExpandButtonWidth,
-          top: '10%',
+          top: '50%',
           transform: 'translate(0%, -50%)',
           transition: 'all 0.1s ease',
           // These styles make sure that the button's SVG
