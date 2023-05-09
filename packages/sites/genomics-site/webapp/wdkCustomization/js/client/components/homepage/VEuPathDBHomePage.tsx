@@ -539,10 +539,10 @@ const useHeaderMenuItems = (
         },
         {
           key: 'mapveu-alpha',
-          display: 'MapVEu Alpha',
+          display: 'Map of Popbio Data [Alpha]',
           tooltip: 'Population Biology map',
           type: 'reactRoute',
-          url: '/maps',
+          url: '/maps/DS_480c976ef9/new',
           metadata: {
             include: useEda ? [VectorBase] : [],
           },
