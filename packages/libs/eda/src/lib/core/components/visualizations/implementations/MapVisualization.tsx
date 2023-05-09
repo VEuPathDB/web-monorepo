@@ -121,7 +121,7 @@ function MapViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -133,20 +133,21 @@ function MapViz(props: VisualizationProps<Options>) {
   if (geoConfigs.length === 1 && vizConfig.geoEntityId === undefined)
     updateVizConfig({ geoEntityId: geoConfigs[0].entity.id });
 
-  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] = useCallback(
-    ({ center, zoom }) => {
-      if (center != null && center.length === 2 && zoom != null) {
-        updateVizConfig({
-          mapCenterAndZoom: {
-            latitude: center[0],
-            longitude: center[1],
-            zoomLevel: zoom,
-          },
-        });
-      }
-    },
-    [updateVizConfig]
-  );
+  const handleViewportChanged: MapVEuMapProps['onViewportChanged'] =
+    useCallback(
+      ({ center, zoom }) => {
+        if (center != null && center.length === 2 && zoom != null) {
+          updateVizConfig({
+            mapCenterAndZoom: {
+              latitude: center[0],
+              longitude: center[1],
+              zoomLevel: zoom,
+            },
+          });
+        }
+      },
+      [updateVizConfig]
+    );
 
   // prettier-ignore
   const onChangeHandlerFactory = useCallback(
@@ -175,6 +176,15 @@ function MapViz(props: VisualizationProps<Options>) {
     );
   }, [vizConfig.geoEntityId, geoConfigs]);
 
+  // get variable constraints for InputVariables
+  const pieOverview = otherVizOverviews.find(
+    (overview) => overview.name === 'map-markers-overlay'
+  );
+  if (pieOverview == null)
+    throw new Error('Map visualization cannot find map-markers-overlay helper');
+  const pieConstraints = pieOverview.dataElementConstraints;
+  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
+
   const {
     markers,
     totalEntityCount,
@@ -198,6 +208,7 @@ function MapViz(props: VisualizationProps<Options>) {
     markerType: vizConfig.markerType,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     checkedLegendItems: vizConfig.checkedLegendItems,
+    overlayDataElementConstraints: pieConstraints,
   });
 
   /**
@@ -331,15 +342,6 @@ function MapViz(props: VisualizationProps<Options>) {
       showOverlayLegend={true}
     />
   );
-
-  // get variable constraints for InputVariables
-  const pieOverview = otherVizOverviews.find(
-    (overview) => overview.name === 'map-markers-overlay'
-  );
-  if (pieOverview == null)
-    throw new Error('Map visualization cannot find map-markers-overlay helper');
-  const pieConstraints = pieOverview.dataElementConstraints;
-  const pieDependencyOrder = pieOverview.dataElementDependencyOrder;
 
   const tableGroupNode = (
     <>

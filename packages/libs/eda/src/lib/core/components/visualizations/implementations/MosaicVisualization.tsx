@@ -34,7 +34,11 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables, requiredInputLabelStyle } from '../InputVariables';
+import {
+  InputSpec,
+  InputVariables,
+  requiredInputLabelStyle,
+} from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
@@ -52,6 +56,7 @@ import {
   vocabularyWithMissingData,
   variablesAreUnique,
   nonUniqueWarning,
+  assertValidInputVariables,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { Variable } from '../../../types/study';
@@ -65,7 +70,6 @@ import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect'
 import { useInputStyles } from '../inputStyles';
 import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
-import { MEDIUM_GRAY } from '@veupathdb/components/lib/constants/colors';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 const plotContainerStyles = {
@@ -193,7 +197,7 @@ function MosaicViz(props: Props<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
   // set default tab to Mosaic in TabbedDisplay component
@@ -206,65 +210,7 @@ function MosaicViz(props: Props<Options>) {
     updateConfiguration
   );
 
-  const handleInputVariableChange = useCallback(
-    (selectedVariables: VariablesByInputName) => {
-      const { xAxisVariable, yAxisVariable, facetVariable } = selectedVariables;
-
-      updateVizConfig({
-        xAxisVariable,
-        yAxisVariable,
-        facetVariable,
-        ...(isTwoByTwo
-          ? {
-              xAxisReferenceValue: _.isEqual(
-                xAxisVariable,
-                vizConfig.xAxisVariable
-              )
-                ? xAxisReferenceValue
-                : undefined,
-              yAxisReferenceValue: _.isEqual(
-                yAxisVariable,
-                vizConfig.yAxisVariable
-              )
-                ? yAxisReferenceValue
-                : undefined,
-            }
-          : {}),
-      });
-    },
-    [updateVizConfig]
-  );
-
-  // prettier-ignore
-  // changed for consistency as now all other Vizs have this format
-  const onChangeHandlerFactory = useCallback(
-    <ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
-      const newPartialConfig = resetCheckedLegendItems
-        ? {
-          [key]: newValue,
-          checkedLegendItems: undefined
-        }
-        : {
-          [key]: newValue
-        };
-      updateVizConfig(newPartialConfig);
-    },
-    [updateVizConfig]
-  );
-
-  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness'
-  );
-
-  const onXAxisReferenceValueChange = onChangeHandlerFactory<string>(
-    'xAxisReferenceValue'
-  );
-
-  const onYAxisReferenceValueChange = onChangeHandlerFactory<string>(
-    'yAxisReferenceValue'
-  );
-
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const { xAxisVariable, yAxisVariable, facetVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -303,6 +249,70 @@ function MosaicViz(props: Props<Options>) {
     vizConfig.yAxisReferenceValue,
   ]);
 
+  const handleInputVariableChange = useCallback(
+    (selectedVariables: VariablesByInputName) => {
+      const { xAxisVariable, yAxisVariable, facetVariable } = selectedVariables;
+
+      updateVizConfig({
+        xAxisVariable,
+        yAxisVariable,
+        facetVariable,
+        ...(isTwoByTwo
+          ? {
+              xAxisReferenceValue: _.isEqual(
+                xAxisVariable,
+                vizConfig.xAxisVariable
+              )
+                ? xAxisReferenceValue
+                : undefined,
+              yAxisReferenceValue: _.isEqual(
+                yAxisVariable,
+                vizConfig.yAxisVariable
+              )
+                ? yAxisReferenceValue
+                : undefined,
+            }
+          : {}),
+      });
+    },
+    [
+      isTwoByTwo,
+      updateVizConfig,
+      vizConfig.xAxisVariable,
+      vizConfig.yAxisVariable,
+      xAxisReferenceValue,
+      yAxisReferenceValue,
+    ]
+  );
+
+  // prettier-ignore
+  // changed for consistency as now all other Vizs have this format
+  const onChangeHandlerFactory = useCallback(
+    <ValueType,>(key: keyof MosaicConfig, resetCheckedLegendItems?: boolean) => (newValue?: ValueType) => {
+      const newPartialConfig = resetCheckedLegendItems
+        ? {
+          [key]: newValue,
+          checkedLegendItems: undefined
+        }
+        : {
+          [key]: newValue
+        };
+      updateVizConfig(newPartialConfig);
+    },
+    [updateVizConfig]
+  );
+
+  const onShowMissingnessChange =
+    onChangeHandlerFactory<boolean>('showMissingness');
+
+  const onXAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'xAxisReferenceValue'
+  );
+
+  const onYAxisReferenceValueChange = onChangeHandlerFactory<string>(
+    'yAxisReferenceValue'
+  );
+
   // passed into ContingencyTable and referenced in order quadrants, so memoizing will prevent unnecessary re-renders
   const selectedReferenceValues = useMemo(
     () => [xAxisReferenceValue, yAxisReferenceValue],
@@ -314,6 +324,44 @@ function MosaicViz(props: Props<Options>) {
     dataElementDependencyOrder,
     vizConfig,
     'xAxisVariable'
+  );
+
+  const selectedVariables = useMemo(
+    () => ({
+      xAxisVariable: vizConfig.xAxisVariable,
+      yAxisVariable: vizConfig.yAxisVariable,
+      facetVariable: vizConfig.facetVariable,
+    }),
+    [vizConfig.facetVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]
+  );
+
+  const inputs = useMemo(
+    (): InputSpec[] => [
+      {
+        name: 'xAxisVariable',
+        label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
+        role: 'axis',
+        titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+        styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
+      },
+      {
+        name: 'yAxisVariable',
+        label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
+        role: 'axis',
+        titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
+        styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
+      },
+      ...(options?.hideFacetInputs
+        ? []
+        : [
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            } as const,
+          ]),
+    ],
+    [isTwoByTwo, options?.hideFacetInputs]
   );
 
   const data = usePromise(
@@ -330,6 +378,13 @@ function MosaicViz(props: Props<Options>) {
 
       if (!variablesAreUnique([xAxisVariable, yAxisVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
+
+      assertValidInputVariables(
+        inputs,
+        selectedVariables,
+        entities,
+        dataElementConstraints
+      );
 
       const xAxisVocabulary = fixLabelsForNumberVariables(
         xAxisVariable.vocabulary,
@@ -409,18 +464,27 @@ function MosaicViz(props: Props<Options>) {
         ) as ContTableDataWithCoverage;
       }
     }, [
-      studyId,
-      filters,
-      dataClient,
-      vizConfig,
+      vizConfig.xAxisVariable,
+      vizConfig.yAxisVariable,
+      vizConfig.xAxisReferenceValue,
+      vizConfig.yAxisReferenceValue,
+      vizConfig.facetVariable,
+      vizConfig.showMissingness,
       xAxisVariable,
       yAxisVariable,
       facetVariable,
-      computation.descriptor.type,
+      inputs,
+      selectedVariables,
+      entities,
+      dataElementConstraints,
+      filters,
       isTwoByTwo,
-      outputEntity?.id,
       xAxisReferenceValue,
       yAxisReferenceValue,
+      studyId,
+      outputEntity?.id,
+      dataClient,
+      computation.descriptor.type,
     ])
   );
 
@@ -641,13 +705,7 @@ function MosaicViz(props: Props<Options>) {
       vizConfig.xAxisReferenceValue &&
       vizConfig.yAxisReferenceValue
     );
-  }, [
-    dataElementConstraints,
-    vizConfig.xAxisVariable,
-    vizConfig.yAxisVariable,
-    vizConfig.xAxisReferenceValue,
-    vizConfig.yAxisReferenceValue,
-  ]);
+  }, [dataElementConstraints, isTwoByTwo, vizConfig]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
@@ -905,40 +963,12 @@ function MosaicViz(props: Props<Options>) {
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: isTwoByTwo ? 'Columns (X-axis)' : 'X-axis',
-                role: 'axis',
-                titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
-                styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
-              },
-              {
-                name: 'yAxisVariable',
-                label: isTwoByTwo ? 'Rows (Y-axis)' : 'Y-axis',
-                role: 'axis',
-                titleOverride: isTwoByTwo ? '2x2 table variables' : undefined,
-                styleOverride: isTwoByTwo ? twoByTwoInputStyle : undefined,
-              },
-              ...(options?.hideFacetInputs
-                ? []
-                : [
-                    {
-                      name: 'facetVariable',
-                      label: 'Facet',
-                      role: 'stratification',
-                    } as const,
-                  ]),
-            ]}
+            inputs={inputs}
             customSections={
               isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
             }
             entities={entities}
-            selectedVariables={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-              facetVariable: vizConfig.facetVariable,
-            }}
+            selectedVariables={selectedVariables}
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
@@ -1102,6 +1132,7 @@ const StatsCollapsibleBannerContent = () => {
               <a
                 href="https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/8-chi-squared-tests"
                 target="_blank"
+                rel="noreferrer"
               >
                 https://www.bmj.com/about-bmj/resources-readers/publications/statistics-square-one/8-chi-squared-tests
               </a>
