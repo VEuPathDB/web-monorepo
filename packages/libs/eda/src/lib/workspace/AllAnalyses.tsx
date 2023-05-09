@@ -549,7 +549,8 @@ export function AllAnalyses(props: Props) {
             const offerPublicityToggle =
               studyAccessLevel === 'public' ||
               studyAccessLevel === 'protected' ||
-              studyAccessLevel === 'controlled';
+              studyAccessLevel === 'controlled' ||
+              studyAccessLevel === null;
 
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
