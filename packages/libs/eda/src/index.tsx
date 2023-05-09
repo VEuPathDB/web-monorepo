@@ -48,7 +48,7 @@ import Header from './Header';
 import MapApp from './lib/map';
 import WorkspaceApp from './lib/workspace';
 import CoreUIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
-import { workspaceThemeOptions as MUIThemeOptions } from './workspaceTheme';
+import { workspaceThemeOptions as MUIThemeOptions } from './lib/workspaceTheme';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
