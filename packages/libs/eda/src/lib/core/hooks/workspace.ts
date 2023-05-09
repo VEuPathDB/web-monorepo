@@ -98,8 +98,8 @@ export function useStudyEntities(filters?: Filter[]) {
   return useMemo((): StudyEntity[] => {
     const mappedRootEntity = !filters?.length
       ? rootEntity
-      : mapStructure(
-          (entity) => {
+      : mapStructure<StudyEntity, StudyEntity>(
+          (entity, mappedChildren) => {
             if (filters.some((f) => f.entityId === entity.id)) {
               const variables = entity.variables.map(
                 (variable): VariableTreeNode => {
@@ -129,9 +129,13 @@ export function useStudyEntities(filters?: Filter[]) {
               return {
                 ...entity,
                 variables,
+                children: mappedChildren,
               };
             }
-            return entity;
+            return {
+              ...entity,
+              children: mappedChildren,
+            };
           },
           (entity) => entity.children ?? [],
           rootEntity
