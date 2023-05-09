@@ -66,7 +66,7 @@ export type AppState = t.TypeOf<typeof AppState>;
 export const defaultAppState: AppState = {
   viewport: {
     center: [0, 0],
-    zoom: 2,
+    zoom: 1,
   },
   mouseMode: 'default',
   activeMarkerConfigurationType: 'pie',

@@ -22,8 +22,6 @@ export type MouseMode = typeof mouseModesArray[number]; // Union of mode names
 export interface MouseToolsProps {
   mouseMode?: MouseMode;
   onMouseModeChange?: (mode: MouseMode) => void;
-  // this prop is only needed for the FSM, so if it will be gone, then this can be removed
-  isStandAloneMap?: boolean;
 }
 
 export default function MouseTools(props: MouseToolsProps) {
@@ -59,9 +57,8 @@ export default function MouseTools(props: MouseToolsProps) {
         <span
           className="mouse-toolbar leaflet-bar mapveu-hori-bar leaflet-control leaflet-touch"
           style={{
-            position: props.isStandAloneMap ? 'relative' : undefined,
-            top: props.isStandAloneMap ? '0px' : undefined,
-            right: props.isStandAloneMap ? '40px' : undefined,
+            top: '0px',
+            right: '40px',
           }}
         >
           {buttons}

@@ -919,7 +919,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultAppState.viewport}
-                    isStandAloneMap={true}
                   />
                 </div>
 

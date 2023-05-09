@@ -180,8 +180,6 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
-  /** is standalone map */
-  isStandAloneMap?: boolean;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -213,8 +211,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     mouseMode,
     onMouseModeChange,
     interactive = true,
-    defaultViewport = { center: [0, 0], zoom: 2 },
-    isStandAloneMap = false,
+    defaultViewport,
   } = props;
 
   // Whether the user is currently dragging the map
@@ -278,8 +275,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       worldCopyJump={false}
       whenCreated={onCreated}
       attributionControl={showAttribution}
-      // use custom zoom control
-      zoomControl={isStandAloneMap ? false : showZoomControl}
+      zoomControl={false}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
       <TileLayer
@@ -298,7 +294,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         <MouseTools
           mouseMode={mouseMode}
           onMouseModeChange={onMouseModeChange}
-          isStandAloneMap={isStandAloneMap}
         />
       )}
 
@@ -341,9 +336,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
       {/* use custom zoom control if SAM */}
-      {isStandAloneMap && (
-        <CustomZoomControl defaultViewport={defaultViewport} />
-      )}
+      <CustomZoomControl defaultViewport={defaultViewport} />
     </MapContainer>
   );
 }
@@ -438,7 +431,7 @@ function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
 
 // custom zoom control
 interface CustomZoomControlProps {
-  defaultViewport: Viewport;
+  defaultViewport?: Viewport;
 }
 
 function CustomZoomControl(props: CustomZoomControlProps) {
@@ -454,20 +447,21 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   // zoom out
   const zoomOut = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    if (map.getZoom() > 2) map.setZoom(map.getZoom() - 1);
+    map.setZoom(map.getZoom() - 1);
   };
 
   // zoom to whole world
   const zoomToWholeWorld = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // for SAM (or full screen mode), very small number does not work: 0.25, 0.25 is ok
-    map.setView([0.25, 0.25], 2);
+    // with zoom level 1, then center: [1,1] works
+    map.setView([1, 1], 1);
   };
 
   // zoom to data: using flyTo function implicitly
   const zoomToData = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    map.setView(props.defaultViewport.center, props.defaultViewport.zoom);
+    if (props.defaultViewport)
+      map.setView(props.defaultViewport.center, props.defaultViewport.zoom);
   };
 
   return (

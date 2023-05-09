@@ -10,8 +10,6 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   duration: number;
   // A class to add to the popup element
   popupClass?: string;
-  //DKDK: this is required to set a markerSum at Mapviz
-  markerLabel?: string;
 }
 
 // Which direction the popup should come out from the marker

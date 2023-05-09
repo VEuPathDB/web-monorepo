@@ -274,8 +274,6 @@ function MapViz(props: VisualizationProps<Options>) {
           ],
           zoom: defaultConfig.mapCenterAndZoom.zoomLevel,
         }}
-        // set this for positioning custom zoom control at MapViz
-        isStandAloneMap={true}
       />
     </>
   );
