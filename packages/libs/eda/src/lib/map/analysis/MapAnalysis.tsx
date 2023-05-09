@@ -734,7 +734,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 analysisClient={analysisClient}
                 subsettingClient={subsettingClient}
                 studyId={getStudyId(studyRecord)}
-                showLoginForm={() => {}}
+                showLoginForm={showLoginForm}
               />
             </div>
           );
