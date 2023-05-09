@@ -223,6 +223,10 @@ function MapViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  const defaultConfig = useMemo(
+    () => createDefaultConfig(),
+    [createDefaultConfig]
+  );
   const [willFlyTo, setWillFlyTo] = useState(false);
 
   // Only decide if we need to flyTo while we are waiting for marker data
@@ -231,10 +235,7 @@ function MapViz(props: VisualizationProps<Options>) {
   useEffect(() => {
     if (pending) {
       setWillFlyTo(
-        isEqual(
-          vizConfig.mapCenterAndZoom,
-          createDefaultConfig().mapCenterAndZoom
-        )
+        isEqual(vizConfig.mapCenterAndZoom, defaultConfig.mapCenterAndZoom)
       );
     }
   }, [pending, vizConfig.mapCenterAndZoom]);
@@ -263,15 +264,15 @@ function MapViz(props: VisualizationProps<Options>) {
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
-        mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
+        mouseMode={vizConfig.mouseMode ?? defaultConfig.mouseMode}
         onMouseModeChange={onMouseModeChange}
         // pass defaultViewport
         defaultViewport={{
           center: [
-            createDefaultConfig().mapCenterAndZoom.latitude,
-            createDefaultConfig().mapCenterAndZoom.longitude,
+            defaultConfig.mapCenterAndZoom.latitude,
+            defaultConfig.mapCenterAndZoom.longitude,
           ],
-          zoom: createDefaultConfig().mapCenterAndZoom.zoomLevel,
+          zoom: defaultConfig.mapCenterAndZoom.zoomLevel,
         }}
         // set this for positioning custom zoom control at MapViz
         isStandAloneMap={true}
