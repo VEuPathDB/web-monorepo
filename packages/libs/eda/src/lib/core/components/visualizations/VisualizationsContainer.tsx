@@ -342,7 +342,7 @@ export function NewVisualizationPickerGrouped(
       {includeHeader && (
         <H5
           additionalStyles={{
-            marginBottom: 10,
+            margin: '5px 0 5px 0',
           }}
         >
           Select a visualization
@@ -351,7 +351,13 @@ export function NewVisualizationPickerGrouped(
       {groupVisualizations(visualizationsOverview).map((vizGroup) => (
         <div className={cx('-GroupedPickerContainer')} key={vizGroup.groupName}>
           <div className={cx('-GroupedPickerEntryHeadline')}>
-            <H6>{vizGroup.groupName}</H6>
+            <H6
+              additionalStyles={{
+                margin: 0,
+              }}
+            >
+              {vizGroup.groupName}
+            </H6>
             <Paragraph styleOverrides={{ margin: '5px 0' }}>
               {vizGroup.groupDescription}
             </Paragraph>
