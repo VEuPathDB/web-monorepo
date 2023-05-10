@@ -118,7 +118,7 @@ export function MapHeader({
                   totalEntityInSubsetCount > 1
                 )} in the subset.`}
               >
-                <td>Subset</td>
+                <td>Filtered</td>
                 <td>{format(totalEntityInSubsetCount)}</td>
               </tr>
               <tr
