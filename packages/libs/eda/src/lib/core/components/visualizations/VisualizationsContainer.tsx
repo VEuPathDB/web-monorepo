@@ -45,13 +45,8 @@ import { VisualizationPlugin } from './VisualizationPlugin';
 import { Modal, H6, Paragraph, H5 } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
-import {
-  JobStatus,
-  isTerminalStatus,
-} from '../computations/ComputeJobStatusHook';
+import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
-import RelaxMicrobeSVG from './relaxMicrobe';
-import EmptyPlotSVG from './emptyPlot';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -573,6 +568,7 @@ interface FullScreenVisualizationProps
   id: string;
   /** Optionally override the action icons */
   actions?: React.ReactNode;
+  draggableContainerDims?: { width: number; height: number };
 }
 
 export function FullScreenVisualization(props: FullScreenVisualizationProps) {
@@ -596,6 +592,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     actions,
     computeJobStatus,
     createComputeJob,
+    draggableContainerDims,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -869,6 +866,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               geoConfigs={geoConfigs}
               otherVizOverviews={overviews.others}
               computeJobStatus={computeJobStatus}
+              draggableContainerDims={draggableContainerDims}
             />
           )}
         </div>

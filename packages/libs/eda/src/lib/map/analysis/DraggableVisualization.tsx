@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { AnalysisState, PromiseHookState } from '../../core';
 
 import { AppState, useAppState } from './appState';
@@ -13,6 +14,7 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { isEqual } from 'lodash';
 
 interface Props {
   analysisState: AnalysisState;
@@ -55,6 +57,7 @@ export default function DraggableVisualization({
     app.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
 
   const computation = analysisState.analysis?.descriptor.computations[0];
+  const [panelDims, setPanelDims] = useState({ height: 547, width: 779 });
 
   return (
     <>
@@ -63,23 +66,37 @@ export default function DraggableVisualization({
           confineToParentContainer
           showPanelTitle
           isOpen
-          styleOverrides={{ zIndex: 10, resize: 'both' }}
+          styleOverrides={{
+            zIndex: 10,
+            resize: 'both',
+            height: 547,
+            width: 779,
+          }}
           panelTitle={activeVizOverview?.displayName || ''}
           defaultPosition={{
             x: 535,
             y: 142,
           }}
           onPanelDismiss={() => setActiveVisualizationId(undefined)}
+          onPanelResize={(heightAndWidthInPixels) => {
+            console.log(heightAndWidthInPixels, panelDims);
+            !isEqual(panelDims, heightAndWidthInPixels) &&
+              setPanelDims(heightAndWidthInPixels);
+          }}
         >
           <div
-            style={{
-              // Initial height & width.
-              height: 547,
-              width: 779,
-              // This prevents the panel from collapsing aburdly.
-              minWidth: 400,
-              minHeight: 200,
-            }}
+            style={
+              {
+                // Initial height & width.
+                // height: panelDims.height,
+                // width: panelDims.width,
+                // height: '100%',
+                // width: '100%',
+                // This prevents the panel from collapsing aburdly.
+                // minWidth: 400,
+                // minHeight: 200,
+              }
+            }
           >
             <FullScreenVisualization
               analysisState={analysisState}
@@ -100,6 +117,7 @@ export default function DraggableVisualization({
               disableThumbnailCreation
               id={activeViz.visualizationId}
               actions={<></>}
+              draggableContainerDims={panelDims}
             />
           </div>
         </DraggablePanel>
