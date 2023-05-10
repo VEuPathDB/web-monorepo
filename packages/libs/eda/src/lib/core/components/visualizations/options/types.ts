@@ -23,8 +23,8 @@ export type RequestOptionProps<ConfigType> = {
   computation?: Computation;
 };
 
-export interface RequestOptions<ConfigType, RequestParamsType> {
+export interface RequestOptions<ConfigType, ExtraProps, RequestParamsType> {
   getRequestParams?: (
-    props: RequestOptionProps<ConfigType>
+    props: RequestOptionProps<ConfigType> & ExtraProps
   ) => RequestParamsType;
 }

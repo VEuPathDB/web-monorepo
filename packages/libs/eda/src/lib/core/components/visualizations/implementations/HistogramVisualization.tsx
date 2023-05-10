@@ -81,6 +81,7 @@ import {
   NumberOrDateRange,
   NumberRange,
   DateRange,
+  TimeUnit,
 } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
@@ -104,11 +105,16 @@ import {
   histogramDefaultDependentAxisMinMax,
 } from '../../../utils/axis-range-calculations';
 import { LayoutOptions } from '../../layouts/types';
-import { OverlayOptions } from '../options/types';
+import {
+  OverlayOptions,
+  RequestOptionProps,
+  RequestOptions,
+} from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -177,7 +183,14 @@ export const HistogramConfig = t.intersection([
   }),
 ]);
 
-interface Options extends LayoutOptions, OverlayOptions {}
+interface Options
+  extends LayoutOptions,
+    OverlayOptions,
+    RequestOptions<
+      HistogramConfig,
+      FloatingHistogramExtraProps,
+      HistogramRequestParams
+    > {}
 
 function HistogramViz(props: VisualizationProps<Options>) {
   const {
@@ -481,7 +494,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filters ?? [],
         valueType,
         dataRequestConfig,
-        xAxisVariable
+        xAxisVariable,
+        options?.getRequestParams
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
@@ -1359,7 +1373,10 @@ function getRequestParams(
   filters: Filter[],
   valueType: 'number' | 'date',
   config: DataRequestConfig,
-  variable?: Variable
+  variable: Variable,
+  optionalRequestGenerator?: (
+    props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
+  ) => HistogramRequestParams
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
@@ -1377,12 +1394,14 @@ function getRequestParams(
     xAxisVariable,
   } = config;
 
-  const binSpec = binWidth
+  const binSpec: Pick<HistogramRequestParams['config'], 'binSpec'> = binWidth
     ? {
         binSpec: {
           type: 'binWidth',
           value: binWidth,
-          ...(valueType === 'date' ? { units: binWidthTimeUnit } : {}),
+          ...(valueType === 'date'
+            ? { units: binWidthTimeUnit as TimeUnit }
+            : {}),
         },
       }
     : { binSpec: { type: 'binWidth' } };
@@ -1398,22 +1417,33 @@ function getRequestParams(
         }
       : undefined;
 
-  return {
-    studyId,
-    filters,
-    config: {
+  return (
+    optionalRequestGenerator?.({
+      studyId,
+      filters,
+      vizConfig: config,
       outputEntityId: xAxisVariable!.entityId,
-      xAxisVariable,
-      barMode: 'stack',
-      overlayVariable: overlayVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
+      binSpec,
       valueSpec,
-      ...binSpec,
-      showMissingness: config.showMissingness ? 'TRUE' : 'FALSE',
-      // pass viewport to get appropriate display range
-      viewport: viewport,
-    },
-  } as HistogramRequestParams;
+      viewport,
+    }) ??
+    ({
+      studyId,
+      filters,
+      config: {
+        outputEntityId: xAxisVariable!.entityId,
+        xAxisVariable,
+        barMode: 'stack',
+        overlayVariable: overlayVariable,
+        facetVariable: facetVariable ? [facetVariable] : [],
+        valueSpec,
+        ...binSpec,
+        showMissingness: config.showMissingness ? 'TRUE' : 'FALSE',
+        // pass viewport to get appropriate display range
+        viewport: viewport,
+      },
+    } as HistogramRequestParams)
+  );
 }
 
 function reorderData(

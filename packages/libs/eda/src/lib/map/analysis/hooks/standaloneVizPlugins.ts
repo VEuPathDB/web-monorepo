@@ -20,6 +20,8 @@ import { boxplotVisualization } from '../../../core/components/visualizations/im
 import { OverlayConfig } from '../../../core';
 import { boxplotRequest } from './plugins/boxplot';
 import { barplotRequest } from './plugins/barplot';
+import { lineplotRequest } from './plugins/lineplot';
+import { histogramRequest } from './plugins/histogram';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -43,14 +45,20 @@ export function useStandaloneVizPlugins({
       });
     }
 
-    function vizWithOverlayConfigRequest<ConfigType, RequestParamsType>(
+    function vizWithOverlayConfigRequest<
+      ConfigType,
+      ExtraProps,
+      RequestParamsType
+    >(
       visualization: VisualizationPlugin<
-        StandaloneVizOptions & RequestOptions<ConfigType, RequestParamsType>
+        StandaloneVizOptions &
+          RequestOptions<ConfigType, ExtraProps, RequestParamsType>
       >,
       requestFunction: (
-        props: RequestOptionProps<ConfigType> & {
-          overlayConfig: OverlayConfig | undefined;
-        }
+        props: RequestOptionProps<ConfigType> &
+          ExtraProps & {
+            overlayConfig: OverlayConfig | undefined;
+          }
       ) => RequestParamsType
     ) {
       return visualization.withOptions({
@@ -74,13 +82,19 @@ export function useStandaloneVizPlugins({
         ...pluginBasics,
         visualizationPlugins: {
           scatterplot: vizWithOptions(scatterplotVisualization),
-          lineplot: vizWithOptions(lineplotVisualization),
+          lineplot: vizWithOverlayConfigRequest(
+            vizWithOptions(lineplotVisualization),
+            lineplotRequest
+          ),
         },
       },
       'standalone-map-distributions': {
         ...pluginBasics,
         visualizationPlugins: {
-          histogram: vizWithOptions(histogramVisualization),
+          histogram: vizWithOverlayConfigRequest(
+            vizWithOptions(histogramVisualization),
+            histogramRequest
+          ),
           boxplot: vizWithOverlayConfigRequest(
             vizWithOptions(boxplotVisualization),
             boxplotRequest

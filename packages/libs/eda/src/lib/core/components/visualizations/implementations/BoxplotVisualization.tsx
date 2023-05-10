@@ -137,7 +137,7 @@ interface Options
     TitleOptions,
     OverlayOptions,
     XAxisOptions,
-    RequestOptions<BoxplotConfig, BoxplotRequestParams> {
+    RequestOptions<BoxplotConfig, {}, BoxplotRequestParams> {
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;

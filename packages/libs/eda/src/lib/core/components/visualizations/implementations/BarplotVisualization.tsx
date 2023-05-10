@@ -135,7 +135,7 @@ export const barplotVisualization = createVisualizationPlugin({
 interface Options
   extends LayoutOptions,
     OverlayOptions,
-    RequestOptions<BarplotConfig, BarplotRequestParams> {}
+    RequestOptions<BarplotConfig, {}, BarplotRequestParams> {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BarplotViz {...props} />;
