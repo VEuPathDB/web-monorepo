@@ -419,7 +419,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         options?.getRequestParams?.({
           studyId,
           filters,
-          vizConfig: dataRequestConfig, //  TO DO: reinstate this and/or fix dependencies
+          vizConfig: dataRequestConfig,
         }) ?? getRequestParams(studyId, filters ?? [], dataRequestConfig);
 
       const response = await dataClient.getBarplot(

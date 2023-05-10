@@ -14,12 +14,12 @@ export function barplotRequest(
     studyId,
     filters,
     config: {
+      outputEntityId: vizConfig.xAxisVariable?.entityId!,
       xAxisVariable: vizConfig.xAxisVariable,
       ...(vizConfig.overlayVariable &&
       isEqual(vizConfig.overlayVariable, overlayConfig?.overlayVariable)
         ? { overlayConfig }
         : {}),
-      outputEntityId,
       barMode: 'group',
     },
   };
