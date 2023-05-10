@@ -349,7 +349,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
-      {/* use custom zoom control if SAM */}
+      {/* use custom zoom control */}
       <CustomZoomControl defaultViewport={defaultViewport} />
     </MapContainer>
   );
@@ -466,9 +466,17 @@ function CustomZoomControl(props: CustomZoomControlProps) {
 
   // zoom to whole world
   const zoomToWholeWorld = (e: React.SyntheticEvent) => {
-    e.preventDefault();
     // with zoom level 1, then center: [1,1] works
-    map.setView([1, 1], 1);
+    const epsilon = 1.0;
+    e.preventDefault();
+    if (props.defaultViewport)
+      map.setView(
+        [
+          props.defaultViewport.center[0] + epsilon,
+          props.defaultViewport.center[1] + epsilon,
+        ],
+        props.defaultViewport.zoom
+      );
   };
 
   // zoom to data: using flyTo function implicitly
