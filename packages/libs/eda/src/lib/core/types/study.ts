@@ -91,6 +91,7 @@ export type VariableScope = t.TypeOf<typeof VariableScope>;
 export const VariableScope = t.keyof({
   download: null,
   variableTree: null,
+  map: null,
 });
 
 export const VariableTreeNode_Base = t.intersection([
