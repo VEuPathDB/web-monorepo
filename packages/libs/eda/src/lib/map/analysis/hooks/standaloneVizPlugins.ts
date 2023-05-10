@@ -16,12 +16,10 @@ import { contTableVisualization } from '../../../core/components/visualizations/
 import { scatterplotVisualization } from '../../../core/components/visualizations/implementations/ScatterplotVisualization';
 import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
-import {
-  BoxplotConfig,
-  boxplotVisualization,
-} from '../../../core/components/visualizations/implementations/BoxplotVisualization';
+import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
 import { OverlayConfig } from '../../../core';
 import { boxplotRequest } from './plugins/boxplot';
+import { barplotRequest } from './plugins/barplot';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -47,7 +45,7 @@ export function useStandaloneVizPlugins({
 
     function vizWithOverlayConfigRequest<ConfigType, RequestParamsType>(
       visualization: VisualizationPlugin<
-        StandaloneVizOptions & RequestOptions<ConfigType>
+        StandaloneVizOptions & RequestOptions<ConfigType, RequestParamsType>
       >,
       requestFunction: (
         props: RequestOptionProps<ConfigType> & {
@@ -93,7 +91,10 @@ export function useStandaloneVizPlugins({
         ...pluginBasics,
         visualizationPlugins: {
           conttable: vizWithOptions(contTableVisualization),
-          barplot: vizWithOptions(barplotVisualization),
+          barplot: vizWithOverlayConfigRequest(
+            vizWithOptions(barplotVisualization),
+            barplotRequest
+          ),
         },
       },
     };

@@ -18,11 +18,13 @@ export interface OverlayOptions {
 export type RequestOptionProps<ConfigType> = {
   studyId: string;
   filters: Filter[] | undefined;
-  vizConfig: ConfigType;
-  outputEntityId: string;
+  vizConfig: Partial<ConfigType>;
+  outputEntityId?: string;
   computation?: Computation;
 };
 
-export interface RequestOptions<ConfigType> {
-  getRequestParams?: (props: RequestOptionProps<ConfigType>) => unknown;
+export interface RequestOptions<ConfigType, RequestParamsType> {
+  getRequestParams?: (
+    props: RequestOptionProps<ConfigType>
+  ) => RequestParamsType;
 }

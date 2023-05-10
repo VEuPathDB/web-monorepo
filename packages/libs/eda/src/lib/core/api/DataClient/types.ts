@@ -25,7 +25,7 @@ import {
   NumberOrDateRange,
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
-import { ComputationAppOverview } from '../../types/visualization';
+import { Computation, ComputationAppOverview } from '../../types/visualization';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -564,12 +564,13 @@ export interface BoxplotRequestParams {
     // add bestFitLineWithRaw
     points: 'outliers' | 'all';
     mean: 'TRUE' | 'FALSE';
-    xAxisVariable: VariableDescriptor;
-    yAxisVariable: VariableDescriptor;
+    xAxisVariable?: VariableDescriptor; // can be provided by compute
+    yAxisVariable?: VariableDescriptor; // can be provided by compute
     overlayVariable?: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
   };
+  computeConfig?: unknown;
 }
 
 // unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE

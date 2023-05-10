@@ -90,7 +90,10 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { VariableMapping } from '../../../api/DataClient/types';
+import {
+  BoxplotRequestParams,
+  VariableMapping,
+} from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
@@ -134,7 +137,7 @@ interface Options
     TitleOptions,
     OverlayOptions,
     XAxisOptions,
-    RequestOptions<BoxplotConfig> {
+    RequestOptions<BoxplotConfig, BoxplotRequestParams> {
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;
@@ -463,15 +466,15 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       );
 
       // add visualization.type here. valueSpec too?
-      const params = options?.getRequestParams?.({
+      const params: BoxplotRequestParams = options?.getRequestParams?.({
         studyId,
-        filters,
+        filters: filters ?? [],
         vizConfig,
         outputEntityId: outputEntity.id,
         computation,
       }) ?? {
         studyId,
-        filters,
+        filters: filters ?? [],
         config: {
           outputEntityId: outputEntity.id,
           // post options: 'all', 'outliers'

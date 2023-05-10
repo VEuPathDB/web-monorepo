@@ -97,7 +97,7 @@ import {
 } from '../../../utils/axis-range-calculations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
-import { OverlayOptions } from '../options/types';
+import { OverlayOptions, RequestOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
@@ -132,7 +132,10 @@ export const barplotVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-interface Options extends LayoutOptions, OverlayOptions {}
+interface Options
+  extends LayoutOptions,
+    OverlayOptions,
+    RequestOptions<BarplotConfig, BarplotRequestParams> {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BarplotViz {...props} />;
@@ -412,11 +415,12 @@ function BarplotViz(props: VisualizationProps<Options>) {
         dataElementConstraints
       );
 
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        dataRequestConfig
-      );
+      const params =
+        options?.getRequestParams?.({
+          studyId,
+          filters,
+          vizConfig: dataRequestConfig, //  TO DO: reinstate this and/or fix dependencies
+        }) ?? getRequestParams(studyId, filters ?? [], dataRequestConfig);
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
