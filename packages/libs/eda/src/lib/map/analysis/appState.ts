@@ -65,10 +65,11 @@ export const AppState = t.intersection([
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
 
-const defaultAppState: AppState = {
+// export default viewport for custom zoom control
+export const defaultAppState: AppState = {
   viewport: {
     center: [0, 0],
-    zoom: 4,
+    zoom: 1,
   },
   mouseMode: 'default',
   activeMarkerConfigurationType: 'pie',

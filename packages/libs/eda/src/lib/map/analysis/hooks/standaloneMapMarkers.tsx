@@ -359,9 +359,10 @@ export function useStandaloneMapMarkers(
       }
     );
   }, [
-    markerData.value,
-    markerType,
+    markerData.value?.mapElements,
     vocabulary,
+    markerType,
+    overlayType,
     defaultDependentAxisRange,
     dependentAxisLogScale,
   ]);

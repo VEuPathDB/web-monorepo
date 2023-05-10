@@ -72,8 +72,18 @@ export default function MapVizManagement({
     // picker in addition to some explanatory text.
     return (
       <div className={mapVizManagementClassName('-NewVizPicker')}>
-        <H5>Select a visualization</H5>
-        <Paragraph>
+        <H5
+          additionalStyles={{
+            margin: '0 0 5px 0',
+          }}
+        >
+          Select a visualization
+        </H5>
+        <Paragraph
+          styleOverrides={{
+            margin: '0 0 5px 0',
+          }}
+        >
           Pick a visualization type to get started! If you update your subset,
           your visualizations will update when you reopen them.
         </Paragraph>
@@ -100,7 +110,7 @@ export default function MapVizManagement({
             />
           )}
         </div>
-        <H5 additionalStyles={{ marginBottom: 15, marginLeft: 10 }}>
+        <H5 additionalStyles={{ margin: '0 0 15px 10px' }}>
           Plots ({totalVisualizationCount}):
         </H5>
         <VisualizationsList

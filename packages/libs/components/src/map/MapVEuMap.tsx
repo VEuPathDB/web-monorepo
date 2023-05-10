@@ -37,7 +37,6 @@ import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
-import { propTypes } from 'react-bootstrap/esm/Image';
 
 // define Viewport type
 export type Viewport = {
@@ -179,6 +178,8 @@ export interface MapVEuMapProps {
   interactive?: boolean;
   /** is map scroll and zoom allowed? default true; will be overridden by `interactive: false` */
   scrollingEnabled?: boolean;
+  /** pass default viewport */
+  defaultViewport?: Viewport;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -210,6 +211,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     mouseMode,
     onMouseModeChange,
     interactive = true,
+    defaultViewport,
   } = props;
 
   // Whether the user is currently dragging the map
@@ -231,6 +233,20 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     },
     [sharedPlotCreation.run]
   );
+
+  useEffect(() => {
+    const gitterBtn: HTMLAnchorElement | null = document.querySelector(
+      '.gitter-open-chat-button'
+    );
+    if (gitterBtn) {
+      gitterBtn.style.display = 'none';
+    }
+    () => {
+      if (gitterBtn) {
+        gitterBtn.style.display = 'inline';
+      }
+    };
+  }, []);
 
   useImperativeHandle<PlotRef, PlotRef>(
     ref,
@@ -273,7 +289,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       worldCopyJump={false}
       whenCreated={onCreated}
       attributionControl={showAttribution}
-      zoomControl={showZoomControl}
+      zoomControl={false}
       {...(interactive ? {} : disabledInteractiveProps)}
     >
       <TileLayer
@@ -333,6 +349,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
+      {/* use custom zoom control */}
+      <CustomZoomControl defaultViewport={defaultViewport} />
     </MapContainer>
   );
 }
@@ -356,52 +374,14 @@ function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
   // instead of using useRef() to the map in v2, useMap() should be used instead in v3
   const map = useMap();
 
-  const markersBounds: MapVEuBounds | null = useMemo(() => {
-    if (markers) {
-      let [minLat, maxLat, minLng, maxLng] = [90, -90, 180, -180];
-
-      for (const marker of markers) {
-        const bounds = marker.props.bounds;
-        const ne = bounds.northEast;
-        const sw = bounds.southWest;
-
-        if (ne.lat > maxLat) maxLat = ne.lat;
-        if (ne.lat < minLat) minLat = ne.lat;
-
-        if (ne.lng > maxLng) maxLng = ne.lng;
-        if (ne.lng < minLng) minLng = ne.lng;
-
-        if (sw.lat > maxLat) maxLat = sw.lat;
-        if (sw.lat < minLat) minLat = sw.lat;
-
-        if (sw.lng > maxLng) maxLng = sw.lng;
-        if (sw.lng < minLng) minLng = sw.lng;
-      }
-
-      return {
-        southWest: { lat: minLat, lng: minLng },
-        northEast: { lat: maxLat, lng: maxLng },
-      };
-    } else {
-      return null;
-    }
+  const markersBounds = useMemo(() => {
+    return computeMarkersBounds(markers);
   }, [markers]);
 
   const performFlyToMarkers = useCallback(() => {
     if (markersBounds) {
-      const ne = markersBounds.northEast;
-      const sw = markersBounds.southWest;
-
-      const bufferFactor = 0.1;
-      const latBuffer = (ne.lat - sw.lat) * bufferFactor;
-      const lngBuffer = (ne.lng - sw.lng) * bufferFactor;
-
-      const boundingBox = new LatLngBounds([
-        [sw.lat - latBuffer, sw.lng - lngBuffer],
-        [ne.lat + latBuffer, ne.lng + lngBuffer],
-      ]);
-
-      map.fitBounds(boundingBox);
+      const boundingBox = computeBoundingBox(markersBounds);
+      if (boundingBox) map.fitBounds(boundingBox);
     }
   }, [markersBounds, map]);
 
@@ -461,4 +441,151 @@ function MapScrollWheelZoom(props: MapScrollWheelZoomProps) {
   }
 
   return null;
+}
+
+// custom zoom control
+interface CustomZoomControlProps {
+  defaultViewport?: Viewport;
+}
+
+function CustomZoomControl(props: CustomZoomControlProps) {
+  const map = useMap();
+
+  // zoom in
+  const zoomIn = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    // map.doubleClickZoom.disable();
+    map.setZoom(map.getZoom() + 1);
+  };
+
+  // zoom out
+  const zoomOut = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    map.setZoom(map.getZoom() - 1);
+  };
+
+  // zoom to whole world
+  const zoomToWholeWorld = (e: React.SyntheticEvent) => {
+    // with zoom level 1, then center: [1,1] works
+    const epsilon = 1.0;
+    e.preventDefault();
+    if (props.defaultViewport)
+      map.setView(
+        [
+          props.defaultViewport.center[0] + epsilon,
+          props.defaultViewport.center[1] + epsilon,
+        ],
+        props.defaultViewport.zoom
+      );
+  };
+
+  // zoom to data: using flyTo function implicitly
+  const zoomToData = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (props.defaultViewport)
+      map.setView(props.defaultViewport.center, props.defaultViewport.zoom);
+  };
+
+  return (
+    <div
+      className="leaflet-top leaflet-right"
+      style={{ top: '0px', right: '-3px' }}
+    >
+      <div className="leaflet-control-zoom leaflet-bar leaflet-control">
+        <a
+          className="leaflet-control-zoom-in"
+          href="/"
+          title="Zoom in"
+          role="button"
+          aria-label="Zoom in"
+          onClick={zoomIn}
+        >
+          +
+        </a>
+        <a
+          className="leaflet-control-zoom-out"
+          href="/"
+          title="Zoom out"
+          role="button"
+          aria-label="Zoom out"
+          onClick={zoomOut}
+        >
+          −
+        </a>
+        <a
+          className="leaflet-control-zoom-out"
+          href="/"
+          title="zoom to whole world"
+          role="button"
+          aria-label="zoom to whole world"
+          onClick={zoomToWholeWorld}
+        >
+          <i className="fa fa-globe"></i>
+        </a>
+        <a
+          className="leaflet-control-zoom-out"
+          href="/"
+          title="zoom to data"
+          role="button"
+          aria-label="zoom to data"
+          onClick={zoomToData}
+        >
+          <i className="fa fa-map-marker"></i>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// compute markers bounds
+function computeMarkersBounds(markers: ReactElement<BoundsDriftMarkerProps>[]) {
+  if (markers) {
+    let [minLat, maxLat, minLng, maxLng] = [90, -90, 180, -180];
+
+    for (const marker of markers) {
+      const bounds = marker.props.bounds;
+      const ne = bounds.northEast;
+      const sw = bounds.southWest;
+
+      if (ne.lat > maxLat) maxLat = ne.lat;
+      if (ne.lat < minLat) minLat = ne.lat;
+
+      if (ne.lng > maxLng) maxLng = ne.lng;
+      if (ne.lng < minLng) minLng = ne.lng;
+
+      if (sw.lat > maxLat) maxLat = sw.lat;
+      if (sw.lat < minLat) minLat = sw.lat;
+
+      if (sw.lng > maxLng) maxLng = sw.lng;
+      if (sw.lng < minLng) minLng = sw.lng;
+    }
+
+    return {
+      southWest: { lat: minLat, lng: minLng },
+      northEast: { lat: maxLat, lng: maxLng },
+    };
+  } else {
+    return null;
+  }
+}
+
+// compute bounding box
+function computeBoundingBox(markersBounds: MapVEuBounds | null) {
+  if (markersBounds) {
+    const ne = markersBounds.northEast;
+    const sw = markersBounds.southWest;
+
+    const bufferFactor = 0.1;
+    const latBuffer = (ne.lat - sw.lat) * bufferFactor;
+    const lngBuffer = (ne.lng - sw.lng) * bufferFactor;
+
+    const boundingBox = new LatLngBounds([
+      [sw.lat - latBuffer, sw.lng - lngBuffer],
+      [ne.lat + latBuffer, ne.lng + lngBuffer],
+    ]);
+
+    return boundingBox;
+  } else {
+    return undefined;
+  }
 }
