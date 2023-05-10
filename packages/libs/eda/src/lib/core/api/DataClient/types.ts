@@ -202,30 +202,34 @@ const histogramConfig = intersection([
 ]);
 
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
-export const HistogramResponse = type({
-  histogram: type({
-    data: array(
-      intersection([
-        type({
-          binLabel: array(string),
-          binStart: array(string),
-          binEnd: array(string),
-          value: array(number),
-        }),
-        partial({
-          overlayVariableDetails: StringVariableValue,
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
-    ),
-    config: histogramConfig,
+export const HistogramResponse = intersection([
+  type({
+    histogram: type({
+      data: array(
+        intersection([
+          type({
+            binLabel: array(string),
+            binStart: array(string),
+            binEnd: array(string),
+            value: array(number),
+          }),
+          partial({
+            overlayVariableDetails: StringVariableValue,
+            facetVariableDetails: union([
+              tuple([StringVariableValue]),
+              tuple([StringVariableValue, StringVariableValue]),
+            ]),
+          }),
+        ])
+      ),
+      config: histogramConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 export interface BarplotRequestParams {
   studyId: string;
@@ -244,32 +248,36 @@ export interface BarplotRequestParams {
 }
 
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
-export const BarplotResponse = type({
-  barplot: type({
-    config: plotConfig,
-    data: array(
-      intersection([
-        type({
-          label: array(string),
-          value: array(number),
-        }),
-        partial({
-          overlayVariableDetails: type({
-            entityId: string,
-            variableId: string,
-            value: string,
+export const BarplotResponse = intersection([
+  type({
+    barplot: type({
+      config: plotConfig,
+      data: array(
+        intersection([
+          type({
+            label: array(string),
+            value: array(number),
           }),
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
-    ),
+          partial({
+            overlayVariableDetails: type({
+              entityId: string,
+              variableId: string,
+              value: string,
+            }),
+            facetVariableDetails: union([
+              tuple([StringVariableValue]),
+              tuple([StringVariableValue, StringVariableValue]),
+            ]),
+          }),
+        ])
+      ),
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 // scatterplot
 export interface ScatterplotRequestParams {
@@ -442,14 +450,18 @@ const lineplotConfig = intersection([
 ]);
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
-export const LineplotResponse = type({
-  lineplot: type({
-    data: LineplotResponseData,
-    config: lineplotConfig,
+export const LineplotResponse = intersection([
+  type({
+    lineplot: type({
+      data: LineplotResponseData,
+      config: lineplotConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 interface MosaicRequestConfig {
   outputEntityId: string;
@@ -475,32 +487,37 @@ export interface TwoByTwoRequestParams extends MosaicRequestParams {
 }
 
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
-export const MosaicResponse = type({
-  mosaic: type({
-    data: array(
-      intersection([
-        type({
-          xLabel: array(string),
-          yLabel: array(array(string)),
-          value: array(array(number)),
-        }),
-        partial({
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
-    ),
-    config: plotConfig,
+export const MosaicResponse = intersection([
+  type({
+    mosaic: type({
+      data: array(
+        intersection([
+          type({
+            xLabel: array(string),
+            yLabel: array(array(string)),
+            value: array(array(number)),
+          }),
+          partial({
+            facetVariableDetails: union([
+              tuple([StringVariableValue]),
+              tuple([StringVariableValue, StringVariableValue]),
+            ]),
+          }),
+        ])
+      ),
+      config: plotConfig,
+    }),
   }),
-  sampleSizeTable: array(
-    type({
-      size: array(number),
-    })
-  ),
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: array(
+      // is this right? everything else is sampleSizeTableArray
+      type({
+        size: array(number),
+      })
+    ),
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
 export const ContTableResponse = intersection([

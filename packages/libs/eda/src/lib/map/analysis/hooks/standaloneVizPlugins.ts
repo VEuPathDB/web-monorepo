@@ -38,7 +38,7 @@ export function useStandaloneVizPlugins({
       visualization: VisualizationPlugin<StandaloneVizOptions>
     ) {
       return visualization.withOptions({
-        hideFacetInputs: true,
+        hideFacetInputs: true, // will also enable table-only mode for mosaic
         layoutComponent: FloatingLayout,
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
         getOverlayVariableHelp: () =>
