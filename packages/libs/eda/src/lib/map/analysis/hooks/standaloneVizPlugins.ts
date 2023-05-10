@@ -23,6 +23,7 @@ import {
 import { Filter, OverlayConfig } from '../../../core';
 import { Computation } from '../../../core/types/visualization';
 import { isEqual } from 'lodash';
+import { boxPlotRequest } from './plugins/boxplot';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -52,33 +53,11 @@ export function useStandaloneVizPlugins({
       >
     ) {
       return visualization.withOptions({
-        getRequestParams: (
-          studyId: string,
-          filters: Filter[] | undefined,
-          vizConfig: BoxplotConfig,
-          outputEntityId: string,
-          computation: Computation
-        ) => {
-          // process overlayConfig?
-          //      const activeMarkerConfig = vizConfig.
-
-          return {
-            studyId,
-            filters,
-            config: {
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-              ...(vizConfig.overlayVariable &&
-              isEqual(
-                vizConfig.overlayVariable,
-                selectedOverlayConfig?.overlayVariable
-              )
-                ? { overlayConfig: selectedOverlayConfig }
-                : {}),
-              outputEntityId,
-            },
-            //        computeConfig: computation.descriptor.configuration,
-          };
+        getRequestParams: (props) => {
+          return boxPlotRequest({
+            ...props,
+            overlayConfig: selectedOverlayConfig,
+          });
         },
       });
     }

@@ -463,13 +463,13 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       );
 
       // add visualization.type here. valueSpec too?
-      const params = options?.getRequestParams?.(
+      const params = options?.getRequestParams?.({
         studyId,
         filters,
         vizConfig,
-        outputEntity.id,
-        computation
-      ) ?? {
+        outputEntityId: outputEntity.id,
+        computation,
+      }) ?? {
         studyId,
         filters,
         config: {

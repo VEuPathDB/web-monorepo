@@ -15,12 +15,14 @@ export interface OverlayOptions {
   getCheckedLegendItems?: (computeConfig: unknown) => string[] | undefined;
 }
 
+export type RequestOptionProps<ConfigType> = {
+  studyId: string;
+  filters: Filter[] | undefined;
+  vizConfig: ConfigType;
+  outputEntityId: string;
+  computation?: Computation;
+};
+
 export interface RequestOptions<ConfigType> {
-  getRequestParams?: (
-    studyId: string,
-    filters: Filter[] | undefined,
-    vizConfig: ConfigType,
-    outputEntityId: string,
-    computation: Computation
-  ) => unknown;
+  getRequestParams?: (props: RequestOptionProps<ConfigType>) => unknown;
 }
