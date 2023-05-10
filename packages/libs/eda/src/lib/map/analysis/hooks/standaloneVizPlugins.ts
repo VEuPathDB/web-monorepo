@@ -6,10 +6,10 @@ import { FloatingLayout } from '../../../core/components/layouts/FloatingLayout'
 import { LayoutOptions } from '../../../core/components/layouts/types';
 import {
   OverlayOptions,
+  RequestOptionProps,
   RequestOptions,
 } from '../../../core/components/visualizations/options/types';
 import { VisualizationPlugin } from '../../../core/components/visualizations/VisualizationPlugin';
-import { VariableDescriptor } from '../../../core/types/variable';
 
 import { histogramVisualization } from '../../../core/components/visualizations/implementations/HistogramVisualization';
 import { contTableVisualization } from '../../../core/components/visualizations/implementations/MosaicVisualization';
@@ -20,10 +20,8 @@ import {
   BoxplotConfig,
   boxplotVisualization,
 } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
-import { Filter, OverlayConfig } from '../../../core';
-import { Computation } from '../../../core/types/visualization';
-import { isEqual } from 'lodash';
-import { boxPlotRequest } from './plugins/boxplot';
+import { OverlayConfig } from '../../../core';
+import { boxplotRequest } from './plugins/boxplot';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -47,14 +45,19 @@ export function useStandaloneVizPlugins({
       });
     }
 
-    function vizWithBoxplotRequest(
+    function vizWithOverlayConfigRequest<ConfigType, RequestParamsType>(
       visualization: VisualizationPlugin<
-        StandaloneVizOptions & RequestOptions<BoxplotConfig>
-      >
+        StandaloneVizOptions & RequestOptions<ConfigType>
+      >,
+      requestFunction: (
+        props: RequestOptionProps<ConfigType> & {
+          overlayConfig: OverlayConfig | undefined;
+        }
+      ) => RequestParamsType
     ) {
       return visualization.withOptions({
         getRequestParams: (props) => {
-          return boxPlotRequest({
+          return requestFunction({
             ...props,
             overlayConfig: selectedOverlayConfig,
           });
@@ -80,7 +83,10 @@ export function useStandaloneVizPlugins({
         ...pluginBasics,
         visualizationPlugins: {
           histogram: vizWithOptions(histogramVisualization),
-          boxplot: vizWithBoxplotRequest(vizWithOptions(boxplotVisualization)),
+          boxplot: vizWithOverlayConfigRequest(
+            vizWithOptions(boxplotVisualization),
+            boxplotRequest
+          ),
         },
       },
       'standalone-map-countsandproportions': {

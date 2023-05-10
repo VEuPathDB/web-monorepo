@@ -3,7 +3,7 @@ import { OverlayConfig } from '../../../../core';
 import { BoxplotConfig } from '../../../../core/components/visualizations/implementations/BoxplotVisualization';
 import { RequestOptionProps } from '../../../../core/components/visualizations/options/types';
 
-export function boxPlotRequest(
+export function boxplotRequest(
   props: RequestOptionProps<BoxplotConfig> & {
     overlayConfig: OverlayConfig | undefined;
   }
