@@ -139,11 +139,15 @@ export const VariableMapping = intersection([
 ]);
 
 export type PlotConfig = TypeOf<typeof plotConfig>;
-const plotConfig = type({
-  completeCasesAllVars: number,
-  completeCasesAxesVars: number,
-  variables: array(VariableMapping),
-});
+const plotConfig = intersection([
+  type({
+    variables: array(VariableMapping),
+  }),
+  partial({
+    completeCasesAllVars: number,
+    completeCasesAxesVars: number,
+  }),
+]);
 
 export interface HistogramRequestParams {
   studyId: string;
@@ -609,14 +613,18 @@ const BoxplotResponseData = array(
 );
 
 export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
-export const BoxplotResponse = type({
-  boxplot: type({
-    data: BoxplotResponseData,
-    config: plotConfig,
+export const BoxplotResponse = intersection([
+  type({
+    boxplot: type({
+      data: BoxplotResponseData,
+      config: plotConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 export interface MapMarkersRequestParams {
   studyId: string;

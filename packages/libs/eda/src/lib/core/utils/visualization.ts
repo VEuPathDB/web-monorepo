@@ -76,11 +76,11 @@ export function hasIncompleteCases(
   variable: Variable | undefined,
   outputEntity: StudyEntity | undefined,
   filteredCounts: EntityCounts,
-  completeCasesTable: CompleteCasesTable
+  completeCasesTable: CompleteCasesTable | undefined
 ): boolean {
   const completeCases =
     entity != null && variable != null
-      ? completeCasesTable.find(
+      ? completeCasesTable?.find(
           (row) =>
             row.variableDetails?.entityId === entity.id &&
             row.variableDetails?.variableId === variable.id
