@@ -21,7 +21,7 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 // viz-related imports
 import { PlotLayout } from '../../layouts/PlotLayout';
 import { useStudyEntities, useStudyMetadata } from '../../../hooks/workspace';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -233,6 +233,23 @@ function MapViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  const defaultConfig = useMemo(
+    () => createDefaultConfig(),
+    [createDefaultConfig]
+  );
+  const [willFlyTo, setWillFlyTo] = useState(false);
+
+  // Only decide if we need to flyTo while we are waiting for marker data
+  // then only trigger the flyTo when no longer pending.
+  // This makes sure that the user sees the global location of the data before the flyTo happens.
+  useEffect(() => {
+    if (pending) {
+      setWillFlyTo(
+        isEqual(vizConfig.mapCenterAndZoom, defaultConfig.mapCenterAndZoom)
+      );
+    }
+  }, [pending, vizConfig.mapCenterAndZoom]);
+
   const plotNode = (
     <>
       <MapVEuMap
@@ -250,22 +267,23 @@ function MapViz(props: VisualizationProps<Options>) {
         onBaseLayerChanged={(newBaseLayer) =>
           updateVizConfig({ baseLayer: newBaseLayer })
         }
-        flyToMarkers={
-          markers &&
-          markers.length > 0 &&
-          isEqual(
-            vizConfig.mapCenterAndZoom,
-            createDefaultConfig().mapCenterAndZoom
-          )
-        }
+        flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
         flyToMarkersDelay={500}
         showSpinner={pending}
         // whether to show scale at map
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
         // show mouse tool
         showMouseToolbar={true}
-        mouseMode={vizConfig.mouseMode ?? createDefaultConfig().mouseMode}
+        mouseMode={vizConfig.mouseMode ?? defaultConfig.mouseMode}
         onMouseModeChange={onMouseModeChange}
+        // pass defaultViewport
+        defaultViewport={{
+          center: [
+            defaultConfig.mapCenterAndZoom.latitude,
+            defaultConfig.mapCenterAndZoom.longitude,
+          ],
+          zoom: defaultConfig.mapCenterAndZoom.zoomLevel,
+        }}
       />
     </>
   );
