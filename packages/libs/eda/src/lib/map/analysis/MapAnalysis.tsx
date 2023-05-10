@@ -52,10 +52,7 @@ import {
   Notes,
   Share,
 } from '@material-ui/icons';
-import {
-  ComputationAppOverview,
-  Visualization,
-} from '../../core/types/visualization';
+import { ComputationAppOverview } from '../../core/types/visualization';
 import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
@@ -202,14 +199,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     ]
   );
 
-  const activeMarkerConfiguration =
-    markerConfigurations.find(
-      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
-    ) || defautMarkerConfigurations[0];
+  const activeMarkerConfiguration = markerConfigurations.find(
+    (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+  );
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable, entity: overlayEntity } =
-    findEntityAndVariable(activeMarkerConfiguration.selectedVariable) ?? {};
+    findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
   const entities = useStudyEntities();
   const outputEntity = useMemo(() => {
@@ -253,13 +249,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         subsettingClient,
       });
 
-      updateMarkerConfigurations({
-        ...activeMarkerConfiguration,
-        overlayConfig,
-      });
+      if (activeMarkerConfiguration != null)
+        updateMarkerConfigurations({
+          ...activeMarkerConfiguration,
+          overlayConfig,
+        });
     }
 
     if (
+      activeMarkerConfiguration != null &&
       // the overlay variable has changed
       !isEqual(
         activeMarkerConfiguration.selectedVariable,
@@ -286,14 +284,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     updateMarkerConfigurations,
   ]);
 
-  const adaptedMarkerTypename = (() => {
-    if (activeMarkerConfiguration.type === 'barplot') {
-      // The marker type for barplots is either `count` or `proportion`.
-      // `useMapMarkers` needs to know this.
-      return activeMarkerConfiguration.selectedPlotMode;
+  // needs to be pie, count or proportion
+  const markerType = (() => {
+    switch (activeMarkerConfiguration?.type) {
+      case 'barplot': {
+        return activeMarkerConfiguration?.selectedPlotMode; // count or proportion
+      }
+      case 'pie':
+      default:
+        return 'pie';
     }
-
-    return activeMarkerConfiguration.type;
   })();
 
   const {
@@ -308,12 +308,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     geoConfig: geoConfig,
     studyId,
     filters,
-    // xAxisVariable: activeMarkerConfiguration.selectedVariable,
-    // computationType: 'pass',
-    markerType: adaptedMarkerTypename,
-    // checkedLegendItems: undefined,
-    selectedOverlayVariable: activeMarkerConfiguration.selectedVariable,
-    overlayConfig: activeMarkerConfiguration.overlayConfig,
+    markerType,
+    selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
+    overlayConfig: activeMarkerConfiguration?.overlayConfig,
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
@@ -354,7 +351,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: activeMarkerConfiguration.overlayConfig,
+    selectedOverlayConfig: activeMarkerConfiguration?.overlayConfig,
   });
 
   const fieldTree = useFieldTree(
@@ -506,7 +503,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   displayName: 'Donuts',
                   icon: <DonutMarkers style={{ height: 30 }} />,
                   renderConfigurationMenu:
-                    activeMarkerConfiguration.type === 'pie' ? (
+                    activeMarkerConfiguration?.type === 'pie' ? (
                       <PieMarkerConfigurationMenu
                         inputs={[{ name: 'overlay', label: 'Overlay' }]}
                         entities={studyEntities}
@@ -527,7 +524,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   displayName: 'Bar plots',
                   icon: <BarPlotMarkers style={{ height: 30 }} />,
                   renderConfigurationMenu:
-                    activeMarkerConfiguration.type === 'barplot' ? (
+                    activeMarkerConfiguration?.type === 'barplot' ? (
                       <BarPlotMarkerConfigurationMenu
                         inputs={[{ name: 'overlay', label: 'Overlay' }]}
                         entities={studyEntities}
