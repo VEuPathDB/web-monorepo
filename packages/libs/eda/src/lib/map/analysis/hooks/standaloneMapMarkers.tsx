@@ -96,8 +96,8 @@ export function useStandaloneMapMarkers(
   } = props;
 
   const dataClient: DataClient = useDataClient();
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const entities = useStudyEntities();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+  const entities = useStudyEntities(filters);
 
   // prepare some info that the map-markers and overlay requests both need
   const { latitudeVariable, longitudeVariable } = useMemo(
@@ -241,6 +241,7 @@ export function useStandaloneMapMarkers(
         return undefined;
       }
     }, [
+      overlayVariableAndEntity,
       overlayVariable,
       outputEntity,
       vocabularyOrFilters,
@@ -462,10 +463,11 @@ export function useStandaloneMapMarkers(
       }
     );
   }, [
-    markerData.value,
+    markerData.value?.mapElements,
+    vocabulary,
     markerType,
-    overlayVariable,
-    outputEntity,
+    overlayType,
+    defaultDependentAxisRange,
     dependentAxisLogScale,
   ]);
 
