@@ -50,7 +50,7 @@ export default function RadioButtonGroup({
   containerStyles = {},
   labelPlacement,
   minWidth,
-  buttonColor,
+  buttonColor = 'primary',
   margins,
   itemMarginRight,
   disabledList,
