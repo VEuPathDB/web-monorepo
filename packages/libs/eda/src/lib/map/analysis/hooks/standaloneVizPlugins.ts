@@ -22,6 +22,7 @@ import { boxplotRequest } from './plugins/boxplot';
 import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
 import { histogramRequest } from './plugins/histogram';
+import { scatterplotRequest } from './plugins/scatterplot';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -81,7 +82,10 @@ export function useStandaloneVizPlugins({
       'standalone-map-xyrelationships': {
         ...pluginBasics,
         visualizationPlugins: {
-          scatterplot: vizWithOptions(scatterplotVisualization),
+          scatterplot: vizWithOverlayConfigRequest(
+            vizWithOptions(scatterplotVisualization),
+            scatterplotRequest
+          ),
           lineplot: vizWithOverlayConfigRequest(
             vizWithOptions(lineplotVisualization),
             lineplotRequest

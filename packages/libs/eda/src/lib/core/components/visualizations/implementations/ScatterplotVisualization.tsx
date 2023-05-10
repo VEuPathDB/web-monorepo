@@ -120,14 +120,17 @@ import {
   useVizConfig,
 } from '../../../hooks/visualizations';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-import { VariableMapping } from '../../../api/DataClient/types';
+import {
+  ScatterplotRequestParams,
+  VariableMapping,
+} from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
-import { OverlayOptions } from '../options/types';
+import { OverlayOptions, RequestOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
@@ -137,6 +140,7 @@ import { ResetButtonCoreUI } from '../../ResetButton';
 import SliderWidget, {
   SliderWidgetProps,
 } from '@veupathdb/components/lib/components/widgets/Slider';
+import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
 
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
@@ -218,7 +222,15 @@ export const ScatterplotConfig = t.partial({
   markerBodyOpacity: t.number,
 });
 
-interface Options extends LayoutOptions, TitleOptions, OverlayOptions {
+interface Options
+  extends LayoutOptions,
+    TitleOptions,
+    OverlayOptions,
+    RequestOptions<
+      ScatterplotConfig,
+      FloatingScatterplotExtraProps,
+      ScatterplotRequestParams
+    > {
   getComputedXAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
@@ -673,7 +685,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       }
 
       // Convert valueSpecConfig to valueSpecValue for the data client request.
-      let valueSpecValue = 'raw';
+      let valueSpecValue: ScatterplotRequestParams['config']['valueSpec'] =
+        'raw';
       if (vizConfig.valueSpecConfig === 'Smoothed mean with raw') {
         valueSpecValue = 'smoothedMeanWithRaw';
       } else if (vizConfig.valueSpecConfig === 'Best fit line with raw') {
@@ -681,7 +694,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       }
 
       // request params
-      const params = {
+      const params = options?.getRequestParams?.({
+        studyId,
+        filters,
+        outputEntityId: outputEntity.id,
+        vizConfig,
+        valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
+      }) ?? {
         studyId,
         filters,
         config: {

@@ -336,14 +336,18 @@ export const ComputedVariableMetadata = partial({
 });
 
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
-export const ScatterplotResponse = type({
-  scatterplot: type({
-    data: ScatterplotResponseData,
-    config: plotConfig,
+export const ScatterplotResponse = intersection([
+  type({
+    scatterplot: type({
+      data: ScatterplotResponseData,
+      config: plotConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 ////////////////
 // Table Data //
