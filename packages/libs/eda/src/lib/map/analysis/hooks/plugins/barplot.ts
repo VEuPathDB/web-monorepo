@@ -8,7 +8,7 @@ export function barplotRequest(
     overlayConfig: OverlayConfig | undefined;
   }
 ) {
-  const { studyId, filters, vizConfig, outputEntityId, overlayConfig } = props;
+  const { studyId, filters, vizConfig, overlayConfig } = props;
 
   return {
     studyId,
@@ -21,6 +21,7 @@ export function barplotRequest(
         ? { overlayConfig }
         : {}),
       barMode: 'group',
+      valueSpec: 'count',
     },
   };
 }
