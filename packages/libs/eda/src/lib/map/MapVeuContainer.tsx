@@ -44,10 +44,10 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   return (
     <Switch>
       <Route
-        path={`${path}/:studyId/:analysisId`}
+        path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}
         render={(
           routeProps: RouteComponentProps<{
-            analysisId: string;
+            analysisId?: string;
             studyId: string;
           }>
         ) => (

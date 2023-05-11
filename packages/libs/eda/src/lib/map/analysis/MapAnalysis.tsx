@@ -6,6 +6,7 @@ import {
   EntityDiagram,
   PromiseResult,
   useAnalysis,
+  useAnalysisClient,
   useDataClient,
   useDownloadClient,
   useFindEntityAndVariable,
@@ -13,11 +14,12 @@ import {
   useStudyEntities,
   useStudyMetadata,
   useStudyRecord,
+  useSubsettingClient,
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import { Download, FilledButton, Filter } from '@veupathdb/coreui';
+import { Download, FilledButton, Filter, H5, Table } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
@@ -88,6 +90,9 @@ import {
   PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
+import { AllAnalyses } from '../../workspace/AllAnalyses';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { isSavedAnalysis } from '../../core/utils/analysis';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -97,6 +102,7 @@ enum MapSideNavItemLabels {
   Plot = 'Plot',
   Share = 'Share',
   StudyDetails = 'View Study Details',
+  MyAnalyses = 'My Analyses',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -126,7 +132,7 @@ export const defaultAnimation = {
 };
 
 interface Props {
-  analysisId: string;
+  analysisId?: string;
   sharingUrl: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
@@ -170,6 +176,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
   const theme = useUITheme();
+  const analysisClient = useAnalysisClient();
+  const subsettingClient = useSubsettingClient();
 
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
   const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
@@ -701,6 +709,43 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
+        labelText: MapSideNavItemLabels.MyAnalyses,
+        icon: <Table />,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              css={{
+                h1: {
+                  fontSize: '21px',
+                  margin: '25px 0 0 0',
+                  padding: '0 0 1em 0',
+                },
+                '.MesaComponent .DataTable': {
+                  fontSize: 'inherit',
+                },
+              }}
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <AllAnalyses
+                analysisClient={analysisClient}
+                activeAnalysisId={
+                  isSavedAnalysis(analysisState.analysis)
+                    ? analysisState.analysis.analysisId
+                    : undefined
+                }
+                subsettingClient={subsettingClient}
+                studyId={getStudyId(studyRecord)}
+                showLoginForm={showLoginForm}
+              />
+            </div>
+          );
+        },
+      },
+      {
         labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
         renderSideNavigationPanel: () => {
@@ -713,6 +758,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 fontSize: '.95em',
               }}
             >
+              <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
               <RecordController
                 recordClass="dataset"
                 primaryKey={studyRecord.id.map((p) => p.value).join('/')}
