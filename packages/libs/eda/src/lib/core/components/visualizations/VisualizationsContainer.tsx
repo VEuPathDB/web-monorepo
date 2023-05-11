@@ -519,15 +519,17 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   );
 
   // Function to update the thumbnail on the configured viz selection page
+  // use a ref because it's used in an effect
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
-      if (viz != null)
+      const v = vizRef.current;
+      if (v != null)
         analysisState.updateVisualization({
-          ...viz,
-          descriptor: { ...viz.descriptor, thumbnail },
+          ...v,
+          descriptor: { ...v.descriptor, thumbnail },
         });
     },
-    [analysisState.updateVisualization, viz]
+    [analysisState.updateVisualization]
   );
 
   if (viz == null) return <div>Visualization not found.</div>;
