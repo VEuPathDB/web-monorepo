@@ -3,18 +3,13 @@ import { ReactElement, useCallback, useMemo } from 'react';
 import { usePromise } from '../../../core/hooks/promise';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../core/types/geoConfig';
-import { StudyEntity, Variable } from '../../../core/types/study';
 import DataClient, {
   OverlayConfig,
   StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
 } from '../../../core/api/DataClient';
 import { Filter } from '../../../core/types/filter';
-import {
-  useDataClient,
-  useFindEntityAndVariable,
-  useStudyEntities,
-} from '../../../core/hooks/workspace';
+import { useDataClient } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
 import { isEqual, some } from 'lodash';
@@ -30,9 +25,8 @@ import {
 } from '../../../core/utils/big-number-formatters';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
-import { useDeepValue } from '../../../core/hooks/immutability';
 import { VariableDescriptor } from '../../../core/types/variable';
+import { useDeepValue } from '../../../core/hooks/immutability';
 
 // Back end overlay values contain a special token for the "Other" category:
 export const UNSELECTED_TOKEN = '__UNSELECTED__';
@@ -88,14 +82,19 @@ export function useStandaloneMapMarkers(
   const {
     boundsZoomLevel,
     geoConfig,
-    selectedOverlayVariable,
-    overlayConfig,
+    selectedOverlayVariable: sov,
+    overlayConfig: oc,
     outputEntityId,
     studyId,
     filters,
     markerType,
     dependentAxisLogScale = false,
   } = props;
+
+  // these two deepvalue eliminate an unnecessary data request
+  // when switching between pie and bar markers when using the same variable
+  const selectedOverlayVariable = useDeepValue(sov);
+  const overlayConfig = useDeepValue(oc);
 
   const dataClient: DataClient = useDataClient();
 
@@ -214,6 +213,7 @@ export function useStandaloneMapMarkers(
       longitudeVariable,
       boundsZoomLevel,
       geoConfig,
+      // TO DO: add markerType and make valueSpec depend on it
     ])
   );
 
