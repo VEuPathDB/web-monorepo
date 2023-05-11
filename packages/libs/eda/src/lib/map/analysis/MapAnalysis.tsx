@@ -180,7 +180,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const subsettingClient = useSubsettingClient();
 
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
-  const selectedVariables = getDefaultVariableId(studyMetadata.rootEntity.id);
+  const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
 
   const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
     appState;
@@ -189,15 +189,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     return [
       {
         type: 'pie',
-        selectedVariable: selectedVariables,
+        selectedVariable: defaultVariable,
       },
       {
         type: 'barplot',
         selectedPlotMode: 'count',
-        selectedVariable: selectedVariables,
+        selectedVariable: defaultVariable,
       },
     ];
-  }, [selectedVariables]);
+  }, [defaultVariable]);
 
   useEffect(
     function generateDefaultMarkerConfigurationsIfNeeded() {
@@ -219,7 +219,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
-    findEntityAndVariable(selectedVariables) ?? {};
+    findEntityAndVariable(activeMarkerConfiguration.selectedVariable) ?? {};
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
@@ -313,7 +313,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       return visualization.withOptions({
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => selectedVariables,
+        getOverlayVariable: (_) => activeMarkerConfiguration.selectedVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
       });
@@ -334,7 +334,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [selectedVariables]);
+  }, [activeMarkerConfiguration.selectedVariable]);
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
