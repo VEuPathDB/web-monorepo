@@ -37,6 +37,7 @@ import NoDataOverlay from '../components/NoDataOverlay';
 import { LatLngBounds, Map } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
+import { Undo } from '@veupathdb/coreui';
 
 // define Viewport type
 export type Viewport = {
@@ -464,21 +465,6 @@ function CustomZoomControl(props: CustomZoomControlProps) {
     map.setZoom(map.getZoom() - 1);
   };
 
-  // zoom to whole world
-  const zoomToWholeWorld = (e: React.SyntheticEvent) => {
-    // with zoom level 1, then center: [1,1] works
-    const epsilon = 1.0;
-    e.preventDefault();
-    if (props.defaultViewport)
-      map.setView(
-        [
-          props.defaultViewport.center[0] + epsilon,
-          props.defaultViewport.center[1] + epsilon,
-        ],
-        props.defaultViewport.zoom
-      );
-  };
-
   // zoom to data: using flyTo function implicitly
   const zoomToData = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -509,18 +495,14 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           role="button"
           aria-label="Zoom out"
           onClick={zoomOut}
+          style={{
+            color:
+              map.getZoom() === props.defaultViewport?.zoom
+                ? 'lightgray'
+                : 'black',
+          }}
         >
           −
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="/"
-          title="zoom to whole world"
-          role="button"
-          aria-label="zoom to whole world"
-          onClick={zoomToWholeWorld}
-        >
-          <i className="fa fa-globe"></i>
         </a>
         <a
           className="leaflet-control-zoom-out"
@@ -530,7 +512,9 @@ function CustomZoomControl(props: CustomZoomControlProps) {
           aria-label="zoom to data"
           onClick={zoomToData}
         >
-          <i className="fa fa-map-marker"></i>
+          <div style={{ paddingTop: '4px' }}>
+            <Undo />
+          </div>
         </a>
       </div>
     </div>
