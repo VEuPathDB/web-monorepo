@@ -305,7 +305,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       return visualization.withOptions({
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => selectedVariables,
+        getOverlayVariable: (_) => activeMarkerConfiguration.selectedVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
       });
@@ -326,7 +326,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [selectedVariables]);
+  }, [activeMarkerConfiguration.selectedVariable]);
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
