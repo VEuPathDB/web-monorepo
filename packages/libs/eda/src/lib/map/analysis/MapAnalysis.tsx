@@ -23,7 +23,7 @@ import { Download, FilledButton, Filter, H5, Table } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
-import { AppState, useAppState } from './appState';
+import { AppState, useAppState, defaultAppState } from './appState';
 import { FloatingDiv } from './FloatingDiv';
 import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
@@ -80,7 +80,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { uniq } from 'lodash';
+import { uniq, isEqual } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -662,7 +662,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
           function getShareMenuContent() {
             if (!userLoggedIn) {
-              return <Login {...loginCallbacks} />;
+              return <Login {...loginCallbacks} showCloseButton={false} />;
             }
             if (
               analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
@@ -840,6 +840,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);
 
+  // for flyTo functionality
+  const [willFlyTo, setWillFlyTo] = useState(false);
+
+  // Only decide if we need to flyTo while we are waiting for marker data
+  // then only trigger the flyTo when no longer pending.
+  // This makes sure that the user sees the global location of the data before the flyTo happens.
+  useEffect(() => {
+    if (pending) {
+      setWillFlyTo(isEqual(appState.viewport, defaultAppState.viewport));
+    }
+  }, [pending, appState.viewport]);
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app: ComputationAppOverview) => {
@@ -933,15 +945,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     height="100%"
                     width="100%"
                     style={mapStyle}
-                    showMouseToolbar={false}
-                    showZoomControl={false}
+                    showMouseToolbar={true}
                     showLayerSelector={false}
                     showSpinner={pending}
                     animation={defaultAnimation}
                     viewport={appState.viewport}
                     markers={finalMarkers}
                     mouseMode={appState.mouseMode}
-                    flyToMarkers={false}
+                    flyToMarkers={
+                      markers && markers.length > 0 && willFlyTo && !pending
+                    }
                     flyToMarkersDelay={500}
                     onBoundsChanged={setBoundsZoomLevel}
                     onViewportChanged={setViewport}
@@ -950,6 +963,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     zoomLevelToGeohashLevel={
                       geoConfig?.zoomLevelToAggregationLevel
                     }
+                    // pass defaultViewport & isStandAloneMap props for custom zoom control
+                    defaultViewport={defaultAppState.viewport}
                   />
                 </div>
 

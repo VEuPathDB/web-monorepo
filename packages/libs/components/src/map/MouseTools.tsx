@@ -53,7 +53,14 @@ export default function MouseTools(props: MouseToolsProps) {
   return (
     <div className="leaflet-control-container">
       <div className="leaflet-top leaflet-right">
-        <span className="mouse-toolbar leaflet-bar mapveu-hori-bar leaflet-control leaflet-touch">
+        {/* different position depending on SAM */}
+        <span
+          className="mouse-toolbar leaflet-bar mapveu-hori-bar leaflet-control leaflet-touch"
+          style={{
+            top: '0px',
+            right: '40px',
+          }}
+        >
           {buttons}
         </span>
       </div>

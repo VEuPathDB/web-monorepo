@@ -144,7 +144,7 @@ export function disabledVariablesForInput(
  */
 export function filterVariablesByConstraint(
   rootEntity: StudyEntity,
-  constraint?: DataElementConstraint
+  constraint: DataElementConstraint | undefined
 ): StudyEntity {
   if (
     constraint == null ||
@@ -159,9 +159,9 @@ export function filterVariablesByConstraint(
   return mapStructure(
     (entity, children) => ({
       ...entity,
-      variables: entity.variables.filter((variable) =>
-        variableConstraintPredicate(constraint, variable)
-      ),
+      variables: entity.variables.filter((variable) => {
+        return variableConstraintPredicate(constraint, variable);
+      }),
       children,
     }),
     (e) => e.children ?? [],
@@ -176,19 +176,19 @@ export function filterVariablesByConstraint(
 export function excludedVariables(
   rootEntity: StudyEntity,
   inputName: string,
-  constraints?: DataElementConstraintRecord[]
+  constraints: DataElementConstraintRecord[] | undefined
 ): VariableDescriptor[] {
   if (constraints == null) return [];
 
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
       e.variables
-        .filter((variable) =>
-          constraints.every(
+        .filter((variable) => {
+          return constraints.every(
             (constraint) =>
               !variableConstraintPredicate(constraint[inputName], variable)
-          )
-        )
+          );
+        })
         .map((v) => ({ entityId: e.id, variableId: v.id }))
     )
     .toArray();
@@ -323,10 +323,10 @@ export function filterConstraints(
     })
   );
 
-  if (compatibleConstraints.length === 0)
-    throw new Error(
-      'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
-    );
+  // if (compatibleConstraints.length === 0)
+  // throw new Error(
+  //   'filterConstraints: Something went wrong. No compatible constraints were found for the current set of values.'
+  //   );
 
   return compatibleConstraints;
 }
