@@ -599,7 +599,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
-                // gets passed to variable tree in order to disaable scrollIntoView
+                // gets passed to variable tree in order to disable scrollIntoView
                 scope="map"
               />
             </div>
