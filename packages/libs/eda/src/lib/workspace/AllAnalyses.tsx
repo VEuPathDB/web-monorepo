@@ -72,6 +72,11 @@ interface Props {
    */
   studyId?: string | null;
   /**
+   * If the analysis with this ID is displayed,
+   * indicate it is "active"
+   */
+  activeAnalysisId?: string;
+  /**
    * Determines if the search term is stored as a query
    * param in the url
    */
@@ -109,6 +114,7 @@ export function AllAnalyses(props: Props) {
     studyId,
     synchronizeWithUrl,
     updateDocumentTitle,
+    activeAnalysisId,
   } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
@@ -494,6 +500,11 @@ export function AllAnalyses(props: Props) {
                   }}
                   maxLength={ANALYSIS_NAME_MAX_LENGTH}
                 />
+                {data.row.analysis.analysisId === activeAnalysisId ? (
+                  <>
+                    &nbsp;&nbsp;<em>(currently viewing)</em>
+                  </>
+                ) : null}
                 {data.row.analysis.provenance != null && (
                   <>
                     <br />

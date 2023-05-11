@@ -92,6 +92,7 @@ import {
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { isSavedAnalysis } from '../../core/utils/analysis';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -730,8 +731,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               }}
             >
               <AllAnalyses
-                // studyId={analysisState.analysis?.studyId!}
                 analysisClient={analysisClient}
+                activeAnalysisId={
+                  isSavedAnalysis(analysisState.analysis)
+                    ? analysisState.analysis.analysisId
+                    : undefined
+                }
                 subsettingClient={subsettingClient}
                 studyId={getStudyId(studyRecord)}
                 showLoginForm={showLoginForm}
