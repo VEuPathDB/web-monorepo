@@ -46,7 +46,7 @@ export function useStandaloneVizPlugins({
       });
     }
 
-    function vizWithOverlayConfigRequest<
+    function vizWithCustomizedGetRequest<
       ConfigType,
       ExtraProps,
       RequestParamsType
@@ -82,11 +82,11 @@ export function useStandaloneVizPlugins({
       'standalone-map-xyrelationships': {
         ...pluginBasics,
         visualizationPlugins: {
-          scatterplot: vizWithOverlayConfigRequest(
+          scatterplot: vizWithCustomizedGetRequest(
             vizWithOptions(scatterplotVisualization),
             scatterplotRequest
           ),
-          lineplot: vizWithOverlayConfigRequest(
+          lineplot: vizWithCustomizedGetRequest(
             vizWithOptions(lineplotVisualization),
             lineplotRequest
           ),
@@ -95,11 +95,11 @@ export function useStandaloneVizPlugins({
       'standalone-map-distributions': {
         ...pluginBasics,
         visualizationPlugins: {
-          histogram: vizWithOverlayConfigRequest(
+          histogram: vizWithCustomizedGetRequest(
             vizWithOptions(histogramVisualization),
             histogramRequest
           ),
-          boxplot: vizWithOverlayConfigRequest(
+          boxplot: vizWithCustomizedGetRequest(
             vizWithOptions(boxplotVisualization),
             boxplotRequest
           ),
@@ -109,7 +109,7 @@ export function useStandaloneVizPlugins({
         ...pluginBasics,
         visualizationPlugins: {
           conttable: vizWithOptions(contTableVisualization),
-          barplot: vizWithOverlayConfigRequest(
+          barplot: vizWithCustomizedGetRequest(
             vizWithOptions(barplotVisualization),
             barplotRequest
           ),
