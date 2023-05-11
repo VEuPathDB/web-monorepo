@@ -1,5 +1,3 @@
-import Path from 'path';
-import { useHistory } from 'react-router-dom';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
 import { orderBy, isEqual } from 'lodash';

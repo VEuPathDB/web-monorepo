@@ -17,11 +17,7 @@ import {
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
 import { VariableDescriptor } from '../../types/variable';
-import {
-  Computation,
-  Visualization,
-  VisualizationOverview,
-} from '../../types/visualization';
+import { Computation, VisualizationOverview } from '../../types/visualization';
 import { Grid } from '../Grid';
 
 import './Visualizations.scss';
@@ -42,16 +38,11 @@ import { plugins as staticPlugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
-import { Modal, H6, Paragraph, H5 } from '@veupathdb/coreui';
+import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
-import {
-  JobStatus,
-  isTerminalStatus,
-} from '../computations/ComputeJobStatusHook';
+import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
-import RelaxMicrobeSVG from './relaxMicrobe';
-import EmptyPlotSVG from './emptyPlot';
 import { ComputationPlugin } from '../computations/Types';
 
 const cx = makeClassNameHelper('VisualizationsContainer');

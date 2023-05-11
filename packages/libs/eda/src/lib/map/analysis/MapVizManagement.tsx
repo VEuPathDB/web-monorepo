@@ -11,11 +11,7 @@ import { AnalysisState } from '../../core';
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
 import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
 import { GeoConfig } from '../../core/types/geoConfig';
-import {
-  Computation,
-  ComputationAppOverview,
-  Visualization,
-} from '../../core/types/visualization';
+import { ComputationAppOverview } from '../../core/types/visualization';
 import './MapVizManagement.scss';
 import { useAppState } from './appState';
 import { ComputationPlugin } from '../../core/components/computations/Types';

@@ -22,10 +22,9 @@ import {
   BinWidthSlider,
   TimeUnit,
   NumberOrNull,
-  NumberOrDateRange,
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
-import { Computation, ComputationAppOverview } from '../../types/visualization';
+import { ComputationAppOverview } from '../../types/visualization';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),

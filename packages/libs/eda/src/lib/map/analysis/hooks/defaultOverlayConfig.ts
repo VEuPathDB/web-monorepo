@@ -1,14 +1,9 @@
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
-import { useCallback } from 'react';
 import {
   BinRange,
   Filter,
   OverlayConfig,
-  PromiseHookState,
   StudyEntity,
-  useDataClient,
-  usePromise,
-  useSubsettingClient,
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';

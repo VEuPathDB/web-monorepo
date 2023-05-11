@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
 import { Computation } from '../../../types/visualization';

@@ -3,7 +3,6 @@ import { AnalysisState, PromiseHookState } from '../../core';
 import { AppState, useAppState } from './appState';
 import {
   ComputationAppOverview,
-  Visualization,
   VisualizationOverview,
 } from '../../core/types/visualization';
 import { FullScreenVisualization } from '../../core/components/visualizations/VisualizationsContainer';
