@@ -103,7 +103,7 @@ export default function DownloadTab({
     const studyAccess =
       typeof studyRecord.attributes['study_access'] === 'string'
         ? studyRecord.attributes['study_access']
-        : '<status not found>';
+        : 'Public';
     const hasPermission = permission.loading
       ? undefined
       : permission.permissions.perDataset[studyRecord.id[0].value]
@@ -129,14 +129,7 @@ export default function DownloadTab({
         )}
       </span>
     );
-  }, [
-    user,
-    permission,
-    studyRecord,
-    handleClick,
-    datasetId,
-    projectDisplayName,
-  ]);
+  }, [user, permission, studyRecord, handleClick]);
 
   /**
    * Ok, this is confusing, but there are two places where we need
@@ -167,9 +160,14 @@ export default function DownloadTab({
       return;
     }
 
-    downloadClient.getStudyReleases(studyMetadata.id).then((result) => {
-      setDownloadServiceStudyReleases(result);
-    });
+    downloadClient.getStudyReleases(studyMetadata.id).then(
+      (result) => {
+        setDownloadServiceStudyReleases(result);
+      },
+      (error) => {
+        console.error('Error fetching download details of study.', error);
+      }
+    );
   }, [shouldFetchStudyReleases, downloadClient, studyMetadata]);
 
   /**
@@ -243,13 +241,13 @@ export default function DownloadTab({
             release={mergedReleaseData[0]}
           />
         )}
-        {mergedReleaseData[0] && (
+        {
           <MySubset
             datasetId={datasetId}
             entities={enhancedEntityData}
             analysisState={analysisState}
           />
-        )}
+        }
         {mergedReleaseData.map((release, index) =>
           index === 0 ? (
             <CurrentRelease

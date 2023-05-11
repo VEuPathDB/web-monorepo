@@ -194,11 +194,12 @@ export function InputVariables(props: Props) {
           return map;
         }, {} as Record<string, VariableDescriptor[]>),
       [
-        dataElementDependencyOrder,
-        entities,
-        constraints,
         inputs,
+        constraints,
         selectedVariables,
+        entities,
+        dataElementDependencyOrder,
+        variablesForConstraints,
       ]
     );
 
