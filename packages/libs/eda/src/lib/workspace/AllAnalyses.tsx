@@ -474,11 +474,15 @@ export function AllAnalyses(props: Props) {
                   value={displayName}
                   displayValue={(value) => (
                     <Link
-                      to={Path.join(
-                        history.location.pathname,
-                        data.row.analysis.studyId,
-                        data.row.analysis.analysisId
-                      )}
+                      to={
+                        studyId
+                          ? data.row.analysis.analysisId
+                          : Path.join(
+                              history.location.pathname,
+                              data.row.analysis.studyId,
+                              data.row.analysis.analysisId
+                            )
+                      }
                     >
                       {value}
                     </Link>
