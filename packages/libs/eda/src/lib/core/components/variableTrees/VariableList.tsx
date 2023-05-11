@@ -198,6 +198,9 @@ interface VariableListProps {
   startExpanded?: boolean;
   asDropdown?: boolean;
   dropdownLabel?: string;
+  /**
+   * used to disable FieldNode's scrollIntoView property in map scope
+   */
   scope?: VariableScope;
   clearSelectionButton?: ReactNode;
 }
@@ -436,7 +439,12 @@ export default function VariableList({
           isStarred={starredVariableTermsSet.has(fieldTerm)}
           starredVariablesLoading={starredVariablesLoading}
           onClickStar={() => toggleStarredVariable({ entityId, variableId })}
-          scrollIntoView
+          /**
+           * map UI has limited space, so let's disable scrollIntoView
+           * in the map context so that we don't inadvertantly hide
+           * contextual info like the entity diagram
+           */
+          scrollIntoView={scope !== 'map'}
           asDropdown={asDropdown}
         />
       );
