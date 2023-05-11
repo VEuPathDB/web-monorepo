@@ -188,7 +188,6 @@ export function useStandaloneMapMarkers(
           const overlayValues = await getMostFrequentValues({
             ...overlayVariable,
             studyId,
-            vocabulary,
             subsettingClient,
             filters,
           });
@@ -504,7 +503,6 @@ type GetMostFrequentValuesProps = {
   studyId: string;
   variableId: string;
   entityId: string;
-  vocabulary: string[];
   subsettingClient: SubsettingClient;
   filters?: Filter[];
 };
@@ -515,7 +513,6 @@ async function getMostFrequentValues({
   studyId,
   variableId,
   entityId,
-  vocabulary,
   subsettingClient,
   filters = [],
 }: GetMostFrequentValuesProps): Promise<string[]> {
@@ -532,14 +529,6 @@ async function getMostFrequentValues({
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
     .map((bin) => bin.binLabel);
-  if (sortedValues.length < vocabulary.length) {
-    // console logging message because the throw didn't seem to bring up the usual dialogue on the screen
-    // TO DO: understand/fix this
-    const message =
-      'standaloneMapMarkers: getMostFrequentValues was called for a low-cardinality variable';
-    console.log({ message, sortedValues });
-    throw new Error(message);
-  }
   if (sortedValues.length > ColorPaletteDefault.length) {
     return [
       ...sortedValues.slice(0, ColorPaletteDefault.length - 1),
