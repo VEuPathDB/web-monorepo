@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Redirect } from 'react-router';
 
-import { MultiFilterVariable, Variable } from '../../core';
+import { MultiFilterVariable, Variable, VariableScope } from '../../core';
 
 // Components
 import { VariableDetails } from '../Variable';
@@ -32,6 +32,10 @@ interface SubsettingProps {
   totalCounts: EntityCounts | undefined;
   filteredCounts: EntityCounts | undefined;
   variableLinkConfig: VariableLinkConfig;
+  /**
+   * used to disable FieldNode's scrollIntoView property in map scope
+   */
+  scope?: VariableScope;
 }
 
 /** Allow user to filter study data based on the value(s) of any available variable. */
@@ -42,6 +46,7 @@ export default function Subsetting({
   totalCounts,
   filteredCounts,
   variableLinkConfig,
+  scope = 'variableTree',
 }: SubsettingProps) {
   // Obtain all entities and associated variables.
   const entities = useStudyEntities();
@@ -82,7 +87,7 @@ export default function Subsetting({
     <div className={cx('-Subsetting')}>
       <div className="Variables">
         <VariableTree
-          scope="variableTree"
+          scope={scope}
           entityId={entity.id}
           starredVariables={starredVariables}
           toggleStarredVariable={toggleStarredVariable}

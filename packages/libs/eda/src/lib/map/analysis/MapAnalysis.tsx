@@ -6,6 +6,7 @@ import {
   EntityDiagram,
   PromiseResult,
   useAnalysis,
+  useAnalysisClient,
   useDataClient,
   useDownloadClient,
   useFindEntityAndVariable,
@@ -18,7 +19,7 @@ import {
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import { Download, FilledButton, Filter } from '@veupathdb/coreui';
+import { Download, FilledButton, Filter, H5, Table } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
@@ -66,8 +67,6 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { isEqual, uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
@@ -80,6 +79,9 @@ import {
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './hooks/defaultOverlayConfig';
+import { AllAnalyses } from '../../workspace/AllAnalyses';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { isSavedAnalysis } from '../../core/utils/analysis';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -89,6 +91,7 @@ enum MapSideNavItemLabels {
   Plot = 'Plot',
   Share = 'Share',
   StudyDetails = 'View Study Details',
+  MyAnalyses = 'My Analyses',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -118,7 +121,7 @@ export const defaultAnimation = {
 };
 
 interface Props {
-  analysisId: string;
+  analysisId?: string;
   sharingUrl: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
@@ -163,6 +166,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
   const theme = useUITheme();
+  const analysisClient = useAnalysisClient();
+  const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
 
   const getDefaultVariableId = useGetDefaultVariableIdCallback();
   const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
@@ -230,11 +236,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       );
       setMarkerConfigurations(nextMarkerConfigurations);
     },
-    [markerConfigurations]
+    [markerConfigurations, setMarkerConfigurations]
   );
-
-  const dataClient = useDataClient();
-  const subsettingClient = useSubsettingClient();
 
   // if the variable or filters have changed on the active marker config
   // set the default overlay config
@@ -282,6 +285,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     overlayVariable,
     overlayEntity,
     updateMarkerConfigurations,
+    dataClient,
+    subsettingClient,
   ]);
 
   // needs to be pie, count or proportion
@@ -317,8 +322,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-
   const downloadClient = useDownloadClient();
 
   const userLoggedIn = useWdkService((wdkService) => {
@@ -342,7 +345,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     useCallback(async () => {
       const { apps } = await dataClient.getApps();
       return apps.filter((app) => app.name.startsWith('standalone-map-')); // TO DO: remove this temporary hack
-    }, [dataClient, wdkService])
+    }, [dataClient])
   );
 
   const totalCounts = useEntityCounts();
@@ -600,6 +603,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
+                // gets passed to variable tree in order to disable scrollIntoView
+                scope="map"
               />
             </div>
           );
@@ -701,6 +706,43 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
+        labelText: MapSideNavItemLabels.MyAnalyses,
+        icon: <Table />,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              css={{
+                h1: {
+                  fontSize: '21px',
+                  margin: '25px 0 0 0',
+                  padding: '0 0 1em 0',
+                },
+                '.MesaComponent .DataTable': {
+                  fontSize: 'inherit',
+                },
+              }}
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <AllAnalyses
+                analysisClient={analysisClient}
+                activeAnalysisId={
+                  isSavedAnalysis(analysisState.analysis)
+                    ? analysisState.analysis.analysisId
+                    : undefined
+                }
+                subsettingClient={subsettingClient}
+                studyId={getStudyId(studyRecord)}
+                showLoginForm={showLoginForm}
+              />
+            </div>
+          );
+        },
+      },
+      {
         labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
         renderSideNavigationPanel: () => {
@@ -713,6 +755,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                 fontSize: '.95em',
               }}
             >
+              <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
               <RecordController
                 recordClass="dataset"
                 primaryKey={studyRecord.id.map((p) => p.value).join('/')}

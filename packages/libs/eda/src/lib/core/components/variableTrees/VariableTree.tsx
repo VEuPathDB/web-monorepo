@@ -97,6 +97,7 @@ export default function VariableTree({
       clearSelectionButton={
         showClearSelectionButton === false ? null : clearSelectionButton
       }
+      scope={scope}
     />
   );
 }
