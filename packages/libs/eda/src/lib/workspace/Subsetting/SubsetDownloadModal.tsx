@@ -435,7 +435,6 @@ export default function SubsetDownloadModal({
               position: 'relative',
               flex: '0 1 auto',
               minHeight: 0,
-              '.css-1nxo5ei-HeaderCell': { height: 'auto' },
             }}
             className="DataGrid-Wrapper"
             ref={dataGridWrapperRef}
@@ -449,7 +448,6 @@ export default function SubsetDownloadModal({
                 headerCells: {
                   textTransform: 'none',
                   position: 'relative',
-                  height: '100%',
                 },
                 table: {
                   width: '100%',
@@ -750,10 +748,8 @@ export default function SubsetDownloadModal({
     }
   };
 
-  const {
-    observe: observeModalHeader,
-    width: modalHeaderWidth,
-  } = useDimensions();
+  const { observe: observeModalHeader, width: modalHeaderWidth } =
+    useDimensions();
 
   // ~18px (round to 20px) per character for medium title size
   const maxStudyNameLength = Math.floor(modalHeaderWidth / 20);
