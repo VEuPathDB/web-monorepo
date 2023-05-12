@@ -600,7 +600,13 @@ const useHeaderMenuItems = (
           metadata: {
             include: useEda ? [VectorBase] : [],
           },
-          items: mapMenuItems ?? [],
+          items: mapMenuItems ?? [
+            {
+              key: 'maps-loading',
+              type: 'custom',
+              display: <Loading radius={4} />,
+            },
+          ],
         },
         {
           key: 'pubcrawler',
