@@ -13,8 +13,8 @@ const MarkerType = t.keyof({
   pie: null,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MarkerConfiguration = t.intersection([
   t.type({
     type: MarkerType,

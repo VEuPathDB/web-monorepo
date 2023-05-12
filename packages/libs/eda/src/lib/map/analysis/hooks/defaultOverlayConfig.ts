@@ -45,17 +45,13 @@ export async function getDefaultOverlayConfig(
 
     if (overlayVariable.vocabulary) {
       // categorical
-      // If the variable has "too many" values, get the top 7 from the distribution service
-      const overlayValues =
-        overlayVariable.vocabulary.length <= ColorPaletteDefault.length
-          ? overlayVariable.vocabulary
-          : await getMostFrequentValues({
-              studyId: studyId,
-              ...overlayVariableDescriptor,
-              filters: filters ?? [],
-              numValues: ColorPaletteDefault.length - 1,
-              subsettingClient,
-            });
+      const overlayValues = await getMostFrequentValues({
+        studyId: studyId,
+        ...overlayVariableDescriptor,
+        filters: filters ?? [],
+        numValues: ColorPaletteDefault.length - 1,
+        subsettingClient,
+      });
 
       return {
         overlayType: 'categorical',

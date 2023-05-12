@@ -4,6 +4,7 @@ import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
+  Filter,
   PromiseResult,
   useAnalysis,
   useAnalysisClient,
@@ -19,7 +20,13 @@ import {
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import { Download, FilledButton, Filter, H5, Table } from '@veupathdb/coreui';
+import {
+  Download,
+  FilledButton,
+  Filter as FilterIcon,
+  H5,
+  Table,
+} from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
@@ -159,10 +166,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
   } = props;
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
   const studyId = studyMetadata.id;
-  const studyEntities = useStudyEntities();
+  const studyEntities = useStudyEntities(filters);
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
   const theme = useUITheme();
@@ -170,7 +178,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
 
-  const getDefaultVariableId = useGetDefaultVariableIdCallback();
+  const getDefaultVariableId = useGetDefaultVariableIdCallback(filters);
   const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
 
   const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
@@ -209,20 +217,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
-  const entities = useStudyEntities();
   const outputEntity = useMemo(() => {
     if (geoConfig == null || geoConfig.entity.id == null) return;
 
     return overlayEntity
-      ? leastAncestralEntity([overlayEntity, geoConfig.entity], entities)
+      ? leastAncestralEntity([overlayEntity, geoConfig.entity], studyEntities)
       : geoConfig.entity;
-  }, [geoConfig, overlayEntity, entities]);
-
-  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  }, [geoConfig, overlayEntity, studyEntities]);
 
   const updateMarkerConfigurations = useCallback(
     (updatedConfiguration: MarkerConfiguration) => {
@@ -258,24 +263,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           overlayConfig,
         });
     }
-
-    if (
-      activeMarkerConfiguration != null &&
-      // the overlay variable has changed
-      !isEqual(
-        activeMarkerConfiguration.selectedVariable,
-        activeMarkerConfiguration.overlayConfig?.overlayVariable
-      )
-      //      ||
-      //      // or the filters have changed TO DO: figure out what to do when filters change
-      //      // it will be related to https://github.com/VEuPathDB/web-monorepo/pull/139
-      //      !isEqual(
-      //	filters,
-      //	activeMarkerConfiguration.lastUsedFilters
-      //      )
-    ) {
-      updateOverlayConfig();
-    }
+    console.log('calling updateOverlayConfig()', {
+      filters,
+      vocabulary: overlayVariable?.vocabulary,
+    });
+    updateOverlayConfig();
 
     // TO DO: return a cancel function?
   }, [
@@ -553,7 +545,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
       {
         labelText: MapSideNavItemLabels.Filter,
-        icon: <Filter />,
+        icon: <FilterIcon />,
         renderSideNavigationPanel: () => {
           return (
             <div
@@ -1040,8 +1032,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
  * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
  * kind of test and simplify its logic.
  */
-export function useGetDefaultVariableIdCallback() {
-  const entities = useStudyEntities();
+export function useGetDefaultVariableIdCallback(filters: Filter[] | undefined) {
+  const entities = useStudyEntities(filters);
   const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldTree = useFieldTree(flattenedFields);
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
