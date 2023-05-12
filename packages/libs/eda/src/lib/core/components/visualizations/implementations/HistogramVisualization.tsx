@@ -193,6 +193,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    draggableContainerDims,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -817,7 +818,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    draggableContainerDims
+      ? {
+          ...plotContainerStyles,
+          height: 0.95 * draggableContainerDims.height,
+          width: 0.95 * draggableContainerDims.width,
+        }
+      : plotContainerStyles,
     [
       data,
       vizConfig.checkedLegendItems,
@@ -835,7 +842,15 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   const histogramProps: HistogramProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? draggableContainerDims
+        ? {
+            ...plotContainerStyles,
+            height: 0.95 * draggableContainerDims.height,
+            width: 0.95 * draggableContainerDims.width,
+          }
+        : plotContainerStyles
+      : undefined,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'Main',
     dependentAxisLabel:

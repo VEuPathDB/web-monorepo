@@ -31,6 +31,7 @@ export interface VisualizationProps<Options = undefined> {
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
   computeJobStatus?: JobStatus;
+  draggableContainerDims?: { width: number; height: number };
 }
 
 export interface IsEnabledInPickerParams {

@@ -138,8 +138,8 @@ export default function DraggablePanel({
           margin: ${styleOverrides?.margin ?? 'margin'};
           // If resize is set, you can consider these two values as
           // initial heights and widths.
-          height: ${styleOverrides?.height ?? 'fit-content'};
-          width: ${styleOverrides?.width ?? 'fit-content'};
+          height: ${styleOverrides?.height + 'px' ?? 'fit-content'};
+          width: ${styleOverrides?.width + 'px' ?? 'fit-content'};
           // Hey, so you need to explicitly set overflow wherever
           // you plan to use resize.
           overflow: auto;
