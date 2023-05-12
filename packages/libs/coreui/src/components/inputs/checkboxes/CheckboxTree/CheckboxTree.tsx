@@ -967,11 +967,13 @@ function CheckboxTree<T>(props: CheckboxTreeProps<T>) {
         ...styleSpec.treeNode?.nodeWrapper,
         ...styleSpec.treeNode?.topLevelNodeWrapper,
       },
+      '.arrow-container': {
+        height: '1em',
+      },
       '.arrow-icon': {
         fill: '#aaa',
         fontSize: '0.75em',
         cursor: 'pointer',
-        marginTop: '3px',
       },
       '.label-text-wrapper': { ...styleSpec.treeNode?.labelTextWrapper },
       '.leaf-node-label': { ...styleSpec.treeNode?.leafNodeLabel },
