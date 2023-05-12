@@ -173,13 +173,6 @@ export function useStandaloneMapMarkers(
     overlayConfig?: OverlayConfig;
   };
 
-  // The categorical overlay config changes when the vocabulary changes,
-  // while the continuous overlay is filter-sensitive.
-  // But only one or the other is a dependency for the markerVariableBundlePromise
-  // so we combine them and "demultiplex" it inside the callback using type guards
-  const vocabularyOrFilters: string[] | Filter[] | undefined =
-    overlayVariableAndEntity?.variable.vocabulary ?? filters;
-
   const markerVariableBundlePromise = usePromise<
     MarkerVariableBundle | undefined
   >(
@@ -189,19 +182,15 @@ export function useStandaloneMapMarkers(
         overlayVariable != null &&
         outputEntity != null
       ) {
-        if (isNonEmptyStringArray(vocabularyOrFilters)) {
+        const vocabulary = overlayVariableAndEntity.variable.vocabulary;
+        if (vocabulary?.length) {
           // categorical
-          // If the variable has "too many" values, get the top 7 from the distribution service
-          const vocabulary = vocabularyOrFilters;
-          const overlayValues =
-            vocabulary.length <= ColorPaletteDefault.length
-              ? vocabulary
-              : await getMostFrequentValues({
-                  studyId: studyId,
-                  ...overlayVariable,
-                  numValues: ColorPaletteDefault.length - 1,
-                  subsettingClient,
-                });
+          const overlayValues = await getMostFrequentValues({
+            ...overlayVariable,
+            studyId,
+            subsettingClient,
+            filters,
+          });
 
           return {
             overlayConfig: {
@@ -211,17 +200,13 @@ export function useStandaloneMapMarkers(
             },
             outputEntityId: outputEntity.id,
           };
-        } else if (
-          isFilterArray(vocabularyOrFilters) ||
-          vocabularyOrFilters == null
-        ) {
+        } else {
           // continuous
-          const filters = vocabularyOrFilters;
           const overlayBins = await getBinRanges({
-            studyId,
-            filters: filters ?? [],
             ...overlayVariable,
+            studyId,
             dataClient,
+            filters: filters ?? [],
           });
 
           return {
@@ -244,10 +229,10 @@ export function useStandaloneMapMarkers(
       overlayVariableAndEntity,
       overlayVariable,
       outputEntity,
-      vocabularyOrFilters,
       studyId,
       subsettingClient,
       dataClient,
+      filters,
     ])
   );
 
@@ -518,8 +503,8 @@ type GetMostFrequentValuesProps = {
   studyId: string;
   variableId: string;
   entityId: string;
-  numValues: number; // the N of the top N most frequent values
   subsettingClient: SubsettingClient;
+  filters?: Filter[];
 };
 
 // get the most frequent values for the entire dataset, no filters at all
@@ -528,8 +513,8 @@ async function getMostFrequentValues({
   studyId,
   variableId,
   entityId,
-  numValues,
   subsettingClient,
+  filters = [],
 }: GetMostFrequentValuesProps): Promise<string[]> {
   const distributionResponse = await subsettingClient.getDistribution(
     studyId,
@@ -537,22 +522,20 @@ async function getMostFrequentValues({
     variableId,
     {
       valueSpec: 'count',
-      filters: [],
+      filters,
     }
   );
 
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
     .map((bin) => bin.binLabel);
-  if (sortedValues.length < numValues) {
-    // console logging message because the throw didn't seem to bring up the usual dialogue on the screen
-    // TO DO: understand/fix this
-    const message =
-      'standaloneMapMarkers: getMostFrequentValues was called for a low-cardinality variable';
-    console.log({ message, sortedValues });
-    throw new Error(message);
+  if (sortedValues.length > ColorPaletteDefault.length) {
+    return [
+      ...sortedValues.slice(0, ColorPaletteDefault.length - 1),
+      UNSELECTED_TOKEN,
+    ];
   }
-  return [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
+  return sortedValues;
 }
 
 type GetBinRangesProps = {
@@ -589,18 +572,4 @@ async function getBinRanges({
 
 function fixLabelForOtherValues(input: string): string {
   return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
-}
-
-function isNonEmptyStringArray(
-  value: unknown[] | undefined
-): value is string[] {
-  return (
-    value != null &&
-    value.length > 0 &&
-    value.every((item) => typeof item === 'string')
-  );
-}
-
-function isFilterArray(value: unknown[] | undefined): value is Filter[] {
-  return value != null && value.every((item) => Filter.is(item));
 }
