@@ -164,6 +164,8 @@ export function WorkspaceRouter({
                 subsettingClient={subsettingClient}
                 exampleAnalysesAuthor={exampleAnalysesAuthor}
                 showLoginForm={showLoginForm}
+                synchronizeWithUrl
+                updateDocumentTitle
               />
             )}
           />
