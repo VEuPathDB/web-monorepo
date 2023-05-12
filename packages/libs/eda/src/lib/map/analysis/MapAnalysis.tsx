@@ -139,7 +139,7 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const analysisState = useAnalysis(props.analysisId, 'pass-through');
+  const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   if (appStateAndSetters.appState == null) return null;
   return (
