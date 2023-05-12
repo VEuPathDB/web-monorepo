@@ -350,9 +350,12 @@ const useHeaderMenuItems = (
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const communitySite = useCommunitySiteRootUrl();
 
+  const showInteractiveMaps = Boolean(useEda && projectId === 'VectorBase');
+
   const mapMenuItems = useWdkService(async (wdkService): Promise<
     HeaderMenuItem[]
   > => {
+    if (!showInteractiveMaps) return [];
     try {
       const anwser = await wdkService.getAnswerJson(
         {
@@ -598,7 +601,7 @@ const useHeaderMenuItems = (
           ),
           type: 'subMenu',
           metadata: {
-            include: useEda ? [VectorBase] : [],
+            test: () => showInteractiveMaps,
           },
           items: mapMenuItems ?? [
             {
