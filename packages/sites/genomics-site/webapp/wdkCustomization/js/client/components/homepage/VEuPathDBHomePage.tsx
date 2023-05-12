@@ -593,7 +593,7 @@ const useHeaderMenuItems = (
           key: 'maps-alpha',
           display: (
             <>
-              Maps <img alt="BETA" src={betaImage} />
+              Interactive maps <img alt="BETA" src={betaImage} />
             </>
           ),
           type: 'subMenu',
