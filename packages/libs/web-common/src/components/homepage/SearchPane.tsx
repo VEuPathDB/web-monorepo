@@ -268,14 +268,20 @@ function SearchPaneNode({
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
         }}
       >
-        <span
-          style={{ marginRight: '0.25em', color: 'gray', fontSize: '0.7em' }}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginRight: '0.25em',
+            height: '1.2em',
+          }}
         >
-          <IconAlt fa="search" />
-        </span>
+          <span style={{ color: 'gray', fontSize: '0.7em' }}>
+            <IconAlt fa="search" />
+          </span>
+        </div>
         <span style={{ color: '#069' }}>{displayName}</span>
       </div>
     </Link>
