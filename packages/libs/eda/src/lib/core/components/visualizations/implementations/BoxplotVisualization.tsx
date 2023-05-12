@@ -61,6 +61,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
+  fixUnselectedBoxplot,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -522,27 +523,31 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        options?.getOverlayVocabulary?.() ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          boxplotResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable,
+        fixUnselectedBoxplot(
+          reorderData(
+            boxplotResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable,
+              entities
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet),
             entities
-          ),
-          vocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
-          entities
+          )
         ),
         showMissingOverlay,
         '#a0a0a0'

@@ -3,6 +3,7 @@ import {
   BarplotData,
   BoxplotData,
   FacetedData,
+  LinePlotData,
 } from '@veupathdb/components/lib/types/plots';
 import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
@@ -25,6 +26,7 @@ import {
   VariablesByInputName,
 } from './data-element-constraints';
 import { isEqual } from 'lodash';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -65,6 +67,61 @@ export function grayOutLastSeries<
         : series
     ),
   } as SeriesWithStatistics<T>;
+}
+
+/**
+ * replace "__UNSELECTED__" with "All other values" in the `name` prop
+ *
+ */
+
+type NamedSeries = {
+  series: {
+    name?: string;
+  }[];
+};
+
+export function fixUnselectedBoxplot<T extends NamedSeries>(
+  data: T | MaybeFacetedSeriesWithStatistics<T>
+): T | MaybeFacetedSeriesWithStatistics<T> {
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: data.facets.map((facet) => ({
+        ...facet,
+        data: fixUnselectedBoxplot(data) as T,
+      })),
+    };
+  } else {
+    return {
+      ...data,
+      series: data.series.map((s) => ({
+        ...s,
+        name: s.name === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : s.name,
+      })),
+    };
+  }
+}
+
+export function fixUnselectedLineplot<T extends NamedSeries>(
+  data: T | FacetedData<T>
+): T | FacetedData<T> {
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: data.facets.map((facet) => ({
+        ...facet,
+        data: fixUnselectedLineplot(data) as T,
+      })),
+    };
+  } else {
+    return {
+      ...data,
+      series: data.series.map((s) => ({
+        ...s,
+        name: s.name === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : s.name,
+      })),
+    };
+  }
 }
 
 /**

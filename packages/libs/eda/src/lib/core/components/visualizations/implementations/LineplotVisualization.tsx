@@ -85,6 +85,7 @@ import {
   vocabularyWithMissingData,
   hasIncompleteCases,
   assertValidInputVariables,
+  fixUnselectedLineplot,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -739,10 +740,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        options?.getOverlayVocabulary?.() ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
@@ -1955,7 +1958,7 @@ export function lineplotResponseToData(
           })),
         };
   return {
-    dataSetProcess,
+    dataSetProcess: fixUnselectedLineplot(dataSetProcess!),
     // calculated y axis limits
     xMin,
     xMinPos,

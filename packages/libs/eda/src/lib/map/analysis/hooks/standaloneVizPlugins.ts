@@ -17,7 +17,7 @@ import { scatterplotVisualization } from '../../../core/components/visualization
 import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
-import { OverlayConfig } from '../../../core';
+import { BinDefinitions, OverlayConfig } from '../../../core';
 import { boxplotRequest } from './plugins/boxplot';
 import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
@@ -42,6 +42,15 @@ export function useStandaloneVizPlugins({
         hideShowMissingnessToggle: true,
         layoutComponent: FloatingLayout,
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
+        getOverlayVocabulary: () => {
+          const overlayValues = selectedOverlayConfig?.overlayValues;
+          if (overlayValues == null) return undefined;
+          if (BinDefinitions.is(overlayValues)) {
+            return overlayValues.map((bin) => bin.binLabel);
+          } else {
+            return overlayValues;
+          }
+        },
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
       });

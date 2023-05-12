@@ -758,6 +758,15 @@ export const MapMarkersOverlayResponse = type({
 
 // OverlayConfig will be used for all next-gen visualizations eventually
 
+export type BinDefinitions = TypeOf<typeof BinDefinitions>;
+export const BinDefinitions = array(
+  type({
+    binStart: string,
+    binEnd: string,
+    binLabel: string,
+  })
+);
+
 export type OverlayConfig = TypeOf<typeof OverlayConfig>;
 export const OverlayConfig = intersection([
   type({
@@ -771,13 +780,7 @@ export const OverlayConfig = intersection([
     }),
     type({
       overlayType: literal('continuous'),
-      overlayValues: array(
-        type({
-          binStart: string,
-          binEnd: string,
-          binLabel: string,
-        })
-      ),
+      overlayValues: BinDefinitions,
     }),
   ]),
 ]);
