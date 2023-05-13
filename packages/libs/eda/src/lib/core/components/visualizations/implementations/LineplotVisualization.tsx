@@ -91,6 +91,7 @@ import { gray } from '../colors';
 import {
   AvailableUnitsAddon,
   ColorPaletteDefault,
+  SequentialGradientColorscale,
 } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -320,6 +321,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable,
     providedOverlayVariableDescriptor
   );
+
+  const colorPaletteOverride =
+    neutralPaletteProps.colorPalette ??
+    options?.getOverlayType?.() === 'continuous'
+      ? SequentialGradientColorscale
+      : undefined;
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
@@ -741,7 +748,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         xAxisVariable
       );
       const overlayVocabulary =
-        options?.getOverlayVocabulary?.() ??
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
         fixLabelsForNumberVariables(
           overlayVariable?.vocabulary,
           overlayVariable
@@ -765,7 +772,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        neutralPaletteProps.colorPalette
+        colorPaletteOverride
       );
     }, [
       outputEntity,

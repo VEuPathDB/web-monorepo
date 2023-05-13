@@ -74,7 +74,10 @@ import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLe
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
 // import { gray } from '../colors';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -454,7 +457,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         variable
       );
       const overlayVocabulary =
-        options?.getOverlayVocabulary?.() ??
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
         fixLabelsForNumberVariables(
           overlayVariable?.vocabulary,
           overlayVariable
@@ -680,6 +683,10 @@ function BarplotViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    colorPalette:
+      options?.getOverlayType?.() === 'continuous'
+        ? SequentialGradientColorscale
+        : ColorPaletteDefault,
     ...neutralPaletteProps,
   };
 

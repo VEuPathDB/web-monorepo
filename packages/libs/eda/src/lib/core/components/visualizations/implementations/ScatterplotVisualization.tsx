@@ -86,6 +86,7 @@ import {
   ColorPaletteDark,
   gradientSequentialColorscaleMap,
   gradientDivergingColorscaleMap,
+  SequentialGradientColorscale,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
@@ -354,7 +355,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable,
     providedOverlayVariableDescriptor
   );
-
+  const colorPaletteOverride =
+    neutralPaletteProps.colorPalette ??
+    options?.getOverlayType?.() === 'continuous'
+      ? SequentialGradientColorscale
+      : ColorPaletteDefault;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const {
@@ -780,7 +785,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ? response.scatterplot.config.variables.find(
             (v) => v.plotReference === 'overlay' && v.vocabulary != null
           )?.vocabulary
-        : options?.getOverlayVocabulary?.() ??
+        : // TO DO: remove the categorical condition when https://github.com/VEuPathDB/EdaNewIssues/issues/642 is sorted
+          (overlayVariable && options?.getOverlayType?.() === 'categorical'
+            ? options?.getOverlayVocabulary?.()
+            : undefined) ??
           fixLabelsForNumberVariables(
             overlayVariable?.vocabulary,
             overlayVariable
@@ -802,7 +810,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         // pass computation
         computation.descriptor.type,
         entities,
-        neutralPaletteProps.colorPalette
+        colorPaletteOverride
       );
       return {
         ...returnData,

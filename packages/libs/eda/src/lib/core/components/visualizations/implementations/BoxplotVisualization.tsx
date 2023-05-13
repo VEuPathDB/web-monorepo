@@ -527,7 +527,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         xAxisVariable
       );
       const overlayVocabulary =
-        options?.getOverlayVocabulary?.() ??
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
         fixLabelsForNumberVariables(
           overlayVariable?.vocabulary,
           overlayVariable

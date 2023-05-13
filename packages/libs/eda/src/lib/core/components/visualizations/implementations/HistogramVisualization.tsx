@@ -73,7 +73,10 @@ import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -523,7 +526,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         );
 
       const overlayVocabulary =
-        options?.getOverlayVocabulary?.() ??
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
         fixLabelsForNumberVariables(
           overlayVariable?.vocabulary,
           overlayVariable
@@ -883,6 +886,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    colorPalette:
+      options?.getOverlayType?.() === 'continuous'
+        ? SequentialGradientColorscale
+        : ColorPaletteDefault,
     ...neutralPaletteProps,
   };
 
