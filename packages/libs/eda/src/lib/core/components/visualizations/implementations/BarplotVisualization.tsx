@@ -53,6 +53,7 @@ import {
   nonUniqueWarning,
   hasIncompleteCases,
   assertValidInputVariables,
+  substituteUnselectedToken1,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -452,26 +453,30 @@ function BarplotViz(props: VisualizationProps<Options>) {
         variable?.vocabulary,
         variable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        options?.getOverlayVocabulary?.() ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
 
       return grayOutLastSeries(
-        reorderData(
-          barplotResponseToData(
-            response,
-            variable,
-            overlayVariable,
-            facetVariable
-          ),
-          vocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        substituteUnselectedToken1(
+          reorderData(
+            barplotResponseToData(
+              response,
+              variable,
+              overlayVariable,
+              facetVariable
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          )
         ),
         showMissingOverlay
       );

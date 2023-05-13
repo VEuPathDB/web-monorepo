@@ -85,7 +85,7 @@ import {
   vocabularyWithMissingData,
   hasIncompleteCases,
   assertValidInputVariables,
-  fixUnselectedLineplot,
+  substituteUnselectedToken2,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -1958,7 +1958,7 @@ export function lineplotResponseToData(
           })),
         };
   return {
-    dataSetProcess: fixUnselectedLineplot(dataSetProcess!),
+    dataSetProcess: substituteUnselectedToken2(dataSetProcess!),
     // calculated y axis limits
     xMin,
     xMinPos,

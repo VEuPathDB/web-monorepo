@@ -64,6 +64,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   assertValidInputVariables,
+  substituteUnselectedToken1,
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
@@ -521,24 +522,28 @@ function HistogramViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        options?.getOverlayVocabulary?.() ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          histogramResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable
-          ),
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        substituteUnselectedToken1(
+          reorderData(
+            histogramResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable
+            ),
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          )
         ),
         showMissingOverlay
       );

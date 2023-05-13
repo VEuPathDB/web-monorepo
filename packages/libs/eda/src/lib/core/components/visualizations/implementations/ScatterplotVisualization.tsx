@@ -78,6 +78,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
+  substituteUnselectedToken2,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -779,7 +780,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ? response.scatterplot.config.variables.find(
             (v) => v.plotReference === 'overlay' && v.vocabulary != null
           )?.vocabulary
-        : fixLabelsForNumberVariables(
+        : options?.getOverlayVocabulary?.() ??
+          fixLabelsForNumberVariables(
             overlayVariable?.vocabulary,
             overlayVariable
           );
@@ -2226,7 +2228,7 @@ export function scatterplotResponseToData(
       );
 
     return {
-      dataSetProcess: dataSetProcess,
+      dataSetProcess: substituteUnselectedToken2(dataSetProcess),
       xMin,
       xMinPos,
       xMax,

@@ -80,7 +80,8 @@ type NamedSeries = {
   }[];
 };
 
-export function fixUnselectedBoxplot<T extends NamedSeries>(
+// boxplot, barplot, histogram
+export function substituteUnselectedToken1<T extends NamedSeries>(
   data: T | MaybeFacetedSeriesWithStatistics<T>
 ): T | MaybeFacetedSeriesWithStatistics<T> {
   if (isFaceted(data)) {
@@ -88,7 +89,7 @@ export function fixUnselectedBoxplot<T extends NamedSeries>(
       ...data,
       facets: data.facets.map((facet) => ({
         ...facet,
-        data: fixUnselectedBoxplot(data) as T,
+        data: substituteUnselectedToken1(data) as T,
       })),
     };
   } else {
@@ -102,7 +103,8 @@ export function fixUnselectedBoxplot<T extends NamedSeries>(
   }
 }
 
-export function fixUnselectedLineplot<T extends NamedSeries>(
+// lineplot, scatterplot
+export function substituteUnselectedToken2<T extends NamedSeries>(
   data: T | FacetedData<T>
 ): T | FacetedData<T> {
   if (isFaceted(data)) {
@@ -110,7 +112,7 @@ export function fixUnselectedLineplot<T extends NamedSeries>(
       ...data,
       facets: data.facets.map((facet) => ({
         ...facet,
-        data: fixUnselectedLineplot(data) as T,
+        data: substituteUnselectedToken2(data) as T,
       })),
     };
   } else {
