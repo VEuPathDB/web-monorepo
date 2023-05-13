@@ -41,7 +41,11 @@ export function useStandaloneVizPlugins({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
         layoutComponent: FloatingLayout,
+        // why are we providing three functions to access the properties of
+        // one object? Because in the pre-SAM world, getOverlayVariable was already
+        // part of this interface.
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
+        getOverlayType: () => selectedOverlayConfig?.overlayType,
         getOverlayVocabulary: () => {
           const overlayValues = selectedOverlayConfig?.overlayValues;
           if (overlayValues == null) return undefined;
