@@ -1,0 +1,1635 @@
+{
+    "apps": [
+        {
+            "name": "standalone-map",
+            "displayName": "Standalone Map",
+            "description": "A collection of visualizations designed to support the unbiased exploration of relationships between spatiotemporal variables in a cartographic map",
+            "projects": [
+                "VectorBase"
+            ],
+            "visualizations": [
+                {
+                    "name": "histogram",
+                    "displayName": "Histogram",
+                    "description": "Visualize the distribution of a continuous variable",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be the same or a child entity as the variable the map markers are painted with, if any."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "barplot",
+                    "displayName": "Bar plot",
+                    "description": "Visualize the distribution of a categorical variable",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be of the same or a child entity as the variable the map markers are painted with, if any."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "scatterplot",
+                    "displayName": "Scatter plot",
+                    "description": "Visualize the relationship between two continuous variables",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be the same or a child entity as the variable the map markers are painted with, if any."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a child entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "boxplot",
+                    "displayName": "Box plot",
+                    "description": "Visualize summary values for a continuous variable",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be the same or a child entity as the variable the map markers are painted with, if any."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number and be of the same or a child entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "conttable",
+                    "displayName": "Contingency Table",
+                    "description": "Visualize the frequency distribution and associated statistics for two categorical variables",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be from the same branch of the dataset diagram as the Y-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be from the same branch of the dataset diagram as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "lineplot",
+                    "displayName": "Line plot",
+                    "description": "Visualize aggregate values of one variable across the sequential values of an ordered variable",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedShapes": [
+                                    "ordinal",
+                                    "continuous"
+                                ],
+                                "description": "Variable must be ordinal, a number, or a date and be the same or a child entity as the variable the map markers are painted with, if any."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "description": "Variable must be of the same or a child entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "map-markers",
+                    "displayName": "org.veupathdb.service.eda.ds.plugin.standalonemap.StandaloneMapMarkersPlugin",
+                    "description": "",
+                    "projects": [
+                        "VectorBase"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "latitudeVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number"
+                                ]
+                            },
+                            "longitudeVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "longitude"
+                                ]
+                            },
+                            "geoAggregateVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "string"
+                                ]
+                            },
+                            "overlayVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "overlayVariable"
+                        ],
+                        [
+                            "geoAggregateVariable",
+                            "latitudeVariable",
+                            "longitudeVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "pass",
+            "displayName": "Pass-Through",
+            "description": "A collection of visualizations designed to support the unbiased exploration of relationships between variables",
+            "projects": [
+                "ClinEpiDB",
+                "AllClinEpiDB"
+            ],
+            "visualizations": [
+                {
+                    "name": "histogram",
+                    "displayName": "Histogram",
+                    "description": "Visualize the distribution of a continuous variable",
+                    "projects": [
+                        "ClinEpiDB",
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "barplot",
+                    "displayName": "Bar plot",
+                    "description": "Visualize the distribution of a categorical variable",
+                    "projects": [
+                        "ClinEpiDB",
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "scatterplot",
+                    "displayName": "Scatter plot",
+                    "description": "Visualize the relationship between two continuous variables",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date."
+                            }
+                        },
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "boxplot",
+                    "displayName": "Box plot",
+                    "description": "Visualize summary values for a continuous variable",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be the same or a parent entity of the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be the same or a parent entity of the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "twobytwo",
+                    "displayName": "Mosaic plot, 2x2 table",
+                    "description": "Visualize the frequency distribution and associated statistics for two dichotomous variables",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "minNumValues": 2,
+                                "maxNumValues": 2,
+                                "description": "Variable must have exactly 2 unique values and be from the same branch of the dataset diagram as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the axes variables."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "minNumValues": 2,
+                                "maxNumValues": 2,
+                                "description": "Variable must have exactly 2 unique values and be from the same branch of the dataset diagram as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "conttable",
+                    "displayName": "Mosaic plot, RxC table",
+                    "description": "Visualize the frequency distribution and chi-squared test results for two categorical variables",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be from the same branch of the dataset diagram as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be from the same branch of the dataset diagram as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "lineplot",
+                    "displayName": "Line plot",
+                    "description": "Visualize aggregate values of one variable across the sequential values of an ordered variable",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedShapes": [
+                                    "ordinal",
+                                    "continuous"
+                                ],
+                                "description": "Variable must be ordinal, a number, or a date and be of the same or a parent entity of the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "densityplot",
+                    "displayName": "Density plot",
+                    "description": "Visualize the smoothed distribution (using a kernel density estimate) of a continuous variable",
+                    "projects": [
+                        "ClinEpiDB",
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity of the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "heatmap",
+                    "displayName": "Heatmap",
+                    "description": "Visualize the magnitude of a continuous numeric variable",
+                    "projects": [
+                        "ClinEpiDB",
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 1000,
+                                "description": "Variable must have 1000 or fewer unique values and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "zAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 1000,
+                                "description": "Variable must have 1000 or fewer unique values and be of the same or a parent entity as the Z-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "zAxisVariable"
+                        ],
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "map-markers",
+                    "displayName": "Geolocation map",
+                    "description": "Visualize available variables on a geographic map.",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "latitudeVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number"
+                                ]
+                            },
+                            "longitudeVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "longitude"
+                                ]
+                            },
+                            "geoAggregateVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "string"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "map-markers-overlay",
+                    "displayName": "Map markers",
+                    "description": "Visualize counts and proportions of both categorical and continuous data overlaid on map markers.",
+                    "projects": [],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values."
+                            },
+                            "geoAggregateVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "description": "Variable(s) must be of the same or a parent entity of the main variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "geoAggregateVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "alphadiv",
+            "displayName": "Alpha Diversity",
+            "description": "Visualize within-sample (alpha) microbial diversity based on field-standard metrics, such as the Shannon Diversity Index, Simpson's Diversity Index, and Pielou's Evenness.",
+            "projects": [
+                "MicrobiomeDB"
+            ],
+            "computeName": "alphadiv",
+            "visualizations": [
+                {
+                    "name": "boxplot",
+                    "displayName": "Box plot",
+                    "description": "Visualize alpha diversity summary values",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be the same or a parent entity of the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 7,
+                                "description": "Variable(s) must have 7 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be the same or a parent entity of the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "scatterplot",
+                    "displayName": "Scatter plot",
+                    "description": "Visualize the relationship between a continuous variable and alpha diversity",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            }
+                        },
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "abundance",
+            "displayName": "Ranked Abundance",
+            "description": "Plot the top n taxa, pathways, or genes from any study, ranked by either the median, maximum, variance, or third quartile of the relative abundance values.",
+            "projects": [
+                "MicrobiomeDB"
+            ],
+            "computeName": "rankedabundance",
+            "visualizations": [
+                {
+                    "name": "boxplot",
+                    "displayName": "Box plot",
+                    "description": "Visualize ranked abundance summary values",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 7,
+                                "description": "Variable(s) must have 7 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be the same or a parent entity of the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "scatterplot",
+                    "displayName": "Scatter plot",
+                    "description": "Visualize the relationship between a continuous variable and abundance",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 7,
+                                "description": "Variable(s) must have7 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "betadiv",
+            "displayName": "Beta Diversity",
+            "description": "Visualize between-sample (beta) comparisons in microbial diversity, using Bray-Curtis dissimilarity, Jensen-Shannon Divergence, or the Jaccard Index",
+            "projects": [
+                "MicrobiomeDB"
+            ],
+            "computeName": "betadiv",
+            "visualizations": [
+                {
+                    "name": "scatterplot",
+                    "displayName": "Scatter plot",
+                    "description": "Visualize a 2-dimensional projection of samples based on their beta diversitiy",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            }
+                        },
+                        {
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "distributions",
+            "displayName": "Distributions",
+            "description": "Plot simple distributions for any continuous variable, including metadata (e.g. age, height, etc.) or microbial assay results.",
+            "projects": [
+                "MicrobiomeDB"
+            ],
+            "visualizations": [
+                {
+                    "name": "histogram",
+                    "displayName": "Histogram",
+                    "description": "Visualize the distribution of a continuous variable",
+                    "projects": [
+                        "ClinEpiDB",
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "boxplot",
+                    "displayName": "Box plot",
+                    "description": "Visualize summary values for a continuous variable",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be the same or a parent entity of the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be the same or a parent entity of the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "countsandproportions",
+            "displayName": "Counts and Proportions",
+            "description": "Use standard bar plots and 'row by column' (RxC) or 2x2 contingency tables to examine and compare frequencies in the data.",
+            "projects": [
+                "MicrobiomeDB"
+            ],
+            "visualizations": [
+                {
+                    "name": "barplot",
+                    "displayName": "Bar plot",
+                    "description": "Visualize the distribution of a categorical variable",
+                    "projects": [
+                        "ClinEpiDB",
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "twobytwo",
+                    "displayName": "Mosaic plot, 2x2 table",
+                    "description": "Visualize the frequency distribution and associated statistics for two dichotomous variables",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "minNumValues": 2,
+                                "maxNumValues": 2,
+                                "description": "Variable must have exactly 2 unique values and be from the same branch of the dataset diagram as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the axes variables."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "minNumValues": 2,
+                                "maxNumValues": 2,
+                                "description": "Variable must have exactly 2 unique values and be from the same branch of the dataset diagram as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "conttable",
+                    "displayName": "Mosaic plot, RxC table",
+                    "description": "Visualize the frequency distribution and chi-squared test results for two categorical variables",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 10,
+                                "description": "Variable must have 10 or fewer unique values and be from the same branch of the dataset diagram as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity of the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be from the same branch of the dataset diagram as the X-axis variable."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "facetVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "xyrelationships",
+            "displayName": "X-Y Relationships",
+            "description": "Interested in creating your own X-Y visualizations of any study variables?  Look no further!  Click on one of the plot types on the right and get ready to be creative.",
+            "projects": [
+                "MicrobiomeDB"
+            ],
+            "visualizations": [
+                {
+                    "name": "scatterplot",
+                    "displayName": "Scatter plot",
+                    "description": "Visualize the relationship between two continuous variables",
+                    "projects": [
+                        "ClinEpiDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date."
+                            }
+                        },
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date and be of the same or a parent entity as the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number, or have 8 or fewer values, and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedTypes": [
+                                    "number",
+                                    "date",
+                                    "integer"
+                                ],
+                                "description": "Variable must be a number or date."
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable",
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                },
+                {
+                    "name": "lineplot",
+                    "displayName": "Line plot",
+                    "description": "Visualize aggregate values of one variable across the sequential values of an ordered variable",
+                    "projects": [
+                        "MicrobiomeDB"
+                    ],
+                    "maxPanels": 1,
+                    "dataElementConstraints": [
+                        {
+                            "xAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "allowedShapes": [
+                                    "ordinal",
+                                    "continuous"
+                                ],
+                                "description": "Variable must be ordinal, a number, or a date and be of the same or a parent entity of the Y-axis variable."
+                            },
+                            "facetVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 2,
+                                "maxNumValues": 10,
+                                "description": "Variable(s) must have 10 or fewer unique values and be of the same or a parent entity as the Overlay variable."
+                            },
+                            "overlayVariable": {
+                                "isRequired": false,
+                                "minNumVars": 1,
+                                "maxNumVars": 1,
+                                "maxNumValues": 8,
+                                "description": "Variable must have 8 or fewer unique values and be of the same or a parent entity as the X-axis variable."
+                            },
+                            "yAxisVariable": {
+                                "isRequired": true,
+                                "minNumVars": 1,
+                                "maxNumVars": 1
+                            }
+                        }
+                    ],
+                    "dataElementDependencyOrder": [
+                        [
+                            "yAxisVariable"
+                        ],
+                        [
+                            "xAxisVariable"
+                        ],
+                        [
+                            "overlayVariable",
+                            "facetVariable"
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "sample",
+            "displayName": "Sample",
+            "description": "Wrapper app for sample/test plugins",
+            "projects": [],
+            "visualizations": [
+                {
+                    "name": "record-count",
+                    "displayName": "Record Count",
+                    "description": "Counts how many rows in a single stream of records",
+                    "projects": [],
+                    "maxPanels": 1
+                },
+                {
+                    "name": "multi-stream",
+                    "displayName": "Multiple Stream Combiner",
+                    "description": "Merges streams for up to three vars into a single tabular output and dumps it",
+                    "projects": [],
+                    "maxPanels": 1
+                },
+                {
+                    "name": "collections-test",
+                    "displayName": "org.veupathdb.service.eda.ds.plugin.sample.TestCollectionPlugin",
+                    "description": "",
+                    "projects": [],
+                    "maxPanels": 1
+                },
+                {
+                    "name": "categorical-distribution",
+                    "displayName": "org.veupathdb.service.eda.ds.plugin.sample.CategoricalDistributionPlugin",
+                    "description": "",
+                    "projects": [],
+                    "maxPanels": 1
+                }
+            ]
+        },
+        {
+            "name": "samplewithcompute",
+            "displayName": "Sample With Compute",
+            "description": "Wrapper app for sample/test plugins that have associated computes",
+            "projects": [],
+            "computeName": "example",
+            "visualizations": [
+                {
+                    "name": "viz-with-compute",
+                    "displayName": "org.veupathdb.service.eda.ds.plugin.sample.ExampleComputeVizPlugin",
+                    "description": "",
+                    "projects": [],
+                    "maxPanels": 1
+                }
+            ]
+        }
+    ]
+}

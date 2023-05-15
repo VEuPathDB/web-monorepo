@@ -1,10 +1,9 @@
 {
   "extends": "@veupathdb/tsconfig/tsconfig.json",
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "compilerOptions": {
     "jsxImportSource": "@emotion/react",
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "types": ["cypress", "@testing-library/cypress"]
   }
 }

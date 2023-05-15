@@ -1,0 +1,64 @@
+{
+    "changePasswordUrl": "https://eupathdb.org/oauth/assets/eupathdb-changePassword.html?returnUrl={{returnUrl}}&suggestedUsername={{suggestedUsername}}",
+    "releaseDate": "01 January 1900 00:00",
+    "displayName": "ClinEpiDB",
+    "userDatasetStoreStatus": {
+        "isAvailable": true
+    },
+    "categoriesOntologyName": "Categories",
+    "description": "Welcome to the WDK 3.0 Web Service",
+    "startupTime": 1681749281442,
+    "showUnreleasedData": true,
+    "projectId": "ClinEpiDB",
+    "buildNumber": "28",
+    "userProfileProperties": [
+        {
+            "isRequired": false,
+            "displayName": "Username",
+            "name": "username",
+            "isPublic": true,
+            "isMultiLine": false
+        },
+        {
+            "isRequired": true,
+            "displayName": "First Name",
+            "name": "firstName",
+            "isPublic": true,
+            "isMultiLine": false
+        },
+        {
+            "isRequired": false,
+            "displayName": "Middle Name",
+            "name": "middleName",
+            "isPublic": true,
+            "isMultiLine": false
+        },
+        {
+            "isRequired": true,
+            "displayName": "Last Name",
+            "name": "lastName",
+            "isPublic": true,
+            "isMultiLine": false
+        },
+        {
+            "isRequired": true,
+            "displayName": "Organization",
+            "name": "organization",
+            "isPublic": true,
+            "isMultiLine": false
+        },
+        {
+            "isRequired": false,
+            "displayName": "Interests",
+            "name": "interests",
+            "isPublic": true,
+            "isMultiLine": true
+        }
+    ],
+    "authentication": {
+        "oauthUrl": "https://eupathdb.org/oauth",
+        "method": "OAUTH2",
+        "oauthClientId": "apiComponentSite",
+        "oauthClientUrl": "https://dfalke-b.clinepidb.org/ce.dfalke/service"
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "isGuest": false,
+    "id": 123456789,
+    "email": "skendrick366@gmail.com",
+    "properties": {
+        "firstName": "Samuel",
+        "lastName": "Kendrick",
+        "organization": "UPenn",
+        "middleName": "",
+        "interests": "",
+        "username": ""
+    }
+}
