@@ -4,6 +4,7 @@ import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
+  Filter,
   PromiseResult,
   useAnalysis,
   useAnalysisClient,
@@ -19,7 +20,13 @@ import {
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import { Download, FilledButton, Filter, H5, Table } from '@veupathdb/coreui';
+import {
+  Download,
+  FilledButton,
+  Filter as FilterIcon,
+  H5,
+  Table,
+} from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
@@ -80,7 +87,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { uniq, isEqual } from 'lodash';
+import { uniq, isEqual, union } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -93,6 +100,7 @@ import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -170,9 +178,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
   } = props;
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
-  const studyEntities = useStudyEntities();
+  const studyEntities = useStudyEntities(filters);
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
   const theme = useUITheme();
@@ -217,11 +226,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       (markerConfig) => markerConfig.type === activeMarkerConfigurationType
     ) || defautMarkerConfigurations[0];
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable } =
     findEntityAndVariable(activeMarkerConfiguration.selectedVariable) ?? {};
-
-  const filters = analysisState.analysis?.descriptor.subset.descriptor;
 
   function updateMarkerConfigurations(
     updatedConfiguration: MarkerConfiguration
@@ -557,7 +564,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
       {
         labelText: MapSideNavItemLabels.Filter,
-        icon: <Filter />,
+        icon: <FilterIcon />,
         renderSideNavigationPanel: () => {
           return (
             <div
@@ -813,7 +820,62 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const filtersIncludingViewport = useMemo(() => {
+  const filtersIncludingViewport = useMemo((): Filter[] => {
+    const isOverlayInFilter = filters?.some(
+      (filter) =>
+        filter.entityId ===
+          activeMarkerConfiguration.selectedVariable.entityId &&
+        filter.variableId ===
+          activeMarkerConfiguration.selectedVariable.variableId
+    );
+    const sortedFilters = isOverlayInFilter
+      ? filters?.map((filter) => {
+          if (
+            filter.entityId ===
+              activeMarkerConfiguration.selectedVariable.entityId &&
+            filter.variableId ===
+              activeMarkerConfiguration.selectedVariable.variableId
+          ) {
+            const legendValues = legendItems.map((item) => item.label);
+            switch (filter.type) {
+              case 'dateSet':
+                return {
+                  ...filter,
+                  dateSet: union(
+                    filter.dateSet.length > ColorPaletteDefault.length
+                      ? legendValues.slice(1)
+                      : legendValues,
+                    filter.dateSet
+                  ),
+                };
+              case 'numberSet':
+                return {
+                  ...filter,
+                  dateSet: union(
+                    (filter.numberSet.length > ColorPaletteDefault.length
+                      ? legendValues.slice(1)
+                      : legendValues
+                    ).map((v) => Number(v)),
+                    filter.numberSet
+                  ),
+                };
+              case 'stringSet':
+                return {
+                  ...filter,
+                  stringSet: union(
+                    filter.stringSet.length > ColorPaletteDefault.length
+                      ? legendValues.slice(1)
+                      : legendValues,
+                    filter.stringSet
+                  ),
+                };
+              default:
+                return filter;
+            }
+          }
+          return filter;
+        })
+      : filters;
     const viewportFilters = appState.boundsZoomLevel
       ? filtersFromBoundingBox(
           appState.boundsZoomLevel.bounds,
@@ -828,15 +890,19 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         )
       : [];
     return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      // order filters by legendItems
+      ...(sortedFilters ?? []),
       ...viewportFilters,
     ];
   }, [
+    filters,
     appState.boundsZoomLevel,
-    geoConfig.entity.id,
     geoConfig.latitudeVariableId,
+    geoConfig.entity.id,
     geoConfig.longitudeVariableId,
-    props.analysisState.analysis?.descriptor.subset.descriptor,
+    activeMarkerConfiguration.selectedVariable.entityId,
+    activeMarkerConfiguration.selectedVariable.variableId,
+    legendItems,
   ]);
 
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
