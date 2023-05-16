@@ -1,29 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import {
-  Core,
-  EdgeDefinition,
-  NodeDefinition,
-  Stylesheet
-} from 'cytoscape';
+import { Core, EdgeDefinition, NodeDefinition, Stylesheet } from 'cytoscape';
 import { noop, orderBy } from 'lodash';
 
-import {
-  NodeDisplayType,
-  ProteinType
-} from 'ortho-client/utils/clusterGraph';
+import { NodeDisplayType, ProteinType } from 'ortho-client/utils/clusterGraph';
 import { addCytoscapeClasses } from 'ortho-client/utils/cytoscapeClasses';
 import {
   makePieStyles,
   makeEdgeData,
   makeHAlignClass,
   makeVAlignClass,
-  nodeEntryToCytoscapeData
+  nodeEntryToCytoscapeData,
 } from 'ortho-client/utils/cytoscapeData';
 import {
   EcNumberEntry,
   GroupLayout,
-  PfamDomainEntry
+  PfamDomainEntry,
 } from 'ortho-client/utils/groupLayout';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
@@ -32,8 +24,8 @@ const MAX_PIE_SLICES = 16;
 export type CytoscapeConfig = ReturnType<typeof useCytoscapeConfig>[0];
 
 interface CyEffectCallback {
-  (cy: Core): (void | (() => void | undefined));
-};
+  (cy: Core): void | (() => void | undefined);
+}
 
 export function useCytoscapeConfig(
   layout: GroupLayout,
@@ -45,7 +37,10 @@ export function useCytoscapeConfig(
   const ecNumberNPieSlices = Math.min(orderedEcNumbers.length, MAX_PIE_SLICES);
 
   const orderedPfamDomains = useOrderedPfamDomains(layout);
-  const pfamDomainNPieSlices = Math.min(orderedPfamDomains.length, MAX_PIE_SLICES);
+  const pfamDomainNPieSlices = Math.min(
+    orderedPfamDomains.length,
+    MAX_PIE_SLICES
+  );
 
   const nodes = useNodes(
     layout,
@@ -60,10 +55,7 @@ export function useCytoscapeConfig(
 
   const edges = useEdges(layout);
 
-  const elements = useMemo(
-    () => [ ...nodes, ...edges ],
-    [ nodes, edges ]
-  );
+  const elements = useMemo(() => [...nodes, ...edges], [nodes, edges]);
 
   const stylesheet = useStylesheet(
     ecNumberNPieSlices,
@@ -75,10 +67,16 @@ export function useCytoscapeConfig(
   const initialCytoscapeConfig = {
     elements,
     stylesheet,
-    layout: { name: 'fcose', 
-       animate: false,       
-       idealEdgeLength: function( edge ){ if(edge.data.score) {return edge.data.score + 500;} return 600; }
-       },
+    layout: {
+      name: 'fcose',
+      animate: false,
+      idealEdgeLength: function (edge) {
+        if (edge.data.score) {
+          return edge.data.score + 500;
+        }
+        return 600;
+      },
+    },
     panningEnabled: true,
     userPanningEnabled: true,
     zoom: 1,
@@ -86,7 +84,7 @@ export function useCytoscapeConfig(
     userZoomingEnabled: true,
     boxSelectionEnabled: false,
     autoungrabify: false,
-    autounselectify: true
+    autounselectify: true,
   };
 
   return useState(initialCytoscapeConfig);
@@ -97,34 +95,39 @@ export function useCyEffect(
   effect: CyEffectCallback,
   deps?: React.DependencyList
 ) {
-  useEffect(() => {
-    if (cyRef.current == null) {
-      return noop;
-    }
+  useEffect(
+    () => {
+      if (cyRef.current == null) {
+        return noop;
+      }
 
-    return effect(cyRef.current);
-  }, deps == null ? [ cyRef.current ] : [ cyRef.current, ...deps ]);
+      return effect(cyRef.current);
+    },
+    deps == null ? [cyRef.current] : [cyRef.current, ...deps]
+  );
 }
 
 function useOrderedEcNumbers(layout: GroupLayout) {
   return useMemo(
-    () => orderBy(
-      Object.values(layout.group.ecNumbers),
-      [ ecNumber => ecNumber.count, ecNumber => ecNumber.index ],
-      [ 'desc', 'asc' ]
-    ),
-    [ layout ]
+    () =>
+      orderBy(
+        Object.values(layout.group.ecNumbers),
+        [(ecNumber) => ecNumber.count, (ecNumber) => ecNumber.index],
+        ['desc', 'asc']
+      ),
+    [layout]
   );
 }
 
 function useOrderedPfamDomains(layout: GroupLayout) {
   return useMemo(
-    () => orderBy(
-      Object.values(layout.group.pfamDomains),
-      [ pfamDomain => pfamDomain.count, pfamDomain => pfamDomain.index ],
-      [ 'desc', 'asc' ]
-    ),
-    [ layout ]
+    () =>
+      orderBy(
+        Object.values(layout.group.pfamDomains),
+        [(pfamDomain) => pfamDomain.count, (pfamDomain) => pfamDomain.index],
+        ['desc', 'asc']
+      ),
+    [layout]
   );
 }
 
@@ -140,33 +143,25 @@ function useNodes(
 ): NodeDefinition[] {
   return useMemo(
     () =>
-      Object.values(layout.nodes).map(
-        nodeEntry =>
-          ({
-            group: 'nodes',
-            classes: addCytoscapeClasses(
-              undefined,
-              [
-                selectedNodeDisplayType,
-                makeHAlignClass(Number(nodeEntry.x), layout.size),
-                makeVAlignClass(Number(nodeEntry.y), layout.size)
-              ]
-            ),
-            data: (
-              nodeEntryToCytoscapeData(
-                nodeEntry,
-                layout,
-                corePeripheralMap,
-                taxonUiMetadata,
-                orderedEcNumbers,
-                ecNumberNPieSlices,
-                orderedPfamDomains,
-                pfamDomainNPieSlices
-              )
-            ),
-          })
-      ),
-      [ layout ]
+      Object.values(layout.nodes).map((nodeEntry) => ({
+        group: 'nodes',
+        classes: addCytoscapeClasses(undefined, [
+          selectedNodeDisplayType,
+          makeHAlignClass(Number(nodeEntry.x), layout.size),
+          makeVAlignClass(Number(nodeEntry.y), layout.size),
+        ]),
+        data: nodeEntryToCytoscapeData(
+          nodeEntry,
+          layout,
+          corePeripheralMap,
+          taxonUiMetadata,
+          orderedEcNumbers,
+          ecNumberNPieSlices,
+          orderedPfamDomains,
+          pfamDomainNPieSlices
+        ),
+      })),
+    [layout]
   );
 }
 
@@ -174,15 +169,16 @@ function useEdges(layout: GroupLayout): EdgeDefinition[] {
   return useMemo(
     () =>
       Object.entries(layout.edges)
-        .map(([ edgeId, edgeEntry ]) =>
-          ({
-            group: 'edges',
-            data: makeEdgeData(edgeId, edgeEntry),
-            selectable: false
-          }) as const
+        .map(
+          ([edgeId, edgeEntry]) =>
+            ({
+              group: 'edges',
+              data: makeEdgeData(edgeId, edgeEntry),
+              selectable: false,
+            } as const)
         )
         .sort((e1, e2) => e2.data.score - e1.data.score),
-    [ layout.edges ]
+    [layout.edges]
   );
 }
 
@@ -197,51 +193,51 @@ function useStylesheet(
       {
         selector: 'node',
         css: {
-          'shape': 'ellipse',
-          'width': 15,
-          'height': 15,
+          shape: 'ellipse',
+          width: 15,
+          height: 15,
           'border-color': 'black',
           'border-width': 1,
           'z-index-compare': 'manual',
-          'z-index': 2
-        }
+          'z-index': 2,
+        },
       },
       {
         selector: 'node.taxa',
         css: {
-          'width': 12,
-          'height': 12,
+          width: 12,
+          height: 12,
           'background-color': 'data(speciesColor)',
           'border-color': 'data(groupColor)',
-          'border-width': 4
-        }
+          'border-width': 4,
+        },
       },
       {
         selector: 'node.ec-numbers',
         css: {
           'background-color': 'white',
-          ...makePieStyles(ecNumberNPieSlices, 'ec')
-        }
+          ...makePieStyles(ecNumberNPieSlices, 'ec'),
+        },
       },
       {
         selector: 'node.pfam-domains',
         css: {
           'background-color': 'white',
-          ...makePieStyles(pfamDomainNPieSlices, 'pfam')
-        }
+          ...makePieStyles(pfamDomainNPieSlices, 'pfam'),
+        },
       },
       {
         selector: 'node.core-peripheral',
         css: {
-          'background-color': 'data(corePeripheralColor)'
-        }
+          'background-color': 'data(corePeripheralColor)',
+        },
       },
       {
         selector: 'node.highlighted',
         css: {
-          'label': 'data(id)',
-          'width': 23,
-          'height': 23,
+          label: 'data(id)',
+          width: 23,
+          height: 23,
           'text-outline-color': 'white',
           'text-outline-width': 2,
           'text-halign': 'right',
@@ -250,84 +246,84 @@ function useStylesheet(
           'text-margin-y': -6,
           'z-index': 4,
           'font-size': 15,
-          'font-weight': 'bold'
-        }
+          'font-weight': 'bold',
+        },
       },
       {
         selector: 'node.taxa.highlighted',
         css: {
-          'width': 20,
-          'height': 20
-        }
+          width: 20,
+          height: 20,
+        },
       },
       {
         selector: 'node.highlighted.left',
         css: {
-          'text-halign': 'left'
-        }
+          'text-halign': 'left',
+        },
       },
       {
         selector: 'node.highlighted.right',
         css: {
-          'text-halign': 'right'
-        }
+          'text-halign': 'right',
+        },
       },
       {
         selector: 'node.highlighted.top',
         css: {
           'text-valign': 'top',
-          'text-margin-y': 5
-        }
+          'text-margin-y': 5,
+        },
       },
       {
         selector: 'node.highlighted.bottom',
         css: {
           'text-valign': 'bottom',
-          'text-margin-y': -8
-        }
+          'text-margin-y': -8,
+        },
       },
       {
         selector: 'edge',
         css: {
           'curve-style': 'straight',
           'line-color': `mapData(score, ${maxEvalueExp}, ${minEvalueExp}, #e9e9e9, black)`,
-          'width': 1,
+          width: 1,
           'z-index-compare': 'manual',
-          'z-index': 1
-        }
+          'z-index': 1,
+        },
       },
       {
         selector: 'edge.highlighted',
         css: {
-          'width': 3,
-          'label': 'data(label)',
+          width: 3,
+          label: 'data(label)',
           'text-outline-color': 'white',
           'text-outline-width': 2,
           'z-index': 3,
           'font-size': 15,
-          'font-weight': 'bold'
-        }
+          'font-weight': 'bold',
+        },
       },
       {
         selector: 'edge.type-highlighted',
         css: {
-          'line-color': 'red'
-        }
+          'line-color': 'red',
+        },
       },
       {
         selector: 'edge.filtered-out',
         css: {
-          'display': 'none'
-        }
+          display: 'none',
+        },
       },
       {
         selector: 'edge.filtered-out.highlighted',
         css: {
           // FIXME: This is necessary to bypass an incorrect type definition
           // in @types/cytoscape; we should open a PR to DefinitelyTyped
-          'display': 'element' as any
-        }
-      }
+          display: 'element' as any,
+        },
+      },
     ],
     []
   );

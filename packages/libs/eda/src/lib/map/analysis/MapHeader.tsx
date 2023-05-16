@@ -13,6 +13,7 @@ import {
 } from '..';
 import { StudyEntity } from '../../core';
 import { makeEntityDisplayName } from '../../core/utils/study-metadata';
+import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 
 export type MapNavigationProps = {
   analysisName?: string;
@@ -46,12 +47,24 @@ export function MapHeader({
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
   const { format } = new Intl.NumberFormat();
+  const { siteName } = siteInformation;
+  const theme = useUITheme();
 
   return (
     <header
       style={{
-        background: mapNavigationBackgroundColor,
-        borderBottom: mapNavigationBorder,
+        /**
+         * If VectorBase => use light sage background color
+         * If theme is present => use lightest shade of primary theme color
+         * Default: mapNavigationBackgroundColor
+         */
+        background:
+          siteName === 'VectorBase'
+            ? '#F5FAF1'
+            : theme?.palette.primary.hue[100] ?? mapNavigationBackgroundColor,
+        // Mimics shadow used in Google maps
+        boxShadow:
+          '0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
       }}
       className={`${mapHeader()}`}
     >
@@ -105,7 +118,7 @@ export function MapHeader({
                   totalEntityInSubsetCount > 1
                 )} in the subset.`}
               >
-                <td>Subset</td>
+                <td>Filtered</td>
                 <td>{format(totalEntityInSubsetCount)}</td>
               </tr>
               <tr

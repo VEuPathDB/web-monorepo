@@ -24,6 +24,7 @@ export function MapLegend(props: Props) {
           boxShadow: 'none',
           padding: 0,
           width: 'auto',
+          maxWidth: 400,
         }}
         showCheckbox={showCheckbox}
       />

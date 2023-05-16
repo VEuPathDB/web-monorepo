@@ -18,6 +18,13 @@ import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
 import { variableDisplayWithUnit } from './variable-display';
+import { InputSpec } from '../components/visualizations/InputVariables';
+import {
+  DataElementConstraintRecord,
+  disabledVariablesForInput,
+  VariablesByInputName,
+} from './data-element-constraints';
+import { isEqual } from 'lodash';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -186,6 +193,43 @@ export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
   const defined = vars.filter((item) => item != null);
   const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
   return defined.length === unique.length;
+}
+
+/**
+ * If any inputs are invalid, throw an error indication as much.
+ *
+ * Validation is determined by solely considering constraints, ignoring
+ * entity relationships between inputs. This should be fixed, eventually
+ */
+export function assertValidInputVariables(
+  inputs: InputSpec[],
+  selectedVariables: VariablesByInputName,
+  entities: StudyEntity[],
+  constraints: DataElementConstraintRecord[] | undefined
+) {
+  const invalidInputs = inputs.filter((input) => {
+    const inputSelection = selectedVariables[input.name];
+    const disabledVariables = disabledVariablesForInput(
+      input.name,
+      entities,
+      constraints,
+      undefined,
+      selectedVariables
+    );
+    return (
+      inputSelection &&
+      disabledVariables.some((disabledVariable) =>
+        isEqual(disabledVariable, inputSelection)
+      )
+    );
+  });
+  if (invalidInputs.length) {
+    throw new Error(
+      `The following variables are invalid and must be changed: ${invalidInputs
+        .map((input) => input.label)
+        .join(', ')}`
+    );
+  }
 }
 
 /**

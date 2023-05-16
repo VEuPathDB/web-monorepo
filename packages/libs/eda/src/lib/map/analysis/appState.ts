@@ -8,6 +8,27 @@ import { VariableDescriptor } from '../../core/types/variable';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
+const MarkerType = t.keyof({
+  barplot: null,
+  pie: null,
+});
+
+const MarkerConfiguration = t.intersection([
+  t.type({
+    type: MarkerType,
+    selectedVariable: VariableDescriptor,
+  }),
+  t.union([
+    t.type({
+      type: t.literal('barplot'),
+      selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
+    }),
+    t.type({
+      type: t.literal('pie'),
+    }),
+  ]),
+]);
+
 export const AppState = t.intersection([
   t.type({
     viewport: t.type({
@@ -20,7 +41,8 @@ export const AppState = t.intersection([
     }),
   }),
   t.partial({
-    selectedOverlayVariable: VariableDescriptor,
+    activeMarkerConfigurationType: MarkerType,
+    markerConfigurations: t.array(MarkerConfiguration),
     activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
@@ -40,12 +62,14 @@ export const AppState = t.intersection([
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type AppState = t.TypeOf<typeof AppState>;
 
-const defaultAppState: AppState = {
+// export default viewport for custom zoom control
+export const defaultAppState: AppState = {
   viewport: {
     center: [0, 0],
-    zoom: 4,
+    zoom: 1,
   },
   mouseMode: 'default',
+  activeMarkerConfigurationType: 'pie',
 };
 
 export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
@@ -89,12 +113,15 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
 
   return {
     appState,
-    setViewport: useSetter('viewport'),
-    setMouseMode: useSetter('mouseMode'),
-    setSelectedOverlayVariable: useSetter('selectedOverlayVariable'),
+    setActiveMarkerConfigurationType: useSetter(
+      'activeMarkerConfigurationType'
+    ),
+    setMarkerConfigurations: useSetter('markerConfigurations'),
     setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
-    setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
+    setMouseMode: useSetter('mouseMode'),
+    setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
+    setViewport: useSetter('viewport'),
   };
 }

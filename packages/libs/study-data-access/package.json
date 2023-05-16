@@ -8,7 +8,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "build-npm-modules": "veupathdb-react-scripts prepare src lib",
-    "build": "veupathdb-react-scripts prepare src lib"
+    "build": "veupathdb-react-scripts prepare src lib",
+    "clean": "rm -rf lib"
   },
   "typings": "./lib/index.d.ts",
   "files": [
