@@ -186,8 +186,7 @@ export function excludedVariables(
     .flatMap((e) =>
       e.variables
         .filter((variable) => {
-          // I'd think this would be some(), not every()
-          return constraints.some(
+          return constraints.every(
             (constraint) =>
               !variableConstraintPredicate(constraint[inputName], variable)
           );

@@ -503,26 +503,47 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             app.visualizations.find((viz) => viz.name === 'map-markers')
               ?.dataElementConstraints ?? [];
 
-          const existingConstraint = markerVariableConstraints.find(
-            (constraint) => 'overlayVariable' in constraint
-          );
+          const overlayConstraint = {
+            isRequired: true,
+            minNumVars: 1,
+            maxNumVars: 1,
+            allowMultiValued: false,
+          };
 
-          if (existingConstraint) {
-            existingConstraint.overlayVariable.allowMultiValued = false;
-
-            if (!('overlay' in existingConstraint)) {
-              existingConstraint.overlay = existingConstraint.overlayVariable;
-            }
-          } else {
+          if (markerVariableConstraints.length === 0) {
             markerVariableConstraints.push({
-              overlay: {
-                isRequired: true,
-                minNumVars: 1,
-                maxNumVars: 1,
-                allowMultiValued: false,
-              },
+              overlay: overlayConstraint,
+            });
+          } else {
+            markerVariableConstraints.forEach((constraint) => {
+              if ('overlay' in constraint) {
+                constraint.overlay.allowMultiValued = false;
+              } else {
+                constraint['overlay'] = overlayConstraint;
+              }
             });
           }
+
+          // const existingConstraint = markerVariableConstraints.find(
+          //   (constraint) => 'overlayVariable' in constraint
+          // );
+
+          // if (existingConstraint) {
+          //   existingConstraint.overlayVariable.allowMultiValued = false;
+
+          //   if (!('overlay' in existingConstraint)) {
+          //     existingConstraint.overlay = existingConstraint.overlayVariable;
+          //   }
+          // } else {
+          // markerVariableConstraints.push({
+          //   overlay: {
+          //     isRequired: true,
+          //     minNumVars: 1,
+          //     maxNumVars: 1,
+          //     allowMultiValued: false,
+          //   },
+          // });
+          // }
 
           console.log({ markerVariableConstraints });
 
