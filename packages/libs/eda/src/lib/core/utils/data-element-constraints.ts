@@ -179,12 +179,15 @@ export function excludedVariables(
   constraints: DataElementConstraintRecord[] | undefined
 ): VariableDescriptor[] {
   if (constraints == null) return [];
+  console.log('in excludedVariables');
+  console.log({ constraints, inputName });
 
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
       e.variables
         .filter((variable) => {
-          return constraints.every(
+          // I'd think this would be some(), not every()
+          return constraints.some(
             (constraint) =>
               !variableConstraintPredicate(constraint[inputName], variable)
           );
@@ -201,6 +204,7 @@ function variableConstraintPredicate(
   constraint: DataElementConstraint | undefined,
   variable: VariableTreeNode
 ) {
+  console.log({ constraint, variable });
   if (constraint == null) return true;
   return (
     variable.type === 'category' ||
