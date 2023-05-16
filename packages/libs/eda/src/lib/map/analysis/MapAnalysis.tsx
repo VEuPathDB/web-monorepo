@@ -498,6 +498,31 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
         renderSideNavigationPanel: (app) => {
+          console.log('new');
+          const markerVariableConstraints = app.visualizations.find(
+            (viz) => viz.name === 'map-markers'
+          )?.dataElementConstraints;
+
+          if (markerVariableConstraints) {
+            const existingConstraint = markerVariableConstraints.find(
+              (constraint) => 'overlayVariable' in constraint
+            );
+
+            if (existingConstraint) {
+              existingConstraint.overlayVariable.allowMultiValued = false;
+            } else {
+              markerVariableConstraints.push({
+                overlayVariable: {
+                  isRequired: true,
+                  minNumVars: 1,
+                  maxNumVars: 1,
+                  allowMultiValued: false,
+                },
+              });
+            }
+          }
+          console.log({ markerVariableConstraints });
+
           return (
             <MarkerConfigurationSelector
               activeMarkerConfigurationType={activeMarkerConfigurationType}
@@ -521,6 +546,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                           []
                         }
                         toggleStarredVariable={toggleStarredVariable}
+                        constraints={
+                          app.visualizations.find(
+                            (viz) => viz.name === 'map-markers'
+                          )?.dataElementConstraints
+                        }
                       />
                     ) : (
                       <></>
