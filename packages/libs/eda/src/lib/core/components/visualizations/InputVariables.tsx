@@ -159,7 +159,6 @@ export function InputVariables(props: Props) {
     customSections,
     showClearSelectionButton,
   } = props;
-
   const classes = useInputStyles();
   const handleChange = (
     inputName: string,

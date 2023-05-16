@@ -498,11 +498,14 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
         renderSideNavigationPanel: (app) => {
-          console.log('new 3');
           const markerVariableConstraints =
             app.visualizations.find((viz) => viz.name === 'map-markers')
               ?.dataElementConstraints ?? [];
 
+          // Temp hack hardcoding a constraint that disallows multiValued
+          // variables for the markers overlay. Check
+          // https://github.com/VEuPathDB/EdaNewIssues/issues/636
+          // for progress on the real solution
           const overlayConstraint = {
             isRequired: true,
             minNumVars: 1,
@@ -523,29 +526,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               }
             });
           }
-
-          // const existingConstraint = markerVariableConstraints.find(
-          //   (constraint) => 'overlayVariable' in constraint
-          // );
-
-          // if (existingConstraint) {
-          //   existingConstraint.overlayVariable.allowMultiValued = false;
-
-          //   if (!('overlay' in existingConstraint)) {
-          //     existingConstraint.overlay = existingConstraint.overlayVariable;
-          //   }
-          // } else {
-          // markerVariableConstraints.push({
-          //   overlay: {
-          //     isRequired: true,
-          //     minNumVars: 1,
-          //     maxNumVars: 1,
-          //     allowMultiValued: false,
-          //   },
-          // });
-          // }
-
-          console.log({ markerVariableConstraints });
 
           return (
             <MarkerConfigurationSelector
