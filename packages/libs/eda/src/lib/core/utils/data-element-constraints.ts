@@ -179,8 +179,6 @@ export function excludedVariables(
   constraints: DataElementConstraintRecord[] | undefined
 ): VariableDescriptor[] {
   if (constraints == null) return [];
-  console.log('in excludedVariables');
-  console.log({ constraints, inputName });
 
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
@@ -203,7 +201,6 @@ function variableConstraintPredicate(
   constraint: DataElementConstraint | undefined,
   variable: VariableTreeNode
 ) {
-  console.log({ constraint, variable });
   if (constraint == null) return true;
   return (
     variable.type === 'category' ||

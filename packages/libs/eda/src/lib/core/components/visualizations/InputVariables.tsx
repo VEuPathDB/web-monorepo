@@ -160,12 +160,6 @@ export function InputVariables(props: Props) {
     showClearSelectionButton,
   } = props;
 
-  console.log({
-    inputs,
-    constraints,
-    variablesForConstraints,
-  });
-
   const classes = useInputStyles();
   const handleChange = (
     inputName: string,
