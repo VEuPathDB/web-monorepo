@@ -132,6 +132,8 @@ import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
+import { filterMinMax } from '../../../utils/filter-axis-range';
+
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -782,13 +784,21 @@ function LineplotViz(props: VisualizationProps<Options>) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  const independentAxisFilterRange = useMemo(() => {
+    return filterMinMax(filters, vizConfig.xAxisVariable);
+  }, [filters, vizConfig.xAxisVariable]);
+  const dependentAxisFilterRange = useMemo(() => {
+    return filterMinMax(filters, vizConfig.yAxisVariable);
+  }, [filters, vizConfig.yAxisVariable]);
+
   const defaultIndependentAxisRange = useDefaultAxisRange(
     xAxisVariable,
     data.value?.xMin,
     data.value?.xMinPos,
     data.value?.xMax,
     vizConfig.independentAxisLogScale,
-    vizConfig.independentAxisValueSpec
+    vizConfig.independentAxisValueSpec,
+    independentAxisFilterRange
   );
 
   const xMinMaxDataRange = useMemo(
@@ -824,7 +834,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
     yAxisVariable,
     vizConfig.dependentAxisLogScale,
     vizConfig.valueSpecConfig,
-    vizConfig.dependentAxisValueSpec
+    vizConfig.dependentAxisValueSpec,
+    dependentAxisFilterRange
   );
 
   // custom legend list
@@ -2598,7 +2609,11 @@ function useDefaultDependentAxisRangeProportion(
   yAxisVariable?: Variable,
   dependentAxisLogScale?: boolean,
   valueSpecConfig?: string,
-  dependentAxisValueSpec?: string
+  dependentAxisValueSpec?: string,
+  dependentAxisFilterRange?: {
+    min: string | number | undefined;
+    max: string | number | undefined;
+  }
 ) {
   let defaultDependentAxisRange = useDefaultAxisRange(
     yAxisVariable,
@@ -2606,7 +2621,8 @@ function useDefaultDependentAxisRangeProportion(
     data.value?.yMinPos,
     data.value?.yMax,
     dependentAxisLogScale,
-    dependentAxisValueSpec
+    dependentAxisValueSpec,
+    dependentAxisFilterRange
   );
 
   // include min origin: 0 (linear) or minPos (logscale)

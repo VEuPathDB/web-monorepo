@@ -102,6 +102,8 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 
+import { filterMinMax } from '../../../utils/filter-axis-range';
+
 type BoxplotData = { series: BoxplotSeries };
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 type BoxplotComputedVariableMetadata = {
@@ -582,6 +584,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     )
   );
 
+  const dependentAxisFilterRange = useMemo(() => {
+    return filterMinMax(filters, vizConfig.yAxisVariable);
+  }, [filters, vizConfig.yAxisVariable]);
+
   const defaultDependentAxisRange = useDefaultAxisRange(
     yAxisVariable ??
       data?.value?.computedVariableMetadata?.find(
@@ -591,7 +597,8 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     undefined, // no minPos needed if no logscale option offered
     dependentAxisMinMax?.max,
     false, // never logscale
-    vizConfig.dependentAxisValueSpec
+    vizConfig.dependentAxisValueSpec,
+    dependentAxisFilterRange
   ) as NumberRange;
 
   // custom legend items for checkbox

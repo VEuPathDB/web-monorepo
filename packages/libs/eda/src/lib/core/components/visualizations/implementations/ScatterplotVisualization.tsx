@@ -138,6 +138,8 @@ import SliderWidget, {
   SliderWidgetProps,
 } from '@veupathdb/components/lib/components/widgets/Slider';
 
+import { filterMinMax } from '../../../utils/filter-axis-range';
+
 const MAXALLOWEDDATAPOINTS = 100000;
 const SMOOTHEDMEANTEXT = 'Smoothed mean';
 const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
@@ -568,15 +570,23 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
       vizConfig.valueSpecConfig === 'Best fit line with raw');
 
+  const overlayFilterRange = useMemo(() => {
+    return filterMinMax(filters, vizConfig.overlayVariable);
+  }, [filters, vizConfig.overlayVariable]);
+
   // If numeric overlay, record the min and max and make a value to color map function
   // assign 0 to avoid undefined
-  const overlayMin: number | undefined =
+  const overlayMin: number =
     overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
-      ? overlayVariable?.distributionDefaults?.rangeMin
+      ? overlayFilterRange != null && overlayFilterRange.min != null
+        ? (overlayFilterRange.min as number)
+        : overlayVariable?.distributionDefaults?.rangeMin
       : 0;
-  const overlayMax: number | undefined =
+  const overlayMax: number =
     overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
-      ? overlayVariable?.distributionDefaults?.rangeMax
+      ? overlayFilterRange != null && overlayFilterRange.max != null
+        ? (overlayFilterRange.max as number)
+        : overlayVariable?.distributionDefaults?.rangeMax
       : 0;
 
   // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
@@ -834,6 +844,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
+  const independentAxisFilterRange = useMemo(() => {
+    return filterMinMax(filters, vizConfig.xAxisVariable);
+  }, [filters, vizConfig.xAxisVariable]);
+  const dependentAxisFilterRange = useMemo(() => {
+    return filterMinMax(filters, vizConfig.yAxisVariable);
+  }, [filters, vizConfig.yAxisVariable]);
+
   // use hook
   const defaultIndependentAxisRange = useDefaultAxisRange(
     xAxisVariable ??
@@ -844,7 +861,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     data.value?.xMinPos,
     data.value?.xMax,
     vizConfig.independentAxisLogScale,
-    vizConfig.independentAxisValueSpec
+    vizConfig.independentAxisValueSpec,
+    independentAxisFilterRange
   );
 
   // use custom hook
@@ -857,7 +875,8 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     data.value?.yMinPos,
     data.value?.yMax,
     vizConfig.dependentAxisLogScale,
-    vizConfig.dependentAxisValueSpec
+    vizConfig.dependentAxisValueSpec,
+    dependentAxisFilterRange
   );
 
   // yMinMaxDataRange will be used for truncation to judge whether data has negative value
