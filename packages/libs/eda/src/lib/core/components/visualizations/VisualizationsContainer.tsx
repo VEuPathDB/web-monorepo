@@ -227,7 +227,10 @@ function ConfiguredVisualizations(props: Props) {
                               }`,
                               visualizationId: uuid(),
                             };
-                            analysisState.addVisualization(computation, newViz);
+                            analysisState.addVisualization(
+                              computation.computationId,
+                              newViz
+                            );
                           }}
                         >
                           <i className="fa fa-clone"></i>
@@ -364,14 +367,17 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                     disabled={disabled}
                     onClick={async () => {
                       const visualizationId = uuid();
-                      analysisState.addVisualization(computation, {
-                        visualizationId,
-                        displayName: 'Unnamed visualization',
-                        descriptor: {
-                          type: vizOverview.name!,
-                          configuration: vizPlugin?.createDefaultConfig(),
-                        },
-                      });
+                      analysisState.addVisualization(
+                        computation.computationId,
+                        {
+                          visualizationId,
+                          displayName: 'Unnamed visualization',
+                          descriptor: {
+                            type: vizOverview.name!,
+                            configuration: vizPlugin?.createDefaultConfig(),
+                          },
+                        }
+                      );
                       onVisualizationCreated(visualizationId, computationId);
                     }}
                   >
@@ -598,7 +604,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   onClick={() => {
                     if (viz == null) return;
                     const vizCopyId = uuid();
-                    analysisState.addVisualization(computation, {
+                    analysisState.addVisualization(computation.computationId, {
                       ...viz,
                       visualizationId: vizCopyId,
                       displayName:

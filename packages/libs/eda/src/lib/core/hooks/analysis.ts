@@ -71,7 +71,7 @@ export type AnalysisState = {
   updateVisualization: (visualization: Visualization) => void;
   /** add a new visualization to a computation, removing it if necessary from a previous computation */
   addVisualization: (
-    computation: Computation,
+    computationId: string,
     visualization: Visualization
   ) => void;
   /** TO DO: copyVisualization? */
@@ -309,13 +309,13 @@ export function useAnalysis(
 
   // add or move a visualization (silently removes it before adding) to a computation
   const addVisualization = useCallback(
-    (computation: Computation, visualization: Visualization) => {
+    (computationId: string, visualization: Visualization) => {
       deleteVisualization(visualization.visualizationId);
       setComputations((computations) =>
         computations.map((comp) => ({
           ...comp,
           visualizations:
-            comp.computationId === computation.computationId
+            comp.computationId === computationId
               ? [...comp.visualizations, visualization]
               : comp.visualizations,
         }))
