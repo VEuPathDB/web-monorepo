@@ -307,17 +307,19 @@ export function useAnalysis(
     [setComputations]
   );
 
-  // add or move a visualization (silently removes it before adding) to a computation
+  // add or move a visualization (silently removes it from any (or none) computation before adding) to a computation
   const addVisualization = useCallback(
     (computationId: string, visualization: Visualization) => {
-      deleteVisualization(visualization.visualizationId);
       setComputations((computations) =>
         computations.map((comp) => ({
           ...comp,
-          visualizations:
-            comp.computationId === computationId
-              ? [...comp.visualizations, visualization]
-              : comp.visualizations,
+          visualizations: [
+            ...comp.visualizations.filter(
+              ({ visualizationId }) =>
+                visualizationId !== visualization.visualizationId
+            ),
+            ...(comp.computationId === computationId ? [visualization] : []),
+          ],
         }))
       );
     },
