@@ -1374,7 +1374,7 @@ function getRequestParams(
   valueType: 'number' | 'date',
   config: DataRequestConfig,
   variable: Variable,
-  optionalRequestGenerator?: (
+  customMakeRequestParams?: (
     props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
   ) => HistogramRequestParams
 ): HistogramRequestParams {
@@ -1418,7 +1418,7 @@ function getRequestParams(
       : undefined;
 
   return (
-    optionalRequestGenerator?.({
+    customMakeRequestParams?.({
       studyId,
       filters,
       vizConfig: config,

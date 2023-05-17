@@ -2077,7 +2077,7 @@ function getRequestParams(
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
   outputEntity: StudyEntity,
-  optionalRequestGenerator?: (
+  customMakeRequestParams?: (
     props: RequestOptionProps<LineplotConfig> & FloatingLineplotExtraProps
   ) => LineplotRequestParams
 ): LineplotRequestParams {
@@ -2127,7 +2127,7 @@ function getRequestParams(
       : 'FALSE';
 
   return (
-    optionalRequestGenerator?.({
+    customMakeRequestParams?.({
       studyId,
       filters,
       vizConfig,
