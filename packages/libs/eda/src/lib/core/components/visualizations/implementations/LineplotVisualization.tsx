@@ -2611,8 +2611,8 @@ function useDefaultDependentAxisRangeProportion(
   valueSpecConfig?: string,
   dependentAxisValueSpec?: string,
   dependentAxisFilterRange?: {
-    min: string | number | undefined;
-    max: string | number | undefined;
+    min: string | number;
+    max: string | number;
   }
 ) {
   let defaultDependentAxisRange = useDefaultAxisRange(

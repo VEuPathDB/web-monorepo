@@ -18,7 +18,7 @@ export function filterMinMax(
           .filter((data) => data != null)
       : undefined;
 
-  return minMaxArray != null && minMaxArray.length > 0
-    ? { min: minMaxArray[0]?.min, max: minMaxArray[0]?.max }
+  return minMaxArray != null && minMaxArray.length > 0 && minMaxArray[0] != null
+    ? { min: minMaxArray[0].min, max: minMaxArray[0].max }
     : undefined;
 }

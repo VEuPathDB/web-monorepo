@@ -24,8 +24,8 @@ export function useDefaultAxisRange(
   logScale?: boolean,
   axisRangeSpec = 'Full',
   filterRange?: {
-    min: string | number | undefined;
-    max: string | number | undefined;
+    min: string | number;
+    max: string | number;
   }
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
