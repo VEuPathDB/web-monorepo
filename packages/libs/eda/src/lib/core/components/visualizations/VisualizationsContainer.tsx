@@ -192,7 +192,9 @@ function ConfiguredVisualizations(props: Props) {
                           type="button"
                           className="link"
                           onClick={() => {
-                            analysisState.deleteVisualization(viz);
+                            analysisState.deleteVisualization(
+                              viz.visualizationId
+                            );
                             /* 
                               Here we're deleting the computation in the event we delete
                               the computation's last remaining visualization.
@@ -562,7 +564,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   className="link"
                   onClick={() => {
                     if (viz == null) return;
-                    analysisState.deleteVisualization(viz);
+                    analysisState.deleteVisualization(viz.visualizationId);
                     /* 
                       Here we're deleting the computation in the event we delete
                       the computation's last remaining visualization.

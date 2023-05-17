@@ -221,7 +221,9 @@ function VisualizationsList({
                           type="button"
                           className="link"
                           onClick={() => {
-                            analysisState.deleteVisualization(viz);
+                            analysisState.deleteVisualization(
+                              viz.visualizationId
+                            );
                             setActiveVisualizationId(undefined);
                           }}
                         >

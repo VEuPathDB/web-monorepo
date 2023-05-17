@@ -76,7 +76,7 @@ export type AnalysisState = {
   ) => void;
   /** TO DO: copyVisualization? */
   /** delete a visualization, do not remove computation if it ends up empty */
-  deleteVisualization: (visualization: Visualization) => void;
+  deleteVisualization: (visualizationId: string) => void;
   /** TO DO: add a deleteIfEmpty mode to deleteVisualization? - see `deleteComputationWithNoVisualizations` in VisualizationsContainer */
 
   saveAnalysis: () => Promise<void>;
@@ -295,12 +295,12 @@ export function useAnalysis(
   // no-op if the visualization isn't there
   // hope that's OK!
   const deleteVisualization = useCallback(
-    (visualization: Visualization) =>
+    (visualizationId: string) =>
       setComputations((computations) =>
         computations.map((computation) => ({
           ...computation,
           visualizations: computation.visualizations.filter(
-            (viz) => viz.visualizationId !== visualization.visualizationId
+            (viz) => viz.visualizationId !== visualizationId
           ),
         }))
       ),
@@ -310,7 +310,7 @@ export function useAnalysis(
   // add or move a visualization (silently removes it before adding) to a computation
   const addVisualization = useCallback(
     (computation: Computation, visualization: Visualization) => {
-      deleteVisualization(visualization);
+      deleteVisualization(visualization.visualizationId);
       setComputations((computations) =>
         computations.map((comp) => ({
           ...comp,
