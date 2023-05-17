@@ -241,11 +241,16 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const providedXAxisVariable = options?.getXAxisVariable?.(
-    computation.descriptor.configuration
+  const { getXAxisVariable, getComputedYAxisDetails } = options ?? {};
+  const { configuration: computeConfig } = computation.descriptor;
+
+  const providedXAxisVariable = useMemo(
+    () => getXAxisVariable?.(computeConfig),
+    [computeConfig, getXAxisVariable]
   );
-  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
-    computation.descriptor.configuration
+  const computedYAxisDetails = useMemo(
+    () => getComputedYAxisDetails?.(computeConfig),
+    [computeConfig, getComputedYAxisDetails]
   );
 
   // When we only have a computed y axis (and no provided x axis) then the y axis var
