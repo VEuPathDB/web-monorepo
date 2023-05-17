@@ -114,6 +114,14 @@ class RecordNavigationSection extends React.PureComponent {
                 padding: '0 0 0 1.5em',
               },
             },
+            treeNode: {
+              nodeWrapper: {
+                padding: '0.25em 0 0.25em 0.5em',
+              },
+              topLevelNodeWrapper: {
+                padding: '0.25em 0',
+              },
+            },
           }}
         />
       </div>

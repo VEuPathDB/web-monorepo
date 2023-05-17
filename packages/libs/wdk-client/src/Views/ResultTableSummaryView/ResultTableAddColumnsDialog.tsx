@@ -188,6 +188,14 @@ function ResultTableAddColumnsDialog({
                 padding: 0,
               },
             },
+            treeNode: {
+              nodeWrapper: {
+                padding: '2px 0',
+              },
+              topLevelNodeWrapper: {
+                padding: '2px 0',
+              },
+            },
           }}
         />
         {buttonWithTooltip}
