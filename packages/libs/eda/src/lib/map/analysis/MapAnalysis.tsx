@@ -976,14 +976,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     right: 8,
                   }}
                 >
-                  {legendItems.length > 0 && (
-                    <MapLegend
-                      legendItems={legendItems}
-                      title={overlayVariable?.displayName}
-                      // control to show checkbox. default: true
-                      showCheckbox={false}
-                    />
-                  )}
+                  <MapLegend
+                    isLoading={legendItems.length === 0}
+                    legendItems={legendItems}
+                    title={overlayVariable?.displayName}
+                    // control to show checkbox. default: true
+                    showCheckbox={false}
+                  />
                 </FloatingDiv>
                 {/* <FloatingDiv
                   style={{
