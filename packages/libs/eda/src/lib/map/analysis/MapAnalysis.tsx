@@ -80,7 +80,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { uniq, isEqual } from 'lodash';
+import { uniq, isEqual, findIndex } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -131,6 +131,11 @@ export const defaultAnimation = {
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+enum DraggablePanelIds {
+  LEGEND_PANEL = 'legend',
+  VIZ_PANEL = 'viz',
+}
 
 interface Props {
   analysisId?: string;
@@ -855,20 +860,33 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
-  const [zIndicies, setZIndicies] = useState<string[]>(['legend']);
-  const [panelOpenDictionary, setPanelOpenDictionary] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [zIndicies, setZIndicies] = useState<DraggablePanelIds[]>(
+    Object.values(DraggablePanelIds)
+  );
 
-  function movePanelToTopLayer(panelTitleToMove: string) {
-    setZIndicies((currentList) => {
-      return currentList
-        .filter((panelTitle) => panelTitle !== panelTitleToMove)
-        .concat(panelTitleToMove);
-    });
+  function movePanelToTopLayer(
+    panelTitleToMove: DraggablePanelIds
+  ): () => void {
+    return () =>
+      setZIndicies((currentList) => {
+        return currentList
+          .filter((panelTitle) => panelTitle !== panelTitleToMove)
+          .concat(panelTitleToMove);
+      });
   }
 
-  const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+  const moveLegendToTop = movePanelToTopLayer(DraggablePanelIds.LEGEND_PANEL);
+  const moveVizToTop = movePanelToTopLayer(DraggablePanelIds.VIZ_PANEL);
+
+  function getZIndexByPanelTitle(
+    requestedPanelTitle: DraggablePanelIds
+  ): number {
+    const index = zIndicies.findIndex(
+      (panelTitle) => panelTitle === requestedPanelTitle
+    );
+    const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+    return index + zIndexFactor;
+  }
 
   return (
     <PromiseResult state={appPromiseState}>
@@ -993,18 +1011,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   confineToParentContainer
                   defaultPosition={{ x: 100, y: 100 }}
                   styleOverrides={{
-                    zIndex:
-                      zIndicies.findIndex((i) => i === 'legend') + zIndexFactor,
+                    zIndex: getZIndexByPanelTitle(
+                      DraggablePanelIds.LEGEND_PANEL
+                    ),
                   }}
-                  onDragStart={() => movePanelToTopLayer('legend')}
+                  onDragStart={moveLegendToTop}
                 >
                   {legendItems.length > 0 && (
-                    <MapLegend
-                      legendItems={legendItems}
-                      title={overlayVariable?.displayName}
-                      // control to show checkbox. default: true
-                      showCheckbox={false}
-                    />
+                    <div
+                      style={{ padding: '5px 10px' }}
+                      onClick={moveLegendToTop}
+                    >
+                      <MapLegend
+                        legendItems={legendItems}
+                        title={overlayVariable?.displayName}
+                        // control to show checkbox. default: true
+                        showCheckbox={false}
+                      />
+                    </div>
                   )}
                 </DraggablePanel>
                 {/* <FloatingDiv
@@ -1040,10 +1064,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
                     filters={filtersIncludingViewport}
-                    onDragStart={() => movePanelToTopLayer('viz')}
-                    zIndexForStackingContext={
-                      zIndicies.findIndex((i) => i === 'viz') + zIndexFactor
-                    }
+                    onTouch={moveVizToTop}
+                    zIndexForStackingContext={getZIndexByPanelTitle(
+                      DraggablePanelIds.VIZ_PANEL
+                    )}
                   />
                 )}
 
