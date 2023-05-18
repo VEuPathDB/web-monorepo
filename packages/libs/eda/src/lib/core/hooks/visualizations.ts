@@ -13,6 +13,7 @@ import {
 } from '../utils/data-element-constraints';
 import { isEqual } from 'lodash';
 import { ColorPaletteAddon } from '@veupathdb/components/lib/types/plots';
+import { Filter } from '../types/filter';
 
 /**
  * Decodes config from back end or uses default config if there's an error (including no config at all)
@@ -77,6 +78,7 @@ export function useProvidedOptionalVariable<ConfigType>(
   /* storedVariableDescriptor is basically vizConfig.overlayVariable */
   storedVariableDescriptor: VariableDescriptor | undefined,
   entities: StudyEntity[],
+  filters: Filter[] | undefined,
   constraints: DataElementConstraintRecord[] | undefined,
   dataElementDependencyOrder: string[][] | undefined,
   selectedVariables: VariablesByInputName,
@@ -123,6 +125,10 @@ export function useProvidedOptionalVariable<ConfigType>(
     selectedVariables,
     enqueueSnackbar,
     updateVizConfig,
+    optionGetter,
+    inputName,
+    filters,
+    snackbarMessage,
   ]);
 }
 
@@ -134,6 +140,7 @@ export function useFilteredConstraints(
   dataElementConstraints: DataElementConstraintRecord[] | undefined,
   selectedVariables: VariablesByInputName,
   entities: StudyEntity[],
+  filters: Filter[] | undefined,
   selectedVarReference: string
 ) {
   return useMemo(

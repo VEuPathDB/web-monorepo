@@ -10,5 +10,20 @@
 
   .MapVEu {
     height: 100%;
+
+    .wdk-RecordContainer {
+      font-size: 0.9em;
+      margin-top: 1em;
+    }
+
+    .wdk-RecordSidebarToggle,
+    .wdk-RecordSidebar {
+      background-color: #eaeaea;
+    }
+
+    .wdk-RecordActions,
+    .wdk-RecordHeading {
+      display: none;
+    }
   }
 }

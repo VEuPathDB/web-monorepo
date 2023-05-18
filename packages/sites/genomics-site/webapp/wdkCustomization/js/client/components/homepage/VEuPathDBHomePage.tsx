@@ -10,6 +10,9 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
+// @ts-ignore
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
+
 import makeSnackbarProvider, {
   SnackbarStyleProps,
 } from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
@@ -57,6 +60,8 @@ import { makeVpdbClassNameHelper } from './Utils';
 
 import './VEuPathDBHomePage.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Warning } from '@veupathdb/coreui';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -345,6 +350,49 @@ const useHeaderMenuItems = (
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const communitySite = useCommunitySiteRootUrl();
 
+  const showInteractiveMaps = Boolean(useEda && projectId === 'VectorBase');
+
+  const mapMenuItems = useWdkService(
+    async (wdkService): Promise<HeaderMenuItem[]> => {
+      if (!showInteractiveMaps) return [];
+      try {
+        const anwser = await wdkService.getAnswerJson(
+          {
+            searchName: 'AllDatasets',
+            searchConfig: {
+              parameters: {},
+            },
+          },
+          {
+            attributes: ['eda_study_id'],
+          }
+        );
+        return anwser.records
+          .filter((record) => record.attributes.eda_study_id != null)
+          .map((record) => ({
+            key: `map-${record.id[0].value}`,
+            display: record.displayName,
+            type: 'reactRoute',
+            url: `/maps/${record.id[0].value}/new`,
+          }));
+      } catch (error) {
+        console.error(error);
+        return [
+          {
+            key: 'maps-error',
+            display: (
+              <>
+                <Warning /> Could not load map data
+              </>
+            ),
+            type: 'custom',
+          },
+        ];
+      }
+    },
+    [showInteractiveMaps]
+  );
+
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
     {
@@ -535,16 +583,6 @@ const useHeaderMenuItems = (
           },
         },
         {
-          key: 'mapveu-alpha',
-          display: 'MapVEu Alpha',
-          tooltip: 'Population Biology map',
-          type: 'reactRoute',
-          url: '/maps',
-          metadata: {
-            include: useEda ? [VectorBase] : [],
-          },
-        },
-        {
           key: 'mapveu',
           display: 'MapVEu',
           tooltip: 'Population Biology map',
@@ -554,6 +592,25 @@ const useHeaderMenuItems = (
           metadata: {
             include: [EuPathDB, UniDB],
           },
+        },
+        {
+          key: 'maps-alpha',
+          display: (
+            <>
+              Interactive maps <img alt="BETA" src={betaImage} />
+            </>
+          ),
+          type: 'subMenu',
+          metadata: {
+            test: () => showInteractiveMaps,
+          },
+          items: mapMenuItems ?? [
+            {
+              key: 'maps-loading',
+              type: 'custom',
+              display: <Loading radius={4} />,
+            },
+          ],
         },
         {
           key: 'pubcrawler',
@@ -653,8 +710,21 @@ const useHeaderMenuItems = (
         {
           key: 'data-files-eupathdb',
           display: 'Download data files',
+          type: 'externalLink',
+          url: '/common/downloads',
+          metadata: {
+            exclude: [EuPathDB],
+          },
+        },
+        {
+          key: 'data-files-eupathdb-beta',
+          display: (
+            <>
+              Download data files <img alt="BETA" src={betaImage} />
+            </>
+          ),
           type: 'reactRoute',
-          url: '/downloads/',
+          url: '/downloads',
           metadata: {
             exclude: [EuPathDB],
           },

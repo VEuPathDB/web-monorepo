@@ -27,6 +27,7 @@ import {
   values,
   map,
   keys,
+  pick,
 } from 'lodash';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import {
@@ -48,7 +49,7 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps } from '../VisualizationTypes';
 import HistogramSVG from './selectorIcons/HistogramSVG';
@@ -62,6 +63,7 @@ import {
   fixLabelsForNumberVariables,
   variablesAreUnique,
   nonUniqueWarning,
+  assertValidInputVariables,
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
@@ -194,7 +196,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -205,24 +207,17 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   // set the state of truncation warning message here
-  const [
-    truncatedIndependentAxisWarning,
-    setTruncatedIndependentAxisWarning,
-  ] = useState<string>('');
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
+    useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
-      const keepIndependentAxisSettings = isEqual(
+      const { xAxisVariable, overlayVariable, facetVariable } =
+        selectedVariables;
+      const keepMainAxisSettings = isEqual(
         xAxisVariable,
         vizConfig.xAxisVariable
       );
@@ -231,21 +226,27 @@ function HistogramViz(props: VisualizationProps<Options>) {
         xAxisVariable,
         overlayVariable,
         facetVariable,
-        binWidth: keepIndependentAxisSettings ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepIndependentAxisSettings
+        binWidth: keepMainAxisSettings ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepMainAxisSettings
           ? vizConfig.binWidthTimeUnit
           : undefined,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        independentAxisRange: keepIndependentAxisSettings
+        independentAxisRange: keepMainAxisSettings
           ? vizConfig.independentAxisRange
           : undefined,
-        dependentAxisRange: undefined,
-        dependentAxisLogScale: false,
-        independentAxisValueSpec: keepIndependentAxisSettings
+        dependentAxisRange: keepMainAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
+        dependentAxisLogScale: keepMainAxisSettings
+          ? vizConfig.dependentAxisLogScale
+          : false,
+        independentAxisValueSpec: keepMainAxisSettings
           ? vizConfig.independentAxisValueSpec
           : 'Full',
-        dependentAxisValueSpec: 'Full',
+        dependentAxisValueSpec: keepMainAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : 'Full',
       });
       // close truncation warnings if exists
       setTruncatedIndependentAxisWarning('');
@@ -328,7 +329,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     true
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
     const { entity, variable } =
@@ -342,9 +343,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
 
+  const getOverlayVariable = options?.getOverlayVariable;
+
   const providedOverlayVariableDescriptor = useMemo(
-    () => options?.getOverlayVariable?.(computation.descriptor.configuration),
-    [options?.getOverlayVariable, computation.descriptor.configuration]
+    () => getOverlayVariable?.(computation.descriptor.configuration),
+    [getOverlayVariable, computation.descriptor.configuration]
   );
 
   const selectedVariables = useDeepValue({
@@ -357,6 +360,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     dataElementConstraints,
     selectedVariables,
     entities,
+    filters,
     'overlayVariable'
   );
 
@@ -366,6 +370,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
     vizConfig.overlayVariable,
     entities,
+    filters,
     filteredConstraints,
     dataElementDependencyOrder,
     selectedVariables,
@@ -401,12 +406,59 @@ function HistogramViz(props: VisualizationProps<Options>) {
     providedOverlayVariableDescriptor,
   ]);
 
+  const inputs = useMemo(
+    (): InputSpec[] => [
+      {
+        name: 'xAxisVariable',
+        label: 'Main',
+        role: 'axis',
+      },
+      {
+        name: 'overlayVariable',
+        label: 'Overlay',
+        role: 'stratification',
+        providedOptionalVariable: providedOverlayVariableDescriptor,
+        readonlyValue:
+          options?.getOverlayVariable != null
+            ? providedOverlayVariableDescriptor
+              ? variableDisplayWithUnit(providedOverlayVariable)
+              : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+            : undefined,
+      },
+      ...(options?.hideFacetInputs
+        ? []
+        : [
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            } as const,
+          ]),
+    ],
+    [options, providedOverlayVariable, providedOverlayVariableDescriptor]
+  );
+
+  const dataRequestConfig: DataRequestConfig = useDeepValue(
+    pick(vizConfig, [
+      'valueSpec',
+      'independentAxisValueSpec',
+      'binWidth',
+      'binWidthTimeUnit',
+      'valueSpec',
+      'overlayVariable',
+      'facetVariable',
+      'xAxisVariable',
+      'independentAxisRange',
+      'showMissingness',
+    ])
+  );
+
   const data = usePromise(
     useCallback(async (): Promise<
       HistogramDataWithCoverageStatistics | undefined
     > => {
       if (
-        vizConfig.xAxisVariable == null ||
+        dataRequestConfig.xAxisVariable == null ||
         xAxisVariable == null ||
         outputEntity == null ||
         filteredCounts.pending ||
@@ -417,11 +469,18 @@ function HistogramViz(props: VisualizationProps<Options>) {
       if (!variablesAreUnique([xAxisVariable, overlayVariable, facetVariable]))
         throw new Error(nonUniqueWarning);
 
+      assertValidInputVariables(
+        inputs,
+        selectedVariables,
+        entities,
+        dataElementConstraints
+      );
+
       const params = getRequestParams(
         studyId,
         filters ?? [],
         valueType,
-        vizConfig,
+        dataRequestConfig,
         xAxisVariable
       );
       const response = await dataClient.getHistogram(
@@ -430,7 +489,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       );
 
       const showMissingOverlay =
-        vizConfig.showMissingness &&
+        dataRequestConfig.showMissingness &&
         hasIncompleteCases(
           overlayEntity,
           overlayVariable,
@@ -439,7 +498,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
       const showMissingFacet =
-        vizConfig.showMissingness &&
+        dataRequestConfig.showMissingness &&
         hasIncompleteCases(
           facetEntity,
           facetVariable,
@@ -470,28 +529,24 @@ function HistogramViz(props: VisualizationProps<Options>) {
         showMissingOverlay
       );
     }, [
-      // using vizConfig only causes issue with onCheckedLegendItemsChange
-      vizConfig.xAxisVariable,
-      vizConfig.binWidth,
-      vizConfig.binWidthTimeUnit,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.valueSpec,
-      vizConfig.showMissingness,
-      vizConfig.independentAxisRange,
-      vizConfig.independentAxisValueSpec === 'Full',
-      studyId,
-      filters,
-      filteredCounts,
+      dataRequestConfig,
+      xAxisVariable,
       outputEntity,
+      filteredCounts.pending,
+      filteredCounts.value,
+      overlayVariable,
+      facetVariable,
+      inputs,
+      selectedVariables,
+      entities,
+      dataElementConstraints,
+      filters,
+      studyId,
+      valueType,
       dataClient,
       computation.descriptor.type,
-      xAxisVariable,
-      overlayVariable,
       overlayEntity,
-      facetVariable,
       facetEntity,
-      valueType,
     ])
   );
 
@@ -514,9 +569,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   // separate minPosMax from dependentMinPosMax
-  const minPosMax = useMemo(() => histogramDefaultDependentAxisMinMax(data), [
-    data,
-  ]);
+  const minPosMax = useMemo(
+    () => histogramDefaultDependentAxisMinMax(data),
+    [data]
+  );
   const dependentMinPosMax = useMemo(() => {
     return minPosMax != null && minPosMax.min != null && minPosMax.max != null
       ? {
@@ -529,7 +585,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
               : minPosMax.max,
         }
       : undefined;
-  }, [data, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
+  }, [minPosMax, vizConfig.valueSpec, vizConfig.dependentAxisValueSpec]);
 
   const defaultDependentAxisRange = useDefaultAxisRange(
     null,
@@ -554,7 +610,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
             return {
               label: dataItem.name,
               // histogram plot does not have mode, so set to square for now
-              marker: 'square',
+              marker: 'square' as const,
               markerColor:
                 dataItem.name === 'No data'
                   ? '#E8E8E8'
@@ -647,12 +703,11 @@ function HistogramViz(props: VisualizationProps<Options>) {
       ? data.value?.completeCasesAllVars
       : data.value?.completeCasesAxesVars;
 
-  const areRequiredInputsSelected = useMemo(() => {
-    if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
+  const areRequiredInputsSelected =
+    !dataElementConstraints ||
+    Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
-  }, [dataElementConstraints, vizConfig.xAxisVariable]);
 
   const widgetHeight = '4em';
 
@@ -669,29 +724,16 @@ function HistogramViz(props: VisualizationProps<Options>) {
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = useMemo(
-    () =>
-      truncationConfig(
-        {
-          ...defaultUIState, // using annotated range, NOT the actual data
-          ...(minPosMax != null &&
-          minPosMax.min != null &&
-          minPosMax.max != null
-            ? { dependentAxisRange: minPosMax }
-            : {}),
-        },
-        vizConfig,
-        {}, // no overrides
-        true // use inclusive less than equal for the range min
-      ),
-    [
-      defaultUIState,
-      dependentMinPosMax,
-      vizConfig.independentAxisRange,
-      vizConfig.dependentAxisRange,
-      vizConfig.independentAxisValueSpec,
-      vizConfig.dependentAxisValueSpec,
-    ]
+  } = truncationConfig(
+    {
+      ...defaultUIState, // using annotated range, NOT the actual data
+      ...(minPosMax != null && minPosMax.min != null && minPosMax.max != null
+        ? { dependentAxisRange: minPosMax }
+        : {}),
+    },
+    vizConfig,
+    {}, // no overrides
+    true // use inclusive less than equal for the range min
   );
 
   // axis range control
@@ -1155,34 +1197,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
-          inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'Main',
-              role: 'axis',
-            },
-            {
-              name: 'overlayVariable',
-              label: 'Overlay',
-              role: 'stratification',
-              providedOptionalVariable: providedOverlayVariableDescriptor,
-              readonlyValue:
-                options?.getOverlayVariable != null
-                  ? providedOverlayVariableDescriptor
-                    ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
-                  : undefined,
-            },
-            ...(options?.hideFacetInputs
-              ? []
-              : [
-                  {
-                    name: 'facetVariable',
-                    label: 'Facet',
-                    role: 'stratification',
-                  } as const,
-                ]),
-          ]}
+          inputs={inputs}
           entities={entities}
           selectedVariables={selectedVariables}
           onChange={handleInputVariableChange}
@@ -1255,13 +1270,15 @@ export function histogramResponseToData(
           unit: response.histogram.config.binSpec.units || 'month',
         };
   const { min, max, step } = response.histogram.config.binSlider;
-  const binWidthRange = (type === 'number' || type === 'integer'
-    ? { min, max }
-    : {
-        min,
-        max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
-        unit: (binWidth as TimeDelta).unit,
-      }) as NumberOrTimeDeltaRange;
+  const binWidthRange = (
+    type === 'number' || type === 'integer'
+      ? { min, max }
+      : {
+          min,
+          max: max != null && max > 60 ? 60 : max, // back end seems to fall over with any values >99 but 60 is used in subsetting
+          unit: (binWidth as TimeDelta).unit,
+        }
+  ) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
 
   // process data and overlay value within each facet grouping
@@ -1324,16 +1341,29 @@ export function histogramResponseToData(
   } as HistogramDataWithCoverageStatistics;
 }
 
+type DataRequestConfig = Pick<
+  HistogramConfig,
+  | 'independentAxisValueSpec'
+  | 'binWidth'
+  | 'binWidthTimeUnit'
+  | 'valueSpec'
+  | 'overlayVariable'
+  | 'facetVariable'
+  | 'xAxisVariable'
+  | 'independentAxisRange'
+  | 'showMissingness'
+>;
+
 function getRequestParams(
   studyId: string,
   filters: Filter[],
   valueType: 'number' | 'date',
-  vizConfig: HistogramConfig,
+  config: DataRequestConfig,
   variable?: Variable
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
-      ? vizConfig.independentAxisValueSpec === 'Full'
+      ? config.independentAxisValueSpec === 'Full'
         ? variable.distributionDefaults.binWidthOverride ??
           variable.distributionDefaults.binWidth
         : undefined
@@ -1345,7 +1375,7 @@ function getRequestParams(
     overlayVariable,
     facetVariable,
     xAxisVariable,
-  } = vizConfig;
+  } = config;
 
   const binSpec = binWidth
     ? {
@@ -1360,11 +1390,11 @@ function getRequestParams(
   // define viewport based on independent axis range: need to check undefined case
   // also no viewport change regardless of the change of overlayVariable
   const viewport =
-    vizConfig?.independentAxisRange?.min != null &&
-    vizConfig?.independentAxisRange?.max != null
+    config?.independentAxisRange?.min != null &&
+    config?.independentAxisRange?.max != null
       ? {
-          xMin: vizConfig?.independentAxisRange?.min,
-          xMax: vizConfig?.independentAxisRange?.max,
+          xMin: config?.independentAxisRange?.min,
+          xMax: config?.independentAxisRange?.max,
         }
       : undefined;
 
@@ -1379,7 +1409,7 @@ function getRequestParams(
       facetVariable: facetVariable ? [facetVariable] : [],
       valueSpec,
       ...binSpec,
-      showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
+      showMissingness: config.showMissingness ? 'TRUE' : 'FALSE',
       // pass viewport to get appropriate display range
       viewport: viewport,
     },

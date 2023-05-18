@@ -53,7 +53,8 @@
     "storybook": "start-storybook -s public",
     "build": "npm-run-all build-npm-modules",
     "build-storybook": "build-storybook -s public",
-    "build-npm-modules": "tsc -p tsconfig.build.json"
+    "build-npm-modules": "veupathdb-react-scripts prepare src",
+    "clean": "rm -rf lib"
   },
   "eslintConfig": {
     "extends": [
@@ -101,6 +102,7 @@
     "@types/stats-lite": "^2.2.0",
     "@veupathdb/browserslist-config": "workspace:^",
     "@veupathdb/eslint-config": "workspace:^",
+    "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/tsconfig": "workspace:^",
     "babel-loader": "^8.1.0",
     "eslint": "^8.29.0",

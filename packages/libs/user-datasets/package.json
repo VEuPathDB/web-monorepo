@@ -20,7 +20,8 @@
     "eject": "veupathdb-react-scripts eject",
     "compile": "veupathdb-react-scripts compile",
     "copy-assets": "veupathdb-react-scripts copy-assets",
-    "build-npm-modules": "veupathdb-react-scripts prepare"
+    "build-npm-modules": "veupathdb-react-scripts prepare",
+    "clean": "rm -rf lib"
   },
   "eslintConfig": {
     "extends": [

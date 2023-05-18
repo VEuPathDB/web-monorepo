@@ -14,6 +14,7 @@ import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
+import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
 import { scaleLinear } from 'd3';
 
 // A collection of stories for viewing our Sequential Gradient Colormap
@@ -176,7 +177,7 @@ Continuous.args = {
 
 // Set up discretized legend.
 const vocabularyEquidistant = ['1', '2', '3', '4', '5', '6', '7'];
-let legendItems = vocabularyEquidistant.map((label) => {
+let legendItems: LegendItemsProps[] = vocabularyEquidistant.map((label) => {
   return {
     label,
     marker: 'square',

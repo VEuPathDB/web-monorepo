@@ -33,14 +33,8 @@ export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
 
 export const VariableLink = forwardRef(
   (props: Props, ref: Ref<HTMLAnchorElement>) => {
-    const {
-      entityId,
-      disabled,
-      variableId,
-      linkConfig,
-      style,
-      ...rest
-    } = props;
+    const { entityId, disabled, variableId, linkConfig, style, ...rest } =
+      props;
     const value = { entityId, variableId };
     const finalStyle = disabled ? { ...style, ...disabledStyle } : style;
 

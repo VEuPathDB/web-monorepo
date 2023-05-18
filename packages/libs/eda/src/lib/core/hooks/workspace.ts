@@ -12,6 +12,7 @@ import {
   StudyRecord,
   StudyRecordClass,
   Variable,
+  VariableTreeNode,
 } from '../types/study';
 import { VariableDescriptor } from '../types/variable';
 import { useCallback, useMemo } from 'react';
@@ -21,6 +22,9 @@ import {
   findEntityAndVariable,
 } from '../utils/study-metadata';
 import { ComputeClient } from '../api/ComputeClient';
+import { DownloadClient } from '../api';
+import { Filter } from '../types/filter';
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 /** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
@@ -38,6 +42,9 @@ export function useSubsettingClient(): SubsettingClient {
 export function useDataClient(): DataClient {
   return useNonNullableContext(WorkspaceContext).dataClient;
 }
+export function useDownloadClient(): DownloadClient {
+  return useNonNullableContext(WorkspaceContext).downloadClient;
+}
 export function useAnalysisClient(): AnalysisClient {
   return useNonNullableContext(WorkspaceContext).analysisClient;
 }
@@ -50,8 +57,8 @@ export function useMakeVariableLink(): MakeVariableLink {
     defaultMakeVariableLink
   );
 }
-export function useFindEntityAndVariable() {
-  const entities = useStudyEntities();
+export function useFindEntityAndVariable(filters?: Filter[]) {
+  const entities = useStudyEntities(filters);
   return useCallback(
     (variable?: VariableDescriptor) => {
       const entAndVar = findEntityAndVariable(entities, variable);
@@ -80,16 +87,61 @@ export function useCollectionVariables(entity: StudyEntity) {
 /**
  * Return an array of StudyEntities.
  *
- * @param rootEntity The entity in the entity hierarchy. All entities at this level and
- * down will be returned in a flattened array.
+ * @param [filters] If provided, variable metadata will be augmented based on filter selections.
  *
  * @returns Essentially, this will provide you will an array of entities in a flattened structure.
  * Technically, the hierarchical structure is still embedded in each entity, but all of the
  * entities are presented as siblings in the array.
  */
-export function useStudyEntities() {
+export function useStudyEntities(filters?: Filter[]) {
   const { rootEntity } = useStudyMetadata();
-  return useMemo(() => entityTreeToArray(rootEntity), [rootEntity]);
+  return useMemo((): StudyEntity[] => {
+    const mappedRootEntity = !filters?.length
+      ? rootEntity
+      : mapStructure<StudyEntity, StudyEntity>(
+          (entity, mappedChildren) => {
+            if (filters.some((f) => f.entityId === entity.id)) {
+              const variables = entity.variables.map(
+                (variable): VariableTreeNode => {
+                  const filter = filters.find(
+                    (f) =>
+                      f.entityId === entity.id && f.variableId === variable.id
+                  );
+                  if (variable.type !== 'category' && filter) {
+                    const vocabulary =
+                      filter.type === 'dateSet'
+                        ? filter.dateSet
+                        : filter.type === 'numberSet'
+                        ? filter.numberSet.map(String)
+                        : filter.type === 'stringSet'
+                        ? filter.stringSet
+                        : undefined;
+                    // augment variable metadata
+                    return {
+                      ...variable,
+                      vocabulary,
+                      distinctValuesCount: vocabulary?.length ?? 0,
+                    };
+                  }
+                  return variable;
+                }
+              );
+              return {
+                ...entity,
+                variables,
+                children: mappedChildren,
+              };
+            }
+            return {
+              ...entity,
+              children: mappedChildren,
+            };
+          },
+          (entity) => entity.children ?? [],
+          rootEntity
+        );
+    return entityTreeToArray(mappedRootEntity);
+  }, [filters, rootEntity]);
 }
 
 function defaultMakeVariableLink({

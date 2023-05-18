@@ -1,31 +1,35 @@
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
+  EntityDiagram,
   PromiseResult,
   useAnalysis,
+  useAnalysisClient,
   useDataClient,
+  useDownloadClient,
   useFindEntityAndVariable,
   usePromise,
   useStudyEntities,
   useStudyMetadata,
   useStudyRecord,
+  useSubsettingClient,
 } from '../../core';
 import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
-import { useMapMarkers } from '../../core/hooks/mapMarkers';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
-import { Download, FilledButton, Filter } from '@veupathdb/coreui';
+import { Download, FilledButton, Filter, H5, Table } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
 import { MapLegend } from './MapLegend';
-import { AppState, useAppState } from './appState';
+import { AppState, useAppState, defaultAppState } from './appState';
 import { FloatingDiv } from './FloatingDiv';
 import Subsetting from '../../workspace/Subsetting';
 import { findFirstVariable } from '../../workspace/Utils';
 import {
   useFeaturedFields,
+  useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
 } from '../../core/components/variableTrees/hooks';
@@ -35,7 +39,6 @@ import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSideNavigation } from './MapSideNavigation';
 import { SiteInformationProps } from '..';
 import MapVizManagement from './MapVizManagement';
-import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import {
@@ -65,6 +68,9 @@ import {
   ComputationAppOverview,
   Visualization,
 } from '../../core/types/visualization';
+import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
+import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
 import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -74,15 +80,29 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
+import { uniq, isEqual } from 'lodash';
+import DownloadTab from '../../workspace/DownloadTab';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import {
+  BarPlotMarkerConfigurationMenu,
+  MarkerConfiguration,
+  MarkerConfigurationSelector,
+  PieMarkerConfigurationMenu,
+} from './MarkerConfiguration';
+import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
+import { AllAnalyses } from '../../workspace/AllAnalyses';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { isSavedAnalysis } from '../../core/utils/analysis';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
   Notes = 'Notes',
-  Paint = 'Paint',
+  Markers = 'Markers',
   Plot = 'Plot',
   Share = 'Share',
   StudyDetails = 'View Study Details',
+  MyAnalyses = 'My Analyses',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -102,17 +122,24 @@ function getSideNavItemIndexByLabel(
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
+  pointerEvents: 'auto',
+};
+
+export const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
 };
 
 interface Props {
-  analysisId: string;
+  analysisId?: string;
   sharingUrl: string;
   studyId: string;
   siteInformationProps: SiteInformationProps;
 }
 
 export function MapAnalysis(props: Props) {
-  const analysisState = useAnalysis(props.analysisId, 'pass-through');
+  const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   if (appStateAndSetters.appState == null) return null;
   return (
@@ -134,13 +161,14 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     appState,
     analysisState,
     setMouseMode,
-    setSelectedOverlayVariable,
     setViewport,
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
     sharingUrl,
     setIsSubsetPanelOpen = () => {},
+    setActiveMarkerConfigurationType,
+    setMarkerConfigurations,
   } = props;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -148,44 +176,103 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
   const theme = useUITheme();
+  const analysisClient = useAnalysisClient();
+  const subsettingClient = useSubsettingClient();
 
-  const selectedVariables = useMemo(
-    () => ({
-      overlay: appState.selectedOverlayVariable,
-    }),
-    [appState.selectedOverlayVariable]
+  const getDefaultVariableId = useGetDefaultVariableIdCallback();
+  const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
+
+  const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
+    appState;
+
+  const defautMarkerConfigurations: MarkerConfiguration[] = useMemo(() => {
+    return [
+      {
+        type: 'pie',
+        selectedVariable: defaultVariable,
+      },
+      {
+        type: 'barplot',
+        selectedPlotMode: 'count',
+        selectedVariable: defaultVariable,
+      },
+    ];
+  }, [defaultVariable]);
+
+  useEffect(
+    function generateDefaultMarkerConfigurationsIfNeeded() {
+      if (markerConfigurations.length > 0) return;
+
+      setMarkerConfigurations(defautMarkerConfigurations);
+    },
+    [
+      defautMarkerConfigurations,
+      markerConfigurations.length,
+      setMarkerConfigurations,
+    ]
   );
+
+  const activeMarkerConfiguration =
+    markerConfigurations.find(
+      (markerConfig) => markerConfig.type === activeMarkerConfigurationType
+    ) || defautMarkerConfigurations[0];
 
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
-    findEntityAndVariable(selectedVariables.overlay) ?? {};
+    findEntityAndVariable(activeMarkerConfiguration.selectedVariable) ?? {};
+
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+
+  function updateMarkerConfigurations(
+    updatedConfiguration: MarkerConfiguration
+  ) {
+    const nextMarkerConfigurations = markerConfigurations.map(
+      (configuration) => {
+        if (configuration.type === updatedConfiguration.type) {
+          return updatedConfiguration;
+        }
+        return configuration;
+      }
+    );
+    setMarkerConfigurations(nextMarkerConfigurations);
+  }
+
+  const adaptedMarkerTypename = (() => {
+    if (activeMarkerConfiguration.type === 'barplot') {
+      // The marker type for barplots is either `count` or `proportion`.
+      // `useMapMarkers` needs to know this.
+      return activeMarkerConfiguration.selectedPlotMode;
+    }
+
+    return activeMarkerConfiguration.type;
+  })();
 
   const {
     markers,
     pending,
+    error,
     legendItems,
-    basicMarkerError,
     outputEntity,
-    overlayError,
-    totalEntityCount,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
-  } = useMapMarkers({
-    requireOverlay: false,
+  } = useStandaloneMapMarkers({
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId: studyMetadata.id,
-    filters: analysisState.analysis?.descriptor.subset.descriptor,
-    xAxisVariable: selectedVariables.overlay,
-    computationType: 'pass',
-    markerType: 'pie',
-    checkedLegendItems: undefined,
+    filters,
+    // xAxisVariable: activeMarkerConfiguration.selectedVariable,
+    // computationType: 'pass',
+    markerType: adaptedMarkerTypename,
+    // checkedLegendItems: undefined,
+    overlayVariable: activeMarkerConfiguration.selectedVariable,
     //TO DO: maybe dependentAxisLogScale
   });
 
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
+
+  const downloadClient = useDownloadClient();
 
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
@@ -226,10 +313,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       return visualization.withOptions({
         hideFacetInputs: true,
         layoutComponent: FloatingLayout,
-        getOverlayVariable: (_) => appState.selectedOverlayVariable,
+        getOverlayVariable: (_) => activeMarkerConfiguration.selectedVariable,
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
-        //        getCheckedLegendItems: (_) => appState.checkedLegendItems,
       });
     }
 
@@ -248,7 +334,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         boxplot: vizWithOptions(boxplotVisualization),
       },
     };
-  }, [appState.selectedOverlayVariable]);
+  }, [activeMarkerConfiguration.selectedVariable]);
 
   const computation = analysisState.analysis?.descriptor.computations[0];
 
@@ -304,7 +390,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const outputEntityTotalCount =
     totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
 
-  const [mapHeaderIsExpanded, setMapHeaderIsExpanded] = useState<boolean>(true);
+  const outputEntityFilteredCount =
+    filteredCounts.value && outputEntity
+      ? filteredCounts.value[outputEntity.id]
+      : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
@@ -313,6 +402,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   const FilterChipListForHeader = () => {
+    if (!studyEntities || !filters) return <></>;
+
     const filterChipConfig: VariableLinkConfig = {
       type: 'button',
       onClick(value) {
@@ -320,10 +411,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         openSubsetPanelFromControlOutsideOfNavigation();
       },
     };
-
-    const filters = analysisState.analysis?.descriptor.subset.descriptor;
-
-    if (!studyEntities || !filters) return <></>;
 
     return (
       <div
@@ -382,40 +469,91 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
    * menu buttons and their associated panels for real.
    */
   const buttonStyles: React.CSSProperties = {
+    alignItems: 'center',
     background: 'transparent',
     borderColor: 'transparent',
+    display: 'flex',
     fontSize: 16,
+    justifyContent: 'flex-start',
     margin: 0,
     padding: 0,
     width: '100%',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
   };
   const iconStyles: React.CSSProperties = {
-    height: 25,
-    width: 25,
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
+    display: 'flex',
+    height: 25,
+    justifyContent: 'center',
+    width: 25,
   };
   const labelStyles: React.CSSProperties = {
     marginLeft: '0.5rem',
   };
 
-  const sideNavigationRenderPlaceholder: SideNavigationItemConfigurationObject['renderSideNavigationPanel'] =
-    (_) => (
-      <div style={{ padding: '2rem' }}>
-        <p>Not Implemented!</p>
-      </div>
-    );
+  const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: MapSideNavItemLabels.Paint,
+        labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: (app) => {
+          return (
+            <MarkerConfigurationSelector
+              activeMarkerConfigurationType={activeMarkerConfigurationType}
+              setActiveMarkerConfigurationType={
+                setActiveMarkerConfigurationType
+              }
+              markerConfigurations={[
+                {
+                  type: 'pie',
+                  displayName: 'Donuts',
+                  icon: <DonutMarkers style={{ height: 30 }} />,
+                  renderConfigurationMenu:
+                    activeMarkerConfiguration.type === 'pie' ? (
+                      <PieMarkerConfigurationMenu
+                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        configuration={activeMarkerConfiguration}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                },
+                {
+                  type: 'barplot',
+                  displayName: 'Bar plots',
+                  icon: <BarPlotMarkers style={{ height: 30 }} />,
+                  renderConfigurationMenu:
+                    activeMarkerConfiguration.type === 'barplot' ? (
+                      <BarPlotMarkerConfigurationMenu
+                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        selectedPlotMode={
+                          activeMarkerConfiguration.selectedPlotMode
+                        }
+                        configuration={activeMarkerConfiguration}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                },
+              ]}
+            />
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Filter,
@@ -424,21 +562,53 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                width: '80vw',
+                width: '70vw',
+                maxWidth: 1500,
                 maxHeight: 650,
                 padding: '0 25px',
               }}
             >
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <EntityDiagram
+                  expanded
+                  orientation="horizontal"
+                  selectedEntity={subsetVariableAndEntity.entityId}
+                  selectedVariable={subsetVariableAndEntity.variableId}
+                  entityCounts={totalCounts.value}
+                  filteredEntityCounts={filteredCounts.value}
+                  filteredEntities={filteredEntities}
+                  variableLinkConfig={{
+                    type: 'button',
+                    onClick: (variableValue) => {
+                      setSubsetVariableAndEntity({
+                        entityId: variableValue?.entityId,
+                        variableId: variableValue?.variableId
+                          ? variableValue.variableId
+                          : getDefaultVariableId(variableValue?.entityId)
+                              .variableId,
+                      });
+                    },
+                  }}
+                />
+              </div>
               <Subsetting
                 variableLinkConfig={{
                   type: 'button',
                   onClick: setSubsetVariableAndEntity,
                 }}
                 entityId={subsetVariableAndEntity?.entityId ?? ''}
-                variableId={subsetVariableAndEntity?.variableId ?? ''}
+                variableId={subsetVariableAndEntity.variableId ?? ''}
                 analysisState={analysisState}
                 totalCounts={totalCounts.value}
                 filteredCounts={filteredCounts.value}
+                // gets passed to variable tree in order to disable scrollIntoView
+                scope="map"
               />
             </div>
           );
@@ -467,7 +637,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Download,
         icon: <Download />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <DownloadTab
+                downloadClient={downloadClient}
+                analysisState={analysisState}
+                totalCounts={totalCounts.value}
+                filteredCounts={filteredCounts.value}
+              />
+            </div>
+          );
+        },
       },
       {
         labelText: MapSideNavItemLabels.Share,
@@ -477,7 +664,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
           function getShareMenuContent() {
             if (!userLoggedIn) {
-              return <Login {...loginCallbacks} />;
+              return <Login {...loginCallbacks} showCloseButton={false} />;
             }
             if (
               analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
@@ -513,8 +700,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           return (
             <div
               style={{
-                // This matches the `marginTop` applied by `<NotesTab />`
-                padding: '0 35px',
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
               }}
             >
               <NotesTab analysisState={analysisState} />
@@ -523,9 +711,63 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
       },
       {
+        labelText: MapSideNavItemLabels.MyAnalyses,
+        icon: <Table />,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              css={{
+                h1: {
+                  fontSize: '21px',
+                  margin: '25px 0 0 0',
+                  padding: '0 0 1em 0',
+                },
+                '.MesaComponent .DataTable': {
+                  fontSize: 'inherit',
+                },
+              }}
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+              }}
+            >
+              <AllAnalyses
+                analysisClient={analysisClient}
+                activeAnalysisId={
+                  isSavedAnalysis(analysisState.analysis)
+                    ? analysisState.analysis.analysisId
+                    : undefined
+                }
+                subsettingClient={subsettingClient}
+                studyId={getStudyId(studyRecord)}
+                showLoginForm={showLoginForm}
+              />
+            </div>
+          );
+        },
+      },
+      {
         labelText: MapSideNavItemLabels.StudyDetails,
         icon: <InfoOutlined />,
-        renderSideNavigationPanel: sideNavigationRenderPlaceholder,
+        renderSideNavigationPanel: () => {
+          return (
+            <div
+              style={{
+                padding: '1em',
+                width: '70vw',
+                maxWidth: '1500px',
+                fontSize: '.95em',
+              }}
+            >
+              <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
+              <RecordController
+                recordClass="dataset"
+                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+              />
+            </div>
+          );
+        },
       },
     ];
 
@@ -539,7 +781,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const intialActiveSideMenuIndex: number | undefined = (() => {
-    if (appState.isSubsetPanelOpen) return filterSideMenuItemIndex;
     if (appState.activeVisualizationId) return plotSideMenuItemIndex;
 
     return undefined;
@@ -601,6 +842,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);
 
+  // for flyTo functionality
+  const [willFlyTo, setWillFlyTo] = useState(false);
+
+  // Only decide if we need to flyTo while we are waiting for marker data
+  // then only trigger the flyTo when no longer pending.
+  // This makes sure that the user sees the global location of the data before the flyTo happens.
+  useEffect(() => {
+    if (pending) {
+      setWillFlyTo(isEqual(appState.viewport, defaultAppState.viewport));
+    }
+  }, [pending, appState.viewport]);
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app: ComputationAppOverview) => {
@@ -616,19 +869,34 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               <div
                 style={{
                   height: '100%',
+                  width: '100%',
                   position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
+                <MapHeader
+                  analysisName={analysisState.analysis?.displayName}
+                  outputEntity={outputEntity}
+                  filterList={<FilterChipListForHeader />}
+                  siteInformation={props.siteInformationProps}
+                  onAnalysisNameEdit={analysisState.setName}
+                  studyName={studyRecord.displayName}
+                  totalEntityCount={outputEntityTotalCount}
+                  totalEntityInSubsetCount={outputEntityFilteredCount}
+                  visibleEntityCount={
+                    totalVisibleWithOverlayEntityCount ??
+                    totalVisibleEntityCount
+                  }
+                  overlayActive={overlayVariable != null}
+                />
                 <div
                   style={{
-                    // Make a div that completely fills its parent. Have it
-                    // layout its children with flexbox.
-                    display: 'flex',
-                    flexDirection: 'column',
+                    // Make a div that completely fills its parent.
                     height: '100%',
                     width: '100%',
-                    // Attach this div container to it's parent.
-                    position: 'absolute',
+                    // Attach this div container to its parent.
+                    position: 'relative',
                     // Remember that just about everything in the DOM is box.
                     // This div is sitting on top of the map. By disabling
                     // pointer events we are saying: hey, div, become porous.
@@ -637,24 +905,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     pointerEvents: 'none',
                   }}
                 >
-                  <MapHeader
-                    analysisName={analysisState.analysis?.displayName}
-                    entityDisplayName={
-                      outputEntity?.displayNamePlural || 'Samples'
-                    }
-                    filterList={<FilterChipListForHeader />}
-                    isExpanded={mapHeaderIsExpanded}
-                    siteInformation={props.siteInformationProps}
-                    onAnalysisNameEdit={analysisState.setName}
-                    onToggleExpand={() => setMapHeaderIsExpanded((c) => !c)}
-                    studyName={studyRecord.displayName}
-                    totalEntityCount={outputEntityTotalCount}
-                    totalEntityInSubsetCount={totalEntityCount}
-                    visibleEntityCount={
-                      totalVisibleWithOverlayEntityCount ??
-                      totalVisibleEntityCount
-                    }
-                  />
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
                     onToggleIsExpanded={() =>
@@ -693,40 +943,45 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       </ul>
                     </div>
                   </MapSideNavigation>
+                  <MapVEuMap
+                    height="100%"
+                    width="100%"
+                    style={mapStyle}
+                    showMouseToolbar={true}
+                    showLayerSelector={false}
+                    showSpinner={pending}
+                    animation={defaultAnimation}
+                    viewport={appState.viewport}
+                    markers={finalMarkers}
+                    mouseMode={appState.mouseMode}
+                    flyToMarkers={
+                      markers && markers.length > 0 && willFlyTo && !pending
+                    }
+                    flyToMarkersDelay={500}
+                    onBoundsChanged={setBoundsZoomLevel}
+                    onViewportChanged={setViewport}
+                    onMouseModeChange={setMouseMode}
+                    showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
+                    zoomLevelToGeohashLevel={
+                      geoConfig?.zoomLevelToAggregationLevel
+                    }
+                    // pass defaultViewport & isStandAloneMap props for custom zoom control
+                    defaultViewport={defaultAppState.viewport}
+                  />
                 </div>
 
-                <MapVEuMap
-                  height="100%"
-                  width="100%"
-                  style={mapStyle}
-                  showMouseToolbar={false}
-                  showZoomControl={false}
-                  showLayerSelector={false}
-                  showSpinner={pending}
-                  animation={null}
-                  viewport={appState.viewport}
-                  markers={finalMarkers}
-                  mouseMode={appState.mouseMode}
-                  flyToMarkers={false}
-                  flyToMarkersDelay={500}
-                  onBoundsChanged={setBoundsZoomLevel}
-                  onViewportChanged={setViewport}
-                  onMouseModeChange={setMouseMode}
-                  showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
-                  zoomLevelToGeohashLevel={
-                    geoConfig?.zoomLevelToAggregationLevel
-                  }
-                />
                 <FloatingDiv
                   style={{
-                    top: 350,
-                    right: 50,
+                    top: 250,
+                    right: 8,
                   }}
                 >
                   {legendItems.length > 0 && (
                     <MapLegend
                       legendItems={legendItems}
                       title={overlayVariable?.displayName}
+                      // control to show checkbox. default: true
+                      showCheckbox={false}
                     />
                   )}
                 </FloatingDiv>
@@ -750,29 +1005,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     />
                   </div>
       */}
-                <FloatingDiv
-                  style={{
-                    top: 150,
-                    right: 50,
-                  }}
-                >
-                  <span style={{ backgroundColor: 'yellow' }}>
-                    temporary - remove me
-                  </span>
-                  <InputVariables
-                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                    entities={studyEntities}
-                    selectedVariables={selectedVariables}
-                    onChange={(selectedVariables) =>
-                      setSelectedOverlayVariable(selectedVariables.overlay)
-                    }
-                    starredVariables={
-                      analysisState.analysis?.descriptor.starredVariables ?? []
-                    }
-                    toggleStarredVariable={toggleStarredVariable}
-                  />
-                </FloatingDiv>
-
                 {activeSideMenuIndex === plotSideMenuItemIndex && (
                   <DraggableVisualization
                     analysisState={analysisState}
@@ -789,7 +1021,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 )}
 
-                {(basicMarkerError || overlayError) && (
+                {error && (
                   <FloatingDiv
                     style={{
                       top: undefined,
@@ -798,8 +1030,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       right: 100,
                     }}
                   >
-                    {basicMarkerError && <div>{String(basicMarkerError)}</div>}
-                    {overlayError && <div>{String(overlayError)}</div>}
+                    <div>{String(error)}</div>
                   </FloatingDiv>
                 )}
               </div>
@@ -809,4 +1040,43 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       }}
     </PromiseResult>
   );
+}
+
+/**
+ * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
+ * kind of test and simplify its logic.
+ */
+export function useGetDefaultVariableIdCallback() {
+  const entities = useStudyEntities();
+  const flattenedFields = useFlattenedFields(entities, 'variableTree');
+  const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
+
+  return function getDefaultVariableIdCallback(entityId?: string) {
+    let finalEntityId = '';
+    let finalVariableId = '';
+
+    if (entityId || featuredFields.length === 0) {
+      // Use the first variable in the entity
+      const entity = entityId
+        ? entities.find((e) => e.id === entityId)
+        : entities[0];
+
+      if (entity) {
+        finalEntityId = entity.id;
+
+        const firstVariable = findFirstVariable(
+          fieldTree,
+          entity.id
+        )?.field.term.split('/')[1];
+
+        finalVariableId = firstVariable || '';
+      }
+    } else {
+      // Use the first featured variable
+      [finalEntityId, finalVariableId] = featuredFields[0].term.split('/');
+    }
+
+    return { entityId: finalEntityId, variableId: finalVariableId };
+  };
 }

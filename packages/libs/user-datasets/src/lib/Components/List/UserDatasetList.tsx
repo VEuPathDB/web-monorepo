@@ -37,6 +37,9 @@ import { normalizePercentage, textCell } from '../UserDatasetUtils';
 import './UserDatasetList.scss';
 import { DateTime } from '../DateTime';
 
+import { ThemedGrantAccessButton } from '../ThemedGrantAccessButton';
+import { ThemedDeleteButton } from '../ThemedDeleteButton';
+
 interface Props {
   baseUrl: string;
   user: User;
@@ -362,17 +365,17 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableActions() {
     const { isMyDataset } = this;
-    const { removeUserDataset } = this.props;
+    const { removeUserDataset, dataNoun } = this.props;
     return [
       {
         callback: (rows: UserDataset[]) => {
           this.openSharingModal();
         },
         element: (
-          <button className="btn btn-info">
-            <Icon fa="share-alt left-side" />
-            Grant Access to {this.props.dataNoun.plural}
-          </button>
+          <ThemedGrantAccessButton
+            buttonText={`Grant Access to ${dataNoun.plural}`}
+            onPress={() => null}
+          />
         ),
         selectionRequired: true,
       },
@@ -418,10 +421,7 @@ class UserDatasetList extends React.Component<Props, State> {
           userDatasets.forEach((userDataset) => removeUserDataset(userDataset));
         },
         element: (
-          <button className="btn btn-error">
-            <Icon fa="trash-o left-side" />
-            Delete
-          </button>
+          <ThemedDeleteButton buttonText="Delete" onPress={() => null} />
         ),
         selectionRequired: true,
       },
@@ -430,10 +430,11 @@ class UserDatasetList extends React.Component<Props, State> {
 
   getTableOptions() {
     const { isRowSelected, toggleProjectScope } = this;
-    const { userDatasets, projectName, filterByProject } = this.props;
+    const { userDatasets, projectName, filterByProject, dataNoun } = this.props;
     const emptyMessage = !userDatasets.length ? (
       <p style={{ textAlign: 'center' }}>
-        This page is empty because you do not have any data sets.
+        This page is empty because you do not have any{' '}
+        {dataNoun.plural.toLowerCase()}.
       </p>
     ) : filterByProject ? (
       <React.Fragment>
@@ -445,7 +446,7 @@ class UserDatasetList extends React.Component<Props, State> {
           className="btn btn-info"
           onClick={() => toggleProjectScope(false)}
         >
-          Show All User Datasets
+          Show All User {dataNoun.plural}
         </button>
       </React.Fragment>
     ) : (

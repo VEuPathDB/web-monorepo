@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 import Path from 'path';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -67,6 +67,25 @@ interface Props {
   subsettingClient: SubsettingClient;
   exampleAnalysesAuthor?: number;
   /**
+   * When provided, the table is filtered to the study,
+   * and the study column is not displayed.
+   */
+  studyId?: string | null;
+  /**
+   * If the analysis with this ID is displayed,
+   * indicate it is "active"
+   */
+  activeAnalysisId?: string;
+  /**
+   * Determines if the search term is stored as a query
+   * param in the url
+   */
+  synchronizeWithUrl?: boolean;
+  /**
+   * Determines if the document title is updated
+   */
+  updateDocumentTitle?: boolean;
+  /**
    * A callback to open a login form.
    * This is passed down through several component layers. */
   showLoginForm: () => void;
@@ -88,29 +107,38 @@ const UNKNOWN_DATASET_NAME = 'Unknown study';
 const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 
 export function AllAnalyses(props: Props) {
-  const { analysisClient, exampleAnalysesAuthor, showLoginForm } = props;
+  const {
+    analysisClient,
+    exampleAnalysesAuthor,
+    showLoginForm,
+    studyId,
+    synchronizeWithUrl,
+    updateDocumentTitle,
+    activeAnalysisId,
+  } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
 
-  const searchText = useMemo(() => {
+  const searchTextQueryParam = useMemo(() => {
+    if (!synchronizeWithUrl) return '';
     const queryParams = new URLSearchParams(location.search);
     const searchParam = queryParams.get('s') ?? '';
     return stripHTML(searchParam); // matches stripHTML(dataset.displayName) below
-  }, [location.search]);
+  }, [location.search, synchronizeWithUrl]);
+
+  const [searchText, setSearchText] = useState(searchTextQueryParam);
 
   const debouncedSearchText = useDebounce(searchText, 250);
 
-  const setSearchText = useCallback(
-    (newSearchText: string) => {
-      const queryParams = newSearchText
-        ? '?s=' + encodeURIComponent(newSearchText)
-        : '';
-      history.replace(location.pathname + queryParams);
-    },
-    [history, location.pathname]
-  );
+  useEffect(() => {
+    if (!synchronizeWithUrl) return;
+    const queryParams = searchText
+      ? '?s=' + encodeURIComponent(searchText)
+      : '';
+    history.replace(location.pathname + queryParams);
+  }, [history, location.pathname, searchText, synchronizeWithUrl]);
 
   const onFilterFieldChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,13 +171,8 @@ export function AllAnalyses(props: Props) {
 
   const datasets = useWdkStudyRecords(WDK_STUDY_RECORD_ATTRIBUTES);
 
-  const {
-    analyses,
-    deleteAnalyses,
-    updateAnalysis,
-    loading,
-    error,
-  } = useAnalysisList(analysisClient);
+  const { analyses, deleteAnalyses, updateAnalysis, loading, error } =
+    useAnalysisList(analysisClient);
 
   const analysesAndDatasets: AnalysisAndDataset[] | undefined = useMemo(
     () =>
@@ -199,11 +222,15 @@ export function AllAnalyses(props: Props) {
   const searchableDatasetColumns = useMemo(() => ['displayName'] as const, []);
 
   const filteredAnalysesAndDatasets = useMemo(() => {
-    if (!debouncedSearchText) return analysesAndDatasets;
+    if (!debouncedSearchText && !studyId) return analysesAndDatasets;
     const lowerSearchText = debouncedSearchText.toLowerCase();
 
-    return analysesAndDatasets?.filter(
-      ({ analysis, dataset }) =>
+    return analysesAndDatasets?.filter(({ analysis, dataset }) => {
+      const matchesStudyId =
+        !studyId || dataset?.attributes.dataset_id === studyId;
+      if (!matchesStudyId) return false;
+      if (!debouncedSearchText) return true;
+      return (
         searchableAnalysisColumns.some((columnKey) =>
           analysis[columnKey]?.toLowerCase().includes(lowerSearchText)
         ) ||
@@ -212,12 +239,14 @@ export function AllAnalyses(props: Props) {
         ) ||
         (dataset == null &&
           UNKNOWN_DATASET_NAME.toLowerCase().includes(lowerSearchText))
-    );
+      );
+    });
   }, [
     searchableAnalysisColumns,
     searchableDatasetColumns,
     debouncedSearchText,
     analysesAndDatasets,
+    studyId,
   ]);
 
   const removeUnpinned = useCallback(() => {
@@ -229,9 +258,8 @@ export function AllAnalyses(props: Props) {
   }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
 
   const [sharingModalVisible, setSharingModalVisible] = useState(false);
-  const [selectedAnalysisId, setSelectedAnalysisId] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedAnalysisId, setSelectedAnalysisId] =
+    useState<string | undefined>(undefined);
 
   const tableState = useMemo(
     () => ({
@@ -422,16 +450,20 @@ export function AllAnalyses(props: Props) {
             </Tooltip>
           ),
         },
-        {
-          key: 'study',
-          name: 'Study',
-          sortable: true,
-          renderCell: (data: { row: AnalysisAndDataset }) => {
-            const { dataset } = data.row;
-            if (dataset == null) return UNKNOWN_DATASET_NAME;
-            return safeHtml(dataset.displayNameHTML);
-          },
-        },
+        ...(studyId
+          ? []
+          : [
+              {
+                key: 'study',
+                name: 'Study',
+                sortable: true,
+                renderCell: (data: { row: AnalysisAndDataset }) => {
+                  const { dataset } = data.row;
+                  if (dataset == null) return UNKNOWN_DATASET_NAME;
+                  return safeHtml(dataset.displayNameHTML);
+                },
+              },
+            ]),
         {
           key: 'name',
           name: 'Analysis',
@@ -448,11 +480,15 @@ export function AllAnalyses(props: Props) {
                   value={displayName}
                   displayValue={(value) => (
                     <Link
-                      to={Path.join(
-                        history.location.pathname,
-                        data.row.analysis.studyId,
-                        data.row.analysis.analysisId
-                      )}
+                      to={
+                        studyId
+                          ? data.row.analysis.analysisId
+                          : Path.join(
+                              history.location.pathname,
+                              data.row.analysis.studyId,
+                              data.row.analysis.analysisId
+                            )
+                      }
                     >
                       {value}
                     </Link>
@@ -464,6 +500,11 @@ export function AllAnalyses(props: Props) {
                   }}
                   maxLength={ANALYSIS_NAME_MAX_LENGTH}
                 />
+                {data.row.analysis.analysisId === activeAnalysisId ? (
+                  <>
+                    &nbsp;&nbsp;<em>(currently viewing)</em>
+                  </>
+                ) : null}
                 {data.row.analysis.provenance != null && (
                   <>
                     <br />
@@ -523,7 +564,8 @@ export function AllAnalyses(props: Props) {
             const offerPublicityToggle =
               studyAccessLevel === 'public' ||
               studyAccessLevel === 'protected' ||
-              studyAccessLevel === 'controlled';
+              studyAccessLevel === 'controlled' ||
+              studyAccessLevel === null;
 
             return (
               <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -597,10 +639,11 @@ export function AllAnalyses(props: Props) {
       removePinnedAnalysis,
       exampleAnalysesAuthor,
       user,
+      studyId,
     ]
   );
 
-  useSetDocumentTitle('My Analyses');
+  useSetDocumentTitle(updateDocumentTitle ? 'My Analyses' : document.title);
 
   return (
     <div className={classes.root}>
@@ -618,7 +661,7 @@ export function AllAnalyses(props: Props) {
       />
 
       <h1>My Analyses</h1>
-      {(loading || datasets == null) && (
+      {(loading || datasets == null || analyses == null || user == null) && (
         <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
       )}
       {error && <ContentError>{error}</ContentError>}
@@ -663,9 +706,7 @@ export function AllAnalyses(props: Props) {
             </span>
           </div>
         </Mesa.Mesa>
-      ) : (
-        <Loading />
-      )}
+      ) : null}
     </div>
   );
 }

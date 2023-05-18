@@ -47,14 +47,14 @@ export default function DraggableVisualization({
   toggleStarredVariable,
   filters,
 }: Props) {
-  const activeViz = analysisState.analysis?.descriptor.computations
-    .flatMap((c) => c.visualizations)
-    .find((v) => v.visualizationId === appState.activeVisualizationId);
+  const [computation, activeViz] =
+    analysisState.analysis?.descriptor.computations
+      .flatMap((c) => c.visualizations.map((v) => [c, v] as const))
+      .find(([c, v]) => v.visualizationId === appState.activeVisualizationId) ??
+    [];
 
   const activeVizOverview: VisualizationOverview | undefined =
     app.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
-
-  const computation = analysisState.analysis?.descriptor.computations[0];
 
   return (
     <>
@@ -63,7 +63,7 @@ export default function DraggableVisualization({
           confineToParentContainer
           showPanelTitle
           isOpen
-          styleOverrides={{ zIndex: 10 }}
+          styleOverrides={{ zIndex: 10, resize: 'both' }}
           panelTitle={activeVizOverview?.displayName || ''}
           defaultPosition={{
             x: 535,
@@ -73,8 +73,6 @@ export default function DraggableVisualization({
         >
           <div
             style={{
-              overflow: 'scroll',
-              resize: 'both',
               // Initial height & width.
               height: 547,
               width: 779,

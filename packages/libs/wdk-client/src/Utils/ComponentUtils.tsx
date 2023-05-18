@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { AttributeValue } from '../Utils/WdkModel';
+import { stripHTML } from './DomUtils';
 
 /**
  * React Component utils
@@ -468,7 +469,7 @@ export function propertyIsNonNull<T, K extends keyof T>(
 
 export function useSetDocumentTitle(title: string) {
   useEffect(() => {
-    document.title = title;
+    document.title = stripHTML(title);
     return () => {
       document.title = '';
     };

@@ -280,13 +280,29 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
             (series.yErrorBarLower ?? []).map(String),
             (series.yErrorBarUpper ?? []).map(String),
             series.extraTooltipText ?? []
-          ).map(([binLabel, x, y, lower, upper, xtra]) => {
+          ).map(([binLabel, x, y, lower, upper, xtra], index) => {
+            const binSampleSize = series.binSampleSize?.[index];
+            const yText =
+              binSampleSize &&
+              'denominatorN' in binSampleSize &&
+              binSampleSize.denominatorN === 0
+                ? 'Undefined'
+                : y;
             const CI =
               lower != null && upper != null
                 ? ` (95% CI: ${lower} - ${upper})`
                 : '';
+            const N = binSampleSize
+              ? 'N' in binSampleSize
+                ? binSampleSize.N
+                : binSampleSize.denominatorN
+              : undefined;
             // use <br> instead of \n for line break
-            return `x: ${binLabel ?? x}<br>y: ${y}${CI}<br>${xtra}`;
+            return (
+              `x: ${binLabel ?? x}<br>y: ${yText}${CI}` +
+              (N !== undefined ? '<br>n: ' + N : '') +
+              (xtra ? '<br>' + xtra : '')
+            );
           }),
         })),
     [data.series]
