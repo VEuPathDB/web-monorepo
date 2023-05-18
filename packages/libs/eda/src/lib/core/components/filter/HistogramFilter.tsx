@@ -277,12 +277,13 @@ export function HistogramFilter(props: Props) {
   const updateUIState = useCallback(
     (newUiState: Partial<UIState>) => {
       // if (uiState.binWidth === newUiState.binWidth) return;
-      analysisState.setVariableUISettings({
+      analysisState.setVariableUISettings((currentState) => ({
+        ...currentState,
         [uiStateKey]: {
           ...uiState,
           ...newUiState,
         },
-      });
+      }));
     },
     [analysisState, uiStateKey, uiState]
   );

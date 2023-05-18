@@ -350,44 +350,48 @@ const useHeaderMenuItems = (
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const communitySite = useCommunitySiteRootUrl();
 
-  const mapMenuItems = useWdkService(async (wdkService): Promise<
-    HeaderMenuItem[]
-  > => {
-    try {
-      const anwser = await wdkService.getAnswerJson(
-        {
-          searchName: 'AllDatasets',
-          searchConfig: {
-            parameters: {},
+  const showInteractiveMaps = Boolean(useEda && projectId === 'VectorBase');
+
+  const mapMenuItems = useWdkService(
+    async (wdkService): Promise<HeaderMenuItem[]> => {
+      if (!showInteractiveMaps) return [];
+      try {
+        const anwser = await wdkService.getAnswerJson(
+          {
+            searchName: 'AllDatasets',
+            searchConfig: {
+              parameters: {},
+            },
           },
-        },
-        {
-          attributes: ['eda_study_id'],
-        }
-      );
-      return anwser.records
-        .filter((record) => record.attributes.eda_study_id != null)
-        .map((record) => ({
-          key: `map-${record.id[0].value}`,
-          display: record.displayName,
-          type: 'reactRoute',
-          url: `/maps/${record.id[0].value}/new`,
-        }));
-    } catch (error) {
-      console.error(error);
-      return [
-        {
-          key: 'maps-error',
-          display: (
-            <>
-              <Warning /> Could not load map data
-            </>
-          ),
-          type: 'custom',
-        },
-      ];
-    }
-  });
+          {
+            attributes: ['eda_study_id'],
+          }
+        );
+        return anwser.records
+          .filter((record) => record.attributes.eda_study_id != null)
+          .map((record) => ({
+            key: `map-${record.id[0].value}`,
+            display: record.displayName,
+            type: 'reactRoute',
+            url: `/maps/${record.id[0].value}/new`,
+          }));
+      } catch (error) {
+        console.error(error);
+        return [
+          {
+            key: 'maps-error',
+            display: (
+              <>
+                <Warning /> Could not load map data
+              </>
+            ),
+            type: 'custom',
+          },
+        ];
+      }
+    },
+    [showInteractiveMaps]
+  );
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -593,14 +597,20 @@ const useHeaderMenuItems = (
           key: 'maps-alpha',
           display: (
             <>
-              Maps <img alt="BETA" src={betaImage} />
+              Interactive maps <img alt="BETA" src={betaImage} />
             </>
           ),
           type: 'subMenu',
           metadata: {
-            include: useEda ? [VectorBase] : [],
+            test: () => showInteractiveMaps,
           },
-          items: mapMenuItems ?? [],
+          items: mapMenuItems ?? [
+            {
+              key: 'maps-loading',
+              type: 'custom',
+              display: <Loading radius={4} />,
+            },
+          ],
         },
         {
           key: 'pubcrawler',

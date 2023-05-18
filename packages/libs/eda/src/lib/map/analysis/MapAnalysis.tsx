@@ -135,7 +135,7 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const analysisState = useAnalysis(props.analysisId, 'pass-through');
+  const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   if (appStateAndSetters.appState == null) return null;
   return (
@@ -959,8 +959,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
                 <FloatingDiv
                   style={{
-                    top: 350,
-                    right: 50,
+                    top: 250,
+                    right: 8,
                   }}
                 >
                   {legendItems.length > 0 && (

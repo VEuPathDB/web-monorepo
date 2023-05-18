@@ -237,7 +237,7 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
         .map((o) => o.value)
         .reduce((a, c) => {
           return a + c;
-        });
+        }, 0);
 
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
   const sumLabel = props.markerLabel ?? String(fullPieValue);
