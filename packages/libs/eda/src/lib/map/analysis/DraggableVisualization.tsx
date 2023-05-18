@@ -32,7 +32,7 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   toggleStarredVariable: (variable: VariableDescriptor) => void;
   filters: Filter[];
-  onDragStart: () => void;
+  onTouch: () => void;
   zIndexForStackingContext: number;
 }
 
@@ -48,7 +48,7 @@ export default function DraggableVisualization({
   filteredCounts,
   toggleStarredVariable,
   filters,
-  onDragStart = () => {},
+  onTouch = () => {},
   zIndexForStackingContext = 10,
 }: Props) {
   const [computation, activeViz] =
@@ -60,55 +60,52 @@ export default function DraggableVisualization({
   const activeVizOverview: VisualizationOverview | undefined =
     app.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
 
-  return (
-    <>
-      {activeViz && (
-        <DraggablePanel
-          confineToParentContainer
-          showPanelTitle
-          isOpen
-          styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
-          panelTitle={activeVizOverview?.displayName || ''}
-          defaultPosition={{
-            x: 535,
-            y: 142,
-          }}
-          onPanelDismiss={() => setActiveVisualizationId(undefined)}
-          onDragStart={onDragStart}
-        >
-          <div
-            style={{
-              // Initial height & width.
-              height: 547,
-              width: 779,
-              // This prevents the panel from collapsing aburdly.
-              minWidth: 400,
-              minHeight: 200,
-            }}
-          >
-            <FullScreenVisualization
-              analysisState={analysisState}
-              computation={computation!}
-              updateVisualizations={updateVisualizations}
-              visualizationPlugins={visualizationPlugins}
-              visualizationsOverview={app.visualizations}
-              geoConfigs={geoConfigs}
-              computationAppOverview={app}
-              filters={filters}
-              starredVariables={
-                analysisState.analysis?.descriptor.starredVariables ?? []
-              }
-              toggleStarredVariable={toggleStarredVariable}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              isSingleAppMode
-              disableThumbnailCreation
-              id={activeViz.visualizationId}
-              actions={<></>}
-            />
-          </div>
-        </DraggablePanel>
-      )}
-    </>
-  );
+  return activeViz ? (
+    <DraggablePanel
+      confineToParentContainer
+      showPanelTitle
+      isOpen
+      styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
+      panelTitle={activeVizOverview?.displayName || ''}
+      defaultPosition={{
+        x: 535,
+        y: 142,
+      }}
+      onPanelDismiss={() => setActiveVisualizationId(undefined)}
+      onDragStart={onTouch}
+    >
+      <div
+        onClick={onTouch} // Ensure that the panel moves to the front when interacted with.
+        style={{
+          // Initial height & width.
+          height: 547,
+          width: 779,
+          // This prevents the panel from collapsing aburdly.
+          minWidth: 400,
+          minHeight: 200,
+        }}
+      >
+        <FullScreenVisualization
+          analysisState={analysisState}
+          computation={computation!}
+          updateVisualizations={updateVisualizations}
+          visualizationPlugins={visualizationPlugins}
+          visualizationsOverview={app.visualizations}
+          geoConfigs={geoConfigs}
+          computationAppOverview={app}
+          filters={filters}
+          starredVariables={
+            analysisState.analysis?.descriptor.starredVariables ?? []
+          }
+          toggleStarredVariable={toggleStarredVariable}
+          totalCounts={totalCounts}
+          filteredCounts={filteredCounts}
+          isSingleAppMode
+          disableThumbnailCreation
+          id={activeViz.visualizationId}
+          actions={<></>}
+        />
+      </div>
+    </DraggablePanel>
+  ) : null;
 }
