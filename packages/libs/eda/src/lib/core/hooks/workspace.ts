@@ -116,12 +116,70 @@ export function useStudyEntities(filters?: Filter[]) {
                         : filter.type === 'stringSet'
                         ? filter.stringSet
                         : undefined;
-                    // augment variable metadata
-                    return {
-                      ...variable,
-                      vocabulary,
-                      distinctValuesCount: vocabulary?.length ?? 0,
-                    };
+                    // need to strip 'T00:00:00Z' from filter.min/max
+                    const filterRange =
+                      filter.type === 'numberRange' ||
+                      filter.type === 'dateRange'
+                        ? {
+                            min:
+                              filter.type === 'numberRange'
+                                ? filter.min
+                                : filter.min.split('T00:00:00Z')[0],
+                            max:
+                              filter.type === 'numberRange'
+                                ? filter.max
+                                : filter.max.split('T00:00:00Z')[0],
+                          }
+                        : undefined;
+
+                    // augment variable metadata including filter-aware axis range
+                    if (
+                      variable.type === 'number' ||
+                      variable.type === 'integer'
+                    )
+                      return {
+                        ...variable,
+                        vocabulary,
+                        distinctValuesCount: vocabulary?.length ?? 0,
+                        distributionDefaults: {
+                          ...variable.distributionDefaults,
+                          rangeMin:
+                            filterRange != null
+                              ? (filterRange.min as number)
+                              : (variable.distributionDefaults
+                                  .rangeMin as number),
+                          rangeMax:
+                            filterRange != null
+                              ? (filterRange.max as number)
+                              : (variable.distributionDefaults
+                                  .rangeMax as number),
+                        },
+                      };
+                    else if (variable.type === 'date')
+                      return {
+                        ...variable,
+                        vocabulary,
+                        distinctValuesCount: vocabulary?.length ?? 0,
+                        distributionDefaults: {
+                          ...variable.distributionDefaults,
+                          rangeMin:
+                            filterRange != null
+                              ? (filterRange.min as string)
+                              : (variable.distributionDefaults
+                                  .rangeMin as string),
+                          rangeMax:
+                            filterRange != null
+                              ? (filterRange.max as string)
+                              : (variable.distributionDefaults
+                                  .rangeMax as string),
+                        },
+                      };
+                    else
+                      return {
+                        ...variable,
+                        vocabulary,
+                        distinctValuesCount: vocabulary?.length ?? 0,
+                      };
                   }
                   return variable;
                 }

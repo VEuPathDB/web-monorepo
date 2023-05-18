@@ -12,11 +12,7 @@ export function numberDateDefaultAxisRange(
   observedMax: number | string | undefined,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full',
-  filterRange?: {
-    min: string | number;
-    max: string | number;
-  }
+  axisRangeSpec = 'Full'
 ): NumberOrDateRange | undefined {
   if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
@@ -42,12 +38,12 @@ export function numberDateDefaultAxisRange(
                   // This can be expressed as a `min` function.
                   (min([
                     defaults.displayRangeMin ?? 0,
-                    filterRange != null ? filterRange.min : defaults.rangeMin,
+                    defaults.rangeMin,
                     observedMin as number,
                   ]) as number),
             max: max([
               defaults.displayRangeMax,
-              filterRange != null ? filterRange.max : defaults.rangeMax,
+              defaults.rangeMax,
               observedMax,
             ]) as number,
           }
@@ -67,7 +63,7 @@ export function numberDateDefaultAxisRange(
                 observedMin != null
                   ? [
                       defaults.displayRangeMin,
-                      filterRange != null ? filterRange.min : defaults.rangeMin,
+                      defaults.rangeMin,
                       observedMin as string,
                     ].reduce(function (a, b) {
                       return a < b ? a : b;
@@ -81,7 +77,7 @@ export function numberDateDefaultAxisRange(
                 observedMax != null
                   ? [
                       defaults.displayRangeMax,
-                      filterRange != null ? filterRange.max : defaults.rangeMax,
+                      defaults.rangeMax,
                       observedMax as string,
                     ].reduce(function (a, b) {
                       return a > b ? a : b;
@@ -95,19 +91,19 @@ export function numberDateDefaultAxisRange(
           : {
               min:
                 observedMin != null
-                  ? [
-                      filterRange != null ? filterRange.min : defaults.rangeMin,
-                      observedMin as string,
-                    ].reduce(function (a, b) {
+                  ? [defaults.rangeMin, observedMin as string].reduce(function (
+                      a,
+                      b
+                    ) {
                       return a < b ? a : b;
                     }) + 'T00:00:00Z'
                   : defaults.rangeMin + 'T00:00:00Z',
               max:
                 observedMax != null
-                  ? [
-                      filterRange != null ? filterRange.max : defaults.rangeMax,
-                      observedMax as string,
-                    ].reduce(function (a, b) {
+                  ? [defaults.rangeMax, observedMax as string].reduce(function (
+                      a,
+                      b
+                    ) {
                       return a > b ? a : b;
                     }) + 'T00:00:00Z'
                   : defaults.rangeMax + 'T00:00:00Z',
@@ -117,14 +113,10 @@ export function numberDateDefaultAxisRange(
             min:
               observedMin != null
                 ? observedMin + 'T00:00:00Z'
-                : filterRange != null
-                ? filterRange.min + 'T00:00:00Z'
                 : defaults.rangeMin + 'T00:00:00Z',
             max:
               observedMax != null
                 ? observedMax + 'T00:00:00Z'
-                : filterRange != null
-                ? filterRange.max + 'T00:00:00Z'
                 : defaults.rangeMax + 'T00:00:00Z',
           };
     }

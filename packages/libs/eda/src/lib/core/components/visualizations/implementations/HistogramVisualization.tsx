@@ -110,8 +110,6 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 
-import { filterMinMax } from '../../../utils/filter-axis-range';
-
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
   | FacetedData<HistogramData>
@@ -557,10 +555,6 @@ function HistogramViz(props: VisualizationProps<Options>) {
     [data]
   );
 
-  const independentAxisFilterRange = useMemo(() => {
-    return filterMinMax(filters, vizConfig.xAxisVariable);
-  }, [filters, vizConfig.xAxisVariable]);
-
   const defaultIndependentRange = useDefaultAxisRange(
     xAxisVariable,
     vizConfig.independentAxisValueSpec === 'Full'
@@ -571,8 +565,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       ? undefined
       : independentAxisMinMax?.max,
     undefined,
-    vizConfig.independentAxisValueSpec,
-    independentAxisFilterRange
+    vizConfig.independentAxisValueSpec
   );
 
   // separate minPosMax from dependentMinPosMax
