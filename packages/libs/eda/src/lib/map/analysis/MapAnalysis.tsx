@@ -978,7 +978,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   confineToParentContainer
                   defaultPosition={{ x: 100, y: 100 }}
                   styleOverrides={{
-                    zIndex: 100,
+                    zIndex: sideNavigationIsExpanded ? 1 : 10,
                   }}
                 >
                   {legendItems.length > 0 && (
