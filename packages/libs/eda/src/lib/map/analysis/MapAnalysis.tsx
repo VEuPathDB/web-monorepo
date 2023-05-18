@@ -93,6 +93,7 @@ import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -970,10 +971,14 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </div>
 
-                <FloatingDiv
-                  style={{
-                    top: 250,
-                    right: 8,
+                <DraggablePanel
+                  isOpen
+                  panelTitle="Legend"
+                  showPanelTitle={false}
+                  confineToParentContainer
+                  defaultPosition={{ x: 100, y: 100 }}
+                  styleOverrides={{
+                    zIndex: 100,
                   }}
                 >
                   {legendItems.length > 0 && (
@@ -984,7 +989,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       showCheckbox={false}
                     />
                   )}
-                </FloatingDiv>
+                </DraggablePanel>
                 {/* <FloatingDiv
                   style={{
                     top: 250,
