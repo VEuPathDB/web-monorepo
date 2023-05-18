@@ -32,6 +32,8 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   toggleStarredVariable: (variable: VariableDescriptor) => void;
   filters: Filter[];
+  onDragStart: () => void;
+  zIndexForStackingContext: number;
 }
 
 export default function DraggableVisualization({
@@ -46,6 +48,8 @@ export default function DraggableVisualization({
   filteredCounts,
   toggleStarredVariable,
   filters,
+  onDragStart = () => {},
+  zIndexForStackingContext = 10,
 }: Props) {
   const [computation, activeViz] =
     analysisState.analysis?.descriptor.computations
@@ -63,13 +67,14 @@ export default function DraggableVisualization({
           confineToParentContainer
           showPanelTitle
           isOpen
-          styleOverrides={{ zIndex: 10, resize: 'both' }}
+          styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
           panelTitle={activeVizOverview?.displayName || ''}
           defaultPosition={{
             x: 535,
             y: 142,
           }}
           onPanelDismiss={() => setActiveVisualizationId(undefined)}
+          onDragStart={onDragStart}
         >
           <div
             style={{

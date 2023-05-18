@@ -855,6 +855,21 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
+  const [zIndicies, setZIndicies] = useState<string[]>(['legend']);
+  const [panelOpenDictionary, setPanelOpenDictionary] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  function movePanelToTopLayer(panelTitleToMove: string) {
+    setZIndicies((currentList) => {
+      return currentList
+        .filter((panelTitle) => panelTitle !== panelTitleToMove)
+        .concat(panelTitleToMove);
+    });
+  }
+
+  const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app: ComputationAppOverview) => {
@@ -978,8 +993,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   confineToParentContainer
                   defaultPosition={{ x: 100, y: 100 }}
                   styleOverrides={{
-                    zIndex: sideNavigationIsExpanded ? 1 : 10,
+                    zIndex:
+                      zIndicies.findIndex((i) => i === 'legend') + zIndexFactor,
                   }}
+                  onDragStart={() => movePanelToTopLayer('legend')}
                 >
                   {legendItems.length > 0 && (
                     <MapLegend
@@ -1023,6 +1040,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
                     filters={filtersIncludingViewport}
+                    onDragStart={() => movePanelToTopLayer('viz')}
+                    zIndexForStackingContext={
+                      zIndicies.findIndex((i) => i === 'viz') + zIndexFactor
+                    }
                   />
                 )}
 
