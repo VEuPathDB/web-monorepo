@@ -263,10 +263,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           overlayConfig,
         });
     }
-    console.log('calling updateOverlayConfig()', {
-      filters,
-      vocabulary: overlayVariable?.vocabulary,
-    });
     updateOverlayConfig();
 
     // TO DO: return a cancel function?

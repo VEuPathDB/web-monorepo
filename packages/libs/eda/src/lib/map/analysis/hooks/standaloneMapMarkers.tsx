@@ -296,7 +296,7 @@ export function useStandaloneMapMarkers(
                       ),
               }))
             : [];
-        console.log({ donutData, overlayType, vocabulary });
+
         // TO DO: address diverging colorscale (especially if there are use-cases)
 
         // now reorder the data, adding zeroes if necessary.
