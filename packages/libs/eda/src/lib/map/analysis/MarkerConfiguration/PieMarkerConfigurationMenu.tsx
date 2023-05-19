@@ -29,6 +29,7 @@ export function PieMarkerConfigurationMenu({
   onChange,
   starredVariables,
   toggleStarredVariable,
+  constraints,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlay) {
@@ -71,6 +72,7 @@ export function PieMarkerConfigurationMenu({
         onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
+        constraints={constraints}
       />
     </div>
   );
