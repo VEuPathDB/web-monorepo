@@ -43,7 +43,7 @@ export async function getDefaultOverlayConfig(
       entityId: overlayEntity.id,
     };
 
-    if (overlayVariable.vocabulary) {
+    if (overlayVariable.dataShape === 'categorical') {
       // categorical
       const overlayValues = await getMostFrequentValues({
         studyId: studyId,

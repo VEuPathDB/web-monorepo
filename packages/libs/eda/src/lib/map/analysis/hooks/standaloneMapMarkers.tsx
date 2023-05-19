@@ -289,11 +289,14 @@ export function useStandaloneMapMarkers(
                   overlayType === 'categorical'
                     ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
                     : gradientSequentialColorscaleMap(
-                        vocabulary.indexOf(binLabel) / (vocabulary.length - 1)
+                        vocabulary.length > 1
+                          ? vocabulary.indexOf(binLabel) /
+                              (vocabulary.length - 1)
+                          : 0.5
                       ),
               }))
             : [];
-
+        console.log({ donutData, overlayType, vocabulary });
         // TO DO: address diverging colorscale (especially if there are use-cases)
 
         // now reorder the data, adding zeroes if necessary.
@@ -382,7 +385,9 @@ export function useStandaloneMapMarkers(
           ? ColorPaletteDefault[vocabulary.indexOf(label)]
           : overlayType === 'continuous'
           ? gradientSequentialColorscaleMap(
-              vocabulary.indexOf(label) / (vocabulary.length - 1)
+              vocabulary.length > 1
+                ? vocabulary.indexOf(label) / (vocabulary.length - 1)
+                : 0.5
             )
           : undefined,
       // has any geo-facet got an array of overlay data
