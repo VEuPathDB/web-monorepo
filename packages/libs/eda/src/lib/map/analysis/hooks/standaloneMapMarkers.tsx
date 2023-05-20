@@ -224,28 +224,28 @@ export function useStandaloneMapMarkers(
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
-  const { valueMax, valueMinPos, valueSum } = useMemo(
+  const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
       markerData.value
         ? markerData.value.mapElements
             .flatMap((el) => el.overlayValues)
             .reduce(
-              ({ valueMax, valueMinPos, valueSum }, elem) => ({
+              ({ valueMax, valueMinPos, countSum }, elem) => ({
                 valueMax: Math.max(elem.value, valueMax),
                 valueMinPos:
                   elem.value > 0 &&
                   (valueMinPos == null || elem.value < valueMinPos)
                     ? elem.value
                     : valueMinPos,
-                valueSum: (valueSum ?? 0) + elem.value,
+                countSum: (countSum ?? 0) + elem.count,
               }),
               {
                 valueMax: 0,
                 valueMinPos: undefined as number | undefined,
-                valueSum: undefined as number | undefined,
+                countSum: undefined as number | undefined,
               }
             )
-        : { valueMax: undefined, valueMinPos: undefined, valueSum: undefined },
+        : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
     [markerData]
   );
 
@@ -404,7 +404,7 @@ export function useStandaloneMapMarkers(
 
   return {
     markers,
-    totalVisibleWithOverlayEntityCount: valueSum,
+    totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
     pending: markerData.pending,

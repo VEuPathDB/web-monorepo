@@ -818,6 +818,7 @@ export const StandaloneMapMarkersResponse = type({
           type({
             binLabel: string,
             value: number,
+            count: number,
           }),
           partial({
             binStart: string,
