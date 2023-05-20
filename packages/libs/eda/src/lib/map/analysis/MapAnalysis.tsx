@@ -525,9 +525,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                           []
                         }
                         toggleStarredVariable={toggleStarredVariable}
-                        selectedPlotMode={
-                          activeMarkerConfiguration.selectedPlotMode
-                        }
                         configuration={activeMarkerConfiguration}
                       />
                     ) : (
