@@ -182,7 +182,7 @@ export function useStandaloneMapMarkers(
           longitudeVariable,
           overlayConfig,
           outputEntityId,
-          valueSpec: 'count', // TO DO: or proportion when we have the UI and back-end fix https://github.com/VEuPathDB/EdaDataService/issues/261 for this
+          valueSpec: markerType === 'pie' ? 'count' : markerType,
           viewport: {
             latitude: {
               xMin,
@@ -213,7 +213,7 @@ export function useStandaloneMapMarkers(
       longitudeVariable,
       boundsZoomLevel,
       geoConfig,
-      // TO DO: add markerType and make valueSpec depend on it
+      markerType,
     ])
   );
 
