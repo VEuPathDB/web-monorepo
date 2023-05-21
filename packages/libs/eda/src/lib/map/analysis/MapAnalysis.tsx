@@ -80,7 +80,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { uniq, isEqual } from 'lodash';
+import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -855,10 +855,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       const epsilon = 2.0;
       const isWillFlyTo =
         appState.viewport.zoom === defaultAppState.viewport.zoom &&
-        Math.abs(appState.viewport.center[0]) <=
-          defaultAppState.viewport.center[0] + epsilon &&
-        Math.abs(appState.viewport.center[1]) <=
-          defaultAppState.viewport.center[1] + epsilon;
+        Math.abs(
+          appState.viewport.center[0] - defaultAppState.viewport.center[0]
+        ) <= epsilon &&
+        Math.abs(
+          appState.viewport.center[1] - defaultAppState.viewport.center[1]
+        ) <= epsilon;
       setWillFlyTo(isWillFlyTo);
     }
   }, [pending, appState.viewport]);

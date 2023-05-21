@@ -34,7 +34,7 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { LatLngBounds, Map } from 'leaflet';
+import { LatLngBounds, Map, DomEvent } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
@@ -94,7 +94,7 @@ export const baseLayers = {
       '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     // minZoom='2'
     // maxZoom='18'
-    // noWrap='0'
+    // noWrap='0
   },
 };
 
@@ -452,10 +452,14 @@ interface CustomZoomControlProps {
 function CustomZoomControl(props: CustomZoomControlProps) {
   const map = useMap();
 
+  const disableMinZoomButton =
+    map.getZoom() === map.options.minZoom ? 'leaflet-disabled' : '';
+  // no leaflet max zoom exists so manually set to 17
+  const disableMaxZoomButton = map.getZoom() === 17 ? 'leaflet-disabled' : '';
+
   // zoom in
   const zoomIn = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // map.doubleClickZoom.disable();
     map.setZoom(map.getZoom() + 1);
   };
 
@@ -474,48 +478,50 @@ function CustomZoomControl(props: CustomZoomControlProps) {
 
   return (
     <div
-      className="leaflet-top leaflet-right"
-      style={{ top: '0px', right: '-3px' }}
+      className="leaflet-control-container"
+      ref={(ref) => {
+        if (!ref) return;
+        DomEvent.disableClickPropagation(ref).disableScrollPropagation(ref);
+      }}
     >
-      <div className="leaflet-control-zoom leaflet-bar leaflet-control">
-        <a
-          className="leaflet-control-zoom-in"
-          href="/"
-          title="Zoom in"
-          role="button"
-          aria-label="Zoom in"
-          onClick={zoomIn}
-        >
-          +
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="/"
-          title="Zoom out"
-          role="button"
-          aria-label="Zoom out"
-          onClick={zoomOut}
-          style={{
-            color:
-              map.getZoom() === props.defaultViewport?.zoom
-                ? 'lightgray'
-                : 'black',
-          }}
-        >
-          −
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="/"
-          title="zoom to data"
-          role="button"
-          aria-label="zoom to data"
-          onClick={zoomToData}
-        >
-          <div style={{ paddingTop: '4px' }}>
-            <Undo />
-          </div>
-        </a>
+      <div
+        className="leaflet-top leaflet-right"
+        style={{ top: '0px', right: '-3px' }}
+      >
+        <div className="leaflet-control-zoom leaflet-bar leaflet-control">
+          <a
+            className={'leaflet-control-zoom-in' + disableMaxZoomButton}
+            href="#"
+            title="Zoom in"
+            role="button"
+            aria-label="Zoom in"
+            onClick={zoomIn}
+          >
+            <span aria-hidden="true">+</span>
+          </a>
+          <a
+            className={'leaflet-control-zoom-out' + disableMinZoomButton}
+            href="#"
+            title="Zoom out"
+            role="button"
+            aria-label="Zoom out"
+            onClick={zoomOut}
+          >
+            <span aria-hidden="true">-</span>
+          </a>
+          <a
+            className="leaflet-control-zoom-out"
+            href="#"
+            title="zoom to data"
+            role="button"
+            aria-label="zoom to data"
+            onClick={zoomToData}
+          >
+            <div style={{ paddingTop: '4px' }}>
+              <Undo />
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   );
