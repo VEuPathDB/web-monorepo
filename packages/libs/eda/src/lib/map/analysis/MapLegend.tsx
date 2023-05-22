@@ -1,7 +1,6 @@
 import React from 'react';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   legendItems: LegendItemsProps[];
@@ -18,9 +17,12 @@ export function MapLegend(props: Props) {
       <div>
         <strong>{title}</strong>
       </div>
-      {isLoading ? (
-        <Loading />
-      ) : (
+      <div
+        style={{
+          fontStyle: isLoading ? 'italic' : 'initial',
+          opacity: isLoading ? 0.3 : 1,
+        }}
+      >
         <PlotLegend
           type="list"
           legendItems={legendItems}
@@ -34,7 +36,7 @@ export function MapLegend(props: Props) {
           }}
           showCheckbox={showCheckbox}
         />
-      )}
+      </div>
     </>
   );
 }
