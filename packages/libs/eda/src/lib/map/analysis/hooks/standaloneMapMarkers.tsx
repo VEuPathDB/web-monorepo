@@ -27,11 +27,7 @@ import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/m
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { useDeepValue } from '../../../core/hooks/immutability';
-
-// Back end overlay values contain a special token for the "Other" category:
-export const UNSELECTED_TOKEN = '__UNSELECTED__';
-// This is what is displayed to the user instead:
-const UNSELECTED_DISPLAY_TEXT = 'All other values';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 
 /**
  * Provides markers for use in the MapVEuMap component

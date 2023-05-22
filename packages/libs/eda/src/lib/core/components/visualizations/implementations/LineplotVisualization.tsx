@@ -85,11 +85,13 @@ import {
   vocabularyWithMissingData,
   hasIncompleteCases,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
   AvailableUnitsAddon,
   ColorPaletteDefault,
+  SequentialGradientColorscale,
 } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -319,6 +321,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable,
     providedOverlayVariableDescriptor
   );
+
+  const colorPaletteOverride =
+    neutralPaletteProps.colorPalette ??
+    options?.getOverlayType?.() === 'continuous'
+      ? SequentialGradientColorscale
+      : undefined;
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
@@ -739,10 +747,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
@@ -762,7 +772,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        neutralPaletteProps.colorPalette
+        colorPaletteOverride
       );
     }, [
       outputEntity,
@@ -1955,7 +1965,7 @@ export function lineplotResponseToData(
           })),
         };
   return {
-    dataSetProcess,
+    dataSetProcess: substituteUnselectedToken(dataSetProcess!),
     // calculated y axis limits
     xMin,
     xMinPos,

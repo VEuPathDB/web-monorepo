@@ -61,6 +61,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -68,7 +69,10 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import {
@@ -527,27 +531,31 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          boxplotResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable,
+        substituteUnselectedToken(
+          reorderData(
+            boxplotResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable,
+              entities
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet),
             entities
-          ),
-          vocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
-          entities
+          )
         ),
         showMissingOverlay,
         '#a0a0a0'
@@ -725,6 +733,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       dependentAxisMinMax={dependentAxisMinMax}
+      colorPalette={
+        options?.getOverlayType?.() === 'continuous'
+          ? SequentialGradientColorscale
+          : ColorPaletteDefault
+      }
       {...neutralPaletteProps}
     />
   );

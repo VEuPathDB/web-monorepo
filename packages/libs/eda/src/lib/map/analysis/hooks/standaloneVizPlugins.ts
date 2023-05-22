@@ -17,7 +17,7 @@ import { scatterplotVisualization } from '../../../core/components/visualization
 import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
-import { OverlayConfig } from '../../../core';
+import { BinDefinitions, OverlayConfig } from '../../../core';
 import { boxplotRequest } from './plugins/boxplot';
 import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
@@ -41,7 +41,20 @@ export function useStandaloneVizPlugins({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
         layoutComponent: FloatingLayout,
+        // why are we providing three functions to access the properties of
+        // one object? Because in the pre-SAM world, getOverlayVariable was already
+        // part of this interface.
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
+        getOverlayType: () => selectedOverlayConfig?.overlayType,
+        getOverlayVocabulary: () => {
+          const overlayValues = selectedOverlayConfig?.overlayValues;
+          if (overlayValues == null) return undefined;
+          if (BinDefinitions.is(overlayValues)) {
+            return overlayValues.map((bin) => bin.binLabel);
+          } else {
+            return overlayValues;
+          }
+        },
         getOverlayVariableHelp: () =>
           'The overlay variable can be selected via the top-right panel.',
       });
