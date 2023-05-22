@@ -93,6 +93,9 @@ import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import { usePrevious } from '../../core/hooks/previousValue';
+import { equals } from 'lodash/fp';
+import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -240,7 +243,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const adaptedMarkerTypename = (() => {
     if (activeMarkerConfiguration.type === 'barplot') {
       // The marker type for barplots is either `count` or `proportion`.
-      // `useMapMarkers` needs to know this.
+      // `useStandaloneMapMarkers` needs to know this.
       return activeMarkerConfiguration.selectedPlotMode;
     }
 
@@ -267,7 +270,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     overlayVariable: activeMarkerConfiguration.selectedVariable,
     //TO DO: maybe dependentAxisLogScale
   });
-
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const dataClient = useDataClient();
@@ -854,6 +856,29 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
+  const previousVariableId = usePrevious(
+    activeMarkerConfiguration.selectedVariable.variableId
+  );
+  const variableIdDidChange =
+    previousVariableId !==
+    activeMarkerConfiguration.selectedVariable.variableId;
+
+  const previousLegendItems = usePrevious<LegendItemsProps[]>(legendItems);
+
+  const [legendIsLoading, setLegendIsLoading] = useState(true);
+
+  if (variableIdDidChange && !legendIsLoading) {
+    setLegendIsLoading(true);
+  }
+
+  const hasNewLegendItems =
+    (previousLegendItems || []).length > 0 &&
+    !equals(previousLegendItems, legendItems);
+
+  if (hasNewLegendItems && legendIsLoading) {
+    setLegendIsLoading(false);
+  }
+
   return (
     <PromiseResult state={appPromiseState}>
       {(app: ComputationAppOverview) => {
@@ -977,7 +1002,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   }}
                 >
                   <MapLegend
-                    isLoading={legendItems.length === 0}
+                    isLoading={legendIsLoading}
                     legendItems={legendItems}
                     title={overlayVariable?.displayName}
                     // control to show checkbox. default: true
