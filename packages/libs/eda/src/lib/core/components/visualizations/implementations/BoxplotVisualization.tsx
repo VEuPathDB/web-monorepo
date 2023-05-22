@@ -61,7 +61,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
-  substituteUnselectedToken1,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -537,7 +537,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         facetVariable
       );
       return grayOutLastSeries(
-        substituteUnselectedToken1(
+        substituteUnselectedToken(
           reorderData(
             boxplotResponseToData(
               response,

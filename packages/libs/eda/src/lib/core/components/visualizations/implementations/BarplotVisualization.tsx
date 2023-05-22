@@ -53,7 +53,7 @@ import {
   nonUniqueWarning,
   hasIncompleteCases,
   assertValidInputVariables,
-  substituteUnselectedToken1,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -468,7 +468,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       );
 
       return grayOutLastSeries(
-        substituteUnselectedToken1(
+        substituteUnselectedToken(
           reorderData(
             barplotResponseToData(
               response,

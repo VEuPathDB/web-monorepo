@@ -78,7 +78,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
-  substituteUnselectedToken2,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -2236,7 +2236,7 @@ export function scatterplotResponseToData(
       );
 
     return {
-      dataSetProcess: substituteUnselectedToken2(dataSetProcess),
+      dataSetProcess: substituteUnselectedToken(dataSetProcess),
       xMin,
       xMinPos,
       xMax,

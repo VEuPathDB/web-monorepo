@@ -64,7 +64,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   assertValidInputVariables,
-  substituteUnselectedToken1,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
@@ -536,7 +536,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         facetVariable
       );
       return grayOutLastSeries(
-        substituteUnselectedToken1(
+        substituteUnselectedToken(
           reorderData(
             histogramResponseToData(
               response,

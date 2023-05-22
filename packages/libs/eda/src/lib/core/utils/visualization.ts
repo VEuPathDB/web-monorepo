@@ -80,39 +80,16 @@ type NamedSeries = {
   }[];
 };
 
-// boxplot, barplot, histogram
-export function substituteUnselectedToken1<T extends NamedSeries>(
-  data: T | MaybeFacetedSeriesWithStatistics<T>
-): T | MaybeFacetedSeriesWithStatistics<T> {
+export function substituteUnselectedToken<
+  T extends NamedSeries,
+  Data extends T | FacetedData<T> | MaybeFacetedSeriesWithStatistics<T>
+>(data: Data): Data {
   if (isFaceted(data)) {
     return {
       ...data,
       facets: data.facets.map((facet) => ({
         ...facet,
-        data: substituteUnselectedToken1(data) as T,
-      })),
-    };
-  } else {
-    return {
-      ...data,
-      series: data.series.map((s) => ({
-        ...s,
-        name: s.name === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : s.name,
-      })),
-    };
-  }
-}
-
-// lineplot, scatterplot
-export function substituteUnselectedToken2<T extends NamedSeries>(
-  data: T | FacetedData<T>
-): T | FacetedData<T> {
-  if (isFaceted(data)) {
-    return {
-      ...data,
-      facets: data.facets.map((facet) => ({
-        ...facet,
-        data: substituteUnselectedToken2(data) as T,
+        data: substituteUnselectedToken(data) as T,
       })),
     };
   } else {
