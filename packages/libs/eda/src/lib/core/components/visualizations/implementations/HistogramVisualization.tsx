@@ -64,6 +64,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
@@ -72,7 +73,10 @@ import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -81,6 +85,7 @@ import {
   NumberOrDateRange,
   NumberRange,
   DateRange,
+  TimeUnit,
 } from '../../../types/general';
 import { padISODateTime } from '../../../utils/date-conversion';
 import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
@@ -104,11 +109,16 @@ import {
   histogramDefaultDependentAxisMinMax,
 } from '../../../utils/axis-range-calculations';
 import { LayoutOptions } from '../../layouts/types';
-import { OverlayOptions } from '../options/types';
+import {
+  OverlayOptions,
+  RequestOptionProps,
+  RequestOptions,
+} from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -177,7 +187,14 @@ export const HistogramConfig = t.intersection([
   }),
 ]);
 
-interface Options extends LayoutOptions, OverlayOptions {}
+interface Options
+  extends LayoutOptions,
+    OverlayOptions,
+    RequestOptions<
+      HistogramConfig,
+      FloatingHistogramExtraProps,
+      HistogramRequestParams
+    > {}
 
 function HistogramViz(props: VisualizationProps<Options>) {
   const {
@@ -481,7 +498,8 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filters ?? [],
         valueType,
         dataRequestConfig,
-        xAxisVariable
+        xAxisVariable,
+        options?.getRequestParams
       );
       const response = await dataClient.getHistogram(
         computation.descriptor.type,
@@ -507,24 +525,28 @@ function HistogramViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          histogramResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable
-          ),
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        substituteUnselectedToken(
+          reorderData(
+            histogramResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable
+            ),
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          )
         ),
         showMissingOverlay
       );
@@ -864,6 +886,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    colorPalette:
+      options?.getOverlayType?.() === 'continuous'
+        ? SequentialGradientColorscale
+        : ColorPaletteDefault,
     ...neutralPaletteProps,
   };
 
@@ -1359,7 +1385,10 @@ function getRequestParams(
   filters: Filter[],
   valueType: 'number' | 'date',
   config: DataRequestConfig,
-  variable?: Variable
+  variable: Variable,
+  customMakeRequestParams?: (
+    props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
+  ) => HistogramRequestParams
 ): HistogramRequestParams {
   const {
     binWidth = NumberVariable.is(variable) || DateVariable.is(variable)
@@ -1377,12 +1406,14 @@ function getRequestParams(
     xAxisVariable,
   } = config;
 
-  const binSpec = binWidth
+  const binSpec: Pick<HistogramRequestParams['config'], 'binSpec'> = binWidth
     ? {
         binSpec: {
           type: 'binWidth',
           value: binWidth,
-          ...(valueType === 'date' ? { units: binWidthTimeUnit } : {}),
+          ...(valueType === 'date'
+            ? { units: binWidthTimeUnit as TimeUnit }
+            : {}),
         },
       }
     : { binSpec: { type: 'binWidth' } };
@@ -1398,22 +1429,33 @@ function getRequestParams(
         }
       : undefined;
 
-  return {
-    studyId,
-    filters,
-    config: {
+  return (
+    customMakeRequestParams?.({
+      studyId,
+      filters,
+      vizConfig: config,
       outputEntityId: xAxisVariable!.entityId,
-      xAxisVariable,
-      barMode: 'stack',
-      overlayVariable: overlayVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
+      binSpec,
       valueSpec,
-      ...binSpec,
-      showMissingness: config.showMissingness ? 'TRUE' : 'FALSE',
-      // pass viewport to get appropriate display range
-      viewport: viewport,
-    },
-  } as HistogramRequestParams;
+      viewport,
+    }) ??
+    ({
+      studyId,
+      filters,
+      config: {
+        outputEntityId: xAxisVariable!.entityId,
+        xAxisVariable,
+        barMode: 'stack',
+        overlayVariable: overlayVariable,
+        facetVariable: facetVariable ? [facetVariable] : [],
+        valueSpec,
+        ...binSpec,
+        showMissingness: config.showMissingness ? 'TRUE' : 'FALSE',
+        // pass viewport to get appropriate display range
+        viewport: viewport,
+      },
+    } as HistogramRequestParams)
+  );
 }
 
 function reorderData(

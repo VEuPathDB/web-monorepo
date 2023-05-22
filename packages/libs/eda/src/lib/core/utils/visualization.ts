@@ -3,6 +3,7 @@ import {
   BarplotData,
   BoxplotData,
   FacetedData,
+  LinePlotData,
 } from '@veupathdb/components/lib/types/plots';
 import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
@@ -25,6 +26,7 @@ import {
   VariablesByInputName,
 } from './data-element-constraints';
 import { isEqual } from 'lodash';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -68,6 +70,40 @@ export function grayOutLastSeries<
 }
 
 /**
+ * replace "__UNSELECTED__" with "All other values" in the `name` prop
+ *
+ */
+
+type NamedSeries = {
+  series: {
+    name?: string;
+  }[];
+};
+
+export function substituteUnselectedToken<
+  T extends NamedSeries,
+  Data extends T | FacetedData<T> | MaybeFacetedSeriesWithStatistics<T>
+>(data: Data): Data {
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: data.facets.map((facet) => ({
+        ...facet,
+        data: substituteUnselectedToken(data) as T,
+      })),
+    };
+  } else {
+    return {
+      ...data,
+      series: data.series.map((s) => ({
+        ...s,
+        name: s.name === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : s.name,
+      })),
+    };
+  }
+}
+
+/**
  * Calculates if there are any incomplete cases for the given variable
  * (usually overlay or facet variable)
  */
@@ -76,11 +112,11 @@ export function hasIncompleteCases(
   variable: Variable | undefined,
   outputEntity: StudyEntity | undefined,
   filteredCounts: EntityCounts,
-  completeCasesTable: CompleteCasesTable
+  completeCasesTable: CompleteCasesTable | undefined
 ): boolean {
   const completeCases =
     entity != null && variable != null
-      ? completeCasesTable.find(
+      ? completeCasesTable?.find(
           (row) =>
             row.variableDetails?.entityId === entity.id &&
             row.variableDetails?.variableId === variable.id

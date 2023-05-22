@@ -72,6 +72,12 @@ import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
+/**
+ * Note: When options.hideFacetInputs is true, the mosaic plot is not shown.
+ * Only the table and stats are shown. This is because it is assumed the
+ * viz is in the standalone map. We can formalise this later if confusing.
+ */
+
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -201,7 +207,9 @@ function MosaicViz(props: Props<Options>) {
   const dataClient: DataClient = useDataClient();
 
   // set default tab to Mosaic in TabbedDisplay component
-  const [activeTab, setActiveTab] = useState('Mosaic');
+  const [activeTab, setActiveTab] = useState(
+    options?.hideFacetInputs ? 'Table' : 'Mosaic'
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -417,7 +425,8 @@ function MosaicViz(props: Props<Options>) {
           vizConfig.facetVariable,
           vizConfig.showMissingness,
           vizConfig.xAxisReferenceValue,
-          vizConfig.yAxisReferenceValue
+          vizConfig.yAxisReferenceValue,
+          options
         );
 
         const response = dataClient.getTwoByTwo(
@@ -444,7 +453,10 @@ function MosaicViz(props: Props<Options>) {
           vizConfig.yAxisVariable,
           outputEntity?.id ?? '',
           vizConfig.facetVariable,
-          vizConfig.showMissingness
+          vizConfig.showMissingness,
+          undefined,
+          undefined,
+          options
         );
         const response = dataClient.getContTable(
           computation.descriptor.type,
@@ -560,27 +572,35 @@ function MosaicViz(props: Props<Options>) {
       }}
       activeTab={activeTab}
       tabs={[
-        {
-          key: 'Mosaic',
-          displayName: 'Mosaic',
-          content: (
-            <div style={{ margin: '15px 0' }}>
-              {isFaceted<ContTableData | TwoByTwoData>(data.value) ? (
-                <FacetedMosaicPlot
-                  facetedPlotRef={plotRef}
-                  data={data.value}
-                  componentProps={mosaicProps}
-                  modalComponentProps={{
-                    ...mosaicProps,
-                    containerStyles: modalPlotContainerStyles,
-                  }}
-                />
-              ) : (
-                <Mosaic {...mosaicProps} ref={plotRef} data={data.value} />
-              )}
-            </div>
-          ),
-        },
+        ...(options?.hideFacetInputs
+          ? []
+          : [
+              {
+                key: 'Mosaic',
+                displayName: 'Mosaic',
+                content: (
+                  <div style={{ margin: '15px 0' }}>
+                    {isFaceted<ContTableData | TwoByTwoData>(data.value) ? (
+                      <FacetedMosaicPlot
+                        facetedPlotRef={plotRef}
+                        data={data.value}
+                        componentProps={mosaicProps}
+                        modalComponentProps={{
+                          ...mosaicProps,
+                          containerStyles: modalPlotContainerStyles,
+                        }}
+                      />
+                    ) : (
+                      <Mosaic
+                        {...mosaicProps}
+                        ref={plotRef}
+                        data={data.value}
+                      />
+                    )}
+                  </div>
+                ),
+              },
+            ]),
         {
           key: 'Table',
           displayName: 'Table',
@@ -1758,7 +1778,8 @@ function getRequestParams(
   facetVariable?: VariableDescriptor,
   showMissingness?: boolean,
   xAxisReferenceValue?: string,
-  yAxisReferenceValue?: string
+  yAxisReferenceValue?: string,
+  options?: Options
 ): MosaicRequestParams | TwoByTwoRequestParams {
   const baseConfig = {
     studyId,
@@ -1768,9 +1789,13 @@ function getRequestParams(
       outputEntityId,
       xAxisVariable,
       yAxisVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness:
-        facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
+      ...(options?.hideFacetInputs
+        ? {}
+        : {
+            facetVariable: facetVariable ? [facetVariable] : [],
+            showMissingness:
+              facetVariable != null && showMissingness ? 'TRUE' : 'FALSE',
+          }),
     },
   };
   if (!xAxisReferenceValue || !yAxisReferenceValue) {
