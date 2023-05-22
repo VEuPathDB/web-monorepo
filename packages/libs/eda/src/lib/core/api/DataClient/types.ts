@@ -14,6 +14,7 @@ import {
   nullType,
   keyof,
   boolean,
+  literal,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -21,7 +22,6 @@ import {
   BinWidthSlider,
   TimeUnit,
   NumberOrNull,
-  NumberOrDateRange,
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
@@ -138,11 +138,15 @@ export const VariableMapping = intersection([
 ]);
 
 export type PlotConfig = TypeOf<typeof plotConfig>;
-const plotConfig = type({
-  completeCasesAllVars: number,
-  completeCasesAxesVars: number,
-  variables: array(VariableMapping),
-});
+const plotConfig = intersection([
+  type({
+    variables: array(VariableMapping),
+  }),
+  partial({
+    completeCasesAllVars: number,
+    completeCasesAxesVars: number,
+  }),
+]);
 
 export interface HistogramRequestParams {
   studyId: string;
@@ -197,30 +201,34 @@ const histogramConfig = intersection([
 ]);
 
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
-export const HistogramResponse = type({
-  histogram: type({
-    data: array(
-      intersection([
-        type({
-          binLabel: array(string),
-          binStart: array(string),
-          binEnd: array(string),
-          value: array(number),
-        }),
-        partial({
-          overlayVariableDetails: StringVariableValue,
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
-    ),
-    config: histogramConfig,
+export const HistogramResponse = intersection([
+  type({
+    histogram: type({
+      data: array(
+        intersection([
+          type({
+            binLabel: array(string),
+            binStart: array(string),
+            binEnd: array(string),
+            value: array(number),
+          }),
+          partial({
+            overlayVariableDetails: StringVariableValue,
+            facetVariableDetails: union([
+              tuple([StringVariableValue]),
+              tuple([StringVariableValue, StringVariableValue]),
+            ]),
+          }),
+        ])
+      ),
+      config: histogramConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 export interface BarplotRequestParams {
   studyId: string;
@@ -239,32 +247,36 @@ export interface BarplotRequestParams {
 }
 
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
-export const BarplotResponse = type({
-  barplot: type({
-    config: plotConfig,
-    data: array(
-      intersection([
-        type({
-          label: array(string),
-          value: array(number),
-        }),
-        partial({
-          overlayVariableDetails: type({
-            entityId: string,
-            variableId: string,
-            value: string,
+export const BarplotResponse = intersection([
+  type({
+    barplot: type({
+      config: plotConfig,
+      data: array(
+        intersection([
+          type({
+            label: array(string),
+            value: array(number),
           }),
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
-    ),
+          partial({
+            overlayVariableDetails: type({
+              entityId: string,
+              variableId: string,
+              value: string,
+            }),
+            facetVariableDetails: union([
+              tuple([StringVariableValue]),
+              tuple([StringVariableValue, StringVariableValue]),
+            ]),
+          }),
+        ])
+      ),
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 // scatterplot
 export interface ScatterplotRequestParams {
@@ -331,14 +343,18 @@ export const ComputedVariableMetadata = partial({
 });
 
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
-export const ScatterplotResponse = type({
-  scatterplot: type({
-    data: ScatterplotResponseData,
-    config: plotConfig,
+export const ScatterplotResponse = intersection([
+  type({
+    scatterplot: type({
+      data: ScatterplotResponseData,
+      config: plotConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 ////////////////
 // Table Data //
@@ -433,14 +449,18 @@ const lineplotConfig = intersection([
 ]);
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
-export const LineplotResponse = type({
-  lineplot: type({
-    data: LineplotResponseData,
-    config: lineplotConfig,
+export const LineplotResponse = intersection([
+  type({
+    lineplot: type({
+      data: LineplotResponseData,
+      config: lineplotConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 interface MosaicRequestConfig {
   outputEntityId: string;
@@ -466,32 +486,37 @@ export interface TwoByTwoRequestParams extends MosaicRequestParams {
 }
 
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
-export const MosaicResponse = type({
-  mosaic: type({
-    data: array(
-      intersection([
-        type({
-          xLabel: array(string),
-          yLabel: array(array(string)),
-          value: array(array(number)),
-        }),
-        partial({
-          facetVariableDetails: union([
-            tuple([StringVariableValue]),
-            tuple([StringVariableValue, StringVariableValue]),
-          ]),
-        }),
-      ])
-    ),
-    config: plotConfig,
+export const MosaicResponse = intersection([
+  type({
+    mosaic: type({
+      data: array(
+        intersection([
+          type({
+            xLabel: array(string),
+            yLabel: array(array(string)),
+            value: array(array(number)),
+          }),
+          partial({
+            facetVariableDetails: union([
+              tuple([StringVariableValue]),
+              tuple([StringVariableValue, StringVariableValue]),
+            ]),
+          }),
+        ])
+      ),
+      config: plotConfig,
+    }),
   }),
-  sampleSizeTable: array(
-    type({
-      size: array(number),
-    })
-  ),
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: array(
+      // is this right? everything else is sampleSizeTableArray
+      type({
+        size: array(number),
+      })
+    ),
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
 export const ContTableResponse = intersection([
@@ -563,12 +588,13 @@ export interface BoxplotRequestParams {
     // add bestFitLineWithRaw
     points: 'outliers' | 'all';
     mean: 'TRUE' | 'FALSE';
-    xAxisVariable: VariableDescriptor;
-    yAxisVariable: VariableDescriptor;
+    xAxisVariable?: VariableDescriptor; // can be provided by compute
+    yAxisVariable?: VariableDescriptor; // can be provided by compute
     overlayVariable?: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
     showMissingness?: 'TRUE' | 'FALSE';
   };
+  computeConfig?: unknown;
 }
 
 // unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
@@ -607,14 +633,18 @@ const BoxplotResponseData = array(
 );
 
 export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
-export const BoxplotResponse = type({
-  boxplot: type({
-    data: BoxplotResponseData,
-    config: plotConfig,
+export const BoxplotResponse = intersection([
+  type({
+    boxplot: type({
+      data: BoxplotResponseData,
+      config: plotConfig,
+    }),
   }),
-  sampleSizeTable: sampleSizeTableArray,
-  completeCasesTable: completeCasesTableArray,
-});
+  partial({
+    sampleSizeTable: sampleSizeTableArray,
+    completeCasesTable: completeCasesTableArray,
+  }),
+]);
 
 export interface MapMarkersRequestParams {
   studyId: string;
@@ -726,23 +756,34 @@ export const MapMarkersOverlayResponse = type({
 
 // Standalone Map
 
-// OverlayConfig will be used for next-gen 'pass' app visualizations
-export type OverlayConfig = {
-  overlayVariable: VariableDescriptor;
-} & (
-  | {
-      overlayType: 'categorical';
-      overlayValues: string[];
-    }
-  | {
-      overlayType: 'continuous';
-      overlayValues: {
-        binStart: string;
-        binEnd: string;
-        binLabel: string;
-      }[];
-    }
+// OverlayConfig will be used for all next-gen visualizations eventually
+
+export type BinDefinitions = TypeOf<typeof BinDefinitions>;
+export const BinDefinitions = array(
+  type({
+    binStart: string,
+    binEnd: string,
+    binLabel: string,
+  })
 );
+
+export type OverlayConfig = TypeOf<typeof OverlayConfig>;
+export const OverlayConfig = intersection([
+  type({
+    overlayType: keyof({ categorical: null, continuous: null }),
+    overlayVariable: VariableDescriptor,
+  }),
+  union([
+    type({
+      overlayType: literal('categorical'),
+      overlayValues: array(string),
+    }),
+    type({
+      overlayType: literal('continuous'),
+      overlayValues: BinDefinitions,
+    }),
+  ]),
+]);
 
 export interface StandaloneMapMarkersRequestParams {
   studyId: string;
@@ -780,6 +821,7 @@ export const StandaloneMapMarkersResponse = type({
           type({
             binLabel: string,
             value: number,
+            count: number,
           }),
           partial({
             binStart: string,

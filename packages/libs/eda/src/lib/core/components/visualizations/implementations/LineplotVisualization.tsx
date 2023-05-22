@@ -85,11 +85,13 @@ import {
   vocabularyWithMissingData,
   hasIncompleteCases,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
   AvailableUnitsAddon,
   ColorPaletteDefault,
+  SequentialGradientColorscale,
 } from '@veupathdb/components/lib/types/plots/addOns';
 // import variable's metadata-based independent axis range utils
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
@@ -124,13 +126,18 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions } from '../../layouts/types';
-import { OverlayOptions } from '../options/types';
+import {
+  OverlayOptions,
+  RequestOptionProps,
+  RequestOptions,
+} from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 const plotContainerStyles = {
   width: 750,
@@ -239,7 +246,14 @@ export const LineplotConfig = t.intersection([
   }),
 ]);
 
-interface Options extends LayoutOptions, OverlayOptions {}
+interface Options
+  extends LayoutOptions,
+    OverlayOptions,
+    RequestOptions<
+      LineplotConfig,
+      FloatingLineplotExtraProps,
+      LineplotRequestParams
+    > {}
 
 function LineplotViz(props: VisualizationProps<Options>) {
   const {
@@ -307,6 +321,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable,
     providedOverlayVariableDescriptor
   );
+
+  const colorPaletteOverride =
+    neutralPaletteProps.colorPalette ??
+    options?.getOverlayType?.() === 'continuous'
+      ? SequentialGradientColorscale
+      : undefined;
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
@@ -695,7 +715,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         dataRequestConfig,
         xAxisVariable,
         yAxisVariable,
-        outputEntity
+        outputEntity,
+        options?.getRequestParams
       );
 
       const response = await dataClient.getLineplot(
@@ -726,10 +747,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
@@ -749,7 +772,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        neutralPaletteProps.colorPalette
+        colorPaletteOverride
       );
     }, [
       outputEntity,
@@ -1942,7 +1965,7 @@ export function lineplotResponseToData(
           })),
         };
   return {
-    dataSetProcess,
+    dataSetProcess: substituteUnselectedToken(dataSetProcess!),
     // calculated y axis limits
     xMin,
     xMinPos,
@@ -2063,7 +2086,10 @@ function getRequestParams(
   vizConfig: DataRequestConfig,
   xAxisVariableMetadata: Variable,
   yAxisVariableMetadata: Variable,
-  outputEntity: StudyEntity
+  outputEntity: StudyEntity,
+  customMakeRequestParams?: (
+    props: RequestOptionProps<LineplotConfig> & FloatingLineplotExtraProps
+  ) => LineplotRequestParams
 ): LineplotRequestParams {
   const {
     xAxisVariable,
@@ -2104,32 +2130,43 @@ function getRequestParams(
     : { binSpec: { type: 'binWidth' } };
 
   const valueSpec = valueSpecLookup[valueSpecConfig];
+  // no error bars for date variables (error bar toggle switch is also disabled)
+  const errorBars =
+    vizConfig.showErrorBars && yAxisVariableMetadata.type !== 'date'
+      ? 'TRUE'
+      : 'FALSE';
 
-  return {
-    studyId,
-    filters,
-    config: {
+  return (
+    customMakeRequestParams?.({
+      studyId,
+      filters,
+      vizConfig,
       outputEntityId: outputEntity?.id,
       valueSpec,
-      xAxisVariable: xAxisVariable!, // these will never be undefined because
-      yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
-      ...binSpec,
-      overlayVariable: overlayVariable,
-      facetVariable: facetVariable ? [facetVariable] : [],
-      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
-      // no error bars for date variables (error bar toggle switch is also disabled)
-      errorBars:
-        vizConfig.showErrorBars && yAxisVariableMetadata.type !== 'date'
-          ? 'TRUE'
-          : 'FALSE',
-      ...(valueSpec === 'proportion'
-        ? {
-            yAxisNumeratorValues: numeratorValues,
-            yAxisDenominatorValues: denominatorValues,
-          }
-        : {}),
-    },
-  };
+      binSpec,
+      errorBars,
+    }) ?? {
+      studyId,
+      filters,
+      config: {
+        outputEntityId: outputEntity?.id,
+        valueSpec,
+        xAxisVariable: xAxisVariable!, // these will never be undefined because
+        yAxisVariable: yAxisVariable!, // data requests are only made when they have been chosen by user
+        ...binSpec,
+        overlayVariable: overlayVariable,
+        facetVariable: facetVariable ? [facetVariable] : [],
+        showMissingness: showMissingness ? 'TRUE' : 'FALSE',
+        errorBars,
+        ...(valueSpec === 'proportion'
+          ? {
+              yAxisNumeratorValues: numeratorValues,
+              yAxisDenominatorValues: denominatorValues,
+            }
+          : {}),
+      },
+    }
+  );
 }
 
 // making plotly input data

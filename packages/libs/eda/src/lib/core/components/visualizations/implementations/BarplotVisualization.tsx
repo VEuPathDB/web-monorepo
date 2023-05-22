@@ -53,6 +53,7 @@ import {
   nonUniqueWarning,
   hasIncompleteCases,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 // use lodash instead of Math.min/max
@@ -73,7 +74,10 @@ import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLe
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
 // import { gray } from '../colors';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -97,7 +101,7 @@ import {
 } from '../../../utils/axis-range-calculations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
-import { OverlayOptions } from '../options/types';
+import { OverlayOptions, RequestOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
@@ -132,7 +136,10 @@ export const barplotVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-interface Options extends LayoutOptions, OverlayOptions {}
+interface Options
+  extends LayoutOptions,
+    OverlayOptions,
+    RequestOptions<BarplotConfig, {}, BarplotRequestParams> {}
 
 function FullscreenComponent(props: VisualizationProps<Options>) {
   return <BarplotViz {...props} />;
@@ -412,11 +419,12 @@ function BarplotViz(props: VisualizationProps<Options>) {
         dataElementConstraints
       );
 
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        dataRequestConfig
-      );
+      const params =
+        options?.getRequestParams?.({
+          studyId,
+          filters,
+          vizConfig: dataRequestConfig,
+        }) ?? getRequestParams(studyId, filters ?? [], dataRequestConfig);
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
@@ -448,26 +456,30 @@ function BarplotViz(props: VisualizationProps<Options>) {
         variable?.vocabulary,
         variable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
 
       return grayOutLastSeries(
-        reorderData(
-          barplotResponseToData(
-            response,
-            variable,
-            overlayVariable,
-            facetVariable
-          ),
-          vocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        substituteUnselectedToken(
+          reorderData(
+            barplotResponseToData(
+              response,
+              variable,
+              overlayVariable,
+              facetVariable
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          )
         ),
         showMissingOverlay
       );
@@ -671,6 +683,10 @@ function BarplotViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    colorPalette:
+      options?.getOverlayType?.() === 'continuous'
+        ? SequentialGradientColorscale
+        : ColorPaletteDefault,
     ...neutralPaletteProps,
   };
 
