@@ -85,7 +85,7 @@ import {
 } from './MarkerConfiguration';
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
-import { getDefaultOverlayConfig } from './hooks/defaultOverlayConfig';
+import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
