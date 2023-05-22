@@ -27,7 +27,6 @@ let RecordNavigationItem = ({
     <div
       className="wdk-RecordNavigationItem"
       style={{
-        margin: isIndividual(category) ? '0.25em 0 0.25em 0.5em' : '0.25em 0',
         display: 'flex',
         position: 'relative',
       }}
