@@ -72,6 +72,12 @@ export const wrapRoutes = (wdkRoutes) => [
 
   {
     path: '/workspace/maps',
+    exact: true,
+    component: EdaMapController,
+  },
+
+  {
+    path: '/workspace/maps',
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
