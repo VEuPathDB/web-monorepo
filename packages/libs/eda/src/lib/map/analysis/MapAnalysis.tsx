@@ -859,23 +859,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const previousVariableId = usePrevious(
     activeMarkerConfiguration.selectedVariable.variableId
   );
-  const variableIdDidChange =
+  const activeVariableIdDidChange =
     previousVariableId !==
     activeMarkerConfiguration.selectedVariable.variableId;
 
-  const previousLegendItems = usePrevious<LegendItemsProps[]>(legendItems);
+  const previousLegendItems = usePrevious<LegendItemsProps[] | undefined>(
+    legendItems.length > 0 ? legendItems : undefined
+  );
 
   const [legendIsLoading, setLegendIsLoading] = useState(true);
 
-  if (variableIdDidChange && !legendIsLoading) {
+  if (!legendIsLoading && activeVariableIdDidChange) {
     setLegendIsLoading(true);
   }
 
-  const hasNewLegendItems =
-    (previousLegendItems || []).length > 0 &&
-    !equals(previousLegendItems, legendItems);
+  const legendItemsHaveChanged =
+    previousLegendItems && !equals(previousLegendItems, legendItems);
 
-  if (hasNewLegendItems && legendIsLoading) {
+  if (legendItemsHaveChanged && legendIsLoading) {
     setLegendIsLoading(false);
   }
 
