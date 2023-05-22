@@ -54,8 +54,9 @@ export function StartPage(props: Props) {
           }}
         >
           {/* orderBy renders available apps ahead of those in development */}
-          {orderBy(apps, [(app) => (plugins[app.name] ? 1 : 0)], ['desc']).map(
-            (app) => (
+          {apps
+            .filter((app) => plugins[app.name] != null)
+            .map((app) => (
               <div
                 style={{
                   display: 'grid',
@@ -224,8 +225,7 @@ export function StartPage(props: Props) {
                   })}
                 </div>
               </div>
-            )
-          )}
+            ))}
         </div>
       </div>
     )

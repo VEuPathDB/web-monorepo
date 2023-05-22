@@ -332,7 +332,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const appsPromiseState = usePromise(
     useCallback(async () => {
       const { apps } = await dataClient.getApps();
-      return apps.filter((app) => app.name.startsWith('standalone-map-')); // TO DO: remove this temporary hack
+      return apps; // return all apps; new viz picker will only show those with client plugins defined
     }, [dataClient])
   );
 
