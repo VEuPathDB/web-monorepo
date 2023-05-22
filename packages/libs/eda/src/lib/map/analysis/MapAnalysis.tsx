@@ -80,7 +80,7 @@ import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
-import { uniq, isEqual, findIndex } from 'lodash';
+import { uniq, isEqual } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -860,23 +860,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
-  const [zIndicies, setZIndicies] = useState<DraggablePanelIds[]>(
+  const [zIndicies /* setZIndicies */] = useState<DraggablePanelIds[]>(
     Object.values(DraggablePanelIds)
   );
-
-  function movePanelToTopLayer(
-    panelTitleToMove: DraggablePanelIds
-  ): () => void {
-    return () =>
-      setZIndicies((currentList) => {
-        return currentList
-          .filter((panelTitle) => panelTitle !== panelTitleToMove)
-          .concat(panelTitleToMove);
-      });
-  }
-
-  const moveLegendToTop = movePanelToTopLayer(DraggablePanelIds.LEGEND_PANEL);
-  const moveVizToTop = movePanelToTopLayer(DraggablePanelIds.VIZ_PANEL);
 
   function getZIndexByPanelTitle(
     requestedPanelTitle: DraggablePanelIds
@@ -887,6 +873,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
     return index + zIndexFactor;
   }
+
+  const legendZIndex =
+    getZIndexByPanelTitle(DraggablePanelIds.LEGEND_PANEL) +
+    getZIndexByPanelTitle(DraggablePanelIds.VIZ_PANEL);
 
   return (
     <PromiseResult state={appPromiseState}>
@@ -1011,17 +1001,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   confineToParentContainer
                   defaultPosition={{ x: 100, y: 100 }}
                   styleOverrides={{
-                    zIndex: getZIndexByPanelTitle(
-                      DraggablePanelIds.LEGEND_PANEL
-                    ),
+                    zIndex: legendZIndex,
                   }}
-                  onDragStart={moveLegendToTop}
                 >
                   {legendItems.length > 0 && (
-                    <div
-                      style={{ padding: '5px 10px' }}
-                      onClick={moveLegendToTop}
-                    >
+                    <div style={{ padding: '5px 10px' }}>
                       <MapLegend
                         legendItems={legendItems}
                         title={overlayVariable?.displayName}
@@ -1064,7 +1048,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
                     filters={filtersIncludingViewport}
-                    onTouch={moveVizToTop}
+                    // onTouch={moveVizToTop}
                     zIndexForStackingContext={getZIndexByPanelTitle(
                       DraggablePanelIds.VIZ_PANEL
                     )}

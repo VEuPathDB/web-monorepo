@@ -32,7 +32,6 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   toggleStarredVariable: (variable: VariableDescriptor) => void;
   filters: Filter[];
-  onTouch: () => void;
   zIndexForStackingContext: number;
 }
 
@@ -48,7 +47,6 @@ export default function DraggableVisualization({
   filteredCounts,
   toggleStarredVariable,
   filters,
-  onTouch = () => {},
   zIndexForStackingContext = 10,
 }: Props) {
   const [computation, activeViz] =
@@ -72,10 +70,8 @@ export default function DraggableVisualization({
         y: 142,
       }}
       onPanelDismiss={() => setActiveVisualizationId(undefined)}
-      onDragStart={onTouch}
     >
       <div
-        onClick={onTouch} // Ensure that the panel moves to the front when interacted with.
         style={{
           // Initial height & width.
           height: 547,
