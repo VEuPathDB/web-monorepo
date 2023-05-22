@@ -60,7 +60,7 @@ export type DraggablePanelProps = {
 export default function DraggablePanel({
   confineToParentContainer,
   children,
-  defaultPosition,
+  defaultPosition = { x: 0, y: 0 },
   isOpen,
   onDragComplete,
   onDragStart,
@@ -74,9 +74,15 @@ export default function DraggablePanel({
 
   const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [position, setPosition] =
+    useState<DraggablePanelCoordinatePair>(defaultPosition);
 
-  function handleDrag() {
+  function handleDrag(_: DraggableEvent, data: DraggableData) {
     !wasDragged && setWasDragged(true);
+    setPosition({
+      x: data.x,
+      y: data.y,
+    });
   }
 
   function handleDragStart() {
@@ -110,14 +116,31 @@ export default function DraggablePanel({
     [height, width, onPanelResize]
   );
 
+  const browserWidth = window.innerWidth;
+  const isOffscreen = position.x + (width || 0) > browserWidth;
+  useEffect(
+    function resetLegendX() {
+      if (!width) return;
+
+      if (isOffscreen) {
+        const rightMostXPoint = browserWidth - width;
+        setPosition((position) => ({
+          ...position,
+          x: rightMostXPoint,
+        }));
+      }
+    },
+    [browserWidth, isOffscreen, width]
+  );
+
   return (
     <Draggable
       bounds={confineToParentContainer ? 'parent' : false}
-      defaultPosition={defaultPosition || { x: 0, y: 0 }}
       handle=".dragHandle"
       onDrag={handleDrag}
       onStart={handleDragStart}
       onStop={handleOnDragStop}
+      position={position}
     >
       <div
         // ref={setRefForResizeObserver}
