@@ -3,6 +3,7 @@ import {
   RouteComponentProps,
   Switch,
   useRouteMatch,
+  useHistory,
 } from 'react-router';
 
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
@@ -10,7 +11,7 @@ import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapAnalysis } from './analysis/MapAnalysis';
 
-import { StudyList } from './StudyList';
+import { AllAnalyses } from '../workspace/AllAnalyses';
 import {
   useConfiguredSubsettingClient,
   useConfiguredDataClient,
@@ -37,6 +38,13 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   const computeClient = useConfiguredComputeClient(edaServiceUrl);
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
+
+  const history = useHistory();
+  function showLoginForm() {
+    const currentUrl = window.location.href;
+    const loginUrl = `${siteInformationProps.loginUrl}?destination=${currentUrl}`;
+    history.push(loginUrl);
+  }
 
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
@@ -89,7 +97,16 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           </EDAAnalysisListContainer>
         )}
       />
-      <Route path={path} component={StudyList} />
+      <Route
+        path={path}
+        render={() => (
+          <AllAnalyses
+            analysisClient={analysisClient}
+            subsettingClient={edaClient}
+            showLoginForm={showLoginForm}
+          />
+        )}
+      />
     </Switch>
   );
 }

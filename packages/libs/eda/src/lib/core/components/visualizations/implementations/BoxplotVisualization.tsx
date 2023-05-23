@@ -61,6 +61,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -68,7 +69,10 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import {
@@ -90,13 +94,16 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { VariableMapping } from '../../../api/DataClient/types';
+import {
+  BoxplotRequestParams,
+  VariableMapping,
+} from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
-import { OverlayOptions, XAxisOptions } from '../options/types';
+import { OverlayOptions, RequestOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
@@ -133,7 +140,8 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     OverlayOptions,
-    XAxisOptions {
+    XAxisOptions,
+    RequestOptions<BoxplotConfig, {}, BoxplotRequestParams> {
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;
@@ -241,11 +249,16 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const providedXAxisVariable = options?.getXAxisVariable?.(
-    computation.descriptor.configuration
+  const { getXAxisVariable, getComputedYAxisDetails } = options ?? {};
+  const { configuration: computeConfig } = computation.descriptor;
+
+  const providedXAxisVariable = useMemo(
+    () => getXAxisVariable?.(computeConfig),
+    [computeConfig, getXAxisVariable]
   );
-  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
-    computation.descriptor.configuration
+  const computedYAxisDetails = useMemo(
+    () => getComputedYAxisDetails?.(computeConfig),
+    [computeConfig, getComputedYAxisDetails]
   );
 
   // When we only have a computed y axis (and no provided x axis) then the y axis var
@@ -462,9 +475,15 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       );
 
       // add visualization.type here. valueSpec too?
-      const params = {
+      const params: BoxplotRequestParams = options?.getRequestParams?.({
         studyId,
-        filters,
+        filters: filters ?? [],
+        vizConfig,
+        outputEntityId: outputEntity.id,
+        computation,
+      }) ?? {
+        studyId,
+        filters: filters ?? [],
         config: {
           outputEntityId: outputEntity.id,
           // post options: 'all', 'outliers'
@@ -512,27 +531,31 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          boxplotResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable,
+        substituteUnselectedToken(
+          reorderData(
+            boxplotResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable,
+              entities
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet),
             entities
-          ),
-          vocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
-          entities
+          )
         ),
         showMissingOverlay,
         '#a0a0a0'
@@ -710,6 +733,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       dependentAxisMinMax={dependentAxisMinMax}
+      colorPalette={
+        options?.getOverlayType?.() === 'continuous'
+          ? SequentialGradientColorscale
+          : ColorPaletteDefault
+      }
       {...neutralPaletteProps}
     />
   );

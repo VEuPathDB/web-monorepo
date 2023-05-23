@@ -11,3 +11,8 @@ export type SiteInformationProps = {
 
 export const mapNavigationBackgroundColor = 'white';
 export const mapNavigationBorder: CSSProperties['border'] = '1px solid #D9D9D9';
+
+// Back end overlay values contain a special token for the "Other" category:
+export const UNSELECTED_TOKEN = '__UNSELECTED__';
+// This is what is displayed to the user instead:
+export const UNSELECTED_DISPLAY_TEXT = 'All other values';
