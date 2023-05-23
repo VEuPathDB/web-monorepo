@@ -3,7 +3,12 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect } from 'react';
-import { AnalysisState, OverlayConfig } from '../../core';
+import {
+  AnalysisState,
+  OverlayConfig,
+  useGetDefaultVariableDescriptorCallback,
+  useStudyMetadata,
+} from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
@@ -42,10 +47,10 @@ export const AppState = t.intersection([
       default: null,
       magnification: null,
     }),
-  }),
-  t.partial({
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
+  }),
+  t.partial({
     activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
@@ -66,13 +71,9 @@ export const AppState = t.intersection([
 export type AppState = t.TypeOf<typeof AppState>;
 
 // export default viewport for custom zoom control
-export const defaultAppState: AppState = {
-  viewport: {
-    center: [0, 0],
-    zoom: 1,
-  },
-  mouseMode: 'default',
-  activeMarkerConfigurationType: 'pie',
+export const defaultViewport: AppState['viewport'] = {
+  center: [0, 0],
+  zoom: 1,
 };
 
 export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
@@ -84,14 +85,39 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     getOrElseW(() => undefined)
   );
 
+  const studyMetadata = useStudyMetadata();
+  const getDefaultVariableDescriptor =
+    useGetDefaultVariableDescriptorCallback();
+  const defaultVariable = getDefaultVariableDescriptor(
+    studyMetadata.rootEntity.id
+  );
+
   useEffect(() => {
     if (analysis && !appState) {
+      const defaultAppState = {
+        viewport: defaultViewport,
+        mouseMode: 'default',
+        activeMarkerConfigurationType: 'pie',
+        markerConfigurations: [
+          {
+            type: 'pie',
+            selectedVariable: defaultVariable,
+            overlayConfig: undefined, // will be fetched from back end
+          },
+          {
+            type: 'barplot',
+            selectedPlotMode: 'count',
+            selectedVariable: defaultVariable,
+            overlayConfig: undefined, // fetched from back end
+          },
+        ],
+      };
       setVariableUISettings((prev) => ({
         ...prev,
         [uiStateKey]: defaultAppState,
       }));
     }
-  }, [analysis, appState, setVariableUISettings, uiStateKey]);
+  }, [analysis, appState, defaultVariable, setVariableUISettings, uiStateKey]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(
