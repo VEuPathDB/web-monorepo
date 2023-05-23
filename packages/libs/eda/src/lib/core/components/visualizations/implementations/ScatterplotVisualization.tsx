@@ -586,8 +586,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
       vizConfig.valueSpecConfig === 'Best fit line with raw');
 
-  // If numeric overlay, record the min and max and make a value to color map function
-  // assign 0 to avoid undefined
   const overlayMin: number | undefined =
     overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
       ? overlayVariable?.distributionDefaults?.rangeMin
