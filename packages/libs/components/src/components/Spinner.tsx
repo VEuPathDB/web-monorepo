@@ -4,7 +4,7 @@ interface Props {
   size?: string | number;
 }
 
-export default function Spinner({ size }: Props) {
+export default function Spinner({ size = 50 }: Props) {
   return (
     <div
       style={{
