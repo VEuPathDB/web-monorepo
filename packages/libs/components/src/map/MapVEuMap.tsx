@@ -453,9 +453,9 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   const map = useMap();
 
   const disableMinZoomButton =
-    map.getZoom() === map.options.minZoom ? 'leaflet-disabled' : '';
-  // no leaflet max zoom exists so manually set to 17
-  const disableMaxZoomButton = map.getZoom() === 17 ? 'leaflet-disabled' : '';
+    map.getZoom() <= map.getMinZoom() ? 'leaflet-disabled' : '';
+  const disableMaxZoomButton =
+    map.getZoom() >= map.getMaxZoom() ? 'leaflet-disabled' : '';
 
   // zoom in
   const zoomIn = (e: React.SyntheticEvent) => {
