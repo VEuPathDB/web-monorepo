@@ -1,6 +1,10 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-export default function Spinner() {
+interface Props {
+  size?: string | number;
+}
+
+export default function Spinner({ size }: Props) {
   return (
     <div
       style={{
@@ -11,7 +15,7 @@ export default function Spinner() {
         zIndex: 450,
       }}
     >
-      <CircularProgress color={'secondary'} size={50} thickness={5} />
+      <CircularProgress color={'secondary'} size={size} thickness={5} />
     </div>
   );
 }

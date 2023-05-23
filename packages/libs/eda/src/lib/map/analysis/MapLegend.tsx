@@ -1,4 +1,4 @@
-import React from 'react';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
@@ -17,12 +17,11 @@ export function MapLegend(props: Props) {
       <div>
         <strong>{title}</strong>
       </div>
-      <div
-        style={{
-          fontStyle: isLoading ? 'italic' : 'initial',
-          opacity: isLoading ? 0.3 : 1,
-        }}
-      >
+      {isLoading ? (
+        <div style={{ marginTop: '1em', height: 50, position: 'relative' }}>
+          <Spinner size={20} />
+        </div>
+      ) : (
         <PlotLegend
           type="list"
           legendItems={legendItems}
@@ -36,7 +35,7 @@ export function MapLegend(props: Props) {
           }}
           showCheckbox={showCheckbox}
         />
-      </div>
+      )}
     </>
   );
 }
