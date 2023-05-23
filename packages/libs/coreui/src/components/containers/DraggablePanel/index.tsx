@@ -74,18 +74,18 @@ export default function DraggablePanel({
 
   const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [position, setPosition] =
+  const [panelPosition, setPanelPosition] =
     useState<DraggablePanelCoordinatePair>(defaultPosition);
 
-  function handleDrag(_: DraggableEvent, data: DraggableData) {
+  function handleOnDrag(_: DraggableEvent, data: DraggableData) {
     !wasDragged && setWasDragged(true);
-    setPosition({
+    setPanelPosition({
       x: data.x,
       y: data.y,
     });
   }
 
-  function handleDragStart() {
+  function handleOnDragStart() {
     setIsDragging(true);
 
     if (onDragStart) onDragStart();
@@ -105,7 +105,7 @@ export default function DraggablePanel({
   const { ref, height, width } = useResizeObserver();
 
   useEffect(
-    function invokeOnResizeHandler() {
+    function invokeOnPanelResize() {
       if (!onPanelResize || !height || !width) return;
 
       onPanelResize({
@@ -116,31 +116,19 @@ export default function DraggablePanel({
     [height, width, onPanelResize]
   );
 
-  const browserWidth = window.innerWidth;
-  const isOffscreen = position.x + (width || 0) > browserWidth;
-  useEffect(
-    function resetLegendX() {
-      if (!width) return;
-
-      if (isOffscreen) {
-        const rightMostXPoint = browserWidth - width;
-        setPosition((position) => ({
-          ...position,
-          x: rightMostXPoint,
-        }));
-      }
-    },
-    [browserWidth, isOffscreen, width]
-  );
+  const finalPosition = confineToParentContainer
+    ? constainPositionOnScreen(panelPosition, width, height, window)
+    : panelPosition;
 
   return (
     <Draggable
       bounds={confineToParentContainer ? 'parent' : false}
       handle=".dragHandle"
-      onDrag={handleDrag}
-      onStart={handleDragStart}
+      onDrag={handleOnDrag}
+      onStart={handleOnDragStart}
       onStop={handleOnDragStop}
-      position={position}
+      defaultPosition={finalPosition}
+      position={finalPosition}
     >
       <div
         // ref={setRefForResizeObserver}
@@ -228,4 +216,55 @@ export default function DraggablePanel({
       </div>
     </Draggable>
   );
+}
+
+function isPanelXAxisOffScreen(
+  position: DraggablePanelCoordinatePair,
+  panelWidth: number,
+  browserWidth: number
+): boolean {
+  const xPlusWidth = position.x + panelWidth;
+  return xPlusWidth > browserWidth;
+}
+
+function isPanelYAxisOffScreen(
+  position: DraggablePanelCoordinatePair,
+  panelHeight: number,
+  browserHeight: number
+): boolean {
+  const yPlusHeight = position.y + panelHeight;
+  return yPlusHeight > browserHeight;
+}
+
+/**
+ * This solves the problem of a resizing panel. Everything on the web is a box.
+ * When that box resizes, the top-left corner maintains its position while the
+ * bottom and/or right grow.
+ * @param position
+ * @param panelWidth
+ * @param panelHeight
+ * @param window
+ * @returns A coordinate pair that places the panel nearest to the original position.
+ * but ensuring that the panel is on screen.
+ */
+function constainPositionOnScreen(
+  position: DraggablePanelCoordinatePair,
+  panelWidth = 0,
+  panelHeight = 0,
+  window: Window
+): DraggablePanelCoordinatePair {
+  const { innerHeight, innerWidth } = window;
+  const isXOffScreen = isPanelXAxisOffScreen(position, panelWidth, innerWidth);
+  const isYOffScreen = isPanelYAxisOffScreen(
+    position,
+    panelHeight,
+    innerHeight
+  );
+  const rightMostX = innerWidth - panelWidth;
+  const bottomMostY = innerHeight - panelHeight;
+
+  return {
+    x: isXOffScreen ? rightMostX : position.x,
+    y: isYOffScreen ? bottomMostY : position.y,
+  };
 }

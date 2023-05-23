@@ -999,7 +999,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   panelTitle="Legend"
                   showPanelTitle={false}
                   confineToParentContainer
-                  defaultPosition={{ x: 100, y: 100 }}
+                  defaultPosition={{ x: window.innerWidth - 20, y: 100 }}
                   styleOverrides={{
                     zIndex: legendZIndex,
                   }}
