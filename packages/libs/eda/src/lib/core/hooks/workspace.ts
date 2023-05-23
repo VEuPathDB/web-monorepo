@@ -140,7 +140,6 @@ export function useStudyEntities(filters?: Filter[]) {
                       return {
                         ...variable,
                         vocabulary,
-                        distinctValuesCount: vocabulary?.length ?? 0,
                         distributionDefaults: {
                           ...variable.distributionDefaults,
                           rangeMin:
@@ -159,7 +158,6 @@ export function useStudyEntities(filters?: Filter[]) {
                       return {
                         ...variable,
                         vocabulary,
-                        distinctValuesCount: vocabulary?.length ?? 0,
                         distributionDefaults: {
                           ...variable.distributionDefaults,
                           rangeMin:
