@@ -373,7 +373,7 @@ const useHeaderMenuItems = (
             key: `map-${record.id[0].value}`,
             display: record.displayName,
             type: 'reactRoute',
-            url: `/maps/${record.id[0].value}/new`,
+            url: `/workspace/maps/${record.id[0].value}/new`,
           }));
       } catch (error) {
         console.error(error);
@@ -673,6 +673,15 @@ const useHeaderMenuItems = (
           url: '/workspace/favorites',
           metadata: {
             exclude: [EuPathDB],
+          },
+        },
+        {
+          key: 'maps-workspace',
+          display: 'My interactive maps',
+          type: 'reactRoute',
+          url: '/workspace/maps',
+          metadata: {
+            test: () => Boolean(showInteractiveMaps),
           },
         },
         {
