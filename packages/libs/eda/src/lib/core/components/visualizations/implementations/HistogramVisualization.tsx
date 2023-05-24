@@ -64,6 +64,7 @@ import {
   variablesAreUnique,
   nonUniqueWarning,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 // import variable's metadata-based independent axis range utils
@@ -72,7 +73,10 @@ import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -521,24 +525,28 @@ function HistogramViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          histogramResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable
-          ),
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+        substituteUnselectedToken(
+          reorderData(
+            histogramResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable
+            ),
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet)
+          )
         ),
         showMissingOverlay
       );
@@ -878,6 +886,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         max: truncationConfigDependentAxisMax,
       },
     },
+    colorPalette:
+      options?.getOverlayType?.() === 'continuous'
+        ? SequentialGradientColorscale
+        : ColorPaletteDefault,
     ...neutralPaletteProps,
   };
 
@@ -1374,7 +1386,7 @@ function getRequestParams(
   valueType: 'number' | 'date',
   config: DataRequestConfig,
   variable: Variable,
-  optionalRequestGenerator?: (
+  customMakeRequestParams?: (
     props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
   ) => HistogramRequestParams
 ): HistogramRequestParams {
@@ -1418,7 +1430,7 @@ function getRequestParams(
       : undefined;
 
   return (
-    optionalRequestGenerator?.({
+    customMakeRequestParams?.({
       studyId,
       filters,
       vizConfig: config,

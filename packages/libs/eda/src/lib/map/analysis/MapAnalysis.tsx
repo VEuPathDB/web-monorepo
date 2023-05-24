@@ -85,7 +85,7 @@ import {
 } from './MarkerConfiguration';
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
-import { getDefaultOverlayConfig } from './hooks/defaultOverlayConfig';
+import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
@@ -135,7 +135,7 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const analysisState = useAnalysis(props.analysisId, 'pass-through');
+  const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   if (appStateAndSetters.appState == null) return null;
   return (
@@ -263,10 +263,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           overlayConfig,
         });
     }
-    console.log('calling updateOverlayConfig()', {
-      filters,
-      vocabulary: overlayVariable?.vocabulary,
-    });
     updateOverlayConfig();
 
     // TO DO: return a cancel function?
@@ -561,9 +557,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                           []
                         }
                         toggleStarredVariable={toggleStarredVariable}
-                        selectedPlotMode={
-                          activeMarkerConfiguration.selectedPlotMode
-                        }
                         configuration={activeMarkerConfiguration}
                       />
                     ) : (
@@ -869,7 +862,18 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   // This makes sure that the user sees the global location of the data before the flyTo happens.
   useEffect(() => {
     if (pending) {
-      setWillFlyTo(isEqual(appState.viewport, defaultAppState.viewport));
+      // set a safe margin (epsilon) to perform flyTo correctly due to an issue of map resolution etc.
+      // not necessarily need to use defaultAppState.viewport.center [0, 0] here but used it just in case
+      const epsilon = 2.0;
+      const isWillFlyTo =
+        appState.viewport.zoom === defaultAppState.viewport.zoom &&
+        Math.abs(
+          appState.viewport.center[0] - defaultAppState.viewport.center[0]
+        ) <= epsilon &&
+        Math.abs(
+          appState.viewport.center[1] - defaultAppState.viewport.center[1]
+        ) <= epsilon;
+      setWillFlyTo(isWillFlyTo);
     }
   }, [pending, appState.viewport]);
 
@@ -991,8 +995,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
                 <FloatingDiv
                   style={{
-                    top: 350,
-                    right: 50,
+                    top: 250,
+                    right: 8,
                   }}
                 >
                   {legendItems.length > 0 && (

@@ -78,6 +78,7 @@ import {
   fixVarIdLabel,
   getVariableLabel,
   assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { gray } from '../colors';
 import {
@@ -85,6 +86,7 @@ import {
   ColorPaletteDark,
   gradientSequentialColorscaleMap,
   gradientDivergingColorscaleMap,
+  SequentialGradientColorscale,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
@@ -353,7 +355,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     vizConfig.overlayVariable,
     providedOverlayVariableDescriptor
   );
-
+  const colorPaletteOverride =
+    neutralPaletteProps.colorPalette ??
+    options?.getOverlayType?.() === 'continuous'
+      ? SequentialGradientColorscale
+      : ColorPaletteDefault;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   const {
@@ -580,8 +586,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
       vizConfig.valueSpecConfig === 'Best fit line with raw');
 
-  // If numeric overlay, record the min and max and make a value to color map function
-  // assign 0 to avoid undefined
   const overlayMin: number | undefined =
     overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
       ? overlayVariable?.distributionDefaults?.rangeMin
@@ -779,7 +783,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ? response.scatterplot.config.variables.find(
             (v) => v.plotReference === 'overlay' && v.vocabulary != null
           )?.vocabulary
-        : fixLabelsForNumberVariables(
+        : // TO DO: remove the categorical condition when https://github.com/VEuPathDB/EdaNewIssues/issues/642 is sorted
+          (overlayVariable && options?.getOverlayType?.() === 'categorical'
+            ? options?.getOverlayVocabulary?.()
+            : undefined) ??
+          fixLabelsForNumberVariables(
             overlayVariable?.vocabulary,
             overlayVariable
           );
@@ -800,7 +808,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         // pass computation
         computation.descriptor.type,
         entities,
-        neutralPaletteProps.colorPalette
+        colorPaletteOverride
       );
       return {
         ...returnData,
@@ -2226,7 +2234,7 @@ export function scatterplotResponseToData(
       );
 
     return {
-      dataSetProcess: dataSetProcess,
+      dataSetProcess: substituteUnselectedToken(dataSetProcess),
       xMin,
       xMinPos,
       xMax,

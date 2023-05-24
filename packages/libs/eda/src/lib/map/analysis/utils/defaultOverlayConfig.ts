@@ -1,4 +1,5 @@
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
+import { UNSELECTED_TOKEN } from '../..';
 import {
   BinRange,
   Filter,
@@ -7,7 +8,6 @@ import {
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
-import { UNSELECTED_TOKEN } from './standaloneMapMarkers';
 
 // This async function fetches the default overlay config.
 // For continuous variables, this involves calling the filter-aware-metadata/continuous-variable
@@ -43,7 +43,7 @@ export async function getDefaultOverlayConfig(
       entityId: overlayEntity.id,
     };
 
-    if (overlayVariable.vocabulary) {
+    if (overlayVariable.dataShape === 'categorical') {
       // categorical
       const overlayValues = await getMostFrequentValues({
         studyId: studyId,

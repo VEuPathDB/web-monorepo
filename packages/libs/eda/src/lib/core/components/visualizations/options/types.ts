@@ -1,3 +1,4 @@
+import { OverlayConfig } from '../../../api/DataClient';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
 import { Computation } from '../../../types/visualization';
@@ -11,6 +12,8 @@ export interface OverlayOptions {
     computeConfig: unknown
   ) => VariableDescriptor | undefined;
   getOverlayVariableHelp?: () => string;
+  getOverlayType?: () => OverlayConfig['overlayType'] | undefined;
+  getOverlayVocabulary?: () => string[] | undefined;
   getCheckedLegendItems?: (computeConfig: unknown) => string[] | undefined;
 }
 

@@ -27,11 +27,7 @@ import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/m
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { useDeepValue } from '../../../core/hooks/immutability';
-
-// Back end overlay values contain a special token for the "Other" category:
-export const UNSELECTED_TOKEN = '__UNSELECTED__';
-// This is what is displayed to the user instead:
-const UNSELECTED_DISPLAY_TEXT = 'All other values';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -182,7 +178,7 @@ export function useStandaloneMapMarkers(
           longitudeVariable,
           overlayConfig,
           outputEntityId,
-          valueSpec: 'count', // TO DO: or proportion when we have the UI and back-end fix https://github.com/VEuPathDB/EdaDataService/issues/261 for this
+          valueSpec: markerType === 'pie' ? 'count' : markerType,
           viewport: {
             latitude: {
               xMin,
@@ -213,7 +209,7 @@ export function useStandaloneMapMarkers(
       longitudeVariable,
       boundsZoomLevel,
       geoConfig,
-      // TO DO: add markerType and make valueSpec depend on it
+      markerType,
     ])
   );
 
@@ -224,28 +220,28 @@ export function useStandaloneMapMarkers(
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
-  const { valueMax, valueMinPos, valueSum } = useMemo(
+  const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
       markerData.value
         ? markerData.value.mapElements
             .flatMap((el) => el.overlayValues)
             .reduce(
-              ({ valueMax, valueMinPos, valueSum }, elem) => ({
+              ({ valueMax, valueMinPos, countSum }, elem) => ({
                 valueMax: Math.max(elem.value, valueMax),
                 valueMinPos:
                   elem.value > 0 &&
                   (valueMinPos == null || elem.value < valueMinPos)
                     ? elem.value
                     : valueMinPos,
-                valueSum: (valueSum ?? 0) + elem.value,
+                countSum: (countSum ?? 0) + elem.count,
               }),
               {
                 valueMax: 0,
                 valueMinPos: undefined as number | undefined,
-                valueSum: undefined as number | undefined,
+                countSum: undefined as number | undefined,
               }
             )
-        : { valueMax: undefined, valueMinPos: undefined, valueSum: undefined },
+        : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
     [markerData]
   );
 
@@ -289,7 +285,10 @@ export function useStandaloneMapMarkers(
                   overlayType === 'categorical'
                     ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
                     : gradientSequentialColorscaleMap(
-                        vocabulary.indexOf(binLabel) / (vocabulary.length - 1)
+                        vocabulary.length > 1
+                          ? vocabulary.indexOf(binLabel) /
+                              (vocabulary.length - 1)
+                          : 0.5
                       ),
               }))
             : [];
@@ -382,7 +381,9 @@ export function useStandaloneMapMarkers(
           ? ColorPaletteDefault[vocabulary.indexOf(label)]
           : overlayType === 'continuous'
           ? gradientSequentialColorscaleMap(
-              vocabulary.indexOf(label) / (vocabulary.length - 1)
+              vocabulary.length > 1
+                ? vocabulary.indexOf(label) / (vocabulary.length - 1)
+                : 0.5
             )
           : undefined,
       // has any geo-facet got an array of overlay data
@@ -399,7 +400,7 @@ export function useStandaloneMapMarkers(
 
   return {
     markers,
-    totalVisibleWithOverlayEntityCount: valueSum,
+    totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
     pending: markerData.pending,

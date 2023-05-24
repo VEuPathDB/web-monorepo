@@ -24,10 +24,10 @@
       "dependsOn": ["^build-npm-modules"]
     },
     "bundle:dev": {
-      "dependsOn": ["^clean", "^build-npm-modules"]
+      "dependsOn": ["^build-npm-modules"]
     },
     "bundle:npm": {
-      "dependsOn": ["^clean", "^build-npm-modules"]
+      "dependsOn": ["^build-npm-modules"]
     },
     "storybook": {
       "dependsOn": ["^build-npm-modules"]

@@ -221,7 +221,9 @@ function VisualizationsList({
                           type="button"
                           className="link"
                           onClick={() => {
-                            analysisState.deleteVisualization(viz);
+                            analysisState.deleteVisualization(
+                              viz.visualizationId
+                            );
                             setActiveVisualizationId(undefined);
                           }}
                         >
@@ -244,7 +246,10 @@ function VisualizationsList({
                                 'Copy of ' +
                                 (viz.displayName || 'unnamed visualization'),
                             };
-                            analysisState.addVisualization(computation, newViz);
+                            analysisState.addVisualization(
+                              computation.computationId,
+                              newViz
+                            );
                             setActiveVisualizationId(vizCopyId);
                           }}
                         >
