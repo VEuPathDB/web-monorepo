@@ -361,10 +361,10 @@ function FullScreenMap(props: FullScreenComponentProps) {
         {(app) => {
           return (
             <NewVisualizationPickerModal
+              analysisState={props.analysisState}
               visible={isSelectorModalOpen}
               onVisibleChange={setIsSelectorModalOpen}
               computation={appState.computation}
-              updateVisualizations={updateVisualizations}
               visualizationPlugins={plugin.visualizationPlugins}
               visualizationsOverview={app.visualizations}
               geoConfigs={[geoConfig]}
@@ -498,7 +498,6 @@ function FullScreenMap(props: FullScreenComponentProps) {
               <FullScreenVisualization
                 analysisState={props.analysisState}
                 computation={appState.computation}
-                updateVisualizations={updateVisualizations}
                 visualizationPlugins={plugin.visualizationPlugins}
                 visualizationsOverview={app.visualizations}
                 geoConfigs={[geoConfig]}
