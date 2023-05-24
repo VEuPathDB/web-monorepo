@@ -75,7 +75,7 @@ import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
 
-import { isEqual, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -89,9 +89,6 @@ import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
-import { usePrevious } from '../../core/hooks/previousValue';
-import { equals } from 'lodash/fp';
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -847,27 +844,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
-  const selectedVariableId =
-    activeMarkerConfiguration?.selectedVariable.variableId;
-
-  const [legendIsLoading, setLegendIsLoading] = useState(true);
-
-  useEffect(
-    function setLegendLoadingOnNewVariableSelection() {
-      selectedVariableId && setLegendIsLoading(true);
-    },
-    [selectedVariableId, setLegendIsLoading]
-  );
-
-  useEffect(
-    function unsetLegendLoadingWhenNewLegendItemsArrive() {
-      if (legendIsLoading && legendItems.length > 0) {
-        setLegendIsLoading(false);
-      }
-    },
-    [legendItems, legendIsLoading]
-  );
-
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -991,7 +967,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   }}
                 >
                   <MapLegend
-                    isLoading={legendIsLoading}
+                    isLoading={legendItems.length === 0}
                     legendItems={legendItems}
                     title={overlayVariable?.displayName}
                     // control to show checkbox. default: true
