@@ -4,6 +4,7 @@ import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
+  OverlayConfig,
   PromiseResult,
   useAnalysis,
   useAnalysisClient,
@@ -38,12 +39,6 @@ import {
 } from './appState';
 import { FloatingDiv } from './FloatingDiv';
 import Subsetting from '../../workspace/Subsetting';
-import { findFirstVariable } from '../../workspace/Utils';
-import {
-  useFeaturedFields,
-  useFieldTree,
-  useFlattenedFields,
-} from '../../core/components/variableTrees/hooks';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
@@ -214,11 +209,22 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  // if the variable or filters have changed on the active marker config
-  // set the default overlay config
-  useEffect(() => {
-    async function updateOverlayConfig() {
-      const overlayConfig = await getDefaultOverlayConfig({
+  // If the variable or filters have changed on the active marker config
+  // get the default overlay config.
+  const activeOverlayConfig = usePromise(
+    useCallback(async (): Promise<OverlayConfig | undefined> => {
+      // TODO Use `selectedValues` to generate the overlay config. Something like this:
+      // if (activeMarkerConfiguration?.selectedValues) {
+      //   return {
+      //     overlayType: CategoryVariableDataShape.is(overlayVariable?.dataShape) ? 'categorical' : 'continuous',
+      //     overlayVariable: {
+      //       variableId: overlayVariable.id,
+      //       entityId: overlayEntity.id,
+      //     },
+      //     overlayValues: activeMarkerConfiguration.selectedValues
+      //   } as OverlayConfig
+      // }
+      return getDefaultOverlayConfig({
         studyId,
         filters,
         overlayVariable,
@@ -226,26 +232,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         dataClient,
         subsettingClient,
       });
-
-      if (activeMarkerConfiguration != null)
-        updateMarkerConfigurations({
-          ...activeMarkerConfiguration,
-          overlayConfig,
-        });
-    }
-    updateOverlayConfig();
-
-    // TO DO: return a cancel function?
-  }, [
-    activeMarkerConfiguration,
-    studyId,
-    filters,
-    overlayVariable,
-    overlayEntity,
-    updateMarkerConfigurations,
-    dataClient,
-    subsettingClient,
-  ]);
+    }, [
+      dataClient,
+      filters,
+      overlayEntity,
+      overlayVariable,
+      studyId,
+      subsettingClient,
+    ])
+  );
 
   // needs to be pie, count or proportion
   const markerType = (() => {
@@ -273,7 +268,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     filters,
     markerType,
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
-    overlayConfig: activeMarkerConfiguration?.overlayConfig,
+    overlayConfig: activeOverlayConfig.value,
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
@@ -310,7 +305,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: activeMarkerConfiguration?.overlayConfig,
+    selectedOverlayConfig: activeOverlayConfig.value,
   });
 
   const subsetVariableAndEntity = useMemo(() => {

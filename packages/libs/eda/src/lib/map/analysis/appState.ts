@@ -5,7 +5,7 @@ import { isEqual } from 'lodash';
 import { useCallback, useEffect } from 'react';
 import {
   AnalysisState,
-  OverlayConfig,
+  BinDefinitions,
   useGetDefaultVariableDescriptorCallback,
   useStudyMetadata,
 } from '../../core';
@@ -24,15 +24,16 @@ export const MarkerConfiguration = t.intersection([
   t.type({
     type: MarkerType,
     selectedVariable: VariableDescriptor,
-    overlayConfig: t.union([OverlayConfig, t.undefined]),
   }),
   t.union([
     t.type({
       type: t.literal('barplot'),
+      selectedValues: t.union([BinDefinitions, t.undefined]), // user-specified selection
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
     }),
     t.type({
       type: t.literal('pie'),
+      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
     }),
   ]),
 ]);
@@ -94,7 +95,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
 
   useEffect(() => {
     if (analysis && !appState) {
-      const defaultAppState = {
+      const defaultAppState: AppState = {
         viewport: defaultViewport,
         mouseMode: 'default',
         activeMarkerConfigurationType: 'pie',
@@ -102,13 +103,13 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           {
             type: 'pie',
             selectedVariable: defaultVariable,
-            overlayConfig: undefined, // will be fetched from back end
+            selectedValues: undefined,
           },
           {
             type: 'barplot',
             selectedPlotMode: 'count',
             selectedVariable: defaultVariable,
-            overlayConfig: undefined, // fetched from back end
+            selectedValues: undefined,
           },
         ],
       };

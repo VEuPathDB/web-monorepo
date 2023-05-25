@@ -6,7 +6,7 @@ import {
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
-import { OverlayConfig } from '../../../core';
+import { BinDefinitions } from '../../../core';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -15,7 +15,7 @@ interface MarkerConfiguration<T extends string> {
 export interface BarPlotMarkerConfiguration
   extends MarkerConfiguration<'barplot'> {
   selectedVariable: VariableDescriptor;
-  overlayConfig: OverlayConfig | undefined;
+  selectedValues: BinDefinitions | undefined;
   selectedPlotMode: 'count' | 'proportion';
 }
 
@@ -46,7 +46,7 @@ export function BarPlotMarkerConfigurationMenu({
     onChange({
       ...configuration,
       selectedVariable: selection.overlay,
-      overlayConfig: undefined,
+      selectedValues: undefined,
     });
   }
   function handlePlotModeSelection(option: string) {
