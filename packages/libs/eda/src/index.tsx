@@ -162,7 +162,13 @@ initialize({
           <H3>MapVEu Links</H3>
           <ul>
             <li>
-              <Link to="/mapveu">Mapveu</Link>
+              <Link to="/maps">My analyses</Link>
+            </li>
+            <li>
+              <Link to="/maps/public">Public analyses</Link>
+            </li>
+            <li>
+              <Link to="/maps/studies">All studies</Link>
             </li>
           </ul>
         </div>
@@ -192,7 +198,7 @@ initialize({
       },
     },
     {
-      path: '/mapveu',
+      path: '/maps',
       component: () => (
         <MapApp
           siteInformationProps={{
