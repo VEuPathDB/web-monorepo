@@ -103,6 +103,7 @@ export default function DraggablePanel({
   }
 
   const { ref, height, width } = useResizeObserver();
+  console.log('🚀 ~ file: index.tsx:106 ~ width:', width);
 
   useEffect(
     function invokeOnPanelResize() {
@@ -131,7 +132,6 @@ export default function DraggablePanel({
       position={finalPosition}
     >
       <div
-        // ref={setRefForResizeObserver}
         ref={ref}
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
@@ -151,10 +151,6 @@ export default function DraggablePanel({
           // initial heights and widths.
           height: ${styleOverrides?.height ?? 'fit-content'};
           width: ${styleOverrides?.width ?? 'fit-content'};
-          // Hey, so you need to explicitly set overflow wherever
-          // you plan to use resize.
-          overflow: auto;
-          resize: ${styleOverrides?.resize ?? 'none'};
           min-height: ${styleOverrides?.minHeight ?? 0};
           min-width: ${styleOverrides?.minWidth ?? 0};
         `}
@@ -202,6 +198,10 @@ export default function DraggablePanel({
         </div>
         <div
           css={css`
+            // Hey, so you need to explicitly set overflow wherever
+            // you plan to use resize.
+            overflow: auto;
+            resize: ${styleOverrides?.resize ?? 'none'};
             border-radius: 7px;
             // We want the content to render below the drag handle, so let's put this
             // container in the same stacking context as the drag handle by giving it

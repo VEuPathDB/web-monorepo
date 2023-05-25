@@ -65,7 +65,7 @@ export default function DraggableVisualization({
       confineToParentContainer
       showPanelTitle
       isOpen
-      styleOverrides={{ zIndex: zIndexForStackingContext }}
+      styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
       panelTitle={activeVizOverview?.displayName || ''}
       defaultPosition={{
         x: 535,
