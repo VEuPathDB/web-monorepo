@@ -103,7 +103,6 @@ export default function DraggablePanel({
   }
 
   const { ref, height, width } = useResizeObserver();
-  console.log('🚀 ~ file: index.tsx:106 ~ width:', width);
 
   useEffect(
     function invokeOnPanelResize() {
@@ -177,7 +176,13 @@ export default function DraggablePanel({
             width: 100%;
           `}
         >
-          <H6 additionalStyles={{ fontWeight: 'bold' }}>
+          <H6
+            additionalStyles={{
+              fontWeight: 'bold',
+              fontSize: 14,
+              padding: '0 10px',
+            }}
+          >
             <span css={showPanelTitle ? null : screenReaderOnly}>
               {panelTitle}
             </span>

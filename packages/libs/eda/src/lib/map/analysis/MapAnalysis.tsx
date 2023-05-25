@@ -986,8 +986,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
                 <DraggablePanel
                   isOpen
-                  panelTitle="Legend"
-                  showPanelTitle={false}
+                  showPanelTitle
+                  panelTitle={overlayVariable?.displayName || 'Legend'}
                   confineToParentContainer
                   defaultPosition={{ x: window.innerWidth, y: 225 }}
                   styleOverrides={{
@@ -998,7 +998,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     <MapLegend
                       isLoading={legendItems.length === 0}
                       legendItems={legendItems}
-                      title={overlayVariable?.displayName}
                       // control to show checkbox. default: true
                       showCheckbox={false}
                     />
