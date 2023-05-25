@@ -117,7 +117,7 @@ export default function DraggablePanel({
   );
 
   const finalPosition = confineToParentContainer
-    ? constainPositionOnScreen(panelPosition, width, height, window)
+    ? constrainPositionOnScreen(panelPosition, width, height, window)
     : panelPosition;
 
   return (
@@ -252,7 +252,7 @@ function isPanelYAxisOffScreen(
  * @returns A coordinate pair that places the panel nearest to the original position.
  * but ensuring that the panel is on screen.
  */
-function constainPositionOnScreen(
+function constrainPositionOnScreen(
   position: DraggablePanelCoordinatePair,
   panelWidth = 0,
   panelHeight = 0,
