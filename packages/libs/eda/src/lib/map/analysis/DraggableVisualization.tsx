@@ -3,7 +3,6 @@ import { AnalysisState, PromiseHookState } from '../../core';
 import { AppState, useAppState } from './appState';
 import {
   ComputationAppOverview,
-  Visualization,
   VisualizationOverview,
 } from '../../core/types/visualization';
 import { FullScreenVisualization } from '../../core/components/visualizations/VisualizationsContainer';
@@ -11,22 +10,17 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
-import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { ComputationPlugin } from '../../core/components/computations/Types';
 
 interface Props {
   analysisState: AnalysisState;
-  updateVisualizations: (
-    visualizations:
-      | Visualization[]
-      | ((visualizations: Visualization[]) => Visualization[])
-  ) => void;
   setActiveVisualizationId: ReturnType<
     typeof useAppState
   >['setActiveVisualizationId'];
   appState: AppState;
-  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
-  app: ComputationAppOverview;
+  apps: ComputationAppOverview[];
+  plugins: Partial<Record<string, ComputationPlugin>>;
   geoConfigs: GeoConfig[];
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
@@ -38,32 +32,40 @@ interface Props {
 export default function DraggableVisualization({
   analysisState,
   appState,
-  updateVisualizations,
   setActiveVisualizationId,
   geoConfigs,
-  app,
-  visualizationPlugins,
+  apps,
+  plugins,
   totalCounts,
   filteredCounts,
   toggleStarredVariable,
   filters,
   zIndexForStackingContext = 10,
 }: Props) {
-  const [computation, activeViz] =
-    analysisState.analysis?.descriptor.computations
-      .flatMap((c) => c.visualizations.map((v) => [c, v] as const))
-      .find(([c, v]) => v.visualizationId === appState.activeVisualizationId) ??
-    [];
+  const { computation: activeComputation, visualization: activeViz } =
+    analysisState.getVisualizationAndComputation(
+      appState.activeVisualizationId
+    ) ?? {};
+
+  const computationType = activeComputation?.descriptor.type;
+
+  const app = apps.find((a) => a.name === computationType);
 
   const activeVizOverview: VisualizationOverview | undefined =
-    app.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
+    app?.visualizations.find((viz) => viz.name === activeViz?.descriptor.type);
 
-  return activeViz ? (
+  const visualizationPlugins = computationType
+    ? plugins[computationType]?.visualizationPlugins
+    : null;
+
+  const shouldRenderVisualization = activeViz && app && visualizationPlugins;
+
+  return shouldRenderVisualization ? (
     <DraggablePanel
       confineToParentContainer
       showPanelTitle
       isOpen
-      styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
+      styleOverrides={{ zIndex: zIndexForStackingContext }}
       panelTitle={activeVizOverview?.displayName || ''}
       defaultPosition={{
         x: 535,
@@ -83,8 +85,7 @@ export default function DraggableVisualization({
       >
         <FullScreenVisualization
           analysisState={analysisState}
-          computation={computation!}
-          updateVisualizations={updateVisualizations}
+          computation={activeComputation!}
           visualizationPlugins={visualizationPlugins}
           visualizationsOverview={app.visualizations}
           geoConfigs={geoConfigs}
@@ -100,6 +101,7 @@ export default function DraggableVisualization({
           disableThumbnailCreation
           id={activeViz.visualizationId}
           actions={<></>}
+          plugins={plugins}
         />
       </div>
     </DraggablePanel>

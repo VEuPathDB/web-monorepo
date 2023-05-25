@@ -45,7 +45,10 @@ function createExtendedVisualizationPlugin<Options>(
     withOptions: (options: Options) =>
       createExtendedVisualizationPlugin({
         ...plugin,
-        options,
+        options: {
+          ...plugin.options,
+          ...options,
+        },
       }),
     withSelectorIcon: (selectorIcon: SelectorIcon) =>
       createExtendedVisualizationPlugin({

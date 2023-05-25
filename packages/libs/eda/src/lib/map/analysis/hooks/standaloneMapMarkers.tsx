@@ -3,23 +3,16 @@ import { ReactElement, useCallback, useMemo } from 'react';
 import { usePromise } from '../../../core/hooks/promise';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../core/types/geoConfig';
-import { StudyEntity, Variable } from '../../../core/types/study';
 import DataClient, {
-  BinRange,
   OverlayConfig,
   StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
 } from '../../../core/api/DataClient';
 import { Filter } from '../../../core/types/filter';
-import {
-  useDataClient,
-  useFindEntityAndVariable,
-  useStudyEntities,
-  useSubsettingClient,
-} from '../../../core/hooks/workspace';
+import { useDataClient } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
-import { some } from 'lodash';
+import { isEqual, some } from 'lodash';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
@@ -33,13 +26,8 @@ import {
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../../../core/types/variable';
-import { leastAncestralEntity } from '../../../core/utils/data-element-constraints';
-import { SubsettingClient } from '../../../core/api';
-
-// Back end overlay values contain a special token for the "Other" category:
-const UNSELECTED_TOKEN = '__UNSELECTED__';
-// This is what is displayed to the user instead:
-const UNSELECTED_DISPLAY_TEXT = 'All other values';
+import { useDeepValue } from '../../../core/hooks/immutability';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -53,7 +41,13 @@ export interface StandaloneMapMarkersProps {
   geoConfig: GeoConfig | undefined;
   studyId: string;
   filters: Filter[] | undefined;
-  overlayVariable: VariableDescriptor | undefined; // formerly xAxisVariable in older EDA viz
+  /** What has the user selected for the global overlay variable? */
+  selectedOverlayVariable: VariableDescriptor | undefined;
+  /** What is the full configuration for that overlay?
+   * This is (sometimes) determined asynchronously from back end requests.
+   */
+  overlayConfig: OverlayConfig | undefined;
+  outputEntityId: string | undefined;
   markerType: 'count' | 'proportion' | 'pie';
   dependentAxisLogScale?: boolean;
 }
@@ -62,10 +56,6 @@ export interface StandaloneMapMarkersProps {
 interface MapMarkers {
   /** the markers */
   markers: ReactElement<BoundsDriftMarkerProps>[] | undefined;
-  /** what the output entity is */
-  outputEntity: StudyEntity | undefined;
-  /** the full xAxisVariable object */
-  overlayVariable: Variable | undefined; // formerly xAxisVariable in older EDA visualizations
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
   totalVisibleEntityCount: number | undefined;
   /** This tells you how many entities are on screen that also have data for the overlay variable
@@ -88,16 +78,21 @@ export function useStandaloneMapMarkers(
   const {
     boundsZoomLevel,
     geoConfig,
+    selectedOverlayVariable: sov,
+    overlayConfig: oc,
+    outputEntityId,
     studyId,
     filters,
-    overlayVariable,
     markerType,
     dependentAxisLogScale = false,
   } = props;
 
+  // these two deepvalue eliminate an unnecessary data request
+  // when switching between pie and bar markers when using the same variable
+  const selectedOverlayVariable = useDeepValue(sov);
+  const overlayConfig = useDeepValue(oc);
+
   const dataClient: DataClient = useDataClient();
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
-  const entities = useStudyEntities(filters);
 
   // prepare some info that the map-markers and overlay requests both need
   const { latitudeVariable, longitudeVariable } = useMemo(
@@ -116,24 +111,6 @@ export function useStandaloneMapMarkers(
           },
     [geoConfig]
   );
-
-  const { outputEntity, overlayVariableAndEntity } = useMemo(() => {
-    if (geoConfig == null || geoConfig.entity.id == null) return {};
-
-    const overlayVariableAndEntity = findEntityAndVariable(overlayVariable);
-    // output entity needs to be the least ancestral of the two entities (if both are non-null)
-    const outputEntity = overlayVariableAndEntity?.entity
-      ? leastAncestralEntity(
-          [overlayVariableAndEntity.entity, geoConfig.entity],
-          entities
-        )
-      : geoConfig.entity;
-
-    return {
-      outputEntity,
-      overlayVariableAndEntity,
-    };
-  }, [geoConfig, overlayVariable, entities, findEntityAndVariable]);
 
   // handle the geoAggregateVariable separately because it changes with zoom level
   // and we don't want that to change overlayVariableAndEntity etc because that invalidates
@@ -155,96 +132,12 @@ export function useStandaloneMapMarkers(
     [boundsZoomLevel?.zoomLevel, geoConfig]
   );
 
-  // determine the default overlayConfig (TO DO: allow user overrides)
-  // this will require a call to the distribution endpoint for categoricals and the new endpoint for continuous
-  const subsettingClient = useSubsettingClient();
-
-  // So we bundle the overlayConfig and the outputEntity together in the usePromise payload. Why?
-  // The issue is that when changing variables, the outputEntity changes instantaneously, while
-  // the overlayConfig has to wait for a back end response. The great thing about usePromise is
-  // that the previous value is kept until the new value is available.
-  // If we bundle them together in the payload then, from the markerData fetch's perspective,
-  // they will **change at the same time**.  If you don't do this, the instantaneous outputEntity
-  // change triggers a back end request (which can fail because old-variable + new-entity can be illegal).
-  // Then when the overlay variable data comes back, a second request is triggered with a consistent
-  // payload of data.
-  type MarkerVariableBundle = {
-    outputEntityId: string;
-    overlayConfig?: OverlayConfig;
-  };
-
-  const markerVariableBundlePromise = usePromise<
-    MarkerVariableBundle | undefined
-  >(
-    useCallback(async () => {
-      if (
-        overlayVariableAndEntity != null &&
-        overlayVariable != null &&
-        outputEntity != null
-      ) {
-        const vocabulary = overlayVariableAndEntity.variable.vocabulary;
-        if (vocabulary?.length) {
-          // categorical
-          const overlayValues = await getMostFrequentValues({
-            ...overlayVariable,
-            studyId,
-            subsettingClient,
-            filters,
-          });
-
-          return {
-            overlayConfig: {
-              overlayType: 'categorical',
-              overlayVariable,
-              overlayValues,
-            },
-            outputEntityId: outputEntity.id,
-          };
-        } else {
-          // continuous
-          const overlayBins = await getBinRanges({
-            ...overlayVariable,
-            studyId,
-            dataClient,
-            filters: filters ?? [],
-          });
-
-          return {
-            overlayConfig: {
-              overlayType: 'continuous',
-              overlayValues: overlayBins,
-              overlayVariable,
-            },
-            outputEntityId: outputEntity.id,
-          };
-        }
-      } else if (outputEntity != null) {
-        return {
-          outputEntityId: outputEntity.id,
-        };
-      } else {
-        return undefined;
-      }
-    }, [
-      overlayVariableAndEntity,
-      overlayVariable,
-      outputEntity,
-      studyId,
-      subsettingClient,
-      dataClient,
-      filters,
-    ])
-  );
-
-  const markerVariableBundle = markerVariableBundlePromise.value;
-  const overlayType = markerVariableBundle?.overlayConfig?.overlayType;
+  const overlayType = overlayConfig?.overlayType;
   const vocabulary =
     overlayType === 'categorical' // switch statement style guide time!!
-      ? markerVariableBundle?.overlayConfig?.overlayValues
+      ? overlayConfig?.overlayValues
       : overlayType === 'continuous'
-      ? markerVariableBundle?.overlayConfig?.overlayValues.map(
-          (ov) => ov.binLabel
-        )
+      ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
       : undefined;
 
   const markerData = usePromise<StandaloneMapMarkersResponse | undefined>(
@@ -256,7 +149,17 @@ export function useStandaloneMapMarkers(
         latitudeVariable == null ||
         longitudeVariable == null ||
         geoAggregateVariable == null ||
-        markerVariableBundle?.outputEntityId == null
+        outputEntityId == null
+      )
+        return undefined;
+
+      // Bail if overlayconfig hasn't been fully determined yet
+      // (e.g. async updateOverlayConfig in MapAnalysis)
+      // This prevents an extra unwanted back end request
+      // for "no overlay" just before the request for an overlay
+      if (
+        selectedOverlayVariable != null &&
+        !isEqual(selectedOverlayVariable, overlayConfig?.overlayVariable)
       )
         return undefined;
 
@@ -273,8 +176,9 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          ...markerVariableBundle, // also includes outputEntityId
-          valueSpec: 'count', // TO DO: or proportion when we have the UI and back-end fix https://github.com/VEuPathDB/EdaDataService/issues/261 for this
+          overlayConfig,
+          outputEntityId,
+          valueSpec: markerType === 'pie' ? 'count' : markerType,
           viewport: {
             latitude: {
               xMin,
@@ -297,12 +201,15 @@ export function useStandaloneMapMarkers(
       studyId,
       filters,
       dataClient,
-      markerVariableBundle,
+      selectedOverlayVariable,
+      overlayConfig,
+      outputEntityId,
       geoAggregateVariable,
       latitudeVariable,
       longitudeVariable,
       boundsZoomLevel,
       geoConfig,
+      markerType,
     ])
   );
 
@@ -313,28 +220,28 @@ export function useStandaloneMapMarkers(
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
-  const { valueMax, valueMinPos, valueSum } = useMemo(
+  const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
       markerData.value
         ? markerData.value.mapElements
             .flatMap((el) => el.overlayValues)
             .reduce(
-              ({ valueMax, valueMinPos, valueSum }, elem) => ({
+              ({ valueMax, valueMinPos, countSum }, elem) => ({
                 valueMax: Math.max(elem.value, valueMax),
                 valueMinPos:
                   elem.value > 0 &&
                   (valueMinPos == null || elem.value < valueMinPos)
                     ? elem.value
                     : valueMinPos,
-                valueSum: (valueSum ?? 0) + elem.value,
+                countSum: (countSum ?? 0) + elem.count,
               }),
               {
                 valueMax: 0,
                 valueMinPos: undefined as number | undefined,
-                valueSum: undefined as number | undefined,
+                countSum: undefined as number | undefined,
               }
             )
-        : { valueMax: undefined, valueMinPos: undefined, valueSum: undefined },
+        : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
     [markerData]
   );
 
@@ -378,7 +285,10 @@ export function useStandaloneMapMarkers(
                   overlayType === 'categorical'
                     ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
                     : gradientSequentialColorscaleMap(
-                        vocabulary.indexOf(binLabel) / (vocabulary.length - 1)
+                        vocabulary.length > 1
+                          ? vocabulary.indexOf(binLabel) /
+                              (vocabulary.length - 1)
+                          : 0.5
                       ),
               }))
             : [];
@@ -471,7 +381,9 @@ export function useStandaloneMapMarkers(
           ? ColorPaletteDefault[vocabulary.indexOf(label)]
           : overlayType === 'continuous'
           ? gradientSequentialColorscaleMap(
-              vocabulary.indexOf(label) / (vocabulary.length - 1)
+              vocabulary.length > 1
+                ? vocabulary.indexOf(label) / (vocabulary.length - 1)
+                : 0.5
             )
           : undefined,
       // has any geo-facet got an array of overlay data
@@ -488,86 +400,12 @@ export function useStandaloneMapMarkers(
 
   return {
     markers,
-    overlayVariable: overlayVariableAndEntity?.variable,
-    outputEntity,
-    totalVisibleWithOverlayEntityCount: valueSum,
+    totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
-    //    vocabulary,
     legendItems,
     pending: markerData.pending,
     error: markerData.error,
   };
-}
-
-type GetMostFrequentValuesProps = {
-  studyId: string;
-  variableId: string;
-  entityId: string;
-  subsettingClient: SubsettingClient;
-  filters?: Filter[];
-};
-
-// get the most frequent values for the entire dataset, no filters at all
-// (for now at least)
-async function getMostFrequentValues({
-  studyId,
-  variableId,
-  entityId,
-  subsettingClient,
-  filters = [],
-}: GetMostFrequentValuesProps): Promise<string[]> {
-  const distributionResponse = await subsettingClient.getDistribution(
-    studyId,
-    entityId,
-    variableId,
-    {
-      valueSpec: 'count',
-      filters,
-    }
-  );
-
-  const sortedValues = distributionResponse.histogram
-    .sort((bin1, bin2) => bin2.value - bin1.value)
-    .map((bin) => bin.binLabel);
-  if (sortedValues.length > ColorPaletteDefault.length) {
-    return [
-      ...sortedValues.slice(0, ColorPaletteDefault.length - 1),
-      UNSELECTED_TOKEN,
-    ];
-  }
-  return sortedValues;
-}
-
-type GetBinRangesProps = {
-  studyId: string;
-  variableId: string;
-  entityId: string;
-  dataClient: DataClient;
-  filters: Filter[];
-};
-
-// get the equal spaced bin definitions (for now at least)
-async function getBinRanges({
-  studyId,
-  variableId,
-  entityId,
-  dataClient,
-  filters,
-}: GetBinRangesProps): Promise<BinRange[]> {
-  const response = await dataClient.getContinousVariableMetadata({
-    studyId,
-    filters,
-    config: {
-      variable: {
-        entityId,
-        variableId,
-      },
-      metadata: ['binRanges'],
-    },
-  });
-
-  const binRanges = response.binRanges?.equalInterval!; // if asking for binRanges, the response WILL contain binRanges
-  return binRanges;
 }
 
 function fixLabelForOtherValues(input: string): string {

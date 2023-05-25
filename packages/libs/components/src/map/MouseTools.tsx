@@ -1,4 +1,5 @@
 import React from 'react';
+import { DomEvent } from 'leaflet';
 // import '../styles/map_styles.css';
 
 // Add new mouse modes here
@@ -51,7 +52,13 @@ export default function MouseTools(props: MouseToolsProps) {
   });
 
   return (
-    <div className="leaflet-control-container">
+    <div
+      className="leaflet-control-container"
+      ref={(ref) => {
+        if (!ref) return;
+        DomEvent.disableClickPropagation(ref).disableScrollPropagation(ref);
+      }}
+    >
       <div className="leaflet-top leaflet-right">
         {/* different position depending on SAM */}
         <span
@@ -65,5 +72,6 @@ export default function MouseTools(props: MouseToolsProps) {
         </span>
       </div>
     </div>
+    // </div>
   );
 }
