@@ -172,7 +172,7 @@ export function useGetDefaultVariableDescriptor() {
   const featuredFields = useFeaturedFieldsFromTree(fieldTree);
 
   return useCallback(
-    function getDefaultVariableIdCallback(entityId?: string) {
+    function getDefaultVariableDescriptor(entityId?: string) {
       let finalEntityId;
       let finalVariableId;
 
