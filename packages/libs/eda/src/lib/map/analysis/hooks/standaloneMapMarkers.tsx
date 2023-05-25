@@ -317,10 +317,10 @@ export function useStandaloneMapMarkers(
                 },
               ];
 
-        const count = overlayValues.reduce(
-          (sum, { count }) => (sum = sum + count),
-          0
-        );
+        const count =
+          vocabulary != null // if there's an overlay (all expected use cases)
+            ? overlayValues.reduce((sum, { count }) => (sum = sum + count), 0)
+            : entityCount; // fallback if not
 
         const commonMarkerProps = {
           id: geoAggregateValue,
