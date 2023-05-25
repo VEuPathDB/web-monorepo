@@ -1,0 +1,1423 @@
+{
+    "records": [
+        {
+            "tables": {},
+            "displayName": "Amazonia ICEMR Brazil Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "BRAZIL0001-1",
+                "dataset_id": "DS_8e1f623542",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_8e1f623542"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Amazonia ICEMR Peru Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERUL0002-1",
+                "dataset_id": "DS_a885240fc4",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_a885240fc4"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Amazonia ICEMR Peru cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "AMPERU2CX-1",
+                "dataset_id": "DS_1d610aa72a",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_1d610aa72a"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Asia Pacific ICEMR Cambodian Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "ASIAPAC-1",
+                "dataset_id": "DS_4d72506014",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_4d72506014"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "AVENIR Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "AVENIR-1",
+                "dataset_id": "DS_8e36901235",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_8e36901235"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Bangladesh Cryptosporidium Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "NIHCRYPTO-1",
+                "dataset_id": "DS_a05cff61da",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_a05cff61da"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "BetterBirth Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "BETTERB-1",
+                "dataset_id": "DS_556c2b1149",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_556c2b1149"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "COVID-19 India Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PREVIEW_General_COVID-19_India_cohort",
+                "dataset_id": "DS_f600a6309e",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_f600a6309e"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "ELICIT Randomized Controlled Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "ELICIT0001-1",
+                "dataset_id": "DS_6834a4c83b",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_6834a4c83b"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "GAMIN Randomized Controlled Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GAMIN00001-1",
+                "dataset_id": "DS_60f5b9358a",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_60f5b9358a"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "GEMS1 Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GEMSCC0003-1",
+                "dataset_id": "DS_841a9f5259",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_841a9f5259"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "GEMS1 HUAS/HUAS Lite Survey",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GEMSHUAS01-1",
+                "dataset_id": "DS_221d2bcac4",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_221d2bcac4"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "GEMS1A Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GEMSCC1A03-1",
+                "dataset_id": "DS_2a6ace17a1",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_2a6ace17a1"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "GEMS1A HUAS Lite Survey",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GEMSCC0005-1",
+                "dataset_id": "DS_6a93753102",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_6a93753102"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Group Antenatal Care Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GANC000001-1",
+                "dataset_id": "DS_8a8a564915",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_8a8a564915"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Guatemala Opportunistic Infection Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GUATOICO-1",
+                "dataset_id": "DS_826bc7f08d",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_826bc7f08d"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR Behavior Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "INDIABCS1-1",
+                "dataset_id": "DS_21205ebb16",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_21205ebb16"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "INDIA0001-1",
+                "dataset_id": "DS_05ea525fd3",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_05ea525fd3"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "INDIA0002-1",
+                "dataset_id": "DS_a5c969d5fa",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_a5c969d5fa"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR DAMaN Quasi-experimental Stepped-wedge",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "DAMAN-1",
+                "dataset_id": "DS_be1995b20b",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_be1995b20b"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR Fever Surveillance",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "INDIAFE01-1",
+                "dataset_id": "DS_4902d9b7ec",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_4902d9b7ec"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR Meghalaya Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "INDIAMEG1-1",
+                "dataset_id": "DS_4670e06911",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_4670e06911"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "India ICEMR Severe <i>P. vivax<\/i> and <i>falciparum<\/i> Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "ICESEVER1-1",
+                "dataset_id": "DS_3b4a4e8f09",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_3b4a4e8f09"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Jilinde Costing Study of PrEP in Kenya",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "JILCOST-1",
+                "dataset_id": "DS_450c62c7d0",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_450c62c7d0"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "JILINDE Healthcare provider Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "JILHEALTHPC-1",
+                "dataset_id": "DS_16d691d630",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_16d691d630"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Jilinde Prospective Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GATESJILINRCT-1",
+                "dataset_id": "DS_d70aacce42",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_d70aacce42"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Kalifabougou Malaria Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "KALIFA001-1",
+                "dataset_id": "DS_22e3c3c070",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_22e3c3c070"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Kalifabougou Malaria QA Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "CROMQA-1",
+                "dataset_id": "DS_7cea54058d",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_7cea54058d"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "LAKANA Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PREVIEW_Gates_REACH_LAKANA_rct",
+                "dataset_id": "DS_515a92c711",
+                "study_access": "Prerelease"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_515a92c711"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "LLINEUP Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "LLINEUP01-1",
+                "dataset_id": "DS_7c4cd6bba9",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_7c4cd6bba9"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "LLINEUP QA Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "QALLINEUP-1",
+                "dataset_id": "DS_9aed3ce875",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_9aed3ce875"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "LLINEUP2 Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "ICEMRLLINEUP2-1",
+                "dataset_id": "DS_df1a61aa2e",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_df1a61aa2e"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "MAL-ED 0-60m Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "MALED0003-1",
+                "dataset_id": "DS_5c41b87221",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_5c41b87221"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Malawi ICEMR Case-Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "MALAWI-1",
+                "dataset_id": "DS_8375362fb0",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_8375362fb0"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "MORDOR Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GMORDOR-1",
+                "dataset_id": "DS_def666ebb5",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_def666ebb5"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Myanmar ICEMR Malaria Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "MYANMAR-1",
+                "dataset_id": "DS_f3ce0be2f1",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_f3ce0be2f1"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Namibia rfMDA RAVC Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GATESNAMIBRCT-1",
+                "dataset_id": "DS_f559aee789",
+                "study_access": "Prerelease"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_f559aee789"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "NECTAR1 Randomised Control Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "NECTAR-1",
+                "dataset_id": "DS_7b47eb7469",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_7b47eb7469"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "NHS111 Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PREVIEW_General_NHS_nhs_111cs",
+                "dataset_id": "DS_8789ea90e7",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_8789ea90e7"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH Bangladesh Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHBAN-1",
+                "dataset_id": "DS_e4ba48125a",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_e4ba48125a"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCH-1",
+                "dataset_id": "DS_1595200bb8",
+                "study_access": "Prerelease"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_1595200bb8"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH Kenya Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHKEN-1",
+                "dataset_id": "DS_2cf32ab2f0",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_2cf32ab2f0"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH Mali Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHMALI-1",
+                "dataset_id": "DS_c3035a108d",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_c3035a108d"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH South Africa Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHSAF-1",
+                "dataset_id": "DS_86424e44ce",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_86424e44ce"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH Thailand Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHTHAI-1",
+                "dataset_id": "DS_24e941b30f",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_24e941b30f"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH The Gambia Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHGAM-1",
+                "dataset_id": "DS_59bedf2966",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_59bedf2966"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PERCH Zambia Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PERCHZAM-1",
+                "dataset_id": "DS_d40f5f723f",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_d40f5f723f"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PPFP Choices Kenya Postpartum Operational Research",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PPFPQE-1",
+                "dataset_id": "DS_c8597ad007",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_c8597ad007"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Preventing Congenital Syphilis Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GATESPCSRCT-1",
+                "dataset_id": "DS_40a4b145f4",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_40a4b145f4"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PRISM ICEMR Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PRISM0001-1",
+                "dataset_id": "DS_0ad509829e",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_0ad509829e"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PRISM2 ICEMR Border Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "P2BORDER-1",
+                "dataset_id": "DS_17191d35b9",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_17191d35b9"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PRISM2 ICEMR Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PRISM2-1",
+                "dataset_id": "DS_51b40fe2e2",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_51b40fe2e2"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PROMOTE Birth Cohort 3 Randomized Controlled Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PROMO-1",
+                "dataset_id": "DS_8786631aaf",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_8786631aaf"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "PROVIDE Randomized Controlled Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "PROVIDE01-1",
+                "dataset_id": "DS_fe95d702c3",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_fe95d702c3"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "RIMDAMAL Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "RIMDAMAL-1",
+                "dataset_id": "DS_1d2c6d8cc8",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_1d2c6d8cc8"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE <i>S. mansoni<\/i> Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCORECX01-1",
+                "dataset_id": "DS_d6a1141fbf",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_d6a1141fbf"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE <i>S. mansoni<\/i> Kenya and Tanzania Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCORESM01-1",
+                "dataset_id": "DS_cb9893494e",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_cb9893494e"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Burundi Mapping Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCOREBU01-1",
+                "dataset_id": "DS_55fd455f5e",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_55fd455f5e"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Five Country CCA Evaluation Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCOREFC01-1",
+                "dataset_id": "DS_6b79157ec1",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_6b79157ec1"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Mozambique <i>S. haematobium<\/i> Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCOREMZ01-1",
+                "dataset_id": "DS_cc143c9cef",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_cc143c9cef"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Niger <i>S. haematobium<\/i> Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCORENIGER-1",
+                "dataset_id": "DS_4d0fe88b6b",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_4d0fe88b6b"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Rwanda Mapping Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCORERW01-1",
+                "dataset_id": "DS_88b591c3e5",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_88b591c3e5"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Seasonal Transmission <i>S. haematobium<\/i> Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCORESL01-1",
+                "dataset_id": "DS_6bd7dbd802",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_6bd7dbd802"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SCORE Zanzibar <i>S. haematobium<\/i> Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SCOREZAN1-1",
+                "dataset_id": "DS_eddb4757ba",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_eddb4757ba"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SHINE Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SHINE-1",
+                "dataset_id": "DS_0086998c2f",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_0086998c2f"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "SIP Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "GATESIP01-1",
+                "dataset_id": "DS_477ce63d68",
+                "study_access": "Controlled"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_477ce63d68"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "South Asia ICEMR Surveillance",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "ICMERSOUTHASIA-1",
+                "dataset_id": "DS_13c737a528",
+                "study_access": "Protected"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_13c737a528"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "South Asia ICEMR Surveillance Extended",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "EXPSASIA-1",
+                "dataset_id": "DS_6a00ba5451",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_6a00ba5451"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Southeast Asia ICEMR Surveillance",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "ISEA-1",
+                "dataset_id": "DS_9564073c4c",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_9564073c4c"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Southeast Asia ICEMR2 Surveillance",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SEA2SURV-1",
+                "dataset_id": "DS_4de7f83333",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_4de7f83333"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Southern Africa ICEMR Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SRNAFRICA-1",
+                "dataset_id": "DS_a83d9defbb",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_a83d9defbb"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "Sub-Saharan Africa ICEMR Kenya Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "SUBSAKEN-1",
+                "dataset_id": "DS_13de92039a",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_13de92039a"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "TEST Randomised Control Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "UNITEST-1",
+                "dataset_id": "DS_f056f037cd",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_f056f037cd"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "UMSP Aggregate Surveillance",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "AGGUMSP-1",
+                "dataset_id": "DS_f5fc8ea2d2",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_f5fc8ea2d2"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "UMSP Surveillance",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "UMSP-1",
+                "dataset_id": "DS_81ef25b6ac",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_81ef25b6ac"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "VIDA Case Control",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "VIDACC-1",
+                "dataset_id": "DS_0605f599e5",
+                "study_access": "Prerelease"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_0605f599e5"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "VIDA HUCS Gambia Mali Survey",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "VIDAGAMALI-1",
+                "dataset_id": "DS_6741e4cc0a",
+                "study_access": "Prerelease"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_6741e4cc0a"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "VIDA HUCS Kenya Survey",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "VIDAHUCSKENYA-1",
+                "dataset_id": "DS_f89ed22806",
+                "study_access": "Prerelease"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_f89ed22806"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "WASH Benefits Bangladesh Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "WASHBBANG-1",
+                "dataset_id": "DS_c56b76b581",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_c56b76b581"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "WASH Benefits Kenya Cluster Randomized Trial",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "WASHBKEN0-1",
+                "dataset_id": "DS_010e5612b8",
+                "study_access": "Public"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_010e5612b8"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "West Africa ICEMR Cohort",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "WESTAFRICA01-1",
+                "dataset_id": "DS_e97c4653cb",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_e97c4653cb"
+                }
+            ],
+            "tableErrors": []
+        },
+        {
+            "tables": {},
+            "displayName": "WWARN Cross-sectional",
+            "recordClassName": "DatasetRecordClasses.DatasetRecordClass",
+            "attributes": {
+                "eda_study_id": "WWARN-1",
+                "dataset_id": "DS_24899fbd90",
+                "study_access": "Private"
+            },
+            "id": [
+                {
+                    "name": "dataset_id",
+                    "value": "DS_24899fbd90"
+                }
+            ],
+            "tableErrors": []
+        }
+    ],
+    "meta": {
+        "displayViewTotalCount": 82,
+        "tables": [],
+        "pagination": {
+            "offset": 0,
+            "numRecords": -1
+        },
+        "cachePreviouslyExisted": false,
+        "viewTotalCount": 82,
+        "sorting": [
+            {
+                "attributeName": "display_name",
+                "direction": "ASC"
+            }
+        ],
+        "recordClassName": "dataset",
+        "responseCount": 82,
+        "attributes": [
+            "dataset_id",
+            "eda_study_id",
+            "study_access"
+        ],
+        "totalCount": 82,
+        "displayTotalCount": 82
+    }
+}

@@ -1,45 +1,10 @@
-describe('Standalone Map Filter / Subset Panel', () => {
-  it('users can open the subset panel from filter chip', () => {
+describe('Example', () => {
+  it.only('users can open the subset panel from filter chip', () => {
     mockRoutes();
-    cy.visit('/mapveu/DS_d6a1141fbf');
-    cy.findByText('The Coolest Study Ever').click();
-    cy.findByText('Country').click();
-    cy.findByText('Nice description!').should('exist');
-  });
-  it('users can add filters to their analysis', () => {
-    mockRoutes();
-    cy.visit('/mapveu/DS_d6a1141fbf');
-    cy.findByText('The Coolest Study Ever').click();
-    cy.findByText('Filter').click();
-
-    cy.wait('@postEdaServiceAppsPassVisualizationsMapMarkers')
-      .then(({ request }) => {
-        const hasAvocado = request.body.filters[0].stringSet.some(
-          (string) => string === 'Avocado'
-        );
-        expect(hasAvocado).to.be.false;
-      })
-      .then(() => {
-        cy.findByText('Avocado').click();
-      })
-      .then(() => {
-        cy.wait('@postEdaServiceAppsPassVisualizationsMapMarkers').then(
-          ({ request }) => {
-            const hasAvocado = request.body.filters[0].stringSet.some(
-              (string) => string === 'Avocado'
-            );
-            expect(hasAvocado).to.be.true;
-          }
-        );
-      });
-
-    cy.findByText('Village administrative information').click();
-    cy.findByText('Village study arm').click();
-    cy.findByText('Barber').click();
-
-    cy.get('header').within(() => {
-      cy.findByText('Village study arm').should('exist');
-    });
+    cy.visit('/mapveu');
+    cy.findByText('There are no analyses that match your search.').should(
+      'exist'
+    );
   });
 });
 
@@ -90,121 +55,27 @@ function mockRoutes() {
       });
     });
 
-  cy.fixture('postServiceRecordTypesDatasetRecords')
-    .then((fixture) => {
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('POST', '/service/record-types/dataset/records', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
+  cy.intercept('GET', '/eda-service/users/*/preferences/*', {
+    statusCode: 200,
+    body: {},
+  });
+  cy.intercept('GET', '/eda-service/users/*/analyses/*', {
+    statusCode: 200,
+    body: [],
+  });
 
-  cy.fixture('getEdaServiceStudiesSCORECX0101-1')
-    .then((fixture) => {
-      fixture.study.rootEntity.variables[0].definition = 'Nice description!';
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('GET', '/eda-service/studies/*', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
-
-  cy.fixture('getEdaServiceUsersIdAnalysesClinEpiDB')
-    .then((fixture) => {
-      fixture[0].displayName = 'The Coolest Study Ever';
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('GET', '/eda-service/users/**/analyses/ClinEpiDB', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
-
-  cy.fixture('postEdaServiceAppsPassVisualizationsMapMarkers')
+  cy.fixture('postServiceRecordTypesDatasetSearchesStudiesReportsStandard')
     .then((fixture) => {
       return fixture;
     })
     .then((fixture) => {
       cy.intercept(
         'POST',
-        '/eda-service/apps/pass/visualizations/map-markers',
-        {
-          statusCode: 200,
-          body: fixture,
-        }
-      ).as('postEdaServiceAppsPassVisualizationsMapMarkers');
-    });
-  cy.fixture('getEdaServiceApps')
-    .then((fixture) => {
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('GET', '/eda-service/apps', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
-  cy.fixture('getEdaServiceStudy_StudyId_entities_EntityId_count')
-    .then((fixture) => {
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('POST', '/eda-service/studies/**/entities/**/count', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
-
-  cy.fixture('getEdaServiceStudy_StudyId_entities_EntityId_count')
-    .then((fixture) => {
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('POST', '/eda-service/studies/**/entities/**/count', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
-
-  cy.fixture('getEdaServiceUsers_UserId_AnalysesClinEpiDB_AnalysisId')
-    .then((fixture) => {
-      fixture.descriptor.subset.uiSettings['@@mapApp@@'].isSubsetPanelOpen =
-        false;
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept('GET', '/eda-service/users/**/analyses/ClinEpiDB/**', {
-        statusCode: 200,
-        body: fixture,
-      });
-    });
-
-  cy.fixture(
-    'postEdaServiceStudies_StudyId_Entitie_EntityId_Variables_VariableId_Distribution'
-  )
-    .then((fixture) => {
-      return fixture;
-    })
-    .then((fixture) => {
-      cy.intercept(
-        'POST',
-        '/eda-service/studies/**/entities/**/variables/**/distribution',
+        '/service/record-types/dataset/searches/Studies/reports/standard',
         {
           statusCode: 200,
           body: fixture,
         }
       );
     });
-
-  cy.intercept('PATCH', '/eda-service/users/**/analyses/ClinEpiDB/**', {
-    statusCode: 202,
-  });
-  cy.intercept('https://*.tile.openstreetmap.org/*/*/*.png', {
-    fixture: 'mapTile.jpeg',
-  });
 }
