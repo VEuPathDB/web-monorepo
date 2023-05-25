@@ -22,6 +22,8 @@ import {
 
 import './MapVEu.scss';
 import { SiteInformationProps } from '.';
+import { StudyList } from './StudyList';
+import { PublicAnalysesRoute } from '../workspace/PublicAnalysesRoute';
 
 interface Props {
   edaServiceUrl: string;
@@ -51,6 +53,22 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   const { path } = useRouteMatch();
   return (
     <Switch>
+      <Route
+        path={path}
+        exact
+        render={() => (
+          <AllAnalyses
+            analysisClient={analysisClient}
+            subsettingClient={edaClient}
+            showLoginForm={showLoginForm}
+          />
+        )}
+      />
+      <Route path={`${path}/studies`} exact render={() => <StudyList />} />
+      <Route
+        path={`${path}/public`}
+        render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
+      />
       <Route
         path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}
         render={(
@@ -95,16 +113,6 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
               singleAppMode={singleAppMode}
             />
           </EDAAnalysisListContainer>
-        )}
-      />
-      <Route
-        path={path}
-        render={() => (
-          <AllAnalyses
-            analysisClient={analysisClient}
-            subsettingClient={edaClient}
-            showLoginForm={showLoginForm}
-          />
         )}
       />
     </Switch>
