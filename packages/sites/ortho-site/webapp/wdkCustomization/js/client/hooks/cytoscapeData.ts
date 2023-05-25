@@ -70,11 +70,12 @@ export function useCytoscapeConfig(
     layout: {
       name: 'fcose',
       animate: false,
+      nodeSeparation: 500,
       idealEdgeLength: function (edge) {
-        if (edge.data.score) {
-          return edge.data.score + 500;
+        if (edge.data('score')) {
+          return edge.data('score') + 500;
         }
-        return 600;
+        return 500;
       },
     },
     panningEnabled: true,
