@@ -14,7 +14,9 @@
     "react-error-overlay": "6.0.9"
   },
   "devDependencies": {
+    "@testing-library/cypress": "^9.0.0",
     "@veupathdb/prettier-config": "workspace:^",
+    "cypress": "^12.13.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
     "nx": "15.3.3"
