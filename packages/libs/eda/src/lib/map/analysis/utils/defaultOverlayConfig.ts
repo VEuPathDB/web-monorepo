@@ -2,7 +2,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { UNSELECTED_TOKEN } from '../..';
 import {
   BinRange,
-  CategoryVariableDataShape,
+  CategoricalVariableDataShape,
   ContinuousVariableDataShape,
   Filter,
   OverlayConfig,
@@ -45,7 +45,7 @@ export async function getDefaultOverlayConfig(
       entityId: overlayEntity.id,
     };
 
-    if (CategoryVariableDataShape.is(overlayVariable.dataShape)) {
+    if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
       const overlayValues = await getMostFrequentValues({
         studyId: studyId,
