@@ -165,7 +165,7 @@ function defaultMakeVariableLink({
  * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
  * kind of test and simplify its logic.
  */
-export function useGetDefaultVariableDescriptorCallback() {
+export function useGetDefaultVariableDescriptor() {
   const entities = useStudyEntities();
   const flattenedFields = useFlattenedFields(entities, 'variableTree');
   const fieldTree = useFieldTree(flattenedFields);

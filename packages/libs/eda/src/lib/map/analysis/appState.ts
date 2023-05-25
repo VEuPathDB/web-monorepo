@@ -6,7 +6,7 @@ import { useCallback, useEffect } from 'react';
 import {
   AnalysisState,
   BinDefinitions,
-  useGetDefaultVariableDescriptorCallback,
+  useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
@@ -87,8 +87,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
   );
 
   const studyMetadata = useStudyMetadata();
-  const getDefaultVariableDescriptor =
-    useGetDefaultVariableDescriptorCallback();
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const defaultVariable = getDefaultVariableDescriptor(
     studyMetadata.rootEntity.id
   );

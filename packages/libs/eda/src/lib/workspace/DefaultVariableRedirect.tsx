@@ -1,5 +1,5 @@
 import { Redirect, useRouteMatch } from 'react-router';
-import { useGetDefaultVariableDescriptorCallback } from '../core/hooks/workspace';
+import { useGetDefaultVariableDescriptor } from '../core/hooks/workspace';
 
 interface Props {
   entityId?: string;
@@ -7,8 +7,7 @@ interface Props {
 
 export function DefaultVariableRedirect(props: Props) {
   const { url } = useRouteMatch();
-  const getDefaultVariableDescriptor =
-    useGetDefaultVariableDescriptorCallback();
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
   const { entityId, variableId } = getDefaultVariableDescriptor(props.entityId);
 
   // Prevent <Variables> from rendering multiple times

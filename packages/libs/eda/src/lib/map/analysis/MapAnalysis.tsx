@@ -11,7 +11,7 @@ import {
   useDataClient,
   useDownloadClient,
   useFindEntityAndVariable,
-  useGetDefaultVariableDescriptorCallback,
+  useGetDefaultVariableDescriptor,
   usePromise,
   useStudyEntities,
   useStudyMetadata,
@@ -174,8 +174,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
 
-  const getDefaultVariableDescriptor =
-    useGetDefaultVariableDescriptorCallback();
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
   const findEntityAndVariable = useFindEntityAndVariable();
 
