@@ -75,7 +75,7 @@ import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
 
-import { isEqual, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -307,7 +307,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
-
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const downloadClient = useDownloadClient();
@@ -967,14 +966,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     right: 8,
                   }}
                 >
-                  {legendItems.length > 0 && (
-                    <MapLegend
-                      legendItems={legendItems}
-                      title={overlayVariable?.displayName}
-                      // control to show checkbox. default: true
-                      showCheckbox={false}
-                    />
-                  )}
+                  <MapLegend
+                    isLoading={legendItems.length === 0}
+                    legendItems={legendItems}
+                    title={overlayVariable?.displayName}
+                    // control to show checkbox. default: true
+                    showCheckbox={false}
+                  />
                 </FloatingDiv>
                 {/* <FloatingDiv
                   style={{
