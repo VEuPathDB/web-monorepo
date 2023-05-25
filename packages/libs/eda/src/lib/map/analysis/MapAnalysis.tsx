@@ -80,7 +80,6 @@ import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BarPlotMarkerConfigurationMenu,
-  MarkerConfigurationSelector,
   PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
@@ -89,12 +88,15 @@ import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import {
+  MapTypeConfigurationMenu,
+  MarkerConfigurationOption,
+} from './MarkerConfiguration/MapTypeConfigurationMenu';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
   Notes = 'Notes',
-  Markers = 'Markers',
   Plot = 'Plot',
   Share = 'Share',
   StudyDetails = 'View Study Details',
@@ -508,9 +510,19 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           },
         ],
         renderSideNavigationPanel: (app) => {
-          return markerConfigurationObjects.find(
-            (marker) => marker.type === activeMarkerConfigurationType
-          )?.renderConfigurationMenu;
+          return (
+            <div
+              style={{
+                padding: '1em',
+                maxWidth: '1500px',
+              }}
+            >
+              <MapTypeConfigurationMenu
+                activeMarkerConfigurationType={activeMarkerConfigurationType}
+                markerConfigurations={markerConfigurationObjects}
+              />
+            </div>
+          );
         },
       },
       {
@@ -749,9 +761,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const markerConfigurationObjects = [
+  const markerConfigurationObjects: MarkerConfigurationOption[] = [
     {
       type: 'pie',
+      displayName: 'Donuts',
+      icon: <DonutMarkers style={{ height: 30 }} />,
       renderConfigurationMenu:
         activeMarkerConfiguration?.type === 'pie' ? (
           <PieMarkerConfigurationMenu
@@ -770,6 +784,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     },
     {
       type: 'barplot',
+      displayName: 'Bar plots',
+      icon: <BarPlotMarkers style={{ height: 30 }} />,
       renderConfigurationMenu:
         activeMarkerConfiguration?.type === 'barplot' ? (
           <BarPlotMarkerConfigurationMenu
