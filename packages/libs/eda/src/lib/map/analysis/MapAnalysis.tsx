@@ -89,6 +89,7 @@ import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -126,6 +127,11 @@ export const defaultAnimation = {
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+enum DraggablePanelIds {
+  LEGEND_PANEL = 'legend',
+  VIZ_PANEL = 'viz',
+}
 
 interface Props {
   analysisId?: string;
@@ -844,6 +850,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
+  const [zIndicies /* setZIndicies */] = useState<DraggablePanelIds[]>(
+    Object.values(DraggablePanelIds)
+  );
+
+  function getZIndexByPanelTitle(
+    requestedPanelTitle: DraggablePanelIds
+  ): number {
+    const index = zIndicies.findIndex(
+      (panelTitle) => panelTitle === requestedPanelTitle
+    );
+    const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+    return index + zIndexFactor;
+  }
+
+  const legendZIndex =
+    getZIndexByPanelTitle(DraggablePanelIds.LEGEND_PANEL) +
+    getZIndexByPanelTitle(DraggablePanelIds.VIZ_PANEL);
+
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -960,20 +984,26 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </div>
 
-                <FloatingDiv
-                  style={{
-                    top: 250,
-                    right: 8,
+                <DraggablePanel
+                  isOpen
+                  showPanelTitle
+                  panelTitle={overlayVariable?.displayName || 'Legend'}
+                  confineToParentContainer
+                  defaultPosition={{ x: window.innerWidth, y: 225 }}
+                  styleOverrides={{
+                    zIndex: legendZIndex,
                   }}
                 >
-                  <MapLegend
-                    isLoading={legendItems.length === 0}
-                    legendItems={legendItems}
-                    title={overlayVariable?.displayName}
-                    // control to show checkbox. default: true
-                    showCheckbox={false}
-                  />
-                </FloatingDiv>
+                  <div style={{ padding: '5px 10px' }}>
+                    <MapLegend
+                      isLoading={legendItems.length === 0}
+                      legendItems={legendItems}
+                      // control to show checkbox. default: true
+                      showCheckbox={false}
+                    />
+                  </div>
+                </DraggablePanel>
+
                 {/* <FloatingDiv
                   style={{
                     top: 250,
@@ -1006,6 +1036,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
                     filters={filtersIncludingViewport}
+                    // onTouch={moveVizToTop}
+                    zIndexForStackingContext={getZIndexByPanelTitle(
+                      DraggablePanelIds.VIZ_PANEL
+                    )}
                   />
                 )}
 
