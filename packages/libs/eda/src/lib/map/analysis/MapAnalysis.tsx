@@ -486,7 +486,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
-        renderSideNavigationPanel: (app) => {
+        renderSideNavigationPanel: (apps) => {
+          const markerVariableConstraints = apps
+            .find((app) => app.name === 'standalone-map')
+            ?.visualizations.find(
+              (viz) => viz.name === 'map-markers'
+            )?.dataElementConstraints;
+
           return (
             <MarkerConfigurationSelector
               activeMarkerConfigurationType={activeMarkerConfigurationType}
@@ -501,7 +507,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   renderConfigurationMenu:
                     activeMarkerConfiguration?.type === 'pie' ? (
                       <PieMarkerConfigurationMenu
-                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
                         entities={studyEntities}
                         onChange={updateMarkerConfigurations}
                         configuration={activeMarkerConfiguration}
@@ -510,6 +516,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                           []
                         }
                         toggleStarredVariable={toggleStarredVariable}
+                        constraints={markerVariableConstraints}
                       />
                     ) : (
                       <></>
