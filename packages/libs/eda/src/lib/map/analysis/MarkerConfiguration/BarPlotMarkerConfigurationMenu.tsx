@@ -34,18 +34,19 @@ export function BarPlotMarkerConfigurationMenu({
   starredVariables,
   toggleStarredVariable,
   configuration,
+  constraints,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
-    if (!selection.overlay) {
+    if (!selection.overlayVariable) {
       console.error(
-        `Expected overlay to defined but got ${typeof selection.overlay}`
+        `Expected overlay to defined but got ${typeof selection.overlayVariable}`
       );
       return;
     }
 
     onChange({
       ...configuration,
-      selectedVariable: selection.overlay,
+      selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
     });
   }
@@ -76,12 +77,15 @@ export function BarPlotMarkerConfigurationMenu({
       </p>
       <InputVariables
         showClearSelectionButton={false}
-        inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
+        inputs={[
+          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+        ]}
         entities={entities}
-        selectedVariables={{ overlay: configuration.selectedVariable }}
+        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
         onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
+        constraints={constraints}
       />
       <RadioButtonGroup
         containerStyles={{

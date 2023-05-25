@@ -469,7 +469,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   renderConfigurationMenu:
                     activeMarkerConfiguration?.type === 'barplot' ? (
                       <BarPlotMarkerConfigurationMenu
-                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
                         entities={studyEntities}
                         onChange={updateMarkerConfigurations}
                         starredVariables={
@@ -478,6 +478,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                         }
                         toggleStarredVariable={toggleStarredVariable}
                         configuration={activeMarkerConfiguration}
+                        constraints={markerVariableConstraints}
                       />
                     ) : (
                       <></>
