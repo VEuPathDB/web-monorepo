@@ -99,6 +99,7 @@ enum MapSideNavItemLabels {
   Share = 'Share',
   StudyDetails = 'View Study Details',
   MyAnalyses = 'My Analyses',
+  MapType = 'Map Type',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -107,6 +108,16 @@ type SideNavigationItemConfigurationObject = {
   icon: ReactNode;
   renderSideNavigationPanel: (apps: ComputationAppOverview[]) => ReactNode;
   onToggleSideMenuItem?: (isActive: boolean) => void;
+  isExpandable?: boolean;
+  isExpanded?: boolean;
+  subMenuConfig?: SubMenuItems[];
+};
+
+type SubMenuItems = {
+  labelText: string;
+  icon?: ReactNode;
+  onClick: () => void;
+  isActive: boolean;
 };
 
 function getSideNavItemIndexByLabel(
@@ -119,6 +130,33 @@ function getSideNavItemIndexByLabel(
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
+};
+
+/**
+ * The following code and styles are for demonstration purposes
+ * at this point. After #1671 is merged, we can implement these
+ * menu buttons and their associated panels for real.
+ */
+const buttonStyles: React.CSSProperties = {
+  alignItems: 'center',
+  background: 'transparent',
+  borderColor: 'transparent',
+  display: 'flex',
+  fontSize: 16,
+  justifyContent: 'flex-start',
+  margin: 0,
+  padding: 0,
+  width: '100%',
+};
+const iconStyles: React.CSSProperties = {
+  alignItems: 'center',
+  display: 'flex',
+  height: 25,
+  justifyContent: 'center',
+  width: 25,
+};
+const labelStyles: React.CSSProperties = {
+  marginLeft: '0.5em',
 };
 
 export const defaultAnimation = {
@@ -447,93 +485,32 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     );
   };
 
-  /**
-   * The following code and styles are for demonstration purposes
-   * at this point. After #1671 is merged, we can implement these
-   * menu buttons and their associated panels for real.
-   */
-  const buttonStyles: React.CSSProperties = {
-    alignItems: 'center',
-    background: 'transparent',
-    borderColor: 'transparent',
-    display: 'flex',
-    fontSize: 16,
-    justifyContent: 'flex-start',
-    margin: 0,
-    padding: 0,
-    width: '100%',
-  };
-  const iconStyles: React.CSSProperties = {
-    alignItems: 'center',
-    display: 'flex',
-    height: 25,
-    justifyContent: 'center',
-    width: 25,
-  };
-  const labelStyles: React.CSSProperties = {
-    marginLeft: '0.5rem',
-  };
-
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: MapSideNavItemLabels.Markers,
+        labelText: MapSideNavItemLabels.MapType,
         icon: <EditLocation />,
+        isExpandable: true,
+        subMenuConfig: [
+          {
+            labelText: 'Donuts',
+            icon: <DonutMarkers style={{ height: 30 }} />,
+            onClick: () => setActiveMarkerConfigurationType('pie'),
+            isActive: activeMarkerConfigurationType === 'pie',
+          },
+          {
+            labelText: 'Bar plots',
+            icon: <BarPlotMarkers style={{ height: 30 }} />,
+            onClick: () => setActiveMarkerConfigurationType('barplot'),
+            isActive: activeMarkerConfigurationType === 'barplot',
+          },
+        ],
         renderSideNavigationPanel: (app) => {
-          return (
-            <MarkerConfigurationSelector
-              activeMarkerConfigurationType={activeMarkerConfigurationType}
-              setActiveMarkerConfigurationType={
-                setActiveMarkerConfigurationType
-              }
-              markerConfigurations={[
-                {
-                  type: 'pie',
-                  displayName: 'Donuts',
-                  icon: <DonutMarkers style={{ height: 30 }} />,
-                  renderConfigurationMenu:
-                    activeMarkerConfiguration?.type === 'pie' ? (
-                      <PieMarkerConfigurationMenu
-                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        configuration={activeMarkerConfiguration}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                },
-                {
-                  type: 'barplot',
-                  displayName: 'Bar plots',
-                  icon: <BarPlotMarkers style={{ height: 30 }} />,
-                  renderConfigurationMenu:
-                    activeMarkerConfiguration?.type === 'barplot' ? (
-                      <BarPlotMarkerConfigurationMenu
-                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        configuration={activeMarkerConfiguration}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                },
-              ]}
-            />
-          );
+          return markerConfigurationObjects.find(
+            (marker) => marker.type === activeMarkerConfigurationType
+          )?.renderConfigurationMenu;
         },
       },
       {
@@ -770,28 +747,46 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     number | undefined
   >(intialActiveSideMenuIndex);
 
-  const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
-    ({ labelText, icon, onToggleSideMenuItem = () => {} }, index) => {
-      return (
-        <button
-          style={buttonStyles}
-          onClick={() => {
-            onToggleSideMenuItem(activeSideMenuIndex === index);
-            setActiveSideMenuIndex((currentIndex) => {
-              return currentIndex === index ? undefined : index;
-            });
-          }}
-        >
-          <span style={iconStyles} aria-hidden>
-            {icon}
-          </span>
-          <span style={labelStyles}>{labelText}</span>
-        </button>
-      );
-    }
-  );
-
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
+  const markerConfigurationObjects = [
+    {
+      type: 'pie',
+      renderConfigurationMenu:
+        activeMarkerConfiguration?.type === 'pie' ? (
+          <PieMarkerConfigurationMenu
+            inputs={[{ name: 'overlay', label: 'Overlay' }]}
+            entities={studyEntities}
+            onChange={updateMarkerConfigurations}
+            configuration={activeMarkerConfiguration}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables ?? []
+            }
+            toggleStarredVariable={toggleStarredVariable}
+          />
+        ) : (
+          <></>
+        ),
+    },
+    {
+      type: 'barplot',
+      renderConfigurationMenu:
+        activeMarkerConfiguration?.type === 'barplot' ? (
+          <BarPlotMarkerConfigurationMenu
+            inputs={[{ name: 'overlay', label: 'Overlay' }]}
+            entities={studyEntities}
+            onChange={updateMarkerConfigurations}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables ?? []
+            }
+            toggleStarredVariable={toggleStarredVariable}
+            configuration={activeMarkerConfiguration}
+          />
+        ) : (
+          <></>
+        ),
+    },
+  ];
 
   const filtersIncludingViewport = useMemo(() => {
     const viewportFilters = appState.boundsZoomLevel
@@ -848,11 +843,28 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
-        const activeSideNavigationItemMenu =
-          activeSideMenuIndex != null &&
-          sideNavigationButtonConfigurationObjects[
-            activeSideMenuIndex
-          ].renderSideNavigationPanel(apps);
+        const activeSideNavigationItemMenu = getSideNavigationItemMenu();
+
+        function getSideNavigationItemMenu() {
+          if (activeSideMenuIndex == null) return <></>;
+          // if activeSideMenuIndex does not correspond to an object, then the activeSideMenuIndex must
+          // correspond to a subMenuItem's index
+          else if (
+            sideNavigationButtonConfigurationObjects[activeSideMenuIndex]
+          ) {
+            return sideNavigationButtonConfigurationObjects[
+              activeSideMenuIndex
+            ].renderSideNavigationPanel(apps);
+          } else {
+            // "normalize" the activeSideMenuIndex to resolve the parent's index
+            const indexOfParentContainer = Math.floor(
+              activeSideMenuIndex / 10 - 1
+            );
+            return sideNavigationButtonConfigurationObjects[
+              indexOfParentContainer
+            ].renderSideNavigationPanel(apps);
+          }
+        }
 
         return (
           <ShowHideVariableContextProvider>
@@ -904,35 +916,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     siteInformationProps={props.siteInformationProps}
                     activeNavigationMenu={activeSideNavigationItemMenu}
                   >
-                    <div>
-                      <ul style={{ margin: 0, padding: 0 }}>
-                        {sideNavigationButtons.map((item, itemIndex) => {
-                          const isActive = activeSideMenuIndex === itemIndex;
-                          return (
-                            <li
-                              key={itemIndex}
-                              style={{
-                                // These styles format the lefthand side menu items.
-                                // Nothing special here. We can conditionally apply
-                                // styles based on in/active states, if we like.
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'flex-start',
-                                width: '100%',
-                                transition: 'background 0.1s ease',
-                                padding: '5px 10px',
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                background: isActive
-                                  ? theme?.palette.primary.hue[100]
-                                  : 'inherit',
-                              }}
-                            >
-                              {item}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                    <SideNavigationItems
+                      activeSideMenuIndex={activeSideMenuIndex}
+                      itemConfigObjects={
+                        sideNavigationButtonConfigurationObjects
+                      }
+                      setActiveSideMenuIndex={setActiveSideMenuIndex}
+                    />
                   </MapSideNavigation>
                   <MapVEuMap
                     height="100%"
@@ -1069,4 +1059,175 @@ export function useGetDefaultVariableIdCallback(filters: Filter[] | undefined) {
 
     return { entityId: finalEntityId, variableId: finalVariableId };
   };
+}
+
+type SideNavItemsProps = {
+  itemConfigObjects: SideNavigationItemConfigurationObject[];
+  activeSideMenuIndex: number | undefined;
+  setActiveSideMenuIndex: React.Dispatch<
+    React.SetStateAction<number | undefined>
+  >;
+};
+
+function SideNavigationItems({
+  itemConfigObjects,
+  activeSideMenuIndex,
+  setActiveSideMenuIndex,
+}: SideNavItemsProps) {
+  const theme = useUITheme();
+  const sideNavigationItems = itemConfigObjects.map(
+    (
+      {
+        labelText,
+        icon,
+        onToggleSideMenuItem = () => {},
+        isExpandable = false,
+        subMenuConfig = [],
+      },
+      itemIndex
+    ) => {
+      /**
+       * if subMenuConfig.length doesn't exist, we render menu items the same as before allowing sub-menus
+       */
+      if (!subMenuConfig.length) {
+        const isActive = activeSideMenuIndex === itemIndex;
+        return (
+          <li
+            key={itemIndex}
+            style={{
+              // These styles format the lefthand side menu items.
+              // Nothing special here. We can conditionally apply
+              // styles based on in/active states, if we like.
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              width: '100%',
+              transition: 'background 0.1s ease',
+              padding: '5px 10px',
+              fontWeight: isActive ? 'bold' : 'normal',
+              background: isActive
+                ? theme?.palette.primary.hue[100]
+                : 'inherit',
+            }}
+          >
+            <button
+              style={buttonStyles}
+              onClick={() => {
+                onToggleSideMenuItem(activeSideMenuIndex === itemIndex);
+                setActiveSideMenuIndex((currentIndex) => {
+                  return currentIndex === itemIndex ? undefined : itemIndex;
+                });
+              }}
+            >
+              <span style={iconStyles} aria-hidden>
+                {icon}
+              </span>
+              <span style={labelStyles}>{labelText}</span>
+            </button>
+          </li>
+        );
+      } else {
+        /**
+         * If subMenuConfig has items, we nest a <ul> and map over the items.
+         * Note that the isActive style gets applied to the nested <ul> items, not the parent
+         */
+        return (
+          <li
+            key={itemIndex}
+            style={{
+              // These styles format the lefthand side menu items.
+              // Nothing special here. We can conditionally apply
+              // styles based on in/active states, if we like.
+              width: '100%',
+              transition: 'background 0.1s ease',
+              padding: '5px 10px',
+              fontWeight: 'normal',
+              background: 'inherit',
+            }}
+          >
+            <button style={buttonStyles}>
+              <span style={iconStyles} aria-hidden>
+                {icon}
+              </span>
+              <span style={labelStyles}>{labelText}</span>
+            </button>
+            <ul>
+              {subMenuConfig.map((item, subItemIndex) => {
+                /**
+                 * The computedIndex lets us:
+                 *    A) know that a sub-menu item was clicked
+                 *    B) work backward to determine parent index and/or subItemIndex as needed
+                 */
+                const computedIndex = 10 * (itemIndex + 1) + (subItemIndex + 1);
+                return (
+                  <li
+                    key={computedIndex}
+                    style={{
+                      // These styles format the lefthand side menu items.
+                      // Nothing special here. We can conditionally apply
+                      // styles based on in/active states, if we like.
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      width: '100%',
+                      transition: 'background 0.1s ease',
+                      padding: '5px 10px',
+                      fontWeight:
+                        activeSideMenuIndex === computedIndex
+                          ? 'bold'
+                          : 'normal',
+                      background:
+                        activeSideMenuIndex === computedIndex
+                          ? theme?.palette.primary.hue[100]
+                          : 'inherit',
+                    }}
+                  >
+                    <button
+                      style={buttonStyles}
+                      onClick={() => {
+                        onToggleSideMenuItem(
+                          activeSideMenuIndex === computedIndex
+                        );
+                        setActiveSideMenuIndex((currentIndex) => {
+                          return currentIndex === computedIndex
+                            ? undefined
+                            : computedIndex;
+                        });
+                        item.onClick();
+                      }}
+                    >
+                      {/**
+                       * The <div> renders a colored circle next to an active sub-menu item that will remain active as relevant
+                       */}
+                      <div
+                        style={{
+                          height: '0.5em',
+                          width: '0.5em',
+                          borderRadius: '50%',
+                          background: item.isActive
+                            ? theme?.palette.primary.hue[400]
+                            : undefined,
+                        }}
+                      ></div>
+                      <span style={{ fontSize: '0.9em', margin: '0 0.5em' }}>
+                        {item.labelText}
+                      </span>
+                      <span style={iconStyles} aria-hidden>
+                        {item.icon}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        );
+      }
+    }
+  );
+  return (
+    <div>
+      <ul style={{ margin: 0, padding: 0 }}>{sideNavigationItems}</ul>
+    </div>
+  );
 }
