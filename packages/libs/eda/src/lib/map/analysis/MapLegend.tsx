@@ -11,14 +11,6 @@ interface Props {
 
 export function MapLegend(props: Props) {
   const { legendItems, isLoading, title = 'Legend', showCheckbox } = props;
-  console.log(
-    '🚀 ~ file: MapLegend.tsx:14 ~ MapLegend ~ isLoading:',
-    isLoading
-  );
-  console.log(
-    '🚀 ~ file: MapLegend.tsx:14 ~ MapLegend ~ legendItems:',
-    legendItems
-  );
 
   return (
     <>
