@@ -771,7 +771,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   // This makes sure that the user sees the global location of the data before the flyTo happens.
   useEffect(() => {
     if (pending) {
-      setWillFlyTo(isEqual(appState.viewport, defaultViewport));
+      // set a safe margin (epsilon) to perform flyTo correctly due to an issue of map resolution etc.
+      // not necessarily need to use defaultAppState.viewport.center [0, 0] here but used it just in case
+      const epsilon = 2.0;
+      const isWillFlyTo =
+        appState.viewport.zoom === defaultViewport.zoom &&
+        Math.abs(appState.viewport.center[0] - defaultViewport.center[0]) <=
+          epsilon &&
+        Math.abs(appState.viewport.center[1] - defaultViewport.center[1]) <=
+          epsilon;
+      setWillFlyTo(isWillFlyTo);
     }
   }, [pending, appState.viewport]);
 
