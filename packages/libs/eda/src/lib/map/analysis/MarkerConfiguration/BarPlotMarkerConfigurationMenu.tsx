@@ -58,13 +58,6 @@ export function BarPlotMarkerConfigurationMenu({
 
   return (
     <div>
-      <H6
-        additionalStyles={{
-          margin: '15px 12px',
-        }}
-      >
-        Configure Bar Plots:
-      </H6>
       <p
         style={{
           paddingLeft: 7,

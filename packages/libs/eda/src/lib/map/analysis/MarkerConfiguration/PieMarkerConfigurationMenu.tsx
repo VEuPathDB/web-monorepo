@@ -33,7 +33,7 @@ export function PieMarkerConfigurationMenu({
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlay) {
       console.error(
-        `Expected overlay to defined but got ${typeof selection.overlay}`
+        `Expected overlay to be defined but got ${typeof selection.overlay}`
       );
       return;
     }
@@ -47,13 +47,6 @@ export function PieMarkerConfigurationMenu({
 
   return (
     <div>
-      <H6
-        additionalStyles={{
-          margin: '15px 12px',
-        }}
-      >
-        Configure Donuts:
-      </H6>
       <p
         style={{
           paddingLeft: 7,
