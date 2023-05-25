@@ -260,8 +260,9 @@ function constainPositionOnScreen(
     panelHeight,
     innerHeight
   );
-  const rightMostX = innerWidth - panelWidth;
-  const bottomMostY = innerHeight - panelHeight;
+  const GUTTER = 10;
+  const rightMostX = innerWidth - panelWidth - GUTTER;
+  const bottomMostY = innerHeight - panelHeight - GUTTER;
 
   return {
     x: isXOffScreen ? rightMostX : position.x,
