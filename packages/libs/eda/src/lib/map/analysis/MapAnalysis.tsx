@@ -69,7 +69,7 @@ import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
 
-import { isEqual, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -83,6 +83,7 @@ import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -120,6 +121,11 @@ export const defaultAnimation = {
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+enum DraggablePanelIds {
+  LEGEND_PANEL = 'legend',
+  VIZ_PANEL = 'viz',
+}
 
 interface Props {
   analysisId?: string;
@@ -271,7 +277,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
-
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const userLoggedIn = useWdkService((wdkService) => {
@@ -421,7 +426,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       {
         labelText: MapSideNavItemLabels.Markers,
         icon: <EditLocation />,
-        renderSideNavigationPanel: (app) => {
+        renderSideNavigationPanel: (apps) => {
+          const markerVariableConstraints = apps
+            .find((app) => app.name === 'standalone-map')
+            ?.visualizations.find(
+              (viz) => viz.name === 'map-markers'
+            )?.dataElementConstraints;
+
           return (
             <MarkerConfigurationSelector
               activeMarkerConfigurationType={activeMarkerConfigurationType}
@@ -436,7 +447,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   renderConfigurationMenu:
                     activeMarkerConfiguration?.type === 'pie' ? (
                       <PieMarkerConfigurationMenu
-                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
                         entities={studyEntities}
                         onChange={updateMarkerConfigurations}
                         configuration={activeMarkerConfiguration}
@@ -445,6 +456,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                           []
                         }
                         toggleStarredVariable={toggleStarredVariable}
+                        constraints={markerVariableConstraints}
                       />
                     ) : (
                       <></>
@@ -784,6 +796,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     }
   }, [pending, appState.viewport]);
 
+  const [zIndicies /* setZIndicies */] = useState<DraggablePanelIds[]>(
+    Object.values(DraggablePanelIds)
+  );
+
+  function getZIndexByPanelTitle(
+    requestedPanelTitle: DraggablePanelIds
+  ): number {
+    const index = zIndicies.findIndex(
+      (panelTitle) => panelTitle === requestedPanelTitle
+    );
+    const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+    return index + zIndexFactor;
+  }
+
+  const legendZIndex =
+    getZIndexByPanelTitle(DraggablePanelIds.LEGEND_PANEL) +
+    getZIndexByPanelTitle(DraggablePanelIds.VIZ_PANEL);
+
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -900,21 +930,26 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </div>
 
-                <FloatingDiv
-                  style={{
-                    top: 250,
-                    right: 8,
+                <DraggablePanel
+                  isOpen
+                  showPanelTitle
+                  panelTitle={overlayVariable?.displayName || 'Legend'}
+                  confineToParentContainer
+                  defaultPosition={{ x: window.innerWidth, y: 225 }}
+                  styleOverrides={{
+                    zIndex: legendZIndex,
                   }}
                 >
-                  {legendItems.length > 0 && (
+                  <div style={{ padding: '5px 10px' }}>
                     <MapLegend
+                      isLoading={legendItems.length === 0}
                       legendItems={legendItems}
-                      title={overlayVariable?.displayName}
                       // control to show checkbox. default: true
                       showCheckbox={false}
                     />
-                  )}
-                </FloatingDiv>
+                  </div>
+                </DraggablePanel>
+
                 {/* <FloatingDiv
                   style={{
                     top: 250,
@@ -947,6 +982,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
                     filters={filtersIncludingViewport}
+                    // onTouch={moveVizToTop}
+                    zIndexForStackingContext={getZIndexByPanelTitle(
+                      DraggablePanelIds.VIZ_PANEL
+                    )}
                   />
                 )}
 
