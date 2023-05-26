@@ -116,3 +116,5 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+cypress/videos
