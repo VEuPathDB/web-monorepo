@@ -36,3 +36,36 @@
 //   }
 // }
 import '@testing-library/cypress/add-commands';
+// Add typings for the custom command
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      dragTo: (
+        draggableElement: Cypress.Chainable<JQuery<HTMLElement>>,
+        dragDestination: { x: number; y: number }
+      ) => Chainable;
+    }
+  }
+}
+
+// Add a custom command
+Cypress.Commands.add('dragTo', dragTo);
+
+/**
+ * Give me an element via cy.findBy* and tell me where to drag it to.
+ * @param draggableElement
+ * @param dragDestination
+ * @returns
+ */
+function dragTo(
+  draggableElement: Cypress.Chainable<JQuery<HTMLElement>>,
+  dragDestination: { x: number; y: number }
+) {
+  return draggableElement
+    .trigger('mousedown', { which: 1 })
+    .trigger('mousemove', {
+      clientX: dragDestination.x,
+      clientY: dragDestination.y,
+    })
+    .trigger('mouseup', { force: true });
+}
