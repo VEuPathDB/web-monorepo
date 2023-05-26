@@ -26,6 +26,7 @@ interface Props {
   filteredCounts: PromiseHookState<EntityCounts>;
   toggleStarredVariable: (variable: VariableDescriptor) => void;
   filters: Filter[];
+  zIndexForStackingContext: number;
 }
 
 export default function DraggableVisualization({
@@ -39,6 +40,7 @@ export default function DraggableVisualization({
   filteredCounts,
   toggleStarredVariable,
   filters,
+  zIndexForStackingContext = 10,
 }: Props) {
   const { computation: activeComputation, visualization: activeViz } =
     analysisState.getVisualizationAndComputation(
@@ -56,54 +58,52 @@ export default function DraggableVisualization({
     ? plugins[computationType]?.visualizationPlugins
     : null;
 
-  return (
-    <>
-      {activeViz && app && visualizationPlugins && (
-        <DraggablePanel
-          confineToParentContainer
-          showPanelTitle
-          isOpen
-          styleOverrides={{ zIndex: 10, resize: 'both' }}
-          panelTitle={activeVizOverview?.displayName || ''}
-          defaultPosition={{
-            x: 535,
-            y: 142,
-          }}
-          onPanelDismiss={() => setActiveVisualizationId(undefined)}
-        >
-          <div
-            style={{
-              // Initial height & width.
-              height: 547,
-              width: 779,
-              // This prevents the panel from collapsing aburdly.
-              minWidth: 400,
-              minHeight: 200,
-            }}
-          >
-            <FullScreenVisualization
-              analysisState={analysisState}
-              computation={activeComputation!}
-              visualizationPlugins={visualizationPlugins}
-              visualizationsOverview={app.visualizations}
-              geoConfigs={geoConfigs}
-              computationAppOverview={app}
-              filters={filters}
-              starredVariables={
-                analysisState.analysis?.descriptor.starredVariables ?? []
-              }
-              toggleStarredVariable={toggleStarredVariable}
-              totalCounts={totalCounts}
-              filteredCounts={filteredCounts}
-              isSingleAppMode
-              disableThumbnailCreation
-              id={activeViz.visualizationId}
-              actions={<></>}
-              plugins={plugins}
-            />
-          </div>
-        </DraggablePanel>
-      )}
-    </>
-  );
+  const shouldRenderVisualization = activeViz && app && visualizationPlugins;
+
+  return shouldRenderVisualization ? (
+    <DraggablePanel
+      confineToParentContainer
+      showPanelTitle
+      isOpen
+      styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
+      panelTitle={activeVizOverview?.displayName || ''}
+      defaultPosition={{
+        x: 535,
+        y: 142,
+      }}
+      onPanelDismiss={() => setActiveVisualizationId(undefined)}
+    >
+      <div
+        style={{
+          // Initial height & width.
+          height: 547,
+          width: 779,
+          // This prevents the panel from collapsing aburdly.
+          minWidth: 400,
+          minHeight: 200,
+        }}
+      >
+        <FullScreenVisualization
+          analysisState={analysisState}
+          computation={activeComputation!}
+          visualizationPlugins={visualizationPlugins}
+          visualizationsOverview={app.visualizations}
+          geoConfigs={geoConfigs}
+          computationAppOverview={app}
+          filters={filters}
+          starredVariables={
+            analysisState.analysis?.descriptor.starredVariables ?? []
+          }
+          toggleStarredVariable={toggleStarredVariable}
+          totalCounts={totalCounts}
+          filteredCounts={filteredCounts}
+          isSingleAppMode
+          disableThumbnailCreation
+          id={activeViz.visualizationId}
+          actions={<></>}
+          plugins={plugins}
+        />
+      </div>
+    </DraggablePanel>
+  ) : null;
 }

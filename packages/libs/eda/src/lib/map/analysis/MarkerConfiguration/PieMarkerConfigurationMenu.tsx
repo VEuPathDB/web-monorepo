@@ -29,18 +29,19 @@ export function PieMarkerConfigurationMenu({
   onChange,
   starredVariables,
   toggleStarredVariable,
+  constraints,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
-    if (!selection.overlay) {
+    if (!selection.overlayVariable) {
       console.error(
-        `Expected overlay to be defined but got ${typeof selection.overlay}`
+        `Expected overlayVariable to be defined but got ${typeof selection.overlayVariable}`
       );
       return;
     }
 
     onChange({
       ...configuration,
-      selectedVariable: selection.overlay,
+      selectedVariable: selection.overlayVariable,
       overlayConfig: undefined,
     });
   }
@@ -58,12 +59,15 @@ export function PieMarkerConfigurationMenu({
       </p>
       <InputVariables
         showClearSelectionButton={false}
-        inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
+        inputs={[
+          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+        ]}
         entities={entities}
-        selectedVariables={{ overlay: configuration.selectedVariable }}
+        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
         onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
+        constraints={constraints}
       />
     </div>
   );

@@ -75,7 +75,7 @@ import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
 import { useHistory } from 'react-router';
 
-import { isEqual, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -92,6 +92,7 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from './MarkerConfiguration/MapTypeConfigurationMenu';
+import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -166,6 +167,11 @@ export const defaultAnimation = {
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
 };
+
+enum DraggablePanelIds {
+  LEGEND_PANEL = 'legend',
+  VIZ_PANEL = 'viz',
+}
 
 interface Props {
   analysisId?: string;
@@ -347,7 +353,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
-
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
   const downloadClient = useDownloadClient();
@@ -509,7 +514,58 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             isActive: activeMarkerConfigurationType === 'barplot',
           },
         ],
-        renderSideNavigationPanel: (app) => {
+        renderSideNavigationPanel: (apps) => {
+          const markerVariableConstraints = apps
+            .find((app) => app.name === 'standalone-map')
+            ?.visualizations.find(
+              (viz) => viz.name === 'map-markers'
+            )?.dataElementConstraints;
+
+          const markerConfigurationObjects: MarkerConfigurationOption[] = [
+            {
+              type: 'pie',
+              displayName: 'Donuts',
+              icon: <DonutMarkers style={{ height: 30 }} />,
+              renderConfigurationMenu:
+                activeMarkerConfiguration?.type === 'pie' ? (
+                  <PieMarkerConfigurationMenu
+                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    onChange={updateMarkerConfigurations}
+                    configuration={activeMarkerConfiguration}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                    constraints={markerVariableConstraints}
+                  />
+                ) : (
+                  <></>
+                ),
+            },
+            {
+              type: 'barplot',
+              displayName: 'Bar plots',
+              icon: <BarPlotMarkers style={{ height: 30 }} />,
+              renderConfigurationMenu:
+                activeMarkerConfiguration?.type === 'barplot' ? (
+                  <BarPlotMarkerConfigurationMenu
+                    inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    onChange={updateMarkerConfigurations}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                    configuration={activeMarkerConfiguration}
+                    constraints={markerVariableConstraints}
+                  />
+                ) : (
+                  <></>
+                ),
+            },
+          ];
+
           return (
             <div
               style={{
@@ -761,49 +817,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const markerConfigurationObjects: MarkerConfigurationOption[] = [
-    {
-      type: 'pie',
-      displayName: 'Donuts',
-      icon: <DonutMarkers style={{ height: 30 }} />,
-      renderConfigurationMenu:
-        activeMarkerConfiguration?.type === 'pie' ? (
-          <PieMarkerConfigurationMenu
-            inputs={[{ name: 'overlay', label: 'Overlay' }]}
-            entities={studyEntities}
-            onChange={updateMarkerConfigurations}
-            configuration={activeMarkerConfiguration}
-            starredVariables={
-              analysisState.analysis?.descriptor.starredVariables ?? []
-            }
-            toggleStarredVariable={toggleStarredVariable}
-          />
-        ) : (
-          <></>
-        ),
-    },
-    {
-      type: 'barplot',
-      displayName: 'Bar plots',
-      icon: <BarPlotMarkers style={{ height: 30 }} />,
-      renderConfigurationMenu:
-        activeMarkerConfiguration?.type === 'barplot' ? (
-          <BarPlotMarkerConfigurationMenu
-            inputs={[{ name: 'overlay', label: 'Overlay' }]}
-            entities={studyEntities}
-            onChange={updateMarkerConfigurations}
-            starredVariables={
-              analysisState.analysis?.descriptor.starredVariables ?? []
-            }
-            toggleStarredVariable={toggleStarredVariable}
-            configuration={activeMarkerConfiguration}
-          />
-        ) : (
-          <></>
-        ),
-    },
-  ];
-
   const filtersIncludingViewport = useMemo(() => {
     const viewportFilters = appState.boundsZoomLevel
       ? filtersFromBoundingBox(
@@ -855,6 +868,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       setWillFlyTo(isWillFlyTo);
     }
   }, [pending, appState.viewport]);
+
+  const [zIndicies /* setZIndicies */] = useState<DraggablePanelIds[]>(
+    Object.values(DraggablePanelIds)
+  );
+
+  function getZIndexByPanelTitle(
+    requestedPanelTitle: DraggablePanelIds
+  ): number {
+    const index = zIndicies.findIndex(
+      (panelTitle) => panelTitle === requestedPanelTitle
+    );
+    const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+    return index + zIndexFactor;
+  }
+
+  const legendZIndex =
+    getZIndexByPanelTitle(DraggablePanelIds.LEGEND_PANEL) +
+    getZIndexByPanelTitle(DraggablePanelIds.VIZ_PANEL);
 
   return (
     <PromiseResult state={appsPromiseState}>
@@ -967,21 +998,26 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   />
                 </div>
 
-                <FloatingDiv
-                  style={{
-                    top: 250,
-                    right: 8,
+                <DraggablePanel
+                  isOpen
+                  showPanelTitle
+                  panelTitle={overlayVariable?.displayName || 'Legend'}
+                  confineToParentContainer
+                  defaultPosition={{ x: window.innerWidth, y: 225 }}
+                  styleOverrides={{
+                    zIndex: legendZIndex,
                   }}
                 >
-                  {legendItems.length > 0 && (
+                  <div style={{ padding: '5px 10px' }}>
                     <MapLegend
+                      isLoading={legendItems.length === 0}
                       legendItems={legendItems}
-                      title={overlayVariable?.displayName}
                       // control to show checkbox. default: true
                       showCheckbox={false}
                     />
-                  )}
-                </FloatingDiv>
+                  </div>
+                </DraggablePanel>
+
                 {/* <FloatingDiv
                   style={{
                     top: 250,
@@ -1014,6 +1050,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
                     filters={filtersIncludingViewport}
+                    // onTouch={moveVizToTop}
+                    zIndexForStackingContext={getZIndexByPanelTitle(
+                      DraggablePanelIds.VIZ_PANEL
+                    )}
                   />
                 )}
 
