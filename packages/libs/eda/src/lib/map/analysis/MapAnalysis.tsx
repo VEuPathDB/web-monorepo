@@ -93,6 +93,7 @@ import {
   MarkerConfigurationOption,
 } from './MarkerConfiguration/MapTypeConfigurationMenu';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -566,6 +567,33 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             },
           ];
 
+          const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+            'markers' | 'plots'
+          >['tabs'] = [
+            {
+              key: 'markers',
+              displayName: 'Markers',
+              content: markerConfigurationObjects.find(
+                ({ type }) => type === activeMarkerConfigurationType
+              )?.renderConfigurationMenu,
+            },
+            {
+              key: 'plots',
+              displayName: 'Supporting Plots',
+              content: (
+                <MapVizManagement
+                  analysisState={analysisState}
+                  setActiveVisualizationId={setActiveVisualizationId}
+                  apps={apps}
+                  activeVisualizationId={appState.activeVisualizationId}
+                  plugins={plugins}
+                  geoConfigs={geoConfigs}
+                  mapType={activeMarkerConfigurationType}
+                />
+              ),
+            },
+          ];
+
           return (
             <div
               style={{
@@ -576,6 +604,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               <MapTypeConfigurationMenu
                 activeMarkerConfigurationType={activeMarkerConfigurationType}
                 markerConfigurations={markerConfigurationObjects}
+                mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
               />
             </div>
           );
@@ -641,22 +670,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
         onToggleSideMenuItem: (isActive) => {
           setIsSubsetPanelOpen(!isActive);
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.Plot,
-        icon: <BarChartSharp />,
-        renderSideNavigationPanel: (apps) => {
-          return (
-            <MapVizManagement
-              analysisState={analysisState}
-              setActiveVisualizationId={setActiveVisualizationId}
-              apps={apps}
-              activeVisualizationId={appState.activeVisualizationId}
-              plugins={plugins}
-              geoConfigs={geoConfigs}
-            />
-          );
         },
       },
       {
@@ -800,13 +813,24 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     MapSideNavItemLabels.Filter,
     sideNavigationButtonConfigurationObjects
   );
-  const plotSideMenuItemIndex = getSideNavItemIndexByLabel(
-    MapSideNavItemLabels.Plot,
+  const mapTypeMenuItemIndex = getSideNavItemIndexByLabel(
+    MapSideNavItemLabels.MapType,
     sideNavigationButtonConfigurationObjects
   );
 
+  function areMapTypeAndActiveVizCompatible() {
+    if (!appState.activeVisualizationId) return false;
+    const visualization = analysisState.getVisualization(
+      appState.activeVisualizationId
+    );
+    return (
+      visualization?.descriptor.additionalContext ===
+      activeMarkerConfigurationType
+    );
+  }
+
   const intialActiveSideMenuIndex: number | undefined = (() => {
-    if (appState.activeVisualizationId) return plotSideMenuItemIndex;
+    if (appState.activeVisualizationId) return mapTypeMenuItemIndex;
 
     return undefined;
   })();
@@ -1038,24 +1062,29 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     />
                   </div>
       */}
-                {activeSideMenuIndex === plotSideMenuItemIndex && (
-                  <DraggableVisualization
-                    analysisState={analysisState}
-                    setActiveVisualizationId={setActiveVisualizationId}
-                    appState={appState}
-                    apps={apps}
-                    plugins={plugins}
-                    geoConfigs={geoConfigs}
-                    totalCounts={totalCounts}
-                    filteredCounts={filteredCounts}
-                    toggleStarredVariable={toggleStarredVariable}
-                    filters={filtersIncludingViewport}
-                    // onTouch={moveVizToTop}
-                    zIndexForStackingContext={getZIndexByPanelTitle(
-                      DraggablePanelIds.VIZ_PANEL
-                    )}
-                  />
-                )}
+                {activeSideMenuIndex &&
+                  Math.floor(activeSideMenuIndex / 10 - 1) ===
+                    mapTypeMenuItemIndex && (
+                    <DraggableVisualization
+                      analysisState={analysisState}
+                      setActiveVisualizationId={setActiveVisualizationId}
+                      appState={appState}
+                      apps={apps}
+                      plugins={plugins}
+                      geoConfigs={geoConfigs}
+                      totalCounts={totalCounts}
+                      filteredCounts={filteredCounts}
+                      toggleStarredVariable={toggleStarredVariable}
+                      filters={filtersIncludingViewport}
+                      // onTouch={moveVizToTop}
+                      zIndexForStackingContext={getZIndexByPanelTitle(
+                        DraggablePanelIds.VIZ_PANEL
+                      )}
+                      additionalRenderCondition={
+                        areMapTypeAndActiveVizCompatible
+                      }
+                    />
+                  )}
 
                 {error && (
                   <FloatingDiv
