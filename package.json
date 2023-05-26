@@ -6,6 +6,10 @@
     "packages/configs/*",
     "packages/sites/*"
   ],
+  "scripts": {
+    "test:component": "yarn cypress run-ct",
+    "test:integration": "yarn cypress run"
+  },
   "resolutions": {
     "@types/react": "<18",
     "@types/react-dom": "<18",

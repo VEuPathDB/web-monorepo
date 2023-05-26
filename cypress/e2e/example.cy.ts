@@ -106,4 +106,15 @@ function mockRoutes() {
         }
       );
     });
+
+  cy.fixture('getRecordTypes')
+    .then((fixture) => {
+      return fixture;
+    })
+    .then((fixture) => {
+      cy.intercept('GET', '/service/record-types?format=expanded', {
+        statusCode: 200,
+        body: fixture,
+      });
+    });
 }

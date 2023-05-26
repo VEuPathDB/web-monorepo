@@ -118,3 +118,4 @@ dist
 !.yarn/versions
 
 cypress/videos
+cypress/screenshots

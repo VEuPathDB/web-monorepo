@@ -1,0 +1,4172 @@
+[
+    {
+        "nativeDisplayName": "Data Set Release Notes",
+        "searches": [
+            {
+                "urlSegment": "DatasetRecordClasses_DatasetReleaseNotesByRealtimeBasket",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Current Data Set Release Notes Basket",
+                "fullName": "InternalQuestions.DatasetRecordClasses_DatasetReleaseNotesByRealtimeBasket",
+                "defaultAttributes": [
+                    "primary_key"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": []
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Data Set Release Notes Basket",
+                "paramNames": [],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset-release-notes",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "DatasetRecordClasses_DatasetReleaseNotesByRealtimeBasket",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Data Set Release Notes Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetRecordClasses_DatasetReleaseNotesBySnapshotBasket",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Copy of Data Set Release Notes Basket",
+                "fullName": "InternalQuestions.DatasetRecordClasses_DatasetReleaseNotesBySnapshotBasket",
+                "defaultAttributes": [
+                    "primary_key"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "DatasetRecordClasses_DatasetReleaseNotesDataset"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Copy of Basket",
+                "paramNames": [
+                    "DatasetRecordClasses_DatasetReleaseNotesDataset"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset-release-notes",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "DatasetRecordClasses_DatasetReleaseNotesBySnapshotBasket",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Data Set Release Notes Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "boolean_question_DatasetRecordClasses_DatasetReleaseNotes",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Combine Data Set Release Notes results",
+                "allowedPrimaryInputRecordClassNames": [
+                    "dataset-release-notes"
+                ],
+                "fullName": "InternalQuestions.boolean_question_DatasetRecordClasses_DatasetReleaseNotes",
+                "defaultAttributes": [
+                    "primary_key"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "bq_left_op_DatasetRecordClasses_DatasetReleaseNotes",
+                            "bq_right_op_DatasetRecordClasses_DatasetReleaseNotes",
+                            "bq_operator"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Combine Data Set Release Notes results",
+                "paramNames": [
+                    "bq_left_op_DatasetRecordClasses_DatasetReleaseNotes",
+                    "bq_right_op_DatasetRecordClasses_DatasetReleaseNotes",
+                    "bq_operator"
+                ],
+                "isCacheable": true,
+                "allowedSecondaryInputRecordClassNames": [
+                    "dataset-release-notes"
+                ],
+                "outputRecordClassName": "dataset-release-notes",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "bq_DatasetRecordClasses_DatasetReleaseNotes",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Data Set Release Notes Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "single_record_question_DatasetRecordClasses_DatasetReleaseNotes",
+                "dynamicAttributes": [],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Single Data Set Release Notes",
+                "fullName": "InternalQuestions.single_record_question_DatasetRecordClasses_DatasetReleaseNotes",
+                "defaultAttributes": [
+                    "primary_key"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "primaryKeys"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Single Data Set Release Notes",
+                "paramNames": [
+                    "primaryKeys"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset-release-notes",
+                "noSummaryOnSingleRecord": false,
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Data Set Release Notes Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            }
+        ],
+        "urlSegment": "dataset-release-notes",
+        "useBasket": true,
+        "nativeShortDisplayName": "Data Set Release Notes",
+        "formats": [
+            {
+                "isInReport": true,
+                "displayName": "Standard JSON",
+                "name": "standard",
+                "description": "Converts your result to the standard JSON used by the web service.",
+                "scopes": [
+                    "results"
+                ],
+                "type": "standard"
+            }
+        ],
+        "hasAllRecordsQuery": false,
+        "displayName": "Data Set Release Notes",
+        "nativeShortDisplayNamePlural": "Data Set Release Notess",
+        "fullName": "DatasetRecordClasses.DatasetReleaseNotes",
+        "description": "",
+        "shortDisplayName": "Data Set Release Notes",
+        "shortDisplayNamePlural": "Data Set Release Notess",
+        "tables": [
+            {
+                "isInReport": true,
+                "displayName": "Dataset Release Notes",
+                "name": "ReleaseNotes",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "VEuPathDB Build #",
+                        "name": "build_number",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Release Date",
+                        "name": "release_date",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_name",
+                        "name": "dataset_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Notes",
+                        "name": "note",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            }
+        ],
+        "nativeDisplayNamePlural": "Data Set Release Notess",
+        "displayNamePlural": "Data Set Release Notess",
+        "recordIdAttributeName": "primary_key",
+        "attributes": [
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Release Notes ID",
+                "name": "primary_key",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": false,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "release_notes_id",
+                "name": "release_notes_id",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "OTHER",
+                "tools": {
+                    "reports": [],
+                    "filters": []
+                },
+                "properties": {}
+            }
+        ],
+        "primaryKeyColumnRefs": [
+            "release_notes_id"
+        ],
+        "properties": {}
+    },
+    {
+        "nativeDisplayName": "Study",
+        "searches": [
+            {
+                "urlSegment": "AllDatasets",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "eupath_release",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Data Sets",
+                "fullName": "DatasetQuestions.AllDatasets",
+                "description": "Find all data sets.",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": []
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "All DS",
+                "paramNames": [],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "AllDatasets",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "SitemapDatasets",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Data Sets",
+                "fullName": "DatasetQuestions.SitemapDatasets",
+                "description": "Find all data sets for use by sitemap.xml",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [],
+                "filters": [],
+                "shortDisplayName": "Sitemap",
+                "paramNames": [],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "SitemapDatasets",
+                "defaultSummaryView": "_default",
+                "properties": {
+                    "forSitemap": []
+                },
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "Studies",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "eupath_release",
+                        "direction": "DESC"
+                    },
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Study summaries",
+                "fullName": "DatasetQuestions.Studies",
+                "description": "Find all data sets.",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": []
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Studies",
+                "paramNames": [],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "AllDatasets",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByDatasetNames",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [],
+                "isAnalyzable": false,
+                "displayName": "Data Sets by dataset names",
+                "fullName": "DatasetQuestions.DatasetsByDatasetNames",
+                "description": "Find data sets that are associated with an attribute on record page (ex.SNP table, Winzeler profile graphs etc.)",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "dataset_name"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Search",
+                "paramNames": [
+                    "dataset_name"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByExternalDatabaseNames",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByReferenceName",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used to generate a table or result",
+                "fullName": "DatasetQuestions.DatasetsByReferenceName",
+                "description": "Find data sets that are associated with an attribute on record page (ex.SNP table, Winzeler profile graphs etc.)",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "reference_name",
+                            "record_class",
+                            "taxon"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Reference",
+                "paramNames": [
+                    "reference_name",
+                    "record_class",
+                    "taxon"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByReferenceName",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByReferenceNameNoTaxon",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used in a search",
+                "fullName": "DatasetQuestions.DatasetsByReferenceNameNoTaxon",
+                "description": "Find data sets that are associated with an attribute on record page (ex.SNP table, Winzeler profile graphs etc.)",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "reference_name",
+                            "record_class"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "RefNoTaxon",
+                "paramNames": [
+                    "reference_name",
+                    "record_class"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByReferenceNameNoTaxon",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByQuestionName",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "display_name",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used in a search",
+                "fullName": "DatasetQuestions.DatasetsByQuestionName",
+                "description": "Find data sets that are associated with a particular search.",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "question_name"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Search",
+                "paramNames": [
+                    "question_name"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByQuestionName",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsById",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "display_name",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Data Sets by ID",
+                "fullName": "DatasetQuestions.DatasetsById",
+                "description": "Find data sets by ID",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "dataset_id"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "ID",
+                "paramNames": [
+                    "dataset_id"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ById",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByRecordClass",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used on a record page for an organism",
+                "fullName": "DatasetQuestions.DatasetsByRecordClass",
+                "description": "Find data sets that are associated with a particular record type and organism, to be used in an a record page.",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "record_class"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Record",
+                "paramNames": [
+                    "record_class"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByRecordClass",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByType",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used on a record page for a type",
+                "fullName": "DatasetQuestions.DatasetsByType",
+                "description": "Find data sets that are associated with a particular data set type.",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "record_class",
+                            "dataset_type"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Type",
+                "paramNames": [
+                    "record_class",
+                    "dataset_type"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByType",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByTypeAndSubtype",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used on a record page for a type and subtype",
+                "fullName": "DatasetQuestions.DatasetsByTypeAndSubtype",
+                "description": "Find data sets that are associated with a particular data set type and subtype",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "record_class",
+                            "dataset_type",
+                            "dataset_subtype"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "TypeAndSubtype",
+                "paramNames": [
+                    "record_class",
+                    "dataset_type",
+                    "dataset_subtype"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByTypeAndSubtype",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByCategoryAndSubtype",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Data Sets used on a record page for a category and subtype",
+                "fullName": "DatasetQuestions.DatasetsByCategoryAndSubtype",
+                "description": "Find data sets that are associated with a particular data set type and subtype",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "dataset_category",
+                            "dataset_subtype"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "CategoryAndSubtype",
+                "paramNames": [
+                    "dataset_category",
+                    "dataset_subtype"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByCategoryAndSubtype",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetsByUserId",
+                "dynamicAttributes": [
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Study Access level",
+                        "name": "restriction_level",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "align": "left",
+                        "columnDataType": "STRING",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Study Id",
+                        "name": "study_id",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "align": "left",
+                        "columnDataType": "STRING",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Data Sets study_access level based on user_id",
+                "fullName": "DatasetQuestions.DatasetsByUserId",
+                "description": "Find data sets that are associated with a particular data set type and subtype",
+                "defaultAttributes": [
+                    "primary_key",
+                    "study_id",
+                    "restriction_level"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "user_id"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "StudyAccess",
+                "paramNames": [
+                    "user_id"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": true,
+                "queryName": "ByUserId",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetRecordClasses_DatasetRecordClassByRealtimeBasket",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Current Study Basket",
+                "fullName": "InternalQuestions.DatasetRecordClasses_DatasetRecordClassByRealtimeBasket",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": []
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Study Basket",
+                "paramNames": [],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "DatasetRecordClasses_DatasetRecordClassByRealtimeBasket",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "DatasetRecordClasses_DatasetRecordClassBySnapshotBasket",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Copy of Study Basket",
+                "fullName": "InternalQuestions.DatasetRecordClasses_DatasetRecordClassBySnapshotBasket",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "DatasetRecordClasses_DatasetRecordClassDataset"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Copy of Basket",
+                "paramNames": [
+                    "DatasetRecordClasses_DatasetRecordClassDataset"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "DatasetRecordClasses_DatasetRecordClassBySnapshotBasket",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "boolean_question_DatasetRecordClasses_DatasetRecordClass",
+                "dynamicAttributes": [
+                    {
+                        "help": "The *search result weight*. This is the sum of the weights you specified for individual searches that found this record.   The more searches that found this record the higher will be its weight.  To give a search a weight, click \"Use Weights\" on the search page, and provide the desired weight.",
+                        "isInReport": true,
+                        "formats": [
+                            {
+                                "isInReport": true,
+                                "displayName": "Histogram",
+                                "name": "wdk_weight-histogram",
+                                "description": "Display a histogram of weight distribution",
+                                "scopes": [],
+                                "type": "histogram"
+                            }
+                        ],
+                        "truncateTo": 100,
+                        "displayName": "Search Weight",
+                        "name": "wdk_weight",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "NUMBER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Combine Study results",
+                "allowedPrimaryInputRecordClassNames": [
+                    "dataset"
+                ],
+                "fullName": "InternalQuestions.boolean_question_DatasetRecordClasses_DatasetRecordClass",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "bq_left_op_DatasetRecordClasses_DatasetRecordClass",
+                            "bq_right_op_DatasetRecordClasses_DatasetRecordClass",
+                            "bq_operator"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Combine Study results",
+                "paramNames": [
+                    "bq_left_op_DatasetRecordClasses_DatasetRecordClass",
+                    "bq_right_op_DatasetRecordClasses_DatasetRecordClass",
+                    "bq_operator"
+                ],
+                "isCacheable": true,
+                "allowedSecondaryInputRecordClassNames": [
+                    "dataset"
+                ],
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": false,
+                "queryName": "bq_DatasetRecordClasses_DatasetRecordClass",
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            },
+            {
+                "urlSegment": "single_record_question_DatasetRecordClasses_DatasetRecordClass",
+                "dynamicAttributes": [],
+                "defaultSorting": [
+                    {
+                        "attributeName": "primary_key",
+                        "direction": "ASC"
+                    }
+                ],
+                "isAnalyzable": false,
+                "displayName": "Single Study",
+                "fullName": "InternalQuestions.single_record_question_DatasetRecordClasses_DatasetRecordClass",
+                "defaultAttributes": [
+                    "primary_key",
+                    "analyze",
+                    "disease",
+                    "Study_Type",
+                    "Study_Design",
+                    "Part_count",
+                    "Country",
+                    "Years",
+                    "study_access"
+                ],
+                "groups": [
+                    {
+                        "displayType": "empty",
+                        "displayName": "",
+                        "name": "empty",
+                        "description": "",
+                        "isVisible": true,
+                        "parameters": [
+                            "primaryKeys"
+                        ]
+                    }
+                ],
+                "filters": [],
+                "shortDisplayName": "Single Study",
+                "paramNames": [
+                    "primaryKeys"
+                ],
+                "isCacheable": true,
+                "outputRecordClassName": "dataset",
+                "noSummaryOnSingleRecord": false,
+                "defaultSummaryView": "_default",
+                "properties": {},
+                "summaryViewPlugins": [
+                    {
+                        "displayName": "Study Results",
+                        "name": "_default",
+                        "description": ""
+                    }
+                ]
+            }
+        ],
+        "urlSegment": "dataset",
+        "useBasket": true,
+        "nativeShortDisplayName": "Study",
+        "formats": [
+            {
+                "isInReport": true,
+                "displayName": "Standard JSON",
+                "name": "standard",
+                "description": "Converts your result to the standard JSON used by the web service.",
+                "scopes": [
+                    "results"
+                ],
+                "type": "standard"
+            },
+            {
+                "isInReport": true,
+                "displayName": "Summary - tab delimited",
+                "name": "attributesTabular",
+                "description": "Summary - tab delimited",
+                "scopes": [
+                    "results"
+                ],
+                "type": "attributesTabular"
+            },
+            {
+                "isInReport": true,
+                "displayName": "Tab- or comma-delimited (openable in Excel) - choose a pre-configured table",
+                "name": "tableTabular",
+                "description": "Tab- or comma-delimited (openable in Excel) - choose a pre-configured table",
+                "scopes": [
+                    "results"
+                ],
+                "type": "tableTabular"
+            },
+            {
+                "isInReport": true,
+                "displayName": "Text - choose from columns and/or tables",
+                "name": "fullRecord",
+                "description": "Text - choose from columns and/or tables",
+                "scopes": [
+                    "record"
+                ],
+                "type": "fullRecord"
+            },
+            {
+                "isInReport": true,
+                "displayName": "XML: choose from columns and/or tables",
+                "name": "xml",
+                "description": "XML: choose from columns and/or tables",
+                "scopes": [],
+                "type": "xml"
+            },
+            {
+                "isInReport": true,
+                "displayName": "json: choose from columns and/or tables",
+                "name": "json",
+                "description": "json: choose from columns and/or tables",
+                "scopes": [],
+                "type": "json"
+            }
+        ],
+        "hasAllRecordsQuery": false,
+        "displayName": "Study",
+        "nativeShortDisplayNamePlural": "Studies",
+        "fullName": "DatasetRecordClasses.DatasetRecordClass",
+        "description": "",
+        "shortDisplayName": "Study",
+        "shortDisplayNamePlural": "Studies",
+        "tables": [
+            {
+                "isInReport": true,
+                "displayName": "Principal Investigator and Collaborators",
+                "name": "Contacts",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_name",
+                        "name": "dataset_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Investigator",
+                        "name": "contact_name",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Affiliation",
+                        "name": "affiliation",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Study Characteristics",
+                "name": "StudyCharacteristicTable",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Disease",
+                        "name": "disease",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Sex",
+                        "name": "sex",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Sample Type",
+                        "name": "Sample_Type",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Investigation Type",
+                        "name": "Study_Type",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Study Design",
+                        "name": "Study_Design",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Country",
+                        "name": "Country",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Years",
+                        "name": "Years",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Variables",
+                        "name": "Variable_count",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Households",
+                        "name": "HH_count",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Participants",
+                        "name": "Part_count",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Participant Repeated Measures",
+                        "name": "Obser_count",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Samples",
+                        "name": "Samp_count",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Additional Data",
+                        "name": "AdditionalData",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Age",
+                        "name": "Age",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "WHO indicator subdomain",
+                        "name": "WHO",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Project Name",
+                        "name": "ProjectName",
+                        "isSortable": false,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Data Versions",
+                "name": "DownloadVersion",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_name",
+                        "name": "dataset_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "version_number",
+                        "name": "version_number",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Download link",
+                        "name": "version_number_link",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "STRING",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Release #",
+                        "name": "build_number",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Release Date",
+                        "name": "release_date",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Updates",
+                        "name": "note",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_sha1_digest",
+                        "name": "dataset_sha1_digest",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Selected Publications",
+                "name": "Publications",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Pubmed ID",
+                        "name": "pmid",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "citation",
+                        "name": "citation",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "url",
+                        "name": "url",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "PubMed Link",
+                        "name": "pubmed_link",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "type": "link",
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "External Resources",
+                "name": "HyperLinks",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "text",
+                        "name": "text",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "url",
+                        "name": "url",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Links",
+                        "name": "hyper_link",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "type": "link",
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Explore this Data Set within this Website",
+                "name": "References",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_name",
+                        "name": "dataset_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "text",
+                        "name": "text",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "url",
+                        "name": "url",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "description",
+                        "name": "description",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Record Type",
+                        "name": "record_type",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Type of Reference",
+                        "name": "target_type",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Name",
+                        "name": "target_name",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "link_type",
+                        "name": "link_type",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Data Access Statistics ",
+                "name": "AccessRequestStats",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_name",
+                        "name": "dataset_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Total requests",
+                        "name": "total",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Approved requests",
+                        "name": "approved",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Percent approved",
+                        "name": "approved_percent",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Data Access Records",
+                "name": "AccessRequest",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_id",
+                        "name": "dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "dataset_name",
+                        "name": "dataset_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Name",
+                        "name": "name",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Organization",
+                        "name": "organization",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Date",
+                        "name": "start_date",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Purpose",
+                        "name": "purpose",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            },
+            {
+                "isInReport": true,
+                "displayName": "Associated Data Sets",
+                "name": "AssociatedDatasets",
+                "description": "",
+                "attributes": [
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "pmid",
+                        "name": "pmid",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "associated_dataset_id",
+                        "name": "associated_dataset_id",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "project",
+                        "name": "project",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "webapp_name",
+                        "name": "webapp_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": true,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "display_name",
+                        "name": "display_name",
+                        "isSortable": true,
+                        "isDisplayable": false,
+                        "isRemovable": true,
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "PubMed ID",
+                        "name": "pubmed link",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "type": "link",
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    },
+                    {
+                        "isInReport": false,
+                        "formats": [],
+                        "truncateTo": 100,
+                        "displayName": "Dataset",
+                        "name": "associated dataset",
+                        "isSortable": true,
+                        "isDisplayable": true,
+                        "isRemovable": true,
+                        "type": "link",
+                        "columnDataType": "OTHER",
+                        "tools": {
+                            "reports": [],
+                            "filters": []
+                        },
+                        "properties": {}
+                    }
+                ],
+                "isDisplayable": true,
+                "properties": {},
+                "clientSortSpec": []
+            }
+        ],
+        "nativeDisplayNamePlural": "Studies",
+        "displayNamePlural": "Studies",
+        "recordIdAttributeName": "primary_key",
+        "attributes": [
+            {
+                "help": "Click a study to go to the full study record",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Study",
+                "name": "primary_key",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": false,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "dataset_id",
+                "name": "dataset_id",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Eda study ID",
+                "name": "eda_study_id",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Dataset Name",
+                "name": "display_name",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "project_availability",
+                "name": "project_availability",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "is_public",
+                "name": "is_public",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "is_prerelease",
+                "name": "is_prerelease",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "help": "Some studies require that the user requests approval to access certain functionality  (they will be prompted when attempting the action):  if 'private', to explore the data, analyze it and download; if 'controlled' or 'protected', just to download.  In controlled studies the user will be allowed to access the data automatically upon request submission, while in protected and private studies there will be human intervention in the decision.",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Data accessibility",
+                "name": "study_access",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "policy_url",
+                "name": "policy_url",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "card_headline",
+                "name": "card_headline",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "card_points",
+                "name": "card_points",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Searches",
+                "name": "card_questions",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "request_protection_level",
+                "name": "request_protection_level",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "request_access_fields",
+                "name": "request_access_fields",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "request_email",
+                "name": "request_email",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "request_email_bcc",
+                "name": "request_email_bcc",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "request_email_body",
+                "name": "request_email_body",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "request_needs_approval",
+                "name": "request_needs_approval",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": false,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Explore & analyze",
+                "name": "analyze",
+                "isSortable": false,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "link",
+                "columnDataType": "OTHER",
+                "tools": {
+                    "reports": [],
+                    "filters": []
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": false,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Download",
+                "name": "bulk_download_url",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "link",
+                "columnDataType": "OTHER",
+                "tools": {
+                    "reports": [],
+                    "filters": []
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Disease",
+                "name": "disease",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Sex",
+                "name": "sex",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Sample type",
+                "name": "Sample_Type",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Investigation type",
+                "name": "Study_Type",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Study design",
+                "name": "Study_Design",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Country",
+                "name": "Country",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Years",
+                "name": "Years",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Variables",
+                "name": "Variable_count",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "NUMBER",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Households",
+                "name": "HH_count",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Participants",
+                "name": "Part_count",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Participant repeated measures",
+                "name": "Obser_count",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Samples",
+                "name": "Samp_count",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Additional data",
+                "name": "AdditionalData",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Age",
+                "name": "Age",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "WHO indicator subdomain",
+                "name": "WHO",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Project name",
+                "name": "ProjectName",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Total requests",
+                "name": "total",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Approved requests",
+                "name": "approved",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Percent approved",
+                "name": "percent_approved",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "total_number",
+                "name": "total_number",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "NUMBER",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "approved_number",
+                "name": "approved_number",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "NUMBER",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "percent_approved_number",
+                "name": "percent_approved_number",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "NUMBER",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "help": "Name of the dataset.",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Data Set Name",
+                "name": "dataset_name",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": false,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "dataset_name_pattern",
+                "name": "dataset_name_pattern",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "short_display_name",
+                "name": "short_display_name",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Description",
+                "name": "description",
+                "isSortable": false,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "OTHER",
+                "tools": {
+                    "reports": [],
+                    "filters": []
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "protocol",
+                "name": "protocol",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Usage",
+                "name": "usage",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Is Species Scope",
+                "name": "is_species_scope",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "NUMBER",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Build Number Introduced",
+                "name": "build_number_introduced",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "type": "number",
+                "columnDataType": "NUMBER",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Type",
+                "name": "type",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "help": "The VEuPathDB release number and date that the dataset first appeared in VEuPathDB. ",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Release # and date",
+                "name": "eupath_release",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "help": "A short description of the dataset.",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Summary",
+                "name": "summary",
+                "isSortable": false,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "OTHER",
+                "tools": {
+                    "reports": [],
+                    "filters": []
+                },
+                "properties": {}
+            },
+            {
+                "help": "The person or organization that serves as a source of information concerning this dataset.",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Contact",
+                "name": "contact",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "help": "The institution where the Contact is located. ",
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Contact institution",
+                "name": "institution",
+                "isSortable": true,
+                "isDisplayable": true,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "email",
+                "name": "email",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            },
+            {
+                "isInReport": true,
+                "formats": [],
+                "truncateTo": 100,
+                "displayName": "Short Attribution",
+                "name": "short_attribution",
+                "isSortable": true,
+                "isDisplayable": false,
+                "isRemovable": true,
+                "columnDataType": "STRING",
+                "tools": {
+                    "reports": [
+                        "byValue"
+                    ],
+                    "filters": [
+                        "byValue"
+                    ]
+                },
+                "properties": {}
+            }
+        ],
+        "primaryKeyColumnRefs": [
+            "dataset_id"
+        ],
+        "properties": {}
+    }
+]
