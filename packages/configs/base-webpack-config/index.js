@@ -31,6 +31,14 @@ exports.merge = function merge(additionalConfig) {
       [
         {
           bail: true,
+          cache: {
+            type: 'filesystem',
+            buildDependencies: {
+              // This makes all dependencies of this file - build dependencies
+              config: [__filename],
+              // By default webpack and loaders are build dependencies
+            },
+          },
           context: process.cwd(),
           resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
