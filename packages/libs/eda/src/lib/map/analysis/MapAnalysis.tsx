@@ -4,13 +4,14 @@ import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
-  Filter,
+  OverlayConfig,
   PromiseResult,
   useAnalysis,
   useAnalysisClient,
   useDataClient,
   useDownloadClient,
   useFindEntityAndVariable,
+  useGetDefaultVariableDescriptor,
   usePromise,
   useStudyEntities,
   useStudyMetadata,
@@ -34,17 +35,10 @@ import {
   AppState,
   MarkerConfiguration,
   useAppState,
-  defaultAppState,
+  defaultViewport,
 } from './appState';
 import { FloatingDiv } from './FloatingDiv';
 import Subsetting from '../../workspace/Subsetting';
-import { findFirstVariable } from '../../workspace/Utils';
-import {
-  useFeaturedFields,
-  useFeaturedFieldsFromTree,
-  useFieldTree,
-  useFlattenedFields,
-} from '../../core/components/variableTrees/hooks';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
@@ -172,6 +166,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
   } = props;
+  const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const studyRecord = useStudyRecord();
   const studyMetadata = useStudyMetadata();
@@ -182,48 +177,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const theme = useUITheme();
   const analysisClient = useAnalysisClient();
   const dataClient = useDataClient();
+  const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
 
-  const getDefaultVariableId = useGetDefaultVariableIdCallback(filters);
-  const defaultVariable = getDefaultVariableId(studyMetadata.rootEntity.id);
+  const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
-  const { activeMarkerConfigurationType = 'pie', markerConfigurations = [] } =
-    appState;
-
-  const defautMarkerConfigurations: MarkerConfiguration[] = useMemo(() => {
-    return [
-      {
-        type: 'pie',
-        selectedVariable: defaultVariable,
-        overlayConfig: undefined, // will be fetched from back end
-      },
-      {
-        type: 'barplot',
-        selectedPlotMode: 'count',
-        selectedVariable: defaultVariable,
-        overlayConfig: undefined, // fetched from back end
-      },
-    ];
-  }, [defaultVariable]);
-
-  useEffect(
-    function generateDefaultMarkerConfigurationsIfNeeded() {
-      if (markerConfigurations.length > 0) return;
-
-      setMarkerConfigurations(defautMarkerConfigurations);
-    },
-    [
-      defautMarkerConfigurations,
-      markerConfigurations.length,
-      setMarkerConfigurations,
-    ]
-  );
+  const findEntityAndVariable = useFindEntityAndVariable();
 
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
@@ -250,11 +214,22 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  // if the variable or filters have changed on the active marker config
-  // set the default overlay config
-  useEffect(() => {
-    async function updateOverlayConfig() {
-      const overlayConfig = await getDefaultOverlayConfig({
+  // If the variable or filters have changed on the active marker config
+  // get the default overlay config.
+  const activeOverlayConfig = usePromise(
+    useCallback(async (): Promise<OverlayConfig | undefined> => {
+      // TODO Use `selectedValues` to generate the overlay config. Something like this:
+      // if (activeMarkerConfiguration?.selectedValues) {
+      //   return {
+      //     overlayType: CategoryVariableDataShape.is(overlayVariable?.dataShape) ? 'categorical' : 'continuous',
+      //     overlayVariable: {
+      //       variableId: overlayVariable.id,
+      //       entityId: overlayEntity.id,
+      //     },
+      //     overlayValues: activeMarkerConfiguration.selectedValues
+      //   } as OverlayConfig
+      // }
+      return getDefaultOverlayConfig({
         studyId,
         filters,
         overlayVariable,
@@ -262,26 +237,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         dataClient,
         subsettingClient,
       });
-
-      if (activeMarkerConfiguration != null)
-        updateMarkerConfigurations({
-          ...activeMarkerConfiguration,
-          overlayConfig,
-        });
-    }
-    updateOverlayConfig();
-
-    // TO DO: return a cancel function?
-  }, [
-    activeMarkerConfiguration,
-    studyId,
-    filters,
-    overlayVariable,
-    overlayEntity,
-    updateMarkerConfigurations,
-    dataClient,
-    subsettingClient,
-  ]);
+    }, [
+      dataClient,
+      filters,
+      overlayEntity,
+      overlayVariable,
+      studyId,
+      subsettingClient,
+    ])
+  );
 
   // needs to be pie, count or proportion
   const markerType = (() => {
@@ -309,13 +273,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     filters,
     markerType,
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
-    overlayConfig: activeMarkerConfiguration?.overlayConfig,
+    overlayConfig: activeOverlayConfig.value,
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
   const finalMarkers = useMemo(() => markers || [], [markers]);
-
-  const downloadClient = useDownloadClient();
 
   const userLoggedIn = useWdkService((wdkService) => {
     return wdkService.getCurrentUser().then((user) => !user.isGuest);
@@ -347,34 +309,12 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: activeMarkerConfiguration?.overlayConfig,
+    selectedOverlayConfig: activeOverlayConfig.value,
   });
 
-  const fieldTree = useFieldTree(
-    useFlattenedFields(studyEntities, 'variableTree')
-  );
-  const featuredFields = useFeaturedFields(studyEntities, 'variableTree');
-
   const subsetVariableAndEntity = useMemo(() => {
-    if (appState.subsetVariableAndEntity)
-      return appState.subsetVariableAndEntity;
-    if (featuredFields.length) {
-      const [entityId, variableId] = featuredFields[0].term.split('/');
-      return { entityId, variableId };
-    } else {
-      const variable = findFirstVariable(
-        fieldTree,
-        studyMetadata.rootEntity.id
-      );
-      const [entityId, variableId] = variable?.field.term.split('/') ?? [];
-      return { entityId, variableId };
-    }
-  }, [
-    appState.subsetVariableAndEntity,
-    featuredFields,
-    fieldTree,
-    studyMetadata.rootEntity.id,
-  ]);
+    return appState.subsetVariableAndEntity ?? getDefaultVariableDescriptor();
+  }, [appState.subsetVariableAndEntity, getDefaultVariableDescriptor]);
 
   const outputEntityTotalCount =
     totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
@@ -529,7 +469,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                   renderConfigurationMenu:
                     activeMarkerConfiguration?.type === 'barplot' ? (
                       <BarPlotMarkerConfigurationMenu
-                        inputs={[{ name: 'overlay', label: 'Overlay' }]}
+                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
                         entities={studyEntities}
                         onChange={updateMarkerConfigurations}
                         starredVariables={
@@ -538,6 +478,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                         }
                         toggleStarredVariable={toggleStarredVariable}
                         configuration={activeMarkerConfiguration}
+                        constraints={markerVariableConstraints}
                       />
                     ) : (
                       <></>
@@ -583,8 +524,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                         entityId: variableValue?.entityId,
                         variableId: variableValue?.variableId
                           ? variableValue.variableId
-                          : getDefaultVariableId(variableValue?.entityId)
-                              .variableId,
+                          : getDefaultVariableDescriptor(
+                              variableValue?.entityId
+                            ).variableId,
                       });
                     },
                   }}
@@ -846,13 +788,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       // not necessarily need to use defaultAppState.viewport.center [0, 0] here but used it just in case
       const epsilon = 2.0;
       const isWillFlyTo =
-        appState.viewport.zoom === defaultAppState.viewport.zoom &&
-        Math.abs(
-          appState.viewport.center[0] - defaultAppState.viewport.center[0]
-        ) <= epsilon &&
-        Math.abs(
-          appState.viewport.center[1] - defaultAppState.viewport.center[1]
-        ) <= epsilon;
+        appState.viewport.zoom === defaultViewport.zoom &&
+        Math.abs(appState.viewport.center[0] - defaultViewport.center[0]) <=
+          epsilon &&
+        Math.abs(appState.viewport.center[1] - defaultViewport.center[1]) <=
+          epsilon;
       setWillFlyTo(isWillFlyTo);
     }
   }, [pending, appState.viewport]);
@@ -987,7 +927,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                       geoConfig?.zoomLevelToAggregationLevel
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
-                    defaultViewport={defaultAppState.viewport}
+                    defaultViewport={defaultViewport}
                   />
                 </div>
 
@@ -1069,43 +1009,4 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       }}
     </PromiseResult>
   );
-}
-
-/**
- * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
- * kind of test and simplify its logic.
- */
-export function useGetDefaultVariableIdCallback(filters: Filter[] | undefined) {
-  const entities = useStudyEntities(filters);
-  const flattenedFields = useFlattenedFields(entities, 'variableTree');
-  const fieldTree = useFieldTree(flattenedFields);
-  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
-
-  return function getDefaultVariableIdCallback(entityId?: string) {
-    let finalEntityId = '';
-    let finalVariableId = '';
-
-    if (entityId || featuredFields.length === 0) {
-      // Use the first variable in the entity
-      const entity = entityId
-        ? entities.find((e) => e.id === entityId)
-        : entities[0];
-
-      if (entity) {
-        finalEntityId = entity.id;
-
-        const firstVariable = findFirstVariable(
-          fieldTree,
-          entity.id
-        )?.field.term.split('/')[1];
-
-        finalVariableId = firstVariable || '';
-      }
-    } else {
-      // Use the first featured variable
-      [finalEntityId, finalVariableId] = featuredFields[0].term.split('/');
-    }
-
-    return { entityId: finalEntityId, variableId: finalVariableId };
-  };
 }
