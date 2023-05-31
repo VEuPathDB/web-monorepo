@@ -323,7 +323,7 @@ export function useAnalysis(
         }))
       );
     },
-    [deleteVisualization, setComputations]
+    [setComputations]
   );
 
   const updateVisualization = useCallback(
