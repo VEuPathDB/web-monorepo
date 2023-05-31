@@ -3,7 +3,6 @@ import {
   BarplotData,
   BoxplotData,
   FacetedData,
-  LinePlotData,
 } from '@veupathdb/components/lib/types/plots';
 import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
@@ -87,9 +86,9 @@ export function substituteUnselectedToken<
   if (isFaceted(data)) {
     return {
       ...data,
-      facets: data.facets.map((facet) => ({
-        ...facet,
-        data: substituteUnselectedToken(data) as T,
+      facets: data.facets.map(({ label, data }) => ({
+        label,
+        data: data != null ? (substituteUnselectedToken(data) as T) : undefined,
       })),
     };
   } else {
