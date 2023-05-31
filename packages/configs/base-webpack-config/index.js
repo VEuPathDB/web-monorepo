@@ -118,6 +118,8 @@ exports.merge = function merge(additionalConfig) {
               __DEV__: JSON.stringify(isDevelopment),
               __OUTPUT_SUBDIR__: JSON.stringify(outputSubDir + '/'),
               __IS_LEGACY_BUNDLE__: JSON.stringify(!isModern),
+              'process.env.NODE_ENV': JSON.stringify(argv.mode),
+              'process.env.NODE_DEBUG': JSON.stringify(false),
             }),
             new MiniCssExtractPlugin({
               filename: '[name].bundle.css',
@@ -125,7 +127,6 @@ exports.merge = function merge(additionalConfig) {
             }),
           ],
           stats: {
-            maxModules: Infinity,
             optimizationBailout: true,
             modules: false,
           },
