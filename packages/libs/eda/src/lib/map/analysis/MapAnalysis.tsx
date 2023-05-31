@@ -21,6 +21,7 @@ import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import {
+  Chip,
   Download,
   FilledButton,
   Filter as FilterIcon,
@@ -82,7 +83,7 @@ import {
   BarPlotMarkerConfigurationMenu,
   PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
-import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
+import { BarPlotMarker, DonutMarker } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
@@ -504,13 +505,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         subMenuConfig: [
           {
             labelText: 'Donuts',
-            icon: <DonutMarkers style={{ height: 30 }} />,
+            icon: <DonutMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
             isActive: activeMarkerConfigurationType === 'pie',
           },
           {
             labelText: 'Bar plots',
-            icon: <BarPlotMarkers style={{ height: 30 }} />,
+            icon: <BarPlotMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
           },
@@ -526,7 +527,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             {
               type: 'pie',
               displayName: 'Donuts',
-              icon: <DonutMarkers style={{ height: 30 }} />,
+              icon: (
+                <DonutMarker
+                  style={{ height: '1.5em', marginLeft: '0.25em' }}
+                />
+              ),
               configurationMenu:
                 activeMarkerConfiguration?.type === 'pie' ? (
                   <PieMarkerConfigurationMenu
@@ -547,7 +552,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             {
               type: 'barplot',
               displayName: 'Bar plots',
-              icon: <BarPlotMarkers style={{ height: 30 }} />,
+              icon: (
+                <BarPlotMarker
+                  style={{ height: '1.5em', marginLeft: '0.25em' }}
+                />
+              ),
               configurationMenu:
                 activeMarkerConfiguration?.type === 'barplot' ? (
                   <BarPlotMarkerConfigurationMenu
@@ -1172,7 +1181,7 @@ function SideNavigationItems({
       itemIndex
     ) => {
       /**
-       * if subMenuConfig.length doesn't exist, we render menu items the same as before allowing sub-menus
+       * if subMenuConfig.length doesn't exist, we render menu items the same as before sub-menus were added
        */
       if (!subMenuConfig.length) {
         const isActive = activeSideMenuIndex === itemIndex;
@@ -1281,25 +1290,32 @@ function SideNavigationItems({
                         item.onClick();
                       }}
                     >
-                      {/**
-                       * The <div> renders a colored circle next to an active sub-menu item that will remain active as relevant
-                       */}
-                      <div
-                        style={{
-                          height: '0.5em',
-                          width: '0.5em',
-                          borderRadius: '50%',
-                          background: item.isActive
-                            ? theme?.palette.primary.hue[400]
-                            : undefined,
-                        }}
-                      ></div>
-                      <span style={{ fontSize: '0.9em', margin: '0 0.5em' }}>
+                      <span style={{ fontSize: '0.9em', marginRight: '0.5em' }}>
                         {item.labelText}
                       </span>
                       <span style={iconStyles} aria-hidden>
                         {item.icon}
                       </span>
+                      {/**
+                       * This div contains a chip that indicates which map type is active. The chip persists even if a different side nav item is selected
+                       */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          flexGrow: 1,
+                          marginLeft: '0.5em',
+                          width: 55,
+                        }}
+                      >
+                        {item.isActive && (
+                          <Chip
+                            text="active"
+                            themeRole="primary"
+                            staticState="hover"
+                          />
+                        )}
+                      </div>
                     </button>
                   </li>
                 );
