@@ -279,14 +279,6 @@ export function InputVariables(props: Props) {
                       // check if provided var is in disabledVariablesByInputName[input.name]
                       // and disable radio input if needed
                       <RadioButtonGroup
-                        disabledList={
-                          disabledVariablesByInputName[input.name].find(
-                            (variable) =>
-                              isEqual(variable, input.providedOptionalVariable)
-                          )
-                            ? ['provided']
-                            : []
-                        }
                         options={['none', 'provided']}
                         optionLabels={[
                           'None',

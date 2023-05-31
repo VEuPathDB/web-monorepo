@@ -240,7 +240,8 @@ export function assertValidInputVariables(
   inputs: InputSpec[],
   selectedVariables: VariablesByInputName,
   entities: StudyEntity[],
-  constraints: DataElementConstraintRecord[] | undefined
+  constraints: DataElementConstraintRecord[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined = undefined // TO DO: make mandatory
 ) {
   const invalidInputs = inputs.filter((input) => {
     const inputSelection = selectedVariables[input.name];
@@ -248,7 +249,7 @@ export function assertValidInputVariables(
       input.name,
       entities,
       constraints,
-      undefined,
+      dataElementDependencyOrder,
       selectedVariables
     );
     return (

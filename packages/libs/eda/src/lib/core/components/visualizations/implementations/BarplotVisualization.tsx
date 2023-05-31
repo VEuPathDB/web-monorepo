@@ -90,9 +90,7 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
-  useFilteredConstraints,
   useNeutralPaletteProps,
-  useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
 import {
@@ -297,33 +295,13 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
-    overlayVariable: vizConfig.overlayVariable,
+    overlayVariable: vizConfig.overlayVariable
+      ? providedOverlayVariableDescriptor ?? vizConfig.overlayVariable
+      : undefined,
     facetVariable: vizConfig.facetVariable,
   });
 
-  const filteredConstraints = useFilteredConstraints(
-    dataElementConstraints,
-    selectedVariables,
-    entities,
-    filters,
-    'overlayVariable'
-  );
-
-  useProvidedOptionalVariable<BarplotConfig>(
-    options?.getOverlayVariable,
-    'overlayVariable',
-    providedOverlayVariableDescriptor,
-    vizConfig.overlayVariable,
-    entities,
-    filters,
-    filteredConstraints,
-    dataElementDependencyOrder,
-    selectedVariables,
-    updateVizConfig,
-    /** snackbar message */
-    'The new overlay variable is not compatible with this visualization and has been disabled.'
-  );
-
+  console.log({ selectedVariables });
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const {
     variable,
@@ -416,7 +394,8 @@ function BarplotViz(props: VisualizationProps<Options>) {
         inputs,
         selectedVariables,
         entities,
-        dataElementConstraints
+        dataElementConstraints,
+        dataElementDependencyOrder
       );
 
       const params =
@@ -494,6 +473,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       selectedVariables,
       entities,
       dataElementConstraints,
+      dataElementDependencyOrder,
       filters,
       studyId,
       dataRequestConfig,
