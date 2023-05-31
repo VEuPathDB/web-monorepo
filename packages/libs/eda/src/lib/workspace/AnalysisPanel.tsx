@@ -47,10 +47,6 @@ import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restrictio
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { DownloadClient } from '../core/api/DownloadClient';
-import { Link } from 'react-router-dom';
-import { fullScreenAppPlugins } from '../core/components/fullScreenApps';
-import { FullScreenAppPlugin } from '../core/types/fullScreenApp';
-import FullScreenContainer from '../core/components/fullScreenApps/FullScreenContainer';
 import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
@@ -95,7 +91,6 @@ interface Props {
   downloadClient: DownloadClient;
   singleAppMode?: string;
   showUnreleasedData: boolean;
-  enableFullScreenApps: boolean;
 }
 
 /**
@@ -115,7 +110,6 @@ export function AnalysisPanel({
   downloadClient,
   singleAppMode,
   showUnreleasedData,
-  enableFullScreenApps,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
@@ -139,7 +133,6 @@ export function AnalysisPanel({
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
-  const history = useHistory();
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
@@ -297,15 +290,6 @@ export function AnalysisPanel({
               }>
             ) => (
               <div className="Entities">
-                {enableFullScreenApps &&
-                  Object.entries(fullScreenAppPlugins).map(
-                    ([key, plugin]) =>
-                      plugin?.isCompatibleWithStudy(studyMetadata) && (
-                        <Link key={key} to={`${routeBase}/fullscreen/${key}`}>
-                          <plugin.triggerComponent analysis={analysis} />
-                        </Link>
-                      )
-                  )}
                 <EntityDiagram
                   expanded
                   orientation="horizontal"
@@ -454,28 +438,6 @@ export function AnalysisPanel({
               </AnalysisTabErrorBoundary>
             )}
           />
-          {enableFullScreenApps && (
-            <Route
-              path={`${routeBase}/fullscreen/:appName`}
-              render={(props) => {
-                const plugin = (
-                  fullScreenAppPlugins as Record<string, FullScreenAppPlugin>
-                )[props.match.params.appName];
-                if (plugin == null) return <div>No full screen app found</div>;
-                return (
-                  <FullScreenContainer
-                    onClose={() =>
-                      history.length
-                        ? history.goBack()
-                        : history.replace(routeBase)
-                    }
-                    appName={props.match.params.appName}
-                    analysisState={analysisState}
-                  />
-                );
-              }}
-            />
-          )}
         </div>
       </ShowHideVariableContextProvider>
     </RestrictedPage>
