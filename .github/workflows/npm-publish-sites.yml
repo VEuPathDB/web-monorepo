@@ -33,6 +33,14 @@ jobs:
         with:
           node-version: 14
           cache: yarn
+      - uses: actions/cache@v3
+        with:
+          # cache directory
+          path: packages/sites/${{ matrix.dir }}/node_modules/.cache/webpack/
+          key: ${{ GITHUB_REF_NAME }}-webpack-build
+          # fallback to use "main" branch cache
+          restore-keys: |
+            main-webpack-build
       - run: yarn
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
         env:
