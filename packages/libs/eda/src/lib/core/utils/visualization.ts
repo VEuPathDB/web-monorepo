@@ -3,7 +3,6 @@ import {
   BarplotData,
   BoxplotData,
   FacetedData,
-  LinePlotData,
 } from '@veupathdb/components/lib/types/plots';
 import { StudyEntity, Variable } from '../types/study';
 import { CoverageStatistics } from '../types/visualization';
@@ -85,7 +84,6 @@ export function substituteUnselectedToken<
   Data extends T | FacetedData<T> | MaybeFacetedSeriesWithStatistics<T>
 >(data: Data): Data {
   if (isFaceted(data)) {
-    console.log('going deep');
     return {
       ...data,
       facets: data.facets.map(({ label, data }) => ({
