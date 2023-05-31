@@ -54,13 +54,7 @@ import { SiteInformationProps } from '..';
 import MapVizManagement from './MapVizManagement';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
-import {
-  BarChartSharp,
-  EditLocation,
-  InfoOutlined,
-  Notes,
-  Share,
-} from '@material-ui/icons';
+import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
@@ -119,6 +113,12 @@ type SideNavigationItemConfigurationObject = {
 };
 
 type SubMenuItems = {
+  /**
+   * id is derived by concatentating the parent and sub-menu labels, since:
+   *  A) parent labels must be unique (makes no sense to offer the same label in a menu!)
+   *  B) sub-menu labels must be unique
+   */
+  id: string;
   labelText: string;
   icon?: ReactNode;
   onClick: () => void;
@@ -371,7 +371,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   function toggleVisible() {
-    setActiveSideMenuIndex(undefined);
+    setActiveSideMenuId(undefined);
   }
 
   const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
@@ -428,7 +428,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
-    setActiveSideMenuIndex(filterSideMenuItemIndex);
+    setActiveSideMenuId(MapSideNavItemLabels.Filter);
     setSideNavigationIsExpanded(true);
   }
 
@@ -459,7 +459,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             // You don't need this button if whenever the filter
             // section is active and expanded.
             sideNavigationIsExpanded &&
-            activeSideMenuIndex === filterSideMenuItemIndex
+            activeSideMenuId === MapSideNavItemLabels.Filter
           }
           themeRole="primary"
           text="Add filters"
@@ -504,12 +504,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         isExpandable: true,
         subMenuConfig: [
           {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.MapType + 'Donuts',
             labelText: 'Donuts',
             icon: <DonutMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
             isActive: activeMarkerConfigurationType === 'pie',
           },
           {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.MapType + 'Bar plots',
             labelText: 'Bar plots',
             icon: <BarPlotMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
@@ -818,14 +822,22 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
     ];
 
-  const filterSideMenuItemIndex = getSideNavItemIndexByLabel(
-    MapSideNavItemLabels.Filter,
-    sideNavigationButtonConfigurationObjects
-  );
-  const mapTypeMenuItemIndex = getSideNavItemIndexByLabel(
-    MapSideNavItemLabels.MapType,
-    sideNavigationButtonConfigurationObjects
-  );
+  function isMapTypeSubMenuItemSelected() {
+    const mapTypeSideNavObject = sideNavigationButtonConfigurationObjects.find(
+      (navObject) => navObject.labelText === MapSideNavItemLabels.MapType
+    );
+    if (
+      mapTypeSideNavObject &&
+      'subMenuConfig' in mapTypeSideNavObject &&
+      mapTypeSideNavObject.subMenuConfig
+    ) {
+      return !!mapTypeSideNavObject.subMenuConfig.find(
+        (mapType) => mapType.id === activeSideMenuId
+      );
+    } else {
+      return false;
+    }
+  }
 
   function areMapTypeAndActiveVizCompatible() {
     if (!appState.activeVisualizationId) return false;
@@ -838,15 +850,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     );
   }
 
-  const intialActiveSideMenuIndex: number | undefined = (() => {
-    if (appState.activeVisualizationId) return mapTypeMenuItemIndex;
+  const intialActiveSideMenuId: string | undefined = (() => {
+    if (appState.activeVisualizationId) return MapSideNavItemLabels.MapType;
 
     return undefined;
   })();
 
-  const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
-    number | undefined
-  >(intialActiveSideMenuIndex);
+  // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
+  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
+    intialActiveSideMenuId
+  );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -926,24 +939,17 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         const activeSideNavigationItemMenu = getSideNavigationItemMenu();
 
         function getSideNavigationItemMenu() {
-          if (activeSideMenuIndex == null) return <></>;
-          // if activeSideMenuIndex does not correspond to an object, then the activeSideMenuIndex must
-          // correspond to a subMenuItem's index
-          else if (
-            sideNavigationButtonConfigurationObjects[activeSideMenuIndex]
-          ) {
-            return sideNavigationButtonConfigurationObjects[
-              activeSideMenuIndex
-            ].renderSideNavigationPanel(apps);
-          } else {
-            // "normalize" the activeSideMenuIndex to resolve the parent's index
-            const indexOfParentContainer = Math.floor(
-              activeSideMenuIndex / 10 - 1
-            );
-            return sideNavigationButtonConfigurationObjects[
-              indexOfParentContainer
-            ].renderSideNavigationPanel(apps);
-          }
+          if (activeSideMenuId == null) return <></>;
+          return sideNavigationButtonConfigurationObjects
+            .find((navItem) => {
+              if (navItem.labelText === activeSideMenuId) return navItem;
+              if ('subMenuConfig' in navItem && navItem.subMenuConfig) {
+                return navItem.subMenuConfig.find(
+                  (subNavItem) => subNavItem.id === activeSideMenuId
+                );
+              }
+            })
+            ?.renderSideNavigationPanel(apps);
         }
 
         return (
@@ -997,11 +1003,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     activeNavigationMenu={activeSideNavigationItemMenu}
                   >
                     <SideNavigationItems
-                      activeSideMenuIndex={activeSideMenuIndex}
+                      activeSideMenuId={activeSideMenuId}
                       itemConfigObjects={
                         sideNavigationButtonConfigurationObjects
                       }
-                      setActiveSideMenuIndex={setActiveSideMenuIndex}
+                      setActiveSideMenuId={setActiveSideMenuId}
                     />
                   </MapSideNavigation>
                   <MapVEuMap
@@ -1071,29 +1077,25 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     />
                   </div>
       */}
-                {activeSideMenuIndex &&
-                  Math.floor(activeSideMenuIndex / 10 - 1) ===
-                    mapTypeMenuItemIndex && (
-                    <DraggableVisualization
-                      analysisState={analysisState}
-                      setActiveVisualizationId={setActiveVisualizationId}
-                      appState={appState}
-                      apps={apps}
-                      plugins={plugins}
-                      geoConfigs={geoConfigs}
-                      totalCounts={totalCounts}
-                      filteredCounts={filteredCounts}
-                      toggleStarredVariable={toggleStarredVariable}
-                      filters={filtersIncludingViewport}
-                      // onTouch={moveVizToTop}
-                      zIndexForStackingContext={getZIndexByPanelTitle(
-                        DraggablePanelIds.VIZ_PANEL
-                      )}
-                      additionalRenderCondition={
-                        areMapTypeAndActiveVizCompatible
-                      }
-                    />
-                  )}
+                {activeSideMenuId && isMapTypeSubMenuItemSelected() && (
+                  <DraggableVisualization
+                    analysisState={analysisState}
+                    setActiveVisualizationId={setActiveVisualizationId}
+                    appState={appState}
+                    apps={apps}
+                    plugins={plugins}
+                    geoConfigs={geoConfigs}
+                    totalCounts={totalCounts}
+                    filteredCounts={filteredCounts}
+                    toggleStarredVariable={toggleStarredVariable}
+                    filters={filtersIncludingViewport}
+                    // onTouch={moveVizToTop}
+                    zIndexForStackingContext={getZIndexByPanelTitle(
+                      DraggablePanelIds.VIZ_PANEL
+                    )}
+                    additionalRenderCondition={areMapTypeAndActiveVizCompatible}
+                  />
+                )}
 
                 {error && (
                   <FloatingDiv
@@ -1157,37 +1159,32 @@ export function useGetDefaultVariableIdCallback(filters: Filter[] | undefined) {
 
 type SideNavItemsProps = {
   itemConfigObjects: SideNavigationItemConfigurationObject[];
-  activeSideMenuIndex: number | undefined;
-  setActiveSideMenuIndex: React.Dispatch<
-    React.SetStateAction<number | undefined>
-  >;
+  activeSideMenuId: string | undefined;
+  setActiveSideMenuId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 function SideNavigationItems({
   itemConfigObjects,
-  activeSideMenuIndex,
-  setActiveSideMenuIndex,
+  activeSideMenuId,
+  setActiveSideMenuId,
 }: SideNavItemsProps) {
   const theme = useUITheme();
   const sideNavigationItems = itemConfigObjects.map(
-    (
-      {
-        labelText,
-        icon,
-        onToggleSideMenuItem = () => {},
-        isExpandable = false,
-        subMenuConfig = [],
-      },
-      itemIndex
-    ) => {
+    ({
+      labelText,
+      icon,
+      onToggleSideMenuItem = () => {},
+      isExpandable = false,
+      subMenuConfig = [],
+    }) => {
       /**
        * if subMenuConfig.length doesn't exist, we render menu items the same as before sub-menus were added
        */
       if (!subMenuConfig.length) {
-        const isActive = activeSideMenuIndex === itemIndex;
+        const isActive = activeSideMenuId === labelText;
         return (
           <li
-            key={itemIndex}
+            key={labelText}
             style={{
               // These styles format the lefthand side menu items.
               // Nothing special here. We can conditionally apply
@@ -1207,9 +1204,9 @@ function SideNavigationItems({
             <button
               style={buttonStyles}
               onClick={() => {
-                onToggleSideMenuItem(activeSideMenuIndex === itemIndex);
-                setActiveSideMenuIndex((currentIndex) => {
-                  return currentIndex === itemIndex ? undefined : itemIndex;
+                onToggleSideMenuItem(activeSideMenuId === labelText);
+                setActiveSideMenuId((currentId) => {
+                  return currentId === labelText ? undefined : labelText;
                 });
               }}
             >
@@ -1227,7 +1224,7 @@ function SideNavigationItems({
          */
         return (
           <li
-            key={itemIndex}
+            key={labelText}
             style={{
               // These styles format the lefthand side menu items.
               // Nothing special here. We can conditionally apply
@@ -1246,16 +1243,10 @@ function SideNavigationItems({
               <span style={labelStyles}>{labelText}</span>
             </button>
             <ul>
-              {subMenuConfig.map((item, subItemIndex) => {
-                /**
-                 * The computedIndex lets us:
-                 *    A) know that a sub-menu item was clicked
-                 *    B) work backward to determine parent index and/or subItemIndex as needed
-                 */
-                const computedIndex = 10 * (itemIndex + 1) + (subItemIndex + 1);
+              {subMenuConfig.map((item) => {
                 return (
                   <li
-                    key={computedIndex}
+                    key={item.id}
                     style={{
                       // These styles format the lefthand side menu items.
                       // Nothing special here. We can conditionally apply
@@ -1267,11 +1258,9 @@ function SideNavigationItems({
                       transition: 'background 0.1s ease',
                       padding: '5px 10px',
                       fontWeight:
-                        activeSideMenuIndex === computedIndex
-                          ? 'bold'
-                          : 'normal',
+                        activeSideMenuId === item.id ? 'bold' : 'normal',
                       background:
-                        activeSideMenuIndex === computedIndex
+                        activeSideMenuId === item.id
                           ? theme?.palette.primary.hue[100]
                           : 'inherit',
                     }}
@@ -1279,13 +1268,9 @@ function SideNavigationItems({
                     <button
                       style={buttonStyles}
                       onClick={() => {
-                        onToggleSideMenuItem(
-                          activeSideMenuIndex === computedIndex
-                        );
-                        setActiveSideMenuIndex((currentIndex) => {
-                          return currentIndex === computedIndex
-                            ? undefined
-                            : computedIndex;
+                        onToggleSideMenuItem(activeSideMenuId === item.id);
+                        setActiveSideMenuId((currentId) => {
+                          return currentId === item.id ? undefined : item.id;
                         });
                         item.onClick();
                       }}
