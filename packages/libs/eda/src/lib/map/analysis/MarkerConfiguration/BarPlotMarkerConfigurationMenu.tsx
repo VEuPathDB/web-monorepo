@@ -6,7 +6,7 @@ import {
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
-import { OverlayConfig } from '../../../core';
+import { BinDefinitions } from '../../../core';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -15,7 +15,7 @@ interface MarkerConfiguration<T extends string> {
 export interface BarPlotMarkerConfiguration
   extends MarkerConfiguration<'barplot'> {
   selectedVariable: VariableDescriptor;
-  overlayConfig: OverlayConfig | undefined;
+  selectedValues: BinDefinitions | undefined;
   selectedPlotMode: 'count' | 'proportion';
 }
 
@@ -34,19 +34,20 @@ export function BarPlotMarkerConfigurationMenu({
   starredVariables,
   toggleStarredVariable,
   configuration,
+  constraints,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
-    if (!selection.overlay) {
+    if (!selection.overlayVariable) {
       console.error(
-        `Expected overlay to defined but got ${typeof selection.overlay}`
+        `Expected overlay to defined but got ${typeof selection.overlayVariable}`
       );
       return;
     }
 
     onChange({
       ...configuration,
-      selectedVariable: selection.overlay,
-      overlayConfig: undefined,
+      selectedVariable: selection.overlayVariable,
+      selectedValues: undefined,
     });
   }
   function handlePlotModeSelection(option: string) {
@@ -69,12 +70,15 @@ export function BarPlotMarkerConfigurationMenu({
       </p>
       <InputVariables
         showClearSelectionButton={false}
-        inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
+        inputs={[
+          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+        ]}
         entities={entities}
-        selectedVariables={{ overlay: configuration.selectedVariable }}
+        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
         onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
+        constraints={constraints}
       />
       <RadioButtonGroup
         containerStyles={{

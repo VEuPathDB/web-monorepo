@@ -1,5 +1,4 @@
 import { H6 } from '@veupathdb/coreui';
-import { OverlayConfig } from '../../../core';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -12,7 +11,7 @@ interface MarkerConfiguration<T extends string> {
 }
 export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
   selectedVariable: VariableDescriptor;
-  overlayConfig: OverlayConfig | undefined;
+  selectedValues: string[] | undefined;
 }
 interface Props
   extends Omit<
@@ -42,7 +41,7 @@ export function PieMarkerConfigurationMenu({
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
-      overlayConfig: undefined,
+      selectedValues: undefined,
     });
   }
 

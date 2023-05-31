@@ -69,9 +69,6 @@ const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
 const showUnreleasedData =
   process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
 
-const enableFullScreenApps =
-  process.env.REACT_APP_ENABLE_FULL_SCREEN_APPS === 'true';
-
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
   : undefined;
@@ -192,7 +189,6 @@ initialize({
             showLoginForm={showLoginForm}
             singleAppMode={singleAppMode}
             showUnreleasedData={showUnreleasedData}
-            enableFullScreenApps={enableFullScreenApps}
           />
         );
       },
