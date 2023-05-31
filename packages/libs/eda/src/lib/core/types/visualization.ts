@@ -30,7 +30,11 @@ export const VisualizationDescriptor = intersection([
     thumbnail: string,
     // new props to store filters at fullscreen mode
     currentPlotFilters: array(Filter),
-    additionalContext: string,
+    /**
+     * can be used to provide additional context for the viz
+     * i.e. we can assign mapType to applicationContext and use it to filter map visualizations by marker
+     */
+    applicationContext: string,
   }),
 ]);
 

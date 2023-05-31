@@ -55,8 +55,8 @@ export default function MapVizManagement({
   const totalVisualizationCount =
     visualizations?.filter(
       (viz) =>
-        'additionalContext' in viz.descriptor &&
-        viz.descriptor.additionalContext === mapType
+        'applicationContext' in viz.descriptor &&
+        viz.descriptor.applicationContext === mapType
     ).length ?? 0;
 
   const newVisualizationPicker = (
@@ -67,7 +67,7 @@ export default function MapVizManagement({
       onVisualizationCreated={onVisualizationCreated}
       showHeading={false}
       tightLayout={true}
-      additionalContext={mapType}
+      applicationContext={mapType}
     />
   );
 
@@ -183,8 +183,8 @@ function VisualizationsList({
             {computation.visualizations
               .filter(
                 (viz) =>
-                  'additionalContext' in viz.descriptor &&
-                  viz.descriptor.additionalContext === mapType
+                  'applicationContext' in viz.descriptor &&
+                  viz.descriptor.applicationContext === mapType
               )
               .map((viz) => {
                 const vizIsActive =

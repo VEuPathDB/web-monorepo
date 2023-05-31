@@ -8,7 +8,7 @@ import TabbedDisplay, {
 export interface MarkerConfigurationOption {
   displayName: string;
   icon?: JSX.Element;
-  renderConfigurationMenu: JSX.Element;
+  configurationMenu: JSX.Element;
   type: MarkerConfiguration['type'];
 }
 

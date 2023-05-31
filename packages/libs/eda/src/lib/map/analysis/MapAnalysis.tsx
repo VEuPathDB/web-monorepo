@@ -527,7 +527,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               type: 'pie',
               displayName: 'Donuts',
               icon: <DonutMarkers style={{ height: 30 }} />,
-              renderConfigurationMenu:
+              configurationMenu:
                 activeMarkerConfiguration?.type === 'pie' ? (
                   <PieMarkerConfigurationMenu
                     inputs={[{ name: 'overlay', label: 'Overlay' }]}
@@ -548,7 +548,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               type: 'barplot',
               displayName: 'Bar plots',
               icon: <BarPlotMarkers style={{ height: 30 }} />,
-              renderConfigurationMenu:
+              configurationMenu:
                 activeMarkerConfiguration?.type === 'barplot' ? (
                   <BarPlotMarkerConfigurationMenu
                     inputs={[{ name: 'overlay', label: 'Overlay' }]}
@@ -575,7 +575,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               displayName: 'Markers',
               content: markerConfigurationObjects.find(
                 ({ type }) => type === activeMarkerConfigurationType
-              )?.renderConfigurationMenu,
+              )?.configurationMenu,
             },
             {
               key: 'plots',
@@ -824,7 +824,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       appState.activeVisualizationId
     );
     return (
-      visualization?.descriptor.additionalContext ===
+      visualization?.descriptor.applicationContext ===
       activeMarkerConfigurationType
     );
   }
