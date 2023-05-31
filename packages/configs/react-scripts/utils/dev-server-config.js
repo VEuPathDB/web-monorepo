@@ -14,7 +14,8 @@ export function makeCommonDevServerConfig({
       publicPath: '/',
     },
     watchOptions: {
-      ignored: '**/packages/*/*/src/**',
+      aggregateTimeout: 600,
+      ignored: ['**/node_modules', '**/packages/*/*/src'],
     },
     devServer: {
       https: true,
