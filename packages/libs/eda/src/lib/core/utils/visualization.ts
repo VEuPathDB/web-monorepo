@@ -85,11 +85,12 @@ export function substituteUnselectedToken<
   Data extends T | FacetedData<T> | MaybeFacetedSeriesWithStatistics<T>
 >(data: Data): Data {
   if (isFaceted(data)) {
+    console.log('going deep');
     return {
       ...data,
-      facets: data.facets.map((facet) => ({
-        ...facet,
-        data: substituteUnselectedToken(data) as T,
+      facets: data.facets.map(({ label, data }) => ({
+        label,
+        data: data != null ? (substituteUnselectedToken(data) as T) : undefined,
       })),
     };
   } else {
