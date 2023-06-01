@@ -301,7 +301,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  console.log({ selectedVariables });
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const {
     variable,

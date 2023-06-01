@@ -16,10 +16,8 @@ export function barplotRequest(
     config: {
       outputEntityId: vizConfig.xAxisVariable?.entityId!,
       xAxisVariable: vizConfig.xAxisVariable,
-      ...(vizConfig.overlayVariable &&
-      isEqual(vizConfig.overlayVariable, overlayConfig?.overlayVariable)
-        ? { overlayConfig }
-        : {}),
+      // for floaters, vizConfig.overlayVariable is simply the on/off switch for overlay
+      ...(vizConfig.overlayVariable ? { overlayConfig } : {}),
       barMode: 'group',
       valueSpec: 'count',
     },

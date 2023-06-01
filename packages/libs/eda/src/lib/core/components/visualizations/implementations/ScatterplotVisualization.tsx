@@ -116,9 +116,7 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import {
-  useFilteredConstraints,
   useNeutralPaletteProps,
-  useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
@@ -324,32 +322,11 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const variablesForConstraints = useDeepValue({
     xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
     yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
-    overlayVariable: vizConfig.overlayVariable,
+    overlayVariable: vizConfig.overlayVariable
+      ? providedOverlayVariableDescriptor ?? vizConfig.overlayVariable
+      : undefined,
     facetVariable: vizConfig.facetVariable,
   });
-
-  const filteredConstraints = useFilteredConstraints(
-    dataElementConstraints,
-    selectedVariables,
-    entities,
-    filters,
-    'overlayVariable'
-  );
-
-  useProvidedOptionalVariable<ScatterplotConfig>(
-    options?.getOverlayVariable,
-    'overlayVariable',
-    providedOverlayVariableDescriptor,
-    vizConfig.overlayVariable,
-    entities,
-    filters,
-    filteredConstraints,
-    dataElementDependencyOrder,
-    selectedVariables,
-    updateVizConfig,
-    /** snackbar message */
-    'The new overlay variable is not compatible with this visualization and has been disabled.'
-  );
 
   const neutralPaletteProps = useNeutralPaletteProps(
     vizConfig.overlayVariable,
@@ -658,9 +635,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
       assertValidInputVariables(
         inputsForValidation,
-        selectedVariables,
+        variablesForConstraints,
         entities,
-        dataElementConstraints
+        dataElementConstraints,
+        dataElementDependencyOrder
       );
 
       // check log scale and plot mode option for retrieving data
@@ -828,6 +806,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       selectedVariables,
       entities,
       dataElementConstraints,
+      dataElementDependencyOrder,
       filters,
       vizConfig.independentAxisLogScale,
       vizConfig.dependentAxisLogScale,
