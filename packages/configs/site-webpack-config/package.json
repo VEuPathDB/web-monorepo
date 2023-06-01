@@ -21,7 +21,10 @@
   },
   "dependencies": {
     "@veupathdb/base-webpack-config": "workspace:^",
+    "crypto-browserify": "^3.12.0",
+    "https-browserify": "^1.0.0",
     "path-browserify": "^1.0.1",
-    "stream-browserify": "^3.0.0"
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0"
   }
 }
