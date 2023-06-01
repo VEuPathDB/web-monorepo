@@ -22,6 +22,7 @@ interface Props {
   ) => void;
   showHeading?: boolean;
   tightLayout?: boolean; // the implementation of this is open to improvement!
+  applicationContext?: string;
 }
 
 export function StartPage(props: Props) {
@@ -32,6 +33,7 @@ export function StartPage(props: Props) {
     onVisualizationCreated,
     showHeading = true,
     tightLayout = false,
+    applicationContext = null,
   } = props;
   const cx = makeClassNameHelper('VisualizationsContainer');
   const studyMetadata = useStudyMetadata();
@@ -145,6 +147,9 @@ export function StartPage(props: Props) {
                                   type: viz.name!,
                                   configuration:
                                     vizPlugin.createDefaultConfig(),
+                                  ...(applicationContext != null
+                                    ? { applicationContext }
+                                    : {}),
                                 },
                               };
                               if (!existingComputation) {
