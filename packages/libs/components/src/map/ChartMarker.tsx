@@ -179,7 +179,7 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
         .map((o) => o.value)
         .reduce((a, c) => {
           return a + c;
-        }); // summation of data's value per marker icon
+        }, 0); // summation of data's value per marker icon
   const sumValuesString =
     sumValues <= 0.99 && sumValues > 0
       ? sumValues.toFixed(2)
