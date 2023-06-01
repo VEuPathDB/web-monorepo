@@ -141,7 +141,7 @@ const buttonStyles: React.CSSProperties = {
   background: 'transparent',
   borderColor: 'transparent',
   display: 'flex',
-  fontSize: 16,
+  fontSize: '1.3em',
   justifyContent: 'flex-start',
   margin: 0,
   padding: 0,
@@ -150,9 +150,9 @@ const buttonStyles: React.CSSProperties = {
 const iconStyles: React.CSSProperties = {
   alignItems: 'center',
   display: 'flex',
-  height: 25,
+  height: '1.5em',
+  width: '1.5em',
   justifyContent: 'center',
-  width: 25,
 };
 const labelStyles: React.CSSProperties = {
   marginLeft: '0.5em',
@@ -216,7 +216,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyEntities = useStudyEntities(filters);
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
-  const theme = useUITheme();
   const analysisClient = useAnalysisClient();
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
@@ -710,7 +709,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             <div
               css={{
                 h1: {
-                  fontSize: '21px',
+                  fontSize: '1.75em',
                   margin: '25px 0 0 0',
                   padding: '0 0 1em 0',
                 },
@@ -1190,7 +1189,7 @@ function SideNavigationItems({
                           justifyContent: 'flex-end',
                           flexGrow: 1,
                           marginLeft: '0.5em',
-                          width: 55,
+                          width: '3.5em',
                         }}
                       >
                         {item.isActive && (
