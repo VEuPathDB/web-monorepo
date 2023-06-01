@@ -32,6 +32,7 @@ exports.merge = function merge(additionalConfig) {
         {
           bail: true,
           cache: {
+            name: process.env.BROWSERSLIST_ENV + '-' + argv.mode,
             type: 'filesystem',
             buildDependencies: {
               // This makes all dependencies of this file - build dependencies
@@ -120,8 +121,7 @@ exports.merge = function merge(additionalConfig) {
           },
           devtool: 'source-map',
           plugins: [
-            new webpack.optimize.ModuleConcatenationPlugin(),
-            new webpack.LoaderOptionsPlugin({ debug: isDevelopment }),
+            // new webpack.optimize.ModuleConcatenationPlugin(),
             new webpack.DefinePlugin({
               __DEV__: JSON.stringify(isDevelopment),
               __OUTPUT_SUBDIR__: JSON.stringify(outputSubDir + '/'),
