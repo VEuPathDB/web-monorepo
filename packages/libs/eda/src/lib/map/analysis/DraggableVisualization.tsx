@@ -27,6 +27,7 @@ interface Props {
   toggleStarredVariable: (variable: VariableDescriptor) => void;
   filters: Filter[];
   zIndexForStackingContext: number;
+  additionalRenderCondition?: () => void;
 }
 
 export default function DraggableVisualization({
@@ -41,6 +42,7 @@ export default function DraggableVisualization({
   toggleStarredVariable,
   filters,
   zIndexForStackingContext = 10,
+  additionalRenderCondition,
 }: Props) {
   const { computation: activeComputation, visualization: activeViz } =
     analysisState.getVisualizationAndComputation(
@@ -58,7 +60,11 @@ export default function DraggableVisualization({
     ? plugins[computationType]?.visualizationPlugins
     : null;
 
-  const shouldRenderVisualization = activeViz && app && visualizationPlugins;
+  const shouldRenderVisualization =
+    activeViz &&
+    app &&
+    visualizationPlugins &&
+    (additionalRenderCondition ? additionalRenderCondition() : true);
 
   return shouldRenderVisualization ? (
     <DraggablePanel

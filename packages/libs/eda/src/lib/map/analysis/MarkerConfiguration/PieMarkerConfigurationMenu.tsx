@@ -47,13 +47,6 @@ export function PieMarkerConfigurationMenu({
 
   return (
     <div>
-      <H6
-        additionalStyles={{
-          margin: '15px 12px',
-        }}
-      >
-        Configure Donuts:
-      </H6>
       <p
         style={{
           paddingLeft: 7,
