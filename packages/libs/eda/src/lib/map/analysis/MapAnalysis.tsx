@@ -22,6 +22,7 @@ import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import {
+  Chip,
   Download,
   FilledButton,
   Filter as FilterIcon,
@@ -47,13 +48,7 @@ import { SiteInformationProps } from '..';
 import MapVizManagement from './MapVizManagement';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
-import {
-  BarChartSharp,
-  EditLocation,
-  InfoOutlined,
-  Notes,
-  Share,
-} from '@material-ui/icons';
+import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
@@ -74,26 +69,30 @@ import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BarPlotMarkerConfigurationMenu,
-  MarkerConfigurationSelector,
   PieMarkerConfigurationMenu,
 } from './MarkerConfiguration';
-import { BarPlotMarkers, DonutMarkers } from './MarkerConfiguration/icons';
+import { BarPlotMarker, DonutMarker } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
+import {
+  MapTypeConfigurationMenu,
+  MarkerConfigurationOption,
+} from './MarkerConfiguration/MapTypeConfigurationMenu';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
   Notes = 'Notes',
-  Markers = 'Markers',
   Plot = 'Plot',
   Share = 'Share',
   StudyDetails = 'View Study Details',
   MyAnalyses = 'My Analyses',
+  MapType = 'Map Type',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -102,6 +101,22 @@ type SideNavigationItemConfigurationObject = {
   icon: ReactNode;
   renderSideNavigationPanel: (apps: ComputationAppOverview[]) => ReactNode;
   onToggleSideMenuItem?: (isActive: boolean) => void;
+  isExpandable?: boolean;
+  isExpanded?: boolean;
+  subMenuConfig?: SubMenuItems[];
+};
+
+type SubMenuItems = {
+  /**
+   * id is derived by concatentating the parent and sub-menu labels, since:
+   *  A) parent labels must be unique (makes no sense to offer the same label in a menu!)
+   *  B) sub-menu labels must be unique
+   */
+  id: string;
+  labelText: string;
+  icon?: ReactNode;
+  onClick: () => void;
+  isActive: boolean;
 };
 
 function getSideNavItemIndexByLabel(
@@ -114,6 +129,33 @@ function getSideNavItemIndexByLabel(
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
+};
+
+/**
+ * The following code and styles are for demonstration purposes
+ * at this point. After #1671 is merged, we can implement these
+ * menu buttons and their associated panels for real.
+ */
+const buttonStyles: React.CSSProperties = {
+  alignItems: 'center',
+  background: 'transparent',
+  borderColor: 'transparent',
+  display: 'flex',
+  fontSize: '1.3em',
+  justifyContent: 'flex-start',
+  margin: 0,
+  padding: 0,
+  width: '100%',
+};
+const iconStyles: React.CSSProperties = {
+  alignItems: 'center',
+  display: 'flex',
+  height: '1.5em',
+  width: '1.5em',
+  justifyContent: 'center',
+};
+const labelStyles: React.CSSProperties = {
+  marginLeft: '0.5em',
 };
 
 export const defaultAnimation = {
@@ -174,7 +216,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyEntities = useStudyEntities(filters);
   const geoConfigs = useGeoConfig(studyEntities);
   const geoConfig = geoConfigs[0];
-  const theme = useUITheme();
   const analysisClient = useAnalysisClient();
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
@@ -291,7 +332,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   function toggleVisible() {
-    setActiveSideMenuIndex(undefined);
+    setActiveSideMenuId(undefined);
   }
 
   const loginCallbacks = useLoginCallbacks({ showLoginForm, toggleVisible });
@@ -326,7 +367,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setIsSubsetPanelOpen(true);
-    setActiveSideMenuIndex(filterSideMenuItemIndex);
+    setActiveSideMenuId(MapSideNavItemLabels.Filter);
     setSideNavigationIsExpanded(true);
   }
 
@@ -357,7 +398,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             // You don't need this button if whenever the filter
             // section is active and expanded.
             sideNavigationIsExpanded &&
-            activeSideMenuIndex === filterSideMenuItemIndex
+            activeSideMenuId === MapSideNavItemLabels.Filter
           }
           themeRole="primary"
           text="Add filters"
@@ -392,40 +433,32 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     );
   };
 
-  /**
-   * The following code and styles are for demonstration purposes
-   * at this point. After #1671 is merged, we can implement these
-   * menu buttons and their associated panels for real.
-   */
-  const buttonStyles: React.CSSProperties = {
-    alignItems: 'center',
-    background: 'transparent',
-    borderColor: 'transparent',
-    display: 'flex',
-    fontSize: 16,
-    justifyContent: 'flex-start',
-    margin: 0,
-    padding: 0,
-    width: '100%',
-  };
-  const iconStyles: React.CSSProperties = {
-    alignItems: 'center',
-    display: 'flex',
-    height: 25,
-    justifyContent: 'center',
-    width: 25,
-  };
-  const labelStyles: React.CSSProperties = {
-    marginLeft: '0.5rem',
-  };
-
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: MapSideNavItemLabels.Markers,
+        labelText: MapSideNavItemLabels.MapType,
         icon: <EditLocation />,
+        isExpandable: true,
+        subMenuConfig: [
+          {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.MapType + 'Donuts',
+            labelText: 'Donuts',
+            icon: <DonutMarker style={{ height: '1.25em' }} />,
+            onClick: () => setActiveMarkerConfigurationType('pie'),
+            isActive: activeMarkerConfigurationType === 'pie',
+          },
+          {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.MapType + 'Bar plots',
+            labelText: 'Bar plots',
+            icon: <BarPlotMarker style={{ height: '1.25em' }} />,
+            onClick: () => setActiveMarkerConfigurationType('barplot'),
+            isActive: activeMarkerConfigurationType === 'barplot',
+          },
+        ],
         renderSideNavigationPanel: (apps) => {
           const markerVariableConstraints = apps
             .find((app) => app.name === 'standalone-map')
@@ -433,59 +466,99 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
               (viz) => viz.name === 'map-markers'
             )?.dataElementConstraints;
 
+          const markerConfigurationObjects: MarkerConfigurationOption[] = [
+            {
+              type: 'pie',
+              displayName: 'Donuts',
+              icon: (
+                <DonutMarker
+                  style={{ height: '1.5em', marginLeft: '0.25em' }}
+                />
+              ),
+              configurationMenu:
+                activeMarkerConfiguration?.type === 'pie' ? (
+                  <PieMarkerConfigurationMenu
+                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    onChange={updateMarkerConfigurations}
+                    configuration={activeMarkerConfiguration}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                    constraints={markerVariableConstraints}
+                  />
+                ) : (
+                  <></>
+                ),
+            },
+            {
+              type: 'barplot',
+              displayName: 'Bar plots',
+              icon: (
+                <BarPlotMarker
+                  style={{ height: '1.5em', marginLeft: '0.25em' }}
+                />
+              ),
+              configurationMenu:
+                activeMarkerConfiguration?.type === 'barplot' ? (
+                  <BarPlotMarkerConfigurationMenu
+                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    onChange={updateMarkerConfigurations}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                    configuration={activeMarkerConfiguration}
+                    constraints={markerVariableConstraints}
+                  />
+                ) : (
+                  <></>
+                ),
+            },
+          ];
+
+          const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+            'markers' | 'plots'
+          >['tabs'] = [
+            {
+              key: 'markers',
+              displayName: 'Markers',
+              content: markerConfigurationObjects.find(
+                ({ type }) => type === activeMarkerConfigurationType
+              )?.configurationMenu,
+            },
+            {
+              key: 'plots',
+              displayName: 'Supporting Plots',
+              content: (
+                <MapVizManagement
+                  analysisState={analysisState}
+                  setActiveVisualizationId={setActiveVisualizationId}
+                  apps={apps}
+                  activeVisualizationId={appState.activeVisualizationId}
+                  plugins={plugins}
+                  geoConfigs={geoConfigs}
+                  mapType={activeMarkerConfigurationType}
+                />
+              ),
+            },
+          ];
+
           return (
-            <MarkerConfigurationSelector
-              activeMarkerConfigurationType={activeMarkerConfigurationType}
-              setActiveMarkerConfigurationType={
-                setActiveMarkerConfigurationType
-              }
-              markerConfigurations={[
-                {
-                  type: 'pie',
-                  displayName: 'Donuts',
-                  icon: <DonutMarkers style={{ height: 30 }} />,
-                  renderConfigurationMenu:
-                    activeMarkerConfiguration?.type === 'pie' ? (
-                      <PieMarkerConfigurationMenu
-                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        configuration={activeMarkerConfiguration}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        constraints={markerVariableConstraints}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                },
-                {
-                  type: 'barplot',
-                  displayName: 'Bar plots',
-                  icon: <BarPlotMarkers style={{ height: 30 }} />,
-                  renderConfigurationMenu:
-                    activeMarkerConfiguration?.type === 'barplot' ? (
-                      <BarPlotMarkerConfigurationMenu
-                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
-                        entities={studyEntities}
-                        onChange={updateMarkerConfigurations}
-                        starredVariables={
-                          analysisState.analysis?.descriptor.starredVariables ??
-                          []
-                        }
-                        toggleStarredVariable={toggleStarredVariable}
-                        configuration={activeMarkerConfiguration}
-                        constraints={markerVariableConstraints}
-                      />
-                    ) : (
-                      <></>
-                    ),
-                },
-              ]}
-            />
+            <div
+              style={{
+                padding: '1em',
+                maxWidth: '1500px',
+              }}
+            >
+              <MapTypeConfigurationMenu
+                activeMarkerConfigurationType={activeMarkerConfigurationType}
+                markerConfigurations={markerConfigurationObjects}
+                mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
+              />
+            </div>
           );
         },
       },
@@ -550,22 +623,6 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         },
         onToggleSideMenuItem: (isActive) => {
           setIsSubsetPanelOpen(!isActive);
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.Plot,
-        icon: <BarChartSharp />,
-        renderSideNavigationPanel: (apps) => {
-          return (
-            <MapVizManagement
-              analysisState={analysisState}
-              setActiveVisualizationId={setActiveVisualizationId}
-              apps={apps}
-              activeVisualizationId={appState.activeVisualizationId}
-              plugins={plugins}
-              geoConfigs={geoConfigs}
-            />
-          );
         },
       },
       {
@@ -652,7 +709,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             <div
               css={{
                 h1: {
-                  fontSize: '21px',
+                  fontSize: '1.75em',
                   margin: '25px 0 0 0',
                   padding: '0 0 1em 0',
                 },
@@ -705,44 +762,43 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       },
     ];
 
-  const filterSideMenuItemIndex = getSideNavItemIndexByLabel(
-    MapSideNavItemLabels.Filter,
-    sideNavigationButtonConfigurationObjects
-  );
-  const plotSideMenuItemIndex = getSideNavItemIndexByLabel(
-    MapSideNavItemLabels.Plot,
-    sideNavigationButtonConfigurationObjects
-  );
+  function isMapTypeSubMenuItemSelected() {
+    const mapTypeSideNavObject = sideNavigationButtonConfigurationObjects.find(
+      (navObject) => navObject.labelText === MapSideNavItemLabels.MapType
+    );
+    if (
+      mapTypeSideNavObject &&
+      'subMenuConfig' in mapTypeSideNavObject &&
+      mapTypeSideNavObject.subMenuConfig
+    ) {
+      return !!mapTypeSideNavObject.subMenuConfig.find(
+        (mapType) => mapType.id === activeSideMenuId
+      );
+    } else {
+      return false;
+    }
+  }
 
-  const intialActiveSideMenuIndex: number | undefined = (() => {
-    if (appState.activeVisualizationId) return plotSideMenuItemIndex;
+  function areMapTypeAndActiveVizCompatible() {
+    if (!appState.activeVisualizationId) return false;
+    const visualization = analysisState.getVisualization(
+      appState.activeVisualizationId
+    );
+    return (
+      visualization?.descriptor.applicationContext ===
+      activeMarkerConfigurationType
+    );
+  }
+
+  const intialActiveSideMenuId: string | undefined = (() => {
+    if (appState.activeVisualizationId) return MapSideNavItemLabels.MapType;
 
     return undefined;
   })();
 
-  const [activeSideMenuIndex, setActiveSideMenuIndex] = useState<
-    number | undefined
-  >(intialActiveSideMenuIndex);
-
-  const sideNavigationButtons = sideNavigationButtonConfigurationObjects.map(
-    ({ labelText, icon, onToggleSideMenuItem = () => {} }, index) => {
-      return (
-        <button
-          style={buttonStyles}
-          onClick={() => {
-            onToggleSideMenuItem(activeSideMenuIndex === index);
-            setActiveSideMenuIndex((currentIndex) => {
-              return currentIndex === index ? undefined : index;
-            });
-          }}
-        >
-          <span style={iconStyles} aria-hidden>
-            {icon}
-          </span>
-          <span style={labelStyles}>{labelText}</span>
-        </button>
-      );
-    }
+  // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
+  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
+    intialActiveSideMenuId
   );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
@@ -818,11 +874,21 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
-        const activeSideNavigationItemMenu =
-          activeSideMenuIndex != null &&
-          sideNavigationButtonConfigurationObjects[
-            activeSideMenuIndex
-          ].renderSideNavigationPanel(apps);
+        const activeSideNavigationItemMenu = getSideNavigationItemMenu();
+
+        function getSideNavigationItemMenu() {
+          if (activeSideMenuId == null) return <></>;
+          return sideNavigationButtonConfigurationObjects
+            .find((navItem) => {
+              if (navItem.labelText === activeSideMenuId) return navItem;
+              if ('subMenuConfig' in navItem && navItem.subMenuConfig) {
+                return navItem.subMenuConfig.find(
+                  (subNavItem) => subNavItem.id === activeSideMenuId
+                );
+              }
+            })
+            ?.renderSideNavigationPanel(apps);
+        }
 
         return (
           <ShowHideVariableContextProvider>
@@ -874,35 +940,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     siteInformationProps={props.siteInformationProps}
                     activeNavigationMenu={activeSideNavigationItemMenu}
                   >
-                    <div>
-                      <ul style={{ margin: 0, padding: 0 }}>
-                        {sideNavigationButtons.map((item, itemIndex) => {
-                          const isActive = activeSideMenuIndex === itemIndex;
-                          return (
-                            <li
-                              key={itemIndex}
-                              style={{
-                                // These styles format the lefthand side menu items.
-                                // Nothing special here. We can conditionally apply
-                                // styles based on in/active states, if we like.
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'flex-start',
-                                width: '100%',
-                                transition: 'background 0.1s ease',
-                                padding: '5px 10px',
-                                fontWeight: isActive ? 'bold' : 'normal',
-                                background: isActive
-                                  ? theme?.palette.primary.hue[100]
-                                  : 'inherit',
-                              }}
-                            >
-                              {item}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
+                    <SideNavigationItems
+                      activeSideMenuId={activeSideMenuId}
+                      itemConfigObjects={
+                        sideNavigationButtonConfigurationObjects
+                      }
+                      setActiveSideMenuId={setActiveSideMenuId}
+                    />
                   </MapSideNavigation>
                   <MapVEuMap
                     height="100%"
@@ -971,7 +1015,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     />
                   </div>
       */}
-                {activeSideMenuIndex === plotSideMenuItemIndex && (
+                {activeSideMenuId && isMapTypeSubMenuItemSelected() && (
                   <DraggableVisualization
                     analysisState={analysisState}
                     setActiveVisualizationId={setActiveVisualizationId}
@@ -987,6 +1031,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     zIndexForStackingContext={getZIndexByPanelTitle(
                       DraggablePanelIds.VIZ_PANEL
                     )}
+                    additionalRenderCondition={areMapTypeAndActiveVizCompatible}
                   />
                 )}
 
@@ -1008,5 +1053,166 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         );
       }}
     </PromiseResult>
+  );
+}
+
+type SideNavItemsProps = {
+  itemConfigObjects: SideNavigationItemConfigurationObject[];
+  activeSideMenuId: string | undefined;
+  setActiveSideMenuId: React.Dispatch<React.SetStateAction<string | undefined>>;
+};
+
+function SideNavigationItems({
+  itemConfigObjects,
+  activeSideMenuId,
+  setActiveSideMenuId,
+}: SideNavItemsProps) {
+  const theme = useUITheme();
+  const sideNavigationItems = itemConfigObjects.map(
+    ({
+      labelText,
+      icon,
+      onToggleSideMenuItem = () => {},
+      isExpandable = false,
+      subMenuConfig = [],
+    }) => {
+      /**
+       * if subMenuConfig.length doesn't exist, we render menu items the same as before sub-menus were added
+       */
+      if (!subMenuConfig.length) {
+        const isActive = activeSideMenuId === labelText;
+        return (
+          <li
+            key={labelText}
+            style={{
+              // These styles format the lefthand side menu items.
+              // Nothing special here. We can conditionally apply
+              // styles based on in/active states, if we like.
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              width: '100%',
+              transition: 'background 0.1s ease',
+              padding: '5px 10px',
+              fontWeight: isActive ? 'bold' : 'normal',
+              background: isActive
+                ? theme?.palette.primary.hue[100]
+                : 'inherit',
+            }}
+          >
+            <button
+              style={buttonStyles}
+              onClick={() => {
+                onToggleSideMenuItem(activeSideMenuId === labelText);
+                setActiveSideMenuId((currentId) => {
+                  return currentId === labelText ? undefined : labelText;
+                });
+              }}
+            >
+              <span style={iconStyles} aria-hidden>
+                {icon}
+              </span>
+              <span style={labelStyles}>{labelText}</span>
+            </button>
+          </li>
+        );
+      } else {
+        /**
+         * If subMenuConfig has items, we nest a <ul> and map over the items.
+         * Note that the isActive style gets applied to the nested <ul> items, not the parent
+         */
+        return (
+          <li
+            key={labelText}
+            style={{
+              // These styles format the lefthand side menu items.
+              // Nothing special here. We can conditionally apply
+              // styles based on in/active states, if we like.
+              width: '100%',
+              transition: 'background 0.1s ease',
+              padding: '5px 10px',
+              fontWeight: 'normal',
+              background: 'inherit',
+            }}
+          >
+            <button style={buttonStyles}>
+              <span style={iconStyles} aria-hidden>
+                {icon}
+              </span>
+              <span style={labelStyles}>{labelText}</span>
+            </button>
+            <ul>
+              {subMenuConfig.map((item) => {
+                return (
+                  <li
+                    key={item.id}
+                    style={{
+                      // These styles format the lefthand side menu items.
+                      // Nothing special here. We can conditionally apply
+                      // styles based on in/active states, if we like.
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-start',
+                      width: '100%',
+                      transition: 'background 0.1s ease',
+                      padding: '5px 10px',
+                      fontWeight:
+                        activeSideMenuId === item.id ? 'bold' : 'normal',
+                      background:
+                        activeSideMenuId === item.id
+                          ? theme?.palette.primary.hue[100]
+                          : 'inherit',
+                    }}
+                  >
+                    <button
+                      style={buttonStyles}
+                      onClick={() => {
+                        onToggleSideMenuItem(activeSideMenuId === item.id);
+                        setActiveSideMenuId((currentId) => {
+                          return currentId === item.id ? undefined : item.id;
+                        });
+                        item.onClick();
+                      }}
+                    >
+                      <span style={{ fontSize: '0.9em', marginRight: '0.5em' }}>
+                        {item.labelText}
+                      </span>
+                      <span style={iconStyles} aria-hidden>
+                        {item.icon}
+                      </span>
+                      {/**
+                       * This div contains a chip that indicates which map type is active. The chip persists even if a different side nav item is selected
+                       */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          flexGrow: 1,
+                          marginLeft: '0.5em',
+                          width: '3.5em',
+                        }}
+                      >
+                        {item.isActive && (
+                          <Chip
+                            text="active"
+                            themeRole="primary"
+                            staticState="hover"
+                          />
+                        )}
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </li>
+        );
+      }
+    }
+  );
+  return (
+    <div>
+      <ul style={{ margin: 0, padding: 0 }}>{sideNavigationItems}</ul>
+    </div>
   );
 }

@@ -10,14 +10,12 @@ import {
   number,
   array,
   record,
-  NullType,
 } from 'io-ts';
 import * as t from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
 
 import { CompleteCasesTable } from '../api/DataClient';
 import { Filter } from './filter';
-import { VariableDescriptor } from './variable';
 
 /**
  * Metadata for the visualization object stored in user's analysis
@@ -32,6 +30,11 @@ export const VisualizationDescriptor = intersection([
     thumbnail: string,
     // new props to store filters at fullscreen mode
     currentPlotFilters: array(Filter),
+    /**
+     * can be used to provide additional context for the viz
+     * i.e. we can assign mapType to applicationContext and use it to filter map visualizations by marker
+     */
+    applicationContext: string,
   }),
 ]);
 
