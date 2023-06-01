@@ -322,9 +322,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const variablesForConstraints = useDeepValue({
     xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
     yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
-    overlayVariable: vizConfig.overlayVariable
-      ? providedOverlayVariableDescriptor ?? vizConfig.overlayVariable
-      : undefined,
+    overlayVariable:
+      vizConfig.overlayVariable &&
+      (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
     facetVariable: vizConfig.facetVariable,
   });
 

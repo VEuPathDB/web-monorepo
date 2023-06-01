@@ -295,9 +295,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
-    overlayVariable: vizConfig.overlayVariable
-      ? providedOverlayVariableDescriptor ?? vizConfig.overlayVariable
-      : undefined,
+    overlayVariable:
+      vizConfig.overlayVariable &&
+      (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
     facetVariable: vizConfig.facetVariable,
   });
 
