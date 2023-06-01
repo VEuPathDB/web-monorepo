@@ -38,6 +38,12 @@ module.exports = function configure(additionalConfig) {
         ],
       },
 
+      plugins: [
+        new baseConfig.webpack.ProvidePlugin({
+          process: 'process/browser',
+        }),
+      ],
+
       // Map external libraries Wdk exposes so we can do things like:
       //
       //    import Wdk from 'wdk;

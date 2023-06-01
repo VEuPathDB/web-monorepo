@@ -15,6 +15,8 @@ const isModern = process.env.BROWSERSLIST_ENV === 'modern';
 const outputSubDir = isModern ? 'modern' : 'legacy';
 console.log('BROWSERSLIST_ENV:', process.env.BROWSERSLIST_ENV);
 
+exports.webpack = webpack;
+
 /**
  * Creates a configuration function that is used by webpack. Takes a
  * configuration object, or an array of configuration objects, and merges them
