@@ -438,7 +438,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         !variablesAreUnique([
           xAxisVariable,
           yAxisVariable,
-          overlayVariable,
+          overlayVariable && (providedOverlayVariable ?? overlayVariable),
           facetVariable,
         ])
       )

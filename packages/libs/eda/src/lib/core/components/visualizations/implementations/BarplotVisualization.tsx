@@ -386,7 +386,13 @@ function BarplotViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
-      if (!variablesAreUnique([variable, overlayVariable, facetVariable]))
+      if (
+        !variablesAreUnique([
+          variable,
+          overlayVariable && (providedOverlayVariable ?? overlayVariable),
+          facetVariable,
+        ])
+      )
         throw new Error(nonUniqueWarning);
 
       assertValidInputVariables(
