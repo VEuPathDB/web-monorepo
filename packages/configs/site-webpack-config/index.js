@@ -26,7 +26,7 @@ module.exports = function configure(additionalConfig) {
         rules: [
           {
             test: /\.(js|jsx|ts|tsx)$/,
-            exclude: /node_modules\/(?!(@veupathdb))/,
+            exclude: [/node_modules/, /vendored/],
             enforce: 'pre',
             use: 'source-map-loader',
           },
