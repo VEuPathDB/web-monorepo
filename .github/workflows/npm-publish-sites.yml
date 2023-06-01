@@ -37,7 +37,7 @@ jobs:
         with:
           # cache directory
           path: packages/sites/${{ matrix.dir }}/node_modules/.cache/webpack/
-          key: ${{ GITHUB_REF_NAME }}-webpack-build
+          key: ${ GITHUB_REF_NAME }-webpack-build
           # fallback to use "main" branch cache
           restore-keys: |
             main-webpack-build
