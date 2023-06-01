@@ -1,17 +1,14 @@
-import { useCallback, useMemo, useEffect, ReactNode } from 'react';
+import { useCallback, useMemo } from 'react';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { VariableDescriptor } from '../types/variable';
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
 import { StudyEntity } from '../types/study';
 import {
   DataElementConstraintRecord,
-  disabledVariablesForInput,
   filterConstraints,
   VariablesByInputName,
 } from '../utils/data-element-constraints';
-import { isEqual } from 'lodash';
 import { ColorPaletteAddon } from '@veupathdb/components/lib/types/plots';
 import { Filter } from '../types/filter';
 
