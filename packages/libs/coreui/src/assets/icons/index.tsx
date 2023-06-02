@@ -1,10 +1,10 @@
-import React from "react";
-import { IconProps } from "./types";
-import Arrow from "./Arrow";
-import CaretDown from "./CaretDown";
-import CaretUp from "./CaretUp";
-import DoubleArrow from "./DoubleArrow";
-import Cancel from "./Cancel";
+import React from 'react';
+import type { IconProps } from './types';
+import Arrow from './Arrow';
+import CaretDown from './CaretDown';
+import CaretUp from './CaretUp';
+import DoubleArrow from './DoubleArrow';
+import Cancel from './Cancel';
 
 export { IconProps, Arrow, CaretDown, CaretUp, DoubleArrow, Cancel };
 
