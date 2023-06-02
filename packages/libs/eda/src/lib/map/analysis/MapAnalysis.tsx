@@ -791,7 +791,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const intialActiveSideMenuId: string | undefined = (() => {
     if (
       appState.activeVisualizationId &&
-      appState.activeMarkerConfigurationType
+      appState.activeMarkerConfigurationType &&
+      MarkerTypeLabels[appState.activeMarkerConfigurationType]
     )
       return (
         MapSideNavItemLabels.MapType +
