@@ -17,11 +17,7 @@ import {
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
 import { VariableDescriptor } from '../../types/variable';
-import {
-  Computation,
-  Visualization,
-  VisualizationOverview,
-} from '../../types/visualization';
+import { Computation, VisualizationOverview } from '../../types/visualization';
 import { Grid } from '../Grid';
 
 import './Visualizations.scss';
@@ -38,20 +34,16 @@ import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
-import { plugins } from '../computations/plugins';
+import { plugins as staticPlugins } from '../computations/plugins';
 import { AnalysisState } from '../../hooks/analysis';
 import { ComputationAppOverview } from '../../types/visualization';
 import { VisualizationPlugin } from './VisualizationPlugin';
-import { Modal, H6, Paragraph, H5 } from '@veupathdb/coreui';
+import { Modal } from '@veupathdb/coreui';
 import { useVizIconColors } from './implementations/selectorIcons/types';
 import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
-import {
-  JobStatus,
-  isTerminalStatus,
-} from '../computations/ComputeJobStatusHook';
+import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
-import RelaxMicrobeSVG from './relaxMicrobe';
-import EmptyPlotSVG from './emptyPlot';
+import { ComputationPlugin } from '../computations/Types';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -59,11 +51,6 @@ interface Props {
   analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
   computation: Computation;
-  updateVisualizations: (
-    visualizations:
-      | Visualization[]
-      | ((visualizations: Visualization[]) => Visualization[])
-  ) => void;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
@@ -77,6 +64,8 @@ interface Props {
   disableThumbnailCreation?: boolean;
   computeJobStatus?: JobStatus;
   createComputeJob?: () => void;
+  /** optional dynamic plugins */
+  plugins?: Partial<Record<string, ComputationPlugin>>;
 }
 
 /**
@@ -150,17 +139,17 @@ function ConfiguredVisualizations(props: Props) {
     analysisState,
     computation,
     computationAppOverview,
-    updateVisualizations,
     visualizationsOverview,
     baseUrl,
     isSingleAppMode,
     computeJobStatus,
+    plugins = staticPlugins,
   } = props;
   const { url } = useRouteMatch();
   const plugin = computation && plugins[computation.descriptor.type];
   const isComputationConfigurationValid =
     computation &&
-    !!plugin.isConfigurationValid(computation.descriptor.configuration);
+    !!plugin?.isConfigurationValid(computation.descriptor.configuration);
 
   return (
     <>
@@ -203,10 +192,8 @@ function ConfiguredVisualizations(props: Props) {
                           type="button"
                           className="link"
                           onClick={() => {
-                            updateVisualizations((visualizations) =>
-                              visualizations.filter(
-                                (v) => v.visualizationId !== viz.visualizationId
-                              )
+                            analysisState.deleteVisualization(
+                              viz.visualizationId
                             );
                             /* 
                               Here we're deleting the computation in the event we delete
@@ -232,17 +219,19 @@ function ConfiguredVisualizations(props: Props) {
                         <button
                           type="button"
                           className="link"
-                          onClick={() =>
-                            updateVisualizations((visualizations) =>
-                              visualizations.concat({
-                                ...viz,
-                                displayName: `Copy of ${
-                                  viz.displayName ?? 'visualization'
-                                }`,
-                                visualizationId: uuid(),
-                              })
-                            )
-                          }
+                          onClick={() => {
+                            const newViz = {
+                              ...viz,
+                              displayName: `Copy of ${
+                                viz.displayName ?? 'visualization'
+                              }`,
+                              visualizationId: uuid(),
+                            };
+                            analysisState.addVisualization(
+                              computation.computationId,
+                              newViz
+                            );
+                          }}
                         >
                           <i className="fa fa-clone"></i>
                         </button>
@@ -305,11 +294,12 @@ function ConfiguredVisualizations(props: Props) {
 }
 
 type NewVisualizationPickerPropKeys =
+  | 'analysisState'
   | 'visualizationPlugins'
   | 'visualizationsOverview'
-  | 'updateVisualizations'
   | 'computation'
-  | 'geoConfigs';
+  | 'geoConfigs'
+  | 'plugins';
 
 interface NewVisualizationPickerProps
   extends Pick<Props, NewVisualizationPickerPropKeys> {
@@ -320,119 +310,11 @@ interface NewVisualizationPickerProps
   includeHeader?: boolean;
 }
 
-export function NewVisualizationPickerGrouped(
-  props: NewVisualizationPickerProps
-) {
-  const {
-    visualizationPlugins,
-    visualizationsOverview,
-    updateVisualizations,
-    computation,
-    geoConfigs,
-    onVisualizationCreated = function (visualizationId, computationId) {
-      history.replace(`../${computationId}/${visualizationId}`);
-    },
-    includeHeader,
-  } = props;
-  const colors = useVizIconColors();
-  const history = useHistory();
-  const { computationId } = computation;
-  return (
-    <>
-      {includeHeader && (
-        <H5
-          additionalStyles={{
-            margin: '5px 0 5px 0',
-          }}
-        >
-          Select a visualization
-        </H5>
-      )}
-      {groupVisualizations(visualizationsOverview).map((vizGroup) => (
-        <div className={cx('-GroupedPickerContainer')} key={vizGroup.groupName}>
-          <div className={cx('-GroupedPickerEntryHeadline')}>
-            <H6
-              additionalStyles={{
-                margin: 0,
-              }}
-            >
-              {vizGroup.groupName}
-            </H6>
-            <Paragraph styleOverrides={{ margin: '5px 0' }}>
-              {vizGroup.groupDescription}
-            </Paragraph>
-          </div>
-          <div className={cx('-GroupedPickerEntryList')}>
-            {vizGroup.groupVisualizationsList.map((vizOverview) => {
-              const vizPlugin = visualizationPlugins[vizOverview.name!];
-              const disabled =
-                vizPlugin == null ||
-                (vizPlugin.isEnabledInPicker != null &&
-                  vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
-              return (
-                <div
-                  className={cx(
-                    '-PickerEntry',
-                    disabled && 'disabled',
-                    'marginRight'
-                  )}
-                  key={`vizType${vizOverview.name}`}
-                >
-                  <Tooltip title={<>{vizOverview.description}</>}>
-                    <button
-                      style={{
-                        cursor: disabled ? 'not-allowed' : 'cursor',
-                      }}
-                      type="button"
-                      disabled={disabled}
-                      onClick={async () => {
-                        const visualizationId = uuid();
-                        updateVisualizations((visualizations) =>
-                          visualizations.concat({
-                            visualizationId,
-                            displayName: 'Unnamed visualization',
-                            descriptor: {
-                              type: vizOverview.name!,
-                              configuration: vizPlugin?.createDefaultConfig(),
-                            },
-                          })
-                        );
-                        onVisualizationCreated(visualizationId, computationId);
-                      }}
-                    >
-                      {vizPlugin ? (
-                        <vizPlugin.selectorIcon {...colors} />
-                      ) : (
-                        <PlaceholderIcon name={vizOverview.name} />
-                      )}
-                    </button>
-                  </Tooltip>
-                  <div className={cx('-PickerEntryName')}>
-                    <div>
-                      {vizOverview.displayName
-                        ?.split(/(, )/g)
-                        .map((str) => (str === ', ' ? <br /> : str))}
-                    </div>
-                    {vizPlugin == null && <i>(Coming soon!)</i>}
-                    {vizPlugin != null && disabled && (
-                      <i>(Not applicable to this study)</i>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      ))}
-    </>
-  );
-}
-
 export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
   const {
+    analysisState,
     visualizationPlugins,
     visualizationsOverview,
-    updateVisualizations,
     computation,
     geoConfigs,
     onVisualizationCreated = function (visualizationId, computationId) {
@@ -485,15 +367,16 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
                     disabled={disabled}
                     onClick={async () => {
                       const visualizationId = uuid();
-                      updateVisualizations((visualizations) =>
-                        visualizations.concat({
+                      analysisState.addVisualization(
+                        computation.computationId,
+                        {
                           visualizationId,
                           displayName: 'Unnamed visualization',
                           descriptor: {
                             type: vizOverview.name!,
                             configuration: vizPlugin?.createDefaultConfig(),
                           },
-                        })
+                        }
                       );
                       onVisualizationCreated(visualizationId, computationId);
                     }}
@@ -554,7 +437,6 @@ type FullScreenVisualizationPropKeys =
   | 'computationAppOverview'
   | 'visualizationPlugins'
   | 'visualizationsOverview'
-  | 'updateVisualizations'
   | 'computation'
   | 'filters'
   | 'starredVariables'
@@ -566,7 +448,8 @@ type FullScreenVisualizationPropKeys =
   | 'isSingleAppMode'
   | 'disableThumbnailCreation'
   | 'computeJobStatus'
-  | 'createComputeJob';
+  | 'createComputeJob'
+  | 'plugins';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -582,7 +465,6 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     visualizationPlugins,
     visualizationsOverview,
     id,
-    updateVisualizations,
     computation,
     filters,
     starredVariables,
@@ -596,10 +478,11 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     actions,
     computeJobStatus,
     createComputeJob,
+    plugins = staticPlugins,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
-  const viz = computation.visualizations.find((v) => v.visualizationId === id);
+  const viz = computation.visualizations.find((v) => v.visualizationId === id); // TO DO: use analysisState.getVisualization? does more work though
   const vizPlugin = viz && visualizationPlugins[viz.descriptor.type];
   const overviews = useMemo(
     () =>
@@ -612,60 +495,57 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
   const constraints = overview?.dataElementConstraints;
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
 
-  const updateConfiguration = useCallback(
-    (configuration: unknown) => {
-      updateVisualizations((visualizations) =>
-        visualizations.map((v) =>
-          v.visualizationId !== id
-            ? v
-            : { ...v, descriptor: { ...v.descriptor, configuration } }
-        )
-      );
-    },
-    [updateVisualizations, id]
-  );
-
-  // store a ref to the latest version of updateVisualizations
-  const updateVisualizationsRef = useRef(updateVisualizations);
-
+  // store a ref to the latest version of the visualization
+  // to avoid using the viz as a dependency in the currentPlotFilters effect below
+  const vizRef = useRef(viz);
   // whenever updateVisualizations changes, update the updateVisualizationsRef
   useEffect(() => {
-    updateVisualizationsRef.current = updateVisualizations;
-  }, [updateVisualizations]);
+    vizRef.current = viz;
+  }, [viz]);
 
   // update currentPlotFilters with the latest filters at fullscreen mode
   useEffect(() => {
-    updateVisualizationsRef.current((visualizations) =>
-      visualizations.map((v) =>
-        v.visualizationId !== id
-          ? v
-          : {
-              ...v,
-              descriptor: { ...v.descriptor, currentPlotFilters: filters },
-            }
-      )
-    );
-  }, [filters, id]);
+    const v = vizRef.current;
+    if (v != null)
+      analysisState.updateVisualization({
+        ...v,
+        descriptor: { ...v.descriptor, currentPlotFilters: filters },
+      });
+  }, [filters, analysisState.updateVisualization]);
+
+  // regular updater (no ref)
+  const updateConfiguration = useCallback(
+    (configuration: unknown) => {
+      if (viz != null) {
+        analysisState.updateVisualization({
+          ...viz,
+          descriptor: { ...viz.descriptor, configuration },
+        });
+      }
+    },
+    [analysisState.updateVisualization, viz]
+  );
 
   // Function to update the thumbnail on the configured viz selection page
+  // use a ref because it's used in an effect
   const updateThumbnail = useCallback(
     (thumbnail: string) => {
-      updateVisualizations((visualizations) =>
-        visualizations.map((v) =>
-          v.visualizationId !== id
-            ? v
-            : { ...v, descriptor: { ...v.descriptor, thumbnail } }
-        )
-      );
+      const v = vizRef.current;
+      if (v != null)
+        analysisState.updateVisualization({
+          ...v,
+          descriptor: { ...v.descriptor, thumbnail },
+        });
     },
-    [updateVisualizations, id]
+    [analysisState.updateVisualization]
   );
+
   if (viz == null) return <div>Visualization not found.</div>;
   if (vizPlugin == null) return <div>Visualization type not implemented.</div>;
 
   const { computationId } = computation;
-  const plugin = plugins[computation.descriptor.type] ?? undefined;
-  const isComputationConfigurationValid = !!plugin.isConfigurationValid(
+  const plugin = plugins[computation.descriptor.type];
+  const isComputationConfigurationValid = !!plugin?.isConfigurationValid(
     computation.descriptor.configuration
   );
 
@@ -690,9 +570,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   className="link"
                   onClick={() => {
                     if (viz == null) return;
-                    updateVisualizations((visualizations) =>
-                      visualizations.filter((v) => v.visualizationId !== id)
-                    );
+                    analysisState.deleteVisualization(viz.visualizationId);
                     /* 
                       Here we're deleting the computation in the event we delete
                       the computation's last remaining visualization.
@@ -726,15 +604,13 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   onClick={() => {
                     if (viz == null) return;
                     const vizCopyId = uuid();
-                    updateVisualizations((visualizations) =>
-                      visualizations.concat({
-                        ...viz,
-                        visualizationId: vizCopyId,
-                        displayName:
-                          'Copy of ' +
-                          (viz.displayName || 'unnamed visualization'),
-                      })
-                    );
+                    analysisState.addVisualization(computation.computationId, {
+                      ...viz,
+                      visualizationId: vizCopyId,
+                      displayName:
+                        'Copy of ' +
+                        (viz.displayName || 'unnamed visualization'),
+                    });
                     history.replace(
                       Path.resolve(history.location.pathname, '..', vizCopyId)
                     );
@@ -771,15 +647,11 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
             <SaveableTextEditor
               value={viz.displayName ?? 'unnamed visualization'}
               onSave={(value) => {
-                if (value) {
-                  updateVisualizations((visualizations) =>
-                    visualizations.map((v) =>
-                      v.visualizationId !== id
-                        ? v
-                        : { ...v, displayName: value }
-                    )
-                  );
-                }
+                if (value)
+                  analysisState.updateVisualization({
+                    ...viz,
+                    displayName: value,
+                  });
               }}
             />
           </h3>

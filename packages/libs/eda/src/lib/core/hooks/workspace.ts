@@ -25,6 +25,12 @@ import { ComputeClient } from '../api/ComputeClient';
 import { DownloadClient } from '../api';
 import { Filter } from '../types/filter';
 import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  useFeaturedFieldsFromTree,
+  useFieldTree,
+  useFlattenedFields,
+} from '../components/variableTrees/hooks';
+import { findFirstVariable } from '../../workspace/Utils';
 
 /** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
@@ -116,12 +122,68 @@ export function useStudyEntities(filters?: Filter[]) {
                         : filter.type === 'stringSet'
                         ? filter.stringSet
                         : undefined;
-                    // augment variable metadata
-                    return {
-                      ...variable,
-                      vocabulary,
-                      distinctValuesCount: vocabulary?.length ?? 0,
-                    };
+                    // need to strip 'T00:00:00Z' from filter.min/max
+                    const filterRange =
+                      filter.type === 'numberRange' ||
+                      filter.type === 'dateRange'
+                        ? {
+                            min:
+                              filter.type === 'numberRange'
+                                ? filter.min
+                                : filter.min.split('T00:00:00Z')[0],
+                            max:
+                              filter.type === 'numberRange'
+                                ? filter.max
+                                : filter.max.split('T00:00:00Z')[0],
+                          }
+                        : undefined;
+
+                    // augment variable metadata including filter-aware axis range
+                    if (
+                      variable.type === 'number' ||
+                      variable.type === 'integer'
+                    )
+                      return {
+                        ...variable,
+                        vocabulary,
+                        distributionDefaults: {
+                          ...variable.distributionDefaults,
+                          rangeMin:
+                            filterRange != null
+                              ? (filterRange.min as number)
+                              : (variable.distributionDefaults
+                                  .rangeMin as number),
+                          rangeMax:
+                            filterRange != null
+                              ? (filterRange.max as number)
+                              : (variable.distributionDefaults
+                                  .rangeMax as number),
+                        },
+                      };
+                    else if (variable.type === 'date')
+                      return {
+                        ...variable,
+                        vocabulary,
+                        distributionDefaults: {
+                          ...variable.distributionDefaults,
+                          rangeMin:
+                            filterRange != null
+                              ? (filterRange.min as string)
+                              : (variable.distributionDefaults
+                                  .rangeMin as string),
+                          rangeMax:
+                            filterRange != null
+                              ? (filterRange.max as string)
+                              : (variable.distributionDefaults
+                                  .rangeMax as string),
+                        },
+                      };
+                    else
+                      return {
+                        ...variable,
+                        vocabulary,
+                        distinctValuesCount: vocabulary?.length ?? 0,
+                      };
                   }
                   return variable;
                 }
@@ -153,4 +215,50 @@ function defaultMakeVariableLink({
     : entityId
     ? `/variables/${entityId}`
     : `/variables`;
+}
+
+/**
+ * TODO: This is pasted directly `DefaultVariableRedirect`. Cover this hook by some
+ * kind of test and simplify its logic.
+ */
+export function useGetDefaultVariableDescriptor() {
+  const entities = useStudyEntities();
+  const flattenedFields = useFlattenedFields(entities, 'variableTree');
+  const fieldTree = useFieldTree(flattenedFields);
+  const featuredFields = useFeaturedFieldsFromTree(fieldTree);
+
+  return useCallback(
+    function getDefaultVariableDescriptor(entityId?: string) {
+      let finalEntityId;
+      let finalVariableId;
+
+      if (entityId || featuredFields.length === 0) {
+        // Use the first variable in the entity
+        const entity = entityId
+          ? entities.find((e) => e.id === entityId)
+          : entities[0];
+
+        if (entity) {
+          finalEntityId = entity.id;
+
+          const firstVariable = findFirstVariable(
+            fieldTree,
+            entity.id
+          )?.field.term.split('/')[1];
+
+          finalVariableId = firstVariable || '';
+        }
+      } else {
+        // Use the first featured variable
+        [finalEntityId, finalVariableId] = featuredFields[0].term.split('/');
+      }
+
+      if (finalEntityId == null || finalVariableId == null) {
+        throw new Error('Could not find a default variable.');
+      }
+
+      return { entityId: finalEntityId, variableId: finalVariableId };
+    },
+    [entities, featuredFields, fieldTree]
+  );
 }

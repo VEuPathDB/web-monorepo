@@ -3,7 +3,7 @@ import React, { Suspense, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Redirect } from 'react-router';
 
-import { communitySite, edaEnableFullScreenApps, projectId } from './config';
+import { communitySite } from './config';
 
 import TreeDataViewerController from './controllers/TreeDataViewerController';
 import ContactUsController from './controllers/ContactUsController';
@@ -63,7 +63,6 @@ export const wrapRoutes = (wdkRoutes) => [
             sharingUrlPrefix={window.location.origin}
             showLoginForm={showLoginForm}
             singleAppMode={edaSingleAppMode}
-            enableFullScreenApps={edaEnableFullScreenApps}
           />
         </Suspense>
       );
@@ -71,11 +70,25 @@ export const wrapRoutes = (wdkRoutes) => [
   },
 
   {
-    path: '/maps',
+    path: '/workspace/maps',
+    exact: true,
+    component: EdaMapController,
+  },
+
+  {
+    path: '/workspace/maps',
     exact: false,
     isFullscreen: true,
     rootClassNameModifier: 'MapVEu',
     component: EdaMapController,
+  },
+
+  {
+    path: '/maps',
+    exact: false,
+    isFullscreen: true,
+    rootClassNameModifier: 'MapVEu',
+    component: () => <Redirect to="/workspace/maps" />,
   },
 
   {

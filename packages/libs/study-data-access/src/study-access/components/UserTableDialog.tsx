@@ -6,8 +6,8 @@ import { Dialog, TextArea } from '@veupathdb/wdk-client/lib/Components';
 
 import { cx } from './StudyAccess';
 
-export const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
+export const EMAIL_REGEX =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export interface Props {
   title: React.ReactNode;
@@ -15,11 +15,7 @@ export interface Props {
   onClose: () => void;
 }
 
-export function UserTableDialog({
-  title,
-  content,
-  onClose
-}: Props) {
+export function UserTableDialog({ title, content, onClose }: Props) {
   return (
     <Dialog
       className={cx('--UserTableDialog')}
@@ -34,28 +30,35 @@ export function UserTableDialog({
 }
 
 export type ContentProps =
-  | { type: 'access-denial' } & AccessDenialContentProps
-  | { type: 'add-users' } & AddUsersContentProps
-  | { type: 'users-added' } & UsersAddedContentProps;
+  | ({ type: 'access-denial' } & AccessDenialContentProps)
+  | ({ type: 'add-users' } & AddUsersContentProps)
+  | ({ type: 'users-added' } & UsersAddedContentProps);
 
 export interface AccessDenialContentProps {
   userName: string;
   onSubmit: (denialReason: string) => void;
 }
 
-export function AccessDenialContent({ onSubmit, userName }: AccessDenialContentProps) {
-  const [ denialReason, setDenialReason ] = useState('');
+export function AccessDenialContent({
+  onSubmit,
+  userName,
+}: AccessDenialContentProps) {
+  const [denialReason, setDenialReason] = useState('');
 
   return (
     <form
       className={cx('--AccessDenialContent')}
-      onSubmit={event => {
+      onSubmit={(event) => {
         event.preventDefault();
         onSubmit(denialReason);
       }}
     >
       <div className={cx('--AccessDenialReason')}>
-        <p>You are denying {userName} access to this study. Please provide a reason:</p>
+        <p>
+          You are denying {userName} access to this study. Please provide a
+          reason for the denial and indicate what additional information is
+          needed for the request to be approved:
+        </p>
         <TextArea
           required
           value={denialReason}
@@ -65,10 +68,7 @@ export function AccessDenialContent({ onSubmit, userName }: AccessDenialContentP
         />
       </div>
       <div className={cx('--AccessDenialSubmit')}>
-        <button
-          type="submit"
-          className="btn"
-        >
+        <button type="submit" className="btn">
           Submit
         </button>
       </div>
@@ -83,55 +83,61 @@ export interface AddUsersContentProps {
 
 export function AddUsersContent({
   permissionNamePlural,
-  onSubmit
+  onSubmit,
 }: AddUsersContentProps) {
-  const [ emailField, setEmailField ] = useState('');
-  const [ userEmails, setUserEmails ] = useState<string[]>([]);
+  const [emailField, setEmailField] = useState('');
+  const [userEmails, setUserEmails] = useState<string[]>([]);
 
   const ref = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    const draftEmails = emailField.split(/[,;\s]+/g).filter(x => x.length > 0);
+    const draftEmails = emailField
+      .split(/[,;\s]+/g)
+      .filter((x) => x.length > 0);
 
-    const [ validEmails, invalidEmails ] = partition(draftEmails, email => EMAIL_REGEX.test(email));
+    const [validEmails, invalidEmails] = partition(draftEmails, (email) =>
+      EMAIL_REGEX.test(email)
+    );
 
     setUserEmails(validEmails);
 
     if (ref.current != null) {
       if (invalidEmails.length > 0) {
-        ref.current.setCustomValidity(`Please correct the following emails: ${invalidEmails.join(', ')}.`);
+        ref.current.setCustomValidity(
+          `Please correct the following emails: ${invalidEmails.join(', ')}.`
+        );
       } else {
         ref.current.setCustomValidity('');
       }
     }
-  }, [ emailField ]);
+  }, [emailField]);
 
   return (
     <form
       className={cx('--AddUsersContent')}
-      onSubmit={event => {
+      onSubmit={(event) => {
         event.preventDefault();
         onSubmit(userEmails);
       }}
     >
       <div className={cx('--AddUsersEmailField')}>
-        <p>Please input the email(s) of the {permissionNamePlural} you wish to add:</p>
+        <p>
+          Please input the email(s) of the {permissionNamePlural} you wish to
+          add:
+        </p>
         <textarea
           required
           ref={ref}
           value={emailField}
           onChange={(e) => {
-            setEmailField(e.target.value)
+            setEmailField(e.target.value);
           }}
           rows={6}
           cols={100}
         />
       </div>
       <div className={cx('--AddUsersSubmit')}>
-        <button
-          type="submit"
-          className="btn"
-        >
+        <button type="submit" className="btn">
           Submit
         </button>
       </div>
@@ -152,48 +158,41 @@ export function UsersAddedContent({
   emailedUsers,
   permissionName,
   permissionNamePlural,
-  onConfirm
+  onConfirm,
 }: UsersAddedContentProps) {
   return (
     <div className={cx('--UsersAddedContent')}>
-      {
-        createdUsers.length > 0 &&
+      {createdUsers.length > 0 && (
         <div className={cx('--UsersAddedCreatedUsers')}>
           <h2>Added Users:</h2>
-          <p>The following users have been granted {permissionName}-level access to this study:</p>
+          <p>
+            The following users have been granted {permissionName}-level access
+            to this study:
+          </p>
           <ul>
-            {
-              createdUsers.map(
-                (createdUser, i) => (
-                  <li key={i}>{createdUser}</li>
-                )
-              )
-            }
+            {createdUsers.map((createdUser, i) => (
+              <li key={i}>{createdUser}</li>
+            ))}
           </ul>
         </div>
-      }
-      {
-        emailedUsers.length > 0 &&
+      )}
+      {emailedUsers.length > 0 && (
         <div className={cx('--UsersAddedEmailedUsers')}>
           <h2>Emailed Users:</h2>
-          <p>The following users could not be granted {permissionName}-level access, as they do not have an existing account. They have been invited to register with us:</p>
+          <p>
+            The following users could not be granted {permissionName}-level
+            access, as they do not have an existing account. They have been
+            invited to register with us:
+          </p>
           <ul>
-            {
-              emailedUsers.map(
-                (emailedUser, i) => (
-                  <li key={i}>{emailedUser}</li>
-                )
-              )
-            }
+            {emailedUsers.map((emailedUser, i) => (
+              <li key={i}>{emailedUser}</li>
+            ))}
           </ul>
         </div>
-      }
+      )}
       <div className={cx('--UsersAddedConfirm')}>
-        <button
-          type="button"
-          className="btn"
-          onClick={onConfirm}
-        >
+        <button type="button" className="btn" onClick={onConfirm}>
           OK
         </button>
       </div>

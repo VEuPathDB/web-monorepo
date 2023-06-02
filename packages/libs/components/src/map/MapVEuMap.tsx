@@ -34,9 +34,10 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { LatLngBounds, Map } from 'leaflet';
+import { LatLngBounds, Map, DomEvent } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
+import { Undo } from '@veupathdb/coreui';
 
 // define Viewport type
 export type Viewport = {
@@ -93,7 +94,7 @@ export const baseLayers = {
       '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     // minZoom='2'
     // maxZoom='18'
-    // noWrap='0'
+    // noWrap='0
   },
 };
 
@@ -451,10 +452,14 @@ interface CustomZoomControlProps {
 function CustomZoomControl(props: CustomZoomControlProps) {
   const map = useMap();
 
+  const disableMinZoomButton =
+    map.getZoom() <= map.getMinZoom() ? 'leaflet-disabled' : '';
+  const disableMaxZoomButton =
+    map.getZoom() >= map.getMaxZoom() ? 'leaflet-disabled' : '';
+
   // zoom in
   const zoomIn = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // map.doubleClickZoom.disable();
     map.setZoom(map.getZoom() + 1);
   };
 
@@ -462,21 +467,6 @@ function CustomZoomControl(props: CustomZoomControlProps) {
   const zoomOut = (e: React.SyntheticEvent) => {
     e.preventDefault();
     map.setZoom(map.getZoom() - 1);
-  };
-
-  // zoom to whole world
-  const zoomToWholeWorld = (e: React.SyntheticEvent) => {
-    // with zoom level 1, then center: [1,1] works
-    const epsilon = 1.0;
-    e.preventDefault();
-    if (props.defaultViewport)
-      map.setView(
-        [
-          props.defaultViewport.center[0] + epsilon,
-          props.defaultViewport.center[1] + epsilon,
-        ],
-        props.defaultViewport.zoom
-      );
   };
 
   // zoom to data: using flyTo function implicitly
@@ -488,50 +478,50 @@ function CustomZoomControl(props: CustomZoomControlProps) {
 
   return (
     <div
-      className="leaflet-top leaflet-right"
-      style={{ top: '0px', right: '-3px' }}
+      className="leaflet-control-container"
+      ref={(ref) => {
+        if (!ref) return;
+        DomEvent.disableClickPropagation(ref).disableScrollPropagation(ref);
+      }}
     >
-      <div className="leaflet-control-zoom leaflet-bar leaflet-control">
-        <a
-          className="leaflet-control-zoom-in"
-          href="/"
-          title="Zoom in"
-          role="button"
-          aria-label="Zoom in"
-          onClick={zoomIn}
-        >
-          +
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="/"
-          title="Zoom out"
-          role="button"
-          aria-label="Zoom out"
-          onClick={zoomOut}
-        >
-          −
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="/"
-          title="zoom to whole world"
-          role="button"
-          aria-label="zoom to whole world"
-          onClick={zoomToWholeWorld}
-        >
-          <i className="fa fa-globe"></i>
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="/"
-          title="zoom to data"
-          role="button"
-          aria-label="zoom to data"
-          onClick={zoomToData}
-        >
-          <i className="fa fa-map-marker"></i>
-        </a>
+      <div
+        className="leaflet-top leaflet-right"
+        style={{ top: '0px', right: '-3px' }}
+      >
+        <div className="leaflet-control-zoom leaflet-bar leaflet-control">
+          <a
+            className={'leaflet-control-zoom-in' + disableMaxZoomButton}
+            href="#"
+            title="Zoom in"
+            role="button"
+            aria-label="Zoom in"
+            onClick={zoomIn}
+          >
+            <span aria-hidden="true">+</span>
+          </a>
+          <a
+            className={'leaflet-control-zoom-out' + disableMinZoomButton}
+            href="#"
+            title="Zoom out"
+            role="button"
+            aria-label="Zoom out"
+            onClick={zoomOut}
+          >
+            <span aria-hidden="true">-</span>
+          </a>
+          <a
+            className="leaflet-control-zoom-out"
+            href="#"
+            title="zoom to data"
+            role="button"
+            aria-label="zoom to data"
+            onClick={zoomToData}
+          >
+            <div style={{ paddingTop: '4px' }}>
+              <Undo />
+            </div>
+          </a>
+        </div>
       </div>
     </div>
   );

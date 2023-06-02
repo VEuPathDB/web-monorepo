@@ -1,5 +1,3 @@
-import Path from 'path';
-import { useHistory } from 'react-router-dom';
 import { ComputationAppOverview } from '../../types/visualization';
 import { ComputationPlugin } from './Types';
 import { orderBy, isEqual } from 'lodash';
@@ -16,26 +14,41 @@ import { useVizIconColors } from '../visualizations/implementations/selectorIcon
 
 interface Props {
   analysisState: AnalysisState;
-  baseUrl: string;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
+  onVisualizationCreated: (
+    visualizationId: string,
+    computationId: string
+  ) => void;
+  showHeading?: boolean;
+  tightLayout?: boolean; // the implementation of this is open to improvement!
+  applicationContext?: string;
 }
 
 export function StartPage(props: Props) {
-  const { analysisState, apps, plugins } = props;
+  const {
+    analysisState,
+    apps,
+    plugins,
+    onVisualizationCreated,
+    showHeading = true,
+    tightLayout = false,
+    applicationContext = null,
+  } = props;
   const cx = makeClassNameHelper('VisualizationsContainer');
   const studyMetadata = useStudyMetadata();
-  const history = useHistory();
   const colors = useVizIconColors();
 
   return (
     apps &&
     plugins && (
       <div>
-        <H5
-          text={'Select a visualization'}
-          additionalStyles={{ marginTop: 15, marginBottom: 5 }}
-        />
+        {showHeading && (
+          <H5
+            text={'Select a visualization'}
+            additionalStyles={{ marginTop: 15, marginBottom: 5 }}
+          />
+        )}
         <div
           style={{
             display: 'flex',
@@ -43,18 +56,25 @@ export function StartPage(props: Props) {
           }}
         >
           {/* orderBy renders available apps ahead of those in development */}
-          {orderBy(apps, [(app) => (plugins[app.name] ? 1 : 0)], ['desc']).map(
-            (app) => (
+          {apps
+            .filter((app) => plugins[app.name] != null)
+            .map((app) => (
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'auto 4fr',
-                  padding: '1em',
+                  gridTemplateColumns: tightLayout ? 'auto' : 'auto 4fr',
+                  padding: tightLayout ? '0em' : '1em',
                   margin: '1em 0',
                 }}
                 key={app.name}
               >
-                <div style={{ width: '300px', margin: '0 8em' }}>
+                <div
+                  style={
+                    tightLayout
+                      ? { width: '100%' }
+                      : { width: '300px', margin: '0 8em' }
+                  }
+                >
                   <H6
                     text={app.displayName}
                     additionalStyles={{ margin: 0, marginBottom: 5 }}
@@ -86,7 +106,7 @@ export function StartPage(props: Props) {
                         className={cx('-PickerEntry', disabled && 'disabled')}
                         key={`vizType${index}`}
                         style={{
-                          margin: '0 3em',
+                          margin: tightLayout ? '1em 1em' : '0 3em',
                         }}
                       >
                         <Tooltip title={<>{viz.description}</>}>
@@ -104,9 +124,10 @@ export function StartPage(props: Props) {
                                 return;
                               const computations =
                                 analysisState.analysis.descriptor.computations;
-                              const defaultComputationConfig = plugin.createDefaultConfiguration(
-                                studyMetadata.rootEntity
-                              );
+                              const defaultComputationConfig =
+                                plugin.createDefaultConfiguration(
+                                  studyMetadata.rootEntity
+                                );
                               /*
                                 The first instance of a configurable app will be derived by a default configuration.
                                 Here we're checking if a computation with a defaultConfig already exists.
@@ -124,7 +145,11 @@ export function StartPage(props: Props) {
                                 displayName: 'Unnamed visualization',
                                 descriptor: {
                                   type: viz.name!,
-                                  configuration: vizPlugin.createDefaultConfig(),
+                                  configuration:
+                                    vizPlugin.createDefaultConfig(),
+                                  ...(applicationContext != null
+                                    ? { applicationContext }
+                                    : {}),
                                 },
                               };
                               if (!existingComputation) {
@@ -138,20 +163,27 @@ export function StartPage(props: Props) {
                                   computation,
                                   ...computations,
                                 ]);
-                                history.push(
+                                onVisualizationCreated(
+                                  visualizationId,
+                                  computation.computationId
+                                );
+                                /*
+				   history.push(
                                   Path.resolve(
                                     history.location.pathname,
                                     '..',
                                     computation.computationId,
                                     visualizationId
                                   )
-                                );
+                                   );
+				   */
                               } else {
                                 const updatedComputation = {
                                   ...existingComputation,
-                                  visualizations: existingComputation.visualizations.concat(
-                                    newVisualization
-                                  ),
+                                  visualizations:
+                                    existingComputation.visualizations.concat(
+                                      newVisualization
+                                    ),
                                 };
                                 analysisState.setComputations([
                                   updatedComputation,
@@ -161,7 +193,12 @@ export function StartPage(props: Props) {
                                       updatedComputation.computationId
                                   ),
                                 ]);
-                                history.push(
+                                onVisualizationCreated(
+                                  visualizationId,
+                                  existingComputation.computationId
+                                );
+                                /*
+				history.push(
                                   Path.resolve(
                                     history.location.pathname,
                                     '..',
@@ -169,6 +206,7 @@ export function StartPage(props: Props) {
                                     visualizationId
                                   )
                                 );
+				*/
                               }
                             }}
                           >
@@ -192,8 +230,7 @@ export function StartPage(props: Props) {
                   })}
                 </div>
               </div>
-            )
-          )}
+            ))}
         </div>
       </div>
     )

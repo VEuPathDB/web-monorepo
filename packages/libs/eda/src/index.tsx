@@ -69,9 +69,6 @@ const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
 const showUnreleasedData =
   process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
 
-const enableFullScreenApps =
-  process.env.REACT_APP_ENABLE_FULL_SCREEN_APPS === 'true';
-
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
   : undefined;
@@ -162,7 +159,13 @@ initialize({
           <H3>MapVEu Links</H3>
           <ul>
             <li>
-              <Link to="/mapveu">Mapveu</Link>
+              <Link to="/maps">My analyses</Link>
+            </li>
+            <li>
+              <Link to="/maps/public">Public analyses</Link>
+            </li>
+            <li>
+              <Link to="/maps/studies">All studies</Link>
             </li>
           </ul>
         </div>
@@ -186,13 +189,12 @@ initialize({
             showLoginForm={showLoginForm}
             singleAppMode={singleAppMode}
             showUnreleasedData={showUnreleasedData}
-            enableFullScreenApps={enableFullScreenApps}
           />
         );
       },
     },
     {
-      path: '/mapveu',
+      path: '/maps',
       component: () => (
         <MapApp
           siteInformationProps={{

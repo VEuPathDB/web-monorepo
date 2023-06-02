@@ -3,6 +3,7 @@ import {
   RouteComponentProps,
   Switch,
   useRouteMatch,
+  useHistory,
 } from 'react-router';
 
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
@@ -10,7 +11,7 @@ import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 import { AnalysisList } from './MapVeuAnalysisList';
 import { MapAnalysis } from './analysis/MapAnalysis';
 
-import { StudyList } from './StudyList';
+import { AllAnalyses } from '../workspace/AllAnalyses';
 import {
   useConfiguredSubsettingClient,
   useConfiguredDataClient,
@@ -21,6 +22,8 @@ import {
 
 import './MapVEu.scss';
 import { SiteInformationProps } from '.';
+import { StudyList } from './StudyList';
+import { PublicAnalysesRoute } from '../workspace/PublicAnalysesRoute';
 
 interface Props {
   edaServiceUrl: string;
@@ -38,11 +41,34 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
   const analysisClient = useConfiguredAnalysisClient(edaServiceUrl);
   const downloadClient = useConfiguredDownloadClient(edaServiceUrl);
 
+  const history = useHistory();
+  function showLoginForm() {
+    const currentUrl = window.location.href;
+    const loginUrl = `${siteInformationProps.loginUrl}?destination=${currentUrl}`;
+    history.push(loginUrl);
+  }
+
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
   return (
     <Switch>
+      <Route
+        path={path}
+        exact
+        render={() => (
+          <AllAnalyses
+            analysisClient={analysisClient}
+            subsettingClient={edaClient}
+            showLoginForm={showLoginForm}
+          />
+        )}
+      />
+      <Route path={`${path}/studies`} exact render={() => <StudyList />} />
+      <Route
+        path={`${path}/public`}
+        render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
+      />
       <Route
         path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}
         render={(
@@ -89,7 +115,6 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           </EDAAnalysisListContainer>
         )}
       />
-      <Route path={path} component={StudyList} />
     </Switch>
   );
 }
