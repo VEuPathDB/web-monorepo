@@ -95,6 +95,11 @@ enum MapSideNavItemLabels {
   MapType = 'Map Type',
 }
 
+enum MarkerTypeLabels {
+  pie = 'Donuts',
+  barplot = 'Bar plots',
+}
+
 type SideNavigationItemConfigurationObject = {
   href?: string;
   labelText: MapSideNavItemLabels;
@@ -118,13 +123,6 @@ type SubMenuItems = {
   onClick: () => void;
   isActive: boolean;
 };
-
-function getSideNavItemIndexByLabel(
-  label: MapSideNavItemLabels,
-  navItems: SideNavigationItemConfigurationObject[]
-): number {
-  return navItems.findIndex((navItem) => navItem.labelText === label);
-}
 
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
@@ -444,16 +442,16 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
         subMenuConfig: [
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + 'Donuts',
-            labelText: 'Donuts',
+            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
+            labelText: MarkerTypeLabels.pie,
             icon: <DonutMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
             isActive: activeMarkerConfigurationType === 'pie',
           },
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + 'Bar plots',
-            labelText: 'Bar plots',
+            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.barplot,
+            labelText: MarkerTypeLabels.barplot,
             icon: <BarPlotMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
@@ -469,7 +467,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           const markerConfigurationObjects: MarkerConfigurationOption[] = [
             {
               type: 'pie',
-              displayName: 'Donuts',
+              displayName: MarkerTypeLabels.pie,
               icon: (
                 <DonutMarker
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
@@ -494,7 +492,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
             },
             {
               type: 'barplot',
-              displayName: 'Bar plots',
+              displayName: MarkerTypeLabels.barplot,
               icon: (
                 <BarPlotMarker
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
@@ -791,7 +789,15 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   }
 
   const intialActiveSideMenuId: string | undefined = (() => {
-    if (appState.activeVisualizationId) return MapSideNavItemLabels.MapType;
+    if (
+      appState.activeVisualizationId &&
+      appState.activeMarkerConfigurationType &&
+      MarkerTypeLabels[appState.activeMarkerConfigurationType]
+    )
+      return (
+        MapSideNavItemLabels.MapType +
+        MarkerTypeLabels[appState.activeMarkerConfigurationType]
+      );
 
     return undefined;
   })();
