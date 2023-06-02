@@ -14,7 +14,11 @@ export function makeCommonDevServerConfig({
       publicPath: '/',
     },
     watchOptions: {
-      ignored: '**/packages/*/*/src/**',
+      // Increase timeout from the default 20, since our build scripts
+      // frequently move files into the target dir in two phases. This
+      // increase seems to avoid two successive rebuilds.
+      aggregateTimeout: 600,
+      ignored: ['**/node_modules', '**/packages/*/*/src'],
     },
     devServer: {
       https: true,
