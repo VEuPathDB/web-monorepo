@@ -68,13 +68,13 @@ export function useCytoscapeConfig(
     elements,
     stylesheet,
     layout: {
-      name: 'fcose',
+      name: 'cola',
       animate: false,
-      idealEdgeLength: function (edge) {
-        if (edge.data.score) {
-          return edge.data.score + 500;
+      edgeLength: function (edge) {
+        if (edge.data('score')) {
+          return edge.data('score') + 500;
         }
-        return 600;
+        return 700;
       },
     },
     panningEnabled: true,

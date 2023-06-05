@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 
-import { Core,use } from 'cytoscape';
+import { Core, use } from 'cytoscape';
 import produce from 'immer';
-import fcose from 'cytoscape-fcose';
+import cola from 'cytoscape-cola';
 import CytoscapeComponent from 'react-cytoscapejs';
 
-use(fcose);
+use(cola);
 
 import { useCytoscapeConfig } from 'ortho-client/hooks/cytoscapeData';
 import {
@@ -13,17 +13,17 @@ import {
   useNodeClickEventHandler,
   useNodeMouseMovementEventHandlers,
   useUpdateHighlightedEdge,
-  useUpdateHighlightedNodes
+  useUpdateHighlightedNodes,
 } from 'ortho-client/hooks/cytoscapeEventHandlers';
 
 import {
   EdgeType,
   NodeDisplayType,
-  ProteinType
+  ProteinType,
 } from 'ortho-client/utils/clusterGraph';
 import {
   addCytoscapeClass,
-  removeCytoscapeClass
+  removeCytoscapeClass,
 } from 'ortho-client/utils/cytoscapeClasses';
 import { GroupLayout } from 'ortho-client/utils/groupLayout';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
@@ -55,27 +55,34 @@ export function ClusterGraphCanvas({
   highlightedLegendNodeIds,
   highlightedSequenceNodeId,
   highlightedBlastEdgeId,
-  onClickNode
+  onClickNode,
 }: Props) {
   const cyRef = useRef<Core>();
-  const [ cytoscapeConfig, setCytoscapeConfig ] = useCytoscapeConfig(
+  const [cytoscapeConfig, setCytoscapeConfig] = useCytoscapeConfig(
     layout,
     corePeripheralMap,
     taxonUiMetadata,
     selectedNodeDisplayType
   );
 
-  const updateHighlightedNodes = useUpdateHighlightedNodes(cytoscapeConfig, setCytoscapeConfig);
-  const updateHighlightedEdge = useUpdateHighlightedEdge(cyRef.current, cytoscapeConfig, setCytoscapeConfig);
+  const updateHighlightedNodes = useUpdateHighlightedNodes(
+    cytoscapeConfig,
+    setCytoscapeConfig
+  );
+  const updateHighlightedEdge = useUpdateHighlightedEdge(
+    cyRef.current,
+    cytoscapeConfig,
+    setCytoscapeConfig
+  );
 
   const onMouseLeaveCanvas = useCallback(() => {
     updateHighlightedNodes([]);
     updateHighlightedEdge(undefined);
-  }, [ updateHighlightedNodes, updateHighlightedEdge ]);
+  }, [updateHighlightedNodes, updateHighlightedEdge]);
 
   useEffect(() => {
-    const newConfig = produce(cytoscapeConfig, draftConfig => {
-      draftConfig.elements.forEach(element => {
+    const newConfig = produce(cytoscapeConfig, (draftConfig) => {
+      draftConfig.elements.forEach((element) => {
         if (element.group === 'nodes') {
           element.classes = selectedNodeDisplayType;
         }
@@ -83,60 +90,71 @@ export function ClusterGraphCanvas({
     });
 
     setCytoscapeConfig(newConfig);
-  }, [ selectedNodeDisplayType ]);
+  }, [selectedNodeDisplayType]);
 
   useEffect(() => {
-    const newConfig = produce(cytoscapeConfig, draftConfig => {
+    const newConfig = produce(cytoscapeConfig, (draftConfig) => {
       const maxEValue = parseFloat(`1e${eValueExp}`);
 
-      draftConfig.elements.forEach(element => {
+      draftConfig.elements.forEach((element) => {
         if (element.group === 'edges') {
           if (
             !selectedEdgeTypes[element.data.type as EdgeType] ||
             element.data.eValue > maxEValue
           ) {
-            element.classes = addCytoscapeClass(element.classes, 'filtered-out');
+            element.classes = addCytoscapeClass(
+              element.classes,
+              'filtered-out'
+            );
           } else {
-            element.classes = removeCytoscapeClass(element.classes, 'filtered-out');
+            element.classes = removeCytoscapeClass(
+              element.classes,
+              'filtered-out'
+            );
           }
         }
       });
     });
 
     setCytoscapeConfig(newConfig);
-  }, [ eValueExp, selectedEdgeTypes ]);
+  }, [eValueExp, selectedEdgeTypes]);
 
   useEffect(() => {
     updateHighlightedNodes(highlightedLegendNodeIds);
-  }, [ highlightedLegendNodeIds ]);
+  }, [highlightedLegendNodeIds]);
 
   useEffect(() => {
-    const newHighlightedNodeIds = highlightedSequenceNodeId == null
-      ? [ ]
-      : [ highlightedSequenceNodeId ];
+    const newHighlightedNodeIds =
+      highlightedSequenceNodeId == null ? [] : [highlightedSequenceNodeId];
 
     updateHighlightedNodes(newHighlightedNodeIds);
-  }, [ highlightedSequenceNodeId ]);
+  }, [highlightedSequenceNodeId]);
 
   useEffect(() => {
     updateHighlightedEdge(highlightedBlastEdgeId);
-  }, [ highlightedBlastEdgeId ]);
+  }, [highlightedBlastEdgeId]);
 
   useEffect(() => {
-    const newConfig = produce(cytoscapeConfig, draftConfig => {
-      draftConfig.elements.forEach(element => {
+    const newConfig = produce(cytoscapeConfig, (draftConfig) => {
+      draftConfig.elements.forEach((element) => {
         if (element.group === 'edges' && element.data.type != null) {
           if (element.data.type === highlightedEdgeType) {
-            element.classes = addCytoscapeClass(element.classes, 'type-highlighted');
+            element.classes = addCytoscapeClass(
+              element.classes,
+              'type-highlighted'
+            );
           } else {
-            element.classes = removeCytoscapeClass(element.classes, 'type-highlighted');
+            element.classes = removeCytoscapeClass(
+              element.classes,
+              'type-highlighted'
+            );
           }
         }
       });
     });
 
     setCytoscapeConfig(newConfig);
-  }, [ highlightedEdgeType ]);
+  }, [highlightedEdgeType]);
 
   useNodeClickEventHandler(cyRef, onClickNode);
 
@@ -151,7 +169,7 @@ export function ClusterGraphCanvas({
     >
       <CytoscapeComponent
         className="ClusterGraphCanvas"
-        cy={cy => {
+        cy={(cy) => {
           cyRef.current = cy;
         }}
         {...cytoscapeConfig}
