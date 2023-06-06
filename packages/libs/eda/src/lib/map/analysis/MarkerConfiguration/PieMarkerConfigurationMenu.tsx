@@ -1,10 +1,11 @@
-import { H6 } from '@veupathdb/coreui';
 import {
   InputVariables,
   Props as InputVariablesProps,
 } from '../../../core/components/visualizations/InputVariables';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
+import { AllValuesDefinition, OverlayConfig } from '../../../core';
+import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -12,6 +13,7 @@ interface MarkerConfiguration<T extends string> {
 export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
   selectedVariable: VariableDescriptor;
   selectedValues: string[] | undefined;
+  allValues: AllValuesDefinition[] | undefined;
 }
 interface Props
   extends Omit<
@@ -20,6 +22,7 @@ interface Props
   > {
   onChange: (configuration: PieMarkerConfiguration) => void;
   configuration: PieMarkerConfiguration;
+  overlayConfiguration: OverlayConfig | undefined;
 }
 
 export function PieMarkerConfigurationMenu({
@@ -29,6 +32,7 @@ export function PieMarkerConfigurationMenu({
   starredVariables,
   toggleStarredVariable,
   constraints,
+  overlayConfiguration,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -68,6 +72,14 @@ export function PieMarkerConfigurationMenu({
         toggleStarredVariable={toggleStarredVariable}
         constraints={constraints}
       />
+      {overlayConfiguration?.overlayType === 'categorical' && (
+        <CategoricalMarkerConfigurationTable
+          overlayConfiguration={overlayConfiguration}
+          configuration={configuration}
+          // @ts-ignore
+          onChange={onChange}
+        />
+      )}
     </div>
   );
 }
