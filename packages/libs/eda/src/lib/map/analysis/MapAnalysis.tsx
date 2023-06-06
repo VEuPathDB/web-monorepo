@@ -2,6 +2,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   AnalysisState,
+  CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
   OverlayConfig,
@@ -257,17 +258,26 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   // get the default overlay config.
   const activeOverlayConfig = usePromise(
     useCallback(async (): Promise<OverlayConfig | undefined> => {
-      // TODO Use `selectedValues` to generate the overlay config. Something like this:
-      // if (activeMarkerConfiguration?.selectedValues) {
-      //   return {
-      //     overlayType: CategoryVariableDataShape.is(overlayVariable?.dataShape) ? 'categorical' : 'continuous',
-      //     overlayVariable: {
-      //       variableId: overlayVariable.id,
-      //       entityId: overlayEntity.id,
-      //     },
-      //     overlayValues: activeMarkerConfiguration.selectedValues
-      //   } as OverlayConfig
-      // }
+      // Use `selectedValues` to generate the overlay config
+      if (
+        activeMarkerConfiguration?.selectedValues &&
+        activeMarkerConfiguration?.type === 'barplot'
+      ) {
+        return {
+          overlayType: CategoricalVariableDataShape.is(
+            overlayVariable?.dataShape
+          )
+            ? 'categorical'
+            : 'continuous',
+          overlayVariable: {
+            variableId: overlayVariable?.id,
+            entityId: overlayEntity?.id,
+          },
+          overlayValues: activeMarkerConfiguration.selectedValues,
+          allValuesSorted: activeMarkerConfiguration.allValues,
+        } as OverlayConfig;
+      }
+
       return getDefaultOverlayConfig({
         studyId,
         filters,
@@ -283,6 +293,8 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       overlayVariable,
       studyId,
       subsettingClient,
+      activeMarkerConfiguration?.selectedValues,
+      activeMarkerConfiguration?.type,
     ])
   );
 
@@ -510,6 +522,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     toggleStarredVariable={toggleStarredVariable}
                     configuration={activeMarkerConfiguration}
                     constraints={markerVariableConstraints}
+                    overlayConfiguration={activeOverlayConfig.value}
                   />
                 ) : (
                   <></>

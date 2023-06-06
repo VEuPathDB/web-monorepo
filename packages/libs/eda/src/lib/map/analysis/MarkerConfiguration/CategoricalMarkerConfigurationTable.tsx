@@ -45,6 +45,7 @@ export function CategoricalMarkerConfigurationTable({
       ...configuration,
       // @ts-ignore
       selectedValues: overlayConfiguration.overlayValues.filter(
+        // @ts-ignore
         (val) => val !== data.label
       ),
       // @ts-ignore

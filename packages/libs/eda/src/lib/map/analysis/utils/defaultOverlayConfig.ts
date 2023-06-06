@@ -47,7 +47,7 @@ export async function getDefaultOverlayConfig(
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
-      const overlayValues = await getMostFrequentValues({
+      const { mostFrequentValues, allValuesSorted } = await getValues({
         studyId: studyId,
         ...overlayVariableDescriptor,
         filters: filters ?? [],
@@ -58,7 +58,8 @@ export async function getDefaultOverlayConfig(
       return {
         overlayType: 'categorical',
         overlayVariable: overlayVariableDescriptor,
-        overlayValues,
+        overlayValues: mostFrequentValues,
+        allValuesSorted,
       };
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
       // continuous
@@ -89,16 +90,26 @@ type GetMostFrequentValuesProps = {
   subsettingClient: SubsettingClient;
 };
 
+type OverlayValue = {
+  label: string;
+  count: number;
+};
+
+type OverlayValues = {
+  mostFrequentValues: string[];
+  allValuesSorted: OverlayValue[];
+};
+
 // get the most frequent values for the entire dataset, no filters at all
 // (for now at least)
-async function getMostFrequentValues({
+async function getValues({
   studyId,
   variableId,
   entityId,
   filters,
   numValues,
   subsettingClient,
-}: GetMostFrequentValuesProps): Promise<string[]> {
+}: GetMostFrequentValuesProps): Promise<OverlayValues> {
   const distributionResponse = await subsettingClient.getDistribution(
     studyId,
     entityId,
@@ -111,10 +122,21 @@ async function getMostFrequentValues({
 
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
-    .map((bin) => bin.binLabel);
-  return sortedValues.length <= numValues
-    ? sortedValues
-    : [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
+    .map((bin) => ({
+      label: bin.binLabel,
+      count: bin.value,
+    }));
+
+  return {
+    mostFrequentValues:
+      sortedValues.length <= numValues
+        ? sortedValues.map((bin) => bin.label)
+        : [
+            ...sortedValues.map((bin) => bin.label).slice(0, numValues),
+            UNSELECTED_TOKEN,
+          ],
+    allValuesSorted: sortedValues,
+  };
 }
 
 type GetBinRangesProps = {

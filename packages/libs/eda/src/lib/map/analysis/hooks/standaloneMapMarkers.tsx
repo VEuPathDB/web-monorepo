@@ -168,6 +168,14 @@ export function useStandaloneMapMarkers(
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
+      let overlayConfigWithoutAllValuesSorted;
+      const hasAllValuesSortedProperty =
+        overlayConfig && 'allValuesSorted' in overlayConfig;
+      if (hasAllValuesSortedProperty) {
+        const { allValuesSorted, ...allOtherProperties } = overlayConfig;
+        overlayConfigWithoutAllValuesSorted = allOtherProperties;
+      }
+
       // now prepare the rest of the request params
       const requestParams: StandaloneMapMarkersRequestParams = {
         studyId,
@@ -176,7 +184,10 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          overlayConfig,
+          // @ts-ignore
+          overlayConfig: hasAllValuesSortedProperty
+            ? overlayConfigWithoutAllValuesSorted
+            : overlayConfig,
           outputEntityId,
           valueSpec: markerType === 'pie' ? 'count' : markerType,
           viewport: {

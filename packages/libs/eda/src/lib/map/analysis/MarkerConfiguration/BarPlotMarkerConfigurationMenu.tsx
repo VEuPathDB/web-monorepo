@@ -1,4 +1,3 @@
-import { H6 } from '@veupathdb/coreui';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -6,7 +5,8 @@ import {
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
-import { BinDefinitions } from '../../../core';
+import { AllValuesDefinitions, OverlayConfig } from '../../../core';
+import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -15,8 +15,9 @@ interface MarkerConfiguration<T extends string> {
 export interface BarPlotMarkerConfiguration
   extends MarkerConfiguration<'barplot'> {
   selectedVariable: VariableDescriptor;
-  selectedValues: BinDefinitions | undefined;
+  selectedValues: OverlayConfig['overlayValues'] | undefined;
   selectedPlotMode: 'count' | 'proportion';
+  allValues: AllValuesDefinitions | undefined;
 }
 
 interface Props
@@ -26,6 +27,7 @@ interface Props
   > {
   onChange: (configuration: BarPlotMarkerConfiguration) => void;
   configuration: BarPlotMarkerConfiguration;
+  overlayConfiguration: OverlayConfig | undefined;
 }
 
 export function BarPlotMarkerConfigurationMenu({
@@ -35,6 +37,7 @@ export function BarPlotMarkerConfigurationMenu({
   toggleStarredVariable,
   configuration,
   constraints,
+  overlayConfiguration,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -59,6 +62,18 @@ export function BarPlotMarkerConfigurationMenu({
 
   return (
     <div>
+      <RadioButtonGroup
+        containerStyles={{
+          marginTop: 20,
+        }}
+        label="Y-axis"
+        selectedOption={configuration.selectedPlotMode || 'count'}
+        options={['count', 'proportion']}
+        optionLabels={['Count', 'Proportion']}
+        buttonColor={'primary'}
+        margins={['0em', '0', '0', '1em']}
+        onOptionSelected={handlePlotModeSelection}
+      />
       <p
         style={{
           paddingLeft: 7,
@@ -80,18 +95,13 @@ export function BarPlotMarkerConfigurationMenu({
         toggleStarredVariable={toggleStarredVariable}
         constraints={constraints}
       />
-      <RadioButtonGroup
-        containerStyles={{
-          marginTop: 20,
-        }}
-        label="Y-axis"
-        selectedOption={configuration.selectedPlotMode || 'count'}
-        options={['count', 'proportion']}
-        optionLabels={['Count', 'Proportion']}
-        buttonColor={'primary'}
-        margins={['0em', '0', '0', '1em']}
-        onOptionSelected={handlePlotModeSelection}
-      />
+      {overlayConfiguration?.overlayType === 'categorical' && (
+        <CategoricalMarkerConfigurationTable
+          overlayConfiguration={overlayConfiguration}
+          configuration={configuration}
+          onChange={onChange}
+        />
+      )}
     </div>
   );
 }
