@@ -5,7 +5,7 @@ import {
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
-import { AllValuesDefinitions, OverlayConfig } from '../../../core';
+import { AllValuesDefinition, OverlayConfig } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
 
 interface MarkerConfiguration<T extends string> {
@@ -17,7 +17,7 @@ export interface BarPlotMarkerConfiguration
   selectedVariable: VariableDescriptor;
   selectedValues: OverlayConfig['overlayValues'] | undefined;
   selectedPlotMode: 'count' | 'proportion';
-  allValues: AllValuesDefinitions | undefined;
+  allValues: AllValuesDefinition[] | undefined;
 }
 
 interface Props
@@ -99,6 +99,7 @@ export function BarPlotMarkerConfigurationMenu({
         <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
+          // @ts-ignore
           onChange={onChange}
         />
       )}

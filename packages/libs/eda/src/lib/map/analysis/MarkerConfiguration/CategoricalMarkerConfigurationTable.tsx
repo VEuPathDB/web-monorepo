@@ -1,13 +1,16 @@
 import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { OverlayConfig } from '../../../core';
+import { OverlayConfig, AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { BarPlotMarkerConfiguration } from './BarPlotMarkerConfigurationMenu';
+import { PieMarkerConfiguration } from './PieMarkerConfigurationMenu';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 
 type Props = {
   overlayConfiguration: OverlayConfig;
-  onChange: (configuration: BarPlotMarkerConfiguration) => void;
-  configuration: BarPlotMarkerConfiguration;
+  onChange: (
+    configuration: BarPlotMarkerConfiguration | PieMarkerConfiguration
+  ) => void;
+  configuration: BarPlotMarkerConfiguration | PieMarkerConfiguration;
 };
 
 export function CategoricalMarkerConfigurationTable({
@@ -22,17 +25,16 @@ export function CategoricalMarkerConfigurationTable({
     0
   );
 
-  function handleSelection(data: any) {
+  function handleSelection(data: AllValuesDefinition) {
     if (
       overlayConfiguration.overlayValues.length <=
-      ColorPaletteDefault.length - 1
+        ColorPaletteDefault.length - 1 &&
+      overlayConfiguration.overlayType === 'categorical'
     ) {
       if (selected.has(data.label)) return;
       onChange({
         ...configuration,
-        // @ts-ignore
         selectedValues: overlayConfiguration.overlayValues.concat(data.label),
-        // @ts-ignore
         allValues: overlayConfiguration.allValuesSorted,
       });
     } else {
@@ -40,48 +42,47 @@ export function CategoricalMarkerConfigurationTable({
     }
   }
 
-  function handleDeselection(data: any) {
-    onChange({
-      ...configuration,
-      // @ts-ignore
-      selectedValues: overlayConfiguration.overlayValues.filter(
-        // @ts-ignore
-        (val) => val !== data.label
-      ),
-      // @ts-ignore
-      allValues: overlayConfiguration.allValuesSorted,
-    });
+  function handleDeselection(data: AllValuesDefinition) {
+    if (overlayConfiguration.overlayType === 'categorical')
+      onChange({
+        ...configuration,
+        selectedValues: overlayConfiguration.overlayValues.filter(
+          (val) => val !== data.label
+        ),
+        allValues: overlayConfiguration.allValuesSorted,
+      });
   }
 
   const tableState = {
     options: {
-      isRowSelected: (sortedValue: any) => selected.has(sortedValue.label),
+      isRowSelected: (sortedValue: AllValuesDefinition) =>
+        selected.has(sortedValue.label),
     },
     eventHandlers: {
       onRowSelect: handleSelection,
       onRowDeselect: handleDeselection,
     },
     actions: [],
-    rows: overlayConfiguration.allValuesSorted,
-    // rows: overlayConfiguration.overlayValues,
+    rows: overlayConfiguration.allValuesSorted as AllValuesDefinition[],
     columns: [
       {
         key: 'values',
         name: 'Values',
-        renderCell: (data: { row: any }) => (
+        renderCell: (data: { row: AllValuesDefinition }) => (
           <>{data.row.label}</>
-          // <>{data.row}</>
         ),
       },
       {
         key: 'counts',
         name: 'Counts',
-        renderCell: (data: { row: any }) => <>{data.row.count}</>,
+        renderCell: (data: { row: AllValuesDefinition }) => (
+          <>{data.row.count}</>
+        ),
       },
       {
         key: 'distribution',
         name: 'Distribution',
-        renderCell: (data: { row: any }) => (
+        renderCell: (data: { row: AllValuesDefinition }) => (
           <Distribution count={data.row.count} filteredTotal={totalCount} />
         ),
       },

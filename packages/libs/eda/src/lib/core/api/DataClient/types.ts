@@ -767,13 +767,11 @@ export const BinDefinitions = array(
   })
 );
 
-export type AllValuesDefinitions = TypeOf<typeof AllValuesDefinitions>;
-export const AllValuesDefinitions = array(
-  type({
-    label: string,
-    count: number,
-  })
-);
+export type AllValuesDefinition = TypeOf<typeof AllValuesDefinition>;
+export const AllValuesDefinition = type({
+  label: string,
+  count: number,
+});
 
 export type OverlayConfig = TypeOf<typeof OverlayConfig>;
 export const OverlayConfig = intersection([
@@ -785,7 +783,7 @@ export const OverlayConfig = intersection([
     type({
       overlayType: literal('categorical'),
       overlayValues: array(string),
-      allValuesSorted: AllValuesDefinitions,
+      allValuesSorted: array(AllValuesDefinition),
     }),
     type({
       overlayType: literal('continuous'),

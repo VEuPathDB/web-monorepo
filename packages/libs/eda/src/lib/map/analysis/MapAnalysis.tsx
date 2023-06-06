@@ -261,7 +261,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       // Use `selectedValues` to generate the overlay config
       if (
         activeMarkerConfiguration?.selectedValues &&
-        activeMarkerConfiguration?.type === 'barplot'
+        activeMarkerConfiguration?.allValues
       ) {
         return {
           overlayType: CategoricalVariableDataShape.is(
@@ -294,7 +294,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
       studyId,
       subsettingClient,
       activeMarkerConfiguration?.selectedValues,
-      activeMarkerConfiguration?.type,
+      activeMarkerConfiguration?.allValues,
     ])
   );
 
@@ -497,6 +497,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     }
                     toggleStarredVariable={toggleStarredVariable}
                     constraints={markerVariableConstraints}
+                    overlayConfiguration={activeOverlayConfig.value}
                   />
                 ) : (
                   <></>
