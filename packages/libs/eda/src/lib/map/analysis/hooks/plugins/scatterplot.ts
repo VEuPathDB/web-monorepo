@@ -30,10 +30,8 @@ export function scatterplotRequest(
       xAxisVariable: vizConfig.xAxisVariable,
       yAxisVariable: vizConfig.yAxisVariable,
       valueSpec,
-      ...(vizConfig.overlayVariable &&
-      isEqual(vizConfig.overlayVariable, overlayConfig?.overlayVariable)
-        ? { overlayConfig }
-        : {}),
+      // for floaters, vizConfig.overlayVariable is simply the on/off switch for overlay
+      ...(vizConfig.overlayVariable ? { overlayConfig } : {}),
     },
   };
 }
