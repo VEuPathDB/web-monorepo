@@ -19,23 +19,26 @@ export function CategoricalMarkerConfigurationTable({
   onChange,
 }: Props) {
   if (overlayConfiguration.overlayType !== 'categorical') return <></>;
-  const selected = new Set(overlayConfiguration.overlayValues);
-  const totalCount = overlayConfiguration.allValuesSorted.reduce(
+  const { overlayType, overlayValues, allValuesSorted } = overlayConfiguration;
+  const selected = new Set(overlayValues);
+  const totalCount = allValuesSorted.reduce(
     (prev, curr) => prev + curr.count,
     0
   );
 
   function handleSelection(data: AllValuesDefinition) {
     if (
-      overlayConfiguration.overlayValues.length <=
-        ColorPaletteDefault.length - 1 &&
-      overlayConfiguration.overlayType === 'categorical'
+      overlayValues.length <= ColorPaletteDefault.length - 1 &&
+      overlayType === 'categorical'
     ) {
       if (selected.has(data.label)) return;
+      const lastItem = [...overlayValues].pop() ?? ''; // TEMP until better solution
       onChange({
         ...configuration,
-        selectedValues: overlayConfiguration.overlayValues.concat(data.label),
-        allValues: overlayConfiguration.allValuesSorted,
+        selectedValues: overlayValues
+          .slice(0, overlayValues.length - 1)
+          .concat(data.label, lastItem),
+        allValues: allValuesSorted,
       });
     } else {
       alert(`Only ${ColorPaletteDefault.length - 1} values can be selected`);
@@ -43,27 +46,24 @@ export function CategoricalMarkerConfigurationTable({
   }
 
   function handleDeselection(data: AllValuesDefinition) {
-    if (overlayConfiguration.overlayType === 'categorical')
+    if (overlayType === 'categorical')
       onChange({
         ...configuration,
-        selectedValues: overlayConfiguration.overlayValues.filter(
-          (val) => val !== data.label
-        ),
-        allValues: overlayConfiguration.allValuesSorted,
+        selectedValues: overlayValues.filter((val) => val !== data.label),
+        allValues: allValuesSorted,
       });
   }
 
   const tableState = {
     options: {
-      isRowSelected: (sortedValue: AllValuesDefinition) =>
-        selected.has(sortedValue.label),
+      isRowSelected: (value: AllValuesDefinition) => selected.has(value.label),
     },
     eventHandlers: {
       onRowSelect: handleSelection,
       onRowDeselect: handleDeselection,
     },
     actions: [],
-    rows: overlayConfiguration.allValuesSorted as AllValuesDefinition[],
+    rows: allValuesSorted as AllValuesDefinition[],
     columns: [
       {
         key: 'values',
