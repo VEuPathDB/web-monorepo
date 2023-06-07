@@ -6,6 +6,7 @@ import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 import { AllValuesDefinition, OverlayConfig } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
+import { MarkerPreview } from './MarkerPreview';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -51,6 +52,7 @@ export function PieMarkerConfigurationMenu({
 
   return (
     <div>
+      <MarkerPreview data={overlayConfiguration} markerType="pie" />
       <p
         style={{
           paddingLeft: 7,

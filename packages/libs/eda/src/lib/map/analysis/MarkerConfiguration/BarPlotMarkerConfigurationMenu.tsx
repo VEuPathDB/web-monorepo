@@ -63,7 +63,7 @@ export function BarPlotMarkerConfigurationMenu({
 
   return (
     <div>
-      <MarkerPreview data={overlayConfiguration} />
+      <MarkerPreview data={overlayConfiguration} markerType="barplot" />
       <RadioButtonGroup
         containerStyles={{
           marginTop: 20,
