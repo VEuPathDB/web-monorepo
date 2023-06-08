@@ -4,12 +4,7 @@ import LinePlot, { LinePlotProps } from '../../plots/LinePlot';
 import { FacetedData, LinePlotData } from '../../types/plots';
 import FacetedLinePlot from '../../plots/facetedPlots/FacetedLinePlot';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
-import {
-  NumberRange,
-  NumberOrDateRange,
-  NumberOrTimeDelta,
-  TimeDelta,
-} from '../../types/general';
+import { NumberOrDateRange } from '../../types/general';
 import { Toggle } from '@veupathdb/coreui';
 import { LinePlotDataSeries } from '../../types/plots';
 
@@ -350,4 +345,331 @@ dateDataFormat.args = {
     height: '450px',
     width: '750px',
   },
+};
+
+// mockup data for testing lineplot with marginal histogram
+const trace1 = {
+  x: [0, 0.2, 0.35, 0.6, 0.8, 1.0],
+  y: [1.5, 1, 1.3, 0.7, 0.8, 0.9],
+  mode: modeValue,
+  name: 'data1',
+  marker: {
+    color: 'rgb(0, 0, 255)',
+  },
+};
+
+const trace2 = {
+  x: [0, 0.2, 0.35, 0.6, 0.8, 1.0],
+  y: [1, 2, 1.3, 0.5, 1.5, 0.75],
+  mode: modeValue,
+  name: 'data2',
+  marker: {
+    color: 'rgb(255, 0, 0)',
+  },
+};
+
+let x1 = [];
+let x2 = [];
+const arrayLength = 500;
+for (var i = 0; i < arrayLength; i++) {
+  x1[i] = Math.random();
+  x2[i] = Math.random();
+}
+
+const trace3 = {
+  x: x1,
+  y: new Array(arrayLength).fill(0),
+  type: 'histogram',
+  name: 'data1',
+  marker: {
+    color: 'rgb(0, 0, 255)',
+  },
+  // set different yaxis for marginal histogram
+  yaxis: 'y2',
+};
+
+const trace4 = {
+  x: x2,
+  y: new Array(arrayLength).fill(0),
+  type: 'histogram',
+  name: 'data2',
+  marker: {
+    color: 'rgb(255, 0, 0)',
+  },
+  // set different yaxis for marginal histogram
+  yaxis: 'y2',
+};
+
+const lineMarginalHistogramData = {
+  series: [trace1, trace2, trace3, trace4],
+};
+
+export const LineMarginalHistogram: Story<LinePlotProps> = (args: any) => {
+  return (
+    <LinePlot
+      data={lineMarginalHistogramData}
+      independentAxisLabel={'X'}
+      dependentAxisLabel={'Y'}
+      interactive={true}
+      displayLegend={false}
+      displayLibraryControls={false}
+      containerStyles={{
+        height: '450px',
+        width: '750px',
+      }}
+      // show marginal histogram
+      showMarginalHistogram={true}
+      // marginal histogram size [0, 1]: default is 0.2 (20 %)
+      marginalHistogramSize={0.2}
+    />
+  );
+};
+
+// testing xVariable: date with overlay variable
+// GEMS1 Case Control; x: Birth date; y: Weight; overlay: Age group at enrollment
+const LineMarginalHistogramDateData = {
+  series: [
+    {
+      x: [
+        '2006-01-01',
+        '2007-01-01',
+        '2008-01-01',
+        '2009-01-01',
+        '2010-01-01',
+        '2011-01-01',
+      ],
+      y: [8.8136, 7.524, 7.26, 7.3144, 6.9045, 4.225],
+      binLabel: [
+        '2006-01-01 - 2007-01-01',
+        '2007-01-01 - 2008-01-01',
+        '2008-01-01 - 2009-01-01',
+        '2009-01-01 - 2010-01-01',
+        '2010-01-01 - 2011-01-01',
+        '2011-01-01 - 2012-01-01',
+      ],
+      yErrorBarUpper: [9.2893, 7.5617, 7.2938, 7.3488, 6.9695, 4.666],
+      yErrorBarLower: [8.338, 7.4864, 7.2263, 7.28, 6.8395, 3.784],
+      binSampleSize: [
+        {
+          N: 22,
+        },
+        {
+          N: 5939,
+        },
+        {
+          N: 8210,
+        },
+        {
+          N: 7545,
+        },
+        {
+          N: 2192,
+        },
+        {
+          N: 4,
+        },
+      ],
+      name: '0-11 months',
+      mode: modeValue,
+      opacity: 0.7,
+      marker: {
+        color: 'rgb(136,34,85)',
+        symbol: 'circle',
+      },
+    },
+    {
+      x: [
+        '2006-01-01',
+        '2007-01-01',
+        '2008-01-01',
+        '2009-01-01',
+        '2010-01-01',
+        '2011-01-01',
+      ],
+      y: [22, 5939, 8210, 7545, 2192, 4],
+      width: [
+        31536000000, 31536000000, 31622400000, 31536000000, 31536000000,
+        31536000000,
+      ],
+      name: '0-11 months',
+      type: 'bar',
+      offset: 0,
+      marker: {
+        color: 'rgb(136,34,85)',
+      },
+      yaxis: 'y2',
+    },
+    {
+      x: [
+        '2005-01-01',
+        '2006-01-01',
+        '2007-01-01',
+        '2008-01-01',
+        '2009-01-01',
+        '2010-01-01',
+      ],
+      y: [9.92, 9.4077, 9.2462, 9.1636, 8.8453, 8.6031],
+      binLabel: [
+        '2005-01-01 - 2006-01-01',
+        '2006-01-01 - 2007-01-01',
+        '2007-01-01 - 2008-01-01',
+        '2008-01-01 - 2009-01-01',
+        '2009-01-01 - 2010-01-01',
+        '2010-01-01 - 2011-01-01',
+      ],
+      yErrorBarUpper: [10.819, 9.468, 9.2853, 9.2004, 8.8973, 9.02],
+      yErrorBarLower: [9.021, 9.3473, 9.207, 9.1268, 8.7933, 8.1863],
+      binSampleSize: [
+        {
+          N: 5,
+        },
+        {
+          N: 2903,
+        },
+        {
+          N: 6887,
+        },
+        {
+          N: 6783,
+        },
+        {
+          N: 3259,
+        },
+        {
+          N: 32,
+        },
+      ],
+      name: '12-23 months',
+      mode: modeValue,
+      opacity: 0.7,
+      marker: {
+        color: 'rgb(136,204,238)',
+        symbol: 'circle',
+      },
+    },
+    {
+      x: [
+        '2005-01-01',
+        '2006-01-01',
+        '2007-01-01',
+        '2008-01-01',
+        '2009-01-01',
+        '2010-01-01',
+      ],
+      y: [5, 2903, 6887, 6783, 3259, 32],
+      width: [
+        31536000000, 31536000000, 31536000000, 31622400000, 31536000000,
+        31536000000,
+      ],
+      name: '12-23 months',
+      type: 'bar',
+      offset: 0,
+      marker: {
+        color: 'rgb(136,204,238)',
+      },
+      yaxis: 'y2',
+    },
+    {
+      x: [
+        '2003-01-01',
+        '2004-01-01',
+        '2005-01-01',
+        '2006-01-01',
+        '2007-01-01',
+        '2008-01-01',
+        '2009-01-01',
+      ],
+      y: [14.6723, 13.7814, 12.6861, 11.7939, 11.3007, 10.9864, 10.2267],
+      binLabel: [
+        '2003-01-01 - 2004-01-01',
+        '2004-01-01 - 2005-01-01',
+        '2005-01-01 - 2006-01-01',
+        '2006-01-01 - 2007-01-01',
+        '2007-01-01 - 2008-01-01',
+        '2008-01-01 - 2009-01-01',
+        '2009-01-01 - 2010-01-01',
+      ],
+      yErrorBarUpper: [
+        14.9122, 13.9133, 12.764, 11.8511, 11.3585, 11.1436, 10.9616,
+      ],
+      yErrorBarLower: [
+        14.4324, 13.6495, 12.6082, 11.7368, 11.2429, 10.8293, 9.4917,
+      ],
+      binSampleSize: [
+        {
+          N: 278,
+        },
+        {
+          N: 1286,
+        },
+        {
+          N: 3184,
+        },
+        {
+          N: 5046,
+        },
+        {
+          N: 3831,
+        },
+        {
+          N: 1704,
+        },
+        {
+          N: 15,
+        },
+      ],
+      name: '24-59 months',
+      mode: modeValue,
+      opacity: 0.7,
+      marker: {
+        color: 'rgb(153,153,51)',
+        symbol: 'circle',
+      },
+    },
+    {
+      x: [
+        '2003-01-01',
+        '2004-01-01',
+        '2005-01-01',
+        '2006-01-01',
+        '2007-01-01',
+        '2008-01-01',
+        '2009-01-01',
+      ],
+      y: [278, 1286, 3184, 5046, 3831, 1704, 15],
+      width: [
+        31536000000, 31622400000, 31536000000, 31536000000, 31536000000,
+        31622400000, 31536000000,
+      ],
+      name: '24-59 months',
+      type: 'bar',
+      offset: 0,
+      marker: {
+        color: 'rgb(153,153,51)',
+      },
+      yaxis: 'y2',
+    },
+  ],
+};
+
+export const LineMarginalHistogramDate: Story<LinePlotProps> = (args: any) => {
+  return (
+    <LinePlot
+      data={LineMarginalHistogramDateData}
+      independentValueType={'date'}
+      independentAxisLabel={'X'}
+      dependentAxisLabel={'Y'}
+      interactive={true}
+      displayLegend={false}
+      displayLibraryControls={false}
+      containerStyles={{
+        height: '450px',
+        width: '750px',
+      }}
+      // show marginal histogram
+      showMarginalHistogram={true}
+      // marginal histogram size [0, 1]: default is 0.2 (20 %)
+      marginalHistogramSize={0.2}
+    />
+  );
 };
