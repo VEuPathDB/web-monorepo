@@ -35,7 +35,7 @@ export function MarkerPreview({ data, markerType }: Props) {
           <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
           <Barplot
             data={{ series: [barplotData] }}
-            dependentAxisLabel="Count (visible data)"
+            dependentAxisLabel="Count (filtered data)"
             barLayout="overlay"
             showValues={true}
           />

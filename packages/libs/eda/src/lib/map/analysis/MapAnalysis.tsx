@@ -498,6 +498,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     toggleStarredVariable={toggleStarredVariable}
                     constraints={markerVariableConstraints}
                     overlayConfiguration={activeOverlayConfig.value}
+                    overlayVariable={overlayVariable}
+                    subsettingClient={subsettingClient}
+                    studyId={studyId}
+                    filters={filters}
                   />
                 ) : (
                   <></>
@@ -524,6 +528,10 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     configuration={activeMarkerConfiguration}
                     constraints={markerVariableConstraints}
                     overlayConfiguration={activeOverlayConfig.value}
+                    overlayVariable={overlayVariable}
+                    subsettingClient={subsettingClient}
+                    studyId={studyId}
+                    filters={filters}
                   />
                 ) : (
                   <></>
