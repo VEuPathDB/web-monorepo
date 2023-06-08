@@ -15,6 +15,8 @@ const isModern = process.env.BROWSERSLIST_ENV === 'modern';
 const outputSubDir = isModern ? 'modern' : 'legacy';
 console.log('BROWSERSLIST_ENV:', process.env.BROWSERSLIST_ENV);
 
+exports.webpack = webpack;
+
 /**
  * Creates a configuration function that is used by webpack. Takes a
  * configuration object, or an array of configuration objects, and merges them
@@ -31,6 +33,15 @@ exports.merge = function merge(additionalConfig) {
       [
         {
           bail: true,
+          cache: {
+            name: process.env.BROWSERSLIST_ENV + '-' + argv.mode,
+            type: 'filesystem',
+            buildDependencies: {
+              // This makes all dependencies of this file - build dependencies
+              config: [__filename],
+              // By default webpack and loaders are build dependencies
+            },
+          },
           context: process.cwd(),
           resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -112,12 +123,13 @@ exports.merge = function merge(additionalConfig) {
           },
           devtool: 'source-map',
           plugins: [
-            new webpack.optimize.ModuleConcatenationPlugin(),
-            new webpack.LoaderOptionsPlugin({ debug: isDevelopment }),
+            // new webpack.optimize.ModuleConcatenationPlugin(),
             new webpack.DefinePlugin({
               __DEV__: JSON.stringify(isDevelopment),
               __OUTPUT_SUBDIR__: JSON.stringify(outputSubDir + '/'),
               __IS_LEGACY_BUNDLE__: JSON.stringify(!isModern),
+              'process.env.NODE_ENV': JSON.stringify(argv.mode),
+              'process.env.NODE_DEBUG': JSON.stringify(false),
             }),
             new MiniCssExtractPlugin({
               filename: '[name].bundle.css',
@@ -125,7 +137,6 @@ exports.merge = function merge(additionalConfig) {
             }),
           ],
           stats: {
-            maxModules: Infinity,
             optimizationBailout: true,
             modules: false,
           },
