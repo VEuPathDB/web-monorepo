@@ -27,6 +27,9 @@
       "inputs": [
         "srcFiles",
         "^srcFiles"
+      ],
+      "outputs": [
+        "{projectRoot}/lib"
       ]
     },
     "start": {
@@ -52,5 +55,6 @@
   },
   "affected": {
     "defaultBase": "main"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json"
 }
