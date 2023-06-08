@@ -7,12 +7,14 @@ import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import { useFindEntityAndVariable } from '../../../hooks/workspace';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { sharedConfigCssStyles } from './abundance';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
+import { config } from 'process';
 
 /**
  * Differential abundance
@@ -37,6 +39,8 @@ export type DifferentialAbundanceConfig = t.TypeOf<
 export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableDescriptor,
   comparatorVariable: VariableDescriptor,
+  comparatorGroupA: t.array(t.string),
+  comparatorGroupB: t.array(t.string),
 });
 
 export const plugin: ComputationPlugin = {
@@ -145,6 +149,8 @@ export function DifferentialAbundanceConfiguration(
     .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
+  const filters: [] = []; // probably in analysis state somewhere? @ann todo!
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   console.log(configuration);
   const handleChange = (
     configuration: DifferentialAbundanceConfig,
@@ -195,11 +201,19 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [collectionVarItems, configuration]);
 
+  // const selectedComparatorVariable = useMemo(() => {
+  //   if (configuration && 'ComparatorVariable' in configuration) {
+  //     return configuration.comparatorVariable;
+  //   }
+  // }, [configuration]);
+  // console.log(selectedComparatorVariable);
+
   const selectedComparatorVariable = useMemo(() => {
-    if (configuration && 'ComparatorVariable' in configuration) {
-      return configuration.comparatorVariable;
+    if (configuration && 'comparatorVariable' in configuration) {
+      return findEntityAndVariable(configuration.comparatorVariable);
     }
   }, [configuration]);
+
   console.log(selectedComparatorVariable);
 
   console.log(configuration);
@@ -267,6 +281,22 @@ export function DifferentialAbundanceConfiguration(
             }}
           />
         </div>
+        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group A</div>
+        <ValuePicker
+          allowedValues={selectedComparatorVariable?.variable.vocabulary}
+          selectedValues={configuration.comparatorGroupA ?? []}
+          onSelectedValuesChange={(newValues) =>
+            changeConfigHandler('comparatorGroupA', newValues)
+          }
+        />
+        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
+        <ValuePicker
+          allowedValues={selectedComparatorVariable?.variable.vocabulary}
+          selectedValues={configuration.comparatorGroupB ?? []}
+          onSelectedValuesChange={(newValues) =>
+            changeConfigHandler('comparatorGroupB', newValues)
+          }
+        />
       </div>
     </ComputationStepContainer>
   );
