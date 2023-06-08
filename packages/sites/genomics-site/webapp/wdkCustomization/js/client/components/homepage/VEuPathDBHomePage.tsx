@@ -15,7 +15,7 @@ import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png'
 
 import makeSnackbarProvider, {
   SnackbarStyleProps,
-} from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+} from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
 
 import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/Notifications';

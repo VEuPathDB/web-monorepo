@@ -13,7 +13,7 @@ import {
 } from '..';
 import { StudyEntity } from '../../core';
 import { makeEntityDisplayName } from '../../core/utils/study-metadata';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 export type MapNavigationProps = {
   analysisName?: string;

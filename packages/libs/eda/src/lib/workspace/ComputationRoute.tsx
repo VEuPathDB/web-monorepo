@@ -11,7 +11,7 @@ import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import { FilledButton } from '@veupathdb/coreui/lib/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
 import { Computation } from '../core/types/visualization';
 import Path from 'path';

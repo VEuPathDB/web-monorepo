@@ -10,7 +10,7 @@ import { DownloadTabStudyRelease } from './types';
 
 // Hooks
 import { ReleaseFile, useGetReleaseFiles } from './hooks/useGetReleaseFiles';
-import { ExpandablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { ExpandablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { useAttemptActionCallback } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
 import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 

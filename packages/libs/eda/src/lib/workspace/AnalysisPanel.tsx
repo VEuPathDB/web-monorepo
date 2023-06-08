@@ -47,7 +47,7 @@ import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restrictio
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { DownloadClient } from '../core/api/DownloadClient';
-import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 

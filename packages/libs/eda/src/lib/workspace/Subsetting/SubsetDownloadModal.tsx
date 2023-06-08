@@ -19,12 +19,12 @@ import { AnalysisState } from '../../core/hooks/analysis';
 import { TabularDataResponse, usePromise } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import {
   EnhancedEntityData,
   EnhancedEntityDatum,
 } from '../DownloadTab/hooks/useEnhancedEntityData';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 // Hooks
 import {
@@ -40,9 +40,9 @@ import tableSVG from './cartoon_table.svg';
 import {
   DataGridProps,
   SortBy,
-} from '@veupathdb/coreui/dist/components/grids/DataGrid';
+} from '@veupathdb/coreui/lib/components/grids/DataGrid';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */

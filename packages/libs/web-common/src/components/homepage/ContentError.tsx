@@ -1,5 +1,5 @@
 import React from 'react';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner'
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   message: string;
@@ -7,9 +7,11 @@ interface Props {
 
 export function ContentError(props: Props) {
   return (
-    <Banner banner={{
-      type: 'error',
-      message: `Content for this section could not be loaded: ${props.message}.`
-    }} />
+    <Banner
+      banner={{
+        type: 'error',
+        message: `Content for this section could not be loaded: ${props.message}.`,
+      }}
+    />
   );
 }

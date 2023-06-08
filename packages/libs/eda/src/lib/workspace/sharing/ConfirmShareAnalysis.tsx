@@ -2,10 +2,10 @@
 import { FloatingButton, Warning, Copy, colors } from '@veupathdb/coreui';
 
 // Hooks
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 // Definitions
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 type ConfirmShareAnalysisProps = {
   contextForUserDataset?: {

@@ -15,7 +15,7 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
-import { red } from '@veupathdb/coreui/dist/definitions/colors';
+import { red } from '@veupathdb/coreui/lib/definitions/colors';
 
 export interface InputSpec {
   name: string;

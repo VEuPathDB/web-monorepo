@@ -3,10 +3,10 @@ import { H5 } from '@veupathdb/coreui';
 import {
   FilledButton,
   OutlinedButton,
-} from '@veupathdb/coreui/dist/components/buttons';
+} from '@veupathdb/coreui/lib/components/buttons';
 
 // Definitions
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default function Login({
   onPressClose,

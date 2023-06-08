@@ -39,7 +39,7 @@ import {
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 
 /**

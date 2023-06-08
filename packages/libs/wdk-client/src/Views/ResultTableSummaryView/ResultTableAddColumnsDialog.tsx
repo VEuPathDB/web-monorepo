@@ -16,7 +16,7 @@ import {
   UpdateColumnsDialogExpandedNodes,
   RequestColumnsChoiceUpdate,
 } from '../../Views/ResultTableSummaryView/Types';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getLeaves } from '../../Utils/TreeUtils';
 import { differenceWith } from 'lodash';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
