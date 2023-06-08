@@ -240,15 +240,29 @@ export function assertValidInputVariables(
   inputs: InputSpec[],
   selectedVariables: VariablesByInputName,
   entities: StudyEntity[],
-  constraints: DataElementConstraintRecord[] | undefined
+  constraints: DataElementConstraintRecord[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined = undefined // TO DO: make mandatory
 ) {
+  // if there is a dependency order, first check the validity
+  // of the variables **without** the inter-entity dependencies
+  // (which basically means checking just the distinct values count, which is affected by filters)
+  if (dataElementDependencyOrder != null) {
+    assertValidInputVariables(
+      inputs,
+      selectedVariables,
+      entities,
+      constraints,
+      undefined
+    );
+  }
+
   const invalidInputs = inputs.filter((input) => {
     const inputSelection = selectedVariables[input.name];
     const disabledVariables = disabledVariablesForInput(
       input.name,
       entities,
       constraints,
-      undefined,
+      dataElementDependencyOrder,
       selectedVariables
     );
     return (
@@ -259,11 +273,19 @@ export function assertValidInputVariables(
     );
   });
   if (invalidInputs.length) {
-    throw new Error(
-      `The following variables are invalid and must be changed: ${invalidInputs
-        .map((input) => input.label)
-        .join(', ')}`
-    );
+    if (dataElementDependencyOrder != null) {
+      throw new Error(
+        `The variables are no longer valid due to entity constraints. Try disabling or changing the ${
+          invalidInputs[invalidInputs.length - 1].label
+        } variable.`
+      );
+    } else {
+      throw new Error(
+        `The following variables are no longer valid and must be changed: ${invalidInputs
+          .map((input) => input.label)
+          .join(', ')}`
+      );
+    }
   }
 }
 

@@ -328,14 +328,10 @@ export function useStandaloneMapMarkers(
                 },
               ];
 
-        // TO DO: this will sum to 1 when we allow proportion mode
-        // maybe ask for the counts to come along site the values in the back end response
-        // https://github.com/VEuPathDB/EdaDataService/issues/261
-        // (the way we did it in the old viz wasn't 100% accurate)
-        const count = reorderedData.reduce(
-          (sum, item) => (sum = sum + item.value),
-          0
-        );
+        const count =
+          vocabulary != null // if there's an overlay (all expected use cases)
+            ? overlayValues.reduce((sum, { count }) => (sum = sum + count), 0)
+            : entityCount; // fallback if not
 
         const commonMarkerProps = {
           id: geoAggregateValue,

@@ -103,9 +103,7 @@ import FacetedLinePlot from '@veupathdb/components/lib/plots/facetedPlots/Facete
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import { BinSpec, BinWidthSlider, TimeUnit } from '../../../types/general';
 import {
-  useFilteredConstraints,
   useNeutralPaletteProps,
-  useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
 import { useInputStyles } from '../inputStyles';
@@ -290,32 +288,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const selectedVariables = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
     yAxisVariable: vizConfig.yAxisVariable,
-    overlayVariable: vizConfig.overlayVariable,
+    overlayVariable:
+      vizConfig.overlayVariable &&
+      (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
     facetVariable: vizConfig.facetVariable,
   });
-
-  const filteredConstraints = useFilteredConstraints(
-    dataElementConstraints,
-    selectedVariables,
-    entities,
-    filters,
-    'overlayVariable'
-  );
-
-  useProvidedOptionalVariable<LineplotConfig>(
-    options?.getOverlayVariable,
-    'overlayVariable',
-    providedOverlayVariableDescriptor,
-    vizConfig.overlayVariable,
-    entities,
-    filters,
-    filteredConstraints,
-    dataElementDependencyOrder,
-    selectedVariables,
-    updateVizConfig,
-    /** snackbar message */
-    'The new overlay variable is not compatible with this visualization and has been disabled.'
-  );
 
   const neutralPaletteProps = useNeutralPaletteProps(
     vizConfig.overlayVariable,
@@ -675,7 +652,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         !variablesAreUnique([
           xAxisVariable,
           yAxisVariable,
-          overlayVariable,
+          overlayVariable && (providedOverlayVariable ?? overlayVariable),
           facetVariable,
         ])
       )
@@ -699,7 +676,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
         inputs,
         selectedVariables,
         entities,
-        dataElementConstraints
+        dataElementConstraints,
+        dataElementDependencyOrder
       );
 
       // check independentValueType/dependentValueType
@@ -788,6 +766,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       selectedVariables,
       entities,
       dataElementConstraints,
+      dataElementDependencyOrder,
       filters,
       studyId,
       dataRequestConfig,

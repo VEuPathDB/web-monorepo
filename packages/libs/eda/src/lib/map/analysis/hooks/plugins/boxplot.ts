@@ -16,10 +16,8 @@ export function boxplotRequest(
     config: {
       xAxisVariable: vizConfig.xAxisVariable,
       yAxisVariable: vizConfig.yAxisVariable,
-      ...(vizConfig.overlayVariable &&
-      isEqual(vizConfig.overlayVariable, overlayConfig?.overlayVariable)
-        ? { overlayConfig }
-        : {}),
+      // for floaters, vizConfig.overlayVariable is simply the on/off switch for overlay
+      ...(vizConfig.overlayVariable ? { overlayConfig } : {}),
       outputEntityId,
     },
   };
