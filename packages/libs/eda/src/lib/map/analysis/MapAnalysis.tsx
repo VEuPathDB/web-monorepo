@@ -83,6 +83,8 @@ import {
 } from './MarkerConfiguration/MapTypeConfigurationMenu';
 import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
+import { GeoConfig } from '../../core/types/geoConfig';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -177,12 +179,23 @@ interface Props {
 export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
+  const geoConfigs = useGeoConfig(useStudyEntities());
+  if (geoConfigs == null || geoConfigs.length === 0)
+    return (
+      <Banner
+        banner={{
+          type: 'error',
+          message: 'This study does not contain map-specific variables.',
+        }}
+      />
+    );
   if (appStateAndSetters.appState == null) return null;
   return (
     <MapAnalysisImpl
       {...props}
       {...(appStateAndSetters as CompleteAppState)}
       analysisState={analysisState}
+      geoConfigs={geoConfigs}
     />
   );
 }
@@ -192,7 +205,11 @@ type CompleteAppState = ReturnType<typeof useAppState> & {
   analysisState: AnalysisState;
 };
 
-function MapAnalysisImpl(props: Props & CompleteAppState) {
+interface ImplProps extends Props, CompleteAppState {
+  geoConfigs: GeoConfig[];
+}
+
+function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
@@ -205,6 +222,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setIsSubsetPanelOpen = () => {},
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
+    geoConfigs,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -212,12 +230,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyMetadata = useStudyMetadata();
   const studyId = studyMetadata.id;
   const studyEntities = useStudyEntities(filters);
-  const geoConfigs = useGeoConfig(studyEntities);
-  const geoConfig = geoConfigs[0];
   const analysisClient = useAnalysisClient();
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
+  const geoConfig = geoConfigs[0];
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
@@ -318,8 +335,9 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   });
   const finalMarkers = useMemo(() => markers || [], [markers]);
 
-  const userLoggedIn = useWdkService((wdkService) => {
-    return wdkService.getCurrentUser().then((user) => !user.isGuest);
+  const userLoggedIn = useWdkService(async (wdkService) => {
+    const user = await wdkService.getCurrentUser();
+    return !user.isGuest;
   });
 
   const history = useHistory();
@@ -886,12 +904,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           if (activeSideMenuId == null) return <></>;
           return sideNavigationButtonConfigurationObjects
             .find((navItem) => {
-              if (navItem.labelText === activeSideMenuId) return navItem;
+              if (navItem.labelText === activeSideMenuId) return true;
               if ('subMenuConfig' in navItem && navItem.subMenuConfig) {
                 return navItem.subMenuConfig.find(
                   (subNavItem) => subNavItem.id === activeSideMenuId
                 );
               }
+              return false;
             })
             ?.renderSideNavigationPanel(apps);
         }
@@ -1079,7 +1098,6 @@ function SideNavigationItems({
       labelText,
       icon,
       onToggleSideMenuItem = () => {},
-      isExpandable = false,
       subMenuConfig = [],
     }) => {
       /**
