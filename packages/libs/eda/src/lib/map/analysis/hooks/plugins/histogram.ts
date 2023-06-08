@@ -40,10 +40,8 @@ export function histogramRequest(
       barMode: 'stack',
       ...binSpec,
       valueSpec,
-      ...(vizConfig.overlayVariable &&
-      isEqual(vizConfig.overlayVariable, overlayConfig?.overlayVariable)
-        ? { overlayConfig }
-        : {}),
+      // for floaters, vizConfig.overlayVariable is simply the on/off switch for overlay
+      ...(vizConfig.overlayVariable ? { overlayConfig } : {}),
       viewport,
     },
   };

@@ -32,9 +32,7 @@ export interface InputSpec {
    * However, you should additionaly use the `readonlyValue` prop as a label to display
    * when the provided variable is null.
    *
-   * The variable will only be selected/selectable if the constraints are met.
-   * (Meaning that if you pass a new provided variable that isn't compatible, the radio button
-   * will switch to "no variable")
+   * The variable will only be selectable if the constraints are met.
    */
   providedOptionalVariable?: VariableDescriptor;
   /**
@@ -303,13 +301,6 @@ export function InputVariables(props: Props) {
                               : input.providedOptionalVariable
                           )
                         }
-                        //                        onSelectedOptionDisabled={(_) => {
-                        //                          handleChange(input.name, undefined);
-                        //                          enqueueSnackbar(
-                        //                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
-                        //                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
-                        //                          );
-                        //                        }}
                       />
                     ) : input.readonlyValue ? (
                       <span style={{ height: '32px', lineHeight: '32px' }}>

@@ -1,5 +1,4 @@
 import { H6 } from '@veupathdb/coreui';
-import { OverlayConfig } from '../../../core';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -12,7 +11,7 @@ interface MarkerConfiguration<T extends string> {
 }
 export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
   selectedVariable: VariableDescriptor;
-  overlayConfig: OverlayConfig | undefined;
+  selectedValues: string[] | undefined;
 }
 interface Props
   extends Omit<
@@ -29,31 +28,25 @@ export function PieMarkerConfigurationMenu({
   onChange,
   starredVariables,
   toggleStarredVariable,
+  constraints,
 }: Props) {
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
-    if (!selection.overlay) {
+    if (!selection.overlayVariable) {
       console.error(
-        `Expected overlay to defined but got ${typeof selection.overlay}`
+        `Expected overlayVariable to be defined but got ${typeof selection.overlayVariable}`
       );
       return;
     }
 
     onChange({
       ...configuration,
-      selectedVariable: selection.overlay,
-      overlayConfig: undefined,
+      selectedVariable: selection.overlayVariable,
+      selectedValues: undefined,
     });
   }
 
   return (
     <div>
-      <H6
-        additionalStyles={{
-          margin: '15px 12px',
-        }}
-      >
-        Configure Donuts:
-      </H6>
       <p
         style={{
           paddingLeft: 7,
@@ -65,12 +58,15 @@ export function PieMarkerConfigurationMenu({
       </p>
       <InputVariables
         showClearSelectionButton={false}
-        inputs={[{ name: 'overlay', label: 'Variable', titleOverride: ' ' }]}
+        inputs={[
+          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+        ]}
         entities={entities}
-        selectedVariables={{ overlay: configuration.selectedVariable }}
+        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
         onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
+        constraints={constraints}
       />
     </div>
   );

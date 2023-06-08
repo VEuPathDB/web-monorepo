@@ -23,6 +23,7 @@ const defaultPlotStyles: CSSProperties = {
 export function FloatingLayout({
   containerStyles,
   plotNode,
+  controlsNode,
   plotStyles,
   showRequiredInputsPrompt,
   isMosaicPlot,
@@ -34,6 +35,7 @@ export function FloatingLayout({
           <RequiredInputsPrompt isMosaicPlot={isMosaicPlot} />
         )}
         {plotNode}
+        {controlsNode}
       </div>
     </div>
   );

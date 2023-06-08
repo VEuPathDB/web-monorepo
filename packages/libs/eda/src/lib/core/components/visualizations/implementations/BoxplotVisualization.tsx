@@ -76,9 +76,7 @@ import {
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import {
-  useFilteredConstraints,
   useNeutralPaletteProps,
-  useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
 
@@ -290,32 +288,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const variablesForConstraints = useDeepValue({
     xAxisVariable: vizConfig.xAxisVariable,
     yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
-    overlayVariable: vizConfig.overlayVariable,
+    overlayVariable:
+      vizConfig.overlayVariable &&
+      (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
     facetVariable: vizConfig.facetVariable,
   });
-
-  const filteredConstraints = useFilteredConstraints(
-    dataElementConstraints,
-    selectedVariables,
-    entities,
-    filters,
-    'overlayVariable'
-  );
-
-  useProvidedOptionalVariable<BoxplotConfig>(
-    options?.getOverlayVariable,
-    'overlayVariable',
-    providedOverlayVariableDescriptor,
-    vizConfig.overlayVariable,
-    entities,
-    filters,
-    filteredConstraints,
-    dataElementDependencyOrder,
-    selectedVariables,
-    updateVizConfig,
-    /** snackbar message */
-    'The new overlay variable is not compatible with this visualization and has been disabled.'
-  );
 
   const {
     xAxisVariable,
@@ -461,7 +438,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         !variablesAreUnique([
           xAxisVariable,
           yAxisVariable,
-          overlayVariable,
+          overlayVariable && (providedOverlayVariable ?? overlayVariable),
           facetVariable,
         ])
       )
@@ -469,9 +446,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
       assertValidInputVariables(
         inputs,
-        selectedVariables,
+        variablesForConstraints,
         entities,
-        dataElementConstraints
+        dataElementConstraints,
+        dataElementDependencyOrder
       );
 
       // add visualization.type here. valueSpec too?
@@ -580,6 +558,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       selectedVariables,
       entities,
       dataElementConstraints,
+      dataElementDependencyOrder,
       filters,
       studyId,
       computation.descriptor.configuration,
