@@ -10,6 +10,9 @@ import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect'
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { sharedConfigCssStyles } from './abundance';
+import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
+import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
+import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 
 /**
  * Differential abundance
@@ -33,7 +36,7 @@ export type DifferentialAbundanceConfig = t.TypeOf<
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableDescriptor,
-  comparatorVariable: t.string,
+  comparatorVariable: VariableDescriptor,
 });
 
 export const plugin: ComputationPlugin = {
@@ -91,6 +94,8 @@ function DifferentialAbundanceConfigDescriptionComponent({
     'comparatorVariable' in configuration
       ? configuration.comparatorVariable
       : undefined;
+
+  console.log(comparatorVariable);
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
@@ -113,17 +118,18 @@ function DifferentialAbundanceConfigDescriptionComponent({
         </span>
       </h4>
       <h4 style={{ padding: 0, marginLeft: 20 }}>
-        Dissimilarity method:{' '}
+        Comparator Variable:{' '}
         <span style={{ fontWeight: 300 }}>
-          {comparatorVariable ? comparatorVariable : <i>Not selected</i>}
+          {comparatorVariable ? (
+            comparatorVariable.variableId
+          ) : (
+            <i>Not selected</i>
+          )}
         </span>
       </h4>
     </>
   );
 }
-
-// Include available methods in this array.
-const BETA_DIV_DISSIMILARITY_METHODS = ['bray', 'jaccard', 'jsd'];
 
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
@@ -134,7 +140,21 @@ export function DifferentialAbundanceConfiguration(
     analysisState,
     visualizationId,
   } = props;
+
+  const configuration = computation.descriptor
+    .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
+  const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
+  console.log(configuration);
+  const handleChange = (
+    configuration: DifferentialAbundanceConfig,
+    selectedVariable?: VariableDescriptor
+  ) => {
+    if (selectedVariable) {
+      configuration.comparatorVariable = selectedVariable;
+    }
+  };
+
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
@@ -144,7 +164,6 @@ export function DifferentialAbundanceConfiguration(
     computation,
     Computation
   );
-  const configuration = computation.descriptor.configuration;
 
   const changeConfigHandler =
     useConfigChangeHandler<DifferentialAbundanceConfig>(
@@ -176,11 +195,14 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [collectionVarItems, configuration]);
 
-  const betaDivDissimilarityMethod = useMemo(() => {
-    if (configuration && 'betaDivDissimilarityMethod' in configuration) {
-      return configuration.betaDivDissimilarityMethod;
+  const selectedComparatorVariable = useMemo(() => {
+    if (configuration && 'ComparatorVariable' in configuration) {
+      return configuration.comparatorVariable;
     }
   }, [configuration]);
+  console.log(selectedComparatorVariable);
+
+  console.log(configuration);
 
   return (
     <ComputationStepContainer
@@ -200,6 +222,7 @@ export function DifferentialAbundanceConfiguration(
         >
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
           <SingleSelect
+            // @ts-ignore
             value={
               selectedCollectionVar
                 ? selectedCollectionVar.value
@@ -214,22 +237,35 @@ export function DifferentialAbundanceConfiguration(
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>
-            Dissimilarity method
+            Comparator Variable
           </div>
-          {/* <SingleSelect
-            value={betaDivDissimilarityMethod ?? 'Select a method'}
-            buttonDisplayContent={
-              betaDivDissimilarityMethod ?? 'Select a method'
-            }
-            items={BETA_DIV_DISSIMILARITY_METHODS.map((method) => ({
-              value: method,
-              display: method,
-            }))}
-            onSelect={partial(
-              changeConfigHandler,
-              'betaDivDissimilarityMethod'
-            )}
-          /> */}
+          <VariableTreeDropdown
+            showClearSelectionButton={false}
+            scope="variableTree"
+            showMultiFilterDescendants
+            // disabledVariables={
+            //   disabledVariablesByInputName[input.name]
+            // }
+            // customDisabledVariableMessage={
+            //   (constraints &&
+            //     constraints.length &&
+            //     constraints[0][input.name]?.description) ||
+            //   undefined
+            // }
+            starredVariables={[]}
+            toggleStarredVariable={toggleStarredVariable}
+            entityId={configuration?.comparatorVariable?.entityId}
+            variableId={configuration?.comparatorVariable?.variableId}
+            variableLinkConfig={{
+              type: 'button',
+              onClick: (variable) => {
+                changeConfigHandler(
+                  'comparatorVariable',
+                  variable as VariableDescriptor
+                );
+              },
+            }}
+          />
         </div>
       </div>
     </ComputationStepContainer>
