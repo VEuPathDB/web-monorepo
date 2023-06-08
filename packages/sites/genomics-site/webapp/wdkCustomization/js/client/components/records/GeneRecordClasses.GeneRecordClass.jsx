@@ -652,8 +652,7 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
         <div style={{ padding: '1em' }}>
           {prot_seq_warn == null ? null : (
             <h4>
-              {' '}
-              NOTE: <i>{prot_seq_warn}</i>
+              NOTE:<i>{prot_seq_warn}</i>
             </h4>
           )}
           <h3>Predicted Protein Sequence</h3>
