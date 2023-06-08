@@ -58,19 +58,17 @@ export function PieMarkerConfigurationMenu({
     useCallback(async () => {
       if (
         !overlayVariable ||
-        overlayConfiguration?.overlayType !== 'continuous'
+        overlayConfiguration?.overlayType !== 'continuous' ||
+        !('distributionDefaults' in overlayVariable)
       )
         return;
       const binSpec = {
-        // @ts-ignore
         displayRangeMin:
           overlayVariable.distributionDefaults.rangeMin +
           (overlayVariable.type === 'date' ? 'T00:00:00Z' : ''),
-        // @ts-ignore
         displayRangeMax:
           overlayVariable.distributionDefaults.rangeMax +
           (overlayVariable.type === 'date' ? 'T00:00:00Z' : ''),
-        // @ts-ignore
         binWidth: overlayVariable.distributionDefaults.binWidth,
         // @ts-ignore
         binUnits: overlayVariable.distributionDefaults.binUnits,
@@ -82,6 +80,7 @@ export function PieMarkerConfigurationMenu({
         {
           valueSpec: 'count',
           filters: filters ?? [],
+          // @ts-ignore
           binSpec,
         }
       );
