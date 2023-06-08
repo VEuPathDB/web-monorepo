@@ -23,8 +23,8 @@ import { sharedConfigCssStyles } from './abundance';
  * data point corresponds to an item (taxon, gene, etc.).
  *
  * Currently the differential abundance app will be implemented with only a volcano visualization. Plans for
- * the future of this app include a lefse diagram, tables of results, and strategies to create user-defined
- * collections from the output of the computation.
+ * the future of this app include a lefse diagram, tables of results, adding new computation methods, and
+ * strategies to create user-defined collections from the output of the computation.
  */
 
 export type DifferentialAbundanceConfig = t.TypeOf<
@@ -33,7 +33,7 @@ export type DifferentialAbundanceConfig = t.TypeOf<
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableDescriptor,
-  betaDivDissimilarityMethod: t.string,
+  comparatorVariable: t.string,
 });
 
 export const plugin: ComputationPlugin = {
@@ -87,9 +87,9 @@ function DifferentialAbundanceConfigDescriptionComponent({
     'collectionVariable' in configuration
       ? configuration.collectionVariable
       : undefined;
-  const betaDivDissimilarityMethod =
-    'betaDivDissimilarityMethod' in configuration
-      ? configuration.betaDivDissimilarityMethod
+  const comparatorVariable =
+    'comparatorVariable' in configuration
+      ? configuration.comparatorVariable
       : undefined;
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -115,12 +115,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
       <h4 style={{ padding: 0, marginLeft: 20 }}>
         Dissimilarity method:{' '}
         <span style={{ fontWeight: 300 }}>
-          {betaDivDissimilarityMethod ? (
-            betaDivDissimilarityMethod[0].toUpperCase() +
-            betaDivDissimilarityMethod.slice(1)
-          ) : (
-            <i>Not selected</i>
-          )}
+          {comparatorVariable ? comparatorVariable : <i>Not selected</i>}
         </span>
       </h4>
     </>
@@ -221,7 +216,7 @@ export function DifferentialAbundanceConfiguration(
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>
             Dissimilarity method
           </div>
-          <SingleSelect
+          {/* <SingleSelect
             value={betaDivDissimilarityMethod ?? 'Select a method'}
             buttonDisplayContent={
               betaDivDissimilarityMethod ?? 'Select a method'
@@ -234,7 +229,7 @@ export function DifferentialAbundanceConfiguration(
               changeConfigHandler,
               'betaDivDissimilarityMethod'
             )}
-          />
+          /> */}
         </div>
       </div>
     </ComputationStepContainer>
