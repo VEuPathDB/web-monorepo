@@ -1,5 +1,4 @@
-import { BoundsDriftMarkerProps } from '@veupathdb/components/lib/map/BoundsDriftMarker';
-import { ReactElement, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { usePromise } from '../../../core/hooks/promise';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../core/types/geoConfig';
@@ -17,8 +16,6 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots';
-import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
 import {
   kFormatter,
   mFormatter,
@@ -28,6 +25,8 @@ import { LegendItemsProps } from '@veupathdb/components/lib/components/plotContr
 import { VariableDescriptor } from '../../../core/types/variable';
 import { useDeepValue } from '../../../core/hooks/immutability';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
+import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
+import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -55,7 +54,7 @@ export interface StandaloneMapMarkersProps {
 // what this hook returns
 interface MapMarkers {
   /** the markers */
-  markers: ReactElement<BoundsDriftMarkerProps>[] | undefined;
+  markerProps: DonutMarkerProps[] | ChartMarkerProps[] | undefined;
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
   totalVisibleEntityCount: number | undefined;
   /** This tells you how many entities are on screen that also have data for the overlay variable
@@ -140,7 +139,7 @@ export function useStandaloneMapMarkers(
       ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
       : undefined;
 
-  const markerData = usePromise<StandaloneMapMarkersResponse | undefined>(
+  const rawMarkersData = usePromise<StandaloneMapMarkersResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
@@ -214,7 +213,7 @@ export function useStandaloneMapMarkers(
   );
 
   const totalVisibleEntityCount: number | undefined =
-    markerData.value?.mapElements.reduce((acc, curr) => {
+    rawMarkersData.value?.mapElements.reduce((acc, curr) => {
       return acc + curr.entityCount;
     }, 0);
 
@@ -222,8 +221,8 @@ export function useStandaloneMapMarkers(
   // assumes the value is a count! (so never negative)
   const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
-      markerData.value
-        ? markerData.value.mapElements
+      rawMarkersData.value
+        ? rawMarkersData.value.mapElements
             .flatMap((el) => el.overlayValues)
             .reduce(
               ({ valueMax, valueMinPos, countSum }, elem) => ({
@@ -242,7 +241,7 @@ export function useStandaloneMapMarkers(
               }
             )
         : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
-    [markerData]
+    [rawMarkersData]
   );
 
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -257,8 +256,8 @@ export function useStandaloneMapMarkers(
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
    */
-  const markers = useMemo(() => {
-    return markerData.value?.mapElements.map(
+  const markerProps = useMemo(() => {
+    return rawMarkersData.value?.mapElements.map(
       ({
         geoAggregateValue,
         entityCount,
@@ -333,28 +332,24 @@ export function useStandaloneMapMarkers(
 
         switch (markerType) {
           case 'pie': {
-            return (
-              <DonutMarker
-                {...commonMarkerProps}
-                markerLabel={kFormatter(count)}
-              />
-            );
+            return {
+              ...commonMarkerProps,
+              markerLabel: kFormatter(count),
+            } as DonutMarkerProps;
           }
           default: {
-            return (
-              <ChartMarker
-                {...commonMarkerProps}
-                markerLabel={mFormatter(count)}
-                dependentAxisRange={defaultDependentAxisRange}
-                dependentAxisLogScale={dependentAxisLogScale}
-              />
-            );
+            return {
+              ...commonMarkerProps,
+              markerLabel: mFormatter(count),
+              dependentAxisRange: defaultDependentAxisRange,
+              dependentAxisLogScale,
+            } as ChartMarkerProps;
           }
         }
       }
     );
   }, [
-    markerData.value?.mapElements,
+    rawMarkersData.value?.mapElements,
     vocabulary,
     markerType,
     overlayType,
@@ -384,23 +379,23 @@ export function useStandaloneMapMarkers(
           : undefined,
       // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label
-      hasData: markerData
-        ? some(markerData.value?.mapElements, (el) =>
+      hasData: rawMarkersData
+        ? some(rawMarkersData.value?.mapElements, (el) =>
             el.overlayValues.some((ov) => ov.binLabel === label)
           )
         : false,
       group: 1,
       rank: 1,
     }));
-  }, [markerData, vocabulary, overlayType]);
+  }, [rawMarkersData, vocabulary, overlayType]);
 
   return {
-    markers,
+    markerProps,
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
-    pending: markerData.pending,
-    error: markerData.error,
+    pending: rawMarkersData.pending,
+    error: rawMarkersData.error,
   };
 }
 
