@@ -54,7 +54,7 @@ export interface StandaloneMapMarkersProps {
 // what this hook returns
 interface MapMarkers {
   /** the markers */
-  markersData: DonutMarkerProps[] | ChartMarkerProps[] | undefined;
+  markerProps: DonutMarkerProps[] | ChartMarkerProps[] | undefined;
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
   totalVisibleEntityCount: number | undefined;
   /** This tells you how many entities are on screen that also have data for the overlay variable
@@ -256,7 +256,7 @@ export function useStandaloneMapMarkers(
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
    */
-  const finalMarkersData = useMemo(() => {
+  const markerProps = useMemo(() => {
     return rawMarkersData.value?.mapElements.map(
       ({
         geoAggregateValue,
@@ -390,7 +390,7 @@ export function useStandaloneMapMarkers(
   }, [rawMarkersData, vocabulary, overlayType]);
 
   return {
-    markersData: finalMarkersData,
+    markerProps,
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,

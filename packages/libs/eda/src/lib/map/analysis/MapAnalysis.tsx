@@ -318,7 +318,7 @@ function MapAnalysisImpl(props: ImplProps) {
   })();
 
   const {
-    markersData,
+    markerProps,
     pending,
     error,
     legendItems,
@@ -338,14 +338,14 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const markers = useMemo(
     () =>
-      markersData?.map((marker) =>
+      markerProps?.map((marker) =>
         markerType === 'pie' ? (
           <DonutMarkerComponent {...marker} />
         ) : (
           <ChartMarkerComponent {...marker} />
         )
       ) || [],
-    [markersData, markerType]
+    [markerProps, markerType]
   );
 
   const userLoggedIn = useWdkService(async (wdkService) => {
