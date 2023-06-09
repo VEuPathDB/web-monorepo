@@ -86,6 +86,8 @@ import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
+import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -328,7 +330,7 @@ function MapAnalysisImpl(props: ImplProps) {
   })();
 
   const {
-    markers,
+    markersData,
     pending,
     error,
     legendItems,
@@ -345,7 +347,18 @@ function MapAnalysisImpl(props: ImplProps) {
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
-  const finalMarkers = useMemo(() => markers || [], [markers]);
+
+  const markers = useMemo(
+    () =>
+      markersData?.map((markerProps) =>
+        markerType === 'pie' ? (
+          <DonutMarkerComponent {...markerProps} />
+        ) : (
+          <ChartMarkerComponent {...markerProps} />
+        )
+      ) || [],
+    [markersData, markerType]
+  );
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
@@ -1004,7 +1017,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     showSpinner={pending}
                     animation={defaultAnimation}
                     viewport={appState.viewport}
-                    markers={finalMarkers}
+                    markers={markers}
                     mouseMode={appState.mouseMode}
                     flyToMarkers={
                       markers && markers.length > 0 && willFlyTo && !pending
