@@ -16,6 +16,8 @@ import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { config } from 'process';
 
+// @ann next step is to make the actual request to the compute service
+
 /**
  * Differential abundance
  *
@@ -35,12 +37,17 @@ import { config } from 'process';
 export type DifferentialAbundanceConfig = t.TypeOf<
   typeof DifferentialAbundanceConfig
 >;
+
+const Comparator = t.type({
+  variable: VariableDescriptor,
+  groupA: t.array(t.string),
+  groupB: t.array(t.string),
+});
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableDescriptor,
-  comparatorVariable: VariableDescriptor,
-  comparatorGroupA: t.array(t.string),
-  comparatorGroupB: t.array(t.string),
+  comparator: Comparator,
+  differentialAbundanceMethod: t.string,
 });
 
 export const plugin: ComputationPlugin = {
@@ -96,7 +103,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
       : undefined;
   const comparatorVariable =
     'comparatorVariable' in configuration
-      ? configuration.comparatorVariable
+      ? configuration.comparator?.variable
       : undefined;
 
   console.log(comparatorVariable);
@@ -157,9 +164,11 @@ export function DifferentialAbundanceConfiguration(
     selectedVariable?: VariableDescriptor
   ) => {
     if (selectedVariable) {
-      configuration.comparatorVariable = selectedVariable;
+      configuration.comparator.variable = selectedVariable;
     }
   };
+  // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
+  configuration.differentialAbundanceMethod = 'DESeq';
 
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -209,8 +218,12 @@ export function DifferentialAbundanceConfiguration(
   // console.log(selectedComparatorVariable);
 
   const selectedComparatorVariable = useMemo(() => {
-    if (configuration && 'comparatorVariable' in configuration) {
-      return findEntityAndVariable(configuration.comparatorVariable);
+    if (
+      configuration &&
+      configuration.comparator &&
+      'variable' in configuration.comparator
+    ) {
+      return findEntityAndVariable(configuration.comparator.variable);
     }
   }, [configuration]);
 
@@ -268,15 +281,16 @@ export function DifferentialAbundanceConfiguration(
             // }
             starredVariables={[]}
             toggleStarredVariable={toggleStarredVariable}
-            entityId={configuration?.comparatorVariable?.entityId}
-            variableId={configuration?.comparatorVariable?.variableId}
+            entityId={configuration?.comparator?.variable?.entityId}
+            variableId={configuration?.comparator?.variable?.variableId}
             variableLinkConfig={{
               type: 'button',
               onClick: (variable) => {
-                changeConfigHandler(
-                  'comparatorVariable',
-                  variable as VariableDescriptor
-                );
+                changeConfigHandler('comparator', {
+                  variable: variable as VariableDescriptor,
+                  groupA: configuration?.comparator?.groupA ?? null,
+                  groupB: configuration?.comparator?.groupB ?? null,
+                });
               },
             }}
           />
@@ -284,17 +298,25 @@ export function DifferentialAbundanceConfiguration(
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group A</div>
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration.comparatorGroupA ?? []}
+          selectedValues={configuration?.comparator?.groupA ?? []}
           onSelectedValuesChange={(newValues) =>
-            changeConfigHandler('comparatorGroupA', newValues)
+            changeConfigHandler('comparator', {
+              variable: configuration?.comparator?.variable ?? null,
+              groupA: newValues,
+              groupB: configuration?.comparator?.groupB ?? null,
+            })
           }
         />
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration.comparatorGroupB ?? []}
+          selectedValues={configuration?.comparator.groupB ?? []}
           onSelectedValuesChange={(newValues) =>
-            changeConfigHandler('comparatorGroupB', newValues)
+            changeConfigHandler('comparator', {
+              variable: configuration?.comparator?.variable ?? null,
+              groupA: configuration?.comparator?.groupA ?? null,
+              groupB: newValues,
+            })
           }
         />
       </div>

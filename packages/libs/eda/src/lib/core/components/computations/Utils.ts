@@ -121,6 +121,8 @@ function handleConfigurationChanges<ConfigType>(
     updatedConfiguration
   );
 
+  console.log(existingComputation);
+
   if (existingComputation) {
     // 2Y:  move viz to existingComputation
 
