@@ -162,6 +162,7 @@ type LinePlotDataSeriesWithType = LinePlotDataSeries & {
   width?: number[];
   type?: string;
   offset?: number;
+  xaxis?: string;
   yaxis?: string;
 };
 
@@ -867,14 +868,16 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
-              ? dataItem.y.length > 0 && dataItem.y[0] !== null
+              ? // fix legend bug
+                dataItem.y.length > 0 &&
+                dataItem.y.some((element) => element != null)
               : allData.facets
                   .map((facet) => facet.data)
                   .filter((data): data is LinePlotData => data != null)
                   .some(
                     (data) =>
                       data.series[index].y.length > 0 &&
-                      data.series[index].y[0] !== null
+                      data.series[index].y.some((element) => element != null)
                   ),
             group: 1,
             rank: 1,
@@ -2329,6 +2332,21 @@ function processInputData(
 
       const color = markerColor(index, el);
 
+      // for dataSetProcessed.name
+      const dataSetProcessedName =
+        (el.overlayVariableDetails?.value != null
+          ? fixLabelForNumberVariables(
+              el.overlayVariableDetails.value,
+              overlayVariable
+            )
+          : el.seriesType !== 'zeroOverZero'
+          ? 'Data'
+          : '') +
+        (el.seriesType === 'zeroOverZero'
+          ? (overlayVariable !== undefined ? ', ' : '') +
+            'Undefined Y (denominator of 0)'
+          : '');
+
       dataSetProcessed.push({
         x: seriesX,
         y: seriesY,
@@ -2345,19 +2363,7 @@ function processInputData(
             }
           : {}),
         binSampleSize: el.binSampleSize,
-        name:
-          (el.overlayVariableDetails?.value != null
-            ? fixLabelForNumberVariables(
-                el.overlayVariableDetails.value,
-                overlayVariable
-              )
-            : el.seriesType !== 'zeroOverZero'
-            ? 'Data'
-            : '') +
-          (el.seriesType === 'zeroOverZero'
-            ? (overlayVariable !== undefined ? ', ' : '') +
-              'Undefined Y (denominator of 0)'
-            : ''),
+        name: dataSetProcessedName,
         hideFromLegend: el.hideFromLegend,
         mode: modeValue,
         fill: fillAreaValue,
@@ -2384,7 +2390,7 @@ function processInputData(
           ? el.binSampleSize.map((val) =>
               val == null
                 ? null
-                : (val as BinSampleSizeProportion).numeratorN /
+                : // just use denominatorN
                   (val as BinSampleSizeProportion).denominatorN
             )
           : el.binSampleSize.map((val) =>
@@ -2421,24 +2427,15 @@ function processInputData(
           y: binSampleSize,
           width: marginalHistogramBinWidths,
           // use the same name with lineplot data for legend control
-          name:
-            (el.overlayVariableDetails?.value != null
-              ? fixLabelForNumberVariables(
-                  el.overlayVariableDetails.value,
-                  overlayVariable
-                )
-              : el.seriesType !== 'zeroOverZero'
-              ? 'Data'
-              : '') +
-            (el.seriesType === 'zeroOverZero'
-              ? (overlayVariable !== undefined ? ', ' : '') +
-                'Undefined Y (denominator of 0)'
-              : ''),
+          name: dataSetProcessedName,
           hideFromLegend: el.hideFromLegend,
           type: 'bar',
           offset: 0,
           marker: { color },
           seriesType: el.seriesType,
+          // set mode to be undefined for marginal histogram dataset
+          // to avoid having unnecessary tooltip content
+          mode: undefined,
           // this indicates that marginal histogram will use different yaxis
           yaxis: 'y2',
         });

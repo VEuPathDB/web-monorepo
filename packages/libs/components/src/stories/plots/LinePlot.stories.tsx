@@ -81,6 +81,7 @@ Basic.args = {
   independentAxisLabel: 'Age',
   legendTitle: 'Animal',
   title: 'Awesomeness of animals',
+  interactive: true,
 };
 
 export const ErrorBars = Template.bind({});
@@ -384,6 +385,8 @@ const trace3 = {
   marker: {
     color: 'rgb(0, 0, 255)',
   },
+  // set mode to be undefined for marginal histogram
+  mode: undefined,
   // set different yaxis for marginal histogram
   yaxis: 'y2',
 };
@@ -396,6 +399,8 @@ const trace4 = {
   marker: {
     color: 'rgb(255, 0, 0)',
   },
+  // set mode to be undefined for marginal histogram
+  mode: undefined,
   // set different yaxis for marginal histogram
   yaxis: 'y2',
 };
@@ -497,6 +502,8 @@ const LineMarginalHistogramDateData = {
       marker: {
         color: 'rgb(136,34,85)',
       },
+      // set mode to be undefined for marginal histogram
+      mode: undefined,
       yaxis: 'y2',
     },
     {
@@ -567,6 +574,8 @@ const LineMarginalHistogramDateData = {
       marker: {
         color: 'rgb(136,204,238)',
       },
+      // set mode to be undefined for marginal histogram
+      mode: undefined,
       yaxis: 'y2',
     },
     {
@@ -647,6 +656,8 @@ const LineMarginalHistogramDateData = {
       marker: {
         color: 'rgb(153,153,51)',
       },
+      // set mode to be undefined for marginal histogram
+      mode: undefined,
       yaxis: 'y2',
     },
   ],

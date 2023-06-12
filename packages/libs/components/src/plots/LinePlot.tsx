@@ -134,7 +134,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     ]);
 
   const layout: Partial<Layout> = {
-    hovermode: 'x',
+    // use unified hovering when marginal histogram is used
+    hovermode: showMarginalHistogram ? 'x unified' : 'x',
     xaxis: {
       title: independentAxisLabel,
       // add axis range control truncation
@@ -226,6 +227,7 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         : undefined,
       // disable plotly's mouse zoom control
       fixedrange: true,
+      title: 'Count',
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,
@@ -297,7 +299,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         // 'hovertemplate' but from there I don't think we can access arbitrary values,
         // such as 'upper', 'lower' and 'n'
 
-        // need to exclude marginal histogram
+        // below is for typical lineplot tooltip content thus no need for marginal histogram
+        // for that purpose, 'mode' attribute is set to be 'undefined' for marginal histogram dataset
         .map((series) => {
           if (series.mode != null) {
             return {
@@ -329,6 +332,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
                   : undefined;
                 // use <br> instead of \n for line break
                 return (
+                  // add <br> for marginal histogram for better readability
+                  (showMarginalHistogram ? '<br>' : '') +
                   `x: ${binLabel ?? x}<br>y: ${yText}${CI}` +
                   (N !== undefined ? '<br>n: ' + N : '') +
                   (xtra ? '<br>' + xtra : '')
