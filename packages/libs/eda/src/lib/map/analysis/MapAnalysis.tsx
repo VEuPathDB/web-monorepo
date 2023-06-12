@@ -363,11 +363,10 @@ function MapAnalysisImpl(props: ImplProps) {
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
     overlayConfig: activeOverlayConfig.value,
     outputEntityId: outputEntity?.id,
-    //TO DO: maybe dependentAxisLogScale
     isMarkerPreview: true,
   });
 
-  const previewMarker = useMemo(() => {
+  const continuousMarkerPreview = useMemo(() => {
     if (!previewMarkerData || !previewMarkerData.length) return;
     const initialDataObject = previewMarkerData[0].data.map((data) => ({
       label: data.label,
@@ -583,7 +582,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     subsettingClient={subsettingClient}
                     studyId={studyId}
                     filters={filters}
-                    previewMarker={previewMarker}
+                    continuousMarkerPreview={continuousMarkerPreview}
                   />
                 ) : (
                   <></>
@@ -614,7 +613,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     subsettingClient={subsettingClient}
                     studyId={studyId}
                     filters={filters}
-                    previewMarker={previewMarker}
+                    continuousMarkerPreview={continuousMarkerPreview}
                   />
                 ) : (
                   <></>

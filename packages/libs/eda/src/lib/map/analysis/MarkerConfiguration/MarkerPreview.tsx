@@ -5,10 +5,10 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 
 type Props = {
   data: OverlayConfig | undefined;
-  markerType: 'barplot' | 'pie';
+  mapType: 'barplot' | 'pie';
 };
 
-export function MarkerPreview({ data, markerType }: Props) {
+export function MarkerPreview({ data, mapType }: Props) {
   if (!data) return <></>;
   if (data.overlayType === 'categorical') {
     const { overlayValues, allValuesSorted } = data;
@@ -17,7 +17,7 @@ export function MarkerPreview({ data, markerType }: Props) {
         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
       0
     );
-    if (markerType === 'barplot') {
+    if (mapType === 'barplot') {
       const barplotData = {
         name: '',
         color: ColorPaletteDefault.slice(0, data?.overlayValues.length),
@@ -31,17 +31,14 @@ export function MarkerPreview({ data, markerType }: Props) {
         ),
       };
       return (
-        <div>
-          <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
-          <Barplot
-            data={{ series: [barplotData] }}
-            dependentAxisLabel="Count (filtered data)"
-            barLayout="overlay"
-            showValues={true}
-          />
-        </div>
+        <Barplot
+          data={{ series: [barplotData] }}
+          dependentAxisLabel="Count (filtered data)"
+          barLayout="overlay"
+          showValues={true}
+        />
       );
-    } else if (markerType === 'pie') {
+    } else if (mapType === 'pie') {
       const pieplotData = overlayValues.map((val, index) => ({
         label: val,
         color: ColorPaletteDefault[index],
@@ -51,19 +48,16 @@ export function MarkerPreview({ data, markerType }: Props) {
             : allValuesSorted.find((v) => v.label === val)?.count ?? 0,
       }));
       return (
-        <div>
-          <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
-          <PiePlot
-            data={{ slices: pieplotData }}
-            donutOptions={{
-              size: 0.5,
-            }}
-            textOptions={{
-              displayPosition: 'none',
-            }}
-            displayLegend={false}
-          />
-        </div>
+        <PiePlot
+          data={{ slices: pieplotData }}
+          donutOptions={{
+            size: 0.5,
+          }}
+          textOptions={{
+            displayPosition: 'none',
+          }}
+          displayLegend={false}
+        />
       );
     } else {
       return null;
