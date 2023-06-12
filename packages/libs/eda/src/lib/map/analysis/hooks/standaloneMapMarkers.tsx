@@ -199,7 +199,6 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          // @ts-ignore
           overlayConfig: hasAllValuesProperty
             ? overlayConfigWithoutAllValuesProperty
             : overlayConfig,

@@ -1,23 +1,19 @@
 import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { OverlayConfig, AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
-import { BarPlotMarkerConfiguration } from './BarPlotMarkerConfigurationMenu';
-import { PieMarkerConfiguration } from './PieMarkerConfigurationMenu';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 
-type Props = {
+type Props<T> = {
   overlayConfiguration: OverlayConfig;
-  onChange: (
-    configuration: BarPlotMarkerConfiguration | PieMarkerConfiguration
-  ) => void;
-  configuration: BarPlotMarkerConfiguration | PieMarkerConfiguration;
+  onChange: (configuration: T) => void;
+  configuration: T;
 };
 
-export function CategoricalMarkerConfigurationTable({
+export function CategoricalMarkerConfigurationTable<T>({
   overlayConfiguration,
   configuration,
   onChange,
-}: Props) {
+}: Props<T>) {
   if (overlayConfiguration.overlayType !== 'categorical') return <></>;
   const { overlayType, overlayValues, allValues } = overlayConfiguration;
   const selected = new Set(overlayValues);

@@ -76,9 +76,11 @@ export function BarPlotMarkerConfigurationMenu({
         displayRangeMax:
           overlayVariable.distributionDefaults.rangeMax +
           (overlayVariable.type === 'date' ? 'T00:00:00Z' : ''),
-        binWidth: overlayVariable.distributionDefaults.binWidth,
-        // @ts-ignore
-        binUnits: overlayVariable.distributionDefaults.binUnits,
+        binWidth: overlayVariable.distributionDefaults.binWidth ?? 1,
+        binUnits:
+          'binUnits' in overlayVariable.distributionDefaults
+            ? overlayVariable.distributionDefaults.binUnits
+            : undefined,
       };
       const distributionResponse = await subsettingClient.getDistribution(
         studyId,
@@ -87,7 +89,6 @@ export function BarPlotMarkerConfigurationMenu({
         {
           valueSpec: 'count',
           filters: filters ?? [],
-          // @ts-ignore
           binSpec,
         }
       );
@@ -174,7 +175,6 @@ export function BarPlotMarkerConfigurationMenu({
         <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
-          // @ts-ignore
           onChange={onChange}
         />
       )}

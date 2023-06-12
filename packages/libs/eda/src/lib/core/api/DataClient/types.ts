@@ -800,7 +800,7 @@ export interface StandaloneMapMarkersRequestParams {
     geoAggregateVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
-    overlayConfig?: OverlayConfig;
+    overlayConfig?: Omit<OverlayConfig, 'allValues'>;
     valueSpec: 'count' | 'proportion';
     viewport: {
       latitude: {
