@@ -119,7 +119,7 @@ export function PieMarkerConfigurationMenu({
 
   return (
     <div>
-      <div>
+      <div style={{ margin: '5px 0 0 0' }}>
         <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <MarkerPreview data={overlayConfiguration} mapType="pie" />
@@ -129,7 +129,6 @@ export function PieMarkerConfigurationMenu({
       </div>
       <p
         style={{
-          paddingLeft: 7,
           margin: '5px 0 0 0',
           fontWeight: 'bold',
         }}

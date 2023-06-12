@@ -130,7 +130,7 @@ export function BarPlotMarkerConfigurationMenu({
 
   return (
     <div>
-      <div>
+      <div style={{ margin: '5px 0 0 0' }}>
         <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <MarkerPreview data={overlayConfiguration} mapType="barplot" />
@@ -152,7 +152,6 @@ export function BarPlotMarkerConfigurationMenu({
       />
       <p
         style={{
-          paddingLeft: 7,
           margin: '5px 0 0 0',
           fontWeight: 'bold',
         }}

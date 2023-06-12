@@ -94,6 +94,7 @@ import ChartMarkerComponent, {
   ChartMarkerProps,
   ChartMarkerStandalone,
 } from '@veupathdb/components/lib/map/ChartMarker';
+import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/MarkerPreview';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -391,9 +392,19 @@ function MapAnalysisImpl(props: ImplProps) {
       initialDataObject
     );
     if (markerType === 'pie') {
-      return <DonutMarkerStandalone data={finalData} />;
+      return (
+        <DonutMarkerStandalone
+          data={finalData}
+          {...sharedStandaloneMarkerProperties}
+        />
+      );
     } else {
-      return <ChartMarkerStandalone data={finalData} />;
+      return (
+        <ChartMarkerStandalone
+          data={finalData}
+          {...sharedStandaloneMarkerProperties}
+        />
+      );
     }
   }, [previewMarkerData]);
 

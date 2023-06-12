@@ -2,10 +2,21 @@ import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import PiePlot from '@veupathdb/components/lib/plots/PiePlot';
 import { OverlayConfig } from '../../../core';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
+import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
+import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 
 type Props = {
   data: OverlayConfig | undefined;
   mapType: 'barplot' | 'pie';
+};
+
+export const sharedStandaloneMarkerProperties = {
+  markerScale: 3,
+  containerStyles: {
+    width: 'fit-content',
+    height: 'fit-content',
+    margin: 'auto',
+  },
 };
 
 export function MarkerPreview({ data, mapType }: Props) {
@@ -17,46 +28,26 @@ export function MarkerPreview({ data, mapType }: Props) {
         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
       0
     );
+    const plotData = overlayValues.map((val, index) => ({
+      label: val,
+      color: ColorPaletteDefault[index],
+      value:
+        val === '__UNSELECTED__'
+          ? allOtherValuesCount
+          : allValues.find((v) => v.label === val)?.count ?? 0,
+    }));
     if (mapType === 'barplot') {
-      const barplotData = {
-        name: '',
-        color: ColorPaletteDefault.slice(0, data?.overlayValues.length),
-        value: overlayValues.map((val) =>
-          val === '__UNSELECTED__'
-            ? allOtherValuesCount
-            : allValues.find((v) => v.label === val)?.count ?? 0
-        ),
-        label: overlayValues.map((val) =>
-          val === '__UNSELECTED__' ? 'All other values' : val
-        ),
-      };
       return (
-        <Barplot
-          data={{ series: [barplotData] }}
-          dependentAxisLabel="Count (filtered data)"
-          barLayout="overlay"
-          showValues={true}
+        <ChartMarkerStandalone
+          data={plotData}
+          {...sharedStandaloneMarkerProperties}
         />
       );
     } else if (mapType === 'pie') {
-      const pieplotData = overlayValues.map((val, index) => ({
-        label: val,
-        color: ColorPaletteDefault[index],
-        value:
-          val === '__UNSELECTED__'
-            ? allOtherValuesCount
-            : allValues.find((v) => v.label === val)?.count ?? 0,
-      }));
       return (
-        <PiePlot
-          data={{ slices: pieplotData }}
-          donutOptions={{
-            size: 0.5,
-          }}
-          textOptions={{
-            displayPosition: 'none',
-          }}
-          displayLegend={false}
+        <DonutMarkerStandalone
+          data={plotData}
+          {...sharedStandaloneMarkerProperties}
         />
       );
     } else {
