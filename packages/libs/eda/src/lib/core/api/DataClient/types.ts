@@ -783,7 +783,7 @@ export const OverlayConfig = intersection([
     type({
       overlayType: literal('categorical'),
       overlayValues: array(string),
-      allValuesSorted: array(AllValuesDefinition),
+      allValues: array(AllValuesDefinition),
     }),
     type({
       overlayType: literal('continuous'),

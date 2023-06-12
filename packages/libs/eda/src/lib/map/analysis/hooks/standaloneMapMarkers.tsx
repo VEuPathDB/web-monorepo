@@ -172,12 +172,12 @@ export function useStandaloneMapMarkers(
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
-      let overlayConfigWithoutAllValuesSorted;
-      const hasAllValuesSortedProperty =
-        overlayConfig && 'allValuesSorted' in overlayConfig;
-      if (hasAllValuesSortedProperty) {
-        const { allValuesSorted, ...allOtherProperties } = overlayConfig;
-        overlayConfigWithoutAllValuesSorted = allOtherProperties;
+      let overlayConfigWithoutAllValuesProperty;
+      const hasAllValuesProperty =
+        overlayConfig && 'allValues' in overlayConfig;
+      if (hasAllValuesProperty) {
+        const { allValues, ...allOtherProperties } = overlayConfig;
+        overlayConfigWithoutAllValuesProperty = allOtherProperties;
       }
 
       const viewport = {
@@ -200,8 +200,8 @@ export function useStandaloneMapMarkers(
           latitudeVariable,
           longitudeVariable,
           // @ts-ignore
-          overlayConfig: hasAllValuesSortedProperty
-            ? overlayConfigWithoutAllValuesSorted
+          overlayConfig: hasAllValuesProperty
+            ? overlayConfigWithoutAllValuesProperty
             : overlayConfig,
           outputEntityId,
           valueSpec: markerType === 'pie' ? 'count' : markerType,

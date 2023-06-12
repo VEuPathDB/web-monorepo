@@ -11,8 +11,8 @@ type Props = {
 export function MarkerPreview({ data, mapType }: Props) {
   if (!data) return <></>;
   if (data.overlayType === 'categorical') {
-    const { overlayValues, allValuesSorted } = data;
-    const allOtherValuesCount = allValuesSorted.reduce(
+    const { overlayValues, allValues } = data;
+    const allOtherValuesCount = allValues.reduce(
       (prev, curr) =>
         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
       0
@@ -24,7 +24,7 @@ export function MarkerPreview({ data, mapType }: Props) {
         value: overlayValues.map((val) =>
           val === '__UNSELECTED__'
             ? allOtherValuesCount
-            : allValuesSorted.find((v) => v.label === val)?.count ?? 0
+            : allValues.find((v) => v.label === val)?.count ?? 0
         ),
         label: overlayValues.map((val) =>
           val === '__UNSELECTED__' ? 'All other values' : val
@@ -45,7 +45,7 @@ export function MarkerPreview({ data, mapType }: Props) {
         value:
           val === '__UNSELECTED__'
             ? allOtherValuesCount
-            : allValuesSorted.find((v) => v.label === val)?.count ?? 0,
+            : allValues.find((v) => v.label === val)?.count ?? 0,
       }));
       return (
         <PiePlot

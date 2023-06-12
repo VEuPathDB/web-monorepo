@@ -299,7 +299,7 @@ function MapAnalysisImpl(props: ImplProps) {
             entityId: overlayEntity?.id,
           },
           overlayValues: activeMarkerConfiguration.selectedValues,
-          allValuesSorted: activeMarkerConfiguration.allValues,
+          allValues: activeMarkerConfiguration.allValues,
         } as OverlayConfig;
       }
 

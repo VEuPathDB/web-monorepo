@@ -47,7 +47,7 @@ export async function getDefaultOverlayConfig(
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
-      const { mostFrequentValues, allValuesSorted } = await getValues({
+      const { mostFrequentValues, allValues } = await getValues({
         studyId: studyId,
         ...overlayVariableDescriptor,
         filters: filters ?? [],
@@ -59,7 +59,7 @@ export async function getDefaultOverlayConfig(
         overlayType: 'categorical',
         overlayVariable: overlayVariableDescriptor,
         overlayValues: mostFrequentValues,
-        allValuesSorted,
+        allValues,
       };
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
       // continuous
@@ -97,7 +97,7 @@ type OverlayValue = {
 
 type OverlayValues = {
   mostFrequentValues: string[];
-  allValuesSorted: OverlayValue[];
+  allValues: OverlayValue[];
 };
 
 // get the most frequent values for the entire dataset, no filters at all
@@ -135,7 +135,7 @@ async function getValues({
             ...sortedValues.map((bin) => bin.label).slice(0, numValues),
             UNSELECTED_TOKEN,
           ],
-    allValuesSorted: sortedValues,
+    allValues: sortedValues,
   };
 }
 

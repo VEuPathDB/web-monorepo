@@ -19,12 +19,9 @@ export function CategoricalMarkerConfigurationTable({
   onChange,
 }: Props) {
   if (overlayConfiguration.overlayType !== 'categorical') return <></>;
-  const { overlayType, overlayValues, allValuesSorted } = overlayConfiguration;
+  const { overlayType, overlayValues, allValues } = overlayConfiguration;
   const selected = new Set(overlayValues);
-  const totalCount = allValuesSorted.reduce(
-    (prev, curr) => prev + curr.count,
-    0
-  );
+  const totalCount = allValues.reduce((prev, curr) => prev + curr.count, 0);
 
   function handleSelection(data: AllValuesDefinition) {
     if (
@@ -38,7 +35,7 @@ export function CategoricalMarkerConfigurationTable({
         selectedValues: overlayValues
           .slice(0, overlayValues.length - 1)
           .concat(data.label, lastItem),
-        allValues: allValuesSorted,
+        allValues,
       });
     } else {
       alert(`Only ${ColorPaletteDefault.length - 1} values can be selected`);
@@ -50,7 +47,7 @@ export function CategoricalMarkerConfigurationTable({
       onChange({
         ...configuration,
         selectedValues: overlayValues.filter((val) => val !== data.label),
-        allValues: allValuesSorted,
+        allValues,
       });
   }
 
@@ -63,7 +60,7 @@ export function CategoricalMarkerConfigurationTable({
       onRowDeselect: handleDeselection,
     },
     actions: [],
-    rows: allValuesSorted as AllValuesDefinition[],
+    rows: allValues as AllValuesDefinition[],
     columns: [
       {
         key: 'values',
