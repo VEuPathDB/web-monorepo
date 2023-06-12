@@ -37,6 +37,7 @@ interface Props
   subsettingClient: SubsettingClient;
   studyId: string;
   filters: Filter[] | undefined;
+  previewMarker: JSX.Element | undefined;
 }
 
 // TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repitition...
@@ -53,6 +54,7 @@ export function PieMarkerConfigurationMenu({
   subsettingClient,
   studyId,
   filters,
+  previewMarker,
 }: Props) {
   const barplotData = usePromise(
     useCallback(async () => {
@@ -116,7 +118,10 @@ export function PieMarkerConfigurationMenu({
 
   return (
     <div>
-      <MarkerPreview data={overlayConfiguration} markerType="pie" />
+      {overlayConfiguration?.overlayType === 'categorical' && (
+        <MarkerPreview data={overlayConfiguration} markerType="pie" />
+      )}
+      {overlayConfiguration?.overlayType === 'continuous' && previewMarker}
       <p
         style={{
           paddingLeft: 7,

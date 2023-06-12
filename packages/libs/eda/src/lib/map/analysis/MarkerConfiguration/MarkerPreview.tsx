@@ -69,6 +69,6 @@ export function MarkerPreview({ data, markerType }: Props) {
       return null;
     }
   } else {
-    return <>Hi, you must be continuous. I'm Jeremy.</>;
+    return null;
   }
 }

@@ -49,6 +49,10 @@ export interface StandaloneMapMarkersProps {
   outputEntityId: string | undefined;
   markerType: 'count' | 'proportion' | 'pie';
   dependentAxisLogScale?: boolean;
+  /**
+   * When true, will aggregate filtered data
+   */
+  isMarkerPreview?: boolean;
 }
 
 // what this hook returns
@@ -84,6 +88,7 @@ export function useStandaloneMapMarkers(
     filters,
     markerType,
     dependentAxisLogScale = false,
+    isMarkerPreview = false,
   } = props;
 
   // these two deepvalue eliminate an unnecessary data request
@@ -175,6 +180,17 @@ export function useStandaloneMapMarkers(
         overlayConfigWithoutAllValuesSorted = allOtherProperties;
       }
 
+      const viewport = {
+        latitude: {
+          xMin: isMarkerPreview ? -90 : xMin,
+          xMax: isMarkerPreview ? 90 : xMax,
+        },
+        longitude: {
+          left: isMarkerPreview ? -180 : left,
+          right: isMarkerPreview ? 180 : right,
+        },
+      };
+
       // now prepare the rest of the request params
       const requestParams: StandaloneMapMarkersRequestParams = {
         studyId,
@@ -189,16 +205,7 @@ export function useStandaloneMapMarkers(
             : overlayConfig,
           outputEntityId,
           valueSpec: markerType === 'pie' ? 'count' : markerType,
-          viewport: {
-            latitude: {
-              xMin,
-              xMax,
-            },
-            longitude: {
-              left,
-              right,
-            },
-          },
+          viewport,
         },
       };
 

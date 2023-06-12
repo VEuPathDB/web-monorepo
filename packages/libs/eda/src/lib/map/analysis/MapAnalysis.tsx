@@ -86,8 +86,14 @@ import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
-import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
+import DonutMarkerComponent, {
+  DonutMarkerProps,
+  DonutMarkerStandalone,
+} from '@veupathdb/components/lib/map/DonutMarker';
+import ChartMarkerComponent, {
+  ChartMarkerProps,
+  ChartMarkerStandalone,
+} from '@veupathdb/components/lib/map/ChartMarker';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -348,6 +354,50 @@ function MapAnalysisImpl(props: ImplProps) {
     //TO DO: maybe dependentAxisLogScale
   });
 
+  const { markersData: previewMarkerData } = useStandaloneMapMarkers({
+    boundsZoomLevel: appState.boundsZoomLevel,
+    geoConfig: geoConfig,
+    studyId,
+    filters,
+    markerType,
+    selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
+    overlayConfig: activeOverlayConfig.value,
+    outputEntityId: outputEntity?.id,
+    //TO DO: maybe dependentAxisLogScale
+    isMarkerPreview: true,
+  });
+
+  const previewMarker = useMemo(() => {
+    if (!previewMarkerData || !previewMarkerData.length) return;
+    const initialDataObject = previewMarkerData[0].data.map((data) => ({
+      label: data.label,
+      value: 0,
+      ...(data.color ? { color: data.color } : {}),
+    }));
+    const typedData =
+      markerType === 'pie'
+        ? ([...previewMarkerData] as DonutMarkerProps[])
+        : ([...previewMarkerData] as ChartMarkerProps[]);
+    const finalData = typedData.reduce(
+      (prevData, currData) =>
+        currData.data.map((data, index) => ({
+          label: data.label,
+          value: data.value + prevData[index].value,
+          ...('color' in prevData[index]
+            ? { color: prevData[index].color }
+            : 'color' in data
+            ? { color: data.color }
+            : {}),
+        })),
+      initialDataObject
+    );
+    if (markerType === 'pie') {
+      return <DonutMarkerStandalone data={finalData} />;
+    } else {
+      return <ChartMarkerStandalone data={finalData} />;
+    }
+  }, [previewMarkerData]);
+
   const markers = useMemo(
     () =>
       markersData?.map((markerProps) =>
@@ -533,6 +583,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     subsettingClient={subsettingClient}
                     studyId={studyId}
                     filters={filters}
+                    previewMarker={previewMarker}
                   />
                 ) : (
                   <></>
@@ -563,6 +614,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     subsettingClient={subsettingClient}
                     studyId={studyId}
                     filters={filters}
+                    previewMarker={previewMarker}
                   />
                 ) : (
                   <></>
