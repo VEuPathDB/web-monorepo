@@ -958,8 +958,10 @@ const FieldNode = ({
         isMultiPick
           ? ''
           : isDisabled
-          ? customDisabledVariableMessage ??
-            'This variable cannot be used with this plot and other variable selections.'
+          ? (customDisabledVariableMessage
+              ? customDisabledVariableMessage
+              : 'This variable cannot be used with this plot and other variable selections.') +
+            ' Muti-valued variables are not currently supported.'
           : 'Select this variable.'
       }
       className={
