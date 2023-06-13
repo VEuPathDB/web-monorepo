@@ -1,16 +1,19 @@
 // load scatter plot component
-import ScatterPlot, {
-  ScatterPlotProps,
-} from '@veupathdb/components/lib/plots/ScatterPlot';
+import VolcanoPlot, {
+  VolcanoPlotProps,
+} from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
-import { scaleLinear } from 'd3-scale';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
-// need to set for Scatterplot
+// need to set for VolcanoPlot
 
-import DataClient, { ScatterplotResponse } from '../../../api/DataClient';
-
+import DataClient, {
+  VolcanoPlotRequestParams,
+  VolcanoplotResponse,
+  VolcanoPlotPoint,
+} from '../../../api/DataClient';
+import { VolcanoPlotData } from '@veupathdb/components/lib/types/plots/volcanoplot';
 import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import {
@@ -35,7 +38,6 @@ import {
 } from '../VisualizationTypes';
 
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
-import ScatterBetadivSVG from './selectorIcons/ScatterBetadivSVG';
 
 // use lodash instead of Math.min/max
 import {
@@ -55,17 +57,12 @@ import {
   filter,
   isEqual,
 } from 'lodash';
-// directly use RadioButtonGroup instead of ScatterPlotControls
+
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { Toggle } from '@veupathdb/coreui';
-// import ScatterPlotData
-import {
-  ScatterPlotDataSeries,
-  ScatterPlotData,
-  FacetedData,
-} from '@veupathdb/components/lib/types/plots';
+
 // import Computation ts
-import { CoverageStatistics } from '../../../types/visualization';
+// import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import { NumberVariable, Variable, StudyEntity } from '../../../types/study';
@@ -97,12 +94,10 @@ import PluginError from '../PluginError';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { PlotLegendGradientProps } from '@veupathdb/components/lib/components/plotControls/PlotGradientLegend';
-import { isFaceted } from '@veupathdb/components/lib/types/guards';
-import FacetedScatterPlot from '@veupathdb/components/lib/plots/facetedPlots/FacetedScatterPlot';
+
 // for converting rgb() to rgba()
 import * as ColorMath from 'color-math';
-// R-square table component
-import { ScatterplotRsquareTable } from '../../ScatterplotRsquareTable';
+
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
@@ -121,10 +116,7 @@ import {
   useVizConfig,
 } from '../../../hooks/visualizations';
 // typing computedVariableMetadata for computation apps such as alphadiv and abundance
-import {
-  ScatterplotRequestParams,
-  VariableMapping,
-} from '../../../api/DataClient/types';
+import { VariableMapping } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
@@ -143,14 +135,6 @@ import SliderWidget, {
 } from '@veupathdb/components/lib/components/widgets/Slider';
 import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
 
-const MAXALLOWEDDATAPOINTS = 100000;
-const SMOOTHEDMEANTEXT = 'Smoothed mean';
-const SMOOTHEDMEANSUFFIX = `, ${SMOOTHEDMEANTEXT}`;
-const CI95TEXT = '95% Confidence interval';
-const CI95SUFFIX = `, ${CI95TEXT}`;
-const BESTFITTEXT = 'Best fit';
-const BESTFITSUFFIX = `, ${BESTFITTEXT}`;
-
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -168,58 +152,51 @@ const modalPlotContainerStyles = {
 };
 
 // define ScatterPlotDataWithCoverage and export
-export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
-  dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
-  // change these types to be compatible with new axis range
-  xMin: number | string | undefined;
-  xMinPos: number | string | undefined;
-  xMax: number | string | undefined;
-  yMin: number | string | undefined;
-  yMinPos: number | string | undefined;
-  yMax: number | string | undefined;
-  overlayValueToColorMapper: ((a: number) => string) | undefined;
-  // add computedVariableMetadata for computation apps such as alphadiv and abundance
-  computedVariableMetadata?: VariableMapping[];
-}
+// export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
+//   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
+//   // change these types to be compatible with new axis range
+//   xMin: number | string | undefined;
+//   xMinPos: number | string | undefined;
+//   xMax: number | string | undefined;
+//   yMin: number | string | undefined;
+//   yMinPos: number | string | undefined;
+//   yMax: number | string | undefined;
+//   overlayValueToColorMapper: ((a: number) => string) | undefined;
+//   // add computedVariableMetadata for computation apps such as alphadiv and abundance
+//   computedVariableMetadata?: VariableMapping[];
+// }
 
-// define ScatterPlotDataResponse
-type ScatterPlotDataResponse = ScatterplotResponse;
+// define VolcanoPlotDataResponse
+type VolcanoPlotDataResponse = VolcanoPlotData;
 
 export const volcanoplotVisualization = createVisualizationPlugin({
   selectorIcon: VolcanoSVG,
-  fullscreenComponent: ScatterplotViz,
+  fullscreenComponent: VolcanoplotViz,
   createDefaultConfig: createDefaultConfig,
 });
 
-function createDefaultConfig(): ScatterplotConfig {
+function createDefaultConfig(): VolcanoPlotConfig {
   return {
-    valueSpecConfig: 'Raw',
-    independentAxisLogScale: false,
-    dependentAxisLogScale: false,
-    independentAxisValueSpec: 'Full',
-    dependentAxisValueSpec: 'Full',
+    log2FoldChangeThreshold: 3,
+    significanceThreshold: 0.05,
+    // independentAxisValueSpec: 'Full',
+    // dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
   };
 }
 
-export type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
+export type VolcanoPlotConfig = t.TypeOf<typeof VolcanoPlotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ScatterplotConfig = t.partial({
-  xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor,
-  overlayVariable: VariableDescriptor,
-  facetVariable: VariableDescriptor,
-  valueSpecConfig: t.string,
-  showMissingness: t.boolean,
+export const VolcanoPlotConfig = t.partial({
+  log2FoldChangeThreshold: t.number,
+  significanceThreshold: t.number,
   // for vizconfig.checkedLegendItems
-  checkedLegendItems: t.array(t.string),
+  // checkedLegendItems: t.array(t.string), // not yet implemented
   // axis range control
-  independentAxisRange: NumberOrDateRange,
-  dependentAxisRange: NumberOrDateRange,
-  independentAxisLogScale: t.boolean,
-  dependentAxisLogScale: t.boolean,
-  independentAxisValueSpec: t.string,
-  dependentAxisValueSpec: t.string,
+  // independentAxisRange: NumberOrDateRange, // not yet implemented
+  // dependentAxisRange: NumberOrDateRange, // not yet implemented
+  // independentAxisValueSpec: t.string,  // not yet implemented
+  // dependentAxisValueSpec: t.string,  // not yet implemented
   markerBodyOpacity: t.number,
 });
 
@@ -228,9 +205,9 @@ interface Options
     TitleOptions,
     OverlayOptions,
     RequestOptions<
-      ScatterplotConfig,
+      VolcanoPlotConfig,
       FloatingScatterplotExtraProps,
-      ScatterplotRequestParams
+      VolcanoPlotRequestParams
     > {
   getComputedXAxisDetails?(
     config: unknown
@@ -243,7 +220,7 @@ interface Options
   hideLogScale?: boolean;
 }
 
-function ScatterplotViz(props: VisualizationProps<Options>) {
+function VolcanoplotViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
@@ -267,205 +244,201 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
-    ScatterplotConfig,
+    VolcanoPlotConfig,
     createDefaultConfig,
     updateConfiguration
   );
 
-  const [
-    computedXAxisDetails,
-    computedYAxisDetails,
-    computedOverlayVariableDescriptor,
-    providedOverlayVariableDescriptor,
-  ] = useMemo(
-    () => [
-      options?.getComputedXAxisDetails?.(computation.descriptor.configuration),
-      options?.getComputedYAxisDetails?.(computation.descriptor.configuration),
-      options?.getComputedOverlayVariable?.(
-        computation.descriptor.configuration
-      ),
-      options?.getOverlayVariable?.(computation.descriptor.configuration),
-    ],
-    [computation.descriptor.configuration, options]
-  );
+  // const [
+  //   computedXAxisDetails,
+  //   computedYAxisDetails,
+  //   computedOverlayVariableDescriptor,
+  //   providedOverlayVariableDescriptor,
+  // ] = useMemo(
+  //   () => [
+  //     options?.getComputedXAxisDetails?.(computation.descriptor.configuration),
+  //     options?.getComputedYAxisDetails?.(computation.descriptor.configuration),
+  //     options?.getComputedOverlayVariable?.(
+  //       computation.descriptor.configuration
+  //     ),
+  //     options?.getOverlayVariable?.(computation.descriptor.configuration),
+  //   ],
+  //   [computation.descriptor.configuration, options]
+  // );
 
   // Create variable descriptors for computed variables, if there are any. These descriptors help the computed vars act
   // just like native vars (for example, in the variable coverage table).
-  const computedXAxisDescriptor = computedXAxisDetails
-    ? {
-        entityId: computedXAxisDetails.entityId,
-        variableId:
-          computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-      }
-    : null;
+  // const computedXAxisDescriptor = computedXAxisDetails
+  //   ? {
+  //       entityId: computedXAxisDetails.entityId,
+  //       variableId:
+  //         computedXAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+  //     }
+  //   : null;
 
   // When we only have a computed y axis (and no provided overlay) then the y axis var
   // can have a "normal" variable descriptor. See abundance app for the funny case of handeling a computed overlay.
-  const computedYAxisDescriptor = computedYAxisDetails
-    ? {
-        entityId: computedYAxisDetails.entityId,
-        variableId:
-          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-      }
-    : null;
+  // const computedYAxisDescriptor = computedYAxisDetails
+  //   ? {
+  //       entityId: computedYAxisDetails.entityId,
+  //       variableId:
+  //         computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+  //     }
+  //   : null;
 
-  const selectedVariables = useDeepValue({
-    xAxisVariable: vizConfig.xAxisVariable,
-    yAxisVariable: vizConfig.yAxisVariable,
-    overlayVariable: vizConfig.overlayVariable,
-    facetVariable: vizConfig.facetVariable,
-  });
+  // const selectedVariables = useDeepValue({
+  //   xAxisVariable: vizConfig.xAxisVariable,
+  //   yAxisVariable: vizConfig.yAxisVariable,
+  //   overlayVariable: vizConfig.overlayVariable,
+  //   facetVariable: vizConfig.facetVariable,
+  // });
 
   // variablesForConstraints includes selected vars, computed vars, and
   // those collection vars that we want to use in constraining the available
   // variables within a viz. Computed overlay was left out intentionally to retain
   // desired behavior (see PR #38).
-  const variablesForConstraints = useDeepValue({
-    xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
-    yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
-    overlayVariable:
-      vizConfig.overlayVariable &&
-      (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
-    facetVariable: vizConfig.facetVariable,
-  });
+  // const variablesForConstraints = useDeepValue({
+  //   xAxisVariable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
+  //   yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+  //   overlayVariable:
+  //     vizConfig.overlayVariable &&
+  //     (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
+  //   facetVariable: vizConfig.facetVariable,
+  // });
 
-  const neutralPaletteProps = useNeutralPaletteProps(
-    vizConfig.overlayVariable,
-    providedOverlayVariableDescriptor
-  );
-  const colorPaletteOverride =
-    neutralPaletteProps.colorPalette ??
-    options?.getOverlayType?.() === 'continuous'
-      ? SequentialGradientColorscale
-      : ColorPaletteDefault;
+  // const neutralPaletteProps = useNeutralPaletteProps(
+  //   vizConfig.overlayVariable,
+  //   providedOverlayVariableDescriptor
+  // );
+  // const colorPaletteOverride =
+  //   neutralPaletteProps.colorPalette ??
+  //   options?.getOverlayType?.() === 'continuous'
+  //     ? SequentialGradientColorscale
+  //     : ColorPaletteDefault;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const {
-    xAxisVariable,
-    yAxisVariable,
-    overlayVariable,
-    providedOverlayVariable,
-    overlayEntity,
-    facetVariable,
-    facetEntity,
-  } = useMemo(() => {
-    const { variable: xAxisVariable } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
-    const { variable: yAxisVariable } =
-      findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
-    const { variable: overlayVariable, entity: overlayEntity } =
-      findEntityAndVariable(vizConfig.overlayVariable) ?? {};
-    const { variable: providedOverlayVariable } =
-      findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
-    const { variable: facetVariable, entity: facetEntity } =
-      findEntityAndVariable(vizConfig.facetVariable) ?? {};
-    return {
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      providedOverlayVariable,
-      overlayEntity,
-      facetVariable,
-      facetEntity,
-    };
-  }, [
-    findEntityAndVariable,
-    vizConfig.xAxisVariable,
-    vizConfig.yAxisVariable,
-    vizConfig.overlayVariable,
-    vizConfig.facetVariable,
-    providedOverlayVariableDescriptor,
-  ]);
+  // const {
+  //   xAxisVariable,
+  //   yAxisVariable,
+  //   overlayVariable,
+  //   providedOverlayVariable,
+  //   overlayEntity,
+  //   facetVariable,
+  //   facetEntity,
+  // } = useMemo(() => {
+  //   const { variable: xAxisVariable } =
+  //     findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+  //   const { variable: yAxisVariable } =
+  //     findEntityAndVariable(vizConfig.yAxisVariable) ?? {};
+  //   const { variable: overlayVariable, entity: overlayEntity } =
+  //     findEntityAndVariable(vizConfig.overlayVariable) ?? {};
+  //   const { variable: providedOverlayVariable } =
+  //     findEntityAndVariable(providedOverlayVariableDescriptor) ?? {};
+  //   const { variable: facetVariable, entity: facetEntity } =
+  //     findEntityAndVariable(vizConfig.facetVariable) ?? {};
+  //   return {
+  //     xAxisVariable,
+  //     yAxisVariable,
+  //     overlayVariable,
+  //     providedOverlayVariable,
+  //     overlayEntity,
+  //     facetVariable,
+  //     facetEntity,
+  //   };
+  // }, [
+  //   findEntityAndVariable,
+  //   vizConfig.xAxisVariable,
+  //   vizConfig.yAxisVariable,
+  //   vizConfig.overlayVariable,
+  //   vizConfig.facetVariable,
+  //   providedOverlayVariableDescriptor,
+  // ]);
 
-  // set the state of truncation warning message
+  // set the state of truncation warning message NOT YET IMPLEMENTED
   const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
     useState<string>('');
   const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
     useState<string>('');
 
-  const handleInputVariableChange = useCallback(
-    (selectedVariables: VariablesByInputName) => {
-      // check xAxisVariable is changed
-      const keepIndependentAxisSettings = isEqual(
-        selectedVariables.xAxisVariable,
-        vizConfig.xAxisVariable
-      );
-      const keepDependentAxisSettings = isEqual(
-        selectedVariables.yAxisVariable,
-        vizConfig.yAxisVariable
-      );
+  // const handleInputVariableChange = useCallback(
+  //   (selectedVariables: VariablesByInputName) => {
+  //     // check xAxisVariable is changed
+  //     const keepIndependentAxisSettings = isEqual(
+  //       selectedVariables.xAxisVariable,
+  //       vizConfig.xAxisVariable
+  //     );
+  //     const keepDependentAxisSettings = isEqual(
+  //       selectedVariables.yAxisVariable,
+  //       vizConfig.yAxisVariable
+  //     );
 
-      const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
-        selectedVariables;
-      updateVizConfig({
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
-        // set valueSpec as Raw when yAxisVariable = date
-        valueSpecConfig:
-          findEntityAndVariable(yAxisVariable)?.variable.type === 'date' ||
-          findEntityAndVariable(overlayVariable)?.variable.type === 'number' ||
-          findEntityAndVariable(overlayVariable)?.variable.type === 'integer'
-            ? 'Raw'
-            : vizConfig.valueSpecConfig,
-        // set undefined for variable change
-        checkedLegendItems: undefined,
-        independentAxisRange: keepIndependentAxisSettings
-          ? vizConfig.independentAxisRange
-          : undefined,
-        dependentAxisRange: keepDependentAxisSettings
-          ? vizConfig.dependentAxisRange
-          : undefined,
-        independentAxisLogScale: keepIndependentAxisSettings
-          ? vizConfig.independentAxisLogScale
-          : false,
-        dependentAxisLogScale: keepDependentAxisSettings
-          ? vizConfig.dependentAxisLogScale
-          : undefined,
-        independentAxisValueSpec: keepIndependentAxisSettings
-          ? vizConfig.independentAxisValueSpec
-          : 'Full',
-        dependentAxisValueSpec: keepDependentAxisSettings
-          ? vizConfig.dependentAxisValueSpec
-          : 'Full',
-      });
-      // close truncation warnings here
-      setTruncatedIndependentAxisWarning('');
-      setTruncatedDependentAxisWarning('');
-    },
-    [
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.valueSpecConfig,
-      vizConfig.independentAxisRange,
-      vizConfig.dependentAxisRange,
-      vizConfig.independentAxisLogScale,
-      vizConfig.dependentAxisLogScale,
-      vizConfig.independentAxisValueSpec,
-      vizConfig.dependentAxisValueSpec,
-      updateVizConfig,
-      findEntityAndVariable,
-    ]
-  );
+  //     const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
+  //       selectedVariables;
+  //     updateVizConfig({
+  //       xAxisVariable,
+  //       yAxisVariable,
+  //       overlayVariable,
+  //       facetVariable,
+  //       // set valueSpec as Raw when yAxisVariable = date
+  //       valueSpecConfig:
+  //         findEntityAndVariable(yAxisVariable)?.variable.type === 'date' ||
+  //         findEntityAndVariable(overlayVariable)?.variable.type === 'number' ||
+  //         findEntityAndVariable(overlayVariable)?.variable.type === 'integer'
+  //           ? 'Raw'
+  //           : vizConfig.valueSpecConfig,
+  //       // set undefined for variable change
+  //       checkedLegendItems: undefined,
+  //       independentAxisRange: keepIndependentAxisSettings
+  //         ? vizConfig.independentAxisRange
+  //         : undefined,
+  //       dependentAxisRange: keepDependentAxisSettings
+  //         ? vizConfig.dependentAxisRange
+  //         : undefined,
+  //       independentAxisLogScale: keepIndependentAxisSettings
+  //         ? vizConfig.independentAxisLogScale
+  //         : false,
+  //       dependentAxisLogScale: keepDependentAxisSettings
+  //         ? vizConfig.dependentAxisLogScale
+  //         : undefined,
+  //       independentAxisValueSpec: keepIndependentAxisSettings
+  //         ? vizConfig.independentAxisValueSpec
+  //         : 'Full',
+  //       dependentAxisValueSpec: keepDependentAxisSettings
+  //         ? vizConfig.dependentAxisValueSpec
+  //         : 'Full',
+  //     });
+  //     // close truncation warnings here
+  //     setTruncatedIndependentAxisWarning('');
+  //     setTruncatedDependentAxisWarning('');
+  //   },
+  //   [
+  //     vizConfig.xAxisVariable,
+  //     vizConfig.yAxisVariable,
+  //     vizConfig.valueSpecConfig,
+  //     vizConfig.independentAxisRange,
+  //     vizConfig.dependentAxisRange,
+  //     vizConfig.independentAxisLogScale,
+  //     vizConfig.dependentAxisLogScale,
+  //     vizConfig.independentAxisValueSpec,
+  //     vizConfig.dependentAxisValueSpec,
+  //     updateVizConfig,
+  //     findEntityAndVariable,
+  //   ]
+  // );
 
   // prettier-ignore
   // allow 2nd parameter of resetCheckedLegendItems for checking legend status
   const onChangeHandlerFactory = useCallback(
-    < ValueType,>(key: keyof ScatterplotConfig,
-      resetCheckedLegendItems?: boolean,
-      resetAxisLogScale?: boolean,
-      resetValueSpecConfig?: boolean,
+    < ValueType,>(key: keyof VolcanoPlotConfig,
+      // resetCheckedLegendItems?: boolean,
       resetIndependentAxisRanges?: boolean,
       resetDependentAxisRanges?: boolean,
       ) => (newValue?: ValueType) => {
       const newPartialConfig = {
         [key]: newValue,
-        ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
-        ...(resetAxisLogScale ? { independentAxisLogScale: false, dependentAxisLogScale: false } : {}),
-        ...(resetValueSpecConfig ? { valueSpecConfig: 'Raw' } : {}),
-        ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
-        ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
+        // ...(resetCheckedLegendItems ? { checkedLegendItems: undefined } : {}),
+        // ...(resetIndependentAxisRanges ? { independentAxisRange: undefined } : {}),
+        // ...(resetDependentAxisRanges ? { dependentAxisRange: undefined } : {}),
       };
       updateVizConfig(newPartialConfig);
       if (resetIndependentAxisRanges) {
@@ -478,834 +451,156 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     [updateVizConfig]
   );
 
-  // set checkedLegendItems: undefined for the change of both plot options and showMissingness
-  const onValueSpecChange = onChangeHandlerFactory<string>(
-    'valueSpecConfig',
-    true,
-    false, // reset both axisLogScale to false if true
-    false,
-    true,
-    true
-  );
-
-  const onIndependentAxisValueSpecChange = onChangeHandlerFactory<string>(
-    'independentAxisValueSpec',
-    false,
-    false,
-    false,
-    true,
-    false
-  );
-
-  const onDependentAxisValueSpecChange = onChangeHandlerFactory<string>(
-    'dependentAxisValueSpec',
-    false,
-    false,
-    false,
-    false,
-    true
-  );
-
-  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
-    'showMissingness',
-    true,
-    true,
-    false,
-    true,
-    true
-  );
-
-  const onIndependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'independentAxisLogScale',
-    true,
-    false,
-    false, // reset valueSpec to Raw if true
-    true,
-    false
-  );
-
-  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
-    'dependentAxisLogScale',
-    true,
-    false,
-    false, // reset valueSpec to Raw if true
-    false,
-    true
-  );
-
   const onMarkerBodyOpacityChange = onChangeHandlerFactory<number>(
     'markerBodyOpacity',
     false,
-    false,
-    false, // reset valueSpec to Raw if true
-    false,
     false
   );
 
-  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useFindOutputEntity(
-    dataElementDependencyOrder,
-    vizConfig,
-    'yAxisVariable',
-    computedYAxisDetails?.entityId
-  );
-
-  // set a condition to show log scale/plot mode related banner
-  const showLogScaleBanner: boolean =
-    vizConfig.valueSpecConfig !== 'Raw' &&
-    (vizConfig.independentAxisLogScale || vizConfig.dependentAxisLogScale)
-      ? true
-      : false;
-
-  // set a condition to show Banner for continuous overlayVariable if plot option is not 'Raw'
-  const showContinousOverlayBanner: boolean =
-    overlayVariable != null &&
-    overlayVariable.dataShape === 'continuous' &&
-    (vizConfig.valueSpecConfig === 'Smoothed mean with raw' ||
-      vizConfig.valueSpecConfig === 'Best fit line with raw');
-
-  const overlayMin: number | undefined =
-    overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
-      ? overlayVariable?.distributionDefaults?.rangeMin
-      : 0;
-  const overlayMax: number | undefined =
-    overlayVariable?.type === 'number' || overlayVariable?.type === 'integer'
-      ? overlayVariable?.distributionDefaults?.rangeMax
-      : 0;
-
-  // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
-  const maxAbsOverlay =
-    Math.abs(overlayMin) > overlayMax ? Math.abs(overlayMin) : overlayMax;
-  const gradientColorscaleType:
-    | 'sequential'
-    | 'sequential reversed'
-    | 'divergent'
-    | undefined =
-    overlayMin != null && overlayMax != null
-      ? overlayMin >= 0 && overlayMax >= 0
-        ? 'sequential'
-        : overlayMin <= 0 && overlayMax <= 0
-        ? 'sequential reversed'
-        : 'divergent'
-      : undefined;
-
-  const inputsForValidation = useMemo(
-    (): InputSpec[] => [
-      {
-        name: 'xAxisVariable',
-        label: 'X-axis',
-      },
-      {
-        name: 'yAxisVariable',
-        label: 'Y-axis',
-      },
-      {
-        name: 'overlayVariable',
-        label: 'Overlay',
-      },
-      {
-        name: 'facetVariable',
-        label: 'Facet',
-      },
-    ],
-    []
-  );
-
   const data = usePromise(
-    useCallback(async (): Promise<ScatterPlotDataWithCoverage | undefined> => {
-      // If this scatterplot has a computed variable and the compute job is anything but complete, do not proceed with getting data.
-      if (computedYAxisDetails && computeJobStatus !== 'complete')
+    useCallback(async (): Promise<VolcanoPlotDataResponse | undefined> => {
+      // Currently volcano is only tied to computes. So if the compute job status isn't complete, we shouldn't draw the plot.
+      if (computeJobStatus !== 'complete') return undefined;
+
+      if (filteredCounts.pending || filteredCounts.value == null)
         return undefined;
 
-      if (
-        outputEntity == null ||
-        filteredCounts.pending ||
-        filteredCounts.value == null
-      )
-        return undefined;
-
-      if (
-        !variablesAreUnique([
-          xAxisVariable,
-          yAxisVariable,
-          overlayVariable && (providedOverlayVariable ?? overlayVariable),
-          facetVariable,
-        ])
-      )
-        throw new Error(nonUniqueWarning);
-
-      assertValidInputVariables(
-        inputsForValidation,
-        variablesForConstraints,
-        entities,
-        dataElementConstraints,
-        dataElementDependencyOrder
-      );
-
-      // check log scale and plot mode option for retrieving data
-      if (
-        (vizConfig.independentAxisLogScale ||
-          vizConfig.dependentAxisLogScale) &&
-        vizConfig.valueSpecConfig !== 'Raw'
-      )
-        return undefined;
-
-      // check variable inputs: this is necessary to prevent from data post
-      if (
-        computedXAxisDetails == null &&
-        (vizConfig.xAxisVariable == null || xAxisVariable == null)
-      )
-        return undefined;
-      else if (
-        computedYAxisDetails == null &&
-        (vizConfig.yAxisVariable == null || yAxisVariable == null)
-      )
-        return undefined;
-
-      // prevent data request for the case of  plot option != Raw when using continuous overlayVariable
-      if (showContinousOverlayBanner) {
-        return undefined;
-      }
-
-      // Convert valueSpecConfig to valueSpecValue for the data client request.
-      let valueSpecValue: ScatterplotRequestParams['config']['valueSpec'] =
-        'raw';
-      if (vizConfig.valueSpecConfig === 'Smoothed mean with raw') {
-        valueSpecValue = 'smoothedMeanWithRaw';
-      } else if (vizConfig.valueSpecConfig === 'Best fit line with raw') {
-        valueSpecValue = 'bestFitLineWithRaw';
-      }
-
-      // request params
-      const params = options?.getRequestParams?.({
-        studyId,
-        filters,
-        outputEntityId: outputEntity.id,
-        vizConfig,
-        valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
-      }) ?? {
-        studyId,
-        filters,
-        config: {
-          outputEntityId: outputEntity.id,
-          valueSpec: options?.hideTrendlines ? undefined : valueSpecValue,
-          xAxisVariable: vizConfig.xAxisVariable,
-          yAxisVariable: vizConfig.yAxisVariable,
-          overlayVariable: vizConfig.overlayVariable,
-          facetVariable: vizConfig.facetVariable
-            ? [vizConfig.facetVariable]
-            : undefined,
-          showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
-        },
-        computeConfig: computation.descriptor.configuration,
-      };
+      // There are _no_ viz request params for the volcano plot!
+      const params = {};
 
       const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        ScatterplotResponse
+        VolcanoPlotPoint
       );
 
-      const showMissingOverlay =
-        vizConfig.showMissingness &&
-        hasIncompleteCases(
-          overlayEntity,
-          overlayVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-      const showMissingFacet =
-        vizConfig.showMissingness &&
-        hasIncompleteCases(
-          facetEntity,
-          facetVariable,
-          outputEntity,
-          filteredCounts.value,
-          response.completeCasesTable
-        );
-
-      let overlayValueToColorMapper: ((a: number) => string) | undefined;
-
-      if (
-        response.scatterplot.data.every(
-          (series) => 'seriesGradientColorscale' in series
-        ) &&
-        (overlayVariable?.type === 'integer' ||
-          overlayVariable?.type === 'number')
-      ) {
-        // create the value to color mapper (continuous overlay)
-        // Initialize normalization function.
-        const normalize = scaleLinear();
-
-        if (gradientColorscaleType === 'divergent') {
-          // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
-          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
-          overlayValueToColorMapper = (a) =>
-            gradientDivergingColorscaleMap(normalize(a));
-        } else if (gradientColorscaleType === 'sequential reversed') {
-          // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
-          normalize.domain([overlayMin, overlayMax]).range([1, 0]);
-          overlayValueToColorMapper = (a) =>
-            gradientSequentialColorscaleMap(normalize(a));
-        } else {
-          // Then we use the sequential (from 0 to inf) colorscale.
-          // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-          overlayValueToColorMapper = (a) =>
-            gradientSequentialColorscaleMap(normalize(a));
-        }
-      }
-
-      const overlayVocabulary = computedOverlayVariableDescriptor
-        ? response.scatterplot.config.variables.find(
-            (v) => v.plotReference === 'overlay' && v.vocabulary != null
-          )?.vocabulary
-        : // TO DO: remove the categorical condition when https://github.com/VEuPathDB/EdaNewIssues/issues/642 is sorted
-          (overlayVariable && options?.getOverlayType?.() === 'categorical'
-            ? options?.getOverlayVocabulary?.()
-            : undefined) ??
-          fixLabelsForNumberVariables(
-            overlayVariable?.vocabulary,
-            overlayVariable
-          );
-
-      const facetVocabulary = fixLabelsForNumberVariables(
-        facetVariable?.vocabulary,
-        facetVariable
-      );
-      const returnData = scatterplotResponseToData(
-        response,
-        showMissingOverlay,
-        overlayVocabulary,
-        overlayVariable,
-        overlayValueToColorMapper,
-        showMissingFacet,
-        facetVocabulary,
-        facetVariable,
-        // pass computation
-        computation.descriptor.type,
-        entities,
-        colorPaletteOverride
-      );
       return {
-        ...returnData,
-        overlayValueToColorMapper,
+        response,
       };
     }, [
-      computedYAxisDetails,
       computeJobStatus,
-      outputEntity,
       filteredCounts.pending,
       filteredCounts.value,
-      xAxisVariable,
-      yAxisVariable,
-      overlayVariable,
-      facetVariable,
-      inputsForValidation,
-      selectedVariables,
       entities,
       dataElementConstraints,
       dataElementDependencyOrder,
       filters,
-      vizConfig.independentAxisLogScale,
-      vizConfig.dependentAxisLogScale,
-      vizConfig.valueSpecConfig,
-      vizConfig.xAxisVariable,
-      vizConfig.yAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.showMissingness,
-      computedXAxisDetails,
-      showContinousOverlayBanner,
       studyId,
       options?.hideTrendlines,
       computation.descriptor.configuration,
       computation.descriptor.type,
       dataClient,
       visualization.descriptor.type,
-      overlayEntity,
-      facetEntity,
-      computedOverlayVariableDescriptor,
-      neutralPaletteProps.colorPalette,
-      gradientColorscaleType,
-      maxAbsOverlay,
-      overlayMin,
-      overlayMax,
     ])
   );
 
-  const outputSize =
-    overlayVariable != null && !vizConfig.showMissingness
-      ? data.value?.completeCasesAllVars
-      : data.value?.completeCasesAxesVars;
+  // const outputSize = @ANN fill in
 
-  // use hook
-  const defaultIndependentAxisRange = useDefaultAxisRange(
-    xAxisVariable ??
-      data?.value?.computedVariableMetadata?.find(
-        (v) => v.plotReference === 'xAxis'
-      ),
-    data.value?.xMin,
-    data.value?.xMinPos,
-    data.value?.xMax,
-    vizConfig.independentAxisLogScale,
-    vizConfig.independentAxisValueSpec
-  );
+  // default ranges. @ANN set based on data i think.
+  const defaultIndependentAxisRange = [-5, 5];
+  const defaultDependentAxisRange = [0, 5];
 
-  // use custom hook
-  const defaultDependentAxisRange = useDefaultAxisRange(
-    yAxisVariable ??
-      data?.value?.computedVariableMetadata?.find(
-        (v) => v.plotReference === 'yAxis'
-      ),
-    data.value?.yMin,
-    data.value?.yMinPos,
-    data.value?.yMax,
-    vizConfig.dependentAxisLogScale,
-    vizConfig.dependentAxisValueSpec
-  );
-
-  // yMinMaxDataRange will be used for truncation to judge whether data has negative value
-  const xMinMaxDataRange = useMemo(
-    () =>
-      data.value != null
-        ? ({ min: data.value.xMin, max: data.value?.xMax } as NumberOrDateRange)
-        : undefined,
-    [data]
-  );
-  const yMinMaxDataRange = useMemo(
-    () =>
-      data.value != null
-        ? ({ min: data.value.yMin, max: data.value?.yMax } as NumberOrDateRange)
-        : undefined,
-    [data]
-  );
+  // TODO add truncation things
 
   const { url } = useRouteMatch();
 
-  const legendTitle = useMemo(() => {
-    if (computedOverlayVariableDescriptor) {
-      return findCollectionVariableEntityAndVariable(
-        entities,
-        computedOverlayVariableDescriptor
-      )?.variable.displayName;
-    }
-    return variableDisplayWithUnit(overlayVariable);
-  }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
-
-  // gradient colorscale legend
-  const gradientLegendProps: PlotLegendGradientProps | undefined =
-    useMemo(() => {
-      if (
-        overlayMax != null &&
-        overlayMin != null &&
-        data.value?.overlayValueToColorMapper != null
-      ) {
-        return {
-          legendMax: overlayMax,
-          legendMin: overlayMin,
-          valueToColorMapper: data.value?.overlayValueToColorMapper,
-          // MUST be odd! Probably should be a clever function of the box size
-          // and font or something...
-          nTicks: 5,
-          showMissingness: vizConfig.showMissingness,
-          legendTitle,
-        };
-      } else {
-        return undefined;
-      }
-    }, [data, vizConfig.showMissingness, legendTitle, overlayMin, overlayMax]);
+  const legendTitle = 'Volcano plot'; // not sure what the title should be but it's always the same
 
   // custom legend list
-  const legendItems: LegendItemsProps[] = useMemo(() => {
-    const palette = neutralPaletteProps.colorPalette ?? ColorPaletteDefault;
-
-    const allData = data.value?.dataSetProcess;
-
-    /**
-     * It was found for some faceted data involving Smoothed mean and or Best fit option,
-     * each facet does not always have full Smoothed mean and/or Best fit info
-     * thus, uniqBy is introduced to find a full list of legend items
-     * However, using uniqBy for faceted data does not always guarantee that the Smoothed mean, CI, or Best fit items are correctly ordered
-     * for this reason, a new array of objects that is partially sorted is made in the following
-     * this may need a revisit in the future for overall improvement/rescheme
-     */
-
-    const legendData = !isFaceted(allData)
-      ? allData?.series
-      : uniqBy(
-          allData.facets
-            .flatMap((facet) => facet?.data?.series)
-            .filter(
-              (element): element is ScatterPlotDataSeries => element != null
-            ),
-          'name'
-        );
-
-    // logic for setting markerColor correctly
-    // find raw legend label (excluding No data as well)
-    const legendLabel =
-      legendData != null
-        ? legendData
-            .filter(
-              (data) =>
-                !data?.name?.includes(SMOOTHEDMEANSUFFIX) &&
-                !data?.name?.includes(CI95SUFFIX) &&
-                !data?.name?.includes(BESTFITSUFFIX) &&
-                !data?.name?.includes('No data')
-            )
-            .map((data) => data.name)
-        : [];
-
-    // construct a kind of a lookup table
-    const legendLabelColor = legendLabel?.map((label, index) => {
-      return {
-        label: label,
-        color: palette[index],
-      };
-    });
-
-    // find the number Raw legend items considering No data case
-    const numberLegendRawItems = vizConfig.showMissingness
-      ? legendLabel.length + 1
-      : legendLabel.length;
-
-    // count will be used for Smoothed mean option as it consists of a pair of smoothed mean and CI per vocabulary
-    let count = 0;
-
-    // new array of objects based on legendData array (a kind of partial sort)
-    // raw data is in the correct order, but not always for smoothed mean, CI, and Best fit
-    // e.g., showing 'data1' (raw), 'data2' (raw), 'data2, Best fit', 'data1, Best fit' in order
-    // needed to have complex conditions for treating Smoothed mean, CI, Best fit, No data, etc.
-    const sortedLegendData =
-      isFaceted(allData) && vizConfig.valueSpecConfig !== 'Raw'
-        ? legendData
-            ?.flatMap((dataItem, index) => {
-              if (index < numberLegendRawItems) {
-                // Raw data is ordered correctly
-                return dataItem;
-              } else if (
-                vizConfig.valueSpecConfig === 'Best fit line with raw'
-              ) {
-                // Best fit
-                return legendData.filter((element) => {
-                  // checking No data case
-                  if (vizConfig.showMissingness) {
-                    if (index < legendData.length - 1) {
-                      return element.name?.includes(
-                        legendLabel[index - numberLegendRawItems] +
-                          BESTFITSUFFIX
-                      );
-                    } else {
-                      // No data case
-                      return element.name?.includes('No data' + BESTFITSUFFIX);
-                    }
-                  } else {
-                    return element.name?.includes(
-                      legendLabel[index - numberLegendRawItems] + BESTFITSUFFIX
-                    );
-                  }
-                });
-                // Smoothed mean and CI
-              } else if (
-                vizConfig.valueSpecConfig === 'Smoothed mean with raw'
-              ) {
-                if (
-                  vizConfig.showMissingness == null ||
-                  !vizConfig.showMissingness
-                ) {
-                  if (dataItem?.name?.includes(SMOOTHEDMEANSUFFIX)) {
-                    return legendData.filter((element) => {
-                      return element.name?.includes(
-                        legendLabel[index - (numberLegendRawItems + count)] +
-                          SMOOTHEDMEANSUFFIX
-                      );
-                    });
-                  } else if (dataItem?.name?.includes(CI95SUFFIX)) {
-                    // increase count here
-                    ++count;
-                    return legendData.filter((element) => {
-                      return element.name?.includes(
-                        legendLabel[index - (numberLegendRawItems + count)] +
-                          CI95SUFFIX
-                      );
-                    });
-                  }
-                  // the case No data exists
-                } else {
-                  if (dataItem?.name?.includes(SMOOTHEDMEANSUFFIX)) {
-                    if (index < legendData.length - 2) {
-                      return legendData.filter((element) => {
-                        return element.name?.includes(
-                          legendLabel[index - (numberLegendRawItems + count)] +
-                            SMOOTHEDMEANSUFFIX
-                        );
-                      });
-                    } else {
-                      // No data case
-                      return legendData.filter((element) => {
-                        return element.name?.includes(
-                          'No data' + SMOOTHEDMEANSUFFIX
-                        );
-                      });
-                    }
-                  } else if (dataItem?.name?.includes(CI95SUFFIX)) {
-                    // increase count here
-                    ++count;
-                    if (index < legendData.length - 2) {
-                      return legendData.filter((element) => {
-                        return element.name?.includes(
-                          legendLabel[index - (numberLegendRawItems + count)] +
-                            CI95SUFFIX
-                        );
-                      });
-                    } else {
-                      return legendData.filter((element) => {
-                        return element.name?.includes('No data' + CI95SUFFIX);
-                      });
-                    }
-                  }
-                }
-              }
-              return [];
-              // observed No data is often undefined during data loading by toggling showMissingness for large scatter data/graphics
-            })
-            .filter((element) => element != null)
-        : legendData;
-
-    return sortedLegendData != null
-      ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
-        sortedLegendData.map(
-          (dataItem: ScatterPlotDataSeries, index: number) => {
-            return {
-              label: dataItem.name ?? '',
-              // making marker info appropriately
-              marker:
-                dataItem.mode != null
-                  ? dataItem.name === 'No data'
-                    ? 'x'
-                    : dataItem.mode === 'markers'
-                    ? 'circle'
-                    : dataItem.mode === 'lines'
-                    ? 'line'
-                    : ''
-                  : dataItem?.fill === 'tozeroy'
-                  ? 'fainted'
-                  : '',
-              // set marker colors appropriately
-              markerColor:
-                dataItem.name != null &&
-                (dataItem?.name === 'No data' ||
-                  dataItem.name?.includes('No data,'))
-                  ? '#A6A6A6'
-                  : // if there is no overlay variable, then marker colors should be the same for Data, Smoothed mean, 95% CI, and Best fit
-                  // with another apps like alphadiv, abundance, etc., this condition needs to be changed: check with data more
-                  computedOverlayVariableDescriptor != null ||
-                    vizConfig.overlayVariable != null
-                  ? dataItem.name != null
-                    ? legendLabelColor
-                        ?.map((legend) => {
-                          // fixed bug and simplified
-                          if (
-                            dataItem.name != null &&
-                            legend.label != null &&
-                            (dataItem.name === legend.label ||
-                              dataItem.name ===
-                                legend.label + SMOOTHEDMEANSUFFIX ||
-                              dataItem.name === legend.label + CI95SUFFIX ||
-                              dataItem.name === legend.label + BESTFITSUFFIX)
-                          )
-                            return legend.color;
-                          else return '';
-                        })
-                        .filter((n: string) => n !== '')
-                        .toString()
-                    : '#ffffff' // just set not to be empty
-                  : palette[0], // set first color for no overlay variable selected
-              // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
-              hasData: !isFaceted(allData)
-                ? dataItem.y != null &&
-                  dataItem.y.length > 0 &&
-                  dataItem.y[0] !== null
-                  ? true
-                  : false
-                : allData.facets
-                    .map((facet) => facet.data)
-                    .filter((data): data is ScatterPlotData => data != null)
-                    .map(
-                      (data) =>
-                        data.series[index]?.y != null &&
-                        data.series[index].y.length > 0 &&
-                        data.series[index].y[0] !== null
-                    )
-                    .includes(true),
-              group: 1,
-              rank: 1,
-            };
-          }
-        )
-      : [];
-  }, [
-    neutralPaletteProps.colorPalette,
-    data.value?.dataSetProcess,
-    vizConfig.showMissingness,
-    vizConfig.valueSpecConfig,
-    vizConfig.overlayVariable,
-    computedOverlayVariableDescriptor,
-  ]);
+  // const legendItems: LegendItemsProps[] = @ANN todo
 
   // set checkedLegendItems to either the config-stored items, or all items if
   // nothing stored
-  const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
-    legendItems,
-    vizConfig.overlayVariable
-      ? options?.getCheckedLegendItems?.(
-          computation.descriptor.configuration
-        ) ?? vizConfig.checkedLegendItems
-      : vizConfig.checkedLegendItems,
-    updateVizConfig
-  );
-
-  const independentAxisLabel = getVariableLabel(
-    'xAxis',
-    data.value?.computedVariableMetadata,
-    entities,
-    'X-axis'
-  );
-
-  // If we're to use a computed variable but no variableId is given for the computed variable,
-  // simply use the placeholder display name given by the app.
-  // Otherwise, create the dependend axis label as usual.
-  const dependentAxisLabel =
-    computedYAxisDetails?.placeholderDisplayName &&
-    !computedYAxisDetails?.variableId
-      ? computedYAxisDetails.placeholderDisplayName
-      : getVariableLabel(
-          'yAxis',
-          data.value?.computedVariableMetadata,
-          entities,
-          'Y-axis'
-        );
-
-  // dataWithoutSmoothedMean returns array of data that does not have smoothed mean
-  // Thus, if dataWithoutSmoothedMean.length > 0, then there is at least one data without smoothed mean
-  const dataWithoutSmoothedMean = useMemo(
-    () =>
-      !isFaceted(data?.value?.dataSetProcess)
-        ? data?.value?.dataSetProcess.series.filter(
-            (data) => data.hasSmoothedMeanData === false
-          )
-        : data?.value?.dataSetProcess.facets
-            .map((facet) => facet.data)
-            .filter((data) => data != null)
-            .flatMap((data) =>
-              data?.series.filter(
-                (series) => series.hasSmoothedMeanData === false
-              )
-            ),
-    [data]
-  );
-
-  // List variables in a collection one by one in the variable coverage table. Create these extra rows
-  // here and then append to the variable coverage table rows array.
-  const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
-    (v) => v.plotReference === 'overlay'
-  );
-  const collectionVariableEntityId =
-    collectionVariableMetadata?.variableSpec.entityId;
-  const additionalVariableCoverageTableRows =
-    collectionVariableEntityId && collectionVariableMetadata?.vocabulary
-      ? collectionVariableMetadata.vocabulary.map((label) => ({
-          role: '',
-          required: true,
-          display: fixVarIdLabel(label, collectionVariableEntityId, entities),
-          variable: { variableId: label, entityId: collectionVariableEntityId },
-        }))
-      : [];
+  // @ANN will need this
+  // const [checkedLegendItems, setCheckedLegendItems] = useCheckedLegendItems(
+  //   legendItems,
+  //   vizConfig.overlayVariable
+  //     ? options?.getCheckedLegendItems?.(
+  //         computation.descriptor.configuration
+  //       ) ?? vizConfig.checkedLegendItems
+  //     : vizConfig.checkedLegendItems,
+  //   updateVizConfig
+  // );
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
     [
       data,
-      vizConfig.checkedLegendItems,
-      vizConfig.independentAxisRange,
-      vizConfig.dependentAxisRange,
-      vizConfig.independentAxisLogScale,
-      vizConfig.dependentAxisLogScale,
-      vizConfig.independentAxisValueSpec,
-      vizConfig.dependentAxisValueSpec,
+      // vizConfig.checkedLegendItems,
+      // vizConfig.independentAxisRange,
+      // vizConfig.dependentAxisRange,
       vizConfig.markerBodyOpacity,
     ]
   );
 
   // set truncation flags: will see if this is reusable with other application
-  const {
-    truncationConfigIndependentAxisMin,
-    truncationConfigIndependentAxisMax,
-    truncationConfigDependentAxisMin,
-    truncationConfigDependentAxisMax,
-  } = useMemo(
-    () =>
-      truncationConfig(
-        {
-          independentAxisRange: xMinMaxDataRange,
-          dependentAxisRange: yMinMaxDataRange,
-        },
-        vizConfig,
-        {
-          // truncation overrides for the axis minima for log scale
-          // only pass key/values that you want overridden
-          // (e.g. false values will override just as much as true)
-          ...(vizConfig.independentAxisLogScale &&
-          xMinMaxDataRange?.min != null &&
-          (xMinMaxDataRange.min as number) <= 0
-            ? { truncationConfigIndependentAxisMin: true }
-            : {}),
-          ...(vizConfig.dependentAxisLogScale &&
-          yMinMaxDataRange?.min != null &&
-          (yMinMaxDataRange.min as number) <= 0
-            ? { truncationConfigDependentAxisMin: true }
-            : {}),
-        }
-      ),
-    [xMinMaxDataRange, yMinMaxDataRange, vizConfig]
-  );
+  // @ANN todo
+  // const {
+  //   truncationConfigIndependentAxisMin,
+  //   truncationConfigIndependentAxisMax,
+  //   truncationConfigDependentAxisMin,
+  //   truncationConfigDependentAxisMax,
+  // } = useMemo(
+  //   () =>
+  //     truncationConfig(
+  //       {
+  //         independentAxisRange: xMinMaxDataRange,
+  //         dependentAxisRange: yMinMaxDataRange,
+  //       },
+  //       vizConfig,
+  //       {
+  //         // truncation overrides for the axis minima for log scale
+  //         // only pass key/values that you want overridden
+  //         // (e.g. false values will override just as much as true)
+  //         ...(vizConfig.independentAxisLogScale &&
+  //         xMinMaxDataRange?.min != null &&
+  //         (xMinMaxDataRange.min as number) <= 0
+  //           ? { truncationConfigIndependentAxisMin: true }
+  //           : {}),
+  //         ...(vizConfig.dependentAxisLogScale &&
+  //         yMinMaxDataRange?.min != null &&
+  //         (yMinMaxDataRange.min as number) <= 0
+  //           ? { truncationConfigDependentAxisMin: true }
+  //           : {}),
+  //       }
+  //     ),
+  //   [xMinMaxDataRange, yMinMaxDataRange, vizConfig]
+  // );
 
   // set useEffect for changing truncation warning message
-  useEffect(() => {
-    if (
-      truncationConfigIndependentAxisMin ||
-      truncationConfigIndependentAxisMax
-    ) {
-      setTruncatedIndependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
-    truncationConfigIndependentAxisMin,
-    truncationConfigIndependentAxisMax,
-    setTruncatedIndependentAxisWarning,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     truncationConfigIndependentAxisMin ||
+  //     truncationConfigIndependentAxisMax
+  //   ) {
+  //     setTruncatedIndependentAxisWarning(
+  //       'Data may have been truncated by range selection, as indicated by the yellow shading'
+  //     );
+  //   }
+  // }, [
+  //   truncationConfigIndependentAxisMin,
+  //   truncationConfigIndependentAxisMax,
+  //   setTruncatedIndependentAxisWarning,
+  // ]);
 
-  useEffect(() => {
-    if (
-      // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-      // !scatterplotProps.showSpinner
-      truncationConfigDependentAxisMin ||
-      truncationConfigDependentAxisMax
-    ) {
-      setTruncatedDependentAxisWarning(
-        'Data may have been truncated by range selection, as indicated by the yellow shading'
-      );
-    }
-  }, [
-    truncationConfigDependentAxisMin,
-    truncationConfigDependentAxisMax,
-    setTruncatedDependentAxisWarning,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
+  //     // !scatterplotProps.showSpinner
+  //     truncationConfigDependentAxisMin ||
+  //     truncationConfigDependentAxisMax
+  //   ) {
+  //     setTruncatedDependentAxisWarning(
+  //       'Data may have been truncated by range selection, as indicated by the yellow shading'
+  //     );
+  //   }
+  // }, [
+  //   truncationConfigDependentAxisMin,
+  //   truncationConfigDependentAxisMax,
+  //   setTruncatedDependentAxisWarning,
+  // ]);
 
   // slider settings
   const markerBodyOpacityContainerStyles = {
@@ -1325,12 +620,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     trackGradientEnd: '#000',
   };
 
-  const scatterplotProps: ScatterPlotProps = {
-    interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
-    showSpinner: filteredCounts.pending || data.pending,
-    independentAxisLabel: independentAxisLabel,
-    dependentAxisLabel: dependentAxisLabel,
-    displayLegend: false,
+  const volcanoplotProps: VolcanoPlotProps = {
+    // interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
+    // showSpinner: filteredCounts.pending || data.pending,
+    displayLegend: false, //@ANN YOU ARE HERE
     independentValueType:
       xAxisVariable == null || NumberVariable.is(xAxisVariable)
         ? 'number'

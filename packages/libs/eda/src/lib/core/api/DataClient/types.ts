@@ -15,6 +15,7 @@ import {
   keyof,
   boolean,
   literal,
+  readonlyArray,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -25,6 +26,10 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
+import {
+  VolcanoPlotDataPoint,
+  VolcanoPlotData,
+} from '@veupathdb/components/lib/types/plots/volcanoplot';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -355,6 +360,23 @@ export const ScatterplotResponse = intersection([
     completeCasesTable: completeCasesTableArray,
   }),
 ]);
+
+// Volcano plot
+export type VolcanoplotResponse = TypeOf<typeof VolcanoplotResponse>;
+export const VolcanoPlotPoint = type({
+  log2foldChange: string,
+  pValue: string,
+  adjustedPValue: string,
+  pointId: string,
+});
+// @ts-ignore
+// export const VolcanoplotResponse = type(Array<VolcanoPlotPoint>)
+
+export interface VolcanoPlotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {}; // Empty config
+}
 
 ////////////////
 // Table Data //
