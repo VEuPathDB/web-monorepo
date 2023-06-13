@@ -81,7 +81,7 @@ export async function getDefaultOverlayConfig(
   }
 }
 
-type GetMostFrequentValuesProps = {
+type GetValuesProps = {
   studyId: string;
   variableId: string;
   entityId: string;
@@ -109,7 +109,7 @@ async function getValues({
   filters,
   numValues,
   subsettingClient,
-}: GetMostFrequentValuesProps): Promise<OverlayValues> {
+}: GetValuesProps): Promise<OverlayValues> {
   const distributionResponse = await subsettingClient.getDistribution(
     studyId,
     entityId,
