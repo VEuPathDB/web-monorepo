@@ -645,6 +645,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
+  // define showMarginalHistogram
+  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
+
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
@@ -758,7 +761,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        colorPaletteOverride
+        colorPaletteOverride,
+        // pass showmarginalHistogram
+        showMarginalHistogram
       );
     }, [
       outputEntity,
@@ -1010,8 +1015,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.independentAxisRange ?? defaultIndependentAxisRange,
     dependentAxisRange:
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
-    // display marginal histogram?
-    showMarginalHistogram: xAxisVariable?.dataShape === 'continuous',
+    // display marginal histogram
+    showMarginalHistogram:
+      xAxisVariable?.dataShape === 'continuous' && showMarginalHistogram,
     // marginal histogram size [0, 1]: default is 0.2 (20 %)
     marginalHistogramSize: 0.2,
   };
@@ -1884,7 +1890,8 @@ export function lineplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  showMarginalHistogram?: boolean
 ): LinePlotDataWithCoverage {
   const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
@@ -1923,7 +1930,8 @@ export function lineplotResponseToData(
         response.lineplot.config.binSpec,
         response.lineplot.config.binSlider,
         overlayVariable,
-        colorPaletteOverride
+        colorPaletteOverride,
+        showMarginalHistogram
       );
 
     return {
@@ -2179,7 +2187,8 @@ function processInputData(
   binSpec?: BinSpec,
   binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable,
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  showMarginalHistogram?: boolean
 ) {
   // define separate types for union type of BinSampleSize
   type BinSampleSizeNumber = {
@@ -2376,14 +2385,15 @@ function processInputData(
         connectgaps: el.seriesType === 'standard' ? true : undefined,
       });
 
-      // for marginal histogram dataset
+      // for marginal histogram dataset: add showMarginalHistogram condition
       if (
         el.binStart &&
         el.binStart.length > 0 &&
         el.binEnd &&
         el.binEnd.length > 0 &&
         el.binSampleSize &&
-        el.binSampleSize.length > 0
+        el.binSampleSize.length > 0 &&
+        showMarginalHistogram
       ) {
         // compute binSampleSize one
         const binSampleSize = categoricalMode
