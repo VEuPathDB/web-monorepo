@@ -586,7 +586,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   const dataRequestConfig: DataRequestConfig = useDeepValue({
-    ...omit(vizConfig, ['dependentAxisRange', 'checkedLegendItems']),
+    // excluding dependencies for data request
+    ...omit(vizConfig, [
+      'dependentAxisRange',
+      'checkedLegendItems',
+      'dependentAxisValueSpec',
+      'dependentAxisLogScale',
+    ]),
     // the following looks nasty but it seems to work
     // the back end only makes use of the x-axis viewport (aka independentAxisRange)
     // when binning is in force, so no need to trigger a new request unless binning

@@ -808,8 +808,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       dataElementConstraints,
       dataElementDependencyOrder,
       filters,
-      vizConfig.independentAxisLogScale,
-      vizConfig.dependentAxisLogScale,
       vizConfig.valueSpecConfig,
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
