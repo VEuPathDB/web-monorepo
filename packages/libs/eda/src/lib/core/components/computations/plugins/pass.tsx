@@ -25,7 +25,7 @@ export const plugin: ComputationPlugin = {
     scatterplot: scatterplotVisualization,
     // considering marginal histogram
     lineplot: lineplotVisualization.withOptions({
-      showMarginalHistogram: false,
+      showMarginalHistogram: true,
     }),
     'map-markers': mapVisualization,
     // placeholder for densityplot
