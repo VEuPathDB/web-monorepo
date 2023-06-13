@@ -25,15 +25,29 @@ export function CategoricalMarkerConfigurationTable<T>({
       overlayType === 'categorical'
     ) {
       if (selected.has(data.label)) return;
-      const lastItem = [...overlayValues].pop() ?? ''; // TEMP until better solution
-      onChange({
-        ...configuration,
-        selectedValues: overlayValues
-          .slice(0, overlayValues.length - 1)
-          .concat(data.label, lastItem),
-        allValues,
-      });
+      if (allValues.length > ColorPaletteDefault.length) {
+        /**
+         * This logic ensures that the "All other values" label:
+         *  1. renders as the last overlayValue value
+         *  2. renders as the last legend item
+         */
+        const allOtherValuesItem = [...overlayValues].pop() ?? '';
+        onChange({
+          ...configuration,
+          selectedValues: overlayValues
+            .slice(0, overlayValues.length - 1)
+            .concat(data.label, allOtherValuesItem),
+          allValues,
+        });
+      } else {
+        onChange({
+          ...configuration,
+          selectedValues: overlayValues.concat(data.label),
+          allValues,
+        });
+      }
     } else {
+      // TODO: how do we want to handle these selections?
       alert(`Only ${ColorPaletteDefault.length - 1} values can be selected`);
     }
   }
@@ -81,7 +95,11 @@ export function CategoricalMarkerConfigurationTable<T>({
       },
     ],
   };
-  return <Mesa state={tableState} />;
+  return (
+    <div style={{ maxWidth: '50vw', overflowX: 'auto' }}>
+      <Mesa state={tableState} />
+    </div>
+  );
 }
 
 type DistributionProps = {
