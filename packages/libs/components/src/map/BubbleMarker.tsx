@@ -7,19 +7,20 @@ import {
   MarkerScaleDefault,
   ContainerStylesAddon,
 } from '../types/plots';
+import { NumberRange } from '../types/general';
 
 // ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use bubble marker one
 export interface BubbleMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon {
   data: {
-    //TODO: will bubble size depend on either data.value relatively or backend response?
-    /** Bubble diameter */
-    size: number;
-    color: string;
-  };
+    value: number;
+    label: string;
+    color?: string;
+  }[];
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
+  dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
 }
 
@@ -87,7 +88,12 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   size: number;
 } {
   const scale = props.markerScale ?? MarkerScaleDefault;
-  const size = props.data.size * scale;
+  console.log({ dependentAxisRange: props.dependentAxisRange });
+  // defined assertion here
+  const size =
+    100 *
+    (Math.log(props.data[0].value) / Math.log(props.dependentAxisRange!.max)) *
+    scale;
   const circleRadius = size / 2;
 
   let svgHTML: string = '';
@@ -119,15 +125,16 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
     '" r="' +
     circleRadius +
     '" stroke="green" stroke-width="0" fill="' +
-    props.data.color +
+    // color is possibly undefined
+    props.data[0].color +
     '" />';
 
   //TODO: do we need to show total number for bubble marker?
   // adding total number text/label and centering it
-  // svgHTML +=
-  //   '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="white" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
-  //   sumLabel +
-  //   '</text>';
+  svgHTML +=
+    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="white" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
+    props.data[0].value +
+    '</text>';
 
   // check isAtomic: draw pushpin if true
   if (props.isAtomic) {

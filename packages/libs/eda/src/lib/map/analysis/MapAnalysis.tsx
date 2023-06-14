@@ -87,6 +87,7 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
+import BubbleMarkerComponent from '@veupathdb/components/lib/map/BubbleMarker';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -102,6 +103,7 @@ enum MapSideNavItemLabels {
 enum MarkerTypeLabels {
   pie = 'Donuts',
   barplot = 'Bar plots',
+  bubble = 'Bubbles',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -340,7 +342,7 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarkerComponent {...markerProps} />
+          <BubbleMarkerComponent {...markerProps} />
         ) : (
           <ChartMarkerComponent {...markerProps} />
         )
@@ -464,6 +466,7 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
+  //here
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -471,14 +474,14 @@ function MapAnalysisImpl(props: ImplProps) {
         icon: <EditLocation />,
         isExpandable: true,
         subMenuConfig: [
-          {
-            // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
-            labelText: MarkerTypeLabels.pie,
-            icon: <DonutMarker style={{ height: '1.25em' }} />,
-            onClick: () => setActiveMarkerConfigurationType('pie'),
-            isActive: activeMarkerConfigurationType === 'pie',
-          },
+          // {
+          //   // concatenating the parent and subMenu labels creates a unique ID
+          //   id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
+          //   labelText: MarkerTypeLabels.pie,
+          //   icon: <DonutMarker style={{ height: '1.25em' }} />,
+          //   onClick: () => setActiveMarkerConfigurationType('pie'),
+          //   isActive: activeMarkerConfigurationType === 'pie',
+          // },
           {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.MapType + MarkerTypeLabels.barplot,
@@ -486,6 +489,14 @@ function MapAnalysisImpl(props: ImplProps) {
             icon: <BarPlotMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
+          },
+          {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.bubble,
+            labelText: MarkerTypeLabels.bubble,
+            icon: <DonutMarker style={{ height: '1.25em' }} />,
+            onClick: () => setActiveMarkerConfigurationType('pie'),
+            isActive: activeMarkerConfigurationType === 'pie',
           },
         ],
         renderSideNavigationPanel: (apps) => {

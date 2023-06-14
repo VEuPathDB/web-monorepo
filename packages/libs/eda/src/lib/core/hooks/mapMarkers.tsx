@@ -30,6 +30,7 @@ import {
 } from '@veupathdb/components/lib/types/plots';
 import DonutMarker from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarker from '@veupathdb/components/lib/map/ChartMarker';
+import BubbleMarker from '@veupathdb/components/lib/map/BubbleMarker';
 import { kFormatter, mFormatter } from '../utils/big-number-formatters';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
@@ -517,7 +518,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
         const MarkerComponent =
           markerType == null || markerType === 'pie'
-            ? DonutMarker
+            ? BubbleMarker
             : ChartMarker;
 
         const count =

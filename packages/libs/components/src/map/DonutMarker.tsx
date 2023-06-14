@@ -9,6 +9,7 @@ import {
   PiePlotDatum,
   ContainerStylesAddon,
 } from '../types/plots';
+import { NumberRange } from '../types/general';
 
 import { last } from 'lodash';
 
@@ -31,6 +32,7 @@ export interface DonutMarkerProps
    * value does not have to be 100.  2,4,6,8,10 would produce the same donut
    * (but with different mouse-overs in the enlarged version.) */
   cumulative?: boolean;
+  dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
 }
 
 // convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))

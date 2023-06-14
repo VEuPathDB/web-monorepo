@@ -31,28 +31,37 @@ export const Standalone: Story<MapVEuMapProps> = () => {
   return (
     <div>
       <BubbleMarkerStandalone
-        data={{
-          size: 10,
-          color: 'yellow',
-        }}
+        data={[
+          {
+            value: 10,
+            label: '',
+            color: 'yellow',
+          },
+        ]}
         isAtomic={false}
         markerScale={1}
         containerStyles={{ margin: '10px' }}
       />
       <BubbleMarkerStandalone
-        data={{
-          size: 85,
-          color: 'pink',
-        }}
+        data={[
+          {
+            value: 85,
+            label: '',
+            color: 'pink',
+          },
+        ]}
         isAtomic={false}
         markerScale={1}
         containerStyles={{ margin: '10px' }}
       />
       <BubbleMarkerStandalone
-        data={{
-          size: 100,
-          color: 'lightblue',
-        }}
+        data={[
+          {
+            value: 100,
+            label: '',
+            color: 'lightblue',
+          },
+        ]}
         isAtomic={false}
         markerScale={1}
         containerStyles={{ margin: '10px' }}

@@ -139,6 +139,7 @@ export function useStandaloneMapMarkers(
       ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
       : undefined;
 
+  // here
   const rawMarkersData = usePromise<StandaloneMapMarkersResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -252,6 +253,8 @@ export function useStandaloneMapMarkers(
     dependentAxisLogScale
   ) as NumberRange;
 
+  console.log({ defaultDependentAxisRange });
+
   /**
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
@@ -316,17 +319,27 @@ export function useStandaloneMapMarkers(
                 },
               ];
 
+        // here's what Bob pointed out
         const count =
           vocabulary != null // if there's an overlay (all expected use cases)
             ? overlayValues.reduce((sum, { count }) => (sum = sum + count), 0)
             : entityCount; // fallback if not
+
+        const bubbleData = [
+          {
+            label: reorderedData[0].label,
+            value: count,
+            color:
+              'color' in reorderedData[0] ? reorderedData[0].color : undefined,
+          },
+        ];
 
         const commonMarkerProps = {
           id: geoAggregateValue,
           key: geoAggregateValue,
           bounds: bounds,
           position: position,
-          data: reorderedData,
+          data: bubbleData,
           duration: defaultAnimationDuration,
         };
 
@@ -335,6 +348,7 @@ export function useStandaloneMapMarkers(
             return {
               ...commonMarkerProps,
               markerLabel: kFormatter(count),
+              dependentAxisRange: defaultDependentAxisRange,
             } as DonutMarkerProps;
           }
           default: {
