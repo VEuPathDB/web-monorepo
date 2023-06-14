@@ -642,12 +642,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       );
 
       // check log scale and plot mode option for retrieving data
-      if (
-        (vizConfig.independentAxisLogScale ||
-          vizConfig.dependentAxisLogScale) &&
-        vizConfig.valueSpecConfig !== 'Raw'
-      )
-        return undefined;
+      if (showLogScaleBanner) return undefined;
 
       // check variable inputs: this is necessary to prevent from data post
       if (
@@ -815,6 +810,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.facetVariable,
       vizConfig.showMissingness,
       computedXAxisDetails,
+      showLogScaleBanner,
       showContinousOverlayBanner,
       studyId,
       options?.hideTrendlines,

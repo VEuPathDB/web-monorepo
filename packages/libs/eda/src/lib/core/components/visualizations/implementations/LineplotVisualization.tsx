@@ -643,6 +643,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
+  // check banner condition
+  const showIndependentAxisBanner =
+    vizConfig.independentAxisLogScale && vizConfig.useBinning;
+  const showDependentAxisBanner =
+    vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
+
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
@@ -677,6 +683,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
             'To calculate a proportion, all selected numerator values must also be present in the denominator'
           );
       }
+
+      // no data request if banner should be shown
+      if (showIndependentAxisBanner || showDependentAxisBanner)
+        return undefined;
 
       assertValidInputVariables(
         inputs,
@@ -782,6 +792,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
       facetEntity,
       visualization.descriptor.type,
       neutralPaletteProps.colorPalette,
+      showIndependentAxisBanner,
+      showDependentAxisBanner,
     ])
   );
 
@@ -1012,8 +1024,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       {isFaceted(data.value?.dataSetProcess) ? (
         <FacetedLinePlot
           data={
-            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
-            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
+            showIndependentAxisBanner || showDependentAxisBanner
               ? undefined
               : data.value?.dataSetProcess
           }
@@ -1031,8 +1042,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
           {...lineplotProps}
           ref={plotRef}
           data={
-            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
-            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
+            showIndependentAxisBanner || showDependentAxisBanner
               ? undefined
               : data.value?.dataSetProcess
           }
@@ -1074,7 +1084,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
       )?.data
     : data.value?.dataSetProcess;
 
-  const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
+  // add banner condition to avoid unnecessary disabled
+  const neverUseBinning =
+    !showIndependentAxisBanner &&
+    !showDependentAxisBanner &&
+    data0?.binWidthSlider == null; // for ordinal string x-variables
+
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
 
