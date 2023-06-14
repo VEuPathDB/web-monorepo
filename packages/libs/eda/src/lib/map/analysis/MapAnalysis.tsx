@@ -70,8 +70,13 @@ import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BarPlotMarkerConfigurationMenu,
   PieMarkerConfigurationMenu,
+  BubbleMarkerConfigurationMenu,
 } from './MarkerConfiguration';
-import { BarPlotMarker, DonutMarker } from './MarkerConfiguration/icons';
+import {
+  BarPlotMarker,
+  DonutMarker,
+  BubbleMarker,
+} from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
@@ -313,6 +318,8 @@ function MapAnalysisImpl(props: ImplProps) {
       case 'barplot': {
         return activeMarkerConfiguration?.selectedPlotMode; // count or proportion
       }
+      case 'bubble':
+        return 'bubble';
       case 'pie':
       default:
         return 'pie';
@@ -342,6 +349,8 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
+          <DonutMarkerComponent {...markerProps} />
+        ) : markerType === 'bubble' ? (
           <BubbleMarkerComponent {...markerProps} />
         ) : (
           <ChartMarkerComponent {...markerProps} />
@@ -474,14 +483,14 @@ function MapAnalysisImpl(props: ImplProps) {
         icon: <EditLocation />,
         isExpandable: true,
         subMenuConfig: [
-          // {
-          //   // concatenating the parent and subMenu labels creates a unique ID
-          //   id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
-          //   labelText: MarkerTypeLabels.pie,
-          //   icon: <DonutMarker style={{ height: '1.25em' }} />,
-          //   onClick: () => setActiveMarkerConfigurationType('pie'),
-          //   isActive: activeMarkerConfigurationType === 'pie',
-          // },
+          {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
+            labelText: MarkerTypeLabels.pie,
+            icon: <DonutMarker style={{ height: '1.25em' }} />,
+            onClick: () => setActiveMarkerConfigurationType('pie'),
+            isActive: activeMarkerConfigurationType === 'pie',
+          },
           {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.MapType + MarkerTypeLabels.barplot,
@@ -494,9 +503,9 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.MapType + MarkerTypeLabels.bubble,
             labelText: MarkerTypeLabels.bubble,
-            icon: <DonutMarker style={{ height: '1.25em' }} />,
-            onClick: () => setActiveMarkerConfigurationType('pie'),
-            isActive: activeMarkerConfigurationType === 'pie',
+            icon: <BubbleMarker style={{ height: '1.25em' }} />,
+            onClick: () => setActiveMarkerConfigurationType('bubble'),
+            isActive: activeMarkerConfigurationType === 'bubble',
           },
         ],
         renderSideNavigationPanel: (apps) => {
@@ -551,6 +560,31 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     toggleStarredVariable={toggleStarredVariable}
                     configuration={activeMarkerConfiguration}
+                    constraints={markerVariableConstraints}
+                  />
+                ) : (
+                  <></>
+                ),
+            },
+            {
+              type: 'bubble',
+              displayName: MarkerTypeLabels.bubble,
+              icon: (
+                <BubbleMarker
+                  style={{ height: '1.5em', marginLeft: '0.25em' }}
+                />
+              ),
+              configurationMenu:
+                activeMarkerConfiguration?.type === 'bubble' ? (
+                  <BubbleMarkerConfigurationMenu
+                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    onChange={updateMarkerConfigurations}
+                    configuration={activeMarkerConfiguration}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
                     constraints={markerVariableConstraints}
                   />
                 ) : (

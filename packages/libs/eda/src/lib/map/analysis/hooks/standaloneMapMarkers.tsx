@@ -27,6 +27,7 @@ import { useDeepValue } from '../../../core/hooks/immutability';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
 import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
+import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -47,14 +48,18 @@ export interface StandaloneMapMarkersProps {
    */
   overlayConfig: OverlayConfig | undefined;
   outputEntityId: string | undefined;
-  markerType: 'count' | 'proportion' | 'pie';
+  markerType: 'count' | 'proportion' | 'pie' | 'bubble';
   dependentAxisLogScale?: boolean;
 }
 
 // what this hook returns
 interface MapMarkers {
   /** the markers */
-  markersData: DonutMarkerProps[] | ChartMarkerProps[] | undefined;
+  markersData:
+    | DonutMarkerProps[]
+    | ChartMarkerProps[]
+    | BubbleMarkerProps[]
+    | undefined;
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
   totalVisibleEntityCount: number | undefined;
   /** This tells you how many entities are on screen that also have data for the overlay variable
@@ -85,6 +90,8 @@ export function useStandaloneMapMarkers(
     markerType,
     dependentAxisLogScale = false,
   } = props;
+
+  console.log({ markerType });
 
   // these two deepvalue eliminate an unnecessary data request
   // when switching between pie and bar markers when using the same variable
@@ -178,7 +185,10 @@ export function useStandaloneMapMarkers(
           longitudeVariable,
           overlayConfig,
           outputEntityId,
-          valueSpec: markerType === 'pie' ? 'count' : markerType,
+          valueSpec:
+            markerType === 'pie' || markerType === 'bubble'
+              ? 'count'
+              : markerType,
           viewport: {
             latitude: {
               xMin,
@@ -191,6 +201,8 @@ export function useStandaloneMapMarkers(
           },
         },
       };
+
+      console.log('here1');
 
       // now get the data
       return await dataClient.getStandaloneMapMarkers(
@@ -212,6 +224,9 @@ export function useStandaloneMapMarkers(
       markerType,
     ])
   );
+
+  console.log('here2');
+  console.log({ rawMarkersData });
 
   const totalVisibleEntityCount: number | undefined =
     rawMarkersData.value?.mapElements.reduce((acc, curr) => {
@@ -339,7 +354,6 @@ export function useStandaloneMapMarkers(
           key: geoAggregateValue,
           bounds: bounds,
           position: position,
-          data: bubbleData,
           duration: defaultAnimationDuration,
         };
 
@@ -347,13 +361,22 @@ export function useStandaloneMapMarkers(
           case 'pie': {
             return {
               ...commonMarkerProps,
+              data: reorderedData,
               markerLabel: kFormatter(count),
-              dependentAxisRange: defaultDependentAxisRange,
             } as DonutMarkerProps;
+          }
+          case 'bubble': {
+            return {
+              ...commonMarkerProps,
+              data: bubbleData,
+              markerLabel: String(count),
+              dependentAxisRange: defaultDependentAxisRange,
+            } as BubbleMarkerProps;
           }
           default: {
             return {
               ...commonMarkerProps,
+              data: reorderedData,
               markerLabel: mFormatter(count),
               dependentAxisRange: defaultDependentAxisRange,
               dependentAxisLogScale,

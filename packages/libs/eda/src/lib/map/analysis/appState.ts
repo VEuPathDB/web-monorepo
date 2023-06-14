@@ -16,6 +16,7 @@ const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 const MarkerType = t.keyof({
   barplot: null,
   pie: null,
+  bubble: null,
 });
 
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
@@ -33,6 +34,10 @@ export const MarkerConfiguration = t.intersection([
     }),
     t.type({
       type: t.literal('pie'),
+      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+    }),
+    t.type({
+      type: t.literal('bubble'),
       selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
     }),
   ]),
@@ -107,6 +112,11 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           {
             type: 'barplot',
             selectedPlotMode: 'count',
+            selectedVariable: defaultVariable,
+            selectedValues: undefined,
+          },
+          {
+            type: 'bubble',
             selectedVariable: defaultVariable,
             selectedValues: undefined,
           },
