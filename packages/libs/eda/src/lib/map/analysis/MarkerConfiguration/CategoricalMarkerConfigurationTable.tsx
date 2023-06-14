@@ -20,10 +20,7 @@ export function CategoricalMarkerConfigurationTable<T>({
   const totalCount = allValues.reduce((prev, curr) => prev + curr.count, 0);
 
   function handleSelection(data: AllValuesDefinition) {
-    if (
-      overlayValues.length <= ColorPaletteDefault.length - 1 &&
-      overlayType === 'categorical'
-    ) {
+    if (overlayValues.length <= ColorPaletteDefault.length - 1) {
       if (selected.has(data.label)) return;
       if (allValues.length > ColorPaletteDefault.length) {
         /**
@@ -53,12 +50,11 @@ export function CategoricalMarkerConfigurationTable<T>({
   }
 
   function handleDeselection(data: AllValuesDefinition) {
-    if (overlayType === 'categorical')
-      onChange({
-        ...configuration,
-        selectedValues: overlayValues.filter((val) => val !== data.label),
-        allValues,
-      });
+    onChange({
+      ...configuration,
+      selectedValues: overlayValues.filter((val) => val !== data.label),
+      allValues,
+    });
   }
 
   const tableState = {
@@ -68,6 +64,18 @@ export function CategoricalMarkerConfigurationTable<T>({
     eventHandlers: {
       onRowSelect: handleSelection,
       onRowDeselect: handleDeselection,
+      onMultipleRowSelect: () =>
+        onChange({
+          ...configuration,
+          selectedValues: allValues.map((v) => v.label),
+          allValues,
+        }),
+      onMultipleRowDeselect: () =>
+        onChange({
+          ...configuration,
+          selectedValues: ['__UNSELECTED__'],
+          allValues,
+        }),
     },
     actions: [],
     rows: allValues as AllValuesDefinition[],
