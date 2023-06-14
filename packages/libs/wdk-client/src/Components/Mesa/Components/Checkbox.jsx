@@ -1,6 +1,5 @@
 import React from 'react';
-
-import Icon from '../../../Components/Mesa/Components/Icon';
+import IndeterminateCheckbox from '@veupathdb/coreui/dist/components/inputs/checkboxes/IndeterminateCheckbox';
 
 class Checkbox extends React.Component {
   constructor(props) {
@@ -14,14 +13,26 @@ class Checkbox extends React.Component {
   }
 
   render() {
-    let { checked, className, disabled } = this.props;
+    let { checked, className, disabled, indeterminate = false } = this.props;
     className = 'Checkbox' + (className ? ' ' + className : '');
     className += ' ' + (checked ? 'Checkbox-Checked' : 'Checkbox-Unchecked');
     className += disabled ? ' Checkbox-Disabled' : '';
 
     return (
       <div className={className}>
-        <input type="checkbox" checked={checked} onChange={this.handleClick} />
+        {indeterminate ? (
+          <IndeterminateCheckbox
+            checked={checked}
+            indeterminate={indeterminate}
+            onChange={this.handleClick}
+          />
+        ) : (
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={this.handleClick}
+          />
+        )}
       </div>
     );
   }
