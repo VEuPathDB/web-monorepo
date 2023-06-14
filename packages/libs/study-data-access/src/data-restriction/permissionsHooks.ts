@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { defaultMemoize } from 'reselect';
-
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
@@ -11,30 +9,36 @@ import { useStudyAccessApi } from '../study-access/studyAccessHooks';
 
 export type AsyncUserPermissions =
   | { loading: true }
-  | { loading: false, permissions: UserPermissions };
+  | { loading: false; permissions: UserPermissions };
 
-const memoizedPermissionsCheck = defaultMemoize(function (
-  user: User,
-  studyAccessApi: StudyAccessApi
-) {
-  return checkPermissions(user, studyAccessApi);
-});
+// Caches permissions until the location changes
+const cachedPermissionCheck = (function () {
+  let result: Promise<UserPermissions>;
+  let lastLocation = window.location.href;
+  return function cachedPermissionCheck(
+    user: User,
+    studyAccessApi: StudyAccessApi
+  ): Promise<UserPermissions> {
+    if (result == null || lastLocation !== window.location.href) {
+      lastLocation = window.location.href;
+      result = checkPermissions(user, studyAccessApi);
+    }
+    return result;
+  };
+})();
 
 export function usePermissions(): AsyncUserPermissions {
   const studyAccessApi = useStudyAccessApi();
 
   const permissions = useWdkService(
-    async wdkService => memoizedPermissionsCheck(
-      await wdkService.getCurrentUser({ force: true }),
-      studyAccessApi
-    ),
+    async (wdkService) =>
+      cachedPermissionCheck(await wdkService.getCurrentUser(), studyAccessApi),
     [studyAccessApi]
   );
 
   return useMemo(
-    () => permissions == null
-      ? { loading: true }
-      : { loading: false, permissions },
-    [ permissions ]
+    () =>
+      permissions == null ? { loading: true } : { loading: false, permissions },
+    [permissions]
   );
 }

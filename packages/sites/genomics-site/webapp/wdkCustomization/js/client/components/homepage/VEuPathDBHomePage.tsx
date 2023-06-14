@@ -45,11 +45,13 @@ import {
 import {
   useUserDatasetsWorkspace,
   useEda,
+  edaServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
+import { useWdkStudyRecords } from '@veupathdb/eda/lib/core/hooks/study';
 
 import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
 
@@ -60,8 +62,9 @@ import { makeVpdbClassNameHelper } from './Utils';
 
 import './VEuPathDBHomePage.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Warning } from '@veupathdb/coreui';
+import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -351,46 +354,18 @@ const useHeaderMenuItems = (
   const communitySite = useCommunitySiteRootUrl();
 
   const showInteractiveMaps = Boolean(useEda && projectId === 'VectorBase');
-
-  const mapMenuItems = useWdkService(
-    async (wdkService): Promise<HeaderMenuItem[]> => {
-      if (!showInteractiveMaps) return [];
-      try {
-        const anwser = await wdkService.getAnswerJson(
-          {
-            searchName: 'AllDatasets',
-            searchConfig: {
-              parameters: {},
-            },
-          },
-          {
-            attributes: ['eda_study_id'],
-          }
-        );
-        return anwser.records
-          .filter((record) => record.attributes.eda_study_id != null)
-          .map((record) => ({
-            key: `map-${record.id[0].value}`,
-            display: record.displayName,
-            type: 'reactRoute',
-            url: `/workspace/maps/${record.id[0].value}/new`,
-          }));
-      } catch (error) {
-        console.error(error);
-        return [
-          {
-            key: 'maps-error',
-            display: (
-              <>
-                <Warning /> Could not load map data
-              </>
-            ),
-            type: 'custom',
-          },
-        ];
-      }
-    },
-    [showInteractiveMaps]
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const subsettingClient = useMemo(
+    () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
+    [wdkService]
+  );
+  const mapMenuItems = useWdkStudyRecords(subsettingClient)?.map(
+    (record): HeaderMenuItem => ({
+      key: `map-${record.id[0].value}`,
+      display: record.displayName,
+      type: 'reactRoute',
+      url: `/workspace/maps/${record.id[0].value}/new`,
+    })
   );
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom

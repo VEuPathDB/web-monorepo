@@ -77,6 +77,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { CellProps, Column } from 'react-table';
 import { CommonModal } from '@veupathdb/wdk-client/lib/Components';
 import './SiteSearch.scss';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 interface Props {
   loading: boolean;
@@ -1416,14 +1417,14 @@ function VariableValueStudyTable(props: {
   summaryField: SiteSearchDocumentTypeField;
 }) {
   const { document, summaryField } = props;
-  const datasets = useDatasets();
+  const permissionsResult = usePermissions();
   function makeLink(studyId: string, entityId?: string, variableId?: string) {
-    if (datasets == null) return '';
-    const dataset = datasets?.records.find(
-      (d) => d.attributes.eda_study_id === studyId
-    );
-    // if (dataset == null) throw new Error("Cannot find dataset with eda_study_id = '" + studyId + "'.");
-    const base = makeEdaRoute(dataset?.id[0].value) + '/new';
+    if (permissionsResult.loading) return '';
+    const datasetId =
+      Object.entries(permissionsResult.permissions.perDataset).find(
+        ([_datasetId, entry]) => entry?.studyId === studyId
+      )?.[0] ?? studyId;
+    const base = makeEdaRoute(datasetId) + '/new';
     if (entityId == null) return base;
     if (variableId == null) return base + `/variables/${entityId}`;
     return base + `/variables/${entityId}/${variableId}`;
@@ -1616,9 +1617,7 @@ const getDatasetsOnce = memoize((wdkService: WdkService) =>
         parameters: {},
       },
     },
-    {
-      attributes: ['eda_study_id'],
-    }
+    {}
   )
 );
 
@@ -1627,14 +1626,12 @@ function useDatasets() {
 }
 
 function useDatasetId(edaStudyId: string) {
-  const datasets = useDatasets();
-  if (datasets == null) return;
-  const dataset = datasets.records.find(
-    (d) => d.attributes.eda_study_id === edaStudyId
-  );
-  // if (dataset == null) throw new Error("Could not find a dataset with eda_study_id = " + edaStudyId);
-  if (dataset == null) return edaStudyId;
-  return dataset.id[0].value;
+  const permissionsResult = usePermissions();
+  if (permissionsResult.loading) return;
+  const datasetId = Object.entries(
+    permissionsResult.permissions.perDataset
+  ).find(([_datasetId, entry]) => entry?.studyId === edaStudyId)?.[0];
+  return datasetId ?? edaStudyId;
 }
 
 interface ColumnDef<T extends string> {

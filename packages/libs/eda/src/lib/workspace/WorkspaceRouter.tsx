@@ -183,13 +183,16 @@ export function WorkspaceRouter({
           <Route
             path={`${path}/studies`}
             exact
-            render={() => <StudyList baseUrl={url} />}
+            render={() => (
+              <StudyList baseUrl={url} subsettingClient={subsettingClient} />
+            )}
           />
           <Route
             path={`${path}/public`}
             render={() => (
               <PublicAnalysesRoute
                 analysisClient={analysisClient}
+                subsettingClient={subsettingClient}
                 exampleAnalysesAuthor={exampleAnalysesAuthor}
               />
             )}
