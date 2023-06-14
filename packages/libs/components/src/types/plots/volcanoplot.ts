@@ -1,3 +1,5 @@
+import { array, type, string, TypeOf } from 'io-ts';
+
 export type VolcanoPlotDataPoint = {
   // log2foldChange becomes the x axis. Also used for coloring points
   log2foldChange: string;
@@ -10,4 +12,13 @@ export type VolcanoPlotDataPoint = {
   pointId: string;
 };
 
-export type VolcanoPlotData = Array<VolcanoPlotDataPoint>;
+export const VolcanoPlotData = array(
+  type({
+    log2foldChange: string,
+    pValue: string,
+    adjustedPValue: string,
+    pointId: string,
+  })
+);
+
+export type VolcanoPlotData = TypeOf<typeof VolcanoPlotData>;

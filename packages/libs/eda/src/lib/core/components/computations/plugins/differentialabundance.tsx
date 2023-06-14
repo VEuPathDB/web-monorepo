@@ -57,31 +57,7 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: DifferentialAbundanceConfig.is,
   visualizationPlugins: {
-    volcanoplot: volcanoplotVisualization // Must match name in data service
-      .withOptions({
-        getComputedXAxisDetails(config) {
-          if (DifferentialAbundanceConfig.is(config)) {
-            return {
-              entityId: config.collectionVariable.entityId, // This is not exactly the entityId of the variable, because the computed variable here exists outside the entity tree!
-              placeholderDisplayName: 'log2(Fold Change)',
-              variableId: 'log2FoldChange',
-            };
-          }
-        },
-        getComputedYAxisDetails(config) {
-          if (DifferentialAbundanceConfig.is(config)) {
-            return {
-              entityId: config.collectionVariable.entityId, // Also not truly the correct entityId, but none exists for the returned variable.
-              placeholderDisplayName: '-log10(P Value)',
-              variableId: '-log10(P Value)',
-            };
-          }
-        },
-        hideShowMissingnessToggle: true, // none of the following will be relevant for volcano. Likely going to remove.
-        hideTrendlines: true,
-        hideFacetInputs: true,
-        hideLogScale: true,
-      }),
+    volcanoplot: volcanoplotVisualization, // Must match name in data service
   },
 };
 
@@ -106,7 +82,6 @@ function DifferentialAbundanceConfigDescriptionComponent({
       ? configuration.comparator?.variable
       : undefined;
 
-  console.log(comparatorVariable);
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
@@ -158,7 +133,7 @@ export function DifferentialAbundanceConfiguration(
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters: [] = []; // probably in analysis state somewhere? @ann todo!
   const findEntityAndVariable = useFindEntityAndVariable(filters);
-  console.log(configuration);
+
   const handleChange = (
     configuration: DifferentialAbundanceConfig,
     selectedVariable?: VariableDescriptor
@@ -168,7 +143,7 @@ export function DifferentialAbundanceConfiguration(
     }
   };
   // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
-  configuration.differentialAbundanceMethod = 'DESeq';
+  if (configuration) configuration.differentialAbundanceMethod = 'DESeq';
 
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -215,7 +190,6 @@ export function DifferentialAbundanceConfiguration(
   //     return configuration.comparatorVariable;
   //   }
   // }, [configuration]);
-  // console.log(selectedComparatorVariable);
 
   const selectedComparatorVariable = useMemo(() => {
     if (
@@ -226,10 +200,6 @@ export function DifferentialAbundanceConfiguration(
       return findEntityAndVariable(configuration.comparator.variable);
     }
   }, [configuration]);
-
-  console.log(selectedComparatorVariable);
-
-  console.log(configuration);
 
   return (
     <ComputationStepContainer
@@ -310,7 +280,7 @@ export function DifferentialAbundanceConfiguration(
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration?.comparator.groupB ?? []}
+          selectedValues={configuration?.comparator?.groupB ?? []}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
               variable: configuration?.comparator?.variable ?? null,

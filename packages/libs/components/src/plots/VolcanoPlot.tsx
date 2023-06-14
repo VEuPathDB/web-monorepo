@@ -77,11 +77,17 @@ function VolcanoPlot(props: VolcanoPlotProps) {
    * y axis is -log10 raw p value.
    */
 
+  console.log(data);
+
   // Find maxes and mins of the data itself
-  const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
-  const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
-  const dataYMin = min(data.map((d) => Number(d.pValue)));
-  const dataYMax = max(data.map((d) => Number(d.pValue)));
+  // const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
+  // const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
+  // const dataYMin = min(data.map((d) => Number(d.pValue)));
+  // const dataYMax = max(data.map((d) => Number(d.pValue)));
+  const dataXMin = 0;
+  const dataXMax = 10;
+  const dataYMin = -6;
+  const dataYMax = 6;
 
   // Determine mins, maxes of axes in the plot.
   // These are different than the data mins/maxes because

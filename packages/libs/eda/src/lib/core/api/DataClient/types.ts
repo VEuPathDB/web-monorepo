@@ -15,7 +15,7 @@ import {
   keyof,
   boolean,
   literal,
-  readonlyArray,
+  undefined,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -26,10 +26,8 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
-import {
-  VolcanoPlotDataPoint,
-  VolcanoPlotData,
-} from '@veupathdb/components/lib/types/plots/volcanoplot';
+import { VolcanoPlotDataPoint } from '@veupathdb/components/lib/types/plots/volcanoplot';
+import VolcanoPlot from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -362,15 +360,19 @@ export const ScatterplotResponse = intersection([
 ]);
 
 // Volcano plot
-export type VolcanoplotResponse = TypeOf<typeof VolcanoplotResponse>;
-export const VolcanoPlotPoint = type({
-  log2foldChange: string,
-  pValue: string,
-  adjustedPValue: string,
-  pointId: string,
-});
-// @ts-ignore
-// export const VolcanoplotResponse = type(Array<VolcanoPlotPoint>)
+export type VolcanoplotResponse = TypeOf<typeof VolcanoPlotData>;
+
+// TEMP - @ANN many of these can be simplified after some backend work is merged.
+// Still open question - what to do if pvalue exists but not adjustedpvalue?
+const VolcanoPlotData = array(
+  type({
+    log2foldChange: union([string, number, undefined]),
+    pValue: union([string, number, undefined]),
+    adjustedPValue: union([string, number, undefined]),
+    pointID: union([string, undefined]),
+  })
+);
+export const VolcanoplotResponse = VolcanoPlotData;
 
 export interface VolcanoPlotRequestParams {
   studyId: string;
