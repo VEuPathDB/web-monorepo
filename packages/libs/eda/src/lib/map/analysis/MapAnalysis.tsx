@@ -22,7 +22,7 @@ import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import {
-  Chip,
+  CheckIcon,
   Download,
   FilledButton,
   Filter as FilterIcon,
@@ -1222,32 +1222,24 @@ function SideNavigationItems({
                         item.onClick();
                       }}
                     >
+                      {/* *
+                       * This div contains a checkmark that indicates which map type is active. The checkmark persists even if a different side nav item is selected.
+                       */}
+                      <div
+                        style={{
+                          marginRight: '0.5em',
+                          width: '1em',
+                          height: '1em',
+                        }}
+                      >
+                        {item.isActive && <CheckIcon />}
+                      </div>
                       <span style={{ fontSize: '0.9em', marginRight: '0.5em' }}>
                         {item.labelText}
                       </span>
                       <span style={iconStyles} aria-hidden>
                         {item.icon}
                       </span>
-                      {/**
-                       * This div contains a chip that indicates which map type is active. The chip persists even if a different side nav item is selected
-                       */}
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          flexGrow: 1,
-                          marginLeft: '0.5em',
-                          width: '3.5em',
-                        }}
-                      >
-                        {item.isActive && (
-                          <Chip
-                            text="active"
-                            themeRole="primary"
-                            staticState="hover"
-                          />
-                        )}
-                      </div>
                     </button>
                   </li>
                 );
