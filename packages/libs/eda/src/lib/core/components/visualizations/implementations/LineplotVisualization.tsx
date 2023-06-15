@@ -1023,11 +1023,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
         <FacetedLinePlot
-          data={
-            showIndependentAxisBanner || showDependentAxisBanner
-              ? undefined
-              : data.value?.dataSetProcess
-          }
+          data={data.value?.dataSetProcess}
           // considering axis range control
           componentProps={lineplotProps}
           modalComponentProps={{
@@ -1041,11 +1037,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         <LinePlot
           {...lineplotProps}
           ref={plotRef}
-          data={
-            showIndependentAxisBanner || showDependentAxisBanner
-              ? undefined
-              : data.value?.dataSetProcess
-          }
+          data={data.value?.dataSetProcess}
           // add controls
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
