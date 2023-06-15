@@ -120,11 +120,6 @@ export function useWdkStudyRecords(
     async (wdkService) => {
       if (permissionsResponse.loading) return;
       const { permissions } = permissionsResponse;
-      const studyIds = new Set(
-        await subsettingClient
-          .getStudies()
-          .then((studies) => studies.map((s) => s.id))
-      );
       const recordClass = await wdkService.findRecordClass('dataset');
       const finalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(
         attributes
@@ -132,24 +127,28 @@ export function useWdkStudyRecords(
       const finalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
         (table) => table in recordClass.tablesMap
       );
-      const answer = await wdkService.getAnswerJson(
-        {
-          searchName: 'Studies',
-          searchConfig: {
-            parameters: {},
-          },
-        },
-        {
-          attributes: finalAttributes,
-          tables: finalTables,
-          sorting: [
-            {
-              attributeName: 'display_name',
-              direction: 'ASC',
+      const [edaStudies, answer] = await Promise.all([
+        subsettingClient.getStudies(),
+        wdkService.getAnswerJson(
+          {
+            searchName: 'Studies',
+            searchConfig: {
+              parameters: {},
             },
-          ],
-        }
-      );
+          },
+          {
+            attributes: finalAttributes,
+            tables: finalTables,
+            sorting: [
+              {
+                attributeName: 'display_name',
+                direction: 'ASC',
+              },
+            ],
+          }
+        ),
+      ]);
+      const studyIds = new Set(edaStudies.map((s) => s.id));
       return answer.records.filter((record) => {
         const datasetId = getStudyId(record);
         if (datasetId == null) {
