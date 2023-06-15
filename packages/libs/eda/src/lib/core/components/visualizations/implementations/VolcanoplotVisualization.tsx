@@ -251,15 +251,12 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
     significanceThreshold: 0.05,
     log2FoldChangeThreshold: 1,
+    containerStyles: plotContainerStyles,
   };
 
   console.log(volcanoplotProps);
 
-  const plotNode = (
-    <div {...plotContainerStyles}>
-      <VolcanoPlot {...volcanoplotProps} />
-    </div>
-  );
+  const plotNode = <VolcanoPlot {...volcanoplotProps} />;
 
   // const handleIndependentAxisRangeChange = useCallback(
   //   (newRange?: NumberOrDateRange) => {

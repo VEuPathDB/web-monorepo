@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import { significanceColors } from '../types/plots';
 import {
   VolcanoPlotData,
@@ -20,6 +21,7 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
+import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -45,10 +47,10 @@ export interface VolcanoPlotProps {
   plotTitle?: string;
   /** marker fill opacity: range from 0 to 1 */
   markerBodyOpacity?: number;
-  /** Height of plot */
-  height?: number;
-  /** Width of plot */
-  width?: number;
+  /** container name */
+  containerClass?: string;
+  /** styling for the plot's container */
+  containerStyles?: CSSProperties;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
@@ -67,8 +69,8 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
-    height,
-    width,
+    containerClass = 'web-components-plot',
+    containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
   } = props;
 
   /**
@@ -146,15 +148,18 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
-    <div style={{ position: 'relative' }}>
+    <div
+      className={containerClass}
+      style={{ ...containerStyles, position: 'relative' }}
+    >
       {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
       <XYChart
-        height={height ?? 300}
+        // height={height ?? 300}
         xScale={{ type: 'linear', domain: [xMin, xMax] }}
         yScale={{ type: 'linear', domain: [yMin, yMax], zero: false }}
-        width={width ?? 300}
+        // width={width ?? 300}
       >
         {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
         <Grid numTicks={6} lineStyle={gridStyles} />
