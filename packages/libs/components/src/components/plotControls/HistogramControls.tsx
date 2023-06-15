@@ -26,8 +26,8 @@ import OrientationToggle from '../widgets/OrientationToggle';
 import { Toggle } from '@veupathdb/coreui';
 import { NumberRangeInput } from '../widgets/NumberAndDateRangeInputs';
 import LabelledGroup from '../widgets/LabelledGroup';
-import { ColorDescriptor } from '@veupathdb/coreui/dist/components/theming/types';
-import { blue } from '@veupathdb/coreui/dist/definitions/colors';
+import { ColorDescriptor } from '@veupathdb/coreui/lib/components/theming/types';
+import { blue } from '@veupathdb/coreui/lib/definitions/colors';
 
 /**
  * Props for histogram controls.

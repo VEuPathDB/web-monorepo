@@ -1,6 +1,6 @@
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { MesaButton, Trash } from '@veupathdb/coreui';
-import { gray, mutedRed } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray, mutedRed } from '@veupathdb/coreui/lib/definitions/colors';
 import { ThemedButtonProps } from './ThemedGrantAccessButton';
 
 export function ThemedDeleteButton({ buttonText, onPress }: ThemedButtonProps) {

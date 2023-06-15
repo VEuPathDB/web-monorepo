@@ -3,23 +3,25 @@ import React, { useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 
 import { Checkbox } from '@veupathdb/wdk-client/lib/Components';
-import CheckboxTree, { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import CheckboxTree, {
+  LinksPosition,
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
   mapStructure,
-  pruneDescendantNodes
+  pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import {
   PhyleticDistributionUiTree,
-  getNodeChildren
+  getNodeChildren,
 } from 'ortho-client/utils/phyleticDistribution';
 import {
   TaxonTree,
   getTaxonNodeId,
   makeInitialExpandedNodes,
-  taxonSearchPredicate
+  taxonSearchPredicate,
 } from 'ortho-client/utils/taxons';
 
 import './PhyleticDistributionCheckbox.scss';
@@ -34,34 +36,38 @@ interface Props {
 
 type SelectionConfig =
   | {
-      selectable: false
+      selectable: false;
     }
   | {
-      selectable: true,
+      selectable: true;
       onSpeciesSelected: (selection: string[]) => void;
     };
 
 export function PhyleticDistributionCheckbox({
   selectionConfig,
   speciesCounts,
-  taxonTree
+  taxonTree,
 }: Props) {
   const phyleticDistributionUiTree = useMemo(
     () => makePhyleticDistributionUiTree(speciesCounts, taxonTree),
-    [ speciesCounts, taxonTree ]
+    [speciesCounts, taxonTree]
   );
 
-  const [ expandedNodes, setExpandedNodes ] = useState(
-    () => makeInitialExpandedNodes(taxonTree)
+  const [expandedNodes, setExpandedNodes] = useState(() =>
+    makeInitialExpandedNodes(taxonTree)
   );
 
-  const [ hideMissingSpecies, setHideMissingSpecies ] = useState(true);
+  const [hideMissingSpecies, setHideMissingSpecies] = useState(true);
 
-  const [ searchTerm, setSearchTerm ] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const prunedPhyleticDistributionUiTree = useMemo(
-    () => filterPhyleticDistributionUiTree(phyleticDistributionUiTree, hideMissingSpecies),
-    [ phyleticDistributionUiTree, hideMissingSpecies ]
+    () =>
+      filterPhyleticDistributionUiTree(
+        phyleticDistributionUiTree,
+        hideMissingSpecies
+      ),
+    [phyleticDistributionUiTree, hideMissingSpecies]
   );
 
   return (
@@ -83,7 +89,7 @@ export function PhyleticDistributionCheckbox({
         }
         isSearchable
         searchBoxPlaceholder="Type a taxonomic name"
-        searchBoxHelp={makeSearchHelpText("the taxons below")}
+        searchBoxHelp={makeSearchHelpText('the taxons below')}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
         searchPredicate={taxonSearchPredicate}
@@ -94,9 +100,8 @@ export function PhyleticDistributionCheckbox({
               value={hideMissingSpecies}
               onChange={setHideMissingSpecies}
             />
-            &nbsp;
-            Hide zero counts
-          </label>
+            &nbsp; Hide zero counts
+          </label>,
         ]}
       />
     </div>
@@ -110,17 +115,13 @@ function makePhyleticDistributionUiTree(
   return mapStructure(
     (node: TaxonTree, mappedChildren: PhyleticDistributionUiTree[]) => ({
       ...node,
-      children: orderBy(
-        mappedChildren,
-        child => child.species,
-        'desc'
-      ),
+      children: orderBy(mappedChildren, (child) => child.species, 'desc'),
       speciesCount: node.species
         ? speciesCounts[node.abbrev] ?? 0
         : mappedChildren.reduce(
             (memo, { speciesCount }) => memo + speciesCount,
             0
-          )
+          ),
     }),
     (node: TaxonTree) => node.children,
     taxonTree
@@ -133,7 +134,7 @@ function filterPhyleticDistributionUiTree(
 ) {
   return hideMissingSpecies
     ? pruneDescendantNodes(
-        node => node.speciesCount > 0,
+        (node) => node.speciesCount > 0,
         phyleticDistributionUiTree
       )
     : phyleticDistributionUiTree;
@@ -145,13 +146,9 @@ function renderNode(node: PhyleticDistributionUiTree) {
       <span className={cx('--NodeName')}>
         {node.name}
         &nbsp;
-        <code className={cx('--NodeAbbrev')}>
-          ({node.abbrev})
-        </code>
+        <code className={cx('--NodeAbbrev')}>({node.abbrev})</code>
       </span>
-      <span className={cx('--NodeCount')}>
-        {node.speciesCount}
-      </span>
+      <span className={cx('--NodeCount')}>{node.speciesCount}</span>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 /**
  * Some basic color definitions that can be used to bring consistency to UI components.

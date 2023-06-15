@@ -3,18 +3,18 @@
   "version": "0.18.27",
   "author": "Michael Dunn <mdunn4@nd.edu>",
   "description": "Core components and style definitions for VEuPath applications.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
     "README.md",
-    "dist"
+    "lib"
   ],
   "scripts": {
     "test": "echo \"Let's talk about testing\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "clean": "rm -rf dist",
-    "build": "NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir dist --extensions \".ts,.tsx\" ",
+    "clean": "rm -rf lib",
+    "build": "NODE_ENV=production babel src --ignore \"src/stories/**/*\" --out-dir lib --extensions \".ts,.tsx\" ",
     "tsc": "tsc",
     "build-npm-modules": "npm-run-all build tsc",
     "create-svg-icons": "npx @svgr/cli --icon --replace-attr-values \"#000000=currentColor\" --out-dir src/components/icons/ src/assets/svg/ --typescript",

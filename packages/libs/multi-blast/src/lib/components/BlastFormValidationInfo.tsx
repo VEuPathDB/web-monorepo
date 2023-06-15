@@ -1,4 +1,4 @@
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 import { InputErrors } from '../utils/ServiceTypes';
 
