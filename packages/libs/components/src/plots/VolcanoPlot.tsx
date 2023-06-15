@@ -80,14 +80,10 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   console.log(data);
 
   // Find maxes and mins of the data itself
-  // const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
-  // const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
-  // const dataYMin = min(data.map((d) => Number(d.pValue)));
-  // const dataYMax = max(data.map((d) => Number(d.pValue)));
-  const dataXMin = 0;
-  const dataXMax = 10;
-  const dataYMin = -6;
-  const dataYMax = 6;
+  const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
+  const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
+  const dataYMin = min(data.map((d) => Number(d.pValue)));
+  const dataYMax = max(data.map((d) => Number(d.pValue)));
 
   // Determine mins, maxes of axes in the plot.
   // These are different than the data mins/maxes because
@@ -218,6 +214,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         <Group opacity={markerBodyOpacity ?? 1}>
           <GlyphSeries
             dataKey={'data'} // unique key
+            //@ts-ignore
             data={data} // data as an array of obejcts (points). Accessed with dataAccessors
             {...dataAccessors}
             colorAccessor={(d) => {

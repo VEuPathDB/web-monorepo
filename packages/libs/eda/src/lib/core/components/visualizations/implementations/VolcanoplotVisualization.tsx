@@ -14,69 +14,23 @@ import {
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
-
-import { VariableDescriptor } from '../../../types/variable';
-
 import { PlotLayout } from '../../layouts/PlotLayout';
 
-import {
-  ComputedVariableDetails,
-  VisualizationProps,
-} from '../VisualizationTypes';
-
-// use lodash instead of Math.min/max
-import {
-  min,
-  max,
-  lte,
-  gte,
-  gt,
-  groupBy,
-  size,
-  head,
-  values,
-  mapValues,
-  map,
-  keys,
-  uniqBy,
-  filter,
-  isEqual,
-} from 'lodash';
-
-import { gray } from '../colors';
+import { VisualizationProps } from '../VisualizationTypes';
 
 import { useRouteMatch } from 'react-router';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import PluginError from '../PluginError';
 // for custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-
-// a custom hook to preserve the status of checked legend items
-import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 
 // concerning axis range control
 import { NumberRange } from '../../../types/general';
-// reusable util for computing truncationConfig
-import { truncationConfig } from '../../../utils/truncation-config-utils';
-// use Notification for truncation warning message
-import Notification from '@veupathdb/components/lib/components/widgets//Notification';
-import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
-import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
-import { OverlayOptions, RequestOptions } from '../options/types';
-
-// reset to defaults button
-import { ResetButtonCoreUI } from '../../ResetButton';
-
-// add Slider and SliderWidgetProps
-import SliderWidget, {
-  SliderWidgetProps,
-} from '@veupathdb/components/lib/components/widgets/Slider';
+import { RequestOptions } from '../options/types';
 
 // Volcano plot imports
 import DataClient, {
@@ -89,6 +43,8 @@ import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/pl
 
 // end imports
 
+// Visualization begins!!
+
 // Constants and styles
 const plotContainerStyles = {
   width: 750,
@@ -98,17 +54,7 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-const plotSpacingOptions = {};
-
-const modalPlotContainerStyles = {
-  width: '85%',
-  height: '100%',
-  margin: 'auto',
-};
-
 const MAXALLOWEDDATAPOINTS = 100000;
-
-// Types
 
 export const volcanoplotVisualization = createVisualizationPlugin({
   selectorIcon: VolcanoSVG,
@@ -120,24 +66,15 @@ function createDefaultConfig(): VolcanoPlotConfig {
   return {
     log2FoldChangeThreshold: 3,
     significanceThreshold: 0.05,
-    // independentAxisValueSpec: 'Full',
-    // dependentAxisValueSpec: 'Full',
     markerBodyOpacity: 0.5,
   };
 }
 
 export type VolcanoPlotConfig = t.TypeOf<typeof VolcanoPlotConfig>;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+
 export const VolcanoPlotConfig = t.partial({
   log2FoldChangeThreshold: t.number,
   significanceThreshold: t.number,
-  // for vizconfig.checkedLegendItems
-  // checkedLegendItems: t.array(t.string), // not yet implemented
-  // axis range control
-  // independentAxisRange: NumberOrDateRange, // not yet implemented
-  // dependentAxisRange: NumberOrDateRange, // not yet implemented
-  // independentAxisValueSpec: t.string,  // not yet implemented
-  // dependentAxisValueSpec: t.string,  // not yet implemented
   markerBodyOpacity: t.number,
 });
 
@@ -174,6 +111,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
+  // Visualization configuration includes threshold values. No variables.
   // const selectedThresholdValues = useDeepValue({
   //   log2foldChangeThreshold: vizConfig.log2foldChangeThreshold,
   //   significanceThreshold: vizConfig.significanceThreshold,
@@ -265,6 +203,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   // const outputSize = @ANN fill in?
 
   console.log(data); //!!!!!!!
+  if (data.value) console.log(Object.values(data.value));
 
   // default ranges. @ANN set based on data i think.
   const defaultIndependentAxisRange = { min: -5, max: 5 } as NumberRange;
@@ -304,121 +243,22 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
-  // set truncation flags: will see if this is reusable with other application
-  // @ANN todo
-  // const {
-  //   truncationConfigIndependentAxisMin,
-  //   truncationConfigIndependentAxisMax,
-  //   truncationConfigDependentAxisMin,
-  //   truncationConfigDependentAxisMax,
-  // } = useMemo(
-  //   () =>
-  //     truncationConfig(
-  //       {
-  //         independentAxisRange: xMinMaxDataRange,
-  //         dependentAxisRange: yMinMaxDataRange,
-  //       },
-  //       vizConfig,
-  //       {
-  //         // truncation overrides for the axis minima for log scale
-  //         // only pass key/values that you want overridden
-  //         // (e.g. false values will override just as much as true)
-  //         ...(vizConfig.independentAxisLogScale &&
-  //         xMinMaxDataRange?.min != null &&
-  //         (xMinMaxDataRange.min as number) <= 0
-  //           ? { truncationConfigIndependentAxisMin: true }
-  //           : {}),
-  //         ...(vizConfig.dependentAxisLogScale &&
-  //         yMinMaxDataRange?.min != null &&
-  //         (yMinMaxDataRange.min as number) <= 0
-  //           ? { truncationConfigDependentAxisMin: true }
-  //           : {}),
-  //       }
-  //     ),
-  //   [xMinMaxDataRange, yMinMaxDataRange, vizConfig]
-  // );
-
-  // set useEffect for changing truncation warning message
-  // useEffect(() => {
-  //   if (
-  //     truncationConfigIndependentAxisMin ||
-  //     truncationConfigIndependentAxisMax
-  //   ) {
-  //     setTruncatedIndependentAxisWarning(
-  //       'Data may have been truncated by range selection, as indicated by the yellow shading'
-  //     );
-  //   }
-  // }, [
-  //   truncationConfigIndependentAxisMin,
-  //   truncationConfigIndependentAxisMax,
-  //   setTruncatedIndependentAxisWarning,
-  // ]);
-
-  // useEffect(() => {
-  //   if (
-  //     // (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) &&
-  //     // !scatterplotProps.showSpinner
-  //     truncationConfigDependentAxisMin ||
-  //     truncationConfigDependentAxisMax
-  //   ) {
-  //     setTruncatedDependentAxisWarning(
-  //       'Data may have been truncated by range selection, as indicated by the yellow shading'
-  //     );
-  //   }
-  // }, [
-  //   truncationConfigDependentAxisMin,
-  //   truncationConfigDependentAxisMax,
-  //   setTruncatedDependentAxisWarning,
-  // ]);
-
-  // slider settings
-  const markerBodyOpacityContainerStyles = {
-    height: '4em',
-    width: '20em',
-    marginLeft: '1em',
-    marginBottom: '0.5em',
-  };
-
-  // implement gradient color for slider opacity
-  const colorSpecProps: SliderWidgetProps['colorSpec'] = {
-    type: 'gradient',
-    tooltip: '#aaa',
-    knobColor: '#aaa',
-    // normal slider color: e.g., from 0 to 1
-    trackGradientStart: '#fff',
-    trackGradientEnd: '#000',
-  };
-
   const volcanoplotProps: VolcanoPlotProps = {
-    // interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
-    // showSpinner: filteredCounts.pending || data.pending,
     //@ts-ignore
-    data: data,
+    data: data.value ? Object.values(data.value) : [], // @ANN START HERE it's an object of objects not an array of objects
     independentAxisRange: defaultIndependentAxisRange,
     dependentAxisRange: defaultDependentAxisRange,
-    // axisTruncationConfig: {
-    //   independentAxis: {
-    //     min: truncationConfigIndependentAxisMin,
-    //     max: truncationConfigIndependentAxisMax,
-    //   },
-    //   dependentAxis: {
-    //     min: truncationConfigDependentAxisMin,
-    //     max: truncationConfigDependentAxisMax,
-    //   },
-    // },
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
-    significantThreshold: 0.05,
-    log2FoldChangeThreshold: 3,
-
-    // ...neutralPaletteProps, // no-op. we have to handle colours here.
+    significanceThreshold: 0.05,
+    log2FoldChangeThreshold: 1,
   };
 
+  console.log(volcanoplotProps);
+
   const plotNode = (
-    <>
-      {/* <VolcanoPlot
-      {...volcanoplotProps}
-    /> */}
-    </>
+    <div {...plotContainerStyles}>
+      <VolcanoPlot {...volcanoplotProps} />
+    </div>
   );
 
   // const handleIndependentAxisRangeChange = useCallback(
@@ -962,80 +802,6 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   );
 
   const tableGroupNode = <> </>;
-  // const tableGroupNode = (
-  //   <>
-  //     <BirdsEyeView
-  //       completeCasesAllVars={
-  //         data.pending ? undefined : data.value?.completeCasesAllVars
-  //       }
-  //       completeCasesAxesVars={
-  //         data.pending ? undefined : data.value?.completeCasesAxesVars
-  //       }
-  //       outputEntity={outputEntity}
-  //       stratificationIsActive={
-  //         overlayVariable != null || computedOverlayVariableDescriptor != null
-  //       }
-  //       enableSpinner={
-  //         xAxisVariable != null && yAxisVariable != null && !data.error
-  //       }
-  //       totalCounts={totalCounts.value}
-  //       filteredCounts={filteredCounts.value}
-  //     />
-  //     <VariableCoverageTable
-  //       completeCases={
-  //         data.value && !data.pending ? data.value?.completeCases : undefined
-  //       }
-  //       filteredCounts={filteredCounts}
-  //       outputEntityId={outputEntity?.id}
-  //       variableSpecs={[
-  //         {
-  //           role: 'X-axis',
-  //           required: true,
-  //           display: independentAxisLabel,
-  //           variable: computedXAxisDescriptor ?? vizConfig.xAxisVariable,
-  //         },
-  //         {
-  //           role: 'Y-axis',
-  //           required: !computedOverlayVariableDescriptor?.variableId,
-  //           display: dependentAxisLabel,
-  //           variable:
-  //             !computedOverlayVariableDescriptor && computedYAxisDescriptor
-  //               ? computedYAxisDescriptor
-  //               : vizConfig.yAxisVariable,
-  //         },
-  //         {
-  //           role: 'Overlay',
-  //           required: !!computedOverlayVariableDescriptor,
-  //           display: legendTitle,
-  //           variable:
-  //             computedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
-  //         },
-  //         ...additionalVariableCoverageTableRows,
-  //         {
-  //           role: 'Facet',
-  //           display: variableDisplayWithUnit(facetVariable),
-  //           variable: vizConfig.facetVariable,
-  //         },
-  //       ]}
-  //     />
-  //     {/* R-square table component: only display when overlay and/or facet variable exist */}
-  //     {vizConfig.valueSpecConfig === 'Best fit line with raw' &&
-  //       data.value != null &&
-  //       !data.pending &&
-  //       (vizConfig.overlayVariable != null ||
-  //         vizConfig.facetVariable != null) && (
-  //         <ScatterplotRsquareTable
-  //           typedData={
-  //             !isFaceted(data.value.dataSetProcess)
-  //               ? { isFaceted: false, data: data.value.dataSetProcess.series }
-  //               : { isFaceted: true, data: data.value.dataSetProcess.facets }
-  //           }
-  //           overlayVariable={overlayVariable}
-  //           facetVariable={facetVariable}
-  //         />
-  //       )}
-  //   </>
-  // );
 
   // plot subtitle
   const plotSubtitle = 'plot subtitle';

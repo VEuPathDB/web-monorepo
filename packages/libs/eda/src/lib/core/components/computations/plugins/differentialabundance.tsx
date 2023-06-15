@@ -57,7 +57,7 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: DifferentialAbundanceConfig.is,
   visualizationPlugins: {
-    volcanoplot: volcanoplotVisualization, // Must match name in data service
+    volcanoplot: volcanoplotVisualization, // Must match name in data service and in visualization.tsx
   },
 };
 
