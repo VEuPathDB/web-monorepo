@@ -28,6 +28,8 @@ import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLe
 import { NumberRange } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
@@ -40,6 +42,8 @@ import DataClient, {
 import { VolcanoPlotData } from '@veupathdb/components/lib/types/plots/volcanoplot';
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 
 // end imports
 
@@ -112,10 +116,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   );
 
   // Visualization configuration includes threshold values. No variables.
-  // const selectedThresholdValues = useDeepValue({
-  //   log2foldChangeThreshold: vizConfig.log2foldChangeThreshold,
-  //   significanceThreshold: vizConfig.significanceThreshold,
-  // });
+
   // look to handleInputVariableChange if need help setting these
 
   // set the state of truncation warning message NOT YET IMPLEMENTED
@@ -249,8 +250,8 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     independentAxisRange: defaultIndependentAxisRange,
     dependentAxisRange: defaultDependentAxisRange,
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
-    significanceThreshold: 0.05,
-    log2FoldChangeThreshold: 1,
+    significanceThreshold: vizConfig.significanceThreshold ?? 0.05,
+    log2FoldChangeThreshold: vizConfig.log2FoldChangeThreshold ?? 3,
     containerStyles: plotContainerStyles,
   };
 
@@ -354,137 +355,6 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   //         justifyContent: 'center',
   //       }}
   //     >
-  //       {/* show Banner message if no smoothed mean exists */}
-  //       {!data.pending &&
-  //         vizConfig.valueSpecConfig === 'Smoothed mean with raw' &&
-  //         dataWithoutSmoothedMean != null &&
-  //         dataWithoutSmoothedMean?.length > 0 && (
-  //           <div>
-  //             <Banner
-  //               banner={{
-  //                 type: 'warning',
-  //                 message:
-  //                   'Smoothed mean(s) were not calculated for one or more data series.',
-  //                 pinned: true,
-  //                 intense: false,
-  //                 // additionalMessage is shown next to message when clicking showMoreLinkText.
-  //                 // disappears when clicking showLess link
-  //                 // note that this additionalMessage prop is used to determine show more/less behavior or not
-  //                 // if undefined, then just show normal banner with message
-  //                 additionalMessage:
-  //                   'The sample size might be too small or the data too skewed.',
-  //                 // text for showMore link
-  //                 showMoreLinkText: 'Why?',
-  //                 // text for showless link
-  //                 showLessLinkText: 'Read less',
-  //                 // color for show more links
-  //                 showMoreLinkColor: '#006699',
-  //                 spacing: {
-  //                   margin: '0.3125em 0 0 0',
-  //                   padding: '0.3125em 0.625em',
-  //                 },
-  //                 fontSize: '1em',
-  //                 showBanner: showBanner,
-  //                 setShowBanner: setShowBanner,
-  //               }}
-  //             />
-  //           </div>
-  //         )}
-
-  //       {/* show Banner for continuous overlayVariable if plot option is not 'Raw' */}
-  //       {!data.pending && showContinousOverlayBanner && (
-  //         <div>
-  //           <Banner
-  //             banner={{
-  //               type: 'warning',
-  //               message:
-  //                 'Plot modes with fitted lines are not available when continuous overlay variables are selected.',
-  //               pinned: true,
-  //               intense: false,
-  //               // additionalMessage is shown next to message when clicking showMoreLinkText.
-  //               // disappears when clicking showLess link
-  //               // note that this additionalMessage prop is used to determine show more/less behavior or not
-  //               // if undefined, then just show normal banner with message
-  //               additionalMessage:
-  //                 'Continuous overlay variable values are not binned.',
-  //               // text for showMore link
-  //               showMoreLinkText: 'Why?',
-  //               // text for showless link
-  //               showLessLinkText: 'Read less',
-  //               // color for show more links
-  //               showMoreLinkColor: '#006699',
-  //               spacing: {
-  //                 margin: '0.3125em 0 0 0',
-  //                 padding: '0.3125em 0.625em',
-  //               },
-  //               fontSize: '1em',
-  //               showBanner: showBanner,
-  //               setShowBanner: setShowBanner,
-  //             }}
-  //           />
-  //         </div>
-  //       )}
-
-  //       {/* show log scale related Banner message unless plot mode of 'Raw' */}
-  //       {showLogScaleBanner && (
-  //         // <div style={{ width: 750, marginLeft: '1em', height: '2.8em' }}>
-  //         <div>
-  //           <Banner
-  //             banner={{
-  //               type: 'warning',
-  //               message:
-  //                 'Log scale is not available for plot modes with fitted lines.',
-  //               pinned: true,
-  //               intense: false,
-  //               // additionalMessage is shown next to message when clicking showMoreLinkText.
-  //               // disappears when clicking showLess link
-  //               // note that this additionalMessage prop is used to determine show more/less behavior or not
-  //               // if undefined, then just show normal banner with message
-  //               additionalMessage:
-  //                 'Lines fitted to non-log transformed raw data cannot be accurately plotted on log scale axes.',
-  //               // text for showMore link
-  //               showMoreLinkText: 'Why?',
-  //               // text for showless link
-  //               showLessLinkText: 'Read less',
-  //               // color for show more links
-  //               showMoreLinkColor: '#006699',
-  //               spacing: {
-  //                 margin: '0.3125em 0 0 0',
-  //                 padding: '0.3125em 0.625em',
-  //               },
-  //               fontSize: '1em',
-  //               showBanner: showBanner,
-  //               setShowBanner: setShowBanner,
-  //             }}
-  //           />
-  //         </div>
-  //       )}
-  //     </div>
-
-  //     {!options?.hideTrendlines && (
-  //       // use RadioButtonGroup directly instead of ScatterPlotControls
-  //       <RadioButtonGroup
-  //         label="Plot mode"
-  //         options={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
-  //         selectedOption={vizConfig.valueSpecConfig ?? 'Raw'}
-  //         onOptionSelected={(newValue: string) => {
-  //           onValueSpecChange(newValue);
-  //           // to reuse Banner
-  //           setShowBanner(true);
-  //         }}
-  //         // disabledList prop is used to disable radio options (grayed out)
-  //         disabledList={
-  //           yAxisVariable?.type === 'date'
-  //             ? ['Smoothed mean with raw', 'Best fit line with raw']
-  //             : []
-  //         }
-  //         orientation={'horizontal'}
-  //         labelPlacement={'end'}
-  //         buttonColor={'primary'}
-  //         margins={['0em', '0', '0', '1em']}
-  //         itemMarginRight={50}
-  //       />
-  //     )}
 
   //     {/* make a plot slide after plot mode for now */}
   //     <SliderWidget
@@ -528,50 +398,6 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   //             />
   //           </div>
   //         </div>
-
-  //         {!options?.hideLogScale && (
-  //           <div
-  //             style={{
-  //               marginLeft: '1em',
-  //               marginTop: '-0.3em',
-  //               marginBottom: '0.8em',
-  //             }}
-  //           >
-  //             <Toggle
-  //               label={`Log scale ${
-  //                 vizConfig.independentAxisLogScale
-  //                   ? 'on (excludes values \u{2264} 0)'
-  //                   : 'off'
-  //               }`}
-  //               value={vizConfig.independentAxisLogScale ?? false}
-  //               onChange={(newValue: boolean) => {
-  //                 setDismissedIndependentAllNegativeWarning(false);
-  //                 onIndependentAxisLogScaleChange(newValue);
-  //                 // to reuse Banner
-  //                 setShowBanner(true);
-  //               }}
-  //               // disable log scale for date variable
-  //               disabled={scatterplotProps.independentValueType === 'date'}
-  //               themeRole="primary"
-  //             />
-  //           </div>
-  //         )}
-  //         {independentAllNegative &&
-  //         !dismissedIndependentAllNegativeWarning &&
-  //         !options?.hideLogScale ? (
-  //           <Notification
-  //             title={''}
-  //             text={
-  //               'Nothing can be plotted with log scale because all values are zero or negative'
-  //             }
-  //             color={'#5586BE'}
-  //             onAcknowledgement={() =>
-  //               setDismissedIndependentAllNegativeWarning(true)
-  //             }
-  //             showWarningIcon={true}
-  //             containerStyles={{ maxWidth: '350px' }}
-  //           />
-  //         ) : null}
 
   //         <LabelledGroup
   //           label="X-axis range"
@@ -809,26 +635,32 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <PluginError
-        error={data.error}
-        outputSize={500}
-        customCases={[
-          (errorString) =>
-            errorString.match(/400.+too large/is) ? (
-              <span>
-                Your plot currently has too many points (&gt;
-                {MAXALLOWEDDATAPOINTS.toLocaleString()}) to display in a
-                reasonable time. Please either add filters in the{' '}
-                <Link replace to={url.replace(/visualizations.+/, 'variables')}>
-                  Browse and subset
-                </Link>{' '}
-                tab to reduce the number, or consider using a summary plot such
-                as histogram or boxplot.
-              </span>
-            ) : undefined,
-        ]}
-      />
+      {/* this is where inputs go. The two inputs we need are the two threshold settings.
+            maybe just use the styling from the controls? probably yeah. @ANN */}
+      <LabelledGroup label="Threshold lines" containerStyles={{}}>
+        {/* The following are always numbers, never dates. Need a bit of type cleaning */}
+        <NumberInput
+          onValueChange={(newValue?: NumberOrDate) =>
+            updateVizConfig({ log2FoldChangeThreshold: Number(newValue) })
+          }
+          label="log2(Fold Change)"
+          minValue={0}
+          value={2}
+          containerStyles={{ flex: 1 }}
+        />
 
+        <NumberInput
+          label="P-Value"
+          onValueChange={(newValue?: NumberOrDate) =>
+            updateVizConfig({ significanceThreshold: Number(newValue) })
+          }
+          minValue={0}
+          value={0.05}
+          containerStyles={{ flex: 1 }}
+        />
+      </LabelledGroup>
+
+      {/* This should be populated with info from the colections var. So like "Showing 1000 taxa blah"*/}
       {/* <OutputEntityTitle
         entity={outputEntity}
         outputSize={outputSize}
