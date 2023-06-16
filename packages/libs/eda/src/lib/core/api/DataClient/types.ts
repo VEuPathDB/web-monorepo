@@ -366,9 +366,9 @@ export type VolcanoplotResponse = TypeOf<typeof VolcanoPlotData>;
 // Still open question - what to do if pvalue exists but not adjustedpvalue?
 const VolcanoPlotData = array(
   type({
-    log2foldChange: union([string, number, undefined]),
-    pValue: union([string, number, undefined]),
-    adjustedPValue: union([string, number, undefined]),
+    log2foldChange: union([string, undefined]),
+    pValue: union([string, undefined]),
+    adjustedPValue: union([string, undefined]),
     pointID: union([string, undefined]),
   })
 );
