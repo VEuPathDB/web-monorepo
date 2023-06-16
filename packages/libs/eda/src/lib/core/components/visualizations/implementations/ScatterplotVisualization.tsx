@@ -125,7 +125,7 @@ import {
   VariableMapping,
 } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 

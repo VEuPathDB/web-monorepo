@@ -22,7 +22,7 @@ import MapVEuMap from '@veupathdb/components/lib/map/MapVEuMap';
 import { useGeoConfig } from '../../core/hooks/geoConfig';
 import { DocumentationContainer } from '../../core/components/docs/DocumentationContainer';
 import {
-  Chip,
+  CheckIcon,
   Download,
   FilledButton,
   Filter as FilterIcon,
@@ -55,7 +55,7 @@ import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import Login from '../../workspace/sharing/Login';
 import { useLoginCallbacks } from '../../workspace/sharing/hooks';
@@ -81,8 +81,12 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from './MarkerConfiguration/MapTypeConfigurationMenu';
-import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
-import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
+import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
+import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
+import { GeoConfig } from '../../core/types/geoConfig';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
+import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -177,12 +181,23 @@ interface Props {
 export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
+  const geoConfigs = useGeoConfig(useStudyEntities());
+  if (geoConfigs == null || geoConfigs.length === 0)
+    return (
+      <Banner
+        banner={{
+          type: 'error',
+          message: 'This study does not contain map-specific variables.',
+        }}
+      />
+    );
   if (appStateAndSetters.appState == null) return null;
   return (
     <MapAnalysisImpl
       {...props}
       {...(appStateAndSetters as CompleteAppState)}
       analysisState={analysisState}
+      geoConfigs={geoConfigs}
     />
   );
 }
@@ -192,7 +207,11 @@ type CompleteAppState = ReturnType<typeof useAppState> & {
   analysisState: AnalysisState;
 };
 
-function MapAnalysisImpl(props: Props & CompleteAppState) {
+interface ImplProps extends Props, CompleteAppState {
+  geoConfigs: GeoConfig[];
+}
+
+function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
@@ -205,6 +224,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     setIsSubsetPanelOpen = () => {},
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
+    geoConfigs,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -212,12 +232,11 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   const studyMetadata = useStudyMetadata();
   const studyId = studyMetadata.id;
   const studyEntities = useStudyEntities(filters);
-  const geoConfigs = useGeoConfig(studyEntities);
-  const geoConfig = geoConfigs[0];
   const analysisClient = useAnalysisClient();
   const dataClient = useDataClient();
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
+  const geoConfig = geoConfigs[0];
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
@@ -299,7 +318,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
   })();
 
   const {
-    markers,
+    markersData,
     pending,
     error,
     legendItems,
@@ -316,10 +335,22 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
     outputEntityId: outputEntity?.id,
     //TO DO: maybe dependentAxisLogScale
   });
-  const finalMarkers = useMemo(() => markers || [], [markers]);
 
-  const userLoggedIn = useWdkService((wdkService) => {
-    return wdkService.getCurrentUser().then((user) => !user.isGuest);
+  const markers = useMemo(
+    () =>
+      markersData?.map((markerProps) =>
+        markerType === 'pie' ? (
+          <DonutMarkerComponent {...markerProps} />
+        ) : (
+          <ChartMarkerComponent {...markerProps} />
+        )
+      ) || [],
+    [markersData, markerType]
+  );
+
+  const userLoggedIn = useWdkService(async (wdkService) => {
+    const user = await wdkService.getCurrentUser();
+    return !user.isGuest;
   });
 
   const history = useHistory();
@@ -886,12 +917,13 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
           if (activeSideMenuId == null) return <></>;
           return sideNavigationButtonConfigurationObjects
             .find((navItem) => {
-              if (navItem.labelText === activeSideMenuId) return navItem;
+              if (navItem.labelText === activeSideMenuId) return true;
               if ('subMenuConfig' in navItem && navItem.subMenuConfig) {
                 return navItem.subMenuConfig.find(
                   (subNavItem) => subNavItem.id === activeSideMenuId
                 );
               }
+              return false;
             })
             ?.renderSideNavigationPanel(apps);
         }
@@ -963,7 +995,7 @@ function MapAnalysisImpl(props: Props & CompleteAppState) {
                     showSpinner={pending}
                     animation={defaultAnimation}
                     viewport={appState.viewport}
-                    markers={finalMarkers}
+                    markers={markers}
                     mouseMode={appState.mouseMode}
                     flyToMarkers={
                       markers && markers.length > 0 && willFlyTo && !pending
@@ -1079,7 +1111,6 @@ function SideNavigationItems({
       labelText,
       icon,
       onToggleSideMenuItem = () => {},
-      isExpandable = false,
       subMenuConfig = [],
     }) => {
       /**
@@ -1180,32 +1211,24 @@ function SideNavigationItems({
                         item.onClick();
                       }}
                     >
+                      {/* *
+                       * This div contains a checkmark that indicates which map type is active. The checkmark persists even if a different side nav item is selected.
+                       */}
+                      <div
+                        style={{
+                          marginRight: '0.5em',
+                          width: '1em',
+                          height: '1em',
+                        }}
+                      >
+                        {item.isActive && <CheckIcon />}
+                      </div>
                       <span style={{ fontSize: '0.9em', marginRight: '0.5em' }}>
                         {item.labelText}
                       </span>
                       <span style={iconStyles} aria-hidden>
                         {item.icon}
                       </span>
-                      {/**
-                       * This div contains a chip that indicates which map type is active. The chip persists even if a different side nav item is selected
-                       */}
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          flexGrow: 1,
-                          marginLeft: '0.5em',
-                          width: '3.5em',
-                        }}
-                      >
-                        {item.isActive && (
-                          <Chip
-                            text="active"
-                            themeRole="primary"
-                            staticState="hover"
-                          />
-                        )}
-                      </div>
                     </button>
                   </li>
                 );

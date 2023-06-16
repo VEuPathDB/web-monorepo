@@ -39,7 +39,7 @@ import {
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { BlockRecordAttributeSection } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { AlphaFoldRecordSection } from './AlphaFoldAttributeSection';
 
 /**
@@ -596,6 +596,7 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   let {
     source_id,
     protein_sequence,
+    prot_seq_warn,
     transcript_sequence,
     genomic_sequence,
     protein_length,
@@ -649,6 +650,11 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
     <div>
       {protein_sequence == null ? null : (
         <div style={{ padding: '1em' }}>
+          {prot_seq_warn == null ? null : (
+            <h4>
+              NOTE:<i>{prot_seq_warn}</i>
+            </h4>
+          )}
           <h3>Predicted Protein Sequence</h3>
           <div>
             <span style={legendStyle}>{protein_length} aa</span>
@@ -656,6 +662,7 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
           <Sequence accession={source_id} sequence={protein_sequence} />
         </div>
       )}
+
       {protein_sequence == null ? null : <hr />}
       <div style={{ padding: '1em' }}>
         <h3>

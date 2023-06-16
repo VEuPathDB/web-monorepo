@@ -15,7 +15,7 @@ import {
   MarkerScaleDefault,
 } from '../types/plots';
 
-interface ChartMarkerProps
+export interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon,
     DependentAxisLogScaleAddon {

@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 import { RootState } from '../Core/State/Types';
 import {

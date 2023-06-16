@@ -10,7 +10,7 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
-import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
+import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 
 interface Props {

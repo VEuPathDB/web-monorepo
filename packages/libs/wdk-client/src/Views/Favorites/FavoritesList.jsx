@@ -1,7 +1,7 @@
 import { escape } from 'lodash';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import BannerList from '@veupathdb/coreui/dist/components/banners/BannerList';
+import BannerList from '@veupathdb/coreui/lib/components/banners/BannerList';
 import Icon from '../../Components/Icon/IconAlt';
 import TextArea from '../../Components/InputControls/TextArea';
 import TextBox from '../../Components/InputControls/TextBox';

@@ -1,39 +1,60 @@
 {
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "build-npm-modules"
+        ]
+      }
+    }
+  },
   "extends": "nx/presets/npm.json",
   "workspaceLayout": {
     "appsDir": "packages/sites",
     "libsDir": "packages/libs"
   },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build-npm-modules"]
-      }
-    }
-  },
   "namedInputs": {
-    "srcFiles": ["!{projectRoot}/{lib,dist}/**/*"]
+    "srcFiles": [
+      "!{projectRoot}/{lib,dist}/**/*"
+    ]
   },
   "targetDefaults": {
     "build-npm-modules": {
-      "dependsOn": ["^build-npm-modules"],
-      "inputs": ["srcFiles", "^srcFiles"]
+      "dependsOn": [
+        "^build-npm-modules"
+      ],
+      "inputs": [
+        "srcFiles",
+        "^srcFiles"
+      ],
+      "outputs": [
+        "{projectRoot}/lib"
+      ]
     },
     "start": {
-      "dependsOn": ["^build-npm-modules"]
+      "dependsOn": [
+        "^build-npm-modules"
+      ]
     },
     "bundle:dev": {
-      "dependsOn": ["^build-npm-modules"]
+      "dependsOn": [
+        "^build-npm-modules"
+      ]
     },
     "bundle:npm": {
-      "dependsOn": ["^build-npm-modules"]
+      "dependsOn": [
+        "^build-npm-modules"
+      ]
     },
     "storybook": {
-      "dependsOn": ["^build-npm-modules"]
+      "dependsOn": [
+        "^build-npm-modules"
+      ]
     }
   },
   "affected": {
     "defaultBase": "main"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json"
 }

@@ -1,5 +1,5 @@
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 import { StudyEntity } from '../../types/study';
 import { makeEntityDisplayName } from '../../utils/study-metadata';
