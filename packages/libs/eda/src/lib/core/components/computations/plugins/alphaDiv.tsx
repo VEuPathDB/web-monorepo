@@ -7,7 +7,7 @@ import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import { sharedConfigCssStyles } from './abundance';

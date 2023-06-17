@@ -121,7 +121,7 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
-import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions } from '../../layouts/types';
 import {
@@ -133,7 +133,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 

@@ -10,7 +10,7 @@ import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
 import { Toggle } from '@veupathdb/coreui';
-import { ColorDescriptor } from '@veupathdb/coreui/dist/components/theming/types';
+import { ColorDescriptor } from '@veupathdb/coreui/lib/components/theming/types';
 import { blue } from '@material-ui/core/colors';
 
 export type PieControlsProps = {

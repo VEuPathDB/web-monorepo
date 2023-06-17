@@ -14,7 +14,7 @@ import {
   findAncestorFields,
 } from '../../Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from '../../Utils/TreeUtils';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 

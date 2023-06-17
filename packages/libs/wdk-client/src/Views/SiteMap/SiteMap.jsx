@@ -57,7 +57,7 @@ import { wrappable } from '../../Utils/ComponentUtils';
 import Link from '../../Components/Link/Link';
 import CheckboxTree, {
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { getNodeChildren, getPropertyValue } from '../../Utils/OntologyUtils';
 import {
   getTargetType,

@@ -1,4 +1,4 @@
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { MesaButton, Share } from '@veupathdb/coreui';
 
 export type ThemedButtonProps = {
