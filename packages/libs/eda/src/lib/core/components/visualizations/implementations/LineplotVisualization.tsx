@@ -121,7 +121,7 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
-import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions } from '../../layouts/types';
 import {
@@ -133,7 +133,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
@@ -594,7 +594,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   const dataRequestConfig: DataRequestConfig = useDeepValue({
-    ...omit(vizConfig, ['dependentAxisRange', 'checkedLegendItems']),
+    // excluding dependencies for data request
+    ...omit(vizConfig, [
+      'dependentAxisRange',
+      'checkedLegendItems',
+      'dependentAxisValueSpec',
+      'dependentAxisLogScale',
+    ]),
     // the following looks nasty but it seems to work
     // the back end only makes use of the x-axis viewport (aka independentAxisRange)
     // when binning is in force, so no need to trigger a new request unless binning
@@ -647,6 +653,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   // define showMarginalHistogram
   const showMarginalHistogram = options?.showMarginalHistogram ?? false;
+  // check banner condition
+  const showIndependentAxisBanner =
+    vizConfig.independentAxisLogScale && vizConfig.useBinning;
+  const showDependentAxisBanner =
+    vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
@@ -682,6 +693,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
             'To calculate a proportion, all selected numerator values must also be present in the denominator'
           );
       }
+
+      // no data request if banner should be shown
+      if (showIndependentAxisBanner || showDependentAxisBanner)
+        return undefined;
 
       assertValidInputVariables(
         inputs,
@@ -789,6 +804,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
       facetEntity,
       visualization.descriptor.type,
       neutralPaletteProps.colorPalette,
+      showIndependentAxisBanner,
+      showDependentAxisBanner,
     ])
   );
 
@@ -1026,12 +1043,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
         <FacetedLinePlot
-          data={
-            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
-            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
-              ? undefined
-              : data.value?.dataSetProcess
-          }
+          data={data.value?.dataSetProcess}
           // considering axis range control
           componentProps={lineplotProps}
           modalComponentProps={{
@@ -1045,12 +1057,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         <LinePlot
           {...lineplotProps}
           ref={plotRef}
-          data={
-            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
-            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
-              ? undefined
-              : data.value?.dataSetProcess
-          }
+          data={data.value?.dataSetProcess}
           // add controls
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
@@ -1089,7 +1096,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
       )?.data
     : data.value?.dataSetProcess;
 
-  const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
+  // add banner condition to avoid unnecessary disabled
+  const neverUseBinning =
+    !showIndependentAxisBanner &&
+    !showDependentAxisBanner &&
+    data0?.binWidthSlider == null; // for ordinal string x-variables
+
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
 

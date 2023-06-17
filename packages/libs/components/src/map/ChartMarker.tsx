@@ -289,7 +289,10 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   // set the location of total number
   svgHTML +=
     '<text x="50%" y=' +
-    (size - 2 + borderWidth + 7) +
+    (size - 2 + borderWidth + (scale === 1 ? 7 : 7 * 0.9 * scale)) +
+    ' font-size="' +
+    (scale === 1 ? 1 : 0.75 * scale) +
+    'em"' +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
     (props.markerLabel ?? sumValuesString) +
     '</text>';

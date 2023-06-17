@@ -7,7 +7,7 @@ import usePlotControls, {
 } from '../../hooks/usePlotControls';
 import { PiePlotData } from '../../types/plots';
 import { LIGHT_PURPLE } from '../../constants/colors';
-import { mutedPurple } from '@veupathdb/coreui/dist/definitions/colors';
+import { mutedPurple } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default {
   title: 'Plot Controls/PieControls',

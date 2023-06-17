@@ -7,7 +7,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import CheckboxTree, {
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   AnchoredTooltip,

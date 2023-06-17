@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import SelectList from '@veupathdb/coreui/dist/components/inputs/SelectList';
+import SelectList from '@veupathdb/coreui/lib/components/inputs/SelectList';
 import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 
 export type ValuePickerProps = {

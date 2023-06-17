@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { red } from '@veupathdb/coreui/dist/definitions/colors';
+import { red } from '@veupathdb/coreui/lib/definitions/colors';
 
 const requiredInputsContainerStyles: CSSProperties = {
   position: 'relative',

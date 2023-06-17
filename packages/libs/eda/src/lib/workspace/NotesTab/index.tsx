@@ -7,29 +7,25 @@ import { AnalysisState } from '../../core';
 // Components
 import MultilineTextField, {
   MultilineTextFieldProps,
-} from '@veupathdb/coreui/dist/components/forms/MultilineTextField';
+} from '@veupathdb/coreui/lib/components/forms/MultilineTextField';
 
 type props = {
   analysisState: AnalysisState;
 };
 
 export default function NotesTab({ analysisState }: props) {
-  const {
-    setDescription: setAnalysisDescription,
-    setNotes: setAnalysisNotes,
-  } = analysisState;
+  const { setDescription: setAnalysisDescription, setNotes: setAnalysisNotes } =
+    analysisState;
 
   const [description, setDescription] = useState(
     analysisState.analysis?.description ?? ''
   );
   const [details, setDetails] = useState(analysisState.analysis?.notes ?? '');
 
-  const [descriptionStatus, setDescriptionStatus] = useState<
-    MultilineTextFieldProps['status']
-  >();
-  const [detailsStatus, setDetailsStatus] = useState<
-    MultilineTextFieldProps['status']
-  >();
+  const [descriptionStatus, setDescriptionStatus] =
+    useState<MultilineTextFieldProps['status']>();
+  const [detailsStatus, setDetailsStatus] =
+    useState<MultilineTextFieldProps['status']>();
 
   const syncDescriptionToAnalysis = useMemo(
     () =>
