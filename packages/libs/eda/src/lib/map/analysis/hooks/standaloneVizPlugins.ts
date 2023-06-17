@@ -40,6 +40,10 @@ export function useStandaloneVizPlugins({
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
+        // TODO: need to distinguish lineplot from lineplot with marginal histogram?
+        // perhaps need to make another function only for lineplot with marginal histogram
+        // or define xxx.withOptions({}) directly at corresponding visualizationPlugins below
+        showMarginalHistogram: false,
         layoutComponent: FloatingLayout,
         // why are we providing three functions to access the properties of
         // one object? Because in the pre-SAM world, getOverlayVariable was already
