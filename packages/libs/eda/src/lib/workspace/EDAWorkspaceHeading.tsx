@@ -19,7 +19,7 @@ import { getAnalysisId, isSavedAnalysis } from '../core/utils/analysis';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { getStudyAccess } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isStubEntity } from '../core/hooks/study';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface EDAWorkspaceHeadingProps {
   /** Optional AnalysisState for "New analysis" button functionality */

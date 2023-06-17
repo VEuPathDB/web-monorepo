@@ -7,17 +7,17 @@ import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 import { ReduxNotificationHandler } from '@veupathdb/wdk-client/lib/Components/Notifications';
 import makeSnackbarProvider, {
   SnackbarStyleProps,
-} from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+} from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
 
 import {
   createTheme as createMUITheme,
   ThemeProvider as MUIThemeProvider,
 } from '@material-ui/core';
 import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/workspaceTheme';
-import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
+import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 
 import { colors } from '@veupathdb/coreui';
-import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
+import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
 
 export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function MicrobiomePage(props: Props) {

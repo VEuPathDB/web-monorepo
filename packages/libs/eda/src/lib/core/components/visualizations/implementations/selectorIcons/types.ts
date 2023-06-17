@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 
 export interface MonotoneSvgProps {
   primaryColor: string;

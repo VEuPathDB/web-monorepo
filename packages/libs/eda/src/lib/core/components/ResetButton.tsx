@@ -1,7 +1,7 @@
 import React from 'react';
-import FloatingButton from '@veupathdb/coreui/dist/components/buttons/FloatingButton';
-import { Undo as UndoIcon } from '@veupathdb/coreui/dist/components/icons';
-import { SwissArmyButtonVariantProps } from '@veupathdb/coreui/dist/components/buttons';
+import FloatingButton from '@veupathdb/coreui/lib/components/buttons/FloatingButton';
+import { Undo as UndoIcon } from '@veupathdb/coreui/lib/components/icons';
+import { SwissArmyButtonVariantProps } from '@veupathdb/coreui/lib/components/buttons';
 
 /**
  * using CoreUI

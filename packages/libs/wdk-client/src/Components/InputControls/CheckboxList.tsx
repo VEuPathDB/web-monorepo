@@ -1,7 +1,7 @@
 import React, { Component, FormEvent, ReactNode } from 'react';
 import { wrappable, addOrRemove } from '../../Utils/ComponentUtils';
 import NativeCheckboxList from '../../Components/InputControls/NativeCheckboxList';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 type Item = {
   display: ReactNode;

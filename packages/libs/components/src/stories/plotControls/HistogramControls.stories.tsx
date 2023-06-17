@@ -8,7 +8,7 @@ import usePlotControls, {
 import { HistogramData } from '../../types/plots';
 import { LIGHT_PURPLE } from '../../constants/colors';
 import { NumberOrTimeDelta, TimeDelta } from '../../types/general';
-import { mutedPurple } from '@veupathdb/coreui/dist/definitions/colors';
+import { mutedPurple } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default {
   title: 'Plot Controls/Histogram',

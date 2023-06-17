@@ -1,4 +1,4 @@
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { includes, memoize, throttle, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
