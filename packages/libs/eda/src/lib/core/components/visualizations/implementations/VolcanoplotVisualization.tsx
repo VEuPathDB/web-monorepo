@@ -37,6 +37,9 @@ import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 
 // end imports
 
+const DEFAULT_SIG_THRESHOLD = 0.05;
+const DEFAULT_FC_THRESHOLD = 2;
+
 const plotContainerStyles = {
   width: 750,
   height: 450,
@@ -53,8 +56,8 @@ export const volcanoplotVisualization = createVisualizationPlugin({
 
 function createDefaultConfig(): VolcanoPlotConfig {
   return {
-    log2FoldChangeThreshold: 3,
-    significanceThreshold: 0.05,
+    log2FoldChangeThreshold: DEFAULT_FC_THRESHOLD,
+    significanceThreshold: DEFAULT_SIG_THRESHOLD,
     markerBodyOpacity: 0.5,
   };
 }
@@ -200,7 +203,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
           }
           label="log2(Fold Change)"
           minValue={0}
-          value={2}
+          value={DEFAULT_FC_THRESHOLD}
           containerStyles={{ flex: 1 }}
         />
 
@@ -210,7 +213,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
             updateVizConfig({ significanceThreshold: Number(newValue) })
           }
           minValue={0}
-          value={0.05}
+          value={DEFAULT_SIG_THRESHOLD}
           containerStyles={{ flex: 1 }}
         />
       </LabelledGroup>
