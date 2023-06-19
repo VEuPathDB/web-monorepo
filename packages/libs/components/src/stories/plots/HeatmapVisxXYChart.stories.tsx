@@ -41,11 +41,14 @@ const pointSizeScale = scaleLinear()
 
 // Make some fake data
 
-const smallBinData: HeatmapDataVisx = genHeatmapData(10, 20);
-console.log(smallBinData);
+const smallBinData: HeatmapDataVisx = genHeatmapData(20, 10);
+const largeBinData: HeatmapDataVisx = genHeatmapData(200, 100);
+const hugeBinData: HeatmapDataVisx = genHeatmapData(2000, 1000);
 
 interface TemplateProps {
   binData: HeatmapDataVisx;
+  nRows: number;
+  nColumns: number;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -54,8 +57,8 @@ const Template: Story<TemplateProps> = (args) => {
   const events = false;
   const margin = defaultMargin;
   const separation = 20;
-  const width = 1600; // both width and height should be functions of nrows/columns
-  const height = 900;
+  const width = args.nColumns * 70; // why do these behave differently?
+  const height = args.nRows * 30;
 
   // bounds
   const size =
@@ -75,16 +78,15 @@ const Template: Story<TemplateProps> = (args) => {
   return (
     <div>
       <XYChart
-        height={height ?? 400}
-        width={width ?? 600}
-        xScale={{ type: 'linear', domain: [-0.5, 10] }}
-        yScale={{ type: 'linear', domain: [-0.5, 20] }}
+        height={height}
+        width={width}
+        xScale={{ type: 'linear', domain: [-0.5, args.nRows] }}
+        yScale={{ type: 'linear', domain: [-0.5, args.nColumns] }}
       >
-        <Axis orientation="left" numTicks={20} />
-        <Axis orientation="top" numTicks={10} />
+        <Axis orientation="top" numTicks={args.nRows} />
+        <Axis orientation="left" numTicks={args.nColumns} />
         <Group>
           {args.binData.map((column) => {
-            console.log(column);
             return (
               <GlyphSeries
                 dataKey={'data' + column.x}
@@ -97,40 +99,6 @@ const Template: Story<TemplateProps> = (args) => {
             );
           })}
         </Group>
-
-        {/* <HeatmapCircle
-        data={args.binData}
-        xScale={(d) => xScale(d) ?? 0}
-        yScale={(d) => yScale(d) ?? 0}
-        colorScale={circleColorScale}
-        // radius={radius}
-        left={300}
-        gap={2}
-        top={50}
-      >
-        {(heatmap) => {
-          console.log(heatmap);
-          return heatmap.map((heatmapBins) =>
-            heatmapBins.map((bin) => (
-              <circle
-                key={`heatmap-circle-${bin.row}-${bin.column}`}
-                className="visx-heatmap-circle"
-                cx={bin.cx}
-                cy={bin.cy}
-                r={Math.random() * 5}
-                fill={bin.color}
-                fillOpacity={bin.opacity}
-                onClick={() => {
-                  if (!events) return;
-                  const { row, column } = bin;
-                  alert(JSON.stringify({ row, column, bin: bin.bin }));
-                }}
-                onMouseOver={handleMouseOver}
-              />
-            ))
-          );
-        }}
-      </HeatmapCircle> */}
       </XYChart>
     </div>
   );
@@ -139,29 +107,33 @@ const Template: Story<TemplateProps> = (args) => {
 export const Small = Template.bind({});
 Small.args = {
   binData: smallBinData,
+  nColumns: 10,
+  nRows: 20,
 };
 
-// export const Large = Template.bind({});
-// Large.args = {
-//   binData: largeBinData
-// }
+export const Large = Template.bind({});
+Large.args = {
+  binData: largeBinData,
+  nColumns: 100,
+  nRows: 200,
+};
 
 // My function for generating fake data
-function genHeatmapData(nColumns: number, nRows: number) {
-  return new Array(nColumns).fill(1).reduce(
+function genHeatmapData(nRows: number, nColumns: number) {
+  return new Array(nRows).fill(1).reduce(
     (arr, _, i) =>
       arr.concat([
         {
           x: i,
-          column: genHeatmapColumn(nRows),
+          column: genHeatmapRow(nColumns),
         },
       ]),
     []
   );
 }
 
-function genHeatmapColumn(nRows: number) {
-  return new Array(nRows).fill(1).reduce(
+function genHeatmapRow(nColumns: number) {
+  return new Array(nColumns).fill(1).reduce(
     (arr2, _, i2) =>
       arr2.concat([
         {
