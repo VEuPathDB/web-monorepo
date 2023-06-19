@@ -19,30 +19,35 @@ export default {
   },
 } as Meta;
 
+// Make some fake data
+const seededRandom = getSeededRandom(0.41);
+
+const smallBinData = genBins(
+  /* length = */ 10,
+  /* height = */ 16,
+  /** binFunc */ (idx) => 150 * idx,
+  /** countFunc */ (i, number) => 25 * (number - i) * seededRandom()
+);
+
+const largeBinData = genBins(
+  /* length = */ 100,
+  /* height = */ 160,
+  /** binFunc */ (idx) => 150 * idx,
+  /** countFunc */ (i, number) => 25 * (number - i) * seededRandom()
+);
+
 type TooltipData = string;
 
-const Template: Story<HeatmapProps> = (args) => {
+interface TemplateProps {
+  binData: Bins[];
+}
+
+const Template: Story<TemplateProps> = (args) => {
   const hot1 = '#77312f';
   const hot2 = '#f33d15';
   const cool1 = '#122549';
   const cool2 = '#b4fbde';
   const background = '#28272c';
-
-  const seededRandom = getSeededRandom(0.41);
-
-  const binData = genBins(
-    /* length = */ 10,
-    /* height = */ 16,
-    /** binFunc */ (idx) => 150 * idx,
-    /** countFunc */ (i, number) => 25 * (number - i) * seededRandom()
-  );
-
-  const largeBinData = genBins(
-    /* length = */ 100,
-    /* height = */ 160,
-    /** binFunc */ (idx) => 150 * idx,
-    /** countFunc */ (i, number) => 25 * (number - i) * seededRandom()
-  );
 
   function max<Datum>(data: Datum[], value: (d: Datum) => number): number {
     return Math.max(...data.map(value));
@@ -56,12 +61,12 @@ const Template: Story<HeatmapProps> = (args) => {
   const bins = (d: Bins) => d.bins;
   const count = (d: Bin) => d.count;
 
-  const colorMax = max(binData, (d) => max(bins(d), count));
-  const bucketSizeMax = max(binData, (d) => bins(d).length);
+  const colorMax = max(args.binData, (d) => max(bins(d), count));
+  const bucketSizeMax = max(args.binData, (d) => bins(d).length);
 
   // scales
   const xScale = scaleLinear<number>({
-    domain: [0, binData.length],
+    domain: [0, args.binData.length],
   });
   const yScale = scaleLinear<number>({
     domain: [0, bucketSizeMax],
@@ -80,8 +85,8 @@ const Template: Story<HeatmapProps> = (args) => {
   const events = false;
   const margin = defaultMargin;
   const separation = 20;
-  const width = 600;
-  const height = 300;
+  const width = 1600;
+  const height = 900;
 
   // bounds
   const size =
@@ -91,14 +96,12 @@ const Template: Story<HeatmapProps> = (args) => {
   const xMax = size / 2;
   const yMax = height - margin.bottom - margin.top;
 
-  const binWidth = xMax / binData.length;
+  const binWidth = xMax / args.binData.length;
   const binHeight = yMax / bucketSizeMax;
   const radius = min([binWidth, binHeight], (d) => d) / 2;
 
   xScale.range([0, xMax]);
   yScale.range([yMax, 0]);
-
-  console.log(binData);
 
   const {
     showTooltip,
@@ -127,7 +130,7 @@ const Template: Story<HeatmapProps> = (args) => {
   return (
     <svg width={width} height={height}>
       <HeatmapCircle
-        data={largeBinData}
+        data={args.binData}
         xScale={(d) => xScale(d) ?? 0}
         yScale={(d) => yScale(d) ?? 0}
         colorScale={circleColorScale}
@@ -169,4 +172,12 @@ const Template: Story<HeatmapProps> = (args) => {
   );
 };
 
-export const Basic = Template.bind({});
+export const Small = Template.bind({});
+Small.args = {
+  binData: smallBinData,
+};
+
+export const Large = Template.bind({});
+Large.args = {
+  binData: largeBinData,
+};
