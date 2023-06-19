@@ -11,6 +11,7 @@ import {
   HeatmapDataVisx,
   HeatmapColumn,
 } from '../../types/plots/heatmapVisx';
+import { gradientDivergingColorscaleMap } from '../../../lib/types/plots/addOns';
 
 export default {
   title: 'Plots/HeatmapCircleXYChart',
@@ -71,9 +72,6 @@ const Template: Story<TemplateProps> = (args) => {
   // xScale.range([0, xMax]);
   // yScale.range([yMax, 0]);
 
-  // @ANN Start here! What is the most natural structure
-  // for this data? Then make that.
-
   return (
     <div>
       <XYChart
@@ -82,8 +80,8 @@ const Template: Story<TemplateProps> = (args) => {
         xScale={{ type: 'linear', domain: [-0.5, 10] }}
         yScale={{ type: 'linear', domain: [-0.5, 20] }}
       >
-        <Axis orientation="left" />
-        <Axis orientation="top" />
+        <Axis orientation="left" numTicks={20} />
+        <Axis orientation="top" numTicks={10} />
         <Group>
           {args.binData.map((column) => {
             console.log(column);
@@ -93,6 +91,8 @@ const Template: Story<TemplateProps> = (args) => {
                 data={column.column}
                 xAccessor={() => Number(column?.x)}
                 yAccessor={(d) => d?.y}
+                size={(d) => d?.radius * 20}
+                colorAccessor={(d) => gradientDivergingColorscaleMap(d?.value)}
               />
             );
           })}
@@ -166,7 +166,7 @@ function genHeatmapColumn(nRows: number) {
       arr2.concat([
         {
           y: i2,
-          value: Math.random(),
+          value: Math.random() - 0.5,
           radius: Math.random(),
         },
       ]),
