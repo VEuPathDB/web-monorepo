@@ -10,9 +10,7 @@ import {
 import { NumberRange } from '../types/general';
 
 // ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use bubble marker one
-export interface BubbleMarkerProps
-  extends BoundsDriftMarkerProps,
-    MarkerScaleAddon {
+export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
     value: number;
     label: string;
@@ -21,6 +19,7 @@ export interface BubbleMarkerProps
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
+  valueToSizeMapper: (value: number) => number;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
 }
 
@@ -87,13 +86,10 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   html: string;
   size: number;
 } {
-  const scale = props.markerScale ?? MarkerScaleDefault;
+  // const scale = props.markerScale ?? MarkerScaleDefault;
   console.log({ dependentAxisRange: props.dependentAxisRange });
   // defined assertion here
-  const size =
-    100 *
-    (Math.log(props.data[0].value) / Math.log(props.dependentAxisRange!.max)) *
-    scale;
+  const size = props.valueToSizeMapper(props.data[0].value);
   const circleRadius = size / 2;
 
   let svgHTML: string = '';

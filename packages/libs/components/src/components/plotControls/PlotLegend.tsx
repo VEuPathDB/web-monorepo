@@ -4,6 +4,7 @@ import PlotListLegend, { PlotListLegendProps } from './PlotListLegend';
 import PlotGradientLegend, {
   PlotLegendGradientProps,
 } from './PlotGradientLegend';
+import PlotBubbleLegend, { PlotLegendBubbleProps } from './PlotBubbleLegend';
 
 interface PlotLegendBaseProps extends ContainerStylesAddon {
   legendTitle?: string;
@@ -13,6 +14,7 @@ export type PlotLegendProps = PlotLegendBaseProps &
   (
     | ({ type: 'list' } & PlotListLegendProps)
     | ({ type: 'colorscale' } & PlotLegendGradientProps)
+    | ({ type: 'bubble' } & PlotLegendBubbleProps)
   );
 
 export default function PlotLegend({
@@ -29,7 +31,8 @@ export default function PlotLegend({
       {((type === 'list' &&
         ((otherProps as PlotListLegendProps).legendItems.length > 1 ||
           (otherProps as PlotListLegendProps).showOverlayLegend)) ||
-        type === 'colorscale') && (
+        type === 'colorscale' ||
+        type === 'bubble') && (
         <div
           style={{
             display: 'inline-block', // for general usage (e.g., story)
@@ -62,6 +65,9 @@ export default function PlotLegend({
           )}
           {type === 'colorscale' && (
             <PlotGradientLegend {...(otherProps as PlotLegendGradientProps)} />
+          )}
+          {type === 'bubble' && (
+            <PlotBubbleLegend {...(otherProps as PlotLegendBubbleProps)} />
           )}
         </div>
       )}

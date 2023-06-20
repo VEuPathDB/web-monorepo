@@ -349,6 +349,24 @@ export function useStandaloneMapMarkers(
           },
         ];
 
+        const bubbleValueToSizeMapper = (value: number) => {
+          // Area scales directly with value
+          const constant = 100;
+          const area = value * constant;
+          const radius = Math.sqrt(area / Math.PI);
+
+          // Radius scales with log_10 of value
+          // const constant = 20;
+          // const radius = Math.log10(value) * constant;
+
+          // Radius scales directly with value
+          // const largestCircleSize = 150;
+          // const constant = maxValue / largestCircleSize;
+          // const radius = value * constant;
+
+          return 2 * radius;
+        };
+
         const commonMarkerProps = {
           id: geoAggregateValue,
           key: geoAggregateValue,
@@ -371,6 +389,7 @@ export function useStandaloneMapMarkers(
               data: bubbleData,
               markerLabel: String(count),
               dependentAxisRange: defaultDependentAxisRange,
+              valueToSizeMapper: bubbleValueToSizeMapper,
             } as BubbleMarkerProps;
           }
           default: {

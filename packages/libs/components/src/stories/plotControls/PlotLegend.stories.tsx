@@ -527,6 +527,43 @@ export const GradientPlotLegend = () => {
   );
 };
 
+export const BubbleMarkerLegend = () => {
+  const maxValue = 100;
+  // const scale = 1;
+
+  const valueToSizeMapper = (value: number) => {
+    // Area scales directly with value
+    const constant = 100;
+    const area = value * constant;
+    const radius = Math.sqrt(area / Math.PI);
+
+    // Radius scales with log_10 of value
+    // const constant = 20;
+    // const radius = Math.log10(value) * constant;
+
+    // Radius scales directly with value
+    // const largestCircleSize = 150;
+    // const constant = maxValue / largestCircleSize;
+    // const radius = value * constant;
+
+    return 2 * radius;
+  };
+
+  return (
+    <div style={{ padding: 15 }}>
+      <PlotLegend
+        type="bubble"
+        legendMax={maxValue}
+        // legendMin={5}
+        valueToSizeMapper={valueToSizeMapper}
+        // pass legend title
+        // nTicks={5}
+        // showMissingness
+      />
+    </div>
+  );
+};
+
 // custom legend with histogram
 export const TestLongLegendItems = () => {
   // long legend test
