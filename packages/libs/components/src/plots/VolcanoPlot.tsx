@@ -150,8 +150,21 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           so use caution when ordering the children (ex. draw axes before data).  */}
       <XYChart
         height={height ?? 300}
-        xScale={{ type: 'linear', domain: [xMin, xMax] }}
-        yScale={{ type: 'linear', domain: [yMin, yMax], zero: false }}
+        xScale={{
+          type: 'linear',
+          domain: independentAxisRange
+            ? [independentAxisRange.min, independentAxisRange.max]
+            : [xMin, xMax],
+          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+        }}
+        yScale={{
+          type: 'linear',
+          domain: dependentAxisRange
+            ? [dependentAxisRange.min, dependentAxisRange.max]
+            : [yMin, yMax],
+          zero: false,
+          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+        }}
         width={width ?? 300}
       >
         {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
