@@ -95,6 +95,7 @@ import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
 import BubbleMarkerComponent, {
   BubbleMarkerProps,
 } from '@veupathdb/components/lib/map/BubbleMarker';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -1060,25 +1061,70 @@ function MapAnalysisImpl(props: ImplProps) {
                   />
                 </div>
 
-                <DraggablePanel
-                  isOpen
-                  showPanelTitle
-                  panelTitle={overlayVariable?.displayName || 'Legend'}
-                  confineToParentContainer
-                  defaultPosition={{ x: window.innerWidth, y: 225 }}
-                  styleOverrides={{
-                    zIndex: legendZIndex,
-                  }}
-                >
-                  <div style={{ padding: '5px 10px' }}>
-                    <MapLegend
-                      isLoading={legendItems.length === 0}
-                      legendItems={legendItems}
-                      // control to show checkbox. default: true
-                      showCheckbox={false}
-                    />
-                  </div>
-                </DraggablePanel>
+                {(markerType === 'count' || markerType === 'proportion') && (
+                  <DraggablePanel
+                    isOpen
+                    showPanelTitle
+                    panelTitle={overlayVariable?.displayName || 'Legend'}
+                    confineToParentContainer
+                    defaultPosition={{ x: window.innerWidth, y: 225 }}
+                    styleOverrides={{
+                      zIndex: legendZIndex,
+                    }}
+                  >
+                    <div style={{ padding: '5px 10px' }}>
+                      <MapLegend
+                        isLoading={legendItems.length === 0}
+                        legendItems={legendItems}
+                        // control to show checkbox. default: true
+                        showCheckbox={false}
+                      />
+                    </div>
+                  </DraggablePanel>
+                )}
+
+                {markerType === 'bubble' && markersData !== undefined && (
+                  <DraggablePanel
+                    isOpen
+                    showPanelTitle
+                    panelTitle={overlayVariable?.displayName || 'Legend'}
+                    confineToParentContainer
+                    defaultPosition={{ x: window.innerWidth, y: 225 }}
+                    styleOverrides={{
+                      zIndex: legendZIndex,
+                    }}
+                  >
+                    <div style={{ padding: '5px 10px' }}>
+                      <PlotLegend
+                        type="bubble"
+                        // isLoading={legendItems.length === 0}
+                        // legendItems={legendItems}
+                        // control to show checkbox. default: true
+                        // showCheckbox={false}
+                        legendMax={
+                          markersData
+                            ? Math.max(
+                                ...markersData.map(
+                                  (markerData) => markerData.data[0].value ?? 0
+                                )
+                              )
+                            : 0
+                        }
+                        valueToSizeMapper={
+                          (markersData as BubbleMarkerProps[])[0]
+                            .valueToSizeMapper
+                        }
+                        containerStyles={{
+                          border: 'none',
+                          boxShadow: 'none',
+                          padding: 0,
+                          width: 'auto',
+                          maxWidth: 400,
+                        }}
+                      />
+                    </div>
+                  </DraggablePanel>
+                )}
 
                 {/* <FloatingDiv
                   style={{
