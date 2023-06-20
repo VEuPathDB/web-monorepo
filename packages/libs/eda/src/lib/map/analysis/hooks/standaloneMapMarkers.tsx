@@ -11,7 +11,7 @@ import { Filter } from '../../../core/types/filter';
 import { useDataClient } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
-import { isEqual, some } from 'lodash';
+import { isEqual, max, some } from 'lodash';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
@@ -275,6 +275,40 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
+    const maxOverlayCount = rawMarkersData.value
+      ? Math.max(
+          ...rawMarkersData.value.mapElements.map((mapElement) => {
+            const count =
+              vocabulary != null // if there's an overlay (all expected use cases)
+                ? mapElement.overlayValues.reduce(
+                    (sum, { count }) => (sum = sum + count),
+                    0
+                  )
+                : mapElement.entityCount;
+            return count;
+          })
+        )
+      : 0;
+
+    const bubbleValueToSizeMapper = (value: number) => {
+      const largestCircleArea = 9000;
+
+      // Area scales directly with value
+      const constant = largestCircleArea / maxOverlayCount;
+      const area = value * constant;
+      const radius = Math.sqrt(area / Math.PI);
+
+      // Radius scales with log_10 of value
+      // const constant = 20;
+      // const radius = Math.log10(value) * constant;
+
+      // Radius scales directly with value
+      // const constant = maxValue / largestCircleSize;
+      // const radius = value * constant;
+
+      return 2 * radius;
+    };
+
     return rawMarkersData.value?.mapElements.map(
       ({
         geoAggregateValue,
@@ -348,24 +382,6 @@ export function useStandaloneMapMarkers(
               'color' in reorderedData[0] ? reorderedData[0].color : undefined,
           },
         ];
-
-        const bubbleValueToSizeMapper = (value: number) => {
-          // Area scales directly with value
-          const constant = 100;
-          const area = value * constant;
-          const radius = Math.sqrt(area / Math.PI);
-
-          // Radius scales with log_10 of value
-          // const constant = 20;
-          // const radius = Math.log10(value) * constant;
-
-          // Radius scales directly with value
-          // const largestCircleSize = 150;
-          // const constant = maxValue / largestCircleSize;
-          // const radius = value * constant;
-
-          return 2 * radius;
-        };
 
         const commonMarkerProps = {
           id: geoAggregateValue,
