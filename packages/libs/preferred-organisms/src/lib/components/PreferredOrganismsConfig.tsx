@@ -5,7 +5,7 @@ import { noop } from 'lodash';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import CheckboxTree, {
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
@@ -30,7 +30,7 @@ import { PreferredOrganismsToggleHelp } from './PreferredOrganismsToggleHelp';
 
 import './PreferredOrganismsConfig.scss';
 import { Tooltip } from '@material-ui/core';
-import useSnackbar from '@veupathdb/coreui/dist/components/notifications/useSnackbar';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 

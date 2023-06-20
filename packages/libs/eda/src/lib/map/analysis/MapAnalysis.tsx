@@ -55,7 +55,7 @@ import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import Login from '../../workspace/sharing/Login';
 import { useLoginCallbacks } from '../../workspace/sharing/hooks';
@@ -86,10 +86,10 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from './MarkerConfiguration/MapTypeConfigurationMenu';
-import { DraggablePanel } from '@veupathdb/coreui/dist/components/containers';
-import { TabbedDisplayProps } from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
+import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
+import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
 import BubbleMarkerComponent from '@veupathdb/components/lib/map/BubbleMarker';

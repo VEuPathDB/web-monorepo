@@ -11,7 +11,7 @@ import {
   Filter,
   Share,
   Trash,
-} from '@veupathdb/coreui/dist/components/icons';
+} from '@veupathdb/coreui/lib/components/icons';
 import { Chip, FilledButton, FloatingButton } from '@veupathdb/coreui';
 
 interface Props {

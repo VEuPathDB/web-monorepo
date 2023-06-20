@@ -13,7 +13,7 @@ import { requestUpdateStepSearchConfig } from '@veupathdb/wdk-client/lib/Actions
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import CheckboxTree, {
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import {
   mapStructure,
   pruneDescendantNodes,

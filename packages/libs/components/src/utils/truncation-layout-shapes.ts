@@ -16,7 +16,9 @@ export function truncationLayoutShapes(
   standardDependentAxisRange: NumberOrDateRange | undefined,
   extendedIndependentAxisRange: NumberOrDateRange | undefined,
   extendedDependentAxisRange: NumberOrDateRange | undefined,
-  axisTruncationConfig?: AxisTruncationConfig
+  axisTruncationConfig?: AxisTruncationConfig,
+  showMarginalHistogram?: boolean,
+  marginalHistogramSize?: number
 ) {
   // this will be used with conditions
   let truncationLayoutShapes: Partial<Shape>[] = [{}];
@@ -41,7 +43,15 @@ export function truncationLayoutShapes(
         x0: orientation === 'vertical' ? extendedIndependentAxisRange?.min : 0,
         x1: orientation === 'vertical' ? standardIndependentAxisRange?.min : 1,
         y0: orientation === 'vertical' ? 0 : extendedIndependentAxisRange?.min,
-        y1: orientation === 'vertical' ? 1 : standardIndependentAxisRange?.min,
+        // adjust truncation size if marginal histogram exists
+        y1:
+          orientation === 'vertical'
+            ? showMarginalHistogram
+              ? marginalHistogramSize != null
+                ? 1 - marginalHistogramSize
+                : 0.8
+              : 1
+            : extendedIndependentAxisRange?.min,
       },
     ];
   }
@@ -64,7 +74,15 @@ export function truncationLayoutShapes(
         x0: orientation === 'vertical' ? standardIndependentAxisRange?.max : 0,
         x1: orientation === 'vertical' ? extendedIndependentAxisRange?.max : 1,
         y0: orientation === 'vertical' ? 0 : standardIndependentAxisRange?.max,
-        y1: orientation === 'vertical' ? 1 : extendedIndependentAxisRange?.max,
+        // adjust truncation size if marginal histogram exists
+        y1:
+          orientation === 'vertical'
+            ? showMarginalHistogram
+              ? marginalHistogramSize != null
+                ? 1 - marginalHistogramSize
+                : 0.8
+              : 1
+            : extendedIndependentAxisRange?.max,
       },
     ];
   }

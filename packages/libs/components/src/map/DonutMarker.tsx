@@ -279,7 +279,9 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
       svgHTML +=
         '<path fill="none" stroke="' +
         (el.color ?? 'silver') +
-        '" stroke-width="5" d="' +
+        '" stroke-width="' +
+        5 * scale +
+        '" d="' +
         makeArc(
           backgroundWhiteCircleRadius,
           backgroundWhiteCircleRadius,
@@ -296,7 +298,9 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
 
   // adding total number text/label and centering it
   svgHTML +=
-    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
+    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="' +
+    (scale === 1 ? 1 : 0.75 * scale) +
+    'em">' +
     sumLabel +
     '</text>';
 
