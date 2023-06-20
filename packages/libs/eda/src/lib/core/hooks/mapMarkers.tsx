@@ -518,7 +518,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
 
         const MarkerComponent =
           markerType == null || markerType === 'pie'
-            ? BubbleMarker
+            ? DonutMarker
             : ChartMarker;
 
         const count =

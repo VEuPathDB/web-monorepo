@@ -92,7 +92,9 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
 import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
-import BubbleMarkerComponent from '@veupathdb/components/lib/map/BubbleMarker';
+import BubbleMarkerComponent, {
+  BubbleMarkerProps,
+} from '@veupathdb/components/lib/map/BubbleMarker';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -351,7 +353,7 @@ function MapAnalysisImpl(props: ImplProps) {
         markerType === 'pie' ? (
           <DonutMarkerComponent {...markerProps} />
         ) : markerType === 'bubble' ? (
-          <BubbleMarkerComponent {...markerProps} />
+          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
         ) : (
           <ChartMarkerComponent {...markerProps} />
         )

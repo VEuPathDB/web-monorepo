@@ -27,6 +27,24 @@ export default {
   title: 'Map/Bubble Markers',
 } as Meta;
 
+const valueToSizeMapper = (value: number) => {
+  // Area scales directly with value
+  const constant = 100;
+  const area = value * constant;
+  const radius = Math.sqrt(area / Math.PI);
+
+  // Radius scales with log_10 of value
+  // const constant = 20;
+  // const radius = Math.log10(value) * constant;
+
+  // Radius scales directly with value
+  // const largestCircleSize = 150;
+  // const constant = maxValue / largestCircleSize;
+  // const radius = value * constant;
+
+  return 2 * radius;
+};
+
 export const Standalone: Story<MapVEuMapProps> = () => {
   return (
     <div>
@@ -39,7 +57,8 @@ export const Standalone: Story<MapVEuMapProps> = () => {
           },
         ]}
         isAtomic={false}
-        markerScale={1}
+        // markerScale={1}
+        valueToSizeMapper={valueToSizeMapper}
         containerStyles={{ margin: '10px' }}
       />
       <BubbleMarkerStandalone
@@ -51,7 +70,8 @@ export const Standalone: Story<MapVEuMapProps> = () => {
           },
         ]}
         isAtomic={false}
-        markerScale={1}
+        // markerScale={1}
+        valueToSizeMapper={valueToSizeMapper}
         containerStyles={{ margin: '10px' }}
       />
       <BubbleMarkerStandalone
@@ -63,7 +83,8 @@ export const Standalone: Story<MapVEuMapProps> = () => {
           },
         ]}
         isAtomic={false}
-        markerScale={1}
+        // markerScale={1}
+        valueToSizeMapper={valueToSizeMapper}
         containerStyles={{ margin: '10px' }}
       />
     </div>
