@@ -87,12 +87,10 @@ interface TemplateProps {
   log2FoldChangeThreshold: number;
   significanceThreshold: number;
   adjustedPValueGate: number;
+  comparisonLabels?: string[];
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  // Eventually should be a Template prop. Not yet implemented in the component.
-  const comparisonLabels = ['up in group a', 'up in group b'];
-
   // Process input data. Take the object of arrays and turn it into
   // an array of data points
   const volcanoDataPoints: VolcanoPlotData =
@@ -110,7 +108,7 @@ const Template: Story<TemplateProps> = (args) => {
     significanceThreshold: args.significanceThreshold,
     log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
-    comparisonLabels: comparisonLabels, // currently does nothing. not yet implemented.
+    comparisonLabels: args.comparisonLabels,
   };
 
   return <VolcanoPlot {...volcanoPlotProps} />;
@@ -127,6 +125,7 @@ Simple.args = {
   markerBodyOpacity: 0.8,
   log2FoldChangeThreshold: 1,
   significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
 };
 
 // Most volcano plots will have thousands of points, since each point
