@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import Heatmap, { HeatmapProps } from '../../plots/Heatmap';
 import { Meta, Story } from '@storybook/react';
 import { Group } from '@visx/group';
 import genBins, { Bin, Bins } from '@visx/mock-data/lib/generators/genBins';
 import { scaleLinear } from '@visx/scale';
 import { AxisBottom, AxisLeft } from '@visx/axis';
-import { GlyphSeries, XYChart, Axis } from '@visx/xychart';
+import {
+  GlyphSeries,
+  XYChart,
+  Axis,
+  Tooltip,
+  TooltipProvider,
+  TooltipContext,
+  TooltipContextType,
+} from '@visx/xychart';
 import {
   HeatmapCell,
   HeatmapDataVisx,
   HeatmapColumn,
 } from '../../types/plots/heatmapVisx';
 import { gradientDivergingColorscaleMap } from '../../../lib/types/plots/addOns';
+import { GlyphCircle, GlyphCross, GlyphStar } from '@visx/glyph';
+import { Circle } from '@visx/shape';
 
 export default {
   title: 'Plots/HeatmapCircleXYChart',
@@ -82,23 +92,51 @@ const Template: Story<TemplateProps> = (args) => {
         width={width}
         xScale={{ type: 'linear', domain: [-0.5, args.nRows] }}
         yScale={{ type: 'linear', domain: [-0.5, args.nColumns] }}
+        pointerEventsDataKey="all"
       >
         <Axis orientation="top" numTicks={args.nRows} />
         <Axis orientation="left" numTicks={args.nColumns} />
-        <Group>
-          {args.binData.map((column) => {
+        {args.binData.map((column) => {
+          return (
+            <GlyphSeries
+              dataKey={'data' + column.x}
+              data={column.column}
+              xAccessor={() => Number(column?.x)}
+              yAccessor={(d) => d?.y}
+              size={(d) => d?.radius * 20}
+              colorAccessor={(d) => gradientDivergingColorscaleMap(d?.value)}
+              renderGlyph={({ datum, x, y, key }) => {
+                // console.log(datum);
+                return (
+                  <Circle
+                    cx={x}
+                    cy={y}
+                    key={key}
+                    r={datum?.radius * 15}
+                    fill={gradientDivergingColorscaleMap(datum?.value)}
+                    onMouseOver={() => {
+                      console.log(datum?.y);
+                    }}
+                  />
+                );
+              }}
+            />
+          );
+        })}
+
+        <Tooltip
+          showHorizontalCrosshair={true}
+          showVerticalCrosshair={false}
+          snapTooltipToDatumX={true}
+          snapTooltipToDatumY={true}
+          renderTooltip={({ tooltipData }) => {
             return (
-              <GlyphSeries
-                dataKey={'data' + column.x}
-                data={column.column}
-                xAccessor={() => Number(column?.x)}
-                yAccessor={(d) => d?.y}
-                size={(d) => d?.radius * 20}
-                colorAccessor={(d) => gradientDivergingColorscaleMap(d?.value)}
-              />
+              <>
+                <text>{'Hi ann'}</text>
+              </>
             );
-          })}
-        </Group>
+          }}
+        />
       </XYChart>
     </div>
   );
