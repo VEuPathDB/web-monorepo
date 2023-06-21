@@ -165,40 +165,28 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
         {/* X axis annotations */}
-        <Annotation
-          datum={{
-            x: xMin,
-            y: yMin,
-          }}
-          dx={0}
-          dy={-15}
-          {...xyAccessors}
-        >
-          <AnnotationLabel
-            subtitle={comparisonLabels && comparisonLabels[0]}
-            horizontalAnchor="middle"
-            verticalAnchor="start"
-            showAnchorLine={false}
-            showBackground={false}
-          />
-        </Annotation>
-        <Annotation
-          datum={{
-            x: xMax,
-            y: yMin,
-          }}
-          dx={0}
-          dy={-15}
-          {...xyAccessors}
-        >
-          <AnnotationLabel
-            subtitle={comparisonLabels && comparisonLabels[1]}
-            horizontalAnchor="middle"
-            verticalAnchor="start"
-            showAnchorLine={false}
-            showBackground={false}
-          />
-        </Annotation>
+        {comparisonLabels &&
+          comparisonLabels.map((label, ind) => {
+            return (
+              <Annotation
+                datum={{
+                  x: [xMin, xMax][ind], // Labels go at extremes of x axis
+                  y: yMin,
+                }}
+                dx={0}
+                dy={-15}
+                {...xyAccessors}
+              >
+                <AnnotationLabel
+                  subtitle={label}
+                  horizontalAnchor="middle"
+                  verticalAnchor="start"
+                  showAnchorLine={false}
+                  showBackground={false}
+                />
+              </Annotation>
+            );
+          })}
 
         {/* Draw threshold lines as annotations below the data points. The
             annotations use XYChart's theme and dimension context.
