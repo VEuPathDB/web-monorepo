@@ -11,6 +11,8 @@ import {
   GlyphSeries,
   Annotation,
   AnnotationLineSubject,
+  BarSeries,
+  DataContext,
 } from '@visx/xychart';
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
@@ -20,6 +22,8 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
+import { Bar } from '@visx/shape';
+import { useContext } from 'react';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -52,6 +56,31 @@ export interface VolcanoPlotProps {
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
+
+interface TruncationRectangleProps {
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+}
+function TruncationRectangle(props: TruncationRectangleProps) {
+  const { xMin, xMax, yMin, yMax } = props;
+  const { colorScale, theme, margin, xScale, yScale } = useContext(DataContext);
+  console.log(yScale && yScale(3));
+
+  return xScale && yScale ? (
+    <Bar
+      x={Number(xScale(xMin))}
+      y={Number(yScale(yMax))}
+      width={20}
+      height={Number(yScale(yMin)) - Number(yScale(yMax))}
+      fill="rgba(23, 233, 217, .5)"
+    />
+  ) : (
+    <></>
+  );
+}
+//  ? <Bar x1={Number(xScale(xMin))} x2={Number(xScale(xMin + 1))} y1={Number(yScale(yMin))} y2={Number(yScale(yMax))} fill={"#ffff00"}/>
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
@@ -238,6 +267,17 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             }}
           />
         </Group>
+
+        {/* Truncation indicators */}
+        {/* Making this a bar series and then will just turn off pointer events */}
+        {/* <BarSeries 
+          data={[{x: xMin, y: yMax}, {x: xMax, y: yMax}]}
+          {...thresholdLineAccessors}
+          dataKey='truncation'
+          enableEvents={false}
+          
+        /> */}
+        <TruncationRectangle xMin={xMin} xMax={xMax} yMin={yMin} yMax={yMax} />
       </XYChart>
     </div>
   );
