@@ -26,8 +26,7 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
-import { VolcanoPlotDataPoint } from '@veupathdb/components/lib/types/plots/volcanoplot';
-import VolcanoPlot from '@veupathdb/components/lib/plots/VolcanoPlot';
+import { VolcanoPlotData } from '@veupathdb/components/lib/types/plots/volcanoplot';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -363,15 +362,14 @@ export const ScatterplotResponse = intersection([
 export type VolcanoplotResponse = TypeOf<typeof VolcanoPlotData>;
 
 // TEMP - @ANN many of these can be simplified after some backend work is merged.
-// Still open question - what to do if pvalue exists but not adjustedpvalue?
-const VolcanoPlotData = array(
-  type({
-    log2foldChange: union([string, undefined]),
-    pValue: union([string, undefined]),
-    adjustedPValue: union([string, undefined]),
-    pointID: union([string, undefined]),
-  })
-);
+// Still open question - what to do if pvalue exists but not adjustedpvalue?]
+// export const VolcanoPlotDataPoint = type({
+//   log2foldChange: union([string, undefined]),
+//   pValue: union([string, undefined]),
+//   adjustedPValue: union([string, undefined]),
+//   pointID: union([string, undefined]),
+// })
+
 export const VolcanoplotResponse = VolcanoPlotData;
 
 export interface VolcanoPlotRequestParams {

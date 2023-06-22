@@ -105,6 +105,10 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   );
 
   // NOT YET IMPLEMENTED set the state of truncation warning message
+  // probably dont need to use state for these warnings. could derive it from the viz config
+  // Rule: if you can derive something from props, dont use state! State is "expensive"
+  // every time you update state it causes component to rerender. Also means we have to keep state
+  // in sync with props
   const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
     useState<string>('');
   const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
@@ -131,12 +135,10 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        VolcanoplotResponse
+        VolcanoplotResponse // CAsInG
       );
 
-      return {
-        ...response,
-      };
+      return response;
     }, [
       computeJobStatus,
       filteredCounts.pending,
@@ -170,8 +172,9 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  // Casing is messed up!! volcanoplot vs volcanoPlot
   const volcanoplotProps: VolcanoPlotProps = {
-    data: data.value ? Object.values(data.value) : [], // @ANN START HERE it's an object of objects not an array of objects
+    data: data.value ? Object.values(data.value) : [],
     independentAxisRange: defaultIndependentAxisRange,
     dependentAxisRange: defaultDependentAxisRange,
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
@@ -193,8 +196,16 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
+  // defining styles inline are getting out of hand! possibly going back to css/scss and away from emotion
+  // can cause performance issues if rendering lots of things
+  // browser doesnt know if the style object is the same - it has to reprocess each time.
+  // emotion isn't as future proof as stylesheets
+  // Tailwind as an option? @ann make an issue!
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {/* does labelledgroup have a container prop? Then we could control what's inside it better. 
+          or specify direction? JM and DF */}
       <LabelledGroup label="Threshold lines">
         {/* The following are always numbers, never dates. Need a bit of type cleaning */}
         <NumberInput

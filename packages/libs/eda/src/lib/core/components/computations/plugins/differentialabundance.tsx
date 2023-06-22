@@ -131,17 +131,9 @@ export function DifferentialAbundanceConfiguration(
     .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-  const filters: [] = []; // probably in analysis state somewhere? @ann todo!
+  const filters: [] = []; // probably in analysis state somewhere? @ann todo! From dave - correct!
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const handleChange = (
-    configuration: DifferentialAbundanceConfig,
-    selectedVariable?: VariableDescriptor
-  ) => {
-    if (selectedVariable) {
-      configuration.comparator.variable = selectedVariable;
-    }
-  };
   // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
   if (configuration) configuration.differentialAbundanceMethod = 'DESeq';
 
@@ -219,7 +211,6 @@ export function DifferentialAbundanceConfiguration(
         >
           <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
           <SingleSelect
-            // @ts-ignore
             value={
               selectedCollectionVar
                 ? selectedCollectionVar.value
