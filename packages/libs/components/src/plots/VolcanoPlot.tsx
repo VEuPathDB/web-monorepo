@@ -24,6 +24,7 @@ import {
 } from './visxVEuPathDB';
 import { Bar } from '@visx/shape';
 import { useContext } from 'react';
+import { PatternLines } from '@visx/visx';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -62,10 +63,14 @@ interface TruncationRectangleProps {
   xMax: number;
   yMin: number;
   yMax: number;
+  fill?: string;
 }
+
+// MUST be used within a visx DataProvider component because it
+// relies on the DataContext to work
 function TruncationRectangle(props: TruncationRectangleProps) {
-  const { xMin, xMax, yMin, yMax } = props;
-  const { colorScale, theme, margin, xScale, yScale } = useContext(DataContext);
+  const { xMin, xMax, yMin, yMax, fill } = props;
+  const { xScale, yScale } = useContext(DataContext);
   console.log(yScale && yScale(3));
 
   return xScale && yScale ? (
@@ -74,13 +79,12 @@ function TruncationRectangle(props: TruncationRectangleProps) {
       y={Number(yScale(yMax))}
       width={20}
       height={Number(yScale(yMin)) - Number(yScale(yMax))}
-      fill="rgba(23, 233, 217, .5)"
+      fill={fill ?? 'rgba(1,0,0,0.8)'}
     />
   ) : (
     <></>
   );
 }
-//  ? <Bar x1={Number(xScale(xMin))} x2={Number(xScale(xMin + 1))} y1={Number(yScale(yMin))} y2={Number(yScale(yMax))} fill={"#ffff00"}/>
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
@@ -269,15 +273,29 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         </Group>
 
         {/* Truncation indicators */}
-        {/* Making this a bar series and then will just turn off pointer events */}
-        {/* <BarSeries 
-          data={[{x: xMin, y: yMax}, {x: xMax, y: yMax}]}
-          {...thresholdLineAccessors}
-          dataKey='truncation'
-          enableEvents={false}
-          
-        /> */}
-        <TruncationRectangle xMin={xMin} xMax={xMax} yMin={yMin} yMax={yMax} />
+        {/* Example from https://airbnb.io/visx/docs/pattern */}
+        <PatternLines
+          id="lines"
+          height={5}
+          width={5}
+          stroke={'black'}
+          strokeWidth={1}
+          orientation={['diagonal']}
+        />
+        <TruncationRectangle
+          xMin={xMin}
+          xMax={xMax}
+          yMin={yMin}
+          yMax={yMax}
+          fill={"url('#lines')"}
+        />
+        <TruncationRectangle
+          xMin={xMax}
+          xMax={xMax}
+          yMin={yMin}
+          yMax={yMax}
+          fill={"url('#lines')"}
+        />
       </XYChart>
     </div>
   );
