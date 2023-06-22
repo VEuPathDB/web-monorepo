@@ -38,6 +38,7 @@ export const MarkerConfiguration = t.intersection([
         t.literal('standardDeviation'),
         t.undefined,
       ]),
+      dependentAxisLogScale: t.boolean,
     }),
     t.type({
       type: t.literal('pie'),
@@ -128,6 +129,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             selectedValues: undefined,
             allValues: undefined,
             binningMethod: undefined,
+            dependentAxisLogScale: false,
           },
         ],
       };

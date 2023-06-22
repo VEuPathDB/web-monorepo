@@ -351,7 +351,11 @@ function MapAnalysisImpl(props: ImplProps) {
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
     overlayConfig: activeOverlayConfig.value,
     outputEntityId: outputEntity?.id,
-    //TO DO: maybe dependentAxisLogScale
+    dependentAxisLogScale:
+      activeMarkerConfiguration &&
+      'dependentAxisLogScale' in activeMarkerConfiguration
+        ? activeMarkerConfiguration.dependentAxisLogScale
+        : false,
   });
 
   const { markersData: previewMarkerData } = useStandaloneMapMarkers({
@@ -401,6 +405,12 @@ function MapAnalysisImpl(props: ImplProps) {
       return (
         <ChartMarkerStandalone
           data={finalData}
+          dependentAxisLogScale={
+            activeMarkerConfiguration &&
+            'dependentAxisLogScale' in activeMarkerConfiguration
+              ? activeMarkerConfiguration.dependentAxisLogScale
+              : false
+          }
           {...sharedStandaloneMarkerProperties}
         />
       );

@@ -31,6 +31,7 @@ export interface BarPlotMarkerConfiguration
   selectedPlotMode: 'count' | 'proportion';
   allValues: AllValuesDefinition[] | undefined;
   binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
+  dependentAxisLogScale: boolean;
 }
 
 interface Props
@@ -134,10 +135,13 @@ export function BarPlotMarkerConfigurationMenu({
   function handleBinningMethodSelection(option: string) {
     onChange({
       ...configuration,
-      binningMethod: option as
-        | 'equalInterval'
-        | 'quantile'
-        | 'standardDeviation',
+      binningMethod: option as BarPlotMarkerConfiguration['binningMethod'],
+    });
+  }
+  function handleLogScaleChange(option: boolean) {
+    onChange({
+      ...configuration,
+      dependentAxisLogScale: option,
     });
   }
 
@@ -181,11 +185,7 @@ export function BarPlotMarkerConfigurationMenu({
             }
           }
           label="Binning method"
-          selectedOption={
-            overlayConfiguration?.overlayType === 'continuous'
-              ? configuration.binningMethod ?? 'equalMethod'
-              : ''
-          }
+          selectedOption={configuration.binningMethod ?? 'equalMethod'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
           optionLabels={[
             'Equal interval',
@@ -220,8 +220,8 @@ export function BarPlotMarkerConfigurationMenu({
         <Toggle
           label="Log scale"
           themeRole="primary"
-          value={false}
-          onChange={() => null}
+          value={configuration.dependentAxisLogScale}
+          onChange={handleLogScaleChange}
         />
       </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
