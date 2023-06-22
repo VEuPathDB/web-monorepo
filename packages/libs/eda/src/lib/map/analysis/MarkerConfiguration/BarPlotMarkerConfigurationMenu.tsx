@@ -185,7 +185,7 @@ export function BarPlotMarkerConfigurationMenu({
             }
           }
           label="Binning method"
-          selectedOption={configuration.binningMethod ?? 'equalMethod'}
+          selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
           optionLabels={[
             'Equal interval',

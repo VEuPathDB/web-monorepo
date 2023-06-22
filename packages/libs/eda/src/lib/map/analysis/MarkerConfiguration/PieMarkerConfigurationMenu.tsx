@@ -16,6 +16,8 @@ import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigur
 import { MarkerPreview } from './MarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -93,6 +95,7 @@ export function PieMarkerConfigurationMenu({
         value: distributionResponse.histogram.map((d) => d.value),
         label: distributionResponse.histogram.map((d) => d.binLabel),
         showValues: false,
+        color: '#333',
       };
     }, [
       overlayVariable,
@@ -115,6 +118,12 @@ export function PieMarkerConfigurationMenu({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       selectedValues: undefined,
+    });
+  }
+  function handleBinningMethodSelection(option: string) {
+    onChange({
+      ...configuration,
+      binningMethod: option as PieMarkerConfiguration['binningMethod'],
     });
   }
 
@@ -150,6 +159,31 @@ export function PieMarkerConfigurationMenu({
           continuousMarkerPreview
         )}
       </div>
+      <LabelledGroup label="Donut marker controls">
+        <RadioButtonGroup
+          containerStyles={
+            {
+              // marginTop: 20,
+            }
+          }
+          label="Binning method"
+          selectedOption={configuration.binningMethod ?? 'equalInterval'}
+          options={['equalInterval', 'quantile', 'standardDeviation']}
+          optionLabels={[
+            'Equal interval',
+            'Quantile (10)',
+            'Standard deviation',
+          ]}
+          buttonColor={'primary'}
+          // margins={['0em', '0', '0', '1em']}
+          onOptionSelected={handleBinningMethodSelection}
+          disabledList={
+            overlayConfiguration?.overlayType === 'continuous'
+              ? []
+              : ['equalInterval', 'quantile', 'standardDeviation']
+          }
+        />
+      </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
         <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}
@@ -157,15 +191,29 @@ export function PieMarkerConfigurationMenu({
           onChange={onChange}
         />
       )}
-      {overlayConfiguration?.overlayType === 'continuous' &&
-        barplotData.value && (
+      {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
+        <div style={{ margin: '5px 0 0 0' }}>
+          <span style={{ fontWeight: 'bold' }}>
+            Raw distribution of overall filtered data
+          </span>
           <Barplot
             data={{ series: [barplotData.value] }}
             barLayout="overlay"
             showValues={false}
             showIndependentAxisTickLabel={false}
+            spacingOptions={{
+              padding: 0,
+              marginLeft: 0,
+              marginRight: 0,
+              marginTop: 0,
+              marginBottom: 0,
+            }}
+            containerStyles={{
+              height: 300,
+            }}
           />
-        )}
+        </div>
+      )}
     </div>
   );
 }
