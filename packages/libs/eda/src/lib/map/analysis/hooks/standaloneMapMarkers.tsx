@@ -172,8 +172,14 @@ export function useStandaloneMapMarkers(
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
+      /**
+       * The backend will throw an error if the overlayConfig object has an unexpected
+       * property in the request. Currently I'm only needing to remove the allValues property
+       * but I've refactored in such a way that I could remove all properties listed in the
+       * INCOMPATIBLE_REQUEST_PARAMS array.
+       */
       let overlayConfigWithoutIncompatibleProperties;
-      const INCOMPATIBLE_REQUEST_PARAMS = ['allValues', 'binningMethod'];
+      const INCOMPATIBLE_REQUEST_PARAMS = ['allValues'];
       const hasIncompatibleRequestParams = Boolean(
         overlayConfig &&
           Object.getOwnPropertyNames(overlayConfig).find((prop) =>

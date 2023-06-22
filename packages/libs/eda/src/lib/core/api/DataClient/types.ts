@@ -788,7 +788,6 @@ export const OverlayConfig = intersection([
     type({
       overlayType: literal('continuous'),
       overlayValues: BinDefinitions,
-      binningMethod: string,
     }),
   ]),
 ]);

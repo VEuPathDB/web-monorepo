@@ -78,7 +78,6 @@ export async function getDefaultOverlayConfig(
         overlayType: 'continuous',
         overlayValues: overlayBins,
         overlayVariable: overlayVariableDescriptor,
-        binningMethod,
       };
     } else {
       return;
