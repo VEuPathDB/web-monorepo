@@ -284,17 +284,14 @@ function MapAnalysisImpl(props: ImplProps) {
   // get the default overlay config.
   const activeOverlayConfig = usePromise(
     useCallback(async (): Promise<OverlayConfig | undefined> => {
-      // Use `selectedValues` to generate the overlay config
+      // Use `selectedValues` to generate the overlay config for categorical variables
       if (
         activeMarkerConfiguration?.selectedValues &&
-        activeMarkerConfiguration?.allValues
+        activeMarkerConfiguration?.allValues &&
+        CategoricalVariableDataShape.is(overlayVariable?.dataShape)
       ) {
         return {
-          overlayType: CategoricalVariableDataShape.is(
-            overlayVariable?.dataShape
-          )
-            ? 'categorical'
-            : 'continuous',
+          overlayType: 'categorical',
           overlayVariable: {
             variableId: overlayVariable?.id,
             entityId: overlayEntity?.id,
@@ -311,6 +308,7 @@ function MapAnalysisImpl(props: ImplProps) {
         overlayEntity,
         dataClient,
         subsettingClient,
+        binningMethod: activeMarkerConfiguration?.binningMethod,
       });
     }, [
       dataClient,
@@ -321,6 +319,7 @@ function MapAnalysisImpl(props: ImplProps) {
       subsettingClient,
       activeMarkerConfiguration?.selectedValues,
       activeMarkerConfiguration?.allValues,
+      activeMarkerConfiguration?.binningMethod,
     ])
   );
 

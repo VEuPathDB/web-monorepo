@@ -32,11 +32,23 @@ export const MarkerConfiguration = t.intersection([
       selectedValues: t.union([BinDefinitions, t.array(t.string), t.undefined]), // user-specified selection
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
       allValues: t.union([t.array(AllValuesDefinition), t.undefined]),
+      binningMethod: t.union([
+        t.literal('equalInterval'),
+        t.literal('quantile'),
+        t.literal('standardDeviation'),
+        t.undefined,
+      ]),
     }),
     t.type({
       type: t.literal('pie'),
       selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
       allValues: t.union([t.array(AllValuesDefinition), t.undefined]),
+      binningMethod: t.union([
+        t.literal('equalInterval'),
+        t.literal('quantile'),
+        t.literal('standardDeviation'),
+        t.undefined,
+      ]),
     }),
   ]),
 ]);
@@ -107,6 +119,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             selectedVariable: defaultVariable,
             selectedValues: undefined,
             allValues: undefined,
+            binningMethod: undefined,
           },
           {
             type: 'barplot',
@@ -114,6 +127,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             selectedVariable: defaultVariable,
             selectedValues: undefined,
             allValues: undefined,
+            binningMethod: undefined,
           },
         ],
       };

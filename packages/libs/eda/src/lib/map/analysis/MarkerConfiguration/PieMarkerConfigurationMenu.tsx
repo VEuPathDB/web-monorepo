@@ -24,6 +24,7 @@ export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
   selectedVariable: VariableDescriptor;
   selectedValues: string[] | undefined;
   allValues: AllValuesDefinition[] | undefined;
+  binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
 }
 interface Props
   extends Omit<
@@ -119,14 +120,6 @@ export function PieMarkerConfigurationMenu({
 
   return (
     <div>
-      <div style={{ margin: '5px 0 0 0' }}>
-        <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
-        {overlayConfiguration?.overlayType === 'categorical' ? (
-          <MarkerPreview data={overlayConfiguration} mapType="pie" />
-        ) : (
-          continuousMarkerPreview
-        )}
-      </div>
       <p
         style={{
           margin: '5px 0 0 0',
@@ -147,6 +140,16 @@ export function PieMarkerConfigurationMenu({
         toggleStarredVariable={toggleStarredVariable}
         constraints={constraints}
       />
+      <div style={{ margin: '5px 0 0 0' }}>
+        <span style={{ fontWeight: 'bold' }}>
+          Summary marker (all filtered data)
+        </span>
+        {overlayConfiguration?.overlayType === 'categorical' ? (
+          <MarkerPreview data={overlayConfiguration} mapType="pie" />
+        ) : (
+          continuousMarkerPreview
+        )}
+      </div>
       {overlayConfiguration?.overlayType === 'categorical' && (
         <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}

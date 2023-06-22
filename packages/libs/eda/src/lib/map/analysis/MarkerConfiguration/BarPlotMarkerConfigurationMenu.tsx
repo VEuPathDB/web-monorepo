@@ -17,6 +17,8 @@ import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigur
 import { MarkerPreview } from './MarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { Toggle } from '@veupathdb/coreui';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -28,6 +30,7 @@ export interface BarPlotMarkerConfiguration
   selectedValues: OverlayConfig['overlayValues'] | undefined;
   selectedPlotMode: 'count' | 'proportion';
   allValues: AllValuesDefinition[] | undefined;
+  binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
 }
 
 interface Props
@@ -97,6 +100,7 @@ export function BarPlotMarkerConfigurationMenu({
         value: distributionResponse.histogram.map((d) => d.value),
         label: distributionResponse.histogram.map((d) => d.binLabel),
         showValues: false,
+        color: '#333',
       };
     }, [
       overlayVariable,
@@ -127,29 +131,18 @@ export function BarPlotMarkerConfigurationMenu({
       selectedPlotMode: option as 'count' | 'proportion',
     });
   }
+  function handleBinningMethodSelection(option: string) {
+    onChange({
+      ...configuration,
+      binningMethod: option as
+        | 'equalInterval'
+        | 'quantile'
+        | 'standardDeviation',
+    });
+  }
 
   return (
     <div>
-      <div style={{ margin: '5px 0 0 0' }}>
-        <span style={{ fontWeight: 'bold' }}>Marker Preview:</span>
-        {overlayConfiguration?.overlayType === 'categorical' ? (
-          <MarkerPreview data={overlayConfiguration} mapType="barplot" />
-        ) : (
-          continuousMarkerPreview
-        )}
-      </div>
-      <RadioButtonGroup
-        containerStyles={{
-          marginTop: 20,
-        }}
-        label="Y-axis"
-        selectedOption={configuration.selectedPlotMode || 'count'}
-        options={['count', 'proportion']}
-        optionLabels={['Count', 'Proportion']}
-        buttonColor={'primary'}
-        margins={['0em', '0', '0', '1em']}
-        onOptionSelected={handlePlotModeSelection}
-      />
       <p
         style={{
           margin: '5px 0 0 0',
@@ -170,6 +163,67 @@ export function BarPlotMarkerConfigurationMenu({
         toggleStarredVariable={toggleStarredVariable}
         constraints={constraints}
       />
+      <div style={{ margin: '5px 0 0 0' }}>
+        <span style={{ fontWeight: 'bold' }}>
+          Summary marker (all filtered data)
+        </span>
+        {overlayConfiguration?.overlayType === 'categorical' ? (
+          <MarkerPreview data={overlayConfiguration} mapType="barplot" />
+        ) : (
+          continuousMarkerPreview
+        )}
+      </div>
+      <LabelledGroup label="Marker X-axis controls">
+        <RadioButtonGroup
+          containerStyles={
+            {
+              // marginTop: 20,
+            }
+          }
+          label="Binning method"
+          selectedOption={
+            overlayConfiguration?.overlayType === 'continuous'
+              ? configuration.binningMethod ?? 'equalMethod'
+              : ''
+          }
+          options={['equalInterval', 'quantile', 'standardDeviation']}
+          optionLabels={[
+            'Equal interval',
+            'Quantile (10)',
+            'Standard deviation',
+          ]}
+          buttonColor={'primary'}
+          // margins={['0em', '0', '0', '1em']}
+          onOptionSelected={handleBinningMethodSelection}
+          disabledList={
+            overlayConfiguration?.overlayType === 'continuous'
+              ? []
+              : ['equalInterval', 'quantile', 'standardDeviation']
+          }
+        />
+      </LabelledGroup>
+      <LabelledGroup label="Marker Y-axis controls">
+        <RadioButtonGroup
+          containerStyles={
+            {
+              // marginTop: 20,
+            }
+          }
+          label="Plot mode"
+          selectedOption={configuration.selectedPlotMode || 'count'}
+          options={['count', 'proportion']}
+          optionLabels={['Count', 'Proportion']}
+          buttonColor={'primary'}
+          // margins={['0em', '0', '0', '1em']}
+          onOptionSelected={handlePlotModeSelection}
+        />
+        <Toggle
+          label="Log scale"
+          themeRole="primary"
+          value={false}
+          onChange={() => null}
+        />
+      </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
         <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}
@@ -177,15 +231,29 @@ export function BarPlotMarkerConfigurationMenu({
           onChange={onChange}
         />
       )}
-      {overlayConfiguration?.overlayType === 'continuous' &&
-        barplotData.value && (
+      {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
+        <div style={{ margin: '5px 0 0 0' }}>
+          <span style={{ fontWeight: 'bold' }}>
+            Raw distribution of overall filtered data
+          </span>
           <Barplot
             data={{ series: [barplotData.value] }}
             barLayout="overlay"
             showValues={false}
             showIndependentAxisTickLabel={false}
+            spacingOptions={{
+              padding: 0,
+              marginLeft: 0,
+              marginRight: 0,
+              marginTop: 0,
+              marginBottom: 0,
+            }}
+            containerStyles={{
+              height: 300,
+            }}
           />
-        )}
+        </div>
+      )}
     </div>
   );
 }

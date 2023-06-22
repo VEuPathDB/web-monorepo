@@ -172,12 +172,24 @@ export function useStandaloneMapMarkers(
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
-      let overlayConfigWithoutAllValuesProperty;
-      const hasAllValuesProperty =
-        overlayConfig && 'allValues' in overlayConfig;
-      if (hasAllValuesProperty) {
-        const { allValues, ...allOtherProperties } = overlayConfig;
-        overlayConfigWithoutAllValuesProperty = allOtherProperties;
+      let overlayConfigWithoutIncompatibleProperties;
+      const INCOMPATIBLE_REQUEST_PARAMS = ['allValues', 'binningMethod'];
+      const hasIncompatibleRequestParams = Boolean(
+        overlayConfig &&
+          Object.getOwnPropertyNames(overlayConfig).find((prop) =>
+            INCOMPATIBLE_REQUEST_PARAMS.includes(prop)
+          )
+      );
+      if (overlayConfig) {
+        const incompatiblePropertiesFound = Object.getOwnPropertyNames(
+          overlayConfig
+        ).filter((prop) => INCOMPATIBLE_REQUEST_PARAMS.includes(prop));
+        const compatibleOverlayEntries = Object.entries(overlayConfig).filter(
+          (entry) => !incompatiblePropertiesFound.includes(entry[0])
+        );
+        overlayConfigWithoutIncompatibleProperties = Object.fromEntries(
+          compatibleOverlayEntries
+        ) as OverlayConfig;
       }
 
       const viewport = {
@@ -199,8 +211,8 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          overlayConfig: hasAllValuesProperty
-            ? overlayConfigWithoutAllValuesProperty
+          overlayConfig: hasIncompatibleRequestParams
+            ? overlayConfigWithoutIncompatibleProperties
             : overlayConfig,
           outputEntityId,
           valueSpec: markerType === 'pie' ? 'count' : markerType,
