@@ -104,7 +104,7 @@ enum MapSideNavItemLabels {
   Share = 'Share',
   StudyDetails = 'View Study Details',
   MyAnalyses = 'My Analyses',
-  MapType = 'Map Type',
+  ConfigureMap = 'Configure Map',
 }
 
 enum MarkerTypeLabels {
@@ -548,13 +548,13 @@ function MapAnalysisImpl(props: ImplProps) {
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: MapSideNavItemLabels.MapType,
+        labelText: MapSideNavItemLabels.ConfigureMap,
         icon: <EditLocation />,
         isExpandable: true,
         subMenuConfig: [
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
+            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
             labelText: MarkerTypeLabels.pie,
             icon: <DonutMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
@@ -562,7 +562,7 @@ function MapAnalysisImpl(props: ImplProps) {
           },
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.barplot,
+            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
             labelText: MarkerTypeLabels.barplot,
             icon: <BarPlotMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
@@ -886,7 +886,7 @@ function MapAnalysisImpl(props: ImplProps) {
 
   function isMapTypeSubMenuItemSelected() {
     const mapTypeSideNavObject = sideNavigationButtonConfigurationObjects.find(
-      (navObject) => navObject.labelText === MapSideNavItemLabels.MapType
+      (navObject) => navObject.labelText === MapSideNavItemLabels.ConfigureMap
     );
     if (
       mapTypeSideNavObject &&
@@ -919,7 +919,7 @@ function MapAnalysisImpl(props: ImplProps) {
       MarkerTypeLabels[appState.activeMarkerConfigurationType]
     )
       return (
-        MapSideNavItemLabels.MapType +
+        MapSideNavItemLabels.ConfigureMap +
         MarkerTypeLabels[appState.activeMarkerConfigurationType]
       );
 
