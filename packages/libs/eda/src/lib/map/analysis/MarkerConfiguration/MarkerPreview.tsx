@@ -1,9 +1,8 @@
-import Barplot from '@veupathdb/components/lib/plots/Barplot';
-import PiePlot from '@veupathdb/components/lib/plots/PiePlot';
 import { OverlayConfig } from '../../../core';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
+import { UNSELECTED_TOKEN } from '../../';
 
 type Props = {
   data: OverlayConfig | undefined;
@@ -32,7 +31,7 @@ export function MarkerPreview({ data, mapType }: Props) {
       label: val,
       color: ColorPaletteDefault[index],
       value:
-        val === '__UNSELECTED__'
+        val === UNSELECTED_TOKEN
           ? allOtherValuesCount
           : allValues.find((v) => v.label === val)?.count ?? 0,
     }));
