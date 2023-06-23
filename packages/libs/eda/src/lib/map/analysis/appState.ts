@@ -39,6 +39,11 @@ export const MarkerConfiguration = t.intersection([
         t.undefined,
       ]),
       dependentAxisLogScale: t.boolean,
+      selectedCountsOption: t.union([
+        t.literal('filtered'),
+        t.literal('visible'),
+        t.undefined,
+      ]),
     }),
     t.type({
       type: t.literal('pie'),
@@ -48,6 +53,11 @@ export const MarkerConfiguration = t.intersection([
         t.literal('equalInterval'),
         t.literal('quantile'),
         t.literal('standardDeviation'),
+        t.undefined,
+      ]),
+      selectedCountsOption: t.union([
+        t.literal('filtered'),
+        t.literal('visible'),
         t.undefined,
       ]),
     }),
@@ -121,6 +131,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             selectedValues: undefined,
             allValues: undefined,
             binningMethod: undefined,
+            selectedCountsOption: 'filtered',
           },
           {
             type: 'barplot',
@@ -130,6 +141,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             allValues: undefined,
             binningMethod: undefined,
             dependentAxisLogScale: false,
+            selectedCountsOption: 'filtered',
           },
         ],
       };

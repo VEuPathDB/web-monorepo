@@ -27,6 +27,7 @@ export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
   selectedValues: string[] | undefined;
   allValues: AllValuesDefinition[] | undefined;
   binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
+  selectedCountsOption: 'filtered' | 'visible' | undefined;
 }
 interface Props
   extends Omit<
@@ -185,7 +186,7 @@ export function PieMarkerConfigurationMenu({
         />
       </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
-        <CategoricalMarkerConfigurationTable
+        <CategoricalMarkerConfigurationTable<PieMarkerConfiguration>
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
           onChange={onChange}

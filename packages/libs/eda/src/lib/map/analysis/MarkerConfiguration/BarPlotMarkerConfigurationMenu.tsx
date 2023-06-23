@@ -32,6 +32,7 @@ export interface BarPlotMarkerConfiguration
   allValues: AllValuesDefinition[] | undefined;
   binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
   dependentAxisLogScale: boolean;
+  selectedCountsOption: 'filtered' | 'visible' | undefined;
 }
 
 interface Props
@@ -129,7 +130,8 @@ export function BarPlotMarkerConfigurationMenu({
   function handlePlotModeSelection(option: string) {
     onChange({
       ...configuration,
-      selectedPlotMode: option as 'count' | 'proportion',
+      selectedPlotMode:
+        option as BarPlotMarkerConfiguration['selectedPlotMode'],
     });
   }
   function handleBinningMethodSelection(option: string) {
@@ -225,7 +227,7 @@ export function BarPlotMarkerConfigurationMenu({
         />
       </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
-        <CategoricalMarkerConfigurationTable
+        <CategoricalMarkerConfigurationTable<BarPlotMarkerConfiguration>
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
           onChange={onChange}

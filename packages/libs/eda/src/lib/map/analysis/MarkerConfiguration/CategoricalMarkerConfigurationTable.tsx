@@ -2,6 +2,8 @@ import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { OverlayConfig, AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { UNSELECTED_TOKEN } from '../../';
 
 type Props<T> = {
   overlayConfiguration: OverlayConfig;
@@ -15,7 +17,7 @@ export function CategoricalMarkerConfigurationTable<T>({
   onChange,
 }: Props<T>) {
   if (overlayConfiguration.overlayType !== 'categorical') return <></>;
-  const { overlayType, overlayValues, allValues } = overlayConfiguration;
+  const { overlayValues, allValues } = overlayConfiguration;
   const selected = new Set(overlayValues);
   const totalCount = allValues.reduce((prev, curr) => prev + curr.count, 0);
 
@@ -57,6 +59,13 @@ export function CategoricalMarkerConfigurationTable<T>({
     });
   }
 
+  function handleCountsSelection(option: string) {
+    onChange({
+      ...configuration,
+      selectedCountsOption: option as 'filtered' | 'visible',
+    });
+  }
+
   const tableState = {
     options: {
       isRowSelected: (value: AllValuesDefinition) => selected.has(value.label),
@@ -73,7 +82,7 @@ export function CategoricalMarkerConfigurationTable<T>({
       onMultipleRowDeselect: () =>
         onChange({
           ...configuration,
-          selectedValues: ['__UNSELECTED__'],
+          selectedValues: [UNSELECTED_TOKEN],
           allValues,
         }),
     },
@@ -104,8 +113,41 @@ export function CategoricalMarkerConfigurationTable<T>({
     ],
   };
   return (
-    <div style={{ maxWidth: '50vw', overflowX: 'auto' }}>
-      <Mesa state={tableState} />
+    <div
+      style={{
+        padding: 15,
+        border: `1px solid rgb(204,204,204)`,
+        width: 'fit-content',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: '50vw',
+          maxHeight: 300,
+          overflow: 'auto',
+        }}
+      >
+        <Mesa state={tableState} />
+      </div>
+      <RadioButtonGroup
+        containerStyles={
+          {
+            // marginTop: 20,
+          }
+        }
+        label="Show counts for:"
+        // @ts-ignore
+        selectedOption={
+          configuration.selectedCountsOption == null
+            ? 'filtered'
+            : configuration.selectedCountsOption
+        }
+        options={['filtered', 'visible']}
+        optionLabels={['Filtered', 'Visible']}
+        buttonColor={'primary'}
+        // margins={['0em', '0', '0', '1em']}
+        onOptionSelected={handleCountsSelection}
+      />
     </div>
   );
 }
