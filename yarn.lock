@@ -7998,6 +7998,7 @@ __metadata:
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/tsconfig": "workspace:^"
     "@visx/axis": ^3.1.0
+    "@visx/brush": ^3.0.1
     "@visx/gradient": ^1.0.0
     "@visx/group": ^1.0.0
     "@visx/hierarchy": ^1.0.0
@@ -8988,6 +8989,23 @@ __metadata:
   peerDependencies:
     react: ^15.0.0-0 || ^16.0.0-0
   checksum: 88e2e18d3ba3087b51ca1b5edc41938fdf0163811248f71a85efffc5097214edcb874ee41878d634a90dc9aaa60b40a27f20db0aca989ea714e4d4e52f9f4f3a
+  languageName: node
+  linkType: hard
+
+"@visx/brush@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@visx/brush@npm:3.0.1"
+  dependencies:
+    "@visx/drag": 3.0.1
+    "@visx/event": 3.0.1
+    "@visx/group": 3.0.0
+    "@visx/scale": 3.0.0
+    "@visx/shape": 3.0.0
+    classnames: ^2.3.1
+    prop-types: ^15.6.1
+  peerDependencies:
+    react: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+  checksum: 7e7d5a4b9663ca8b623245e7ba4dc63eeee912ca28cf0fff9ca15672e24984a2445b45fd8e8281ad309621dac0e7bad5413eedb1a93da66eba9572f0c75bfb03
   languageName: node
   linkType: hard
 
