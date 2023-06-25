@@ -45,7 +45,7 @@ import TwoByTwoSVG from './selectorIcons/TwoByTwoSVG';
 import RxCSVG from './selectorIcons/RxCSVG';
 import { TabbedDisplay } from '@veupathdb/coreui';
 import { Table } from '@veupathdb/coreui';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
@@ -66,11 +66,11 @@ import FacetedMosaicPlot from '@veupathdb/components/lib/plots/facetedPlots/Face
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { LayoutOptions } from '../../layouts/types';
-import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useInputStyles } from '../inputStyles';
 import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 /**
  * Note: When options.hideFacetInputs is true, the mosaic plot is not shown.

@@ -12,7 +12,7 @@ import { makeSearchHelpText } from '../../Utils/SearchUtils';
 import CheckboxTree, {
   LinksPosition,
   CheckboxTreeStyleSpec,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import {
   getFilteredNodeChildren,
   nodeSearchPredicateWithHiddenNodes,

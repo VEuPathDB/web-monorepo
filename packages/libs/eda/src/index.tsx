@@ -47,12 +47,12 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import MapApp from './lib/map';
 import WorkspaceApp from './lib/workspace';
-import CoreUIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
+import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 import { workspaceThemeOptions as MUIThemeOptions } from './lib/workspaceTheme';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
+import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
 
 // Definitions
 import { colors, H3 } from '@veupathdb/coreui';
@@ -60,7 +60,7 @@ import { colors, H3 } from '@veupathdb/coreui';
 import './index.css';
 
 // snackbar
-import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
 
 // Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
 // Otherwise, let singleAppMode remain undefined or set it to '' to allow multiple app instances.

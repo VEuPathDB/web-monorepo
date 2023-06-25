@@ -14,7 +14,7 @@ import {
 import {
   LinksPosition,
   CheckboxTreeStyleSpec,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import {

@@ -390,7 +390,8 @@ export const Standalone: Story<MapVEuMapProps> = () => {
       ]}
       cumulative={true}
       isAtomic={false}
-      markerScale={1}
+      // testing markerScale
+      markerScale={3}
       containerStyles={{ margin: '10px' }}
     />
   );
