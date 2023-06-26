@@ -3,7 +3,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 import { UNSELECTED_TOKEN } from '../../';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 type Props = {
   data: OverlayConfig | undefined;
