@@ -9,33 +9,43 @@ type Props<T> = {
   overlayConfiguration: OverlayConfig;
   onChange: (configuration: T) => void;
   configuration: T;
+  uncontrolledSelections: Set<string>;
+  setUncontrolledSelections: (v: Set<string>) => void;
 };
 
 export function CategoricalMarkerConfigurationTable<T>({
   overlayConfiguration,
   configuration,
   onChange,
+  uncontrolledSelections,
+  setUncontrolledSelections,
 }: Props<T>) {
   if (overlayConfiguration.overlayType !== 'categorical') return <></>;
   const { overlayValues, allValues } = overlayConfiguration;
-  const selected = new Set(overlayValues);
+  const controlledSelections = new Set(overlayValues);
   const totalCount = allValues.reduce((prev, curr) => prev + curr.count, 0);
 
   function handleSelection(data: AllValuesDefinition) {
     if (overlayValues.length <= ColorPaletteDefault.length - 1) {
-      if (selected.has(data.label)) return;
+      if (
+        uncontrolledSelections.has(data.label) ||
+        controlledSelections.has(data.label)
+      )
+        return;
+      const nextSelections = new Set(uncontrolledSelections);
+      nextSelections.add(data.label);
+      setUncontrolledSelections(nextSelections);
       if (allValues.length > ColorPaletteDefault.length) {
-        /**
-         * This logic ensures that the "All other values" label:
-         *  1. renders as the last overlayValue value
-         *  2. renders as the last legend item
-         */
-        const allOtherValuesItem = [...overlayValues].pop() ?? '';
         onChange({
           ...configuration,
+          /**
+           * This logic ensures that the "All other values" label:
+           *  1. renders as the last overlayValue value
+           *  2. renders as the last legend item
+           */
           selectedValues: overlayValues
             .slice(0, overlayValues.length - 1)
-            .concat(data.label, allOtherValuesItem),
+            .concat(data.label, UNSELECTED_TOKEN),
           allValues,
         });
       } else {
@@ -46,17 +56,29 @@ export function CategoricalMarkerConfigurationTable<T>({
         });
       }
     } else {
-      // TODO: how do we want to handle these selections?
-      alert(`Only ${ColorPaletteDefault.length - 1} values can be selected`);
+      const nextSelections = new Set(uncontrolledSelections);
+      nextSelections.add(data.label);
+      setUncontrolledSelections(nextSelections);
     }
   }
 
   function handleDeselection(data: AllValuesDefinition) {
-    onChange({
-      ...configuration,
-      selectedValues: overlayValues.filter((val) => val !== data.label),
-      allValues,
-    });
+    const nextSelections = new Set(uncontrolledSelections);
+    nextSelections.delete(data.label);
+    if (nextSelections.size <= ColorPaletteDefault.length) {
+      // remove "All other values" label, then add it back to the end;
+      // this ensures it's always the last item in the legend
+      nextSelections.delete(UNSELECTED_TOKEN);
+      nextSelections.add(UNSELECTED_TOKEN);
+      const newSelectedValues: string[] = [];
+      nextSelections.forEach((v) => newSelectedValues.push(v));
+      onChange({
+        ...configuration,
+        selectedValues: newSelectedValues,
+        allValues,
+      });
+    }
+    setUncontrolledSelections(nextSelections);
   }
 
   function handleCountsSelection(option: string) {
@@ -68,23 +90,31 @@ export function CategoricalMarkerConfigurationTable<T>({
 
   const tableState = {
     options: {
-      isRowSelected: (value: AllValuesDefinition) => selected.has(value.label),
+      isRowSelected: (value: AllValuesDefinition) =>
+        uncontrolledSelections.has(value.label),
     },
     eventHandlers: {
       onRowSelect: handleSelection,
       onRowDeselect: handleDeselection,
-      onMultipleRowSelect: () =>
-        onChange({
-          ...configuration,
-          selectedValues: allValues.map((v) => v.label),
-          allValues,
-        }),
-      onMultipleRowDeselect: () =>
+      onMultipleRowSelect: () => {
+        const nextSelections = new Set(allValues.map((v) => v.label));
+        setUncontrolledSelections(nextSelections);
+        if (nextSelections.size <= ColorPaletteDefault.length - 1) {
+          onChange({
+            ...configuration,
+            selectedValues: allValues.map((v) => v.label),
+            allValues,
+          });
+        }
+      },
+      onMultipleRowDeselect: () => {
+        setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
         onChange({
           ...configuration,
           selectedValues: [UNSELECTED_TOKEN],
           allValues,
-        }),
+        });
+      },
     },
     actions: [],
     rows: allValues as AllValuesDefinition[],
@@ -136,11 +166,12 @@ export function CategoricalMarkerConfigurationTable<T>({
           }
         }
         label="Show counts for:"
-        // @ts-ignore
         selectedOption={
+          // @ts-ignore
           configuration.selectedCountsOption == null
             ? 'filtered'
-            : configuration.selectedCountsOption
+            : // @ts-ignore
+              configuration.selectedCountsOption
         }
         options={['filtered', 'visible']}
         optionLabels={['Filtered', 'Visible']}

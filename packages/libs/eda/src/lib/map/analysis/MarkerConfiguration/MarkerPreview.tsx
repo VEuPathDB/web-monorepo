@@ -3,10 +3,12 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 import { UNSELECTED_TOKEN } from '../../';
+import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
 
 type Props = {
   data: OverlayConfig | undefined;
   mapType: 'barplot' | 'pie';
+  numberSelected: number;
 };
 
 export const sharedStandaloneMarkerProperties = {
@@ -18,10 +20,12 @@ export const sharedStandaloneMarkerProperties = {
   },
 };
 
-export function MarkerPreview({ data, mapType }: Props) {
+export function MarkerPreview({ data, mapType, numberSelected }: Props) {
   if (!data) return <></>;
   if (data.overlayType === 'categorical') {
     const { overlayValues, allValues } = data;
+    const showTooManySelectionsOverlay =
+      numberSelected > ColorPaletteDefault.length - 1;
     const allOtherValuesCount = allValues.reduce(
       (prev, curr) =>
         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
@@ -37,17 +41,35 @@ export function MarkerPreview({ data, mapType }: Props) {
     }));
     if (mapType === 'barplot') {
       return (
-        <ChartMarkerStandalone
-          data={plotData}
-          {...sharedStandaloneMarkerProperties}
-        />
+        <div
+          style={{
+            position: 'relative',
+          }}
+        >
+          {showTooManySelectionsOverlay && (
+            <TooManySelectionsOverlay numberSelected={numberSelected} />
+          )}
+          <ChartMarkerStandalone
+            data={plotData}
+            {...sharedStandaloneMarkerProperties}
+          />
+        </div>
       );
     } else if (mapType === 'pie') {
       return (
-        <DonutMarkerStandalone
-          data={plotData}
-          {...sharedStandaloneMarkerProperties}
-        />
+        <div
+          style={{
+            position: 'relative',
+          }}
+        >
+          {showTooManySelectionsOverlay && (
+            <TooManySelectionsOverlay numberSelected={numberSelected} />
+          )}
+          <DonutMarkerStandalone
+            data={plotData}
+            {...sharedStandaloneMarkerProperties}
+          />
+        </div>
       );
     } else {
       return null;
@@ -55,4 +77,41 @@ export function MarkerPreview({ data, mapType }: Props) {
   } else {
     return null;
   }
+}
+
+function TooManySelectionsOverlay({
+  numberSelected,
+}: {
+  numberSelected: number;
+}) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <Banner
+        banner={{
+          type: 'warning',
+          message: (
+            <>
+              <p style={{ margin: 0 }}>Please select fewer values.</p>
+              <p style={{ margin: 0, marginTop: '0.5em' }}>
+                Only {ColorPaletteDefault.length - 1} values may be selected.
+                You have selected {numberSelected} values.
+              </p>
+            </>
+          ),
+          spacing: {
+            margin: 0,
+          },
+        }}
+      />
+    </div>
+  );
 }

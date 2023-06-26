@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -60,6 +60,18 @@ export function PieMarkerConfigurationMenu({
   filters,
   continuousMarkerPreview,
 }: Props) {
+  const [uncontrolledSelections, setUncontrolledSelections] = useState(
+    new Set(
+      overlayConfiguration?.overlayType === 'categorical'
+        ? overlayConfiguration?.overlayValues
+        : undefined
+    )
+  );
+  useEffect(() => {
+    if (overlayConfiguration?.overlayType !== 'categorical') return;
+    setUncontrolledSelections(new Set(overlayConfiguration?.overlayValues));
+  }, [overlayConfiguration?.overlayValues, overlayConfiguration?.overlayType]);
+
   const barplotData = usePromise(
     useCallback(async () => {
       if (
@@ -155,7 +167,11 @@ export function PieMarkerConfigurationMenu({
           Summary marker (all filtered data)
         </span>
         {overlayConfiguration?.overlayType === 'categorical' ? (
-          <MarkerPreview data={overlayConfiguration} mapType="pie" />
+          <MarkerPreview
+            data={overlayConfiguration}
+            mapType="pie"
+            numberSelected={uncontrolledSelections.size - 1}
+          />
         ) : (
           continuousMarkerPreview
         )}
@@ -190,6 +206,8 @@ export function PieMarkerConfigurationMenu({
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
           onChange={onChange}
+          uncontrolledSelections={uncontrolledSelections}
+          setUncontrolledSelections={setUncontrolledSelections}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

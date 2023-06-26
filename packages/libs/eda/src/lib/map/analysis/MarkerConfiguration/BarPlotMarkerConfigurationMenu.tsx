@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -66,6 +66,18 @@ export function BarPlotMarkerConfigurationMenu({
   filters,
   continuousMarkerPreview,
 }: Props) {
+  const [uncontrolledSelections, setUncontrolledSelections] = useState(
+    new Set(
+      overlayConfiguration?.overlayType === 'categorical'
+        ? overlayConfiguration?.overlayValues
+        : undefined
+    )
+  );
+  useEffect(() => {
+    if (overlayConfiguration?.overlayType !== 'categorical') return;
+    setUncontrolledSelections(new Set(overlayConfiguration?.overlayValues));
+  }, [overlayConfiguration?.overlayValues, overlayConfiguration?.overlayType]);
+
   const barplotData = usePromise(
     useCallback(async () => {
       if (
@@ -174,7 +186,13 @@ export function BarPlotMarkerConfigurationMenu({
           Summary marker (all filtered data)
         </span>
         {overlayConfiguration?.overlayType === 'categorical' ? (
-          <MarkerPreview data={overlayConfiguration} mapType="barplot" />
+          <>
+            <MarkerPreview
+              data={overlayConfiguration}
+              mapType="barplot"
+              numberSelected={uncontrolledSelections.size - 1}
+            />
+          </>
         ) : (
           continuousMarkerPreview
         )}
@@ -231,6 +249,8 @@ export function BarPlotMarkerConfigurationMenu({
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
           onChange={onChange}
+          uncontrolledSelections={uncontrolledSelections}
+          setUncontrolledSelections={setUncontrolledSelections}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (
