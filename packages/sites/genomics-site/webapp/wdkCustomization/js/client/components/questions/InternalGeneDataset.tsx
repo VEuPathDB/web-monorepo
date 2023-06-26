@@ -18,7 +18,7 @@ import { TabbedDisplay } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import QuestionController, {
   useSetSearchDocumentTitle,
-  OwnProps as Props,
+  Props,
 } from '@veupathdb/wdk-client/lib/Controllers/QuestionController';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
