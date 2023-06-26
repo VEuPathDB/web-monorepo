@@ -17,7 +17,7 @@
     "@veupathdb/prettier-config": "workspace:^",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
-    "nx": "15.3.3"
+    "nx": "16.3.2"
   },
   "prettier": "@veupathdb/prettier-config",
   "lint-staged": {

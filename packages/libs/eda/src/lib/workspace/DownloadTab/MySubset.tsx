@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/coreui';
 
 // Hooks
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 // Definitions
 import {

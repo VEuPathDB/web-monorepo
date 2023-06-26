@@ -9,7 +9,7 @@ import {
   useSnackbar,
 } from 'notistack';
 
-import DismissButton from '@veupathdb/coreui/dist/components/notifications/DismissButton';
+import DismissButton from '@veupathdb/coreui/lib/components/notifications/DismissButton';
 
 import { enqueueSnackbar } from '../../Actions/NotificationActions';
 import { Link } from '../../Components';

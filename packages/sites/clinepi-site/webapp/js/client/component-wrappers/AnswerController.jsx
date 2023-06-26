@@ -10,7 +10,7 @@ import {
   useDiyStudySummaryRows,
 } from '@veupathdb/web-common/lib/hooks/diyStudySummaries';
 
-import DataGrid from '@veupathdb/coreui/dist/components/grids/DataGrid';
+import DataGrid from '@veupathdb/coreui/lib/components/grids/DataGrid';
 
 import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 

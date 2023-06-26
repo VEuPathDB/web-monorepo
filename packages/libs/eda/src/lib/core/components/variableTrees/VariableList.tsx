@@ -21,8 +21,8 @@ import {
   preorderSeq,
   pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import SelectTree from '@veupathdb/coreui/dist/components/inputs/SelectTree/SelectTree';
-import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import SelectTree from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
+import CheckboxTree from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   isFilterField,
@@ -48,9 +48,9 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
-import { CustomCheckboxes } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
+import { CustomCheckboxes } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
 import { Toggle } from '@veupathdb/coreui';
-import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLink, VariableLinkConfig } from '../VariableLink';
 
 const baseFieldNodeLinkStyle = {
@@ -958,8 +958,10 @@ const FieldNode = ({
         isMultiPick
           ? ''
           : isDisabled
-          ? customDisabledVariableMessage ??
-            'This variable cannot be used with this plot and other variable selections.'
+          ? (customDisabledVariableMessage
+              ? customDisabledVariableMessage
+              : 'This variable cannot be used with this plot and other variable selections.') +
+            ' Muti-valued variables are not currently supported.'
           : 'Select this variable.'
       }
       className={

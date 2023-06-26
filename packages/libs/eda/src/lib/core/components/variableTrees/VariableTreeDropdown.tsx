@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Tooltip } from '@material-ui/core';
 
-import { Cancel } from '@veupathdb/coreui/dist/assets/icons';
-import { gray, red } from '@veupathdb/coreui/dist/definitions/colors';
+import { Cancel } from '@veupathdb/coreui/lib/assets/icons';
+import { gray, red } from '@veupathdb/coreui/lib/definitions/colors';
 
 import VariableTree, { VariableTreeProps } from './VariableTree';
 

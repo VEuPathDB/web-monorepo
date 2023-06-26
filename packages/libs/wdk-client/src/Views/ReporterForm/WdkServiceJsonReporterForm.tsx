@@ -14,7 +14,7 @@ import {
   getAttributesChangeHandler,
   getTableTree,
 } from '../../Views/ReporterForm/reporterUtils';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 type Props<T, U> = {
   scope: string;

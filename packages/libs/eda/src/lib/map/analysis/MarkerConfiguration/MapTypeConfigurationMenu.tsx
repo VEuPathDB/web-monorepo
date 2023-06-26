@@ -3,7 +3,7 @@ import { H5 } from '@veupathdb/coreui';
 import { MarkerConfiguration } from '../appState';
 import TabbedDisplay, {
   TabbedDisplayProps,
-} from '@veupathdb/coreui/dist/components/grids/TabbedDisplay';
+} from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 
 export interface MarkerConfigurationOption {
   displayName: string;

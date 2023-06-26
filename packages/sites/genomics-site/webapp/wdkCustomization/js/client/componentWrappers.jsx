@@ -36,7 +36,7 @@ import {
 
 import { workspaceThemeOptions as MUIThemeOptions } from '@veupathdb/eda/lib/workspaceTheme';
 
-import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
+import UIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
 import { colors } from '@veupathdb/coreui';
 
 export const SiteHeader = () => ApiSiteHeader;
@@ -524,3 +524,5 @@ export function Page() {
 export { SiteSearchInput } from './component-wrappers/SiteSearchInput';
 
 export { AnswerController } from './component-wrappers/AnswerController';
+
+export { QuestionController } from './component-wrappers/QuestionController';
