@@ -14,7 +14,10 @@ import { VisualizationPlugin } from '../../../core/components/visualizations/Vis
 import { histogramVisualization } from '../../../core/components/visualizations/implementations/HistogramVisualization';
 import { contTableVisualization } from '../../../core/components/visualizations/implementations/MosaicVisualization';
 import { scatterplotVisualization } from '../../../core/components/visualizations/implementations/ScatterplotVisualization';
-import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
+import {
+  lineplotVisualization,
+  timelineplotVisualization,
+} from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
 import { BinDefinitions, OverlayConfig } from '../../../core';
@@ -35,15 +38,14 @@ export function useStandaloneVizPlugins({
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
-      visualization: VisualizationPlugin<StandaloneVizOptions>
+      visualization: VisualizationPlugin<StandaloneVizOptions>,
+      // optional showMarginalHistogram prop: set default showMarginalHistogram to be false
+      showMarginalHistogram = false
     ) {
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
-        // TODO: need to distinguish lineplot from lineplot with marginal histogram?
-        // perhaps need to make another function only for lineplot with marginal histogram
-        // or define xxx.withOptions({}) directly at corresponding visualizationPlugins below
-        showMarginalHistogram: false,
+        showMarginalHistogram: showMarginalHistogram,
         layoutComponent: FloatingLayout,
         // why are we providing three functions to access the properties of
         // one object? Because in the pre-SAM world, getOverlayVariable was already
@@ -106,6 +108,12 @@ export function useStandaloneVizPlugins({
           ),
           lineplot: vizWithCustomizedGetRequest(
             vizWithOptions(lineplotVisualization),
+            lineplotRequest
+          ),
+          // activate timeplot Viz
+          timeseries: vizWithCustomizedGetRequest(
+            // use timelineplotVisualization and set showMarginalHistogram to be true
+            vizWithOptions(timelineplotVisualization, true),
             lineplotRequest
           ),
         },
