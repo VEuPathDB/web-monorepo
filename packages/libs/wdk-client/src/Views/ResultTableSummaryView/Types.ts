@@ -45,6 +45,8 @@ export type RequestPageSizeUpdate = (pageSize: number) => void;
 
 export type ViewPageNumber = (pageNumber: number) => void;
 
+export type UpdateInBasketFilter = (enabled: boolean) => void;
+
 export type ShowHideAddColumnsDialog = (show: boolean) => void;
 
 export type UpdateColumnsDialogSelection = (attributes: string[]) => void;

@@ -17,6 +17,7 @@ import {
   updateColumnsDialogSearchString,
   updateColumnsDialogExpandedNodes,
   updateSelectedIds,
+  updateInBasketFilter,
 } from '../Actions/SummaryView/ResultTableSummaryViewActions';
 import {
   requestUpdateBasket,
@@ -49,6 +50,7 @@ interface StateProps {
     question?: Question;
     userIsGuest: boolean;
     errorMessage?: string;
+    inBasketFilterEnabled: boolean;
   };
 }
 type DispatchProps = {
@@ -72,6 +74,7 @@ type DispatchProps = {
   >;
   updateSelectedIds: Partial1<typeof updateSelectedIds>;
   viewPageNumber: Partial1<typeof viewPageNumber>;
+  updateInBasketFilter: Partial1<typeof updateInBasketFilter>;
 };
 
 type OwnProps = {
@@ -200,6 +203,9 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
       userIsGuest: state.globalData.user
         ? state.globalData.user.isGuest
         : false,
+      inBasketFilterEnabled:
+        state.resultTableSummaryView[props.viewId]?.inBaskeFilterEnabled ??
+        false,
       errorMessage,
     },
   };
@@ -236,6 +242,7 @@ function mapDispatchToProps(
       ),
       updateSelectedIds: partial(updateSelectedIds, viewId),
       viewPageNumber: partial(viewPageNumber, viewId),
+      updateInBasketFilter: partial(updateInBasketFilter, viewId),
     },
     dispatch
   );

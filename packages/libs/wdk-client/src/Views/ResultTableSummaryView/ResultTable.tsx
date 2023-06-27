@@ -23,6 +23,7 @@ import {
   RequestUpdateBasket,
   RequestAddStepToBasket,
   ViewPageNumber,
+  UpdateInBasketFilter,
   RequestPageSizeUpdate,
   ShowHideAddColumnsDialog,
   OpenAttributeAnalysis,
@@ -45,11 +46,13 @@ export interface Props {
   question: Question;
   userIsGuest: boolean;
   basketStatusArray?: BasketStatusArray;
+  inBasketFilterEnabled: boolean;
   requestSortingUpdate: RequestSortingUpdate;
   requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
   requestUpdateBasket: RequestUpdateBasket;
   requestAddStepToBasket: RequestAddStepToBasket;
   viewPageNumber: ViewPageNumber;
+  updateInBasketFilter: UpdateInBasketFilter;
   requestPageSizeUpdate: RequestPageSizeUpdate;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   openAttributeAnalysis: OpenAttributeAnalysis;
@@ -76,6 +79,8 @@ function ResultTable(props: Props) {
     selectedIds,
     userIsGuest,
     showLoginWarning,
+    updateInBasketFilter,
+    inBasketFilterEnabled,
     renderToolbarContent = defaultRenderToolbarContent,
   } = props;
   const columns = getColumns(props);
@@ -173,6 +178,16 @@ function ResultTable(props: Props) {
 
   return (
     <Mesa state={tableState}>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={inBasketFilterEnabled}
+            onChange={(e) => updateInBasketFilter(e.currentTarget.checked)}
+          />
+          &nbsp; Only show {recordClass.displayNamePlural} in your basket.
+        </label>
+      </div>
       {renderToolbarContent({
         addColumnsNode,
         addToBasketNode,

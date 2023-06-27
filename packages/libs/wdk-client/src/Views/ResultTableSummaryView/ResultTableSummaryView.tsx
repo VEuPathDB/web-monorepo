@@ -12,6 +12,7 @@ import {
   RequestAddStepToBasket,
   RequestPageSizeUpdate,
   ViewPageNumber,
+  UpdateInBasketFilter,
   ShowHideAddColumnsDialog,
   UpdateColumnsDialogExpandedNodes,
   UpdateColumnsDialogSelection,
@@ -48,12 +49,14 @@ interface Props {
   columnsDialogSearchString?: string;
   columnsDialogExpandedNodes?: string[];
   columnsTree?: CategoryTreeNode;
+  inBasketFilterEnabled: boolean;
   requestSortingUpdate: RequestSortingUpdate;
   requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
   requestUpdateBasket: RequestUpdateBasket;
   requestAddStepToBasket: RequestAddStepToBasket;
   requestPageSizeUpdate: RequestPageSizeUpdate;
   viewPageNumber: ViewPageNumber;
+  updateInBasketFilter: UpdateInBasketFilter;
   viewId: string;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   updateColumnsDialogSelection: UpdateColumnsDialogSelection;
@@ -86,6 +89,8 @@ export default function ResultTableSummaryView({
   requestAddStepToBasket,
   requestPageSizeUpdate,
   viewPageNumber,
+  inBasketFilterEnabled,
+  updateInBasketFilter,
   viewId,
   showHideAddColumnsDialog,
   columnsDialogExpandedNodes,
@@ -149,6 +154,8 @@ export default function ResultTableSummaryView({
           closeAttributeAnalysis={closeAttributeAnalysis}
           updateSelectedIds={updateSelectedIds}
           showLoginWarning={showLoginWarning}
+          updateInBasketFilter={updateInBasketFilter}
+          inBasketFilterEnabled={inBasketFilterEnabled}
         />
       ) : null}
     </div>
