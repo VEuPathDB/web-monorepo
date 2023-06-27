@@ -22,13 +22,14 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import UserMenu from '../../App/UserMenu';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
-import { SiteSearchInput } from '../../components/SiteSearch/SiteSearchInput';
+import { SiteSearchInput } from '../SiteSearch/SiteSearchInput';
 
 import { webAppUrl } from '../../config';
 
 import { combineClassNames } from './Utils';
 
 import './Header.scss';
+import { SITE_SEARCH_ROUTE } from '../SiteSearch/SiteSearchConstants';
 
 const cx = makeClassNameHelper('ebrc-Header');
 
@@ -194,7 +195,7 @@ const HeaderView = withRouter(
             dismissSubmenus={dismissSubmenus}
           />
         </div>
-        <SiteSearchInput />
+        <SiteSearchInput siteSearchURL={webAppUrl + SITE_SEARCH_ROUTE} />
         <UserMenu webAppUrl={webAppUrl} user={user} actions={actions} />
         <SocialMediaLinks
           showAnnouncementsToggle={showAnnouncementsToggle}
