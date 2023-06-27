@@ -211,7 +211,7 @@ function constrainLongitudeToMainWorld({
   // but we need to make sure that west is slightly greater than east
   // so that they "wrap around" the whole globe
   // (if west was slightly less than east, it would represent a very tiny sliver)
-  if (newWest === newEast || newWest < newEast) newWest = newEast + 1e-8;
+  if (Math.abs(newEast - newWest) < 1e-8) newWest = newEast + 1e-8;
 
   return {
     southWest: { lat: south, lng: newWest },
