@@ -193,14 +193,6 @@ export const lineplotVisualization = createVisualizationPlugin({
   createDefaultConfig: createDefaultConfig,
 });
 
-// define timelineplotVisualization for changing SVG icon for timeline plot
-export const timelineplotVisualization = createVisualizationPlugin({
-  //TODO: need TimelineSVG icon
-  selectorIcon: LineSVG,
-  fullscreenComponent: LineplotViz,
-  createDefaultConfig: createDefaultConfig,
-});
-
 // Display names to internal names
 const valueSpecLookup: Record<
   string,

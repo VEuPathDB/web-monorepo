@@ -14,10 +14,7 @@ import { VisualizationPlugin } from '../../../core/components/visualizations/Vis
 import { histogramVisualization } from '../../../core/components/visualizations/implementations/HistogramVisualization';
 import { contTableVisualization } from '../../../core/components/visualizations/implementations/MosaicVisualization';
 import { scatterplotVisualization } from '../../../core/components/visualizations/implementations/ScatterplotVisualization';
-import {
-  lineplotVisualization,
-  timelineplotVisualization,
-} from '../../../core/components/visualizations/implementations/LineplotVisualization';
+import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
 import { BinDefinitions, OverlayConfig } from '../../../core';
@@ -26,6 +23,8 @@ import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
 import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
+//TO DO import timeline SVGIcon
+import LineSVG from '../../../core/components/visualizations/implementations/selectorIcons/LineSVG';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -38,14 +37,11 @@ export function useStandaloneVizPlugins({
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
-      visualization: VisualizationPlugin<StandaloneVizOptions>,
-      // optional showMarginalHistogram prop: set default showMarginalHistogram to be false
-      showMarginalHistogram = false
+      visualization: VisualizationPlugin<StandaloneVizOptions>
     ) {
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
-        showMarginalHistogram: showMarginalHistogram,
         layoutComponent: FloatingLayout,
         // why are we providing three functions to access the properties of
         // one object? Because in the pre-SAM world, getOverlayVariable was already
@@ -110,10 +106,17 @@ export function useStandaloneVizPlugins({
             vizWithOptions(lineplotVisualization),
             lineplotRequest
           ),
-          // activate timeplot Viz
+          // activate timeline Viz
           timeseries: vizWithCustomizedGetRequest(
-            // use timelineplotVisualization and set showMarginalHistogram to be true
-            vizWithOptions(timelineplotVisualization, true),
+            vizWithOptions(
+              vizWithOptions(
+                lineplotVisualization
+                  .withOptions({
+                    showMarginalHistogram: true,
+                  })
+                  .withSelectorIcon(LineSVG)
+              )
+            ),
             lineplotRequest
           ),
         },
