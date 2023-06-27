@@ -50,7 +50,7 @@ export async function getDefaultOverlayConfig(
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
-      const { mostFrequentValues, allValues } = await getValues({
+      const overlayValues = await getMostFrequentValues({
         studyId: studyId,
         ...overlayVariableDescriptor,
         filters: filters ?? [],
@@ -61,8 +61,7 @@ export async function getDefaultOverlayConfig(
       return {
         overlayType: 'categorical',
         overlayVariable: overlayVariableDescriptor,
-        overlayValues: mostFrequentValues,
-        allValues,
+        overlayValues,
       };
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
       // continuous
@@ -85,7 +84,7 @@ export async function getDefaultOverlayConfig(
   }
 }
 
-type GetValuesProps = {
+type GetMostFrequentValuesProps = {
   studyId: string;
   variableId: string;
   entityId: string;
@@ -94,26 +93,15 @@ type GetValuesProps = {
   subsettingClient: SubsettingClient;
 };
 
-type OverlayValue = {
-  label: string;
-  count: number;
-};
-
-type OverlayValues = {
-  mostFrequentValues: string[];
-  allValues: OverlayValue[];
-};
-
-// get the most frequent values for the entire dataset, no filters at all
-// (for now at least)
-async function getValues({
+// get the most frequent values for the entire dataset
+async function getMostFrequentValues({
   studyId,
   variableId,
   entityId,
   filters,
   numValues,
   subsettingClient,
-}: GetValuesProps): Promise<OverlayValues> {
+}: GetMostFrequentValuesProps): Promise<string[]> {
   const distributionResponse = await subsettingClient.getDistribution(
     studyId,
     entityId,
@@ -126,21 +114,11 @@ async function getValues({
 
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
-    .map((bin) => ({
-      label: bin.binLabel,
-      count: bin.value,
-    }));
+    .map((bin) => bin.binLabel);
 
-  return {
-    mostFrequentValues:
-      sortedValues.length <= numValues
-        ? sortedValues.map((bin) => bin.label)
-        : [
-            ...sortedValues.map((bin) => bin.label).slice(0, numValues),
-            UNSELECTED_TOKEN,
-          ],
-    allValues: sortedValues,
-  };
+  return sortedValues.length <= numValues
+    ? sortedValues
+    : [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
 }
 
 type GetBinRangesProps = {

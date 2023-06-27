@@ -783,7 +783,6 @@ export const OverlayConfig = intersection([
     type({
       overlayType: literal('categorical'),
       overlayValues: array(string),
-      allValues: array(AllValuesDefinition),
     }),
     type({
       overlayType: literal('continuous'),
@@ -800,7 +799,7 @@ export interface StandaloneMapMarkersRequestParams {
     geoAggregateVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
-    overlayConfig?: Omit<OverlayConfig, 'allValues' | 'binningMethod'>;
+    overlayConfig?: Omit<OverlayConfig, 'binningMethod'>;
     valueSpec: 'count' | 'proportion';
     viewport: {
       latitude: {

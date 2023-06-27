@@ -172,32 +172,6 @@ export function useStandaloneMapMarkers(
         southWest: { lat: xMin, lng: left },
       } = boundsZoomLevel.bounds;
 
-      /**
-       * The backend will throw an error if the overlayConfig object has an unexpected
-       * property in the request. Currently I'm only needing to remove the allValues property
-       * but I've refactored in such a way that I could remove all properties listed in the
-       * INCOMPATIBLE_REQUEST_PARAMS array.
-       */
-      let overlayConfigWithoutIncompatibleProperties;
-      const INCOMPATIBLE_REQUEST_PARAMS = ['allValues'];
-      const hasIncompatibleRequestParams = Boolean(
-        overlayConfig &&
-          Object.getOwnPropertyNames(overlayConfig).find((prop) =>
-            INCOMPATIBLE_REQUEST_PARAMS.includes(prop)
-          )
-      );
-      if (overlayConfig) {
-        const incompatiblePropertiesFound = Object.getOwnPropertyNames(
-          overlayConfig
-        ).filter((prop) => INCOMPATIBLE_REQUEST_PARAMS.includes(prop));
-        const compatibleOverlayEntries = Object.entries(overlayConfig).filter(
-          (entry) => !incompatiblePropertiesFound.includes(entry[0])
-        );
-        overlayConfigWithoutIncompatibleProperties = Object.fromEntries(
-          compatibleOverlayEntries
-        ) as OverlayConfig;
-      }
-
       const viewport = {
         latitude: {
           xMin: isMarkerPreview ? -90 : xMin,
@@ -217,9 +191,7 @@ export function useStandaloneMapMarkers(
           geoAggregateVariable,
           latitudeVariable,
           longitudeVariable,
-          overlayConfig: hasIncompatibleRequestParams
-            ? overlayConfigWithoutIncompatibleProperties
-            : overlayConfig,
+          overlayConfig,
           outputEntityId,
           valueSpec: markerType === 'pie' ? 'count' : markerType,
           viewport,
