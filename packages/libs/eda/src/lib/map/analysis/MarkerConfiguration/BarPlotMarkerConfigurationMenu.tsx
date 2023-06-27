@@ -14,7 +14,7 @@ import {
   Filter,
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
-import { MarkerPreview } from './CategoricalMarkerPreview';
+import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -29,7 +29,6 @@ export interface BarPlotMarkerConfiguration
   selectedVariable: VariableDescriptor;
   selectedValues: OverlayConfig['overlayValues'] | undefined;
   selectedPlotMode: 'count' | 'proportion';
-  allValues: AllValuesDefinition[] | undefined;
   binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
   dependentAxisLogScale: boolean;
   selectedCountsOption: 'filtered' | 'visible' | undefined;
@@ -48,6 +47,14 @@ interface Props
   studyId: string;
   filters: Filter[] | undefined;
   continuousMarkerPreview: JSX.Element | undefined;
+  /**
+   * Always used for categorical marker preview. Also used in categorical table if selectedCountsOption is 'filtered'
+   */
+  allFilteredCategoricalValues: AllValuesDefinition[] | undefined;
+  /**
+   * Only defined and used in categorical table if selectedCountsOption is 'visible'
+   */
+  allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
 }
 
 // TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repitition...
@@ -65,6 +72,8 @@ export function BarPlotMarkerConfigurationMenu({
   studyId,
   filters,
   continuousMarkerPreview,
+  allFilteredCategoricalValues,
+  allVisibleCategoricalValues,
 }: Props) {
   const [uncontrolledSelections, setUncontrolledSelections] = useState(
     new Set(
@@ -187,8 +196,9 @@ export function BarPlotMarkerConfigurationMenu({
         </span>
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <>
-            <MarkerPreview
-              data={overlayConfiguration}
+            <CategoricalMarkerPreview
+              overlayConfiguration={overlayConfiguration}
+              allFilteredCategoricalValues={allFilteredCategoricalValues}
               mapType="barplot"
               numberSelected={uncontrolledSelections.size - 1}
             />
@@ -251,6 +261,11 @@ export function BarPlotMarkerConfigurationMenu({
           onChange={onChange}
           uncontrolledSelections={uncontrolledSelections}
           setUncontrolledSelections={setUncontrolledSelections}
+          allCategoricalValues={
+            configuration.selectedCountsOption === 'filtered'
+              ? allFilteredCategoricalValues
+              : allVisibleCategoricalValues
+          }
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

@@ -1,6 +1,7 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+  AllValuesDefinition,
   AnalysisState,
   CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
@@ -96,6 +97,7 @@ import ChartMarkerComponent, {
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
+import { getCategoricalValues } from './utils/categoricalValues';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -281,6 +283,83 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
+  const filtersIncludingViewport = useMemo(() => {
+    const viewportFilters = appState.boundsZoomLevel
+      ? filtersFromBoundingBox(
+          appState.boundsZoomLevel.bounds,
+          {
+            variableId: geoConfig.latitudeVariableId,
+            entityId: geoConfig.entity.id,
+          },
+          {
+            variableId: geoConfig.longitudeVariableId,
+            entityId: geoConfig.entity.id,
+          }
+        )
+      : [];
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...viewportFilters,
+    ];
+  }, [
+    appState.boundsZoomLevel,
+    geoConfig.entity.id,
+    geoConfig.latitudeVariableId,
+    geoConfig.longitudeVariableId,
+    props.analysisState.analysis?.descriptor.subset.descriptor,
+  ]);
+
+  const allFilteredCategoricalValues = usePromise(
+    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
+      /**
+       * We only need this data for categorical vars, so we can return early if var isn't categorical
+       */
+      if (
+        !overlayVariable ||
+        !CategoricalVariableDataShape.is(overlayVariable.dataShape)
+      )
+        return;
+      return getCategoricalValues({
+        overlayEntity,
+        subsettingClient,
+        studyId,
+        overlayVariable,
+        filters,
+      });
+    }, [overlayEntity, overlayVariable, subsettingClient, studyId, filters])
+  );
+
+  const allVisibleCategoricalValues = usePromise(
+    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
+      /**
+       * Return early if:
+       *  - overlay var isn't categorical
+       *  - "Show counts for" toggle isn't set to 'visible'
+       */
+      if (
+        !overlayVariable ||
+        !CategoricalVariableDataShape.is(overlayVariable.dataShape) ||
+        activeMarkerConfiguration?.selectedCountsOption !== 'visible'
+      )
+        return;
+
+      return getCategoricalValues({
+        overlayEntity,
+        subsettingClient,
+        studyId,
+        overlayVariable,
+        filters: filtersIncludingViewport,
+      });
+    }, [
+      overlayEntity,
+      overlayVariable,
+      subsettingClient,
+      studyId,
+      filtersIncludingViewport,
+      activeMarkerConfiguration?.selectedCountsOption,
+    ])
+  );
+
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
   const activeOverlayConfig = usePromise(
@@ -288,7 +367,6 @@ function MapAnalysisImpl(props: ImplProps) {
       // Use `selectedValues` to generate the overlay config for categorical variables
       if (
         activeMarkerConfiguration?.selectedValues &&
-        activeMarkerConfiguration?.allValues &&
         CategoricalVariableDataShape.is(overlayVariable?.dataShape)
       ) {
         return {
@@ -298,7 +376,6 @@ function MapAnalysisImpl(props: ImplProps) {
             entityId: overlayEntity?.id,
           },
           overlayValues: activeMarkerConfiguration.selectedValues,
-          allValues: activeMarkerConfiguration.allValues,
         } as OverlayConfig;
       }
 
@@ -319,7 +396,6 @@ function MapAnalysisImpl(props: ImplProps) {
       studyId,
       subsettingClient,
       activeMarkerConfiguration?.selectedValues,
-      activeMarkerConfiguration?.allValues,
       activeMarkerConfiguration?.binningMethod,
     ])
   );
@@ -605,6 +681,12 @@ function MapAnalysisImpl(props: ImplProps) {
                     subsettingClient={subsettingClient}
                     studyId={studyId}
                     filters={filters}
+                    allFilteredCategoricalValues={
+                      allFilteredCategoricalValues.value
+                    }
+                    allVisibleCategoricalValues={
+                      allVisibleCategoricalValues.value
+                    }
                     continuousMarkerPreview={continuousMarkerPreview}
                   />
                 ) : (
@@ -636,6 +718,12 @@ function MapAnalysisImpl(props: ImplProps) {
                     subsettingClient={subsettingClient}
                     studyId={studyId}
                     filters={filters}
+                    allFilteredCategoricalValues={
+                      allFilteredCategoricalValues.value
+                    }
+                    allVisibleCategoricalValues={
+                      allVisibleCategoricalValues.value
+                    }
                     continuousMarkerPreview={continuousMarkerPreview}
                   />
                 ) : (
@@ -935,32 +1023,6 @@ function MapAnalysisImpl(props: ImplProps) {
   );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...viewportFilters,
-    ];
-  }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
-    props.analysisState.analysis?.descriptor.subset.descriptor,
-  ]);
 
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);

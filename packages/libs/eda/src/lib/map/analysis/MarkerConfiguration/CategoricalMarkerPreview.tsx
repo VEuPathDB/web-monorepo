@@ -1,4 +1,4 @@
-import { OverlayConfig } from '../../../core';
+import { AllValuesDefinition, OverlayConfig } from '../../../core';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
@@ -10,9 +10,10 @@ import {
 } from '../../../core/utils/big-number-formatters';
 
 type Props = {
-  data: OverlayConfig | undefined;
+  overlayConfiguration: OverlayConfig | undefined;
   mapType: 'barplot' | 'pie';
   numberSelected: number;
+  allFilteredCategoricalValues: AllValuesDefinition[] | undefined;
 };
 
 export const sharedStandaloneMarkerProperties = {
@@ -24,13 +25,18 @@ export const sharedStandaloneMarkerProperties = {
   },
 };
 
-export function MarkerPreview({ data, mapType, numberSelected }: Props) {
-  if (!data) return <></>;
-  if (data.overlayType === 'categorical') {
-    const { overlayValues, allValues } = data;
+export function CategoricalMarkerPreview({
+  overlayConfiguration,
+  allFilteredCategoricalValues,
+  mapType,
+  numberSelected,
+}: Props) {
+  if (!overlayConfiguration || !allFilteredCategoricalValues) return <></>;
+  if (overlayConfiguration.overlayType === 'categorical') {
+    const { overlayValues } = overlayConfiguration;
     const showTooManySelectionsOverlay =
       numberSelected > ColorPaletteDefault.length - 1;
-    const allOtherValuesCount = allValues.reduce(
+    const allOtherValuesCount = allFilteredCategoricalValues.reduce(
       (prev, curr) =>
         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
       0
@@ -41,7 +47,8 @@ export function MarkerPreview({ data, mapType, numberSelected }: Props) {
       value:
         val === UNSELECTED_TOKEN
           ? allOtherValuesCount
-          : allValues.find((v) => v.label === val)?.count ?? 0,
+          : allFilteredCategoricalValues.find((v) => v.label === val)?.count ??
+            0,
     }));
     if (mapType === 'barplot') {
       return (

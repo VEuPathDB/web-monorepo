@@ -11,6 +11,7 @@ type Props<T> = {
   configuration: T;
   uncontrolledSelections: Set<string>;
   setUncontrolledSelections: (v: Set<string>) => void;
+  allCategoricalValues: AllValuesDefinition[] | undefined;
 };
 
 export function CategoricalMarkerConfigurationTable<T>({
@@ -19,11 +20,19 @@ export function CategoricalMarkerConfigurationTable<T>({
   onChange,
   uncontrolledSelections,
   setUncontrolledSelections,
+  allCategoricalValues,
 }: Props<T>) {
-  if (overlayConfiguration.overlayType !== 'categorical') return <></>;
-  const { overlayValues, allValues } = overlayConfiguration;
+  if (
+    overlayConfiguration.overlayType !== 'categorical' ||
+    !allCategoricalValues
+  )
+    return <></>;
+  const { overlayValues } = overlayConfiguration;
   const controlledSelections = new Set(overlayValues);
-  const totalCount = allValues.reduce((prev, curr) => prev + curr.count, 0);
+  const totalCount = allCategoricalValues.reduce(
+    (prev, curr) => prev + curr.count,
+    0
+  );
 
   function handleSelection(data: AllValuesDefinition) {
     if (overlayValues.length <= ColorPaletteDefault.length - 1) {
@@ -35,7 +44,10 @@ export function CategoricalMarkerConfigurationTable<T>({
       const nextSelections = new Set(uncontrolledSelections);
       nextSelections.add(data.label);
       setUncontrolledSelections(nextSelections);
-      if (allValues.length > ColorPaletteDefault.length) {
+      if (
+        allCategoricalValues &&
+        allCategoricalValues.length > ColorPaletteDefault.length
+      ) {
         onChange({
           ...configuration,
           /**
@@ -46,13 +58,11 @@ export function CategoricalMarkerConfigurationTable<T>({
           selectedValues: overlayValues
             .slice(0, overlayValues.length - 1)
             .concat(data.label, UNSELECTED_TOKEN),
-          allValues,
         });
       } else {
         onChange({
           ...configuration,
           selectedValues: overlayValues.concat(data.label),
-          allValues,
         });
       }
     } else {
@@ -75,7 +85,6 @@ export function CategoricalMarkerConfigurationTable<T>({
       onChange({
         ...configuration,
         selectedValues: newSelectedValues,
-        allValues,
       });
     }
     setUncontrolledSelections(nextSelections);
@@ -97,13 +106,14 @@ export function CategoricalMarkerConfigurationTable<T>({
       onRowSelect: handleSelection,
       onRowDeselect: handleDeselection,
       onMultipleRowSelect: () => {
-        const nextSelections = new Set(allValues.map((v) => v.label));
+        const nextSelections = new Set(
+          allCategoricalValues.map((v) => v.label)
+        );
         setUncontrolledSelections(nextSelections);
         if (nextSelections.size <= ColorPaletteDefault.length - 1) {
           onChange({
             ...configuration,
-            selectedValues: allValues.map((v) => v.label),
-            allValues,
+            selectedValues: allCategoricalValues.map((v) => v.label),
           });
         }
       },
@@ -112,12 +122,11 @@ export function CategoricalMarkerConfigurationTable<T>({
         onChange({
           ...configuration,
           selectedValues: [UNSELECTED_TOKEN],
-          allValues,
         });
       },
     },
     actions: [],
-    rows: allValues as AllValuesDefinition[],
+    rows: allCategoricalValues as AllValuesDefinition[],
     columns: [
       {
         key: 'values',
