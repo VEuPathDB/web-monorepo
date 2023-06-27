@@ -14,7 +14,7 @@ import {
   Filter,
 } from '../../../core';
 import { CategoricalMarkerConfigurationTable } from './CategoricalMarkerConfigurationTable';
-import { MarkerPreview } from './MarkerPreview';
+import { MarkerPreview } from './CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
@@ -271,7 +271,8 @@ export function BarPlotMarkerConfigurationMenu({
               marginBottom: 0,
             }}
             containerStyles={{
-              height: 300,
+              height: 250,
+              width: 400,
             }}
           />
         </div>

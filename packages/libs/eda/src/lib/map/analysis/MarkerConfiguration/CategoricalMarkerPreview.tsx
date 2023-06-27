@@ -2,8 +2,12 @@ import { OverlayConfig } from '../../../core';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
-import { UNSELECTED_TOKEN } from '../../';
+import { UNSELECTED_TOKEN } from '../..';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import {
+  kFormatter,
+  mFormatter,
+} from '../../../core/utils/big-number-formatters';
 
 type Props = {
   data: OverlayConfig | undefined;
@@ -51,6 +55,7 @@ export function MarkerPreview({ data, mapType, numberSelected }: Props) {
           )}
           <ChartMarkerStandalone
             data={plotData}
+            markerLabel={mFormatter(plotData.reduce((p, c) => p + c.value, 0))}
             {...sharedStandaloneMarkerProperties}
           />
         </div>
@@ -67,6 +72,7 @@ export function MarkerPreview({ data, mapType, numberSelected }: Props) {
           )}
           <DonutMarkerStandalone
             data={plotData}
+            markerLabel={kFormatter(plotData.reduce((p, c) => p + c.value, 0))}
             {...sharedStandaloneMarkerProperties}
           />
         </div>

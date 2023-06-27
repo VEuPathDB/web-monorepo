@@ -94,7 +94,8 @@ import ChartMarkerComponent, {
   ChartMarkerProps,
   ChartMarkerStandalone,
 } from '@veupathdb/components/lib/map/ChartMarker';
-import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/MarkerPreview';
+import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
+import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -398,6 +399,7 @@ function MapAnalysisImpl(props: ImplProps) {
       return (
         <DonutMarkerStandalone
           data={finalData}
+          markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
           {...sharedStandaloneMarkerProperties}
         />
       );
@@ -405,6 +407,7 @@ function MapAnalysisImpl(props: ImplProps) {
       return (
         <ChartMarkerStandalone
           data={finalData}
+          markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
           dependentAxisLogScale={
             activeMarkerConfiguration &&
             'dependentAxisLogScale' in activeMarkerConfiguration
