@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { SEARCH_TERM_PARAM } from './SiteSearchConstants';
 
 import './SiteSearch.scss';
-import { SEARCH_TERM_PARAM } from './SiteSearchConstants';
 
 // region Keyboard
 
@@ -113,9 +113,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const [hintValue, setHintValue] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  const typeAheadAPI = new TypeAheadAPI(
-    'https://161a-2600-4040-70fa-ee00-a236-2c1e-6c12-f4c9.ngrok-free.app' /*props.siteSearchURL*/
-  );
+  const typeAheadAPI = new TypeAheadAPI(props.siteSearchURL);
   const ulReference = useRef<HTMLUListElement>(null);
   const ulClassName =
     suggestions.length == 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
