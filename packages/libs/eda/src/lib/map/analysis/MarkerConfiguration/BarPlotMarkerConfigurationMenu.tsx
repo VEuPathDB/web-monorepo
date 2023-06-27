@@ -4,7 +4,6 @@ import {
   Props as InputVariablesProps,
 } from '../../../core/components/visualizations/InputVariables';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
 import {
   usePromise,
@@ -19,19 +18,18 @@ import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { Toggle } from '@veupathdb/coreui';
+import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
 
 export interface BarPlotMarkerConfiguration
-  extends MarkerConfiguration<'barplot'> {
-  selectedVariable: VariableDescriptor;
+  extends MarkerConfiguration<'barplot'>,
+    SharedMarkerConfigurations {
   selectedValues: OverlayConfig['overlayValues'] | undefined;
   selectedPlotMode: 'count' | 'proportion';
-  binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
   dependentAxisLogScale: boolean;
-  selectedCountsOption: 'filtered' | 'visible' | undefined;
 }
 
 interface Props
@@ -255,7 +253,7 @@ export function BarPlotMarkerConfigurationMenu({
         />
       </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
-        <CategoricalMarkerConfigurationTable<BarPlotMarkerConfiguration>
+        <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
           onChange={onChange}
@@ -266,6 +264,7 @@ export function BarPlotMarkerConfigurationMenu({
               ? allFilteredCategoricalValues
               : allVisibleCategoricalValues
           }
+          selectedCountsOption={configuration.selectedCountsOption}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

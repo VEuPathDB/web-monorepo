@@ -22,12 +22,18 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
-export interface PieMarkerConfiguration extends MarkerConfiguration<'pie'> {
+
+export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
-  selectedValues: string[] | undefined;
   binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
   selectedCountsOption: 'filtered' | 'visible' | undefined;
 }
+export interface PieMarkerConfiguration
+  extends MarkerConfiguration<'pie'>,
+    SharedMarkerConfigurations {
+  selectedValues: string[] | undefined;
+}
+
 interface Props
   extends Omit<
     InputVariablesProps,
@@ -212,7 +218,7 @@ export function PieMarkerConfigurationMenu({
         />
       </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
-        <CategoricalMarkerConfigurationTable<PieMarkerConfiguration>
+        <CategoricalMarkerConfigurationTable
           overlayConfiguration={overlayConfiguration}
           configuration={configuration}
           onChange={onChange}
@@ -223,6 +229,7 @@ export function PieMarkerConfigurationMenu({
               ? allFilteredCategoricalValues
               : allVisibleCategoricalValues
           }
+          selectedCountsOption={configuration.selectedCountsOption}
         />
       )}
       {overlayConfiguration?.overlayType === 'continuous' && barplotData.value && (

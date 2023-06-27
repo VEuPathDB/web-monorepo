@@ -4,6 +4,7 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../';
+import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 
 type Props<T> = {
   overlayConfiguration: OverlayConfig;
@@ -12,6 +13,7 @@ type Props<T> = {
   uncontrolledSelections: Set<string>;
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
+  selectedCountsOption: SharedMarkerConfigurations['selectedCountsOption'];
 };
 
 export function CategoricalMarkerConfigurationTable<T>({
@@ -21,6 +23,7 @@ export function CategoricalMarkerConfigurationTable<T>({
   uncontrolledSelections,
   setUncontrolledSelections,
   allCategoricalValues,
+  selectedCountsOption,
 }: Props<T>) {
   if (
     overlayConfiguration.overlayType !== 'categorical' ||
@@ -176,11 +179,7 @@ export function CategoricalMarkerConfigurationTable<T>({
         }
         label="Show counts for:"
         selectedOption={
-          // @ts-ignore
-          configuration.selectedCountsOption == null
-            ? 'filtered'
-            : // @ts-ignore
-              configuration.selectedCountsOption
+          selectedCountsOption == null ? 'filtered' : selectedCountsOption
         }
         options={['filtered', 'visible']}
         optionLabels={['Filtered', 'Visible']}
