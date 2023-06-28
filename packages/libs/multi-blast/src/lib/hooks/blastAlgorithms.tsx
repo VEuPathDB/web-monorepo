@@ -27,7 +27,7 @@ export function useEnabledAlgorithms(
   const algorithmTermsByDatabase = useAlgorithmTermsByDatabase();
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
-  const enabledAlgorithms = useMemo(() => {
+  return useMemo(() => {
     if (algorithmTermsByDatabase == null) {
       return undefined;
     }
@@ -54,12 +54,10 @@ export function useEnabledAlgorithms(
       enabledAlgorithmsForWdkRecordType,
     };
   }, [algorithmTermsByDatabase, targetDataType, targetMetadataByDataType]);
-
-  return enabledAlgorithms;
 }
 
 function useAlgorithmTermsByDatabase() {
-  const algorithmTermsByDatabase = useWdkService(async (wdkService) => {
+  return useWdkService(async (wdkService) => {
     const [projectId, recordClasses] = await Promise.all([
       wdkService.getConfig().then(({ projectId }) => projectId),
       wdkService.getRecordClasses(),
@@ -85,7 +83,7 @@ function useAlgorithmTermsByDatabase() {
 
     const databaseRecords = await Promise.all(recordPromises);
 
-    const result = zip(blastOntologyDatabases, databaseRecords).reduce(
+    return zip(blastOntologyDatabases, databaseRecords).reduce(
       (memo, [databaseName, record]) => ({
         ...memo,
         [databaseName as BlastOntologyDatabase]: recordToTerms(
@@ -95,11 +93,7 @@ function useAlgorithmTermsByDatabase() {
       }),
       {} as Record<BlastOntologyDatabase, string[]>
     );
-
-    return result;
   }, []);
-
-  return algorithmTermsByDatabase;
 }
 
 function recordToTerms(

@@ -53,14 +53,9 @@ import {
 import { InputErrors } from '../utils/ServiceTypes';
 import {
   ADVANCED_PARAMS_GROUP_NAME,
-  BLAST_ALGORITHM_PARAM_NAME,
-  BLAST_DATABASE_ORGANISM_PARAM_NAME,
-  BLAST_DATABASE_TYPE_PARAM_NAME,
-  BLAST_QUERY_SEQUENCE_PARAM_NAME,
-  JOB_DESCRIPTION_PARAM_NAME,
+  ParamNames,
   isOmittedParam,
   organismParamValueToFilenames,
-  paramValuesToBlastConfig,
   transformOrganismParameter,
 } from '../utils/params';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
@@ -74,6 +69,7 @@ import { AdvancedParamGroup } from './AdvancedParamGroup';
 import { BlastFormValidationInfo } from './BlastFormValidationInfo';
 
 import './BlastForm.scss';
+import { paramValuesToBlastQueryConfig } from '../utils/params-to-query-config';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -87,7 +83,7 @@ export interface Props extends DefaultQuestionFormProps {
 }
 
 export function BlastForm(props: Props) {
-  const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+  const targetType = props.state.paramValues[ParamNames.BlastDatabaseType];
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const formPropsWithTransformedQuestion = transformFormQuestion(
@@ -104,10 +100,10 @@ export function BlastForm(props: Props) {
 function BlastFormWithTransformedQuestion(props: Props) {
   const canChangeRecordType = props.canChangeRecordType ?? false;
 
-  const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+  const targetType = props.state.paramValues[ParamNames.BlastDatabaseType];
 
   const selectedBlastAlgorithm =
-    props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
+    props.state.paramValues[ParamNames.BlastAlgorithm];
 
   const restrictedAdvancedParamGroup = useMemo(() => {
     const fullAdvancedParamGroup =
@@ -130,7 +126,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
 
   const updateQueryParam = useChangeParamValue(
-    props.state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME],
+    props.state.question.parametersByName[ParamNames.BlastQuerySequence],
     props.state,
     props.eventHandlers.updateParamValue
   );
@@ -154,7 +150,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
   );
 
   const selectedBlastAlgorithmParameter =
-    props.state.question.parametersByName[BLAST_ALGORITHM_PARAM_NAME];
+    props.state.question.parametersByName[ParamNames.BlastAlgorithm];
 
   const searchName = props.state.question.urlSegment;
   const dispatchAction = props.dispatchAction;
@@ -177,10 +173,9 @@ function BlastFormWithTransformedQuestion(props: Props) {
           })
         );
       },
-      disabled:
-        defaultAdvancedParamsMetadata[
-          selectedBlastAlgorithm
-        ].areDefaultParamsSelected(paramValues),
+      disabled: defaultAdvancedParamsMetadata[
+        selectedBlastAlgorithm
+      ].areDefaultParamsSelected(paramValues),
     };
   }, [
     defaultAdvancedParamsMetadata,
@@ -211,13 +206,13 @@ function BlastFormWithTransformedQuestion(props: Props) {
   const targetParamElement = (
     <RadioList
       {...targetParamProps}
-      name={`${props.state.question.urlSegment}/${BLAST_DATABASE_TYPE_PARAM_NAME}`}
+      name={`${props.state.question.urlSegment}/${ParamNames.BlastDatabaseType}`}
     />
   );
   const algorithmParamElement = (
     <RadioList
       {...algorithmParamProps}
-      name={`${props.state.question.urlSegment}/${BLAST_ALGORITHM_PARAM_NAME}`}
+      name={`${props.state.question.urlSegment}/${ParamNames.BlastAlgorithm}`}
     />
   );
   const sequenceParamElement = (
@@ -229,18 +224,18 @@ function BlastFormWithTransformedQuestion(props: Props) {
       </div>
       <TextArea
         {...sequenceParamProps}
-        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
+        name={`${props.state.question.urlSegment}/${ParamNames.BlastQuerySequence}`}
       />
       <input
         type="file"
         accept="text/*"
-        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
+        name={`${props.state.question.urlSegment}/${ParamNames.BlastQuerySequence}__file`}
         onChange={onQueryFileInputChanged}
       />
     </div>
   );
   const dynamicOrganismParam =
-    props.state.question.parametersByName[BLAST_DATABASE_ORGANISM_PARAM_NAME];
+    props.state.question.parametersByName[ParamNames.BlastDatabaseOrganism];
   const organismParamElement = (
     <Plugin
       context={{
@@ -257,8 +252,8 @@ function BlastFormWithTransformedQuestion(props: Props) {
           paramValues: props.state.paramValues,
         },
         parameter: dynamicOrganismParam,
-        value: props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM_NAME],
-        uiState: props.state.paramUIState[BLAST_DATABASE_ORGANISM_PARAM_NAME],
+        value: props.state.paramValues[ParamNames.BlastDatabaseOrganism],
+        uiState: props.state.paramUIState[ParamNames.BlastDatabaseOrganism],
         onParamValueChange: (paramValue: string) => {
           props.eventHandlers.updateParamValue({
             searchName: props.state.question.urlSegment,
@@ -275,10 +270,10 @@ function BlastFormWithTransformedQuestion(props: Props) {
 
   const parameterElements = {
     ...props.parameterElements,
-    [BLAST_DATABASE_TYPE_PARAM_NAME]: targetParamElement,
-    [BLAST_ALGORITHM_PARAM_NAME]: algorithmParamElement,
-    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: sequenceParamElement,
-    [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamElement,
+    [ParamNames.BlastDatabaseType]: targetParamElement,
+    [ParamNames.BlastAlgorithm]: algorithmParamElement,
+    [ParamNames.BlastQuerySequence]: sequenceParamElement,
+    [ParamNames.BlastDatabaseOrganism]: organismParamElement,
   };
 
   const renderBlastParamGroup = useCallback(
@@ -345,7 +340,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
               errors: {
                 general: [],
                 byKey: {
-                  [BLAST_QUERY_SEQUENCE_PARAM_NAME]: [validationError],
+                  [ParamNames.BlastQuerySequence]: [validationError],
                 },
               },
             },
@@ -388,8 +383,9 @@ function NewJobForm(props: NewJobFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [submitting, setSubmitting] = useState(false);
-  const [inputErrors, setInputErrors] =
-    useState<InputErrors | undefined>(undefined);
+  const [inputErrors, setInputErrors] = useState<InputErrors | undefined>(
+    undefined
+  );
   const dependentParamsAreUpdating = useDependentParamsAreUpdating(
     props.state.question,
     props.state.paramsUpdatingDependencies
@@ -429,8 +425,7 @@ function NewJobForm(props: NewJobFormProps) {
 
       setSubmitting(true);
 
-      const targetType =
-        props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+      const targetType = props.state.paramValues[ParamNames.BlastDatabaseType];
 
       const [projectId, { organismsToFiles }] = await Promise.all([
         wdkDependencies.wdkService
@@ -446,33 +441,32 @@ function NewJobForm(props: NewJobFormProps) {
       const dbTargetName = targetTypeTermToDbName(targetType);
 
       const selectedOrganismFilenames = organismParamValueToFilenames(
-        props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM_NAME],
+        props.state.paramValues[ParamNames.BlastDatabaseOrganism],
         organismsToFiles
       );
 
       const targets = selectedOrganismFilenames.map((organism) => ({
-        organism,
-        target: `${organism}${dbTargetName}`,
+        targetDisplayName: organism,
+        targetFile: `${organism}${dbTargetName}`,
       }));
 
-      const query = props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME];
-
-      const config = paramValuesToBlastConfig(props.state.paramValues);
-
-      const jobDescription =
-        props.state.paramValues[JOB_DESCRIPTION_PARAM_NAME];
-
-      const createJobResult = await api.createJob(
-        projectId,
-        targets,
-        query,
-        config,
-        0,
-        jobDescription
+      const createJobResult = await api.queryAPI.createJob(
+        {
+          jobConfig: {
+            targets: targets,
+            addToUserCollection: true,
+            site: projectId,
+          },
+          blastConfig: paramValuesToBlastQueryConfig(props.state.paramValues),
+          userMeta: {
+            summary: props.state.paramValues[ParamNames.JobDescription],
+          },
+        },
+        props.state.paramValues[ParamNames.BlastQuerySequence]
       );
 
       if (createJobResult.status === 'ok') {
-        const jobId = createJobResult.value.jobId;
+        const jobId = createJobResult.value.queryJobID;
 
         setSubmitting(false);
 
@@ -526,20 +520,21 @@ function transformFormQuestion(
 ): Props {
   const transformedParameters = formProps.state.question.parameters.reduce(
     (memo, parameter) => {
-      if (parameter.name === JOB_DESCRIPTION_PARAM_NAME && !isMultiBlast) {
+      if (parameter.name === ParamNames.JobDescription && !isMultiBlast) {
         return memo;
       } else if (
-        parameter.name === BLAST_QUERY_SEQUENCE_PARAM_NAME &&
+        parameter.name === ParamNames.BlastQuerySequence &&
         isMultiBlast
       ) {
         memo.push({
           ...parameter,
           displayName: 'Input Sequence(s)',
-          help: 'Paste your Input Sequence(s) in the text box, or upload a FASTA file.',
+          help:
+            'Paste your Input Sequence(s) in the text box, or upload a FASTA file.',
         });
 
         return memo;
-      } else if (parameter.name === BLAST_DATABASE_ORGANISM_PARAM_NAME) {
+      } else if (parameter.name === ParamNames.BlastDatabaseOrganism) {
         const organismParameter = transformOrganismParameter(
           parameter,
           targetRecordType

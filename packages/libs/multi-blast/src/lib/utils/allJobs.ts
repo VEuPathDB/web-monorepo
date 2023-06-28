@@ -1,28 +1,22 @@
 import { JobRow } from '../components/BlastWorkspaceAll';
 
-import { ShortJobResponse } from './ServiceTypes';
-
-export function shouldIncludeInJobsTable(
-  jobEntity: ShortJobResponse,
-  projectId: string
-) {
-  return isJobPrimary(jobEntity) && isJobFromSite(jobEntity, projectId);
-}
-
-function isJobPrimary(jobEntity: ShortJobResponse) {
-  return jobEntity.isPrimary;
-}
-
-function isJobFromSite(jobEntity: ShortJobResponse, projectId: string) {
-  return jobEntity.site === projectId;
-}
+import { IOJobStatus } from './api/query/types/common';
 
 export function entityStatusToReadableStatus(
-  entityStatus: ShortJobResponse['status']
+  entityStatus: IOJobStatus
 ): JobRow['status'] {
-  return entityStatus === 'completed'
-    ? 'finished'
-    : entityStatus === 'in-progress'
-    ? 'running'
-    : entityStatus;
+  switch (entityStatus) {
+    case 'queued':
+      return 'queued';
+    case 'in-progress':
+      return 'running';
+    case 'complete':
+      return 'finished';
+    case 'failed':
+      return 'errored';
+    case 'expired':
+      return 'expired';
+    default:
+      throw new Error(`Unexpected job status value: ${entityStatus}.`);
+  }
 }

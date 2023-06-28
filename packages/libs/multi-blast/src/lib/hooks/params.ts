@@ -18,12 +18,7 @@ import {
 import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 import { Props } from '../components/BlastForm';
-import {
-  ADVANCED_PARAMS_GROUP_NAME,
-  BLAST_ALGORITHM_PARAM_NAME,
-  BLAST_DATABASE_TYPE_PARAM_NAME,
-  BLAST_QUERY_SEQUENCE_PARAM_NAME,
-} from '../utils/params';
+import { ADVANCED_PARAMS_GROUP_NAME, ParamNames } from '../utils/params';
 import {
   EnabledAlgorithms,
   TargetMetadataByDataType,
@@ -38,10 +33,10 @@ export function useTargetParamProps(
 
   // FIXME: Validate this
   const parameter = state.question.parametersByName[
-    BLAST_DATABASE_TYPE_PARAM_NAME
+    ParamNames.BlastDatabaseType
   ] as CheckBoxEnumParam;
 
-  const selectedType = state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+  const selectedType = state.paramValues[ParamNames.BlastDatabaseType];
 
   const items = useMemo(
     () =>
@@ -77,9 +72,9 @@ export function useAlgorithmParamProps(
 ) {
   // FIXME: Validate this
   const parameter = state.question.parametersByName[
-    BLAST_ALGORITHM_PARAM_NAME
+    ParamNames.BlastAlgorithm
   ] as CheckBoxEnumParam;
-  const algorithm = state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
+  const algorithm = state.paramValues[ParamNames.BlastAlgorithm];
 
   const enabledAlgorithmsForTargetType =
     enabledAlgorithms?.enabledAlgorithmsForTargetType;
@@ -136,12 +131,12 @@ export function useSequenceParamProps(
   updateParamValue: Props['eventHandlers']['updateParamValue']
 ) {
   const parameter =
-    state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME];
+    state.question.parametersByName[ParamNames.BlastQuerySequence];
 
   const onChange = useChangeParamValue(parameter, state, updateParamValue);
 
   return {
-    value: state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME],
+    value: state.paramValues[ParamNames.BlastQuerySequence],
     onChange,
     required: true,
     cols: 80,
@@ -157,13 +152,12 @@ interface DefaultAdvancedParamsMetadata {
 export function useDefaultAdvancedParams(
   question: QuestionWithMappedParameters
 ): Record<string, DefaultAdvancedParamsMetadata> | undefined {
-  const defaultAlgorithmDependentParams = useWdkService(
+  return useWdkService(
     async (wdkService) => {
       // FIXME: Validate this
       const algorithmParameter = question.parametersByName[
-        BLAST_ALGORITHM_PARAM_NAME
+        ParamNames.BlastAlgorithm
       ] as CheckBoxEnumParam;
-
       const algorithms = algorithmParameter.vocabulary.map(([value]) => value);
 
       return fetchDefaultAlgorithmDependentParamsOnce(
@@ -174,8 +168,6 @@ export function useDefaultAdvancedParams(
     },
     [question]
   );
-
-  return defaultAlgorithmDependentParams;
 }
 
 async function fetchDefaultAlgorithmAdvancedParams(
@@ -194,7 +186,7 @@ async function fetchDefaultAlgorithmAdvancedParams(
   const dependentAdvancedParamPromises = algorithms.map((algorithm) =>
     wdkService.getRefreshedDependentParams(
       searchName,
-      BLAST_ALGORITHM_PARAM_NAME,
+      ParamNames.BlastAlgorithm,
       algorithm,
       {}
     )
@@ -216,17 +208,16 @@ async function fetchDefaultAlgorithmAdvancedParams(
           dependentAdvancedParamsByName[advancedParam.name] ?? advancedParam
       );
 
-      const defaultAdvancedParamValues =
-        defaultAdvancedParamsForAlgorithm.reduce(
-          (memo, { initialDisplayValue, name }) => {
-            if (initialDisplayValue != null) {
-              memo[name] = initialDisplayValue;
-            }
+      const defaultAdvancedParamValues = defaultAdvancedParamsForAlgorithm.reduce(
+        (memo, { initialDisplayValue, name }) => {
+          if (initialDisplayValue != null) {
+            memo[name] = initialDisplayValue;
+          }
 
-            return memo;
-          },
-          {} as ParameterValues
-        );
+          return memo;
+        },
+        {} as ParameterValues
+      );
 
       return {
         defaultParams: defaultAdvancedParamsForAlgorithm,
