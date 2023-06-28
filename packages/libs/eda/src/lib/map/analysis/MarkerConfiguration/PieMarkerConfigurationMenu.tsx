@@ -57,7 +57,7 @@ interface Props
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
 }
 
-// TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repitition...
+// TODO: generalize this and BarPlotMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
 
 export function PieMarkerConfigurationMenu({
   entities,

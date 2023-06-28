@@ -55,7 +55,7 @@ interface Props
   allVisibleCategoricalValues: AllValuesDefinition[] | undefined;
 }
 
-// TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repitition...
+// TODO: generalize this and PieMarkerConfigMenu into MarkerConfigurationMenu. Lots of code repetition...
 
 export function BarPlotMarkerConfigurationMenu({
   entities,
@@ -73,6 +73,12 @@ export function BarPlotMarkerConfigurationMenu({
   allFilteredCategoricalValues,
   allVisibleCategoricalValues,
 }: Props) {
+  /**
+   * Used to track the CategoricalMarkerConfigurationTable's selection state, which allows users to
+   * select more than the allowable limit. Doing so results in a message to the user that they've selected
+   * too many values. The state is lifted up (versus living in CategoricalMarkerConfigurationTable) in order
+   * to pass its length to CategoricalMarkerPreview.
+   */
   const [uncontrolledSelections, setUncontrolledSelections] = useState(
     new Set(
       overlayConfiguration?.overlayType === 'categorical'

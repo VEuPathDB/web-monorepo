@@ -33,7 +33,7 @@ export function CategoricalMarkerConfigurationTable<T>({
   allCategoricalValues = [],
   selectedCountsOption,
 }: Props<T>) {
-  const [sort, setSort] = useState<MesaSortObject | null>(DEFAULT_SORTING);
+  const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
   const controlledSelections = new Set(overlayValues);
   const totalCount = allCategoricalValues.reduce(
     (prev, curr) => prev + curr.count,
@@ -41,7 +41,9 @@ export function CategoricalMarkerConfigurationTable<T>({
   );
 
   function handleSelection(data: AllValuesDefinition) {
+    // check if we already have selected the maximum allowed
     if (overlayValues.length <= ColorPaletteDefault.length - 1) {
+      // return early if we somehow duplicate a selection
       if (
         uncontrolledSelections.has(data.label) ||
         controlledSelections.has(data.label)
@@ -50,6 +52,7 @@ export function CategoricalMarkerConfigurationTable<T>({
       const nextSelections = new Set(uncontrolledSelections);
       nextSelections.add(data.label);
       setUncontrolledSelections(nextSelections);
+      // check if we have the "All other values" label by seeing if the number of values in the table is greater than the allowable limit
       if (
         allCategoricalValues &&
         allCategoricalValues.length > ColorPaletteDefault.length
@@ -65,12 +68,14 @@ export function CategoricalMarkerConfigurationTable<T>({
             .slice(0, overlayValues.length - 1)
             .concat(data.label, UNSELECTED_TOKEN),
         });
+        // can set the new configuration without worrying about the "All other values" data
       } else {
         onChange({
           ...configuration,
           selectedValues: overlayValues.concat(data.label),
         });
       }
+      // we're already at the limit for selections, so just track the selections for the table state, but don't set the configuration
     } else {
       const nextSelections = new Set(uncontrolledSelections);
       nextSelections.add(data.label);
@@ -79,14 +84,14 @@ export function CategoricalMarkerConfigurationTable<T>({
   }
 
   function handleDeselection(data: AllValuesDefinition) {
+    /**
+     * After we delete the value from our newly initialized Set, we'll check if we're within the allowable selections limit.
+     *  - When true, we remove the "All other values" label if it exists, tack it back onto the end, then set the new configuration
+     *  - When false, we set the table's selection state without setting a new configuration
+     */
     const nextSelections = new Set(uncontrolledSelections);
     nextSelections.delete(data.label);
     if (nextSelections.size <= ColorPaletteDefault.length) {
-      /**
-       * We want "All other values" label to be at the end, so if it exists:
-       *  - delete it from the Set
-       *  - add it back to the end of the Set
-       */
       if (nextSelections.has(UNSELECTED_TOKEN)) {
         nextSelections.delete(UNSELECTED_TOKEN);
         nextSelections.add(UNSELECTED_TOKEN);
@@ -117,6 +122,11 @@ export function CategoricalMarkerConfigurationTable<T>({
       onRowSelect: handleSelection,
       onRowDeselect: handleDeselection,
       onMultipleRowSelect: () => {
+        /**
+         * This handler actually selects all values, but we may exceed the allowable selections. Thus, we have to check if we're within the allowable selection limit.
+         *  - When true, we can set both the table state and the configuration to all the values
+         *  - When false, we only set the table state to all the values and bypass setting the configuration
+         */
         const nextSelections = new Set(
           allCategoricalValues.map((v) => v.label)
         );
@@ -129,6 +139,9 @@ export function CategoricalMarkerConfigurationTable<T>({
         }
       },
       onMultipleRowDeselect: () => {
+        /**
+         * This handler actually deselects all values by setting the table state and the configuration to the "All other labels" value
+         */
         setUncontrolledSelections(new Set([UNSELECTED_TOKEN]));
         onChange({
           ...configuration,
