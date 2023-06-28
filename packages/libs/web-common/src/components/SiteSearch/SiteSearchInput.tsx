@@ -30,18 +30,15 @@ export const SiteSearchInput = wrappable(function ({
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const searchParams = new URLSearchParams(location.search);
-  const searchString = (location.pathname === SITE_SEARCH_ROUTE && searchParams.get(SEARCH_TERM_PARAM)) || '';
-  const docType = (location.pathname === SITE_SEARCH_ROUTE && searchParams.get(DOCUMENT_TYPE_PARAM)) || '';
-  const organisms = (location.pathname === SITE_SEARCH_ROUTE && searchParams.getAll(ORGANISM_PARAM)) || [];
-  const fields = (location.pathname === SITE_SEARCH_ROUTE && searchParams.getAll(FILTERS_PARAM)) || [];
+  const searchString = location.pathname === SITE_SEARCH_ROUTE && searchParams.get(SEARCH_TERM_PARAM) || '';
+  const docType = location.pathname === SITE_SEARCH_ROUTE && searchParams.get(DOCUMENT_TYPE_PARAM) || '';
+  const organisms = location.pathname === SITE_SEARCH_ROUTE && searchParams.getAll(ORGANISM_PARAM) || [];
+  const fields = location.pathname === SITE_SEARCH_ROUTE && searchParams.getAll(FILTERS_PARAM) || [];
   const hasFilters = !isEmpty(docType) || !isEmpty(organisms) || !isEmpty(fields);
 
-  const onSearch = useCallback(
-    (queryString: string) => {
+  const onSearch = useCallback((queryString: string) => {
       history.push(`${SITE_SEARCH_ROUTE}?${queryString}`);
-    },
-    [history]
-  );
+    }, [ history ]);
 
   const handleSubmitWithFilters = useCallback(() => {
     const { current } = formRef;
@@ -49,14 +46,12 @@ export const SiteSearchInput = wrappable(function ({
     const formData = new FormData(current);
     const queryString = new URLSearchParams(formData as any).toString();
     onSearch(queryString);
-  }, [onSearch]);
+  }, [ onSearch ]);
 
   const handleSubmitWithoutFilters = useCallback(() => {
-    const queryString = `q=${encodeURIComponent(
-      inputRef.current?.value || ''
-    )}`;
+    const queryString = `q=${encodeURIComponent(inputRef.current?.value || '')}`;
     onSearch(queryString);
-  }, [onSearch]);
+  }, [ onSearch ]);
 
   const [lastSearchQueryString, setLastSearchQueryString] =
     useSessionBackedState<string>(
