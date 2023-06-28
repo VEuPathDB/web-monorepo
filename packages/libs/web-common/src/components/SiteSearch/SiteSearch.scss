@@ -101,6 +101,8 @@
     }
 
     div.type-ahead {
+      width: 100%;
+
       div.type-ahead-input {
         position: relative;
 
@@ -142,15 +144,21 @@
 
         li.type-ahead-hint {
           padding: 0.2em 0 0.2em 1em;
+
+          &:focus,
+          &:hover {
+            background: #DEDEDE;
+          }
+
+          &:first-child {
+            padding-top: 0.4em;
+          }
+
+          &:last-child {
+            padding-bottom: 0.4em;
+          }
         }
 
-        li.type-ahead-hint:first-child {
-          padding-top: 0.4em;
-        }
-
-        li.type-ahead-hint:last-child {
-          padding-bottom: 0.4em;
-        }
       }
     }
 
