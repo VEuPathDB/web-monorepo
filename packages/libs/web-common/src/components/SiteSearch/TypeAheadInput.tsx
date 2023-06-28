@@ -391,25 +391,51 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       } else {
         (e.currentTarget.nextElementSibling as HTMLLIElement | null)?.focus();
       }
-    } else if (kbIsEscape(e)) {
+    }
+
+    // If the event was an <Escape> key press, "reset" the form.
+    else if (kbIsEscape(e)) {
       resetInput();
     }
   };
 
+  /**
+   * Handles keyboard events on the user input element.
+   *
+   * @param e Keyboard event to handle.
+   */
   const onInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // If the keyboard event has a modifier on it, ignore it.
+    // TODO: on <Shift>+<Tab> should we roll the focus back to the last
+    //       suggestion (provided there is such a suggestion)?
     if (kbHasModifier(e)) {
       return;
-    } else if (kbIsArrowDown(e)) {
+    }
+
+    // If the event is an <ArrowDown> key press, attempt to focus the first
+    // suggestion (if such a suggestion exists).
+    //
+    // Additionally, prevent the default behavior of the event as it will
+    // attempt to scroll the view down.
+    else if (kbIsArrowDown(e)) {
       e.preventDefault();
       e.stopPropagation();
       (ulReference.current?.firstElementChild as HTMLLIElement | null)?.focus();
-    } else if (kbIsArrowUp(e)) {
+    }
+
+    // If the event is an <ArrowUp> key press, attempt to focus the last
+    // suggestion (if such a suggestion exists).
+    //
+    // Additionally, prevent the default behavior of the event as it will
+    // attempt to scroll the view up.
+    else if (kbIsArrowUp(e)) {
       e.preventDefault();
       e.stopPropagation();
       (ulReference.current?.lastElementChild as HTMLLIElement | null)?.focus();
-      // } else if (kbIsEnter(e)) {
-      //   props.formReference.current?.submit();
-    } else if (kbIsEscape(e)) {
+    }
+
+    // If the event was an <Escape> key press, "reset" the form.
+    else if (kbIsEscape(e)) {
       resetInput();
     }
   };
