@@ -53,7 +53,7 @@ export const SiteSearchInput = wrappable(function ({
     onSearch(queryString);
   }, [ onSearch ]);
 
-  const [ lastSearchQueryString, setLastSearchQueryString ] = useSessionBackedState<string>(
+  const [ lastSearchQueryString, setLastSearchQueryString] = useSessionBackedState<string>(
     '',
     'ebrc/site-search/last-query-string',
     (value: string) => value,
@@ -80,13 +80,13 @@ export const SiteSearchInput = wrappable(function ({
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
         <Tooltip content="Go back to your last search result">
           <button className="back" type="button" onClick={() => onSearch(lastSearchQueryString)}>
-            <i className="fa fa-long-arrow-left" />
+            <i className="fa fa-long-arrow-left"/>
           </button>
         </Tooltip>
       )}
       <Tooltip content={hasFilters ? 'Update your search, keeping existing filters' : 'Run a new search'}>
         <button type="submit">
-          <i className="fa fa-search"/>
+          <i className="fa fa-search" />
         </button>
       </Tooltip>
     </form>
