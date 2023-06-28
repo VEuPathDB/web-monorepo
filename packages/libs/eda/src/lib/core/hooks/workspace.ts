@@ -130,11 +130,11 @@ export function useStudyEntities(filters?: Filter[]) {
                             min:
                               filter.type === 'numberRange'
                                 ? filter.min
-                                : filter.min.split('T00:00:00Z')[0],
+                                : filter.min.split(/T00:00:00(?:\.000)?Z?/)[0],
                             max:
                               filter.type === 'numberRange'
                                 ? filter.max
-                                : filter.max.split('T00:00:00Z')[0],
+                                : filter.max.split(/T00:00:00(?:\.000)?Z?/)[0],
                           }
                         : undefined;
 
