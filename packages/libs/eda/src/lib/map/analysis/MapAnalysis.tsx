@@ -436,7 +436,7 @@ function MapAnalysisImpl(props: ImplProps) {
   });
 
   const { markersData: previewMarkerData } = useStandaloneMapMarkers({
-    boundsZoomLevel: appState.boundsZoomLevel,
+    boundsZoomLevel: undefined,
     geoConfig: geoConfig,
     studyId,
     filters,
@@ -444,7 +444,6 @@ function MapAnalysisImpl(props: ImplProps) {
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
     overlayConfig: activeOverlayConfig.value,
     outputEntityId: outputEntity?.id,
-    isMarkerPreview: true,
   });
 
   const continuousMarkerPreview = useMemo(() => {
