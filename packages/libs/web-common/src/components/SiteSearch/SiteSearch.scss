@@ -21,9 +21,9 @@
     left: 50%;
 
     > * {
-      padding: 0.5em 1em;
-      border-radius: 0.5em;
-      background: #bbdefb;
+      padding: .5em 1em;
+      border-radius: .5em;
+      background: #BBDEFB;
       box-shadow: 0px 0px 2px #00000036;
       margin: 1em;
       font-size: 1.1em;
@@ -46,15 +46,15 @@
   h1 {
     grid-area: title;
     padding: 0;
-    padding-top: 0.5em;
+    padding-top: .5em;
   }
 
   &--Results {
     display: grid;
     grid:
-      '...... pagination-top' auto
-      'counts result' 1fr
-      'counts pagination-bottom' auto
+      "...... pagination-top" auto
+      "counts result" 1fr
+      "counts pagination-bottom" auto
       / auto 1fr;
     grid-gap: 0em 2em;
     flex-grow: 1;
@@ -150,7 +150,7 @@
           &:focus,
           &:active,
           &:hover {
-            background: #dedede;
+            background: #DEDEDE;
           }
 
           &:first-child {
@@ -161,6 +161,7 @@
             padding-bottom: 0.4em;
           }
         }
+
       }
     }
 
@@ -171,7 +172,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-left: 0.9em;
+      padding-left: .9em;
       padding-right: 1em;
 
       &:last-child {
@@ -182,14 +183,13 @@
         border-right: 1px solid #00000042;
       }
 
-      &:focus,
-      &:hover {
+      &:focus, &:hover {
         background: #2b2d2f;
         outline: none;
       }
 
       i {
-        font-size: 0.7em;
+        font-size: .7em;
       }
 
       &.back i {
@@ -198,7 +198,7 @@
     }
 
     .reset {
-      font-size: 0.85em;
+      font-size: .85em;
       white-space: nowrap;
       background: #fafaf9;
       color: #069;
@@ -231,8 +231,7 @@
     }
   }
 
-  &--CountsContainer,
-  &--ResultTypeWidgetContainer {
+  &--CountsContainer, &--ResultTypeWidgetContainer {
     padding: 1em;
     width: 30em;
     max-width: 30em;
@@ -246,11 +245,11 @@
 
     h2 {
       padding: 0;
-      margin-bottom: 0.5em;
+      margin-bottom: .5em;
     }
 
     h3 {
-      padding: 0.2em 0;
+      padding: .2em 0;
     }
 
     &:empty {
@@ -273,7 +272,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    font-size: 0.9em;
+    font-size: .9em;
     input {
       margin-right: 1ex;
     }
@@ -286,15 +285,15 @@
   &--Result {
     border-top: 1px solid #bdbdbd;
     display: grid;
-    row-gap: 0.5em;
-    padding: 0.5em 0;
+    row-gap: .5em;
+    padding: .5em 0;
 
     color: #4e4e4e;
 
     strong {
       font-weight: 400;
       color: black;
-      margin-right: 0.5ex;
+      margin-right: .5ex;
     }
 
     &List &:nth-child(2n + 1) {
@@ -324,7 +323,7 @@
   }
 
   &--ResultSummary .wdk-CollapsibleSection {
-    padding: 0.5em 0;
+    padding: .5em 0;
     margin-bottom: -1em;
   }
 
@@ -334,14 +333,14 @@
   }
 
   &--FieldsHit {
-    padding: 0.5em 0;
+    padding: .5em 0;
     ul {
       margin-left: 1em;
       display: table;
       > li {
         display: table-row;
         > * {
-          padding: 0.15em;
+          padding: .15em;
           display: table-cell;
           &:first-child {
             white-space: nowrap;
@@ -384,7 +383,7 @@
 
     th {
       border: none;
-      padding: 0.5em 0 0 0.25em;
+      padding: .5em 0 0 .25em;
       font-weight: normal;
       font-size: 1.1em;
       color: #4f4f4f;
@@ -413,8 +412,7 @@
     position: relative;
     z-index: 1;
 
-    &__organism,
-    &__widget {
+    &__organism, &__widget {
       margin-top: 2em;
     }
   }
@@ -463,8 +461,7 @@
   }
 
   &--LinkOut {
-    a,
-    button.btn {
+    a, button.btn {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -475,28 +472,25 @@
       margin: 0;
       position: relative;
 
-      &,
-      &:hover {
-        border: 0.1em solid white;
+      &, &:hover {
+        border: .1em solid white;
         box-shadow: 0 0.2em 0.5em #00000073;
       }
 
-      &:hover,
-      &:active,
-      &:focus {
+      &:hover, &:active, &:focus {
         background: #0c3aaa;
         text-decoration: none;
         outline: none;
       }
 
       &:disabled {
-        opacity: 0.5;
+        opacity: .5;
         background: #1345bd;
         color: white;
       }
     }
     &Text {
-      margin: 0.25em 1.5em;
+      margin: .25em 1.5em;
     }
     &Arrow {
       font-size: 2em;
@@ -531,22 +525,22 @@
   }
 
   &--RedButton {
-    background: #b71c1c !important;
+    background: #B71C1C !important;
   }
 
-  &--GreenButton.btn,
-  &--RedButton.btn {
+  &--GreenButton.btn, &--RedButton.btn {
     color: white;
-    border-radius: 0.5em;
-    font-size: 0.9em;
-    padding: 0.5em 0.75em;
+    border-radius: .5em;
+    font-size: .9em;
+    padding: .5em .75em;
     margin: 0;
     .fa {
       margin: 0;
       font-size: 1em;
     }
     &:disabled {
-      opacity: 0.5;
+      opacity: .5;
     }
   }
+
 }
