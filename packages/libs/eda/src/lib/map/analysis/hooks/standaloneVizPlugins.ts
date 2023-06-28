@@ -109,13 +109,11 @@ export function useStandaloneVizPlugins({
           // activate timeline Viz
           timeseries: vizWithCustomizedGetRequest(
             vizWithOptions(
-              vizWithOptions(
-                lineplotVisualization
-                  .withOptions({
-                    showMarginalHistogram: true,
-                  })
-                  .withSelectorIcon(LineSVG)
-              )
+              lineplotVisualization
+                .withOptions({
+                  showMarginalHistogram: true,
+                })
+                .withSelectorIcon(LineSVG)
             ),
             lineplotRequest
           ),
