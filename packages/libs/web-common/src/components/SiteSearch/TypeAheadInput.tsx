@@ -5,22 +5,107 @@ import './SiteSearch.scss';
 
 // region Keyboard
 
+//
+// Keyboard Event Helper Functions.
+//
+
+/**
+ * Tests whether the keyboard event had a modifier key press present.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event had a modifier key press present,
+ * otherwise `false`.
+ */
 const kbHasModifier = (e: React.KeyboardEvent<any>) =>
   e.altKey || e.metaKey || e.ctrlKey || e.shiftKey;
+
+/**
+ * Tests whether the keyboard event had ONLY the "shift" modifier key press
+ * present.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event had the "shift" modifier and only the
+ * "shift" modifier press present, otherwise `false`.
+ */
 const kbHasOnlyShiftMod = (e: React.KeyboardEvent<any>) =>
   !(e.altKey || e.metaKey || e.ctrlKey) && e.shiftKey;
+
+/**
+ * Tests whether the keyboard event was for a "Tab" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for a "Tab" key press, otherwise
+ * `false`.
+ */
 const kbIsTab = (e: React.KeyboardEvent<any>) =>
   e.code === 'Tab' || e.keyCode == 9;
+
+/**
+ * Tests whether the keyboard event was for a "Space" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for a "Space" key press, otherwise
+ * `false`.
+ */
 const kbIsSpace = (e: React.KeyboardEvent<any>) =>
   e.code === 'Space' || e.keyCode == 32;
+
+/**
+ * Tests whether the keyboard event was for an "ArrowRight" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "ArrowRight" key press,
+ * otherwise `false`.
+ */
 const kbIsArrowRight = (e: React.KeyboardEvent<any>) =>
   e.code === 'ArrowRight' || e.keyCode == 39;
+
+/**
+ * Tests whether the keyboard event was for an "ArrowDown" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "ArrowDown" key press,
+ * otherwise `false`.
+ */
 const kbIsArrowDown = (e: React.KeyboardEvent<any>) =>
   e.code === 'ArrowDown' || e.keyCode == 40;
+
+/**
+ * Tests whether the keyboard event was for an "ArrowUp" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "ArrowUp" key press,
+ * otherwise `false`.
+ */
 const kbIsArrowUp = (e: React.KeyboardEvent<any>) =>
   e.code === 'ArrowUp' || e.keyCode == 38;
+
+/**
+ * Tests whether the keyboard event was for an "Enter" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "Enter" key press, otherwise
+ * `false`.
+ */
 const kbIsEnter = (e: React.KeyboardEvent<any>) =>
   e.code === 'Enter' || e.keyCode == 13;
+
+/**
+ * Tests whether the keyboard event was for an "Escape" key press.
+ *
+ * @param e Keyboard event to test.
+ *
+ * @return `true` if the keyboard event was for an "Escape" key press, otherwise
+ * `false`.
+ */
 const kbIsEscape = (e: React.KeyboardEvent<any>) =>
   e.code === 'Escape' || e.keyCode == 27;
 
@@ -28,11 +113,34 @@ const kbIsEscape = (e: React.KeyboardEvent<any>) =>
 
 // region Strings
 
+//
+// String Helper Functions
+//
+
+/**
+ * Returns the last word of the given string.
+ *
+ * @param value String from which the last word should be returned.
+ *
+ * @return The last word of the given string.
+ */
 const lastWordOf = (value: string) =>
   ((arr: Array<string>) => (arr.length > 0 ? arr[arr.length - 1] : ''))(
     value.split(/ +/)
   );
 
+/**
+ * Replaces the last word in the given `original` string with the given
+ * `replacement` word(s), returning the new string.
+ *
+ * @param original Original string whose last word should be replaced.
+ *
+ * @param replacement Word that will replace the last word of the original
+ * string.
+ *
+ * @return A new string formed by replacing the last word of the `original`
+ * string with the given `replacement`.
+ */
 const replaceLastWord = (original: string, replacement: string) =>
   original.substring(0, original.lastIndexOf(lastWordOf(original))) +
   replacement;
@@ -41,8 +149,31 @@ const replaceLastWord = (original: string, replacement: string) =>
 
 // region Debouncer
 
+/**
+ * Debouncer Function Type.
+ *
+ * Represents a function that may be used to build a "debounced" or "debouncing"
+ * function by passing in a target function that takes a value of type `T` and
+ * returns nothing.
+ *
+ * The return value of a Debouncer function call will be a new function that
+ * wraps the given target function with debouncing.
+ *
+ * @param T Type of the value consumed by the function wrapped by and returned
+ * by the Debouncer function.
+ */
 type Debouncer<T> = (func: (value: T) => void) => (value: T) => void;
 
+
+/**
+ * Builds a new `Debouncer` function that may be used to build one or more
+ * functions that debounce on the same timer.
+ *
+ * @param delay Debouncing delay.
+ *
+ * @return A `Debouncer` function that may be used to build one or more
+ * functions that debounce on the same timer.
+ */
 function buildDebouncer<T>(delay: number): Debouncer<T> {
   let timer: any;
 
@@ -60,6 +191,9 @@ function buildDebouncer<T>(delay: number): Debouncer<T> {
 
 const TYPEAHEAD_PATH: string = 'suggest';
 
+/**
+ * Wrapper for the SiteSearch Type-Ahead HTTP API.
+ */
 class TypeAheadAPI {
   private apiEndpoint: string;
 
@@ -68,6 +202,15 @@ class TypeAheadAPI {
       (endpoint.endsWith('/') ? endpoint : endpoint + '/') + TYPEAHEAD_PATH;
   }
 
+  /**
+   * Runs a type-ahead query against the HTTP API and calls the given callback
+   * (`cb`) with the results.
+   *
+   * @param query Type-Ahead query to be used to retrieve completion
+   * suggestions.
+   *
+   * @param cb Callback that will be called with the results of the API query.
+   */
   typeAhead(query: string, cb: (values: Array<string>) => any) {
     console.log(query);
     fetch(this.apiEndpoint + '?searchText=' + encodeURIComponent(query))
