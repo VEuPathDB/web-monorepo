@@ -67,10 +67,10 @@ export const SiteSearchInput = wrappable(function ({
   }, [ location ]);
 
   return (
-    <form ref={formRef} action={SITE_SEARCH_ROUTE} onSubmit={preventEventWith(handleSubmitWithFilters)} className={cx('--SearchBox')} autoComplete="off">
-      {docType && (<input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType} />)}
-      {organisms.map((organism) => <input key={organism} type="hidden" name={ORGANISM_PARAM} value={organism}/>)}
-      {fields.map((field) => <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />)}
+    <form ref={formRef} action={SITE_SEARCH_ROUTE} onSubmit={preventEventWith(handleSubmitWithFilters)} className={cx("--SearchBox")} autoComplete="off">
+      {docType && <input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType}/>}
+      {organisms.map(organism => <input key={organism} type="hidden" name={ORGANISM_PARAM} value={organism}/>)}
+      {fields.map(field => <input key={field} type="hidden" name={FILTERS_PARAM} value={field}/>)}
       {hasFilters ? (
         <Tooltip content="Run a new search, without your existing filters">
           <button className="reset" type="button" onClick={handleSubmitWithoutFilters}>Clear filters</button>
@@ -86,7 +86,7 @@ export const SiteSearchInput = wrappable(function ({
       )}
       <Tooltip content={hasFilters ? 'Update your search, keeping existing filters' : 'Run a new search'}>
         <button type="submit">
-          <i className="fa fa-search" />
+          <i className="fa fa-search"/>
         </button>
       </Tooltip>
     </form>

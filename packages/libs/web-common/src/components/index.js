@@ -8,6 +8,6 @@ export { default as ActiveGroup } from './ActiveGroup';
 export { default as SiteHeader } from './SiteHeader';
 export { default as QuickSearch } from './QuickSearch';
 export { default as TabularReporterFormSubmitButtons } from './reporters/TabularReporterFormSubmitButtons';
-export { SiteSearchInput } from './SiteSearch/SiteSearchInput';
+export { SiteSearchInput } from '../components/SiteSearch/SiteSearchInput';
 export { default as DownloadLink } from '../App/Studies/DownloadLink';
 export { SearchCheckboxTree } from '../components/homepage/SearchPane';

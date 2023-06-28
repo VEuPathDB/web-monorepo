@@ -23,13 +23,13 @@ import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import UserMenu from '../../App/UserMenu';
 import { SocialMediaLinks } from '../../components/homepage/SocialMediaLinks';
 import { SiteSearchInput } from '../SiteSearch/SiteSearchInput';
+import { SITE_SEARCH_ROUTE } from '../SiteSearch/SiteSearchConstants';
 
 import { webAppUrl } from '../../config';
 
 import { combineClassNames } from './Utils';
 
 import './Header.scss';
-import { SITE_SEARCH_ROUTE } from '../SiteSearch/SiteSearchConstants';
 
 const cx = makeClassNameHelper('ebrc-Header');
 
