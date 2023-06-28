@@ -290,23 +290,25 @@ export function useStandaloneMapMarkers(
         )
       : 0;
 
-    const bubbleValueToSizeMapper = (value: number) => {
-      const largestCircleArea = 9000;
+    const bubbleValueToDiameterMapper = (value: number) => {
+      // const largestCircleArea = 9000;
+      const largestCircleDiameter = 90;
 
       // Area scales directly with value
-      const constant = largestCircleArea / maxOverlayCount;
-      const area = value * constant;
-      const radius = Math.sqrt(area / Math.PI);
+      // const constant = largestCircleArea / maxOverlayCount;
+      // const area = value * constant;
+      // const radius = Math.sqrt(area / Math.PI);
 
       // Radius scales with log_10 of value
       // const constant = 20;
       // const radius = Math.log10(value) * constant;
 
       // Radius scales directly with value
-      // const constant = maxValue / largestCircleSize;
-      // const radius = value * constant;
+      const scalingFactor = largestCircleDiameter / maxOverlayCount;
+      const diameter = value * scalingFactor;
 
-      return 2 * radius;
+      // return 2 * radius;
+      return diameter;
     };
 
     return rawMarkersData.value?.mapElements.map(
@@ -405,7 +407,7 @@ export function useStandaloneMapMarkers(
               data: bubbleData,
               markerLabel: String(count),
               dependentAxisRange: defaultDependentAxisRange,
-              valueToSizeMapper: bubbleValueToSizeMapper,
+              valueToDiameterMapper: bubbleValueToDiameterMapper,
             } as BubbleMarkerProps;
           }
           default: {

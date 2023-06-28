@@ -27,7 +27,7 @@ export default {
   title: 'Map/Bubble Markers',
 } as Meta;
 
-const valueToSizeMapper = (value: number) => {
+const valueToDiameterMapper = (value: number) => {
   // Area scales directly with value
   const constant = 100;
   const area = value * constant;
@@ -58,7 +58,7 @@ export const Standalone: Story<MapVEuMapProps> = () => {
         ]}
         isAtomic={false}
         // markerScale={1}
-        valueToSizeMapper={valueToSizeMapper}
+        valueToDiameterMapper={valueToDiameterMapper}
         containerStyles={{ margin: '10px' }}
       />
       <BubbleMarkerStandalone
@@ -71,7 +71,7 @@ export const Standalone: Story<MapVEuMapProps> = () => {
         ]}
         isAtomic={false}
         // markerScale={1}
-        valueToSizeMapper={valueToSizeMapper}
+        valueToDiameterMapper={valueToDiameterMapper}
         containerStyles={{ margin: '10px' }}
       />
       <BubbleMarkerStandalone
@@ -84,7 +84,7 @@ export const Standalone: Story<MapVEuMapProps> = () => {
         ]}
         isAtomic={false}
         // markerScale={1}
-        valueToSizeMapper={valueToSizeMapper}
+        valueToDiameterMapper={valueToDiameterMapper}
         containerStyles={{ margin: '10px' }}
       />
     </div>

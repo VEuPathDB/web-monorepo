@@ -1,11 +1,12 @@
 import React from 'react';
 import { range } from 'd3';
+import _ from 'lodash';
 
 // set props for custom legend function
 export interface PlotLegendBubbleProps {
   legendMax: number;
   //   legendMin: number;
-  valueToSizeMapper: (value: number) => number;
+  valueToDiameterMapper: (value: number) => number;
   //   nTicks?: number; // MUST be odd!
   //   showMissingness?: boolean;
 }
@@ -21,7 +22,7 @@ export interface PlotLegendBubbleProps {
 export default function PlotBubbleLegend({
   legendMax,
   //   legendMin,
-  valueToSizeMapper,
+  valueToDiameterMapper,
 }: //   nTicks = 5,
 //   showMissingness,
 PlotLegendBubbleProps) {
@@ -32,16 +33,31 @@ PlotLegendBubbleProps) {
   const legendTextSize = '1.0em';
   const circleStrokeWidth = 3;
   const padding = 5;
-  // const largestDataCircleSize = valueToSizeMapper(legendMax);
+  // const largestDataCircleSize = valueToDiameterMapper(legendMax);
   const numCircles = 3;
 
   // the value of the largest circle in the legend will be the smallest power of 10 that's larger than legendMax
-  const largestCircleValue = Math.pow(10, Math.ceil(Math.log10(legendMax)));
-  const largestCircleDiameter = valueToSizeMapper(largestCircleValue);
-  const largestCircleRadius = largestCircleDiameter / 2;
-  const circleValues = range(numCircles).map(
-    (i) => largestCircleValue / Math.pow(10, i)
+  // const largestCircleValue = Math.pow(10, Math.ceil(Math.log10(legendMax)));
+  // const circleValues = range(numCircles).map(
+  //   (i) => largestCircleValue / Math.pow(10, i)
+  // );
+
+  console.log('here9');
+
+  const legendMaxLog10 = Math.floor(Math.log10(legendMax));
+  const largestCircleValue =
+    legendMax <= 10
+      ? legendMax
+      : (Number(legendMax.toPrecision(1)[0]) + 1) * 10 ** legendMaxLog10;
+  const circleValues = _.uniq(
+    range(numCircles)
+      .map((i) => Math.round(largestCircleValue / 2 ** i))
+      .filter((value) => value >= 1)
   );
+  console.log({ legendMax, legendMaxLog10, largestCircleValue, circleValues });
+
+  const largestCircleDiameter = valueToDiameterMapper(largestCircleValue);
+  const largestCircleRadius = largestCircleDiameter / 2;
 
   console.log({ circleValues });
 
@@ -53,7 +69,7 @@ PlotLegendBubbleProps) {
   // //   const fudge = legendStep / 10; // to get an inclusive range from d3 we have to make a slightly too-large max
   // const stopPoints = range(legendStep, legendMax, legendStep).map(
   //     (value: number, index: number) => {
-  //       const size = valueToSizeMapper(value);
+  //       const size = valueToDiameterMapper(value);
   //       return (
   //         <stop
   //           offset={stopPercentage}
@@ -77,7 +93,7 @@ PlotLegendBubbleProps) {
       {circleValues.map((value, i) => {
         console.log({ value });
         // const value = legendMax * (i / (numCircles - 1));
-        const circleDiameter = valueToSizeMapper(value);
+        const circleDiameter = valueToDiameterMapper(value);
         const circleRadius = circleDiameter / 2;
         const tickY =
           padding + largestCircleDiameter + circleStrokeWidth - circleDiameter;

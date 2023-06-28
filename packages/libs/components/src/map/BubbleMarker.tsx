@@ -19,7 +19,7 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
-  valueToSizeMapper: (value: number) => number;
+  valueToDiameterMapper: (value: number) => number;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
 }
 
@@ -27,7 +27,7 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
  * this is a SVG bubble marker icon
  */
 export default function BubbleMarker(props: BubbleMarkerProps) {
-  const { html: svgHTML, size } = bubbleMarkerSVGIcon(props);
+  const { html: svgHTML, diameter: size } = bubbleMarkerSVGIcon(props);
 
   // set icon as divIcon
   const SVGBubbleIcon = L.divIcon({
@@ -65,7 +65,7 @@ type BubbleMarkerStandaloneProps = Omit<
   ContainerStylesAddon;
 
 export function BubbleMarkerStandalone(props: BubbleMarkerStandaloneProps) {
-  const { html, size } = bubbleMarkerSVGIcon(props);
+  const { html, diameter } = bubbleMarkerSVGIcon(props);
   // NOTE: the font size and line height would normally come from the .leaflet-container class
   // but we won't be using that. You can override these with `containerStyles` if you like.
   return (
@@ -73,8 +73,8 @@ export function BubbleMarkerStandalone(props: BubbleMarkerStandaloneProps) {
       style={{
         fontSize: '12px',
         lineHeight: 1.5,
-        width: size,
-        height: size,
+        width: diameter,
+        height: diameter,
         ...props.containerStyles,
       }}
       dangerouslySetInnerHTML={{ __html: html }}
@@ -84,19 +84,27 @@ export function BubbleMarkerStandalone(props: BubbleMarkerStandaloneProps) {
 
 function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   html: string;
-  size: number;
+  diameter: number;
 } {
   // const scale = props.markerScale ?? MarkerScaleDefault;
   console.log({ dependentAxisRange: props.dependentAxisRange });
-  // defined assertion here
-  const size = props.valueToSizeMapper(props.data[0].value);
-  const circleRadius = size / 2;
+  const diameter = props.valueToDiameterMapper(props.data[0].value);
+  const radius = diameter / 2;
+  // set outer white circle size to describe white boundary
+  const strokeWidth = 2;
+  const outlineRadius = radius + strokeWidth;
 
   let svgHTML: string = '';
 
   // set drawing area
   svgHTML +=
-    '<svg width="' + circleRadius * 2 + '" height="' + circleRadius * 2 + '">'; // initiate svg marker icon
+    '<svg width="' +
+    outlineRadius * 2 +
+    '" height="' +
+    outlineRadius * 2 +
+    '">'; // initiate svg marker icon
+
+  console.log('here5');
 
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
   // const sumLabel = props.markerLabel ?? String(fullPieValue);
@@ -115,13 +123,14 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   //TODO: two things to consider: a) bubble size; b) bubble color
   svgHTML +=
     '<circle cx="' +
-    circleRadius +
+    outlineRadius +
     '" cy="' +
-    circleRadius +
+    outlineRadius +
     '" r="' +
-    circleRadius +
-    '" stroke="green" stroke-width="0" fill="' +
-    // color is possibly undefined
+    outlineRadius +
+    '" stroke="white" stroke-width="' +
+    strokeWidth +
+    '" fill="' +
     props.data[0].color +
     '" />';
 
@@ -144,5 +153,5 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   // closing svg tag
   svgHTML += '</svg>';
 
-  return { html: svgHTML, size };
+  return { html: svgHTML, diameter: diameter };
 }

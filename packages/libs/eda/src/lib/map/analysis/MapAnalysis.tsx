@@ -1110,9 +1110,9 @@ function MapAnalysisImpl(props: ImplProps) {
                               )
                             : 0
                         }
-                        valueToSizeMapper={
+                        valueToDiameterMapper={
                           (markersData as BubbleMarkerProps[])[0]
-                            .valueToSizeMapper
+                            .valueToDiameterMapper
                         }
                         containerStyles={{
                           border: 'none',
