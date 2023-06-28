@@ -37,8 +37,8 @@ export const SiteSearchInput = wrappable(function ({
   const hasFilters = !isEmpty(docType) || !isEmpty(organisms) || !isEmpty(fields);
 
   const onSearch = useCallback((queryString: string) => {
-      history.push(`${SITE_SEARCH_ROUTE}?${queryString}`);
-    }, [ history ]);
+    history.push(`${SITE_SEARCH_ROUTE}?${queryString}`);
+  }, [ history ]);
 
   const handleSubmitWithFilters = useCallback(() => {
     const { current } = formRef;
@@ -53,76 +53,38 @@ export const SiteSearchInput = wrappable(function ({
     onSearch(queryString);
   }, [ onSearch ]);
 
-  const [lastSearchQueryString, setLastSearchQueryString] =
-    useSessionBackedState<string>(
-      '',
-      'ebrc/site-search/last-query-string',
-      (value: string) => value,
-      (value: string) => value
-    );
+  const [ lastSearchQueryString, setLastSearchQueryString ] = useSessionBackedState<string>(
+    '',
+    'ebrc/site-search/last-query-string',
+    (value: string) => value,
+    (value: string) => value
+  );
 
   useEffect(() => {
     if (location.pathname === SITE_SEARCH_ROUTE) {
       setLastSearchQueryString(location.search.slice(1));
     }
-  }, [location]);
+  }, [ location ]);
 
   return (
-    <form
-      ref={formRef}
-      action={SITE_SEARCH_ROUTE}
-      onSubmit={preventEventWith(handleSubmitWithFilters)}
-      className={cx('--SearchBox')}
-      autoComplete="off"
-    >
-      {docType && (
-        <input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType} />
-      )}
-      {organisms.map((organism) => (
-        <input
-          key={organism}
-          type="hidden"
-          name={ORGANISM_PARAM}
-          value={organism}
-        />
-      ))}
-      {fields.map((field) => (
-        <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />
-      ))}
+    <form ref={formRef} action={SITE_SEARCH_ROUTE} onSubmit={preventEventWith(handleSubmitWithFilters)} className={cx('--SearchBox')} autoComplete="off">
+      {docType && (<input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType} />)}
+      {organisms.map((organism) => <input key={organism} type="hidden" name={ORGANISM_PARAM} value={organism}/>)}
+      {fields.map((field) => <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />)}
       {hasFilters ? (
         <Tooltip content="Run a new search, without your existing filters">
-          <button
-            className="reset"
-            type="button"
-            onClick={handleSubmitWithoutFilters}
-          >
-            Clear filters
-          </button>
+          <button className="reset" type="button" onClick={handleSubmitWithoutFilters}>Clear filters</button>
         </Tooltip>
       ) : null}
-      <TypeAheadInput
-        siteSearchURL={siteSearchURL}
-        inputReference={inputRef}
-        searchString={searchString}
-      />
+      <TypeAheadInput siteSearchURL={siteSearchURL} inputReference={inputRef} searchString={searchString} />
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
         <Tooltip content="Go back to your last search result">
-          <button
-            className="back"
-            type="button"
-            onClick={() => onSearch(lastSearchQueryString)}
-          >
+          <button className="back" type="button" onClick={() => onSearch(lastSearchQueryString)}>
             <i className="fa fa-long-arrow-left" />
           </button>
         </Tooltip>
       )}
-      <Tooltip
-        content={
-          hasFilters
-            ? 'Update your search, keeping existing filters'
-            : 'Run a new search'
-        }
-      >
+      <Tooltip content={hasFilters ? 'Update your search, keeping existing filters' : 'Run a new search'}>
         <button type="submit">
           <i className="fa fa-search" />
         </button>
