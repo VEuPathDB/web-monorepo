@@ -651,13 +651,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
-  // define showMarginalHistogram
-  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
   // check banner condition
   const showIndependentAxisBanner =
     vizConfig.independentAxisLogScale && vizConfig.useBinning;
   const showDependentAxisBanner =
     vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
+
+  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
