@@ -377,9 +377,9 @@ const enhance = connect<
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
+    ...omit(ownProps, ['question', 'recordClass']),
     searchName: ownProps.question,
     recordClassName: ownProps.recordClass,
-    ...omit(ownProps, ['question', 'recordClass']),
   })
 );
 
