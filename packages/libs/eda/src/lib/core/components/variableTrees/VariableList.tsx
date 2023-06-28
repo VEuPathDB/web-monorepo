@@ -21,8 +21,8 @@ import {
   preorderSeq,
   pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import SelectTree from '@veupathdb/coreui/dist/components/inputs/SelectTree/SelectTree';
-import CheckboxTree from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import SelectTree from '@veupathdb/coreui/lib/components/inputs/SelectTree/SelectTree';
+import CheckboxTree from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   isFilterField,
@@ -48,13 +48,13 @@ import { pruneEmptyFields } from '../../utils/wdk-filter-param-adapter';
 
 import { Tooltip as VarTooltip } from '../docs/variable-constraints';
 import { useActiveDocument } from '../docs/DocumentationContainer';
-import { CustomCheckboxes } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
+import { CustomCheckboxes } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTreeNode';
 import { Toggle } from '@veupathdb/coreui';
-import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLink, VariableLinkConfig } from '../VariableLink';
 
 const baseFieldNodeLinkStyle = {
-  padding: '0.25em 0.5em',
+  padding: '0 0.5em',
   borderRadius: '0.5em',
   display: 'inline-block',
   cursor: 'pointer',
@@ -87,7 +87,11 @@ const useFieldNodeCssSelectors = () => {
         ...baseFieldNodeLinkStyle,
         ...activeFieldNodeLinkStyle,
       },
-      '.single-select-anchor-node': { marginLeft: '0.5em' },
+      '.single-select-anchor-node': {
+        marginLeft: '0.5em',
+        alignSelf: 'center',
+        padding: '0.25em 0.5em',
+      },
       '.dropdown-node-color': { color: '#2f2f2f' },
       '.base-node-color': {
         color: themePrimaryColor ?? '#069',
@@ -95,7 +99,7 @@ const useFieldNodeCssSelectors = () => {
       '.entity-node': {
         fontWeight: 'bold',
         cursor: 'pointer',
-        padding: '0.25em 0.5em',
+        padding: '0 0.5em',
       },
       '.starred-var-container': {
         display: 'flex',
@@ -198,6 +202,9 @@ interface VariableListProps {
   startExpanded?: boolean;
   asDropdown?: boolean;
   dropdownLabel?: string;
+  /**
+   * used to disable FieldNode's scrollIntoView property in map scope
+   */
   scope?: VariableScope;
   clearSelectionButton?: ReactNode;
 }
@@ -230,10 +237,8 @@ export default function VariableList({
   clearSelectionButton,
 }: VariableListProps) {
   // useContext is used here with ShowHideVariableContext
-  const {
-    showOnlyCompatibleVariables,
-    setShowOnlyCompatibleVariablesHandler,
-  } = useContext(ShowHideVariableContext);
+  const { showOnlyCompatibleVariables, setShowOnlyCompatibleVariablesHandler } =
+    useContext(ShowHideVariableContext);
   const isMultiPick = mode === 'multiSelection';
 
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -364,9 +369,8 @@ export default function VariableList({
   const starredVariablesLoading = starredVariables == null;
 
   // moved this useState here
-  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
-    false
-  );
+  const [showOnlyStarredVariables, setShowOnlyStarredVariables] =
+    useState(false);
 
   // make visibleStarredVariableTerms state be used at MyVariable
   const visibleStarredVariableTerms = useMemo(() => {
@@ -393,9 +397,10 @@ export default function VariableList({
     return new Set(presentStarredVariableTerms);
   }, [availableVariableTerms, visibleStarredVariableTerms]);
 
-  const disabledFields = useMemo(() => new Set(disabledFieldIds), [
-    disabledFieldIds,
-  ]);
+  const disabledFields = useMemo(
+    () => new Set(disabledFieldIds),
+    [disabledFieldIds]
+  );
 
   const multiFilterDescendants = useMemo(() => {
     const children = new Map<string, string>();
@@ -438,7 +443,12 @@ export default function VariableList({
           isStarred={starredVariableTermsSet.has(fieldTerm)}
           starredVariablesLoading={starredVariablesLoading}
           onClickStar={() => toggleStarredVariable({ entityId, variableId })}
-          scrollIntoView
+          /**
+           * map UI has limited space, so let's disable scrollIntoView
+           * in the map context so that we don't inadvertantly hide
+           * contextual info like the entity diagram
+           */
+          scrollIntoView={scope !== 'map'}
           asDropdown={asDropdown}
         />
       );
@@ -489,7 +499,6 @@ export default function VariableList({
             }}
             type="button"
             onClick={toggleShowOnlyStarredVariables}
-            disabled={starredVariableToggleDisabled}
           >
             <Toggle
               value={showOnlyStarredVariables}
@@ -693,9 +702,10 @@ export default function VariableList({
               const checked = selectedFields.some((f) => f.term === field.term);
               const onChange = (node: any, checked: boolean) => {
                 if (onSelectedFieldsChange == null) return;
-                const nextSelectedFields = (checked
-                  ? selectedFields.concat(field)
-                  : selectedFields.filter((f) => f.term !== field.term)
+                const nextSelectedFields = (
+                  checked
+                    ? selectedFields.concat(field)
+                    : selectedFields.filter((f) => f.term !== field.term)
                 ).map((field) => field.term);
                 onSelectedFieldsChange(nextSelectedFields);
               };
@@ -713,6 +723,7 @@ export default function VariableList({
                       display: 'flex',
                       alignItems: 'center',
                       marginLeft: '1em',
+                      padding: scope === 'download' ? '0.2em 0' : undefined,
                     }}
                   >
                     {isMultiPick &&
@@ -788,7 +799,10 @@ export default function VariableList({
     styleOverrides: {
       treeNode: {
         nodeWrapper: {
-          padding: 0,
+          padding: scope === 'download' ? '0.125em 0' : 0,
+        },
+        topLevelNodeWrapper: {
+          padding: '0.25em 0.5em',
         },
       },
       treeLinks: {
@@ -944,8 +958,10 @@ const FieldNode = ({
         isMultiPick
           ? ''
           : isDisabled
-          ? customDisabledVariableMessage ??
-            'This variable cannot be used with this plot and other variable selections.'
+          ? (customDisabledVariableMessage
+              ? customDisabledVariableMessage
+              : 'This variable cannot be used with this plot and other variable selections.') +
+            ' Muti-valued variables are not currently supported.'
           : 'Select this variable.'
       }
       className={

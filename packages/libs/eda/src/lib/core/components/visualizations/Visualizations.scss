@@ -107,6 +107,26 @@
     position: relative;
     padding: 1em 0;
   }
+  &-GroupedPickerContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin: 15px 0 15px 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  &-GroupedPickerEntryHeadline {
+    margin-right: 15px;
+  }
+  &-GroupedPickerEntryList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    font-size: 0.75em;
+    margin-top: 15px;
+  }
   &-PickerActions {
     padding: 2em 0;
     position: absolute;
@@ -118,6 +138,9 @@
   &-PickerEntry {
     &__disabled {
       opacity: 0.75;
+    }
+    &__marginRight {
+      margin-right: 15px;
     }
     display: flex;
     flex-direction: column;

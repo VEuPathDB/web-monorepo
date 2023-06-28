@@ -17,7 +17,7 @@
     "@veupathdb/prettier-config": "workspace:^",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
-    "nx": "15.3.3"
+    "nx": "16.3.2"
   },
   "prettier": "@veupathdb/prettier-config",
   "lint-staged": {
@@ -29,5 +29,9 @@
   },
   "engines": {
     "node": "<=16.17.1"
+  },
+  "dependencies": {
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1"
   }
 }

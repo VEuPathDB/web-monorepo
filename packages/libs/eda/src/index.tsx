@@ -19,6 +19,10 @@ import React, {
 } from 'react';
 
 import { partial } from 'lodash';
+import {
+  createTheme as createMUITheme,
+  ThemeProvider as MUIThemeProvider,
+} from '@material-ui/core';
 
 import {
   initialize,
@@ -43,11 +47,12 @@ import reportWebVitals from './reportWebVitals';
 import Header from './Header';
 import MapApp from './lib/map';
 import WorkspaceApp from './lib/workspace';
-import UIThemeProvider from '@veupathdb/coreui/dist/components/theming/UIThemeProvider';
+import CoreUIThemeProvider from '@veupathdb/coreui/lib/components/theming/UIThemeProvider';
+import { workspaceThemeOptions as MUIThemeOptions } from './lib/workspaceTheme';
 
 // Hooks
 import { useAttemptActionClickHandler } from '@veupathdb/study-data-access/lib/data-restriction/dataRestrictionHooks';
-import { useCoreUIFonts } from '@veupathdb/coreui/dist/hooks';
+import { useCoreUIFonts } from '@veupathdb/coreui/lib/hooks';
 
 // Definitions
 import { colors, H3 } from '@veupathdb/coreui';
@@ -55,7 +60,7 @@ import { colors, H3 } from '@veupathdb/coreui';
 import './index.css';
 
 // snackbar
-import makeSnackbarProvider from '@veupathdb/coreui/dist/components/notifications/SnackbarProvider';
+import makeSnackbarProvider from '@veupathdb/coreui/lib/components/notifications/SnackbarProvider';
 
 // Set singleAppMode to the name of one app, if the eda should use one instance of one app only.
 // Otherwise, let singleAppMode remain undefined or set it to '' to allow multiple app instances.
@@ -63,9 +68,6 @@ const singleAppMode = process.env.REACT_APP_SINGLE_APP_MODE;
 
 const showUnreleasedData =
   process.env.REACT_APP_SHOW_UNRELEASED_DATA === 'true';
-
-const enableFullScreenApps =
-  process.env.REACT_APP_ENABLE_FULL_SCREEN_APPS === 'true';
 
 const exampleAnalysesAuthor = process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR
   ? Number(process.env.REACT_APP_EXAMPLE_ANALYSES_AUTHOR)
@@ -81,8 +83,8 @@ export const DevLoginFormContext = createContext<DevLoginFormState>({
   setLoginFormVisible: () => {},
 });
 
-// snackbar
 const SnackbarProvider = makeSnackbarProvider();
+const MUITheme = createMUITheme(MUIThemeOptions);
 
 wrapComponents({
   Header: () => Header,
@@ -110,23 +112,25 @@ wrapComponents({
       useCoreUIFonts();
 
       return (
-        <DevLoginFormContext.Provider value={loginFormContext}>
-          <DataRestrictionDaemon
-            makeStudyPageRoute={(id: string) => `/eda/${id}`}
-          />
-          <UIThemeProvider
-            theme={{
-              palette: {
-                primary: { hue: colors.mutedCyan, level: 600 },
-                secondary: { hue: colors.mutedRed, level: 500 },
-              },
-            }}
-          >
-            <SnackbarProvider styleProps={{}}>
-              <DefaultComponent {...props} />
-            </SnackbarProvider>
-          </UIThemeProvider>
-        </DevLoginFormContext.Provider>
+        <MUIThemeProvider theme={MUITheme}>
+          <DevLoginFormContext.Provider value={loginFormContext}>
+            <DataRestrictionDaemon
+              makeStudyPageRoute={(id: string) => `/eda/${id}`}
+            />
+            <CoreUIThemeProvider
+              theme={{
+                palette: {
+                  primary: { hue: colors.mutedCyan, level: 600 },
+                  secondary: { hue: colors.mutedRed, level: 500 },
+                },
+              }}
+            >
+              <SnackbarProvider styleProps={{}}>
+                <DefaultComponent {...props} />
+              </SnackbarProvider>
+            </CoreUIThemeProvider>
+          </DevLoginFormContext.Provider>
+        </MUIThemeProvider>
       );
     };
   },
@@ -155,7 +159,13 @@ initialize({
           <H3>MapVEu Links</H3>
           <ul>
             <li>
-              <Link to="/mapveu">Mapveu</Link>
+              <Link to="/maps">My analyses</Link>
+            </li>
+            <li>
+              <Link to="/maps/public">Public analyses</Link>
+            </li>
+            <li>
+              <Link to="/maps/studies">All studies</Link>
             </li>
           </ul>
         </div>
@@ -179,13 +189,12 @@ initialize({
             showLoginForm={showLoginForm}
             singleAppMode={singleAppMode}
             showUnreleasedData={showUnreleasedData}
-            enableFullScreenApps={enableFullScreenApps}
           />
         );
       },
     },
     {
-      path: '/mapveu',
+      path: '/maps',
       component: () => (
         <MapApp
           siteInformationProps={{
@@ -193,10 +202,11 @@ initialize({
             siteLogoSrc:
               'https://veupathdb.org/veupathdb/images/VEuPathDB/icons-footer/vectorbase.png',
             siteName: 'VectorBase',
-            loginUrl: 'https://eupathdb.org/oauth/assets/eupathdb-login.html',
+            loginUrl: '/user/login',
           }}
           singleAppMode={singleAppMode}
           edaServiceUrl={edaEndpoint}
+          sharingUrl={window.location.href}
         />
       ),
       exact: false,

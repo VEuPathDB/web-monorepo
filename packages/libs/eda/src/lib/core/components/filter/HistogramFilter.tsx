@@ -43,9 +43,11 @@ import Notification from '@veupathdb/components/lib/components/widgets//Notifica
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../utils/variable-display';
 import { useDefaultAxisRange } from '../../hooks/computeDefaultAxisRange';
-import { min, max } from 'lodash';
+import { min, max, gt, lt } from 'lodash';
 import { useDebounce } from '../../hooks/debouncing';
 import { useDeepValue } from '../../hooks/immutability';
+// reset to defaults button
+import { ResetButtonCoreUI } from '../ResetButton';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -275,18 +277,25 @@ export function HistogramFilter(props: Props) {
   const updateUIState = useCallback(
     (newUiState: Partial<UIState>) => {
       // if (uiState.binWidth === newUiState.binWidth) return;
-      analysisState.setVariableUISettings({
+      analysisState.setVariableUISettings((currentState) => ({
+        ...currentState,
         [uiStateKey]: {
           ...uiState,
           ...newUiState,
         },
-      });
+      }));
     },
     [analysisState, uiStateKey, uiState]
   );
 
   // stats from foreground
   const fgSummaryStats = data?.value?.series[1].summary;
+  const fgSummaryStatsMin = formatStatValue(fgSummaryStats?.min, variable.type);
+  const fgSummaryStatsMean = formatStatValue(
+    fgSummaryStats?.mean,
+    variable.type
+  );
+  const fgSummaryStatsMax = formatStatValue(fgSummaryStats?.max, variable.type);
 
   const minPosVal = useMemo(
     () =>
@@ -338,24 +347,10 @@ export function HistogramFilter(props: Props) {
         >
           {fgSummaryStats && (
             <div className="histogram-summary-stats">
-              <>
-                <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
-                &emsp;
-              </>
-              <>
-                <b>Mean:</b>{' '}
-                {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
-              </>
-              {/*
-                <>
-                  <b>Median:</b>{' '}
-                  {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;
-                </>
-              */}
-              <>
-                <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}{' '}
-                &emsp;
-              </>
+              {/* display Min, Mean, and Max stats */}
+              <DisplayStats title={'Min'} stats={fgSummaryStatsMin} />
+              <DisplayStats title={'Mean'} stats={fgSummaryStatsMean} />
+              <DisplayStats title={'Max'} stats={fgSummaryStatsMax} />
             </div>
           )}
           {data.value?.hasDataEntitiesCount != null && (
@@ -369,7 +364,7 @@ export function HistogramFilter(props: Props) {
           )}
         </div>
         <HistogramPlotWithControls
-          key={filters?.length ?? 0}
+          key={otherFilters?.length ?? 0}
           filter={filter}
           data={
             data.value &&
@@ -654,122 +649,148 @@ function HistogramPlotWithControls({
       />
 
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="X-axis controls">
-          <BinWidthControl
-            binWidth={data?.binWidthSlider?.binWidth}
-            binWidthStep={data?.binWidthSlider?.binWidthStep}
-            binWidthRange={data?.binWidthSlider?.binWidthRange}
-            binUnit={uiState.binWidthTimeUnit ?? 'year'}
-            binUnitOptions={
-              data?.binWidthSlider?.valueType === 'date'
-                ? ['day', 'week', 'month', 'year']
-                : undefined
-            }
-            onBinWidthChange={handleBinWidthChange}
-            valueType={data?.binWidthSlider?.valueType}
-            containerStyles={{ minHeight: widgetHeight }}
-          />
-
-          <AxisRangeControl
-            label="Range"
-            range={uiState.independentAxisRange}
-            onRangeChange={handleIndependentAxisRangeChange}
-            valueType={data?.binWidthSlider?.valueType}
-            containerStyles={{ minWidth: '400px' }}
-          />
-          {/* truncation notification */}
-          {truncatedIndependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedIndependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedIndependentAxisWarning('');
-              }}
-              showWarningIcon={true}
-              containerStyles={{
-                maxWidth:
-                  data?.binWidthSlider?.valueType === 'date'
-                    ? '34.5em'
-                    : '38.5em',
-              }}
-            />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset X-axis to defaults'}
-            onClick={handleIndependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-          />
-        </LabelledGroup>
+          >
+            <LabelledGroup label="X-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleIndependentAxisSettingsReset}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginLeft: '1em',
+              marginTop: '-0.5em',
+            }}
+          >
+            <BinWidthControl
+              binWidth={data?.binWidthSlider?.binWidth}
+              binWidthStep={data?.binWidthSlider?.binWidthStep}
+              binWidthRange={data?.binWidthSlider?.binWidthRange}
+              binUnit={uiState.binWidthTimeUnit ?? 'year'}
+              binUnitOptions={
+                data?.binWidthSlider?.valueType === 'date'
+                  ? ['day', 'week', 'month', 'year']
+                  : undefined
+              }
+              onBinWidthChange={handleBinWidthChange}
+              valueType={data?.binWidthSlider?.valueType}
+              containerStyles={{ minHeight: widgetHeight }}
+            />
+            <AxisRangeControl
+              label="Range"
+              range={uiState.independentAxisRange}
+              onRangeChange={handleIndependentAxisRangeChange}
+              valueType={data?.binWidthSlider?.valueType}
+              containerStyles={{ minWidth: '400px' }}
+            />
+            {/* truncation notification */}
+            {truncatedIndependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedIndependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedIndependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                containerStyles={{
+                  maxWidth: '36.7em',
+                }}
+              />
+            ) : null}
+          </div>
+        </div>
 
         {/* add vertical line in btw Y- and X- controls */}
         <div
           style={{
             display: 'inline-flex',
             borderLeft: '2px solid lightgray',
-            height: '13.6em',
+            height: '10.6em',
             position: 'relative',
-            marginLeft: '-1.2em',
+            marginLeft: '1.0em',
             top: '1.5em',
           }}
         >
           {' '}
         </div>
 
-        <LabelledGroup label="Y-axis controls">
-          <Toggle
-            label={'Log scale'}
-            value={uiState.dependentAxisLogScale}
-            onChange={handleDependentAxisLogScale}
-            styleOverrides={{
-              container: {
-                paddingBottom: '0.3125em',
-                minHeight: widgetHeight,
-              },
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* set Undo icon and its behavior */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-            themeRole="primary"
-          />
+          >
+            <LabelledGroup label="Y-axis controls"> </LabelledGroup>
+            <div style={{ marginLeft: '-2.6em', width: '50%' }}>
+              <ResetButtonCoreUI
+                size={'medium'}
+                text={''}
+                themeRole={'primary'}
+                tooltip={'Reset to defaults'}
+                disabled={false}
+                onPress={handleDependentAxisSettingsReset}
+              />
+            </div>
+          </div>
 
-          <NumberRangeInput
-            label="Range"
-            range={uiState.dependentAxisRange ?? defaultDependentAxisRange}
-            onRangeChange={(newRange?: NumberOrDateRange) => {
-              handleDependentAxisRangeChange(newRange as NumberRange);
-            }}
-            allowPartialRange={false}
-            containerStyles={{ minWidth: '400px' }}
-          />
-          {/* truncation notification */}
-          {truncatedDependentAxisWarning ? (
-            <Notification
-              title={''}
-              text={truncatedDependentAxisWarning}
-              // this was defined as LIGHT_BLUE
-              color={'#5586BE'}
-              onAcknowledgement={() => {
-                setTruncatedDependentAxisWarning('');
+          <div style={{ marginLeft: '1em', marginTop: '-0.6em' }}>
+            <Toggle
+              label={'Log scale'}
+              value={uiState.dependentAxisLogScale}
+              onChange={handleDependentAxisLogScale}
+              styleOverrides={{
+                container: {
+                  paddingBottom: '0.3125em',
+                  minHeight: widgetHeight,
+                },
               }}
-              showWarningIcon={true}
-              containerStyles={{ maxWidth: '38.5em' }}
+              themeRole="primary"
             />
-          ) : null}
-          <Button
-            type={'outlined'}
-            text={'Reset Y-axis to defaults'}
-            onClick={handleDependentAxisSettingsReset}
-            containerStyles={{
-              paddingTop: '1.0em',
-              width: '50%',
-              float: 'right',
-            }}
-          />
-        </LabelledGroup>
+            <NumberRangeInput
+              label="Range"
+              range={uiState.dependentAxisRange ?? defaultDependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                handleDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRange={false}
+              containerStyles={{ minWidth: '400px' }}
+            />
+            {/* truncation notification */}
+            {truncatedDependentAxisWarning ? (
+              <Notification
+                title={''}
+                text={truncatedDependentAxisWarning}
+                // this was defined as LIGHT_BLUE
+                color={'#5586BE'}
+                onAcknowledgement={() => {
+                  setTruncatedDependentAxisWarning('');
+                }}
+                showWarningIcon={true}
+                containerStyles={{ maxWidth: '36.7em' }}
+              />
+            ) : null}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -842,16 +863,28 @@ function tidyBinLabel(
 function formatStatValue(
   value: string | number | undefined,
   type: HistogramVariable['type']
-) {
+): string | number | string[] {
   if (value == null) return 'N/A';
-  return type === 'date'
-    ? String(value).replace(/T.*$/, '')
-    : // check a possible year variable
-    type === 'integer' && Number(value) >= 1900 && Number(value) <= 2100
-    ? Number.isInteger(value)
+
+  let formattedValue: string | number | string[] =
+    type === 'date'
+      ? String(value).replace(/T.*$/, '')
+      : // set conditions similar to plotly
+      gt(Number(value), 100000) ||
+        (Number(value) != 0 && lt(Math.abs(Number(value)), 0.0001))
+      ? Number(value).toExponential(4)
+      : Number.isInteger(value)
       ? Number(value)
-      : Number(value).toFixed(4)
-    : Number(value).toExponential(4);
+      : Number(value).toFixed(4);
+
+  // treating negative exponent
+  if (typeof formattedValue === 'string' && formattedValue.includes('e')) {
+    formattedValue = formattedValue.includes('e-')
+      ? formattedValue.split('e')
+      : formattedValue.split('e+');
+  }
+
+  return formattedValue;
 }
 
 function computeBinSlider(
@@ -894,3 +927,23 @@ function enforceBounds(
     return range;
   }
 }
+
+interface DisplayStatsProps {
+  /* title: Min, Mean, Max */
+  title: string;
+  /* Min, Mean, Max */
+  stats: string | number | string[];
+}
+
+// component for displaying Min, Mean, and Max stats
+const DisplayStats = (props: DisplayStatsProps) => {
+  const { title, stats } = props;
+
+  return (
+    <>
+      <b>{title}:</b> {Array.isArray(stats) ? stats[0] : stats}
+      {Array.isArray(stats) ? <span>&#215;10</span> : ''}
+      {Array.isArray(stats) ? <sup>{stats[1]}</sup> : ''} &emsp;
+    </>
+  );
+};

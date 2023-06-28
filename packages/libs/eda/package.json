@@ -41,7 +41,8 @@
     "build": "veupathdb-react-scripts prepare",
     "test": "veupathdb-react-scripts test",
     "eject": "veupathdb-react-scripts eject",
-    "build-npm-modules": "veupathdb-react-scripts prepare"
+    "build-npm-modules": "veupathdb-react-scripts prepare",
+    "clean": "rm -rf lib"
   },
   "eslintConfig": {
     "extends": [
@@ -80,6 +81,7 @@
     "@veupathdb/react-scripts": "workspace:^",
     "@veupathdb/tsconfig": "workspace:^",
     "assert": "^2.0.0",
+    "babel-loader": "^8.3.0",
     "bubleify": "^2.0.0",
     "buffer": "^6.0.3",
     "http-proxy-middleware": "^2.0.6",
@@ -99,7 +101,7 @@
     "sass": "^1.54.4",
     "script-loader": "^0.7.2",
     "set-cookie-parser": "^2.5.1",
-    "source-map-loader": "1",
+    "source-map-loader": "1.1.3",
     "stream-browserify": "^3.0.0",
     "typescript": "^4.3.4",
     "web-vitals": "^0.2.4"

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Route, Switch, Redirect } from 'react-router';
+import { Route, Switch, Redirect, useHistory } from 'react-router';
 import { Link, useRouteMatch } from 'react-router-dom';
 import { AnalysisState, useDataClient } from '../core';
 import { ComputationInstance } from '../core/components/computations/ComputationInstance';
@@ -11,9 +11,10 @@ import { PromiseHookState, usePromise } from '../core/hooks/promise';
 import { GeoConfig } from '../core/types/geoConfig';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import { FilledButton } from '@veupathdb/coreui/lib/components/buttons';
 import AddIcon from '@material-ui/icons/Add';
 import { Computation } from '../core/types/visualization';
+import Path from 'path';
 
 export interface Props {
   analysisState: AnalysisState;
@@ -71,6 +72,21 @@ export function ComputationRoute(props: Props) {
     }
     return Object.entries(groupingObject);
   }, [analysisState]);
+
+  const history = useHistory();
+  const onVisualizationCreated = useCallback(
+    (visualizationId: string, computationId: string) => {
+      history.push(
+        Path.resolve(
+          history.location.pathname,
+          '..',
+          computationId,
+          visualizationId
+        )
+      );
+    },
+    [history]
+  );
 
   return (
     <PromiseResult state={promiseState}>
@@ -171,9 +187,9 @@ export function ComputationRoute(props: Props) {
               </Route>
               <Route exact path={`${url}/new`}>
                 <StartPage
-                  baseUrl={`${url}`}
                   apps={apps}
                   plugins={plugins}
+                  onVisualizationCreated={onVisualizationCreated}
                   {...props}
                 />
               </Route>
@@ -181,9 +197,10 @@ export function ComputationRoute(props: Props) {
                 path={`${url}/:id`}
                 render={(routeProps) => {
                   // These are routes for the computation instances already saved
-                  const computation = props.analysisState.analysis?.descriptor.computations.find(
-                    (c) => c.computationId === routeProps.match.params.id
-                  );
+                  const computation =
+                    props.analysisState.analysis?.descriptor.computations.find(
+                      (c) => c.computationId === routeProps.match.params.id
+                    );
                   const app = apps.find(
                     (app) => app.name === computation?.descriptor.type
                   );

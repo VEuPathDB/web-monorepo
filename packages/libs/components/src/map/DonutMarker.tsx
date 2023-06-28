@@ -215,11 +215,18 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
 } {
   const scale = props.markerScale ?? MarkerScaleDefault;
   const size = 40 * scale;
+  // set outter white circle size to describe white boundary
+  const backgroundWhiteCircleRadius = size / 2 + size / 16;
 
   let svgHTML: string = '';
 
-  //DKDK set drawing area
-  svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
+  // set drawing area
+  svgHTML +=
+    '<svg width="' +
+    backgroundWhiteCircleRadius * 2 +
+    '" height="' +
+    backgroundWhiteCircleRadius * 2 +
+    '">'; // initiate svg marker icon
 
   // what value corresponds to 360 degrees of the circle?
   // regular mode: summation of fullStat.value per marker icon
@@ -230,31 +237,31 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
         .map((o) => o.value)
         .reduce((a, c) => {
           return a + c;
-        });
+        }, 0);
 
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
   const sumLabel = props.markerLabel ?? String(fullPieValue);
 
-  //DKDK draw white circle
+  // draw a larger white-filled circle
   svgHTML +=
     '<circle cx="' +
-    size / 2 +
+    backgroundWhiteCircleRadius +
     '" cy="' +
-    size / 2 +
+    backgroundWhiteCircleRadius +
     '" r="' +
-    size / 2 +
+    backgroundWhiteCircleRadius +
     '" stroke="green" stroke-width="0" fill="white" />';
 
-  //DKDK set start point of arc = 0
+  // set start point of arc = 0
   let startValue = 0;
   let cumulativeSum = 0;
   const sliceTextOverrides: string[] = [];
 
-  //DKDK create arcs for data
+  // create arcs for data
   props.data.forEach(function (el: PiePlotDatum) {
-    //DKDK if fullPieValue = 0, do not draw arc
+    // if fullPieValue = 0, do not draw arc
     if (fullPieValue > 0) {
-      //DKDK compute the ratio of each data to the total number
+      // compute the ratio of each data to the total number
       const thisValue = el.value - cumulativeSum; // subtracts nothing if not in cumulative mode, see below
 
       let arcValue: number = thisValue / fullPieValue;
@@ -266,31 +273,36 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
         // only sum up in cumulative mode
         cumulativeSum += thisValue;
 
-      //DKDK draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
+      // draw arc: makeArc(centerX, centerY, Radius for arc, start point of arc (radian), end point of arc (radian))
       svgHTML +=
         '<path fill="none" stroke="' +
         (el.color ?? 'silver') +
-        '" stroke-width="4" d="' +
+        '" stroke-width="' +
+        5 * scale +
+        '" d="' +
         makeArc(
-          size / 2,
-          size / 2,
+          backgroundWhiteCircleRadius,
+          backgroundWhiteCircleRadius,
           size / 2 - 2,
           startValue,
           startValue + arcValue * 2 * Math.PI
         ) +
         '" />';
-      //DKDK set next startValue to be previous arcValue
+
+      // set next startValue to be previous arcValue
       startValue = startValue + arcValue * 2 * Math.PI;
     }
   });
 
-  //DKDK adding total number text/label and centering it
+  // adding total number text/label and centering it
   svgHTML +=
-    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
+    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="' +
+    (scale === 1 ? 1 : 0.75 * scale) +
+    'em">' +
     sumLabel +
     '</text>';
 
-  //DKDK check isAtomic: draw pushpin if true
+  // check isAtomic: draw pushpin if true
   if (props.isAtomic) {
     let pushPinCode = '&#128392;';
     svgHTML +=
@@ -299,7 +311,7 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
       '</text>';
   }
 
-  // DKDK closing svg tag
+  // closing svg tag
   svgHTML += '</svg>';
   return { html: svgHTML, size, sliceTextOverrides, markerLabel: sumLabel };
 }

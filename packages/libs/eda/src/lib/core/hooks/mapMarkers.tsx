@@ -34,7 +34,13 @@ import { kFormatter, mFormatter } from '../utils/big-number-formatters';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import { VariableDescriptor } from '../types/variable';
-import { leastAncestralEntity } from '../utils/data-element-constraints';
+import {
+  DataElementConstraintRecord,
+  leastAncestralEntity,
+  VariablesByInputName,
+} from '../utils/data-element-constraints';
+import { assertValidInputVariables } from '../utils/visualization';
+import { InputSpec } from '../components/visualizations/InputVariables';
 
 /**
  * Provides markers for use in the MapVEuMap component
@@ -83,6 +89,7 @@ export interface MapMarkersProps {
   miniMarkers?: boolean;
   /** invisible markers (special use case related to minimap fly-to) - default = false */
   invisibleMarkers?: boolean;
+  overlayDataElementConstraints?: DataElementConstraintRecord[];
 }
 
 // what this hook returns
@@ -129,11 +136,12 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     checkedLegendItems = undefined,
     miniMarkers = false,
     invisibleMarkers = false,
+    overlayDataElementConstraints,
   } = props;
 
   const dataClient: DataClient = useDataClient();
-  const findEntityAndVariable = useFindEntityAndVariable();
-  const entities = useStudyEntities();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
+  const entities = useStudyEntities(filters);
 
   // prepare some info that the map-markers and overlay requests both need
   const {
@@ -181,9 +189,30 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       geoAggregateVariable,
       outputEntity,
       xAxisVariableAndEntity,
-      findEntityAndVariable,
     };
-  }, [boundsZoomLevel, geoConfig, xAxisVariable]);
+  }, [
+    boundsZoomLevel,
+    geoConfig,
+    xAxisVariable,
+    entities,
+    findEntityAndVariable,
+  ]);
+
+  const variableSelectionError = useMemo(
+    () =>
+      testVariableSelectionValidity(
+        [
+          {
+            name: 'xAxisVariable',
+            label: 'Main',
+          },
+        ],
+        { xAxisVariable },
+        entities,
+        overlayDataElementConstraints
+      ),
+    [entities, overlayDataElementConstraints, xAxisVariable]
+  );
 
   // now do the first request
   const basicMarkerData = usePromise<BasicMarkerData | undefined>(
@@ -196,7 +225,8 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         longitudeVariable == null ||
         geoAggregateVariable == null ||
         outputEntity == null ||
-        (requireOverlay && xAxisVariable == null)
+        (requireOverlay && xAxisVariable == null) ||
+        variableSelectionError
       )
         return undefined;
 
@@ -276,6 +306,7 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       computationType,
       geoConfig,
       requireOverlay,
+      variableSelectionError,
     ])
   );
 
@@ -300,8 +331,9 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
         xAxisVariable == null ||
         geoAggregateVariable == null ||
         outputEntity == null ||
-        latitudeVariable == undefined ||
-        longitudeVariable == undefined
+        latitudeVariable == null ||
+        longitudeVariable == null ||
+        variableSelectionError
       )
         return undefined;
 
@@ -350,7 +382,9 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       geoAggregateVariable,
       outputEntity,
       filters,
-      xAxisVariableAndEntity,
+      latitudeVariable,
+      longitudeVariable,
+      variableSelectionError,
     ])
   );
 
@@ -537,9 +571,11 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     overlayData,
     checkedLegendItems,
     markerType,
-    xAxisVariable,
-    outputEntity,
     dependentAxisLogScale,
+    defaultDependentAxisRange,
+    invisibleMarkers,
+    miniMarkers,
+    xAxisVariableType,
   ]);
 
   /**
@@ -571,7 +607,25 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
       group: 1,
       rank: 1,
     }));
-  }, [xAxisVariable, vocabulary, overlayData]);
+  }, [vocabulary, overlayData, xAxisVariableType]);
+
+  if (variableSelectionError) {
+    return {
+      markers: undefined,
+      outputEntity: undefined,
+      xAxisVariable: undefined,
+      totalEntityCount: undefined,
+      totalVisibleEntityCount: undefined,
+      totalVisibleWithOverlayEntityCount: undefined,
+      completeCasesAllVars: undefined,
+      completeCases: undefined,
+      vocabulary: undefined,
+      legendItems: [],
+      pending: false,
+      basicMarkerError: variableSelectionError,
+      overlayError: undefined,
+    };
+  }
 
   return {
     markers,
@@ -588,4 +642,22 @@ export function useMapMarkers(props: MapMarkersProps): MapMarkers {
     basicMarkerError: basicMarkerData.error,
     overlayError: overlayResponse.error,
   };
+}
+
+function testVariableSelectionValidity(
+  inputs: InputSpec[],
+  selectedVariables: VariablesByInputName,
+  entities: StudyEntity[],
+  overlayDataElementConstraints: DataElementConstraintRecord[] | undefined
+) {
+  try {
+    assertValidInputVariables(
+      inputs,
+      selectedVariables,
+      entities,
+      overlayDataElementConstraints
+    );
+  } catch (error: unknown) {
+    return error as Error;
+  }
 }

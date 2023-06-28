@@ -1,4 +1,4 @@
-import { keyBy, mapValues, toString } from 'lodash';
+import { keyBy, mapValues, pick, toString } from 'lodash';
 import { Seq } from '../Utils/IterableUtils';
 import {
   combineEpics,
@@ -57,6 +57,7 @@ import {
   QuestionWithParameters,
   RecordClass,
   ParameterValues,
+  Question,
 } from '../Utils/WdkModel';
 
 import {
@@ -82,7 +83,7 @@ import {
   InferAction,
   mergeMapRequestActionsToEpic as mrate,
 } from '../Utils/ActionCreatorUtils';
-import { ParamValueStore } from '../Utils/ParamValueStore';
+import { GlobalParamMapping, ParamValueStore } from '../Utils/ParamValueStore';
 
 export const key = 'question';
 
@@ -117,6 +118,7 @@ export type QuestionState = {
   stepValidation?: Step['validation'];
   submitting: boolean;
   paramsUpdatingDependencies: Record<string, boolean>;
+  globalParamMapping: GlobalParamMapping;
 };
 
 export type State = {
@@ -180,12 +182,13 @@ function reduceQuestionState(
 
     case UPDATE_ACTIVE_QUESTION:
       return {
-        ...state,
+        // ...state,
         stepId: action.payload.stepId,
         questionStatus: 'loading',
         submitting: false,
         paramsUpdatingDependencies: {},
-      };
+        globalParamMapping: action.payload.globalParamMapping,
+      } as QuestionState;
 
     case QUESTION_LOADED:
       return {
@@ -483,7 +486,8 @@ const observeLoadQuestion: QuestionEpic = (
           action.payload.prepopulateWithLastParamValues,
           action.payload.stepId,
           action.payload.initialParamData,
-          action.payload.submissionMetadata
+          action.payload.submissionMetadata,
+          action.payload.globalParamMapping
         )
       ).pipe(
         takeUntil(
@@ -548,9 +552,14 @@ const observeStoreUpdatedParams: QuestionEpic = (
         );
       }
 
-      const newParamValues = questionState.paramValues;
+      const { globalParamMapping, paramValues: newParamValues } = questionState;
 
-      await updateLastParamValues(paramValueStore, searchName, newParamValues);
+      await updateLastParamValues(
+        paramValueStore,
+        searchName,
+        newParamValues,
+        globalParamMapping
+      );
       return EMPTY;
     }),
     mergeAll()
@@ -743,7 +752,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) =>
             const {
               payload: { submissionMetadata },
             }: SubmitQuestionAction = action;
-            const { question } = questionState;
+            const { question, globalParamMapping } = questionState;
 
             // Parse the input string into a number
             const weight = Number.parseInt(questionState.weight || '');
@@ -759,7 +768,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) =>
             updateLastParamValues(
               services.paramValueStore,
               searchName,
-              paramValues
+              paramValues,
+              globalParamMapping
             );
 
             if (submissionMetadata.type === 'edit-step') {
@@ -1020,24 +1030,25 @@ async function loadQuestion(
   prepopulateWithLastParamValues: boolean,
   stepId?: number,
   initialParamData?: ParameterValues,
-  submissionMetadata?: SubmissionMetadata
+  submissionMetadata?: SubmissionMetadata,
+  globalParamMapping?: Record<string, string>
 ) {
-  const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const initialParams = await fetchInitialParams(
-    searchName,
-    step,
-    initialParamData,
-    prepopulateWithLastParamValues,
-    paramValueStore
-  );
-
-  const atLeastOneInitialParamValueProvided =
-    Object.keys(initialParams).length > 0;
-
   try {
+    const step = stepId ? await wdkService.findStep(stepId) : undefined;
     const defaultQuestion = await wdkService.getQuestionAndParameters(
       searchName
     );
+    const initialParams = await fetchInitialParams(
+      defaultQuestion,
+      step,
+      initialParamData,
+      prepopulateWithLastParamValues,
+      paramValueStore,
+      globalParamMapping
+    );
+
+    const atLeastOneInitialParamValueProvided =
+      Object.keys(initialParams).length > 0;
 
     const question = atLeastOneInitialParamValueProvided
       ? await wdkService.getQuestionGivenParameters(searchName, initialParams)
@@ -1060,7 +1071,12 @@ async function loadQuestion(
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
-    await updateLastParamValues(paramValueStore, searchName, paramValues);
+    await updateLastParamValues(
+      paramValueStore,
+      searchName,
+      paramValues,
+      globalParamMapping
+    );
 
     return questionLoaded({
       autoRun,
@@ -1084,18 +1100,25 @@ async function loadQuestion(
 }
 
 async function fetchInitialParams(
-  searchName: string,
+  question: Question,
   step: Step | undefined,
   initialParamData: ParameterValues | undefined,
   prepopulateWithLastParamValues: boolean,
-  paramValueStore: ParamValueStore
+  paramValueStore: ParamValueStore,
+  globalParamMapping: Record<string, string> | undefined
 ) {
   if (step != null) {
     return initialParamDataFromStep(step);
   } else if (initialParamData != null) {
-    return initialParamDataWithDatasetParamSpecialCase(initialParamData);
+    return extracParamValues(initialParamData, question.paramNames);
   } else if (prepopulateWithLastParamValues) {
-    return (await fetchLastParamValues(paramValueStore, searchName)) ?? {};
+    return (
+      (await fetchLastParamValues(
+        paramValueStore,
+        question.urlSegment,
+        globalParamMapping
+      )) ?? {}
+    );
   } else {
     return {};
   }
@@ -1114,40 +1137,40 @@ function initialParamDataFromStep(step: Step): ParameterValues {
   }, {});
 }
 
-function initialParamDataWithDatasetParamSpecialCase(
-  initialParamData: ParameterValues
-) {
-  return Object.keys(initialParamData).reduce(function (result, paramName) {
-    if (paramName.endsWith('.idList') || paramName.endsWith('.url')) {
-      return result;
-    }
-
-    return Object.assign(result, {
-      [paramName]: initialParamData[paramName],
-    });
-  }, {});
+/** Pick items from `initialParamData` that correspond to parameter names */
+function extracParamValues(
+  initialParamData: Record<string, string>,
+  paramNames: string[]
+): ParameterValues {
+  return pick(initialParamData, paramNames);
 }
 
 function updateLastParamValues(
   paramValueStore: ParamValueStore,
   searchName: string,
-  newParamValues: ParameterValues
+  newParamValues: ParameterValues,
+  globalParamMapping: GlobalParamMapping | undefined
 ) {
   const paramValueStoreContext = makeParamValueStoreContext(searchName);
 
   return paramValueStore.updateParamValues(
     paramValueStoreContext,
-    newParamValues
+    newParamValues,
+    globalParamMapping
   );
 }
 
-function fetchLastParamValues(
+async function fetchLastParamValues(
   paramValueStore: ParamValueStore,
-  searchName: string
+  searchName: string,
+  globalParamMapping: GlobalParamMapping | undefined
 ) {
   const paramValueStoreContext = makeParamValueStoreContext(searchName);
 
-  return paramValueStore.fetchParamValues(paramValueStoreContext);
+  return paramValueStore.fetchParamValues(
+    paramValueStoreContext,
+    globalParamMapping
+  );
 }
 
 function makeParamValueStoreContext(searchName: string) {

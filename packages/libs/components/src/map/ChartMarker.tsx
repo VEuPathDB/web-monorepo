@@ -15,7 +15,7 @@ import {
   MarkerScaleDefault,
 } from '../types/plots';
 
-interface ChartMarkerProps
+export interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon,
     DependentAxisLogScaleAddon {
@@ -179,7 +179,7 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
         .map((o) => o.value)
         .reduce((a, c) => {
           return a + c;
-        }); // summation of data's value per marker icon
+        }, 0); // summation of data's value per marker icon
   const sumValuesString =
     sumValues <= 0.99 && sumValues > 0
       ? sumValues.toFixed(2)
@@ -289,7 +289,10 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   // set the location of total number
   svgHTML +=
     '<text x="50%" y=' +
-    (size - 2 + borderWidth + 7) +
+    (size - 2 + borderWidth + (scale === 1 ? 7 : 7 * 0.9 * scale)) +
+    ' font-size="' +
+    (scale === 1 ? 1 : 0.75 * scale) +
+    'em"' +
     ' dominant-baseline="middle" text-anchor="middle" opacity="1">' +
     (props.markerLabel ?? sumValuesString) +
     '</text>';

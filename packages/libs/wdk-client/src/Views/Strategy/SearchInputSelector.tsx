@@ -16,7 +16,7 @@ import {
   Tabs,
   IconAlt,
 } from '../../Components';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { DispatchAction } from '../../Core/CommonTypes';
 import { RootState } from '../../Core/State/Types';
 import {

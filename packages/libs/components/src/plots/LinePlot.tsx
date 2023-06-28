@@ -50,6 +50,10 @@ export interface LinePlotProps
   dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
   // TO DO
   // opacity?
+  // add prop for marginal histogram display
+  showMarginalHistogram?: boolean;
+  // marginal histogram size
+  marginalHistogramSize?: number;
 }
 
 const EmptyLinePlotData: LinePlotData = {
@@ -74,6 +78,10 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     axisTruncationConfig,
     independentAxisLogScale = independentAxisLogScaleDefault,
     dependentAxisLogScale = DependentAxisLogScaleDefault,
+    // set default value of showmarginalHistogram to be false
+    showMarginalHistogram = false,
+    // set default value of marginalHistogramSize to be 20 % (0.2)
+    marginalHistogramSize = 0.2,
     ...restProps
   } = props;
 
@@ -107,7 +115,10 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
           standardDependentAxisRange,
           extendedIndependentAxisRange, // send undefined for independentAxisRange
           extendedDependentAxisRange,
-          axisTruncationConfig
+          axisTruncationConfig,
+          // need to add showMarginalHistogram & marginalHistogramSize props to adjust truncation size
+          showMarginalHistogram,
+          marginalHistogramSize
         );
 
         return filteredTruncationLayoutShapes;
@@ -123,7 +134,8 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
     ]);
 
   const layout: Partial<Layout> = {
-    hovermode: 'x',
+    // use unified hovering when marginal histogram is used
+    hovermode: showMarginalHistogram ? 'x unified' : 'x',
     xaxis: {
       title: independentAxisLabel,
       // add axis range control truncation
@@ -203,9 +215,25 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         dependentValueType,
         data.series.length
       ),
+      // lineplot size
+      domain: showMarginalHistogram
+        ? [0, 1 - marginalHistogramSize]
+        : undefined,
+    },
+    // set yaxis2 for marginal histogram
+    yaxis2: {
+      domain: showMarginalHistogram
+        ? [1 - marginalHistogramSize, 1]
+        : undefined,
+      // disable plotly's mouse zoom control
+      fixedrange: true,
+      title: 'Count',
     },
     // axis range control: add truncatedAxisHighlighting for layout.shapes
     shapes: truncatedAxisHighlighting,
+    // marginal histogram props
+    bargap: 0,
+    barmode: 'stack',
   };
 
   // Convert upper and lower error bar data from absolute to relative
@@ -270,25 +298,52 @@ const LinePlot = makePlotlyPlotComponent('LinePlot', (props: LinePlotProps) => {
         // NOTE: unfortunately the newlines do not render.  Newlines can be added to the
         // 'hovertemplate' but from there I don't think we can access arbitrary values,
         // such as 'upper', 'lower' and 'n'
-        .map((series) => ({
-          ...series,
-          hovertemplate: '%{text}',
-          text: zip(
-            series.binLabel ?? [],
-            (series.x ?? []).map(String),
-            (series.y ?? []).map(String),
-            (series.yErrorBarLower ?? []).map(String),
-            (series.yErrorBarUpper ?? []).map(String),
-            series.extraTooltipText ?? []
-          ).map(([binLabel, x, y, lower, upper, xtra]) => {
-            const CI =
-              lower != null && upper != null
-                ? ` (95% CI: ${lower} - ${upper})`
-                : '';
-            // use <br> instead of \n for line break
-            return `x: ${binLabel ?? x}<br>y: ${y}${CI}<br>${xtra}`;
-          }),
-        })),
+
+        // below is for typical lineplot tooltip content thus no need for marginal histogram
+        // for that purpose, 'mode' attribute is set to be 'undefined' for marginal histogram dataset
+        .map((series) => {
+          if (series.mode != null) {
+            return {
+              ...series,
+              hovertemplate: '%{text}',
+              text: zip(
+                series.binLabel ?? [],
+                (series.x ?? []).map(String),
+                (series.y ?? []).map(String),
+                (series.yErrorBarLower ?? []).map(String),
+                (series.yErrorBarUpper ?? []).map(String),
+                series.extraTooltipText ?? []
+              ).map(([binLabel, x, y, lower, upper, xtra], index) => {
+                const binSampleSize = series.binSampleSize?.[index];
+                const yText =
+                  binSampleSize &&
+                  'denominatorN' in binSampleSize &&
+                  binSampleSize.denominatorN === 0
+                    ? 'Undefined'
+                    : y;
+                const CI =
+                  lower != null && upper != null
+                    ? ` (95% CI: ${lower} - ${upper})`
+                    : '';
+                const N = binSampleSize
+                  ? 'N' in binSampleSize
+                    ? binSampleSize.N
+                    : binSampleSize.denominatorN
+                  : undefined;
+                // use <br> instead of \n for line break
+                return (
+                  // add <br> for marginal histogram for better readability
+                  (showMarginalHistogram ? '<br>' : '') +
+                  `x: ${binLabel ?? x}<br>y: ${yText}${CI}` +
+                  (N !== undefined ? '<br>n: ' + N : '') +
+                  (xtra ? '<br>' + xtra : '')
+                );
+              }),
+            };
+          } else {
+            return series;
+          }
+        }),
     [data.series]
   );
 

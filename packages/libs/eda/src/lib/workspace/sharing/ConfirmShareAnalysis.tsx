@@ -1,16 +1,25 @@
 // Components
-import { FloatingButton, H5, Warning, Copy, colors } from '@veupathdb/coreui';
+import { FloatingButton, Warning, Copy, colors } from '@veupathdb/coreui';
 
 // Hooks
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 // Definitions
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
-type ConfirmShareAnalysisProps = { sharingURL: string };
+type ConfirmShareAnalysisProps = {
+  contextForUserDataset?: {
+    isUserStudy: boolean;
+    isCurrentUserStudyManager: boolean;
+  };
+  sharingUrl: string;
+  sharingDatasetUrl?: string;
+};
 
 export default function ConfirmShareAnalysis({
-  sharingURL,
+  contextForUserDataset,
+  sharingUrl,
+  sharingDatasetUrl,
 }: ConfirmShareAnalysisProps) {
   const theme = useUITheme();
 
@@ -25,11 +34,6 @@ export default function ConfirmShareAnalysis({
       }}
     >
       <div style={{ flex: 1 }}>
-        <H5
-          text="Sharing URL"
-          additionalStyles={{ marginTop: 25, marginBottom: 0 }}
-        />
-
         <div
           style={{
             display: 'flex',
@@ -39,7 +43,7 @@ export default function ConfirmShareAnalysis({
             borderRadius: 10,
             padding: 10,
             marginTop: 10,
-            marginBottom: 20,
+            marginBottom: 10,
             borderColor: theme?.palette.primary.hue[500],
           }}
         >
@@ -52,10 +56,44 @@ export default function ConfirmShareAnalysis({
                 maxWidth: 500,
               }}
             >
-              Anyone with the link below will be able to get a copy of this
-              analysis.
+              {contextForUserDataset &&
+              contextForUserDataset.isUserStudy &&
+              sharingDatasetUrl ? (
+                <>
+                  <span
+                    style={{
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {contextForUserDataset.isCurrentUserStudyManager
+                      ? 'You own this study.'
+                      : 'Another user owns this study.'}
+                  </span>{' '}
+                  <span>
+                    {contextForUserDataset.isCurrentUserStudyManager
+                      ? 'This analysis is only viewable to users who have been granted access to your study data.'
+                      : 'The owner must grant all recipients of this shared analysis access to the study data for the URL to work.'}
+                  </span>{' '}
+                  {contextForUserDataset.isCurrentUserStudyManager && (
+                    <span>
+                      To grant users access to your study data,{' '}
+                      <a
+                        href={sharingDatasetUrl}
+                        style={{
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        go to your study's status page
+                      </a>{' '}
+                      and click the "Grant Access to Study" button in the upper
+                      right.
+                    </span>
+                  )}
+                </>
+              ) : (
+                'Anyone with the link below will be able to get a copy of this analysis.'
+              )}
             </p>
-
             <p
               style={{
                 fontSize: '.9rem',
@@ -63,13 +101,16 @@ export default function ConfirmShareAnalysis({
                 maxWidth: 500,
               }}
             >
+              {contextForUserDataset &&
+                contextForUserDataset.isUserStudy &&
+                'The URL below can be used to share this analysis.'}{' '}
               When a recipient clicks the link, they receive a <em>copy</em> of
               the <em>latest version</em>.
             </p>
             <p
               style={{
                 fontSize: '.9rem',
-                color: theme?.palette.primary.hue[600] ?? gray[600],
+                color: gray[600],
                 maxWidth: 500,
                 fontWeight: 'bold',
                 marginTop: 0,
@@ -91,7 +132,7 @@ export default function ConfirmShareAnalysis({
             color: gray[600],
           }}
         >
-          To share, copy and paste the URL below
+          To share this analysis, copy and paste the URL below
         </p>
         <div
           style={{
@@ -115,7 +156,7 @@ export default function ConfirmShareAnalysis({
             ariaLabel="Copy URL to Clipboard"
             icon={Copy}
             tooltip="Copy URL to Clipboard"
-            onPress={() => navigator.clipboard.writeText(sharingURL)}
+            onPress={() => navigator.clipboard.writeText(sharingUrl)}
             styleOverrides={{
               container: { marginLeft: 10, marginRight: 5, padding: 0 },
               hover: { color: 'transparent' },
@@ -128,7 +169,7 @@ export default function ConfirmShareAnalysis({
               },
             }}
           />
-          <p style={{ margin: 0, flex: 1 }}>{sharingURL}</p>
+          <p style={{ margin: 0, flex: 1 }}>{sharingUrl}</p>
         </div>
       </div>
     </div>

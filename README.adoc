@@ -62,6 +62,16 @@ You will need to configure the server with a `packages/libs/eda/.env.local` file
 
 For more documentation see the link:packages/libs/eda/README.md[package README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
 
+### VEuPathDB sites
+
+Directory: `packages/sites/{site name}-site`
+
+Copy the `packages/sites/{site name}-site/.env.sample` file to `packages/sites/{site name}-site/.env` and configure the new file with passwords and the desired backend for the site.
+
+Run `yarn` to update dependencies if necessary.
+
+Run the command `yarn nx start @veupathdb/{site name}-site`. For example, to run the ortho site use `yarn nx start @veupathdb/ortho-site`.
+
 ## IDE hints
 
 ### emacs tide

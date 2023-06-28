@@ -19,12 +19,12 @@ import { AnalysisState } from '../../core/hooks/analysis';
 import { TabularDataResponse, usePromise } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { APIError } from '../../core/api/types';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import {
   EnhancedEntityData,
   EnhancedEntityDatum,
 } from '../DownloadTab/hooks/useEnhancedEntityData';
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 // Hooks
 import {
@@ -40,9 +40,9 @@ import tableSVG from './cartoon_table.svg';
 import {
   DataGridProps,
   SortBy,
-} from '@veupathdb/coreui/dist/components/grids/DataGrid';
+} from '@veupathdb/coreui/lib/components/grids/DataGrid';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 type SubsetDownloadModalProps = {
   /** Should the modal currently be visible? */
@@ -435,7 +435,6 @@ export default function SubsetDownloadModal({
               position: 'relative',
               flex: '0 1 auto',
               minHeight: 0,
-              '.css-1nxo5ei-HeaderCell': { height: 'auto' },
             }}
             className="DataGrid-Wrapper"
             ref={dataGridWrapperRef}
@@ -449,7 +448,6 @@ export default function SubsetDownloadModal({
                 headerCells: {
                   textTransform: 'none',
                   position: 'relative',
-                  height: '100%',
                 },
                 table: {
                   width: '100%',
@@ -750,10 +748,8 @@ export default function SubsetDownloadModal({
     }
   };
 
-  const {
-    observe: observeModalHeader,
-    width: modalHeaderWidth,
-  } = useDimensions();
+  const { observe: observeModalHeader, width: modalHeaderWidth } =
+    useDimensions();
 
   // ~18px (round to 20px) per character for medium title size
   const maxStudyNameLength = Math.floor(modalHeaderWidth / 20);

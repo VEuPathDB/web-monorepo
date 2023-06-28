@@ -20,6 +20,7 @@ import { useAnalysisClient, useStudyRecord } from './workspace';
 import { createComputation } from '../components/computations/Utils';
 import { useHistory } from 'react-router-dom';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
+import { Computation, Visualization } from '../types/visualization';
 
 /**
  * Type definition for function that will set an attribute of an Analysis.
@@ -51,6 +52,32 @@ export type AnalysisState = {
   setStarredVariables: Setter<Analysis['descriptor']['starredVariables']>;
   setVariableUISettings: Setter<Analysis['descriptor']['subset']['uiSettings']>;
   setDataTableConfig: Setter<Analysis['descriptor']['dataTableConfig']>;
+
+  /** Convenience methods for manipulating visualizations nested inside computations.
+   * The getters return undefined if analysis is undefined...
+   */
+
+  /** get a flat list of all visualizations, regardless of computation, though you can optionally specify a computation */
+  getVisualizations: (computationId?: string) => Visualization[] | undefined;
+  /** get one visualization by Id */
+  getVisualization: (
+    visualizationId: string | undefined
+  ) => Visualization | undefined;
+  /** get one visualization and its computation by Id all at once */
+  getVisualizationAndComputation: (
+    visualizationId: string | undefined
+  ) => { visualization: Visualization; computation: Computation } | undefined;
+  /** update visualization by replacing existing visualization with same Id with the provided version */
+  updateVisualization: (visualization: Visualization) => void;
+  /** add a new visualization to a computation, removing it if necessary from a previous computation */
+  addVisualization: (
+    computationId: string,
+    visualization: Visualization
+  ) => void;
+  /** TO DO: copyVisualization? */
+  /** delete a visualization, do not remove computation if it ends up empty */
+  deleteVisualization: (visualizationId: string) => void;
+  /** TO DO: add a deleteIfEmpty mode to deleteVisualization? - see `deleteComputationWithNoVisualizations` in VisualizationsContainer */
 
   saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ analysisId: string }>;
@@ -229,6 +256,91 @@ export function useAnalysis(
   );
   const setDataTableConfig = useSetter(analysisToDataTableConfig);
 
+  // Visualization manipulations
+  const getVisualizations = useCallback(
+    (computationId?: string) =>
+      analysis?.descriptor.computations
+        .filter(
+          (computation) =>
+            computationId == null || computation.computationId === computationId
+        )
+        .flatMap((computation) => computation.visualizations),
+    [analysis]
+  );
+
+  const getVisualization = useCallback(
+    (visualizationId: string | undefined) =>
+      analysis?.descriptor.computations
+        .flatMap((computation) => computation.visualizations)
+        .find((viz) => viz.visualizationId === visualizationId),
+    [analysis]
+  );
+
+  const getVisualizationAndComputation = useCallback(
+    (visualizationId: string | undefined) =>
+      analysis?.descriptor.computations.reduce((result, comp) => {
+        const foundViz = comp.visualizations.find(
+          (viz) => viz.visualizationId === visualizationId
+        );
+        return foundViz != null
+          ? {
+              computation: comp,
+              visualization: foundViz,
+            }
+          : result;
+      }, undefined as { computation: Computation; visualization: Visualization } | undefined),
+    [analysis]
+  );
+
+  // no-op if the visualization isn't there
+  // hope that's OK!
+  const deleteVisualization = useCallback(
+    (visualizationId: string) =>
+      setComputations((computations) =>
+        computations.map((computation) => ({
+          ...computation,
+          visualizations: computation.visualizations.filter(
+            (viz) => viz.visualizationId !== visualizationId
+          ),
+        }))
+      ),
+    [setComputations]
+  );
+
+  // add or move a visualization (silently removes it from any (or none) computation before adding) to a computation
+  const addVisualization = useCallback(
+    (computationId: string, visualization: Visualization) => {
+      setComputations((computations) =>
+        computations.map((comp) => ({
+          ...comp,
+          visualizations: [
+            ...comp.visualizations.filter(
+              ({ visualizationId }) =>
+                visualizationId !== visualization.visualizationId
+            ),
+            ...(comp.computationId === computationId ? [visualization] : []),
+          ],
+        }))
+      );
+    },
+    [setComputations]
+  );
+
+  const updateVisualization = useCallback(
+    (visualization: Visualization) =>
+      setComputations((computations) =>
+        computations.map((computation) => ({
+          ...computation,
+          visualizations: computation.visualizations.map((viz) =>
+            viz.visualizationId === visualization.visualizationId
+              ? visualization
+              : viz
+          ),
+        }))
+      ),
+    [setComputations]
+  );
+
   // Retrieve an Analysis from the data store whenever `analysisID` updates.
   useEffect(() => {
     setUpdateScheduled(false);
@@ -290,6 +402,12 @@ export function useAnalysis(
     copyAnalysis,
     deleteAnalysis,
     saveAnalysis,
+    getVisualizations,
+    getVisualization,
+    getVisualizationAndComputation,
+    deleteVisualization,
+    addVisualization,
+    updateVisualization,
   };
 }
 
@@ -440,16 +558,13 @@ export function usePinnedAnalyses(analysisClient: AnalysisClient) {
   };
 }
 
-const analysisToNameLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'displayName'
-);
-const analysisToDescriptionLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'description'
-);
+const analysisToNameLens =
+  Lens.fromProp<NewAnalysis | Analysis>()('displayName');
+const analysisToDescriptionLens =
+  Lens.fromProp<NewAnalysis | Analysis>()('description');
 const analysisToNotesLens = Lens.fromProp<NewAnalysis | Analysis>()('notes');
-const analysisToIsPublicLens = Lens.fromProp<NewAnalysis | Analysis>()(
-  'isPublic'
-);
+const analysisToIsPublicLens =
+  Lens.fromProp<NewAnalysis | Analysis>()('isPublic');
 const analysisToFiltersLens = Lens.fromPath<NewAnalysis | Analysis>()([
   'descriptor',
   'subset',

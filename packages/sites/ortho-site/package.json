@@ -6,8 +6,11 @@
   "license": "MIT",
   "scripts": {
     "start": "veupathdb-react-scripts run-site-dev-server --config webpack.config.local.mjs",
-    "bundle:dev": "rm -rf dist && webpack",
-    "bundle:npm": "rm -rf dist && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
+    "clean": "rm -rf dist && mkdir dist",
+    "copy:webapp": "cp -r webapp/* dist",
+    "copy:images": "cp -r ../../../node_modules/@veupathdb/web-common/images dist",
+    "bundle:dev": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=development",
+    "bundle:npm": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
   },
   "browserslist": [
     "extends @veupathdb/browserslist-config"
@@ -44,7 +47,7 @@
     "@veupathdb/study-data-access": "workspace:^",
     "@veupathdb/wdk-client": "workspace:^",
     "@veupathdb/web-common": "workspace:^",
-    "babel-loader": "^8.0.5",
+    "babel-loader": "^8.3.0",
     "bubleify": "^2.0.0",
     "core-js": "^3.25.3",
     "css-loader": "^2.1.1",
@@ -57,8 +60,9 @@
     "ify-loader": "^1.1.0",
     "immer": "^7.0.5",
     "jquery": "1.9.1",
-    "mini-css-extract-plugin": "^0.6.0",
+    "mini-css-extract-plugin": "^2.7.6",
     "notistack": "^1.0.10",
+    "npm-run-all": "^4.1.5",
     "popper.js": "^1.16.1",
     "react": "17",
     "react-cytoscapejs": "^2.0.0",
@@ -70,16 +74,16 @@
     "redux-observable": "^1.2.0",
     "rxjs": "^6.2.2",
     "sass": "^1.52.2",
-    "sass-loader": "^7.1.0",
+    "sass-loader": "^7.3.1",
     "script-loader": "^0.7.2",
-    "source-map-loader": "^1.1.2",
-    "ts-loader": "^5.4.5",
+    "source-map-loader": "^1.1.3",
+    "ts-loader": "^9.4.3",
     "typescript": "~4.3.5",
     "url-loader": "^1.1.2",
-    "webpack": "^4.46.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4",
-    "webpack-merge": "^4.2.1"
+    "webpack": "^5.84.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0",
+    "webpack-merge": "^4.2.2"
   },
   "files": [
     "dist",

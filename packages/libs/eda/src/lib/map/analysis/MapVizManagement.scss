@@ -1,0 +1,92 @@
+.MapVizManagement {
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+
+  &-VizButton {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: none;
+    color: inherit;
+    transition: background 0.05s ease;
+    border: none;
+    width: 100%;
+    padding: 5px;
+
+    &__add {
+      justify-content: center;
+      padding: 1rem;
+    }
+  }
+  &-VizList {
+    margin: 0;
+    list-style: none;
+  }
+  &-VizButtonItem {
+    margin: 0 10px;
+    display: flex;
+    border-right: 1px solid transparent;
+    position: relative;
+    &__active {
+      font-weight: bold;
+    }
+  }
+  &-VizButtonItem:hover &__copyAndDeleteButtons {
+    opacity: 1;
+  }
+
+  &__copyAndDeleteButtons {
+    display: flex;
+    opacity: 0;
+    // Pin the copy & delete viz buttons
+    // to the top-right of the list item button.
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    &__active {
+      opacity: 1;
+    }
+    button {
+      height: 30px;
+      width: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      & i {
+        font-size: 16px;
+      }
+    }
+  }
+
+  &-VizName {
+    max-width: 225px;
+    overflow: auto;
+    text-align: left;
+    margin-left: 10px;
+    font-size: 15px;
+  }
+  &-NewVizPicker {
+    // This constraint will leverage the picker's
+    // flex wrapping.
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 400px;
+    padding: 5px 10px;
+    overflow: auto;
+    height: 100%;
+  }
+  &-VizListContainer {
+    overflow: auto;
+    width: 300px;
+  }
+  &-VizListHeaderContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+}

@@ -58,7 +58,7 @@ export default function SwissArmyButton({
         }}
       >
         <Icon
-          fontSize='inherit'
+          fontSize="inherit"
           fill={styleSpec[styleState].textColor}
           css={text && { marginRight: 10 }}
         />
@@ -87,7 +87,7 @@ export default function SwissArmyButton({
             alignItems: 'center',
             paddingLeft: horizontalPadding,
             paddingRight: horizontalPadding,
-            color: styleSpec[styleState].textColor,
+            color: `${styleSpec[styleState].textColor} !important`,
             textTransform: textTransform,
             fontWeight: styleSpec[styleState].fontWeight ?? 600,
             fontSize: calculatedFontSize,

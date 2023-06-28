@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { useToggleStarredVariable } from '../../hooks/starredVariables';
-import { Computation, Visualization } from '../../types/visualization';
+import { Computation } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { ComputationProps } from './Types';
 import { plugins } from './plugins';
@@ -29,7 +29,7 @@ export function ComputationInstance(props: Props) {
     isSingleAppMode,
   } = props;
 
-  const { analysis, setComputations } = analysisState;
+  const { analysis } = analysisState;
 
   const computation = useComputation(analysis, computationId);
 
@@ -38,28 +38,6 @@ export function ComputationInstance(props: Props) {
   if (computation == null) throw new Error('Cannot find computation.');
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-
-  const updateVisualizations = useCallback(
-    (
-      visualizations:
-        | Visualization[]
-        | ((visualizations: Visualization[]) => Visualization[])
-    ) => {
-      setComputations((computations) =>
-        computations.map((computation) => {
-          if (computation.computationId !== computationId) return computation;
-          return {
-            ...computation,
-            visualizations:
-              typeof visualizations === 'function'
-                ? visualizations(computation.visualizations)
-                : visualizations,
-          };
-        })
-      );
-    },
-    [setComputations, computationId]
-  );
 
   const { url } = useRouteMatch();
 
@@ -97,7 +75,6 @@ export function ComputationInstance(props: Props) {
         computation={computation}
         visualizationsOverview={computationAppOverview.visualizations}
         visualizationPlugins={visualizationPlugins}
-        updateVisualizations={updateVisualizations}
         filters={analysis.descriptor.subset.descriptor}
         starredVariables={analysis?.descriptor.starredVariables}
         toggleStarredVariable={toggleStarredVariable}

@@ -2,6 +2,7 @@ import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import {
+  CollapsibleSection,
   Error as ErrorPage,
   Link,
   Loading,
@@ -49,6 +50,7 @@ interface Props {
 }
 
 const POLLING_INTERVAL = 3000;
+const MAX_DATABASE_STRING_LENGTH = 500;
 
 export function BlastWorkspaceResult(props: Props) {
   useSetDocumentTitle(`BLAST Job ${props.jobId}`);
@@ -374,6 +376,8 @@ function BlastSummary({
     }
   }, [selectedResult]);
 
+  const [showMore, setShowMore] = useState<boolean>(false);
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
@@ -427,7 +431,35 @@ function BlastSummary({
           <span className="InlineHeader">
             {databases.length > 1 ? 'Databases' : 'Database'}:
           </span>
-          <span>{databasesStr}</span>
+          <span>
+            {databasesStr.length > MAX_DATABASE_STRING_LENGTH ? (
+              <CollapsibleSection
+                isCollapsed={!showMore}
+                onCollapsedChange={() => setShowMore(!showMore)}
+                headerContent={
+                  <>
+                    {!showMore ? (
+                      <span>
+                        {databasesStr.slice(0, MAX_DATABASE_STRING_LENGTH)}...{' '}
+                        <span className="link">Show more</span>
+                      </span>
+                    ) : (
+                      <div
+                        style={{
+                          height: '2em',
+                        }}
+                      >
+                        <span className="link">Show less</span>
+                      </div>
+                    )}
+                  </>
+                }
+                children={databasesStr}
+              />
+            ) : (
+              databasesStr
+            )}
+          </span>
         </div>
       </div>
       {queryCount > 1 && (

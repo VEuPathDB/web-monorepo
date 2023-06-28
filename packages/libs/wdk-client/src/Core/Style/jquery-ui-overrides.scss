@@ -1,0 +1,14 @@
+/* 
+    Adds the "resize" icon to the jquery container that acts as the resize "handle"
+    Can remove the FoldChange specificity if needed, but be mindful that the FoldChange use-case only resizes vertically
+*/
+.wdk-FoldChangeSampleParameterContainer,
+.wdk-FoldChangeReferenceSample {
+  .ui-resizable {
+    .ui-resizable-handle,
+    .ui-resizable-s {
+      overflow-y: hidden;
+      resize: vertical;
+    }
+  }
+}

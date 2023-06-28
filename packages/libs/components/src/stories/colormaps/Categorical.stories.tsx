@@ -16,6 +16,7 @@ import { PlotLegendProps } from '../../components/plotControls/PlotLegend';
 import SliderWidget, {
   SliderWidgetProps,
 } from '../../components/widgets/Slider';
+import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
 
 // A collection of stories for vieweing our categorical colormaps
 export default {
@@ -148,7 +149,7 @@ const Template: Story<TemplateProps> = (args) => {
 
 const vocabulary = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 
-const legendItems = vocabulary.map((label) => {
+const legendItems: LegendItemsProps[] = vocabulary.map((label) => {
   return {
     label,
     marker: 'square',
@@ -173,7 +174,7 @@ Default.args = {
 
 // Showcase ordinal categorical colormap. (Ordinal colormap itself still a work in progress)
 
-const ordinalLegendItems = vocabulary.map((label) => {
+const ordinalLegendItems: LegendItemsProps[] = vocabulary.map((label) => {
   return {
     label,
     marker: 'square',

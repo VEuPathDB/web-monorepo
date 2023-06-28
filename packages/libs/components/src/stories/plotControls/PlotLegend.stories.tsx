@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Meta } from '@storybook/react/types-6-0';
 import Histogram from '../../plots/Histogram';
 import PlotLegend from '../../components/plotControls/PlotLegend';
-import PlotGradientLegend from '../../components/plotControls/PlotGradientLegend';
-import { HistogramData } from '../../types/plots';
+import { LegendItemsProps } from '../../components/plotControls/PlotListLegend';
+import {
+  gradientSequentialColorscaleMap,
+  HistogramData,
+} from '../../types/plots';
 
 export default {
   title: 'Plot Controls/PlotLegend',
@@ -191,7 +194,7 @@ const data: HistogramData = {
 };
 
 // legend items processed from data.value
-const legendItems = [
+const legendItems: LegendItemsProps[] = [
   {
     label: '24-59 months',
     marker: 'square',
@@ -219,7 +222,7 @@ const legendItems = [
 ];
 
 // test data for long legend items: taken from Scatterplot with Smoothed mean
-const longLegendItems = [
+const longLegendItems: LegendItemsProps[] = [
   {
     label: 'Bangladesh',
     marker: 'circle',
@@ -390,6 +393,73 @@ const longLegendItems = [
   },
 ];
 
+const iconDemoLegendItems: LegendItemsProps[] = [
+  {
+    label: 'square',
+    marker: 'square',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'lightSquareBorder',
+    marker: 'lightSquareBorder',
+    markerColor: 'rgb(136,204,238)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'circle',
+    marker: 'circle',
+    markerColor: 'rgb(153,153,51)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'circleOutline',
+    marker: 'circleOutline',
+    markerColor: 'rgb(51,34,136)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'line',
+    marker: 'line',
+    markerColor: 'rgb(68,170,153)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'lineWithCircle',
+    marker: 'lineWithCircle',
+    markerColor: 'rgb(221,204,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'fainted',
+    marker: 'fainted',
+    markerColor: 'rgb(204,102,119)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+  {
+    label: 'x',
+    marker: 'x',
+    markerColor: 'rgb(136,34,85)',
+    hasData: true,
+    group: 1,
+    rank: 1,
+  },
+];
+
 // set some default props
 const plotWidth = 1000;
 const plotHeight = 600;
@@ -446,8 +516,9 @@ export const GradientPlotLegend = () => {
         type="colorscale"
         legendMax={100}
         legendMin={5}
-        // Options are 'sequential' and 'divergent'
-        gradientColorscaleType={'divergent'}
+        valueToColorMapper={(a: number) =>
+          gradientSequentialColorscaleMap((a - 5) / (100 - 5))
+        }
         // pass legend title
         nTicks={5}
         showMissingness
@@ -474,6 +545,22 @@ export const TestLongLegendItems = () => {
         onCheckedLegendItemsChange={setCheckedLongLegendItems}
         // pass legend title
         legendTitle={'Country'}
+      />
+    </div>
+  );
+};
+
+// custom legend with histogram
+export const LegendIconsDemo = () => {
+  return (
+    <div>
+      <h5># Legend Icons</h5>
+      <PlotLegend
+        type="list"
+        legendItems={iconDemoLegendItems}
+        checkedLegendItems={undefined}
+        // pass legend title
+        legendTitle={'Icon name'}
       />
     </div>
   );

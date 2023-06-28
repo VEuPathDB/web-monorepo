@@ -1,4 +1,4 @@
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { includes, memoize, throttle, stubTrue } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -112,6 +112,14 @@ class RecordNavigationSection extends React.PureComponent {
             treeSection: {
               ul: {
                 padding: '0 0 0 1.5em',
+              },
+            },
+            treeNode: {
+              nodeWrapper: {
+                padding: '0.25em 0 0.25em 0.5em',
+              },
+              topLevelNodeWrapper: {
+                padding: '0.25em 0',
               },
             },
           }}

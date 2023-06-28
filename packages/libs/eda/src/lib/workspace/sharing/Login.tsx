@@ -1,16 +1,21 @@
 // Components
 import { H5 } from '@veupathdb/coreui';
-import { FilledButton } from '@veupathdb/coreui/dist/components/buttons';
+import {
+  FilledButton,
+  OutlinedButton,
+} from '@veupathdb/coreui/lib/components/buttons';
 
 // Definitions
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default function Login({
   onPressClose,
   onPressLogIn,
+  showCloseButton = true,
 }: {
   onPressClose: () => void;
   onPressLogIn: () => void;
+  showCloseButton?: boolean;
 }) {
   return (
     <div
@@ -39,19 +44,21 @@ export default function Login({
       <div style={{ display: 'flex' }}>
         <FilledButton
           text="Log In"
-          themeRole="secondary"
+          themeRole="primary"
           onPress={onPressLogIn}
         />
-        <FilledButton
-          text="Close"
-          themeRole="secondary"
-          onPress={onPressClose}
-          styleOverrides={{
-            container: {
-              marginLeft: 10,
-            },
-          }}
-        />
+        {showCloseButton && (
+          <OutlinedButton
+            text="Close"
+            themeRole="primary"
+            onPress={onPressClose}
+            styleOverrides={{
+              container: {
+                marginLeft: 10,
+              },
+            }}
+          />
+        )}
       </div>
     </div>
   );

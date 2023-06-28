@@ -15,7 +15,7 @@ import { useInputStyles } from './inputStyles';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
-import { red } from '@veupathdb/coreui/dist/definitions/colors';
+import { red } from '@veupathdb/coreui/lib/definitions/colors';
 
 export interface InputSpec {
   name: string;
@@ -32,9 +32,7 @@ export interface InputSpec {
    * However, you should additionaly use the `readonlyValue` prop as a label to display
    * when the provided variable is null.
    *
-   * The variable will only be selected/selectable if the constraints are met.
-   * (Meaning that if you pass a new provided variable that isn't compatible, the radio button
-   * will switch to "no variable")
+   * The variable will only be selectable if the constraints are met.
    */
   providedOptionalVariable?: VariableDescriptor;
   /**
@@ -104,6 +102,11 @@ export interface Props {
    */
   selectedVariables: VariablesByInputName;
   /**
+   * The complete set of variables we should use when considering
+   * constraints on entities. Usually the union of computed and selected vars.
+   */
+  variablesForConstraints?: VariablesByInputName;
+  /**
    * Change handler that is called when any input value is changed.
    */
   onChange: (selectedVariables: VariablesByInputName) => void;
@@ -129,6 +132,7 @@ export interface Props {
   enableShowMissingnessToggle?: boolean;
   /** controlled state of stratification variables' showMissingness toggle switch (optional) */
   showMissingness?: boolean;
+  showClearSelectionButton?: boolean;
   /** handler for showMissingness state change */
   onShowMissingnessChange?: (newState: boolean) => void;
   /** output entity, required for toggle switch label */
@@ -140,6 +144,7 @@ export function InputVariables(props: Props) {
     inputs,
     entities,
     selectedVariables,
+    variablesForConstraints,
     onChange,
     constraints,
     dataElementDependencyOrder,
@@ -150,6 +155,7 @@ export function InputVariables(props: Props) {
     onShowMissingnessChange,
     outputEntity,
     customSections,
+    showClearSelectionButton,
   } = props;
   const classes = useInputStyles();
   const handleChange = (
@@ -161,40 +167,39 @@ export function InputVariables(props: Props) {
 
   // Find entities that are excluded for each variable, and union their variables
   // with the disabled variables.
-  const disabledVariablesByInputName: Record<
-    string,
-    VariableDescriptor[]
-  > = useMemo(
-    () =>
-      inputs.reduce((map, input) => {
-        // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
-        const filteredConstraints =
-          constraints &&
-          filterConstraints(
-            selectedVariables,
+  const disabledVariablesByInputName: Record<string, VariableDescriptor[]> =
+    useMemo(
+      () =>
+        inputs.reduce((map, input) => {
+          // For each input (ex. xAxisVariable), determine its constraints based on which patterns any other selected variables match.
+          const filteredConstraints =
+            constraints &&
+            filterConstraints(
+              selectedVariables,
+              entities,
+              constraints,
+              input.name
+            );
+
+          map[input.name] = disabledVariablesForInput(
+            input.name,
             entities,
-            constraints,
-            input.name
+            filteredConstraints,
+            dataElementDependencyOrder,
+            variablesForConstraints ?? selectedVariables
           );
 
-        map[input.name] = disabledVariablesForInput(
-          input.name,
-          entities,
-          filteredConstraints,
-          dataElementDependencyOrder,
-          selectedVariables
-        );
-
-        return map;
-      }, {} as Record<string, VariableDescriptor[]>),
-    [
-      dataElementDependencyOrder,
-      entities,
-      constraints,
-      inputs,
-      selectedVariables,
-    ]
-  );
+          return map;
+        }, {} as Record<string, VariableDescriptor[]>),
+      [
+        inputs,
+        constraints,
+        selectedVariables,
+        entities,
+        dataElementDependencyOrder,
+        variablesForConstraints,
+      ]
+    );
 
   const hasMultipleStratificationValues =
     inputs.filter((input) => input.role === 'stratification').length > 1;
@@ -245,7 +250,10 @@ export function InputVariables(props: Props) {
                             ? requiredInputLabelStyle
                             : input.role === 'stratification' &&
                               hasMultipleStratificationValues
-                            ? multipleStratificationVariableLabelStyle
+                            ? input.readonlyValue &&
+                              !input.providedOptionalVariable
+                              ? undefined
+                              : multipleStratificationVariableLabelStyle
                             : undefined
                         }
                       >
@@ -270,10 +278,9 @@ export function InputVariables(props: Props) {
                       // and disable radio input if needed
                       <RadioButtonGroup
                         disabledList={
-                          disabledVariablesByInputName[
-                            input.name
-                          ].find((variable) =>
-                            isEqual(variable, input.providedOptionalVariable)
+                          disabledVariablesByInputName[input.name].find(
+                            (variable) =>
+                              isEqual(variable, input.providedOptionalVariable)
                           )
                             ? ['provided']
                             : []
@@ -294,13 +301,6 @@ export function InputVariables(props: Props) {
                               : input.providedOptionalVariable
                           )
                         }
-                        //                        onSelectedOptionDisabled={(_) => {
-                        //                          handleChange(input.name, undefined);
-                        //                          enqueueSnackbar(
-                        //                            `The newly chosen ${input.label} variable has been disabled because is not compatible with this visualization as currently configured.`,
-                        //                            { preventDuplicate: true } // nasty hack to workaround double calls to this callback which I tried for more than an hour to fix (and when I did fix it, the radio button was not switched to "none"...)
-                        //                          );
-                        //                        }}
                       />
                     ) : input.readonlyValue ? (
                       <span style={{ height: '32px', lineHeight: '32px' }}>
@@ -308,6 +308,9 @@ export function InputVariables(props: Props) {
                       </span>
                     ) : (
                       <VariableTreeDropdown
+                        showClearSelectionButton={
+                          showClearSelectionButton ?? true
+                        }
                         scope="variableTree"
                         showMultiFilterDescendants
                         disabledVariables={

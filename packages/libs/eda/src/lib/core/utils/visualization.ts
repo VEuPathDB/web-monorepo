@@ -18,6 +18,14 @@ import { Filter } from '../types/filter';
 import { VariableDescriptor } from '../types/variable';
 import { findEntityAndVariable } from './study-metadata';
 import { variableDisplayWithUnit } from './variable-display';
+import { InputSpec } from '../components/visualizations/InputVariables';
+import {
+  DataElementConstraintRecord,
+  disabledVariablesForInput,
+  VariablesByInputName,
+} from './data-element-constraints';
+import { isEqual } from 'lodash';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../map';
 
 // was: BarplotData | HistogramData | { series: BoxplotData };
 type SeriesWithStatistics<T> = T & CoverageStatistics;
@@ -61,6 +69,40 @@ export function grayOutLastSeries<
 }
 
 /**
+ * replace "__UNSELECTED__" with "All other values" in the `name` prop
+ *
+ */
+
+type NamedSeries = {
+  series: {
+    name?: string;
+  }[];
+};
+
+export function substituteUnselectedToken<
+  T extends NamedSeries,
+  Data extends T | FacetedData<T> | MaybeFacetedSeriesWithStatistics<T>
+>(data: Data): Data {
+  if (isFaceted(data)) {
+    return {
+      ...data,
+      facets: data.facets.map(({ label, data }) => ({
+        label,
+        data: data != null ? (substituteUnselectedToken(data) as T) : undefined,
+      })),
+    };
+  } else {
+    return {
+      ...data,
+      series: data.series.map((s) => ({
+        ...s,
+        name: s.name === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : s.name,
+      })),
+    };
+  }
+}
+
+/**
  * Calculates if there are any incomplete cases for the given variable
  * (usually overlay or facet variable)
  */
@@ -69,11 +111,11 @@ export function hasIncompleteCases(
   variable: Variable | undefined,
   outputEntity: StudyEntity | undefined,
   filteredCounts: EntityCounts,
-  completeCasesTable: CompleteCasesTable
+  completeCasesTable: CompleteCasesTable | undefined
 ): boolean {
   const completeCases =
     entity != null && variable != null
-      ? completeCasesTable.find(
+      ? completeCasesTable?.find(
           (row) =>
             row.variableDetails?.entityId === entity.id &&
             row.variableDetails?.variableId === variable.id
@@ -186,6 +228,65 @@ export function variablesAreUnique(vars: (Variable | undefined)[]): boolean {
   const defined = vars.filter((item) => item != null);
   const unique = defined.filter((item, i, ar) => ar.indexOf(item) === i);
   return defined.length === unique.length;
+}
+
+/**
+ * If any inputs are invalid, throw an error indication as much.
+ *
+ * Validation is determined by solely considering constraints, ignoring
+ * entity relationships between inputs. This should be fixed, eventually
+ */
+export function assertValidInputVariables(
+  inputs: InputSpec[],
+  selectedVariables: VariablesByInputName,
+  entities: StudyEntity[],
+  constraints: DataElementConstraintRecord[] | undefined,
+  dataElementDependencyOrder: string[][] | undefined = undefined // TO DO: make mandatory
+) {
+  // if there is a dependency order, first check the validity
+  // of the variables **without** the inter-entity dependencies
+  // (which basically means checking just the distinct values count, which is affected by filters)
+  if (dataElementDependencyOrder != null) {
+    assertValidInputVariables(
+      inputs,
+      selectedVariables,
+      entities,
+      constraints,
+      undefined
+    );
+  }
+
+  const invalidInputs = inputs.filter((input) => {
+    const inputSelection = selectedVariables[input.name];
+    const disabledVariables = disabledVariablesForInput(
+      input.name,
+      entities,
+      constraints,
+      dataElementDependencyOrder,
+      selectedVariables
+    );
+    return (
+      inputSelection &&
+      disabledVariables.some((disabledVariable) =>
+        isEqual(disabledVariable, inputSelection)
+      )
+    );
+  });
+  if (invalidInputs.length) {
+    if (dataElementDependencyOrder != null) {
+      throw new Error(
+        `The variables are no longer valid due to entity constraints. Try disabling or changing the ${
+          invalidInputs[invalidInputs.length - 1].label
+        } variable.`
+      );
+    } else {
+      throw new Error(
+        `The following variables are no longer valid and must be changed: ${invalidInputs
+          .map((input) => input.label)
+          .join(', ')}`
+      );
+    }
+  }
 }
 
 /**

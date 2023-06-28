@@ -1,0 +1,97 @@
+import { H6 } from '@veupathdb/coreui';
+import {
+  InputVariables,
+  Props as InputVariablesProps,
+} from '../../../core/components/visualizations/InputVariables';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import { VariableDescriptor } from '../../../core/types/variable';
+import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
+import { BinDefinitions } from '../../../core';
+
+interface MarkerConfiguration<T extends string> {
+  type: T;
+}
+
+export interface BarPlotMarkerConfiguration
+  extends MarkerConfiguration<'barplot'> {
+  selectedVariable: VariableDescriptor;
+  selectedValues: BinDefinitions | undefined;
+  selectedPlotMode: 'count' | 'proportion';
+}
+
+interface Props
+  extends Omit<
+    InputVariablesProps,
+    'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
+  > {
+  onChange: (configuration: BarPlotMarkerConfiguration) => void;
+  configuration: BarPlotMarkerConfiguration;
+}
+
+export function BarPlotMarkerConfigurationMenu({
+  entities,
+  onChange,
+  starredVariables,
+  toggleStarredVariable,
+  configuration,
+  constraints,
+}: Props) {
+  function handleInputVariablesOnChange(selection: VariablesByInputName) {
+    if (!selection.overlayVariable) {
+      console.error(
+        `Expected overlay to defined but got ${typeof selection.overlayVariable}`
+      );
+      return;
+    }
+
+    onChange({
+      ...configuration,
+      selectedVariable: selection.overlayVariable,
+      selectedValues: undefined,
+    });
+  }
+  function handlePlotModeSelection(option: string) {
+    onChange({
+      ...configuration,
+      selectedPlotMode: option as 'count' | 'proportion',
+    });
+  }
+
+  return (
+    <div>
+      <p
+        style={{
+          paddingLeft: 7,
+          margin: '5px 0 0 0',
+          fontWeight: 'bold',
+        }}
+      >
+        Color:
+      </p>
+      <InputVariables
+        showClearSelectionButton={false}
+        inputs={[
+          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+        ]}
+        entities={entities}
+        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
+        onChange={handleInputVariablesOnChange}
+        starredVariables={starredVariables}
+        toggleStarredVariable={toggleStarredVariable}
+        constraints={constraints}
+      />
+      <RadioButtonGroup
+        containerStyles={{
+          marginTop: 20,
+        }}
+        label="Y-axis"
+        selectedOption={configuration.selectedPlotMode || 'count'}
+        options={['count', 'proportion']}
+        optionLabels={['Count', 'Proportion']}
+        buttonColor={'primary'}
+        margins={['0em', '0', '0', '1em']}
+        onOptionSelected={handlePlotModeSelection}
+      />
+    </div>
+  );
+}

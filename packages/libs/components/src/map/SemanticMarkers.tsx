@@ -68,11 +68,11 @@ export default function SemanticMarkers({
     debouncedUpdateBounds();
 
     // attach to leaflet events handler
-    map.on('resize dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
+    map.on('resize moveend dragend zoomend', debouncedUpdateBounds); // resize is there hopefully when we have full screen mode
 
     return () => {
       // detach from leaflet events handler
-      map.off('resize dragend zoomend', debouncedUpdateBounds);
+      map.off('resize moveend dragend zoomend', debouncedUpdateBounds);
       debouncedUpdateBounds.cancel();
     };
   }, [map, onBoundsChanged]);
@@ -211,7 +211,7 @@ function constrainLongitudeToMainWorld({
   // but we need to make sure that west is slightly greater than east
   // so that they "wrap around" the whole globe
   // (if west was slightly less than east, it would represent a very tiny sliver)
-  if (newWest === newEast) newWest = newWest + 1e-8;
+  if (Math.abs(newEast - newWest) < 1e-8) newWest = newEast + 1e-8;
 
   return {
     southWest: { lat: south, lng: newWest },

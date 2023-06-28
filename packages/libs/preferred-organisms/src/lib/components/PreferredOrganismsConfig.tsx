@@ -5,7 +5,7 @@ import { noop } from 'lodash';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import CheckboxTree, {
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
@@ -29,6 +29,8 @@ import { getNodeChildren, getNodeId } from '../utils/organismNodes';
 import { PreferredOrganismsToggleHelp } from './PreferredOrganismsToggleHelp';
 
 import './PreferredOrganismsConfig.scss';
+import { Tooltip } from '@material-ui/core';
+import useSnackbar from '@veupathdb/coreui/lib/components/notifications/useSnackbar';
 
 export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
@@ -121,6 +123,8 @@ export function PreferredOrganismsConfig({
 
   const [describeNewOrganisms, setDescribeNewOrganisms] = useState(true);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <div className={cx()}>
       <h1>
@@ -191,30 +195,45 @@ export function PreferredOrganismsConfig({
           <h2>
             Choose organisms to keep
             {
-              <div
-                className={cx(
-                  '--ConfigButtons',
-                  configIsUnchanged ? 'hidden' : 'visible'
-                )}
-              >
+              <div className={cx('--ConfigButtons')}>
                 {
                   <>
-                    <button
-                      type="button"
-                      className={`btn ${cx('--ApplyButton')}`}
-                      disabled={!savingPreferredOrganismsEnabled}
-                      onClick={savePreferredOrganisms}
+                    <Tooltip
+                      title={
+                        configIsUnchanged
+                          ? 'No changes to apply'
+                          : !configSelection.length
+                          ? 'Please select at least one organism'
+                          : ''
+                      }
                     >
-                      Apply
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn ${cx('--CancelButton')}`}
-                      onClick={revertConfigSelection}
-                      disabled={configIsUnchanged}
+                      <button
+                        type="button"
+                        className={`btn ${cx('--ApplyButton')}`}
+                        disabled={!savingPreferredOrganismsEnabled}
+                        onClick={function handleApplyPrefOrgsChanges() {
+                          enqueueSnackbar(
+                            'Your preferred organisms have been updated.',
+                            { variant: 'success' }
+                          );
+                          savePreferredOrganisms();
+                        }}
+                      >
+                        Apply
+                      </button>
+                    </Tooltip>
+                    <Tooltip
+                      title={configIsUnchanged ? 'No changes to cancel' : ''}
                     >
-                      X
-                    </button>
+                      <button
+                        type="button"
+                        className={`btn ${cx('--CancelButton')}`}
+                        onClick={revertConfigSelection}
+                        disabled={configIsUnchanged}
+                      >
+                        X
+                      </button>
+                    </Tooltip>
                   </>
                 }
               </div>

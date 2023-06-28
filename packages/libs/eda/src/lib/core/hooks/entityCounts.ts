@@ -1,16 +1,20 @@
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { useCallback } from 'react';
 import { Filter } from '../types/filter';
 import { usePromise } from './promise';
-import { useStudyMetadata, useSubsettingClient } from './workspace';
+import {
+  useStudyEntities,
+  useStudyMetadata,
+  useSubsettingClient,
+} from './workspace';
 import { useDebounce } from '../hooks/debouncing';
 import { isStubEntity, STUB_ENTITY } from './study';
 
 export type EntityCounts = Record<string, number>;
 
 export function useEntityCounts(filters?: Filter[]) {
-  const { id, rootEntity } = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
+  const { id, rootEntity } = useStudyMetadata();
+  const entities = useStudyEntities();
 
   // debounce to prevent a back end call for each click on a filter checkbox
   const debouncedFilters = useDebounce(filters, 2000);
@@ -21,22 +25,25 @@ export function useEntityCounts(filters?: Filter[]) {
         return {
           [STUB_ENTITY.id]: 0,
         };
-      const counts: Record<string, number> = {};
-      for (const entity of preorder(rootEntity, (e) => e.children ?? [])) {
-        const { count } = await subsettingClient
-          .getEntityCount(id, entity.id, debouncedFilters ?? [])
-          .catch((error) => {
-            console.warn(
-              'Could not load count for entity',
-              entity.id,
-              entity.displayName
-            );
-            console.error(error);
-            return { count: 0 };
-          });
-        counts[entity.id] = count;
-      }
-      return counts;
-    }, [rootEntity, subsettingClient, id, debouncedFilters])
+      const countsEntries = await Promise.all(
+        entities.map((entity) =>
+          subsettingClient
+            .getEntityCount(id, entity.id, debouncedFilters ?? [])
+            .then(
+              ({ count }) => [entity.id, count],
+              (error) => {
+                console.warn(
+                  'Could not load count for entity',
+                  entity.id,
+                  entity.displayName
+                );
+                console.error(error);
+                return [entity.id, 0];
+              }
+            )
+        )
+      );
+      return Object.fromEntries(countsEntries);
+    }, [rootEntity, entities, subsettingClient, id, debouncedFilters])
   );
 }

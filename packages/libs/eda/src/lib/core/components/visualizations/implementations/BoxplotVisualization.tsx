@@ -19,7 +19,7 @@ import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
-import { InputVariables } from '../InputVariables';
+import { InputSpec, InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   ComputedVariableDetails,
@@ -36,7 +36,17 @@ import { BirdsEyeView } from '../../BirdsEyeView';
 import { PlotLayout } from '../../layouts/PlotLayout';
 import PluginError from '../PluginError';
 
-import { at, groupBy, mapValues, size, head, map, values, keys } from 'lodash';
+import {
+  at,
+  groupBy,
+  mapValues,
+  size,
+  head,
+  map,
+  values,
+  keys,
+  isEqual,
+} from 'lodash';
 // import axis label unit util
 import { variableDisplayWithUnit } from '../../../utils/variable-display';
 import {
@@ -50,6 +60,8 @@ import {
   fixVarIdLabels,
   fixVarIdLabel,
   getVariableLabel,
+  assertValidInputVariables,
+  substituteUnselectedToken,
 } from '../../../utils/visualization';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { StudyEntity, Variable } from '../../../types/study';
@@ -57,13 +69,14 @@ import { isFaceted } from '@veupathdb/components/lib/types/guards';
 // custom legend
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
-import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
+import {
+  ColorPaletteDefault,
+  SequentialGradientColorscale,
+} from '@veupathdb/components/lib/types/plots/addOns';
 // a custom hook to preserve the status of checked legend items
 import { useCheckedLegendItems } from '../../../hooks/checkedLegendItemsStatus';
 import {
-  useFilteredConstraints,
   useNeutralPaletteProps,
-  useProvidedOptionalVariable,
   useVizConfig,
 } from '../../../hooks/visualizations';
 
@@ -79,13 +92,16 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
-import { VariableMapping } from '../../../api/DataClient/types';
+import {
+  BoxplotRequestParams,
+  VariableMapping,
+} from '../../../api/DataClient/types';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { boxplotDefaultDependentAxisMinMax } from '../../../utils/axis-range-calculations';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions, TitleOptions } from '../../layouts/types';
-import { OverlayOptions, XAxisOptions } from '../options/types';
+import { OverlayOptions, RequestOptions, XAxisOptions } from '../options/types';
 import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
@@ -122,7 +138,8 @@ interface Options
   extends LayoutOptions,
     TitleOptions,
     OverlayOptions,
-    XAxisOptions {
+    XAxisOptions,
+    RequestOptions<BoxplotConfig, {}, BoxplotRequestParams> {
   getComputedYAxisDetails?: (
     computeConfig: unknown
   ) => ComputedVariableDetails | undefined;
@@ -178,7 +195,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities();
+  const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
 
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -189,20 +206,20 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   );
 
   // set the state of truncation warning message
-  const [
-    truncatedDependentAxisWarning,
-    setTruncatedDependentAxisWarning,
-  ] = useState<string>('');
+  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
+    useState<string>('');
 
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
-      const {
-        xAxisVariable,
-        yAxisVariable,
-        overlayVariable,
-        facetVariable,
-      } = selectedVariables;
+      // check yAxisVariable is changed
+      const keepDependentAxisSettings = isEqual(
+        selectedVariables.yAxisVariable,
+        vizConfig.yAxisVariable
+      );
+
+      const { xAxisVariable, yAxisVariable, overlayVariable, facetVariable } =
+        selectedVariables;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
@@ -210,27 +227,52 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         facetVariable,
         // set undefined for variable change
         checkedLegendItems: undefined,
-        dependentAxisRange: undefined,
-        dependentAxisValueSpec: 'Full',
+        dependentAxisRange: keepDependentAxisSettings
+          ? vizConfig.dependentAxisRange
+          : undefined,
+        dependentAxisValueSpec: keepDependentAxisSettings
+          ? vizConfig.dependentAxisValueSpec
+          : 'Full',
       });
       // close truncation warnings
       setTruncatedDependentAxisWarning('');
     },
-    [updateVizConfig]
+    [
+      updateVizConfig,
+      vizConfig.dependentAxisRange,
+      vizConfig.dependentAxisValueSpec,
+      vizConfig.yAxisVariable,
+    ]
   );
 
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const providedXAxisVariable = options?.getXAxisVariable?.(
-    computation.descriptor.configuration
+  const { getXAxisVariable, getComputedYAxisDetails } = options ?? {};
+  const { configuration: computeConfig } = computation.descriptor;
+
+  const providedXAxisVariable = useMemo(
+    () => getXAxisVariable?.(computeConfig),
+    [computeConfig, getXAxisVariable]
   );
-  const computedYAxisDetails = options?.getComputedYAxisDetails?.(
-    computation.descriptor.configuration
+  const computedYAxisDetails = useMemo(
+    () => getComputedYAxisDetails?.(computeConfig),
+    [computeConfig, getComputedYAxisDetails]
   );
+
+  // When we only have a computed y axis (and no provided x axis) then the y axis var
+  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
+  // like any other continuous variable.
+  const computedYAxisDescriptor = computedYAxisDetails
+    ? {
+        entityId: computedYAxisDetails.entityId,
+        variableId:
+          computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
+      }
+    : null;
 
   const providedOverlayVariableDescriptor = useMemo(
     () => options?.getOverlayVariable?.(computation.descriptor.configuration),
-    [options?.getOverlayVariable, computation.descriptor.configuration]
+    [options, computation.descriptor.configuration]
   );
 
   const selectedVariables = useDeepValue({
@@ -240,26 +282,17 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     facetVariable: vizConfig.facetVariable,
   });
 
-  const filteredConstraints = useFilteredConstraints(
-    dataElementConstraints,
-    selectedVariables,
-    entities,
-    'overlayVariable'
-  );
-
-  useProvidedOptionalVariable<BoxplotConfig>(
-    options?.getOverlayVariable,
-    'overlayVariable',
-    providedOverlayVariableDescriptor,
-    vizConfig.overlayVariable,
-    entities,
-    filteredConstraints,
-    dataElementDependencyOrder,
-    selectedVariables,
-    updateVizConfig,
-    /** snackbar message */
-    'The new overlay variable is not compatible with this visualization and has been disabled.'
-  );
+  // variablesForConstraints includes selected vars, computed vars, and
+  // those collection vars that we want to use in constraining the available
+  // variables within a viz.
+  const variablesForConstraints = useDeepValue({
+    xAxisVariable: vizConfig.xAxisVariable,
+    yAxisVariable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+    overlayVariable:
+      vizConfig.overlayVariable &&
+      (providedOverlayVariableDescriptor ?? vizConfig.overlayVariable),
+    facetVariable: vizConfig.facetVariable,
+  });
 
   const {
     xAxisVariable,
@@ -337,6 +370,51 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     computedYAxisDetails?.entityId
   );
 
+  const inputs = useMemo(
+    (): InputSpec[] => [
+      {
+        name: 'xAxisVariable',
+        label: 'X-axis',
+        role: 'axis',
+        readonlyValue: providedXAxisVariable && '',
+      },
+      {
+        name: 'yAxisVariable',
+        label: 'Y-axis',
+        role: 'axis',
+        readonlyValue: computedYAxisDetails && '',
+      },
+      {
+        name: 'overlayVariable',
+        label: 'Overlay',
+        role: 'stratification',
+        providedOptionalVariable: providedOverlayVariableDescriptor,
+        readonlyValue:
+          options?.getOverlayVariable != null
+            ? providedOverlayVariableDescriptor
+              ? variableDisplayWithUnit(providedOverlayVariable)
+              : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
+            : undefined,
+      },
+      ...(options?.hideFacetInputs
+        ? []
+        : [
+            {
+              name: 'facetVariable',
+              label: 'Facet',
+              role: 'stratification',
+            } as const,
+          ]),
+    ],
+    [
+      computedYAxisDetails,
+      options,
+      providedOverlayVariable,
+      providedOverlayVariableDescriptor,
+      providedXAxisVariable,
+    ]
+  );
+
   // add to support both alphadiv and abundance
   const data = usePromise(
     useCallback(async (): Promise<BoxplotDataWithCoverage | undefined> => {
@@ -360,16 +438,30 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         !variablesAreUnique([
           xAxisVariable,
           yAxisVariable,
-          overlayVariable,
+          overlayVariable && (providedOverlayVariable ?? overlayVariable),
           facetVariable,
         ])
       )
         throw new Error(nonUniqueWarning);
 
+      assertValidInputVariables(
+        inputs,
+        variablesForConstraints,
+        entities,
+        dataElementConstraints,
+        dataElementDependencyOrder
+      );
+
       // add visualization.type here. valueSpec too?
-      const params = {
+      const params: BoxplotRequestParams = options?.getRequestParams?.({
         studyId,
-        filters,
+        filters: filters ?? [],
+        vizConfig,
+        outputEntityId: outputEntity.id,
+        computation,
+      }) ?? {
+        studyId,
+        filters: filters ?? [],
         config: {
           outputEntityId: outputEntity.id,
           // post options: 'all', 'outliers'
@@ -417,49 +509,60 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         xAxisVariable?.vocabulary,
         xAxisVariable
       );
-      const overlayVocabulary = fixLabelsForNumberVariables(
-        overlayVariable?.vocabulary,
-        overlayVariable
-      );
+      const overlayVocabulary =
+        (overlayVariable && options?.getOverlayVocabulary?.()) ??
+        fixLabelsForNumberVariables(
+          overlayVariable?.vocabulary,
+          overlayVariable
+        );
       const facetVocabulary = fixLabelsForNumberVariables(
         facetVariable?.vocabulary,
         facetVariable
       );
       return grayOutLastSeries(
-        reorderData(
-          boxplotResponseToData(
-            response,
-            xAxisVariable,
-            overlayVariable,
-            facetVariable,
+        substituteUnselectedToken(
+          reorderData(
+            boxplotResponseToData(
+              response,
+              xAxisVariable,
+              overlayVariable,
+              facetVariable,
+              entities
+            ),
+            vocabulary,
+            vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
+            vocabularyWithMissingData(facetVocabulary, showMissingFacet),
             entities
-          ),
-          vocabulary,
-          vocabularyWithMissingData(overlayVocabulary, showMissingOverlay),
-          vocabularyWithMissingData(facetVocabulary, showMissingFacet),
-          entities
+          )
         ),
         showMissingOverlay,
         '#a0a0a0'
       );
     }, [
+      providedXAxisVariable,
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.showMissingness,
       xAxisVariable,
-      computation.descriptor.configuration,
-      computation.descriptor.type,
-      computeJobStatus,
+      computedYAxisDetails,
       yAxisVariable,
       outputEntity,
       filteredCounts.pending,
       filteredCounts.value,
+      computeJobStatus,
       overlayVariable,
       facetVariable,
-      studyId,
+      inputs,
+      selectedVariables,
+      entities,
+      dataElementConstraints,
+      dataElementDependencyOrder,
       filters,
+      studyId,
+      computation.descriptor.configuration,
+      computation.descriptor.type,
       dataClient,
       visualization.descriptor.type,
       overlayEntity,
@@ -609,6 +712,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       truncatedDependentAxisWarning={truncatedDependentAxisWarning}
       setTruncatedDependentAxisWarning={setTruncatedDependentAxisWarning}
       dependentAxisMinMax={dependentAxisMinMax}
+      colorPalette={
+        options?.getOverlayType?.() === 'continuous'
+          ? SequentialGradientColorscale
+          : ColorPaletteDefault
+      }
       {...neutralPaletteProps}
     />
   );
@@ -643,18 +751,6 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       showOverlayLegend={showOverlayLegend}
     />
   );
-
-  // When we only have a computed y axis (and no provided x axis) then the y axis var
-  // can have a "normal" variable descriptor. In this case we want the computed y var to act just
-  // like any other continuous variable.
-  const computedYAxisDescriptor =
-    !providedXAxisVariable && computedYAxisDetails
-      ? {
-          entityId: computedYAxisDetails.entityId,
-          variableId:
-            computedYAxisDetails.variableId ?? '__NO_COMPUTED_VARIABLE_ID__', // for type safety, unlikely to be user-facing
-        }
-      : null;
 
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
@@ -708,7 +804,10 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             role: 'Y-axis',
             required: !providedXAxisVariable,
             display: dependentAxisLabel,
-            variable: computedYAxisDescriptor ?? vizConfig.yAxisVariable,
+            variable:
+              !providedXAxisVariable && computedYAxisDescriptor
+                ? computedYAxisDescriptor
+                : vizConfig.yAxisVariable,
           },
           {
             role: 'Overlay',
@@ -730,61 +829,53 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     computation.descriptor.configuration
   );
 
-  const areRequiredInputsSelected = useMemo(() => {
-    if (!dataElementConstraints) return false;
-    return Object.entries(dataElementConstraints[0])
+  const areRequiredInputsSelected =
+    !dataElementConstraints ||
+    Object.entries(dataElementConstraints[0])
       .filter((variable) => variable[1].isRequired)
       .every((reqdVar) => !!(vizConfig as any)[reqdVar[0]]);
-  }, [
-    dataElementConstraints,
-    vizConfig.xAxisVariable,
-    vizConfig.yAxisVariable,
-  ]);
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
+
+  const finalizedInputs = useMemo(
+    (): InputSpec[] =>
+      inputs.map((input) => {
+        if (input.name === 'xAxisVariable')
+          return {
+            name: 'xAxisVariable',
+            label: 'X-axis',
+            role: 'axis',
+            readonlyValue: providedXAxisVariable && independentAxisLabel,
+          };
+
+        if (input.name === 'yAxisVariable')
+          return {
+            name: 'yAxisVariable',
+            label: 'Y-axis',
+            role: 'axis',
+            readonlyValue: computedYAxisDetails && dependentAxisLabel,
+          };
+
+        return input;
+      }),
+    [
+      computedYAxisDetails,
+      dependentAxisLabel,
+      independentAxisLabel,
+      inputs,
+      providedXAxisVariable,
+    ]
+  );
 
   // for handling alphadiv abundance
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
         <InputVariables
-          inputs={[
-            {
-              name: 'xAxisVariable',
-              label: 'X-axis',
-              role: 'axis',
-              readonlyValue: providedXAxisVariable && independentAxisLabel,
-            },
-            {
-              name: 'yAxisVariable',
-              label: 'Y-axis',
-              role: 'axis',
-              readonlyValue: computedYAxisDetails && dependentAxisLabel,
-            },
-            {
-              name: 'overlayVariable',
-              label: 'Overlay',
-              role: 'stratification',
-              providedOptionalVariable: providedOverlayVariableDescriptor,
-              readonlyValue:
-                options?.getOverlayVariable != null
-                  ? providedOverlayVariableDescriptor
-                    ? variableDisplayWithUnit(providedOverlayVariable)
-                    : 'None. ' + options?.getOverlayVariableHelp?.() ?? ''
-                  : undefined,
-            },
-            ...(options?.hideFacetInputs
-              ? []
-              : [
-                  {
-                    name: 'facetVariable',
-                    label: 'Facet',
-                    role: 'stratification',
-                  } as const,
-                ]),
-          ]}
+          inputs={finalizedInputs}
           entities={entities}
           selectedVariables={selectedVariables}
+          variablesForConstraints={variablesForConstraints}
           onChange={handleInputVariableChange}
           constraints={dataElementConstraints}
           dataElementDependencyOrder={dataElementDependencyOrder}
@@ -867,11 +958,7 @@ function Plot({
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = useMemo(
-    () =>
-      truncationConfig({ dependentAxisRange: dependentAxisMinMax }, vizConfig),
-    [dependentAxisMinMax, vizConfig.dependentAxisRange]
-  );
+  } = truncationConfig({ dependentAxisRange: dependentAxisMinMax }, vizConfig);
 
   useEffect(() => {
     if (truncationConfigDependentAxisMin || truncationConfigDependentAxisMax) {

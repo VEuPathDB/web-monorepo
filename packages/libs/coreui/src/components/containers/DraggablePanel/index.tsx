@@ -1,12 +1,12 @@
-import { CSSProperties, ReactNode, useEffect, useState } from "react";
-import Draggable, { DraggableEvent, DraggableData } from "react-draggable";
-import { css } from "@emotion/react";
-import useResizeObserver from "use-resize-observer";
-import { gray } from "../../../definitions/colors";
-import { screenReaderOnly } from "../../../styleDefinitions/typography";
-import { useUITheme } from "../../theming";
-import DismissButton from "../../notifications/DismissButton";
-import { H6 } from "../../typography";
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
+import { css } from '@emotion/react';
+import useResizeObserver from 'use-resize-observer';
+import { gray } from '../../../definitions/colors';
+import { screenReaderOnly } from '../../../styleDefinitions/typography';
+import { useUITheme } from '../../theming';
+import DismissButton from '../../notifications/DismissButton';
+import { H6 } from '../../typography';
 
 export type DraggablePanelCoordinatePair = {
   x: number;
@@ -14,15 +14,15 @@ export type DraggablePanelCoordinatePair = {
 };
 
 export type DraggablePanelStyleOverrides = {
-  boxShadow?: CSSProperties["boxShadow"];
-  height?: CSSProperties["height"];
-  margin?: CSSProperties["margin"];
-  minHeight?: CSSProperties["minHeight"];
-  minWidth?: CSSProperties["minWidth"];
-  padding?: CSSProperties["padding"];
-  resize?: CSSProperties["resize"];
-  width?: CSSProperties["width"];
-  zIndex?: CSSProperties["zIndex"];
+  boxShadow?: CSSProperties['boxShadow'];
+  height?: CSSProperties['height'];
+  margin?: CSSProperties['margin'];
+  minHeight?: CSSProperties['minHeight'];
+  minWidth?: CSSProperties['minWidth'];
+  padding?: CSSProperties['padding'];
+  resize?: CSSProperties['resize'];
+  width?: CSSProperties['width'];
+  zIndex?: CSSProperties['zIndex'];
 };
 
 export type HeightAndWidthInPixels = {
@@ -60,7 +60,7 @@ export type DraggablePanelProps = {
 export default function DraggablePanel({
   confineToParentContainer,
   children,
-  defaultPosition,
+  defaultPosition = { x: 0, y: 0 },
   isOpen,
   onDragComplete,
   onDragStart,
@@ -74,12 +74,18 @@ export default function DraggablePanel({
 
   const [wasDragged, setWasDragged] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [panelPosition, setPanelPosition] =
+    useState<DraggablePanelCoordinatePair>(defaultPosition);
 
-  function handleDrag() {
+  function handleOnDrag(_: DraggableEvent, data: DraggableData) {
     !wasDragged && setWasDragged(true);
+    setPanelPosition({
+      x: data.x,
+      y: data.y,
+    });
   }
 
-  function handleDragStart() {
+  function handleOnDragStart() {
     setIsDragging(true);
 
     if (onDragStart) onDragStart();
@@ -99,7 +105,7 @@ export default function DraggablePanel({
   const { ref, height, width } = useResizeObserver();
 
   useEffect(
-    function invokeOnResizeHandler() {
+    function invokeOnPanelResize() {
       if (!onPanelResize || !height || !width) return;
 
       onPanelResize({
@@ -110,21 +116,25 @@ export default function DraggablePanel({
     [height, width, onPanelResize]
   );
 
+  const finalPosition = confineToParentContainer
+    ? constrainPositionOnScreen(panelPosition, width, height, window)
+    : panelPosition;
+
   return (
     <Draggable
-      bounds={confineToParentContainer ? "parent" : false}
-      defaultPosition={defaultPosition || { x: 0, y: 0 }}
+      bounds={confineToParentContainer ? 'parent' : false}
       handle=".dragHandle"
-      onDrag={handleDrag}
-      onStart={handleDragStart}
+      onDrag={handleOnDrag}
+      onStart={handleOnDragStart}
       onStop={handleOnDragStop}
+      defaultPosition={finalPosition}
+      position={finalPosition}
     >
       <div
-        // ref={setRefForResizeObserver}
         ref={ref}
         // As the attribute's name suggests, this helps with automated testing.
         // At the moment, jsdom and dragging is a bad combo for testing.
-        data-testid={`${panelTitle} ${wasDragged ? "dragged" : "not dragged"}`}
+        data-testid={`${panelTitle} ${wasDragged ? 'dragged' : 'not dragged'}`}
         css={css`
           background: white;
           border-radius: 7px;
@@ -133,17 +143,13 @@ export default function DraggablePanel({
           rgba(0, 0, 0, 0.3) 0px 1px 3px -1px`};
           position: absolute;
           top: 0;
-          visibility: ${isOpen === false ? "hidden" : "visible"};
-          z-index: ${styleOverrides?.zIndex ?? "auto"};
-          margin: ${styleOverrides?.margin ?? "margin"};
+          visibility: ${isOpen === false ? 'hidden' : 'visible'};
+          z-index: ${styleOverrides?.zIndex ?? 'auto'};
+          margin: ${styleOverrides?.margin ?? 'margin'};
           // If resize is set, you can consider these two values as
           // initial heights and widths.
-          height: ${styleOverrides?.height ?? "fit-content"};
-          width: ${styleOverrides?.width ?? "fit-content"};
-          // Hey, so you need to explicitly set overflow wherever
-          // you plan to use resize.
-          overflow: scroll;
-          resize: ${styleOverrides?.resize ?? "none"};
+          height: ${styleOverrides?.height ?? 'fit-content'};
+          width: ${styleOverrides?.width ?? 'fit-content'};
           min-height: ${styleOverrides?.minHeight ?? 0};
           min-width: ${styleOverrides?.minWidth ?? 0};
         `}
@@ -154,20 +160,29 @@ export default function DraggablePanel({
             align-items: center;
             border-radius: 7px 7px 0 0;
             background: ${theme?.palette?.primary?.hue[100] ?? gray[100]};
-            cursor: ${isDragging ? "grabbing" : "grab"};
+            cursor: ${isDragging ? 'grabbing' : 'grab'};
             display: flex;
             height: 2rem;
             justify-content: center;
-            // Because the panels are positioned absolutely and overflow scroll,
+            // Because the panels are positioned absolutely and overflow auto,
             // the handle will get lost when the user scrolls down. We can pin the
             // handle (which includes the panel title and dismiss button) to
             // the top of the panel with position sticky and top 0.
             position: sticky;
             top: 0;
+            // We give the drag handle a z-index of 2 and the content's container a
+            // z-index of 1, thereby ensuring the drag handle renders above the content.
+            z-index: 2;
             width: 100%;
           `}
         >
-          <H6 additionalStyles={{ fontWeight: "bold" }}>
+          <H6
+            additionalStyles={{
+              fontWeight: 'bold',
+              fontSize: 14,
+              padding: '0 10px',
+            }}
+          >
             <span css={showPanelTitle ? null : screenReaderOnly}>
               {panelTitle}
             </span>
@@ -188,8 +203,17 @@ export default function DraggablePanel({
         </div>
         <div
           css={css`
+            // Hey, so you need to explicitly set overflow wherever
+            // you plan to use resize.
+            overflow: auto;
+            resize: ${styleOverrides?.resize ?? 'none'};
             border-radius: 7px;
-            overflow: scroll;
+            // We want the content to render below the drag handle, so let's put this
+            // container in the same stacking context as the drag handle by giving it
+            // position: relative. Then, we'll give the drag handle a z-index of 2
+            // and the content's container a z-index of 1.
+            position: relative;
+            z-index: 1;
           `}
         >
           {children}
@@ -197,4 +221,56 @@ export default function DraggablePanel({
       </div>
     </Draggable>
   );
+}
+
+function isPanelXAxisOffScreen(
+  position: DraggablePanelCoordinatePair,
+  panelWidth: number,
+  browserWidth: number
+): boolean {
+  const xPlusWidth = position.x + panelWidth;
+  return xPlusWidth > browserWidth;
+}
+
+function isPanelYAxisOffScreen(
+  position: DraggablePanelCoordinatePair,
+  panelHeight: number,
+  browserHeight: number
+): boolean {
+  const yPlusHeight = position.y + panelHeight;
+  return yPlusHeight > browserHeight;
+}
+
+/**
+ * This solves the problem of a resizing panel. Everything on the web is a box.
+ * When that box resizes, the top-left corner maintains its position while the
+ * bottom and/or right grow.
+ * @param position
+ * @param panelWidth
+ * @param panelHeight
+ * @param window
+ * @returns A coordinate pair that places the panel nearest to the original position.
+ * but ensuring that the panel is on screen.
+ */
+function constrainPositionOnScreen(
+  position: DraggablePanelCoordinatePair,
+  panelWidth = 0,
+  panelHeight = 0,
+  window: Window
+): DraggablePanelCoordinatePair {
+  const { innerHeight, innerWidth } = window;
+  const isXOffScreen = isPanelXAxisOffScreen(position, panelWidth, innerWidth);
+  const isYOffScreen = isPanelYAxisOffScreen(
+    position,
+    panelHeight,
+    innerHeight
+  );
+  const GUTTER = 10;
+  const rightMostX = innerWidth - panelWidth - GUTTER;
+  const bottomMostY = innerHeight - panelHeight - GUTTER;
+
+  return {
+    x: isXOffScreen ? rightMostX : position.x,
+    y: isYOffScreen ? bottomMostY : position.y,
+  };
 }

@@ -63,7 +63,7 @@ export const VariableType = t.keyof({
   longitude: null,
 });
 
-export const CategoryVariableDataShape = t.keyof({
+export const CategoricalVariableDataShape = t.keyof({
   categorical: null,
   ordinal: null,
   binary: null,
@@ -74,7 +74,7 @@ export const ContinuousVariableDataShape = t.keyof({
 });
 
 export const VariableDataShape = t.union([
-  CategoryVariableDataShape,
+  CategoricalVariableDataShape,
   ContinuousVariableDataShape,
 ]);
 
@@ -91,6 +91,7 @@ export type VariableScope = t.TypeOf<typeof VariableScope>;
 export const VariableScope = t.keyof({
   download: null,
   variableTree: null,
+  map: null,
 });
 
 export const VariableTreeNode_Base = t.intersection([

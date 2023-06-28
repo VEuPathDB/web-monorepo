@@ -53,7 +53,7 @@ export function shouldAddFilter(
     return filter.value == null
       ? true
       : filter.value.length == 0
-      ? false
+      ? filter.includeUnknown
       : true;
   }
 

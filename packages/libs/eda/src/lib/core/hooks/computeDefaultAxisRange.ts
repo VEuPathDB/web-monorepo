@@ -59,6 +59,7 @@ export function useDefaultAxisRange(
           typeof defaultRange?.min === 'number' &&
           typeof defaultRange?.max === 'number')
       )
+        // check non-zero baseline for continuous overlay variable
         return {
           min: numberSignificantFigures(defaultRange.min, 4, 'down'),
           max: numberSignificantFigures(defaultRange.max, 4, 'up'),

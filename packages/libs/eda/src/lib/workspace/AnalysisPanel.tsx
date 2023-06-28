@@ -35,7 +35,6 @@ import {
   ErrorBoundary,
   RecordController,
 } from '@veupathdb/wdk-client/lib/Controllers';
-import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import ShowHideVariableContextProvider from '../core/utils/show-hide-variable-context';
 import NotesTab from './NotesTab';
@@ -48,11 +47,7 @@ import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restrictio
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 import { DownloadClient } from '../core/api/DownloadClient';
-import { Link } from 'react-router-dom';
-import { fullScreenAppPlugins } from '../core/components/fullScreenApps';
-import { FullScreenAppPlugin } from '../core/types/fullScreenApp';
-import FullScreenContainer from '../core/components/fullScreenApps/FullScreenContainer';
-import useUITheme from '@veupathdb/coreui/dist/components/theming/useUITheme';
+import useUITheme from '@veupathdb/coreui/lib/components/theming/useUITheme';
 import { VariableLinkConfig } from '../core/components/VariableLink';
 import FilterChipList from '../core/components/FilterChipList';
 
@@ -96,7 +91,6 @@ interface Props {
   downloadClient: DownloadClient;
   singleAppMode?: string;
   showUnreleasedData: boolean;
-  enableFullScreenApps: boolean;
 }
 
 /**
@@ -116,7 +110,6 @@ export function AnalysisPanel({
   downloadClient,
   singleAppMode,
   showUnreleasedData,
-  enableFullScreenApps,
 }: Props) {
   const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId, singleAppMode);
@@ -140,11 +133,9 @@ export function AnalysisPanel({
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
   const geoConfigs = useGeoConfig(entities);
   const location = useLocation();
-  const history = useHistory();
 
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
-  // const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
   const [sharingModalVisible, setSharingModalVisible] =
     useState<boolean>(false);
 
@@ -170,6 +161,17 @@ export function AnalysisPanel({
         .subsetting
     ? 'approved'
     : 'not-approved';
+
+  const isDatasetAUserStudy = Boolean(
+    !permissionsValue.loading &&
+      !hideSavedAnalysisButtons &&
+      permissionsValue.permissions.perDataset[studyId]?.isUserStudy
+  );
+  const isCurrentUserStudyManager = Boolean(
+    !permissionsValue.loading &&
+      !hideSavedAnalysisButtons &&
+      permissionsValue.permissions.perDataset[studyId]?.isManager
+  );
 
   const previousAnalysisId = usePrevious(analysisId);
 
@@ -245,6 +247,10 @@ export function AnalysisPanel({
           analysisState={analysisState}
           sharingUrlPrefix={sharingUrlPrefix}
           showLoginForm={showLoginForm}
+          contextForUserDataset={{
+            isUserStudy: isDatasetAUserStudy,
+            isCurrentUserStudyManager,
+          }}
         />
         <div
           css={
@@ -266,31 +272,12 @@ export function AnalysisPanel({
             deleteAnalysis={
               hideSavedAnalysisButtons ? undefined : deleteAnalysis
             }
-            // onFilterIconClick={() =>
-            //   setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
-            // }
-            // globalFiltersDialogOpen={globalFiltersDialogOpen}
             displaySharingModal={
               hideSavedAnalysisButtons
                 ? undefined
                 : () => setSharingModalVisible(true)
             }
           />
-          {/* <GlobalFiltersDialog
-            open={globalFiltersDialogOpen}
-            setOpen={setGlobalFiltersDialogOpen}
-            entities={entities}
-            filters={analysis.descriptor.subset.descriptor}
-            setFilters={setFilters}
-            removeFilter={(filter) =>
-              setFilters(
-                analysis.descriptor.subset.descriptor.filter(
-                  (f) => f !== filter
-                )
-              )
-            }
-            variableLinkConfig={variableLinkConfig}
-          /> */}
           <Route
             path={[
               `${routeBase}/variables/:entityId?/:variableId?`,
@@ -303,15 +290,6 @@ export function AnalysisPanel({
               }>
             ) => (
               <div className="Entities">
-                {enableFullScreenApps &&
-                  Object.entries(fullScreenAppPlugins).map(
-                    ([key, plugin]) =>
-                      plugin?.isCompatibleWithStudy(studyMetadata) && (
-                        <Link key={key} to={`${routeBase}/fullscreen/${key}`}>
-                          <plugin.triggerComponent analysis={analysis} />
-                        </Link>
-                      )
-                  )}
                 <EntityDiagram
                   expanded
                   orientation="horizontal"
@@ -460,28 +438,6 @@ export function AnalysisPanel({
               </AnalysisTabErrorBoundary>
             )}
           />
-          {enableFullScreenApps && (
-            <Route
-              path={`${routeBase}/fullscreen/:appName`}
-              render={(props) => {
-                const plugin = (
-                  fullScreenAppPlugins as Record<string, FullScreenAppPlugin>
-                )[props.match.params.appName];
-                if (plugin == null) return <div>No full screen app found</div>;
-                return (
-                  <FullScreenContainer
-                    onClose={() =>
-                      history.length
-                        ? history.goBack()
-                        : history.replace(routeBase)
-                    }
-                    appName={props.match.params.appName}
-                    analysisState={analysisState}
-                  />
-                );
-              }}
-            />
-          )}
         </div>
       </ShowHideVariableContextProvider>
     </RestrictedPage>

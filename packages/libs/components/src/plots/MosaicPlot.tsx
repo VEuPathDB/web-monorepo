@@ -183,9 +183,10 @@ const MosaicPlot = makePlotlyPlotComponent(
               : independentAxisLabel,
           standoff: xAxisTitleStandoff,
         },
-        tickvals: column_centers,
-        tickangle: 90,
-        ticktext: new Array(data.independentLabels.length).fill(''),
+        // Make sure there's always tick labels so that the axis title gets
+        // positioned correctly
+        tickvals: column_centers.length > 0 ? column_centers : [50],
+        ticktext: new Array(data.independentLabels.length || 1).fill(' '),
         range: [0, 100] as number[],
         // this is required to separate axis tick label from axis title
         automargin: true,
