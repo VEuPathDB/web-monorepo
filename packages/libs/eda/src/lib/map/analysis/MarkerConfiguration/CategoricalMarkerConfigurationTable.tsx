@@ -79,10 +79,15 @@ export function CategoricalMarkerConfigurationTable<T>({
     const nextSelections = new Set(uncontrolledSelections);
     nextSelections.delete(data.label);
     if (nextSelections.size <= ColorPaletteDefault.length) {
-      // remove "All other values" label, then add it back to the end;
-      // this ensures it's always the last item in the legend
-      nextSelections.delete(UNSELECTED_TOKEN);
-      nextSelections.add(UNSELECTED_TOKEN);
+      /**
+       * We want "All other values" label to be at the end, so if it exists:
+       *  - delete it from the Set
+       *  - add it back to the end of the Set
+       */
+      if (nextSelections.has(UNSELECTED_TOKEN)) {
+        nextSelections.delete(UNSELECTED_TOKEN);
+        nextSelections.add(UNSELECTED_TOKEN);
+      }
       const newSelectedValues: string[] = [];
       nextSelections.forEach((v) => newSelectedValues.push(v));
       onChange({
