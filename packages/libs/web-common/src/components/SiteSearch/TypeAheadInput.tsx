@@ -83,7 +83,7 @@ class TypeAheadAPI {
 
     if ((json as Array<any>).length == 0) return json as Array<string>;
 
-    for (const entry in json as Array<any>) {
+    for (const entry of json as Array<any>) {
       if (typeof entry != 'string') {
         throw new Error(
           'type-ahead API response contained a non-string value!'
