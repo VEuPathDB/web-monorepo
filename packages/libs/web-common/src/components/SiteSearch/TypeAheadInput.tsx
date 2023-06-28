@@ -261,6 +261,11 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const ulClassName =
     suggestions.length == 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
 
+  /**
+   * Updates the "suggestion" input with the given hint text value.
+   *
+   * @param hint Hint text to show.
+   */
   const showHint = (hint: string) => {
     if (inputValue.length == 0) {
       setHintValue(hint);
@@ -271,25 +276,51 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     }
   };
 
+  /**
+   * Refocuses the user input field and clears the suggestions, "resetting" the
+   * state of the form.
+   */
   const resetInput = () => {
     props.inputReference.current?.focus();
     setSuggestions([]);
   };
 
+  /**
+   * Resets the "suggestion" input with the value pulled from the user input
+   * field.
+   */
   const resetHint = () => {
     setHintValue(inputValue);
   };
 
+  /**
+   * "Selects" the suggested hint by updating the user input value to the value
+   * of the "suggestion" input.
+   */
   const selectHint = () => {
     setInputValue(hintValue + ' ');
     resetInput();
   };
 
+  /**
+   * Handles keyboard events on elements of the suggestion list.
+   *
+   * @param e Keyboard event to handle.
+   *
+   * @param suggestion Value of the suggestion element that the event originated
+   * from.
+   */
   const onLiKeyDown = (
     e: React.KeyboardEvent<HTMLLIElement>,
     suggestion: string
   ) => {
+    // Filter keyboard events with modifiers:
     if (kbHasModifier(e)) {
+
+      // If the event was specifically a <Shift>+<Tab> combination then we want
+      // to reverse the focus by one element, either selecting the suggestion
+      // above the event source, or if the event source was the first
+      // suggestion, selecting the user input field itself.
       if (kbHasOnlyShiftMod(e) && kbIsTab(e)) {
         e.preventDefault();
         e.stopPropagation();
@@ -297,37 +328,66 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
         if (ulReference.current?.firstElementChild === e.currentTarget) {
           props.inputReference.current?.focus();
         } else {
-          (
-            e.currentTarget.previousElementSibling as HTMLLIElement | null
-          )?.focus();
+          (e.currentTarget.previousElementSibling as HTMLLIElement | null)?.focus();
         }
-      } else {
+      }
+
+      // If the event was anything other than a <Shift>+<Tab> and had one or
+      // more modifier keys pressed, then we will disregard it.
+      else {
         return;
       }
-    } else if (kbIsSpace(e) || kbIsArrowRight(e)) {
+    }
+
+    // If the event was a <Space> or <ArrowRight> key press then select the hint
+    // that was the source of the event.  Additionally, prevent the default
+    // behavior of the action as otherwise we will create an extra space
+    // character in the user input field or scroll the page to the right.
+    else if (kbIsSpace(e) || kbIsArrowRight(e)) {
       e.preventDefault();
       e.stopPropagation();
       selectHint();
-    } else if (kbIsEnter(e)) {
+    }
+
+    // If the event was an <Enter> key press, then select the hint that was the
+    // source of the event.  We DO NOT prevent the default behavior here as the
+    // <Enter> key-up will cause the SiteSearch form to be submitted which is
+    // the desired behavior.
+    else if (kbIsEnter(e)) {
       selectHint();
-    } else if (kbIsArrowUp(e)) {
+    }
+
+    // If the event was an <ArrowUp> key press, then attempt to shift the focus
+    // to the element above the event source element.  If the event source
+    // element was the first suggestion item in the list, then the focus should
+    // be returned to the user input.
+    //
+    // Additionally, prevent the default behavior here as the up arrow will
+    // attempt to scroll the view up.
+    else if (kbIsArrowUp(e)) {
       e.preventDefault();
       e.stopPropagation();
       if (ulReference.current?.firstElementChild === e.currentTarget) {
         props.inputReference.current?.focus();
       } else {
-        (
-          e.currentTarget.previousElementSibling as HTMLLIElement | null
-        )?.focus();
+        (e.currentTarget.previousElementSibling as HTMLLIElement | null)?.focus();
       }
-    } else if (kbIsArrowDown(e) || kbIsTab(e)) {
+    }
+
+    // If the event was an <ArrowDown> or <Tab> key press, then attempt to shift
+    // the focus to the element below the event source element.  If the event
+    // source element was the last suggestion item in the list, then the focus
+    // should be returned to the top of the suggestion list.
+    //
+    // Additionally, prevent the default behavior here as the down arrow will
+    // attempt to scroll the view down, and the tab key will shift focus to
+    // whatever the next focus-able element on the page is.
+    else if (kbIsArrowDown(e) || kbIsTab(e)) {
       e.preventDefault();
       e.stopPropagation();
 
       if (ulReference.current?.lastElementChild === e.currentTarget) {
-        (
-          ulReference.current?.firstElementChild as HTMLLIElement | null
-        )?.focus();
+        (ulReference.current?.firstElementChild as HTMLLIElement | null)?.focus();
       } else {
         (e.currentTarget.nextElementSibling as HTMLLIElement | null)?.focus();
       }
@@ -385,10 +445,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   ));
 
   const clickHandler = (e: MouseEvent) => {
-    if (
-      e.target instanceof HTMLElement &&
-      e.target.parentElement !== ulReference.current
-    )
+    if (e.target instanceof HTMLElement && e.target.parentElement !== ulReference.current)
       resetInput();
   };
 
