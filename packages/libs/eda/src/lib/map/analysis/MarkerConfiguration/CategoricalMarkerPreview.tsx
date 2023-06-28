@@ -14,6 +14,7 @@ type Props = {
   mapType: 'barplot' | 'pie';
   numberSelected: number;
   allFilteredCategoricalValues: AllValuesDefinition[] | undefined;
+  isDependentAxisLogScaleActive?: boolean;
 };
 
 export const sharedStandaloneMarkerProperties = {
@@ -30,6 +31,7 @@ export function CategoricalMarkerPreview({
   allFilteredCategoricalValues,
   mapType,
   numberSelected,
+  isDependentAxisLogScaleActive = false,
 }: Props) {
   if (!overlayConfiguration || !allFilteredCategoricalValues) return <></>;
   if (overlayConfiguration.overlayType === 'categorical') {
@@ -63,6 +65,7 @@ export function CategoricalMarkerPreview({
           <ChartMarkerStandalone
             data={plotData}
             markerLabel={mFormatter(plotData.reduce((p, c) => p + c.value, 0))}
+            dependentAxisLogScale={isDependentAxisLogScaleActive}
             {...sharedStandaloneMarkerProperties}
           />
         </div>

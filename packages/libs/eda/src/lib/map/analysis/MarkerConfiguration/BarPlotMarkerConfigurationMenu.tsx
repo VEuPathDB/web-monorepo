@@ -199,6 +199,9 @@ export function BarPlotMarkerConfigurationMenu({
               allFilteredCategoricalValues={allFilteredCategoricalValues}
               mapType="barplot"
               numberSelected={uncontrolledSelections.size - 1}
+              isDependentAxisLogScaleActive={
+                configuration.dependentAxisLogScale
+              }
             />
           </>
         ) : (
