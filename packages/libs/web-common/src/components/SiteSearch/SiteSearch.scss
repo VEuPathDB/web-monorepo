@@ -94,7 +94,7 @@
     display: flex;
     justify-content: space-between;
     border-radius: 1.5em;
-    overflow: hidden;
+    position: relative;
 
     &:focus-within {
       box-shadow: 0 0 3pt 2pt #0067f4;
@@ -108,7 +108,7 @@
 
         input {
           border: none !important;
-          border-radius: 0;
+          border-radius: 1.5em 0 0 1.5em;
           padding: 0.4em 0.9em !important;
           width: 100%;
 
@@ -139,12 +139,13 @@
         position: absolute;
         background: #ededed;
         overflow: hidden;
-        width: 37em;
+        width: 100%;
         border-radius: 1em;
         box-shadow: 0 0 1em rgba(0, 48, 76, 0.5);
 
         li.type-ahead-hint {
           padding: 0.2em 0 0.2em 1em;
+          text-align: left;
 
           &:focus,
           &:active,
@@ -166,7 +167,6 @@
 
     button {
       border: none;
-      border-radius: 0;
       background: #6c757d;
       color: white;
       display: flex;
@@ -174,6 +174,7 @@
       align-items: center;
       padding-left: .9em;
       padding-right: 1em;
+      border-radius: 0 1.5em 1.5em 0;
 
       &:not(:last-of-type) {
         border-right: 1px solid #00000042;
