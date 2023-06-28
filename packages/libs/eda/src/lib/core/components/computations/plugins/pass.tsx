@@ -23,7 +23,10 @@ export const plugin: ComputationPlugin = {
     twobytwo: twoByTwoVisualization,
     conttable: contTableVisualization,
     scatterplot: scatterplotVisualization,
-    lineplot: lineplotVisualization,
+    // considering marginal histogram
+    lineplot: lineplotVisualization.withOptions({
+      showMarginalHistogram: false,
+    }),
     'map-markers': mapVisualization,
     // placeholder for densityplot
     // densityplot: scatterplotVisualization,

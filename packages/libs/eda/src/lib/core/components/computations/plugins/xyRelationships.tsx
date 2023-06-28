@@ -12,6 +12,9 @@ export const plugin: ComputationPlugin = {
   visualizationPlugins: {
     testVisualization,
     scatterplot: scatterplotVisualization,
-    lineplot: lineplotVisualization,
+    // considering marginal histogram
+    lineplot: lineplotVisualization.withOptions({
+      showMarginalHistogram: false,
+    }),
   },
 };

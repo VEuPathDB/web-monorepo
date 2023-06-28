@@ -227,13 +227,11 @@ function getSideNodeCoords(node, orientation, values, direction) {
     }
     sideNode.renderedPosition({ x: sideNode.data('x'), y: sideNode.data('y') });
     //        sideNode.style({'label':null, shape: 'ellipse',width:'label',height:'label', 'background-color':'white','background-image-opacity':0,'border-width':0, 'color':'grey'});
-    sideNode
-      .connectedEdges()
-      .style({
-        'line-color': 'grey',
-        'target-arrow-color': 'grey',
-        'source-arrow-color': 'grey',
-      });
+    sideNode.connectedEdges().style({
+      'line-color': 'grey',
+      'target-arrow-color': 'grey',
+      'source-arrow-color': 'grey',
+    });
   }
 }
 
@@ -855,12 +853,10 @@ function makeCy(
                   } else if (pathwaySource.indexOf('KEGG') > -1) {
                     for (let i = 0; i < node.children().size(); i++) {
                       if (node.children()[i].is('node[?x]')) {
-                        node
-                          .children()
-                          [i].renderedPosition({
-                            x: node.children()[i].data('x'),
-                            y: node.children()[i].data('y'),
-                          });
+                        node.children()[i].renderedPosition({
+                          x: node.children()[i].data('x'),
+                          y: node.children()[i].data('y'),
+                        });
                         node.children()[i].data('placed', 'true');
                         node.data('placed', 'true');
                         orientation === 'vertical'
@@ -897,12 +893,10 @@ function makeCy(
                     }
                   } else {
                     for (let i = 0; i < node.children().size(); i++) {
-                      node
-                        .children()
-                        [i].renderedPosition({
-                          x: node.children()[i].data('x'),
-                          y: node.children()[i].data('y'),
-                        });
+                      node.children()[i].renderedPosition({
+                        x: node.children()[i].data('x'),
+                        y: node.children()[i].data('y'),
+                      });
                       node.data('placed', 'true');
                       node.children()[i].data('placed', 'true');
                       orientation === 'vertical'
