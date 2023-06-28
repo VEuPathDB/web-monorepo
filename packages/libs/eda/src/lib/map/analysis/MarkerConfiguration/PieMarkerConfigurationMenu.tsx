@@ -219,7 +219,7 @@ export function PieMarkerConfigurationMenu({
       </LabelledGroup>
       {overlayConfiguration?.overlayType === 'categorical' && (
         <CategoricalMarkerConfigurationTable
-          overlayConfiguration={overlayConfiguration}
+          overlayValues={overlayConfiguration.overlayValues}
           configuration={configuration}
           onChange={onChange}
           uncontrolledSelections={uncontrolledSelections}

@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import Mesa from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { OverlayConfig, AllValuesDefinition } from '../../../core';
+import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { AllValuesDefinition } from '../../../core';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../';
 import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
+import { orderBy } from 'lodash';
 
 type Props<T> = {
-  overlayConfiguration: OverlayConfig;
+  overlayValues: string[];
   onChange: (configuration: T) => void;
   configuration: T;
   uncontrolledSelections: Set<string>;
@@ -16,21 +19,21 @@ type Props<T> = {
   selectedCountsOption: SharedMarkerConfigurations['selectedCountsOption'];
 };
 
+const DEFAULT_SORTING: MesaSortObject = {
+  columnKey: 'count',
+  direction: 'desc',
+};
+
 export function CategoricalMarkerConfigurationTable<T>({
-  overlayConfiguration,
+  overlayValues,
   configuration,
   onChange,
   uncontrolledSelections,
   setUncontrolledSelections,
-  allCategoricalValues,
+  allCategoricalValues = [],
   selectedCountsOption,
 }: Props<T>) {
-  if (
-    overlayConfiguration.overlayType !== 'categorical' ||
-    !allCategoricalValues
-  )
-    return <></>;
-  const { overlayValues } = overlayConfiguration;
+  const [sort, setSort] = useState<MesaSortObject | null>(DEFAULT_SORTING);
   const controlledSelections = new Set(overlayValues);
   const totalCount = allCategoricalValues.reduce(
     (prev, curr) => prev + curr.count,
@@ -132,20 +135,35 @@ export function CategoricalMarkerConfigurationTable<T>({
           selectedValues: [UNSELECTED_TOKEN],
         });
       },
+      onSort: (
+        { key: columnKey }: { key: string },
+        direction: MesaSortObject['direction']
+      ) => setSort({ columnKey, direction }),
     },
     actions: [],
-    rows: allCategoricalValues as AllValuesDefinition[],
+    uiState: { sort },
+    rows:
+      sort === null
+        ? (allCategoricalValues as AllValuesDefinition[])
+        : orderBy(allCategoricalValues, [sort.columnKey], [sort.direction]),
     columns: [
       {
-        key: 'values',
+        /**
+         * For proper sorting in Mesa, the column keys must match the data object's keys. The data objects
+         * used in this table are defined by AllValuesDefinition, hence the divergence of the column keys
+         * from the column names for the two sortable columns.
+         */
+        key: 'label',
         name: 'Values',
+        sortable: true,
         renderCell: (data: { row: AllValuesDefinition }) => (
           <>{data.row.label}</>
         ),
       },
       {
-        key: 'counts',
+        key: 'count',
         name: 'Counts',
+        sortable: true,
         renderCell: (data: { row: AllValuesDefinition }) => (
           <>{data.row.count}</>
         ),
