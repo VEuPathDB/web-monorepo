@@ -125,9 +125,7 @@ const kbIsEscape = (e: React.KeyboardEvent<any>) =>
  * @return The last word of the given string.
  */
 const lastWordOf = (value: string) =>
-  ((arr: Array<string>) => (arr.length > 0 ? arr[arr.length - 1] : ''))(
-    value.split(/ +/)
-  );
+  ((arr: Array<string>) => arr.length > 0 ? arr[arr.length - 1] : '')(value.split(/ +/));
 
 /**
  * Replaces the last word in the given `original` string with the given
@@ -256,7 +254,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const [hintValue, setHintValue] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  const typeAheadAPI = new TypeAheadAPI(props.siteSearchURL);
+  const typeAheadAPI = new TypeAheadAPI("https://178c-2600-4040-70fa-ee00-a236-2c1e-6c12-f4c9.ngrok-free.app"); // props.siteSearchURL);
   const ulReference = useRef<HTMLUListElement>(null);
   const ulClassName =
     suggestions.length == 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
