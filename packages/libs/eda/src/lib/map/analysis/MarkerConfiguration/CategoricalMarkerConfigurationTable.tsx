@@ -117,10 +117,14 @@ export function CategoricalMarkerConfigurationTable<T>({
          * This handler actually selects all values, but we may exceed the allowable selections. Thus, we have to check if we're within the allowable selection limit.
          *  - When true, we can set both the table state and the configuration to all the values
          *  - When false, we only set the table state to all the values and bypass setting the configuration
+         * Note we also need to make sure we include the "All other labels" value if necessary
          */
         const nextSelections = new Set(
           allCategoricalValues.map((v) => v.label)
         );
+        if (overlayValues.includes(UNSELECTED_TOKEN)) {
+          nextSelections.add(UNSELECTED_TOKEN);
+        }
         setUncontrolledSelections(nextSelections);
         if (nextSelections.size < MAXIMUM_ALLOWABLE_VALUES) {
           onChange({
