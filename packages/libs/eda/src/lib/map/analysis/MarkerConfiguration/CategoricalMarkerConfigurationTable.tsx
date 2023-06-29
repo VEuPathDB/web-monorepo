@@ -24,6 +24,8 @@ const DEFAULT_SORTING: MesaSortObject = {
   direction: 'desc',
 };
 
+export const MAXIMUM_ALLOWABLE_VALUES = ColorPaletteDefault.length;
+
 export function CategoricalMarkerConfigurationTable<T>({
   overlayValues,
   configuration,
@@ -34,29 +36,20 @@ export function CategoricalMarkerConfigurationTable<T>({
   selectedCountsOption,
 }: Props<T>) {
   const [sort, setSort] = useState<MesaSortObject>(DEFAULT_SORTING);
-  const controlledSelections = new Set(overlayValues);
   const totalCount = allCategoricalValues.reduce(
     (prev, curr) => prev + curr.count,
     0
   );
 
   function handleSelection(data: AllValuesDefinition) {
-    // check if we already have selected the maximum allowed
-    if (overlayValues.length <= ColorPaletteDefault.length - 1) {
+    if (overlayValues.length < MAXIMUM_ALLOWABLE_VALUES) {
       // return early if we somehow duplicate a selection
-      if (
-        uncontrolledSelections.has(data.label) ||
-        controlledSelections.has(data.label)
-      )
-        return;
+      if (uncontrolledSelections.has(data.label)) return;
       const nextSelections = new Set(uncontrolledSelections);
       nextSelections.add(data.label);
       setUncontrolledSelections(nextSelections);
-      // check if we have the "All other values" label by seeing if the number of values in the table is greater than the allowable limit
-      if (
-        allCategoricalValues &&
-        allCategoricalValues.length > ColorPaletteDefault.length
-      ) {
+      // check if we have the "All other values" label so we can do some extra processing as needed
+      if (overlayValues.includes(UNSELECTED_TOKEN)) {
         onChange({
           ...configuration,
           /**
@@ -91,16 +84,14 @@ export function CategoricalMarkerConfigurationTable<T>({
      */
     const nextSelections = new Set(uncontrolledSelections);
     nextSelections.delete(data.label);
-    if (nextSelections.size <= ColorPaletteDefault.length) {
+    if (nextSelections.size <= MAXIMUM_ALLOWABLE_VALUES) {
       if (nextSelections.has(UNSELECTED_TOKEN)) {
         nextSelections.delete(UNSELECTED_TOKEN);
         nextSelections.add(UNSELECTED_TOKEN);
       }
-      const newSelectedValues: string[] = [];
-      nextSelections.forEach((v) => newSelectedValues.push(v));
       onChange({
         ...configuration,
-        selectedValues: newSelectedValues,
+        selectedValues: Array.from(nextSelections),
       });
     }
     setUncontrolledSelections(nextSelections);
@@ -131,7 +122,7 @@ export function CategoricalMarkerConfigurationTable<T>({
           allCategoricalValues.map((v) => v.label)
         );
         setUncontrolledSelections(nextSelections);
-        if (nextSelections.size <= ColorPaletteDefault.length - 1) {
+        if (nextSelections.size < MAXIMUM_ALLOWABLE_VALUES) {
           onChange({
             ...configuration,
             selectedValues: allCategoricalValues.map((v) => v.label),
