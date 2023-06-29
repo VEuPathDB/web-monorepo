@@ -1,4 +1,6 @@
 import { SVGProps } from 'react';
+
+// This needs to be redesigned
 export function BubbleMarker(props: SVGProps<SVGSVGElement>) {
   return (
     <svg

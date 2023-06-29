@@ -1,27 +1,10 @@
-import React, { ReactElement, useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
-import { BoundsViewport } from '../map/Types';
-import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
-import { defaultAnimationDuration } from '../map/config/map';
-import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
-import {
-  getSpeciesDonuts,
-  getSpeciesBasicMarkers,
-} from './api/getMarkersFromFixtureData';
 
-import { LeafletMouseEvent } from 'leaflet';
-import { Viewport } from '../map/MapVEuMap';
+import { MapVEuMapProps } from '../map/MapVEuMap';
 
-// sidebar & legend
-import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
-import geohashAnimation from '../map/animation_functions/geohash';
-import { MouseMode } from '../map/MouseTools';
-
-import BubbleMarker, {
-  BubbleMarkerProps,
-  BubbleMarkerStandalone,
-} from '../map/BubbleMarker';
+import { BubbleMarkerStandalone } from '../map/BubbleMarker';
 
 export default {
   title: 'Map/Bubble Markers',

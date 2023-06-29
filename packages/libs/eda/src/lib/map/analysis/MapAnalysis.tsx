@@ -478,7 +478,6 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
-  //here
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -1083,6 +1082,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   </DraggablePanel>
                 )}
 
+                {/* Maybe should reintroduce loading placeholder */}
                 {markerType === 'bubble' && markersData !== undefined && (
                   <DraggablePanel
                     isOpen

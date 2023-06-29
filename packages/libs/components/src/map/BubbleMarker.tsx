@@ -9,7 +9,7 @@ import {
 } from '../types/plots';
 import { NumberRange } from '../types/general';
 
-// ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use bubble marker one
+// Don't need some of these props, but have to have them because of the general marker API/type definitions
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
     value: number;
@@ -92,8 +92,8 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   const diameter = props.valueToDiameterMapper(props.data[0].value);
   const radius = diameter / 2;
   // set outer white circle size to describe white boundary
-  const strokeWidth = 2;
-  const outlineRadius = radius + strokeWidth;
+  const outlineWidth = 2;
+  const outlineRadius = radius + outlineWidth;
 
   let svgHTML: string = '';
 
@@ -119,7 +119,6 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
     '" stroke="green" stroke-width="0" fill="white" />';
 
   // create bubble
-  //TODO: two things to consider: a) bubble size; b) bubble color
   svgHTML +=
     '<circle cx="' +
     outlineRadius +
@@ -147,7 +146,6 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
       '</text>';
   }
 
-  // closing svg tag
   svgHTML += '</svg>';
 
   return { html: svgHTML, diameter: diameter };

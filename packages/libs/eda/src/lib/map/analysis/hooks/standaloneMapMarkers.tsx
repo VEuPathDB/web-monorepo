@@ -91,8 +91,6 @@ export function useStandaloneMapMarkers(
     dependentAxisLogScale = false,
   } = props;
 
-  console.log({ markerType });
-
   // these two deepvalue eliminate an unnecessary data request
   // when switching between pie and bar markers when using the same variable
   const selectedOverlayVariable = useDeepValue(sov);
@@ -146,7 +144,6 @@ export function useStandaloneMapMarkers(
       ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
       : undefined;
 
-  // here
   const rawMarkersData = usePromise<StandaloneMapMarkersResponse | undefined>(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -202,8 +199,6 @@ export function useStandaloneMapMarkers(
         },
       };
 
-      console.log('here1');
-
       // now get the data
       return await dataClient.getStandaloneMapMarkers(
         'standalone-map',
@@ -224,9 +219,6 @@ export function useStandaloneMapMarkers(
       markerType,
     ])
   );
-
-  console.log('here2');
-  console.log({ rawMarkersData });
 
   const totalVisibleEntityCount: number | undefined =
     rawMarkersData.value?.mapElements.reduce((acc, curr) => {
@@ -267,8 +259,6 @@ export function useStandaloneMapMarkers(
     valueMax,
     dependentAxisLogScale
   ) as NumberRange;
-
-  console.log({ defaultDependentAxisRange });
 
   /**
    * Merge the overlay data into the basicMarkerData, if available,
@@ -370,7 +360,6 @@ export function useStandaloneMapMarkers(
                 },
               ];
 
-        // here's what Bob pointed out
         const count =
           vocabulary != null // if there's an overlay (all expected use cases)
             ? overlayValues.reduce((sum, { count }) => (sum = sum + count), 0)
