@@ -8,6 +8,7 @@ import {
   kFormatter,
   mFormatter,
 } from '../../../core/utils/big-number-formatters';
+import { MAXIMUM_ALLOWABLE_VALUES } from './CategoricalMarkerConfigurationTable';
 
 type Props = {
   overlayConfiguration: OverlayConfig | undefined;
@@ -36,13 +37,27 @@ export function CategoricalMarkerPreview({
   if (!overlayConfiguration || !allFilteredCategoricalValues) return <></>;
   if (overlayConfiguration.overlayType === 'categorical') {
     const { overlayValues } = overlayConfiguration;
+
     const showTooManySelectionsOverlay =
-      numberSelected > ColorPaletteDefault.length - 1;
+      overlayValues.includes(UNSELECTED_TOKEN) &&
+      numberSelected > MAXIMUM_ALLOWABLE_VALUES;
+    /**
+     * When overlayValues includes UNSELECTED_TOKEN, numberSelected will be calculated with the inclusion of UNSELECTED_TOKEN.
+     * Since UNSELECTED_TOKEN is not user-generated, we subtract 1 to indicate the actual number of values the user can select.
+     */
+    const adjustedNumberSelected = overlayValues.includes(UNSELECTED_TOKEN)
+      ? numberSelected - 1
+      : numberSelected;
+    const tooManySelectionsOverlay = showTooManySelectionsOverlay ? (
+      <TooManySelectionsOverlay numberSelected={adjustedNumberSelected} />
+    ) : null;
+
     const allOtherValuesCount = allFilteredCategoricalValues.reduce(
       (prev, curr) =>
         prev + (overlayValues.includes(curr.label) ? 0 : curr.count),
       0
     );
+
     const plotData = overlayValues.map((val, index) => ({
       label: val,
       color: ColorPaletteDefault[index],
@@ -59,9 +74,7 @@ export function CategoricalMarkerPreview({
             position: 'relative',
           }}
         >
-          {showTooManySelectionsOverlay && (
-            <TooManySelectionsOverlay numberSelected={numberSelected} />
-          )}
+          {tooManySelectionsOverlay}
           <ChartMarkerStandalone
             data={plotData}
             markerLabel={mFormatter(plotData.reduce((p, c) => p + c.value, 0))}
@@ -77,9 +90,7 @@ export function CategoricalMarkerPreview({
             position: 'relative',
           }}
         >
-          {showTooManySelectionsOverlay && (
-            <TooManySelectionsOverlay numberSelected={numberSelected} />
-          )}
+          {tooManySelectionsOverlay}
           <DonutMarkerStandalone
             data={plotData}
             markerLabel={kFormatter(plotData.reduce((p, c) => p + c.value, 0))}
@@ -118,8 +129,12 @@ function TooManySelectionsOverlay({
             <>
               <p style={{ margin: 0 }}>Please select fewer values.</p>
               <p style={{ margin: 0, marginTop: '0.5em' }}>
-                Only {ColorPaletteDefault.length - 1} values may be selected.
-                You have selected {numberSelected} values.
+                {/**
+                 * MAXIMUM_ALLOWABLE_VALUES is derived by the color palette and the color palette saves space for
+                 * the UNSELECTED_TOKEN, hence the user can only select 1 less than the max.
+                 */}
+                Only {MAXIMUM_ALLOWABLE_VALUES - 1} values may be selected. You
+                have selected {numberSelected} values.
               </p>
             </>
           ),

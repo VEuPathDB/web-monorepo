@@ -204,7 +204,7 @@ export function BarPlotMarkerConfigurationMenu({
               overlayConfiguration={overlayConfiguration}
               allFilteredCategoricalValues={allFilteredCategoricalValues}
               mapType="barplot"
-              numberSelected={uncontrolledSelections.size - 1}
+              numberSelected={uncontrolledSelections.size}
               isDependentAxisLogScaleActive={
                 configuration.dependentAxisLogScale
               }

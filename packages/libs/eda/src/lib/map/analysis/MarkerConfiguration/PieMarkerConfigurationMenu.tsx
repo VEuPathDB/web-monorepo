@@ -186,7 +186,7 @@ export function PieMarkerConfigurationMenu({
             overlayConfiguration={overlayConfiguration}
             allFilteredCategoricalValues={allFilteredCategoricalValues}
             mapType="pie"
-            numberSelected={uncontrolledSelections.size - 1}
+            numberSelected={uncontrolledSelections.size}
           />
         ) : (
           continuousMarkerPreview
