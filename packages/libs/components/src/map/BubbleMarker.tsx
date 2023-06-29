@@ -47,6 +47,7 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       bounds={props.bounds}
       icon={SVGBubbleIcon as L.Icon}
       duration={duration}
+      zIndexOffset={-props.data[0].value * 1000}
     />
   );
 }
@@ -104,20 +105,18 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
     outlineRadius * 2 +
     '">'; // initiate svg marker icon
 
-  console.log('here5');
-
   // for display, convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
   // const sumLabel = props.markerLabel ?? String(fullPieValue);
 
   // draw a larger white-filled circle
-  // svgHTML +=
-  //   '<circle cx="' +
-  //   circleRadius +
-  //   '" cy="' +
-  //   circleRadius +
-  //   '" r="' +
-  //   circleRadius +
-  //   '" stroke="green" stroke-width="0" fill="white" />';
+  svgHTML +=
+    '<circle cx="' +
+    outlineRadius +
+    '" cy="' +
+    outlineRadius +
+    '" r="' +
+    outlineRadius +
+    '" stroke="green" stroke-width="0" fill="white" />';
 
   // create bubble
   //TODO: two things to consider: a) bubble size; b) bubble color
@@ -127,10 +126,8 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
     '" cy="' +
     outlineRadius +
     '" r="' +
-    outlineRadius +
-    '" stroke="white" stroke-width="' +
-    strokeWidth +
-    '" fill="' +
+    radius +
+    '" stroke="white" stroke-width="0" fill="' +
     props.data[0].color +
     '" />';
 
