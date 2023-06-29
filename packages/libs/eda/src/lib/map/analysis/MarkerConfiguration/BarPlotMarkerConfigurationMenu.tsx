@@ -27,7 +27,6 @@ interface MarkerConfiguration<T extends string> {
 export interface BarPlotMarkerConfiguration
   extends MarkerConfiguration<'barplot'>,
     SharedMarkerConfigurations {
-  selectedValues: OverlayConfig['overlayValues'] | undefined;
   selectedPlotMode: 'count' | 'proportion';
   dependentAxisLogScale: boolean;
 }

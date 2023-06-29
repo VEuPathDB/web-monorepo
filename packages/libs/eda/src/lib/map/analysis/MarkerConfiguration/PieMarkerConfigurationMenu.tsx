@@ -27,12 +27,11 @@ export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
   binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
   selectedCountsOption: 'filtered' | 'visible' | undefined;
+  selectedValues: string[] | undefined;
 }
 export interface PieMarkerConfiguration
   extends MarkerConfiguration<'pie'>,
-    SharedMarkerConfigurations {
-  selectedValues: string[] | undefined;
-}
+    SharedMarkerConfigurations {}
 
 interface Props
   extends Omit<

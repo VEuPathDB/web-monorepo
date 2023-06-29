@@ -4,9 +4,7 @@ import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect } from 'react';
 import {
-  AllValuesDefinition,
   AnalysisState,
-  BinDefinitions,
   useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
@@ -29,7 +27,7 @@ export const MarkerConfiguration = t.intersection([
   t.union([
     t.type({
       type: t.literal('barplot'),
-      selectedValues: t.union([BinDefinitions, t.array(t.string), t.undefined]), // user-specified selection
+      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
       binningMethod: t.union([
         t.literal('equalInterval'),
