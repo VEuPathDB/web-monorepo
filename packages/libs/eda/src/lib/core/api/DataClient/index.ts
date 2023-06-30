@@ -48,6 +48,7 @@ export default class DataClient extends FetchClientWithCredentials {
     params: unknown,
     decoder: Decoder<unknown, T>
   ): Promise<T> {
+    console.log(decoder);
     return this.fetch(
       createJsonRequest({
         method: 'POST',

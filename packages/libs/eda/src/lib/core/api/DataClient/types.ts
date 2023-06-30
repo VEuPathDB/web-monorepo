@@ -15,6 +15,7 @@ import {
   keyof,
   boolean,
   literal,
+  undefined,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {
@@ -25,6 +26,7 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
+import { VolcanoPlotData } from '@veupathdb/components/lib/types/plots/volcanoplot';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -355,6 +357,26 @@ export const ScatterplotResponse = intersection([
     completeCasesTable: completeCasesTableArray,
   }),
 ]);
+
+// Volcano plot
+// The volcano plot response type is the same as the VolcanoplotData type defined in the components package
+export type VolcanoplotResponse = TypeOf<typeof VolcanoplotResponse>;
+
+// TEMP - @ANN many of these can be simplified after some backend work is merged.
+export const VolcanoplotResponse = array(
+  type({
+    log2foldChange: union([string, undefined]),
+    pValue: union([string, undefined]),
+    adjustedPValue: union([string, undefined]),
+    pointID: union([string, undefined]),
+  })
+);
+
+export interface VolcanoPlotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {}; // Empty viz config because there are no viz input vars
+}
 
 ////////////////
 // Table Data //

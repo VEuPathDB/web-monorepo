@@ -56,6 +56,7 @@ export function StartPage(props: Props) {
           }}
         >
           {/* orderBy renders available apps ahead of those in development */}
+          {console.log(apps)}
           {apps
             .filter((app) => plugins[app.name] != null)
             .map((app) => (
@@ -97,6 +98,7 @@ export function StartPage(props: Props) {
                 >
                   {app.visualizations.map((viz, index) => {
                     const plugin = plugins[app.name];
+                    console.log(plugin);
                     const vizPlugin =
                       plugin && plugin.visualizationPlugins[viz.name];
                     const disabled =
