@@ -25,7 +25,7 @@ const proteomeSummaryRowDecoder = record({
   resource_version: oneOf(string, nullValue),
   groups: string,
   name: string,
-  resource_name: string,
+  ncbi_taxon_url_link: linkAttributeValue,
   resource_url_link: linkAttributeValue,
   sequences: string,
   root_taxon: string,
@@ -55,6 +55,13 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     name: 'Name',
     helpText: 'Genus, species and strain name',
     sortable: true,
+  },
+  ncbi_taxon_url_link: {
+    key: 'ncbi_taxon_url_link',
+    name: 'NCBI Taxon ID',
+    helpText: 'The URL of the NCBI site for this taxon.',
+    sortable: true,
+    renderCell: ({ value }) => renderAttributeValue(value),
   },
   root_taxon: {
     key: 'root_taxon',
@@ -94,17 +101,10 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     sortable: true,
     makeOrder: ({ sequences }) => Number(sequences),
   },
-  resource_name: {
-    key: 'resource_name',
-    name: 'Resource',
-    helpText: 'The source of the organism proteome.',
-    sortable: true,
-  },
   resource_url_link: {
     key: 'resource_url_link',
-    name: 'URL',
-    helpText:
-      'The URL of the site from which the organism proteome was obtained.',
+    name: 'Resource',
+    helpText: 'The source of the organism proteome.',
     sortable: true,
     renderCell: ({ value }) => renderAttributeValue(value),
   },
@@ -139,9 +139,9 @@ export function makeReleaseSummaryRows(
 export const RELEASE_SUMMARY_COLUMN_ORDER = [
   'root_taxon',
   'name',
+  'ncbi_taxon_url_link',
   'core_peripheral',
   'three_letter_abbrev',
-  'resource_name',
   'resource_url_link',
   'resource_version',
   'most_recent',
