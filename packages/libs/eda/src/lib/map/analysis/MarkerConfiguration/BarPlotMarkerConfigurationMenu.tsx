@@ -19,6 +19,7 @@ import { SubsettingClient } from '../../../core/api';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { Toggle } from '@veupathdb/coreui';
 import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
+import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -78,17 +79,12 @@ export function BarPlotMarkerConfigurationMenu({
    * too many values. The state is lifted up (versus living in CategoricalMarkerConfigurationTable) in order
    * to pass its length to CategoricalMarkerPreview.
    */
-  const [uncontrolledSelections, setUncontrolledSelections] = useState(
-    new Set(
+  const { uncontrolledSelections, setUncontrolledSelections } =
+    useUncontrolledSelections(
       overlayConfiguration?.overlayType === 'categorical'
         ? overlayConfiguration?.overlayValues
         : undefined
-    )
-  );
-  useEffect(() => {
-    if (overlayConfiguration?.overlayType !== 'categorical') return;
-    setUncontrolledSelections(new Set(overlayConfiguration?.overlayValues));
-  }, [overlayConfiguration?.overlayValues, overlayConfiguration?.overlayType]);
+    );
 
   const barplotData = usePromise(
     useCallback(async () => {
