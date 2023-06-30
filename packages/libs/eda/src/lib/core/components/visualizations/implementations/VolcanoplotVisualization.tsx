@@ -4,7 +4,7 @@ import VolcanoPlot, {
 } from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -48,7 +48,7 @@ const plotContainerStyles = {
   boxShadow: '1px 1px 4px #00000066',
 };
 
-export const volcanoplotVisualization = createVisualizationPlugin({
+export const volcanoPlotVisualization = createVisualizationPlugin({
   selectorIcon: VolcanoSVG,
   fullscreenComponent: VolcanoplotViz,
   createDefaultConfig: createDefaultConfig,
@@ -104,21 +104,11 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     updateConfiguration
   );
 
-  // NOT YET IMPLEMENTED set the state of truncation warning message
-  // probably dont need to use state for these warnings. could derive it from the viz config
-  // Rule: if you can derive something from props, dont use state! State is "expensive"
-  // every time you update state it causes component to rerender. Also means we have to keep state
-  // in sync with props
-  const [truncatedIndependentAxisWarning, setTruncatedIndependentAxisWarning] =
-    useState<string>('');
-  const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
-    useState<string>('');
-
   // Get the volcano plot data!
   const data = usePromise(
     useCallback(async (): Promise<VolcanoplotResponse | undefined> => {
       // Only need to check compute job status and filter status, since there are no
-      // input variables.
+      // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
       if (filteredCounts.pending || filteredCounts.value == null)
         return undefined;
@@ -155,7 +145,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  // TODO set based on input data. Requires update to VolcanoPlot.tsx
+  // TODO set based on input data. Requires update to VolcanoPlot.tsx. Will be new issue
   const defaultIndependentAxisRange = { min: -5, max: 5 } as NumberRange;
   const defaultDependentAxisRange = { min: 0, max: 5 } as NumberRange;
 
@@ -165,15 +155,14 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     plotContainerStyles,
     [
       data,
-      // vizConfig.checkedLegendItems,
-      // vizConfig.independentAxisRange,
-      // vizConfig.dependentAxisRange,
+      // vizConfig.checkedLegendItems, TODO
+      // vizConfig.independentAxisRange, TODO
+      // vizConfig.dependentAxisRange, TODO
       vizConfig.markerBodyOpacity,
     ]
   );
 
-  // Casing is messed up!! volcanoplot vs volcanoPlot
-  const volcanoplotProps: VolcanoPlotProps = {
+  const volcanoPlotProps: VolcanoPlotProps = {
     data: data.value ? Object.values(data.value) : [],
     independentAxisRange: defaultIndependentAxisRange,
     dependentAxisRange: defaultDependentAxisRange,
@@ -183,7 +172,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     containerStyles: plotContainerStyles,
   };
 
-  const plotNode = <VolcanoPlot {...volcanoplotProps} />;
+  const plotNode = <VolcanoPlot {...volcanoPlotProps} />;
 
   // TODO
   const controlsNode = <> </>;
@@ -196,18 +185,9 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
 
-  // defining styles inline are getting out of hand! possibly going back to css/scss and away from emotion
-  // can cause performance issues if rendering lots of things
-  // browser doesnt know if the style object is the same - it has to reprocess each time.
-  // emotion isn't as future proof as stylesheets
-  // Tailwind as an option? @ann make an issue!
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {/* does labelledgroup have a container prop? Then we could control what's inside it better. 
-          or specify direction? JM and DF */}
       <LabelledGroup label="Threshold lines">
-        {/* The following are always numbers, never dates. Need a bit of type cleaning */}
         <NumberInput
           onValueChange={(newValue?: NumberOrDate) =>
             updateVizConfig({ log2FoldChangeThreshold: Number(newValue) })

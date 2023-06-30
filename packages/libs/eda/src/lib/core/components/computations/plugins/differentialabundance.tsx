@@ -1,6 +1,6 @@
 import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
-import { volcanoplotVisualization } from '../../visualizations/implementations/VolcanoplotVisualization';
+import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
@@ -15,8 +15,6 @@ import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { config } from 'process';
-
-// @ann next step is to make the actual request to the compute service
 
 /**
  * Differential abundance
@@ -57,7 +55,7 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: DifferentialAbundanceConfig.is,
   visualizationPlugins: {
-    volcanoplot: volcanoplotVisualization, // Must match name in data service and in visualization.tsx
+    volcanoplot: volcanoPlotVisualization, // Must match name in data service and in visualization.tsx
   },
 };
 

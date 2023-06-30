@@ -359,23 +359,23 @@ export const ScatterplotResponse = intersection([
 ]);
 
 // Volcano plot
-export type VolcanoplotResponse = TypeOf<typeof VolcanoPlotData>;
+// The volcano plot response type is the same as the VolcanoplotData type defined in the components package
+export type VolcanoplotResponse = TypeOf<typeof VolcanoplotResponse>;
 
 // TEMP - @ANN many of these can be simplified after some backend work is merged.
-// Still open question - what to do if pvalue exists but not adjustedpvalue?]
-// export const VolcanoPlotDataPoint = type({
-//   log2foldChange: union([string, undefined]),
-//   pValue: union([string, undefined]),
-//   adjustedPValue: union([string, undefined]),
-//   pointID: union([string, undefined]),
-// })
-
-export const VolcanoplotResponse = VolcanoPlotData;
+export const VolcanoplotResponse = array(
+  type({
+    log2foldChange: union([string, undefined]),
+    pValue: union([string, undefined]),
+    adjustedPValue: union([string, undefined]),
+    pointID: union([string, undefined]),
+  })
+);
 
 export interface VolcanoPlotRequestParams {
   studyId: string;
   filters: Filter[];
-  config: {}; // Empty config
+  config: {}; // Empty viz config because there are no viz input vars
 }
 
 ////////////////

@@ -1,5 +1,3 @@
-import { array, type, string, TypeOf, union, number, undefined } from 'io-ts';
-
 // Note that this is violating "separation of concerns" because this is io-ts stuff here
 // in components
 
@@ -9,25 +7,20 @@ import { array, type, string, TypeOf, union, number, undefined } from 'io-ts';
 // want errors to happen as close to the source as possible.
 // we probably have examples.
 
-export const VolcanoPlotDataPoint = type({
-  log2foldChange: union([string, undefined]),
-  pValue: union([string, undefined]),
-  adjustedPValue: union([string, undefined]),
-  pointID: union([string, undefined]),
-});
-export const VolcanoPlotData = array(VolcanoPlotDataPoint);
+// Can remove the | undefined from most of these after some other backend work is merged
+export type VolcanoPlotDataPoint = {
+  // log2foldChange becomes the x axis. Also used for coloring points
+  log2foldChange: string | undefined;
+  // pValue will be negative log transformed for the y axis. Also
+  // needed as is (untransformed) in the tooltip and when coloring points
+  pValue: string | undefined;
+  // Used for thresholding and tooltip
+  adjustedPValue: string | undefined;
+  // Used for tooltip
+  pointID: string | undefined;
+};
 
-// export type VolcanoPlotDataPoint = {
-//   // log2foldChange becomes the x axis. Also used for coloring points
-//   log2foldChange: string;
-//   // pValue will be negative log transformed for the y axis. Also
-//   // needed as is (untransformed) in the tooltip and when coloring points
-//   pValue: string;
-//   // Used for thresholding and tooltip
-//   adjustedPValue: string;
-//   // Used for tooltip
-//   pointID: string;
-// };
+export type VolcanoPlotData = Array<VolcanoPlotDataPoint>;
 
 // export const VolcanoPlotData = array(
 //   type({
