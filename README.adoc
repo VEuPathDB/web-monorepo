@@ -84,3 +84,30 @@ upgrade emacs tide (to, at time of writing 4.5.4):
 M-x package-reinstall <ret> tide <ret>
 ```
 
+== Docker Image
+
+This repo contains a Dockerfile that may be used to build and run an NGINX
+server that serves out the compiled client bundles.
+
+The docker image may be built using the command `make docker-build` and run
+using the command `make docker-run`.  The files are exposed under the following
+paths:
+
+[source]
+----
+{URL}/clinepi/legacy/{file-name}
+{URL}/clinepi/modern/{file-name}
+
+{URL}/genomics/legacy/{file-name}
+{URL}/genomics/modern/{file-name}
+
+{URL}/mbio/legacy/{file-name}
+{URL}/mbio/modern/{file-name}
+
+{URL}/ortho/legacy/{file-name}
+{URL}/ortho/modern/{file-name}
+----
+
+So for example, after running `make docker-run`, the URL
+http://localhost:8082/genomics/modern/site-client.bundle.js may be used to fetch
+the `site-client.bundle.js` file.
