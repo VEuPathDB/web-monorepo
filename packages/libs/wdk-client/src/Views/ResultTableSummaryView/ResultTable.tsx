@@ -156,7 +156,7 @@ function ResultTable(props: Props) {
           }
           onClick={() => {
             if (userIsGuest) showLoginWarning('use baskets');
-            else requestAddStepToBasket(resultType.step.id);
+            else requestAddStepToBasket(resultType.step.id, false);
           }}
         >
           <IconAlt fa="shopping-basket" /> Add to Basket
@@ -178,16 +178,6 @@ function ResultTable(props: Props) {
 
   return (
     <Mesa state={tableState}>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            checked={inBasketFilterEnabled}
-            onChange={(e) => updateInBasketFilter(e.currentTarget.checked)}
-          />
-          &nbsp; Only show {recordClass.displayNamePlural} in your basket.
-        </label>
-      </div>
       {renderToolbarContent({
         addColumnsNode,
         addToBasketNode,
