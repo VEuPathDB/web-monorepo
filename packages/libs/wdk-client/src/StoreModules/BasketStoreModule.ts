@@ -90,6 +90,9 @@ async function getFulfillAddStepToBasket(
   { wdkService }: EpicDependencies
 ) {
   const step = await wdkService.findStep(requestAction.payload.stepId);
+  if (requestAction.payload.clearFirst) {
+    await wdkService.clearBasket(step.recordClassName);
+  }
   await wdkService.addStepToBasket(step.recordClassName, step.id);
   return fulfillAddStepToBasket(step);
 }

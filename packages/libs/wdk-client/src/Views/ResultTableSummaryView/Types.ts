@@ -39,7 +39,10 @@ export type RequestUpdateBasket = (
   primaryKeys: PrimaryKey[]
 ) => void;
 
-export type RequestAddStepToBasket = (stepId: number) => void;
+export type RequestAddStepToBasket = (
+  stepId: number,
+  clearFirst: boolean
+) => void;
 
 export type RequestPageSizeUpdate = (pageSize: number) => void;
 
