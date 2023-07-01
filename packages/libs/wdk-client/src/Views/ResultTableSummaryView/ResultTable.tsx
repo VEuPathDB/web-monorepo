@@ -11,7 +11,6 @@ import { pure, wrappable } from '../../Utils/ComponentUtils';
 import { Mesa, MesaState } from '../../Components/Mesa';
 import Link from '../../Components/Link';
 import BasketCell from '../../Views/ResultTableSummaryView/BasketCell';
-import BasketHeading from '../../Views/ResultTableSummaryView/BasketHeading';
 import PrimaryKeyCell from '../../Views/ResultTableSummaryView/PrimaryKeyCell';
 import AttributeCell from '../../Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from '../../Views/ResultTableSummaryView/AttributeHeading';
@@ -23,7 +22,6 @@ import {
   RequestUpdateBasket,
   RequestAddStepToBasket,
   ViewPageNumber,
-  UpdateInBasketFilter,
   RequestPageSizeUpdate,
   ShowHideAddColumnsDialog,
   OpenAttributeAnalysis,
@@ -46,13 +44,11 @@ export interface Props {
   question: Question;
   userIsGuest: boolean;
   basketStatusArray?: BasketStatusArray;
-  inBasketFilterEnabled: boolean;
   requestSortingUpdate: RequestSortingUpdate;
   requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
   requestUpdateBasket: RequestUpdateBasket;
   requestAddStepToBasket: RequestAddStepToBasket;
   viewPageNumber: ViewPageNumber;
-  updateInBasketFilter: UpdateInBasketFilter;
   requestPageSizeUpdate: RequestPageSizeUpdate;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   openAttributeAnalysis: OpenAttributeAnalysis;
@@ -79,8 +75,6 @@ function ResultTable(props: Props) {
     selectedIds,
     userIsGuest,
     showLoginWarning,
-    updateInBasketFilter,
-    inBasketFilterEnabled,
     renderToolbarContent = defaultRenderToolbarContent,
   } = props;
   const columns = getColumns(props);
