@@ -34,7 +34,24 @@ WORKDIR /var/www
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
-COPY --from=build /project/node_modules/@veupathdb/clinepi-site/dist/bundles/ clinepi/
-COPY --from=build /project/node_modules/@veupathdb/genomics-site/dist/bundles/ genomics/
-COPY --from=build /project/node_modules/@veupathdb/mbio-site/dist/bundles/ mbio/
-COPY --from=build /project/node_modules/@veupathdb/ortho-site/dist/bundles/ ortho/
+#
+# Important!!
+#
+# We shuffle the order of the directories here for NGINX path rewrites!
+#
+
+# Clinepi
+COPY --from=build /project/node_modules/@veupathdb/clinepi-site/dist/bundles/legacy legacy/clinepi/
+COPY --from=build /project/node_modules/@veupathdb/clinepi-site/dist/bundles/modern modern/clinepi/
+
+# Genomics
+COPY --from=build /project/node_modules/@veupathdb/genomics-site/dist/bundles/legacy legacy/genomics/
+COPY --from=build /project/node_modules/@veupathdb/genomics-site/dist/bundles/modern modern/genomics/
+
+# MBio
+COPY --from=build /project/node_modules/@veupathdb/mbio-site/dist/bundles/legacy legacy/mbio/
+COPY --from=build /project/node_modules/@veupathdb/mbio-site/dist/bundles/modern modern/mbio/
+
+# Ortho
+COPY --from=build /project/node_modules/@veupathdb/ortho-site/dist/bundles/legacy legacy/ortho/
+COPY --from=build /project/node_modules/@veupathdb/ortho-site/dist/bundles/modern modern/ortho/

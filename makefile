@@ -10,5 +10,5 @@ docker-build:
 	@docker build -t veupathdb/client .
 
 docker-run:
-	@docker run -it --rm -p 8082:80 veupathdb/client
+	@docker run -it --rm -p 80:80 veupathdb/client
 
