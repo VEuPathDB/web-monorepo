@@ -16,7 +16,7 @@ if (userAgent == null) {
   process.exit(1);
 }
 const isModern = ${r}.test(userAgent);
-process.stdout.write(isModern ? '/modern' : '/legacy');
+process.stdout.write(isModern ? 'modern' : 'legacy');
 `;
 
 if (outputFileName) fs.writeFile(outputFileName, program, 'utf8', err => {
