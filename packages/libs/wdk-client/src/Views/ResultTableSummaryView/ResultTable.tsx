@@ -11,7 +11,6 @@ import { pure, wrappable } from '../../Utils/ComponentUtils';
 import { Mesa, MesaState } from '../../Components/Mesa';
 import Link from '../../Components/Link';
 import BasketCell from '../../Views/ResultTableSummaryView/BasketCell';
-import BasketHeading from '../../Views/ResultTableSummaryView/BasketHeading';
 import PrimaryKeyCell from '../../Views/ResultTableSummaryView/PrimaryKeyCell';
 import AttributeCell from '../../Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from '../../Views/ResultTableSummaryView/AttributeHeading';
@@ -151,7 +150,7 @@ function ResultTable(props: Props) {
           }
           onClick={() => {
             if (userIsGuest) showLoginWarning('use baskets');
-            else requestAddStepToBasket(resultType.step.id);
+            else requestAddStepToBasket(resultType.step.id, false);
           }}
         >
           <IconAlt fa="shopping-basket" /> Add to Basket
