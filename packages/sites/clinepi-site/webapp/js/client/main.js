@@ -1,6 +1,5 @@
 import { partial } from 'lodash';
 
-import { reduxMiddleware } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
@@ -21,5 +20,4 @@ initialize({
   wrapWdkService,
   wrapStoreModules,
   wrapRoutes,
-  additionalMiddleware: [ reduxMiddleware ]
 });

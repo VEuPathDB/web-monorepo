@@ -18,8 +18,8 @@ import {
   areTermsInStringRegexString,
   parseSearchQueryString,
 } from '../../Utils/SearchUtils';
-import CheckboxList from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxList';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import CheckboxList from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxList';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import '../../Components/DataTable/DataTable.css';
 import HelpIcon from '../Icon/HelpIcon';
 import Tooltip from '../Overlays/Tooltip';

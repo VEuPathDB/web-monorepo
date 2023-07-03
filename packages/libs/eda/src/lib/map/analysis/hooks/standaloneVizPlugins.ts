@@ -23,6 +23,8 @@ import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
 import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
+//TO DO import timeline SVGIcon
+import LineSVG from '../../../core/components/visualizations/implementations/selectorIcons/LineSVG';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig;
@@ -102,6 +104,17 @@ export function useStandaloneVizPlugins({
           ),
           lineplot: vizWithCustomizedGetRequest(
             vizWithOptions(lineplotVisualization),
+            lineplotRequest
+          ),
+          // activate timeline Viz
+          timeseries: vizWithCustomizedGetRequest(
+            vizWithOptions(
+              lineplotVisualization
+                .withOptions({
+                  showMarginalHistogram: true,
+                })
+                .withSelectorIcon(LineSVG)
+            ),
             lineplotRequest
           ),
         },

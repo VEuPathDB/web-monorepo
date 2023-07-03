@@ -1,6 +1,6 @@
 import React, { Component, FormEvent, MouseEvent, ReactNode } from 'react';
 import { uniqueId, noop } from 'lodash';
-import { LinksPosition } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import { wrappable, makeClassNameHelper } from '../../Utils/ComponentUtils';
 
 import './wdk-CheckboxList.scss';

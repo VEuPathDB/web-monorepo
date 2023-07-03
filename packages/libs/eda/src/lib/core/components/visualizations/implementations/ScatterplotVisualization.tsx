@@ -125,7 +125,7 @@ import {
   VariableMapping,
 } from '../../../api/DataClient/types';
 // use Banner from CoreUI for showing message for no smoothing
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
@@ -642,12 +642,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       );
 
       // check log scale and plot mode option for retrieving data
-      if (
-        (vizConfig.independentAxisLogScale ||
-          vizConfig.dependentAxisLogScale) &&
-        vizConfig.valueSpecConfig !== 'Raw'
-      )
-        return undefined;
+      if (showLogScaleBanner) return undefined;
 
       // check variable inputs: this is necessary to prevent from data post
       if (
@@ -808,8 +803,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       dataElementConstraints,
       dataElementDependencyOrder,
       filters,
-      vizConfig.independentAxisLogScale,
-      vizConfig.dependentAxisLogScale,
       vizConfig.valueSpecConfig,
       vizConfig.xAxisVariable,
       vizConfig.yAxisVariable,
@@ -817,6 +810,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       vizConfig.facetVariable,
       vizConfig.showMissingness,
       computedXAxisDetails,
+      showLogScaleBanner,
       showContinousOverlayBanner,
       studyId,
       options?.hideTrendlines,

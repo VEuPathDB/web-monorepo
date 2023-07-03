@@ -17,6 +17,8 @@ export interface LayoutOptions {
   layoutComponent?: (props: LayoutProps) => JSX.Element;
   hideShowMissingnessToggle?: boolean;
   hideFacetInputs?: boolean;
+  // considering marginal histogram
+  showMarginalHistogram?: boolean;
 }
 
 export interface TitleOptions {

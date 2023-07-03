@@ -8,7 +8,7 @@ import { areTermsInString, makeSearchHelpText } from '../../Utils/SearchUtils';
 import { preorderSeq } from '../../Utils/TreeUtils';
 import CheckboxTree, {
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '../../Components/Icon/IconAlt';
 import Tooltip from '../../Components/Overlays/Tooltip';
 import {

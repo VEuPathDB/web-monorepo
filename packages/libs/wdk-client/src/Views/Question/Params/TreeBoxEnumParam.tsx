@@ -6,7 +6,7 @@ import React, { useCallback, useMemo } from 'react';
 import CheckboxTree, {
   CheckboxTreeProps,
   LinksPosition,
-} from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+} from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 import Icon from '../../../Components/Icon/IconAlt';
 import { safeHtml } from '../../../Utils/ComponentUtils';
 import { Seq } from '../../../Utils/IterableUtils';

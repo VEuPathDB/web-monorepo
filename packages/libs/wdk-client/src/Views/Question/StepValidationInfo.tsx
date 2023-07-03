@@ -1,7 +1,7 @@
 import React from 'react';
 import { Step } from '../../Utils/WdkUser';
 import { QuestionWithParameters } from '../../Utils/WdkModel';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 
 interface Props {
   stepValidation?: Step['validation'];

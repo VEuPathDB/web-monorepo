@@ -121,7 +121,7 @@ import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 
-import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { LayoutOptions } from '../../layouts/types';
 import {
@@ -133,9 +133,11 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
-import Banner from '@veupathdb/coreui/dist/components/banners/Banner';
+import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
+
+import * as DateMath from 'date-arithmetic';
 
 const plotContainerStyles = {
   width: 750,
@@ -156,6 +158,12 @@ const modalPlotContainerStyles = {
 type LinePlotDataSeriesWithType = LinePlotDataSeries & {
   seriesType?: 'standard' | 'zeroOverZero';
   hideFromLegend?: boolean;
+  // add props for marginal historgram
+  width?: number[];
+  type?: string;
+  offset?: number;
+  xaxis?: string;
+  yaxis?: string;
 };
 
 type LinePlotDataWithType = Omit<LinePlotData, 'series'> & {
@@ -586,7 +594,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
   );
 
   const dataRequestConfig: DataRequestConfig = useDeepValue({
-    ...omit(vizConfig, ['dependentAxisRange', 'checkedLegendItems']),
+    // excluding dependencies for data request
+    ...omit(vizConfig, [
+      'dependentAxisRange',
+      'checkedLegendItems',
+      'dependentAxisValueSpec',
+      'dependentAxisLogScale',
+    ]),
     // the following looks nasty but it seems to work
     // the back end only makes use of the x-axis viewport (aka independentAxisRange)
     // when binning is in force, so no need to trigger a new request unless binning
@@ -637,6 +651,14 @@ function LineplotViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
+  // check banner condition
+  const showIndependentAxisBanner =
+    vizConfig.independentAxisLogScale && vizConfig.useBinning;
+  const showDependentAxisBanner =
+    vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
+
+  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
+
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
       if (
@@ -671,6 +693,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
             'To calculate a proportion, all selected numerator values must also be present in the denominator'
           );
       }
+
+      // no data request if banner should be shown
+      if (showIndependentAxisBanner || showDependentAxisBanner)
+        return undefined;
 
       assertValidInputVariables(
         inputs,
@@ -750,7 +776,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
         showMissingFacet,
         facetVocabulary,
         facetVariable,
-        colorPaletteOverride
+        colorPaletteOverride,
+        // pass showmarginalHistogram
+        showMarginalHistogram
       );
     }, [
       outputEntity,
@@ -776,6 +804,8 @@ function LineplotViz(props: VisualizationProps<Options>) {
       facetEntity,
       visualization.descriptor.type,
       neutralPaletteProps.colorPalette,
+      showIndependentAxisBanner,
+      showDependentAxisBanner,
     ])
   );
 
@@ -834,11 +864,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
     const allData = data.value?.dataSetProcess;
     const palette = neutralPaletteProps.colorPalette ?? ColorPaletteDefault;
 
+    // use lineplot data only for legend
     const legendData = !isFaceted(allData)
-      ? allData?.series
-      : allData?.facets.find(
-          ({ data }) => data != null && data.series.length > 0
-        )?.data?.series;
+      ? allData?.series.filter((data) => data.mode === 'lines+markers')
+      : allData?.facets
+          .find(({ data }) => data != null && data.series.length > 0)
+          ?.data?.series.filter((data) => data.mode === 'lines+markers');
 
     return legendData != null
       ? // the name 'dataItem' is used inside the map() to distinguish from the global 'data' variable
@@ -859,14 +890,16 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 : dataItem.marker?.color ?? palette[index], // set first color for no overlay variable selected
             // simplifying the check with the presence of data: be carefule of y:[null] case in Scatter plot
             hasData: !isFaceted(allData)
-              ? dataItem.y.length > 0 && dataItem.y[0] !== null
+              ? // fix legend bug
+                dataItem.y.length > 0 &&
+                dataItem.y.some((element) => element != null)
               : allData.facets
                   .map((facet) => facet.data)
                   .filter((data): data is LinePlotData => data != null)
                   .some(
                     (data) =>
                       data.series[index].y.length > 0 &&
-                      data.series[index].y[0] !== null
+                      data.series[index].y.some((element) => element != null)
                   ),
             group: 1,
             rank: 1,
@@ -999,18 +1032,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
       vizConfig.independentAxisRange ?? defaultIndependentAxisRange,
     dependentAxisRange:
       vizConfig.dependentAxisRange ?? defaultDependentAxisRange,
+    // display marginal histogram
+    showMarginalHistogram:
+      xAxisVariable?.dataShape === 'continuous' && showMarginalHistogram,
+    // marginal histogram size [0, 1]: default is 0.2 (20 %)
+    marginalHistogramSize: 0.2,
   };
 
   const plotNode = (
     <>
       {isFaceted(data.value?.dataSetProcess) ? (
         <FacetedLinePlot
-          data={
-            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
-            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
-              ? undefined
-              : data.value?.dataSetProcess
-          }
+          data={data.value?.dataSetProcess}
           // considering axis range control
           componentProps={lineplotProps}
           modalComponentProps={{
@@ -1024,12 +1057,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         <LinePlot
           {...lineplotProps}
           ref={plotRef}
-          data={
-            (vizConfig.independentAxisLogScale && vizConfig.useBinning) ||
-            (vizConfig.dependentAxisLogScale && vizConfig.showErrorBars)
-              ? undefined
-              : data.value?.dataSetProcess
-          }
+          data={data.value?.dataSetProcess}
           // add controls
           displayLibraryControls={false}
           // custom legend: pass checkedLegendItems to PlotlyPlot
@@ -1068,7 +1096,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
       )?.data
     : data.value?.dataSetProcess;
 
-  const neverUseBinning = data0?.binWidthSlider == null; // for ordinal string x-variables
+  // add banner condition to avoid unnecessary disabled
+  const neverUseBinning =
+    !showIndependentAxisBanner &&
+    !showDependentAxisBanner &&
+    data0?.binWidthSlider == null; // for ordinal string x-variables
+
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
 
@@ -1869,7 +1902,8 @@ export function lineplotResponseToData(
   showMissingFacet: boolean = false,
   facetVocabulary: string[] = [],
   facetVariable?: Variable,
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  showMarginalHistogram?: boolean
 ): LinePlotDataWithCoverage {
   const modeValue: LinePlotDataSeries['mode'] = 'lines+markers';
 
@@ -1908,7 +1942,8 @@ export function lineplotResponseToData(
         response.lineplot.config.binSpec,
         response.lineplot.config.binSlider,
         overlayVariable,
-        colorPaletteOverride
+        colorPaletteOverride,
+        showMarginalHistogram
       );
 
     return {
@@ -2103,7 +2138,7 @@ function getRequestParams(
               } // not binning
             : xAxisVariableMetadata?.type === 'date'
             ? { value: 1, units: 'day' }
-            : { value: 0 }),
+            : { value: 1 }),
         },
       }
     : { binSpec: { type: 'binWidth' } };
@@ -2164,8 +2199,19 @@ function processInputData(
   binSpec?: BinSpec,
   binWidthSlider?: BinWidthSlider,
   overlayVariable?: Variable,
-  colorPaletteOverride?: string[]
+  colorPaletteOverride?: string[],
+  showMarginalHistogram?: boolean
 ) {
+  // define separate types for union type of BinSampleSize
+  type BinSampleSizeNumber = {
+    N: number;
+  };
+
+  type BinSampleSizeProportion = {
+    numeratorN: number;
+    denominatorN: number;
+  };
+
   const zeroProcessedData = processZeroOverZeroData(
     responseLineplotData,
     dependentIsProportion,
@@ -2307,6 +2353,21 @@ function processInputData(
 
       const color = markerColor(index, el);
 
+      // for dataSetProcessed.name
+      const dataSetProcessedName =
+        (el.overlayVariableDetails?.value != null
+          ? fixLabelForNumberVariables(
+              el.overlayVariableDetails.value,
+              overlayVariable
+            )
+          : el.seriesType !== 'zeroOverZero'
+          ? 'Data'
+          : '') +
+        (el.seriesType === 'zeroOverZero'
+          ? (overlayVariable !== undefined ? ', ' : '') +
+            'Undefined Y (denominator of 0)'
+          : '');
+
       dataSetProcessed.push({
         x: seriesX,
         y: seriesY,
@@ -2323,19 +2384,7 @@ function processInputData(
             }
           : {}),
         binSampleSize: el.binSampleSize,
-        name:
-          (el.overlayVariableDetails?.value != null
-            ? fixLabelForNumberVariables(
-                el.overlayVariableDetails.value,
-                overlayVariable
-              )
-            : el.seriesType !== 'zeroOverZero'
-            ? 'Data'
-            : '') +
-          (el.seriesType === 'zeroOverZero'
-            ? (overlayVariable !== undefined ? ', ' : '') +
-              'Undefined Y (denominator of 0)'
-            : ''),
+        name: dataSetProcessedName,
         hideFromLegend: el.hideFromLegend,
         mode: modeValue,
         fill: fillAreaValue,
@@ -2348,12 +2397,83 @@ function processInputData(
         connectgaps: el.seriesType === 'standard' ? true : undefined,
       });
 
+      // for marginal histogram dataset: add showMarginalHistogram condition
+      if (
+        el.binStart &&
+        el.binStart.length > 0 &&
+        el.binEnd &&
+        el.binEnd.length > 0 &&
+        el.binSampleSize &&
+        el.binSampleSize.length > 0 &&
+        showMarginalHistogram
+      ) {
+        // compute binSampleSize one
+        const binSampleSize = categoricalMode
+          ? el.binSampleSize.map((val) =>
+              val == null
+                ? null
+                : // just use denominatorN
+                  (val as BinSampleSizeProportion).denominatorN
+            )
+          : el.binSampleSize.map((val) =>
+              val == null ? null : (val as BinSampleSizeNumber).N
+            );
+
+        // calculate binWidths for marginal historgram
+        const marginalHistogramBinWidths = el.binStart.map((val, index) => {
+          if (
+            independentValueType === 'integer' ||
+            independentValueType === 'number'
+          ) {
+            // binStart and binEnd from the backend are string
+            return el.binStart != null && el.binEnd != null
+              ? (Number(el.binEnd[index]) as number) -
+                  (Number(el.binStart[index]) as number)
+              : 0;
+          } else {
+            // date type in milliseconds
+            return el.binStart != null && el.binEnd != null
+              ? DateMath.diff(
+                  new Date(el.binStart[index] as string),
+                  new Date(el.binEnd[index] as string),
+                  'seconds',
+                  false
+                ) * 1000
+              : 0;
+          }
+        });
+
+        // add marginal histogram data
+        dataSetProcessed.push({
+          x: seriesX,
+          y: binSampleSize,
+          width: marginalHistogramBinWidths,
+          // use the same name with lineplot data for legend control
+          name: dataSetProcessedName,
+          hideFromLegend: el.hideFromLegend,
+          type: 'bar',
+          offset: 0,
+          marker: { color },
+          seriesType: el.seriesType,
+          // set mode to be undefined for marginal histogram dataset
+          // to avoid having unnecessary tooltip content
+          mode: undefined,
+          // this indicates that marginal histogram will use different yaxis
+          yaxis: 'y2',
+        });
+      }
       return breakAfterThisSeries(index);
     }
     return false;
   });
 
-  const xValues = dataSetProcessed
+  // only use lineplot data to correctly compute min/max
+  const lineplotDataSetProcessed = dataSetProcessed.filter(
+    (data) => data.mode === modeValue
+  );
+
+  // use lineplotDataSetProcessed instead of dataSetProcessed for computing min/max correctly
+  const xValues = lineplotDataSetProcessed
     .flatMap<string | number | null>((series) =>
       series.x.map((xValue, index) =>
         series.y[index] !== null ? xValue : null
@@ -2361,15 +2481,15 @@ function processInputData(
     )
     .filter((xValue) => xValue !== null) as (string | number)[];
   // get all values of y (including error bars if present) in a kind of clunky way...
-  const yValues = dataSetProcessed
+  const yValues = lineplotDataSetProcessed
     .flatMap<string | number | null>((series) => series.y)
     .concat(
-      dataSetProcessed
+      lineplotDataSetProcessed
         .flatMap((series) => series.yErrorBarLower ?? [])
         .filter((val): val is number | string => val != null)
     )
     .concat(
-      dataSetProcessed
+      lineplotDataSetProcessed
         .flatMap((series) => series.yErrorBarUpper ?? [])
         .filter((val): val is number | string => val != null)
     );

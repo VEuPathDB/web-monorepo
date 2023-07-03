@@ -2,7 +2,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
-import { CheckboxTreeProps } from '@veupathdb/coreui/dist/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
+import { CheckboxTreeProps } from '@veupathdb/coreui/lib/components/inputs/checkboxes/CheckboxTree/CheckboxTree';
 
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
@@ -126,7 +126,7 @@ function TreeBoxOrganismEnumParam(
       renderNode,
       searchPredicate,
     }),
-    [renderNode, searchPredicate]
+    [maxSelectedCount, renderNode, searchPredicate]
   );
 
   return hasEmptyVocabularly(paramWithPrunedVocab) ? (
@@ -185,9 +185,8 @@ function useTreeBoxParamWithPrunedVocab(
       ? pruneNodesWithSingleExtendingChild(parameter.vocabulary)
       : parameter.vocabulary;
 
-    const shouldOnlyShowPreferredOrganisms = findShouldOnlyShowPreferredOrganisms(
-      parameter
-    );
+    const shouldOnlyShowPreferredOrganisms =
+      findShouldOnlyShowPreferredOrganisms(parameter);
 
     const preferredVocabulary =
       shouldOnlyShowPreferredOrganisms && preferredOrganismsEnabled
@@ -231,9 +230,8 @@ function useFlatParamWithPrunedVocab(
   const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
   const paramWithPrunedVocab = useMemo(() => {
-    const shouldOnlyShowPreferredOrganisms = findShouldOnlyShowPreferredOrganisms(
-      parameter
-    );
+    const shouldOnlyShowPreferredOrganisms =
+      findShouldOnlyShowPreferredOrganisms(parameter);
 
     return shouldOnlyShowPreferredOrganisms && preferredOrganismsEnabled
       ? {
@@ -352,9 +350,8 @@ function useRestrictSelectedValues(
   useEffect(() => {
     const { selectedValues, onChange } = selectedValuesRef.current;
 
-    const shouldOnlyShowPreferredOrganisms = findShouldOnlyShowPreferredOrganisms(
-      parameter
-    );
+    const shouldOnlyShowPreferredOrganisms =
+      findShouldOnlyShowPreferredOrganisms(parameter);
 
     if (
       shouldOnlyShowPreferredOrganisms &&

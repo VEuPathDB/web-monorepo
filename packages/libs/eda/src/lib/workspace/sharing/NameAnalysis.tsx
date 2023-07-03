@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { H5, FilledButton, FormField, Edit } from '@veupathdb/coreui';
 
 // Definitions
-import { gray } from '@veupathdb/coreui/dist/definitions/colors';
-import { useUITheme } from '@veupathdb/coreui/dist/components/theming';
+import { gray } from '@veupathdb/coreui/lib/definitions/colors';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 type NameAnalysisProps = {
   currentName: string;
@@ -20,9 +20,8 @@ export default function NameAnalysis({
   currentName,
   updateName,
 }: NameAnalysisProps) {
-  const [localAnalysisName, setLocalAnalysisName] = useState<
-    string | undefined
-  >(undefined);
+  const [localAnalysisName, setLocalAnalysisName] =
+    useState<string | undefined>(undefined);
 
   const theme = useUITheme();
 
