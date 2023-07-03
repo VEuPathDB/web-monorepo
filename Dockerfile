@@ -23,16 +23,32 @@ COPY yarn.lock yarn.lock
 COPY packages packages
 
 RUN yarn \
-  && yarn nx bundle:npm @veupathdb/clinepi-site \
-  && yarn nx bundle:npm @veupathdb/genomics-site \
-  && yarn nx bundle:npm @veupathdb/mbio-site \
-  && yarn nx bundle:npm @veupathdb/ortho-site
+    && yarn nx bundle:npm @veupathdb/clinepi-site \
+    && yarn nx bundle:npm @veupathdb/genomics-site \
+    && yarn nx bundle:npm @veupathdb/mbio-site \
+    && yarn nx bundle:npm @veupathdb/ortho-site
 
-FROM nginx:alpine3.17-slim
+
+FROM nginx:alpine3.17-perl
+
+ENV PATH="$PATH:/opt/node/bin"
+
+RUN apk add libstdc++
+
+COPY --from=build /opt/node /opt/node
+
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker /etc/veupathdb
+
+WORKDIR /etc/veupathdb
+
+RUN npm i -g yarn \
+    && yarn install \
+    && chmod +x makeSupportedBrowsersScript.js \
+    && ./makeSupportedBrowsersScript.js > getBundlesSubPath \
+    && chmod +x getBundlesSubPath
 
 WORKDIR /var/www
-
-COPY nginx.conf /etc/nginx/nginx.conf
 
 #
 # Important!!
