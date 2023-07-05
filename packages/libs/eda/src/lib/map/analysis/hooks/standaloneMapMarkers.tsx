@@ -29,12 +29,32 @@ import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
 import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
 
 /**
+ * We can use this viewport to request all available data
+ */
+export const GLOBAL_VIEWPORT = {
+  latitude: {
+    xMin: -90,
+    xMax: 90,
+  },
+  longitude: {
+    left: -180,
+    right: 180,
+  },
+};
+
+/**
  * Provides markers for use in the MapVEuMap component
  * Also provides associated data (stats, legend items), pending status and back end errors.
  *
  */
 
 export interface StandaloneMapMarkersProps {
+  /**
+   * If boundsZoomLevel is undefined, then:
+   *  - geoAggregateVariable will default to { entityId: geoConfig.entity.id, variableId: geoConfig.aggregationVariableIds[0] }
+   *  - viewport will be set to the GLOBAL_VIEWPORT object
+   *    - example use-case: data requests for MarkerPreview components pass in an undefined boundsZoomLevel in order to render a marker that aggregates all filtered data
+   */
   boundsZoomLevel: BoundsViewport | undefined;
   //vizConfig: MapConfig;
   geoConfig: GeoConfig | undefined;
@@ -117,14 +137,17 @@ export function useStandaloneMapMarkers(
 
   const geoAggregateVariable = useMemo(
     () =>
-      geoConfig != null && boundsZoomLevel?.zoomLevel != null
+      geoConfig != null
         ? {
             entityId: geoConfig.entity.id,
             variableId:
+              // if boundsZoomLevel is undefined, we'll default to geoConfig.aggregationVariableIds[0]
               geoConfig.aggregationVariableIds[
-                geoConfig.zoomLevelToAggregationLevel(
-                  boundsZoomLevel?.zoomLevel
-                ) - 1
+                boundsZoomLevel
+                  ? geoConfig.zoomLevelToAggregationLevel(
+                      boundsZoomLevel.zoomLevel
+                    ) - 1
+                  : 0
               ],
           }
         : undefined,
@@ -143,7 +166,6 @@ export function useStandaloneMapMarkers(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
-        boundsZoomLevel == null ||
         geoConfig == null ||
         latitudeVariable == null ||
         longitudeVariable == null ||
@@ -162,10 +184,18 @@ export function useStandaloneMapMarkers(
       )
         return undefined;
 
-      const {
-        northEast: { lat: xMax, lng: right },
-        southWest: { lat: xMin, lng: left },
-      } = boundsZoomLevel.bounds;
+      const viewport = boundsZoomLevel
+        ? {
+            latitude: {
+              xMin: boundsZoomLevel.bounds.southWest.lat,
+              xMax: boundsZoomLevel.bounds.northEast.lat,
+            },
+            longitude: {
+              left: boundsZoomLevel.bounds.southWest.lng,
+              right: boundsZoomLevel.bounds.northEast.lng,
+            },
+          }
+        : GLOBAL_VIEWPORT;
 
       // now prepare the rest of the request params
       const requestParams: StandaloneMapMarkersRequestParams = {
@@ -178,16 +208,7 @@ export function useStandaloneMapMarkers(
           overlayConfig,
           outputEntityId,
           valueSpec: markerType === 'pie' ? 'count' : markerType,
-          viewport: {
-            latitude: {
-              xMin,
-              xMax,
-            },
-            longitude: {
-              left,
-              right,
-            },
-          },
+          viewport,
         },
       };
 
