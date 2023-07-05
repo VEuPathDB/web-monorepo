@@ -1,60 +1,65 @@
-# web-monorepo
+= web-monorepo
 
-## Prerequisties
+== Prerequisites
 * `Node <=16.17.1`
 * Either a global installation of `yarn >=1.17.0`, or `volta >=1.1.0`
 ** With such a version of `yarn` globally installed, all `yarn` commands executed in this repo will be delegated to the "pinned" `yarn@3.3.1` installation included in `.yarn/releases`.
 ** With such a version of https://volta.sh/[volta] installed, the required version of `yarn` will automatically be installed.
 
-## Quick Start
+== Quick Start
 
-### Install yarn dependencies
+=== Install yarn dependencies
 
 From anywhere in the repo:
 
-```
+[source, shell]
+----
 yarn
-```
+----
 
-### View workspace dependency graph
+=== View workspace dependency graph
 
 From the root `package.json`:
 
-```
+[source, shell]
+----
 yarn nx graph
-```
+----
 
-### Execute a workspace's yarn script using the `nx` task runner
+=== Execute a workspace's yarn script using the `nx` task runner
 
 From the root `package.json`:
 
-```
+[source, shell]
+----
 yarn nx run <workspaceName>:<scriptName>
-```
+----
 
 For example, you can start the MultiBLAST dev server by running
 
-```
+[source, shell]
+----
 yarn nx run @veupathdb/multi-blast:start
-```
+----
 
-### Rebuild dependencies when running a development server
+=== Rebuild dependencies when running a development server
 
 When running a development server (such as `yarn nx start @veupathdb/eda` or `yarn nx start @veupathdb/clinepi-site`),
 use the following command to rebuild changes made to dependencies, and to have the dev site reload with the changes:
 
-```
+[source, shell]
+----
 cd packages/libs/<package>
 yarn build-npm-modules
-```
+----
 
 **Note: You may need to manually reload your website to see the changes the first time.**
 
 _Using the equivalent `nx` command (`yarn nx build-npm-modules @veupathdb/<package>`) has proven inadequate in this scenario._
 
-## Notes on individual packages
+== Notes on individual packages
 
-### EDA dev server
+=== EDA dev server
 
 Directory: `packages/libs/eda`
 
@@ -62,7 +67,7 @@ You will need to configure the server with a `packages/libs/eda/.env.local` file
 
 For more documentation see the link:packages/libs/eda/README.md[package README] and link:packages/libs/eda/.env.local.sample.localservices[this sample file].
 
-### VEuPathDB sites
+=== VEuPathDB sites
 
 Directory: `packages/sites/{site name}-site`
 
@@ -72,17 +77,18 @@ Run `yarn` to update dependencies if necessary.
 
 Run the command `yarn nx start @veupathdb/{site name}-site`. For example, to run the ortho site use `yarn nx start @veupathdb/ortho-site`.
 
-## IDE hints
+== IDE hints
 
-### emacs tide
+=== emacs tide
 
 If it is showing errors for tsx imports (especially in `eda`) and
 `tide-verify-setup` mentions tsserver version 3.x then it is time to
 upgrade emacs tide (to, at time of writing 4.5.4):
 
-```
+[source]
+----
 M-x package-reinstall <ret> tide <ret>
-```
+----
 
 == Client Bundle Server
 
@@ -105,8 +111,8 @@ Whether a browser is considered modern or legacy is dependent on the version of
 the browser compared to a RegEx constructed by the
 link:https://github.com/browserslist/browserslist-useragent-regexp[browserslist-useragent-regexp]
 library using the input query constructed in the
-link:../packages/configs/browserslist-config[browserslist-config] package of
-this repo.  (See link:../packages/configs/browserslist-config/index.js[index.js]
+link:packages/configs/browserslist-config[browserslist-config] package of
+this repo.  (See link:packages/configs/browserslist-config/index.js[index.js]
 for the raw queries)
 
 === Docker Image
@@ -118,8 +124,8 @@ that determines which path a specified file should be served from.
 
 The image build is multi-staged with the first stage compiling primary contents
 of this repository, and the second stage setting up NGINX and the secondary JS
-script included in this directory
-(link:makeSupportedBrowsersScript.js[makeSupportedBrowsersScript.js]).
+script included in the link:docker/[docker] directory
+(link:docker/makeSupportedBrowsersScript.js[makeSupportedBrowsersScript.js]).
 
 === Paths
 
