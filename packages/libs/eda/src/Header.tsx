@@ -20,15 +20,41 @@ const navBarLinkStyle = {
   margin: '0 1em',
 };
 
-export default function Header() {
-  const { loginFormVisible, setLoginFormVisible } = React.useContext(
-    DevLoginFormContext
+const baseHeaderStyle = {
+  background: 'black',
+  color: 'whitesmoke',
+  width: '100%',
+  zIndex: 1000,
+  overflow: 'hidden',
+};
+
+// hardcoded from EDA sites
+const fullHeaderHeight = 158;
+const stickyHeight = 40;
+const scrollThreshold = 90;
+
+function DevSiteBanner() {
+  return (
+    <div style={{ marginLeft: 10 }}>
+      {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+      <code>/// ========================== \\\</code>
+      <br />
+      <code>||| VEUPATHDB DEVELOPMENT SITE |||</code>
+      <br />
+      <code>\\\ ========================== ///</code>
+    </div>
   );
+}
+
+export default function Header() {
+  const { loginFormVisible, setLoginFormVisible } =
+    React.useContext(DevLoginFormContext);
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');
   const [user, setUser] = React.useState<User>();
   const [errorMsg, setErrorMsg] = React.useState<string>('');
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const [isStickyHeader, setIsStickyHeader] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     wdkService.getCurrentUser().then(setUser);
@@ -51,24 +77,44 @@ export default function Header() {
     window.location.assign('/');
   }
 
+  function adjustHeaderHeight() {
+    const { pageYOffset } = window;
+    if (pageYOffset >= scrollThreshold && !isStickyHeader) {
+      setIsStickyHeader(!isStickyHeader);
+    } else if (pageYOffset < scrollThreshold && isStickyHeader) {
+      setIsStickyHeader(!isStickyHeader);
+    }
+  }
+
+  window.addEventListener('scroll', adjustHeaderHeight);
+
   return (
-    <h1
+    <header
       style={{
-        background: 'black',
-        color: 'whitesmoke',
+        ...baseHeaderStyle,
         margin: 0,
-        fontSize: '2.5em',
+        fontSize: isStickyHeader ? '1em' : '2.5em',
         fontWeight: 400,
         textAlign: 'left',
+        height: fullHeaderHeight,
+        display: 'flex',
+        flexDirection: isStickyHeader ? 'row' : 'column',
       }}
     >
-      {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
-      <code>/// ========================== \\\</code>
-      <br />
-      <code>||| VEUPATHDB DEVELOPMENT SITE |||</code>
-      <br />
-      <code>\\\ ========================== ///</code>
-      <div style={{ display: 'flex', marginTop: '0.5em' }}>
+      {!isStickyHeader && <DevSiteBanner />}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexGrow: 1,
+          alignItems: 'center',
+          position: isStickyHeader ? 'fixed' : 'static',
+          top: 0,
+          height: isStickyHeader ? stickyHeight : 'auto',
+          ...baseHeaderStyle,
+        }}
+      >
+        {isStickyHeader && <DevSiteBanner />}
         <nav style={{ display: 'flex', alignItems: 'center' }}>
           <Link to="/eda" style={navBarLinkStyle}>
             My analyses
@@ -84,8 +130,6 @@ export default function Header() {
           style={{
             fontSize: '1rem',
             position: 'relative',
-            flexGrow: 1,
-            textAlign: 'end',
             paddingRight: '1em',
           }}
         >
@@ -192,6 +236,6 @@ export default function Header() {
           )}
         </div>
       </div>
-    </h1>
+    </header>
   );
 }
