@@ -43,7 +43,7 @@ export const fulfillUpdateBasket = makeActionCreator(
 
 export const requestAddStepToBasket = makeActionCreator(
   'requestAddStepToBasket',
-  (stepId: number) => ({ stepId })
+  (stepId: number, clearFirst: boolean) => ({ stepId, clearFirst })
 );
 
 export const fulfillAddStepToBasket = makeActionCreator(

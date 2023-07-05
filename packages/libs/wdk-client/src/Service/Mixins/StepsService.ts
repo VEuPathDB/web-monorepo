@@ -39,11 +39,11 @@ export default (base: ServiceBase) => {
     formatting: AnswerFormatting,
     userId: string = 'current'
   ): Promise<any> {
-    let reportConfig = formatting.formatConfig;
+    let { formatConfig: reportConfig, viewFilters } = formatting;
     return base.sendRequest(Decode.ok, {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/${formatting.format}`,
-      body: JSON.stringify({ reportConfig }),
+      body: JSON.stringify({ reportConfig, viewFilters }),
     });
   }
 
@@ -75,7 +75,10 @@ export default (base: ServiceBase) => {
         `/users/${userId}/steps/${stepId}/reports/${formatting.format}`,
       target,
       inputs: {
-        data: JSON.stringify({ reportConfig: formatting.formatConfig }),
+        data: JSON.stringify({
+          reportConfig: formatting.formatConfig,
+          viewFilters: formatting.viewFilters,
+        }),
       },
     });
   }

@@ -11,6 +11,7 @@ import {
   updateForm,
   updateFormUi,
   submitForm,
+  updateViewFilters,
 } from '../Actions/DownloadFormActions';
 import DownloadFormContainer from '../Views/ReporterForm/DownloadFormContainer';
 import { RootState } from '../Core/State/Types';
@@ -23,6 +24,7 @@ const DownloadFormActionCreators = {
   submitForm,
   updateFormState: updateForm,
   updateFormUiState: updateFormUi,
+  updateViewFilters,
 };
 
 type Options = Partial<{
