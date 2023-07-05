@@ -7,19 +7,24 @@ import { makeClassNameHelper, wrappable } from '@veupathdb/wdk-client/lib/Utils/
 import { SITE_SEARCH_ROUTE, SEARCH_TERM_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, FILTERS_PARAM } from './SiteSearchConstants';
 
 import './SiteSearch.scss';
+import { TypeAheadInput } from './TypeAheadInput';
 
 const cx = makeClassNameHelper("SiteSearch");
 
 const preventEventWith = (callback: () => void) => (event: React.FormEvent) => {
   event.preventDefault();
   callback();
-}
+};
 
 export interface Props {
   placeholderText?: string;
+  siteSearchURL: string;
 }
 
-export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
+export const SiteSearchInput = wrappable(function ({
+  placeholderText,
+  siteSearchURL,
+}: Props) {
   const location = useLocation();
   const history = useHistory();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +52,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
     const queryString = `q=${encodeURIComponent(inputRef.current?.value || '')}`;
     onSearch(queryString);
   }, [ onSearch ]);
-  
+
   const [ lastSearchQueryString, setLastSearchQueryString] = useSessionBackedState<string>(
     '',
     'ebrc/site-search/last-query-string',
@@ -62,7 +67,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
   }, [ location ]);
 
   return (
-    <form ref={formRef} action={SITE_SEARCH_ROUTE} onSubmit={preventEventWith(handleSubmitWithFilters)} className={cx("--SearchBox")}>
+    <form ref={formRef} action={SITE_SEARCH_ROUTE} onSubmit={preventEventWith(handleSubmitWithFilters)} className={cx("--SearchBox")} autoComplete="off">
       {docType && <input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType}/>}
       {organisms.map(organism => <input key={organism} type="hidden" name={ORGANISM_PARAM} value={organism}/>)}
       {fields.map(field => <input key={field} type="hidden" name={FILTERS_PARAM} value={field}/>)}
@@ -71,15 +76,7 @@ export const SiteSearchInput = wrappable(function ({ placeholderText }: Props) {
           <button className="reset" type="button" onClick={handleSubmitWithoutFilters}>Clear filters</button>
         </Tooltip>
       ) : null}
-      <input
-        ref={inputRef}
-        type="input"
-        onFocus={e => e.target.select()}
-        name={SEARCH_TERM_PARAM}
-        key={searchString}
-        defaultValue={searchString}
-        placeholder={placeholderText}
-      />
+      <TypeAheadInput siteSearchURL={siteSearchURL} inputReference={inputRef} searchString={searchString} />
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
         <Tooltip content="Go back to your last search result">
           <button className="back" type="button" onClick={() => onSearch(lastSearchQueryString)}>

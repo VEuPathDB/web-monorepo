@@ -72,7 +72,7 @@
       min-height: 4.25em;
       align-items: center;
       flex-wrap: wrap;
-      
+
       .PaginationMenu {
         margin: auto;
 
@@ -89,24 +89,79 @@
     align-items: flex-start;
     position: relative;
   }
-  
+
   &--SearchBox {
     display: flex;
     justify-content: space-between;
     border-radius: 1.5em;
-    overflow: hidden;
+    position: relative;
 
     &:focus-within {
       box-shadow: 0 0 3pt 2pt #0067f4;
     }
 
-    input {
-      border: none !important;
-      border-radius: 0;
-      padding: .4em .9em !important;
+    div.type-ahead {
       width: 100%;
-      &:focus {
-        outline: none;
+
+      div.type-ahead-input {
+        position: relative;
+
+        input {
+          border: none !important;
+          border-radius: 1.5em 0 0 1.5em;
+          padding: 0.4em 0.9em !important;
+          width: 100%;
+
+          &:focus {
+            outline: none;
+          }
+        }
+
+        input:first-child {
+          position: relative;
+          background: #00000000 !important;
+          z-index: 1;
+        }
+
+        input:nth-child(2) {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 0;
+          color: gray;
+        }
+      }
+
+      ul.type-ahead-hints {
+        margin: 0.2em 0 0 0;
+        padding: 0;
+        list-style: none;
+        position: absolute;
+        background: #ededed;
+        overflow: hidden;
+        width: 100%;
+        border-radius: 1em;
+        box-shadow: 0 0 1em rgba(0, 48, 76, 0.5);
+
+        li.type-ahead-hint {
+          padding: 0.2em 0 0.2em 1em;
+          text-align: left;
+
+          &:focus,
+          &:active,
+          &:hover {
+            background: #DEDEDE;
+          }
+
+          &:first-child {
+            padding-top: 0.4em;
+          }
+
+          &:last-child {
+            padding-bottom: 0.4em;
+          }
+        }
+
       }
     }
 
@@ -120,6 +175,10 @@
       align-items: center;
       padding-left: .9em;
       padding-right: 1em;
+
+      &:last-child {
+        border-radius: 0 1.5em 1.5em 0;
+      }
 
       &:not(:last-of-type) {
         border-right: 1px solid #00000042;
@@ -149,7 +208,6 @@
       }
     }
   }
-
 
   &--CountsContainer {
     grid-area: counts;
@@ -431,7 +489,6 @@
         background: #1345bd;
         color: white;
       }
-
     }
     &Text {
       margin: .25em 1.5em;
@@ -488,4 +545,3 @@
   }
 
 }
-
