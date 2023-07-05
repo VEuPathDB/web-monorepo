@@ -33,15 +33,20 @@ class SelectionCell extends React.PureComponent {
     const { rows, isRowSelected, eventHandlers, inert } = this.props;
     const selection = rows.filter(isRowSelected);
     const checked = rows.length && rows.every(isRowSelected);
+    const isIndeterminate = selection.length > 0 && !checked;
 
     let handler = (e) => {
       e.stopPropagation();
-      return checked ? this.deselectAllRows() : this.selectAllRows();
+      return checked || isIndeterminate
+        ? this.deselectAllRows()
+        : this.selectAllRows();
     };
 
     return (
       <th className="SelectionCell" onClick={handler}>
-        {inert ? null : <Checkbox checked={checked} />}
+        {inert ? null : (
+          <Checkbox checked={checked} indeterminate={isIndeterminate} />
+        )}
       </th>
     );
   }

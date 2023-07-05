@@ -1,7 +1,9 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+  AllValuesDefinition,
   AnalysisState,
+  CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
   OverlayConfig,
@@ -90,12 +92,22 @@ import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import DonutMarkerComponent from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarkerComponent from '@veupathdb/components/lib/map/ChartMarker';
 import BubbleMarkerComponent, {
   BubbleMarkerProps,
+  BubbleMarkerStandalone,
 } from '@veupathdb/components/lib/map/BubbleMarker';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import DonutMarkerComponent, {
+  DonutMarkerProps,
+  DonutMarkerStandalone,
+} from '@veupathdb/components/lib/map/DonutMarker';
+import ChartMarkerComponent, {
+  ChartMarkerProps,
+  ChartMarkerStandalone,
+} from '@veupathdb/components/lib/map/ChartMarker';
+import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
+import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
+import { getCategoricalValues } from './utils/categoricalValues';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -105,7 +117,7 @@ enum MapSideNavItemLabels {
   Share = 'Share',
   StudyDetails = 'View Study Details',
   MyAnalyses = 'My Analyses',
-  MapType = 'Map Type',
+  ConfigureMap = 'Configure Map',
 }
 
 enum MarkerTypeLabels {
@@ -282,21 +294,102 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
+  const filtersIncludingViewport = useMemo(() => {
+    const viewportFilters = appState.boundsZoomLevel
+      ? filtersFromBoundingBox(
+          appState.boundsZoomLevel.bounds,
+          {
+            variableId: geoConfig.latitudeVariableId,
+            entityId: geoConfig.entity.id,
+          },
+          {
+            variableId: geoConfig.longitudeVariableId,
+            entityId: geoConfig.entity.id,
+          }
+        )
+      : [];
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...viewportFilters,
+    ];
+  }, [
+    appState.boundsZoomLevel,
+    geoConfig.entity.id,
+    geoConfig.latitudeVariableId,
+    geoConfig.longitudeVariableId,
+    props.analysisState.analysis?.descriptor.subset.descriptor,
+  ]);
+
+  const allFilteredCategoricalValues = usePromise(
+    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
+      /**
+       * We only need this data for categorical vars, so we can return early if var isn't categorical
+       */
+      if (
+        !overlayVariable ||
+        !CategoricalVariableDataShape.is(overlayVariable.dataShape)
+      )
+        return;
+      return getCategoricalValues({
+        overlayEntity,
+        subsettingClient,
+        studyId,
+        overlayVariable,
+        filters,
+      });
+    }, [overlayEntity, overlayVariable, subsettingClient, studyId, filters])
+  );
+
+  const allVisibleCategoricalValues = usePromise(
+    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
+      /**
+       * Return early if:
+       *  - overlay var isn't categorical
+       *  - "Show counts for" toggle isn't set to 'visible'
+       */
+      if (
+        !overlayVariable ||
+        !CategoricalVariableDataShape.is(overlayVariable.dataShape) ||
+        activeMarkerConfiguration?.selectedCountsOption !== 'visible'
+      )
+        return;
+
+      return getCategoricalValues({
+        overlayEntity,
+        subsettingClient,
+        studyId,
+        overlayVariable,
+        filters: filtersIncludingViewport,
+      });
+    }, [
+      overlayEntity,
+      overlayVariable,
+      subsettingClient,
+      studyId,
+      filtersIncludingViewport,
+      activeMarkerConfiguration?.selectedCountsOption,
+    ])
+  );
+
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
   const activeOverlayConfig = usePromise(
     useCallback(async (): Promise<OverlayConfig | undefined> => {
-      // TODO Use `selectedValues` to generate the overlay config. Something like this:
-      // if (activeMarkerConfiguration?.selectedValues) {
-      //   return {
-      //     overlayType: CategoryVariableDataShape.is(overlayVariable?.dataShape) ? 'categorical' : 'continuous',
-      //     overlayVariable: {
-      //       variableId: overlayVariable.id,
-      //       entityId: overlayEntity.id,
-      //     },
-      //     overlayValues: activeMarkerConfiguration.selectedValues
-      //   } as OverlayConfig
-      // }
+      // Use `selectedValues` to generate the overlay config for categorical variables
+      if (
+        activeMarkerConfiguration?.selectedValues &&
+        CategoricalVariableDataShape.is(overlayVariable?.dataShape)
+      ) {
+        return {
+          overlayType: 'categorical',
+          overlayVariable: {
+            variableId: overlayVariable?.id,
+            entityId: overlayEntity?.id,
+          },
+          overlayValues: activeMarkerConfiguration.selectedValues,
+        } as OverlayConfig;
+      }
+
       return getDefaultOverlayConfig({
         studyId,
         filters,
@@ -304,6 +397,7 @@ function MapAnalysisImpl(props: ImplProps) {
         overlayEntity,
         dataClient,
         subsettingClient,
+        binningMethod: activeMarkerConfiguration?.binningMethod,
       });
     }, [
       dataClient,
@@ -312,6 +406,8 @@ function MapAnalysisImpl(props: ImplProps) {
       overlayVariable,
       studyId,
       subsettingClient,
+      activeMarkerConfiguration?.selectedValues,
+      activeMarkerConfiguration?.binningMethod,
     ])
   );
 
@@ -345,8 +441,72 @@ function MapAnalysisImpl(props: ImplProps) {
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
     overlayConfig: activeOverlayConfig.value,
     outputEntityId: outputEntity?.id,
-    //TO DO: maybe dependentAxisLogScale
+    dependentAxisLogScale:
+      activeMarkerConfiguration &&
+      'dependentAxisLogScale' in activeMarkerConfiguration
+        ? activeMarkerConfiguration.dependentAxisLogScale
+        : false,
   });
+
+  const { markersData: previewMarkerData } = useStandaloneMapMarkers({
+    boundsZoomLevel: undefined,
+    geoConfig: geoConfig,
+    studyId,
+    filters,
+    markerType,
+    selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
+    overlayConfig: activeOverlayConfig.value,
+    outputEntityId: outputEntity?.id,
+  });
+
+  const continuousMarkerPreview = useMemo(() => {
+    if (!previewMarkerData || !previewMarkerData.length) return;
+    const initialDataObject = previewMarkerData[0].data.map((data) => ({
+      label: data.label,
+      value: 0,
+      ...(data.color ? { color: data.color } : {}),
+    }));
+    const typedData =
+      markerType === 'pie'
+        ? ([...previewMarkerData] as DonutMarkerProps[])
+        : ([...previewMarkerData] as ChartMarkerProps[]);
+    const finalData = typedData.reduce(
+      (prevData, currData) =>
+        currData.data.map((data, index) => ({
+          label: data.label,
+          value: data.value + prevData[index].value,
+          ...('color' in prevData[index]
+            ? { color: prevData[index].color }
+            : 'color' in data
+            ? { color: data.color }
+            : {}),
+        })),
+      initialDataObject
+    );
+    if (markerType === 'pie') {
+      return (
+        <DonutMarkerStandalone
+          data={finalData}
+          markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+          {...sharedStandaloneMarkerProperties}
+        />
+      );
+    } else {
+      return (
+        <ChartMarkerStandalone
+          data={finalData}
+          markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+          dependentAxisLogScale={
+            activeMarkerConfiguration &&
+            'dependentAxisLogScale' in activeMarkerConfiguration
+              ? activeMarkerConfiguration.dependentAxisLogScale
+              : false
+          }
+          {...sharedStandaloneMarkerProperties}
+        />
+      );
+    }
+  }, [previewMarkerData]);
 
   const markers = useMemo(
     () =>
@@ -481,13 +641,13 @@ function MapAnalysisImpl(props: ImplProps) {
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
-        labelText: MapSideNavItemLabels.MapType,
+        labelText: MapSideNavItemLabels.ConfigureMap,
         icon: <EditLocation />,
         isExpandable: true,
         subMenuConfig: [
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.pie,
+            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
             labelText: MarkerTypeLabels.pie,
             icon: <DonutMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
@@ -495,7 +655,7 @@ function MapAnalysisImpl(props: ImplProps) {
           },
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.barplot,
+            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
             labelText: MarkerTypeLabels.barplot,
             icon: <BarPlotMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
@@ -503,7 +663,7 @@ function MapAnalysisImpl(props: ImplProps) {
           },
           {
             // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.MapType + MarkerTypeLabels.bubble,
+            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.bubble,
             labelText: MarkerTypeLabels.bubble,
             icon: <BubbleMarker style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('bubble'),
@@ -538,6 +698,18 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     toggleStarredVariable={toggleStarredVariable}
                     constraints={markerVariableConstraints}
+                    overlayConfiguration={activeOverlayConfig.value}
+                    overlayVariable={overlayVariable}
+                    subsettingClient={subsettingClient}
+                    studyId={studyId}
+                    filters={filters}
+                    allFilteredCategoricalValues={
+                      allFilteredCategoricalValues.value
+                    }
+                    allVisibleCategoricalValues={
+                      allVisibleCategoricalValues.value
+                    }
+                    continuousMarkerPreview={continuousMarkerPreview}
                   />
                 ) : (
                   <></>
@@ -563,6 +735,18 @@ function MapAnalysisImpl(props: ImplProps) {
                     toggleStarredVariable={toggleStarredVariable}
                     configuration={activeMarkerConfiguration}
                     constraints={markerVariableConstraints}
+                    overlayConfiguration={activeOverlayConfig.value}
+                    overlayVariable={overlayVariable}
+                    subsettingClient={subsettingClient}
+                    studyId={studyId}
+                    filters={filters}
+                    allFilteredCategoricalValues={
+                      allFilteredCategoricalValues.value
+                    }
+                    allVisibleCategoricalValues={
+                      allVisibleCategoricalValues.value
+                    }
+                    continuousMarkerPreview={continuousMarkerPreview}
                   />
                 ) : (
                   <></>
@@ -840,7 +1024,7 @@ function MapAnalysisImpl(props: ImplProps) {
 
   function isMapTypeSubMenuItemSelected() {
     const mapTypeSideNavObject = sideNavigationButtonConfigurationObjects.find(
-      (navObject) => navObject.labelText === MapSideNavItemLabels.MapType
+      (navObject) => navObject.labelText === MapSideNavItemLabels.ConfigureMap
     );
     if (
       mapTypeSideNavObject &&
@@ -873,7 +1057,7 @@ function MapAnalysisImpl(props: ImplProps) {
       MarkerTypeLabels[appState.activeMarkerConfigurationType]
     )
       return (
-        MapSideNavItemLabels.MapType +
+        MapSideNavItemLabels.ConfigureMap +
         MarkerTypeLabels[appState.activeMarkerConfigurationType]
       );
 
@@ -886,32 +1070,6 @@ function MapAnalysisImpl(props: ImplProps) {
   );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...viewportFilters,
-    ];
-  }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
-    props.analysisState.analysis?.descriptor.subset.descriptor,
-  ]);
 
   const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
     useState<boolean>(true);

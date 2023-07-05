@@ -5,7 +5,6 @@ import { isEqual } from 'lodash';
 import { useCallback, useEffect } from 'react';
 import {
   AnalysisState,
-  BinDefinitions,
   useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
@@ -29,16 +28,50 @@ export const MarkerConfiguration = t.intersection([
   t.union([
     t.type({
       type: t.literal('barplot'),
-      selectedValues: t.union([BinDefinitions, t.undefined]), // user-specified selection
+      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
+      binningMethod: t.union([
+        t.literal('equalInterval'),
+        t.literal('quantile'),
+        t.literal('standardDeviation'),
+        t.undefined,
+      ]),
+      dependentAxisLogScale: t.boolean,
+      selectedCountsOption: t.union([
+        t.literal('filtered'),
+        t.literal('visible'),
+        t.undefined,
+      ]),
     }),
     t.type({
       type: t.literal('pie'),
       selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+      binningMethod: t.union([
+        t.literal('equalInterval'),
+        t.literal('quantile'),
+        t.literal('standardDeviation'),
+        t.undefined,
+      ]),
+      selectedCountsOption: t.union([
+        t.literal('filtered'),
+        t.literal('visible'),
+        t.undefined,
+      ]),
     }),
     t.type({
       type: t.literal('bubble'),
       selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+      binningMethod: t.union([
+        t.literal('equalInterval'),
+        t.literal('quantile'),
+        t.literal('standardDeviation'),
+        t.undefined,
+      ]),
+      selectedCountsOption: t.union([
+        t.literal('filtered'),
+        t.literal('visible'),
+        t.undefined,
+      ]),
     }),
   ]),
 ]);
@@ -108,17 +141,24 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
             type: 'pie',
             selectedVariable: defaultVariable,
             selectedValues: undefined,
+            binningMethod: undefined,
+            selectedCountsOption: 'filtered',
           },
           {
             type: 'barplot',
             selectedPlotMode: 'count',
             selectedVariable: defaultVariable,
             selectedValues: undefined,
+            binningMethod: undefined,
+            dependentAxisLogScale: false,
+            selectedCountsOption: 'filtered',
           },
           {
             type: 'bubble',
             selectedVariable: defaultVariable,
             selectedValues: undefined,
+            binningMethod: undefined,
+            selectedCountsOption: 'filtered',
           },
         ],
       };

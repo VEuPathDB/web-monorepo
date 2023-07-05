@@ -14,6 +14,16 @@ import { LinksPosition } from '@veupathdb/coreui/lib/components/inputs/checkboxe
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
+const SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE = {
+  name: 'representativeTranscriptOnly',
+  value: {},
+};
+
+const IN_BASKET_VIEW_FILTER_VALUE = {
+  name: 'in_basket_filter',
+  value: {},
+};
+
 /** @type import('./Types').ReporterFormComponent */
 let TranscriptAttributesReporterForm = (props) => {
   let {
@@ -22,8 +32,10 @@ let TranscriptAttributesReporterForm = (props) => {
     recordClass,
     formState,
     formUiState,
+    viewFilters,
     updateFormState,
     updateFormUiState,
+    updateViewFilters,
     onSubmit,
     ontology,
     includeSubmit,
@@ -38,7 +50,7 @@ let TranscriptAttributesReporterForm = (props) => {
       Object.assign({}, formState, {
         attributes: prependAppropriateIds(
           newAttribsArray,
-          formState.applyFilter,
+          formState.applyOneTranscriptPerGeneFilter,
           recordClass
         ),
       })
@@ -46,9 +58,17 @@ let TranscriptAttributesReporterForm = (props) => {
   };
 
   let transcriptPerGeneChangeHandler = (isChecked) => {
+    const nextViewFilters =
+      viewFilters?.filter(
+        (filterValue) =>
+          filterValue.name !== SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE.name
+      ) ?? [];
+    if (isChecked) {
+      nextViewFilters.push(SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE);
+    }
+    updateViewFilters(nextViewFilters);
     updateFormState(
       Object.assign({}, formState, {
-        applyFilter: isChecked,
         attributes: prependAppropriateIds(
           formState.attributes,
           isChecked,
@@ -56,6 +76,17 @@ let TranscriptAttributesReporterForm = (props) => {
         ),
       })
     );
+  };
+
+  let inBasketFilterChangeHandler = (isChecked) => {
+    const nextViewFilters =
+      viewFilters?.filter(
+        (filterValue) => filterValue.name !== IN_BASKET_VIEW_FILTER_VALUE.name
+      ) ?? [];
+    if (isChecked) {
+      nextViewFilters.push(IN_BASKET_VIEW_FILTER_VALUE);
+    }
+    updateViewFilters(nextViewFilters);
   };
 
   return (
@@ -92,11 +123,31 @@ let TranscriptAttributesReporterForm = (props) => {
               <div>
                 <label>
                   <Checkbox
-                    value={formState.applyFilter}
+                    value={
+                      viewFilters?.some(
+                        (f) =>
+                          f.name === SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE.name
+                      ) ?? false
+                    }
                     onChange={transcriptPerGeneChangeHandler}
                   />
                   <span style={{ marginLeft: '0.5em' }}>
                     Include only one transcript per gene (the longest)
+                  </span>
+                </label>
+              </div>
+              <div>
+                <label>
+                  <Checkbox
+                    value={
+                      viewFilters?.some(
+                        (f) => f.name === IN_BASKET_VIEW_FILTER_VALUE.name
+                      ) ?? false
+                    }
+                    onChange={inBasketFilterChangeHandler}
+                  />
+                  <span style={{ marginLeft: '0.5em' }}>
+                    Include only genes in your basket
                   </span>
                 </label>
               </div>
@@ -148,7 +199,7 @@ let TranscriptAttributesReporterForm = (props) => {
 
 function prependAppropriateIds(
   selectedAttributes,
-  applyFilterChecked,
+  applyOneTranscriptPerGeneFilterChecked,
   recordClass
 ) {
   // per Redmine #22888, don't include transcript ID when filter box is checked and add back if unchecked
@@ -156,7 +207,7 @@ function prependAppropriateIds(
     (attr) => ![recordClass.recordIdAttributeName, 'source_id'].includes(attr)
   );
   return util.addPk(
-    applyFilterChecked
+    applyOneTranscriptPerGeneFilterChecked
       ? nonIdAttrs
       : util.prependAttrib('source_id', nonIdAttrs),
     recordClass
@@ -179,10 +230,10 @@ TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
     scope === 'results'
       ? util.getAttributeSelections(preferences, question, allReportScopedAttrs)
       : allReportScopedAttrs;
-  let filterChecked = getUserPrefFilterValue(preferences);
+  let oneTranscriptPerGeneFilterChecked = getUserPrefFilterValue(preferences);
   selectedAttributes = prependAppropriateIds(
     selectedAttributes,
-    filterChecked,
+    oneTranscriptPerGeneFilterChecked,
     recordClass
   );
   return {
@@ -190,12 +241,14 @@ TranscriptAttributesReporterForm.getInitialState = (downloadFormStoreState) => {
       attributes: selectedAttributes,
       includeHeader: true,
       attachmentType: 'plain',
-      applyFilter: filterChecked,
     },
     formUiState: {
       expandedAttributeNodes: null,
       attributeSearchText: '',
     },
+    viewFilters: oneTranscriptPerGeneFilterChecked
+      ? [SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE]
+      : undefined,
   };
 };
 

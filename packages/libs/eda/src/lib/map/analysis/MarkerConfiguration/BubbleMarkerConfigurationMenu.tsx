@@ -4,14 +4,16 @@ import {
 } from '../../../core/components/visualizations/InputVariables';
 import { VariableDescriptor } from '../../../core/types/variable';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
+import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
 }
 export interface BubbleMarkerConfiguration
-  extends MarkerConfiguration<'bubble'> {
-  selectedVariable: VariableDescriptor;
-  selectedValues: string[] | undefined;
+  extends MarkerConfiguration<'bubble'>,
+    SharedMarkerConfigurations {
+  // selectedVariable: VariableDescriptor;
+  // selectedValues: string[] | undefined;
 }
 interface Props
   extends Omit<
