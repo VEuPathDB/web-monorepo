@@ -84,3 +84,88 @@ upgrade emacs tide (to, at time of writing 4.5.4):
 M-x package-reinstall <ret> tide <ret>
 ```
 
+== Client Bundle Server
+
+The Client Bundle Server is a Docker image based on NGINX that is used to serve
+VEuPathDB client code over HTTP.
+
+As the client code comes in 2 flavors (bundles), legacy and modern, this NGINX
+server has an internal path rewrite based on the requesting browser's user agent
+string to the appropriate client bundle component on request.
+
+This means using a modern browser, requesting the file
+`genomics/site-client.bundle.js` will cause the server to actually return
+`modern/genomics/site-client.bundle.js` whereas requesting that same file from
+an older or unsupported browser (such as CURL or Postman) the server will return
+`legacy/genomics/site-client.bundle.js`.
+
+=== Browsers
+
+Whether a browser is considered modern or legacy is dependent on the version of
+the browser compared to a RegEx constructed by the
+link:https://github.com/browserslist/browserslist-useragent-regexp[browserslist-useragent-regexp]
+library using the input query constructed in the
+link:../packages/configs/browserslist-config[browserslist-config] package of
+this repo.  (See link:../packages/configs/browserslist-config/index.js[index.js]
+for the raw queries)
+
+=== Docker Image
+
+The docker image is based on NGINX-Perl and includes NodeJS for executing a
+script based on
+link:https://github.com/browserslist/browserslist-useragent-regexp[browserslist-useragent-regexp]
+that determines which path a specified file should be served from.
+
+The image build is multi-staged with the first stage compiling primary contents
+of this repository, and the second stage setting up NGINX and the secondary JS
+script included in this directory
+(link:makeSupportedBrowsersScript.js[makeSupportedBrowsersScript.js]).
+
+=== Paths
+
+Content is served from the following paths from the root path used to reach a
+running instance of the built Docker image:
+
+[source]
+----
+{URL}/clinepi/{target-file}
+{URL}/genomics/{target-file}
+{URL}/mbio/{target-file}
+{URL}/ortho/{target-file}
+----
+
+These paths correspond to the following container internal paths:
+
+[source]
+----
+/var/www/legacy/clinepi/{target-file}
+/var/www/modern/clinepi/{target-file}
+
+/var/www/legacy/genomics/{target-file}
+/var/www/modern/genomics/{target-file}
+
+/var/www/legacy/mbio/{target-file}
+/var/www/modern/mbio/{target-file}
+
+/var/www/legacy/ortho/{target-file}
+/var/www/modern/ortho/{target-file}
+----
+
+=== Testing
+
+The Docker image may be tested locally by performing the following steps from
+the link:docker/[docker/] subdirectory:
+
+. Build and Start the image:
++
+[source, shell]
+----
+make docker-build
+make docker-run
+----
+
+. Using your favorite HTTP request making tool such as Postman, CURL, or a web
+browser, make a request to
+http://localhost/genomics/site-client.bundle.js.LICENSE.txt . If the service is
+working you should receive a LICENSE text file's contents as the response with
+a 200 status code.  If it is not working you will receive a 403 or 404 error.
