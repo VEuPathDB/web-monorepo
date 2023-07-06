@@ -1,9 +1,9 @@
-import { Rectangle, useMap, Popup } from 'react-leaflet';
-import React, { useRef, useState } from 'react';
+import { useMap, Popup } from 'react-leaflet';
+import { useRef, useEffect } from 'react';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
-import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
+import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
@@ -30,12 +30,26 @@ export default function BoundsDriftMarker({
   popupContent,
   popupClass,
 }: BoundsDriftMarkerProps) {
-  const [displayBounds, setDisplayBounds] = useState<boolean>(false);
   const map = useMap();
   const boundingBox = new LatLngBounds([
     [bounds.southWest.lat, bounds.southWest.lng],
     [bounds.northEast.lat, bounds.northEast.lng],
   ]);
+
+  const boundsRectangle = L.rectangle(boundingBox, {
+    color: 'gray',
+    weight: 1,
+  });
+  useEffect(() => {
+    /**
+     * Prevents an edge case where the boundsRectangle persists if simultaneously a marker is hovered
+     * and a user changes the viewport
+     */
+    return () => {
+      map.removeLayer(boundsRectangle);
+    };
+  }, [map, boundsRectangle]);
+
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
@@ -145,23 +159,14 @@ export default function BoundsDriftMarker({
 
   const handleMouseOver = (e: LeafletMouseEvent) => {
     e.target._icon.classList.add('top-marker'); // marker on top
-
-    if (showPopup && popupContent) {
-      e.target.openPopup();
-    } else {
-      // there is a conflict with popup so bounds only shows no popup case
-      setDisplayBounds(true); // Display bounds rectangle
-    }
+    map.addLayer(boundsRectangle);
+    e.target.openPopup();
   };
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
     e.target._icon.classList.remove('top-marker'); // remove marker on top
-
-    if (showPopup && popupContent) {
-      e.target.closePopup();
-    } else {
-      setDisplayBounds(false); // Remove bounds rectangle
-    }
+    map.removeLayer(boundsRectangle);
+    e.target.closePopup();
   };
 
   const handleClick = (e: LeafletMouseEvent) => {
@@ -197,9 +202,6 @@ export default function BoundsDriftMarker({
       }}
       {...optionalIconProp}
     >
-      {displayBounds ? (
-        <Rectangle bounds={boundingBox} color={'gray'} weight={1}></Rectangle>
-      ) : null}
       {showPopup && popup}
     </ReactLeafletDriftMarker>
   );
