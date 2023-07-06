@@ -4,7 +4,11 @@
 name: NPM Publish Sites
 on:
   release:
-    types: [published]
+    types:
+      - published
+  push:
+    branches:
+      - main
 
 jobs:
   # Gather the names of the sites directories and store it as an output variable
@@ -17,10 +21,10 @@ jobs:
       - id: set-matrix
         run: echo "matrix=$(ls packages/sites |  jq -Rsc '. / "\n" - [""]')" >> $GITHUB_OUTPUT
 
-  # Publish sites packages to npm
+  # Build and publish sites packages to npm
+  # Skip publishing, if release tag does not begin with "v"
   publish:
-    name: Publish ${{ matrix.dir }}
-    if: ${{ startsWith(github.event.release.tag_name, 'v') }}
+    name: Build and publish ${{ matrix.dir }}
     needs:
       - dirs
     runs-on: ubuntu-latest
@@ -44,6 +48,7 @@ jobs:
           NODE_OPTIONS: '--max-old-space-size=4096'
       - run: node tools/scripts/version.mjs packages/sites/${{ matrix.dir }} ${GITHUB_REF_NAME#v}
       - uses: JS-DevTools/npm-publish@v2
+        if: ${{ startsWith(github.event.release.tag_name, 'v') }}
         with:
           token: ${{ secrets.NPM_TOKEN }}
           access: public
