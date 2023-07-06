@@ -6,7 +6,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
@@ -24,6 +24,7 @@ import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
 
 import Announcements from '@veupathdb/web-common/lib/components/Announcements';
 import CookieBanner from '@veupathdb/web-common/lib/components/CookieBanner';
@@ -52,6 +53,7 @@ import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticD
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 import { useWdkStudyRecords } from '@veupathdb/eda/lib/core/hooks/study';
+import { getWdkStudyRecords } from '@veupathdb/eda/lib/core/utils/study-records';
 
 import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
 
@@ -65,6 +67,10 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { StudyRecord } from '@veupathdb/eda/lib/core/types/study';
+import { Warning } from '@veupathdb/coreui';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -353,20 +359,13 @@ const useHeaderMenuItems = (
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const communitySite = useCommunitySiteRootUrl();
 
-  const showInteractiveMaps = Boolean(useEda && projectId === 'VectorBase');
-  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-  const subsettingClient = useMemo(
-    () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
-    [wdkService]
+  const mapMenuItemsQuestion = useSelector((state: RootState) =>
+    state.globalData.questions?.find(
+      (q) => q.urlSegment === 'DatasetsForMapMenu'
+    )
   );
-  const mapMenuItems = useWdkStudyRecords(subsettingClient)?.map(
-    (record): HeaderMenuItem => ({
-      key: `map-${record.id[0].value}`,
-      display: record.displayName,
-      type: 'reactRoute',
-      url: `/workspace/maps/${record.id[0].value}/new`,
-    })
-  );
+  const showInteractiveMaps = mapMenuItemsQuestion != null;
+  const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -1158,3 +1157,47 @@ const VEuPathDBSnackbarProvider = makeSnackbarProvider(
 export const VEuPathDBHomePage = connect(mapStateToProps)(
   VEuPathDBHomePageView
 );
+
+function useMapMenuItems(question?: Question) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const studyAccessApi = useStudyAccessApi();
+  const subsettingClient = useMemo(
+    () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
+    [wdkService]
+  );
+  const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItem[]>();
+  useEffect(() => {
+    if (question == null) return;
+    getWdkStudyRecords(
+      { studyAccessApi, subsettingClient, wdkService },
+      { searchName: question.urlSegment }
+    ).then(
+      (records) => {
+        const menuItems = records.map(
+          (record): HeaderMenuItem => ({
+            key: `map-${record.id[0].value}`,
+            display: record.displayName,
+            type: 'reactRoute',
+            url: `/workspace/maps/${record.id[0].value}/new`,
+          })
+        );
+        setMapMenuItems(menuItems);
+      },
+      (error) => {
+        console.error(error);
+        setMapMenuItems([
+          {
+            key: 'map-error',
+            type: 'custom',
+            display: (
+              <>
+                <Warning /> Unable to load map datasets.
+              </>
+            ),
+          },
+        ]);
+      }
+    );
+  }, [question, studyAccessApi, subsettingClient, wdkService]);
+  return mapMenuItems;
+}

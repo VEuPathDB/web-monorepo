@@ -171,10 +171,9 @@ export function AllAnalyses(props: Props) {
   } = usePinnedAnalyses(analysisClient);
 
   const subsettingClient = useSubsettingClient();
-  const datasets = useWdkStudyRecords(
-    subsettingClient,
-    WDK_STUDY_RECORD_ATTRIBUTES
-  );
+  const datasets = useWdkStudyRecords(subsettingClient, {
+    attributes: WDK_STUDY_RECORD_ATTRIBUTES,
+  });
 
   const { analyses, deleteAnalyses, updateAnalysis, loading, error } =
     useAnalysisList(analysisClient);

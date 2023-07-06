@@ -27,8 +27,10 @@ import SubsettingClient from '../api/SubsettingClient';
 
 // Hooks
 import { useStudyRecord } from '..';
+import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
+import { getWdkStudyRecords } from '../utils/study-records';
+import { useDeepValue } from './immutability';
 import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
-import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -106,59 +108,29 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
   );
 }
 
-const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id'];
-const DEFAULT_STUDY_TABLES: string[] = [];
-const EMPTY_ARRAY: string[] = [];
+interface WdkStudyRecordsOptions {
+  attributes?: AnswerJsonFormatConfig['attributes'];
+  tables?: AnswerJsonFormatConfig['tables'];
+  searchName?: string;
+}
 
 export function useWdkStudyRecords(
   subsettingClient: SubsettingClient,
-  attributes: AnswerJsonFormatConfig['attributes'] = EMPTY_ARRAY,
-  tables: AnswerJsonFormatConfig['tables'] = EMPTY_ARRAY
+  options?: WdkStudyRecordsOptions
 ): StudyRecord[] | undefined {
-  const permissionsResponse = usePermissions();
+  const studyAccessApi = useStudyAccessApi();
+  const stableOptions = useDeepValue(options);
   return useWdkService(
-    async (wdkService) => {
-      if (permissionsResponse.loading) return;
-      const { permissions } = permissionsResponse;
-      const recordClass = await wdkService.findRecordClass('dataset');
-      const finalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(
-        attributes
-      ).filter((attribute) => attribute in recordClass.attributesMap);
-      const finalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
-        (table) => table in recordClass.tablesMap
-      );
-      const [edaStudies, answer] = await Promise.all([
-        subsettingClient.getStudies(),
-        wdkService.getAnswerJson(
-          {
-            searchName: 'Studies',
-            searchConfig: {
-              parameters: {},
-            },
-          },
-          {
-            attributes: finalAttributes,
-            tables: finalTables,
-            sorting: [
-              {
-                attributeName: 'display_name',
-                direction: 'ASC',
-              },
-            ],
-          }
-        ),
-      ]);
-      const studyIds = new Set(edaStudies.map((s) => s.id));
-      return answer.records.filter((record) => {
-        const datasetId = getStudyId(record);
-        if (datasetId == null) {
-          return false;
-        }
-        const studyId = permissions.perDataset[datasetId]?.studyId;
-        return studyId && studyIds.has(studyId);
-      });
-    },
-    [attributes, tables, permissionsResponse]
+    (wdkService) =>
+      getWdkStudyRecords(
+        {
+          studyAccessApi,
+          subsettingClient,
+          wdkService,
+        },
+        stableOptions
+      ),
+    [studyAccessApi, subsettingClient, stableOptions]
   );
 }
 

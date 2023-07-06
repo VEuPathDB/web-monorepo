@@ -12,7 +12,7 @@ export type AsyncUserPermissions =
   | { loading: false; permissions: UserPermissions };
 
 // Caches permissions until the location changes
-const cachedPermissionCheck = (function () {
+export const cachedPermissionCheck = (function () {
   let result: Promise<UserPermissions>;
   let lastLocation = window.location.href;
   return function cachedPermissionCheck(

@@ -24,7 +24,9 @@ export function StudyList(props: StudyListProps) {
 
   const studyRecordAttributes = useMemo(() => ['study_access'], []);
 
-  const datasets = useWdkStudyRecords(subsettingClient, studyRecordAttributes);
+  const datasets = useWdkStudyRecords(subsettingClient, {
+    attributes: studyRecordAttributes,
+  });
 
   const permissions = usePermissions();
 
