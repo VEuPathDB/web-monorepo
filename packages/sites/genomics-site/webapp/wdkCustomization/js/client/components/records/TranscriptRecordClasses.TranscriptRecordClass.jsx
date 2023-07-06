@@ -65,6 +65,7 @@ function TranscriptViewFilter({
   requestTranscriptFilterUpdate,
   inBasketFilterEnabled,
   updateInBasketFilter,
+  isGuest,
 }) {
   const display = displayTotalCount === 1 ? displayName : displayNamePlural;
   const nativeDisplay =
@@ -116,18 +117,20 @@ function TranscriptViewFilter({
           </div>
         </>
       )}
-      <div>
-        <input
-          id={basketToggleId}
-          type="checkbox"
-          checked={inBasketFilterEnabled}
-          onChange={(e) => updateInBasketFilter(e.currentTarget.checked)}
-        />
-        <label htmlFor={basketToggleId}>
-          <BasketIcon enabled />
-          &nbsp;&nbsp; Show only the {displayNamePlural} in my basket.
-        </label>
-      </div>
+      {!isGuest && (
+        <div>
+          <input
+            id={basketToggleId}
+            type="checkbox"
+            checked={inBasketFilterEnabled}
+            onChange={(e) => updateInBasketFilter(e.currentTarget.checked)}
+          />
+          <label htmlFor={basketToggleId}>
+            <BasketIcon enabled />
+            &nbsp;&nbsp; Show only the {displayNamePlural} in my basket.
+          </label>
+        </div>
+      )}
     </div>
   );
 }
@@ -143,6 +146,7 @@ const ConnectedTranscriptViewFilter = connect(
       ['resultTableSummaryView', props.viewId, 'globalViewFilters'],
       {}
     ),
+    isGuest: get(state, ['globalData', 'user', 'isGuest'], true),
   }),
   (dispatch, props) => ({
     requestTranscriptFilterUpdate: (...args) =>
