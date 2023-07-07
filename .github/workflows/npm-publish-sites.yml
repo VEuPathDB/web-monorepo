@@ -6,9 +6,6 @@ on:
   release:
     types:
       - published
-  push:
-    branches:
-      - main
 
 jobs:
   # Gather the names of the sites directories and store it as an output variable
@@ -37,11 +34,6 @@ jobs:
         with:
           node-version: 14
           cache: yarn
-      - uses: actions/cache@v3
-        with:
-          # cache directory
-          path: packages/sites/${{ matrix.dir }}/node_modules/.cache/webpack/
-          key: ${{ matrix.dir }}-webpack-build
       - run: yarn
       - run: yarn nx bundle:npm @veupathdb/${{matrix.dir}}
         env:
