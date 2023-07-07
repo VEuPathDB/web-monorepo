@@ -44,16 +44,15 @@
 
   tr.DataRow {
     .DataCell:nth-child(1) {
-      position: relative;
       > button {
-        position: absolute;
-        top: 1ex;
-        right: 1em;
         font-weight: bold;
+        text-align: right;
+        width: 100%;
       }
     }
     .DataCell:nth-child(3) {
       text-align: center;
+      white-space: nowrap;
       div {
         display: inline-block;
         width: 36px;

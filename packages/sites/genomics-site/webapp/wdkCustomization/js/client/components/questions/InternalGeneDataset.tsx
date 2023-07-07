@@ -318,7 +318,7 @@ function InternalGeneDatasetContent(props: Props) {
             sortable: true,
             sortType: 'htmlText',
             helpText: 'Organism data is aligned to',
-            renderCell: OrganismCell,
+            renderCell: (props: any) => <OrganismCell {...props} />,
           },
           {
             key: 'display_name',
@@ -830,7 +830,7 @@ function OrganismCell(props: { value: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxHeight: CSSProperties['maxHeight'] = isExpanded
     ? 'fit-content'
-    : '2em';
+    : '2.5em';
   const isOverflowingV = useIsRefOverflowingVertically(containerRef);
   return (
     <>
