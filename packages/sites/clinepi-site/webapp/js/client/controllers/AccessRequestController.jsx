@@ -4,25 +4,27 @@ import { connect } from 'react-redux';
 
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 
-import { 
+import {
   loadStudy,
-  onChangeFieldFactory, 
+  onChangeFieldFactory,
   submitForm,
 } from '../action-creators/AccessRequestActionCreators';
 
-import { 
+import {
   alreadyRequested,
   disableSubmit,
   submissionError,
   successfullySubmitted,
   loaded,
   notFound,
-  fieldElements, 
+  fieldElements,
   formValues,
   studyName,
   requestNeedsApproval,
   downloadLink,
-  title
+  title,
+  requestStatus,
+  allowEdit,
 } from '../selectors/AccessRequestSelectors';
 
 import AccessRequestView from './AccessRequestView';
@@ -35,13 +37,7 @@ class AccessRequestController extends PageController {
   }
 
   loadData(prevProps) {
-    if (
-      prevProps == null ||
-      (
-        prevProps.datasetId !==
-        this.props.datasetId
-      )
-    ) {
+    if (prevProps == null || prevProps.datasetId !== this.props.datasetId) {
       this.props.loadStudy(this.props.datasetId);
     }
   }
@@ -55,15 +51,13 @@ class AccessRequestController extends PageController {
   }
 
   renderView() {
-    return (
-      <AccessRequestView {...this.props} />
-    );
+    return <AccessRequestView {...this.props} />;
   }
 }
 
-const mapStateToProps = ({ 
-  accessRequest: accessRequestState, 
-  globalData: globalDataState
+const mapStateToProps = ({
+  accessRequest: accessRequestState,
+  globalData: globalDataState,
 }) => ({
   webAppUrl: get(globalDataState, 'siteConfig.webAppUrl', ''),
   location: get(globalDataState, 'location', ''),
@@ -79,7 +73,9 @@ const mapStateToProps = ({
   formValues: formValues(accessRequestState),
   studyName: studyName(accessRequestState),
   requestNeedsApproval: requestNeedsApproval(accessRequestState),
-  downloadLink: downloadLink(accessRequestState)
+  downloadLink: downloadLink(accessRequestState),
+  requestStatus: requestStatus(accessRequestState),
+  allowEdit: allowEdit(accessRequestState),
 });
 
 const mapDispatchToProps = {
@@ -89,10 +85,10 @@ const mapDispatchToProps = {
   onChangeResearchQuestion: onChangeFieldFactory('research_question'),
   onChangeAnalysisPlan: onChangeFieldFactory('analysis_plan'),
   onChangeDisseminationPlan: onChangeFieldFactory('dissemination_plan'),
-  submitForm
+  submitForm,
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AccessRequestController);
