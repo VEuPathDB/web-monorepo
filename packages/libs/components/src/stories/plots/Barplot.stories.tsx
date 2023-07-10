@@ -6,6 +6,9 @@ import FacetedBarplot from '../../plots/facetedPlots/FacetedBarplot';
 import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { NumberRange, NumberOrDateRange } from '../../types/general';
 import { Toggle } from '@veupathdb/coreui';
+import DraggablePanel, {
+  HeightAndWidthInPixels,
+} from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
 
 export default {
   title: 'Plots/Barplot',
@@ -184,4 +187,48 @@ LogScale.args = {
     height: '450px',
     width: '750px',
   },
+};
+
+// demo plot resize with draggable panel
+export const PlotResizeWithDraggablePanel: Story<BarplotProps> = (args) => {
+  const panelTitle = 'Panel 1';
+  const draggablePanelHeight = 600;
+  const draggablePanelWidth = 900;
+
+  const [panelDimension, setPanelDimension] = useState<HeightAndWidthInPixels>({
+    height: draggablePanelHeight,
+    width: draggablePanelWidth,
+  });
+
+  return (
+    <DraggablePanel
+      defaultPosition={{ x: 200, y: 200 }}
+      confineToParentContainer
+      key={panelTitle}
+      isOpen
+      panelTitle={panelTitle}
+      showPanelTitle={true}
+      styleOverrides={{
+        resize: 'both',
+      }}
+      onPanelResize={(dimensions: HeightAndWidthInPixels) => {
+        setPanelDimension(dimensions);
+      }}
+    >
+      <Barplot
+        data={dataSet}
+        dependentAxisLabel={'Awesomeness'}
+        independentAxisLabel={'Animal'}
+        displayLegend={false}
+        containerStyles={{
+          // perhaps plot height may be set to be proportional to to plot width
+          // as mostly resize invloves the change of width
+          // Otherwise, if DraggablePanel has other elements like InputVariables, Plot controls,
+          // then, height should substract heights of those elements to be better represented
+          height: panelDimension.height,
+          width: panelDimension.width,
+        }}
+      />
+    </DraggablePanel>
+  );
 };
