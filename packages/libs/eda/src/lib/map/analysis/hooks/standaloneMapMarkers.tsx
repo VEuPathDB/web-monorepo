@@ -11,7 +11,7 @@ import { Filter } from '../../../core/types/filter';
 import { useDataClient } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
-import { isEqual, some } from 'lodash';
+import { isEqual, max, some } from 'lodash';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
@@ -27,6 +27,7 @@ import { useDeepValue } from '../../../core/hooks/immutability';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
 import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
+import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
 
 /**
  * We can use this viewport to request all available data
@@ -67,14 +68,18 @@ export interface StandaloneMapMarkersProps {
    */
   overlayConfig: OverlayConfig | undefined;
   outputEntityId: string | undefined;
-  markerType: 'count' | 'proportion' | 'pie';
+  markerType: 'count' | 'proportion' | 'pie' | 'bubble';
   dependentAxisLogScale?: boolean;
 }
 
 // what this hook returns
 interface MapMarkers {
   /** the markers */
-  markersData: DonutMarkerProps[] | ChartMarkerProps[] | undefined;
+  markersData:
+    | DonutMarkerProps[]
+    | ChartMarkerProps[]
+    | BubbleMarkerProps[]
+    | undefined;
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
   totalVisibleEntityCount: number | undefined;
   /** This tells you how many entities are on screen that also have data for the overlay variable
@@ -207,7 +212,10 @@ export function useStandaloneMapMarkers(
           longitudeVariable,
           overlayConfig,
           outputEntityId,
-          valueSpec: markerType === 'pie' ? 'count' : markerType,
+          valueSpec:
+            markerType === 'pie' || markerType === 'bubble'
+              ? 'count'
+              : markerType,
           viewport,
         },
       };
@@ -278,6 +286,42 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
+    const maxOverlayCount = rawMarkersData.value
+      ? Math.max(
+          ...rawMarkersData.value.mapElements.map((mapElement) => {
+            const count =
+              vocabulary != null // if there's an overlay (all expected use cases)
+                ? mapElement.overlayValues.reduce(
+                    (sum, { count }) => (sum = sum + count),
+                    0
+                  )
+                : mapElement.entityCount;
+            return count;
+          })
+        )
+      : 0;
+
+    const bubbleValueToDiameterMapper = (value: number) => {
+      // const largestCircleArea = 9000;
+      const largestCircleDiameter = 90;
+
+      // Area scales directly with value
+      // const constant = largestCircleArea / maxOverlayCount;
+      // const area = value * constant;
+      // const radius = Math.sqrt(area / Math.PI);
+
+      // Radius scales with log_10 of value
+      // const constant = 20;
+      // const radius = Math.log10(value) * constant;
+
+      // Radius scales directly with value
+      const scalingFactor = largestCircleDiameter / maxOverlayCount;
+      const diameter = value * scalingFactor;
+
+      // return 2 * radius;
+      return diameter;
+    };
+
     return rawMarkersData.value?.mapElements.map(
       ({
         geoAggregateValue,
@@ -342,12 +386,20 @@ export function useStandaloneMapMarkers(
             ? overlayValues.reduce((sum, { count }) => (sum = sum + count), 0)
             : entityCount; // fallback if not
 
+        const bubbleData = [
+          {
+            label: reorderedData[0].label,
+            value: count,
+            color:
+              'color' in reorderedData[0] ? reorderedData[0].color : undefined,
+          },
+        ];
+
         const commonMarkerProps = {
           id: geoAggregateValue,
           key: geoAggregateValue,
           bounds: bounds,
           position: position,
-          data: reorderedData,
           duration: defaultAnimationDuration,
         };
 
@@ -355,12 +407,23 @@ export function useStandaloneMapMarkers(
           case 'pie': {
             return {
               ...commonMarkerProps,
+              data: reorderedData,
               markerLabel: kFormatter(count),
             } as DonutMarkerProps;
+          }
+          case 'bubble': {
+            return {
+              ...commonMarkerProps,
+              data: bubbleData,
+              markerLabel: String(count),
+              dependentAxisRange: defaultDependentAxisRange,
+              valueToDiameterMapper: bubbleValueToDiameterMapper,
+            } as BubbleMarkerProps;
           }
           default: {
             return {
               ...commonMarkerProps,
+              data: reorderedData,
               markerLabel: mFormatter(count),
               dependentAxisRange: defaultDependentAxisRange,
               dependentAxisLogScale,

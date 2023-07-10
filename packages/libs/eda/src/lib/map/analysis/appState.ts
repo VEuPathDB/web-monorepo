@@ -2,7 +2,7 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   AnalysisState,
   useGetDefaultVariableDescriptor,
@@ -15,6 +15,7 @@ const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 const MarkerType = t.keyof({
   barplot: null,
   pie: null,
+  bubble: null,
 });
 
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
@@ -44,6 +45,21 @@ export const MarkerConfiguration = t.intersection([
     }),
     t.type({
       type: t.literal('pie'),
+      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+      binningMethod: t.union([
+        t.literal('equalInterval'),
+        t.literal('quantile'),
+        t.literal('standardDeviation'),
+        t.undefined,
+      ]),
+      selectedCountsOption: t.union([
+        t.literal('filtered'),
+        t.literal('visible'),
+        t.undefined,
+      ]),
+    }),
+    t.type({
+      type: t.literal('bubble'),
       selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
       binningMethod: t.union([
         t.literal('equalInterval'),
@@ -114,37 +130,71 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     studyMetadata.rootEntity.id
   );
 
+  const defaultAppState: AppState = useMemo(
+    () => ({
+      viewport: defaultViewport,
+      mouseMode: 'default',
+      activeMarkerConfigurationType: 'pie',
+      markerConfigurations: [
+        {
+          type: 'pie',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          selectedCountsOption: 'filtered',
+        },
+        {
+          type: 'barplot',
+          selectedPlotMode: 'count',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          dependentAxisLogScale: false,
+          selectedCountsOption: 'filtered',
+        },
+        {
+          type: 'bubble',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          selectedCountsOption: 'filtered',
+        },
+      ],
+    }),
+    [defaultVariable]
+  );
+
   useEffect(() => {
-    if (analysis && !appState) {
-      const defaultAppState: AppState = {
-        viewport: defaultViewport,
-        mouseMode: 'default',
-        activeMarkerConfigurationType: 'pie',
-        markerConfigurations: [
-          {
-            type: 'pie',
-            selectedVariable: defaultVariable,
-            selectedValues: undefined,
-            binningMethod: undefined,
-            selectedCountsOption: 'filtered',
-          },
-          {
-            type: 'barplot',
-            selectedPlotMode: 'count',
-            selectedVariable: defaultVariable,
-            selectedValues: undefined,
-            binningMethod: undefined,
-            dependentAxisLogScale: false,
-            selectedCountsOption: 'filtered',
-          },
-        ],
-      };
-      setVariableUISettings((prev) => ({
-        ...prev,
-        [uiStateKey]: defaultAppState,
-      }));
+    if (analysis) {
+      if (!appState) {
+        setVariableUISettings((prev) => ({
+          ...prev,
+          [uiStateKey]: defaultAppState,
+        }));
+      } else {
+        const missingMarkerConfigs =
+          defaultAppState.markerConfigurations.filter(
+            (defaultConfig) =>
+              !appState.markerConfigurations.some(
+                (config) => config.type === defaultConfig.type
+              )
+          );
+
+        if (missingMarkerConfigs.length > 0) {
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              markerConfigurations: [
+                ...appState.markerConfigurations,
+                ...missingMarkerConfigs,
+              ],
+            },
+          }));
+        }
+      }
     }
-  }, [analysis, appState, defaultVariable, setVariableUISettings, uiStateKey]);
+  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(

@@ -72,8 +72,13 @@ import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BarPlotMarkerConfigurationMenu,
   PieMarkerConfigurationMenu,
+  BubbleMarkerConfigurationMenu,
 } from './MarkerConfiguration';
-import { BarPlotMarker, DonutMarker } from './MarkerConfiguration/icons';
+import {
+  BarPlotMarker,
+  DonutMarker,
+  BubbleMarker,
+} from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
@@ -87,6 +92,11 @@ import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import BubbleMarkerComponent, {
+  BubbleMarkerProps,
+  BubbleMarkerStandalone,
+} from '@veupathdb/components/lib/map/BubbleMarker';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import DonutMarkerComponent, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -113,6 +123,7 @@ enum MapSideNavItemLabels {
 enum MarkerTypeLabels {
   pie = 'Donuts',
   barplot = 'Bar plots',
+  bubble = 'Bubbles',
 }
 
 type SideNavigationItemConfigurationObject = {
@@ -406,6 +417,8 @@ function MapAnalysisImpl(props: ImplProps) {
       case 'barplot': {
         return activeMarkerConfiguration?.selectedPlotMode; // count or proportion
       }
+      case 'bubble':
+        return 'bubble';
       case 'pie':
       default:
         return 'pie';
@@ -500,6 +513,8 @@ function MapAnalysisImpl(props: ImplProps) {
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
           <DonutMarkerComponent {...markerProps} />
+        ) : markerType === 'bubble' ? (
+          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
         ) : (
           <ChartMarkerComponent {...markerProps} />
         )
@@ -646,6 +661,14 @@ function MapAnalysisImpl(props: ImplProps) {
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
           },
+          {
+            // concatenating the parent and subMenu labels creates a unique ID
+            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.bubble,
+            labelText: MarkerTypeLabels.bubble,
+            icon: <BubbleMarker style={{ height: '1.25em' }} />,
+            onClick: () => setActiveMarkerConfigurationType('bubble'),
+            isActive: activeMarkerConfigurationType === 'bubble',
+          },
         ],
         renderSideNavigationPanel: (apps) => {
           const markerVariableConstraints = apps
@@ -724,6 +747,31 @@ function MapAnalysisImpl(props: ImplProps) {
                       allVisibleCategoricalValues.value
                     }
                     continuousMarkerPreview={continuousMarkerPreview}
+                  />
+                ) : (
+                  <></>
+                ),
+            },
+            {
+              type: 'bubble',
+              displayName: MarkerTypeLabels.bubble,
+              icon: (
+                <BubbleMarker
+                  style={{ height: '1.5em', marginLeft: '0.25em' }}
+                />
+              ),
+              configurationMenu:
+                activeMarkerConfiguration?.type === 'bubble' ? (
+                  <BubbleMarkerConfigurationMenu
+                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
+                    entities={studyEntities}
+                    onChange={updateMarkerConfigurations}
+                    configuration={activeMarkerConfiguration}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                    constraints={markerVariableConstraints}
                   />
                 ) : (
                   <></>
@@ -1170,25 +1218,71 @@ function MapAnalysisImpl(props: ImplProps) {
                   />
                 </div>
 
-                <DraggablePanel
-                  isOpen
-                  showPanelTitle
-                  panelTitle={overlayVariable?.displayName || 'Legend'}
-                  confineToParentContainer
-                  defaultPosition={{ x: window.innerWidth, y: 225 }}
-                  styleOverrides={{
-                    zIndex: legendZIndex,
-                  }}
-                >
-                  <div style={{ padding: '5px 10px' }}>
-                    <MapLegend
-                      isLoading={legendItems.length === 0}
-                      legendItems={legendItems}
-                      // control to show checkbox. default: true
-                      showCheckbox={false}
-                    />
-                  </div>
-                </DraggablePanel>
+                {(markerType === 'count' || markerType === 'proportion') && (
+                  <DraggablePanel
+                    isOpen
+                    showPanelTitle
+                    panelTitle={overlayVariable?.displayName || 'Legend'}
+                    confineToParentContainer
+                    defaultPosition={{ x: window.innerWidth, y: 225 }}
+                    styleOverrides={{
+                      zIndex: legendZIndex,
+                    }}
+                  >
+                    <div style={{ padding: '5px 10px' }}>
+                      <MapLegend
+                        isLoading={legendItems.length === 0}
+                        legendItems={legendItems}
+                        // control to show checkbox. default: true
+                        showCheckbox={false}
+                      />
+                    </div>
+                  </DraggablePanel>
+                )}
+
+                {/* Maybe should reintroduce loading placeholder */}
+                {markerType === 'bubble' && markersData !== undefined && (
+                  <DraggablePanel
+                    isOpen
+                    showPanelTitle
+                    panelTitle={overlayVariable?.displayName || 'Legend'}
+                    confineToParentContainer
+                    defaultPosition={{ x: window.innerWidth, y: 225 }}
+                    styleOverrides={{
+                      zIndex: legendZIndex,
+                    }}
+                  >
+                    <div style={{ padding: '5px 10px' }}>
+                      <PlotLegend
+                        type="bubble"
+                        // isLoading={legendItems.length === 0}
+                        // legendItems={legendItems}
+                        // control to show checkbox. default: true
+                        // showCheckbox={false}
+                        legendMax={
+                          markersData
+                            ? Math.max(
+                                ...markersData.map(
+                                  (markerData) => markerData.data[0].value ?? 0
+                                )
+                              )
+                            : 0
+                        }
+                        valueToDiameterMapper={
+                          (markersData as BubbleMarkerProps[])[0]
+                            .valueToDiameterMapper
+                        }
+                        containerStyles={{
+                          border: 'none',
+                          boxShadow: 'none',
+                          padding: 0,
+                          width: 'auto',
+                          maxWidth: 400,
+                        }}
+                      />
+                    </div>
+                  </DraggablePanel>
+                )}
 
                 {/* <FloatingDiv
                   style={{
