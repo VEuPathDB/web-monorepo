@@ -23,6 +23,7 @@ import {
 import {
   datasetId,
   formValues,
+  requestStatus,
   userId,
 } from '../selectors/AccessRequestSelectors';
 import { parse } from 'querystring';
@@ -233,13 +234,7 @@ function observeSubmitForm(action$, state$, dependencies) {
     filter(({ type }) => type === SUBMIT_FORM),
     withLatestFrom(state$),
     mergeMap(async ([, { [key]: accessRequestState }]) => {
-      const studyAccessRequestData = await getStudyAccessRequestData(
-        dependencies.studyAccessApi,
-        userId(accessRequestState),
-        datasetId(accessRequestState)
-      );
-
-      if (studyAccessRequestData) {
+      if (requestStatus(accessRequestState) === 'denied') {
         const {
           purpose,
           prior_auth,
