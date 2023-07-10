@@ -1,60 +1,11 @@
-import React, { Component, Fragment, useEffect, useState } from 'react';
+import React, { Component, Fragment } from 'react';
 
-import { Link } from '@veupathdb/wdk-client/lib/Components'
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 import SupportFormBase from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBase';
 import SupportFormBody from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBody';
 
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
-
-const camelToSnakeCase = (str) =>
-  str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-
-const AccessRequestView = (props) => {
-  const [existingRequestData, setExistingRequestData] = useState(null);
-  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
-  const studyAccessApi = useStudyAccessApi();
-
-  useEffect(() => {
-    // It's possible that the user has already submitted an access request. If
-    // so, this will get the submitted form values so we can prepopulate the
-    // fields.
-    const asyncFunction = async () => {
-      let response = null;
-
-      try {
-        response =
-          props.datasetId && user
-            ? await studyAccessApi.fetchEndUserEntry(user.id, props.datasetId)
-            : null;
-      } catch (error) {
-        // The endpoint returns a 404 if the user has not already submitted
-        // a request, so a 404 is expected behavior. Any other error is not.
-        if (!error.message.startsWith("404 Not Found")) throw error;
-      }
-
-      const requestData = response
-        ? Object.keys(response).reduce((newObj, key) => {
-            newObj[camelToSnakeCase(key)] = response[key];
-            return newObj;
-          }, {})
-        : null;
-      setExistingRequestData(requestData);
-    };
-
-    asyncFunction();
-  }, [user, studyAccessApi, props.location]);
-
-  return (
-    <AccessRequestViewInner
-      {...props}
-      existingRequestData={existingRequestData}
-    />
-  );
-};
-
-class AccessRequestViewInner extends Component {
+class AccessRequestView extends Component {
   constructor(...args) {
     super(...args);
 
@@ -64,16 +15,13 @@ class AccessRequestViewInner extends Component {
   }
 
   renderTitle() {
-    const {
-      formTitle,
-      successfullySubmitted,
-      alreadyRequested,
-      existingRequestData,
-    } = this.props;
+    const { formTitle, successfullySubmitted, requestStatus } = this.props;
 
     if (successfullySubmitted) {
       return <h1>Data Access Request Submitted</h1>;
-    } else if (alreadyRequested || existingRequestData) {
+    } else if (requestStatus === 'denied') {
+      return <h1>Re-Submit Data Access Request</h1>;
+    } else if (requestStatus === 'requested') {
       return <h1>Data Access Request Already Submitted</h1>;
     } else {
       return <h1>{formTitle}</h1>;
@@ -86,33 +34,65 @@ class AccessRequestViewInner extends Component {
       successfullySubmitted,
       requestNeedsApproval,
       datasetId,
-      alreadyRequested,
       webAppUrl,
-      existingRequestData,
+      requestStatus,
+      denialReason,
     } = this.props;
     const studyPageUrl = webAppUrl + '/app/record/dataset/' + datasetId;
 
-    if (successfullySubmitted && (requestNeedsApproval!="0")) {
+    if (successfullySubmitted && requestNeedsApproval != '0') {
       return (
         <Fragment>
           <p>
-            Your data access request has been submitted. We will contact you if any additional information is needed. Please <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a> with any questions.
+            Your data access request has been submitted. We will contact you if
+            any additional information is needed. Please{' '}
+            <a href={`${webAppUrl}/app/contact-us`} target="_blank">
+              contact us
+            </a>{' '}
+            with any questions.
           </p>
         </Fragment>
       );
-    } else if (successfullySubmitted && (requestNeedsApproval=="0")) {
+    } else if (successfullySubmitted && requestNeedsApproval == '0') {
       return (
         <Fragment>
           <p>
-          Thank you for submitting your data access registration. You may go to the <a href={`${studyPageUrl}`}>study page</a> to download the data files.
+            Thank you for submitting your data access registration. You may go
+            to the <a href={`${studyPageUrl}`}>study page</a> to download the
+            data files.
           </p>
         </Fragment>
       );
-    } else if (alreadyRequested || existingRequestData) {
+    } else if (requestStatus === 'denied') {
+      const denialReasonDetails = denialReason.split('.');
       return (
         <Fragment>
           <p>
-            Our records indicate that you have already submitted a request for this dataset. If you have any questions about the status of your request, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a>. 
+            Your data access request has been denied with the following details:
+            <ul className="access-request-denial-ul">
+              <li>{denialReasonDetails[0].trim()}</li>
+              <li>{denialReasonDetails[1].trim()}</li>
+            </ul>
+            You may edit and re-submit your request. Please{' '}
+            <a href={`${webAppUrl}/app/contact-us`} target="_blank">
+              contact us
+            </a>{' '}
+            with any questions.
+          </p>
+          <AccessRequestForm />
+        </Fragment>
+      );
+    } else if (requestStatus === 'requested') {
+      return (
+        <Fragment>
+          <p>
+            Our records indicate that you have already submitted a request for
+            this dataset. If you have any questions about the status of your
+            request, please don't hesitate to{' '}
+            <a href={`${webAppUrl}/app/contact-us`} target="_blank">
+              contact us
+            </a>
+            .
           </p>
           <AccessRequestForm />
         </Fragment>
@@ -130,46 +110,63 @@ class AccessRequestViewInner extends Component {
       submitForm,
       submissionError,
       webAppUrl,
-      alreadyRequested,
-      existingRequestData,
+      allowEdit,
       datasetId,
     } = this.props;
 
     return (
       <Fragment>
         <h4 className="access-request-form-header">
-          Data files will be available to download in a tab-delimited format with an additional data dictionary file. To process your download request, the data providers for this study require documentation of the following information.
-          <br/><br/>
-          To ensure transparency and promote collaboration within the wider scientific community, your name, organization, date of request and purpose for which the data will be used, as submitted below, will appear publicly on the corresponding  <a href={`${webAppUrl}/app/record/dataset/${datasetId}#AccessRequest`}>study page</a> after a request has been granted. The dataset page also contains critical methodologic information and study findings that are necessary to interpret the requested study data. 
-          <br/><br/>
-          If you have any questions about a data access request please contact us at <a href={`${webAppUrl}/app/contact-us`}>help@clinepidb.org</a>.
+          Data files will be available to download in a tab-delimited format
+          with an additional data dictionary file. To process your download
+          request, the data providers for this study require documentation of
+          the following information.
+          <br />
+          <br />
+          To ensure transparency and promote collaboration within the wider
+          scientific community, your name, organization, date of request and
+          purpose for which the data will be used, as submitted below, will
+          appear publicly on the corresponding{' '}
+          <a
+            href={`${webAppUrl}/app/record/dataset/${datasetId}#AccessRequest`}
+          >
+            study page
+          </a>{' '}
+          after a request has been granted. The dataset page also contains
+          critical methodologic information and study findings that are
+          necessary to interpret the requested study data.
+          <br />
+          <br />
+          If you have any questions about a data access request please contact
+          us at <a href={`${webAppUrl}/app/contact-us`}>help@clinepidb.org</a>.
         </h4>
-        <form 
-          onSubmit={e => {
+        <form
+          onSubmit={(e) => {
             e.preventDefault();
             submitForm();
-          }}>
+          }}
+        >
           <table align="left">
             <tbody>
-              {fieldElements.map(({ key, FieldComponent, label, onChangeKey }) => 
-                <FieldComponent
-                  key={key}
-                  mykey={key}
-                  label={label}
-                  value={
-                    existingRequestData &&
-                    existingRequestData.hasOwnProperty(key)
-                      ? existingRequestData[key]
-                      : formValues[key]
-                  }
-                  onChange={this.props[onChangeKey]}
-                  disabled={alreadyRequested || existingRequestData} />
+              {fieldElements.map(
+                ({ key, FieldComponent, label, onChangeKey }) => (
+                  <FieldComponent
+                    key={key}
+                    mykey={key}
+                    label={label}
+                    value={formValues[key]}
+                    onChange={this.props[onChangeKey]}
+                    disabled={!allowEdit}
+                  />
+                )
               )}
               <tr>
                 <td colSpan={4}>
                   <div>
                     <em>
-                      Note: if there is a discrepancy with your personal information, please <Link to="/user/profile">update your profile</Link>.
+                      Note: if there is a discrepancy with your personal
+                      information, please{' '}
+                      <Link to="/user/profile">update your profile</Link>.
                     </em>
                   </div>
                 </td>
@@ -178,24 +175,24 @@ class AccessRequestViewInner extends Component {
                 <td colSpan={4}>
                   <input
                     type="submit"
-                    disabled={disableSubmit || existingRequestData}
+                    disabled={disableSubmit || !allowEdit}
                     value="Submit"
                   />
                 </td>
               </tr>
-              {
-                submissionError &&
+              {submissionError && (
                 <tr>
                   <td colSpan={4}>
-                    The following error was reported when we tried to submit your request. 
-                    If it persists, please don't hesitate to <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a> for help:
-
-                    <p>
-                      {submissionError}
-                    </p>
+                    The following error was reported when we tried to submit
+                    your request. If it persists, please don't hesitate to{' '}
+                    <a href={`${webAppUrl}/app/contact-us`} target="_blank">
+                      contact us
+                    </a>{' '}
+                    for help:
+                    <p>{submissionError}</p>
                   </td>
                 </tr>
-              }
+              )}
             </tbody>
           </table>
         </form>
@@ -206,8 +203,8 @@ class AccessRequestViewInner extends Component {
   render() {
     const Title = this.renderTitle;
     const Content = this.renderContent;
-    
-    return ( 
+
+    return (
       <SupportFormBase>
         <SupportFormBody>
           <Title />
