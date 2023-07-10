@@ -20,7 +20,7 @@ class AccessRequestView extends Component {
     if (successfullySubmitted) {
       return <h1>Data Access Request Submitted</h1>;
     } else if (requestStatus === 'denied') {
-      return <h1>Data Access Request Denied</h1>;
+      return <h1>Re-Submit Data Access Request</h1>;
     } else if (requestStatus === 'requested') {
       return <h1>Data Access Request Already Submitted</h1>;
     } else {
@@ -36,6 +36,7 @@ class AccessRequestView extends Component {
       datasetId,
       webAppUrl,
       requestStatus,
+      denialReason,
     } = this.props;
     const studyPageUrl = webAppUrl + '/app/record/dataset/' + datasetId;
 
@@ -63,11 +64,16 @@ class AccessRequestView extends Component {
         </Fragment>
       );
     } else if (requestStatus === 'denied') {
+      const denialReasonDetails = denialReason.split('.');
       return (
         <Fragment>
           <p>
-            Your data access request has been denied. You may edit and re-submit
-            your request. Please{' '}
+            Your data access request has been denied with the following details:
+            <ul className="access-request-denial-ul">
+              <li>{denialReasonDetails[0].trim()}</li>
+              <li>{denialReasonDetails[1].trim()}</li>
+            </ul>
+            You may edit and re-submit your request. Please{' '}
             <a href={`${webAppUrl}/app/contact-us`} target="_blank">
               contact us
             </a>{' '}

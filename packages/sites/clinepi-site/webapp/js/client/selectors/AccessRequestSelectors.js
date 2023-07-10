@@ -49,6 +49,8 @@ export const requestStatus = ({ requestStatus }) => requestStatus;
 
 export const allowEdit = ({ allowEdit }) => !!allowEdit;
 
+export const denialReason = ({ denialReason }) => denialReason;
+
 export const fieldElements = (state) => {
   const labelMap = labels(state);
 

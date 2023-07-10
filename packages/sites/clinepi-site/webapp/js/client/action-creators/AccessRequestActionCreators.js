@@ -8,6 +8,7 @@ export const SUBMIT_FORM = 'request-access/submit-form';
 export const FINISH_SUBMISSION = 'request-access/finish-submission';
 export const UPDATE_REQUEST_STATUS = 'request-access/update-request-status';
 export const UPDATE_EDITABLE_STATUS = 'request-access/update-editable-status';
+export const UPDATE_DENIAL_REASON = 'request-access/update-denial-reason';
 
 export const loadStudy = (datasetId) => ({
   type: LOAD_STUDY,
@@ -27,6 +28,13 @@ export const updateEditableStatus = (status) => ({
   type: UPDATE_EDITABLE_STATUS,
   payload: {
     status,
+  },
+});
+
+export const updateDenialReason = (reason) => ({
+  type: UPDATE_DENIAL_REASON,
+  payload: {
+    reason,
   },
 });
 

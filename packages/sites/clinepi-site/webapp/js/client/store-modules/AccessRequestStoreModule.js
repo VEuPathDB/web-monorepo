@@ -11,14 +11,16 @@ import {
   UPDATE_SUBMISSION_ERROR,
   UPDATE_USER_ID,
   UPDATE_REQUEST_STATUS,
+  UPDATE_EDITABLE_STATUS,
+  UPDATE_DENIAL_REASON,
   finishSubmission,
   updateField,
   updateLoadingError,
   updateStudy,
   updateUserId,
   updateRequestStatus,
-  UPDATE_EDITABLE_STATUS,
   updateEditableStatus,
+  updateDenialReason,
 } from '../action-creators/AccessRequestActionCreators';
 import {
   datasetId,
@@ -57,6 +59,7 @@ const initialState = {
   },
   requestStatus: '',
   allowEdit: true,
+  denialReason: '',
 };
 
 const ALREADY_REQUESTED_STATUS = 409;
@@ -79,6 +82,12 @@ export function reduce(state = initialState, { type, payload }) {
       return {
         ...state,
         allowEdit: payload.status,
+      };
+
+    case UPDATE_DENIAL_REASON:
+      return {
+        ...state,
+        denialReason: payload.reason,
       };
 
     case UPDATE_STUDY:
@@ -205,6 +214,7 @@ function observeLoadStudy(action$, state$, dependencies) {
                   ),
                   updateRequestStatus(studyAccessRequestData['approvalStatus']),
                   updateEditableStatus(studyAccessRequestData['allowEdit']),
+                  updateDenialReason(studyAccessRequestData['denialReason']),
                 ]
               : [
                   updateField('purpose', ''),
@@ -214,6 +224,7 @@ function observeLoadStudy(action$, state$, dependencies) {
                   updateField('dissemination_plan', ''),
                   updateRequestStatus(''),
                   updateEditableStatus(true),
+                  updateDenialReason(''),
                 ]),
             updateStudy(study),
             // reset these values when page loads to avoid getting "stuck" on the

@@ -25,6 +25,7 @@ import {
   title,
   requestStatus,
   allowEdit,
+  denialReason,
 } from '../selectors/AccessRequestSelectors';
 
 import AccessRequestView from './AccessRequestView';
@@ -76,6 +77,7 @@ const mapStateToProps = ({
   downloadLink: downloadLink(accessRequestState),
   requestStatus: requestStatus(accessRequestState),
   allowEdit: allowEdit(accessRequestState),
+  denialReason: denialReason(accessRequestState),
 });
 
 const mapDispatchToProps = {
