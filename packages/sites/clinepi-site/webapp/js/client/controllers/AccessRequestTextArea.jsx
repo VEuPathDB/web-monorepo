@@ -5,7 +5,6 @@ const AccessRequestTextArea = ({
   rows,
   cols,
   required,
-  disabled,
   ...otherProps
 }) => (
   <tr>
@@ -17,11 +16,14 @@ const AccessRequestTextArea = ({
       <br />
       <textarea
         id={mykey}
-        className={disabled ? 'disabled-access-request-textarea' : null}
+        className={
+          otherProps.disabled ? 'disabled-access-request-textarea' : null
+        }
         rows={8}
         cols={150}
-        title={disabled ? 'Pending requests cannot be edited.' : null}
-        disabled
+        title={
+          otherProps.disabled ? 'Pending requests cannot be edited.' : null
+        }
         required
         {...otherProps}
       />
