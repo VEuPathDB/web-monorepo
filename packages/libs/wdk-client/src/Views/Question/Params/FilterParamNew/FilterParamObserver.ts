@@ -139,6 +139,8 @@ const observeInitialParamData: Observer = (action$, state$, services) => {
           } as Filter);
         }
       }
+      // If filters is empty, assume there is no initialParamData for this param.
+      if (filters.length === 0) return EMPTY;
       return of(
         updateParamValue({
           paramValue: JSON.stringify({ filters }),

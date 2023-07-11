@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
 } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router';
@@ -16,9 +17,10 @@ import {
 } from '@veupathdb/wdk-client/lib/Components';
 import { TabbedDisplay } from '@veupathdb/coreui';
 import { CommonResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
+import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
 import QuestionController, {
   useSetSearchDocumentTitle,
-  OwnProps as Props,
+  Props,
 } from '@veupathdb/wdk-client/lib/Controllers/QuestionController';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -55,6 +57,7 @@ import { isPreferredDataset } from '../../util/preferredOrganisms';
 import { PageLoading } from '../common/PageLoading';
 
 import './InternalGeneDataset.scss';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
 
@@ -312,10 +315,10 @@ function InternalGeneDatasetContent(props: Props) {
           {
             key: 'organism_prefix',
             name: 'Organism',
-            type: 'html',
             sortable: true,
             sortType: 'htmlText',
             helpText: 'Organism data is aligned to',
+            renderCell: (props: any) => <OrganismCell {...props} />,
           },
           {
             key: 'display_name',
@@ -820,4 +823,31 @@ function makeLinkClickHandler(
       setSelectedSearch(categorySearchName);
     }
   };
+}
+
+function OrganismCell(props: { value: string }) {
+  const containerRef = useRef<HTMLElement>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxHeight: CSSProperties['maxHeight'] = isExpanded
+    ? 'fit-content'
+    : '2.5em';
+  const isOverflowingV = useIsRefOverflowingVertically(containerRef);
+  return (
+    <>
+      {safeHtml(
+        props.value,
+        { ref: containerRef, style: { maxHeight, overflow: 'hidden' } },
+        'div'
+      )}
+      {isOverflowingV && (
+        <button
+          type="button"
+          className="link"
+          onClick={() => setIsExpanded((v) => !v)}
+        >
+          {isExpanded ? 'Read less' : 'Read more'}
+        </button>
+      )}
+    </>
+  );
 }

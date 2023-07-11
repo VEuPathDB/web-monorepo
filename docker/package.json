@@ -1,0 +1,6 @@
+{
+  "name": "veupathdb-client-container",
+  "dependencies": {
+    "browserslist-useragent-regexp": "^2.1.0"
+  }
+}
