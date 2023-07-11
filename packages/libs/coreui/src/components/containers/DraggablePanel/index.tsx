@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import { CSSProperties, ReactNode, useEffect, useState, useMemo } from 'react';
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import { css } from '@emotion/react';
 import useResizeObserver from 'use-resize-observer';
@@ -113,7 +113,7 @@ export default function DraggablePanel({
         width: width,
       });
     },
-    [height, width, onPanelResize]
+    [height, width]
   );
 
   const finalPosition = confineToParentContainer
