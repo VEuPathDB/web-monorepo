@@ -88,9 +88,11 @@ interface TemplateProps {
   log2FoldChangeThreshold: number;
   significanceThreshold: number;
   adjustedPValueGate: number;
+  independentAxisRange?: NumberRange;
+  dependentAxisRange?: NumberRange;
   comparisonLabels?: string[];
-  independentAxisRange: NumberRange;
-  dependentAxisRange: NumberRange;
+  width?: number;
+  height?: number;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -114,6 +116,8 @@ const Template: Story<TemplateProps> = (args) => {
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
+    width: args.width,
+    height: args.height,
   };
 
   return <VolcanoPlot {...volcanoPlotProps} />;
@@ -133,6 +137,8 @@ Simple.args = {
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+  height: 500,
+  width: 600,
 };
 
 // Most volcano plots will have thousands of points, since each point
