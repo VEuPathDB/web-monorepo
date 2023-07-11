@@ -3,6 +3,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { range } from 'lodash';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
 import { VolcanoPlotData } from '../../types/plots/volcanoplot';
+import { NumberRange } from '../../types/general';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -87,6 +88,8 @@ interface TemplateProps {
   log2FoldChangeThreshold: number;
   significanceThreshold: number;
   adjustedPValueGate: number;
+  independentAxisRange: NumberRange;
+  dependentAxisRange: NumberRange;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -111,6 +114,8 @@ const Template: Story<TemplateProps> = (args) => {
     log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
     comparisonLabels: comparisonLabels, // currently does nothing. not yet implemented.
+    independentAxisRange: args.independentAxisRange,
+    dependentAxisRange: args.dependentAxisRange,
   };
 
   return <VolcanoPlot {...volcanoPlotProps} />;
@@ -127,6 +132,8 @@ Simple.args = {
   markerBodyOpacity: 0.8,
   log2FoldChangeThreshold: 1,
   significanceThreshold: 0.01,
+  independentAxisRange: { min: -8, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
 };
 
 // Most volcano plots will have thousands of points, since each point
@@ -138,6 +145,8 @@ ManyPoints.args = {
   markerBodyOpacity: 0.5,
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
+  independentAxisRange: { min: -8, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
 };
 
 // Add story for truncation

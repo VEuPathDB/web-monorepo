@@ -85,39 +85,49 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   // Determine mins, maxes of axes in the plot.
   // These are different than the data mins/maxes because
-  // of the log transform and the little bit of padding. The padding
-  // ensures we don't clip off part of the glyphs that represent
-  // the most extreme points
-  let xMin: number;
-  let xMax: number;
-  let yMin: number;
-  let yMax: number;
-  const AXIS_PADDING_FACTOR = 0.05;
+  // of the log transform and the little bit of padding, or because axis ranges
+  // are supplied.
+  let xAxisMin: number;
+  let xAxisMax: number;
+  let yAxisMin: number;
+  let yAxisMax: number;
+  const AXIS_PADDING_FACTOR = 0.05; // The padding ensures we don't clip off part of the glyphs that represent
+  // the most extreme points.
 
   // X axis
-  if (dataXMin && dataXMax) {
-    // We can use the dataMin and dataMax here because we don't have a further transform
-    xMin = dataXMin;
-    xMax = dataXMax;
-    // Add a little padding to prevent clipping the glyph representing the extreme points
-    xMin = xMin - (xMax - xMin) * AXIS_PADDING_FACTOR;
-    xMax = xMax + (xMax - xMin) * AXIS_PADDING_FACTOR;
+  if (independentAxisRange) {
+    xAxisMin = independentAxisRange.min;
+    xAxisMax = independentAxisRange.max;
   } else {
-    xMin = 0;
-    xMax = 0;
+    if (dataXMin && dataXMax) {
+      // We can use the dataMin and dataMax here because we don't have a further transform
+      xAxisMin = dataXMin;
+      xAxisMax = dataXMax;
+      // Add a little padding to prevent clipping the glyph representing the extreme points
+      xAxisMin = xAxisMin - (xAxisMax - xAxisMin) * AXIS_PADDING_FACTOR;
+      xAxisMax = xAxisMax + (xAxisMax - xAxisMin) * AXIS_PADDING_FACTOR;
+    } else {
+      xAxisMin = 0;
+      xAxisMax = 0;
+    }
   }
 
   // Y axis
-  if (dataYMin && dataYMax) {
-    // Standard volcano plots have -log10(raw p value) as the y axis
-    yMin = -Math.log10(dataYMax);
-    yMax = -Math.log10(dataYMin);
-    // Add a little padding to prevent clipping the glyph representing the extreme points
-    yMin = yMin - (yMax - yMin) * AXIS_PADDING_FACTOR;
-    yMax = yMax + (yMax - yMin) * AXIS_PADDING_FACTOR;
+  if (dependentAxisRange) {
+    yAxisMin = dependentAxisRange.min;
+    yAxisMax = dependentAxisRange.max;
   } else {
-    yMin = 0;
-    yMax = 0;
+    if (dataYMin && dataYMax) {
+      // Standard volcano plots have -log10(raw p value) as the y axis
+      yAxisMin = -Math.log10(dataYMax);
+      yAxisMax = -Math.log10(dataYMin);
+      // Add a little padding to prevent clipping the glyph representing the extreme points
+      yAxisMin = yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR;
+      yAxisMax = yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR;
+    } else {
+      yAxisMin = 0;
+      yAxisMax = 0;
+    }
   }
 
   /**
@@ -150,8 +160,17 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           so use caution when ordering the children (ex. draw axes before data).  */}
       <XYChart
         height={height ?? 300}
-        xScale={{ type: 'linear', domain: [xMin, xMax] }}
-        yScale={{ type: 'linear', domain: [yMin, yMax], zero: false }}
+        xScale={{
+          type: 'linear',
+          domain: [xAxisMin, xAxisMax],
+          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+        }}
+        yScale={{
+          type: 'linear',
+          domain: [yAxisMin, yAxisMax],
+          zero: false,
+          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+        }}
         width={width ?? 300}
       >
         {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
