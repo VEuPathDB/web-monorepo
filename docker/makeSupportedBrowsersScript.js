@@ -5,7 +5,7 @@ const { getUserAgentRegExp } = require('browserslist-useragent-regexp');
 const outputFileName = process.argv[2];
 const r = getUserAgentRegExp({
   env: 'modern',
-  allowHigherVersions: true
+  allowHigherVersions: true,
 });
 const program = `#!/opt/node/bin/node
 
@@ -19,8 +19,8 @@ const isModern = ${r}.test(userAgent);
 process.stdout.write(isModern ? 'modern' : 'legacy');
 `;
 
-if (outputFileName) fs.writeFile(outputFileName, program, 'utf8', err => {
-  if (err) throw err;
-});
-
+if (outputFileName)
+  fs.writeFile(outputFileName, program, 'utf8', (err) => {
+    if (err) throw err;
+  });
 else process.stdout.write(program);
