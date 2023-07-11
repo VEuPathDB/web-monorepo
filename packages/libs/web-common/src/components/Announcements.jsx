@@ -257,6 +257,46 @@ const siteAnnouncements = [
     }
   },
 */
+
+  //VectorBase, July 8 2023 genome pages for Ixodes scapularis PalLabHiFi and  Ixodes scapularis Wikel https://redmine.apidb.org/issues/51701
+  {
+    id: 'ixodesScap',
+    renderDisplay: (props) => {
+      if (
+        props.projectId == 'VectorBase' &&
+        (props.location.pathname.indexOf(
+          '/record/dataset/TMPTX_iscaPalLabHiFi'
+        ) > -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_iscaWikel') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_975ab2c4c6') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_bb84a3ee55') > -1)
+      ) {
+        return (
+          <div key="ixodesScap">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_iscaPalLabHiFi">
+              <i>Ixodes scapularis</i> PalLabHiFi
+            </a>{' '}
+            is the <b>new reference genome</b> for this tick species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_iscaWikel">
+              <i>Ixodes scapularis</i> Wikel
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
   // VectorBase gene page for Haemaphysalis longicornis HaeL-2018
   {
     id: 'HLOH',

@@ -350,6 +350,9 @@ export function RecordTable(props) {
     case 'MendelGPIForm':
       return <MendelGPIForm {...props} />;
 
+    case 'FungalGPIForm':
+      return <FungalGPIForm {...props} />;
+
     case 'StringDBForm':
       return <StringDBForm {...props} />;
 
@@ -1156,6 +1159,47 @@ class MendelGPIForm extends React.Component {
           <input type="radio" name="LSet" value="protozoa" /> Protozoa
           <br />
           <br />
+          <input type="submit" />
+        </form>
+      </div>
+    );
+  }
+}
+
+class FungalGPIForm extends React.Component {
+  inputHeader(t) {
+    if (t.length > 1) {
+      return <p>Select the Protein:</p>;
+    }
+  }
+
+  printInputs(t) {
+    if (t.length == 1) {
+      return (
+        <input type="hidden" name="source_ID" value={t[0].protein_source_id} />
+      );
+    }
+
+    return t.map((p) => {
+      return (
+        <label key={p.protein_source_id}>
+          <input type="radio" name="source_ID" value={p.protein_source_id} />
+          {p.protein_source_id} <br />{' '}
+        </label>
+      );
+    });
+  }
+
+  render() {
+    let { project_id } = this.props.record.attributes;
+    let t = this.props.value;
+    return (
+      <div>
+        <form action="/cgi-bin/fungalGPI.pl" target="_blank" method="post">
+          <input type="hidden" name="project_id" value={projectId} />
+          <input type="hidden" id="id_type" name="id_type" value="protein" />
+          {this.inputHeader(t)}
+          {this.printInputs(t)}
           <input type="submit" />
         </form>
       </div>
