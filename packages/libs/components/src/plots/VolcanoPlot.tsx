@@ -12,6 +12,7 @@ import {
   GlyphSeries,
   Annotation,
   AnnotationLineSubject,
+  AnnotationLabel,
 } from '@visx/xychart';
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
@@ -39,7 +40,7 @@ export interface VolcanoPlotProps {
   dependentAxisRange?: NumberRange;
   /**
    * Array of size 2 that contains a label for the left and right side
-   * of the x axis. (Not yet implemented). Expect this to be passed by the viz based
+   * of the x axis (in that order). Expect this to be passed by the viz based
    * on the type of data we're using (genes vs taxa vs etc.)
    */
   comparisonLabels?: Array<string>;
@@ -71,6 +72,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     markerBodyOpacity,
     containerClass = 'web-components-plot',
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
+    comparisonLabels,
   } = props;
 
   /**
@@ -138,6 +140,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
    * Accessors - tell visx which value of the data point we should use and where.
    */
 
+  // For the actual volcano plot data
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => {
       return Number(d?.log2foldChange);
@@ -147,7 +150,9 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     },
   };
 
-  const thresholdLineAccessors = {
+  // For all other situations where we need to access point values. For example
+  // threshold lines and annotations.
+  const xyAccessors = {
     xAccessor: (d: VisxPoint) => {
       return d?.x;
     },
@@ -185,6 +190,30 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
         <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
+        {/* X axis annotations */}
+        {comparisonLabels &&
+          comparisonLabels.map((label, ind) => {
+            return (
+              <Annotation
+                datum={{
+                  x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
+                  y: yAxisMin,
+                }}
+                dx={0}
+                dy={-15}
+                {...xyAccessors}
+              >
+                <AnnotationLabel
+                  subtitle={label}
+                  horizontalAnchor="middle"
+                  verticalAnchor="start"
+                  showAnchorLine={false}
+                  showBackground={false}
+                />
+              </Annotation>
+            );
+          })}
+
         {/* Draw threshold lines as annotations below the data points. The
             annotations use XYChart's theme and dimension context.
             The Annotation component holds the context for its children, which is why
@@ -199,7 +228,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
               x: 0, // horizontal line so x could be anything
               y: -Math.log10(Number(significanceThreshold)),
             }}
-            {...thresholdLineAccessors}
+            {...xyAccessors}
           >
             <AnnotationLineSubject
               orientation="horizontal"
@@ -215,7 +244,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
                 x: -log2FoldChangeThreshold,
                 y: 0, // vertical line so y could be anything
               }}
-              {...thresholdLineAccessors}
+              {...xyAccessors}
             >
               <AnnotationLineSubject {...thresholdLineStyles} />
             </Annotation>
@@ -224,7 +253,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
                 x: log2FoldChangeThreshold,
                 y: 0, // vertical line so y could be anything
               }}
-              {...thresholdLineAccessors}
+              {...xyAccessors}
             >
               <AnnotationLineSubject {...thresholdLineStyles} />
             </Annotation>
