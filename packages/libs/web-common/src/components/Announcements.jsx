@@ -258,7 +258,45 @@ const siteAnnouncements = [
   },
 */
 
-  //VectorBase, July 8 2023 genome pages for Ixodes scapularis PalLabHiFi and  Ixodes scapularis Wikel https://redmine.apidb.org/issues/51701
+  //VectorBase, July 8 2023  FOR A YEAR  :  genome pages for Aedes albopictus Foshan FPA and Aedes albopictus Foshan  https://redmine.apidb.org/issues/51815
+  {
+    id: 'albopicusFoshan',
+    renderDisplay: (props) => {
+      if (
+        (props.projectId == 'VectorBase' || props.projectId == 'EuPathDB') &&
+        (props.location.pathname.indexOf('/record/dataset/TMPTX_aalbFPA') >
+          -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_f18070316b') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/TMPTX_aalbFoshan') >
+            -1 ||
+          props.location.pathname.indexOf('/record/dataset/DS_58c436b555') > -1)
+      ) {
+        return (
+          <div key="albopicusFoshan">
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_aalbFPA">
+              <i>Aedes albopictus</i> Foshan FPA
+            </a>{' '}
+            is the <b>new reference genome</b> for this tick species, which
+            means that the 'omics' data sets are only aligned to this strain and
+            all the site functionality is activated.{' '}
+            <a href="https://vectorbase.org/vectorbase/app/record/dataset/TMPTX_aalbFoshan">
+              <i>Aedes albopictus</i> Foshan
+            </a>{' '}
+            will remain available on VectorBase, but with limited functionality.
+            Please{' '}
+            <a href="https://vectorbase.org/vectorbase/app/contact-us">
+              contact us
+            </a>{' '}
+            if you have any questions, suggestions or feedback.
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+
+  //VectorBase, July 8 2023  FOR A YEAR  :  genome pages for Ixodes scapularis PalLabHiFi and  Ixodes scapularis Wikel https://redmine.apidb.org/issues/51701
   {
     id: 'ixodesScap',
     renderDisplay: (props) => {
