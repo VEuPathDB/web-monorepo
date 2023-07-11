@@ -6,11 +6,17 @@ import {
   UPDATE_FORM_UI,
   UPDATE_FORM,
   ReporterSelection,
+  UPDATE_VIEW_FILTERS,
 } from '../Actions/DownloadFormActions';
 import WdkServiceJsonReporterForm from '../Views/ReporterForm/WdkServiceJsonReporterForm';
 import { STANDARD_REPORTER_NAME } from '../Views/ReporterForm/reporterUtils';
 import { UserPreferences } from '../Utils/WdkUser';
-import { RecordClass, Question, Reporter } from '../Utils/WdkModel';
+import {
+  RecordClass,
+  Question,
+  Reporter,
+  FilterValueArray,
+} from '../Utils/WdkModel';
 import { ServiceError } from '../Service/ServiceError';
 import { CategoryOntology } from '../Utils/CategoryUtils';
 import { Action } from '../Actions';
@@ -29,6 +35,7 @@ export type State = {
   selectedReporter: string | null;
   formState: any;
   formUiState: any;
+  viewFilters?: FilterValueArray;
   error?: ServiceError;
 };
 
@@ -56,6 +63,7 @@ const initialState: State = {
   selectedReporter: null,
   formState: null,
   formUiState: null,
+  viewFilters: undefined,
 };
 
 const getDefaultReporter: GetSelectedReporter = () =>
@@ -83,6 +91,9 @@ export const makeReducer =
 
       case UPDATE_FORM_UI:
         return updateFormUiState(state, action.payload.formUiState);
+
+      case UPDATE_VIEW_FILTERS:
+        return updateViewFilters(state, action.payload.viewFilters);
 
       case SET_ERROR:
         return setError(state, action.payload.error);
@@ -228,4 +239,8 @@ function updateFormState(state: State, formState: any) {
 
 function updateFormUiState(state: State, formUiState: any) {
   return Object.assign({}, state, { formUiState });
+}
+
+function updateViewFilters(state: State, viewFilters?: FilterValueArray) {
+  return Object.assign({}, state, { viewFilters });
 }

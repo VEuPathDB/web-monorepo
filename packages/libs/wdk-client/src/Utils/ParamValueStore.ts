@@ -7,16 +7,23 @@ import { ParameterValues } from '../Utils/WdkModel';
 const SERVICE_VERSION_STORE_KEY = '__service-version';
 const USER_ID_STORE_KEY = '__user-id';
 
+export type GlobalParamMapping = {
+  [ParamName in string]: string;
+};
 export interface ParamValueStore {
   clearParamValues: () => Promise<void>;
 
-  fetchParamValues: (paramContext: string) => Promise<ParameterValues | null>;
+  fetchParamValues: (
+    paramContext: string,
+    globalParamMapping?: GlobalParamMapping
+  ) => Promise<ParameterValues | null>;
 
   removeParamValueEntry: (paramContext: string) => Promise<void>;
 
   updateParamValues: (
     paramContext: string,
-    newParamValues: ParameterValues
+    newParamValues: ParameterValues,
+    globalParamMapping?: GlobalParamMapping
   ) => Promise<ParameterValues>;
 }
 
@@ -73,24 +80,51 @@ function makeInstance(
     clearParamValues: () => {
       return _store.clear();
     },
-    fetchParamValues: async (paramContext) => {
+    fetchParamValues: async (paramContext, globalParamMapping) => {
       await _checkServiceVersionAndUserId({ forceUser: true });
 
       const storeKey = makeParamStoreKey(paramContext);
 
-      return _store.getItem(storeKey);
+      let paramValues = await _store.getItem<ParameterValues>(storeKey);
+
+      if (globalParamMapping) {
+        paramValues ??= {};
+
+        for (const [paramName, key] of Object.entries(globalParamMapping)) {
+          const value = await _store.getItem<string>(key);
+          if (value) {
+            paramValues[paramName] = value;
+          }
+        }
+      }
+
+      return paramValues;
     },
     removeParamValueEntry: (paramContext: string) => {
       const storeKey = makeParamStoreKey(paramContext);
 
       return _store.removeItem(storeKey);
     },
-    updateParamValues: async (paramContext, newParamValues) => {
+    updateParamValues: async (
+      paramContext,
+      newParamValues,
+      globalParamMapping
+    ) => {
       await _checkServiceVersionAndUserId();
 
       const storeKey = makeParamStoreKey(paramContext);
 
-      return _store.setItem(storeKey, newParamValues);
+      await _store.setItem(storeKey, newParamValues);
+
+      if (globalParamMapping) {
+        for (const [paramName, key] of Object.entries(globalParamMapping)) {
+          if (paramName in newParamValues) {
+            await _store.setItem(key, newParamValues[paramName]);
+          }
+        }
+      }
+
+      return newParamValues;
     },
   };
 }

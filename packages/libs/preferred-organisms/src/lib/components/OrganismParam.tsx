@@ -126,7 +126,7 @@ function TreeBoxOrganismEnumParam(
       renderNode,
       searchPredicate,
     }),
-    [renderNode, searchPredicate]
+    [maxSelectedCount, renderNode, searchPredicate]
   );
 
   return hasEmptyVocabularly(paramWithPrunedVocab) ? (

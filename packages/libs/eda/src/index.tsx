@@ -39,7 +39,6 @@ import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wra
 import {
   disableRestriction,
   enableRestriction,
-  reduxMiddleware,
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 
 import { edaEndpoint, wdkEndpoint, rootElement, rootUrl } from './constants';
@@ -224,7 +223,6 @@ initialize({
     },
   }),
   endpoint: wdkEndpoint,
-  additionalMiddleware: [reduxMiddleware],
 } as any);
 
 // If you want to start measuring performance in your app, pass a function
