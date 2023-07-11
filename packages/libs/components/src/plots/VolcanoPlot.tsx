@@ -11,6 +11,8 @@ import {
   GlyphSeries,
   Annotation,
   AnnotationLineSubject,
+  BarSeries,
+  DataContext,
 } from '@visx/xychart';
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
@@ -20,6 +22,9 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
+import { Bar } from '@visx/shape';
+import { useContext } from 'react';
+import { PatternLines } from '@visx/visx';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -52,6 +57,34 @@ export interface VolcanoPlotProps {
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
+
+interface TruncationRectangleProps {
+  xMin: number;
+  xMax: number;
+  yMin: number;
+  yMax: number;
+  fill?: string;
+}
+
+// MUST be used within a visx DataProvider component because it
+// relies on the DataContext to work
+function TruncationRectangle(props: TruncationRectangleProps) {
+  const { xMin, xMax, yMin, yMax, fill } = props;
+  const { xScale, yScale } = useContext(DataContext);
+  console.log(yScale && yScale(3));
+
+  return xScale && yScale ? (
+    <Bar
+      x={Number(xScale(xMin))}
+      y={Number(yScale(yMax))}
+      width={20}
+      height={Number(yScale(yMin)) - Number(yScale(yMax))}
+      fill={fill ?? 'rgba(1,0,0,0.8)'}
+    />
+  ) : (
+    <></>
+  );
+}
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
@@ -150,8 +183,21 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           so use caution when ordering the children (ex. draw axes before data).  */}
       <XYChart
         height={height ?? 300}
-        xScale={{ type: 'linear', domain: [xMin, xMax] }}
-        yScale={{ type: 'linear', domain: [yMin, yMax], zero: false }}
+        xScale={{
+          type: 'linear',
+          domain: independentAxisRange
+            ? [independentAxisRange.min, independentAxisRange.max]
+            : [xMin, xMax],
+          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+        }}
+        yScale={{
+          type: 'linear',
+          domain: dependentAxisRange
+            ? [dependentAxisRange.min, dependentAxisRange.max]
+            : [yMin, yMax],
+          zero: false,
+          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+        }}
         width={width ?? 300}
       >
         {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
@@ -225,6 +271,31 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             }}
           />
         </Group>
+
+        {/* Truncation indicators */}
+        {/* Example from https://airbnb.io/visx/docs/pattern */}
+        <PatternLines
+          id="lines"
+          height={5}
+          width={5}
+          stroke={'black'}
+          strokeWidth={1}
+          orientation={['diagonal']}
+        />
+        <TruncationRectangle
+          xMin={xMin}
+          xMax={xMax}
+          yMin={yMin}
+          yMax={yMax}
+          fill={"url('#lines')"}
+        />
+        <TruncationRectangle
+          xMin={xMax}
+          xMax={xMax}
+          yMin={yMin}
+          yMax={yMax}
+          fill={"url('#lines')"}
+        />
       </XYChart>
     </div>
   );
