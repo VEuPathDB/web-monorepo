@@ -4,9 +4,14 @@ import { Link } from 'react-router-dom';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { useWdkStudyRecords } from '../core/hooks/study';
+import { SubsettingClient } from '../core/api';
 
-export function StudyList() {
-  const studies = useWdkStudyRecords();
+interface Props {
+  subsettingClient: SubsettingClient;
+}
+
+export function StudyList({ subsettingClient }: Props) {
+  const studies = useWdkStudyRecords(subsettingClient);
   if (studies == null) return <div>Loading...</div>;
   return (
     <div>

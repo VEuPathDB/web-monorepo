@@ -64,10 +64,19 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           />
         )}
       />
-      <Route path={`${path}/studies`} exact render={() => <StudyList />} />
+      <Route
+        path={`${path}/studies`}
+        exact
+        render={() => <StudyList subsettingClient={edaClient} />}
+      />
       <Route
         path={`${path}/public`}
-        render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
+        render={() => (
+          <PublicAnalysesRoute
+            analysisClient={analysisClient}
+            subsettingClient={edaClient}
+          />
+        )}
       />
       <Route
         path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}

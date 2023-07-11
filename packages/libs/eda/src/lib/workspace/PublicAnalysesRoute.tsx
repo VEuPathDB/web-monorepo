@@ -9,18 +9,21 @@ import { AnalysisClient, usePublicAnalysisList } from '../core';
 import { useWdkStudyRecords } from '../core/hooks/study';
 
 import { PublicAnalyses } from './PublicAnalyses';
+import SubsettingClient from '../core/api/SubsettingClient';
 
 export interface Props {
   analysisClient: AnalysisClient;
+  subsettingClient: SubsettingClient;
   exampleAnalysesAuthor?: number;
 }
 
 export function PublicAnalysesRoute({
   analysisClient,
+  subsettingClient,
   exampleAnalysesAuthor,
 }: Props) {
   const publicAnalysisListState = usePublicAnalysisList(analysisClient);
-  const studyRecords = useWdkStudyRecords();
+  const studyRecords = useWdkStudyRecords(subsettingClient);
 
   const location = useLocation();
   const makeAnalysisLink = useCallback(
