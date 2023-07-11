@@ -1102,6 +1102,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
     !showDependentAxisBanner &&
     data0?.binWidthSlider == null; // for ordinal string x-variables
 
+  // always enable useBinning for timeline Viz
+  const alwaysEnableUseBinning = useMemo(() => {
+    return showMarginalHistogram && xAxisVariable?.dataShape === 'continuous';
+  }, [showMarginalHistogram, xAxisVariable]);
+
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
 
@@ -1131,7 +1136,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       independentAxisRange: undefined,
       independentAxisLogScale: false,
       independentAxisValueSpec: 'Full',
-      useBinning: false,
+      useBinning: alwaysEnableUseBinning,
       binWidth: undefined,
       binWidthTimeUnit: undefined,
     });
@@ -1202,6 +1207,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
     truncationConfigDependentAxisMax,
     setTruncatedDependentAxisWarning,
   ]);
+
+  // change default vizConfig.useBinning to be true if timeline Viz
+  useEffect(() => {
+    if (alwaysEnableUseBinning) onUseBinningChange(true);
+  }, [alwaysEnableUseBinning]);
 
   const controlsNode = (
     <>
@@ -1341,15 +1351,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
               />
             ) : null}
-            <Toggle
-              label={'Binning'}
-              value={vizConfig.useBinning}
-              onChange={(newValue: boolean) => {
-                onUseBinningChange(newValue);
-              }}
-              disabled={neverUseBinning}
-              themeRole="primary"
-            />
+            {/* hide Binning toggle for timeline Viz */}
+            {!alwaysEnableUseBinning ? (
+              <Toggle
+                label={'Binning'}
+                value={vizConfig.useBinning}
+                onChange={(newValue: boolean) => {
+                  onUseBinningChange(newValue);
+                }}
+                disabled={neverUseBinning}
+                themeRole="primary"
+              />
+            ) : null}
             <BinWidthControl
               binWidth={data0?.binWidthSlider?.binWidth}
               onBinWidthChange={onBinWidthChange}
@@ -1374,7 +1387,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
                     ? '250px'
                     : '350px',
               }}
-              disabled={!vizConfig.useBinning || neverUseBinning}
+              // always enable binning for timeline Viz
+              disabled={
+                alwaysEnableUseBinning
+                  ? undefined
+                  : !vizConfig.useBinning || neverUseBinning
+              }
             />
           </div>
 
