@@ -144,14 +144,6 @@ export interface MapVEuMapProps {
   /** What's the minimum leaflet zoom level allowed? Default = 1 */
   minZoom?: number;
   /**
-   * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
-   **/
-  showMouseToolbar?: boolean;
-  /** mouseMode control */
-  mouseMode?: MouseMode;
-  /** a function for changing mouseMode */
-  onMouseModeChange?: (value: MouseMode) => void;
-  /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
   baseLayer?: BaseLayerChoice;
@@ -196,7 +188,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showGrid,
     zoomLevelToGeohashLevel,
     minZoom = 1,
-    showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
     flyToMarkers,
@@ -208,8 +199,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showAttribution = true,
     showZoomControl = true,
     scrollingEnabled = true,
-    mouseMode,
-    onMouseModeChange,
     interactive = true,
     defaultViewport,
   } = props;
@@ -263,7 +252,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
 
   const finalMarkers = useMemo(() => {
     return markers.map((marker) => cloneElement(marker, { showPopup: true }));
-  }, [markers, mouseMode]);
+  }, [markers]);
 
   const disabledInteractiveProps = {
     dragging: false,
@@ -279,7 +268,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       center={viewport.center}
       zoom={viewport.zoom}
       style={{ height, width, ...style }}
-      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
       worldCopyJump={false}
       whenCreated={onCreated}
