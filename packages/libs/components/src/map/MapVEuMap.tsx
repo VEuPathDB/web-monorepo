@@ -28,7 +28,6 @@ import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
 import './styles/map-styles.css';
 import CustomGridLayer from './CustomGridLayer';
-import { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
