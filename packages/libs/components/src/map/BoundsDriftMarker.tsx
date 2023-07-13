@@ -12,12 +12,14 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   popupClass?: string;
 }
 
-const MARKER_BORDER_ADJUSTMENT = 5;
 /**
- * Accounts for minor discrepancies between actual screen dims vs what getBoundingClient returns
- * NOTE: determined by trial and error, nothing scientific
+ * These adjustments account for discrepancies between actual rendered positions vs what getBoundingClient returns
+ * NOTE: moreso determined by trial and error, nothing scientific
  */
+const FINE_ADJUSTMENT = 5;
 const OFFSET_ADJUSTMENT = 35;
+// Default offset applied to popups. Not sure how/why the y-value is 7.
+const DEFAULT_OFFSET = [0, 7];
 
 // Which direction the popup should come out from the marker
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -73,77 +75,37 @@ export default function BoundsDriftMarker({
       const mapRect = map.getContainer().getBoundingClientRect();
       const markerRect = markerRef.current._icon.getBoundingClientRect();
       const markerCenterX = (markerRect.left + markerRect.right) / 2;
-      // @ts-ignore
-      const grayBoundsRect = boundsRectangle._path.getBoundingClientRect();
+      const grayBoundsRect = boundsRectangle
+        .getElement()
+        ?.getBoundingClientRect();
       /**
        * Now that we anchor to the "highest" element (the marker or the gray box), we want to use the "higher" element
        * when determining if the popup should orient up or down
+       * To please TypeScript, we'll fallback to markerRect.top if grayBoundsRect doesn't exist (though it should exist)
        */
-      const topOfMarkerOrGrayBox =
-        markerRect.top < grayBoundsRect.top
+      const topOfMarkerOrGrayBox = grayBoundsRect
+        ? markerRect.top < grayBoundsRect.top
           ? markerRect.top
-          : grayBoundsRect.top;
+          : grayBoundsRect.top
+        : markerRect.top;
 
-      /**
-       * Within each conditional block that sets the value for popupOrientationRef, we will:
-       *  1.  check the position of the gray box vs the marker to determine which element the popup should
-       *      be anchored to
-       *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
-       */
       if (
         topOfMarkerOrGrayBox - OFFSET_ADJUSTMENT - mapRect.top <
         popupContent.size.height
       ) {
         popupOrientationRef.current = 'down';
-        const yOffset =
-          markerRect.bottom > grayBoundsRect.bottom
-            ? markerRect.height / 2 + MARKER_BORDER_ADJUSTMENT / 2
-            : markerRect.height / 2 +
-              grayBoundsRect.bottom -
-              markerRect.bottom -
-              MARKER_BORDER_ADJUSTMENT / 2;
-        popupRef.current.options.offset = {
-          x: MARKER_BORDER_ADJUSTMENT / 2,
-          y: yOffset,
-        };
       } else if (
         markerCenterX - OFFSET_ADJUSTMENT / 2 - mapRect.left <
         popupContent.size.width / 2
       ) {
         popupOrientationRef.current = 'right';
-        const xOffset =
-          markerRect.right > grayBoundsRect.right
-            ? markerRect.width / 4 + MARKER_BORDER_ADJUSTMENT
-            : markerRect.width / 4 - (markerRect.right - grayBoundsRect.right);
-        popupRef.current.options.offset = {
-          x: xOffset,
-          y: markerRect.height / 4,
-        };
       } else if (
         mapRect.right - OFFSET_ADJUSTMENT / 2 - markerCenterX <
         popupContent.size.width / 2
       ) {
         popupOrientationRef.current = 'left';
-        const xOffset =
-          markerRect.left < grayBoundsRect.left
-            ? -markerRect.width / 4
-            : -markerRect.width / 4 - (markerRect.left - grayBoundsRect.left);
-        popupRef.current.options.offset = {
-          x: xOffset,
-          y: markerRect.height / 4,
-        };
       } else {
         popupOrientationRef.current = 'up';
-        const yOffset =
-          markerRect.top < grayBoundsRect.top
-            ? -MARKER_BORDER_ADJUSTMENT / 2
-            : grayBoundsRect.top -
-              markerRect.top -
-              MARKER_BORDER_ADJUSTMENT / 2;
-        popupRef.current.options.offset = {
-          x: MARKER_BORDER_ADJUSTMENT / 2,
-          y: yOffset,
-        };
       }
     }
   };
@@ -193,10 +155,71 @@ export default function BoundsDriftMarker({
     }
   });
 
+  const updateAnchorPosition = (orientation: PopupOrientation) => {
+    const grayBoundsRect = boundsRectangle
+      .getElement()
+      ?.getBoundingClientRect();
+    // grayBoundsRect should exist, but we'll early return in the event it doesn't, which
+    // also pleases the TypeScript overlords
+    if (!grayBoundsRect) return;
+
+    const markerRect = markerRef.current._icon.getBoundingClientRect();
+    const markerIconRect =
+      markerRef.current._icon.firstChild.getBoundingClientRect();
+    const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
+    const { height: anchorHeight, width: anchorWidth } = anchorRect;
+    const popupRect = popupRef.current._container.getBoundingClientRect();
+
+    /**
+     * Within each conditional block, we will:
+     *  1.  check the position of the gray box vs the marker to determine which element the popup should
+     *      be anchored to
+     *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
+     */
+    if (orientation === 'down') {
+      const yOffset =
+        (markerIconRect.bottom > grayBoundsRect.bottom
+          ? markerIconRect.bottom
+          : grayBoundsRect.bottom) -
+        popupRect.top +
+        anchorHeight -
+        FINE_ADJUSTMENT / 2;
+      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+    } else if (orientation === 'right') {
+      const xOffset =
+        (markerIconRect.right > grayBoundsRect.right
+          ? markerIconRect.right
+          : grayBoundsRect.right) +
+        anchorWidth / 2 -
+        popupRect.left;
+      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+    } else if (orientation === 'left') {
+      const xOffset =
+        (markerRect.left < grayBoundsRect.left
+          ? markerRect.left
+          : grayBoundsRect.left) -
+        popupRect.right -
+        anchorWidth / 2;
+      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+    } else {
+      const yOffset =
+        (markerRect.top < grayBoundsRect.top
+          ? markerRect.top
+          : grayBoundsRect.top) -
+        FINE_ADJUSTMENT / 2 -
+        popupRect.bottom;
+      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+    }
+  };
+
   const handlePopupOpen = () => {
     // Orient the popup correctly
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
+
+    // Do this after updatePopupOrientationRef and orientPopup so that the actual popupRef's orientation (not to be mistaken
+    // with the popupOrientationRef) is updated by the time we use its getBoundingClientRect values
+    updateAnchorPosition(popupOrientationRef.current);
 
     // Watch for changes to the popup's styling
     const popupDOMNode = popupRef.current._container as HTMLElement;
@@ -208,6 +231,10 @@ export default function BoundsDriftMarker({
 
     // Have to do this again because styling is changed again on close
     orientPopup(popupOrientationRef.current);
+
+    // Set the popupRef's offsets back to the defaults so we use the same baseline position
+    // to calculate the popup offset in updateAnchorPosition
+    popupRef.current.options.offset = DEFAULT_OFFSET;
   };
 
   const popup = popupContent && (
