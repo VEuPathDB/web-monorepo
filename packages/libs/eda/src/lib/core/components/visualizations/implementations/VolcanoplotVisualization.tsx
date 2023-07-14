@@ -184,6 +184,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     log2FoldChangeThreshold: vizConfig.log2FoldChangeThreshold ?? 3,
     containerStyles: plotContainerStyles,
     comparisonLabels: comparisonLabels,
+    showSpinner: data.pending,
   };
 
   // @ts-ignore

@@ -92,6 +92,7 @@ interface TemplateProps {
   comparisonLabels?: string[];
   width?: number;
   height?: number;
+  showSpinner?: boolean;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -115,6 +116,7 @@ const Template: Story<TemplateProps> = (args) => {
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
+    showSpinner: args.showSpinner,
   };
 
   return (
@@ -153,9 +155,9 @@ ManyPoints.args = {
   dependentAxisRange: { min: -1, max: 9 },
 };
 
-// Story for testing toImage function
-export const ToImage = Template.bind({});
-ToImage.args = {
+// Test the spinner
+export const Spinner = Template.bind({});
+Spinner.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.8,
   log2FoldChangeThreshold: 1,
@@ -163,6 +165,7 @@ ToImage.args = {
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+  showSpinner: true,
 };
 
 // Add story for truncation

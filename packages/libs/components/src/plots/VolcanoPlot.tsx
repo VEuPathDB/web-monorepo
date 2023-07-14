@@ -34,6 +34,7 @@ import {
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
+import Spinner from '../components/Spinner';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -63,6 +64,8 @@ export interface VolcanoPlotProps {
   containerClass?: string;
   /** styling for the plot's container */
   containerStyles?: CSSProperties;
+  /** shall we show the loading spinner? */
+  showSpinner?: boolean;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
@@ -84,6 +87,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     containerClass = 'web-components-plot',
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     comparisonLabels,
+    showSpinner = false,
   } = props;
 
   // Keep the real browser DOM in a separate ref. Expose only the methods we want the parent component to call
@@ -308,6 +312,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           />
         </Group>
       </XYChart>
+      {showSpinner && <Spinner />}
     </div>
   );
 }
