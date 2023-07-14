@@ -90,8 +90,6 @@ interface TemplateProps {
   independentAxisRange?: NumberRange;
   dependentAxisRange?: NumberRange;
   comparisonLabels?: string[];
-  width?: number;
-  height?: number;
   showSpinner?: boolean;
 }
 

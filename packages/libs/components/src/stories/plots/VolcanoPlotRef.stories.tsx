@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
+import { Story, Meta } from '@storybook/react/types-6-0';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
-import { PlotRef } from '../../types/plots';
 import { range } from 'lodash';
 import { VolcanoPlotData } from '../../types/plots/volcanoplot';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
@@ -12,7 +12,17 @@ export default {
   component: VolcanoPlot,
 };
 
-// Fake data
+interface TemplateProps {
+  data: VEuPathDBVolcanoPlotData;
+  markerBodyOpacity: number;
+  log2FoldChangeThreshold: number;
+  significanceThreshold: number;
+  adjustedPValueGate: number;
+  comparisonLabels?: string[];
+  showSpinner?: boolean;
+}
+
+// Generate fake data
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
     log2foldChange: string[];
@@ -35,16 +45,24 @@ const data: VEuPathDBVolcanoPlotData = {
   },
 };
 
-export function ToImage() {
+// The following template includes the normal vixs volcano plot
+// in addition to a screenshotted version below. This template
+// should be used only to test screenshotting. In the future,
+// conisder reusing for other visx plot types?
+const Template: Story<TemplateProps> = (args) => {
+  // Generate a jpeg version of the volcano plot (svg).
+  // Mimicks the makePlotThumbnailUrl process in web-eda.
   const ref = useRef<any>(null);
   const [img, setImg] = useState('');
   useEffect(() => {
-    ref.current
-      ?.toImage({ format: 'jpeg', height: 300, width: 300 })
-      // @ts-ignore
-      .then((src) => setImg(src));
+    setTimeout(() => {
+      ref.current
+        ?.toImage({ format: 'jpeg', height: 400, width: 600 })
+        .then((src: string) => setImg(src));
+    }, 2000);
   }, []);
 
+  // Wrangle data to get it into the nice form for plot component.
   const volcanoDataPoints: VolcanoPlotData =
     data.volcanoplot.log2foldChange.map((l2fc, index) => {
       return {
@@ -54,17 +72,32 @@ export function ToImage() {
         pointID: data.volcanoplot.pointID[index],
       };
     });
+
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
-    significanceThreshold: 0.05,
-    log2FoldChangeThreshold: 2,
-    markerBodyOpacity: 0.9,
-    comparisonLabels: ['a', 'b'],
+    significanceThreshold: args.significanceThreshold,
+    log2FoldChangeThreshold: args.log2FoldChangeThreshold,
+    markerBodyOpacity: args.markerBodyOpacity,
+    comparisonLabels: args.comparisonLabels,
   };
+
   return (
     <>
       <VolcanoPlot ref={ref} {...volcanoPlotProps} />
+      <br></br>
+      <h2>
+        A partial snapshot of the plot will appear below after two sconds...
+      </h2>
       <img src={img} />
     </>
   );
-}
+};
+
+export const ToImage = Template.bind({});
+ToImage.args = {
+  data: data,
+  significanceThreshold: 0.05,
+  log2FoldChangeThreshold: 2,
+  markerBodyOpacity: 0.9,
+  comparisonLabels: ['a', 'b'],
+};

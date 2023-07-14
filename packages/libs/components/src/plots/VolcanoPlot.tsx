@@ -2,12 +2,10 @@ import {
   CSSProperties,
   forwardRef,
   Ref,
-  useCallback,
   useImperativeHandle,
-  useMemo,
   useRef,
 } from 'react';
-import { PlotRef, significanceColors } from '../types/plots';
+import { significanceColors } from '../types/plots';
 import {
   VolcanoPlotData,
   VolcanoPlotDataPoint,
@@ -30,11 +28,11 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
+import Spinner from '../components/Spinner';
 // For screenshotting
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
-import Spinner from '../components/Spinner';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -90,7 +88,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     showSpinner = false,
   } = props;
 
-  // Keep the real browser DOM in a separate ref. Expose only the methods we want the parent component to call
+  // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
   useImperativeHandle<HTMLDivElement, any>(
     ref,
@@ -200,7 +198,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           so use caution when ordering the children (ex. draw axes before data).  */}
 
       <XYChart
-        // height={height ?? 300}
         xScale={{
           type: 'linear',
           domain: [xAxisMin, xAxisMax],
@@ -212,8 +209,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           zero: false,
           clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
         }}
-
-        // width={width ?? 300}
       >
         {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
         <Grid numTicks={6} lineStyle={gridStyles} />

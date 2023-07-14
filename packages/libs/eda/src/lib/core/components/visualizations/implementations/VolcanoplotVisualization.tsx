@@ -97,6 +97,8 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const computationConfiguration: DifferentialAbundanceConfig = computation
+    .descriptor.configuration as DifferentialAbundanceConfig;
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -120,7 +122,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
         studyId,
         filters,
         config: {},
-        computeConfig: computation.descriptor.configuration,
+        computeConfig: computationConfiguration,
       };
       const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
@@ -139,16 +141,12 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
       dataElementDependencyOrder,
       filters,
       studyId,
-      computation.descriptor.configuration,
+      computationConfiguration,
       computation.descriptor.type,
       dataClient,
       visualization.descriptor.type,
     ])
   );
-
-  // TODO set based on input data. Requires update to VolcanoPlot.tsx. Will be new issue
-  const defaultIndependentAxisRange = { min: -5, max: 5 } as NumberRange;
-  const defaultDependentAxisRange = { min: 0, max: 5 } as NumberRange;
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -164,21 +162,18 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
 
   // Add labels to the extremes of the x axis. These may change in the future based on the type
   // of data. For example, for genes we may want to say Up regulated in...
-  const comparisonLabels = [
-    'Up in ' +
-      (
-        computation.descriptor.configuration as DifferentialAbundanceConfig
-      ).comparator.groupA.join(', '),
-    'Up in ' +
-      (
-        computation.descriptor.configuration as DifferentialAbundanceConfig
-      ).comparator.groupB.join(', '),
-  ];
+  const comparisonLabels =
+    computationConfiguration &&
+    computationConfiguration.comparator?.groupA &&
+    computationConfiguration.comparator?.groupB
+      ? [
+          'Up in ' + computationConfiguration.comparator.groupA.join(', '),
+          'Up in ' + computationConfiguration.comparator.groupB.join(', '),
+        ]
+      : [];
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: data.value ? Object.values(data.value) : [],
-    independentAxisRange: defaultIndependentAxisRange,
-    dependentAxisRange: defaultDependentAxisRange,
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
     significanceThreshold: vizConfig.significanceThreshold ?? 0.05,
     log2FoldChangeThreshold: vizConfig.log2FoldChangeThreshold ?? 3,
