@@ -115,11 +115,13 @@ const Template: Story<TemplateProps> = (args) => {
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
-    width: args.width,
-    height: args.height,
   };
 
-  return <VolcanoPlot {...volcanoPlotProps} />;
+  return (
+    <>
+      <VolcanoPlot {...volcanoPlotProps} />
+    </>
+  );
 };
 
 /**
@@ -136,8 +138,6 @@ Simple.args = {
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
-  height: 500,
-  width: 600,
 };
 
 // Most volcano plots will have thousands of points, since each point
@@ -149,6 +149,18 @@ ManyPoints.args = {
   markerBodyOpacity: 0.5,
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
+  independentAxisRange: { min: -8, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+};
+
+// Story for testing toImage function
+export const ToImage = Template.bind({});
+ToImage.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  log2FoldChangeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
 };

@@ -1,5 +1,13 @@
-import { CSSProperties } from 'react';
-import { significanceColors } from '../types/plots';
+import {
+  CSSProperties,
+  forwardRef,
+  Ref,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from 'react';
+import { PlotRef, significanceColors } from '../types/plots';
 import {
   VolcanoPlotData,
   VolcanoPlotDataPoint,
@@ -22,7 +30,10 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
+// For screenshotting
+import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
+import domToImage from 'dom-to-image';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -62,7 +73,7 @@ const EmptyVolcanoPlotData: VolcanoPlotData = [];
  * on the y axis. The volcano plot also colors the points based on their
  * significance and magnitude change to make it easy to spot significantly up or down-regulated genes or taxa.
  */
-function VolcanoPlot(props: VolcanoPlotProps) {
+function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<SVGGElement>) {
   const {
     data = EmptyVolcanoPlotData,
     independentAxisRange, // not yet implemented - expect this to be set by user
@@ -75,13 +86,39 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     comparisonLabels,
   } = props;
 
+  // Keep the real browser DOM in a separate ref. Expose only the methods we want the parent component to call
+  const plotRef = useRef<SVGGElement>(null);
+  useImperativeHandle<SVGGElement, any>(
+    ref,
+    () => ({
+      // Set the ref's toImage function that will be called in web-eda
+      toImage: async (imageOpts: ToImgopts) => {
+        setTimeout(() => {
+          console.log('to image!');
+          // GOAL select the svg
+          console.log(plotRef.current);
+          console.log(plotRef.current?.querySelector('svg'));
+          console.log(plotRef.current?.innerHTML);
+
+          // // the canvas calls to output a png
+          // var canvas = document.getElementById("canvas");
+          // var img = canvas.toDataURL("image/png");
+        }, 4000);
+        // Wait to allow map to finish rendering
+        await new Promise((res) => setTimeout(res, 4000));
+        if (!plotRef.current) throw new Error('Map not ready');
+        console.log(domToImage.toPng(plotRef.current, imageOpts));
+        return domToImage.toPng(plotRef.current, imageOpts);
+      },
+    }),
+    []
+  );
+
   /**
    * Find mins and maxes of the data and for the plot.
    * The standard x axis is the log2 fold change. The standard
    * y axis is -log10 raw p value.
    */
-
-  console.log(data);
 
   // Find maxes and mins of the data itself
   const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
@@ -170,6 +207,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
       {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
+
       <XYChart
         // height={height ?? 300}
         xScale={{
@@ -183,103 +221,106 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           zero: false,
           clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
         }}
+
         // width={width ?? 300}
       >
         {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
-        <Grid numTicks={6} lineStyle={gridStyles} />
-        <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
-        <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
+        <Group innerRef={plotRef}>
+          <Grid numTicks={6} lineStyle={gridStyles} />
+          <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
+          <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
-        {/* X axis annotations */}
-        {comparisonLabels &&
-          comparisonLabels.map((label, ind) => {
-            return (
-              <Annotation
-                datum={{
-                  x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
-                  y: yAxisMin,
-                }}
-                dx={0}
-                dy={-15}
-                {...xyAccessors}
-              >
-                <AnnotationLabel
-                  subtitle={label}
-                  horizontalAnchor="middle"
-                  verticalAnchor="start"
-                  showAnchorLine={false}
-                  showBackground={false}
-                />
-              </Annotation>
-            );
-          })}
+          {/* X axis annotations */}
+          {comparisonLabels &&
+            comparisonLabels.map((label, ind) => {
+              return (
+                <Annotation
+                  datum={{
+                    x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
+                    y: yAxisMin,
+                  }}
+                  dx={0}
+                  dy={-15}
+                  {...xyAccessors}
+                >
+                  <AnnotationLabel
+                    subtitle={label}
+                    horizontalAnchor="middle"
+                    verticalAnchor="start"
+                    showAnchorLine={false}
+                    showBackground={false}
+                  />
+                </Annotation>
+              );
+            })}
 
-        {/* Draw threshold lines as annotations below the data points. The
+          {/* Draw threshold lines as annotations below the data points. The
             annotations use XYChart's theme and dimension context.
             The Annotation component holds the context for its children, which is why
             we make a new Annotation component for each line.
             Another option would be to make Line with LineSeries, but the default hover response
             is on the points instead of the line connecting them. */}
 
-        {/* Draw horizontal significance threshold */}
-        {significanceThreshold && (
-          <Annotation
-            datum={{
-              x: 0, // horizontal line so x could be anything
-              y: -Math.log10(Number(significanceThreshold)),
-            }}
-            {...xyAccessors}
-          >
-            <AnnotationLineSubject
-              orientation="horizontal"
-              {...thresholdLineStyles}
-            />
-          </Annotation>
-        )}
-        {/* Draw both vertical log2 fold change threshold lines */}
-        {log2FoldChangeThreshold && (
-          <>
+          {/* Draw horizontal significance threshold */}
+          {significanceThreshold && (
             <Annotation
               datum={{
-                x: -log2FoldChangeThreshold,
-                y: 0, // vertical line so y could be anything
+                x: 0, // horizontal line so x could be anything
+                y: -Math.log10(Number(significanceThreshold)),
               }}
               {...xyAccessors}
             >
-              <AnnotationLineSubject {...thresholdLineStyles} />
+              <AnnotationLineSubject
+                orientation="horizontal"
+                {...thresholdLineStyles}
+              />
             </Annotation>
-            <Annotation
-              datum={{
-                x: log2FoldChangeThreshold,
-                y: 0, // vertical line so y could be anything
-              }}
-              {...xyAccessors}
-            >
-              <AnnotationLineSubject {...thresholdLineStyles} />
-            </Annotation>
-          </>
-        )}
+          )}
+          {/* Draw both vertical log2 fold change threshold lines */}
+          {log2FoldChangeThreshold && (
+            <>
+              <Annotation
+                datum={{
+                  x: -log2FoldChangeThreshold,
+                  y: 0, // vertical line so y could be anything
+                }}
+                {...xyAccessors}
+              >
+                <AnnotationLineSubject {...thresholdLineStyles} />
+              </Annotation>
+              <Annotation
+                datum={{
+                  x: log2FoldChangeThreshold,
+                  y: 0, // vertical line so y could be anything
+                }}
+                {...xyAccessors}
+              >
+                <AnnotationLineSubject {...thresholdLineStyles} />
+              </Annotation>
+            </>
+          )}
 
-        {/* The data itself */}
-        {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
+          {/* The data itself */}
+          {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
             down to those elements, but I haven't found it yet */}
-        <Group opacity={markerBodyOpacity ?? 1}>
-          <GlyphSeries
-            dataKey={'data'} // unique key
-            //@ts-ignore
-            data={data} // data as an array of obejcts (points). Accessed with dataAccessors
-            {...dataAccessors}
-            colorAccessor={(d) => {
-              return assignSignificanceColor(
-                Number(d.log2foldChange),
-                Number(d.pValue),
-                significanceThreshold,
-                log2FoldChangeThreshold,
-                significanceColors
-              );
-            }}
-          />
+          <Group opacity={markerBodyOpacity ?? 1}>
+            <GlyphSeries
+              dataKey={'data'} // unique key
+              //@ts-ignore
+              data={data} // data as an array of obejcts (points). Accessed with dataAccessors
+              {...dataAccessors}
+              colorAccessor={(d) => {
+                return assignSignificanceColor(
+                  Number(d.log2foldChange),
+                  Number(d.pValue),
+                  significanceThreshold,
+                  log2FoldChangeThreshold,
+                  significanceColors
+                );
+              }}
+            />
+          </Group>
         </Group>
       </XYChart>
     </div>
@@ -320,4 +361,4 @@ function assignSignificanceColor(
   return significanceColors[INSIGNIFICANT];
 }
 
-export default VolcanoPlot;
+export default forwardRef(VolcanoPlot);
