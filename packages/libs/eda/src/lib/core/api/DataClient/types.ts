@@ -26,7 +26,6 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
-import { VolcanoPlotData } from '@veupathdb/components/lib/types/plots/volcanoplot';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -359,10 +358,10 @@ export const ScatterplotResponse = intersection([
 ]);
 
 // Volcano plot
-// The volcano plot response type is the same as the VolcanoplotData type defined in the components package
+// The volcano plot response type MUST be the same as the VolcanoplotData type defined in the components package
 export type VolcanoplotResponse = TypeOf<typeof VolcanoplotResponse>;
 
-// TEMP - @ANN many of these can be simplified after some backend work is merged.
+// TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
 export const VolcanoplotResponse = array(
   type({
     log2foldChange: union([string, undefined]),

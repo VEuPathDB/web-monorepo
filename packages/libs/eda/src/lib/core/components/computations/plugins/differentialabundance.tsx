@@ -1,4 +1,8 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  AnalysisState,
+  useCollectionVariables,
+  useStudyMetadata,
+} from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -129,7 +133,7 @@ export function DifferentialAbundanceConfiguration(
     .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
-  const filters: [] = []; // probably in analysis state somewhere? @ann todo! From dave - correct!
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
   // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
@@ -174,12 +178,6 @@ export function DifferentialAbundanceConfiguration(
       return selectedItem;
     }
   }, [collectionVarItems, configuration]);
-
-  // const selectedComparatorVariable = useMemo(() => {
-  //   if (configuration && 'ComparatorVariable' in configuration) {
-  //     return configuration.comparatorVariable;
-  //   }
-  // }, [configuration]);
 
   const selectedComparatorVariable = useMemo(() => {
     if (
@@ -229,15 +227,6 @@ export function DifferentialAbundanceConfiguration(
             showClearSelectionButton={false}
             scope="variableTree"
             showMultiFilterDescendants
-            // disabledVariables={
-            //   disabledVariablesByInputName[input.name]
-            // }
-            // customDisabledVariableMessage={
-            //   (constraints &&
-            //     constraints.length &&
-            //     constraints[0][input.name]?.description) ||
-            //   undefined
-            // }
             starredVariables={[]}
             toggleStarredVariable={toggleStarredVariable}
             entityId={configuration?.comparator?.variable?.entityId}
