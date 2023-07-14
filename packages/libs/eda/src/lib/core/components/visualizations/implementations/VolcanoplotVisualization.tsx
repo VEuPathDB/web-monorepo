@@ -34,6 +34,7 @@ import DataClient, {
 } from '../../../api/DataClient';
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
+import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
 
 // end imports
 
@@ -149,7 +150,6 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
   const defaultIndependentAxisRange = { min: -5, max: 5 } as NumberRange;
   const defaultDependentAxisRange = { min: 0, max: 5 } as NumberRange;
 
-  // TODO update thumbnail
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
@@ -162,6 +162,19 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  // Add labels to the extremes of the x axis. These may change in the future based on the type
+  // of data. For example, for genes we may want to say Up regulated in...
+  const comparisonLabels = [
+    'Up in ' +
+      (
+        computation.descriptor.configuration as DifferentialAbundanceConfig
+      ).comparator.groupA.join(', '),
+    'Up in ' +
+      (
+        computation.descriptor.configuration as DifferentialAbundanceConfig
+      ).comparator.groupB.join(', '),
+  ];
+
   const volcanoPlotProps: VolcanoPlotProps = {
     data: data.value ? Object.values(data.value) : [],
     independentAxisRange: defaultIndependentAxisRange,
@@ -170,6 +183,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     significanceThreshold: vizConfig.significanceThreshold ?? 0.05,
     log2FoldChangeThreshold: vizConfig.log2FoldChangeThreshold ?? 3,
     containerStyles: plotContainerStyles,
+    comparisonLabels: comparisonLabels,
   };
 
   // @ts-ignore
