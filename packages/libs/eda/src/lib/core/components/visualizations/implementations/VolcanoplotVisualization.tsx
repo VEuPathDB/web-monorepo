@@ -172,7 +172,8 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
     containerStyles: plotContainerStyles,
   };
 
-  const plotNode = <VolcanoPlot {...volcanoPlotProps} />;
+  // @ts-ignore
+  const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
   // TODO
   const controlsNode = <> </>;

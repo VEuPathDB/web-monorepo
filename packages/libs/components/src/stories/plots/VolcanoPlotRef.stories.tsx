@@ -40,7 +40,7 @@ export function ToImage() {
   const [img, setImg] = useState('');
   useEffect(() => {
     ref.current
-      ?.toImage({ format: 'jpeg', height: 100, width: 100 })
+      ?.toImage({ format: 'jpeg', height: 300, width: 300 })
       // @ts-ignore
       .then((src) => setImg(src));
   }, []);

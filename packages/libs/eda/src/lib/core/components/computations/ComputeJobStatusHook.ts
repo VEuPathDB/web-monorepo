@@ -43,8 +43,6 @@ export function useComputeJobStatus(
     computeName,
   };
 
-  console.log(nextJobStatusDeps);
-
   // Use a state variable to track current dependencies
   const [jobStatusDeps, setJobStatusDeps] = useState(nextJobStatusDeps);
 
