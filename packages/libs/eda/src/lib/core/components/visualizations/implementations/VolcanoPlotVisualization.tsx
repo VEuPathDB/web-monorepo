@@ -205,7 +205,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
           }
           label="log2(Fold Change)"
           minValue={0}
-          value={DEFAULT_FC_THRESHOLD}
+          value={vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD}
           containerStyles={{ flex: 1 }}
         />
 
@@ -215,7 +215,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
             updateVizConfig({ significanceThreshold: Number(newValue) })
           }
           minValue={0}
-          value={DEFAULT_SIG_THRESHOLD}
+          value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
           containerStyles={{ flex: 1 }}
         />
       </LabelledGroup>
