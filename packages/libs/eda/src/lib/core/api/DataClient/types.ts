@@ -358,11 +358,11 @@ export const ScatterplotResponse = intersection([
 ]);
 
 // Volcano plot
-// The volcano plot response type MUST be the same as the VolcanoplotData type defined in the components package
-export type VolcanoplotResponse = TypeOf<typeof VolcanoplotResponse>;
+// The volcano plot response type MUST be the same as the VolcanoPlotData type defined in the components package
+export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
 
 // TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
-export const VolcanoplotResponse = array(
+export const VolcanoPlotResponse = array(
   type({
     log2foldChange: union([string, undefined]),
     pValue: union([string, undefined]),

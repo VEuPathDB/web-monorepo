@@ -30,7 +30,7 @@ import { RequestOptions } from '../options/types';
 // Volcano plot imports
 import DataClient, {
   VolcanoPlotRequestParams,
-  VolcanoplotResponse,
+  VolcanoPlotResponse,
 } from '../../../api/DataClient';
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
@@ -51,7 +51,7 @@ const plotContainerStyles = {
 
 export const volcanoPlotVisualization = createVisualizationPlugin({
   selectorIcon: VolcanoSVG,
-  fullscreenComponent: VolcanoplotViz,
+  fullscreenComponent: VolcanoPlotViz,
   createDefaultConfig: createDefaultConfig,
 });
 
@@ -79,7 +79,7 @@ interface Options
 // The volcano plot visualization takes no input variables. The received data populates all parts of the plot.
 // The user can control the threshold lines, which affect the marker colors. Additional controls
 // will include axis ranges.
-function VolcanoplotViz(props: VisualizationProps<Options>) {
+function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
@@ -109,7 +109,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
 
   // Get the volcano plot data!
   const data = usePromise(
-    useCallback(async (): Promise<VolcanoplotResponse | undefined> => {
+    useCallback(async (): Promise<VolcanoPlotResponse | undefined> => {
       // Only need to check compute job status and filter status, since there are no
       // viz input variables.
       if (computeJobStatus !== 'complete') return undefined;
@@ -128,7 +128,7 @@ function VolcanoplotViz(props: VisualizationProps<Options>) {
         computation.descriptor.type,
         visualization.descriptor.type,
         params,
-        VolcanoplotResponse // CAsInG
+        VolcanoPlotResponse
       );
 
       return response;
