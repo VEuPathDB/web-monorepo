@@ -45,17 +45,13 @@ export interface UpdateActiveQuestionAction {
     initialParamData?: Record<string, string>;
     stepId: number | undefined;
     submissionMetadata?: SubmissionMetadata;
+    globalParamMapping?: Record<string, string>;
   }>;
 }
 
-export function updateActiveQuestion(payload: {
-  searchName: string;
-  autoRun: boolean;
-  prepopulateWithLastParamValues: boolean;
-  initialParamData?: Record<string, string>;
-  stepId: number | undefined;
-  submissionMetadata?: SubmissionMetadata;
-}): UpdateActiveQuestionAction {
+export function updateActiveQuestion(
+  payload: UpdateActiveQuestionAction['payload']
+): UpdateActiveQuestionAction {
   return {
     type: UPDATE_ACTIVE_QUESTION,
     payload,

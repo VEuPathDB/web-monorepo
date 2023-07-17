@@ -82,9 +82,9 @@ export default (base: ServiceBase) => {
     basketName: string,
     formatting: AnswerFormatting
   ): Promise<T> {
-    const { format, formatConfig: reportConfig } = formatting;
+    const { format, formatConfig: reportConfig, viewFilters } = formatting;
     const url = `${BASKETS_PATH}/${basketName}/reports/${format}`;
-    const body = JSON.stringify({ reportConfig });
+    const body = JSON.stringify({ reportConfig, viewFilters });
     return base._fetchJson<T>('post', url, body);
   }
 
@@ -110,7 +110,10 @@ export default (base: ServiceBase) => {
         `${BASKETS_PATH}/${basketName}/reports/${formatting.format}`,
       target,
       inputs: {
-        data: JSON.stringify({ reportConfig: formatting.formatConfig }),
+        data: JSON.stringify({
+          reportConfig: formatting.formatConfig,
+          viewFilters: formatting.viewFilters,
+        }),
       },
     });
   }

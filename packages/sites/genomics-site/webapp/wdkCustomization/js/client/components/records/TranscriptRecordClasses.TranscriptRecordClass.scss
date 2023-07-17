@@ -10,11 +10,12 @@
 
   &--Label {
     color: black;
-    margin-right: .5em;
+    margin-right: 0.5em;
   }
 
-  #TranscriptViewFilter--Toggle {
-    margin-right: .5em;
+  #TranscriptViewFilter--Toggle,
+  #InBasketFilter--Toggle {
+    margin-right: 0.5em;
   }
 }
 

@@ -34,7 +34,8 @@ class DataCell extends React.PureComponent {
       case 'number':
         return Templates.numberCell(cellProps);
       case 'html':
-        return Templates[inline ? 'textCell' : 'htmlCell'](cellProps);
+        const Component = Templates[inline ? 'textCell' : 'htmlCell'];
+        return Component(cellProps);
       case 'text':
       default:
         return Templates.textCell(cellProps);

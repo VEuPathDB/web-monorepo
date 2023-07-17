@@ -10,7 +10,7 @@ import {
   ActionCreatorResult,
 } from '../Core/WdkMiddleware';
 import { UserPreferences } from '../Utils/WdkUser';
-import { Question, RecordClass } from '../Utils/WdkModel';
+import { FilterValueArray, Question, RecordClass } from '../Utils/WdkModel';
 import { CategoryOntology } from '../Utils/CategoryUtils';
 import { WdkService } from '../Core';
 import {
@@ -26,7 +26,8 @@ export type Action =
   | SetErrorAction
   | StartLoadingAction
   | UpdateFormAction
-  | UpdateFormUiAction;
+  | UpdateFormUiAction
+  | UpdateViewFiltersAction;
 
 //==============================================================================
 
@@ -128,6 +129,28 @@ export function updateFormUi(formUiState: any): UpdateFormUiAction {
     type: UPDATE_FORM_UI,
     payload: {
       formUiState,
+    },
+  };
+}
+
+//==============================================================================
+
+export const UPDATE_VIEW_FILTERS = 'downloadForm/update-view-filters';
+
+export interface UpdateViewFiltersAction {
+  type: typeof UPDATE_VIEW_FILTERS;
+  payload: {
+    viewFilters?: FilterValueArray;
+  };
+}
+
+export function updateViewFilters(
+  viewFilters?: FilterValueArray
+): UpdateViewFiltersAction {
+  return {
+    type: UPDATE_VIEW_FILTERS,
+    payload: {
+      viewFilters,
     },
   };
 }
@@ -367,6 +390,7 @@ export function submitForm(
   resultType: ResultType,
   selectedReporter: string,
   formState: any,
+  viewFilters?: FilterValueArray,
   target = '_blank'
 ): ActionThunk<EmptyAction> {
   return ({ wdkService }) => {
@@ -374,6 +398,7 @@ export function submitForm(
       format: selectedReporter ? selectedReporter : STANDARD_REPORTER_NAME,
       formatConfig:
         formState != null ? formState : { contentDisposition: 'attachment' },
+      viewFilters,
     };
     downloadReport(wdkService, resultType, formatting, target);
     return emptyAction;
