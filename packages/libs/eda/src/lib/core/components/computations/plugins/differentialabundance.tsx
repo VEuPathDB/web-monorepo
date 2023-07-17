@@ -239,8 +239,8 @@ export function DifferentialAbundanceConfiguration(
               onClick: (variable) => {
                 changeConfigHandler('comparator', {
                   variable: variable as VariableDescriptor,
-                  groupA: configuration?.comparator?.groupA ?? null,
-                  groupB: configuration?.comparator?.groupB ?? null,
+                  groupA: [],
+                  groupB: [],
                 });
               },
             }}
