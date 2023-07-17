@@ -38,9 +38,10 @@ export default function DraggableTimeFilter({
 }: // constraints,
 Props) {
   // converting lineplot data to visx format
+  // temporarily set to 1 (with data) and 0 (no data) manually for demo purpose
   const timeFilterData: EZTimeFilterDataProp[] = data.series[0].x.map(
-    (value: any, index: any) => {
-      return { x: value, y: data.series[0].y[index] };
+    (value: any, index: number) => {
+      return { x: value, y: data.series[0].y[index] >= 9 ? 1 : 0 };
     }
   );
 
@@ -79,6 +80,10 @@ Props) {
     //   selectedValues: undefined,
     // });
   }
+
+  // set constant values
+  const defaultSymbolSize = 0.9;
+  const defaultColor = 'lightgray';
 
   return (
     <>
@@ -194,12 +199,41 @@ Props) {
             selectedRange={selectedRange}
             setSelectedRange={setSelectedRange}
             width={timeFilterWidth - 30}
-            height={125}
+            height={100}
             // line color of the selectedRange
             accentColor={'#4A6BD6'}
             // axis tick and tick label color
             axisColor={'#000'}
           />
+          {/* DKDK add a legend */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: defaultSymbolSize + 'em',
+            }}
+          >
+            <div
+              style={{
+                height: defaultSymbolSize + 'em',
+                width: defaultSymbolSize + 'em',
+                borderWidth: '0',
+                backgroundColor: defaultColor,
+              }}
+            />
+            <div>&nbsp;&nbsp;Has visible data on the map</div>
+            <div
+              style={{
+                marginLeft: '5em',
+                height: defaultSymbolSize / 2 + 'em',
+                width: defaultSymbolSize + 'em',
+                borderWidth: '0',
+                backgroundColor: defaultColor,
+              }}
+            />
+            <div>&nbsp;&nbsp;Has no visible data on the map</div>
+          </div>
         </div>
       </DraggablePanel>
     </>

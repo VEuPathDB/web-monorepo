@@ -253,7 +253,8 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
   // converting lineplot data to visx format
   const timeFilterData: EZTimeFilterDataProp[] = LineplotData.series[0].x.map(
     (value, index) => {
-      return { x: value, y: LineplotData.series[0].y[index] };
+      // return { x: value, y: LineplotData.series[0].y[index] };
+      return { x: value, y: LineplotData.series[0].y[index] >= 9 ? 1 : 0 };
     }
   );
 
@@ -266,11 +267,15 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
   // set forwardRef to call handleResetClick function from EzTimeFilter component
   const childRef = useRef<{ handleResetClick: () => void }>(null);
 
+  // set constant values
+  const defaultSymbolSize = 0.8;
+  const defaultColor = 'lightgray';
+
   return (
     <div
       style={{
         width: 750,
-        height: 180,
+        height: 170,
         border: '1px solid #dedede',
         boxShadow: '1px 1px 4px #00000066',
         marginTop: '10em',
@@ -315,12 +320,41 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
         selectedRange={selectedRange}
         setSelectedRange={setSelectedRange}
         width={720}
-        height={125}
+        height={100}
         // line color of the selectedRange
         accentColor={'#4A6BD6'}
         // axis tick and tick label color
         axisColor={'#000'}
       />
+      {/* add a legend */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: defaultSymbolSize + 'em',
+        }}
+      >
+        <div
+          style={{
+            height: defaultSymbolSize + 'em',
+            width: defaultSymbolSize + 'em',
+            borderWidth: '0',
+            backgroundColor: defaultColor,
+          }}
+        />
+        <div>&nbsp;&nbsp;Has visible data on the map</div>
+        <div
+          style={{
+            marginLeft: '5em',
+            height: defaultSymbolSize / 2 + 'em',
+            width: defaultSymbolSize + 'em',
+            borderWidth: '0',
+            backgroundColor: defaultColor,
+          }}
+        />
+        <div>&nbsp;&nbsp;Has no visible data on the map</div>
+      </div>
     </div>
   );
 };

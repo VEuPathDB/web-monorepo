@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import React, {
   useRef,
-  useState,
+  useEffect,
   useMemo,
-  useCallback,
   useImperativeHandle,
   forwardRef,
   ForwardedRef,
 } from 'react';
 import { scaleTime, scaleLinear } from '@visx/scale';
-import appleStock, { AppleStock } from '@visx/mock-data/lib/mocks/appleStock';
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, {
@@ -20,10 +18,11 @@ import { PatternLines } from '@visx/pattern';
 import { Group } from '@visx/group';
 import { max, extent } from 'd3-array';
 import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
-import { AreaClosed } from '@visx/shape';
 import { AxisBottom } from '@visx/axis';
-import { curveMonotoneX } from '@visx/curve';
 import { millisecondTodate } from '../../utils/date-format-change';
+import { Bar } from '@visx/shape';
+import { debounce } from 'lodash';
+import { LineSubject } from '@visx/annotation';
 
 export type EZTimeFilterDataProp = {
   x: string;
@@ -45,6 +44,8 @@ export type EzTimeFilterProps = {
   accentColor?: string;
   /** axis tick and tick label color */
   axisColor?: string;
+  /** debounce rate in millisecond */
+  debounceRateMs?: number;
 };
 
 // using forwardRef
@@ -61,6 +62,8 @@ function EzTimeFilter(
     axisColor = '#000',
     selectedRange,
     setSelectedRange,
+    // set a default debounce time in milliseconds
+    debounceRateMs = 500,
   } = props;
 
   const brushRef = useRef<BaseBrush | null>(null);
@@ -166,6 +169,30 @@ function EzTimeFilter(
     []
   );
 
+  // compute bar width manually as scaleTime is used for Bar chart
+  const barWidth = xBrushMax / data.length;
+
+  // after dragging ends
+  const onBrushEnd = () => {
+    //TO-DO a sort of submitting action for a filtered range later is required here
+    console.log('brush dragging ends!!!');
+  };
+
+  // debounce function for onBrushEnd: will be used for submitting filtered range later
+  const debouncedOnBrushEnd = useMemo(
+    () => debounce(onBrushEnd, debounceRateMs),
+    [onBrushEnd]
+  );
+
+  const defaultColor = 'lightgray';
+
+  // Cancel pending onBrushEnd request when this component is unmounted
+  useEffect(() => {
+    return () => {
+      debouncedOnBrushEnd.cancel();
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -175,15 +202,30 @@ function EzTimeFilter(
     >
       <svg width={width} height={height}>
         <Group left={margin.left} top={margin.top}>
-          <AreaClosed
-            data={data}
-            x={(d) => xBrushScale(getXData(d)) || 0}
-            y={(d) => yBrushScale(getYData(d)) || 0}
-            yScale={yBrushScale}
-            strokeWidth={1}
-            fill="lightgray"
-            curve={curveMonotoneX}
-          />
+          {/* use Bar chart */}
+          {data.map((d, i) => {
+            const barHeight = yBrushMax - yBrushScale(getYData(d));
+            return (
+              <React.Fragment key={i}>
+                <Bar
+                  key={`bar-${i.toString()}`}
+                  x={xBrushScale(getXData(d))}
+                  // In SVG bar chart, y-coordinate increases downward, i.e.,
+                  // y-coordinates of the top and bottom of the bars are 0 and yBrushMax, respectively
+                  // Also, under current yBrushScale, dataY = 0 -> barHeight = 0; dataY = 1 -> barHeight = 60
+                  // Thus, to mimick the bar shape of the ez time filter mockup,
+                  // starting y-coordinate for dataY = 1 sets to be 1/4*yBrushMax.
+                  // And, the height prop is set to be 1/2*yBrushMax so that
+                  // the bottom side of a bar has 1/4*yBrushMax space with respect to the x-axis line
+                  y={barHeight === 0 ? yBrushMax : (1 / 4) * yBrushMax}
+                  height={(1 / 2) * barHeight}
+                  // set the last data's barWidth to be 0 so that it does not overflow to dragging area
+                  width={i === data.length - 1 ? 0 : barWidth}
+                  fill={defaultColor}
+                />
+              </React.Fragment>
+            );
+          })}
           <AxisBottom
             top={yBrushMax}
             scale={xBrushScale}
@@ -215,8 +257,22 @@ function EzTimeFilter(
             onClick={handleResetClick}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
+            onBrushEnd={debouncedOnBrushEnd}
             renderBrushHandle={(props) => <BrushHandle {...props} />}
           />
+          {/* horizontal center line for no data */}
+          <>
+            <g>
+              <LineSubject
+                orientation="horizontal"
+                min={0}
+                max={xBrushMax}
+                y={yBrushMax / 2}
+                stroke={defaultColor}
+                strokeWidth={5}
+              />
+            </g>
+          </>
         </Group>
       </svg>
     </div>
