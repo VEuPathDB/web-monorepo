@@ -292,7 +292,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         <Group opacity={markerBodyOpacity ?? 1}>
           <GlyphSeries
             dataKey={'data'} // unique key
-            //@ts-ignore
             data={data} // data as an array of obejcts (points). Accessed with dataAccessors
             {...dataAccessors}
             colorAccessor={(d) => {

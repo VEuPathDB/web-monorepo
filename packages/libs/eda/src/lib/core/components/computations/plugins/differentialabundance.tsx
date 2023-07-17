@@ -1,8 +1,4 @@
-import {
-  AnalysisState,
-  useCollectionVariables,
-  useStudyMetadata,
-} from '../../..';
+import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -10,7 +6,7 @@ import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
-import SingleSelect from '@veupathdb/coreui/dist/components/inputs/SingleSelect';
+import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useFindEntityAndVariable } from '../../../hooks/workspace';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
@@ -18,7 +14,6 @@ import { sharedConfigCssStyles } from './abundance';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
-import { config } from 'process';
 
 /**
  * Differential abundance
@@ -80,7 +75,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
       ? configuration.collectionVariable
       : undefined;
   const comparatorVariable =
-    'comparatorVariable' in configuration
+    'comparator' in configuration
       ? configuration.comparator?.variable
       : undefined;
 

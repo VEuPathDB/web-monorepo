@@ -351,7 +351,6 @@ export function NewVisualizationPicker(props: NewVisualizationPickerProps) {
             (vizPlugin.isEnabledInPicker != null &&
               vizPlugin.isEnabledInPicker({ geoConfigs }) === false);
           // we could in future pass other study metadata, variable constraints, etc to isEnabledInPicker()
-          console.log(vizPlugin);
           return (
             <div
               className={cx('-PickerEntry', disabled && 'disabled')}
