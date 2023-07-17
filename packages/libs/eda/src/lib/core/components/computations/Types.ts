@@ -43,6 +43,7 @@ export interface ComputationPlugin {
   configurationComponent: React.ComponentType<ComputationConfigProps>;
   configurationDescriptionComponent?: React.ComponentType<{
     computation: Computation;
+    analysisState: AnalysisState;
   }>;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
   createDefaultConfiguration: (rootEntity: StudyEntity) => unknown;

@@ -65,7 +65,7 @@ export function ComputationInstance(props: Props) {
             gap: '1em',
           }}
         >
-          <AppTitle computation={computation} />
+          <AppTitle computation={computation} analysisState={analysisState} />
         </div>
       )}
       <VisualizationsContainer
@@ -92,10 +92,11 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
+  analysisState: AnalysisState;
 }
 
 function AppTitle(props: AppTitleProps) {
-  const { computation } = props;
+  const { computation, analysisState } = props;
   const plugin = plugins[computation.descriptor?.type];
   const ConfigDescription = plugin
     ? plugin.configurationDescriptionComponent
@@ -118,6 +119,7 @@ function AppTitle(props: AppTitleProps) {
                       },
                     }
               }
+              analysisState={analysisState}
             />
           )
         : null}

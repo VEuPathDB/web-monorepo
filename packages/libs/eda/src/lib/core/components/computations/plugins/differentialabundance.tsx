@@ -1,4 +1,8 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  AnalysisState,
+  useCollectionVariables,
+  useStudyMetadata,
+} from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -60,8 +64,10 @@ export const plugin: ComputationPlugin = {
 
 function DifferentialAbundanceConfigDescriptionComponent({
   computation,
+  analysisState,
 }: {
   computation: Computation;
+  analysisState: AnalysisState;
 }) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -69,6 +75,8 @@ function DifferentialAbundanceConfigDescriptionComponent({
     computation,
     Computation
   );
+  const filters = analysisState.analysis?.descriptor.subset.descriptor;
+  const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { configuration } = computation.descriptor;
   const collectionVariable =
     'collectionVariable' in configuration
@@ -76,7 +84,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
       : undefined;
   const comparatorVariable =
     'comparator' in configuration
-      ? configuration.comparator?.variable
+      ? findEntityAndVariable(configuration.comparator.variable)
       : undefined;
 
   const updatedCollectionVariable = collections.find((collectionVar) =>
@@ -104,7 +112,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
         Comparator Variable:{' '}
         <span style={{ fontWeight: 300 }}>
           {comparatorVariable ? (
-            comparatorVariable.variableId
+            comparatorVariable.variable.displayName
           ) : (
             <i>Not selected</i>
           )}
