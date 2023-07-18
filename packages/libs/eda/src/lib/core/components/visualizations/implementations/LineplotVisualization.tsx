@@ -365,6 +365,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
     useState<string>('');
 
+  // for checking if this is lineplot or timeline plot
+  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
+
+  // always enable useBinning for timeline Viz
+  const alwaysEnableUseBinning =
+    showMarginalHistogram && xAxisVariable?.dataShape === 'continuous';
+
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const keepIndependentAxisSettings = isEqual(
@@ -375,6 +382,10 @@ function LineplotViz(props: VisualizationProps<Options>) {
         selectedVariables.yAxisVariable,
         vizConfig.yAxisVariable
       );
+
+      // need to get xAxisVariable based on selectedVariables
+      const { variable: xAxisVar } =
+        findEntityAndVariable(selectedVariables.xAxisVariable) ?? {};
 
       // need to get the yAxisVariable metadata right here, right now
       // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
@@ -425,6 +436,9 @@ function LineplotViz(props: VisualizationProps<Options>) {
             ? 'Full'
             : 'Auto-zoom'
           : 'Full',
+        // set this for changing xAxisVariable
+        useBinning:
+          showMarginalHistogram && xAxisVar?.dataShape === 'continuous',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -656,8 +670,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.independentAxisLogScale && vizConfig.useBinning;
   const showDependentAxisBanner =
     vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
-
-  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
@@ -1102,11 +1114,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     !showDependentAxisBanner &&
     data0?.binWidthSlider == null; // for ordinal string x-variables
 
-  // always enable useBinning for timeline Viz
-  const alwaysEnableUseBinning = useMemo(() => {
-    return showMarginalHistogram && xAxisVariable?.dataShape === 'continuous';
-  }, [showMarginalHistogram, xAxisVariable]);
-
   // axis range control
   const neverShowErrorBars = lineplotProps.dependentValueType === 'date';
 
@@ -1207,11 +1214,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     truncationConfigDependentAxisMax,
     setTruncatedDependentAxisWarning,
   ]);
-
-  // change default vizConfig.useBinning to be true if timeline Viz
-  useEffect(() => {
-    if (alwaysEnableUseBinning) onUseBinningChange(true);
-  }, [alwaysEnableUseBinning]);
 
   const controlsNode = (
     <>
