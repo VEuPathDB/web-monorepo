@@ -767,6 +767,12 @@ export const BinDefinitions = array(
   })
 );
 
+export type AllValuesDefinition = TypeOf<typeof AllValuesDefinition>;
+export const AllValuesDefinition = type({
+  label: string,
+  count: number,
+});
+
 export type OverlayConfig = TypeOf<typeof OverlayConfig>;
 export const OverlayConfig = intersection([
   type({
@@ -793,7 +799,7 @@ export interface StandaloneMapMarkersRequestParams {
     geoAggregateVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
-    overlayConfig?: OverlayConfig;
+    overlayConfig?: Omit<OverlayConfig, 'binningMethod'>;
     valueSpec: 'count' | 'proportion';
     viewport: {
       latitude: {

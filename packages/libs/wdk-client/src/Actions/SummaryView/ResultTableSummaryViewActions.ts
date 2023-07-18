@@ -204,6 +204,11 @@ export const fulfillGlobalViewFilters = makeActionCreator(
   })
 );
 
+export const updateInBasketFilter = makeActionCreator(
+  'resultTableSummaryView/toggleInBasketFilter',
+  (viewId: string, enabled: boolean) => ({ viewId, enabled })
+);
+
 export type Action = InferAction<
   | typeof openResultTableSummaryView
   | typeof closeResultTableSummaryView
@@ -231,4 +236,5 @@ export type Action = InferAction<
   | typeof requestGlobalViewFilters
   | typeof updateGlobalViewFilters
   | typeof fulfillGlobalViewFilters
+  | typeof updateInBasketFilter
 >;
