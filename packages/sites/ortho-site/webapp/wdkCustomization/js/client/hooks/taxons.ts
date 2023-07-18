@@ -10,10 +10,7 @@ import {
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
 export function useTaxonEntries(): TaxonEntries | undefined {
-  return useOrthoService(
-    orthoService => orthoService.getTaxons(),
-    []
-  );
+  return useOrthoService((orthoService) => orthoService.getTaxons(), []);
 }
 
 const memoizedTaxonTreeMaker = once(makeTaxonTree);

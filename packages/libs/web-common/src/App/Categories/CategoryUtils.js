@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function getCategoryColor (category) {
+export function getCategoryColor(category) {
   if (!category) return null;
   switch (category.toLowerCase()) {
     // This contains a mix of disease variables from https://webprotege.stanford.edu/#projects/719dd1bd-ffbb-4c15-99cc-050a233977ee/edit/Classes?selection=Class(%3Chttp://purl.obolibrary.org/obo/DOID_4%3E),
@@ -8,7 +8,7 @@ export function getCategoryColor (category) {
     case 'enteric':
     case 'diarrhea':
     case 'diarrheal disease':
-      return '#6738ff';  //#8874a3'; more muted
+      return '#6738ff'; //#8874a3'; more muted
     case 'hiv':
     case 'aids':
       return '#cb2b39';
@@ -37,18 +37,38 @@ export function getCategoryColor (category) {
   }
 }
 
-export function getCategoryName (category = '') {
+export function getCategoryName(category = '') {
   switch (category.toLowerCase()) {
     case 'malarial':
     case 'malaria':
-      return <span>A <b>Malaria</b> Study</span>;
+      return (
+        <span>
+          A <b>Malaria</b> Study
+        </span>
+      );
     case 'enteric':
-      return <span>An <b>Enteric</b> Disease Study</span>;
+      return (
+        <span>
+          An <b>Enteric</b> Disease Study
+        </span>
+      );
     case 'respiratory':
-      return <span>A <b>Respiratory</b> Disease Study</span>;
+      return (
+        <span>
+          A <b>Respiratory</b> Disease Study
+        </span>
+      );
     case 'schistosomiasis':
-      return <span>A <b>Schistosomiasis</b> Study</span>;
+      return (
+        <span>
+          A <b>Schistosomiasis</b> Study
+        </span>
+      );
     default:
-      return <span>An <b>Epidemiological</b> Study</span>;
+      return (
+        <span>
+          An <b>Epidemiological</b> Study
+        </span>
+      );
   }
 }

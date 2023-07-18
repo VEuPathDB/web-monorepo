@@ -23,12 +23,11 @@ export default function ExternalContentController(props: Props) {
       const response = await fetch(url, { mode: 'cors' });
       if (response.ok) return response.text();
       return `<h1>${response.statusText}</h1>`;
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
       return `<h1>Oops... something went wrong.</h1>`;
     }
-  }, [ url ]);
+  }, [url]);
 
   useEffect(() => {
     if (content == null || ref.current == null) return;
@@ -45,19 +44,18 @@ export default function ExternalContentController(props: Props) {
           scrollIntoView(target);
         }
       }
-    }
-    catch(error) {
+    } catch (error) {
       console.error(error);
     }
-  }, [ location.hash, content ]);
+  }, [location.hash, content]);
 
-  if (content == null) return <Loading/>;
+  if (content == null) return <Loading />;
 
   return safeHtml(
     content,
     {
       className: EXTERNAL_CONTENT_CONTROLLER_CLASSNAME,
-      ref
+      ref,
     },
     'div'
   );

@@ -1,5 +1,5 @@
 .OpenedStrategies {
-  margin-top: .5em;
+  margin-top: 0.5em;
 }
 
 .OpenedStrategiesContent {
@@ -9,14 +9,14 @@
 }
 
 .OpenedStrategiesContent > * {
-  font-size: .7em;
+  font-size: 0.7em;
 }
 
 .OpenedStrategiesHeader {
   font-size: 1.7em;
   font-weight: bold;
   text-transform: capitalize;
-  padding-bottom: .5em;
+  padding-bottom: 0.5em;
 }
 
 .OpenedStrategiesPanel {
@@ -63,7 +63,7 @@
 
 .OpenedStrategiesPanel__topShadow:before {
   content: '';
-  height: .75em;
+  height: 0.75em;
   width: 100%;
   background: linear-gradient(#ababab, transparent);
   position: sticky;
@@ -76,7 +76,7 @@
 
 .OpenedStrategiesPanel__bottomShadow:after {
   content: '';
-  height: .75em;
+  height: 0.75em;
   width: 100%;
   background: linear-gradient(transparent, #ababab);
   position: sticky;

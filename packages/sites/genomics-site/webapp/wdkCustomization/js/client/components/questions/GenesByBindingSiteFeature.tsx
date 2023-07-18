@@ -6,12 +6,14 @@ import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 export const GenesByBindingSiteFeature = (props: Props<Parameter>) => {
   useEffect(() => {
-    const bindingSiteImage = document.getElementById('tfbs_image') as HTMLImageElement;
+    const bindingSiteImage = document.getElementById(
+      'tfbs_image'
+    ) as HTMLImageElement;
 
     if (bindingSiteImage) {
       bindingSiteImage.src = `/a/images/pf_tfbs/${props.value}.png`;
     }
-  }, [ props.value ]);
+  }, [props.value]);
 
   return <ParameterComponent {...props} />;
 };

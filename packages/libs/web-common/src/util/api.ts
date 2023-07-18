@@ -1,5 +1,8 @@
 import { mapValues, compose } from 'lodash/fp';
-import { Decoder, standardErrorReport } from '@veupathdb/wdk-client/lib/Utils/Json';
+import {
+  Decoder,
+  standardErrorReport,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
 
 /*
  * An "Api" is an abstraction for interacting with resources.
@@ -36,17 +39,25 @@ export interface ApiRequestsObject<T = any, U extends any[] = any[]> {
   [Key: string]: ApiRequestCreator<T, U>;
 }
 
-type ApiRequestToBound<R extends ApiRequestCreator<any>> = R extends ApiRequestCreator<infer T, infer U> ? (...args: U) => Promise<T> : never;
+type ApiRequestToBound<R extends ApiRequestCreator<any>> =
+  R extends ApiRequestCreator<infer T, infer U>
+    ? (...args: U) => Promise<T>
+    : never;
 
 export type BoundApiRequestsObject<T extends ApiRequestsObject> = {
-  [P in keyof T]: T[P] extends ApiRequestCreator<infer A, infer B> ? (...args: B) => Promise<A> : never;
-}
+  [P in keyof T]: T[P] extends ApiRequestCreator<infer A, infer B>
+    ? (...args: B) => Promise<A>
+    : never;
+};
 
 export function bindApiRequestCreators<T extends ApiRequestsObject>(
   requestCreators: T,
   handler: ApiRequestHandler
 ): BoundApiRequestsObject<T> {
-  return mapValues(requestCreator => compose(handler, requestCreator), requestCreators) as BoundApiRequestsObject<T>;
+  return mapValues(
+    (requestCreator) => compose(handler, requestCreator),
+    requestCreators
+  ) as BoundApiRequestsObject<T>;
 }
 
 // XXX Not sure if these belong here, since they are specific to an ApiRequestHandler
@@ -58,9 +69,9 @@ export function createJsonRequest<T>(init: ApiRequest<T>): ApiRequest<T> {
     body: JSON.stringify(init.body),
     headers: {
       ...init.headers,
-      'Content-Type': 'application/json'
-    }
-  }
+      'Content-Type': 'application/json',
+    },
+  };
 }
 
 /** Helper to create a request with a plain text body. */
@@ -69,9 +80,9 @@ export function createPlainTextRequest<T>(init: ApiRequest<T>): ApiRequest<T> {
     ...init,
     headers: {
       ...init.headers,
-      'Content-Type': 'text/plain'
-    }
-  }
+      'Content-Type': 'text/plain',
+    },
+  };
 }
 
 /** Standard transformer that uses a `Json.ts` `decoder` type. */
@@ -79,9 +90,11 @@ export function standardTransformer<T>(decoder: Decoder<T>) {
   return async function transform(body: unknown): Promise<T> {
     const result = decoder(body);
     if (result.status === 'ok') return result.value;
-    const report = `Expected ${result.expected}${result.context ? ('at _' + result.context) : ''}, but got ${JSON.stringify(result.value)}.`;
-    throw new Error("Could not decode response.\n" + report);
-  }
+    const report = `Expected ${result.expected}${
+      result.context ? 'at _' + result.context : ''
+    }, but got ${JSON.stringify(result.value)}.`;
+    throw new Error('Could not decode response.\n' + report);
+  };
 }
 
 /**
@@ -106,9 +119,13 @@ export interface FetchApiOptions {
 /**
  * A `fetch`-based implentation of an `ApiRequestHandler`.
  */
-export function createFetchApiRequestHandler(options: FetchApiOptions): ApiRequestHandler {
+export function createFetchApiRequestHandler(
+  options: FetchApiOptions
+): ApiRequestHandler {
   const { baseUrl, init = {}, fetchApi = window.fetch } = options;
-  return async function fetchApiRequestHandler<T>(apiRequest: ApiRequest<T>): Promise<T> {
+  return async function fetchApiRequestHandler<T>(
+    apiRequest: ApiRequest<T>
+  ): Promise<T> {
     const { transformResponse, path, body, ...restReq } = apiRequest;
     const request = new Request(baseUrl + path, {
       ...init,
@@ -116,8 +133,8 @@ export function createFetchApiRequestHandler(options: FetchApiOptions): ApiReque
       body: body,
       headers: {
         ...restReq.headers,
-        ...init.headers
-      }
+        ...init.headers,
+      },
     });
     const response = await fetchApi(request);
     // TODO Make this behavior configurable
@@ -126,8 +143,10 @@ export function createFetchApiRequestHandler(options: FetchApiOptions): ApiReque
 
       return await transformResponse(responseBody);
     }
-    throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
-  }
+    throw new Error(
+      `${response.status} ${response.statusText}${'\n'}${await response.text()}`
+    );
+  };
 }
 
 export abstract class FetchClient {
@@ -140,7 +159,7 @@ export abstract class FetchClient {
     this.init = options.init ?? {};
     this.fetchApi = options.fetchApi ?? window.fetch;
   }
-  
+
   protected async fetch<T>(apiRequest: ApiRequest<T>): Promise<T> {
     const { baseUrl, init, fetchApi } = this;
     const { transformResponse, path, body, ...restReq } = apiRequest;
@@ -150,8 +169,8 @@ export abstract class FetchClient {
       body: body,
       headers: {
         ...restReq.headers,
-        ...init.headers
-      }
+        ...init.headers,
+      },
     });
     const response = await fetchApi(request);
     // TODO Make this behavior configurable
@@ -160,7 +179,9 @@ export abstract class FetchClient {
 
       return await transformResponse(responseBody);
     }
-    throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
+    throw new Error(
+      `${response.status} ${response.statusText}${'\n'}${await response.text()}`
+    );
   }
 }
 

@@ -2,8 +2,15 @@
 @import './AllSites.scss';
 @import './question-wizard.css';
 
-body, h1, h2, h3, h4, h5, h6 {
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
+    sans-serif;
 }
 h1 {
   text-align: left;
@@ -24,18 +31,17 @@ h4 {
   font-weight: 500;
 }
 
-
 .TableAsTree .wdk-CheckboxTreeItem__leaf .wdk-CheckboxTreeNodeContent span {
   background: yellow;
   font-weight: bold;
 }
 
 .form-group {
-  margin: .6em 0;
+  margin: 0.6em 0;
 }
 
 .form-radio {
-  margin: .4em;
+  margin: 0.4em;
 }
 
 #wdk-container {
@@ -52,7 +58,7 @@ h4 {
 }
 
 .wdk-RecordOverview:after {
-  content: "";
+  content: '';
   display: table;
   clear: both;
 }
@@ -124,15 +130,16 @@ td.wdk-DataTableCell__thumbnail {
   width: 100%;
 }
 
-.eupathdb-RecordOverviewItem, .eupathdb-RecordOverviewLink {
-  margin: .2em 0;
+.eupathdb-RecordOverviewItem,
+.eupathdb-RecordOverviewLink {
+  margin: 0.2em 0;
   font-size: 1.4em;
   font-weight: 300;
   max-width: 95%;
 }
 
 .eupathdb-RecordOverviewItem[data-label]:before {
-  content: attr(data-label) ": ";
+  content: attr(data-label) ': ';
   font-weight: bold;
 }
 
@@ -157,20 +164,39 @@ td.wdk-DataTableCell__thumbnail {
     margin: 0;
   }
 
-  .eupathdb-ReporterFormGroup { width: 400px; }
+  .eupathdb-ReporterFormGroup {
+    width: 400px;
+  }
 
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 2; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 3; }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns {
+    order: 1;
+  }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions {
+    order: 2;
+  }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables {
+    order: 3;
+  }
 }
 
 /* break point based on combined width of all ReporterFormGroup elemens */
 @media all and (min-width: 1024px) {
-  .eupathdb-ReporterForm { margin: 0 2em; column-gap: 4em; }
-  .eupathdb-ReporterFormGroup__otherOptions { width: auto; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns      { order: 1; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables       { order: 2; }
-  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions { order: 3; }
+  .eupathdb-ReporterForm {
+    margin: 0 2em;
+    column-gap: 4em;
+  }
+  .eupathdb-ReporterFormGroup__otherOptions {
+    width: auto;
+  }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__columns {
+    order: 1;
+  }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__tables {
+    order: 2;
+  }
+  .eupathdb-ReporterForm__shared .eupathdb-ReporterFormGroup__otherOptions {
+    order: 3;
+  }
 }
 
 .eupathdb-ReporterFormGroup .wdk-CheckboxTree-list li label {
@@ -307,13 +333,12 @@ div.eupathdb-content {
   line-height: 150%;
 }
 
-
-
 /* ======================= */
 /* Galaxy Orientation page */
 /* ======================= */
 
-#eupathdb-GalaxyTerms p, #eupathdb-GalaxyTerms div {
+#eupathdb-GalaxyTerms p,
+#eupathdb-GalaxyTerms div {
   font-size: 1.2em;
 }
 #eupathdb-GalaxyTerms h1 {
@@ -321,12 +346,12 @@ div.eupathdb-content {
 }
 
 #eupathdb-GalaxyTerms-initial {
- text-align: center;
- margin: 2em 0;
+  text-align: center;
+  margin: 2em 0;
 }
 #eupathdb-GalaxyTerms img {
   width: 95%;
-  border: solid #365EA2 1px;
+  border: solid #365ea2 1px;
 }
 #eupathdb-GalaxyTerms-submit {
   margin-top: 2em;
@@ -370,9 +395,18 @@ div.eupathdb-content {
   margin: 1em 0;
 }
 
-.column-left{ float: left; width: 33%; }
-.column-right{ float: right; width: 33%; }
-.column-center{ display: inline-block; width: 33%; }
+.column-left {
+  float: left;
+  width: 33%;
+}
+.column-right {
+  float: right;
+  width: 33%;
+}
+.column-center {
+  display: inline-block;
+  width: 33%;
+}
 
 .eupathdb-GalaxySignUpScreens {
   display: flex;
@@ -384,7 +418,7 @@ div.eupathdb-content {
 #eupathdb-GalaxyTerms .eupathdb-GalaxySignUpScreenHeader,
 #eupathdb-GalaxyTerms .eupathdb-GalaxySignUpScreenCaption {
   font-size: 85%;
-  margin: .5em 0;
+  margin: 0.5em 0;
 }
 .eupathdb-GalaxySignUpScreenCaption {
   font-style: italic;

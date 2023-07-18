@@ -11,11 +11,10 @@ export function useProcessedGridData(
   entities: Array<StudyEntity>,
   currentEntity?: StudyEntity
 ) {
-  return useMemo(() => processGridData(gridData, entities, currentEntity), [
-    gridData,
-    entities,
-    currentEntity,
-  ]);
+  return useMemo(
+    () => processGridData(gridData, entities, currentEntity),
+    [gridData, entities, currentEntity]
+  );
 }
 
 export const processGridData = (

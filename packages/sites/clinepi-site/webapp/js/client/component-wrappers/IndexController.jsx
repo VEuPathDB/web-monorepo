@@ -5,7 +5,7 @@ import CardBasedIndexController from '@veupathdb/web-common/lib/controllers/Card
 import { getStaticSiteData } from '../selectors/siteData';
 import makeGetHomeContent from '../data/homeContent';
 
-const searchesUserEmails = [ 'eupathdb@gmail.com' ];
+const searchesUserEmails = ['eupathdb@gmail.com'];
 
 export default function IndexControllerWrapper() {
   return function IndexController() {
@@ -22,6 +22,6 @@ export default function IndexControllerWrapper() {
         getSiteData={getStaticSiteData}
         getHomeContent={getHomeContent}
       />
-    )
-  }
+    );
+  };
 }

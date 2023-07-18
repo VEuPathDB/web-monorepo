@@ -14,26 +14,24 @@ export const UploadedFileRow = ({
   mimeType,
   url,
   entryClassName,
-  rowNumber
+  rowNumber,
 }: Props) => {
   const isImage = mimeType.startsWith('image');
 
   return (
     <tr className={entryClassName}>
       <td>{rowNumber}</td>
-      <td><a href={url}>{name}</a></td>
+      <td>
+        <a href={url}>{name}</a>
+      </td>
       <td>{description}</td>
-      <td>{
-        !isImage
-          ? null
-          : <a href={url}>
-              <img 
-                src={url}
-                width={80}
-                height={80} 
-              />
-            </a> 
-      }</td>
+      <td>
+        {!isImage ? null : (
+          <a href={url}>
+            <img src={url} width={80} height={80} />
+          </a>
+        )}
+      </td>
     </tr>
   );
-}
+};

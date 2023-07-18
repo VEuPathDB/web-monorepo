@@ -3,17 +3,20 @@
   position: relative;
   width: 402px;
   height: 302px;
-  border: 1px solid #AAA;
+  border: 1px solid #aaa;
   border-radius: 4px;
   padding: 1px;
   margin-top: 2em;
 
-  .wdk-FoldChangeImg__UpRegulated, .wdk-FoldChangeImg__DownRegulated, .wdk-FoldChangeImg__UpOrDownRegulated {
+  .wdk-FoldChangeImg__UpRegulated,
+  .wdk-FoldChangeImg__DownRegulated,
+  .wdk-FoldChangeImg__UpOrDownRegulated {
     height: 100%;
     width: 100%;
   }
 
-  .wdk-FoldChangeImg__UpRegulated, .wdk-FoldChangeImg__DownRegulated {
+  .wdk-FoldChangeImg__UpRegulated,
+  .wdk-FoldChangeImg__DownRegulated {
     background-image: url(./graph-background.jpg);
   }
 
@@ -28,7 +31,7 @@
   font-weight: bold;
 
   &.wdk-SampleCollectionReferenceSamples {
-    color: rgb(39,136,194);
+    color: rgb(39, 136, 194);
 
     .wdk-SampleCollectionSamplesLabel {
       left: 90px;
@@ -36,7 +39,7 @@
   }
 
   &.wdk-SampleCollectionComparisonSamples {
-    color: rgb(158,19,22);
+    color: rgb(158, 19, 22);
 
     .wdk-SampleCollectionSamplesLabel {
       left: 166px;
@@ -73,7 +76,8 @@
 
 // Sizing of sample collection operation
 .wdk-FoldChangeImg {
-  .wdk-FoldChangeImg__UpRegulated, .wdk-FoldChangeImg__DownRegulated {
+  .wdk-FoldChangeImg__UpRegulated,
+  .wdk-FoldChangeImg__DownRegulated {
     .wdk-SampleCollectionOperation {
       height: 48px;
     }
@@ -84,20 +88,20 @@
 .wdk-FoldChangeImg {
   .wdk-SampleCollectionReferenceSamples {
     .wdk-SampleCollectionSample {
-      background-color: rgb(39,136,194);
-      left: -170px;    
+      background-color: rgb(39, 136, 194);
+      left: -170px;
     }
   }
 
   .wdk-SampleCollectionComparisonSamples {
     .wdk-SampleCollectionSample {
-      background-color: rgb(158,19,22);
+      background-color: rgb(158, 19, 22);
       left: -85px;
     }
   }
 }
 
-// Vertical positioning for the four possible types of samples: 
+// Vertical positioning for the four possible types of samples:
 // (up-regulated or down-regulated) + (reference or collected)
 .wdk-FoldChangeImg {
   .wdk-FoldChangeImg__UpRegulated {
@@ -138,17 +142,19 @@
   text-align: left;
   margin-left: 218px;
 
-  .wdk-FoldChangeLabelUpArrow, .wdk-FoldChangeLabelDownArrow {
+  .wdk-FoldChangeLabelUpArrow,
+  .wdk-FoldChangeLabelDownArrow {
     height: 30px;
     display: block;
     margin-left: 20px;
-    border-left: 2px solid black;    
+    border-left: 2px solid black;
   }
 
-  .wdk-FoldChangeLabelUpArrow:before, .wdk-FoldChangeLabelDownArrow:before {
+  .wdk-FoldChangeLabelUpArrow:before,
+  .wdk-FoldChangeLabelDownArrow:before {
     position: relative;
     display: block;
-    content: " ";
+    content: ' ';
     height: 0;
     width: 0;
     border-right: 5px solid transparent;
@@ -171,7 +177,7 @@
     white-space: nowrap;
     line-height: 14px;
     margin-left: 8px;
-    height: auto;    
+    height: auto;
   }
 }
 
@@ -196,11 +202,12 @@
       width: 180px;
     }
   }
-}  
+}
 
 // Overrides to the sample collection position/styling for "up or down regulated" (PT 1)
-.wdk-FoldChangeImg { 
-  .wdk-FoldChangeImgLeftSamples, .wdk-FoldChangeImgRightSamples {
+.wdk-FoldChangeImg {
+  .wdk-FoldChangeImgLeftSamples,
+  .wdk-FoldChangeImgRightSamples {
     .wdk-SampleCollectionOperation {
       width: 7em;
       height: 2em;
@@ -245,11 +252,11 @@
         top: 10px;
       }
     }
-  }      
+  }
 }
 
 // Overrides to the sample collection position/styling for "up or down regulated" (PT 2)
-.wdk-FoldChangeImg { 
+.wdk-FoldChangeImg {
   .wdk-FoldChangeImg__UpOrDownRegulated {
     .wdk-SampleCollectionSamplesLabel {
       font-size: 65%;
@@ -291,14 +298,15 @@
 
 // Overrides to the fold change label styling for "up or down regulated"
 .wdk-FoldChangeImg {
-  .wdk-FoldChangeImg__UpOrDownRegulated { 
+  .wdk-FoldChangeImg__UpOrDownRegulated {
     .wdk-FoldChangeLabel {
       top: 17px;
       height: 54px;
       font-size: 90%;
       margin-left: 36%;
 
-      .wdk-FoldChangeLabelUpArrow, .wdk-FoldChangeLabelDownArrow {
+      .wdk-FoldChangeLabelUpArrow,
+      .wdk-FoldChangeLabelDownArrow {
         height: 19px;
       }
 

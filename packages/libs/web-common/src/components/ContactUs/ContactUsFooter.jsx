@@ -9,19 +9,15 @@ const ContactUsFooter = ({
   <tr>
     <td></td>
     <td align="center">
-      <input 
-        type="submit"
-        disabled={submitDisabled}
-        value="Submit message" 
-      />
-      {
-        submissionFailed &&
-        <ContactUsError 
+      <input type="submit" disabled={submitDisabled} value="Submit message" />
+      {submissionFailed && (
+        <ContactUsError
           responseMessage={
-            'An error occurred when we tried to submit your message. Please try to resubmit:\n' + responseMessage
-          } 
+            'An error occurred when we tried to submit your message. Please try to resubmit:\n' +
+            responseMessage
+          }
         />
-      }
+      )}
     </td>
   </tr>
 );

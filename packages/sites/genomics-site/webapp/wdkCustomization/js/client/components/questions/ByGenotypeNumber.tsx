@@ -9,6 +9,9 @@ import './ByGenotypeNumber.scss';
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
-export const ByGenotypeNumber: React.FunctionComponent<Props> = props =>
-  <EbrcDefaultQuestionForm {...props} containerClassName={`${cx()} ${cx('ByGenotypeNumber')}`} />;
-  
+export const ByGenotypeNumber: React.FunctionComponent<Props> = (props) => (
+  <EbrcDefaultQuestionForm
+    {...props}
+    containerClassName={`${cx()} ${cx('ByGenotypeNumber')}`}
+  />
+);

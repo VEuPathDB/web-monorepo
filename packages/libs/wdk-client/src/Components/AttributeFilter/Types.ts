@@ -1,6 +1,5 @@
 // Typescript types for attribute filter
 
-
 // Field types
 // -----------
 
@@ -19,7 +18,7 @@ export interface StringMemberField extends BaseField {
 
 export interface NumberMemberField extends BaseField {
   type: 'number';
-  isRange: false
+  isRange: false;
 }
 
 export interface DateMemberField extends BaseField {
@@ -41,7 +40,10 @@ export interface MultiField extends BaseField {
   type: 'multiFilter';
 }
 
-export type MemberField = StringMemberField | NumberMemberField | DateMemberField;
+export type MemberField =
+  | StringMemberField
+  | NumberMemberField
+  | DateMemberField;
 export type RangeField = NumberRangeField | DateRangeField;
 export type FilterField = MemberField | RangeField | MultiField;
 export type Field = FilterField | BaseField;
@@ -55,20 +57,22 @@ export type FieldTreeNode = TreeNode<Field>;
 // Filter value types
 // ------------------
 
-export type MemberValue<T> = Array<T|null>;
-export type RangeValue<T> = { min?: T, max?: T };
+export type MemberValue<T> = Array<T | null>;
+export type RangeValue<T> = { min?: T; max?: T };
 export type MultiFilterValue = {
-  operation: "union" | "intersect",
-  filters: MemberFilter[]
-}
+  operation: 'union' | 'intersect';
+  filters: MemberFilter[];
+};
 
-export type FilterValue<T extends FilterField> =
-  T extends MultiField ? MultiFilterValue :
-  T extends NumberRangeField ? RangeValue<number> :
-  T extends DateRangeField ? RangeValue<string> :
-  T extends MemberField ? MemberValue<T> :
-  never;
-
+export type FilterValue<T extends FilterField> = T extends MultiField
+  ? MultiFilterValue
+  : T extends NumberRangeField
+  ? RangeValue<number>
+  : T extends DateRangeField
+  ? RangeValue<string>
+  : T extends MemberField
+  ? MemberValue<T>
+  : never;
 
 // Filter type
 // -----------
@@ -123,8 +127,14 @@ export interface MultiFilter extends BaseFilter {
   isRange: false;
 }
 
-export type MemberFilter = StringMemberFilter | NumberMemberFilter | DateMemberFilter;
-export type RangeFilter = NumberRangeFilter | DateRangeFilter | LongitudeRangeFilter;
+export type MemberFilter =
+  | StringMemberFilter
+  | NumberMemberFilter
+  | DateMemberFilter;
+export type RangeFilter =
+  | NumberRangeFilter
+  | DateRangeFilter
+  | LongitudeRangeFilter;
 
 export type Filter = MemberFilter | RangeFilter | MultiFilter;
 

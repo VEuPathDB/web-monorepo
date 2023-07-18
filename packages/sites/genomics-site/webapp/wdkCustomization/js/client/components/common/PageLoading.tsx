@@ -8,4 +8,4 @@ export function PageLoading() {
       <div className="wdk-LoadingData">Loading data...</div>
     </Loading>
   );
-};
+}

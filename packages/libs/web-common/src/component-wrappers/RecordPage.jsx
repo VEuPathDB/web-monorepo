@@ -7,26 +7,28 @@ import { findExportWith } from './util';
 // --------
 
 export function RecordHeading(DefaultComponent) {
-  const DynamicRecordHeading = makeDynamicWrapper('RecordHeading')(DefaultComponent);
+  const DynamicRecordHeading =
+    makeDynamicWrapper('RecordHeading')(DefaultComponent);
   return function EbrcRecordHeading(props) {
     return (
       <div>
-        <DynamicRecordHeading {...props}/>
+        <DynamicRecordHeading {...props} />
         {renderWithCustomElements(props.record.attributes.record_overview)}
       </div>
-    )
-  }
+    );
+  };
 }
 
 export function RecordMainSection(DefaultComponent) {
-  const DynamicRecordMainSection = makeDynamicWrapper('RecordMainSection')(DefaultComponent);
+  const DynamicRecordMainSection =
+    makeDynamicWrapper('RecordMainSection')(DefaultComponent);
   return function EbrcRecordMainSection(props) {
     return (
       <div>
-        <DynamicRecordMainSection {...props}/>
-        {!props.depth && ('attribution' in props.record.attributes) && (
-          <div className='RecordAttribution'>
-            <hr/>
+        <DynamicRecordMainSection {...props} />
+        {!props.depth && 'attribution' in props.record.attributes && (
+          <div className="RecordAttribution">
+            <hr />
             <h3>Record Attribution</h3>
             <RecordAttribute
               attribute={props.recordClass.attributesMap.attribution}
@@ -43,11 +45,12 @@ export function RecordMainSection(DefaultComponent) {
 export const RecordUI = makeDynamicWrapper('RecordUI');
 export const RecordTable = makeDynamicWrapper('RecordTable');
 
-
 // Helpers
 // -------
 
-const findRecordPageComponent = findExportWith(require.context('../components/records', true, /\.(js|jsx)$/));
+const findRecordPageComponent = findExportWith(
+  require.context('../components/records', true, /\.(js|jsx)$/)
+);
 
 /**
  * Uses partially applied `findRecordPageComponent` function to dynamically
@@ -63,10 +66,13 @@ function makeDynamicWrapper(componentName) {
     return function DynamicWrapper(props) {
       // Need to append the .js suffix for this to work. Not sure why this
       // changed, but probably related to the prepublish build. @dmfalke
-      const ResolvedComponent = findRecordPageComponent(componentName)(`./${props.recordClass.fullName}.js`) || DefaultComponent;
+      const ResolvedComponent =
+        findRecordPageComponent(componentName)(
+          `./${props.recordClass.fullName}.js`
+        ) || DefaultComponent;
       return (
-        <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent} />
       );
-    }
-  }
+    };
+  };
 }

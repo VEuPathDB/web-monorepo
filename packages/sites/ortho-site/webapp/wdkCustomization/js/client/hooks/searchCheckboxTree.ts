@@ -9,11 +9,15 @@ import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 export function useSearchTree() {
   return useSelector(
-    (state: RootState) => get(state.globalData, 'searchTree') as CategoryTreeNode | undefined
+    (state: RootState) =>
+      get(state.globalData, 'searchTree') as CategoryTreeNode | undefined
   );
 }
 
-export function useSessionBackedSearchTerm(initialSearchTerm: string, key: string) {
+export function useSessionBackedSearchTerm(
+  initialSearchTerm: string,
+  key: string
+) {
   return useSessionBackedState(
     initialSearchTerm,
     key,
@@ -22,7 +26,10 @@ export function useSessionBackedSearchTerm(initialSearchTerm: string, key: strin
   );
 }
 
-export function useSessionBackedExpandedBranches(initialExpandedBranches: string[], key: string) {
+export function useSessionBackedExpandedBranches(
+  initialExpandedBranches: string[],
+  key: string
+) {
   return useSessionBackedState(
     initialExpandedBranches,
     key,
@@ -35,7 +42,6 @@ const encodeSearchTerm = (s: string) => s;
 const parseSearchTerm = encodeSearchTerm;
 
 const encodeExpandedBranches = JSON.stringify;
-const parseExpandedBranches = memoize((s: string) => decode(
-  arrayOf(string),
-  s
-));
+const parseExpandedBranches = memoize((s: string) =>
+  decode(arrayOf(string), s)
+);

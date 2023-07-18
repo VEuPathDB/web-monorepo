@@ -20,21 +20,19 @@ export function wrapWdkService(
 ): BlastCompatibleWdkService {
   return {
     ...wdkService,
-    getBlastParamInternalValues: blastCompatibleWdkServiceWrappers.getBlastParamInternalValues(
-      wdkService
-    ),
+    getBlastParamInternalValues:
+      blastCompatibleWdkServiceWrappers.getBlastParamInternalValues(wdkService),
   };
 }
 
 export const blastCompatibleWdkServiceWrappers = {
-  getBlastParamInternalValues: (wdkService: WdkService) => (
-    multiBlastSearchName: string
-  ) =>
-    wdkService.sendRequest(blastParamInternalValues, {
-      useCache: true,
-      method: 'get',
-      path: `/blast-param-internal-values/${multiBlastSearchName}`,
-    }),
+  getBlastParamInternalValues:
+    (wdkService: WdkService) => (multiBlastSearchName: string) =>
+      wdkService.sendRequest(blastParamInternalValues, {
+        useCache: true,
+        method: 'get',
+        path: `/blast-param-internal-values/${multiBlastSearchName}`,
+      }),
 };
 
 export interface BlastCompatibleWdkService extends WdkService {

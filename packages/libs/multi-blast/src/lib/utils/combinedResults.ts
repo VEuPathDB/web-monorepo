@@ -57,9 +57,8 @@ export function retrieveDataFromHitTitleFactory(regex: RegExp) {
 export const defaultDeflineToSourceId = retrieveDataFromHitTitleFactory(
   DEFAULT_SOURCE_ID_REGEX
 );
-export const defaultGeneDeflineToWdkPrimaryKey = retrieveDataFromHitTitleFactory(
-  DEFAULT_GENE_REGEX
-);
+export const defaultGeneDeflineToWdkPrimaryKey =
+  retrieveDataFromHitTitleFactory(DEFAULT_GENE_REGEX);
 export const defaultDeflineToOrganism = retrieveDataFromHitTitleFactory(
   DEFAULT_ORGANISM_REGEX
 );

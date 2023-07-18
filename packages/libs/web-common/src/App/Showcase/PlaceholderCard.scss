@@ -1,6 +1,6 @@
 .PlaceholderCard {
   display: flex;
-  opacity: .7;
+  opacity: 0.7;
   height: 335px;
   padding: 2em;
 
@@ -9,8 +9,8 @@
   }
 
   .PlaceholderText {
-    margin: .4em 0;
-    height: .4em;
+    margin: 0.4em 0;
+    height: 0.4em;
     width: 100%;
     background: gray;
 
@@ -18,7 +18,5 @@
       width: 90%;
       align-self: flex-end;
     }
-
   }
-
 }

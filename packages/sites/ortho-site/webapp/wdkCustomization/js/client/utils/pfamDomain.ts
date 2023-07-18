@@ -3,19 +3,19 @@ const BAND_COUNT = 4;
 
 // 13 colors used for 4-band domain coloring
 const COLORS = [
-  "rgb(71, 145, 213)",  // dark blue
-  "rgb(193, 235, 248)", // light blue
-  "orange",
-  "rgb(235, 235, 0)",  // yellow
-  "black",
-  "rgb(190, 190, 190)", // grey
-  "rgb(255, 192, 203)", // light red
-  "rgb(223, 42, 42)",   // dark red
-  "rgb(144, 238, 144)", // light green
-  "rgb(0, 145, 0)",     // dark green
-  "rgb(216, 87, 216)",  // purple
-  "rgb(206, 169, 73)",  // brown
-  "white"
+  'rgb(71, 145, 213)', // dark blue
+  'rgb(193, 235, 248)', // light blue
+  'orange',
+  'rgb(235, 235, 0)', // yellow
+  'black',
+  'rgb(190, 190, 190)', // grey
+  'rgb(255, 192, 203)', // light red
+  'rgb(223, 42, 42)', // dark red
+  'rgb(144, 238, 144)', // light green
+  'rgb(0, 145, 0)', // dark green
+  'rgb(216, 87, 216)', // purple
+  'rgb(206, 169, 73)', // brown
+  'white',
 ];
 
 // COLORS is a curated list of colors. Four colors are combined based on
@@ -43,7 +43,5 @@ export function assignColors(pfamId: string) {
   const paddedTerms = terms.padStart(BAND_COUNT, '0');
 
   // Transform each term into a color
-  return [...paddedTerms].map(
-    term => COLORS[parseInt(term, COLORS.length)]
-  );
+  return [...paddedTerms].map((term) => COLORS[parseInt(term, COLORS.length)]);
 }

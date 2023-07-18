@@ -20,9 +20,8 @@ export function useEditablePublicAnalysisList(
   publicAnalyses: PublicAnalysisSummary[],
   analysisClient: AnalysisClient
 ) {
-  const [publicAnalysesState, setPublicAnalysesState] = useState(
-    publicAnalyses
-  );
+  const [publicAnalysesState, setPublicAnalysesState] =
+    useState(publicAnalyses);
 
   const updateAnalysis = useCallback(
     async (analysisId: string, patch: SingleAnalysisPatchRequest) => {

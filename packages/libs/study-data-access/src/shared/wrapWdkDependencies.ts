@@ -9,17 +9,13 @@ export interface WdkDependenciesWithStudyAccessApi extends WdkDependencies {
 export function areCompatibleWdkDependencies(
   wdkDependencies: WdkDependencies | undefined
 ): wdkDependencies is WdkDependenciesWithStudyAccessApi {
-  return (
-    wdkDependencies != null &&
-    'studyAccessApi' in wdkDependencies
-  );
+  return wdkDependencies != null && 'studyAccessApi' in wdkDependencies;
 }
 
 export function wrapWdkDependencies(
   studyAccessApiUrl: string | undefined,
-  wdkDependencies: WdkDependencies,
+  wdkDependencies: WdkDependencies
 ): WdkDependenciesWithStudyAccessApi {
-
   let studyAccessApi;
 
   if (studyAccessApiUrl) {
@@ -37,6 +33,6 @@ export function wrapWdkDependencies(
 
   return {
     ...wdkDependencies,
-    studyAccessApi
+    studyAccessApi,
   };
 }

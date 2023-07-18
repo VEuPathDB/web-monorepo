@@ -5,10 +5,10 @@ interface PromiseFactory<T> {
 }
 
 // A Promise that never leaves the pending state.
-export const pendingPromise = { then() { } } as Promise<any>;
+export const pendingPromise = { then() {} } as Promise<any>;
 
 export function delay(ms: number): Promise<undefined> {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     window.setTimeout(resolve, ms);
   });
 }
@@ -40,21 +40,22 @@ export function isPromise<T>(maybePromise: any): maybePromise is Promise<T> {
 export function latest<T>(promiseFactory: PromiseFactory<T>) {
   let latestPromise: Promise<T>;
   return function createPromise(this: any, ...args: any[]) {
-    let thisPromise: Promise<T> = latestPromise = promiseFactory.apply(this, args);
+    let thisPromise: Promise<T> = (latestPromise = promiseFactory.apply(
+      this,
+      args
+    ));
     return thisPromise.then(
-      data => {
+      (data) => {
         if (thisPromise === latestPromise) {
           return data;
-        }
-        else {
+        } else {
           return <Promise<T>>pendingPromise;
         }
       },
-      reason => {
+      (reason) => {
         if (thisPromise === latestPromise) {
           throw reason;
-        }
-        else {
+        } else {
           return <Promise<T>>pendingPromise;
         }
       }
@@ -72,9 +73,12 @@ export function synchronized<T>(promiseFactory: PromiseFactory<T>) {
   let queue: Promise<void> = Promise.resolve();
   return <PromiseFactory<T>>function enque(this: any, ...args: any[]) {
     const task = queue.then(() => promiseFactory.apply(this, args));
-    queue = task.then(() => {}, () => {});
+    queue = task.then(
+      () => {},
+      () => {}
+    );
     return task;
-  }
+  };
 }
 
 /**
@@ -86,22 +90,26 @@ export function synchronized<T>(promiseFactory: PromiseFactory<T>) {
  * @param {Function} rejectHandler
  * @returns {Promise}
  */
-export function seq(promiseArray: Promise<any>[], resolveHandler: (res: any) => any, rejectHandler: (err: Error) => any) {
-  return promiseArray.reduce(function(seq$, promise$) {
+export function seq(
+  promiseArray: Promise<any>[],
+  resolveHandler: (res: any) => any,
+  rejectHandler: (err: Error) => any
+) {
+  return promiseArray.reduce(function (seq$, promise$) {
     return seq$.then(() => promise$.then(resolveHandler, rejectHandler));
   }, Promise.resolve());
 }
 
 export class Mutex {
-
   private _queue: Promise<any> = Promise.resolve();
 
   synchronize<T>(callback: () => Promise<T>): Promise<T> {
     return new Promise((resolve, reject) => {
-      return this._queue = this._queue.then(() => callback()).then(resolve, reject)
-    })
+      return (this._queue = this._queue
+        .then(() => callback())
+        .then(resolve, reject));
+    });
   }
-
 }
 
 interface Deferred<T> extends Promise<T> {
@@ -126,7 +134,7 @@ interface Deferred<T> extends Promise<T> {
 export function createDeferred<T>(): Deferred<T> {
   let resolve: (value: any) => void;
   let reject: (value: any) => void;
-  let promise = new Promise<T>(function(_resolve, _reject) {
+  let promise = new Promise<T>(function (_resolve, _reject) {
     resolve = _resolve;
     reject = _reject;
   });
@@ -139,6 +147,6 @@ export function createDeferred<T>(): Deferred<T> {
     },
     asPromise() {
       return promise;
-    }
+    },
   });
 }

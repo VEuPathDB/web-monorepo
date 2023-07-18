@@ -3,7 +3,7 @@ $tablet-width: 1000px;
 .ebrc-NewsPane {
   position: relative;
 
-  .News-Section { 
+  .News-Section {
     .wdk-Showcase-HeadingRow {
       h2 {
         color: black;
@@ -19,7 +19,8 @@ $tablet-width: 1000px;
       color: #00304c;
     }
 
-    .wdk-Showcase-ContentRow, .News {
+    .wdk-Showcase-ContentRow,
+    .News {
       border: unset;
     }
   }
@@ -81,7 +82,8 @@ $tablet-width: 1000px;
   }
 
   @media screen and (max-width: $tablet-width) {
-    &__news-expanded, &__news-collapsed {
+    &__news-expanded,
+    &__news-collapsed {
       .News-Section {
         display: block;
       }
@@ -95,7 +97,7 @@ $tablet-width: 1000px;
       display: block;
       margin-left: calc(0.75em + 10px);
       margin-right: 1rem;
-      margin-bottom: 1rem
+      margin-bottom: 1rem;
     }
 
     .NewsEntry:nth-child(n + 4) {
