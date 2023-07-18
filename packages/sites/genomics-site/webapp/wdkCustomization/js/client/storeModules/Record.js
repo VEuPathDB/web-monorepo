@@ -262,6 +262,7 @@ function pruneByDatasetCategory(categoryTree, record) {
       if (individual.wdkReference.name === 'ExternalDatabases') return false;
       if (individual.wdkReference.name === 'GenomeHistory') return false;
       if (individual.wdkReference.name === 'genecount') return false;
+      if (individual.wdkReference.name === 'Busco') return false;
       return true;
     }, categoryTree);
   }
