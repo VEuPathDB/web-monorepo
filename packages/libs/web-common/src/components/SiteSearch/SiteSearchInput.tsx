@@ -76,7 +76,7 @@ export const SiteSearchInput = wrappable(function ({
           <button className="reset" type="button" onClick={handleSubmitWithoutFilters}>Clear filters</button>
         </Tooltip>
       ) : null}
-      <TypeAheadInput siteSearchURL={siteSearchURL} inputReference={inputRef} searchString={searchString} />
+      <TypeAheadInput siteSearchURL={siteSearchURL} inputReference={inputRef} searchString={searchString} placeHolderText={placeholderText} />
       {location.pathname !== SITE_SEARCH_ROUTE && lastSearchQueryString && (
         <Tooltip content="Go back to your last search result">
           <button className="back" type="button" onClick={() => onSearch(lastSearchQueryString)}>
