@@ -10,6 +10,7 @@ import {
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
+import { MarkerConfiguration } from '../appState';
 
 // This async function fetches the default overlay config.
 // For continuous variables, this involves calling the filter-aware-metadata/continuous-variable
@@ -25,6 +26,7 @@ export interface DefaultOverlayConfigProps {
   overlayEntity: StudyEntity | undefined;
   dataClient: DataClient;
   subsettingClient: SubsettingClient;
+  binningMethod?: MarkerConfiguration['binningMethod'];
 }
 
 export async function getDefaultOverlayConfig(
@@ -37,6 +39,7 @@ export async function getDefaultOverlayConfig(
     overlayEntity,
     dataClient,
     subsettingClient,
+    binningMethod = 'equalInterval',
   } = props;
 
   if (overlayVariable != null && overlayEntity != null) {
@@ -67,6 +70,7 @@ export async function getDefaultOverlayConfig(
         ...overlayVariableDescriptor,
         filters: filters ?? [],
         dataClient,
+        binningMethod,
       });
 
       return {
@@ -89,8 +93,7 @@ type GetMostFrequentValuesProps = {
   subsettingClient: SubsettingClient;
 };
 
-// get the most frequent values for the entire dataset, no filters at all
-// (for now at least)
+// get the most frequent values for the entire dataset
 async function getMostFrequentValues({
   studyId,
   variableId,
@@ -112,6 +115,7 @@ async function getMostFrequentValues({
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
     .map((bin) => bin.binLabel);
+
   return sortedValues.length <= numValues
     ? sortedValues
     : [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
@@ -123,6 +127,7 @@ type GetBinRangesProps = {
   entityId: string;
   dataClient: DataClient;
   filters: Filter[];
+  binningMethod: MarkerConfiguration['binningMethod'];
 };
 
 // get the equal spaced bin definitions (for now at least)
@@ -132,6 +137,7 @@ async function getBinRanges({
   entityId,
   dataClient,
   filters,
+  binningMethod = 'equalInterval',
 }: GetBinRangesProps): Promise<BinRange[]> {
   const response = await dataClient.getContinousVariableMetadata({
     studyId,
@@ -145,6 +151,6 @@ async function getBinRanges({
     },
   });
 
-  const binRanges = response.binRanges?.equalInterval!; // if asking for binRanges, the response WILL contain binRanges
+  const binRanges = response.binRanges?.[binningMethod]!; // if asking for binRanges, the response WILL contain binRanges
   return binRanges;
 }

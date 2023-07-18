@@ -88,14 +88,14 @@ interface TemplateProps {
   log2FoldChangeThreshold: number;
   significanceThreshold: number;
   adjustedPValueGate: number;
-  independentAxisRange: NumberRange;
-  dependentAxisRange: NumberRange;
+  independentAxisRange?: NumberRange;
+  dependentAxisRange?: NumberRange;
+  comparisonLabels?: string[];
+  width?: number;
+  height?: number;
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  // Eventually should be a Template prop. Not yet implemented in the component.
-  const comparisonLabels = ['up in group a', 'up in group b'];
-
   // Process input data. Take the object of arrays and turn it into
   // an array of data points
   const volcanoDataPoints: VolcanoPlotData =
@@ -113,9 +113,11 @@ const Template: Story<TemplateProps> = (args) => {
     significanceThreshold: args.significanceThreshold,
     log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
-    comparisonLabels: comparisonLabels, // currently does nothing. not yet implemented.
+    comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
+    width: args.width,
+    height: args.height,
   };
 
   return <VolcanoPlot {...volcanoPlotProps} />;
@@ -132,8 +134,11 @@ Simple.args = {
   markerBodyOpacity: 0.8,
   log2FoldChangeThreshold: 1,
   significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+  height: 500,
+  width: 600,
 };
 
 // Most volcano plots will have thousands of points, since each point

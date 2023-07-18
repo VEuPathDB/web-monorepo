@@ -14,6 +14,7 @@ import { number, record, string } from '../../Utils/Json';
 export interface AnswerFormatting {
   format: string;
   formatConfig: object;
+  viewFilters?: FilterValueArray;
 }
 
 // Legacy, for backward compatibility of client code with older service API
@@ -30,6 +31,7 @@ export interface StandardSearchReportRequest {
 export interface CustomSearchReportRequest {
   searchConfig: SearchConfig;
   reportConfig: object;
+  viewFilters?: FilterValueArray;
 }
 
 export interface CustomSearchReportRequestInfo {
@@ -53,7 +55,12 @@ export default (base: ServiceBase) => {
     );
     let searchConfig: SearchConfig = answerSpec.searchConfig;
     let reportConfig = formatting.formatConfig || {};
-    let request: CustomSearchReportRequest = { searchConfig, reportConfig };
+    let viewFilters = formatting.viewFilters;
+    let request: CustomSearchReportRequest = {
+      searchConfig,
+      reportConfig,
+      viewFilters,
+    };
     return { url, request };
   }
 

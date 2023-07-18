@@ -2,7 +2,7 @@
   margin: auto;
   max-width: 81.25rem; // same max-width as .wdk-QuestionForm
 
-  >.wdk-QuestionFormQuestionHeader {
+  > .wdk-QuestionFormQuestionHeader {
     position: inherit;
   }
 
@@ -43,10 +43,16 @@
   }
 
   tr.DataRow {
+    .DataCell:nth-child(1) {
+      > button {
+        font-weight: bold;
+        text-align: right;
+        width: 100%;
+      }
+    }
     .DataCell:nth-child(3) {
-      display: flex;
-      justify-content: center;
-
+      text-align: center;
+      white-space: nowrap;
       div {
         display: inline-block;
         width: 36px;
@@ -78,7 +84,7 @@
     background-image: -moz-linear-gradient(to bottom, #ffffff, #e6e6e6);
     background-image: -o-linear-gradient(to bottom, #ffffff, #e6e6e6);
     background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-    filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)";
+    filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)';
     background-repeat: repeat-x;
 
     &:hover,
@@ -96,7 +102,7 @@
     background-image: -moz-linear-gradient(to bottom, #5bc0de, #2f96b4);
     background-image: -o-linear-gradient(to bottom, #5bc0de, #2f96b4);
     background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
-    -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
+    -ms-filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)';
   }
 
   .bttn:active,

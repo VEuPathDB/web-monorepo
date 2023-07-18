@@ -8,9 +8,7 @@ import wrapStoreModules from './wrapStoreModules';
 import { wrapWdkService } from './wrapWdkService';
 import pluginConfig from './pluginConfig';
 
-import { reduxMiddleware } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
 import { wrapWdkDependencies } from '@veupathdb/study-data-access/lib/shared/wrapWdkDependencies';
-
 
 // import CSS files
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -19,13 +17,15 @@ import 'site/css/AllApiSites.css';
 import 'site/wdkCustomization/css/client.scss';
 
 // Initialize the application.
-export const initialize =  initializeWdk => initializeEbrc({
-  initializeWdk,
-  componentWrappers,
-  wrapRoutes,
-  wrapStoreModules,
-  wrapWdkService,
-  wrapWdkDependencies: useEda ? partial(wrapWdkDependencies, edaServiceUrl) : undefined,
-  pluginConfig,
-  additionalMiddleware: useEda ? [ reduxMiddleware ] : undefined,
-})
+export const initialize = (initializeWdk) =>
+  initializeEbrc({
+    initializeWdk,
+    componentWrappers,
+    wrapRoutes,
+    wrapStoreModules,
+    wrapWdkService,
+    wrapWdkDependencies: useEda
+      ? partial(wrapWdkDependencies, edaServiceUrl)
+      : undefined,
+    pluginConfig,
+  });

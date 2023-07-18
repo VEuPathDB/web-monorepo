@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { PrimaryKey } from '../../Utils/WdkModel';
 import {
   BasketStatus,
@@ -16,6 +16,25 @@ interface BasketIconButtonProps {
   tooltipContext: string;
 }
 
+const iconWidth = '1em';
+
+export interface BasketIconProps {
+  enabled: boolean;
+}
+
+export function BasketIcon({ enabled }: BasketIconProps) {
+  const color = enabled ? 'green' : '#A6ACAF';
+  return (
+    <i
+      className="fa fa-shopping-basket"
+      style={{
+        color,
+        width: iconWidth,
+      }}
+    />
+  );
+}
+
 export default function BasketIconButton({
   tooltipContext,
   status,
@@ -25,8 +44,6 @@ export default function BasketIconButton({
   requestUpdateBasket,
   showLoginWarning,
 }: BasketIconButtonProps) {
-  const iconWidth = '1em';
-
   const icon =
     status === 'loading' ? (
       <i
@@ -34,13 +51,7 @@ export default function BasketIconButton({
         style={{ width: iconWidth }}
       />
     ) : (
-      <i
-        className="fa fa-shopping-basket"
-        style={{
-          color: status === 'yes' ? 'green' : '#A6ACAF',
-          width: iconWidth,
-        }}
-      />
+      <BasketIcon enabled={status === 'yes'} />
     );
   return (
     <button
