@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SEARCH_TERM_PARAM } from './SiteSearchConstants';
+import * as io from 'io-ts'
 
 import './SiteSearch.scss';
+import {createJsonRequest, FetchClient, ioTransformer} from "@veupathdb/http-utils";
 
 // region Keyboard
 
@@ -189,50 +191,19 @@ function buildDebouncer<T>(delay: number): Debouncer<T> {
 
 const TYPEAHEAD_PATH: string = 'suggest';
 
+const TypeAheadResponse = io.array(io.string)
+
 /**
  * Wrapper for the SiteSearch Type-Ahead HTTP API.
  */
-class TypeAheadAPI {
-  private apiEndpoint: string;
-
-  constructor(endpoint: string) {
-    this.apiEndpoint =
-      (endpoint.endsWith('/') ? endpoint : endpoint + '/') + TYPEAHEAD_PATH;
-  }
-
-  /**
-   * Runs a type-ahead query against the HTTP API and calls the given callback
-   * (`cb`) with the results.
-   *
-   * @param query Type-Ahead query to be used to retrieve completion
-   * suggestions.
-   *
-   * @param cb Callback that will be called with the results of the API query.
-   */
+class TypeAheadAPI extends FetchClient {
   typeAhead(query: string, cb: (values: Array<string>) => any) {
-    console.log(query);
-    fetch(this.apiEndpoint + '?searchText=' + encodeURIComponent(query))
-      .then(this.requireValidResult)
-      .then(cb);
-  }
-
-  private async requireValidResult(value: Response): Promise<Array<string>> {
-    const json = await value.json();
-
-    if (!(json instanceof Array))
-      throw new Error('type-ahead API response was not an array!');
-
-    if ((json as Array<any>).length == 0) return json as Array<string>;
-
-    for (const entry of json as Array<any>) {
-      if (typeof entry != 'string') {
-        throw new Error(
-          'type-ahead API response contained a non-string value!'
-        );
-      }
-    }
-
-    return json as Array<string>;
+    this.fetch(createJsonRequest({
+      method: 'GET',
+      path: "?searchText=" + encodeURIComponent(query),
+      transformResponse: ioTransformer(TypeAheadResponse)
+    }))
+      .then(cb)
   }
 }
 
@@ -254,7 +225,9 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const [hintValue, setHintValue] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  const typeAheadAPI = new TypeAheadAPI(props.siteSearchURL);
+  const typeAheadAPI = new TypeAheadAPI({
+    baseUrl: (ep => (ep.endsWith('/') ? ep : ep + '/') + TYPEAHEAD_PATH)(props.siteSearchURL)
+  });
   const ulReference = useRef<HTMLUListElement>(null);
   const ulClassName =
     suggestions.length == 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
