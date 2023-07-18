@@ -23,7 +23,7 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
-import { Bar } from '@visx/shape';
+import { Bar, Polygon } from '@visx/shape';
 import { useContext } from 'react';
 import { PatternLines } from '@visx/visx';
 
@@ -60,7 +60,8 @@ export interface VolcanoPlotProps {
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
 
 interface TruncationRectangleProps {
-  xMin: number;
+  x1: number;
+  x2: number;
   xMax: number;
   yMin: number;
   yMax: number;
@@ -71,16 +72,17 @@ interface TruncationRectangleProps {
 // MUST be used within a visx DataProvider component because it
 // relies on the DataContext to give plot scales
 function TruncationRectangle(props: TruncationRectangleProps) {
-  const { xMin, xMax, yMin, yMax, barWidth, fill } = props;
+  const { x1, x2, yMin, yMax, fill } = props;
   const { xScale, yScale } = useContext(DataContext);
-  console.log(yScale && yScale(3));
 
   return xScale && yScale ? (
-    <Bar
-      x={Number(xScale(xMin))}
-      y={Number(yScale(yMax))}
-      width={10}
-      height={Number(yScale(yMin)) - Number(yScale(yMax))}
+    <Polygon
+      points={[
+        [Number(xScale(x1)), Number(yScale(yMin))],
+        [Number(xScale(x2)), Number(yScale(yMin))],
+        [Number(xScale(x2)), Number(yScale(yMax))],
+        [Number(xScale(x1)), Number(yScale(yMax))],
+      ]}
       fill={fill ?? 'rgba(1,0,0,0.8)'}
     />
   ) : (
@@ -200,6 +202,11 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     },
   };
 
+  // Truncation indicators padding
+  // If we have truncation indicators, we'll need to expand the plot range just a tad to
+  // ensure the truncation bars appear.
+  const truncationBarWidth = 0.1 * (xAxisMax - xAxisMin);
+
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div style={{ position: 'relative' }}>
@@ -210,7 +217,10 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         height={height ?? 300}
         xScale={{
           type: 'linear',
-          domain: [xAxisMin, xAxisMax],
+          domain: [
+            xAxisMin - truncationBarWidth,
+            xAxisMax + truncationBarWidth,
+          ],
           unknown: 1,
           zero: false,
         }}
@@ -329,15 +339,17 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           orientation={['diagonal']}
         />
         <TruncationRectangle
-          xMin={xAxisMin - 10}
-          xMax={xAxisMin - 10}
+          x1={xAxisMin - truncationBarWidth}
+          x2={xAxisMin}
+          xMax={xAxisMax}
           yMin={yAxisMin}
           yMax={yAxisMax}
           barWidth={(xAxisMax - xAxisMin) * 0.01}
           fill={"url('#lines')"}
         />
         <TruncationRectangle
-          xMin={xAxisMax}
+          x1={xAxisMax}
+          x2={xAxisMax + truncationBarWidth}
           xMax={xAxisMax}
           yMin={yAxisMin}
           yMax={yAxisMax}
