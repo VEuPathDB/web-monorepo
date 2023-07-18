@@ -64,13 +64,14 @@ interface TruncationRectangleProps {
   xMax: number;
   yMin: number;
   yMax: number;
+  barWidth: number;
   fill?: string;
 }
 
 // MUST be used within a visx DataProvider component because it
-// relies on the DataContext to work
+// relies on the DataContext to give plot scales
 function TruncationRectangle(props: TruncationRectangleProps) {
-  const { xMin, xMax, yMin, yMax, fill } = props;
+  const { xMin, xMax, yMin, yMax, barWidth, fill } = props;
   const { xScale, yScale } = useContext(DataContext);
   console.log(yScale && yScale(3));
 
@@ -78,7 +79,7 @@ function TruncationRectangle(props: TruncationRectangleProps) {
     <Bar
       x={Number(xScale(xMin))}
       y={Number(yScale(yMax))}
-      width={20}
+      width={10}
       height={Number(yScale(yMin)) - Number(yScale(yMax))}
       fill={fill ?? 'rgba(1,0,0,0.8)'}
     />
@@ -127,7 +128,8 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   let yAxisMin: number;
   let yAxisMax: number;
   const AXIS_PADDING_FACTOR = 0.05; // The padding ensures we don't clip off part of the glyphs that represent
-  // the most extreme points.
+  // the most extreme points. We could have also used d3.scale.nice but then we dont have precise control of where
+  // the extremes are, which is important for user-defined ranges and truncation bars.
 
   // X axis
   if (independentAxisRange) {
@@ -170,12 +172,20 @@ function VolcanoPlot(props: VolcanoPlotProps) {
    */
 
   // For the actual volcano plot data
+  // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => {
-      return Number(d?.log2foldChange);
+      return Number(d?.log2foldChange) <= xAxisMax &&
+        Number(d?.log2foldChange) >= xAxisMin
+        ? Number(d?.log2foldChange)
+        : null;
     },
     yAccessor: (d: VolcanoPlotDataPoint) => {
-      return -Math.log10(Number(d?.pValue));
+      return -Math.log10(Number(d?.pValue)) <= yAxisMax &&
+        -Math.log10(Number(d?.pValue)) >= yAxisMin
+        ? -Math.log10(Number(d?.pValue))
+        : null;
+      // return ((-Math.log10(Number(d?.pValue)) <= yAxisMax) && (-Math.log10(Number(d?.pValue))) >= yAxisMin) && -Math.log10(Number(d?.pValue));
     },
   };
 
@@ -201,13 +211,14 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         xScale={{
           type: 'linear',
           domain: [xAxisMin, xAxisMax],
-          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+          unknown: 1,
+          zero: false,
         }}
         yScale={{
           type: 'linear',
           domain: [yAxisMin, yAxisMax],
           zero: false,
-          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+          unkonwn: 1,
         }}
         width={width ?? 300}
       >
@@ -318,10 +329,11 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           orientation={['diagonal']}
         />
         <TruncationRectangle
-          xMin={xAxisMin}
-          xMax={xAxisMin}
+          xMin={xAxisMin - 10}
+          xMax={xAxisMin - 10}
           yMin={yAxisMin}
           yMax={yAxisMax}
+          barWidth={(xAxisMax - xAxisMin) * 0.01}
           fill={"url('#lines')"}
         />
         <TruncationRectangle
@@ -329,6 +341,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           xMax={xAxisMax}
           yMin={yAxisMin}
           yMax={yAxisMax}
+          barWidth={(xAxisMax - xAxisMin) * 0.01}
           fill={"url('#lines')"}
         />
       </XYChart>
