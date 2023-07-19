@@ -4,6 +4,7 @@ import { range } from 'lodash';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
 import { VolcanoPlotData } from '../../types/plots/volcanoplot';
 import { NumberRange } from '../../types/general';
+import { yellow } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -93,6 +94,7 @@ interface TemplateProps {
   comparisonLabels?: string[];
   width?: number;
   height?: number;
+  truncationBarFill?: string;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -118,6 +120,7 @@ const Template: Story<TemplateProps> = (args) => {
     dependentAxisRange: args.dependentAxisRange,
     width: args.width,
     height: args.height,
+    truncationBarFill: args.truncationBarFill,
   };
 
   return <VolcanoPlot {...volcanoPlotProps} />;
@@ -165,4 +168,5 @@ Truncation.args = {
   dependentAxisRange: { min: 1, max: 3 },
   height: 500,
   width: 600,
+  truncationBarFill: yellow[300],
 };

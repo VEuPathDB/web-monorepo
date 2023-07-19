@@ -23,7 +23,7 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
-import { Bar, Polygon } from '@visx/shape';
+import { Polygon } from '@visx/shape';
 import { useContext } from 'react';
 import { PatternLines } from '@visx/visx';
 
@@ -55,6 +55,8 @@ export interface VolcanoPlotProps {
   height?: number;
   /** Width of plot */
   width?: number;
+  /** Truncation bar fill color. If no color provided, truncation bars will be filled with a black and white pattern */
+  truncationBarFill?: string;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
@@ -64,7 +66,7 @@ interface TruncationRectangleProps {
   x2: number;
   y1: number;
   y2: number;
-  fill?: string;
+  fill: string;
 }
 
 // MUST be used within a visx DataProvider component because it
@@ -81,7 +83,7 @@ function TruncationRectangle(props: TruncationRectangleProps) {
         [Number(xScale(x2)), Number(yScale(y2))],
         [Number(xScale(x1)), Number(yScale(y2))],
       ]}
-      fill={fill ?? 'rgba(1,0,0,0.8)'}
+      fill={fill}
     />
   ) : (
     <></>
@@ -105,6 +107,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     height,
     width,
     comparisonLabels,
+    truncationBarFill,
   } = props;
 
   /**
@@ -335,21 +338,23 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
         {/* Truncation indicators */}
         {/* Example from https://airbnb.io/visx/docs/pattern */}
-        <PatternLines
-          id="lines"
-          height={5}
-          width={5}
-          stroke={'black'}
-          strokeWidth={1}
-          orientation={['diagonal']}
-        />
+        {!truncationBarFill && (
+          <PatternLines
+            id="lines"
+            height={5}
+            width={5}
+            stroke={'black'}
+            strokeWidth={1}
+            orientation={['diagonal']}
+          />
+        )}
         {showXMinTruncationBar && (
           <TruncationRectangle
             x1={xAxisMin - xTruncationBarWidth}
             x2={xAxisMin}
             y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
             y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
-            fill={"url('#lines')"}
+            fill={truncationBarFill ?? "url('#lines')"}
           />
         )}
         {showXMaxTruncationBar && (
@@ -358,7 +363,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             x2={xAxisMax + xTruncationBarWidth}
             y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
             y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
-            fill={"url('#lines')"}
+            fill={truncationBarFill ?? "url('#lines')"}
           />
         )}
         {showYMaxTruncationBar && (
@@ -367,7 +372,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
             y1={yAxisMax}
             y2={yAxisMax + yTruncationBarHeight}
-            fill={"url('#lines')"}
+            fill={truncationBarFill ?? "url('#lines')"}
           />
         )}
         {showYMinTruncationBar && (
@@ -376,7 +381,7 @@ function VolcanoPlot(props: VolcanoPlotProps) {
             x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
             y1={yAxisMin - yTruncationBarHeight}
             y2={yAxisMin}
-            fill={"url('#lines')"}
+            fill={truncationBarFill ?? "url('#lines')"}
           />
         )}
       </XYChart>
