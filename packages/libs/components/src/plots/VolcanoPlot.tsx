@@ -186,127 +186,132 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     },
   };
 
+  console.log(containerStyles);
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div
       className={containerClass}
       style={{ ...containerStyles, position: 'relative' }}
-      ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work wiht domToImage
     >
-      {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
+      <div
+        ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work wiht domToImage
+        style={{ width: '100%', height: '100%' }}
+      >
+        {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
 
-      <XYChart
-        xScale={{
-          type: 'linear',
-          domain: [xAxisMin, xAxisMax],
-          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
-        }}
-        yScale={{
-          type: 'linear',
-          domain: [yAxisMin, yAxisMax],
-          zero: false,
-          clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
-        }}
-      >
-        {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
-        <Grid numTicks={6} lineStyle={gridStyles} />
-        <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
-        <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
+        <XYChart
+          xScale={{
+            type: 'linear',
+            domain: [xAxisMin, xAxisMax],
+            clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+          }}
+          yScale={{
+            type: 'linear',
+            domain: [yAxisMin, yAxisMax],
+            zero: false,
+            clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+          }}
+        >
+          {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
+          <Grid numTicks={6} lineStyle={gridStyles} />
+          <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
+          <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
-        {/* X axis annotations */}
-        {comparisonLabels &&
-          comparisonLabels.map((label, ind) => {
-            return (
-              <Annotation
-                datum={{
-                  x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
-                  y: yAxisMin,
-                }}
-                dx={0}
-                dy={-15}
-                {...xyAccessors}
-              >
-                <AnnotationLabel
-                  subtitle={label}
-                  horizontalAnchor="middle"
-                  verticalAnchor="start"
-                  showAnchorLine={false}
-                  showBackground={false}
-                />
-              </Annotation>
-            );
-          })}
+          {/* X axis annotations */}
+          {comparisonLabels &&
+            comparisonLabels.map((label, ind) => {
+              return (
+                <Annotation
+                  datum={{
+                    x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
+                    y: yAxisMin,
+                  }}
+                  dx={0}
+                  dy={-15}
+                  {...xyAccessors}
+                >
+                  <AnnotationLabel
+                    subtitle={label}
+                    horizontalAnchor="middle"
+                    verticalAnchor="start"
+                    showAnchorLine={false}
+                    showBackground={false}
+                  />
+                </Annotation>
+              );
+            })}
 
-        {/* Draw threshold lines as annotations below the data points. The
+          {/* Draw threshold lines as annotations below the data points. The
           annotations use XYChart's theme and dimension context.
           The Annotation component holds the context for its children, which is why
           we make a new Annotation component for each line.
           Another option would be to make Line with LineSeries, but the default hover response
           is on the points instead of the line connecting them. */}
 
-        {/* Draw horizontal significance threshold */}
-        {significanceThreshold && (
-          <Annotation
-            datum={{
-              x: 0, // horizontal line so x could be anything
-              y: -Math.log10(Number(significanceThreshold)),
-            }}
-            {...xyAccessors}
-          >
-            <AnnotationLineSubject
-              orientation="horizontal"
-              {...thresholdLineStyles}
-            />
-          </Annotation>
-        )}
-        {/* Draw both vertical log2 fold change threshold lines */}
-        {log2FoldChangeThreshold && (
-          <>
+          {/* Draw horizontal significance threshold */}
+          {significanceThreshold && (
             <Annotation
               datum={{
-                x: -log2FoldChangeThreshold,
-                y: 0, // vertical line so y could be anything
+                x: 0, // horizontal line so x could be anything
+                y: -Math.log10(Number(significanceThreshold)),
               }}
               {...xyAccessors}
             >
-              <AnnotationLineSubject {...thresholdLineStyles} />
+              <AnnotationLineSubject
+                orientation="horizontal"
+                {...thresholdLineStyles}
+              />
             </Annotation>
-            <Annotation
-              datum={{
-                x: log2FoldChangeThreshold,
-                y: 0, // vertical line so y could be anything
-              }}
-              {...xyAccessors}
-            >
-              <AnnotationLineSubject {...thresholdLineStyles} />
-            </Annotation>
-          </>
-        )}
+          )}
+          {/* Draw both vertical log2 fold change threshold lines */}
+          {log2FoldChangeThreshold && (
+            <>
+              <Annotation
+                datum={{
+                  x: -log2FoldChangeThreshold,
+                  y: 0, // vertical line so y could be anything
+                }}
+                {...xyAccessors}
+              >
+                <AnnotationLineSubject {...thresholdLineStyles} />
+              </Annotation>
+              <Annotation
+                datum={{
+                  x: log2FoldChangeThreshold,
+                  y: 0, // vertical line so y could be anything
+                }}
+                {...xyAccessors}
+              >
+                <AnnotationLineSubject {...thresholdLineStyles} />
+              </Annotation>
+            </>
+          )}
 
-        {/* The data itself */}
-        {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
+          {/* The data itself */}
+          {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
           a bunch of glyphs which are <circles> so there should be a way to pass opacity
           down to those elements, but I haven't found it yet */}
-        <Group opacity={markerBodyOpacity ?? 1}>
-          <GlyphSeries
-            dataKey={'data'} // unique key
-            data={data} // data as an array of obejcts (points). Accessed with dataAccessors
-            {...dataAccessors}
-            colorAccessor={(d) => {
-              return assignSignificanceColor(
-                Number(d.log2foldChange),
-                Number(d.pValue),
-                significanceThreshold,
-                log2FoldChangeThreshold,
-                significanceColors
-              );
-            }}
-          />
-        </Group>
-      </XYChart>
-      {showSpinner && <Spinner />}
+          <Group opacity={markerBodyOpacity ?? 1}>
+            <GlyphSeries
+              dataKey={'data'} // unique key
+              data={data} // data as an array of obejcts (points). Accessed with dataAccessors
+              {...dataAccessors}
+              colorAccessor={(d) => {
+                return assignSignificanceColor(
+                  Number(d.log2foldChange),
+                  Number(d.pValue),
+                  significanceThreshold,
+                  log2FoldChangeThreshold,
+                  significanceColors
+                );
+              }}
+            />
+          </Group>
+        </XYChart>
+        {showSpinner && <Spinner />}
+      </div>
     </div>
   );
 }
