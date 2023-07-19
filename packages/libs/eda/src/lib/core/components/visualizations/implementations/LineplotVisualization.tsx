@@ -383,9 +383,16 @@ function LineplotViz(props: VisualizationProps<Options>) {
         vizConfig.yAxisVariable
       );
 
-      // need to get xAxisVariable based on selectedVariables
+      // need to get xAxisVariable based on vizConfig.xAxisVariable and selectedVariables
       const { variable: xAxisVar } =
+        findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+      const { variable: selectedXAxisVar } =
         findEntityAndVariable(selectedVariables.xAxisVariable) ?? {};
+
+      // check useBinning condition for independent axis
+      const keepIndependentAxisUseBinning =
+        xAxisVar?.dataShape === 'continuous' &&
+        selectedXAxisVar?.dataShape === 'continuous';
 
       // need to get the yAxisVariable metadata right here, right now
       // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
@@ -436,9 +443,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
             ? 'Full'
             : 'Auto-zoom'
           : 'Full',
-        // set this for changing xAxisVariable
-        useBinning:
-          showMarginalHistogram && xAxisVar?.dataShape === 'continuous',
+        // udpate useBinning with conditions
+        useBinning: keepIndependentAxisUseBinning
+          ? vizConfig.useBinning
+          : showMarginalHistogram &&
+            selectedXAxisVar?.dataShape === 'continuous',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
