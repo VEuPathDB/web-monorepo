@@ -363,11 +363,11 @@ export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
 
 // TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
 export const VolcanoPlotResponse = array(
-  type({
-    log2foldChange: union([string, undefined]),
-    pValue: union([string, undefined]),
-    adjustedPValue: union([string, undefined]),
-    pointID: union([string, undefined]),
+  partial({
+    log2foldChange: string,
+    pValue: string,
+    adjustedPValue: string,
+    pointID: string,
   })
 );
 

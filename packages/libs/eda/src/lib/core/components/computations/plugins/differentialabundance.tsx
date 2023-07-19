@@ -190,7 +190,7 @@ export function DifferentialAbundanceConfiguration(
     ) {
       return findEntityAndVariable(configuration.comparator.variable);
     }
-  }, [configuration]);
+  }, [configuration, findEntityAndVariable]);
 
   return (
     <ComputationStepContainer
@@ -230,7 +230,7 @@ export function DifferentialAbundanceConfiguration(
             showClearSelectionButton={false}
             scope="variableTree"
             showMultiFilterDescendants
-            starredVariables={[]}
+            starredVariables={analysisState.analysis?.descriptor.starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             entityId={configuration?.comparator?.variable?.entityId}
             variableId={configuration?.comparator?.variable?.variableId}
