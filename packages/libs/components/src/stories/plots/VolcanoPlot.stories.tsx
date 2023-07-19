@@ -135,8 +135,8 @@ Simple.args = {
   log2FoldChangeThreshold: 1,
   significanceThreshold: 0.01,
   comparisonLabels: ['up in group a', 'up in group b'],
-  independentAxisRange: { min: -8, max: 9 },
-  dependentAxisRange: { min: -1, max: 9 },
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
   height: 500,
   width: 600,
 };
@@ -150,8 +150,8 @@ ManyPoints.args = {
   markerBodyOpacity: 0.5,
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
-  independentAxisRange: { min: -8, max: 9 },
-  dependentAxisRange: { min: -1, max: 9 },
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
 };
 
 // Test truncation indicators
@@ -162,7 +162,7 @@ Truncation.args = {
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
   independentAxisRange: { min: -3, max: 3 },
-  dependentAxisRange: { min: -1, max: 9 },
+  dependentAxisRange: { min: 1, max: 3 },
   height: 500,
   width: 600,
 };

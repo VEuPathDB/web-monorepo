@@ -62,26 +62,24 @@ const EmptyVolcanoPlotData: VolcanoPlotData = [];
 interface TruncationRectangleProps {
   x1: number;
   x2: number;
-  xMax: number;
-  yMin: number;
-  yMax: number;
-  barWidth: number;
+  y1: number;
+  y2: number;
   fill?: string;
 }
 
 // MUST be used within a visx DataProvider component because it
 // relies on the DataContext to give plot scales
 function TruncationRectangle(props: TruncationRectangleProps) {
-  const { x1, x2, yMin, yMax, fill } = props;
+  const { x1, x2, y1, y2, fill } = props;
   const { xScale, yScale } = useContext(DataContext);
 
   return xScale && yScale ? (
     <Polygon
       points={[
-        [Number(xScale(x1)), Number(yScale(yMin))],
-        [Number(xScale(x2)), Number(yScale(yMin))],
-        [Number(xScale(x2)), Number(yScale(yMax))],
-        [Number(xScale(x1)), Number(yScale(yMax))],
+        [Number(xScale(x1)), Number(yScale(y1))],
+        [Number(xScale(x2)), Number(yScale(y1))],
+        [Number(xScale(x2)), Number(yScale(y2))],
+        [Number(xScale(x1)), Number(yScale(y2))],
       ]}
       fill={fill ?? 'rgba(1,0,0,0.8)'}
     />
@@ -116,10 +114,10 @@ function VolcanoPlot(props: VolcanoPlotProps) {
    */
 
   // Find maxes and mins of the data itself
-  const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
-  const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
-  const dataYMin = min(data.map((d) => Number(d.pValue)));
-  const dataYMax = max(data.map((d) => Number(d.pValue)));
+  const dataXMin = min(data.map((d) => Number(d.log2foldChange))) ?? 0;
+  const dataXMax = max(data.map((d) => Number(d.log2foldChange))) ?? 0;
+  const dataYMin = min(data.map((d) => Number(d.pValue))) ?? 0;
+  const dataYMax = max(data.map((d) => Number(d.pValue))) ?? 0;
 
   // Determine mins, maxes of axes in the plot.
   // These are different than the data mins/maxes because
@@ -205,7 +203,13 @@ function VolcanoPlot(props: VolcanoPlotProps) {
   // Truncation indicators padding
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear.
-  const truncationBarWidth = 0.1 * (xAxisMax - xAxisMin);
+  const showXMinTruncationBar = dataXMin < xAxisMin;
+  const showXMaxTruncationBar = dataXMax > xAxisMax;
+  const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
+
+  const showYMinTruncationBar = -Math.log10(dataYMax) < yAxisMin;
+  const showYMaxTruncationBar = -Math.log10(dataYMin) > yAxisMax;
+  const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
@@ -218,17 +222,18 @@ function VolcanoPlot(props: VolcanoPlotProps) {
         xScale={{
           type: 'linear',
           domain: [
-            xAxisMin - truncationBarWidth,
-            xAxisMax + truncationBarWidth,
+            xAxisMin - +showXMinTruncationBar * xTruncationBarWidth,
+            xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth,
           ],
-          unknown: 1,
           zero: false,
         }}
         yScale={{
           type: 'linear',
-          domain: [yAxisMin, yAxisMax],
+          domain: [
+            yAxisMin - +showYMinTruncationBar * yTruncationBarHeight,
+            yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight,
+          ],
           zero: false,
-          unkonwn: 1,
         }}
         width={width ?? 300}
       >
@@ -338,24 +343,42 @@ function VolcanoPlot(props: VolcanoPlotProps) {
           strokeWidth={1}
           orientation={['diagonal']}
         />
-        <TruncationRectangle
-          x1={xAxisMin - truncationBarWidth}
-          x2={xAxisMin}
-          xMax={xAxisMax}
-          yMin={yAxisMin}
-          yMax={yAxisMax}
-          barWidth={(xAxisMax - xAxisMin) * 0.01}
-          fill={"url('#lines')"}
-        />
-        <TruncationRectangle
-          x1={xAxisMax}
-          x2={xAxisMax + truncationBarWidth}
-          xMax={xAxisMax}
-          yMin={yAxisMin}
-          yMax={yAxisMax}
-          barWidth={(xAxisMax - xAxisMin) * 0.01}
-          fill={"url('#lines')"}
-        />
+        {showXMinTruncationBar && (
+          <TruncationRectangle
+            x1={xAxisMin - xTruncationBarWidth}
+            x2={xAxisMin}
+            y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
+            y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
+            fill={"url('#lines')"}
+          />
+        )}
+        {showXMaxTruncationBar && (
+          <TruncationRectangle
+            x1={xAxisMax}
+            x2={xAxisMax + xTruncationBarWidth}
+            y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
+            y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
+            fill={"url('#lines')"}
+          />
+        )}
+        {showYMaxTruncationBar && (
+          <TruncationRectangle
+            x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
+            x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
+            y1={yAxisMax}
+            y2={yAxisMax + yTruncationBarHeight}
+            fill={"url('#lines')"}
+          />
+        )}
+        {showYMinTruncationBar && (
+          <TruncationRectangle
+            x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
+            x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
+            y1={yAxisMin - yTruncationBarHeight}
+            y2={yAxisMin}
+            fill={"url('#lines')"}
+          />
+        )}
       </XYChart>
     </div>
   );
