@@ -110,6 +110,7 @@ export function useStandaloneMapMarkers(
   // when switching between pie and bar markers when using the same variable
   const selectedOverlayVariable = useDeepValue(sov);
   const overlayConfig = useDeepValue(oc);
+  const overlayType = overlayConfig?.overlayType;
 
   const dataClient: DataClient = useDataClient();
 
@@ -154,15 +155,13 @@ export function useStandaloneMapMarkers(
     [boundsZoomLevel?.zoomLevel, geoConfig]
   );
 
-  const overlayType = overlayConfig?.overlayType;
-  const vocabulary =
-    overlayType === 'categorical' // switch statement style guide time!!
-      ? overlayConfig?.overlayValues
-      : overlayType === 'continuous'
-      ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
-      : undefined;
-
-  const rawMarkersData = usePromise<StandaloneMapMarkersResponse | undefined>(
+  const rawMarkersPayload = usePromise<
+    | {
+        rawMarkersData: StandaloneMapMarkersResponse;
+        vocabulary: string[] | undefined;
+      }
+    | undefined
+  >(
     useCallback(async () => {
       // check all required vizConfigs are provided
       if (
@@ -212,11 +211,19 @@ export function useStandaloneMapMarkers(
         },
       };
 
-      // now get the data
-      return await dataClient.getStandaloneMapMarkers(
-        'standalone-map',
-        requestParams
-      );
+      // now get and return the data
+      return {
+        rawMarkersData: await dataClient.getStandaloneMapMarkers(
+          'standalone-map',
+          requestParams
+        ),
+        vocabulary:
+          overlayType === 'categorical' // switch statement style guide time!!
+            ? overlayConfig?.overlayValues
+            : overlayType === 'continuous'
+            ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
+            : undefined,
+      };
     }, [
       studyId,
       filters,
@@ -234,7 +241,7 @@ export function useStandaloneMapMarkers(
   );
 
   const totalVisibleEntityCount: number | undefined =
-    rawMarkersData.value?.mapElements.reduce((acc, curr) => {
+    rawMarkersPayload.value?.rawMarkersData.mapElements.reduce((acc, curr) => {
       return acc + curr.entityCount;
     }, 0);
 
@@ -242,8 +249,8 @@ export function useStandaloneMapMarkers(
   // assumes the value is a count! (so never negative)
   const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
-      rawMarkersData.value
-        ? rawMarkersData.value.mapElements
+      rawMarkersPayload.value?.rawMarkersData
+        ? rawMarkersPayload.value.rawMarkersData.mapElements
             .flatMap((el) => el.overlayValues)
             .reduce(
               ({ valueMax, valueMinPos, countSum }, elem) => ({
@@ -262,7 +269,7 @@ export function useStandaloneMapMarkers(
               }
             )
         : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
-    [rawMarkersData]
+    [rawMarkersPayload.value?.rawMarkersData]
   );
 
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -278,7 +285,8 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
-    return rawMarkersData.value?.mapElements.map(
+    const vocabulary = rawMarkersPayload.value?.vocabulary;
+    return rawMarkersPayload.value?.rawMarkersData.mapElements.map(
       ({
         geoAggregateValue,
         entityCount,
@@ -339,7 +347,9 @@ export function useStandaloneMapMarkers(
 
         const count =
           vocabulary != null // if there's an overlay (all expected use cases)
-            ? overlayValues.reduce((sum, { count }) => (sum = sum + count), 0)
+            ? overlayValues
+                .filter(({ binLabel }) => vocabulary.includes(binLabel))
+                .reduce((sum, { count }) => (sum = sum + count), 0)
             : entityCount; // fallback if not
 
         const commonMarkerProps = {
@@ -370,8 +380,7 @@ export function useStandaloneMapMarkers(
       }
     );
   }, [
-    rawMarkersData.value?.mapElements,
-    vocabulary,
+    rawMarkersPayload,
     markerType,
     overlayType,
     defaultDependentAxisRange,
@@ -381,8 +390,8 @@ export function useStandaloneMapMarkers(
   /**
    * create custom legend data
    */
-
   const legendItems: LegendItemsProps[] = useMemo(() => {
+    const vocabulary = rawMarkersPayload?.value?.vocabulary;
     if (vocabulary == null) return [];
 
     return vocabulary.map((label) => ({
@@ -400,23 +409,23 @@ export function useStandaloneMapMarkers(
           : undefined,
       // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label
-      hasData: rawMarkersData
-        ? some(rawMarkersData.value?.mapElements, (el) =>
+      hasData: rawMarkersPayload.value?.rawMarkersData
+        ? some(rawMarkersPayload.value.rawMarkersData.mapElements, (el) =>
             el.overlayValues.some((ov) => ov.binLabel === label)
           )
         : false,
       group: 1,
       rank: 1,
     }));
-  }, [rawMarkersData, vocabulary, overlayType]);
+  }, [rawMarkersPayload, overlayType]);
 
   return {
     markersData: finalMarkersData,
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
-    pending: rawMarkersData.pending,
-    error: rawMarkersData.error,
+    pending: rawMarkersPayload.pending,
+    error: rawMarkersPayload.error,
   };
 }
 
