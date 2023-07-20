@@ -94,9 +94,6 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements, legendRadioValue]
   );
 
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
-
   return (
     <>
       <MapVEuMap
@@ -106,11 +103,8 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
-        showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -129,7 +123,6 @@ AllInOneRequest.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: false, // not yet implemented
 };
 
 export const TwoRequests: Story<MapVEuMapProps> = (args) => {
@@ -162,9 +155,6 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
 
   const legendType = 'numeric';
   const duration = defaultAnimationDuration;
-
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   useEffect(() => {
     // track if effect has been cancelled
@@ -206,11 +196,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
-        showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -229,7 +216,6 @@ TwoRequests.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: false, // not yet implemented
 };
 
 // dependent axis log scale story
@@ -256,8 +242,6 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
 
   const duration = defaultAnimationDuration;
 
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
   const [dependentAxisLogScale, setDependentAxisLogScale] = useState(false);
 
   // send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
@@ -288,11 +272,8 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
         onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         showGrid={true}
-        showMouseToolbar={true}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       {/* Y-axis range control */}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -314,7 +295,6 @@ LogScale.args = {
   height: '50vh',
   width: '50vw',
   showGrid: true,
-  showMouseToolbar: false, // not yet implemented
 };
 
 export const Standalone: Story<MapVEuMapProps> = () => {
