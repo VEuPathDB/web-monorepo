@@ -1,8 +1,4 @@
-import {
-  AnalysisState,
-  useCollectionVariables,
-  useStudyMetadata,
-} from '../../..';
+import { useCollectionVariables, useStudyMetadata } from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -40,11 +36,16 @@ export type DifferentialAbundanceConfig = t.TypeOf<
   typeof DifferentialAbundanceConfig
 >;
 
-const Comparator = t.type({
-  variable: VariableDescriptor,
-  groupA: t.array(t.string),
-  groupB: t.array(t.string),
-});
+const Comparator = t.intersection([
+  t.partial({
+    groupA: t.array(t.string),
+    groupB: t.array(t.string),
+  }),
+  t.type({
+    variable: VariableDescriptor,
+  }),
+]);
+
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
   collectionVariable: VariableDescriptor,
@@ -52,12 +53,20 @@ export const DifferentialAbundanceConfig = t.type({
   differentialAbundanceMethod: t.string,
 });
 
+// Check to ensure the entirety of the configuration is filled out before enabling the
+// Generate Results button.
+function isCompleteDifferentialAbundanceConfig(config: unknown) {
+  return (DifferentialAbundanceConfig.is(config) &&
+    config.comparator.groupA &&
+    config.comparator.groupB) as boolean;
+}
+
 export const plugin: ComputationPlugin = {
   configurationComponent: DifferentialAbundanceConfiguration,
   configurationDescriptionComponent:
     DifferentialAbundanceConfigDescriptionComponent,
   createDefaultConfiguration: () => undefined,
-  isConfigurationValid: DifferentialAbundanceConfig.is,
+  isConfigurationValid: isCompleteDifferentialAbundanceConfig,
   visualizationPlugins: {
     volcanoplot: volcanoPlotVisualization, // Must match name in data service and in visualization.tsx
   },
@@ -241,8 +250,6 @@ export function DifferentialAbundanceConfiguration(
               onClick: (variable) => {
                 changeConfigHandler('comparator', {
                   variable: variable as VariableDescriptor,
-                  groupA: [],
-                  groupB: [],
                 });
               },
             }}
@@ -254,9 +261,9 @@ export function DifferentialAbundanceConfiguration(
           selectedValues={configuration?.comparator?.groupA ?? []}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
-              variable: configuration?.comparator?.variable ?? null,
-              groupA: newValues,
-              groupB: configuration?.comparator?.groupB ?? null,
+              variable: configuration?.comparator?.variable ?? undefined,
+              groupA: newValues.length ? newValues : undefined,
+              groupB: configuration?.comparator?.groupB ?? undefined,
             })
           }
         />
@@ -266,9 +273,9 @@ export function DifferentialAbundanceConfiguration(
           selectedValues={configuration?.comparator?.groupB ?? []}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
-              variable: configuration?.comparator?.variable ?? null,
-              groupA: configuration?.comparator?.groupA ?? null,
-              groupB: newValues,
+              variable: configuration?.comparator?.variable ?? undefined,
+              groupA: configuration?.comparator?.groupA ?? undefined,
+              groupB: newValues.length ? newValues : undefined,
             })
           }
         />
