@@ -59,7 +59,6 @@ function createDefaultConfig() {
     },
     baseLayer: 'Street',
     dependentAxisLogScale: false,
-    mouseMode: 'default',
   } as const;
 }
 
@@ -95,10 +94,6 @@ const MapConfig = t.intersection([
       pie: null,
     }),
     dependentAxisLogScale: t.boolean,
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
-    }),
   }),
 ]);
 
@@ -165,8 +160,6 @@ function MapViz(props: VisualizationProps<Options>) {
     'dependentAxisLogScale'
   );
 
-  const onMouseModeChange = onChangeHandlerFactory<MouseMode>('mouseMode');
-
   const [boundsZoomLevel, setBoundsZoomLevel] = useState<BoundsViewport>();
 
   const geoConfig = useMemo(() => {
@@ -229,7 +222,6 @@ function MapViz(props: VisualizationProps<Options>) {
       zoomLevel,
       vizConfig.baseLayer,
       vizConfig.checkedLegendItems,
-      vizConfig.mouseMode,
     ]
   );
 
@@ -272,10 +264,6 @@ function MapViz(props: VisualizationProps<Options>) {
         showSpinner={pending}
         // whether to show scale at map
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
-        // show mouse tool
-        showMouseToolbar={true}
-        mouseMode={vizConfig.mouseMode ?? defaultConfig.mouseMode}
-        onMouseModeChange={onMouseModeChange}
         // pass defaultViewport
         defaultViewport={{
           center: [
