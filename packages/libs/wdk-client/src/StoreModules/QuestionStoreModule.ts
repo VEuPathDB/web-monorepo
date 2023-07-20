@@ -547,9 +547,7 @@ const observeStoreUpdatedParams: QuestionEpic = (
       const questionState = state$.value.question.questions[searchName];
 
       if (questionState == null) {
-        throw new Error(
-          `Tried to record the parameter values of a nonexistent or unloaded question ${searchName}`
-        );
+        return EMPTY;
       }
 
       const { globalParamMapping, paramValues: newParamValues } = questionState;
@@ -580,14 +578,8 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
       const { searchName } = action.payload;
       const questionState = state$.value.question.questions[searchName];
 
-      if (questionState == null) {
-        throw new Error(
-          `Tried to load group count of a nonexistent or unloaded question ${searchName}`
-        );
-      }
-
       if (
-        questionState.question.properties?.websiteProperties?.includes(
+        questionState?.question.properties?.websiteProperties?.includes(
           'useWizard'
         ) != true
       ) {
