@@ -54,7 +54,7 @@ export default function BoundsDriftMarker({
      * Prevents an edge case where the boundsRectangle persists if simultaneously a marker is hovered
      * and a user changes the viewport
      */
-    return () => {
+    return function cleanup() {
       map.removeLayer(boundsRectangle);
     };
   }, [map, boundsRectangle]);
@@ -70,7 +70,7 @@ export default function BoundsDriftMarker({
   // rather, it seems to be exposed to upper level
   // i.e., current.leafletElement._icon -> current._icon
   const updatePopupOrientationRef = () => {
-    if (popupContent && map) {
+    if (popupContent && map && markerRef.current) {
       // Figure out if we're close to the map edge
       const mapRect = map.getContainer().getBoundingClientRect();
       const markerRect = markerRef.current._icon.getBoundingClientRect();
@@ -159,9 +159,11 @@ export default function BoundsDriftMarker({
     const grayBoundsRect = boundsRectangle
       .getElement()
       ?.getBoundingClientRect();
-    // grayBoundsRect should exist, but we'll early return in the event it doesn't, which
-    // also pleases the TypeScript overlords
-    if (!grayBoundsRect) return;
+    /**
+     * Early return if markerRef.current and popupRef.current are falsy. Include a check
+     * on grayBoundsRect in the early return to please TypeScript.
+     */
+    if (!markerRef.current || !popupRef.current || !grayBoundsRect) return;
 
     const markerRect = markerRef.current._icon.getBoundingClientRect();
     const markerIconRect =
@@ -213,6 +215,7 @@ export default function BoundsDriftMarker({
   };
 
   const handlePopupOpen = () => {
+    if (!popupRef.current) return;
     // Orient the popup correctly
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
@@ -227,6 +230,7 @@ export default function BoundsDriftMarker({
   };
 
   const handlePopupClose = () => {
+    if (!popupRef.current) return;
     observer.disconnect();
 
     // Have to do this again because styling is changed again on close
