@@ -167,9 +167,13 @@ export function PieMarkerConfigurationMenu({
         Color:
       </p>
       <InputVariables
-        showClearSelectionButton={false}
         inputs={[
-          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+          {
+            name: 'overlayVariable',
+            label: 'Variable',
+            titleOverride: ' ',
+            isNonNullable: true,
+          },
         ]}
         entities={entities}
         selectedVariables={{ overlayVariable: configuration.selectedVariable }}
