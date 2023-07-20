@@ -15,7 +15,6 @@ import {
   keyof,
   boolean,
   literal,
-  undefined,
 } from 'io-ts';
 import { Filter } from '../../types/filter';
 import {

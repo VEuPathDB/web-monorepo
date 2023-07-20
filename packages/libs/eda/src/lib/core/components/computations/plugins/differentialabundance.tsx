@@ -18,6 +18,7 @@ import { sharedConfigCssStyles } from './abundance';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
+import { Filter } from '../../..';
 
 /**
  * Differential abundance
@@ -64,10 +65,10 @@ export const plugin: ComputationPlugin = {
 
 function DifferentialAbundanceConfigDescriptionComponent({
   computation,
-  analysisState,
+  filters,
 }: {
   computation: Computation;
-  analysisState: AnalysisState;
+  filters: Filter[];
 }) {
   const studyMetadata = useStudyMetadata();
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -75,7 +76,6 @@ function DifferentialAbundanceConfigDescriptionComponent({
     computation,
     Computation
   );
-  const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const { configuration } = computation.descriptor;
   const collectionVariable =
@@ -230,7 +230,9 @@ export function DifferentialAbundanceConfiguration(
             showClearSelectionButton={false}
             scope="variableTree"
             showMultiFilterDescendants
-            starredVariables={analysisState.analysis?.descriptor.starredVariables}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables
+            }
             toggleStarredVariable={toggleStarredVariable}
             entityId={configuration?.comparator?.variable?.entityId}
             variableId={configuration?.comparator?.variable?.variableId}

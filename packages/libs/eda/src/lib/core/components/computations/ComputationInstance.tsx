@@ -8,6 +8,7 @@ import { plugins } from './plugins';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 import { AnalysisState } from '../../hooks/analysis';
 import { useComputeJobStatus } from './ComputeJobStatusHook';
+import { Filter } from '../../types/filter';
 
 export interface Props extends ComputationProps {
   computationId: string;
@@ -52,6 +53,8 @@ export function ComputationInstance(props: Props) {
   const showTitle =
     url.replace(/\/+$/, '').split('/').pop() === 'visualizations';
 
+  const filters = analysisState.analysis?.descriptor.subset.descriptor ?? [];
+
   // If we can have multiple app instances, add a title. Otherwise, use
   // the normal VisualizationsContainer.
   return (
@@ -65,7 +68,7 @@ export function ComputationInstance(props: Props) {
             gap: '1em',
           }}
         >
-          <AppTitle computation={computation} analysisState={analysisState} />
+          <AppTitle computation={computation} filters={filters} />
         </div>
       )}
       <VisualizationsContainer
@@ -92,11 +95,11 @@ export function ComputationInstance(props: Props) {
 // Title above each app in /visualizations
 interface AppTitleProps {
   computation: Computation;
-  analysisState: AnalysisState;
+  filters: Filter[];
 }
 
 function AppTitle(props: AppTitleProps) {
-  const { computation, analysisState } = props;
+  const { computation, filters } = props;
   const plugin = plugins[computation.descriptor?.type];
   const ConfigDescription = plugin
     ? plugin.configurationDescriptionComponent
@@ -119,7 +122,7 @@ function AppTitle(props: AppTitleProps) {
                       },
                     }
               }
-              analysisState={analysisState}
+              filters={filters}
             />
           )
         : null}

@@ -18,7 +18,6 @@ import { PlotLayout } from '../../layouts/PlotLayout';
 import { VisualizationProps } from '../VisualizationTypes';
 
 // concerning axis range control
-import { NumberRange } from '../../../types/general';
 import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';

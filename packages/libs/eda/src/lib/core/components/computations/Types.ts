@@ -4,7 +4,7 @@ import { EntityCounts } from '../../hooks/entityCounts';
 import { PromiseHookState } from '../../hooks/promise';
 import { GeoConfig } from '../../types/geoConfig';
 import { Computation, ComputationAppOverview } from '../../types/visualization';
-import { StudyEntity } from '../..';
+import { Filter, StudyEntity } from '../..';
 import { VisualizationPlugin } from '../visualizations/VisualizationPlugin';
 
 export interface ComputationProps {
@@ -43,7 +43,7 @@ export interface ComputationPlugin {
   configurationComponent: React.ComponentType<ComputationConfigProps>;
   configurationDescriptionComponent?: React.ComponentType<{
     computation: Computation;
-    analysisState: AnalysisState;
+    filters: Filter[];
   }>;
   visualizationPlugins: Partial<Record<string, VisualizationPlugin<any>>>;
   createDefaultConfiguration: (rootEntity: StudyEntity) => unknown;

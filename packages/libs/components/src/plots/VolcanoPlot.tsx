@@ -186,7 +186,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     },
   };
 
-  console.log(containerStyles);
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div
