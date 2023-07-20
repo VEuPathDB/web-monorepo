@@ -99,8 +99,6 @@ export const Spinner: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -111,8 +109,6 @@ export const Spinner: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -130,7 +126,6 @@ Spinner.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
   showSpinner: true,
 };
 
@@ -152,8 +147,6 @@ export const NoDataOverlay: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -164,8 +157,6 @@ export const NoDataOverlay: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -183,7 +174,6 @@ NoDataOverlay.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
   showNoDataOverlay: true,
 };
 
@@ -205,8 +195,6 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -217,8 +205,6 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -241,7 +227,6 @@ Windowed.args = {
     marginRight: 'auto',
   },
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 export const ScreenshotOnLoad: Story<MapVEuMapProps> = function ScreenhotOnLoad(
@@ -281,7 +266,6 @@ ScreenshotOnLoad.args = {
   height: 500,
   width: 700,
   showGrid: true,
-  showMouseToolbar: true,
   markers: [],
   viewport: { center: [13, 16], zoom: 4 },
   onBoundsChanged: () => {},
@@ -332,7 +316,6 @@ Tiny.args = {
     marginRight: 'auto',
   },
   showGrid: false,
-  showMouseToolbar: false,
   showScale: false,
   showLayerSelector: false,
   showAttribution: false,
@@ -421,5 +404,4 @@ ScrollAndZoom.args = {
     marginRight: 'auto',
   },
   showGrid: true,
-  showMouseToolbar: true,
 };
