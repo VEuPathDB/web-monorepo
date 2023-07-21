@@ -1,3 +1,10 @@
+import {
+  CSSProperties,
+  forwardRef,
+  Ref,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { significanceColors } from '../types/plots';
 import {
   VolcanoPlotData,
@@ -26,6 +33,11 @@ import {
 import { Polygon } from '@visx/shape';
 import { useContext } from 'react';
 import { PatternLines } from '@visx/visx';
+import Spinner from '../components/Spinner';
+// For screenshotting
+import { ToImgopts } from 'plotly.js';
+import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
+import domToImage from 'dom-to-image';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -57,6 +69,12 @@ export interface VolcanoPlotProps {
   width?: number;
   /** Truncation bar fill color. If no color provided, truncation bars will be filled with a black and white pattern */
   truncationBarFill?: string;
+  /** container name */
+  containerClass?: string;
+  /** styling for the plot's container */
+  containerStyles?: CSSProperties;
+  /** shall we show the loading spinner? */
+  showSpinner?: boolean;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
@@ -96,7 +114,7 @@ function TruncationRectangle(props: TruncationRectangleProps) {
  * on the y axis. The volcano plot also colors the points based on their
  * significance and magnitude change to make it easy to spot significantly up or down-regulated genes or taxa.
  */
-function VolcanoPlot(props: VolcanoPlotProps) {
+function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     data = EmptyVolcanoPlotData,
     independentAxisRange, // not yet implemented - expect this to be set by user
@@ -104,11 +122,26 @@ function VolcanoPlot(props: VolcanoPlotProps) {
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
-    height,
-    width,
+    containerClass = 'web-components-plot',
+    containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     comparisonLabels,
     truncationBarFill,
+    showSpinner = false,
   } = props;
+
+  // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
+  const plotRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle<HTMLDivElement, any>(
+    ref,
+    () => ({
+      // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function
+      toImage: async (imageOpts: ToImgopts) => {
+        if (!plotRef.current) throw new Error('Plot not ready');
+        return domToImage.toPng(plotRef.current, imageOpts);
+      },
+    }),
+    []
+  );
 
   /**
    * Find mins and maxes of the data and for the plot.
@@ -216,175 +249,183 @@ function VolcanoPlot(props: VolcanoPlotProps) {
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
-    <div style={{ position: 'relative' }}>
-      {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
+    <div
+      className={containerClass}
+      style={{ ...containerStyles, position: 'relative' }}
+    >
+      <div
+        ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work wiht domToImage
+        style={{ width: '100%', height: '100%' }}
+      >
+        {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
-      <XYChart
-        height={height ?? 300}
-        xScale={{
-          type: 'linear',
-          domain: [
-            xAxisMin - +showXMinTruncationBar * xTruncationBarWidth,
-            xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth,
-          ],
-          zero: false,
-        }}
-        yScale={{
-          type: 'linear',
-          domain: [
-            yAxisMin - +showYMinTruncationBar * yTruncationBarHeight,
-            yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight,
-          ],
-          zero: false,
-        }}
-        width={width ?? 300}
-      >
-        {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
-        <Grid numTicks={6} lineStyle={gridStyles} />
-        <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
-        <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
 
-        {/* X axis annotations */}
-        {comparisonLabels &&
-          comparisonLabels.map((label, ind) => {
-            return (
+        <XYChart
+          xScale={{
+            type: 'linear',
+            domain: [
+              xAxisMin - +showXMinTruncationBar * xTruncationBarWidth,
+              xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth,
+            ],
+            zero: false,
+          }}
+          yScale={{
+            type: 'linear',
+            domain: [
+              yAxisMin - +showYMinTruncationBar * yTruncationBarHeight,
+              yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight,
+            ],
+            zero: false,
+          }}
+        >
+          {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
+          <Grid numTicks={6} lineStyle={gridStyles} />
+          <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
+          <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
+
+          {/* X axis annotations */}
+          {comparisonLabels &&
+            comparisonLabels.map((label, ind) => {
+              return (
+                <Annotation
+                  datum={{
+                    x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
+                    y: yAxisMin,
+                  }}
+                  dx={0}
+                  dy={-15}
+                  {...xyAccessors}
+                >
+                  <AnnotationLabel
+                    subtitle={label}
+                    horizontalAnchor="middle"
+                    verticalAnchor="start"
+                    showAnchorLine={false}
+                    showBackground={false}
+                  />
+                </Annotation>
+              );
+            })}
+
+          {/* Draw threshold lines as annotations below the data points. The
+          annotations use XYChart's theme and dimension context.
+          The Annotation component holds the context for its children, which is why
+          we make a new Annotation component for each line.
+          Another option would be to make Line with LineSeries, but the default hover response
+          is on the points instead of the line connecting them. */}
+
+          {/* Draw horizontal significance threshold */}
+          {significanceThreshold && (
+            <Annotation
+              datum={{
+                x: 0, // horizontal line so x could be anything
+                y: -Math.log10(Number(significanceThreshold)),
+              }}
+              {...xyAccessors}
+            >
+              <AnnotationLineSubject
+                orientation="horizontal"
+                {...thresholdLineStyles}
+              />
+            </Annotation>
+          )}
+          {/* Draw both vertical log2 fold change threshold lines */}
+          {log2FoldChangeThreshold && (
+            <>
               <Annotation
                 datum={{
-                  x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
-                  y: yAxisMin,
+                  x: -log2FoldChangeThreshold,
+                  y: 0, // vertical line so y could be anything
                 }}
-                dx={0}
-                dy={-15}
                 {...xyAccessors}
               >
-                <AnnotationLabel
-                  subtitle={label}
-                  horizontalAnchor="middle"
-                  verticalAnchor="start"
-                  showAnchorLine={false}
-                  showBackground={false}
-                />
+                <AnnotationLineSubject {...thresholdLineStyles} />
               </Annotation>
-            );
-          })}
+              <Annotation
+                datum={{
+                  x: log2FoldChangeThreshold,
+                  y: 0, // vertical line so y could be anything
+                }}
+                {...xyAccessors}
+              >
+                <AnnotationLineSubject {...thresholdLineStyles} />
+              </Annotation>
+            </>
+          )}
 
-        {/* Draw threshold lines as annotations below the data points. The
-            annotations use XYChart's theme and dimension context.
-            The Annotation component holds the context for its children, which is why
-            we make a new Annotation component for each line.
-            Another option would be to make Line with LineSeries, but the default hover response
-            is on the points instead of the line connecting them. */}
-
-        {/* Draw horizontal significance threshold */}
-        {significanceThreshold && (
-          <Annotation
-            datum={{
-              x: 0, // horizontal line so x could be anything
-              y: -Math.log10(Number(significanceThreshold)),
-            }}
-            {...xyAccessors}
-          >
-            <AnnotationLineSubject
-              orientation="horizontal"
-              {...thresholdLineStyles}
-            />
-          </Annotation>
-        )}
-        {/* Draw both vertical log2 fold change threshold lines */}
-        {log2FoldChangeThreshold && (
-          <>
-            <Annotation
-              datum={{
-                x: -log2FoldChangeThreshold,
-                y: 0, // vertical line so y could be anything
-              }}
-              {...xyAccessors}
-            >
-              <AnnotationLineSubject {...thresholdLineStyles} />
-            </Annotation>
-            <Annotation
-              datum={{
-                x: log2FoldChangeThreshold,
-                y: 0, // vertical line so y could be anything
-              }}
-              {...xyAccessors}
-            >
-              <AnnotationLineSubject {...thresholdLineStyles} />
-            </Annotation>
-          </>
-        )}
-
-        {/* The data itself */}
-        {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
+          {/* The data itself */}
+          {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
             down to those elements, but I haven't found it yet */}
-        <Group opacity={markerBodyOpacity ?? 1}>
-          <GlyphSeries
-            dataKey={'data'} // unique key
-            data={data} // data as an array of obejcts (points). Accessed with dataAccessors
-            {...dataAccessors}
-            colorAccessor={(d) => {
-              return assignSignificanceColor(
-                Number(d.log2foldChange),
-                Number(d.pValue),
-                significanceThreshold,
-                log2FoldChangeThreshold,
-                significanceColors
-              );
-            }}
-          />
-        </Group>
+          <Group opacity={markerBodyOpacity ?? 1}>
+            <GlyphSeries
+              dataKey={'data'} // unique key
+              data={data} // data as an array of obejcts (points). Accessed with dataAccessors
+              {...dataAccessors}
+              colorAccessor={(d) => {
+                return assignSignificanceColor(
+                  Number(d.log2foldChange),
+                  Number(d.pValue),
+                  significanceThreshold,
+                  log2FoldChangeThreshold,
+                  significanceColors
+                );
+              }}
+            />
+          </Group>
 
-        {/* Truncation indicators */}
-        {/* Example from https://airbnb.io/visx/docs/pattern */}
-        {!truncationBarFill && (
-          <PatternLines
-            id="lines"
-            height={5}
-            width={5}
-            stroke={'black'}
-            strokeWidth={1}
-            orientation={['diagonal']}
-          />
-        )}
-        {showXMinTruncationBar && (
-          <TruncationRectangle
-            x1={xAxisMin - xTruncationBarWidth}
-            x2={xAxisMin}
-            y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
-            y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
-            fill={truncationBarFill ?? "url('#lines')"}
-          />
-        )}
-        {showXMaxTruncationBar && (
-          <TruncationRectangle
-            x1={xAxisMax}
-            x2={xAxisMax + xTruncationBarWidth}
-            y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
-            y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
-            fill={truncationBarFill ?? "url('#lines')"}
-          />
-        )}
-        {showYMaxTruncationBar && (
-          <TruncationRectangle
-            x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
-            x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
-            y1={yAxisMax}
-            y2={yAxisMax + yTruncationBarHeight}
-            fill={truncationBarFill ?? "url('#lines')"}
-          />
-        )}
-        {showYMinTruncationBar && (
-          <TruncationRectangle
-            x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
-            x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
-            y1={yAxisMin - yTruncationBarHeight}
-            y2={yAxisMin}
-            fill={truncationBarFill ?? "url('#lines')"}
-          />
-        )}
-      </XYChart>
+          {/* Truncation indicators */}
+          {/* Example from https://airbnb.io/visx/docs/pattern */}
+          {!truncationBarFill && (
+            <PatternLines
+              id="lines"
+              height={5}
+              width={5}
+              stroke={'black'}
+              strokeWidth={1}
+              orientation={['diagonal']}
+            />
+          )}
+          {showXMinTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMin - xTruncationBarWidth}
+              x2={xAxisMin}
+              y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
+              y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+          {showXMaxTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMax}
+              x2={xAxisMax + xTruncationBarWidth}
+              y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
+              y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+          {showYMaxTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
+              x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
+              y1={yAxisMax}
+              y2={yAxisMax + yTruncationBarHeight}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+          {showYMinTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
+              x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
+              y1={yAxisMin - yTruncationBarHeight}
+              y2={yAxisMin}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+        </XYChart>
+        {showSpinner && <Spinner />}
+      </div>
     </div>
   );
 }
@@ -423,4 +464,4 @@ function assignSignificanceColor(
   return significanceColors[INSIGNIFICANT];
 }
 
-export default VolcanoPlot;
+export default forwardRef(VolcanoPlot);
