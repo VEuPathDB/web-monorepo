@@ -206,15 +206,17 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => {
-      return Number(d?.log2foldChange) <= xAxisMax &&
-        Number(d?.log2foldChange) >= xAxisMin
-        ? Number(d?.log2foldChange)
+      const log2foldChange = Number(d?.log2foldChange);
+
+      return log2foldChange <= xAxisMax && log2foldChange >= xAxisMin
+        ? log2foldChange
         : null;
     },
     yAccessor: (d: VolcanoPlotDataPoint) => {
-      return -Math.log10(Number(d?.pValue)) <= yAxisMax &&
-        -Math.log10(Number(d?.pValue)) >= yAxisMin
-        ? -Math.log10(Number(d?.pValue))
+      const transformedPValue = -Math.log10(Number(d?.pValue));
+
+      return transformedPValue <= yAxisMax && transformedPValue >= yAxisMin
+        ? transformedPValue
         : null;
     },
   };
@@ -233,12 +235,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   // Truncation indicators padding
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear.
-  const showXMinTruncationBar = dataXMin < xAxisMin;
-  const showXMaxTruncationBar = dataXMax > xAxisMax;
+  const showXMinTruncationBar = Number(dataXMin < xAxisMin);
+  const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
 
-  const showYMinTruncationBar = -Math.log10(dataYMax) < yAxisMin;
-  const showYMaxTruncationBar = -Math.log10(dataYMin) > yAxisMax;
+  const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
+  const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   return (
@@ -259,16 +261,16 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           xScale={{
             type: 'linear',
             domain: [
-              xAxisMin - +showXMinTruncationBar * xTruncationBarWidth,
-              xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth,
+              xAxisMin - showXMinTruncationBar * xTruncationBarWidth,
+              xAxisMax + showXMaxTruncationBar * xTruncationBarWidth,
             ],
             zero: false,
           }}
           yScale={{
             type: 'linear',
             domain: [
-              yAxisMin - +showYMinTruncationBar * yTruncationBarHeight,
-              yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight,
+              yAxisMin - showYMinTruncationBar * yTruncationBarHeight,
+              yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
             ],
             zero: false,
           }}
@@ -285,7 +287,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                 <Annotation
                   datum={{
                     x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
-                    y: yAxisMin,
+                    y: yAxisMin - showYMinTruncationBar * yTruncationBarHeight,
                   }}
                   dx={0}
                   dy={-15}
@@ -379,14 +381,15 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               stroke={'black'}
               strokeWidth={1}
               orientation={['diagonal']}
+              background="#FFF"
             />
           )}
           {showXMinTruncationBar && (
             <TruncationRectangle
               x1={xAxisMin - xTruncationBarWidth}
               x2={xAxisMin}
-              y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
-              y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
+              y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
+              y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
               fill={truncationBarFill ?? "url('#lines')"}
             />
           )}
@@ -394,15 +397,15 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             <TruncationRectangle
               x1={xAxisMax}
               x2={xAxisMax + xTruncationBarWidth}
-              y1={yAxisMin - +showYMinTruncationBar * yTruncationBarHeight}
-              y2={yAxisMax + +showYMaxTruncationBar * yTruncationBarHeight}
+              y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
+              y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
               fill={truncationBarFill ?? "url('#lines')"}
             />
           )}
           {showYMaxTruncationBar && (
             <TruncationRectangle
-              x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
-              x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
+              x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
+              x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
               y1={yAxisMax}
               y2={yAxisMax + yTruncationBarHeight}
               fill={truncationBarFill ?? "url('#lines')"}
@@ -410,8 +413,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           )}
           {showYMinTruncationBar && (
             <TruncationRectangle
-              x1={xAxisMin - +showXMinTruncationBar * xTruncationBarWidth}
-              x2={xAxisMax + +showXMaxTruncationBar * xTruncationBarWidth}
+              x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
+              x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
               y1={yAxisMin - yTruncationBarHeight}
               y2={yAxisMin}
               fill={truncationBarFill ?? "url('#lines')"}
