@@ -89,10 +89,8 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
   const [binWidth, setBinWidth] = useState<number>(500);
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [
-    independentAxisRange,
-    setIndependentAxisRange,
-  ] = useState<NumberOrDateRange>();
+  const [independentAxisRange, setIndependentAxisRange] =
+    useState<NumberOrDateRange>();
 
   const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) => {
     if (newBinWidth > 0) {
@@ -223,10 +221,8 @@ const TemplateWithSelectedDateRangeControls: Story<
   const [data, setData] = useState<HistogramData>();
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [
-    independentAxisRange,
-    setIndependentAxisRange,
-  ] = useState<NumberOrDateRange>();
+  const [independentAxisRange, setIndependentAxisRange] =
+    useState<NumberOrDateRange>();
   const [binWidth, setBinWidth] = useState<NumberOrTimeDelta>({
     value: 1,
     unit: 'month',
@@ -356,15 +352,11 @@ EmptyDataLoading.args = {
 
 const TemplateStaticWithRangeControls: Story<HistogramProps> = (args) => {
   const [dependentAxisRange, setDependentAxisRange] = useState<NumberRange>();
-  const [
-    independentAxisRange,
-    setIndependentAxisRange,
-  ] = useState<NumberOrDateRange>();
+  const [independentAxisRange, setIndependentAxisRange] =
+    useState<NumberOrDateRange>();
 
-  const [
-    axisTruncationConfig,
-    setAxisTruncationConfig,
-  ] = useState<AxisTruncationConfig>({});
+  const [axisTruncationConfig, setAxisTruncationConfig] =
+    useState<AxisTruncationConfig>({});
 
   const handleDependentAxisRangeChange = async (
     newRange?: NumberOrDateRange

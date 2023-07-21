@@ -1,5 +1,4 @@
 .MesaComponent {
-
   .PaginationMenu-DisallowClick {
     pointer-events: none;
     opacity: 0.5;
@@ -52,14 +51,15 @@
       }
       button i.icon {
         font-size: 150%;
-     }
+      }
     }
 
-    .Pagination-Editor, .Pagination-Spacer {
+    .Pagination-Editor,
+    .Pagination-Spacer {
       flex: 1;
       padding-left: 20px;
       text-align: right;
-    /*  font-size: 0.8em; */
+      /*  font-size: 0.8em; */
       white-space: nowrap;
     }
   }

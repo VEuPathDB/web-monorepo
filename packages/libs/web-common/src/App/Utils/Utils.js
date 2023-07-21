@@ -1,37 +1,40 @@
-export function ucFirst (text) {
+export function ucFirst(text) {
   return typeof text === 'string' && text.length > 1
     ? text[0].toUpperCase() + text.slice(1)
     : text;
-};
+}
 
-export function filterKeysFromObject (object, keys = []) {
+export function filterKeysFromObject(object, keys = []) {
   if (typeof object !== 'object' || !Object.keys(object).length) return object;
   return Object.entries(object).reduce((output, entry, entries) => {
-    const [ key, value ] = entry;
+    const [key, value] = entry;
     if (!keys.includes(key)) output[key] = value;
     return output;
   }, {});
-};
+}
 
-export function iconMenuItemsFromSocials (siteConfig = {}) {
+export function iconMenuItemsFromSocials(siteConfig = {}) {
   const { facebookUrl, twitterUrl, youtubeUrl, vimeoUrl } = siteConfig;
   const items = [];
-  if (facebookUrl) items.push({ type: 'facebook', url: facebookUrl, target: '_blank' });
-  if (twitterUrl) items.push({ type: 'twitter', url: twitterUrl, target: '_blank' });
-  if (youtubeUrl) items.push({ type: 'youtube', url: youtubeUrl, target: '_blank' });
+  if (facebookUrl)
+    items.push({ type: 'facebook', url: facebookUrl, target: '_blank' });
+  if (twitterUrl)
+    items.push({ type: 'twitter', url: twitterUrl, target: '_blank' });
+  if (youtubeUrl)
+    items.push({ type: 'youtube', url: youtubeUrl, target: '_blank' });
   if (vimeoUrl) items.push({ type: 'vimeo', url: vimeoUrl, target: '_blank' });
   return items;
 }
 
-export function menuItemsFromSocials (siteConfig = {}) {
+export function menuItemsFromSocials(siteConfig = {}) {
   return ['Facebook', 'Twitter', 'YouTube']
-    .filter(siteName => {
+    .filter((siteName) => {
       const key = siteName.toLowerCase() + 'Url';
-      return key in siteConfig && siteConfig[key] && siteConfig[key].length
+      return key in siteConfig && siteConfig[key] && siteConfig[key].length;
     })
-    .map(siteName => ({
+    .map((siteName) => ({
       text: siteName,
       url: siteConfig[siteName.toLowerCase() + 'Url'],
-      target: '_blank'
+      target: '_blank',
     }));
-};
+}

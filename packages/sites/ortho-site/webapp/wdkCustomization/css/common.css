@@ -4,7 +4,7 @@
 /* optional class to buffer main content */
 div.buffered-content {
   margin: 6px;
-  border: 1px solid #0B4796;
+  border: 1px solid #0b4796;
   padding: 6px;
   text-align: left;
 }
@@ -25,17 +25,33 @@ p.indented {
       =HEADER 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#header2 {min-width:975px; clear:both;}
-
-div#header2 .ui-widget-content {
-  background:0;
-  border:0;
+#header2 {
+  min-width: 975px;
+  clear: both;
 }
 
-#header-control {float:right; text-align: right; margin: 7px; }
-#header2 #quick-search, #header2 #tool-sets { margin: 5px; }
-#header2 #quick-search input.search-box { width: 100px; }
-#header2 #site-logo a {font:bold 50pt Georgia,serif; color:#3333FF; text-decoration:none;}
+div#header2 .ui-widget-content {
+  background: 0;
+  border: 0;
+}
+
+#header-control {
+  float: right;
+  text-align: right;
+  margin: 7px;
+}
+#header2 #quick-search,
+#header2 #tool-sets {
+  margin: 5px;
+}
+#header2 #quick-search input.search-box {
+  width: 100px;
+}
+#header2 #site-logo a {
+  font: bold 50pt Georgia, serif;
+  color: #3333ff;
+  text-decoration: none;
+}
 
 #header_rt {
   margin-top: 22px;
@@ -53,7 +69,7 @@ div#header2 .ui-widget-content {
 #nav-top .socmedia-link-twitter {
   position: relative;
   bottom: 2px;
-  left:2px;
+  left: 2px;
 }
 
 .eupathdb-SmallMenuItem {
@@ -72,16 +88,22 @@ div#header2 .ui-widget-content {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =grey MENUBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#menu {clear:both; position:relative; z-index:11;}
-#menu > ul.menu {float:none;}
-#menu #favorite-menu {float:right;}
-
+#menu {
+  clear: both;
+  position: relative;
+  z-index: 11;
+}
+#menu > ul.menu {
+  float: none;
+}
+#menu #favorite-menu {
+  float: right;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =SEARCH page
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 /* #query-description-section { font-size: 12pt; margin: 10px; } */
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =WEBSERVICES page
@@ -108,7 +130,6 @@ div#header2 .ui-widget-content {
   margin-left: 22px;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =Summary page 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -122,7 +143,6 @@ div#header2 .ui-widget-content {
   margin-top: 0.2em;
   margin-bottom: 0.2em;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =ERROR page (WEB-INF/jsp/error.jsp)
@@ -148,7 +168,7 @@ div#header2 .ui-widget-content {
   width: 230px;
   margin: 15px;
   -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;  
+  -webkit-border-radius: 50px;
   -khtml-border-radius: 50px;
   border-radius: 50px;
 }
@@ -156,11 +176,15 @@ div#header2 .ui-widget-content {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       =FOOTER     using also css from AllSites.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-#footer { padding: 5px;}
-#footer #copyright { float: left; padding: 10px; }
-#footer #contact { float: right; text-align: right; font-size:120%;}
-
-
-
-
-
+#footer {
+  padding: 5px;
+}
+#footer #copyright {
+  float: left;
+  padding: 10px;
+}
+#footer #contact {
+  float: right;
+  text-align: right;
+  font-size: 120%;
+}

@@ -1,7 +1,14 @@
 import React, { Fragment } from 'react';
 import { StepAnalysisResultPluginProps } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/StepAnalysisResultsPane';
-import { integerCell, decimalCellFactory, scientificCellFactory } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/Utils/StepAnalysisResults';
-import { CommonResultTable, ColumnSettings } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
+import {
+  integerCell,
+  decimalCellFactory,
+  scientificCellFactory,
+} from '@veupathdb/wdk-client/lib/Components/StepAnalysis/Utils/StepAnalysisResults';
+import {
+  CommonResultTable,
+  ColumnSettings,
+} from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 
 import './StepAnalysisEnrichmentResult.scss';
 import { StepAnalysisButtonArray } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/StepAnalysisButtonArray';
@@ -12,7 +19,7 @@ const wordEnrichmentResultColumns = [
     key: 'descrip',
     name: 'Description',
     helpText: 'Description',
-    sortable: true
+    sortable: true,
   },
   {
     key: 'bgdGenes',
@@ -20,7 +27,7 @@ const wordEnrichmentResultColumns = [
     helpText: 'Number of genes with this word in the background',
     renderCell: integerCell('bgdGenes'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'resultGenes',
@@ -28,7 +35,7 @@ const wordEnrichmentResultColumns = [
     helpText: 'Number of genes with this word in your result',
     renderCell: integerCell('resultGenes'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'percentInResult',
@@ -37,7 +44,7 @@ const wordEnrichmentResultColumns = [
       'Of the genes in the background with this word, the percent that are present in your result',
     renderCell: decimalCellFactory(1)('percentInResult'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'foldEnrich',
@@ -46,7 +53,7 @@ const wordEnrichmentResultColumns = [
       'The percent of genes with this word in your result divided by the percent of genes with this word in the background',
     renderCell: decimalCellFactory(2)('foldEnrich'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'oddsRatio',
@@ -54,7 +61,7 @@ const wordEnrichmentResultColumns = [
     helpText: "Odds ratio statistic from the Fisher's exact test",
     renderCell: decimalCellFactory(2)('oddsRatio'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'pValue',
@@ -62,7 +69,7 @@ const wordEnrichmentResultColumns = [
     helpText: "P-value from Fisher's exact test",
     renderCell: scientificCellFactory(2)('pValue'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'benjamini',
@@ -70,7 +77,7 @@ const wordEnrichmentResultColumns = [
     helpText: 'Benjamini-Hochberg false discovery rate (FDR)',
     renderCell: scientificCellFactory(2)('benjamini'),
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'bonferroni',
@@ -78,8 +85,8 @@ const wordEnrichmentResultColumns = [
     helpText: 'Bonferroni adjusted p-value',
     renderCell: scientificCellFactory(2)('bonferroni'),
     sortable: true,
-    sortType: 'number'
-  }
+    sortType: 'number',
+  },
 ] as ColumnSettings[];
 
 const wordEnrichmentButtonsConfigFactory = (
@@ -88,35 +95,34 @@ const wordEnrichmentButtonsConfigFactory = (
   { downloadPath }: any,
   webAppUrl: string
 ) => [
-    {
-      key: 'download',
-      href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${downloadPath}`,
-      iconClassName: 'fa fa-download blue-text',
-      contents: 'Download'
-    }
-  ];
+  {
+    key: 'download',
+    href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${downloadPath}`,
+    iconClassName: 'fa fa-download blue-text',
+    contents: 'Download',
+  },
+];
 
-export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> = ({
-  analysisResult,
-  analysisConfig,
-  webAppUrl
-}) => (
-  <Fragment>
-    <StepAnalysisButtonArray configs={
-      wordEnrichmentButtonsConfigFactory(
-        analysisConfig.stepId,
-        analysisConfig.analysisId,
-        analysisResult,
-        webAppUrl
-      )
-    } />
-    <h3>Analysis Results:   </h3>
-    <CommonResultTable
-      emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
-      rows={analysisResult.resultData}
-      columns={wordEnrichmentResultColumns}
-      initialSortColumnKey={'pValue'}
-      fixedTableHeader
-    />
-  </Fragment>
-);
+export const StepAnalysisWordEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> =
+  ({ analysisResult, analysisConfig, webAppUrl }) => (
+    <Fragment>
+      <StepAnalysisButtonArray
+        configs={wordEnrichmentButtonsConfigFactory(
+          analysisConfig.stepId,
+          analysisConfig.analysisId,
+          analysisResult,
+          webAppUrl
+        )}
+      />
+      <h3>Analysis Results: </h3>
+      <CommonResultTable
+        emptyResultMessage={
+          'No enrichment was found with significance at the P-value threshold you specified.'
+        }
+        rows={analysisResult.resultData}
+        columns={wordEnrichmentResultColumns}
+        initialSortColumnKey={'pValue'}
+        fixedTableHeader
+      />
+    </Fragment>
+  );

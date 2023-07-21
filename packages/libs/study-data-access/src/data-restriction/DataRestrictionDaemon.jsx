@@ -31,11 +31,8 @@ function DataRestrictionDaemon(props) {
 
   const permissionsValue = usePermissions();
 
-  if (
-    dataRestriction == null ||
-    user == null ||
-    permissionsValue.loading
-  ) return null;
+  if (dataRestriction == null || user == null || permissionsValue.loading)
+    return null;
 
   return !dataRestriction ? null : (
     <DataRestrictionModal
@@ -59,14 +56,14 @@ DataRestrictionDaemon.propTypes = {
 };
 
 const enhance = connect(
-  state => ({
+  (state) => ({
     dataRestriction: state.dataRestriction,
     user: state.globalData.user,
   }),
   {
     clearRestrictions,
-    showLoginForm
+    showLoginForm,
   }
-)
+);
 
 export default compose(wrappable, enhance)(DataRestrictionDaemon);

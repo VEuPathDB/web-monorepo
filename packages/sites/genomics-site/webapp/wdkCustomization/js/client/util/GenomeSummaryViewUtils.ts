@@ -4,11 +4,12 @@ import {
   GenomeViewSequence,
   GenomeSummaryViewReport,
   GenomeViewFeature,
-  GenomeViewRegion
+  GenomeViewRegion,
 } from '../types/genomeSummaryViewTypes';
 
 export type GenomeSummaryViewReportModel =
-  TruncatedGenomeSummaryViewReportModel | UntruncatedGenomeSummaryViewReportModel;
+  | TruncatedGenomeSummaryViewReportModel
+  | UntruncatedGenomeSummaryViewReportModel;
 
 interface TruncatedGenomeSummaryViewReportModel {
   type: 'truncated';
@@ -41,9 +42,9 @@ export interface GenomeViewRegionModel {
   endFormatted: string;
   sourceId: string;
   featureCount: number;
-  isForward: boolean,
-  percentStart: number,
-  percentLength: number,
+  isForward: boolean;
+  percentStart: number;
+  percentLength: number;
   stringRep: string;
   features: GenomeViewFeatureModel[];
 }
@@ -68,22 +69,27 @@ export interface GenomeViewFeatureModel {
   description: string;
 }
 
-export const toReportModel = (report: GenomeSummaryViewReport): GenomeSummaryViewReportModel => report.isTruncate
-  ? {
-    type: 'truncated'
-  }
-  : {
-    type: 'untruncated',
-    isDetail: report.isDetail,
-    maxLength: report.maxLength,
-    sequences: report.sequences.map(toSequenceModel)
-  };
+export const toReportModel = (
+  report: GenomeSummaryViewReport
+): GenomeSummaryViewReportModel =>
+  report.isTruncate
+    ? {
+        type: 'truncated',
+      }
+    : {
+        type: 'untruncated',
+        isDetail: report.isDetail,
+        maxLength: report.maxLength,
+        sequences: report.sequences.map(toSequenceModel),
+      };
 
-const toSequenceModel = (sequence: GenomeViewSequence): GenomeViewSequenceModel => ({
+const toSequenceModel = (
+  sequence: GenomeViewSequence
+): GenomeViewSequenceModel => ({
   ...sequence,
   regions: sequence.regions.map(toRegionModel),
   features: sequence.features.map(toFeatureModel),
-  featureCount: sequence.features.length
+  featureCount: sequence.features.length,
 });
 
 const toRegionModel = (region: GenomeViewRegion): GenomeViewRegionModel => {
@@ -104,7 +110,7 @@ const toRegionModel = (region: GenomeViewRegion): GenomeViewRegionModel => {
     start,
     end,
     startFormatted,
-    endFormatted
+    endFormatted,
   };
 };
 
@@ -112,14 +118,16 @@ const findBoundingLocation = (features: GenomeViewFeature[]): RegionLocation =>
   features.length === 0
     ? { start: 0, end: 0 }
     : features.reduce(
-      (result, feature) => ({
-        start: Math.min(result.start, feature.start),
-        end: Math.max(result.end, feature.end)
-      }),
-      { start: Infinity, end: -Infinity }
-    );
+        (result, feature) => ({
+          start: Math.min(result.start, feature.start),
+          end: Math.max(result.end, feature.end),
+        }),
+        { start: Infinity, end: -Infinity }
+      );
 
-const toFeatureModel = (feature: GenomeViewFeature): GenomeViewFeatureModel => ({
+const toFeatureModel = (
+  feature: GenomeViewFeature
+): GenomeViewFeatureModel => ({
   ...feature,
   context: `${feature.sequenceId}:${feature.context}`,
   strand: feature.isForward ? 'forward' : 'reversed',
@@ -130,6 +138,6 @@ const toFeatureModel = (feature: GenomeViewFeature): GenomeViewFeatureModel => (
 const PORTAL_SITE_PROJECT_ID = 'EuPathDB';
 
 export function useIsPortalSite() {
-  const config = useWdkService(wdkService => wdkService.getConfig(), []);
+  const config = useWdkService((wdkService) => wdkService.getConfig(), []);
   return config?.projectId === PORTAL_SITE_PROJECT_ID;
 }

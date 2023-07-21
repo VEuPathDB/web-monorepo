@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import Icon from ".";
-import { gray } from "../../definitions/colors";
-import { IconProps } from "./types";
+import { useMemo } from 'react';
+import Icon from '.';
+import { gray } from '../../definitions/colors';
+import { IconProps } from './types';
 
 export default function CaretUpIcon(props: IconProps) {
   const finalProps = useMemo(() => {

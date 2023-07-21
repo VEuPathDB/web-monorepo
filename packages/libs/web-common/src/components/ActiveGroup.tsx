@@ -6,18 +6,13 @@ import Parameters from './Parameters';
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import {
-  Parameter
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import {
-  QuestionWizardProps
-} from '../util/WizardTypes'
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { QuestionWizardProps } from '../util/WizardTypes';
 
 /**
  * Active group section. Includes heading, help text, summary counts, and parameters.
  */
 function ActiveGroup(props: QuestionWizardProps) {
-
   const {
     searchName,
     recordClassName,
@@ -29,49 +24,63 @@ function ActiveGroup(props: QuestionWizardProps) {
       recordClass,
       activeGroupIx,
       initialCount,
-      updatingParamName
+      updatingParamName,
     },
     parameterEventHandlers,
-    dispatch
+    dispatch,
   } = props;
-  const paramMap = new Map(question.parameters.map(p => [p.name, p]));
+  const paramMap = new Map(question.parameters.map((p) => [p.name, p]));
   const activeGroup = parameterGroupUIs[activeGroupIx];
 
   const filteredCountState = activeGroup.filteredCountState;
-  const filteredCountStateOfPreviousGroup = activeGroupIx === 0 ? initialCount : parameterGroupUIs[activeGroupIx - 1]!.filteredCountState;
+  const filteredCountStateOfPreviousGroup =
+    activeGroupIx === 0
+      ? initialCount
+      : parameterGroupUIs[activeGroupIx - 1]!.filteredCountState;
 
   const parameters = activeGroup.parameters
-    .map(paramName => paramMap.get(paramName) as Parameter)
-    .filter(param => param.isVisible);
+    .map((paramName) => paramMap.get(paramName) as Parameter)
+    .filter((param) => param.isVisible);
 
-  const loadingEl = <Loading radius={2} className={makeClassName('GroupLoading')}/>;
+  const loadingEl = (
+    <Loading radius={2} className={makeClassName('GroupLoading')} />
+  );
 
-  const showUpdatingOverlay = (
+  const showUpdatingOverlay =
     updatingParamName == null ||
     (paramMap.get(updatingParamName) as Parameter).group === activeGroup.name
-  )
-    ? false
-    : getDeepDependencies(updatingParamName, paramMap)
-      .map((paramName: string) => paramMap.get(paramName) as Parameter)
-      .some((param: Parameter) => param.group === activeGroup.name);
+      ? false
+      : getDeepDependencies(updatingParamName, paramMap)
+          .map((paramName: string) => paramMap.get(paramName) as Parameter)
+          .some((param: Parameter) => param.group === activeGroup.name);
 
   return (
     <div className={makeClassName('ActiveGroupContainer')}>
-      {showUpdatingOverlay &&
+      {showUpdatingOverlay && (
         <div className={makeClassName('ActiveGroupContainerOverlay')}>
           Updating
         </div>
-      }
+      )}
       <div className={makeClassName('ActiveGroupHeading')}>
-        <div className={makeClassName('ActiveGroupCount', activeGroup.allValuesDefault ? 'hidden' : 'visible')}>
-          Your <em>{activeGroup.displayName}</em> filters reduce {
-            (filteredCountStateOfPreviousGroup === 'loading' ? loadingEl : result(filteredCountStateOfPreviousGroup, 'toLocaleString'))
-          } {recordClass.shortDisplayNamePlural} to {
-            (filteredCountState === 'loading' ? loadingEl : result(filteredCountState, 'toLocaleString'))
-          }
+        <div
+          className={makeClassName(
+            'ActiveGroupCount',
+            activeGroup.allValuesDefault ? 'hidden' : 'visible'
+          )}
+        >
+          Your <em>{activeGroup.displayName}</em> filters reduce{' '}
+          {filteredCountStateOfPreviousGroup === 'loading'
+            ? loadingEl
+            : result(filteredCountStateOfPreviousGroup, 'toLocaleString')}{' '}
+          {recordClass.shortDisplayNamePlural} to{' '}
+          {filteredCountState === 'loading'
+            ? loadingEl
+            : result(filteredCountState, 'toLocaleString')}
         </div>
         {activeGroup.description && (
-          <div className={makeClassName('ActiveGroupDescription')}>{activeGroup.description}</div>
+          <div className={makeClassName('ActiveGroupDescription')}>
+            {activeGroup.description}
+          </div>
         )}
       </div>
       <Parameters
@@ -89,8 +98,13 @@ function ActiveGroup(props: QuestionWizardProps) {
 
 export default wrappable(ActiveGroup);
 
-function getDeepDependencies(paramName: string, paramMap: Map<string, Parameter>): string[] {
+function getDeepDependencies(
+  paramName: string,
+  paramMap: Map<string, Parameter>
+): string[] {
   return Seq.from((paramMap.get(paramName) as Parameter).dependentParams)
-    .flatMap(depParamName =>
-      Seq.of(depParamName).concat(getDeepDependencies(depParamName, paramMap))).toArray();
+    .flatMap((depParamName) =>
+      Seq.of(depParamName).concat(getDeepDependencies(depParamName, paramMap))
+    )
+    .toArray();
 }

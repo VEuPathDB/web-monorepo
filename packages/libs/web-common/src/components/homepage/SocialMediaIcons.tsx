@@ -7,32 +7,38 @@ import './SocialMediaIcons.scss';
 
 const cx = makeClassNameHelper('ebrc-SocialMediaIcon');
 
-export const AnnouncementsToggle = () =>
+export const AnnouncementsToggle = () => (
   <div className={cx()}>
     <IconAlt fa="bullhorn" />
-  </div>;
+  </div>
+);
 
-export const ContactUs = () => 
+export const ContactUs = () => (
   <div className={cx()}>
     <IconAlt fa="envelope-o" />
-  </div>;
+  </div>
+);
 
-export const Twitter = () =>
+export const Twitter = () => (
   <div className={cx()}>
     <IconAlt fa="twitter" />
-  </div>;
+  </div>
+);
 
-export const Reddit = () =>
+export const Reddit = () => (
   <div className={cx()}>
     <IconAlt fa="reddit" />
-  </div>;
+  </div>
+);
 
-export const Facebook = () =>
+export const Facebook = () => (
   <div className={cx()}>
     <IconAlt fa="facebook-square" />
-  </div>;
+  </div>
+);
 
-export const YouTube = () =>
+export const YouTube = () => (
   <div className={cx()}>
     <IconAlt fa="youtube-play" />
-  </div>;
+  </div>
+);

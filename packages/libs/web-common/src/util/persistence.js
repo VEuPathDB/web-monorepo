@@ -13,9 +13,8 @@ const prefix = '@@ebrc@@';
 export function set(key, value) {
   try {
     store.setItem(prefix + '/' + key, JSON.stringify(value));
-  }
-  catch(e) {
-    console.error("Unable to set value to localStorage.", e);
+  } catch (e) {
+    console.error('Unable to set value to localStorage.', e);
   }
 }
 
@@ -26,9 +25,8 @@ export function get(key, defaultValue) {
   try {
     let item = store.getItem(prefix + '/' + key);
     return item == null ? defaultValue : JSON.parse(item);
-  }
-  catch(e) {
-    console.error("Unable to get value from localStorage.", e);
+  } catch (e) {
+    console.error('Unable to get value from localStorage.', e);
     return defaultValue;
   }
 }

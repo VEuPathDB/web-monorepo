@@ -14,7 +14,7 @@
     margin-left: 1em;
   }
 
-  .EValueText input[type="text"] {
+  .EValueText input[type='text'] {
     margin-left: 0.25em;
     width: 3.5em;
   }
@@ -27,11 +27,12 @@
     margin-bottom: 1em;
   }
 
-  .EdgeOptions .GraphAccordionContent > *:nth-child(n+2) {
+  .EdgeOptions .GraphAccordionContent > *:nth-child(n + 2) {
     margin-top: 1em;
   }
 
-  .EdgeTypeOption, .LegendEntry {
+  .EdgeTypeOption,
+  .LegendEntry {
     display: inline-grid;
     grid-template-columns: auto 1fr;
     column-gap: 0.25em;
@@ -40,7 +41,7 @@
     border: 0.0625rem dotted gray;
 
     &:hover {
-      background-color: #FFFF99;
+      background-color: #ffff99;
     }
   }
 
@@ -50,7 +51,8 @@
     margin-bottom: 0.25em;
   }
 
-  .EdgeTypeOptions, .LegendContent {
+  .EdgeTypeOptions,
+  .LegendContent {
     display: inline-grid;
     grid-gap: 0.4em;
   }
@@ -78,7 +80,8 @@
     margin-top: 1em;
   }
 
-  fieldset, .ControlSection {
+  fieldset,
+  .ControlSection {
     border: 0.0625rem dotted gray;
     padding: 0.5em;
   }

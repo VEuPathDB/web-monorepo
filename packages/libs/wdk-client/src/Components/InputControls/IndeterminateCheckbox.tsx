@@ -10,13 +10,14 @@ export type IndeterminateCheckboxProps<T> = {
   node: T;
   toggleCheckbox: (node: T, selected: boolean) => void;
   value: string;
-}
+};
 
 /**
  * React Component that provides a 3-state checkbox
  */
-export default class IndeterminateCheckbox<T> extends React.Component<IndeterminateCheckboxProps<T>> {
-
+export default class IndeterminateCheckbox<T> extends React.Component<
+  IndeterminateCheckboxProps<T>
+> {
   constructor(props: IndeterminateCheckboxProps<T>) {
     super(props);
 
@@ -51,8 +52,14 @@ export default class IndeterminateCheckbox<T> extends React.Component<Indetermin
     // name may be undefined; it is optional
     let nameProp = this.props.name ? { name: this.props.name } : {};
     return (
-        <input type="checkbox" {...nameProp} className={this.props.className} value={this.props.value}
-               checked={this.props.checked} onChange={this.handleChange} />
+      <input
+        type="checkbox"
+        {...nameProp}
+        className={this.props.className}
+        value={this.props.value}
+        checked={this.props.checked}
+        onChange={this.handleChange}
+      />
     );
   }
 }

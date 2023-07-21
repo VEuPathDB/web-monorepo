@@ -21,9 +21,8 @@ const navBarLinkStyle = {
 };
 
 export default function Header() {
-  const { loginFormVisible, setLoginFormVisible } = React.useContext(
-    DevLoginFormContext
-  );
+  const { loginFormVisible, setLoginFormVisible } =
+    React.useContext(DevLoginFormContext);
   const [email, setEmail] = React.useState('');
   const [pwd, setPwd] = React.useState('');
   const [user, setUser] = React.useState<User>();

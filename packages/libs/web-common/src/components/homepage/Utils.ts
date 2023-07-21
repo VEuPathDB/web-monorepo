@@ -2,11 +2,14 @@ import { useMemo } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { CategoryTreeNode, getDisplayName } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import {
+  CategoryTreeNode,
+  getDisplayName,
+} from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
-export const combineClassNames = (...classNames: (string | undefined )[]) =>
-  classNames.filter(className => className).join(' ');
+export const combineClassNames = (...classNames: (string | undefined)[]) =>
+  classNames.filter((className) => className).join(' ');
 
 export function useAlphabetizedSearchTree(searchTree?: CategoryTreeNode) {
   const result = useMemo(() => {
@@ -18,18 +21,16 @@ export function useAlphabetizedSearchTree(searchTree?: CategoryTreeNode) {
       (node, mappedChildren: CategoryTreeNode[]) => {
         return {
           ...node,
-          children: node === searchTree
-            ? mappedChildren
-            : orderBy(
-              [...mappedChildren],
-              getDisplayName
-            )
+          children:
+            node === searchTree
+              ? mappedChildren
+              : orderBy([...mappedChildren], getDisplayName),
         };
       },
-      node => node.children,
+      (node) => node.children,
       searchTree
     );
-  }, [ searchTree ]);
+  }, [searchTree]);
 
   return result;
 }

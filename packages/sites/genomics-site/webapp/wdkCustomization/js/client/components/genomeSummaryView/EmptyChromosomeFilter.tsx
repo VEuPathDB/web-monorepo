@@ -7,12 +7,10 @@ interface EmptyChromosomesFilterProps {
 
 export const EmptyChromosomesFilter: React.SFC<EmptyChromosomesFilterProps> = ({
   applied,
-  onChange
-}) =>
+  onChange,
+}) => (
   <div id="emptyChromosomes">
-    <input type="checkbox" 
-      checked={applied}
-      onChange={onChange}
-    /> 
-    {' '}Show empty chromosomes
-  </div>;
+    <input type="checkbox" checked={applied} onChange={onChange} /> Show empty
+    chromosomes
+  </div>
+);

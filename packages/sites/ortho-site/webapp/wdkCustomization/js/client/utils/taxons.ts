@@ -8,7 +8,7 @@ import {
   objectOf,
   optional,
   record,
-  string
+  string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
@@ -38,10 +38,11 @@ export const taxonEntryDecoder: Decoder<TaxonEntry> = record({
   sortIndex: number,
   species: boolean,
   color: optional(string),
-  groupColor: optional(string)
+  groupColor: optional(string),
 });
 
-export const taxonEntriesDecoder: Decoder<TaxonEntries> = objectOf(taxonEntryDecoder);
+export const taxonEntriesDecoder: Decoder<TaxonEntries> =
+  objectOf(taxonEntryDecoder);
 
 export interface TaxonTree extends BaseTaxonEntry {
   children: TaxonTree[];
@@ -59,21 +60,17 @@ export function makeTaxonTree(taxonEntries: TaxonEntries): TaxonTree {
   return _traverseEntries(rootEntry);
 
   function _traverseEntries(entry: TaxonEntry): TaxonTree {
-    const unorderedChildren = mapValues(
-      entry.children,
-      childEntry => _traverseEntries(childEntry)
+    const unorderedChildren = mapValues(entry.children, (childEntry) =>
+      _traverseEntries(childEntry)
     );
 
-    const orderedChildren = orderBy(
-      Object.values(unorderedChildren),
-      [
-        childEntry => taxonEntries[childEntry.abbrev].sortIndex
-      ]
-    );
+    const orderedChildren = orderBy(Object.values(unorderedChildren), [
+      (childEntry) => taxonEntries[childEntry.abbrev].sortIndex,
+    ]);
 
     return {
       ...entry,
-      children: orderedChildren
+      children: orderedChildren,
     };
   }
 }
@@ -86,7 +83,10 @@ export function taxonSearchPredicate(node: TaxonTree, searchTerms: string[]) {
   return areTermsInString(searchTerms, `${node.name} ${node.abbrev}`);
 }
 
-export function makeInitialExpandedNodes(taxonTree: TaxonTree, maxDepth: number = 1) {
+export function makeInitialExpandedNodes(
+  taxonTree: TaxonTree,
+  maxDepth: number = 1
+) {
   const initialExpandedNodes = [] as string[];
 
   _traverse(taxonTree, 0);
@@ -97,7 +97,7 @@ export function makeInitialExpandedNodes(taxonTree: TaxonTree, maxDepth: number 
     if (depth <= maxDepth) {
       initialExpandedNodes.push(getTaxonNodeId(node));
 
-      node.children.forEach(child => {
+      node.children.forEach((child) => {
         _traverse(child, depth + 1);
       });
     }
@@ -122,7 +122,10 @@ export interface SpeciesEntry extends TaxonEntry {
   path: string[];
 }
 
-export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: TaxonTree): TaxonUiMetadata {
+export function makeTaxonUiMetadata(
+  taxonEntries: TaxonEntries,
+  taxonTree: TaxonTree
+): TaxonUiMetadata {
   const rootTaxons = {} as TaxonUiMetadata['rootTaxons'];
   const species = {} as TaxonUiMetadata['species'];
   const taxonOrder = [] as TaxonUiMetadata['taxonOrder'];
@@ -131,29 +134,30 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     node: taxonTree,
     groupColor: undefined,
     rootTaxon: undefined,
-    path: []
+    path: [],
   });
 
   return {
     rootTaxons,
     species,
     taxonOrder,
-    taxonTree
+    taxonTree,
   };
 
   function _traverseTaxonTree({
     node,
     groupColor,
     rootTaxon,
-    path
+    path,
   }: {
-    node: TaxonTree,
-    groupColor: string | undefined,
-    rootTaxon: string | undefined,
-    path: string[]
+    node: TaxonTree;
+    groupColor: string | undefined;
+    rootTaxon: string | undefined;
+    path: string[];
   }) {
     const taxonAbbrev = node.abbrev;
-    const newPath = taxonAbbrev === ROOT_TAXON_ABBREV ? path : [...path, taxonAbbrev];
+    const newPath =
+      taxonAbbrev === ROOT_TAXON_ABBREV ? path : [...path, taxonAbbrev];
     const taxonEntry = taxonEntries[taxonAbbrev];
 
     if (taxonEntry == null) {
@@ -164,21 +168,27 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     if (taxonEntry.groupColor != null) {
       rootTaxons[taxonAbbrev] = {
         ...taxonEntry,
-        groupColor: taxonEntry.groupColor
+        groupColor: taxonEntry.groupColor,
       };
     }
 
     if (taxonEntry.species) {
       if (taxonEntry.color == null) {
-        throw new Error(`The taxon entry for "${taxonAbbrev}" is missing a color.`);
+        throw new Error(
+          `The taxon entry for "${taxonAbbrev}" is missing a color.`
+        );
       }
 
       if (groupColor == null) {
-        throw new Error(`The taxon entry for "${taxonAbbrev}" was not assigned a group color.`);
+        throw new Error(
+          `The taxon entry for "${taxonAbbrev}" was not assigned a group color.`
+        );
       }
 
       if (rootTaxon == null) {
-        throw new Error(`The taxon entry for "${taxonAbbrev}" was not assigned a root taxon.`);
+        throw new Error(
+          `The taxon entry for "${taxonAbbrev}" was not assigned a root taxon.`
+        );
       }
 
       species[taxonAbbrev] = {
@@ -186,18 +196,18 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
         color: taxonEntry.color,
         groupColor,
         rootTaxon,
-        path: newPath
+        path: newPath,
       };
 
       taxonOrder.push(taxonAbbrev);
     }
 
-    node.children.forEach(childNode => {
+    node.children.forEach((childNode) => {
       _traverseTaxonTree({
         node: childNode,
         groupColor: groupColor ?? taxonEntry.groupColor,
         rootTaxon: rootTaxon ?? (taxonEntry.groupColor && taxonEntry.abbrev),
-        path: newPath
+        path: newPath,
       });
     });
   }

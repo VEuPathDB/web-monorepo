@@ -11,9 +11,8 @@ import {
 
 export const makeReferenceStrainsRecoilState = memoize(
   (wdkDependencies: WdkDependencies | undefined) => {
-    const { organismMetadata } = makeOrganismMetadataRecoilState(
-      wdkDependencies
-    );
+    const { organismMetadata } =
+      makeOrganismMetadataRecoilState(wdkDependencies);
 
     const referenceStrains = selector({
       key: 'reference-strains',

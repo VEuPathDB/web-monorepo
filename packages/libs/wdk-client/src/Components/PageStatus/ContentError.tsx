@@ -6,7 +6,7 @@ export interface Props {
 
 const style: React.CSSProperties = {
   fontSize: '1.2em',
-}
+};
 
 export function ContentError(props: Props) {
   return (

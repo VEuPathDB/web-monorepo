@@ -7,39 +7,44 @@ import {
   ParameterGroup,
   QuestionWithParameters,
   RecordClass,
-  ParameterValues
+  ParameterValues,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-import {
-  ParameterGroupUI,
-  WizardState
-} from './WizardTypes'
+import { ParameterGroupUI, WizardState } from './WizardTypes';
 
-import {
-  GroupState
-} from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule'
+import { GroupState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 
-import {
-  State as FilterParamState
-} from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/State'
+import { State as FilterParamState } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/State';
 
-export function constructParameterGroupUIs(question: QuestionWithParameters, paramValues: ParameterValues, defaultParamValues: ParameterValues, groupUIState: Record<string, GroupState>, activeGroupIx: number): ParameterGroupUI[]{
-
-  return question.groups.map((group, ix) => Object.assign({},
-    group,
-    { 
-      selectedInPanel: ix === activeGroupIx,
-      precedingTheGroupThatIsSelectedInPanel: activeGroupIx > -1 && ix + 1 === activeGroupIx,
-    },
-    {
-      filteredCountState: groupUIState[group.name]!.filteredCountState,
-    },
-    { allValuesDefault: 
-       every(group.parameters.map(paramName => 
-         paramValues[paramName] == defaultParamValues[paramName]
-      ))
-    }
-  ));
+export function constructParameterGroupUIs(
+  question: QuestionWithParameters,
+  paramValues: ParameterValues,
+  defaultParamValues: ParameterValues,
+  groupUIState: Record<string, GroupState>,
+  activeGroupIx: number
+): ParameterGroupUI[] {
+  return question.groups.map((group, ix) =>
+    Object.assign(
+      {},
+      group,
+      {
+        selectedInPanel: ix === activeGroupIx,
+        precedingTheGroupThatIsSelectedInPanel:
+          activeGroupIx > -1 && ix + 1 === activeGroupIx,
+      },
+      {
+        filteredCountState: groupUIState[group.name]!.filteredCountState,
+      },
+      {
+        allValuesDefault: every(
+          group.parameters.map(
+            (paramName) =>
+              paramValues[paramName] == defaultParamValues[paramName]
+          )
+        ),
+      }
+    )
+  );
 }
 
 // Immutable state modifiers
@@ -51,8 +56,15 @@ export function constructParameterGroupUIs(question: QuestionWithParameters, par
  * @param {boolean} visiblity
  * @return {WizardState}
  */
-export function setFilterPopupVisiblity(wizardState: WizardState, visible: boolean): WizardState {
-  return Object.assign({}, wizardState, { filterPopupState: Object.assign({}, wizardState.filterPopupState, {visible})});
+export function setFilterPopupVisiblity(
+  wizardState: WizardState,
+  visible: boolean
+): WizardState {
+  return Object.assign({}, wizardState, {
+    filterPopupState: Object.assign({}, wizardState.filterPopupState, {
+      visible,
+    }),
+  });
 }
 
 /**
@@ -61,7 +73,13 @@ export function setFilterPopupVisiblity(wizardState: WizardState, visible: boole
  * @param {boolean} pinned
  * @return {WizardState}
  */
-export function setFilterPopupPinned(wizardState: WizardState, pinned: boolean): WizardState {
-  return Object.assign({}, wizardState, { filterPopupState: Object.assign({}, wizardState.filterPopupState, {pinned})});
+export function setFilterPopupPinned(
+  wizardState: WizardState,
+  pinned: boolean
+): WizardState {
+  return Object.assign({}, wizardState, {
+    filterPopupState: Object.assign({}, wizardState.filterPopupState, {
+      pinned,
+    }),
+  });
 }
-

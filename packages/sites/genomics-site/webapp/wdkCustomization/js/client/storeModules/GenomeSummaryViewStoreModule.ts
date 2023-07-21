@@ -1,22 +1,25 @@
 import { get } from 'lodash/fp';
 import { combineEpics, StateObservable } from 'redux-observable';
 
-import { Action as WdkAction } from '@veupathdb/wdk-client/lib/Actions'
+import { Action as WdkAction } from '@veupathdb/wdk-client/lib/Actions';
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 import {
   InferAction,
-  mergeMapRequestActionsToEpic
+  mergeMapRequestActionsToEpic,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { makeCommonErrorMessage } from '@veupathdb/wdk-client/lib/Utils/Errors';
-import { indexByActionProperty, IndexedState } from '@veupathdb/wdk-client/lib/Utils/ReducerUtils';
+import {
+  indexByActionProperty,
+  IndexedState,
+} from '@veupathdb/wdk-client/lib/Utils/ReducerUtils';
 import { RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
   getCustomReport,
   getResultTypeDetails,
-  ResultType
+  ResultType,
 } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
 import {
@@ -27,14 +30,17 @@ import {
   requestGenomeSummaryReport,
   showRegionDialog,
   unapplyEmptyChromosomesFilter,
-  rejectGenomeSummaryReport
+  rejectGenomeSummaryReport,
 } from '../actions/GenomeSummaryViewActions';
 import { GenomeSummaryViewReport } from '../types/genomeSummaryViewTypes';
 
 export const key = 'genomeSummaryView';
 export type State = IndexedState<ViewState>;
 export type Action = WdkAction | GenomeSummaryViewAction;
-export const reduce = indexByActionProperty(reduceView, get(['payload', 'viewId']));
+export const reduce = indexByActionProperty(
+  reduceView,
+  get(['payload', 'viewId'])
+);
 
 type ViewState = {
   errorMessage?: string;
@@ -48,10 +54,13 @@ const initialState: ViewState = {
   genomeSummaryData: undefined,
   recordClass: undefined,
   regionDialogVisibilities: {},
-  emptyChromosomeFilterApplied: false
+  emptyChromosomeFilterApplied: false,
 };
 
-function reduceView(state: ViewState = initialState, action: Action): ViewState {
+function reduceView(
+  state: ViewState = initialState,
+  action: Action
+): ViewState {
   switch (action.type) {
     case requestGenomeSummaryReport.type: {
       return initialState;
@@ -60,22 +69,22 @@ function reduceView(state: ViewState = initialState, action: Action): ViewState 
       return {
         ...state,
         genomeSummaryData: action.payload.genomeSummaryViewReport,
-        recordClass: action.payload.recordClass
+        recordClass: action.payload.recordClass,
       };
     }
     case rejectGenomeSummaryReport.type: {
       return {
         ...state,
-        errorMessage: action.payload.message
-      }
+        errorMessage: action.payload.message,
+      };
     }
     case showRegionDialog.type: {
       return {
         ...state,
         regionDialogVisibilities: {
           ...state.regionDialogVisibilities,
-          [action.payload.regionId]: true
-        }
+          [action.payload.regionId]: true,
+        },
       };
     }
     case hideRegionDialog.type: {
@@ -83,8 +92,8 @@ function reduceView(state: ViewState = initialState, action: Action): ViewState 
         ...state,
         regionDialogVisibilities: {
           ...state.regionDialogVisibilities,
-          [action.payload.regionId]: false
-        }
+          [action.payload.regionId]: false,
+        },
       };
     }
     case applyEmptyChromosomesFilter.type: {
@@ -106,8 +115,10 @@ function getFormatFromRecordClassName(recordClassName: string): string {
     case 'genomic-segment':
       return 'dynamicSpanSummaryView';
     default:
-      throw new Error('This step cannot use this summary view, it is the wrong record class: ' +
-        recordClassName);
+      throw new Error(
+        'This step cannot use this summary view, it is the wrong record class: ' +
+          recordClassName
+      );
   }
 }
 
@@ -116,10 +127,12 @@ async function getRecordClassAndFormat(
   wdkService: WdkService
 ): Promise<[string, RecordClass]> {
   const resultTypeDetails = await getResultTypeDetails(wdkService, resultType);
-  const recordClass = await wdkService.findRecordClass(resultTypeDetails.recordClassName);
+  const recordClass = await wdkService.findRecordClass(
+    resultTypeDetails.recordClassName
+  );
   return [
     getFormatFromRecordClassName(resultTypeDetails.recordClassName),
-    recordClass
+    recordClass,
   ];
 }
 
@@ -127,7 +140,10 @@ async function getGenomeSummaryViewReport(
   [requestAction]: [InferAction<typeof requestGenomeSummaryReport>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillGenomeSummaryReport> | InferAction<typeof rejectGenomeSummaryReport>> {
+): Promise<
+  | InferAction<typeof fulfillGenomeSummaryReport>
+  | InferAction<typeof rejectGenomeSummaryReport>
+> {
   let [format, recordClass] = await getRecordClassAndFormat(
     requestAction.payload.resultType,
     wdkService
@@ -138,9 +154,12 @@ async function getGenomeSummaryViewReport(
       requestAction.payload.resultType,
       { format: format, formatConfig: {} }
     );
-    return fulfillGenomeSummaryReport(requestAction.payload.viewId, report, recordClass);
-  }
-  catch (error) {
+    return fulfillGenomeSummaryReport(
+      requestAction.payload.viewId,
+      report,
+      recordClass
+    );
+  } catch (error) {
     wdkService.submitErrorIfUndelayedAndNot500(error);
     const message = makeCommonErrorMessage(error);
     return rejectGenomeSummaryReport(requestAction.payload.viewId, message);
@@ -148,5 +167,8 @@ async function getGenomeSummaryViewReport(
 }
 
 export const observe = combineEpics(
-  mergeMapRequestActionsToEpic([requestGenomeSummaryReport], getGenomeSummaryViewReport)
+  mergeMapRequestActionsToEpic(
+    [requestGenomeSummaryReport],
+    getGenomeSummaryViewReport
+  )
 );

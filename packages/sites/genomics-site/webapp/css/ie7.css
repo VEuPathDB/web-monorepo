@@ -3,12 +3,12 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #query_selection {
-	left: auto;
-	padding: 10px 20px;
+  left: auto;
+  padding: 10px 20px;
 }
 
 #query_selection .top_nav li:hover {
-	background-color: #DDDDDD;
+  background-color: #dddddd;
 }
 
 .arrow.right.size2 {
@@ -20,51 +20,52 @@
 }
 
 .crumb_details {
-	border-width: 2px;
-	z-index: 999;
+  border-width: 2px;
+  z-index: 999;
 }
 
 .crumb_details div.crumb_menu {
-	margin-right: -3px;
+  margin-right: -3px;
 }
 
 #Strategies {
-	position: relative;
+  position: relative;
 }
 
 #menu_lefttop div ul {
-	padding: 3px 3px 3px 0;
+  padding: 3px 3px 3px 0;
 }
 
 .thinTopBorders {
-	line-height: normal;
+  line-height: normal;
 }
 
 .ts_ie {
-	margin-left:-15px;
+  margin-left: -15px;
 }
 
-.twoColHybLt #sidebar1 { 
-	padding-top: 30px; 
+.twoColHybLt #sidebar1 {
+  padding-top: 30px;
 }
 
-.twoColHybLt #mainContent { 
-	zoom: 1; padding-top: 15px; 
+.twoColHybLt #mainContent {
+  zoom: 1;
+  padding-top: 15px;
 }
 
 #menu > ul > li > ul {
-	left:0;
+  left: 0;
 }
 
 .operation {
-	z-index: -1;
+  z-index: -1;
 }
 
 .operation.INTERSECT,
 .operation.MINUS,
 .operation.RMINUS,
 .operation.UNION {
-	height: 27px;
+  height: 27px;
 }
 
 a.redbutton {
@@ -73,45 +74,48 @@ a.redbutton {
 }
 
 a.disabled {
-	color: gray;
+  color: gray;
 }
 
 a.disabled:hover {
-	color: gray;
+  color: gray;
 }
 
 #footer div {
-	display: inline-block;
+  display: inline-block;
 }
 
 .tbody-overflow {
-	height: auto;
+  height: auto;
 }
 
 .crumb_details ul.question_name {
-	float:none;
-	left:90%;
+  float: none;
+  left: 90%;
 }
 
 .unsaved-strategies {
-	max-height: 250px;
-	overflow-y: scroll;
-	overflow-x: hidden;
+  max-height: 250px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-#strategy_results, #search_history,
-#sample_strat, #help, #strategy_new {
-	z-index: 2;
+#strategy_results,
+#search_history,
+#sample_strat,
+#help,
+#strategy_new {
+  z-index: 2;
 }
 
-div#dyk-box div.dragHandle{
-	position:relative;
-	left:auto;
-	border-left: none;
-	border-right: none;
-	border-top: none;
+div#dyk-box div.dragHandle {
+  position: relative;
+  left: auto;
+  border-left: none;
+  border-right: none;
+  border-top: none;
 }
 
-div#dyk-box div#dyk-text{
-	margin: 0;
+div#dyk-box div#dyk-text {
+  margin: 0;
 }

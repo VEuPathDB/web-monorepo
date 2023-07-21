@@ -25,11 +25,10 @@ const quickSearchReferences = [
       <p>
       To query a list of genes with Gene ID(s) use the search  <a href='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'>Gene ID(s)</a> under "Annotation, curation, and identifiers" (in the "New Search" menu or in the home page bubble). 
       </p>
-    `
+    `,
     // help: `Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.`,
-  }
+  },
 ];
-
 
 export default function SiteHeader() {
   return (
@@ -38,6 +37,5 @@ export default function SiteHeader() {
       makeSmallMenuItems={makeSmallMenuItems}
       quickSearchReferences={quickSearchReferences}
     />
-  )
+  );
 }
-

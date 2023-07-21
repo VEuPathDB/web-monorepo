@@ -7,7 +7,6 @@ import QueryGrid from '../QueryGrid';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 
 class QueryGridController extends PageController {
-
   isRenderDataLoaded() {
     return this.props.searchTree;
   }
@@ -17,13 +16,10 @@ class QueryGridController extends PageController {
   }
 
   renderView() {
-    return ( <QueryGrid grid={this.props.searchTree} /> );
+    return <QueryGrid grid={this.props.searchTree} />;
   }
-
 }
 
-export default connect(
-  state => ({
-    searchTree: searchTree(state)
-  })
-)(QueryGridController);
+export default connect((state) => ({
+  searchTree: searchTree(state),
+}))(QueryGridController);

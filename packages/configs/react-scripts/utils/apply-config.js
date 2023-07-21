@@ -5,10 +5,10 @@ import dotenvExpand from 'dotenv-expand';
 
 export function applyConfig(siteConfigPath) {
   const dotenvFilesToApply = !Array.isArray(siteConfigPath)
-    ? [ siteConfigPath ]
+    ? [siteConfigPath]
     : siteConfigPath;
 
-  dotenvFilesToApply.forEach(dotenvFilename => {
+  dotenvFilesToApply.forEach((dotenvFilename) => {
     if (existsSync(dotenvFilename)) {
       const nextEnv = dotenv.config({ path: dotenvFilename });
       dotenvExpand(nextEnv);

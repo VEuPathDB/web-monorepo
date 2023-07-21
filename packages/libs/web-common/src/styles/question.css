@@ -1,6 +1,6 @@
 .toc {
-    font-size: 130%;
-    padding: 1em;
+  font-size: 130%;
+  padding: 1em;
 }
 /*
 #query-description-section { font-size: 13px; }
@@ -11,7 +11,7 @@
 }
 */
 .truncate-toggle {
-	margin-left: -0.5em;
+  margin-left: -0.5em;
 }
 
 #query-description-section p {
@@ -26,7 +26,8 @@
   margin-left: 1em;
 }
 
-#query-description-section ol, #query-description-section ul {
+#query-description-section ol,
+#query-description-section ul {
   margin-left: 1em;
   list-style-position: outside;
   padding-top: 0.4em;
@@ -50,22 +51,34 @@
   border-collapse: collapse;
 }
 
-#query-description-section th, #query-description-section td {
+#query-description-section th,
+#query-description-section td {
   border: 1px solid black;
 }
 
-#attributions-section ul { 
+#attributions-section ul {
   list-style-type: square;
-	margin-left:  2em;
-	list-style-position: outside;
+  margin-left: 2em;
+  list-style-position: outside;
   padding: 0;
-} 
-#attributions-section .data-source { margin: 3px; padding: 2px 0px; }
-#attributions-section .data-source .title { font-weight:bold; }
-#attributions-section .data-source .detail { margin:5px 12px; }
-#attributions-section .data-source .publications { list-style-type: circle; }
-#attributions-section .data-source .publications li { margin:5px 14px; font-size: 11px; }
-
+}
+#attributions-section .data-source {
+  margin: 3px;
+  padding: 2px 0px;
+}
+#attributions-section .data-source .title {
+  font-weight: bold;
+}
+#attributions-section .data-source .detail {
+  margin: 5px 12px;
+}
+#attributions-section .data-source .publications {
+  list-style-type: circle;
+}
+#attributions-section .data-source .publications li {
+  margin: 5px 14px;
+  font-size: 11px;
+}
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     make background same as hover - the path to the image is from the jQuery theme css file
@@ -75,7 +88,9 @@
 .xor-select .ui-widget-content .ui-state-default,
 .xor-select .ui-widget-header .ui-state-default {
   border: 1px solid #999999;
-  background: #dadada url(../../wdk/css/ui-custom/custom-theme/images/ui-bg_highlight-hard_75_cbc8c8_1x100.png) 50% 50% repeat-x;
+  background: #dadada
+    url(../../wdk/css/ui-custom/custom-theme/images/ui-bg_highlight-hard_75_cbc8c8_1x100.png)
+    50% 50% repeat-x;
   font-weight: normal;
   color: #212121;
 }
@@ -89,11 +104,26 @@
   color: #212121;
 }
 
-.xor-select { padding-left: 15%; position: relative; top: 1px; white-space: nowrap; }
-.xor-select label { font-weight: bold; }
-.xor-select .ui-button { margin-right: 0.3em; border-bottom: none; z-index: 0; }
-.xor-select .ui-button.ui-state-active { z-index: 10; }
-.xor-select .ui-button span { padding: 0.1em 1em; }
+.xor-select {
+  padding-left: 15%;
+  position: relative;
+  top: 1px;
+  white-space: nowrap;
+}
+.xor-select label {
+  font-weight: bold;
+}
+.xor-select .ui-button {
+  margin-right: 0.3em;
+  border-bottom: none;
+  z-index: 0;
+}
+.xor-select .ui-button.ui-state-active {
+  z-index: 10;
+}
+.xor-select .ui-button span {
+  padding: 0.1em 1em;
+}
 
 /* static fold change */
 .params {

@@ -6,7 +6,7 @@ ul.wdk-RadioList {
 }
 
 ul.wdk-RadioList li {
-  margin: .4em 0;
+  margin: 0.4em 0;
 }
 
 ul.wdk-RadioList li.disabled {
@@ -14,7 +14,7 @@ ul.wdk-RadioList li.disabled {
 }
 
 ul.wdk-RadioList li span {
-  margin-left: 0.5em
+  margin-left: 0.5em;
 }
 
 .wdk-RadioListInfoIcon {

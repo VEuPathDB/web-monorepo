@@ -16,7 +16,7 @@ interface State {
  */
 export default class DeferredDiv extends React.Component<Props, State> {
   state = {
-    shouldRender: this.props.visible
+    shouldRender: this.props.visible,
   };
 
   componentDidUpdate() {
@@ -30,7 +30,12 @@ export default class DeferredDiv extends React.Component<Props, State> {
 
     const { visible, ...divProps } = this.props;
     return (
-      <div {...divProps} style={ visible ? divProps.style : { ...divProps.style, display: 'none' } }/>
+      <div
+        {...divProps}
+        style={
+          visible ? divProps.style : { ...divProps.style, display: 'none' }
+        }
+      />
     );
   }
 }

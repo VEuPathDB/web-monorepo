@@ -26,7 +26,7 @@ html {
   background-image: -moz-linear-gradient(to bottom, #ffffff, #e6e6e6);
   background-image: -o-linear-gradient(to bottom, #ffffff, #e6e6e6);
   background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-  filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)";
+  filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#ffffff, endColorStr=#e6e6e6)';
   background-repeat: repeat-x;
 }
 .btn-blue {
@@ -37,17 +37,17 @@ html {
   background-image: -moz-linear-gradient(to bottom, #73a5f1, #4576c0);
   background-image: -o-linear-gradient(to bottom, #73a5f1, #4576c0);
   background-image: -webkit-linear-gradient(top, #73a5f1, #4576c0);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#73a5f1, endColorStr=#4576c0)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#73a5f1, endColorStr=#4576c0)';
 }
 .btn-brown {
   color: #ffffff;
-  border: 1px solid #9E6946;
-  background-color: #9E6946;
-  background-image: linear-gradient(to bottom, #C79F6C, #9E6946);
-  background-image: -moz-linear-gradient(to bottom, #C79F6C, #9E6946);
-  background-image: -o-linear-gradient(to bottom, #C79F6C, #9E6946);
-  background-image: -webkit-linear-gradient(top, #C79F6C, #9E6946);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C79F6C, endColorStr=#9E6946)";
+  border: 1px solid #9e6946;
+  background-color: #9e6946;
+  background-image: linear-gradient(to bottom, #c79f6c, #9e6946);
+  background-image: -moz-linear-gradient(to bottom, #c79f6c, #9e6946);
+  background-image: -o-linear-gradient(to bottom, #c79f6c, #9e6946);
+  background-image: -webkit-linear-gradient(top, #c79f6c, #9e6946);
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#C79F6C, endColorStr=#9E6946)';
 }
 .btn-green {
   color: #ffffff;
@@ -57,7 +57,7 @@ html {
   background-image: -moz-linear-gradient(to bottom, #86c586, #3f963f);
   background-image: -o-linear-gradient(to bottom, #86c586, #3f963f);
   background-image: -webkit-linear-gradient(top, #86c586, #3f963f);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#86c586, endColorStr=#3f963f)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#86c586, endColorStr=#3f963f)';
 }
 .btn-red {
   color: #ffffff;
@@ -67,7 +67,7 @@ html {
   background-image: -moz-linear-gradient(to bottom, #d67676, #b34949);
   background-image: -o-linear-gradient(to bottom, #d67676, #b34949);
   background-image: -webkit-linear-gradient(top, #d67676, #b34949);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#d67676, endColorStr=#b34949)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#d67676, endColorStr=#b34949)';
 }
 .btn-cyan {
   color: #ffffff;
@@ -77,13 +77,15 @@ html {
   background-image: -moz-linear-gradient(to bottom, #5bc0de, #2f96b4);
   background-image: -o-linear-gradient(to bottom, #5bc0de, #2f96b4);
   background-image: -webkit-linear-gradient(top, #5bc0de, #2f96b4);
-  -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)';
 }
-.btn:hover, .btn:focus {
+.btn:hover,
+.btn:focus {
   background-position: 0 -8px;
   text-decoration: none;
 }
-.btn:active, .btn-active {
+.btn:active,
+.btn-active {
   background-image: none;
   box-shadow: 1px 1px 0 #dddddd;
   -moz-box-shadow: 1px 1px 0 #dddddd;
@@ -122,31 +124,31 @@ html {
   position: relative;
   left: -20px;
   top: 3px;
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)';
   cursor: pointer;
 }
 .dataTables_filter input.content + .filter-clear:hover {
   opacity: 0.7;
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=70)';
 }
 .dataTables_filter input.content + .filter-clear,
 .dataTables_filter input.content + .filter-clear:active {
   display: inline-block;
   opacity: 0.5;
-  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=50)';
 }
-.dataTable th ,
+.dataTable th,
 .dataTable td {
   padding: 0.4em 0em;
   vertical-align: middle;
   background-color: #ffffff;
   text-align: left;
 }
-.dataTable tr:first-child th:first-child ,
+.dataTable tr:first-child th:first-child,
 .dataTable tr td:first-child {
   padding-left: 0.8em;
 }
-.dataTable tr:first-child th:last-child ,
+.dataTable tr:first-child th:last-child,
 .dataTable tr td:last-child {
   padding-right: 0.8em;
 }
@@ -195,7 +197,7 @@ th.searches {
   background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_desc.png');
 }
 .dataTable td.description {
-  padding: 0 .5em;
+  padding: 0 0.5em;
 }
 .dataTable.collapsed tbody tr {
   display: none;
@@ -265,7 +267,10 @@ td.search-mechanism a {
 .ui-tabs-panel {
   min-height: 500px;
 }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button {
   font-family: inherit;
   font-size: inherit;
 }
