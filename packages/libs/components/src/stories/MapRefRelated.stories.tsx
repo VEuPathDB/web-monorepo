@@ -137,7 +137,6 @@ MapFlyTo.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 export const MapThumbnail: Story<MapVEuMapProps> = (args) => {
@@ -200,7 +199,6 @@ MapThumbnail.args = {
   height: '250px',
   width: '500px',
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 // testing the changes of viewport and baselayer
@@ -255,5 +253,4 @@ ChangeViewportAndBaseLayer.args = {
   height: '50vh',
   width: '50vw',
   showGrid: true,
-  showMouseToolbar: true,
 };
