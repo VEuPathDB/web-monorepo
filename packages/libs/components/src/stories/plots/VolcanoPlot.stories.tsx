@@ -167,7 +167,7 @@ export const Truncation = Template.bind({});
 Truncation.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.5,
-  log2FoldChangeThreshold: 3,
+  log2FoldChangeThreshold: 2,
   significanceThreshold: 0.01,
   independentAxisRange: { min: -3, max: 3 },
   dependentAxisRange: { min: 1, max: 3 },
@@ -188,10 +188,3 @@ Spinner.args = {
   dependentAxisRange: { min: -1, max: 9 },
   showSpinner: true,
 };
-
-// Add story for truncation
-// export const Truncation = Template.bind({})
-// Truncation.args = {
-//   data: dataSetVolcano,
-//   independentAxisRange: []
-// }
