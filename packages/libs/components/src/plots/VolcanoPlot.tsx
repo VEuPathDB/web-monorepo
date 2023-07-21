@@ -18,7 +18,6 @@ import {
   GlyphSeries,
   Annotation,
   AnnotationLineSubject,
-  BarSeries,
   DataContext,
   AnnotationLabel,
 } from '@visx/xychart';
@@ -63,10 +62,6 @@ export interface VolcanoPlotProps {
   plotTitle?: string;
   /** marker fill opacity: range from 0 to 1 */
   markerBodyOpacity?: number;
-  /** Height of plot */
-  height?: number;
-  /** Width of plot */
-  width?: number;
   /** Truncation bar fill color. If no color provided, truncation bars will be filled with a black and white pattern */
   truncationBarFill?: string;
   /** container name */
@@ -221,7 +216,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         -Math.log10(Number(d?.pValue)) >= yAxisMin
         ? -Math.log10(Number(d?.pValue))
         : null;
-      // return ((-Math.log10(Number(d?.pValue)) <= yAxisMax) && (-Math.log10(Number(d?.pValue))) >= yAxisMin) && -Math.log10(Number(d?.pValue));
     },
   };
 

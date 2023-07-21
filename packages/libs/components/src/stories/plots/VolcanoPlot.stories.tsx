@@ -91,8 +91,6 @@ interface TemplateProps {
   independentAxisRange?: NumberRange;
   dependentAxisRange?: NumberRange;
   comparisonLabels?: string[];
-  width?: number;
-  height?: number;
   truncationBarFill?: string;
   showSpinner?: boolean;
 }
@@ -118,8 +116,6 @@ const Template: Story<TemplateProps> = (args) => {
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
-    width: args.width,
-    height: args.height,
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
   };
@@ -145,8 +141,6 @@ Simple.args = {
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: 0, max: 9 },
-  height: 500,
-  width: 600,
 };
 
 // Most volcano plots will have thousands of points, since each point
@@ -171,8 +165,6 @@ Truncation.args = {
   significanceThreshold: 0.01,
   independentAxisRange: { min: -3, max: 3 },
   dependentAxisRange: { min: 1, max: 3 },
-  height: 500,
-  width: 600,
   truncationBarFill: yellow[300],
 };
 
