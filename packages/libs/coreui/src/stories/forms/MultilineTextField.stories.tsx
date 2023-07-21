@@ -16,9 +16,8 @@ export default {
 
 const Template: Story<MultilineTextFieldProps> = (args) => {
   const [value, setValue] = useState('');
-  const [status, setStatus] = useState<MultilineTextFieldProps['status']>(
-    undefined
-  );
+  const [status, setStatus] =
+    useState<MultilineTextFieldProps['status']>(undefined);
 
   const debouncedOnValueChange = useCallback(
     debounce((value: string) => {
@@ -58,7 +57,7 @@ Default.args = {
   placeholder: 'Example Placeholder',
   characterLimit: 500,
 };
-export const NoLimit = Template.bind({})
+export const NoLimit = Template.bind({});
 NoLimit.args = {
   heading: 'Example Heading',
   instructions: 'These are example instructions. ',

@@ -18,16 +18,15 @@ export default {
   },
 } as Meta;
 
-// Currently going to assume that the backend will send us data like this. Then
-// the volcano visualization will do some processing. Will discuss
-// with Danielle if we can have the backend send us an array of objects
-// instead of this object of arrays...
+// The backend nicely sends us an array of objects. That's a pretty annoying way to make fake data though.
+// Let's just use the below to more easily make some fake data. Then we'll process it into an array
+// of objects for actual use :)
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
     log2foldChange: string[];
     pValue: string[];
     adjustedPValue: string[];
-    pointId: string[];
+    pointID: string[];
   };
 }
 
@@ -63,7 +62,7 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
       '0.002',
     ],
     adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
-    pointId: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
+    pointID: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
   },
 };
 
@@ -78,7 +77,7 @@ const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
     adjustedPValue: range(1, nPoints).map((p) =>
       String(nPoints * Math.random())
     ),
-    pointId: range(1, nPoints).map((p) => String(p)),
+    pointID: range(1, nPoints).map((p) => String(p)),
   },
 };
 
@@ -91,20 +90,19 @@ interface TemplateProps {
   independentAxisRange?: NumberRange;
   dependentAxisRange?: NumberRange;
   comparisonLabels?: string[];
-  width?: number;
-  height?: number;
+  showSpinner?: boolean;
 }
 
 const Template: Story<TemplateProps> = (args) => {
   // Process input data. Take the object of arrays and turn it into
-  // an array of data points
+  // an array of data points. Note the backend will do this for us!
   const volcanoDataPoints: VolcanoPlotData =
     args.data.volcanoplot.log2foldChange.map((l2fc, index) => {
       return {
         log2foldChange: l2fc,
         pValue: args.data.volcanoplot.pValue[index],
         adjustedPValue: args.data.volcanoplot.adjustedPValue[index],
-        pointId: args.data.volcanoplot.pointId[index],
+        pointID: args.data.volcanoplot.pointID[index],
       };
     });
 
@@ -116,11 +114,14 @@ const Template: Story<TemplateProps> = (args) => {
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
-    width: args.width,
-    height: args.height,
+    showSpinner: args.showSpinner,
   };
 
-  return <VolcanoPlot {...volcanoPlotProps} />;
+  return (
+    <>
+      <VolcanoPlot {...volcanoPlotProps} />
+    </>
+  );
 };
 
 /**
@@ -137,8 +138,6 @@ Simple.args = {
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
-  height: 500,
-  width: 600,
 };
 
 // Most volcano plots will have thousands of points, since each point
@@ -152,6 +151,19 @@ ManyPoints.args = {
   significanceThreshold: 0.01,
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+};
+
+// Test the spinner
+export const Spinner = Template.bind({});
+Spinner.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  log2FoldChangeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
+  independentAxisRange: { min: -8, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+  showSpinner: true,
 };
 
 // Add story for truncation

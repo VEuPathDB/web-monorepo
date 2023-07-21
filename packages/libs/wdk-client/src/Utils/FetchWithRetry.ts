@@ -11,8 +11,7 @@ export async function fetchWithRetry(
   for (let i = 0; i < maxRetry; i++) {
     try {
       return await fetch(input, appendRetryHeader(i, init));
-    }
-    catch {
+    } catch {
       // Add a delay in case the user's network is in a temporary bad state.
       await new Promise((resolve) => setTimeout(resolve, 250));
     }
@@ -22,6 +21,6 @@ export async function fetchWithRetry(
 
 function appendRetryHeader(retryNum: number, init?: RequestInit): RequestInit {
   const headers = new Headers(init?.headers ?? ({} as HeadersInit));
-  headers.append("x-client-retry-count", retryNum.toString());
+  headers.append('x-client-retry-count', retryNum.toString());
   return { ...init, headers };
 }

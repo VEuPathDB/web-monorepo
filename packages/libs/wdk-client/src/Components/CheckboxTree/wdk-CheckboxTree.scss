@@ -63,7 +63,7 @@
   /* Modifies size and color of accordion (expand/collapse) icon */
   &Toggle {
     cursor: pointer;
-    color: #AAA;
+    color: #aaa;
     font-size: 1.2em;
     position: absolute;
     width: 1.2em;
@@ -71,7 +71,7 @@
   }
 
   &Checkbox {
-    margin-right: .5ex;
+    margin-right: 0.5ex;
   }
 
   &NodeContent {
@@ -96,7 +96,7 @@
 
   &Filters {
     display: grid;
-    grid-template-areas: "searchbox additional-filters";
+    grid-template-areas: 'searchbox additional-filters';
     grid-template-columns: 1fr auto;
     align-items: center;
   }
@@ -117,5 +117,4 @@
   &AdditionalFilters {
     grid-area: additional-filters;
   }
-
 }

@@ -72,7 +72,7 @@ export type TabConfig<TabKey extends string> = {
   displayName: React.ReactNode;
   /** The content for the tab */
   content?: React.ReactNode;
-}
+};
 
 /** Allows the developer to create a tabbed display of content. */
 export default function TabbedDisplay<T extends string = string>({
@@ -82,7 +82,7 @@ export default function TabbedDisplay<T extends string = string>({
   styleOverrides = {},
   themeRole,
 }: TabbedDisplayProps<T>) {
-  const selectedTab = tabs.find(tab => tab.key === activeTab);
+  const selectedTab = tabs.find((tab) => tab.key === activeTab);
   const tabContent = selectedTab ? selectedTab.content : null;
 
   const [hoveredTab, setHoveredTab] = useState<null | string>(null);
@@ -114,9 +114,9 @@ export default function TabbedDisplay<T extends string = string>({
   return (
     <div css={{ ...finalStyle.container }}>
       <div
-        key='controls'
+        key="controls"
         css={{ display: 'flex', borderBottom: '1px solid lightgray' }}
-        role='tablist'
+        role="tablist"
       >
         {tabs.map((tab) => {
           const tabState =
@@ -128,7 +128,7 @@ export default function TabbedDisplay<T extends string = string>({
 
           return (
             <div
-              role='tab'
+              role="tab"
               tabIndex={0}
               key={tab.key}
               css={[
@@ -168,7 +168,7 @@ export default function TabbedDisplay<T extends string = string>({
           );
         })}
       </div>
-      <div role='tabpanel'>{tabContent}</div>
+      <div role="tabpanel">{tabContent}</div>
     </div>
   );
 }

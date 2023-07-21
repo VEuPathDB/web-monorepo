@@ -22,6 +22,5 @@ export interface WorkspaceContextValue {
   makeVariableLink?: MakeVariableLink;
 }
 
-export const WorkspaceContext = createContext<
-  WorkspaceContextValue | undefined
->(undefined);
+export const WorkspaceContext =
+  createContext<WorkspaceContextValue | undefined>(undefined);

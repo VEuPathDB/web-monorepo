@@ -17,5 +17,5 @@ export function makeUseRefinedContext<T, U extends T>(
     }
 
     return v;
-  }
+  };
 }

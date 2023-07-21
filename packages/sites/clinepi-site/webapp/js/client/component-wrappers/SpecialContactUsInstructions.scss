@@ -13,8 +13,7 @@
 
   &--ExpandedDetails {
     display: grid;
-    grid-template-areas:
-      "instructions-list sample-screenshot";
+    grid-template-areas: 'instructions-list sample-screenshot';
     grid-template-columns: 1fr auto;
 
     column-gap: 1em;
@@ -39,5 +38,4 @@
     width: 22em;
     margin: 1em;
   }
-
 }

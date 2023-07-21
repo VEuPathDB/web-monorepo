@@ -7,10 +7,12 @@ import {
   RecordInstance,
   RecordClass,
   TableField,
-  TableValue
+  TableValue,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-export type WrappedComponentProps<T> = T & { DefaultComponent: React.ComponentType<T> };
+export type WrappedComponentProps<T> = T & {
+  DefaultComponent: React.ComponentType<T>;
+};
 
 export interface RecordAttributeProps {
   attribute: AttributeField;

@@ -31,7 +31,9 @@ export const UserCommentShowView: React.SFC<UserCommentShowViewProps> = ({
   useEffect(() => {
     if (containerRef.current && initialCommentId) {
       const initialCommentIdSelector = `[id='${initialCommentId}']`;
-      const commentToScrollTo = containerRef.current.querySelector(initialCommentIdSelector);
+      const commentToScrollTo = containerRef.current.querySelector(
+        initialCommentIdSelector
+      );
 
       if (commentToScrollTo) {
         commentToScrollTo.scrollIntoView();
@@ -41,9 +43,7 @@ export const UserCommentShowView: React.SFC<UserCommentShowViewProps> = ({
 
   return (
     <div className={className} ref={containerRef}>
-      <div className={headerClassName}>
-        {title}
-      </div>
+      <div className={headerClassName}>{title}</div>
       <div className={bodyClassName}>
         <FormBody {...formBodyProps} />
       </div>

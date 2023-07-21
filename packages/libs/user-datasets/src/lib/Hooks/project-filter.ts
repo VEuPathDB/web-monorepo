@@ -6,15 +6,15 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
 
 export function useProjectFilter() {
-  const [projectFilter, setProjectFilter] = useState<boolean | undefined>(
-    undefined
-  );
+  const [projectFilter, setProjectFilter] =
+    useState<boolean | undefined>(undefined);
 
   useWdkEffect(
     (wdkService) =>
       Task.fromPromise(async () => {
         try {
-          const currentUserPreferences = await wdkService.getCurrentUserPreferences();
+          const currentUserPreferences =
+            await wdkService.getCurrentUserPreferences();
 
           return (
             currentUserPreferences.global[FILTER_BY_PROJECT_PREF] !== 'false'

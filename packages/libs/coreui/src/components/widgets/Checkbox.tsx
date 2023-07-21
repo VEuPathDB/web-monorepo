@@ -75,7 +75,7 @@ export default function Checkbox({
             alignItems: 'center',
           }}
         >
-          <CheckIcon fill='white' fontSize={finalStyle.size} />
+          <CheckIcon fill="white" fontSize={finalStyle.size} />
         </div>
       ) : (
         <div

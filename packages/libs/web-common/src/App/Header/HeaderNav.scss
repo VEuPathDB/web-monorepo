@@ -1,4 +1,4 @@
-$red: #DD314E;
+$red: #dd314e;
 
 .HeaderNav-Wrapper {
   width: 100%;
@@ -55,7 +55,9 @@ $red: #DD314E;
     padding-right: 10px;
   }
 
-  &, .box, .row {
+  &,
+  .box,
+  .row {
     align-items: center;
   }
 
@@ -109,7 +111,12 @@ $red: #DD314E;
   justify-content: right;
   align-items: center;
   a.HeaderNav-Social-Link {
-    &, &:link, &:active, &:visited { color: #fff; }
+    &,
+    &:link,
+    &:active,
+    &:visited {
+      color: #fff;
+    }
     opacity: 0.7;
     transition: all 0.6s;
     font-size: 25px;
@@ -123,8 +130,10 @@ $red: #DD314E;
 }
 
 .HeaderNav-Title {
-
-  a, &:link, &:visited, &:hover {
+  a,
+  &:link,
+  &:visited,
+  &:hover {
     color: $red;
     text-decoration: none;
     transition: all 0.5s;
@@ -139,7 +148,9 @@ $red: #DD314E;
 }
 
 .HeaderNav-Sticky {
-  * { box-sizing: border-box; }
+  * {
+    box-sizing: border-box;
+  }
 
   width: 100%;
   min-width: 1200px;
@@ -197,5 +208,4 @@ $red: #DD314E;
       }
     }
   }
-
 }

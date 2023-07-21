@@ -3,7 +3,7 @@ import React from 'react';
 import { IconAlt as Icon, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 class ShowcaseFilter extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     const { filters } = props;
     this.state = { activeFilters: [] };
@@ -17,32 +17,35 @@ class ShowcaseFilter extends React.Component {
     }
   }
 
-  toggleFilter (id) {
+  toggleFilter(id) {
     const { activeFilters } = this.state;
     let newFilters;
     if (activeFilters.includes(id)) {
-      newFilters = [ ...activeFilters.filter(filterId => filterId !== id) ];
+      newFilters = [...activeFilters.filter((filterId) => filterId !== id)];
     } else {
-      newFilters = [ ...activeFilters, id ];
+      newFilters = [...activeFilters, id];
     }
     this.setState({ activeFilters: newFilters }, this.applyFilterToList);
   }
 
-  applyFilterToList () {
+  applyFilterToList() {
     const { activeFilters } = this.state;
     const { items, filters, onFilter } = this.props;
     if (!onFilter || !items || !filters) return;
-    const remainingItems = activeFilters.length === 0 ? items : items.filter(item => {
-      return activeFilters.some(filterId => {
-        const filterObj = filters.find(({ id }) => id === filterId);
-        if (!filterObj) return false;
-        return filterObj.predicate(item);
-      });
-    });
+    const remainingItems =
+      activeFilters.length === 0
+        ? items
+        : items.filter((item) => {
+            return activeFilters.some((filterId) => {
+              const filterObj = filters.find(({ id }) => id === filterId);
+              if (!filterObj) return false;
+              return filterObj.predicate(item);
+            });
+          });
     onFilter(remainingItems);
   }
 
-  render () {
+  render() {
     const { filters } = this.props;
     const { activeFilters } = this.state;
     return (
@@ -51,7 +54,13 @@ class ShowcaseFilter extends React.Component {
           const active = activeFilters.includes(id);
           const toggle = () => this.toggleFilter(id);
           return (
-            <div className={'wdk-ShowcaseFilter-Item ' + (active ? 'active' : 'inactive')} key={id} onClick={toggle}>
+            <div
+              className={
+                'wdk-ShowcaseFilter-Item ' + (active ? 'active' : 'inactive')
+              }
+              key={id}
+              onClick={toggle}
+            >
               <Mesa.Checkbox checked={active} onChange={toggle} />
               {display}
             </div>
@@ -60,6 +69,6 @@ class ShowcaseFilter extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default ShowcaseFilter;

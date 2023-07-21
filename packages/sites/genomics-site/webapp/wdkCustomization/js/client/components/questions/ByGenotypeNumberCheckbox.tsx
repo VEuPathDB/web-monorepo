@@ -1,10 +1,13 @@
 import React, { useMemo, useCallback } from 'react';
 
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { toMultiValueArray, toMultiValueString } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+import {
+  toMultiValueArray,
+  toMultiValueString,
+} from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 import { Props as ParameterProps } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
-const detailTypes = ["I", "II", "III", "II or III", "nd", "u-1", "u-2", "u-3"];
+const detailTypes = ['I', 'II', 'III', 'II or III', 'nd', 'u-1', 'u-2', 'u-3'];
 const rawRows = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4],
   [2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
@@ -194,120 +197,135 @@ const rawRows = [
   [197, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],
   [202, 5, 0, 1, 2, 2, 1, 2, 0, 0, 2, 0],
   [203, 0, 0, 0, 2, 0, 1, 1, 2, 2, 0, 2],
-  [231, 0, 2, 2, 2, 1, 2, 1, 1, 1, 2, 1]
+  [231, 0, 2, 2, 2, 1, 2, 1, 1, 1, 2, 1],
 ];
 
-const rowKeys = rawRows.map(([ rowKey ]) => rowKey);
-const rowDetails = rawRows.map(
-  ([, ...rawDetailEntries]) => rawDetailEntries.map(
-    rawDetailEntry => detailTypes[rawDetailEntry]
-  )
+const rowKeys = rawRows.map(([rowKey]) => rowKey);
+const rowDetails = rawRows.map(([, ...rawDetailEntries]) =>
+  rawDetailEntries.map((rawDetailEntry) => detailTypes[rawDetailEntry])
 );
 
-const annotationEntries = [null, null, null, "5'+3'", 'alternative', null, null, null, null, null, null, null, null];
-const headerEntries = [null, 'Genotype#', 'SAG1', 'SAG2', 'SAG2', 'SAG3', 'BTUB', 'GRA6', 'c22-8', 'c29-2', 'L358', 'PK1', 'Apico'];
+const annotationEntries = [
+  null,
+  null,
+  null,
+  "5'+3'",
+  'alternative',
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+];
+const headerEntries = [
+  null,
+  'Genotype#',
+  'SAG1',
+  'SAG2',
+  'SAG2',
+  'SAG3',
+  'BTUB',
+  'GRA6',
+  'c22-8',
+  'c29-2',
+  'L358',
+  'PK1',
+  'Apico',
+];
 
-const AnnotationsRow = () =>
+const AnnotationsRow = () => (
   <tbody>
     <tr>
-      {
-        annotationEntries.map((entry, j) =>
-          <td key={j}>{entry}</td>
-        )
-      }
+      {annotationEntries.map((entry, j) => (
+        <td key={j}>{entry}</td>
+      ))}
     </tr>
-  </tbody>;
+  </tbody>
+);
 
-const HeaderRow = () =>
+const HeaderRow = () => (
   <tbody>
     <tr>
-      {
-        headerEntries.map((entry, j) =>
-          <th key={j}>{entry}</th>
-        )
-      }
+      {headerEntries.map((entry, j) => (
+        <th key={j}>{entry}</th>
+      ))}
     </tr>
-  </tbody>;
+  </tbody>
+);
 
 interface TableBodyProps {
-  onToggle: (itemKey: number) => (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onToggle: (
+    itemKey: number
+  ) => (event: React.ChangeEvent<HTMLInputElement>) => void;
   checkedValues: Record<string, boolean>;
 }
 
-const TableBody: React.SFC<TableBodyProps> = ({ checkedValues, onToggle }) =>
+const TableBody: React.SFC<TableBodyProps> = ({ checkedValues, onToggle }) => (
   <tbody>
-    {
-      rowKeys.map((rowKey, i) =>
-        <tr key={rowKey}>
-          <td key={0}>
-            <input 
-              type="checkbox" 
-              value={rowKey} 
-              checked={checkedValues[rowKey]} 
-              onChange={onToggle(rowKey)}
-            />
-          </td>
-          <td key={1}>
-            {rowKey}
-          </td>
-          {
-            rowDetails[i].map((detailEntry, j) => 
-              <td key={j + 2}>
-                {detailEntry}
-              </td>
-            )
-          }
-        </tr>
-      )
-    }
-  </tbody>;
+    {rowKeys.map((rowKey, i) => (
+      <tr key={rowKey}>
+        <td key={0}>
+          <input
+            type="checkbox"
+            value={rowKey}
+            checked={checkedValues[rowKey]}
+            onChange={onToggle(rowKey)}
+          />
+        </td>
+        <td key={1}>{rowKey}</td>
+        {rowDetails[i].map((detailEntry, j) => (
+          <td key={j + 2}>{detailEntry}</td>
+        ))}
+      </tr>
+    ))}
+  </tbody>
+);
 
 type ByGenotypeNumberCheckboxProps = ParameterProps<Parameter>;
 
 const EMPTY_VALUE = toMultiValueString([]);
 
-export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberCheckboxProps> = ({ 
-  onParamValueChange, 
-  value = EMPTY_VALUE
-}) => {
-  const orderedCheckedValues = useMemo(
-    () => toMultiValueArray(value),
-    [ value ]
-  );
-  const checkedValues = useMemo(
-    () => orderedCheckedValues.reduce(
-      (memo, checkedItem) => ({ ...memo, [checkedItem]: true }), 
-      {}
-    ),
-    [ orderedCheckedValues ]
-  );
-  
-  const onToggle = useCallback((itemKey: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const predecessors = orderedCheckedValues.filter(x => parseInt(x) < itemKey);
-    const successors = orderedCheckedValues.filter(x => parseInt(x) > itemKey);
+export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberCheckboxProps> =
+  ({ onParamValueChange, value = EMPTY_VALUE }) => {
+    const orderedCheckedValues = useMemo(
+      () => toMultiValueArray(value),
+      [value]
+    );
+    const checkedValues = useMemo(
+      () =>
+        orderedCheckedValues.reduce(
+          (memo, checkedItem) => ({ ...memo, [checkedItem]: true }),
+          {}
+        ),
+      [orderedCheckedValues]
+    );
 
-    const newParamValueItems = event.target.checked
-      ? [
-        ...predecessors,
-        `${itemKey}`,
-        ...successors
-      ]
-      : [
-        ...predecessors,
-        ...successors
-      ];
+    const onToggle = useCallback(
+      (itemKey: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+        const predecessors = orderedCheckedValues.filter(
+          (x) => parseInt(x) < itemKey
+        );
+        const successors = orderedCheckedValues.filter(
+          (x) => parseInt(x) > itemKey
+        );
 
-    onParamValueChange(toMultiValueString(newParamValueItems));
-  }, [ onParamValueChange, orderedCheckedValues ] );
+        const newParamValueItems = event.target.checked
+          ? [...predecessors, `${itemKey}`, ...successors]
+          : [...predecessors, ...successors];
 
-  return (
-    <table>
-      <AnnotationsRow />
-      <HeaderRow />
-      <TableBody
-        onToggle={onToggle}
-        checkedValues={checkedValues} 
-      />
-    </table>
-  );
-};
+        onParamValueChange(toMultiValueString(newParamValueItems));
+      },
+      [onParamValueChange, orderedCheckedValues]
+    );
+
+    return (
+      <table>
+        <AnnotationsRow />
+        <HeaderRow />
+        <TableBody onToggle={onToggle} checkedValues={checkedValues} />
+      </table>
+    );
+  };

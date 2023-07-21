@@ -10,8 +10,14 @@ import Gff3ReporterForm from '../components/reporters/Gff3ReporterForm';
 import FastaGeneReporterForm from '../components/reporters/FastaGeneReporterForm';
 import SequenceGeneReporterForm from '../components/reporters/SequenceGeneReporterForm';
 import BedGeneReporterForm from '../components/reporters/BedGeneReporterForm';
-import {SequenceSimpleReporterForm, BedSimpleReporterForm} from '../components/reporters/BedAndSequenceSimpleReporterForms';
-import {SequenceGenomicSequenceReporterForm, BedGenomicSequenceReporterForm} from '../components/reporters/BedAndSequenceGenomicSequenceReporterForms';
+import {
+  SequenceSimpleReporterForm,
+  BedSimpleReporterForm,
+} from '../components/reporters/BedAndSequenceSimpleReporterForms';
+import {
+  SequenceGenomicSequenceReporterForm,
+  BedGenomicSequenceReporterForm,
+} from '../components/reporters/BedAndSequenceGenomicSequenceReporterForms';
 import SequenceSequenceReporterForm from '../components/reporters/SequenceSequenceReporterForm';
 import FastaGenomicSequenceReporterForm from '../components/reporters/FastaGenomicSequenceReporterForm';
 import FastaOrthoSequenceReporterForm from '../components/reporters/FastaOrthoSequenceReporterForm';
@@ -20,7 +26,7 @@ import TranscriptTableReporterForm from '../components/reporters/TranscriptTable
 import TranscriptAttributesReporterForm from '../components/reporters/TranscriptAttributesReporterForm';
 import ZippedFilesReporterForm from '../components/reporters/ZippedFilesReporterForm';
 
-let EmptyReporter = props => ( null );
+let EmptyReporter = (props) => null;
 
 EmptyReporter.getInitialState = () => ({ formState: null, formUiState: null });
 
@@ -51,7 +57,9 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'SequenceRecordClasses.SequenceRecordClass':
           return FastaGenomicSequenceReporterForm;
         default:
-          console.error("Unsupported FASTA recordClass: " + recordClassFullName);
+          console.error(
+            'Unsupported FASTA recordClass: ' + recordClassFullName
+          );
           return EmptyReporter;
       }
     case 'bed':
@@ -66,7 +74,7 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'EstRecordClasses.EstRecordClass':
           return BedSimpleReporterForm;
         default:
-          console.error("Unsupported BED recordClass: " + recordClassFullName);
+          console.error('Unsupported BED recordClass: ' + recordClassFullName);
           return EmptyReporter;
       }
     case 'sequence':
@@ -81,7 +89,9 @@ export function selectReporterComponent(reporterName, recordClassFullName) {
         case 'EstRecordClasses.EstRecordClass':
           return SequenceSimpleReporterForm;
         default:
-          console.error("Unsupported sequence recordClass: " + recordClassFullName);
+          console.error(
+            'Unsupported sequence recordClass: ' + recordClassFullName
+          );
           return EmptyReporter;
       }
     case 'fasta':

@@ -22,6 +22,6 @@ export function httpGet(url) {
         xhr.abort();
         get.cache.delete(url);
       }
-    }
+    },
   };
 }

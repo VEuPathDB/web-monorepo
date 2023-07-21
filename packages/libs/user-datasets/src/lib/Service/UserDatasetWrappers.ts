@@ -40,59 +40,57 @@ export const userDatasetsServiceWrappers = {
       'get',
       `/users/current/user-datasets/${id}`
     ),
-  updateUserDataset: (wdkService: WdkService) => (
-    id: number,
-    meta: UserDatasetMeta
-  ) =>
-    wdkService._fetchJson<void>(
-      'put',
-      `/users/current/user-datasets/${id}/meta`,
-      JSON.stringify(meta)
-    ),
+  updateUserDataset:
+    (wdkService: WdkService) => (id: number, meta: UserDatasetMeta) =>
+      wdkService._fetchJson<void>(
+        'put',
+        `/users/current/user-datasets/${id}/meta`,
+        JSON.stringify(meta)
+      ),
   removeUserDataset: (wdkService: WdkService) => (id: number) =>
     wdkService._fetchJson<void>('delete', `/users/current/user-datasets/${id}`),
-  editUserDatasetSharing: (wdkService: WdkService) => (
-    actionName: string,
-    userDatasetIds: number[],
-    recipientUserIds: number[]
-  ) => {
-    const acceptableActions = ['add', 'delete'];
-    if (!actionName || !acceptableActions.includes(actionName))
-      throw new TypeError(
-        `editUserDatasetSharing: invalid action name given: "${actionName}"`
+  editUserDatasetSharing:
+    (wdkService: WdkService) =>
+    (
+      actionName: string,
+      userDatasetIds: number[],
+      recipientUserIds: number[]
+    ) => {
+      const acceptableActions = ['add', 'delete'];
+      if (!actionName || !acceptableActions.includes(actionName))
+        throw new TypeError(
+          `editUserDatasetSharing: invalid action name given: "${actionName}"`
+        );
+      const delta = JSON.stringify({
+        [actionName]: userDatasetIds
+          .map((id) => `${id}`)
+          .reduce((output: object, datasetId: string) => {
+            Object.defineProperty(output, datasetId, {
+              value: recipientUserIds.map((id) => `${id}`),
+              enumerable: true,
+            });
+            return output;
+          }, {}),
+      });
+      return wdkService._fetchJson<UserDatasetShareResponse>(
+        'patch',
+        '/users/current/user-dataset-sharing',
+        delta
       );
-    const delta = JSON.stringify({
-      [actionName]: userDatasetIds
-        .map((id) => `${id}`)
-        .reduce((output: object, datasetId: string) => {
-          Object.defineProperty(output, datasetId, {
-            value: recipientUserIds.map((id) => `${id}`),
-            enumerable: true,
-          });
-          return output;
-        }, {}),
-    });
-    return wdkService._fetchJson<UserDatasetShareResponse>(
-      'patch',
-      '/users/current/user-dataset-sharing',
-      delta
-    );
-  },
-  getUserDatasetDownloadUrl: (wdkService: WdkService) => (
-    datasetId: number,
-    filename: string
-  ) => {
-    if (typeof datasetId !== 'number')
-      throw new TypeError(
-        `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
-      );
-    if (typeof filename !== 'string')
-      throw new TypeError(
-        `Can't build downloadUrl; invalid filename given (${filename}) [${typeof filename}]`
-      );
+    },
+  getUserDatasetDownloadUrl:
+    (wdkService: WdkService) => (datasetId: number, filename: string) => {
+      if (typeof datasetId !== 'number')
+        throw new TypeError(
+          `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
+        );
+      if (typeof filename !== 'string')
+        throw new TypeError(
+          `Can't build downloadUrl; invalid filename given (${filename}) [${typeof filename}]`
+        );
 
-    return `${wdkService.serviceUrl}/users/current/user-datasets/${datasetId}/user-datafiles/${filename}`;
-  },
+      return `${wdkService.serviceUrl}/users/current/user-datasets/${datasetId}/user-datafiles/${filename}`;
+    },
   getUserIdsByEmail: (wdkService: WdkService) => (emails: string[]) => {
     return wdkService.sendRequest(userIdsByEmailDecoder, {
       path: '/user-id-query',

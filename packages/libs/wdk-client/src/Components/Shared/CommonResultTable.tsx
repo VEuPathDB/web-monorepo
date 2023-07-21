@@ -7,8 +7,11 @@ import { htmlStringValue, numericValue } from '../Mesa/Utils/Utils';
 import { compose, debounce } from 'lodash/fp';
 import { MesaColumn } from '../../Core/CommonTypes';
 
-const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
-  Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
+const simpleFilterPredicateFactory =
+  (searchQuery: string) => (row: Record<string, string>) =>
+    Object.values(row).some((entry) =>
+      `${entry}`.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
 interface CommonResultTableProps<R> {
   emptyResultMessage: string;
@@ -30,7 +33,10 @@ export interface ColumnSettings extends MesaColumn {
 }
 
 // TODO Refactor using hooks
-export class CommonResultTable<R = Record<string, any>> extends Component<CommonResultTableProps<R>, any> {
+export class CommonResultTable<R = Record<string, any>> extends Component<
+  CommonResultTableProps<R>,
+  any
+> {
   constructor(props: CommonResultTableProps<R>) {
     super(props);
     this.handleSearch = debounce(200, this.handleSearch.bind(this));
@@ -41,52 +47,49 @@ export class CommonResultTable<R = Record<string, any>> extends Component<Common
     this.state = MesaState.create({
       rows: this.props.rows,
       columns: this.props.columns,
-      options:
-        this.props.fixedTableHeader
-          ? {
-            showCount: this.props.showCount === undefined
-              ? true
-              : this.props.showCount,
-            toolbar: true
+      options: this.props.fixedTableHeader
+        ? {
+            showCount:
+              this.props.showCount === undefined ? true : this.props.showCount,
+            toolbar: true,
           }
-          : {
-            showCount: this.props.showCount === undefined
-              ? true
-              : this.props.showCount,
+        : {
+            showCount:
+              this.props.showCount === undefined ? true : this.props.showCount,
             toolbar: true,
             useStickyHeader: true,
-            tableBodyMaxHeight: '80vh'
+            tableBodyMaxHeight: '80vh',
           },
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',
         sort: {
           columnKey: this.props.initialSortColumnKey || null,
-          direction: this.props.initialSortDirection || 'asc'
+          direction: this.props.initialSortDirection || 'asc',
         },
         pagination: this.props.pagination
           ? {
-            currentPage: 1,
-            totalRows: this.props.rows.length,
-            rowsPerPage: 20
-          }
-          : undefined
+              currentPage: 1,
+              totalRows: this.props.rows.length,
+              rowsPerPage: 20,
+            }
+          : undefined,
       },
       eventHandlers: {
-        onSort: ({ key }: any, direction: any) => this.handleSort(key, direction),
+        onSort: ({ key }: any, direction: any) =>
+          this.handleSort(key, direction),
         onPageChange: this.handlePageChange,
-        onRowsPerPageChange: this.handleRowsPerPageChange
-      }
+        onRowsPerPageChange: this.handleRowsPerPageChange,
+      },
     });
   }
 
   componentDidUpdate(prevProps: CommonResultTableProps<R>) {
     if (prevProps !== this.props) {
-      this.setState(
-        (prevState: any, props: CommonResultTableProps<R>) =>
-          MesaState.setColumns(
-            MesaState.setRows(prevState, props.rows),
-            props.columns
-          )
+      this.setState((prevState: any, props: CommonResultTableProps<R>) =>
+        MesaState.setColumns(
+          MesaState.setRows(prevState, props.rows),
+          props.columns
+        )
       );
     }
   }
@@ -99,130 +102,134 @@ export class CommonResultTable<R = Record<string, any>> extends Component<Common
 
   handleSort(sortByKey: string, sortDirection: 'asc' | 'desc') {
     const { setSortDirection, setSortColumnKey } = MesaState;
-    const updatedTableState = setSortDirection(setSortColumnKey(this.state, sortByKey), sortDirection);
+    const updatedTableState = setSortDirection(
+      setSortColumnKey(this.state, sortByKey),
+      sortDirection
+    );
 
     this.setState(updatedTableState);
   }
 
   handlePageChange(pageNumber: number) {
-    const updatedTableState = MesaState.setUiState(
-      this.state,
-      {
-        ...MesaState.getUiState(this.state),
-        pagination: {
-          ...MesaState.getUiState(this.state).pagination,
-          currentPage: pageNumber
-        }
-      }
-    );
+    const updatedTableState = MesaState.setUiState(this.state, {
+      ...MesaState.getUiState(this.state),
+      pagination: {
+        ...MesaState.getUiState(this.state).pagination,
+        currentPage: pageNumber,
+      },
+    });
 
     this.setState(updatedTableState);
   }
 
   handleRowsPerPageChange(rowsPerPage: number) {
-    const updatedTableState = MesaState.setUiState(
-      this.state,
-      {
-        ...MesaState.getUiState(this.state),
-        pagination: {
-          ...MesaState.getUiState(this.state).pagination,
-          rowsPerPage
-        }
-      }
-    );
+    const updatedTableState = MesaState.setUiState(this.state, {
+      ...MesaState.getUiState(this.state),
+      pagination: {
+        ...MesaState.getUiState(this.state).pagination,
+        rowsPerPage,
+      },
+    });
 
     this.setState(updatedTableState);
   }
 
   render() {
-    const { getColumns, getFilteredRows, getUiState, setFilteredRows, setUiState } = MesaState;
-    const { searchQuery, sort: { columnKey: sortColumnKey, direction: sortDirection } } = getUiState(this.state);
+    const {
+      getColumns,
+      getFilteredRows,
+      getUiState,
+      setFilteredRows,
+      setUiState,
+    } = MesaState;
+    const {
+      searchQuery,
+      sort: { columnKey: sortColumnKey, direction: sortDirection },
+    } = getUiState(this.state);
 
     const filteredState = searchQuery
-      ? MesaState.filterRows(this.state, simpleFilterPredicateFactory(searchQuery))
+      ? MesaState.filterRows(
+          this.state,
+          simpleFilterPredicateFactory(searchQuery)
+        )
       : this.state;
 
     const allRows = MesaState.getRows(filteredState);
     const filteredRows = MesaState.getFilteredRows(filteredState);
 
-    const filterCountedState = setUiState(
-      filteredState,
-      {
-        ...MesaState.getUiState(filteredState),
-        filteredRowCount: allRows.length - filteredRows.length,
-      }
-    );
+    const filterCountedState = setUiState(filteredState, {
+      ...MesaState.getUiState(filteredState),
+      filteredRowCount: allRows.length - filteredRows.length,
+    });
 
-    const { currentPage = 1, rowsPerPage = 20 } = MesaState.getUiState(filteredState).pagination || {};
+    const { currentPage = 1, rowsPerPage = 20 } =
+      MesaState.getUiState(filteredState).pagination || {};
     const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
     const newCurrentPage = Math.min(currentPage, totalPages);
 
-    const pagedRows = filteredRows.slice((newCurrentPage - 1) * rowsPerPage, newCurrentPage * rowsPerPage);
+    const pagedRows = filteredRows.slice(
+      (newCurrentPage - 1) * rowsPerPage,
+      newCurrentPage * rowsPerPage
+    );
     const pagedState = MesaState.getUiState(filteredState).pagination
-      ? setUiState(
-        setFilteredRows(filterCountedState, pagedRows),
-        {
+      ? setUiState(setFilteredRows(filterCountedState, pagedRows), {
           ...MesaState.getUiState(filterCountedState),
           pagination: {
             ...MesaState.getUiState(filterCountedState).pagination,
             currentPage: newCurrentPage,
             totalPages,
-            totalRows: allRows.length
-          }
-        }
-      )
+            totalRows: allRows.length,
+          },
+        })
       : filterCountedState;
 
-    const { sortType = 'text' } = getColumns(pagedState).find(({ key }) => key === sortColumnKey) || {};
+    const { sortType = 'text' } =
+      getColumns(pagedState).find(({ key }) => key === sortColumnKey) || {};
     const sortMethod = sortTypes[sortType] || sortTypes['text'];
 
     const unsortedRows = getFilteredRows(pagedState);
-    const sortedRows = sortColumnKey === null
-      ? unsortedRows
-      : sortMethod(unsortedRows, sortColumnKey, sortDirection === 'asc');
+    const sortedRows =
+      sortColumnKey === null
+        ? unsortedRows
+        : sortMethod(unsortedRows, sortColumnKey, sortDirection === 'asc');
 
-    const sortedState = setFilteredRows(
-      pagedState,
-      sortedRows
-    );
+    const sortedState = setFilteredRows(pagedState, sortedRows);
 
     return (
       <Fragment>
-        {
-          this.props.rows.length
-            ? (
-              <Mesa state={sortedState}>
-                <div className="wdk-RealTimeSearchBoxContainer">
-                  <span>{this.props.searchBoxHeader || null}</span>
-                  <RealTimeSearchBox
-                    className="enrichment-search-field"
-                    autoFocus={false}
-                    searchTerm={searchQuery}
-                    onSearchTermChange={this.handleSearch}
-                    placeholderText={''}
-                    helpText={'The entire table will be searched'}
-                  />
-                </div>
-                {this.props.children}
-              </Mesa>
-            )
-            : (
-              <div className="enrich-empty-results">
-                {this.props.emptyResultMessage}
-              </div>
-            )
-        }
+        {this.props.rows.length ? (
+          <Mesa state={sortedState}>
+            <div className="wdk-RealTimeSearchBoxContainer">
+              <span>{this.props.searchBoxHeader || null}</span>
+              <RealTimeSearchBox
+                className="enrichment-search-field"
+                autoFocus={false}
+                searchTerm={searchQuery}
+                onSearchTermChange={this.handleSearch}
+                placeholderText={''}
+                helpText={'The entire table will be searched'}
+              />
+            </div>
+            {this.props.children}
+          </Mesa>
+        ) : (
+          <div className="enrich-empty-results">
+            {this.props.emptyResultMessage}
+          </div>
+        )}
       </Fragment>
     );
   }
 }
 
-const sortTypes: Record<string, ((rows: any[], key: string, ascending: boolean) => any[])> = {
-  'number': MesaUtils.numberSort,
-  'text': MesaUtils.textSort,
-  'htmlText': MesaUtils.customSortFactory(htmlStringValue),
-  'htmlNumber': MesaUtils.customSortFactory(compose(
-    numericValue,
-    htmlStringValue
-  ))
+const sortTypes: Record<
+  string,
+  (rows: any[], key: string, ascending: boolean) => any[]
+> = {
+  number: MesaUtils.numberSort,
+  text: MesaUtils.textSort,
+  htmlText: MesaUtils.customSortFactory(htmlStringValue),
+  htmlNumber: MesaUtils.customSortFactory(
+    compose(numericValue, htmlStringValue)
+  ),
 };

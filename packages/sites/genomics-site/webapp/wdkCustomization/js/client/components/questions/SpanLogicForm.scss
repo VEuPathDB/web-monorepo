@@ -4,7 +4,7 @@ $blue-text: #0000ee;
 $grey-background: #efefef;
 
 $red-region: #c80064;
-$blue-region: #0000ff; 
+$blue-region: #0000ff;
 $grey-feature: #646464;
 
 .SpanLogicForm {
@@ -137,8 +137,8 @@ $grey-feature: #646464;
     border-left: 1px solid grey;
     border-right: 1px solid grey;
 
-    background-color: $grey-background;    
-  } 
+    background-color: $grey-background;
+  }
 
   &--RightRegionTabBottom {
     grid-row: 2;
@@ -169,7 +169,7 @@ $grey-feature: #646464;
 
     background-color: $grey-background;
   }
-  
+
   &--OperationDescription {
     grid-row: 3;
     grid-column: 3;
@@ -188,11 +188,11 @@ $grey-feature: #646464;
 
     background-color: $grey-background;
 
-    input[type="text"] {
+    input[type='text'] {
       width: 6em;
     }
 
-    input[type="radio"] {
+    input[type='radio'] {
       margin-right: 0.5em;
     }
   }
@@ -225,7 +225,7 @@ $grey-feature: #646464;
         background-color: white;
 
         overflow: visible;
-  
+
         .region_a {
           line {
             stroke: $blue-region;
@@ -260,16 +260,16 @@ $grey-feature: #646464;
         border: 1px solid silver;
 
         padding: 0.25em 0.5em 0.5em 0.5em;
-  
+
         > * {
           margin: 0.5em 1em;
         }
 
-        input[type="text"] {
+        input[type='text'] {
           width: 6em;
         }
-    
-        input[type="radio"] {
+
+        input[type='radio'] {
           margin-right: 0.5em;
         }
       }
@@ -278,19 +278,21 @@ $grey-feature: #646464;
     &-CustomRegionParams {
       display: grid;
       grid-template-columns: 7em 1fr;
-  
+
       > * {
         display: flex;
         align-items: center;
-  
+
         margin: 0.25em;
       }
-  
-      &-BeginHeader, &-EndHeader {
+
+      &-BeginHeader,
+      &-EndHeader {
         justify-content: flex-end;
       }
 
-      &-BeginBody, &-EndBody {
+      &-BeginBody,
+      &-EndBody {
         > * {
           margin: 0.25em;
         }
@@ -309,15 +311,15 @@ $grey-feature: #646464;
     border: 1px solid grey;
 
     &__OVERLAP {
-      background-image: url("./overlap.svg");
+      background-image: url('./overlap.svg');
     }
 
     &__B_CONTAIN_A {
-      background-image: url("./b_contain_a.svg");
+      background-image: url('./b_contain_a.svg');
     }
 
     &__A_CONTAIN_B {
-      background-image: url("./a_contain_b.svg");
+      background-image: url('./a_contain_b.svg');
     }
   }
 }

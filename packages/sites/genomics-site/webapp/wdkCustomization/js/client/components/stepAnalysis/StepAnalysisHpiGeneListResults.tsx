@@ -1,17 +1,23 @@
 import React, { Fragment } from 'react';
-import { StepAnalysisResultPluginProps } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/StepAnalysisResultsPane'
-import { CommonResultTable, ColumnSettings } from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
+import { StepAnalysisResultPluginProps } from '@veupathdb/wdk-client/lib/Components/StepAnalysis/StepAnalysisResultsPane';
+import {
+  CommonResultTable,
+  ColumnSettings,
+} from '@veupathdb/wdk-client/lib/Components/Shared/CommonResultTable';
 import Templates from '@veupathdb/wdk-client/lib/Components/Mesa/Templates';
 
 import './StepAnalysisEnrichmentResult.scss';
 import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
 
-const baseColumnSettings: Pick<ColumnSettings, 'key' | 'renderCell' | 'sortable' | 'sortType' | 'type'>[] = [
+const baseColumnSettings: Pick<
+  ColumnSettings,
+  'key' | 'renderCell' | 'sortable' | 'sortType' | 'type'
+>[] = [
   {
     key: 'species',
     type: 'html',
     sortable: true,
-    sortType: 'htmlText'
+    sortType: 'htmlText',
   },
   {
     key: 'experimentName',
@@ -20,74 +26,77 @@ const baseColumnSettings: Pick<ColumnSettings, 'key' | 'renderCell' | 'sortable'
         content={Templates.htmlCell({
           ...cellProps,
           key: 'description',
-          value: cellProps.row.description
+          value: cellProps.row.description,
         })}
       >
         <a
           title={cellProps.row.description}
           href={`${cellProps.row.uri}`}
-          target="_blank">{cellProps.row.experimentName}
+          target="_blank"
+        >
+          {cellProps.row.experimentName}
         </a>
       </Tooltip>
     ),
-    sortable: true
+    sortable: true,
   },
   {
     key: 'type',
-    sortable: true
+    sortable: true,
   },
   {
     key: 'c11',
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'c22',
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'c33',
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'c44',
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'c55',
     sortable: true,
-    sortType: 'number'
+    sortType: 'number',
   },
   {
     key: 'significance',
     sortable: true,
-    sortType: 'number'
-  }
+    sortType: 'number',
+  },
 ];
 
-const hpiGeneListResultColumns = (headerRow: any, headerDescription: any): ColumnSettings[] => baseColumnSettings.map(column => ({
-  ...column,
-  name: headerRow[column.key],
-  helpText: headerDescription[column.key]
-}));
+const hpiGeneListResultColumns = (
+  headerRow: any,
+  headerDescription: any
+): ColumnSettings[] =>
+  baseColumnSettings.map((column) => ({
+    ...column,
+    name: headerRow[column.key],
+    helpText: headerDescription[column.key],
+  }));
 
-export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> = ({
-  analysisResult: {
-    resultData,
-    headerRow,
-    headerDescription
-  }
-}) => (
-  <>
-    <h3>Analysis Results:   </h3>
-    <CommonResultTable
-      emptyResultMessage={'No enrichment was found for the threshold you specified.'}
-      rows={resultData}
-      columns={hpiGeneListResultColumns(headerRow, headerDescription)}
-      fixedTableHeader
-    />
-  </>
-);
+export const StepAnalysisHpiGeneListResults: React.SFC<StepAnalysisResultPluginProps> =
+  ({ analysisResult: { resultData, headerRow, headerDescription } }) => (
+    <>
+      <h3>Analysis Results: </h3>
+      <CommonResultTable
+        emptyResultMessage={
+          'No enrichment was found for the threshold you specified.'
+        }
+        rows={resultData}
+        columns={hpiGeneListResultColumns(headerRow, headerDescription)}
+        fixedTableHeader
+      />
+    </>
+  );
