@@ -297,7 +297,12 @@ export function filterOutProps<P extends AnyObject>(
  */
 export function formatAttributeValue(value?: AttributeValue): string {
   if (typeof value === 'object' && value != null) {
-    return `<a href="${value.url}">${value.displayText || value.url}</a>`;
+    const url = new URL(value.url, window.location.href);
+    const isExternal = url.origin !== window.location.origin;
+    const externalAttrs = isExternal ? 'target="_blank" rel="noreferrer"' : '';
+    return `<a href="${value.url}" ${externalAttrs}>${
+      value.displayText || value.url
+    }</a>`;
   }
   return value as string;
 }
