@@ -4,7 +4,7 @@ $news-border-color: #0f597099;
 $news-border-width: 2px;
 
 .News-Section {
-  margin-left: .75em;
+  margin-left: 0.75em;
   margin-right: 1em;
   flex: $news-width 0 0;
 
@@ -21,7 +21,7 @@ $news-border-width: 2px;
 
   .NewsLoadError {
     color: darkred;
-    padding: .6rem;
+    padding: 0.6rem;
   }
 
   .wdk-Showcase-HeadingControls {
@@ -29,27 +29,35 @@ $news-border-width: 2px;
   }
 
   .wdk-Showcase-ContentRow {
-    padding: .5rem 0;
+    padding: 0.5rem 0;
     background: white;
     border: $news-border-width solid $news-border-color;
-    a { color: #0f5970; }
+    a {
+      color: #0f5970;
+    }
   }
 
-  .AllNewsLink, .NewsEntry, a.twitter-timeline {
-    padding: 0 .6rem;
+  .AllNewsLink,
+  .NewsEntry,
+  a.twitter-timeline {
+    padding: 0 0.6rem;
   }
 
   .NewsEntry {
     // background: rgba(15, 89, 112, 0.11);
-    margin-bottom: .4rem;
+    margin-bottom: 0.4rem;
 
-    &:hover, &:focus, &:active {
+    &:hover,
+    &:focus,
+    &:active {
       background: rgba(15, 89, 112, 0.05);
     }
     .NewsHeadline {
       font-weight: 500;
-      padding: .2rem 0;
-      a { text-decoration: underline; }
+      padding: 0.2rem 0;
+      a {
+        text-decoration: underline;
+      }
     }
 
     .NewsDate {
@@ -58,14 +66,13 @@ $news-border-width: 2px;
     }
 
     .NewsTeaser {
-      padding: .4rem 0;
+      padding: 0.4rem 0;
     }
   }
 
   .AllNewsLink {
     display: block;
     padding-top: 1.2rem;
-    padding-bottom: .2rem;
+    padding-bottom: 0.2rem;
   }
-
 }

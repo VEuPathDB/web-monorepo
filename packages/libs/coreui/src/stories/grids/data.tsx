@@ -196,18 +196,20 @@ export function fetchGridData({
   const startRow = pageSize * pageIndex;
   const endRow = startRow + pageSize;
 
-  const sortedRows = sortBy ? [...ROWS].sort((rowA, rowB) => {
-    for (const column of sortBy) {
-      const [valA, valB] = [rowA[column.id], rowB[column.id]];
+  const sortedRows = sortBy
+    ? [...ROWS].sort((rowA, rowB) => {
+        for (const column of sortBy) {
+          const [valA, valB] = [rowA[column.id], rowB[column.id]];
 
-      if (valA !== valB) {
-        if (column.desc) return valA > valB ? -1 : 1;
-        else return valA < valB ? -1 : 1;
-      }
-    }
+          if (valA !== valB) {
+            if (column.desc) return valA > valB ? -1 : 1;
+            else return valA < valB ? -1 : 1;
+          }
+        }
 
-    return 0;
-  }) : ROWS;
+        return 0;
+      })
+    : ROWS;
 
   return sortedRows.slice(startRow, endRow);
 }

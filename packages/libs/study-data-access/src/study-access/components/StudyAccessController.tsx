@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { Loading, PermissionDenied } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Loading,
+  PermissionDenied,
+} from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
@@ -16,7 +19,7 @@ import {
   useStudyAccessApi,
   useTableUiState,
   useUserPermissions,
-  useHistoryTableSectionConfig
+  useHistoryTableSectionConfig,
 } from '../studyAccessHooks';
 import { getStudyName } from '../../shared/studies';
 
@@ -26,7 +29,7 @@ interface Props {
 
 export default function StudyAccessController({ datasetId }: Props) {
   const userProfile = useWdkService(
-    wdkService => wdkService.getCurrentUser(),
+    (wdkService) => wdkService.getCurrentUser(),
     []
   );
 
@@ -34,19 +37,21 @@ export default function StudyAccessController({ datasetId }: Props) {
 
   const studyAccessApi = useStudyAccessApi();
 
-  const { value: userPermissions } = useUserPermissions(studyAccessApi.fetchPermissions);
-
-  const dashboardAccessAllowed = (
-    userPermissions != null && canAccessDashboard(userPermissions, datasetId)
+  const { value: userPermissions } = useUserPermissions(
+    studyAccessApi.fetchPermissions
   );
 
-  const documentTitle = userProfile == null || study.status === 'loading' || userPermissions == null
-    ? 'Loading...'
-    : study.status === 'not-found'
-    ? 'Not Found'
-    : !dashboardAccessAllowed
-    ? 'Permission Denied'
-    : `Study Access Dashboard: ${getStudyName(study.record)}`;
+  const dashboardAccessAllowed =
+    userPermissions != null && canAccessDashboard(userPermissions, datasetId);
+
+  const documentTitle =
+    userProfile == null || study.status === 'loading' || userPermissions == null
+      ? 'Loading...'
+      : study.status === 'not-found'
+      ? 'Not Found'
+      : !dashboardAccessAllowed
+      ? 'Permission Denied'
+      : `Study Access Dashboard: ${getStudyName(study.record)}`;
 
   useSetDocumentTitle(documentTitle);
 
@@ -56,7 +61,7 @@ export default function StudyAccessController({ datasetId }: Props) {
     providerTableUiState,
     setProviderTableUiState,
     staffTableUiState,
-    setStaffTableUiState
+    setStaffTableUiState,
   } = useTableUiState(datasetId);
 
   const { openDialogConfig, changeOpenDialogConfig } = useOpenDialogConfig();
@@ -99,20 +104,22 @@ export default function StudyAccessController({ datasetId }: Props) {
     datasetId
   );
 
-  return (
-    userProfile == null || study.status == 'loading' || userPermissions == null
-      ? <Loading />
-      : study.status == 'not-found'
-      ? <NotFound />
-      : !dashboardAccessAllowed
-      ? <PermissionDenied />
-      : <StudyAccess
-          title={`Study: ${getStudyName(study.record)}`}
-          staffTableConfig={staffTableConfig}
-          providerTableConfig={providerTableConfig}
-          endUserTableConfig={endUserTableConfig}
-          historyTableConfig={historyTableConfig}
-          openDialogConfig={openDialogConfig}
-        />
+  return userProfile == null ||
+    study.status == 'loading' ||
+    userPermissions == null ? (
+    <Loading />
+  ) : study.status == 'not-found' ? (
+    <NotFound />
+  ) : !dashboardAccessAllowed ? (
+    <PermissionDenied />
+  ) : (
+    <StudyAccess
+      title={`Study: ${getStudyName(study.record)}`}
+      staffTableConfig={staffTableConfig}
+      providerTableConfig={providerTableConfig}
+      endUserTableConfig={endUserTableConfig}
+      historyTableConfig={historyTableConfig}
+      openDialogConfig={openDialogConfig}
+    />
   );
 }

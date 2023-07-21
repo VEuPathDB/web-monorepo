@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 
 export function main(srcDir, targetDir) {
   return fs.copy(srcDir, targetDir, {
-    filter: src => {
+    filter: (src) => {
       if (fs.lstatSync(src).isDirectory()) {
         return true;
       }
@@ -14,6 +14,6 @@ export function main(srcDir, targetDir) {
         !src.endsWith('.tsx') &&
         !src.toLowerCase().endsWith('md')
       );
-    }
+    },
   });
 }

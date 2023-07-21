@@ -2,12 +2,14 @@
   font-style: italic;
   font-weight: bold;
 
-  .wdk-FormulaLeftHandSide, .wdk-FormulaOperator, .wdk-FormulaRightHandSide {
+  .wdk-FormulaLeftHandSide,
+  .wdk-FormulaOperator,
+  .wdk-FormulaRightHandSide {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
   }
-  
+
   .wdk-FormulaOperator {
     padding: 0 0.3em;
   }

@@ -52,51 +52,53 @@ import { wrapActions } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
  *   the store's state should not be modified. Treat the state as immutable.
  * @return {ComponentDecorator}
  */
-export let withStore = (getStateFromStore = identity) => (TargetComponent) => {
-  class StoreProvider extends React.PureComponent {
+export let withStore =
+  (getStateFromStore = identity) =>
+  (TargetComponent) => {
+    class StoreProvider extends React.PureComponent {
+      static get displayName() {
+        return `${this.name}(${
+          TargetComponent.displayName || TargetComponent.name
+        })`;
+      }
 
-    static get displayName() {
-      return `${this.name}(${TargetComponent.displayName || TargetComponent.name})`;
-    }
+      constructor(props, context) {
+        super(props, context);
+        this.state = this.getStateFromStore(this.props);
+      }
 
-    constructor(props, context) {
-      super(props, context);
-      this.state = this.getStateFromStore(this.props);
-    }
+      getStateFromStore(props) {
+        return getStateFromStore(this.context.viewStore.getState(), props);
+      }
 
-    getStateFromStore(props) {
-      return getStateFromStore(this.context.viewStore.getState(), props);
-    }
+      componentDidMount() {
+        this.subscription = this.context.viewStore.addListener(() => {
+          this.setState(this.getStateFromStore(this.props));
+        });
+      }
 
-    componentDidMount() {
-      this.subscription = this.context.viewStore.addListener(() => {
-        this.setState(this.getStateFromStore(this.props));
-      })
-    }
+      componentWillReceiveProps(nextProps) {
+        // only update store's state if `getStateFromStore` is using props
+        if (getStateFromStore.length === 2) {
+          this.setState(this.getStateFromStore(nextProps));
+        }
+      }
 
-    componentWillReceiveProps(nextProps) {
-      // only update store's state if `getStateFromStore` is using props
-      if (getStateFromStore.length === 2) {
-        this.setState(this.getStateFromStore(nextProps));
+      componentWillUnmount() {
+        this.subscription.remove();
+      }
+
+      render() {
+        return <TargetComponent {...this.props} {...this.state} />;
       }
     }
 
-    componentWillUnmount() {
-      this.subscription.remove();
-    }
+    StoreProvider.contextTypes = {
+      viewStore: PropTypes.object.isRequired,
+    };
 
-    render() {
-      return <TargetComponent {...this.props} {...this.state}/>
-    }
-
-  }
-
-  StoreProvider.contextTypes = {
-    viewStore: PropTypes.object.isRequired
+    return StoreProvider;
   };
-
-  return StoreProvider;
-};
 
 /**
  * Creates a Component decorator that passes a set of wrapped action creators
@@ -118,30 +120,37 @@ export let withStore = (getStateFromStore = identity) => (TargetComponent) => {
  * @param {Object} actionCreators An object-map of action creator functions
  * @return {ComponentDecorator}
  */
-export let withActions = (actionCreators = {}) => (TargetComponent) => {
-  class WrappActionCreatorsProvider extends React.PureComponent {
+export let withActions =
+  (actionCreators = {}) =>
+  (TargetComponent) => {
+    class WrappActionCreatorsProvider extends React.PureComponent {
+      static get displayName() {
+        return `${this.name}(${
+          TargetComponent.displayName || TargetComponent.name
+        })`;
+      }
 
-    static get displayName() {
-      return `${this.name}(${TargetComponent.displayName || TargetComponent.name})`;
+      constructor(props, context) {
+        super(props, context);
+        this.wrappedActionCreators = wrapActions(
+          context.dispatchAction,
+          actionCreators
+        );
+      }
+
+      render() {
+        return (
+          <TargetComponent {...this.props} {...this.wrappedActionCreators} />
+        );
+      }
     }
 
-    constructor(props, context) {
-      super(props, context);
-      this.wrappedActionCreators = wrapActions(context.dispatchAction, actionCreators);
-    }
+    WrappActionCreatorsProvider.contextTypes = {
+      dispatchAction: PropTypes.func.isRequired,
+    };
 
-    render() {
-      return <TargetComponent {...this.props} {...this.wrappedActionCreators} />
-    }
-
-  }
-
-  WrappActionCreatorsProvider.contextTypes = {
-    dispatchAction: PropTypes.func.isRequired
+    return WrappActionCreatorsProvider;
   };
-
-  return WrappActionCreatorsProvider;
-};
 
 /**
  * Decorates a component so that when any of part of it is copied, all rich
@@ -154,7 +163,7 @@ export let withPlainTextCopy = (TargetComponent) =>
         <TargetComponent {...props} />
       </div>
     );
-  }
+  };
 
 function handleCopy(event) {
   event.clipboardData.setData('text/plain', window.getSelection().toString());

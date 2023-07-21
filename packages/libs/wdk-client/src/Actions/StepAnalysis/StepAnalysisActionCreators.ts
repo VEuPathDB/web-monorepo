@@ -19,14 +19,14 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
-  TOGGLE_PARAMETERS
+  TOGGLE_PARAMETERS,
 } from './StepAnalysisActionConstants';
 import {
   UninitializedAnalysisPanelState,
   SavedAnalysisState,
   AnalysisMenuState,
   UnsavedAnalysisState,
-  AnalysisPanelState
+  AnalysisPanelState,
 } from '../../StoreModules/StepAnalysis/StepAnalysisState';
 import {
   StartLoadingTabListingAction,
@@ -49,111 +49,148 @@ import {
   UpdateParamValues,
   ToggleDescription,
   ToggleParameters,
-  RunAnalysisAction
+  RunAnalysisAction,
 } from './StepAnalysisActions';
 import { StepAnalysisType } from '../../Utils/StepAnalysisUtils';
 
-export const startLoadingTabListing = (strategyId: number, stepId: number): StartLoadingTabListingAction => ({
+export const startLoadingTabListing = (
+  strategyId: number,
+  stepId: number
+): StartLoadingTabListingAction => ({
   type: START_LOADING_TAB_LISTING,
-  payload: { stepId, strategyId }
+  payload: { stepId, strategyId },
 });
 
-export const finishLoadingTabListing = (tabListing: UninitializedAnalysisPanelState[], analysisChoices: StepAnalysisType[]): FinishLoadingTabListingAction => ({
+export const finishLoadingTabListing = (
+  tabListing: UninitializedAnalysisPanelState[],
+  analysisChoices: StepAnalysisType[]
+): FinishLoadingTabListingAction => ({
   type: FINISH_LOADING_TAB_LISTING,
-  payload: { tabListing, analysisChoices }
+  payload: { tabListing, analysisChoices },
 });
 
 export const selectTab = (panelId: number): SelectTabAction => ({
   type: SELECT_TAB,
-  payload: { panelId }
+  payload: { panelId },
 });
 
-export const startLoadingSavedTab = (panelId: number): StartLoadingSavedTabAction => ({
+export const startLoadingSavedTab = (
+  panelId: number
+): StartLoadingSavedTabAction => ({
   type: START_LOADING_SAVED_TAB,
-  payload: { panelId }
+  payload: { panelId },
 });
 
-export const finishLoadingSavedTab = (panelId: number, loadedState: UninitializedAnalysisPanelState | SavedAnalysisState): FinishLoadingSavedTabAction => ({
+export const finishLoadingSavedTab = (
+  panelId: number,
+  loadedState: UninitializedAnalysisPanelState | SavedAnalysisState
+): FinishLoadingSavedTabAction => ({
   type: FINISH_LOADING_SAVED_TAB,
-  payload: { panelId, loadedState }
+  payload: { panelId, loadedState },
 });
 
-export const startLoadingChosenAnalysisTab = (panelId: number, choice: StepAnalysisType): StartLoadingChosenAnalysisTabAction => ({
+export const startLoadingChosenAnalysisTab = (
+  panelId: number,
+  choice: StepAnalysisType
+): StartLoadingChosenAnalysisTabAction => ({
   type: START_LOADING_CHOSEN_ANALYSIS_TAB,
-  payload: { panelId, choice }
+  payload: { panelId, choice },
 });
 
-export const finishLoadingChosenAnalysisTab = (panelId: number, loadedState: AnalysisMenuState | UnsavedAnalysisState): FinishLoadingChosenAnalysisTabAction => ({
+export const finishLoadingChosenAnalysisTab = (
+  panelId: number,
+  loadedState: AnalysisMenuState | UnsavedAnalysisState
+): FinishLoadingChosenAnalysisTabAction => ({
   type: FINISH_LOADING_CHOSEN_ANALYSIS_TAB,
-  payload: { panelId, loadedState }
+  payload: { panelId, loadedState },
 });
 
-export const createNewTab = (initialState: AnalysisPanelState): CreateNewTabAction => ({
+export const createNewTab = (
+  initialState: AnalysisPanelState
+): CreateNewTabAction => ({
   type: CREATE_NEW_TAB,
-  payload: { initialState }
+  payload: { initialState },
 });
 
 export const deleteAnalysis = (panelId: number): DeleteAnalysisAction => ({
   type: DELETE_ANALYSIS,
-  payload: { panelId }
+  payload: { panelId },
 });
 
 export const removeTab = (panelId: number): RemoveTabAction => ({
   type: REMOVE_TAB,
-  payload: { panelId }
+  payload: { panelId },
 });
 
-export const startFormSubmission = (panelId: number): StartFormSubmissionAction => ({
+export const startFormSubmission = (
+  panelId: number
+): StartFormSubmissionAction => ({
   type: START_FORM_SUBMISSION,
-  payload: { panelId }
+  payload: { panelId },
 });
 
 export const runAnalysis = (panelId: number): RunAnalysisAction => ({
   type: RUN_ANALYSIS,
-  payload: { panelId }
+  payload: { panelId },
 });
 
-export const checkResultStatus = (panelId: number): CheckResultStatusAction => ({
+export const checkResultStatus = (
+  panelId: number
+): CheckResultStatusAction => ({
   type: CHECK_RESULT_STATUS,
-  payload: { panelId }
+  payload: { panelId },
 });
 
 export const countDown = (panelId: number): CountDownAction => ({
   type: COUNT_DOWN,
-  payload: { panelId }
+  payload: { panelId },
 });
 
-export const finishFormSubmission = (panelId: number, loadedState: SavedAnalysisState): FinishFormSubmissionAction => ({
+export const finishFormSubmission = (
+  panelId: number,
+  loadedState: SavedAnalysisState
+): FinishFormSubmissionAction => ({
   type: FINISH_FORM_SUBMISSION,
-  payload: { panelId, loadedState }
+  payload: { panelId, loadedState },
 });
 
-export const renameAnalysis = (panelId: number, newDisplayName: string): RenameAnalysisAction => ({
+export const renameAnalysis = (
+  panelId: number,
+  newDisplayName: string
+): RenameAnalysisAction => ({
   type: RENAME_ANALYSIS,
-  payload: { panelId, newDisplayName }
+  payload: { panelId, newDisplayName },
 });
 
-export const renameTab = (panelId: number, newDisplayName: string): RenameTabAction => ({
+export const renameTab = (
+  panelId: number,
+  newDisplayName: string
+): RenameTabAction => ({
   type: RENAME_TAB,
-  payload: { panelId, newDisplayName }
+  payload: { panelId, newDisplayName },
 });
 
-export const duplicateAnalysis = (panelId: number): DuplicateAnalysisAction => ({
+export const duplicateAnalysis = (
+  panelId: number
+): DuplicateAnalysisAction => ({
   type: DUPLICATE_ANALYSIS,
-  payload: { panelId }
+  payload: { panelId },
 });
 
-export const updateParamValues = (panelId: number, newParamValues: Record<string, string>): UpdateParamValues => ({
+export const updateParamValues = (
+  panelId: number,
+  newParamValues: Record<string, string>
+): UpdateParamValues => ({
   type: UPDATE_PARAM_VALUES,
-  payload: { panelId, newParamValues }
+  payload: { panelId, newParamValues },
 });
 
 export const toggleDescription = (panelId: number): ToggleDescription => ({
   type: TOGGLE_DESCRIPTION,
-  payload: { panelId }
+  payload: { panelId },
 });
 
 export const toggleParameters = (panelId: number): ToggleParameters => ({
   type: TOGGLE_PARAMETERS,
-  payload: { panelId }
+  payload: { panelId },
 });

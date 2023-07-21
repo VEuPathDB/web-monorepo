@@ -125,9 +125,10 @@ export default function SliderWidget({
   const [localValue, setLocalValue] = useState<number | undefined>(value);
 
   // XXX We may want a generic useDebouncedCallback hook.
-  const debouncedOnChange = useMemo(() => debounce(onChange, debounceRateMs), [
-    onChange,
-  ]);
+  const debouncedOnChange = useMemo(
+    () => debounce(onChange, debounceRateMs),
+    [onChange]
+  );
 
   // cancel any lingering calls to onChange (via useEffect cleanup fn)
   useEffect(() => debouncedOnChange.cancel, []);

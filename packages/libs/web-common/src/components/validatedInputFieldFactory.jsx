@@ -1,7 +1,7 @@
-import { invoke } from "lodash";
-import React, { Component, createRef } from "react";
+import { invoke } from 'lodash';
+import React, { Component, createRef } from 'react';
 
-export const validatedInputFieldFactory = Field =>
+export const validatedInputFieldFactory = (Field) =>
   class ValidatedInputField extends Component {
     constructor(...args) {
       super(...args);
@@ -28,7 +28,7 @@ export const validatedInputFieldFactory = Field =>
 
     render() {
       const { validity, ...fieldProps } = this.props;
-      
+
       return <Field {...fieldProps} ref={this.fieldRef} />;
     }
   };

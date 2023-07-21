@@ -1,16 +1,16 @@
-import React from "react";
-import { Story, Meta } from "@storybook/react/types-6-0";
-import { useState } from "react";
-import UIThemeProvider from "../../components/theming/UIThemeProvider";
-import { mutedMagenta, gray } from "../../definitions/colors";
+import React from 'react';
+import { Story, Meta } from '@storybook/react/types-6-0';
+import { useState } from 'react';
+import UIThemeProvider from '../../components/theming/UIThemeProvider';
+import { mutedMagenta, gray } from '../../definitions/colors';
 import DraggablePanel, {
   DraggablePanelCoordinatePair,
   DraggablePanelProps,
   HeightAndWidthInPixels,
-} from "../../components/containers/DraggablePanel";
+} from '../../components/containers/DraggablePanel';
 
 export default {
-  title: "Containers/DraggablePanel",
+  title: 'Containers/DraggablePanel',
   component: DraggablePanel,
 } as Meta;
 
@@ -21,10 +21,10 @@ interface DraggablePanelStoryProps extends DraggablePanelProps {
 
 const Template: Story<DraggablePanelStoryProps> = (args) => {
   const panelDefinitionOjects: DraggablePanelStoryProps[] = [
-    "Panel 1",
-    "Panel 2",
-    "Panel 3",
-    "Panel 4",
+    'Panel 1',
+    'Panel 2',
+    'Panel 3',
+    'Panel 4',
   ].map((panelTitle, panelIndex) => {
     return {
       children: () => <p>Panel Contents</p>,
@@ -58,7 +58,9 @@ Default.args = {
   styleOverrides: {},
 };
 
-type StackOrderingKeeperProps = { draggablePanelProps: DraggablePanelStoryProps[] };
+type StackOrderingKeeperProps = {
+  draggablePanelProps: DraggablePanelStoryProps[];
+};
 
 function StackOrderingKeeper({
   draggablePanelProps,
@@ -125,16 +127,16 @@ function StackOrderingKeeper({
   return (
     <div
       style={{
-        position: "relative",
-        height: "97vh",
-        border: "3px solid coral",
+        position: 'relative',
+        height: '97vh',
+        border: '3px solid coral',
       }}
     >
       <ul
         style={{
-          display: "flex",
-          justifyContent: "space-around",
-          listStyle: "none",
+          display: 'flex',
+          justifyContent: 'space-around',
+          listStyle: 'none',
         }}
       >
         {draggablePanelProps.map((props) => {
@@ -146,16 +148,16 @@ function StackOrderingKeeper({
                   movePanelToTopLayer(props.panelTitle);
                   togglePanelOpen(props.panelTitle);
                 }}
-                style={{ backgroundColor: isOpen ? "tomato" : "lightgreen" }}
+                style={{ backgroundColor: isOpen ? 'tomato' : 'lightgreen' }}
               >
                 <span
                   style={{
                     fontSize: 16,
-                    fontWeight: "bold",
-                    padding: "0.25rem 0.5rem",
+                    fontWeight: 'bold',
+                    padding: '0.25rem 0.5rem',
                   }}
                 >
-                  {isOpen ? "Close" : "Open"} {props.panelTitle}
+                  {isOpen ? 'Close' : 'Open'} {props.panelTitle}
                 </span>
               </button>
             </li>
@@ -201,11 +203,11 @@ function StackOrderingKeeper({
             }
             styleOverrides={{
               zIndex,
-              margin: "0 0 1rem 0",
-              width: "500px",
-              height: "200px",
-              minHeight: "175px",
-              minWidth: "285px",
+              margin: '0 0 1rem 0',
+              width: '500px',
+              height: '200px',
+              minHeight: '175px',
+              minWidth: '285px',
               ...props.styleOverrides,
             }}
           >
@@ -215,19 +217,19 @@ function StackOrderingKeeper({
                 movePanelToTopLayer(props.panelTitle);
               }}
               style={{
-                padding: "1rem",
-                fontFamily: "sans-serif",
+                padding: '1rem',
+                fontFamily: 'sans-serif',
               }}
             >
               <h2>{props.panelTitle} Content</h2>
               <p>
-                Panel Dimensions:{" "}
+                Panel Dimensions:{' '}
                 {JSON.stringify(
                   dimensionByPanelTitleDictionary[props.panelTitle]
                 )}
               </p>
               <p>
-                Panel Position:{" "}
+                Panel Position:{' '}
                 {JSON.stringify(
                   positionByPanelTitleDictionary[props.panelTitle]
                 )}

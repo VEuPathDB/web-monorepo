@@ -9,28 +9,33 @@ export function createMockHistory(options: { basename: string }): History {
     location: { pathname: '' } as Location,
     push: getPushOrReplace(createHref, true),
     replace: getPushOrReplace(createHref, false),
-    go: (n: number) => { /* noop */ },
-    goBack: () => { },
-    goForward: () => { },
+    go: (n: number) => {
+      /* noop */
+    },
+    goBack: () => {},
+    goForward: () => {},
     block: (prompt?: boolean) => () => {},
     listen: () => () => {},
-    createHref
+    createHref,
   };
 }
 
-function getPushOrReplace(createHref: (location: Location) => string, push: boolean) {
+function getPushOrReplace(
+  createHref: (location: Location) => string,
+  push: boolean
+) {
   function pushOrReplace(path: string): void;
   function pushOrReplace(path: Location): void;
   function pushOrReplace(path: string | Location) {
     const fn = push ? 'assign' : 'replace';
     const location: Location = isString(path)
       ? {
-        pathname: path,
-        search: '',
-        state: null,
-        hash: '',
-        key: ''
-      }
+          pathname: path,
+          search: '',
+          state: null,
+          hash: '',
+          key: '',
+        }
       : path;
     window.location[fn](createHref(location));
   }
@@ -39,7 +44,12 @@ function getPushOrReplace(createHref: (location: Location) => string, push: bool
 
 function getCreateHref(basename: string) {
   function createHref(location: Location) {
-    return basename + location.pathname + (location.search || '') + (location.hash || '');
+    return (
+      basename +
+      location.pathname +
+      (location.search || '') +
+      (location.hash || '')
+    );
   }
   return createHref;
 }

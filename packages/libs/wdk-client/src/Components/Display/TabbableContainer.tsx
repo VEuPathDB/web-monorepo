@@ -7,16 +7,15 @@ type Props = {
   autoFocus: boolean;
   className?: string;
   onKeyDown?: (event: RKeyboardEvent) => void;
-}
+};
 
 /**
  * Creates a container that allows a user to cycle among all tabbable elements.
  * This is useful for components such as dialogs and dropdown menus.
  */
 class TabbableContainer extends React.Component<Props> {
-
   static defaultProps = {
-    autoFocus: false
+    autoFocus: false,
   };
 
   node: HTMLElement | null;
@@ -51,7 +50,9 @@ class TabbableContainer extends React.Component<Props> {
   // prevent user from tabbing out of dropdown
   // manually tab since os x removes some controls from the tabindex by default
   containTab(event: RKeyboardEvent) {
-    if (event.key !== 'Tab') { return; }
+    if (event.key !== 'Tab') {
+      return;
+    }
     let tabbables = $(':tabbable', this.node!);
     let l = tabbables.length;
     let index = tabbables.index($(event.target as HTMLElement));
@@ -67,10 +68,14 @@ class TabbableContainer extends React.Component<Props> {
 
   render() {
     return (
-      <div ref={node => this.node = node} tabIndex={-1} {...this.props} onKeyDown={this.handleKeyDown}/>
+      <div
+        ref={(node) => (this.node = node)}
+        tabIndex={-1}
+        {...this.props}
+        onKeyDown={this.handleKeyDown}
+      />
     );
   }
-
 }
 
 export default TabbableContainer;

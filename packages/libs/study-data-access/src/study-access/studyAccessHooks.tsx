@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  capitalize,
-  isNil,
-  negate,
-  partition,
-  zipWith
- } from 'lodash';
+import { capitalize, isNil, negate, partition, zipWith } from 'lodash';
 
 import { IconAlt, SingleSelect } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
@@ -15,9 +9,7 @@ import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { ApprovalStatus, HistoryResult } from './EntityTypes';
-import {
-  StudyAccessApi,
-} from './api';
+import { StudyAccessApi } from './api';
 import {
   UserPermissions,
   canAddEndUsers,
@@ -40,11 +32,9 @@ import {
   AccessDenialContent,
   AddUsersContent,
   ContentProps,
-  UsersAddedContent
+  UsersAddedContent,
 } from './components/UserTableDialog';
-import {
-  Props as UserTableSectionConfig
-} from './components/UserTableSection';
+import { Props as UserTableSectionConfig } from './components/UserTableSection';
 import { fetchStudies, getStudyId } from '../shared/studies';
 import { useWdkDependenciesWithStudyAccessApi } from '../shared/wdkDependencyHook';
 
@@ -107,10 +97,22 @@ interface HistoryTableFullRow extends HistoryTableRow {
   priorAuth: NonNullable<HistoryResult['row']['priorAuth']>;
 }
 
-export type StaffTableSectionConfig = UserTableSectionConfig<StaffTableFullRow, keyof StaffTableRow>;
-export type ProviderTableSectionConfig = UserTableSectionConfig<ProviderTableFullRow, keyof ProviderTableRow>;
-export type EndUserTableSectionConfig = UserTableSectionConfig<EndUserTableFullRow, keyof EndUserTableRow>;
-export type HistoryTableSectionConfig = UserTableSectionConfig<HistoryTableFullRow, keyof HistoryTableRow>;
+export type StaffTableSectionConfig = UserTableSectionConfig<
+  StaffTableFullRow,
+  keyof StaffTableRow
+>;
+export type ProviderTableSectionConfig = UserTableSectionConfig<
+  ProviderTableFullRow,
+  keyof ProviderTableRow
+>;
+export type EndUserTableSectionConfig = UserTableSectionConfig<
+  EndUserTableFullRow,
+  keyof EndUserTableRow
+>;
+export type HistoryTableSectionConfig = UserTableSectionConfig<
+  HistoryTableFullRow,
+  keyof HistoryTableRow
+>;
 
 export type OpenDialogConfig = UserTableDialogProps;
 
@@ -130,69 +132,69 @@ interface EndUserTableUiState {
 type StudyStatus =
   | { status: 'loading' }
   | { status: 'not-found' }
-  | { status: 'success', record: RecordInstance };
+  | { status: 'success'; record: RecordInstance };
 
 export function useStudy(datasetId: string): StudyStatus {
   const studies = useWdkService(fetchStudies, []);
 
-  return useMemo(
-    () => {
-      if (studies == null) {
-        return { status: 'loading' };
-      }
+  return useMemo(() => {
+    if (studies == null) {
+      return { status: 'loading' };
+    }
 
-      const study = studies.records.find(
-        (study) => getStudyId(study) === datasetId
-      );
+    const study = studies.records.find(
+      (study) => getStudyId(study) === datasetId
+    );
 
-      return study == null
-        ? { status: 'not-found' }
-        : { status: 'success', record: study };
-    },
-    [ datasetId, studies ]
-  );
+    return study == null
+      ? { status: 'not-found' }
+      : { status: 'success', record: study };
+  }, [datasetId, studies]);
 }
 
 export function useStudyAccessApi() {
   return useWdkDependenciesWithStudyAccessApi().studyAccessApi;
 }
 
-export function useUserPermissions(fetchPermissions: StudyAccessApi['fetchPermissions']) {
-  return usePromise(
-    async () => {
-      const permissionsResponse = await fetchPermissions();
+export function useUserPermissions(
+  fetchPermissions: StudyAccessApi['fetchPermissions']
+) {
+  return usePromise(async () => {
+    const permissionsResponse = await fetchPermissions();
 
-      return permissionsResponseToUserPermissions(
-        permissionsResponse
-      );
-    },
-    [ fetchPermissions ]
-  );
+    return permissionsResponseToUserPermissions(permissionsResponse);
+  }, [fetchPermissions]);
 }
 
 export function useTableUiState(activeDatasetId: string) {
   const initialStaffTableUiState: StaffTableUiState = {
-    isOwner: {}
+    isOwner: {},
   };
 
   const initialProviderTableUiState: ProviderTableUiState = {
-    isManager: {}
+    isManager: {},
   };
 
   const initialEndUserTableUiState: EndUserTableUiState = {
     approvalStatus: {},
-    denialReason: {}
+    denialReason: {},
   };
 
-  const [ staffTableUiState, setStaffTableUiState ] = useState(initialStaffTableUiState);
-  const [ providerTableUiState, setProviderTableUiState ] = useState(initialProviderTableUiState);
-  const [ endUserTableUiState, setEndUserTableUiState ] = useState(initialEndUserTableUiState);
+  const [staffTableUiState, setStaffTableUiState] = useState(
+    initialStaffTableUiState
+  );
+  const [providerTableUiState, setProviderTableUiState] = useState(
+    initialProviderTableUiState
+  );
+  const [endUserTableUiState, setEndUserTableUiState] = useState(
+    initialEndUserTableUiState
+  );
 
   useEffect(() => {
     setEndUserTableUiState(initialEndUserTableUiState);
     setProviderTableUiState(initialProviderTableUiState);
     setStaffTableUiState(initialStaffTableUiState);
-  }, [ activeDatasetId ]);
+  }, [activeDatasetId]);
 
   return {
     endUserTableUiState,
@@ -200,46 +202,54 @@ export function useTableUiState(activeDatasetId: string) {
     staffTableUiState,
     setEndUserTableUiState,
     setProviderTableUiState,
-    setStaffTableUiState
+    setStaffTableUiState,
   };
 }
 
 export function useOpenDialogConfig() {
-  const [ openDialogConfig, setOpenDialogConfig ] = useState<OpenDialogConfig | undefined>(undefined);
+  const [openDialogConfig, setOpenDialogConfig] =
+    useState<OpenDialogConfig | undefined>(undefined);
 
-  const changeOpenDialogConfig = useCallback((newDialogContentProps: ContentProps | undefined) => {
-    if (newDialogContentProps == null) {
-      setOpenDialogConfig(undefined);
-    } else if (newDialogContentProps.type === 'access-denial') {
-      setOpenDialogConfig({
-        title: 'Denying Access',
-        onClose: () => {
-          setOpenDialogConfig(undefined);
-        },
-        content: <AccessDenialContent {...newDialogContentProps} />
-      });
-    } else if (newDialogContentProps.type === 'add-users') {
-      setOpenDialogConfig({
-        title: `Adding ${capitalizeRole(newDialogContentProps.permissionNamePlural)}`,
-        onClose: () => {
-          setOpenDialogConfig(undefined);
-        },
-        content: <AddUsersContent {...newDialogContentProps} />
-      });
-    } else if (newDialogContentProps.type === 'users-added') {
-      setOpenDialogConfig({
-        title: `New ${capitalizeRole(newDialogContentProps.permissionNamePlural)}`,
-        onClose: () => {
-          setOpenDialogConfig(undefined);
-        },
-        content: <UsersAddedContent {...newDialogContentProps} />
-      })
-    }
-  }, []);
+  const changeOpenDialogConfig = useCallback(
+    (newDialogContentProps: ContentProps | undefined) => {
+      if (newDialogContentProps == null) {
+        setOpenDialogConfig(undefined);
+      } else if (newDialogContentProps.type === 'access-denial') {
+        setOpenDialogConfig({
+          title: 'Denying Access',
+          onClose: () => {
+            setOpenDialogConfig(undefined);
+          },
+          content: <AccessDenialContent {...newDialogContentProps} />,
+        });
+      } else if (newDialogContentProps.type === 'add-users') {
+        setOpenDialogConfig({
+          title: `Adding ${capitalizeRole(
+            newDialogContentProps.permissionNamePlural
+          )}`,
+          onClose: () => {
+            setOpenDialogConfig(undefined);
+          },
+          content: <AddUsersContent {...newDialogContentProps} />,
+        });
+      } else if (newDialogContentProps.type === 'users-added') {
+        setOpenDialogConfig({
+          title: `New ${capitalizeRole(
+            newDialogContentProps.permissionNamePlural
+          )}`,
+          onClose: () => {
+            setOpenDialogConfig(undefined);
+          },
+          content: <UsersAddedContent {...newDialogContentProps} />,
+        });
+      }
+    },
+    []
+  );
 
   return {
     openDialogConfig,
-    changeOpenDialogConfig
+    changeOpenDialogConfig,
   };
 }
 
@@ -256,90 +266,87 @@ export function useStaffTableSectionConfig(
       userPermissions && shouldDisplayStaffTable(userPermissions),
       fetchStaffList
     ),
-    [ userPermissions ]
+    [userPermissions]
   );
 
   const staffUpdateable = false;
 
-  const {
-    onIsOwnerChange
-  } = useIsOwnerColumnConfig(
+  const { onIsOwnerChange } = useIsOwnerColumnConfig(
     updateStaffEntry,
     staffTableUiState,
     setStaffTableUiState
   );
 
   return useMemo(
-    () => userId == null || value == null
-      ? {
-          status: 'loading'
-        }
-      : value.type === 'not-allowed'
-      ? {
-          status: 'unavailable'
-        }
-      : {
-          status: 'success',
-          title: 'Staff',
-          value: {
-            rows: value.result.data.map(({ user, staffId, isOwner }) => ({
-              userId: user.userId,
-              name: `${user.firstName} ${user.lastName}`,
-              email: user.email,
-              isOwner: staffTableUiState.isOwner[staffId] ?? isOwner,
-              staffId
-            })),
-            columns: {
-              userId: {
-                key: 'userId',
-                name: 'User ID',
-                className: cx('--UserIdentityCell'),
-                sortable: true,
-                makeOrder: ({ name, userId }) => [name, userId],
-                makeSearchableString: (_, { name, userId }) => `${name} ${userId} (${userId})`,
-                renderCell: ({ row: { name, userId } }) => `${name} (${userId})`
-              },
-              email: {
-                key: 'email',
-                name: 'Email',
-                className: cx('--EmailCell'),
-                sortable: true
-              },
-              isOwner: {
-                key: 'isOwner',
-                name: 'Is Owner?',
-                className: cx('--IsOwnerCell'),
-                sortable: true,
-                makeSearchableString: booleanToString,
-                makeOrder: ({ isOwner }) => booleanToString(isOwner),
-                renderCell: ({ value, row: { staffId, userId: wdkUserId } }) => {
-                  return !staffUpdateable || wdkUserId === userId
-                    ? booleanToString(value)
-                    : <SingleSelect
+    () =>
+      userId == null || value == null
+        ? {
+            status: 'loading',
+          }
+        : value.type === 'not-allowed'
+        ? {
+            status: 'unavailable',
+          }
+        : {
+            status: 'success',
+            title: 'Staff',
+            value: {
+              rows: value.result.data.map(({ user, staffId, isOwner }) => ({
+                userId: user.userId,
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                isOwner: staffTableUiState.isOwner[staffId] ?? isOwner,
+                staffId,
+              })),
+              columns: {
+                userId: {
+                  key: 'userId',
+                  name: 'User ID',
+                  className: cx('--UserIdentityCell'),
+                  sortable: true,
+                  makeOrder: ({ name, userId }) => [name, userId],
+                  makeSearchableString: (_, { name, userId }) =>
+                    `${name} ${userId} (${userId})`,
+                  renderCell: ({ row: { name, userId } }) =>
+                    `${name} (${userId})`,
+                },
+                email: {
+                  key: 'email',
+                  name: 'Email',
+                  className: cx('--EmailCell'),
+                  sortable: true,
+                },
+                isOwner: {
+                  key: 'isOwner',
+                  name: 'Is Owner?',
+                  className: cx('--IsOwnerCell'),
+                  sortable: true,
+                  makeSearchableString: booleanToString,
+                  makeOrder: ({ isOwner }) => booleanToString(isOwner),
+                  renderCell: ({
+                    value,
+                    row: { staffId, userId: wdkUserId },
+                  }) => {
+                    return !staffUpdateable || wdkUserId === userId ? (
+                      booleanToString(value)
+                    ) : (
+                      <SingleSelect
                         items={BOOLEAN_SELECT_ITEMS}
                         value={booleanToString(value)}
                         onChange={(newValue) => {
-                          onIsOwnerChange(
-                            staffId,
-                            stringToBoolean(newValue)
-                          );
+                          onIsOwnerChange(staffId, stringToBoolean(newValue));
                         }}
-                      />;
-                }
-              }
+                      />
+                    );
+                  },
+                },
+              },
+              columnOrder: ['userId', 'email', 'isOwner'],
+              idGetter: ({ userId }) => userId,
+              initialSort: { columnKey: 'userId', direction: 'asc' },
             },
-            columnOrder: [ 'userId', 'email', 'isOwner' ],
-            idGetter: ({ userId }) => userId,
-            initialSort: { columnKey: 'userId', direction: 'asc' }
-          }
-        },
-    [
-      userId,
-      value,
-      staffUpdateable,
-      staffTableUiState,
-      onIsOwnerChange
-    ]
+          },
+    [userId, value, staffUpdateable, staffTableUiState, onIsOwnerChange]
   );
 }
 
@@ -353,75 +360,93 @@ export function useProviderTableSectionConfig(
   activeDatasetId: string,
   providerTableUiState: ProviderTableUiState,
   setProvideTableUiState: (newState: ProviderTableUiState) => void,
-  changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void
+  changeOpenDialogConfig: (
+    newDialogContentProps: ContentProps | undefined
+  ) => void
 ): ProviderTableSectionConfig {
-  const { value, loading, reload: reloadProvidersTable } = usePromiseWithReloadCallback(
+  const {
+    value,
+    loading,
+    reload: reloadProvidersTable,
+  } = usePromiseWithReloadCallback(
     fetchIfAllowed(
-      userPermissions && shouldDisplayProvidersTable(userPermissions, activeDatasetId),
+      userPermissions &&
+        shouldDisplayProvidersTable(userPermissions, activeDatasetId),
       () => fetchProviderList(activeDatasetId)
     ),
-    [ userPermissions, activeDatasetId ]
+    [userPermissions, activeDatasetId]
   );
 
-  const providersAddable = userPermissions && canAddProviders(userPermissions, activeDatasetId);
-  const providersRemovable = userPermissions && canRemoveProviders(userPermissions);
-  const providersUpdateable = userPermissions && canUpdateProviders(userPermissions, activeDatasetId);
+  const providersAddable =
+    userPermissions && canAddProviders(userPermissions, activeDatasetId);
+  const providersRemovable =
+    userPermissions && canRemoveProviders(userPermissions);
+  const providersUpdateable =
+    userPermissions && canUpdateProviders(userPermissions, activeDatasetId);
 
-  const {
-    onIsManagerChange
-  } = useIsManagerColumnConfig(
+  const { onIsManagerChange } = useIsManagerColumnConfig(
     updateProviderEntry,
     providerTableUiState,
     setProvideTableUiState
   );
 
   return useMemo(
-    () => userId == null || value == null
-      ? {
-          status: 'loading'
-        }
-      : value.type === 'not-allowed'
-      ? {
-          status: 'unavailable'
-        }
-      : {
-          status: 'success',
-          title: 'Study Team Members',
-          value: {
-            rows: value.result.data.map(({ user, providerId, isManager }) => ({
-              userId: user.userId,
-              providerId,
-              name: `${user.firstName} ${user.lastName}`,
-              email: `${user.email}`,
-              isManager: providerTableUiState.isManager[providerId] ?? isManager
-            })),
-            columns: {
-              userId: {
-                key: 'userId',
-                name: 'User ID',
-                className: cx('--UserIdentityCell'),
-                sortable: true,
-                makeOrder: ({ name, userId }) => [name, userId],
-                makeSearchableString: (_, { name, userId }) => `${name} ${userId} (${userId})`,
-                renderCell: ({ row: { name, userId } }) => `${name} (${userId})`
-              },
-              email: {
-                key: 'email',
-                name: 'Email',
-                className: cx('--EmailCell'),
-                sortable: true
-              },
-              isManager: {
-                key: 'isManager',
-                name: 'Is Manager?',
-                className: cx('--IsManagerCell'),
-                sortable: true,
-                makeSearchableString: booleanToString,
-                makeOrder: ({ isManager }) => booleanToString(isManager),
-                renderCell: ({ value, row: { providerId, userId: wdkUserId } }) => {
-                  return !providersUpdateable || wdkUserId === userId
-                    ? booleanToString(value)
-                    : <SingleSelect
+    () =>
+      userId == null || value == null
+        ? {
+            status: 'loading',
+          }
+        : value.type === 'not-allowed'
+        ? {
+            status: 'unavailable',
+          }
+        : {
+            status: 'success',
+            title: 'Study Team Members',
+            value: {
+              rows: value.result.data.map(
+                ({ user, providerId, isManager }) => ({
+                  userId: user.userId,
+                  providerId,
+                  name: `${user.firstName} ${user.lastName}`,
+                  email: `${user.email}`,
+                  isManager:
+                    providerTableUiState.isManager[providerId] ?? isManager,
+                })
+              ),
+              columns: {
+                userId: {
+                  key: 'userId',
+                  name: 'User ID',
+                  className: cx('--UserIdentityCell'),
+                  sortable: true,
+                  makeOrder: ({ name, userId }) => [name, userId],
+                  makeSearchableString: (_, { name, userId }) =>
+                    `${name} ${userId} (${userId})`,
+                  renderCell: ({ row: { name, userId } }) =>
+                    `${name} (${userId})`,
+                },
+                email: {
+                  key: 'email',
+                  name: 'Email',
+                  className: cx('--EmailCell'),
+                  sortable: true,
+                },
+                isManager: {
+                  key: 'isManager',
+                  name: 'Is Manager?',
+                  className: cx('--IsManagerCell'),
+                  sortable: true,
+                  makeSearchableString: booleanToString,
+                  makeOrder: ({ isManager }) => booleanToString(isManager),
+                  renderCell: ({
+                    value,
+                    row: { providerId, userId: wdkUserId },
+                  }) => {
+                    return !providersUpdateable || wdkUserId === userId ? (
+                      booleanToString(value)
+                    ) : (
+                      <SingleSelect
                         items={BOOLEAN_SELECT_ITEMS}
                         value={booleanToString(value)}
                         onChange={(newValue) => {
@@ -430,24 +455,25 @@ export function useProviderTableSectionConfig(
                             stringToBoolean(newValue)
                           );
                         }}
-                      />;
-                }
-              }
+                      />
+                    );
+                  },
+                },
+              },
+              columnOrder: ['userId', 'email', 'isManager'],
+              idGetter: ({ userId }) => userId,
+              initialSort: { columnKey: 'userId', direction: 'asc' },
+              actions: makeProviderTableActions(
+                activeDatasetId,
+                createProviderEntry,
+                deleteProviderEntry,
+                changeOpenDialogConfig,
+                reloadProvidersTable,
+                providersAddable,
+                providersRemovable
+              ),
             },
-            columnOrder: [ 'userId', 'email', 'isManager' ],
-            idGetter: ({ userId }) => userId,
-            initialSort: { columnKey: 'userId', direction: 'asc' },
-            actions: makeProviderTableActions(
-              activeDatasetId,
-              createProviderEntry,
-              deleteProviderEntry,
-              changeOpenDialogConfig,
-              reloadProvidersTable,
-              providersAddable,
-              providersRemovable
-            )
-          }
-        },
+          },
     [
       userId,
       value,
@@ -460,7 +486,7 @@ export function useProviderTableSectionConfig(
       reloadProvidersTable,
       changeOpenDialogConfig,
       createProviderEntry,
-      deleteProviderEntry
+      deleteProviderEntry,
     ]
   );
 }
@@ -475,110 +501,125 @@ export function useEndUserTableSectionConfig(
   activeDatasetId: string,
   endUserTableUiState: EndUserTableUiState,
   setEndUserTableUiState: (newState: EndUserTableUiState) => void,
-  changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void
+  changeOpenDialogConfig: (
+    newDialogContentProps: ContentProps | undefined
+  ) => void
 ): EndUserTableSectionConfig {
-  const { value, loading, reload: reloadEndUsersTable } = usePromiseWithReloadCallback(
+  const {
+    value,
+    loading,
+    reload: reloadEndUsersTable,
+  } = usePromiseWithReloadCallback(
     fetchIfAllowed(
-      userPermissions && shouldDisplayEndUsersTable(userPermissions, activeDatasetId),
+      userPermissions &&
+        shouldDisplayEndUsersTable(userPermissions, activeDatasetId),
       () => fetchEndUserList(activeDatasetId)
     ),
-    [ userPermissions, activeDatasetId ]
+    [userPermissions, activeDatasetId]
   );
 
-  const endUsersAddable = userPermissions && canAddEndUsers(userPermissions, activeDatasetId);
-  const endUsersRemovable = userPermissions && canRemoveEndUsers(userPermissions);
+  const endUsersAddable =
+    userPermissions && canAddEndUsers(userPermissions, activeDatasetId);
+  const endUsersRemovable =
+    userPermissions && canRemoveEndUsers(userPermissions);
 
-  const {
-    approvalStatusEditable,
-    onApprovalStatusChange
-  } = useApprovalStatusColumnConfig(
-    userPermissions,
-    activeDatasetId,
-    updateEndUserEntry,
-    endUserTableUiState,
-    setEndUserTableUiState,
-    changeOpenDialogConfig
-  );
+  const { approvalStatusEditable, onApprovalStatusChange } =
+    useApprovalStatusColumnConfig(
+      userPermissions,
+      activeDatasetId,
+      updateEndUserEntry,
+      endUserTableUiState,
+      setEndUserTableUiState,
+      changeOpenDialogConfig
+    );
 
   return useMemo(
-    () => userId == null || value == null
-      ? {
-          status: 'loading'
-        }
-      : value.type === 'not-allowed'
-      ? {
-          status: 'unavailable'
-        }
-      : {
-          status: 'success',
-          title: 'End Users',
-          value: {
-            rows: value.result.data.map(({
-              user,
-              startDate,
-              approvalStatus,
-              purpose,
-              researchQuestion,
-              analysisPlan,
-              disseminationPlan,
-              denialReason = '',
-              priorAuth,
-            }) => ({
-              userId: user.userId,
-              name: `${user.firstName} ${user.lastName}`,
-              email: user.email,
-              startDate,
-              approvalStatus: endUserTableUiState.approvalStatus[user.userId] ?? approvalStatus,
-              content: makeContentSearchableSring(
-                purpose,
-                researchQuestion,
-                analysisPlan,
-                disseminationPlan,
-                priorAuth,
+    () =>
+      userId == null || value == null
+        ? {
+            status: 'loading',
+          }
+        : value.type === 'not-allowed'
+        ? {
+            status: 'unavailable',
+          }
+        : {
+            status: 'success',
+            title: 'End Users',
+            value: {
+              rows: value.result.data.map(
+                ({
+                  user,
+                  startDate,
+                  approvalStatus,
+                  purpose,
+                  researchQuestion,
+                  analysisPlan,
+                  disseminationPlan,
+                  denialReason = '',
+                  priorAuth,
+                }) => ({
+                  userId: user.userId,
+                  name: `${user.firstName} ${user.lastName}`,
+                  email: user.email,
+                  startDate,
+                  approvalStatus:
+                    endUserTableUiState.approvalStatus[user.userId] ??
+                    approvalStatus,
+                  content: makeContentSearchableSring(
+                    purpose,
+                    researchQuestion,
+                    analysisPlan,
+                    disseminationPlan,
+                    priorAuth
+                  ),
+                  purpose: purpose ?? '',
+                  researchQuestion: researchQuestion ?? '',
+                  analysisPlan: analysisPlan ?? '',
+                  disseminationPlan: disseminationPlan ?? '',
+                  denialReason:
+                    endUserTableUiState.denialReason[user.userId] ??
+                    denialReason,
+                  priorAuth: priorAuth ?? '',
+                })
               ),
-              purpose: purpose ?? '',
-              researchQuestion: researchQuestion ?? '',
-              analysisPlan: analysisPlan ?? '',
-              disseminationPlan: disseminationPlan ?? '',
-              denialReason: endUserTableUiState.denialReason[user.userId] ?? denialReason,
-              priorAuth: priorAuth ?? '',
-            })),
-            columns: {
-              userId: {
-                key: 'userId',
-                name: 'User ID',
-                className: cx('--UserIdCell'),
-                sortable: true
-              },
-              name: {
-                key: 'name',
-                name: 'Name',
-                className: cx('--NameCell'),
-                sortable: true
-              },
-              email: {
-                key: 'email',
-                name: 'Email',
-                className: cx('--EmailCell'),
-                sortable: true
-              },
-              startDate: {
-                key: 'startDate',
-                name: 'Date Created',
-                className: cx('--TimestampCell'),
-                sortable: true,
-                renderCell: ({ value }) => isoToUtcString(value),
-                makeSearchableString: isoToUtcString
-              },
-              approvalStatus: {
-                key: 'approvalStatus',
-                name: 'Approval Status',
-                className: cx('--ApprovalStatusCell'),
-                sortable: true,
-                renderCell: ({ value, row: { userId: wdkUserId, name } }) => {
-                  return !approvalStatusEditable || wdkUserId === userId
-                    ? makeApprovalStatusDisplayName(value)
-                    : <SingleSelect
+              columns: {
+                userId: {
+                  key: 'userId',
+                  name: 'User ID',
+                  className: cx('--UserIdCell'),
+                  sortable: true,
+                },
+                name: {
+                  key: 'name',
+                  name: 'Name',
+                  className: cx('--NameCell'),
+                  sortable: true,
+                },
+                email: {
+                  key: 'email',
+                  name: 'Email',
+                  className: cx('--EmailCell'),
+                  sortable: true,
+                },
+                startDate: {
+                  key: 'startDate',
+                  name: 'Date Created',
+                  className: cx('--TimestampCell'),
+                  sortable: true,
+                  renderCell: ({ value }) => isoToUtcString(value),
+                  makeSearchableString: isoToUtcString,
+                },
+                approvalStatus: {
+                  key: 'approvalStatus',
+                  name: 'Approval Status',
+                  className: cx('--ApprovalStatusCell'),
+                  sortable: true,
+                  renderCell: ({ value, row: { userId: wdkUserId, name } }) => {
+                    return !approvalStatusEditable || wdkUserId === userId ? (
+                      makeApprovalStatusDisplayName(value)
+                    ) : (
+                      <SingleSelect
                         items={makeApprovalStatusSelectItems(value)}
                         value={value}
                         onChange={(newValue) => {
@@ -589,59 +630,72 @@ export function useEndUserTableSectionConfig(
                             newValue as ApprovalStatus
                           );
                         }}
-                      />;
-                }
-              },
-              content: {
-                key: 'content',
-                name: 'Content',
-                className: cx('--ContentCell'),
-                sortable: false,
-                width: '35em',
-                renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan, priorAuth } }) => {
-                  const textValue = makeContentDisplay(
-                    purpose,
-                    researchQuestion,
-                    analysisPlan,
-                    disseminationPlan,
-                    priorAuth,
-                  );
+                      />
+                    );
+                  },
+                },
+                content: {
+                  key: 'content',
+                  name: 'Content',
+                  className: cx('--ContentCell'),
+                  sortable: false,
+                  width: '35em',
+                  renderCell: ({
+                    row: {
+                      userId,
+                      purpose,
+                      researchQuestion,
+                      analysisPlan,
+                      disseminationPlan,
+                      priorAuth,
+                    },
+                  }) => {
+                    const textValue = makeContentDisplay(
+                      purpose,
+                      researchQuestion,
+                      analysisPlan,
+                      disseminationPlan,
+                      priorAuth
+                    );
 
-                  return <OverflowingTextCell key={userId} value={textValue} />;
-                }
+                    return (
+                      <OverflowingTextCell key={userId} value={textValue} />
+                    );
+                  },
+                },
+                denialReason: {
+                  key: 'denialReason',
+                  name: 'Notes',
+                  className: cx('--NotesCell'),
+                  sortable: false,
+                  width: '15em',
+                  renderCell: ({ value, row: { userId } }) => (
+                    <OverflowingTextCell key={userId} value={value} />
+                  ),
+                },
               },
-              denialReason: {
-                key: 'denialReason',
-                name: 'Notes',
-                className: cx('--NotesCell'),
-                sortable: false,
-                width: '15em',
-                renderCell: ({ value, row: { userId } }) =>
-                  <OverflowingTextCell key={userId} value={value} />
-              }
+              columnOrder: [
+                'userId',
+                'name',
+                'email',
+                'startDate',
+                'approvalStatus',
+                'content',
+                'denialReason',
+              ],
+              idGetter: ({ userId }) => userId,
+              initialSort: { columnKey: 'startDate', direction: 'desc' },
+              actions: makeEndUserTableActions(
+                activeDatasetId,
+                createEndUserEntry,
+                deleteEndUserEntry,
+                changeOpenDialogConfig,
+                reloadEndUsersTable,
+                endUsersAddable,
+                endUsersRemovable
+              ),
             },
-            columnOrder: [
-              'userId',
-              'name',
-              'email',
-              'startDate',
-              'approvalStatus',
-              'content',
-              'denialReason',
-            ],
-            idGetter: ({ userId }) => userId,
-            initialSort: { columnKey: 'startDate', direction: 'desc' },
-            actions: makeEndUserTableActions(
-              activeDatasetId,
-              createEndUserEntry,
-              deleteEndUserEntry,
-              changeOpenDialogConfig,
-              reloadEndUsersTable,
-              endUsersAddable,
-              endUsersRemovable
-            )
-          }
-        },
+          },
     [
       value,
       loading,
@@ -654,7 +708,7 @@ export function useEndUserTableSectionConfig(
       endUsersRemovable,
       changeOpenDialogConfig,
       createEndUserEntry,
-      deleteEndUserEntry
+      deleteEndUserEntry,
     ]
   );
 }
@@ -669,161 +723,170 @@ export function useHistoryTableSectionConfig(
       userPermissions && shouldDisplayHistoryTable(userPermissions),
       fetchHistory
     ),
-    [ userPermissions ]
+    [userPermissions]
   );
 
   return useMemo(
-    () => value == null || loading
-      ? {
-          status: 'loading'
-        }
-      : value.type === 'not-allowed'
-      ? {
-          status: 'unavailable'
-        }
-      : {
-          status: 'success',
-          title: 'End User Table Updates',
-          value: {
-            rows: value.result.results
-              .filter(({ row: { datasetPresenterID } }) => datasetPresenterID === activeDatasetId)
-              .map(({ cause, row }) => ({
-                userId: row.user.userID,
-                name: `${row.user.firstName} ${row.user.lastName}`,
-                email: row.user.email,
-                timestamp: cause.timestamp,
-                actionPerformer: `${cause.user.firstName} ${cause.user.lastName}`,
-                action: cause.action,
-                approvalStatus: row.approvalStatus,
-                purpose: row.purpose ?? '',
-                researchQuestion: row.researchQuestion ?? '',
-                analysisPlan: row.analysisPlan ?? '',
-                disseminationPlan: row.disseminationPlan ?? '',
-                priorAuth: row.priorAuth ?? '',
-                content: makeContentSearchableSring(
-                  row.purpose,
-                  row.researchQuestion,
-                  row.analysisPlan,
-                  row.disseminationPlan,
-                  row.priorAuth
-                ),
-                denialReason: row.denialReason ?? '',
-                allowSelfEdits: row.allowSelfEdits,
-              }))
-              .sort(({ timestamp: timestampA }, { timestamp: timestampB }) =>
-                timestampA === timestampB
-                  ? 0
-                  : timestampA < timestampB
-                  ? -1
-                  : 1
-              )
-              .reduce(
-                addChangeDescription,
-                {
-                  rowsWithChangeDescriptions: [],
-                  lastRowsByEndUser: {}
-                }
-              )
-              .rowsWithChangeDescriptions,
-            columns: {
-              userId: {
-                key: 'userId',
-                name: 'User ID',
-                className: cx('--UserIdCell'),
-                sortable: true
-              },
-              name: {
-                key: 'name',
-                name: 'Name',
-                className: cx('--NameCell'),
-                sortable: true
-              },
-              email: {
-                key: 'email',
-                name: 'Email',
-                className: cx('--EmailCell'),
-                sortable: true
-              },
-              timestamp: {
-                key: 'timestamp',
-                name: 'Date Of Action',
-                className: cx('--TimestampCell'),
-                sortable: true,
-                renderCell: ({ value }) => isoToUtcString(value),
-                makeSearchableString: isoToUtcString
-              },
-              actionPerformer: {
-                key: 'actionPerformer',
-                name: 'Who Performed Action',
-                className: cx('--NameCell'),
-                sortable: true,
-              },
-              changeDescription: {
-                key: 'changeDescription',
-                name: 'Action',
-                className: cx('--ChangeDescriptionCell'),
-                sortable: true,
-                renderCell: ({ value }) => value.toLowerCase()
-              },
-              approvalStatus: {
-                key: 'approvalStatus',
-                name: 'Approval Status',
-                className: cx('--ApprovalStatusCell'),
-                sortable: true,
-                renderCell: ({ value }) => value.toLowerCase()
-              },
-              content: {
-                key: 'content',
-                name: 'Content',
-                className: cx('--ContentCell'),
-                sortable: false,
-                width: '35em',
-                renderCell: ({ row }) => {
-                  const textValue = makeContentDisplay(
+    () =>
+      value == null || loading
+        ? {
+            status: 'loading',
+          }
+        : value.type === 'not-allowed'
+        ? {
+            status: 'unavailable',
+          }
+        : {
+            status: 'success',
+            title: 'End User Table Updates',
+            value: {
+              rows: value.result.results
+                .filter(
+                  ({ row: { datasetPresenterID } }) =>
+                    datasetPresenterID === activeDatasetId
+                )
+                .map(({ cause, row }) => ({
+                  userId: row.user.userID,
+                  name: `${row.user.firstName} ${row.user.lastName}`,
+                  email: row.user.email,
+                  timestamp: cause.timestamp,
+                  actionPerformer: `${cause.user.firstName} ${cause.user.lastName}`,
+                  action: cause.action,
+                  approvalStatus: row.approvalStatus,
+                  purpose: row.purpose ?? '',
+                  researchQuestion: row.researchQuestion ?? '',
+                  analysisPlan: row.analysisPlan ?? '',
+                  disseminationPlan: row.disseminationPlan ?? '',
+                  priorAuth: row.priorAuth ?? '',
+                  content: makeContentSearchableSring(
                     row.purpose,
                     row.researchQuestion,
                     row.analysisPlan,
                     row.disseminationPlan,
                     row.priorAuth
-                  );
+                  ),
+                  denialReason: row.denialReason ?? '',
+                  allowSelfEdits: row.allowSelfEdits,
+                }))
+                .sort(({ timestamp: timestampA }, { timestamp: timestampB }) =>
+                  timestampA === timestampB
+                    ? 0
+                    : timestampA < timestampB
+                    ? -1
+                    : 1
+                )
+                .reduce(addChangeDescription, {
+                  rowsWithChangeDescriptions: [],
+                  lastRowsByEndUser: {},
+                }).rowsWithChangeDescriptions,
+              columns: {
+                userId: {
+                  key: 'userId',
+                  name: 'User ID',
+                  className: cx('--UserIdCell'),
+                  sortable: true,
+                },
+                name: {
+                  key: 'name',
+                  name: 'Name',
+                  className: cx('--NameCell'),
+                  sortable: true,
+                },
+                email: {
+                  key: 'email',
+                  name: 'Email',
+                  className: cx('--EmailCell'),
+                  sortable: true,
+                },
+                timestamp: {
+                  key: 'timestamp',
+                  name: 'Date Of Action',
+                  className: cx('--TimestampCell'),
+                  sortable: true,
+                  renderCell: ({ value }) => isoToUtcString(value),
+                  makeSearchableString: isoToUtcString,
+                },
+                actionPerformer: {
+                  key: 'actionPerformer',
+                  name: 'Who Performed Action',
+                  className: cx('--NameCell'),
+                  sortable: true,
+                },
+                changeDescription: {
+                  key: 'changeDescription',
+                  name: 'Action',
+                  className: cx('--ChangeDescriptionCell'),
+                  sortable: true,
+                  renderCell: ({ value }) => value.toLowerCase(),
+                },
+                approvalStatus: {
+                  key: 'approvalStatus',
+                  name: 'Approval Status',
+                  className: cx('--ApprovalStatusCell'),
+                  sortable: true,
+                  renderCell: ({ value }) => value.toLowerCase(),
+                },
+                content: {
+                  key: 'content',
+                  name: 'Content',
+                  className: cx('--ContentCell'),
+                  sortable: false,
+                  width: '35em',
+                  renderCell: ({ row }) => {
+                    const textValue = makeContentDisplay(
+                      row.purpose,
+                      row.researchQuestion,
+                      row.analysisPlan,
+                      row.disseminationPlan,
+                      row.priorAuth
+                    );
 
-                  return <OverflowingTextCell key={getHistoryTableRowId(row)} value={textValue} />;
-                }
+                    return (
+                      <OverflowingTextCell
+                        key={getHistoryTableRowId(row)}
+                        value={textValue}
+                      />
+                    );
+                  },
+                },
+                denialReason: {
+                  key: 'denialReason',
+                  name: 'Notes',
+                  className: cx('--NotesCell'),
+                  sortable: false,
+                  width: '15em',
+                  renderCell: ({ value, row }) => (
+                    <OverflowingTextCell
+                      key={getHistoryTableRowId(row)}
+                      value={value}
+                    />
+                  ),
+                },
+                allowSelfEdits: {
+                  key: 'allowSelfEdits',
+                  name: 'Lock/Unlock',
+                  className: cx('--LockUnlockCell'),
+                  sortable: false,
+                  renderCell: ({ value }) => (value ? 'unlocked' : 'locked'),
+                },
               },
-              denialReason: {
-                key: 'denialReason',
-                name: 'Notes',
-                className: cx('--NotesCell'),
-                sortable: false,
-                width: '15em',
-                renderCell: ({ value, row }) =>
-                  <OverflowingTextCell key={getHistoryTableRowId(row)} value={value} />
-              },
-              allowSelfEdits: {
-                key: 'allowSelfEdits',
-                name: 'Lock/Unlock',
-                className: cx('--LockUnlockCell'),
-                sortable: false,
-                renderCell: ({ value }) => value ? 'unlocked' : 'locked'
-              }
+              columnOrder: [
+                'userId',
+                'name',
+                'email',
+                'timestamp',
+                'actionPerformer',
+                'changeDescription',
+                'approvalStatus',
+                'denialReason',
+                'content',
+                'allowSelfEdits',
+              ],
+              idGetter: getHistoryTableRowId,
+              initialSort: { columnKey: 'timestamp', direction: 'desc' },
             },
-            columnOrder: [
-              'userId',
-              'name',
-              'email',
-              'timestamp',
-              'actionPerformer',
-              'changeDescription',
-              'approvalStatus',
-              'denialReason',
-              'content',
-              'allowSelfEdits'
-            ],
-            idGetter: getHistoryTableRowId,
-            initialSort: { columnKey: 'timestamp', direction: 'desc' }
-          }
-        },
-    [ activeDatasetId, loading, value ]
+          },
+    [activeDatasetId, loading, value]
   );
 }
 
@@ -846,16 +909,13 @@ function useIsOwnerColumnConfig(
           );
         },
         async () => {
-          updateStaffEntry(
-            staffId,
-            [
-              {
-                op: 'replace',
-                path: '/isOwner',
-                value: newIsOwner
-              }
-            ]
-          );
+          updateStaffEntry(staffId, [
+            {
+              op: 'replace',
+              path: '/isOwner',
+              value: newIsOwner,
+            },
+          ]);
         },
         () => {
           updateStaffIsOwnerUiState(
@@ -867,15 +927,11 @@ function useIsOwnerColumnConfig(
         }
       );
     },
-    [
-      updateStaffEntry,
-      staffTableUiState,
-      setStaffTableUiState
-    ]
+    [updateStaffEntry, staffTableUiState, setStaffTableUiState]
   );
 
   return {
-    onIsOwnerChange
+    onIsOwnerChange,
   };
 }
 
@@ -898,16 +954,13 @@ function useIsManagerColumnConfig(
           );
         },
         async () => {
-          updateProviderEntry(
-            providerId,
-            [
-              {
-                op: 'replace',
-                path: '/isManager',
-                value: newIsManager
-              }
-            ]
-          );
+          updateProviderEntry(providerId, [
+            {
+              op: 'replace',
+              path: '/isManager',
+              value: newIsManager,
+            },
+          ]);
         },
         () => {
           updateProviderIsManagerUiState(
@@ -919,15 +972,11 @@ function useIsManagerColumnConfig(
         }
       );
     },
-    [
-      updateProviderEntry,
-      providerTableUiState,
-      setProviderTableUiState
-    ]
+    [updateProviderEntry, providerTableUiState, setProviderTableUiState]
   );
 
   return {
-    onIsManagerChange
+    onIsManagerChange,
   };
 }
 
@@ -937,7 +986,9 @@ function useApprovalStatusColumnConfig(
   updateEndUserEntry: StudyAccessApi['updateEndUserEntry'],
   endUserTableUiState: EndUserTableUiState,
   setEndUserTableUiState: (newState: EndUserTableUiState) => void,
-  changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void
+  changeOpenDialogConfig: (
+    newDialogContentProps: ContentProps | undefined
+  ) => void
 ) {
   const onApprovalStatusChange = useCallback(
     async (
@@ -950,7 +1001,9 @@ function useApprovalStatusColumnConfig(
       const oldDenialReason = endUserTableUiState.denialReason[userId];
 
       if (newApprovalStatus !== 'denied') {
-        const denialReason = `${makeTimestampString()}: Status was changed to ${makeApprovalStatusDisplayName(newApprovalStatus)}.`;
+        const denialReason = `${makeTimestampString()}: Status was changed to ${makeApprovalStatusDisplayName(
+          newApprovalStatus
+        )}.`;
 
         updateUiStateOptimistically(
           () => {
@@ -963,22 +1016,18 @@ function useApprovalStatusColumnConfig(
             );
           },
           async () => {
-            await updateEndUserEntry(
-              userId,
-              datasetId,
-              [
-                {
-                  op: 'replace',
-                  path: '/approvalStatus',
-                  value: newApprovalStatus
-                },
-                {
-                  op: 'replace',
-                  path: '/denialReason',
-                  value: denialReason
-                }
-              ]
-            );
+            await updateEndUserEntry(userId, datasetId, [
+              {
+                op: 'replace',
+                path: '/approvalStatus',
+                value: newApprovalStatus,
+              },
+              {
+                op: 'replace',
+                path: '/denialReason',
+                value: denialReason,
+              },
+            ]);
           },
           () => {
             updateEndUserApprovalStatusUiState(
@@ -994,10 +1043,12 @@ function useApprovalStatusColumnConfig(
         changeOpenDialogConfig({
           type: 'access-denial',
           userName,
-          onSubmit: function(denialReason) {
+          onSubmit: function (denialReason) {
             changeOpenDialogConfig(undefined);
 
-            const fullDenialReason = `${makeTimestampString()}: Status was changed to ${makeApprovalStatusDisplayName('denied')}. Reason: ${denialReason}`;
+            const fullDenialReason = `${makeTimestampString()}: Status was changed to ${makeApprovalStatusDisplayName(
+              'denied'
+            )}. Reason: ${denialReason}`;
 
             updateUiStateOptimistically(
               () => {
@@ -1010,22 +1061,18 @@ function useApprovalStatusColumnConfig(
                 );
               },
               async () => {
-                await updateEndUserEntry(
-                  userId,
-                  datasetId,
-                  [
-                    {
-                      op: 'replace',
-                      path: '/approvalStatus',
-                      value: newApprovalStatus
-                    },
-                    {
-                      op: 'replace',
-                      path: '/denialReason',
-                      value: fullDenialReason
-                    }
-                  ]
-                );
+                await updateEndUserEntry(userId, datasetId, [
+                  {
+                    op: 'replace',
+                    path: '/approvalStatus',
+                    value: newApprovalStatus,
+                  },
+                  {
+                    op: 'replace',
+                    path: '/denialReason',
+                    value: fullDenialReason,
+                  },
+                ]);
               },
               () => {
                 updateEndUserApprovalStatusUiState(
@@ -1037,7 +1084,7 @@ function useApprovalStatusColumnConfig(
                 );
               }
             );
-          }
+          },
         });
       }
     },
@@ -1045,16 +1092,15 @@ function useApprovalStatusColumnConfig(
       updateEndUserEntry,
       changeOpenDialogConfig,
       endUserTableUiState,
-      setEndUserTableUiState
+      setEndUserTableUiState,
     ]
   );
 
   return {
-    approvalStatusEditable: (
+    approvalStatusEditable:
       userPermissions &&
-      canUpdateApprovalStatus(userPermissions, activeDatasetId)
-    ),
-    onApprovalStatusChange
+      canUpdateApprovalStatus(userPermissions, activeDatasetId),
+    onApprovalStatusChange,
   };
 }
 
@@ -1068,232 +1114,244 @@ function makeProviderTableActions(
   activeDatasetId: string,
   createProviderEntry: StudyAccessApi['createProviderEntry'],
   deleteProviderEntry: StudyAccessApi['deleteProviderEntry'],
-  changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void,
+  changeOpenDialogConfig: (
+    newDialogContentProps: ContentProps | undefined
+  ) => void,
   reloadProvidersTable: () => void,
   providersAddable: boolean | undefined,
-  providersRemovable: boolean | undefined,
+  providersRemovable: boolean | undefined
 ) {
-  const addProviders = !providersAddable ? undefined : {
-    element: (
-      <button type="button" className="btn">
-        <IconAlt fa="plus" />
-        Add Providers
-      </button>
-    ),
-    callback: () => {
-      changeOpenDialogConfig({
-        type: 'add-users',
-        permissionNamePlural: 'providers',
-        onSubmit: async (providerEmails: string[]) => {
-          changeOpenDialogConfig(undefined);
-
-          const addedUsers = await Promise.all(
-            providerEmails.map(
-              providerEmail => createProviderEntry({
-                datasetId: activeDatasetId,
-                email: providerEmail,
-                isManager: false
-              })
-            )
-          );
-
-          const addedUsersWithEmails = zipWith(
-            addedUsers,
-            providerEmails,
-            (addedUser, email) => ({
-              ...addedUser,
-              email
-            })
-          );
-
-          const [ createdUsers, emailedUsers ] = partition(addedUsersWithEmails, ({ created }) => created);
-
+  const addProviders = !providersAddable
+    ? undefined
+    : {
+        element: (
+          <button type="button" className="btn">
+            <IconAlt fa="plus" />
+            Add Providers
+          </button>
+        ),
+        callback: () => {
           changeOpenDialogConfig({
-            type: 'users-added',
-            createdUsers: createdUsers.map(({ email }) => email),
-            emailedUsers: emailedUsers.map(({ email }) => email),
-            permissionName: 'provider',
+            type: 'add-users',
             permissionNamePlural: 'providers',
-            onConfirm: () => {
+            onSubmit: async (providerEmails: string[]) => {
               changeOpenDialogConfig(undefined);
-            }
+
+              const addedUsers = await Promise.all(
+                providerEmails.map((providerEmail) =>
+                  createProviderEntry({
+                    datasetId: activeDatasetId,
+                    email: providerEmail,
+                    isManager: false,
+                  })
+                )
+              );
+
+              const addedUsersWithEmails = zipWith(
+                addedUsers,
+                providerEmails,
+                (addedUser, email) => ({
+                  ...addedUser,
+                  email,
+                })
+              );
+
+              const [createdUsers, emailedUsers] = partition(
+                addedUsersWithEmails,
+                ({ created }) => created
+              );
+
+              changeOpenDialogConfig({
+                type: 'users-added',
+                createdUsers: createdUsers.map(({ email }) => email),
+                emailedUsers: emailedUsers.map(({ email }) => email),
+                permissionName: 'provider',
+                permissionNamePlural: 'providers',
+                onConfirm: () => {
+                  changeOpenDialogConfig(undefined);
+                },
+              });
+
+              reloadProvidersTable();
+            },
           });
+        },
+      };
+
+  const removeProviders = !providersRemovable
+    ? undefined
+    : {
+        selectionRequired: true,
+        element: (selection: ProviderTableFullRow[]) => (
+          <button
+            type="button"
+            className="btn"
+            disabled={selection.length === 0}
+          >
+            <IconAlt fa="trash" />
+            Remove {selection.length === 1 ? 'Provider' : 'Providers'}
+          </button>
+        ),
+        callback: async (selection: ProviderTableFullRow[]) => {
+          await Promise.all(
+            selection.map(({ providerId }) => deleteProviderEntry(providerId))
+          );
 
           reloadProvidersTable();
-        }
-      });
-    }
-  };
+        },
+      };
 
-  const removeProviders = !providersRemovable ? undefined : {
-    selectionRequired: true,
-    element: (selection: ProviderTableFullRow[]) => (
-      <button
-        type="button"
-        className="btn"
-        disabled={selection.length === 0}
-      >
-        <IconAlt fa="trash" />
-        Remove {selection.length === 1 ? 'Provider' : 'Providers'}
-      </button>
-    ),
-    callback: async (selection: ProviderTableFullRow[]) => {
-      await Promise.all(
-        selection.map(({ providerId }) => deleteProviderEntry(providerId))
-      );
-
-      reloadProvidersTable();
-    }
-  }
-
-  const availableActions = [
-    addProviders,
-    removeProviders
-  ].filter(
+  const availableActions = [addProviders, removeProviders].filter(
     (action): action is TableAction<ProviderTableRow> => action != null
   );
 
-  return availableActions.length === 0
-    ? undefined
-    : availableActions;
+  return availableActions.length === 0 ? undefined : availableActions;
 }
 
 function makeEndUserTableActions(
   activeDatasetId: string,
   createEndUserEntry: StudyAccessApi['createEndUserEntry'],
   deleteEndUserEntry: StudyAccessApi['deleteEndUserEntry'],
-  changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void,
+  changeOpenDialogConfig: (
+    newDialogContentProps: ContentProps | undefined
+  ) => void,
   reloadEndUsersTable: () => void,
   endUsersAddable: boolean | undefined,
-  endUsersRemovable: boolean | undefined,
+  endUsersRemovable: boolean | undefined
 ) {
-  const addEndUsers = !endUsersAddable ? undefined : {
-    selectionRequired: false,
-    element: (
-      <button type="button" className="btn">
-        <IconAlt fa="plus" />
-        Add End Users
-      </button>
-    ),
-    callback: () => {
-      changeOpenDialogConfig({
-        type: 'add-users',
-        permissionNamePlural: 'end users',
-        onSubmit: async (endUserEmails: string[]) => {
-          changeOpenDialogConfig(undefined);
+  const addEndUsers = !endUsersAddable
+    ? undefined
+    : {
+        selectionRequired: false,
+        element: (
+          <button type="button" className="btn">
+            <IconAlt fa="plus" />
+            Add End Users
+          </button>
+        ),
+        callback: () => {
+          changeOpenDialogConfig({
+            type: 'add-users',
+            permissionNamePlural: 'end users',
+            onSubmit: async (endUserEmails: string[]) => {
+              changeOpenDialogConfig(undefined);
 
-          const addedUsers = await Promise.all(
-            endUserEmails.map(
-              endUserEmail => createEndUserEntry({
-                datasetId: activeDatasetId,
-                email: endUserEmail,
-                purpose: '',
-                researchQuestion: '',
-                analysisPlan: '',
-                disseminationPlan: '',
-                approvalStatus: 'approved',
-                startDate: new Date().toISOString(),
-                priorAuth: '',
-                restrictionLevel: 'public',
-                duration: -1,
-                denialReason: undefined
-              })
+              const addedUsers = await Promise.all(
+                endUserEmails.map((endUserEmail) =>
+                  createEndUserEntry({
+                    datasetId: activeDatasetId,
+                    email: endUserEmail,
+                    purpose: '',
+                    researchQuestion: '',
+                    analysisPlan: '',
+                    disseminationPlan: '',
+                    approvalStatus: 'approved',
+                    startDate: new Date().toISOString(),
+                    priorAuth: '',
+                    restrictionLevel: 'public',
+                    duration: -1,
+                    denialReason: undefined,
+                  })
+                )
+              );
+
+              const addedUsersWithEmails = zipWith(
+                addedUsers,
+                endUserEmails,
+                (addedUser, email) => ({
+                  ...addedUser,
+                  email,
+                })
+              );
+
+              const [createdUsers, emailedUsers] = partition(
+                addedUsersWithEmails,
+                ({ created }) => created
+              );
+
+              changeOpenDialogConfig({
+                type: 'users-added',
+                createdUsers: createdUsers.map(({ email }) => email),
+                emailedUsers: emailedUsers.map(({ email }) => email),
+                permissionName: 'end user',
+                permissionNamePlural: 'end users',
+                onConfirm: () => {
+                  changeOpenDialogConfig(undefined);
+                },
+              });
+
+              reloadEndUsersTable();
+            },
+          });
+        },
+      };
+
+  const removeEndUsers = !endUsersRemovable
+    ? undefined
+    : {
+        selectionRequired: true,
+        element: (selection: EndUserTableFullRow[]) => (
+          <button
+            type="button"
+            className="btn"
+            disabled={selection.length === 0}
+          >
+            <IconAlt fa="trash" />
+            Remove {selection.length === 1 ? 'End User' : 'End Users'}
+          </button>
+        ),
+        callback: async (selection: EndUserTableFullRow[]) => {
+          await Promise.all(
+            selection.map(({ userId }) =>
+              deleteEndUserEntry(userId, activeDatasetId)
             )
           );
 
-          const addedUsersWithEmails = zipWith(
-            addedUsers,
-            endUserEmails,
-            (addedUser, email) => ({
-              ...addedUser,
-              email
-            })
-          );
-
-          const [ createdUsers, emailedUsers ] = partition(addedUsersWithEmails, ({ created }) => created);
-
-          changeOpenDialogConfig({
-            type: 'users-added',
-            createdUsers: createdUsers.map(({ email }) => email),
-            emailedUsers: emailedUsers.map(({ email }) => email),
-            permissionName: 'end user',
-            permissionNamePlural: 'end users',
-            onConfirm: () => {
-              changeOpenDialogConfig(undefined);
-            }
-          });
-
           reloadEndUsersTable();
-        }
-      });
-    }
-  };
+        },
+      };
 
-  const removeEndUsers = !endUsersRemovable ? undefined : {
-    selectionRequired: true,
-    element: (selection: EndUserTableFullRow[]) => (
-      <button
-        type="button"
-        className="btn"
-        disabled={selection.length === 0}
-      >
-        <IconAlt fa="trash" />
-        Remove {selection.length === 1 ? 'End User' : 'End Users'}
-      </button>
-    ),
-    callback: async (selection: EndUserTableFullRow[]) => {
-      await Promise.all(
-        selection.map(({ userId }) => deleteEndUserEntry(userId, activeDatasetId))
-      );
-
-      reloadEndUsersTable();
-    }
-  };
-
-  const availableActions = [
-    addEndUsers,
-    removeEndUsers
-  ].filter(
+  const availableActions = [addEndUsers, removeEndUsers].filter(
     (action): action is TableAction<EndUserTableFullRow> => action != null
   );
 
-  return availableActions.length === 0
-    ? undefined
-    : availableActions;
+  return availableActions.length === 0 ? undefined : availableActions;
 }
 
 type ConditionalFetchResult<T> =
   | { type: 'not-allowed' }
-  | { type: 'allowed', result: T };
+  | { type: 'allowed'; result: T };
 
-function fetchIfAllowed<T>(allowed: boolean | undefined, factory: () => Promise<T>): () => Promise<ConditionalFetchResult<T>> {
-  return async () => !allowed
-    ? { type: 'not-allowed' }
-    : { type: 'allowed', result: await factory() };
+function fetchIfAllowed<T>(
+  allowed: boolean | undefined,
+  factory: () => Promise<T>
+): () => Promise<ConditionalFetchResult<T>> {
+  return async () =>
+    !allowed
+      ? { type: 'not-allowed' }
+      : { type: 'allowed', result: await factory() };
 }
 
-function usePromiseWithReloadCallback<T>(factory: () => Promise<T>, deps?: any[]) {
-  const [ reloadTime, setReloadTime ] = useState(Date.now());
+function usePromiseWithReloadCallback<T>(
+  factory: () => Promise<T>,
+  deps?: any[]
+) {
+  const [reloadTime, setReloadTime] = useState(Date.now());
 
-  const reload = useCallback(
-    () => {
-      setReloadTime(Date.now())
-    },
-    []
-  );
+  const reload = useCallback(() => {
+    setReloadTime(Date.now());
+  }, []);
 
   const fullDeps = useMemo(
-    () => deps == null
-      ? [ reloadTime ]
-      : [ ...deps, reloadTime ],
-    [ deps, reloadTime ]
+    () => (deps == null ? [reloadTime] : [...deps, reloadTime]),
+    [deps, reloadTime]
   );
 
   const promiseStatus = usePromise(factory, fullDeps);
 
   return {
     ...promiseStatus,
-    reload
+    reload,
   };
 }
 
@@ -1327,11 +1385,10 @@ function updateStaffIsOwnerUiState(
     ...staffTableUiState,
     isOwner: {
       ...staffTableUiState.isOwner,
-      [staffId]: newIsOwner
-    }
+      [staffId]: newIsOwner,
+    },
   });
 }
-
 
 function updateProviderIsManagerUiState(
   providerTableUiState: ProviderTableUiState,
@@ -1343,8 +1400,8 @@ function updateProviderIsManagerUiState(
     ...providerTableUiState,
     isManager: {
       ...providerTableUiState.isManager,
-      [providerId]: newIsManager
-    }
+      [providerId]: newIsManager,
+    },
   });
 }
 
@@ -1359,12 +1416,12 @@ function updateEndUserApprovalStatusUiState(
     ...endUserTableUiState,
     approvalStatus: {
       ...endUserTableUiState.approvalStatus,
-      [userId]: newApprovalStatus
+      [userId]: newApprovalStatus,
     },
     denialReason: {
       ...endUserTableUiState.denialReason,
-      [userId]: newDenialReason
-    }
+      [userId]: newDenialReason,
+    },
   });
 }
 
@@ -1379,19 +1436,21 @@ function stringToBoolean(value: string) {
 const BOOLEAN_SELECT_ITEMS = [
   {
     value: booleanToString(true),
-    display: booleanToString(true)
+    display: booleanToString(true),
   },
   {
     value: booleanToString(false),
-    display: booleanToString(false)
-  }
+    display: booleanToString(false),
+  },
 ];
 
 function makeApprovalStatusSelectItems(oldApprovalStatus: ApprovalStatus) {
-  return permittedApprovalStatusChanges(oldApprovalStatus).map(permittedStatus => ({
-    value: permittedStatus,
-    display: makeApprovalStatusDisplayName(permittedStatus)
-  }));
+  return permittedApprovalStatusChanges(oldApprovalStatus).map(
+    (permittedStatus) => ({
+      value: permittedStatus,
+      display: makeApprovalStatusDisplayName(permittedStatus),
+    })
+  );
 }
 
 function makeApprovalStatusDisplayName(approvalStatus: ApprovalStatus) {
@@ -1403,9 +1462,7 @@ function makeTimestampString() {
 }
 
 function isoToUtcString(value: string | undefined) {
-  return value == null
-    ? ''
-    : dateToUtcString(new Date(value))
+  return value == null ? '' : dateToUtcString(new Date(value));
 }
 
 function dateToUtcString(date: Date) {
@@ -1421,7 +1478,7 @@ function makeContentSearchableSring(
   researchQuestion: string | undefined,
   analysisPlan: string | undefined,
   disseminationPlan: string | undefined,
-  priorAuth: string | undefined,
+  priorAuth: string | undefined
 ) {
   return [
     purpose && 'Purpose:',
@@ -1434,7 +1491,9 @@ function makeContentSearchableSring(
     disseminationPlan,
     priorAuth && 'Prior Authorization:',
     priorAuth,
-  ].filter(negate(isNil)).join('\0');
+  ]
+    .filter(negate(isNil))
+    .join('\0');
 }
 
 function makeContentDisplay(
@@ -1442,15 +1501,19 @@ function makeContentDisplay(
   researchQuestion: string,
   analysisPlan: string,
   disseminationPlan: string,
-  priorAuth: string,
+  priorAuth: string
 ) {
   const contentFields = zipWith(
-    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:', 'Prior Authorization:'],
-    [ purpose, researchQuestion, analysisPlan, disseminationPlan, priorAuth ],
+    [
+      'Purpose:',
+      'Research Question:',
+      'Analysis Plan:',
+      'Dissemination Plan:',
+      'Prior Authorization:',
+    ],
+    [purpose, researchQuestion, analysisPlan, disseminationPlan, priorAuth],
     (heading, field) => {
-      return field.length > 0
-        ? `${heading}\n${field}`
-        : undefined
+      return field.length > 0 ? `${heading}\n${field}` : undefined;
     }
   );
 
@@ -1458,7 +1521,7 @@ function makeContentDisplay(
 }
 
 function getHistoryTableRowId(row: HistoryTableFullRow) {
-  return `${row.userId}-${row.timestamp}`
+  return `${row.userId}-${row.timestamp}`;
 }
 
 interface RowHistory {
@@ -1466,15 +1529,19 @@ interface RowHistory {
   lastRowsByEndUser: Record<string, HistoryTableFullRow>;
 }
 
-function addChangeDescription(rowHistory: RowHistory, nextRow: Omit<HistoryTableFullRow, 'changeDescription'>) {
+function addChangeDescription(
+  rowHistory: RowHistory,
+  nextRow: Omit<HistoryTableFullRow, 'changeDescription'>
+) {
   const rowWithChangeDescription = {
     ...nextRow,
-    changeDescription: nextRow.action !== 'UPDATE'
-      ? nextRow.action
-      : makeUpdateChangeDescription(
-          nextRow,
-          rowHistory.lastRowsByEndUser[nextRow.userId]
-        )
+    changeDescription:
+      nextRow.action !== 'UPDATE'
+        ? nextRow.action
+        : makeUpdateChangeDescription(
+            nextRow,
+            rowHistory.lastRowsByEndUser[nextRow.userId]
+          ),
   };
 
   rowHistory.rowsWithChangeDescriptions.push(rowWithChangeDescription);
@@ -1484,21 +1551,26 @@ function addChangeDescription(rowHistory: RowHistory, nextRow: Omit<HistoryTable
 }
 
 const COLUMNS_TO_MONITOR_FOR_CHANGE = {
-  'approvalStatus': 'approval status',
-  'content': 'content',
-  'denialReason': 'notes',
-  'allowSelfEdits': 'lock/unlock'
+  approvalStatus: 'approval status',
+  content: 'content',
+  denialReason: 'notes',
+  allowSelfEdits: 'lock/unlock',
 } as const;
 
-const COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS =
-  Object.keys(COLUMNS_TO_MONITOR_FOR_CHANGE) as (keyof typeof COLUMNS_TO_MONITOR_FOR_CHANGE)[];
+const COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS = Object.keys(
+  COLUMNS_TO_MONITOR_FOR_CHANGE
+) as (keyof typeof COLUMNS_TO_MONITOR_FOR_CHANGE)[];
 
-function makeUpdateChangeDescription(nextRow: Omit<HistoryTableFullRow, 'changeDescription'>, prevRow?: HistoryTableFullRow) {
-  const changedColumns = prevRow == null
-    ? []
-    : COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS
-      .filter(columnKey => prevRow[columnKey] !== nextRow[columnKey])
-      .map(columnKey => COLUMNS_TO_MONITOR_FOR_CHANGE[columnKey]);
+function makeUpdateChangeDescription(
+  nextRow: Omit<HistoryTableFullRow, 'changeDescription'>,
+  prevRow?: HistoryTableFullRow
+) {
+  const changedColumns =
+    prevRow == null
+      ? []
+      : COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS.filter(
+          (columnKey) => prevRow[columnKey] !== nextRow[columnKey]
+        ).map((columnKey) => COLUMNS_TO_MONITOR_FOR_CHANGE[columnKey]);
 
   return changedColumns.length === 0
     ? `update`

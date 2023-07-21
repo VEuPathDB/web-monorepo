@@ -5,26 +5,26 @@ import { keyBy } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 export const SITE_CONFIG_LOADED = 'eupathdb/site-config-loaded';
-export const BASKETS_LOADED = 'eupathdb/basket'
-export const QUICK_SEARCH_LOADED = 'eupathdb/quick-search-loaded'
+export const BASKETS_LOADED = 'eupathdb/basket';
+export const QUICK_SEARCH_LOADED = 'eupathdb/quick-search-loaded';
 
 export function loadSiteConfig(siteConfig) {
   return {
     type: SITE_CONFIG_LOADED,
-    payload: { siteConfig }
-  }
+    payload: { siteConfig },
+  };
 }
 
 export function loadBasketCounts() {
   return function run({ wdkService }) {
-    return wdkService.getCurrentUser().then(user => {
+    return wdkService.getCurrentUser().then((user) => {
       return user.isGuest
         ? emptyAction
-        : wdkService.getBasketCounts().then(basketCounts => ({
-          type: BASKETS_LOADED,
-          payload: { basketCounts }
-        }));
-    })
+        : wdkService.getBasketCounts().then((basketCounts) => ({
+            type: BASKETS_LOADED,
+            payload: { basketCounts },
+          }));
+    });
   };
 }
 
@@ -38,18 +38,20 @@ export function loadBasketCounts() {
 export function loadQuickSearches(quickSearchSpecs) {
   return function run({ wdkService }) {
     let requests = quickSearchSpecs
-      .filter(spec => !spec.isDisabled)
-      .map(spec =>
-        wdkService.findQuestion(spec.name)
-          .then(q => wdkService.getQuestionAndParameters(q.urlSegment)));
+      .filter((spec) => !spec.isDisabled)
+      .map((spec) =>
+        wdkService
+          .findQuestion(spec.name)
+          .then((q) => wdkService.getQuestionAndParameters(q.urlSegment))
+      );
     return Promise.all(requests)
-    .then(
-      questions => keyBy(questions, 'urlSegment'),
-      error => error
-    )
-    .then(questions => ({
-      type: QUICK_SEARCH_LOADED,
-      payload: { questions: questions }
-    }));
-  }
+      .then(
+        (questions) => keyBy(questions, 'urlSegment'),
+        (error) => error
+      )
+      .then((questions) => ({
+        type: QUICK_SEARCH_LOADED,
+        payload: { questions: questions },
+      }));
+  };
 }

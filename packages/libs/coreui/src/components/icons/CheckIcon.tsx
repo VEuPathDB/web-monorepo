@@ -1,5 +1,5 @@
-import * as React from "react";
-import { SVGProps } from "react";
+import * as React from 'react';
+import { SVGProps } from 'react';
 
 const SvgCheckIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -7,9 +7,9 @@ const SvgCheckIcon = (props: SVGProps<SVGSVGElement>) => (
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
     style={{
-      fillRule: "evenodd",
-      clipRule: "evenodd",
-      strokeLinejoin: "round",
+      fillRule: 'evenodd',
+      clipRule: 'evenodd',
+      strokeLinejoin: 'round',
       strokeMiterlimit: 2,
     }}
     width="1em"
@@ -18,15 +18,15 @@ const SvgCheckIcon = (props: SVGProps<SVGSVGElement>) => (
   >
     <path
       style={{
-        fill: "none",
-        fillRule: "nonzero",
+        fill: 'none',
+        fillRule: 'nonzero',
       }}
       d="M0 0h24v24H0z"
     />
     <path
       d="M9 14.17 3.83 9l-2.42 2.41L9 19 21 7l-2.41-2.41L9 14.17Z"
       style={{
-        fillRule: "nonzero",
+        fillRule: 'nonzero',
       }}
       transform="rotate(-2.951 18.236 -6.055)"
     />

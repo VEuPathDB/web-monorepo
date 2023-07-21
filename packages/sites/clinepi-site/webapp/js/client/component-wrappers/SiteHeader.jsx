@@ -15,14 +15,20 @@ import heroImageUrl from 'site/images/global.jpg';
 
 export default function SiteHeaderWrapper() {
   return function SiteHeader() {
-    const [searchTerm, setSearchTerm] = useSessionBackedState('', "SiteHeader__filterString", s => s, s => s );
+    const [searchTerm, setSearchTerm] = useSessionBackedState(
+      '',
+      'SiteHeader__filterString',
+      (s) => s,
+      (s) => s
+    );
 
     const permissions = usePermissions();
 
     const { diyDatasets, reloadDiyDatasets } = useDiyDatasets();
 
     const makeHeaderMenuItems = useMemo(
-      () => makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
+      () =>
+        makeHeaderMenuItemsFactory(permissions, diyDatasets, reloadDiyDatasets),
       [permissions, diyDatasets, reloadDiyDatasets]
     );
 
@@ -41,8 +47,10 @@ export default function SiteHeaderWrapper() {
           setSearchTerm={setSearchTerm}
         />
         <DisclaimerModal />
-        <DataRestrictionDaemon makeStudyPageRoute={id => makeEdaRoute(id) + '/details'} />
+        <DataRestrictionDaemon
+          makeStudyPageRoute={(id) => makeEdaRoute(id) + '/details'}
+        />
       </React.Fragment>
-    )
-  }
+    );
+  };
 }

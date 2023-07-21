@@ -7,7 +7,7 @@ export function useCommunitySiteRootUrl(): string | undefined {
   );
 
   return communitySiteRootUrl;
-};
+}
 
 export function useCommunitySiteContentProjectUrl(): string | undefined {
   const communitySiteRootUrl = useCommunitySiteRootUrl();
@@ -20,8 +20,7 @@ export function useCommunitySiteContentProjectUrl(): string | undefined {
   return displayName == null || communitySiteRootUrl == null
     ? undefined
     : `${communitySiteRootUrl}content/${displayName}`;
-};
-
+}
 
 export function useCommunitySiteProjectUrl(): string | undefined {
   const communitySiteRootUrl = useCommunitySiteRootUrl();
@@ -34,4 +33,4 @@ export function useCommunitySiteProjectUrl(): string | undefined {
   return displayName == null || communitySiteRootUrl == null
     ? undefined
     : `${communitySiteRootUrl}${displayName}`;
-};
+}

@@ -14,17 +14,22 @@ export function withRequestFields(Component) {
   return connect(mapRecordStateToProps)(WithFieldsWrapper);
   function WithFieldsWrapper({ dispatch, currentRecordState, ...props }) {
     const { requestId, record, recordClass } = currentRecordState;
-    const requestFields = useCallback((options) => {
-      if (requestId == null || record == null) return;
-      dispatch(RecordActions.requestPartialRecord(
-        requestId,
-        recordClass.urlSegment,
-        record.id.map(part => part.value),
-        options.attributes,
-        options.tables
-      ))
-    }, [ dispatch, requestId ]);
-    return <Component {...props} requestFields={requestFields}/>
+    const requestFields = useCallback(
+      (options) => {
+        if (requestId == null || record == null) return;
+        dispatch(
+          RecordActions.requestPartialRecord(
+            requestId,
+            recordClass.urlSegment,
+            record.id.map((part) => part.value),
+            options.attributes,
+            options.tables
+          )
+        );
+      },
+      [dispatch, requestId]
+    );
+    return <Component {...props} requestFields={requestFields} />;
   }
 }
 
@@ -44,8 +49,5 @@ export function renderNodeLabelMarkup(dataProp) {
     getCytoscapeElementData
   );
 
-  return memoize(
-    compose(stripHTML, getDataProperty),
-    getDataProperty
-  );
+  return memoize(compose(stripHTML, getDataProperty), getDataProperty);
 }
