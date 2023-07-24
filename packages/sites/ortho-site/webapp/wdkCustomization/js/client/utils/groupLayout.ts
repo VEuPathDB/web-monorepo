@@ -8,14 +8,14 @@ import {
   objectOf,
   oneOf,
   record,
-  string
+  string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { EdgeType } from 'ortho-client/utils/clusterGraph';
 import {
   TaxonEntries,
   TaxonEntry,
   taxonEntryDecoder,
-  taxonEntriesDecoder
+  taxonEntriesDecoder,
 } from 'ortho-client/utils/taxons';
 
 export interface GroupLayout {
@@ -97,26 +97,28 @@ export const edgeEntryDecoder: Decoder<EdgeEntry> = record({
   T: edgeTypeDecoder,
   queryId: string,
   score: number,
-  subjectId: string
+  subjectId: string,
 });
 
-export const edgeEntriesDecoder: Decoder<EdgeEntries> = objectOf(edgeEntryDecoder);
+export const edgeEntriesDecoder: Decoder<EdgeEntries> =
+  objectOf(edgeEntryDecoder);
 
 export const nodeEntryDecoder: Decoder<NodeEntry> = record({
   x: string,
   y: string,
   i: number,
-  id: string
+  id: string,
 });
 
-export const nodeEntriesDecoder: Decoder<NodeEntries> = objectOf(nodeEntryDecoder);
+export const nodeEntriesDecoder: Decoder<NodeEntries> =
+  objectOf(nodeEntryDecoder);
 
 export const ecNumberEntryDecoder: Decoder<EcNumberEntry> = record({
   code: string,
   color: string,
   count: number,
   description: string,
-  index: number
+  index: number,
 });
 
 export const geneEntryDecoder: Decoder<GeneEntry> = record({
@@ -124,7 +126,7 @@ export const geneEntryDecoder: Decoder<GeneEntry> = record({
   ecNumbers: arrayOf(string),
   length: number,
   pfamDomains: objectOf(arrayOf(number)),
-  taxon: taxonEntryDecoder
+  taxon: taxonEntryDecoder,
 });
 
 export const pfamDomainEntryDecoder: Decoder<PfamDomainEntry> = record({
@@ -133,13 +135,13 @@ export const pfamDomainEntryDecoder: Decoder<PfamDomainEntry> = record({
   count: number,
   description: string,
   index: number,
-  symbol: string
+  symbol: string,
 });
 
 export const groupFieldDecoder: Decoder<GroupField> = record({
   ecNumbers: objectOf(ecNumberEntryDecoder),
   genes: objectOf(geneEntryDecoder),
-  pfamDomains: objectOf(pfamDomainEntryDecoder)
+  pfamDomains: objectOf(pfamDomainEntryDecoder),
 });
 
 export const groupLayoutDecoder: Decoder<GroupLayout> = record({
@@ -150,15 +152,12 @@ export const groupLayoutDecoder: Decoder<GroupLayout> = record({
   maxEvalueExp: number,
   size: number,
   taxonCounts: objectOf(number),
-  taxons: taxonEntriesDecoder
+  taxons: taxonEntriesDecoder,
 });
 
 export const groupLayoutResponseDecoder = oneOf(
   record({ layoutOffered: constant(false) }),
-  combine(
-    record({ layoutOffered: constant(true) }),
-    groupLayoutDecoder
-  )
+  combine(record({ layoutOffered: constant(true) }), groupLayoutDecoder)
 );
 
 export type GroupLayoutResponse = Unpack<typeof groupLayoutResponseDecoder>;

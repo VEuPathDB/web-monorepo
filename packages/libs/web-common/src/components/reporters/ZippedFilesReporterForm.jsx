@@ -1,15 +1,17 @@
 import React from 'react';
 
-let ZippedFilesReporterForm = props => {
-  let { onSubmit, includeSubmit  } = props;
+let ZippedFilesReporterForm = (props) => {
+  let { onSubmit, includeSubmit } = props;
   return (
-    <div className='eupathdb-ReporterFormWrapper'>
+    <div className="eupathdb-ReporterFormWrapper">
       <h3>Generate a ZIP file containing your selected file records</h3>
-      { includeSubmit &&
+      {includeSubmit && (
         <div className="eupathdb-ReporterFormSubmit">
-          <button className="btn" type="submit" onClick={onSubmit}>Get ZIP file</button>
+          <button className="btn" type="submit" onClick={onSubmit}>
+            Get ZIP file
+          </button>
         </div>
-      }
+      )}
     </div>
   );
 };
@@ -17,7 +19,7 @@ let ZippedFilesReporterForm = props => {
 ZippedFilesReporterForm.getInitialState = (downloadFormStoreState) => {
   return {
     formState: {},
-    formUiState: {}
+    formUiState: {},
   };
 };
 

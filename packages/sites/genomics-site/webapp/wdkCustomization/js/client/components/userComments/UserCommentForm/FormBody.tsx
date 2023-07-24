@@ -18,23 +18,19 @@ export const FormBody: React.SFC<FormBodyProps> = ({
   formGroupOrder,
   formGroupClassName,
   formGroupHeaderClassName,
-  formGroupBodyClassName
+  formGroupBodyClassName,
 }) => (
   <div>
-    {
-      formGroupOrder.map(
-        formGroupKey => (
-          <FormGroup 
-            key={formGroupKey}
-            groupKey={formGroupKey}
-            headerContent={formGroupHeaders[formGroupKey]}
-            formRows={formGroupFields[formGroupKey]}
-            className={formGroupClassName}
-            headerClassName={formGroupHeaderClassName}
-            bodyClassName={formGroupBodyClassName}
-          />
-        )
-      )
-    }
+    {formGroupOrder.map((formGroupKey) => (
+      <FormGroup
+        key={formGroupKey}
+        groupKey={formGroupKey}
+        headerContent={formGroupHeaders[formGroupKey]}
+        formRows={formGroupFields[formGroupKey]}
+        className={formGroupClassName}
+        headerClassName={formGroupHeaderClassName}
+        bodyClassName={formGroupBodyClassName}
+      />
+    ))}
   </div>
 );

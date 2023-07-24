@@ -2,8 +2,9 @@ $tablet-width: 1000px;
 
 .ebrc-SocialMediaControls {
   .ebrc-SocialMediaLinks {
-    background-color: rgba(255,255,255,.9);
-    a, button.link {
+    background-color: rgba(255, 255, 255, 0.9);
+    a,
+    button.link {
       color: #00304c;
 
       &:hover {
@@ -44,5 +45,5 @@ $tablet-width: 1000px;
 
   @media screen and (max-width: $tablet-width) {
     display: none;
-  } 
+  }
 }

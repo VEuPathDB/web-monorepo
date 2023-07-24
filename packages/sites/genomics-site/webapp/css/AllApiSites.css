@@ -6,20 +6,21 @@
 }
 
 .wdk-TabContent .wdk-QuestionForm__default-width {
-    max-width: 72.5rem;
+  max-width: 72.5rem;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
               = Data Set Record page
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions a[title="Download Data Set"]{
+.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass
+  .wdk-RecordActions
+  a[title='Download Data Set'] {
   visibility: hidden;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
            = Sidebar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
 
 #menu_lefttop .ui-accordion-header {
   padding: 0;
@@ -37,7 +38,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 header {
-	overflow: visible;
+  overflow: visible;
   position: relative;
   z-index: 100;
 }
@@ -47,7 +48,6 @@ header {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .Footer {
   background-color: #f0f0f0;
-
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,61 +75,70 @@ div.MatchedTranscriptsFilter {
 
 /* BOOLEAN, combined?  */
 
-  .gene-boolean-filter, .gene-leaf-filter  {
-    display: none;
-    margin-bottom: 1em;
-  }
-  .gene-boolean-filter a.gene-boolean-filter-controls-toggle,
-  .gene-leaf-filter a.gene-leaf-filter-controls-toggle  {
-    padding-left:0.5em;
-  }
-  .gene-boolean-filter-controls, .gene-leaf-filter-controls {
-    display: none;
-    text-align: center;
-   }
-  .gene-boolean-filter table, .gene-leaf-filter table {
-    border-collapse: separate;
-    color: black;
-  }
-  .gene-boolean-filter-summary, .gene-leaf-filter-summary {
-    display: inline-block;
-  }
-  .gene-boolean-filter-controls p, .gene-leaf-filter-controls p  {
-    text-align: center;
-  }
-  .gene-boolean-filter-controls button:disabled,  .gene-leaf-filter-controls button:disabled   {
- 		color:grey;
-  }
-  table#booleanFilter td#prompt, table#leafFilter td#prompt{
-    font-weight:bold;
-  }
-  table#booleanFilter table td{
-    padding:0 8px;
-  }
-  table#booleanFilter table img  {
-    width:80px;
-  }
-  table#leafFilter table img  {
-    width:20px; /* same size as in attribute column in site/wdkAttribute.tag */
-  }
-  table#booleanFilter table img, table#leafFilter table img  {
-    vertical-align: text-bottom;
-    margin-left:10px;
-  }
+.gene-boolean-filter,
+.gene-leaf-filter {
+  display: none;
+  margin-bottom: 1em;
+}
+.gene-boolean-filter a.gene-boolean-filter-controls-toggle,
+.gene-leaf-filter a.gene-leaf-filter-controls-toggle {
+  padding-left: 0.5em;
+}
+.gene-boolean-filter-controls,
+.gene-leaf-filter-controls {
+  display: none;
+  text-align: center;
+}
+.gene-boolean-filter table,
+.gene-leaf-filter table {
+  border-collapse: separate;
+  color: black;
+}
+.gene-boolean-filter-summary,
+.gene-leaf-filter-summary {
+  display: inline-block;
+}
+.gene-boolean-filter-controls p,
+.gene-leaf-filter-controls p {
+  text-align: center;
+}
+.gene-boolean-filter-controls button:disabled,
+.gene-leaf-filter-controls button:disabled {
+  color: grey;
+}
+table#booleanFilter td#prompt,
+table#leafFilter td#prompt {
+  font-weight: bold;
+}
+table#booleanFilter table td {
+  padding: 0 8px;
+}
+table#booleanFilter table img {
+  width: 80px;
+}
+table#leafFilter table img {
+  width: 20px; /* same size as in attribute column in site/wdkAttribute.tag */
+}
+table#booleanFilter table img,
+table#leafFilter table img {
+  vertical-align: text-bottom;
+  margin-left: 10px;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = results table view filter (representative transcript)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-  div#oneTr-filter {
-    font-family: Verdana;
-    font-weight: bold;
-    padding-left: 0.5em;
-    margin-top: 1em;
-  }
-  div#oneTr-filter span#prompt,  div#oneTr-filter span span {
-    color: darkred;
-    padding-right: 1em;
-  }
+div#oneTr-filter {
+  font-family: Verdana;
+  font-weight: bold;
+  padding-left: 0.5em;
+  margin-top: 1em;
+}
+div#oneTr-filter span#prompt,
+div#oneTr-filter span span {
+  color: darkred;
+  padding-right: 1em;
+}
 
 /* ========================================================================= */
 /* Gene  page   - Transcriptomics, coverage graph                            */
@@ -138,13 +147,13 @@ div.eupathdb-GbrowseContextContent {
   margin-right: 2em;
 }
 
-
-
-
 /* ---------------------------------------------------------------
                     jQuery UI Override
     -------------------------------------------------------------*/
 
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea,
+.ui-widget button {
   font-family: inherit;
 }

@@ -237,7 +237,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
-    setMouseMode,
     setViewport,
     setActiveVisualizationId,
     setBoundsZoomLevel,
@@ -1195,20 +1194,17 @@ function MapAnalysisImpl(props: ImplProps) {
                     height="100%"
                     width="100%"
                     style={mapStyle}
-                    showMouseToolbar={true}
                     showLayerSelector={false}
                     showSpinner={pending}
                     animation={defaultAnimation}
                     viewport={appState.viewport}
                     markers={markers}
-                    mouseMode={appState.mouseMode}
                     flyToMarkers={
                       markers && markers.length > 0 && willFlyTo && !pending
                     }
                     flyToMarkersDelay={500}
                     onBoundsChanged={setBoundsZoomLevel}
                     onViewportChanged={setViewport}
-                    onMouseModeChange={setMouseMode}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
                     zoomLevelToGeohashLevel={
                       geoConfig?.zoomLevelToAggregationLevel

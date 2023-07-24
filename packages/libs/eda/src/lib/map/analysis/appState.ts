@@ -82,10 +82,6 @@ export const AppState = t.intersection([
       center: t.tuple([t.number, t.number]),
       zoom: t.number,
     }),
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
-    }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
   }),
@@ -165,34 +161,11 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
   );
 
   useEffect(() => {
-    if (analysis) {
-      if (!appState) {
-        setVariableUISettings((prev) => ({
-          ...prev,
-          [uiStateKey]: defaultAppState,
-        }));
-      } else {
-        const missingMarkerConfigs =
-          defaultAppState.markerConfigurations.filter(
-            (defaultConfig) =>
-              !appState.markerConfigurations.some(
-                (config) => config.type === defaultConfig.type
-              )
-          );
-
-        if (missingMarkerConfigs.length > 0) {
-          setVariableUISettings((prev) => ({
-            ...prev,
-            [uiStateKey]: {
-              ...appState,
-              markerConfigurations: [
-                ...appState.markerConfigurations,
-                ...missingMarkerConfigs,
-              ],
-            },
-          }));
-        }
-      }
+    if (analysis && !appState) {
+      setVariableUISettings((prev) => ({
+        ...prev,
+        [uiStateKey]: defaultAppState,
+      }));
     }
   }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
@@ -226,7 +199,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
-    setMouseMode: useSetter('mouseMode'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
   };

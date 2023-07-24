@@ -3,7 +3,7 @@ import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { FormRowProps } from './FormRow';
 import { FormBody } from './FormBody';
 
-import './UserCommentFormView.scss'
+import './UserCommentFormView.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 export interface UserCommentFormViewProps {
@@ -47,64 +47,53 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
   ...formBodyProps
 }) => (
   <div className={className}>
-    {
-      completed
-        ? (
-          <>
-            <h1>Thank You For The Comment</h1>
-            <Link to={returnUrl}>{returnLinkText}</Link>
-          </>
-        )
-        : (
-          <>
-            {
-              submitting &&
-              <div className={cx('-LoadingOverlay')}>
-                <Loading className={cx('-Loading')}>
-                  Submitting Your Comment...
-                </Loading>
-              </div>
-            }
-            <div className={headerClassName}>
-              {title}
-            </div>
-            <div className={bodyClassName}>
-              <form onSubmit={onSubmit}>
-                <FormBody {...formBodyProps} />  
-                <div className={errorsClassName}>
-                  {
-                    (backendValidationErrors.length > 0) && (
-                      <div>
-                        Please correct the following and resubmit your comment:
-                        <ul>
-                          {
-                            backendValidationErrors.map(
-                              error => <li key={error}>{error}</li>
-                            )
-                          }
-                        </ul>
-                      </div>
-                    )
-                  }
-                  {
-                    internalError && (
-                      <div>
-                        An internal error occurred while trying to submit your comment. Please try to resubmit and <Link to="/contact-us" target="_blank">contact us</Link> if this problem persists.
-                        
-                        <pre>
-                          {internalError}
-                        </pre>
-                      </div>
-                    )
-                  }
-                </div>
+    {completed ? (
+      <>
+        <h1>Thank You For The Comment</h1>
+        <Link to={returnUrl}>{returnLinkText}</Link>
+      </>
+    ) : (
+      <>
+        {submitting && (
+          <div className={cx('-LoadingOverlay')}>
+            <Loading className={cx('-Loading')}>
+              Submitting Your Comment...
+            </Loading>
+          </div>
+        )}
+        <div className={headerClassName}>{title}</div>
+        <div className={bodyClassName}>
+          <form onSubmit={onSubmit}>
+            <FormBody {...formBodyProps} />
+            <div className={errorsClassName}>
+              {backendValidationErrors.length > 0 && (
                 <div>
-                  <input type="submit" disabled={submitting} value={buttonText} />
+                  Please correct the following and resubmit your comment:
+                  <ul>
+                    {backendValidationErrors.map((error) => (
+                      <li key={error}>{error}</li>
+                    ))}
+                  </ul>
                 </div>
-              </form>
+              )}
+              {internalError && (
+                <div>
+                  An internal error occurred while trying to submit your
+                  comment. Please try to resubmit and{' '}
+                  <Link to="/contact-us" target="_blank">
+                    contact us
+                  </Link>{' '}
+                  if this problem persists.
+                  <pre>{internalError}</pre>
+                </div>
+              )}
             </div>
-          </>
-        )
-    }
+            <div>
+              <input type="submit" disabled={submitting} value={buttonText} />
+            </div>
+          </form>
+        </div>
+      </>
+    )}
   </div>
 );

@@ -2,23 +2,23 @@
       =Search bubbles  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#contentcolumn { 
-  text-align: center; 
+#contentcolumn {
+  text-align: center;
   margin-top: 0;
-  margin-bottom:12px;
+  margin-bottom: 12px;
 }
 #contentcolumn > ul {
-   /*display: inline-table; floating list elements instead*/
-   margin-top: 0;
-   white-space:nowrap; 
-   list-style: none;
+  /*display: inline-table; floating list elements instead*/
+  margin-top: 0;
+  white-space: nowrap;
+  list-style: none;
 }
-#contentcolumn > ul > li { 
-  	width: 30%; 
-	margin: 10px; 
-	padding: 2px;
-	/*display: inline-table; floating list elements instead*/
-	float:left;
+#contentcolumn > ul > li {
+  width: 30%;
+  margin: 10px;
+  padding: 2px;
+  /*display: inline-table; floating list elements instead*/
+  float: left;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,95 +29,93 @@
   margin: 8px;
 }
 
-#sidebar a.heading:link, #sidebar a.heading:visited {
-	color: #FFFFFF;
-	display: block;
-/*  padding:0 0 0 8px; */
+#sidebar a.heading:link,
+#sidebar a.heading:visited {
+  color: #ffffff;
+  display: block;
+  /*  padding:0 0 0 8px; */
 }
-	
+
 #sidebar a.heading:hover {
-	color: #CCCCCC; 
-	display: block;
+  color: #cccccc;
+  display: block;
 }
 
 #sidebar a.heading {
- font-weight:normal; 
-	height: 24px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 17px;
-	text-decoration: none;
-	padding-right: 10px;
-	padding-left:  7px;
-	margin-bottom: 5px;
+  font-weight: normal;
+  height: 24px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  text-decoration: none;
+  padding-right: 10px;
+  padding-left: 7px;
+  margin-bottom: 5px;
 }
 
 #sidebar img {
   display: block;
-}	
-
+}
 
 div#sidebar h3 {
   padding: 0;
 }
 div#sidebar h3.ui-state-active {
-	background:0;
-  border:0;
+  background: 0;
+  border: 0;
 }
 div#sidebar h3.ui-state-default {
-	background:0;
-  border:0;
+  background: 0;
+  border: 0;
 }
-
 
 #sidebar div {
-   font-family: Arial, Helvetica, sans-serif;
-   font-size: 12px;
-   font-weight: normal;
-   padding: 6px;
-   line-height: 15px;
-   background-color: #FFFFFF;
-   margin: -5px 0px 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 6px;
+  line-height: 15px;
+  background-color: #ffffff;
+  margin: -5px 0px 5px;
 }
 
-#sidebar div ul{  /* second-level lists */
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	font-weight: normal;
-	padding: 6px 6px 6px 4px;
-	line-height: 15px;
-	list-style-position: outside;  /* so bullet lists wrap under text */
-	list-style-type: square;
-	margin-left:  1em;
-	padding-left: 0;
+#sidebar div ul {
+  /* second-level lists */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 6px 6px 6px 4px;
+  line-height: 15px;
+  list-style-position: outside; /* so bullet lists wrap under text */
+  list-style-type: square;
+  margin-left: 1em;
+  padding-left: 0;
 }
 
 #sidebar div ul.related-sites,
 #sidebar div ul#news,
 #sidebar div ul#communityEventList {
-    border: 1px lightgrey solid;
-    height: 70px;   /* 120px; */
-    list-style-position: inside;
-    margin-left: 0;
-    overflow-y: auto;
+  border: 1px lightgrey solid;
+  height: 70px; /* 120px; */
+  list-style-position: inside;
+  margin-left: 0;
+  overflow-y: auto;
 }
 
 #sidebar div ul.related-sites li,
 #sidebar div ul#news li,
 #sidebar div ul#communityEventList li {
-    padding-left: 1.7em;
-    text-indent: -1.5em;
+  padding-left: 1.7em;
+  text-indent: -1.5em;
 }
 
-
-
 #sidebar a.heading {
-   text-align: center;
+  text-align: center;
   height: 26px;
   font-family: Verdana, Arial, Helvetica, sans-serif;
   font-size: 14px;
   text-decoration: none;
   padding-right: 10px;
-  padding-left:  7px;
+  padding-left: 7px;
   padding-top: 12px;
   margin-bottom: 5px;
   border-top-left-radius: 12px;

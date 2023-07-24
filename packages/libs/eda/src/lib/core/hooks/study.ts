@@ -49,7 +49,9 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         STUDY_RECORD_CLASS_NAME
       );
       const ontology = await wdkService.getOntology(
-        (await wdkService.getConfig()).categoriesOntologyName
+        (
+          await wdkService.getConfig()
+        ).categoriesOntologyName
       );
       const attributes = preorderSeq(ontology.tree)
         .filter(

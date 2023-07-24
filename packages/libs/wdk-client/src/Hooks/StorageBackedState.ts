@@ -8,8 +8,8 @@ export function useStorageBackedState<T>(
   defaultValue: T,
   key: string,
   encode: Encoder<T>,
-  parse: Parser<T>,
-): [ T, (newState: T) => void ] {
+  parse: Parser<T>
+): [T, (newState: T) => void] {
   let initialValue = defaultValue;
 
   try {
@@ -24,16 +24,21 @@ export function useStorageBackedState<T>(
     );
   }
 
-  const [ state, setState ] = useState(initialValue);
+  const [state, setState] = useState(initialValue);
 
-  const setStorageBackedState = useCallback((newValue: T) => {
-    try {
-      storage.setItem(key, encode(newValue));
-    } catch {
-      console.warn(`Failed attempt to persist state value storage key "${key}"; falling back to component state`);
-    }
-    setState(newValue);
-  }, [ encode ]);
+  const setStorageBackedState = useCallback(
+    (newValue: T) => {
+      try {
+        storage.setItem(key, encode(newValue));
+      } catch {
+        console.warn(
+          `Failed attempt to persist state value storage key "${key}"; falling back to component state`
+        );
+      }
+      setState(newValue);
+    },
+    [encode]
+  );
 
-  return [ state, setStorageBackedState ];
-};
+  return [state, setStorageBackedState];
+}

@@ -11,7 +11,7 @@ import { useStudyAccessApi } from '../study-access/studyAccessHooks';
 
 export type AsyncUserPermissions =
   | { loading: true }
-  | { loading: false, permissions: UserPermissions };
+  | { loading: false; permissions: UserPermissions };
 
 const memoizedPermissionsCheck = defaultMemoize(function (
   user: User,
@@ -24,17 +24,17 @@ export function usePermissions(): AsyncUserPermissions {
   const studyAccessApi = useStudyAccessApi();
 
   const permissions = useWdkService(
-    async wdkService => memoizedPermissionsCheck(
-      await wdkService.getCurrentUser({ force: true }),
-      studyAccessApi
-    ),
+    async (wdkService) =>
+      memoizedPermissionsCheck(
+        await wdkService.getCurrentUser({ force: true }),
+        studyAccessApi
+      ),
     [studyAccessApi]
   );
 
   return useMemo(
-    () => permissions == null
-      ? { loading: true }
-      : { loading: false, permissions },
-    [ permissions ]
+    () =>
+      permissions == null ? { loading: true } : { loading: false, permissions },
+    [permissions]
   );
 }

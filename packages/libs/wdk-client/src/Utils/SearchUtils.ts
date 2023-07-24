@@ -5,21 +5,27 @@
 import { escapeRegExp, deburr } from 'lodash';
 
 /**
-* Filter a provided list of (generic) items.
-* Uses a "multi-term" search approach.  The search expression is parsed into query terms
-* (space delimited; quoted strings treated as one term).  Items match if their searchable string contains
-* all of the terms.
-*
-* @param {Array<Object>} items           The list of items to filter
-* @param {function}   itemToSearchableString A function from item=>String.  Returns the searchable string, given an item
-* @param {string}     searchQueryString      The query, in string form, with which to filter records
-* @return {Array<Object>} an Array of items that pass the filter
-*/
-export function filterItems<T>(items: Array<T>, itemToSearchableString: (item: T) => string, searchQueryString: string) {
+ * Filter a provided list of (generic) items.
+ * Uses a "multi-term" search approach.  The search expression is parsed into query terms
+ * (space delimited; quoted strings treated as one term).  Items match if their searchable string contains
+ * all of the terms.
+ *
+ * @param {Array<Object>} items           The list of items to filter
+ * @param {function}   itemToSearchableString A function from item=>String.  Returns the searchable string, given an item
+ * @param {string}     searchQueryString      The query, in string form, with which to filter records
+ * @return {Array<Object>} an Array of items that pass the filter
+ */
+export function filterItems<T>(
+  items: Array<T>,
+  itemToSearchableString: (item: T) => string,
+  searchQueryString: string
+) {
   if (!searchQueryString || !items) return items;
 
   let terms = parseSearchQueryString(searchQueryString);
-  let predicate = function (item: T) { return areTermsInString(terms, itemToSearchableString(item)) };
+  let predicate = function (item: T) {
+    return areTermsInString(terms, itemToSearchableString(item));
+  };
   return items.filter(predicate);
 }
 
@@ -48,8 +54,11 @@ export function parseSearchQueryString(searchQueryString: string) {
  * @param searchableString The string to search.
  * @returns boolean
  */
-export function areTermsInString(queryTerms: Array<string>, searchableString: string) {
-  const re = new RegExp(areTermsInStringRegexString(queryTerms), "i");
+export function areTermsInString(
+  queryTerms: Array<string>,
+  searchableString: string
+) {
+  const re = new RegExp(areTermsInStringRegexString(queryTerms), 'i');
   return re.test(searchableString);
 }
 
@@ -67,9 +76,7 @@ export function areTermsInStringRegexString(queryTerms: Array<string>) {
 
 function combineQueryTermRegexStrs(queryTermRegexStrs: Array<string>) {
   return (
-    '^(?=[\\\s\\\S]*?' +
-    queryTermRegexStrs.join( ')(?=[\\\s\\\S]*?' ) +
-    ')[\\\s\\\S]*$'
+    '^(?=[\\s\\S]*?' + queryTermRegexStrs.join(')(?=[\\s\\S]*?') + ')[\\s\\S]*$'
   );
 }
 
@@ -88,21 +95,27 @@ export function makeSearchHelpText(itemDescription: string) {
  * @param {string} searchableString
  * @returns {boolean} true if a match
  */
-export function isTermInString(queryTerm: string, searchableString: string = '') {
+export function isTermInString(
+  queryTerm: string,
+  searchableString: string = ''
+) {
   if (!queryTerm) return true;
 
-  const re = new RegExp(isTermInStringRegexString(queryTerm), "i");
+  const re = new RegExp(isTermInStringRegexString(queryTerm), 'i');
   return re.test(deburr(searchableString));
 }
 
 function isTermInStringRegexString(queryTerm: string) {
   if (!queryTerm) {
-    return "";
+    return '';
   }
 
   const deburredQueryTerm = deburr(queryTerm);
   const escapedQueryTerm = escapeRegExp(deburredQueryTerm);
-  const queryTermRegexWithWildcards = escapedQueryTerm.replace(/\\\*/g, '[\\w]*');
+  const queryTermRegexWithWildcards = escapedQueryTerm.replace(
+    /\\\*/g,
+    '[\\w]*'
+  );
 
-  return "\\b" + queryTermRegexWithWildcards;
+  return '\\b' + queryTermRegexWithWildcards;
 }

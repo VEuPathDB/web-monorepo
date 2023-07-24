@@ -6,25 +6,27 @@
     & {
       display: flex;
       width: 100%;
-      border-bottom: 1px solid #CCC;
+      border-bottom: 1px solid #ccc;
     }
 
     .wdk-Tab {
       cursor: pointer;
-      background: #E6E6E6;
+      background: #e6e6e6;
       margin: 0 0.5em -1px 0;
-      border: 1px solid #CCC;
+      border: 1px solid #ccc;
       padding: 2px 6px;
 
       &__active {
-        background-color: #FAFAFA;
+        background-color: #fafafa;
         border-bottom: unset;
         border-top-right-radius: 4px;
         border-top-left-radius: 4px;
       }
 
-      &:hover, &:focus, &:active {
-        background: #C6C6C6;
+      &:hover,
+      &:focus,
+      &:active {
+        background: #c6c6c6;
       }
     }
   }
@@ -33,6 +35,6 @@
     position: relative;
     padding: 1em;
     border-top: none;
-    background-color: #FAFAFA;
+    background-color: #fafafa;
   }
 }

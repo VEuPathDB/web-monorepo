@@ -1,9 +1,9 @@
-import { Rectangle, useMap, Popup } from 'react-leaflet';
-import React, { useRef, useState } from 'react';
+import { useMap, Popup } from 'react-leaflet';
+import { useRef, useEffect } from 'react';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
-import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
+import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
@@ -11,6 +11,15 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   // A class to add to the popup element
   popupClass?: string;
 }
+
+/**
+ * These adjustments account for discrepancies between actual rendered positions vs what getBoundingClient returns
+ * NOTE: moreso determined by trial and error, nothing scientific
+ */
+const FINE_ADJUSTMENT = 5;
+const OFFSET_ADJUSTMENT = 35;
+// Default offset applied to popups. Not sure how/why the y-value is 7.
+const DEFAULT_OFFSET = [0, 7];
 
 // Which direction the popup should come out from the marker
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -31,12 +40,26 @@ export default function BoundsDriftMarker({
   popupClass,
   zIndexOffset,
 }: BoundsDriftMarkerProps) {
-  const [displayBounds, setDisplayBounds] = useState<boolean>(false);
   const map = useMap();
   const boundingBox = new LatLngBounds([
     [bounds.southWest.lat, bounds.southWest.lng],
     [bounds.northEast.lat, bounds.northEast.lng],
   ]);
+
+  const boundsRectangle = L.rectangle(boundingBox, {
+    color: 'gray',
+    weight: 1,
+  });
+  useEffect(() => {
+    /**
+     * Prevents an edge case where the boundsRectangle persists if simultaneously a marker is hovered
+     * and a user changes the viewport
+     */
+    return function cleanup() {
+      map.removeLayer(boundsRectangle);
+    };
+  }, [map, boundsRectangle]);
+
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
@@ -48,17 +71,39 @@ export default function BoundsDriftMarker({
   // rather, it seems to be exposed to upper level
   // i.e., current.leafletElement._icon -> current._icon
   const updatePopupOrientationRef = () => {
-    if (popupContent && map) {
+    if (popupContent && map && markerRef.current) {
       // Figure out if we're close to the map edge
       const mapRect = map.getContainer().getBoundingClientRect();
       const markerRect = markerRef.current._icon.getBoundingClientRect();
       const markerCenterX = (markerRect.left + markerRect.right) / 2;
+      const grayBoundsRect = boundsRectangle
+        .getElement()
+        ?.getBoundingClientRect();
+      /**
+       * Now that we anchor to the "highest" element (the marker or the gray box), we want to use the "higher" element
+       * when determining if the popup should orient up or down
+       * To please TypeScript, we'll fallback to markerRect.top if grayBoundsRect doesn't exist (though it should exist)
+       */
+      const topOfMarkerOrGrayBox = grayBoundsRect
+        ? markerRect.top < grayBoundsRect.top
+          ? markerRect.top
+          : grayBoundsRect.top
+        : markerRect.top;
 
-      if (markerRect.top - mapRect.top < popupContent.size.height) {
+      if (
+        topOfMarkerOrGrayBox - OFFSET_ADJUSTMENT - mapRect.top <
+        popupContent.size.height
+      ) {
         popupOrientationRef.current = 'down';
-      } else if (markerCenterX - mapRect.left < popupContent.size.width / 2) {
+      } else if (
+        markerCenterX - OFFSET_ADJUSTMENT / 2 - mapRect.left <
+        popupContent.size.width / 2
+      ) {
         popupOrientationRef.current = 'right';
-      } else if (mapRect.right - markerCenterX < popupContent.size.width / 2) {
+      } else if (
+        mapRect.right - OFFSET_ADJUSTMENT / 2 - markerCenterX <
+        popupContent.size.width / 2
+      ) {
         popupOrientationRef.current = 'left';
       } else {
         popupOrientationRef.current = 'up';
@@ -111,10 +156,74 @@ export default function BoundsDriftMarker({
     }
   });
 
+  const updateAnchorPosition = (orientation: PopupOrientation) => {
+    const grayBoundsRect = boundsRectangle
+      .getElement()
+      ?.getBoundingClientRect();
+    /**
+     * Early return if markerRef.current and popupRef.current are falsy. Include a check
+     * on grayBoundsRect in the early return to please TypeScript.
+     */
+    if (!markerRef.current || !popupRef.current || !grayBoundsRect) return;
+
+    const markerRect = markerRef.current._icon.getBoundingClientRect();
+    const markerIconRect =
+      markerRef.current._icon.firstChild.getBoundingClientRect();
+    const anchorRect = popupRef.current._tipContainer.getBoundingClientRect();
+    const { height: anchorHeight, width: anchorWidth } = anchorRect;
+    const popupRect = popupRef.current._container.getBoundingClientRect();
+
+    /**
+     * Within each conditional block, we will:
+     *  1.  check the position of the gray box vs the marker to determine which element the popup should
+     *      be anchored to
+     *  2.  set the popupRef's offset accordingly (with some fuzzy calculations)
+     */
+    if (orientation === 'down') {
+      const yOffset =
+        (markerIconRect.bottom > grayBoundsRect.bottom
+          ? markerIconRect.bottom
+          : grayBoundsRect.bottom) -
+        popupRect.top +
+        anchorHeight -
+        FINE_ADJUSTMENT / 2;
+      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+    } else if (orientation === 'right') {
+      const xOffset =
+        (markerIconRect.right > grayBoundsRect.right
+          ? markerIconRect.right
+          : grayBoundsRect.right) +
+        anchorWidth / 2 -
+        popupRect.left;
+      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+    } else if (orientation === 'left') {
+      const xOffset =
+        (markerRect.left < grayBoundsRect.left
+          ? markerRect.left
+          : grayBoundsRect.left) -
+        popupRect.right -
+        anchorWidth / 2;
+      popupRef.current.options.offset = [xOffset, DEFAULT_OFFSET[1]];
+    } else {
+      const yOffset =
+        (markerRect.top < grayBoundsRect.top
+          ? markerRect.top
+          : grayBoundsRect.top) -
+        FINE_ADJUSTMENT / 2 -
+        popupRect.bottom;
+      popupRef.current.options.offset = [FINE_ADJUSTMENT / 2, yOffset];
+    }
+  };
+
   const handlePopupOpen = () => {
+    if (!popupRef.current) return;
     // Orient the popup correctly
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
+
+    // Do this after updatePopupOrientationRef and orientPopup so that the actual popupRef's orientation (not to be mistaken
+    // with the popupOrientationRef) is updated by the time we use its getBoundingClientRect values
+    updateAnchorPosition(popupOrientationRef.current);
 
     // Watch for changes to the popup's styling
     const popupDOMNode = popupRef.current._container as HTMLElement;
@@ -122,10 +231,15 @@ export default function BoundsDriftMarker({
   };
 
   const handlePopupClose = () => {
+    if (!popupRef.current) return;
     observer.disconnect();
 
     // Have to do this again because styling is changed again on close
     orientPopup(popupOrientationRef.current);
+
+    // Set the popupRef's offsets back to the defaults so we use the same baseline position
+    // to calculate the popup offset in updateAnchorPosition
+    popupRef.current.options.offset = DEFAULT_OFFSET;
   };
 
   const popup = popupContent && (
@@ -146,23 +260,14 @@ export default function BoundsDriftMarker({
 
   const handleMouseOver = (e: LeafletMouseEvent) => {
     e.target._icon.classList.add('top-marker'); // marker on top
-
-    if (showPopup && popupContent) {
-      e.target.openPopup();
-    } else {
-      // there is a conflict with popup so bounds only shows no popup case
-      setDisplayBounds(true); // Display bounds rectangle
-    }
+    map.addLayer(boundsRectangle);
+    e.target.openPopup();
   };
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
     e.target._icon.classList.remove('top-marker'); // remove marker on top
-
-    if (showPopup && popupContent) {
-      e.target.closePopup();
-    } else {
-      setDisplayBounds(false); // Remove bounds rectangle
-    }
+    map.removeLayer(boundsRectangle);
+    e.target.closePopup();
   };
 
   const handleClick = (e: LeafletMouseEvent) => {
@@ -199,9 +304,6 @@ export default function BoundsDriftMarker({
       zIndexOffset={zIndexOffset}
       {...optionalIconProp}
     >
-      {displayBounds ? (
-        <Rectangle bounds={boundingBox} color={'gray'} weight={1}></Rectangle>
-      ) : null}
       {showPopup && popup}
     </ReactLeafletDriftMarker>
   );

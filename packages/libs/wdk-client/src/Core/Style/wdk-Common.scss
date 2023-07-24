@@ -9,8 +9,9 @@
  *
  * The media selector targets Chrome and Safari only
  */
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  html, body {
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  html,
+  body {
     position: relative;
   }
 }
@@ -31,43 +32,44 @@ html {
 body {
   font-size: 12px;
   text-align: left;
-	color: #000000;
-	background-color: #ffffff;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	white-space: normal;
-	background-repeat: repeat-x;
+  color: #000000;
+  background-color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  white-space: normal;
+  background-repeat: repeat-x;
   min-width: 1000px;
 }
 
-body, body * {
+body,
+body * {
   box-sizing: border-box;
 }
 
 h1 {
-	font-size: 170%;   /* 20px; */
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	text-align: center;
-	margin-bottom: 14px;
+  font-size: 170%; /* 20px; */
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 14px;
 }
 
 h2 {
-	font-size: 150%;   /* 18px; */
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	margin-bottom: 11px;
- 	text-align: left;
-	margin-left: 11px;
+  font-size: 150%; /* 18px; */
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  margin-bottom: 11px;
+  text-align: left;
+  margin-left: 11px;
 }
 
 h3 {
-	font-size: 120%;   /* 14px; */
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	margin-bottom: 11px;
- 	text-align: left;
-	margin-left: 11px;
+  font-size: 120%; /* 14px; */
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  margin-bottom: 11px;
+  text-align: left;
+  margin-left: 11px;
 }
 
 ul {
@@ -75,16 +77,18 @@ ul {
   margin: 0 0 0 1.5em;
 }
 
-a:link, a:visited {
-	text-decoration: none;
+a:link,
+a:visited {
+  text-decoration: none;
 }
 
-a:hover, a:active {
-	text-decoration: none;
+a:hover,
+a:active {
+  text-decoration: none;
 }
 
 p {
-	margin: 1em 0;
+  margin: 1em 0;
 }
 
 td {
@@ -101,64 +105,64 @@ img[data-assets-src][src] {
 }
 
 .h2center {
-	font-size: 150%;
-	font-weight: bold;
-	color:  black;
-	margin-bottom: 11px;
- 	text-align: center;
-	margin-left: 11px;
+  font-size: 150%;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 11px;
+  text-align: center;
+  margin-left: 11px;
 }
 .h3center {
-	font-size: 120%;
-	font-weight: bold;
-	color:  black;
-	margin-bottom: 5px;
- 	text-align: center;
+  font-size: 120%;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 5px;
+  text-align: center;
 }
 
 .h3left {
-	font-size: 120%;
-	font-weight: bold;
-	color:  black;
-	margin-bottom: 11px;
- 	text-align: left;
+  font-size: 120%;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 11px;
+  text-align: left;
   line-height: 1;
 }
 
 .h4left {
-/*	font-size: 130%; */
-	font-weight: bold;
-	color:  black;
- 	text-align: left;
+  /*	font-size: 130%; */
+  font-weight: bold;
+  color: black;
+  text-align: left;
 }
 .h4center {
-/*	font-size: 130%; */
-	font-weight: bold;
-	color:  black;
- 	text-align: center;
+  /*	font-size: 130%; */
+  font-weight: bold;
+  color: black;
+  text-align: center;
 }
 .large {
-	font-size: 18px;
-	font-weight: bold;
-	line-height: 23px;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 23px;
 }
 .larger {
-	font-size: 22px;
-	font-weight: bold;
-	line-height: 28px;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 28px;
 }
 
 .small {
-	font-size: 95%;
+  font-size: 95%;
 }
 
 .tiny-text {
-	font-size: 9px;
+  font-size: 9px;
 }
 
 #wrap {
-	width: 100%;
-	text-align: left;
+  width: 100%;
+  text-align: left;
 }
 
 .muted {
@@ -166,32 +170,32 @@ img[data-assets-src][src] {
 }
 
 .clear {
-   clear:both;
+  clear: both;
 }
 
 .fltrt {
-	float: right;
-	margin-left: 8px;
+  float: right;
+  margin-left: 8px;
 }
 .fltlft {
-	float: left;
-	margin-right: 8px;
+  float: left;
+  margin-right: 8px;
 }
 .clearfloat {
-	clear:both;
-    height:0;
-    font-size: 1px;
-    line-height: 0px;
+  clear: both;
+  height: 0;
+  font-size: 1px;
+  line-height: 0px;
 }
 
 #full {
-	width: 100%;
-	text-align: center;
-	clear: both;
+  width: 100%;
+  text-align: center;
+  clear: both;
 }
 #center {
-	width: 100%;
-	text-align: center;
+  width: 100%;
+  text-align: center;
 }
 .acenter {
   text-align: center;
@@ -239,7 +243,7 @@ button.wdk-Link {
 .wdk-editable:hover {
   /* 	border-bottom:1px dashed black; */
   /*  outline: 1px solid blue; */
-   background-color:#EDEDED;
+  background-color: #ededed;
 }
 
 .wdk-editable-show {
@@ -298,7 +302,7 @@ button.wdk-Link {
 
 .qtip-tipsy {
   background: rgb(75, 75, 75);
-  background: rgba(75, 75, 75, .97);
+  background: rgba(75, 75, 75, 0.97);
   box-shadow: 0px 0px 3px #c9c9c9;
 }
 .qtip-tipsy .qtip-content a,
@@ -318,7 +322,7 @@ button.wdk-Link {
   background-color: #fffceb;
   padding: 4px;
   z-index: 1;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   border: none;
   font: unset;
@@ -359,7 +363,7 @@ button.wdk-Link {
 }
 .wdk-feature-tooltip .dismiss-wrapper label {
   font-size: 75%;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -374,9 +378,13 @@ button.wdk-Link {
   *border-collapse: expression('separate', cellSpacing = '3px');
 }
 
-#login th { border-width: 0px 0px 0px 0px; }
+#login th {
+  border-width: 0px 0px 0px 0px;
+}
 
-#login td { margin-top: 3px; }
+#login td {
+  margin-top: 3px;
+}
 
 #wdk-dialog-login-form input {
   margin: 0 4px;
@@ -413,7 +421,7 @@ button.wdk-Link {
   width: auto;
   z-index: 520;
   /* display: inline; */
-/*  list-style-type: none; */
+  /*  list-style-type: none; */
   padding-right: 15px;
   background-image: url('images/menu_divider.png');
   background-position: center right;
@@ -429,34 +437,35 @@ button.wdk-Link {
 }
 
 #nav-top .nav-last {
-  padding-right:5px
+  padding-right: 5px;
 }
-#nav-top a:link, #nav-top a:visited {
+#nav-top a:link,
+#nav-top a:visited {
   display: block;
   color: black;
   width: auto;
   text-decoration: none;
 }
-#nav-top a:hover, #nav-top a:active {
+#nav-top a:hover,
+#nav-top a:active {
   display: block;
-  color: #0000CD;
+  color: #0000cd;
   width: auto;
   text-decoration: none;
 }
-
 
 #nav-top li ul {
   position: absolute;
   width: 13em;
   text-align: left;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border: solid #808080 1px;
   display: none;
   z-index: 520;
 }
 
 #nav-top li ul li {
-	/*display: block;*/
+  /*display: block;*/
   width: 100%;
   margin: 0px;
   padding: 0px;
@@ -464,23 +473,22 @@ button.wdk-Link {
 }
 
 #nav-top li ul li a {
-	display: block;
-	width: 100%;
-	margin: 0px;
-	border: 0px;
-	padding: 3px;
+  display: block;
+  width: 100%;
+  margin: 0px;
+  border: 0px;
+  padding: 3px;
 }
 
 #nav-top li ul li a:hover {
-	background-color: white;
+  background-color: white;
 }
-
 
 /***** Styles for Pop-Up Dialogs *****/
 
 .popup-dialog {
   width: 650px;
-  text-decoration:none;
+  text-decoration: none;
 }
 .popup-dialog h2 {
   font-size: 16px;
@@ -499,47 +507,47 @@ button.wdk-Link {
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 ul.menubar {
-    border-bottom: 1px solid;
-    list-style-image:none;
-    list-style-position:outside;
-    list-style-type:none;
-    float:left;
-    display:inline-block;
-    margin:0 0 5px;
-    padding:0 10px;
-    width: 98%;
+  border-bottom: 1px solid;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  float: left;
+  display: inline-block;
+  margin: 0 0 5px;
+  padding: 0 10px;
+  width: 98%;
 }
 
 .menubar li {
-    float:left;
-    padding:0.24em 0;
-    margin:0;
+  float: left;
+  padding: 0.24em 0;
+  margin: 0;
 }
 
 .menubar li a {
-    color:black;
-    display:inline-block;
-    padding:0.24em 1em;
-    text-align:center;
-    text-decoration:none;
+  color: black;
+  display: inline-block;
+  padding: 0.24em 1em;
+  text-align: center;
+  text-decoration: none;
 }
 
 .menubar li a:hover {
-    color:black;
-    font-weight:bold;
-    padding:0.24em 0.8em;
-    position:relative;
+  color: black;
+  font-weight: bold;
+  padding: 0.24em 0.8em;
+  position: relative;
 }
 
 .menubar .selected_type {
-    background-color: #FFFFA0;
+  background-color: #ffffa0;
 }
 
 .menubar .selected_type a {
-    color:black;
-    padding:0.24em 0.8em;
-    font-weight:bold;
-    position:relative;
+  color: black;
+  padding: 0.24em 0.8em;
+  font-weight: bold;
+  position: relative;
 }
 
 /* used in new search page
@@ -552,7 +560,7 @@ ul.menubar {
 */
 /* temporary search page, look like old one */
 .content-pane.collapsible {
-  background:#fafafa;
+  background: #fafafa;
   border: 1px solid lightgray;
   border-radius: 6px;
 }
@@ -562,11 +570,11 @@ ul.menubar {
 }
 
 .content-pane.collapsible.collapsed:hover {
-  background:#fafafa;
+  background: #fafafa;
 }
 
 .snippet .ui-icon-arrowthickstop-1-s,
-.snippet .ui-icon-arrowthickstop-1-n ,
+.snippet .ui-icon-arrowthickstop-1-n,
 .truncate .ui-icon-arrowthickstop-1-s,
 .truncate .ui-icon-arrowthickstop-1-n {
   display: inline-block;
@@ -574,7 +582,8 @@ ul.menubar {
   top: 0.3em;
 }
 
-.truncate-toggle, .snippet-toggle {
+.truncate-toggle,
+.snippet-toggle {
   font-size: 11px;
 }
 
@@ -590,14 +599,13 @@ ul.menubar {
   font-size: 1.6em;
 }
 
-.group-title span{
-	position: relative;
-	top: -5px;
-
+.group-title span {
+  position: relative;
+  top: -5px;
 }
 
 .param-group[type='ShowHide'] {
-  background-color: #DEDEDE;
+  background-color: #dedede;
   border: 1px solid white;
 }
 
@@ -606,7 +614,6 @@ ul.menubar {
 }
 
 .param-group[type='ShowHide'] .group-detail {
-
 }
 
 .param-group .group-detail.hidden {
@@ -622,26 +629,26 @@ ul.menubar {
   font-size: 1.4em;
 }
 
-div.param-group div#grp-descr{
-  margin:0 0 1em 5px;
+div.param-group div#grp-descr {
+  margin: 0 0 1em 5px;
 }
 
 .param-item {
   display: block;
-  margin-top: 1em;  /* 5px; */
+  margin-top: 1em; /* 5px; */
   margin-bottom: 2em; /* 5px; */
 }
 
 .param-item p {
-  margin-left:5px;
-  margin-bottom:5px;
-  font-style:italic
+  margin-left: 5px;
+  margin-bottom: 5px;
+  font-style: italic;
 }
 
 .param-item > label {
   display: block;
-  margin: 1em 0 .5em 0;
-  padding: .5em 0;
+  margin: 1em 0 0.5em 0;
+  padding: 0.5em 0;
   border-bottom: 1px solid lightgray;
   font-weight: 500;
   font-size: 1.5em;
@@ -687,13 +694,14 @@ div.param-group div#grp-descr{
 */
 
 .param-control td {
- /*  vertical-align: top; is messing up the datasetParam not sure where else these are used*/
+  /*  vertical-align: top; is messing up the datasetParam not sure where else these are used*/
 }
 .param-control .jstree-classic.jstree-focused {
   background: transparent;
 }
 
-.param-group td, .param-group th {
+.param-group td,
+.param-group th {
   /*  padding: 3px;  we have 4px already by default */
 }
 .param-group td.disabled {
@@ -701,28 +709,29 @@ div.param-group div#grp-descr{
 }
 /* css for the tree box enum param */
 .param-group .term-children {
-    display: none;
+  display: none;
 }
 
-.param-group img.plus-minus, .param-group .term-node input {
-    float: left;
+.param-group img.plus-minus,
+.param-group .term-node input {
+  float: left;
 }
 
 .param-group .term-node span {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 .param-group .term-node {
-    clear: left;
-    line-height: 1.5;
+  clear: left;
+  line-height: 1.5;
 }
 
 .param-controls {
-    float: left;
-    clear: left;
+  float: left;
+  clear: left;
 }
 
-.param[data-type="type-ahead"] > div:first-child {
+.param[data-type='type-ahead'] > div:first-child {
   line-height: 2;
 }
 
@@ -732,21 +741,37 @@ div.param-group div#grp-descr{
   list-style: none;
 }
 .enumParam ul li {
-  margin-top: .4em;
-  margin-bottom: .4em;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
 }
 .param .jstree ul li {
   margin-top: 0;
   margin-bottom: 0;
 }
 
-.params .invalid-params { padding:10px 5px 5px 100px; font-weight: bold; }
-.params .invalid-params ul { list-style:disc outside none; margin:2px 2px 2px 15px; }
-.params .invalid-params li { color:red; }
+.params .invalid-params {
+  padding: 10px 5px 5px 100px;
+  font-weight: bold;
+}
+.params .invalid-params ul {
+  list-style: disc outside none;
+  margin: 2px 2px 2px 15px;
+}
+.params .invalid-params li {
+  color: red;
+}
 
-.params .invalid-values { padding:5px; font-weight: bold; }
-.params .invalid-values ul { list-style:disc outside none; margin:2px 2px 2px 15px; }
-.params .invalid-values li.invalid { color:red; }
+.params .invalid-values {
+  padding: 5px;
+  font-weight: bold;
+}
+.params .invalid-values ul {
+  list-style: disc outside none;
+  margin: 2px 2px 2px 15px;
+}
+.params .invalid-values li.invalid {
+  color: red;
+}
 
 .params .invalid-values__filter-param {
   align-self: flex-start;
@@ -758,30 +783,27 @@ div.param-group div#grp-descr{
 
 /* ======= Needed in treeParams, when param value is so long that it wraps (plasmo mass spec) ========*/
 .checkbox-tree .jstree-icon {
-  vertical-align:top;
+  vertical-align: top;
 }
 .checkbox-tree li a span {
-  white-space:normal;
+  white-space: normal;
 }
-
-
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SEARCH PAGE:enumParamInputNode, also apicomm DQG_bubble
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 img.plus-minus {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .type-ahead-help {
-    color: #666666;
-    font-size: smaller;
+  color: #666666;
+  font-size: smaller;
 }
 
 .search-section {
   margin: 2em 0;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =STRUCTURE STRATEGY WORKSPACE
@@ -789,41 +811,40 @@ img.plus-minus {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #contentwrapper {
-	padding: 12px 0;
+  padding: 12px 0;
   position: relative;
 }
 
 #contentcolumn2 {
-	min-width: 900px;
+  min-width: 900px;
   margin: 0 8px;
 }
 
-.innertube{
-	margin: 6px;
+.innertube {
+  margin: 6px;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      = STRATEGY tabs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 ul#strategy_tabs {
-    font-size: 15px;
-    border-bottom: 1px solid #777;
-    margin:0 0 1px;
-    padding:0 10px;
-    height: 24.5px;
-    width: 98%;
+  font-size: 15px;
+  border-bottom: 1px solid #777;
+  margin: 0 0 1px;
+  padding: 0 10px;
+  height: 24.5px;
+  width: 98%;
 }
 
 #strategy_tabs li {
-    display: inline;
-    list-style-type: none;
-    margin:0;
-    padding: 0;
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 #search_history {
-	min-height: 130px;
+  min-height: 130px;
 }
 
 #strategy_new {
@@ -831,40 +852,43 @@ ul#strategy_tabs {
 }
 
 .workspace_panel {
-	clear: both;
-	position: absolute;
-	left: -999em;
-	width:100%;
+  clear: both;
+  position: absolute;
+  left: -999em;
+  width: 100%;
 }
 
-#strategy_tabs a:link, #strategy_tabs a:visited, #strategy_tabs li span {
-    border-color: #CCCCCC #CCCCCC #777777;
-    border-style: solid;
-    border-width: 1px;
-    float: left;
-    padding:0.3em 1em;
-    text-align:center;
-    text-decoration:none;
-    line-height: 1;
+#strategy_tabs a:link,
+#strategy_tabs a:visited,
+#strategy_tabs li span {
+  border-color: #cccccc #cccccc #777777;
+  border-style: solid;
+  border-width: 1px;
+  float: left;
+  padding: 0.3em 1em;
+  text-align: center;
+  text-decoration: none;
+  line-height: 1;
 }
 
 #strategy_tabs #selected a {
-    background-color: #FFFFFF;
-    border-color: #777777 #777777 #FFFFFF;
-    color: #000000;
-    font-weight:bold;
+  background-color: #ffffff;
+  border-color: #777777 #777777 #ffffff;
+  color: #000000;
+  font-weight: bold;
 }
 
 #strategy_tabs li span#stratTitle {
-	border:none;
-	padding-left:0em;
+  border: none;
+  padding-left: 0em;
 }
 
-span.subscriptCount, font.subscriptCount {
-	color:#600000;   /*dark red, tested against color blindness */
-	display:inline;
-	font-size:12px;
-	vertical-align:middle;
+span.subscriptCount,
+font.subscriptCount {
+  color: #600000; /*dark red, tested against color blindness */
+  display: inline;
+  font-size: 12px;
+  vertical-align: middle;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -872,9 +896,8 @@ span.subscriptCount, font.subscriptCount {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 div#history-menu .ui-tabs-panel {
-	border:0;
+  border: 0;
 }
-
 
 /* see https://redmine.apidb.org/issues/9167#note-8
 table.datatables tr.headerrow th {
@@ -883,7 +906,7 @@ table.datatables tr.headerrow th {
 */
 
 .ui-dialog-title {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .no-close .ui-dialog-titlebar-close {
@@ -894,35 +917,39 @@ table.datatables tr.headerrow th {
     =RED BUTTON   ==> TO STRATEGY.css??
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 a.redbutton {
-   display: block;
-   text-decoration: none;
-   background-attachment: scroll;
-   background-color: transparent;
-   background-image: url(images/redboxb.gif);
-   background-position: right top;
-   background-repeat: no-repeat;
+  display: block;
+  text-decoration: none;
+  background-attachment: scroll;
+  background-color: transparent;
+  background-image: url(images/redboxb.gif);
+  background-position: right top;
+  background-repeat: no-repeat;
 }
 
 a.redbutton span {
-   display: block;
-   color: #FFFFFF;
-   font: normal 13px arial, sans-serif;
-   line-height: 13px;
-   padding: 15px 21px 12px;
-   text-decoration: none;
+  display: block;
+  color: #ffffff;
+  font: normal 13px arial, sans-serif;
+  line-height: 13px;
+  padding: 15px 21px 12px;
+  text-decoration: none;
 }
 
 a.redbutton:active {
-   background-position: bottom right;
-   color: #cecece;
-   outline: none; /* hide dotted outline in Firefox */
+  background-position: bottom right;
+  color: #cecece;
+  outline: none; /* hide dotted outline in Firefox */
 }
 
 a.redbutton:active span {
-   padding: 16px 21px 11px; /* push text down 1px */
+  padding: 16px 21px 11px; /* push text down 1px */
 }
 
-a.button { padding: 2px 5px; line-height:30px; margin: 3px; }
+a.button {
+  padding: 2px 5px;
+  line-height: 30px;
+  margin: 3px;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =RESULTS PAGE
@@ -933,8 +960,8 @@ a.button { padding: 2px 5px; line-height:30px; margin: 3px; }
 } */
 
 #text_strategy_number {
-	color:black;
-/* wdk-editable does this
+  color: black;
+  /* wdk-editable does this
   font-style:italic;
 	font-weight:normal;
   padding:4px;
@@ -943,58 +970,56 @@ a.button { padding: 2px 5px; line-height:30px; margin: 3px; }
 }
 
 /* span.wdk-editable:hover { */
-  /* 	border-bottom:1px dashed black; */
-  /*  outline: 1px solid blue; */
-  /* background-color:#EDEDED; */
+/* 	border-bottom:1px dashed black; */
+/*  outline: 1px solid blue; */
+/* background-color:#EDEDED; */
 /* } */
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      = Download page
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .download-block {
-		padding: 1em;
-		border-bottom: 1px solid grey;
-		margin-bottom: 1em;
+  padding: 1em;
+  border-bottom: 1px solid grey;
+  margin-bottom: 1em;
 }
 .download-block h3 {
-		margin-left: 0;
+  margin-left: 0;
 }
 .download-block select {
-		font-size:110%;
+  font-size: 110%;
 }
 .download-note {
-		font-size:120%;
-		font-style:italic;
-		margin-top:1em;
+  font-size: 120%;
+  font-style: italic;
+  margin-top: 1em;
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      = Advanced Paging Pop Up initial style
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .advanced-paging {
-  display:none;
-  position:absolute;
-  border:solid 2px #888888;   /* #B2BFD4;   */
-  background-color:#c2cee1;
-  padding:5px;
+  display: none;
+  position: absolute;
+  border: solid 2px #888888; /* #B2BFD4;   */
+  background-color: #c2cee1;
+  padding: 5px;
 }
 
-.advanced-paging span#CAP{
-  font-size:7pt;
-  cursor:pointer;
-  left:250px;
-  position:absolute;
-  top:0px;
+.advanced-paging span#CAP {
+  font-size: 7pt;
+  cursor: pointer;
+  left: 250px;
+  position: absolute;
+  top: 0px;
 }
 
 .advanced-paging div.text {
-	font-size: 110%;
-	padding-bottom: 5px;
+  font-size: 110%;
+  padding-bottom: 5px;
 }
 .advanced-paging .submit {
-		float:right;
+  float: right;
 }
 
 table.Results_Table {
@@ -1002,49 +1027,47 @@ table.Results_Table {
 }
 
 td.headerrow {
-	height: 29px;
-	font-size: 15px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	background-repeat: repeat-x;
-	background-position: top;
-	font-weight: bold;
-	padding: 4px;
+  height: 29px;
+  font-size: 15px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  background-repeat: repeat-x;
+  background-position: top;
+  font-weight: bold;
+  padding: 4px;
 }
 
-
 tr.headerrow {
-	height: 29px;
-	font-size: 15px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	padding: 4px;
+  height: 29px;
+  font-size: 15px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  padding: 4px;
 }
 
 tr.headerrow > th {
-	background-repeat: repeat-x;
-	background-position: top;
-	background-color: #f2f2f2;
+  background-repeat: repeat-x;
+  background-position: top;
+  background-color: #f2f2f2;
 }
 
-
 td.subheaderrow {
-	height: 30px;
-	font-size: 13px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #474747;
-	background-repeat: repeat-x;
-	background-position: top;
-	font-weight: bold;
-	padding: 4px;
+  height: 30px;
+  font-size: 13px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  color: #474747;
+  background-repeat: repeat-x;
+  background-position: top;
+  font-weight: bold;
+  padding: 4px;
 }
 
 tr.subheaderrow {
-	height:30px;
-	font-size: 12px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-/*	color: #474747; */
-	font-weight: bold;
-	padding: 4px;
+  height: 30px;
+  font-size: 12px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  /*	color: #474747; */
+  font-weight: bold;
+  padding: 4px;
 }
 
 tr.subheaderrow th {
@@ -1052,166 +1075,178 @@ tr.subheaderrow th {
 }
 
 td.lines {
-	padding: 4px;
+  padding: 4px;
 }
 
 td.linesalt {
-	background-color: #EEEEEE;
-	padding: 4px;
+  background-color: #eeeeee;
+  padding: 4px;
 }
 
-.result-message { width:75%; margin:5px auto; padding:10px; color:#990000; font-weight:bold; text-align:center; line-height:20px; }
+.result-message {
+  width: 75%;
+  margin: 5px auto;
+  padding: 10px;
+  color: #990000;
+  font-weight: bold;
+  text-align: center;
+  line-height: 20px;
+}
 
 table.results {
-	margin-top: 6px;
+  margin-top: 6px;
 }
 
 tr.subheaderrow th {
-	border: 0;
-	border-style: solid;
+  border: 0;
+  border-style: solid;
 }
 
 tr.headerrow th {
-/*	white-space: nowrap; */
-	font-size: 12px;
-	vertical-align:	middle;
-	padding: 1px 2px;
-	border-width: 1px;  /* 2px 1px 2px 1px; */  /* 2px 0 2px 0; results headers side borders */
-	border-style: solid;
-                              border-color: #aaa;
+  /*	white-space: nowrap; */
+  font-size: 12px;
+  vertical-align: middle;
+  padding: 1px 2px;
+  border-width: 1px; /* 2px 1px 2px 1px; */ /* 2px 0 2px 0; results headers side borders */
+  border-style: solid;
+  border-color: #aaa;
 }
 
 /* result column headers */
 tr.headerrow th table tbody tr td {
-	padding: 1px;
-/*	white-space: nowrap; */
-	vertical-align: middle;
-	font-size: 12px;
+  padding: 1px;
+  /*	white-space: nowrap; */
+  vertical-align: middle;
+  font-size: 12px;
   line-height: 1;
 }
 
 tr.headerInternalRow td {
-	vertical-align: middle;
+  vertical-align: middle;
 }
 
 tr.lines {
-	background-color: white; /* whitesmoke; */ /* was #FFFFFF */
+  background-color: white; /* whitesmoke; */ /* was #FFFFFF */
 }
 
 tr.linesalt > td {
-/*	background-color: #DDDDDD; */
-	background-color: #fbfbfb;  /* #EEEEEE; */
+  /*	background-color: #DDDDDD; */
+  background-color: #fbfbfb; /* #EEEEEE; */
 }
 
-tr.lines td, tr.linesalt td {
-  padding: 2px;  /* padding: 0px 2px;*/
-  vertical-align: middle;  /* results table:  basket in the middle */
-  border-left: 1px solid #CCCCCC;
+tr.lines td,
+tr.linesalt td {
+  padding: 2px; /* padding: 0px 2px;*/
+  vertical-align: middle; /* results table:  basket in the middle */
+  border-left: 1px solid #cccccc;
 }
-
 
 div.Workspace {
-   position: relative;
- 	border: 2px solid #0B4796;
-	margin-top:5px;
-	padding: 6px;
-
+  position: relative;
+  border: 2px solid #0b4796;
+  margin-top: 5px;
+  padding: 6px;
 }
 
 /* XXX image doesn't exist in repo
 .step {background-image: url(images/loading_step.png);}
 */
 
-
 tr.headerRow {
-	background: #EFEFEF;
+  background: #efefef;
 }
 
 tr.headerRow th {
-   border-left: black solid thin;
-   border-right: black solid thin;
+  border-left: black solid thin;
+  border-right: black solid thin;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =RESULTS:  addAttributes.tag used in resultTable.tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .formPopup {
-	position: absolute;
-	background-color: #FFFFFF;
-	background-repeat: repeat-x;
-	background-position: 0 26px;   /* was 36px, decreased to have Add Step title thiner */
-	border: 1px solid #888888;
-	padding: 0 8px 8px 8px;
-	z-index: 190;   /* as good as 1000... in select columns popup to cover results */
+  position: absolute;
+  background-color: #ffffff;
+  background-repeat: repeat-x;
+  background-position: 0 26px; /* was 36px, decreased to have Add Step title thiner */
+  border: 1px solid #888888;
+  padding: 0 8px 8px 8px;
+  z-index: 190; /* as good as 1000... in select columns popup to cover results */
 }
 
 .attributesList {
-	display: none;
-	text-align: left;
-	min-width: 300px;
+  display: none;
+  text-align: left;
+  min-width: 300px;
 }
 
 .attributesFormWrapper {
-	font-family: Arial, Helvetica, sans-serif;
-	font-weight: normal;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
 }
 
 .formButtonPanel {
-	text-align: center;
-	padding: 5px;
+  text-align: center;
+  padding: 5px;
 }
-
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RESULTS PAGE: column summaries
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 .rotate45 {
-  -webkit-transform:rotate(45deg);
-  -moz-transform:rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
   -o-transform: rotate(45deg);
 }
 
 .rotate90 {
-  -webkit-transform:rotate(90deg);
-  -moz-transform:rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
   -o-transform: rotate(90deg);
   filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
 
-#flot-tooltip { position:absolute; display:block; border:1px solid #fdd; padding:3px; border-radius:3px; background-color:#ffe; z-index:100000000000; }
+#flot-tooltip {
+  position: absolute;
+  display: block;
+  border: 1px solid #fdd;
+  padding: 3px;
+  border-radius: 3px;
+  background-color: #ffe;
+  z-index: 100000000000;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = RESULT PAGE and basket title and links
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 table#title-links {
-	font-size:12px;
-/*we need to figure out why the font size in this table becomes different when used in basket vs results table */
+  font-size: 12px;
+  /*we need to figure out why the font size in this table becomes different when used in basket vs results table */
 }
 div#Summary_Views {
-	border:0;
+  border: 0;
 }
 div#Summary_Views > .ui-tabs-nav {
-position: relative;
-z-index: 1;
-overflow: hidden;
-padding: 0;
-margin: 1em 0 -1px;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  padding: 0;
+  margin: 1em 0 -1px;
 }
 
 .result-panel-container {
   min-height: 25em;
 }
 button.wdk-StepActionButton {
-  color: #FFF;
-  background: #4F81BD;
+  color: #fff;
+  background: #4f81bd;
   border-color: #346792;
-  box-shadow: 0px 0px 1px #245F92;
+  box-shadow: 0px 0px 1px #245f92;
   padding: 1px 1em;
-  margin-left: .5em;
+  margin-left: 0.5em;
   font-weight: normal;
   font-size: smaller;
   border-radius: 4px;
@@ -1220,15 +1255,16 @@ button.wdk-StepActionButton {
 button.wdk-StepActionButton:hover,
 button.wdk-StepActionButton:active,
 button.wdk-StepActionButton:focus {
-  background: #357EBD;
+  background: #357ebd;
   /*border-color: #245F92;*/
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = RESULTS used in group default view (orthomcl)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.record-panel { overflow:auto; }
-
+.record-panel {
+  overflow: auto;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    =USER PROFILE-RELATED FORM STYLES
@@ -1262,7 +1298,7 @@ div.user-form-frame td {
 }
 
 div.user-form-frame ul {
-	margin-left: 7px;
+  margin-left: 7px;
   list-style-type: circle;
   list-style-position: inside;
 }
@@ -1271,16 +1307,19 @@ div.user-form-frame ul {
 	 =RECORD PAGE tables: in toggle.tag and wdkTable.tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-table.center {margin-left:auto; margin-right:auto;}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
 
 table.paneltoggle {
-        background:#dddddd;
-        margin-top: 5px;
-        margin-bottom:0px;
-        padding-top: 2.5px;
-        padding-right: 3px;
-        padding-bottom: 2.5px;
-        padding-left: 3px;
+  background: #dddddd;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  padding-top: 2.5px;
+  padding-right: 3px;
+  padding-bottom: 2.5px;
+  padding-left: 3px;
 }
 
 table.recordTable {
@@ -1290,56 +1329,59 @@ table.recordTable {
   border-left: black solid thin;
 }
 
-
-.wdk-table { border:black solid thin; }
-.wdk-table-description { color:#666666; }
+.wdk-table {
+  border: black solid thin;
+}
+.wdk-table-description {
+  color: #666666;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = toggle.tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.toggle {display: none;}
-.boggle {
-	margin: 6px 20px 20px 20px;
-	display: none;
-	overflow-x: auto;
+.toggle {
+  display: none;
 }
-
+.boggle {
+  margin: 6px 20px 20px 20px;
+  display: none;
+  overflow-x: auto;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = wdkTable.tag
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 tr.rowMedium {
-    background-color: #DDDDDD;
-    color: black;
-    font-family: arial;
-	font-size: 10pt;
+  background-color: #dddddd;
+  color: black;
+  font-family: arial;
+  font-size: 10pt;
 }
 tr.rowMedium td {
-    padding-left:   5px;
-    padding-top:    5px;
-    padding-bottom: 5px;
-    padding-right: 4px;
-    border-left: black dotted thin;
-    border-right: black dotted thin;
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 4px;
+  border-left: black dotted thin;
+  border-right: black dotted thin;
 }
 tr.rowLight {
-    background-color: whitesmoke; /* was #FFFFFF */
-    color: black;
-    font-family: arial;
-	font-size: 10pt;
+  background-color: whitesmoke; /* was #FFFFFF */
+  color: black;
+  font-family: arial;
+  font-size: 10pt;
 }
 
 tr.rowLight td {
-    padding-left:   5px;
-    padding-top:    5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    border-left: black dotted thin;
-    border-right: black dotted thin;
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  border-left: black dotted thin;
+  border-right: black dotted thin;
 }
-
 
 table.dataTable tr {
   border-left: 1px solid rgba(0, 0, 0, 0.08);
@@ -1347,7 +1389,7 @@ table.dataTable tr {
 }
 
 table.dataTable tr.even {
-  background-color: rgba(0,0,0,0.02);
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 table.dataTable tr.odd {
@@ -1370,8 +1412,8 @@ table.dataTable tr.odd {
   /* styling block for plus/minus */
   display: inline-block;
   position: absolute;
-  top: .5em;
-  left: .2em;
+  top: 0.5em;
+  left: 0.2em;
 }
 .collapsible-title span.ui-icon.wdk-icon-plus {
   background-image: url(images/plus.gif);
@@ -1379,42 +1421,47 @@ table.dataTable tr.odd {
 .collapsible-title span.ui-icon.wdk-icon-minus {
   background-image: url(images/minus.gif);
 }
-.collapsible-title, .collapsible-content, .notcollapsible  {
+.collapsible-title,
+.collapsible-content,
+.notcollapsible {
   padding: 0.5rem 1.5rem;
 }
 .collapsible-content {
-/*   border-top: 1px solid #DDD; */
+  /*   border-top: 1px solid #DDD; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =RECORD PAGE section titles (top bottom border look)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-tr.headerRow > td,th {
-   border-width:2px 0;
-   border-style:solid;
-   vertical-align: middle;
-   padding: 4px;
+tr.headerRow > td,
+th {
+  border-width: 2px 0;
+  border-style: solid;
+  vertical-align: middle;
+  padding: 4px;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =RECORD page:  wdk/jsp/records/default.jsp
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.fixed {font-family:courier, fixed-width, monospace; font-size:10pt; color:#000000;}
-
-
-#basket-control {
-    margin: 5px;
-    text-align: center;
+.fixed {
+  font-family: courier, fixed-width, monospace;
+  font-size: 10pt;
+  color: #000000;
 }
 
+#basket-control {
+  margin: 5px;
+  text-align: center;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =blockUI popups
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.blockMsg{
-	background-repeat: repeat-x;
+.blockMsg {
+  background-repeat: repeat-x;
   z-index: 1001;
   position: fixed;
   padding: 10px;
@@ -1431,53 +1478,51 @@ tr.headerRow > td,th {
 }
 
 #wdk-dialog-IE-warning h2 {
-        text-align: center;
+  text-align: center;
 }
 
 #wdk-dialog-IE-warning p {
-        margin: 15px;
-        text-align: left;
+  margin: 15px;
+  text-align: left;
 }
 
 #wdk-dialog-IE-warning h3 {
-        margin-left: 15px;
-        margin-top: 15px;
-        text-align: left;
+  margin-left: 15px;
+  margin-top: 15px;
+  text-align: left;
 }
 
 #wdk-dialog-IE-warning ul {
-        margin-left: 30px;
-        list-style-type: inherit;
-        text-align: left;
+  margin-left: 30px;
+  list-style-type: inherit;
+  text-align: left;
 }
 
 #wdk-dialog-IE-warning input {
-        margin-bottom: 15px;
+  margin-bottom: 15px;
 }
-
-
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = BASKET
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 img.basket {
-	margin:-1px 0px -2px -1px;
+  margin: -1px 0px -2px -1px;
 }
 
-#basket-menu > .ui-tabs-panel{
-	padding:0;
+#basket-menu > .ui-tabs-panel {
+  padding: 0;
 }
 
-#basket #basket-control-panel { display: none; }
+#basket #basket-control-panel {
+  display: none;
+}
 
 #basket table#basket-control {
-/*	margin-bottom: 1px; */
-	margin-left:2px;
-	clear: both;
-	font-size:85%;
+  /*	margin-bottom: 1px; */
+  margin-left: 2px;
+  clear: both;
+  font-size: 85%;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1485,10 +1530,13 @@ img.basket {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 span.basket-warning {
-	color:darkred;font-style:italic;margin-bottom:7px;margin-right:5px;position:relative;right:5px;
+  color: darkred;
+  font-style: italic;
+  margin-bottom: 7px;
+  margin-right: 5px;
+  position: relative;
+  right: 5px;
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     = FAVORITES
@@ -1498,142 +1546,145 @@ span.basket-warning {
      =in menubar: favorite tab
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #menu #favorite-menu {
-    background-image: url("./images/favorite_color.gif");
-    background-position: -1px 4px;
-    background-repeat: no-repeat;
-    background-size: 20% auto;
-    float: right;
-    padding: 3px 0 0 16px;
+  background-image: url('./images/favorite_color.gif');
+  background-position: -1px 4px;
+  background-repeat: no-repeat;
+  background-size: 20% auto;
+  float: right;
+  padding: 3px 0 0 16px;
 }
 
 table.mytableStyle {
-	empty-cells:show;
-	border-width:1px;
-	border-style:solid;
-	border-color:black;
-	border-collapse:collapse;
-	table-layout: auto;
+  empty-cells: show;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  border-collapse: collapse;
+  table-layout: auto;
 }
 tr.mytdStyle {
-	text-align:center;
-
+  text-align: center;
 }
 tr.mythStyle {
-	background-color:lightgrey;
-	text-align:center;
-	font-weight:bold;
+  background-color: lightgrey;
+  text-align: center;
+  font-weight: bold;
 }
-td.mythStyle,td.mytdStyle,th.mythStyle {
-	vertical-align:middle;
-	border-width:1px;
-	border-style:inset;
-	border-color:gray;
-	-moz-border-radius:0px;
-	padding:3px;
+td.mythStyle,
+td.mytdStyle,
+th.mythStyle {
+  vertical-align: middle;
+  border-width: 1px;
+  border-style: inset;
+  border-color: gray;
+  -moz-border-radius: 0px;
+  padding: 3px;
 }
 th.mythStyle {
-	font-weight:bold;
-	background-color:lightgrey;
-	border-bottom: 3px solid grey;
+  font-weight: bold;
+  background-color: lightgrey;
+  border-bottom: 3px solid grey;
 }
-
 
 .record .primaryKey {
-    display: none;
+  display: none;
 }
 
-div.favorite-button-div{
-	width:20px;
-	height:100%;
-	float:right;
+div.favorite-button-div {
+  width: 20px;
+  height: 100%;
+  float: right;
 }
 
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-.favorite-note, .favorite-group {
-    white-space: pre-wrap;
+.favorite-note,
+.favorite-group {
+  white-space: pre-wrap;
 }
 
 textarea.favorite-group {
-    width: 60%;
+  width: 60%;
 }
 textarea.favorite-note {
-    width: 80%;
+  width: 80%;
 }
 
-.favorite-note.hidden, .favorite-group.hidden {
-    display: none;
+.favorite-note.hidden,
+.favorite-group.hidden {
+  display: none;
 }
 
-.favorite-group-button, .favorite-note-button {
-	float:right;
-	text-align:left;
+.favorite-group-button,
+.favorite-note-button {
+  float: right;
+  text-align: left;
 }
 
-span.wdk-record {        /*to not affect a tr same class in favorites page */
-  font-size:70%;
-  font-weight:normal;
+span.wdk-record {
+  /*to not affect a tr same class in favorites page */
+  font-size: 70%;
+  font-weight: normal;
 }
 
 .wdk-record .primaryKey {
-    display: none;
+  display: none;
 }
 
 .favorites_panel {
-    display: none;
-    padding: 0 10px;
+  display: none;
+  padding: 0 10px;
 }
 
 .favorites_panel .favorite-note-button {
-    text-align: right;
+  text-align: right;
 }
 
 .favorites_panel .favorite-group-button {
-    text-align: right;
+  text-align: right;
 }
 
 .favorite-refresh-button {
-    clear: both;
+  clear: both;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = note on new releases
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 p.fav-warning {
-color:darkred;font-style:italic;font-size:95%;
+  color: darkred;
+  font-style: italic;
+  font-size: 95%;
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      = jQuery
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .ui-tabs > .ui-widget-header {
-    background: none;
-    border: none;
+  background: none;
+  border: none;
 }
 
 #search_history .ui-tabs > .ui-widget-header {
-    border-bottom: 1px solid;
+  border-bottom: 1px solid;
 }
 
 .dataTables_wrapper .ui-widget-header {
-	/*padding:0;*/
-	background:none;
-	border:0;
+  /*padding:0;*/
+  background: none;
+  border: 0;
 }
 .ui-tabs .ui-tabs-panel {
-	/* padding:0.5em 0.5em 0.5em; */
-	border-width: 1px;
+  /* padding:0.5em 0.5em 0.5em; */
+  border-width: 1px;
 }
 
 .ui-dialog-fixed-width {
-    width: 500px !important;
+  width: 500px !important;
 }
 
 /* move arrows to left of header text */
@@ -1660,7 +1711,7 @@ table.dataTable thead th div.DataTables_sort_wrapper {
 
 /* make datatable pagination buttons prettier */
 .dataTables_paginate .ui-button {
-  padding: .2em 0.4em;
+  padding: 0.2em 0.4em;
   margin: 0;
 }
 .dataTables_paginate .ui-button:first-child {
@@ -1669,7 +1720,6 @@ table.dataTable thead th div.DataTables_sort_wrapper {
 .dataTables_paginate .ui-button:last-child {
   border-radius: 0 4px 4px 0;
 }
-
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
      select2 overrides
@@ -1685,66 +1735,66 @@ table.dataTable thead th div.DataTables_sort_wrapper {
   top: 2px;
 }
 
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      = jQuery validation plugin messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 label.error {
   float: none;
   color: red;
-  padding-left: .5em;
+  padding-left: 0.5em;
   vertical-align: top;
-  font-weight:bold;
+  font-weight: bold;
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     some jQuery style is overwritten
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-.jqbutton.ui-button {padding:0px;}
-
+.jqbutton.ui-button {
+  padding: 0px;
+}
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 = jQuery tabs:  basket page
          = in wdk/css/ui-custom-custom-theme/jquery-ui....custom.css
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .ui-tabs .ui-tabs-nav li a {
-	padding: 0.1em 1em;
+  padding: 0.1em 1em;
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =MISC
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-span.marker a:link, span.marker a:visited {
-	padding-left: 15px;
-	font-weight: bold;
+span.marker a:link,
+span.marker a:visited {
+  padding-left: 15px;
+  font-weight: bold;
 }
 
 .help_div {
-	background-color: lightYellow;
-	border: 1px solid black;
+  background-color: lightYellow;
+  border: 1px solid black;
 }
 
 .disabled {
-  color:#999999;
+  color: #999999;
 }
 
 .onload-function {
   display: none;
 }
 
-.ui-state-highlight.save_as_msg, .ui-state-highlight.share_msg {
-    padding: 8px;
-    color: #8B0000;
+.ui-state-highlight.save_as_msg,
+.ui-state-highlight.share_msg {
+  padding: 8px;
+  color: #8b0000;
 }
 
 .ui-state-error a,
 .ui-widget-content .ui-state-error a,
 .ui-widget-header .ui-state-error a {
-  color: #187A02;
+  color: #187a02;
 }
 
 .ui-widget-overlay {
@@ -1759,7 +1809,7 @@ span.marker a:link, span.marker a:visited {
   font-size: large;
 }
 .wdk-error::after {
-  content: "!";
+  content: '!';
 }
 
 .flexigrid div.bDiv {
@@ -1770,22 +1820,41 @@ span.marker a:link, span.marker a:visited {
      = Search Lookup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-.ui-widget { font-size:100%; font-family:Arial,Helvetica,sans-serif;}
+.ui-widget {
+  font-size: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-#search-lookup_wrapper #type-filter { display:inline; }
-#search-lookup td { border: 1px dotted #eeeeee; padding:2px}
+#search-lookup_wrapper #type-filter {
+  display: inline;
+}
+#search-lookup td {
+  border: 1px dotted #eeeeee;
+  padding: 2px;
+}
 
-.mycontent ul { padding: 3px 3px 3px 15px; list-style: disc outside none; }
-.mycontent li { padding-bottom: 3px; }
-.mycontent h3 { margin: 15px 0px 0px 0px; padding: 10px; background-color: #EEEEEE; }
+.mycontent ul {
+  padding: 3px 3px 3px 15px;
+  list-style: disc outside none;
+}
+.mycontent li {
+  padding-bottom: 3px;
+}
+.mycontent h3 {
+  margin: 15px 0px 0px 0px;
+  padding: 10px;
+  background-color: #eeeeee;
+}
 
+#search-lookup_wrapper div.dataTables_scroll {
+  display: none;
+}
 
-#search-lookup_wrapper div.dataTables_scroll { display: none; }
-
-#search-lookup_wrapper div.ui-corner-bl { display: none; }
-img#close-table { display: none; }
-
-
-
+#search-lookup_wrapper div.ui-corner-bl {
+  display: none;
+}
+img#close-table {
+  display: none;
+}
 
 /* THE END */

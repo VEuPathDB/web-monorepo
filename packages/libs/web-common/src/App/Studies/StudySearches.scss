@@ -1,12 +1,14 @@
-$red: #DD314E;
+$red: #dd314e;
 
 .StudySearchIconLinks {
   display: flex;
 
   &Item {
-    margin: 0 .5em;
+    margin: 0 0.5em;
 
-    a, .link, .wdk-Link {
+    a,
+    .link,
+    .wdk-Link {
       color: black;
       transition: 250ms color;
       text-decoration: none;
@@ -15,7 +17,6 @@ $red: #DD314E;
         color: $red;
       }
     }
-
   }
 }
 

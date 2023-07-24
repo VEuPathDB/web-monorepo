@@ -24,9 +24,10 @@ export type BaseProps<M extends NumberOrDateRange> = {
    * If a validator is provided, `required` is no longer useful, and
    * rangeBounds will only be used for auto-filling empty inputs.
    */
-  validator?: (
-    newRange?: NumberOrDateRange
-  ) => { validity: boolean; message: string };
+  validator?: (newRange?: NumberOrDateRange) => {
+    validity: boolean;
+    message: string;
+  };
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */
@@ -90,9 +91,8 @@ function BaseInput({
       'WARNING: NumberRangeInput or DateRangeInput will ignore `required` prop because validator was provided.'
     );
 
-  const [localRange, setLocalRange] = useState<
-    NumberRange | DateRange | undefined
-  >(range);
+  const [localRange, setLocalRange] =
+    useState<NumberRange | DateRange | undefined>(range);
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
   const [validationWarning, setValidationWarning] = useState<string>('');
 

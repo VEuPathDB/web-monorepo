@@ -45,40 +45,76 @@ $tooltipColor: hsl(50, 100%, 96%);
   }
 
   &.no-corner {
-    &::after { display: none; }
+    &::after {
+      display: none;
+    }
   }
 
-  &.top-left, &.bottom-left {
-    &::after { left: 5px; }
+  &.top-left,
+  &.bottom-left {
+    &::after {
+      left: 5px;
+    }
   }
-  &.top-right, &.bottom-right {
-    &::after { right: 5px; }
+  &.top-right,
+  &.bottom-right {
+    &::after {
+      right: 5px;
+    }
   }
-  &.top-middle, &.bottom-middle {
-    &::after { right: calc(50% - 5px); }
-  }
-
-  &.top-left, &.top-right, &.top-middle {
-    &::after { top: -3px; }
-  }
-  &.bottom-left, &.bottom-right, &.bottom-middle {
-    &::after { bottom: -3px; }
-  }
-
-  &.left-bottom, &.left-top, &.left-middle {
-    &::after { left: -3px; }
-  }
-  &.right-bottom, &.right-top, &.right-middle {
-    &::after { right: -3px; }
+  &.top-middle,
+  &.bottom-middle {
+    &::after {
+      right: calc(50% - 5px);
+    }
   }
 
-  &.left-bottom, &.right-bottom {
-    &::after { bottom: 5px; }
+  &.top-left,
+  &.top-right,
+  &.top-middle {
+    &::after {
+      top: -3px;
+    }
   }
-  &.left-top, &.right-top {
-    &::after { top: 5px; }
+  &.bottom-left,
+  &.bottom-right,
+  &.bottom-middle {
+    &::after {
+      bottom: -3px;
+    }
   }
-  &.left-middle, &.right-middle {
-    &::after { top: calc(50% - 5px); }
+
+  &.left-bottom,
+  &.left-top,
+  &.left-middle {
+    &::after {
+      left: -3px;
+    }
+  }
+  &.right-bottom,
+  &.right-top,
+  &.right-middle {
+    &::after {
+      right: -3px;
+    }
+  }
+
+  &.left-bottom,
+  &.right-bottom {
+    &::after {
+      bottom: 5px;
+    }
+  }
+  &.left-top,
+  &.right-top {
+    &::after {
+      top: 5px;
+    }
+  }
+  &.left-middle,
+  &.right-middle {
+    &::after {
+      top: calc(50% - 5px);
+    }
   }
 }

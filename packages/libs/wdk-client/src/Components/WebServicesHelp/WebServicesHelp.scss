@@ -1,4 +1,6 @@
-body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__web-services-help .vpdb-Main {
+body.vpdb-Body
+  .vpdb-RootContainer.vpdb-RootContainer__web-services-help
+  .vpdb-Main {
   margin: 0;
   padding: 0;
 }
@@ -19,7 +21,7 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__web-services-help .vpdb-M
     padding-left: 1rem;
     margin-right: 1rem;
     box-sizing: content-box;
-    border-right: 0.1250rem solid #777777;
+    border-right: 0.125rem solid #777777;
   }
 
   &--StepHeader {
@@ -37,11 +39,12 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__web-services-help .vpdb-M
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin-right: .5em;
+    margin-right: 0.5em;
     color: white;
   }
 
-  &--SearchPartInstructions, &--ReportPartInstructions {
+  &--SearchPartInstructions,
+  &--ReportPartInstructions {
     font-size: 1.2em;
   }
 
@@ -75,7 +78,8 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__web-services-help .vpdb-M
     }
   }
 
-  &--GeneratedGetRequest, &--GeneratedPostRequest {
+  &--GeneratedGetRequest,
+  &--GeneratedPostRequest {
     margin-right: 1em;
     padding: 1em;
     overflow: auto;

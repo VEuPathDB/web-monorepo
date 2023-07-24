@@ -4,14 +4,14 @@ import {
   EdgeType,
   ProteinType,
   corePeripheralLegendColors,
-  edgeTypeDisplayNames
+  edgeTypeDisplayNames,
 } from 'ortho-client/utils/clusterGraph';
 import {
   EcNumberEntry,
   EdgeEntry,
   GroupLayout,
   NodeEntry,
-  PfamDomainEntry
+  PfamDomainEntry,
 } from 'ortho-client/utils/groupLayout';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
@@ -48,10 +48,24 @@ export function nodeEntryToCytoscapeData(
 ): NodeData {
   return {
     id: nodeEntry.id,
-    corePeripheralColor: nodeEntryToCorePeripheralColor(nodeEntry, layout, corePeripheralMap),
+    corePeripheralColor: nodeEntryToCorePeripheralColor(
+      nodeEntry,
+      layout,
+      corePeripheralMap
+    ),
     ...nodeEntryToTaxonColors(nodeEntry, layout, taxonUiMetadata),
-    ...nodeEntryToEcNumberPieData(nodeEntry, layout, orderedEcNumbers, ecNumberNPieSlices),
-    ...nodeEntryToPfamDomainPieData(nodeEntry, layout, orderedPfamDomains, pfamDomainNPieSlices)
+    ...nodeEntryToEcNumberPieData(
+      nodeEntry,
+      layout,
+      orderedEcNumbers,
+      ecNumberNPieSlices
+    ),
+    ...nodeEntryToPfamDomainPieData(
+      nodeEntry,
+      layout,
+      orderedPfamDomains,
+      pfamDomainNPieSlices
+    ),
   };
 }
 
@@ -76,7 +90,7 @@ function nodeEntryToTaxonColors(
 
   return {
     groupColor: nodeSpecies.groupColor,
-    speciesColor: nodeSpecies.color
+    speciesColor: nodeSpecies.color,
   };
 }
 
@@ -88,15 +102,15 @@ function nodeEntryToEcNumberPieData(
 ) {
   const nodeEcNumbers = genes[nodeEntry.id].ecNumbers;
 
-  const ecPieColors = orderedEcNumbers.slice(0, ecNumberNPieSlices).map(
-    ecNumber => nodeEcNumbers.includes(ecNumber.code)
-      ? ecNumber.color
-      : 'white'
-  );
+  const ecPieColors = orderedEcNumbers
+    .slice(0, ecNumberNPieSlices)
+    .map((ecNumber) =>
+      nodeEcNumbers.includes(ecNumber.code) ? ecNumber.color : 'white'
+    );
 
   return {
     ecPieColors,
-    ecPieSliceSize: `${(100 / ecNumberNPieSlices)}%`
+    ecPieSliceSize: `${100 / ecNumberNPieSlices}%`,
   };
 }
 
@@ -108,15 +122,17 @@ function nodeEntryToPfamDomainPieData(
 ) {
   const nodePfamDomains = Object.keys(genes[nodeEntry.id].pfamDomains);
 
-  const pfamPieColors = orderedPfamDomains.slice(0, pfamDomainNPieSlices).map(
-    pfamDomain => nodePfamDomains.includes(pfamDomain.accession)
-      ? pfamDomain.color
-      : 'white'
-  );
+  const pfamPieColors = orderedPfamDomains
+    .slice(0, pfamDomainNPieSlices)
+    .map((pfamDomain) =>
+      nodePfamDomains.includes(pfamDomain.accession)
+        ? pfamDomain.color
+        : 'white'
+    );
 
   return {
     pfamPieColors,
-    pfamPieSliceSize: `${(100 / pfamDomainNPieSlices)}%`
+    pfamPieSliceSize: `${100 / pfamDomainNPieSlices}%`,
   };
 }
 
@@ -128,7 +144,7 @@ export function makeEdgeData(edgeId: string, edgeEntry: EdgeEntry): EdgeData {
     type: edgeEntry.T,
     label: `${edgeTypeDisplayNames[edgeEntry.T]}, evalue=${edgeEntry.E}`,
     eValue: Number(edgeEntry.E),
-    score: edgeEntry.score
+    score: edgeEntry.score,
   };
 }
 
@@ -137,25 +153,21 @@ export function makePieStyles(nPieSlices: number, dataPrefix: string) {
     (memo, i) => ({
       ...memo,
       [`pie-${i + 1}-background-color`]: `data(${dataPrefix}PieColors.${i})`,
-      [`pie-${i + 1}-background-size`]: `data(${dataPrefix}PieSliceSize)`
+      [`pie-${i + 1}-background-size`]: `data(${dataPrefix}PieSliceSize)`,
     }),
     {}
   );
 
   return {
     'pie-size': '100%',
-    ...sliceStyles
+    ...sliceStyles,
   };
 }
 
 export function makeHAlignClass(xCoord: number, canvasWidth: number) {
-  return xCoord <= canvasWidth / 2
-    ? 'right'
-    : 'left';
+  return xCoord <= canvasWidth / 2 ? 'right' : 'left';
 }
 
 export function makeVAlignClass(yCoord: number, canvasHeight: number) {
-  return yCoord <= canvasHeight / 2
-    ? 'bottom'
-    : 'top';
+  return yCoord <= canvasHeight / 2 ? 'bottom' : 'top';
 }
