@@ -155,7 +155,7 @@ export function useStandaloneMapMarkers(
     [boundsZoomLevel?.zoomLevel, geoConfig]
   );
 
-  const rawMarkersPayload = usePromise<
+  const rawPromise = usePromise<
     | {
         rawMarkersData: StandaloneMapMarkersResponse;
         vocabulary: string[] | undefined;
@@ -241,7 +241,7 @@ export function useStandaloneMapMarkers(
   );
 
   const totalVisibleEntityCount: number | undefined =
-    rawMarkersPayload.value?.rawMarkersData.mapElements.reduce((acc, curr) => {
+    rawPromise.value?.rawMarkersData.mapElements.reduce((acc, curr) => {
       return acc + curr.entityCount;
     }, 0);
 
@@ -249,8 +249,8 @@ export function useStandaloneMapMarkers(
   // assumes the value is a count! (so never negative)
   const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
-      rawMarkersPayload.value?.rawMarkersData
-        ? rawMarkersPayload.value.rawMarkersData.mapElements
+      rawPromise.value?.rawMarkersData
+        ? rawPromise.value.rawMarkersData.mapElements
             .flatMap((el) => el.overlayValues)
             .reduce(
               ({ valueMax, valueMinPos, countSum }, elem) => ({
@@ -269,7 +269,7 @@ export function useStandaloneMapMarkers(
               }
             )
         : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
-    [rawMarkersPayload.value?.rawMarkersData]
+    [rawPromise.value?.rawMarkersData]
   );
 
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -285,8 +285,8 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
-    const vocabulary = rawMarkersPayload.value?.vocabulary;
-    return rawMarkersPayload.value?.rawMarkersData.mapElements.map(
+    const vocabulary = rawPromise.value?.vocabulary;
+    return rawPromise.value?.rawMarkersData.mapElements.map(
       ({
         geoAggregateValue,
         entityCount,
@@ -380,7 +380,7 @@ export function useStandaloneMapMarkers(
       }
     );
   }, [
-    rawMarkersPayload,
+    rawPromise,
     markerType,
     overlayType,
     defaultDependentAxisRange,
@@ -391,7 +391,7 @@ export function useStandaloneMapMarkers(
    * create custom legend data
    */
   const legendItems: LegendItemsProps[] = useMemo(() => {
-    const vocabulary = rawMarkersPayload?.value?.vocabulary;
+    const vocabulary = rawPromise?.value?.vocabulary;
     if (vocabulary == null) return [];
 
     return vocabulary.map((label) => ({
@@ -409,23 +409,23 @@ export function useStandaloneMapMarkers(
           : undefined,
       // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label
-      hasData: rawMarkersPayload.value?.rawMarkersData
-        ? some(rawMarkersPayload.value.rawMarkersData.mapElements, (el) =>
+      hasData: rawPromise.value?.rawMarkersData
+        ? some(rawPromise.value.rawMarkersData.mapElements, (el) =>
             el.overlayValues.some((ov) => ov.binLabel === label)
           )
         : false,
       group: 1,
       rank: 1,
     }));
-  }, [rawMarkersPayload, overlayType]);
+  }, [rawPromise, overlayType]);
 
   return {
     markersData: finalMarkersData,
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
-    pending: rawMarkersPayload.pending,
-    error: rawMarkersPayload.error,
+    pending: rawPromise.pending,
+    error: rawPromise.error,
   };
 }
 
