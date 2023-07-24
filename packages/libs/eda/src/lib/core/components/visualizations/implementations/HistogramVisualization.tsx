@@ -562,6 +562,9 @@ function HistogramViz(props: VisualizationProps<Options>) {
     [data]
   );
 
+  // Note: defaultIndependentRange in the Histogram Viz should keep its initial range
+  // regardless of the change of the data to ensure the truncation behavior
+  // Thus, pass an additional prop to useDefaultAxisRange() if Histogram Viz
   const defaultIndependentRange = useDefaultAxisRange(
     xAxisVariable,
     vizConfig.independentAxisValueSpec === 'Full'
@@ -572,7 +575,9 @@ function HistogramViz(props: VisualizationProps<Options>) {
       ? undefined
       : independentAxisMinMax?.max,
     undefined,
-    vizConfig.independentAxisValueSpec
+    vizConfig.independentAxisValueSpec,
+    // pass true for histogramViz (default is false)
+    true
   );
 
   // separate minPosMax from dependentMinPosMax
@@ -731,16 +736,29 @@ function HistogramViz(props: VisualizationProps<Options>) {
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = truncationConfig(
-    {
-      ...defaultUIState, // using annotated range, NOT the actual data
-      ...(minPosMax != null && minPosMax.min != null && minPosMax.max != null
-        ? { dependentAxisRange: minPosMax }
-        : {}),
-    },
-    vizConfig,
-    {}, // no overrides
-    true // use inclusive less than equal for the range min
+  } = useMemo(
+    () =>
+      truncationConfig(
+        {
+          ...defaultUIState, // using annotated range, NOT the actual data
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
+            : {}),
+        },
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
+      ),
+    [
+      defaultUIState,
+      dependentMinPosMax,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
+    ]
   );
 
   // axis range control
