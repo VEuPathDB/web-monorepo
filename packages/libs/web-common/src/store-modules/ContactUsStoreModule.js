@@ -1,17 +1,9 @@
-import { 
-  compose,
-  map 
-} from 'lodash/fp';
+import { compose, map } from 'lodash/fp';
 
 import { merge } from 'rxjs';
-import { 
-  filter,
-  mergeAll, 
-  mergeMap, 
-  withLatestFrom 
-} from 'rxjs/operators';
+import { filter, mergeAll, mergeMap, withLatestFrom } from 'rxjs/operators';
 
-import { 
+import {
   CHANGE_SUBJECT,
   CHANGE_REPORTER_EMAIL,
   CHANGE_CC_EMAILS,
@@ -27,7 +19,7 @@ import {
   updateField,
   updateSubmittingStatus,
   finishRequest,
-  CHANGE_CONTEXT
+  CHANGE_CONTEXT,
 } from '../actioncreators/ContactUsActionCreators';
 
 import { files, parsedFormFields } from '../selectors/ContactUsSelectors';
@@ -52,40 +44,40 @@ const initialState = {
   submissionStatus: SUBMISSION_PENDING,
   responseMessage: '',
   nextAttachmentId: 0,
-  nextScreenshotId: 0
+  nextScreenshotId: 0,
 };
 
 export function reduce(state = initialState, { type, payload }) {
-  switch(type) {
+  switch (type) {
     case CHANGE_SUBJECT:
       return {
         ...state,
-        subject: payload.subject
+        subject: payload.subject,
       };
 
     case CHANGE_REPORTER_EMAIL:
       return {
         ...state,
-        reporterEmail: payload.reporterEmail
+        reporterEmail: payload.reporterEmail,
       };
 
     case CHANGE_CC_EMAILS:
       return {
         ...state,
-        ccEmails: payload.ccEmails
+        ccEmails: payload.ccEmails,
       };
 
     case CHANGE_MESSAGE:
       return {
         ...state,
-        message: payload.message
+        message: payload.message,
       };
 
     case CHANGE_CONTEXT:
       return {
         ...state,
-        context: payload.context
-      }
+        context: payload.context,
+      };
 
     case CHANGE_ATTACHMENT_METADATA:
       return {
@@ -94,10 +86,10 @@ export function reduce(state = initialState, { type, payload }) {
           ...state.attachmentMetadata.slice(0, payload.index),
           {
             ...state.attachmentMetadata[payload.index],
-            ...payload.metadata
+            ...payload.metadata,
           },
-          ...state.attachmentMetadata.slice(payload.index + 1)
-        ]
+          ...state.attachmentMetadata.slice(payload.index + 1),
+        ],
       };
 
     case ADD_ATTACHMENT_METADATA:
@@ -107,10 +99,10 @@ export function reduce(state = initialState, { type, payload }) {
           ...state.attachmentMetadata,
           {
             ...payload.metadata,
-            id: state.nextAttachmentId
-          }
+            id: state.nextAttachmentId,
+          },
         ],
-        nextAttachmentId: state.nextAttachmentId + 1
+        nextAttachmentId: state.nextAttachmentId + 1,
       };
 
     case REMOVE_ATTACHMENT_METADATA:
@@ -118,8 +110,8 @@ export function reduce(state = initialState, { type, payload }) {
         ...state,
         attachmentMetadata: [
           ...state.attachmentMetadata.slice(0, payload.index),
-          ...state.attachmentMetadata.slice(payload.index + 1)
-        ]
+          ...state.attachmentMetadata.slice(payload.index + 1),
+        ],
       };
 
     case ADD_SCREENSHOT_METADATA:
@@ -129,10 +121,10 @@ export function reduce(state = initialState, { type, payload }) {
           ...state.screenshotMetadata,
           {
             ...payload.metadata,
-            id: state.nextScreenshotId
-          }
+            id: state.nextScreenshotId,
+          },
         ],
-        nextScreenshotId: state.nextScreenshotId + 1
+        nextScreenshotId: state.nextScreenshotId + 1,
       };
 
     case REMOVE_SCREENSHOT_METADATA:
@@ -140,32 +132,32 @@ export function reduce(state = initialState, { type, payload }) {
         ...state,
         screenshotMetadata: [
           ...state.screenshotMetadata.slice(0, payload.index),
-          ...state.screenshotMetadata.slice(payload.index + 1)
-        ]
+          ...state.screenshotMetadata.slice(payload.index + 1),
+        ],
       };
 
     case SUBMIT_DETAILS:
       return {
         ...state,
-        submittingStatus: true
+        submittingStatus: true,
       };
 
     case FINISH_REQUEST:
       return {
         ...state,
-        submissionStatus: payload.ok 
-          ? SUBMISSION_SUCCESSFUL 
+        submissionStatus: payload.ok
+          ? SUBMISSION_SUCCESSFUL
           : SUBMISSION_FAILED,
-        responseMessage: payload.message
+        responseMessage: payload.message,
       };
 
     case UPDATE_SUBMITTING_STATUS:
       return {
         ...state,
-        submittingStatus: payload.submittingStatus
+        submittingStatus: payload.submittingStatus,
       };
 
-    default: 
+    default:
       return state;
   }
 }
@@ -177,17 +169,11 @@ export function observe(action$, state$, dependencies) {
   );
 }
 
-const observeSubmitDetails = (
-  action$, 
-  state$, 
-  { 
-    wdkService
-  }
-) =>
+const observeSubmitDetails = (action$, state$, { wdkService }) =>
   action$.pipe(
     filter(({ type }) => type === SUBMIT_DETAILS),
     withLatestFrom(state$),
-    mergeMap(async ([ , { [key]: contactUsState }]) => {
+    mergeMap(async ([, { [key]: contactUsState }]) => {
       const temporaryFilePromises = compose(
         map(wdkService.createTemporaryFile.bind(wdkService)),
         files
@@ -202,36 +188,36 @@ const observeSubmitDetails = (
         {
           ...parsedFormFields(contactUsState),
           // referrer: (window.opener && window.opener.location.href) || undefined,
-          attachmentIds
+          attachmentIds,
         }
       );
 
       return [
         finishRequest(await response.text(), response.ok),
-        updateSubmittingStatus(false)
-      ]
+        updateSubmittingStatus(false),
+      ];
     }),
     mergeAll()
   );
 
-const observeUserLoaded = (action$, state$, dependencies) => 
+const observeUserLoaded = (action$, state$, dependencies) =>
   action$.pipe(
     filter(({ type }) => type === 'static/user-loaded'),
-    mergeMap(({ payload: { user: { email, isGuest } } }) =>
-      isGuest 
-        ? []
-        : [updateField('reporterEmail')(email)]
+    mergeMap(
+      ({
+        payload: {
+          user: { email, isGuest },
+        },
+      }) => (isGuest ? [] : [updateField('reporterEmail')(email)])
     )
   );
 
-const jsonPostRequest = (serviceUrl, endpoint, body) => fetch(
-  `${serviceUrl}${endpoint}`,
-  {
+const jsonPostRequest = (serviceUrl, endpoint, body) =>
+  fetch(`${serviceUrl}${endpoint}`, {
     method: 'POST',
     headers: {
-      'credentials': 'include',
-      'Content-Type': 'application/json'
+      credentials: 'include',
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body)
-  }
-);
+    body: JSON.stringify(body),
+  });

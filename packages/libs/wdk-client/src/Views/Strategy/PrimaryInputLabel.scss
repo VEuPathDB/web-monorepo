@@ -7,16 +7,16 @@
 
     display: flex;
     align-items: center;
-    
-    border-left: .083333333rem solid black;
-    border-bottom: .083333333rem solid black;
-    border-top: .083333333rem solid black;
-    
+
+    border-left: 0.083333333rem solid black;
+    border-bottom: 0.083333333rem solid black;
+    border-top: 0.083333333rem solid black;
+
     padding: 0.25rem 0.5rem;
-    
+
     background-color: #f1f1f1;
   }
-  
+
   &--Arrow {
     svg {
       height: 3rem;

@@ -4,7 +4,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 const containerStyle = {
   position: 'relative',
   display: 'inline-block',
-  minHeight: '4em'
+  minHeight: '4em',
 };
 
 const loadingStyle = {
@@ -19,14 +19,14 @@ const loadingStyle = {
   left: 0,
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center'
+  alignItems: 'center',
 };
 
 // Wraps child component with loading status
 // Child should be one of the following types of copmonents: `iframe`, `object`, `img`
 export default function ExternalResource(props) {
-  const [ isLoading, setIsLoading ] = useState(true);
-  const [ isError, setIsError ] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const key = getKey(props.children);
 
   useEffect(() => {
@@ -45,10 +45,7 @@ export default function ExternalResource(props) {
   });
 
   return (
-    <ExternalResourceContainer
-      isLoading={isLoading}
-      isError={isError}
-    >
+    <ExternalResourceContainer isLoading={isLoading} isError={isError}>
       {child}
     </ExternalResourceContainer>
   );
@@ -67,7 +64,7 @@ export function ExternalResourceContainer(props) {
 function getKey(element) {
   if (element && element.props.key) return element.props.key;
 
-  switch(element && element.type) {
+  switch (element && element.type) {
     case 'object':
       return element.props.data;
     case 'iframe':

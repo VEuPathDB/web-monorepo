@@ -4,18 +4,15 @@ import { getNodeId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 let booleanQuestionPrefixes = [
   'InternalQuestions.boolean_question',
-  'SpanQuestions.'
+  'SpanQuestions.',
 ];
 
-let badBooleanAttributes = [
-  'transcripts_found_per_gene'
-];
+let badBooleanAttributes = ['transcripts_found_per_gene'];
 
 export function trimBooleanQuestionAttribs(question, categoryTree) {
-
   // determine if this type of question needs its attributes trimmed
   let needsTrimming = false;
-  booleanQuestionPrefixes.forEach(prefix => {
+  booleanQuestionPrefixes.forEach((prefix) => {
     if (question.fullName.startsWith(prefix)) needsTrimming = true;
   });
 
@@ -24,7 +21,11 @@ export function trimBooleanQuestionAttribs(question, categoryTree) {
   }
 
   // function tells whether a leaf should be trimmed off (if so, returns true)
-  let trimLeafPredicate = node => (badBooleanAttributes.indexOf(getNodeId(node)) !== -1) ;
+  let trimLeafPredicate = (node) =>
+    badBooleanAttributes.indexOf(getNodeId(node)) !== -1;
 
-  return pruneDescendantNodes(node => nodeHasChildren(node) || !trimLeafPredicate(node), categoryTree);
+  return pruneDescendantNodes(
+    (node) => nodeHasChildren(node) || !trimLeafPredicate(node),
+    categoryTree
+  );
 }

@@ -19,10 +19,14 @@ export function isServerError(error: unknown): error is ServiceError {
 }
 
 export function isClientError(error: unknown): error is ServiceError {
-  return isServiceError(error) && error.status !== 422 && error.status >= 400 && error.status < 500;
+  return (
+    isServiceError(error) &&
+    error.status !== 422 &&
+    error.status >= 400 &&
+    error.status < 500
+  );
 }
 
 export function isInputError(error: unknown): error is ServiceError {
   return isServiceError(error) && error.status === 422;
 }
-

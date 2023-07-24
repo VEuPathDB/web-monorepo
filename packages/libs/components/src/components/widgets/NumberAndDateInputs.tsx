@@ -18,9 +18,10 @@ type BaseProps<M extends NumberOrDate> = {
   /** Optional validator function. Should return {validity: true, message: ''} if value is allowed.
    * If provided, minValue and maxValue and required will have no effect.
    */
-  validator?: (
-    newValue?: NumberOrDate
-  ) => { validity: boolean; message: string };
+  validator?: (newValue?: NumberOrDate) => {
+    validity: boolean;
+    message: string;
+  };
   /** Function to invoke when value changes. */
   onValueChange: (newValue?: NumberOrDate) => void;
   /** UI Label for the widget. Optional */
@@ -103,9 +104,10 @@ function BaseInput({
     },
   })();
 
-  const debouncedOnChange = useMemo(() => debounce(onValueChange, 500), [
-    onValueChange,
-  ]);
+  const debouncedOnChange = useMemo(
+    () => debounce(onValueChange, 500),
+    [onValueChange]
+  );
 
   // Cancel pending onChange request when this component is unmounted.
   useEffect(() => debouncedOnChange.cancel, []);

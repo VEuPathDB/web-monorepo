@@ -4,12 +4,28 @@
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-.formula { font-style: italic;font-weight:bold; }
-.formula .left-hand-side, .formula .right-hand-side { display: inline-block; vertical-align: middle; }
-.formula .left-hand-side::after { content: " ="; }
-.formula .right-hand-side { padding-left: .1em; }
-.formula .division > div { text-align: center; padding: 0px 4px; }
-.formula .division .numerator { border-bottom: 1px solid; }
+.formula {
+  font-style: italic;
+  font-weight: bold;
+}
+.formula .left-hand-side,
+.formula .right-hand-side {
+  display: inline-block;
+  vertical-align: middle;
+}
+.formula .left-hand-side::after {
+  content: ' =';
+}
+.formula .right-hand-side {
+  padding-left: 0.1em;
+}
+.formula .division > div {
+  text-align: center;
+  padding: 0px 4px;
+}
+.formula .division .numerator {
+  border-bottom: 1px solid;
+}
 
 .group-detail.ui-widget-content {
   background: #fafafa;
@@ -64,7 +80,7 @@
   position: relative;
   width: 402px;
   height: 302px;
-  border: 1px solid #AAA;
+  border: 1px solid #aaa;
   border-radius: 4px;
   padding: 1px;
   margin-top: 2em;
@@ -141,26 +157,27 @@
 .fold-change .text.prompt {
   font-weight: bold;
 }
-.reference, .comparison {
+.reference,
+.comparison {
   padding: 0.5em;
   margin-bottom: 1em;
-  border: 1px solid #EEE;
+  border: 1px solid #eee;
   border-radius: 4px;
 }
 .reference {
-  background-color: rgb(180,210,235);
+  background-color: rgb(180, 210, 235);
 }
 .comparison {
-  background-color: rgb(189,117,120);
+  background-color: rgb(189, 117, 120);
 }
 .reference-label {
-  color: rgb(39,136,194);
+  color: rgb(39, 136, 194);
 }
 .comparison-label {
-  color: rgb(158,19,22);
+  color: rgb(158, 19, 22);
 }
 .fold-change-params .samples .samples-tab {
-  border: 1px solid #AAA;
+  border: 1px solid #aaa;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
   /*background-color: whitesmoke;*/
@@ -170,12 +187,14 @@
   position: relative;
   top: 1px;
 }
-.reference .text, .comparison .text {
+.reference .text,
+.comparison .text {
   font-size: small;
 }
-.reference .param-line, .comparison .param-line {
+.reference .param-line,
+.comparison .param-line {
   background-color: white;
-  border: 1px solid #AAA;
+  border: 1px solid #aaa;
   border-radius: 4px;
   padding: 0.4em;
   margin-top: 1em;
@@ -183,7 +202,7 @@
 .fold-change #samples_fc_comp_genericaaa,
 .fold-change #samples_fc_ref_genericaaa {
   background: white;
-  border: 1px solid #AAA;
+  border: 1px solid #aaa;
   border-radius: 4px;
 }
 
@@ -200,8 +219,8 @@
   height: 100px;
   background: white;
   overflow-y: scroll;
-  border: 1px solid #AAA;
-  padding: 0 .3em;
+  border: 1px solid #aaa;
+  padding: 0 0.3em;
 }
 .fold-change .checkbox-tree {
   margin-left: 3px;
@@ -210,7 +229,8 @@
 .fold-change-params .samples {
   margin: 1em auto;
 }
-#min_max_avg_ref, #min_max_avg_comp {
+#min_max_avg_ref,
+#min_max_avg_comp {
   /*font-weight: bold !important;*/
   margin: 0px;
 }
@@ -221,7 +241,8 @@
   padding: 1em 0em;
 }
 
-.fold-change-graphic .title, .fold-change-graphic .subtitle {
+.fold-change-graphic .title,
+.fold-change-graphic .subtitle {
   text-align: center;
 }
 .fold-change-graphic .title {
@@ -252,12 +273,12 @@
 }
 
 .fold-change-graphic .reference-samples .sample {
-  background-color: rgb(39,136,194);
+  background-color: rgb(39, 136, 194);
   left: -170px;
 }
 
 .fold-change-graphic .comparison-samples .sample {
-  background-color: rgb(158,19,22);
+  background-color: rgb(158, 19, 22);
   left: -85px;
 }
 
@@ -276,11 +297,11 @@
 }
 
 .fold-change-graphic .reference-samples {
-  color: rgb(39,136,194);
+  color: rgb(39, 136, 194);
 }
 
 .fold-change-graphic .comparison-samples {
-  color: rgb(158,19,22);
+  color: rgb(158, 19, 22);
 }
 
 .fold-change-graphic .down-regulated .sample-operation,
@@ -386,16 +407,18 @@
   font-size: 90%;
   margin-left: 0px;
 }
-.fold-change-label .up-arrow, .fold-change-label .down-arrow {
+.fold-change-label .up-arrow,
+.fold-change-label .down-arrow {
   height: 30px;
   display: block;
   margin-left: 20px;
   border-left: 2px solid black;
 }
-.fold-change-label .up-arrow:before, .fold-change-label .down-arrow:before {
+.fold-change-label .up-arrow:before,
+.fold-change-label .down-arrow:before {
   position: relative;
   display: block;
-  content: " ";
+  content: ' ';
   height: 0;
   width: 0;
   border-right: 5px solid transparent;
@@ -444,7 +467,6 @@
   max-width: 100%;
 }
 
-.fold-change .wdk-TreeBoxParam { 
+.fold-change .wdk-TreeBoxParam {
   padding: 1em 2em;
 }
-

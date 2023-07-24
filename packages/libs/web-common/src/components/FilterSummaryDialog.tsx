@@ -1,10 +1,7 @@
 import { every } from 'lodash';
 import React from 'react';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import {
-  Dialog,
-  IconAlt as Icon
-} from '@veupathdb/wdk-client/lib/Components';
+import { Dialog, IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
@@ -16,19 +13,19 @@ import {
   Parameter,
   ParameterGroup,
   ParameterValue,
-  ParameterValues
+  ParameterValues,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { FilterField } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 type Props = {
-  isVisible: boolean,
-  isPinned: boolean,
-  setVisible: (visible: boolean) => any,
-  setPinned: (pinned: boolean) => any,
-}
+  isVisible: boolean;
+  isPinned: boolean;
+  setVisible: (visible: boolean) => any;
+  setPinned: (pinned: boolean) => any;
+};
 
 class FilterSummaryDialog extends React.Component<Props> {
-  render () {
+  render() {
     const props = this.props;
     return (
       <Dialog
@@ -53,13 +50,11 @@ class FilterSummaryDialog extends React.Component<Props> {
             className={makeClassName('FilterPopupTitleButton')}
             onClick={() => props.setVisible(false)}
           >
-            <Icon fa="close"/>
-          </button>
+            <Icon fa="close" />
+          </button>,
         ]}
       >
-        <div>
-          { this.props.children }
-        </div>
+        <div>{this.props.children}</div>
       </Dialog>
     );
   }

@@ -195,70 +195,70 @@ export const makeUserDatasetUploadServiceWrappers = ({
   fullWdkServiceUrl,
 }: ServiceConfig) => ({
   [DATASET_IMPORT_URL_KEY]: (wdkService: WdkService) => datasetImportUrl,
-  addDataset: (wdkService: WdkService) => async (
-    newUserDataset: NewUserDataset
-  ): Promise<void> => {
-    const metaBody = JSON.stringify({
-      datasetName: newUserDataset.name,
-      datasetType: newUserDataset.datasetType,
-      description: newUserDataset.description,
-      summary: newUserDataset.summary,
-      projects: newUserDataset.projects,
-      origin: 'direct-upload',
-    });
+  addDataset:
+    (wdkService: WdkService) =>
+    async (newUserDataset: NewUserDataset): Promise<void> => {
+      const metaBody = JSON.stringify({
+        datasetName: newUserDataset.name,
+        datasetType: newUserDataset.datasetType,
+        description: newUserDataset.description,
+        summary: newUserDataset.summary,
+        projects: newUserDataset.projects,
+        origin: 'direct-upload',
+      });
 
-    const fileBody = new FormData();
+      const fileBody = new FormData();
 
-    const { uploadMethod } = newUserDataset;
+      const { uploadMethod } = newUserDataset;
 
-    if (uploadMethod.type === 'file') {
-      fileBody.append('uploadMethod', 'file');
-      fileBody.append('file', uploadMethod.file);
-    } else if (uploadMethod.type === 'url') {
-      fileBody.append('uploadMethod', 'url');
-      fileBody.append('url', uploadMethod.url);
-    } else if (newUserDataset.uploadMethod.type === 'result') {
-      const temporaryResultPath = await wdkService.getTemporaryResultPath(
-        uploadMethod.stepId,
-        uploadMethod.reportName,
-        uploadMethod.reportConfig
-      );
+      if (uploadMethod.type === 'file') {
+        fileBody.append('uploadMethod', 'file');
+        fileBody.append('file', uploadMethod.file);
+      } else if (uploadMethod.type === 'url') {
+        fileBody.append('uploadMethod', 'url');
+        fileBody.append('url', uploadMethod.url);
+      } else if (newUserDataset.uploadMethod.type === 'result') {
+        const temporaryResultPath = await wdkService.getTemporaryResultPath(
+          uploadMethod.stepId,
+          uploadMethod.reportName,
+          uploadMethod.reportConfig
+        );
 
-      const temporaryResultUrl = `${fullWdkServiceUrl}${temporaryResultPath}`;
+        const temporaryResultUrl = `${fullWdkServiceUrl}${temporaryResultPath}`;
 
-      fileBody.append('uploadMethod', 'url');
-      fileBody.append('url', temporaryResultUrl);
-    } else {
-      throw new Error(
-        `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
-      );
-    }
-
-    return fetchDecodedJsonOrThrowMessage(
-      datasetImportUrl,
-      Decode.field('jobId', Decode.string),
-      {
-        path: '/user-datasets',
-        method: 'POST',
-        body: metaBody,
+        fileBody.append('uploadMethod', 'url');
+        fileBody.append('url', temporaryResultUrl);
+      } else {
+        throw new Error(
+          `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
+        );
       }
-    ).then(({ jobId }) =>
-      fetchWithCredentials(
-        datasetImportUrl,
-        '/user-datasets/' + jobId,
-        'POST',
-        fileBody
-      ).then((response) => {
-        if (!response.ok) {
-          return response.text().then((error) => {
-            throw error;
-          });
-        }
 
-        return;
-      })
-    );
-  },
+      return fetchDecodedJsonOrThrowMessage(
+        datasetImportUrl,
+        Decode.field('jobId', Decode.string),
+        {
+          path: '/user-datasets',
+          method: 'POST',
+          body: metaBody,
+        }
+      ).then(({ jobId }) =>
+        fetchWithCredentials(
+          datasetImportUrl,
+          '/user-datasets/' + jobId,
+          'POST',
+          fileBody
+        ).then((response) => {
+          if (!response.ok) {
+            return response.text().then((error) => {
+              throw error;
+            });
+          }
+
+          return;
+        })
+      );
+    },
   listStatusDetails: () => (): Promise<UserDatasetUpload[]> => {
     return fetchDecodedJsonOrThrowMessage(
       datasetImportUrl,
@@ -270,14 +270,18 @@ export const makeUserDatasetUploadServiceWrappers = ({
     ).then((uploads) => uploads.map(userDatasetUploadFromStatusDetail));
   },
   // Currently only works for jobs whose status is awaiting-upload
-  cancelOngoingUpload: () => (jobId: string): Promise<void> => {
-    return issueDeleteCommand(datasetImportUrl, jobId);
-  },
-  clearMessages: () => (jobIds: string[]): Promise<void> => {
-    return Promise.all(
-      jobIds.map(partial(issueDeleteCommand, datasetImportUrl))
-    ).then((x) => {});
-  },
+  cancelOngoingUpload:
+    () =>
+    (jobId: string): Promise<void> => {
+      return issueDeleteCommand(datasetImportUrl, jobId);
+    },
+  clearMessages:
+    () =>
+    (jobIds: string[]): Promise<void> => {
+      return Promise.all(
+        jobIds.map(partial(issueDeleteCommand, datasetImportUrl))
+      ).then((x) => {});
+    },
   getSupportedDatasetTypes: () => (projectId: string) => {
     return fetchDecodedJsonOrThrowMessage(
       datasetImportUrl,
@@ -288,19 +292,17 @@ export const makeUserDatasetUploadServiceWrappers = ({
       }
     );
   },
-  getSupportedFileUploadTypes: () => (
-    projectId: string,
-    datasetType: string
-  ) => {
-    return fetchDecodedJsonOrThrowMessage(
-      datasetImportUrl,
-      Decode.arrayOf(Decode.string),
-      {
-        path: `/projects/${projectId}/datasetTypes/${datasetType}/fileTypes`,
-        method: 'GET',
-      }
-    );
-  },
+  getSupportedFileUploadTypes:
+    () => (projectId: string, datasetType: string) => {
+      return fetchDecodedJsonOrThrowMessage(
+        datasetImportUrl,
+        Decode.arrayOf(Decode.string),
+        {
+          path: `/projects/${projectId}/datasetTypes/${datasetType}/fileTypes`,
+          method: 'GET',
+        }
+      );
+    },
 });
 
 export function isUserDatasetUploadCompatibleWdkService(

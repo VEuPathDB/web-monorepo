@@ -4,7 +4,7 @@ import useDimensions from 'react-cool-dimensions';
 import { Modal as ResponsiveModal } from 'react-responsive-modal';
 
 // Components
-import { H3, H4, H5, H6 } from "../typography/headers";
+import { H3, H4, H5, H6 } from '../typography/headers';
 import { CloseCircle } from '../icons';
 
 // Definitions
@@ -55,7 +55,7 @@ export type ModalProps = {
   /** Adds a subtitle under the title. No effect if there is no title. */
   subtitle?: ReactNode;
   /** Optional. Size control for the title text. */
-  titleSize?: "small" | "medium" | "large";
+  titleSize?: 'small' | 'medium' | 'large';
   /** Optional. Reduces the amount of vertical blank space in the title. */
   compactTitle?: boolean;
   /** Indicates which theme role to use for style augmentation. */
@@ -86,7 +86,7 @@ export type ModalProps = {
 export default function Modal({
   title,
   subtitle,
-  titleSize = "large",
+  titleSize = 'large',
   compactTitle,
   visible,
   zIndex = 1000,
@@ -157,24 +157,22 @@ export default function Modal({
   }, [themeRole, styleOverrides, theme]);
 
   const TitleComponent =
-    titleSize === "large" ? H3 : titleSize === "medium" ? H4 : H5;
+    titleSize === 'large' ? H3 : titleSize === 'medium' ? H4 : H5;
   const SubtitleComponent =
-    titleSize === "large" ? H4 : titleSize === "medium" ? H5 : H6;
+    titleSize === 'large' ? H4 : titleSize === 'medium' ? H5 : H6;
   const titleTopOffset = subtitle
-    ? titleSize === "large"
+    ? titleSize === 'large'
       ? 7
-      : titleSize === "medium"
+      : titleSize === 'medium'
       ? 5
       : 4
-    : titleSize === "large"
+    : titleSize === 'large'
     ? 9
-    : titleSize === "medium"
+    : titleSize === 'medium'
     ? 7
     : 5;
 
-  const headerHeight = title
-    ? titleHeight + (compactTitle ? 20 : 40)
-    : 0;
+  const headerHeight = title ? titleHeight + (compactTitle ? 20 : 40) : 0;
 
   return (
     <ResponsiveModal
@@ -183,7 +181,7 @@ export default function Modal({
       onClose={() => toggleVisible && toggleVisible(false)}
       showCloseIcon={false}
       closeOnEsc={true}
-      classNames={{root: className}}
+      classNames={{ root: className }}
       styles={{
         root: {
           position: 'fixed',
@@ -242,9 +240,9 @@ export default function Modal({
               flex: 1,
               backgroundColor: componentStyle.header.primaryBackgroundColor,
               transition: 'all ease .25s',
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
             }}
           >
             <div
@@ -253,7 +251,7 @@ export default function Modal({
                 paddingRight: 25,
                 paddingLeft: 25,
                 top: titleTopOffset,
-                position: "relative",
+                position: 'relative',
               }}
             >
               <TitleComponent
@@ -295,8 +293,8 @@ export default function Modal({
           css={{ position: 'absolute', top: 15, right: 15 }}
           fontSize={24}
           onClick={() => toggleVisible(!visible)}
-          role='button'
-          aria-label='Close modal button.'
+          role="button"
+          aria-label="Close modal button."
         />
       )}
       <div

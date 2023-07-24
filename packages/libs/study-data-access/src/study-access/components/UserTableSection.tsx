@@ -4,7 +4,7 @@ import { cx } from './StudyAccess';
 import {
   UserTable,
   UserTableColumnKey,
-  Props as UserTableProps
+  Props as UserTableProps,
 } from './UserTable';
 
 export type Props<R, C extends UserTableColumnKey<R>> =
@@ -24,13 +24,16 @@ export type Props<R, C extends UserTableColumnKey<R>> =
       value: UserTableProps<R, C>;
     };
 
-export function UserTableSection<R, C extends UserTableColumnKey<R>>(props: Props<R, C>) {
-  return props.status === 'loading' || props.status === 'unavailable'
-    ? null
-    : props.status === 'error'
-    ? <p>{props.message}</p>
-    : <details className={cx('--UserTableSection')} open>
-        <summary>{props.title}</summary>
-        <UserTable {...props.value} />
-      </details>;
+export function UserTableSection<R, C extends UserTableColumnKey<R>>(
+  props: Props<R, C>
+) {
+  return props.status === 'loading' ||
+    props.status === 'unavailable' ? null : props.status === 'error' ? (
+    <p>{props.message}</p>
+  ) : (
+    <details className={cx('--UserTableSection')} open>
+      <summary>{props.title}</summary>
+      <UserTable {...props.value} />
+    </details>
+  );
 }

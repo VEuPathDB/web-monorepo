@@ -2,51 +2,42 @@ import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 import {
   ProteomeSummaryRows,
-  proteomeSummaryRowsDecoder
+  proteomeSummaryRowsDecoder,
 } from 'ortho-client/utils/dataSummary';
 import {
   GroupLayoutResponse,
-  groupLayoutResponseDecoder
+  groupLayoutResponseDecoder,
 } from 'ortho-client/utils/groupLayout';
 import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
-  return ({
+  return {
     ...wdkService,
     getGroupLayout: orthoServiceWrappers.getGroupLayout(wdkService),
     getProteomeSummary: orthoServiceWrappers.getProteomeSummary(wdkService),
-    getTaxons: orthoServiceWrappers.getTaxons(wdkService)
-  });
-};
+    getTaxons: orthoServiceWrappers.getTaxons(wdkService),
+  };
+}
 
 const orthoServiceWrappers = {
   getGroupLayout: (wdkService: WdkService) => (groupName: string) =>
-    wdkService.sendRequest(
-      groupLayoutResponseDecoder,
-      {
-        useCache: true,
-        method: 'get',
-        path: `/group/${groupName}/layout`
-      }
-    ),
+    wdkService.sendRequest(groupLayoutResponseDecoder, {
+      useCache: true,
+      method: 'get',
+      path: `/group/${groupName}/layout`,
+    }),
   getProteomeSummary: (wdkService: WdkService) => () =>
-    wdkService.sendRequest(
-      proteomeSummaryRowsDecoder,
-      {
-        useCache: true,
-        method: 'get',
-        path: '/data-summary/proteomes'
-      }
-    ),
+    wdkService.sendRequest(proteomeSummaryRowsDecoder, {
+      useCache: true,
+      method: 'get',
+      path: '/data-summary/proteomes',
+    }),
   getTaxons: (wdkService: WdkService) => () =>
-    wdkService.sendRequest(
-      taxonEntriesDecoder,
-      {
-        useCache: true,
-        method: 'get',
-        path: '/data-summary/taxons'
-      }
-    )
+    wdkService.sendRequest(taxonEntriesDecoder, {
+      useCache: true,
+      method: 'get',
+      path: '/data-summary/taxons',
+    }),
 };
 
 export interface OrthoService extends WdkService {
@@ -55,8 +46,10 @@ export interface OrthoService extends WdkService {
   getTaxons: () => Promise<TaxonEntries>;
 }
 
-export function isOrthoService(wdkService: WdkService): wdkService is OrthoService {
+export function isOrthoService(
+  wdkService: WdkService
+): wdkService is OrthoService {
   return Object.keys(orthoServiceWrappers).every(
-    orthoServiceKey => orthoServiceKey in wdkService
+    (orthoServiceKey) => orthoServiceKey in wdkService
   );
 }

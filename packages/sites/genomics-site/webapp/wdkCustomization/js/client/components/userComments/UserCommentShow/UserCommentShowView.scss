@@ -4,8 +4,8 @@
       display: grid;
       grid-template-columns: 1fr;
       margin-top: 1em;
-  
-      // TODO: Once (if?) we drop IE11 support, we can use 
+
+      // TODO: Once (if?) we drop IE11 support, we can use
       // "row-gap" instead of applying "margin-bottom"
       // to the direct descendants
       > * {
@@ -21,20 +21,20 @@
           border-top: 2px black solid;
           border-bottom: 2px black solid;
         }
-    
+
         .wdk-UserComments-Show-Group-Body {
           display: grid;
           grid-template-columns: 30em 1fr;
           margin-top: 0.5em;
-  
-          // TODO: Once (if?) we drop IE11 support, we can use 
+
+          // TODO: Once (if?) we drop IE11 support, we can use
           // "row-gap" instead of applying "margin-bottom"
           // to the direct descendants
           > * {
             margin-bottom: 0.5em;
           }
-  
-          > label {            
+
+          > label {
             margin-left: 1em;
           }
 
@@ -45,15 +45,16 @@
               padding-bottom: 0.5em;
               border-bottom: 1px rgb(128, 128, 128) solid;
               margin-bottom: 1em;
-              
+
               display: grid;
-              grid-template-columns: 10ch 1fr;    
-              
+              grid-template-columns: 10ch 1fr;
+
               > * {
                 padding: 0.5em;
               }
 
-              > *:nth-child(1), > *:nth-child(2) {
+              > *:nth-child(1),
+              > *:nth-child(2) {
                 background-color: lightgrey;
               }
             }

@@ -2,19 +2,23 @@ import { allDataLoaded } from '@veupathdb/wdk-client/lib/Actions/StaticDataActio
 import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export function reduce(state, action) {
-  switch(action.type) {
+  switch (action.type) {
     // flatten search tree
-    case allDataLoaded.type: return {
-      ...state,
-      searchTree: {
-        ...state.searchTree,
-        children: state.searchTree.children.map(node =>
-          node.properties.label[0] === 'TranscriptRecordClasses.TranscriptRecordClass'
-            ? node
-            : { ...node, children: getLeaves(node, node => node.children) })
-      }
-    }
-    default: return state;
+    case allDataLoaded.type:
+      return {
+        ...state,
+        searchTree: {
+          ...state.searchTree,
+          children: state.searchTree.children.map((node) =>
+            node.properties.label[0] ===
+            'TranscriptRecordClasses.TranscriptRecordClass'
+              ? node
+              : { ...node, children: getLeaves(node, (node) => node.children) }
+          ),
+        },
+      };
+    default:
+      return state;
   }
 }
 

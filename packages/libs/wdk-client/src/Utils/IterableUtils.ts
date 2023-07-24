@@ -16,7 +16,7 @@ interface Reducer<T, U> {
 }
 interface Collector<T, U> {
   from: (i: Iterable<T>) => U;
-};
+}
 
 /**
  * Useful operators for Iterables.
@@ -51,7 +51,6 @@ interface Collector<T, U> {
  * Wraps `iterable` in an object with collection operations.
  */
 export class Seq<T> {
-
   private static readonly EMPTY = new Seq([]);
 
   // constructors
@@ -75,10 +74,9 @@ export class Seq<T> {
   private _iterator?: Iterator<T>;
   private readonly _cache: T[] = [];
 
-  private constructor(private _iterable: Iterable<T>) { }
+  private constructor(private _iterable: Iterable<T>) {}
 
   *[Symbol.iterator]() {
-
     // Since this._iterator can be a generator object, we cache the iteration
     // so it can be replayed. Generator objects are stateful, so this is
     // necessary.
@@ -90,8 +88,7 @@ export class Seq<T> {
       const { done, value } = this._iterator.next();
       if (done) {
         break;
-      }
-      else {
+      } else {
         this._cache.push(value);
         yield value;
       }
@@ -120,13 +117,17 @@ export class Seq<T> {
 
   orderBy<U>(fn: Mapper<T, U>, reverse = false) {
     const reverseBit = reverse ? -1 : 1;
-    return new Seq(this.toArray().sort((a: T, b: T) => {
-      const mappedA = fn(a);
-      const mappedB = fn(b);
-      return mappedA < mappedB ? -1 * reverseBit
-           : mappedA > mappedB ? 1 * reverseBit
-           : 0;
-    }))
+    return new Seq(
+      this.toArray().sort((a: T, b: T) => {
+        const mappedA = fn(a);
+        const mappedB = fn(b);
+        return mappedA < mappedB
+          ? -1 * reverseBit
+          : mappedA > mappedB
+          ? 1 * reverseBit
+          : 0;
+      })
+    );
   }
 
   filter<U extends T>(fn: Guard<T, U>): Seq<U>;
@@ -144,7 +145,7 @@ export class Seq<T> {
   }
 
   takeWhile<U extends T>(fn: Guard<T, U>): Seq<U>;
-  takeWhile(fn: Predicate<T>): Seq<T>
+  takeWhile(fn: Predicate<T>): Seq<T>;
   takeWhile(fn: Predicate<T>) {
     return new Seq(takeWhile(fn, this));
   }
@@ -219,8 +220,8 @@ export class Seq<T> {
     return !this.some(() => true);
   }
 
-  forEach(fn: (t:T) => void) {
-    for (let iter = this[Symbol.iterator]();;) {
+  forEach(fn: (t: T) => void) {
+    for (let iter = this[Symbol.iterator](); ; ) {
       let { done, value } = iter.next();
       if (done) break;
       fn(value);
@@ -238,9 +239,7 @@ export class Seq<T> {
     }, new Map<S, T[]>());
     return Seq.from(groupMap);
   }
-
 }
-
 
 // XXX The for..of loop construct is not being used because babel adds a
 // try-catch to the loop body, which deoptimizes the code path. See
@@ -253,7 +252,7 @@ export function* concat<T>(...iterables: Iterable<T>[]) {
 }
 
 export function* map<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     yield fn(value);
@@ -261,7 +260,7 @@ export function* map<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
 }
 
 export function* flatMap<T, U>(fn: FlatMapper<T, U>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     yield* fn(value);
@@ -270,7 +269,7 @@ export function* flatMap<T, U>(fn: FlatMapper<T, U>, iterable: Iterable<T>) {
 
 export function* uniq<T>(iterable: Iterable<T>) {
   let values = new Set();
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (values.has(value) === false) {
@@ -282,7 +281,7 @@ export function* uniq<T>(iterable: Iterable<T>) {
 
 export function* uniqBy<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
   let keys = new Set<U>();
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     let key = fn(value);
@@ -293,10 +292,13 @@ export function* uniqBy<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
   }
 }
 
-export function filter<T, U extends T>(fn: Guard<T, U>, iterable: Iterable<T>): Iterable<U>;
+export function filter<T, U extends T>(
+  fn: Guard<T, U>,
+  iterable: Iterable<T>
+): Iterable<U>;
 export function filter<T>(fn: Predicate<T>, iterable: Iterable<T>): Iterable<T>;
 export function* filter<T>(fn: Predicate<T>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (fn(value)) yield value;
@@ -305,7 +307,7 @@ export function* filter<T>(fn: Predicate<T>, iterable: Iterable<T>) {
 
 export function* take<T>(n: number, iterable: Iterable<T>) {
   let count = 0;
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (!done && count++ < n) yield value;
     else break;
@@ -322,10 +324,16 @@ export function* takeLast<T>(n: number, iterable: Iterable<T>) {
 /**
  * Keep items until test returns false.
  */
-export function takeWhile<T, U extends T>(fn: Guard<T, U>, iterable: Iterable<T>): Iterable<U>;
-export function takeWhile<T>(fn: Predicate<T>, iterable: Iterable<T>): Iterable<T>;
+export function takeWhile<T, U extends T>(
+  fn: Guard<T, U>,
+  iterable: Iterable<T>
+): Iterable<U>;
+export function takeWhile<T>(
+  fn: Predicate<T>,
+  iterable: Iterable<T>
+): Iterable<T>;
 export function* takeWhile<T>(fn: Predicate<T>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done || fn(value) === false) break;
     yield value;
@@ -333,7 +341,7 @@ export function* takeWhile<T>(fn: Predicate<T>, iterable: Iterable<T>) {
 }
 
 export function* drop<T>(n: number, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (n-- > 0) continue;
@@ -348,11 +356,17 @@ export function* dropLast<T>(n: number, iterable: Iterable<T>) {
 /**
  * Ignore items until test returns false.
  */
-export function dropWhile<T, U extends T>(fn: Guard<T, U>, iterable: Iterable<T>): Iterable<U>;
-export function dropWhile<T>(fn: Predicate<T>, iterable: Iterable<T>): Iterable<T>;
+export function dropWhile<T, U extends T>(
+  fn: Guard<T, U>,
+  iterable: Iterable<T>
+): Iterable<U>;
+export function dropWhile<T>(
+  fn: Predicate<T>,
+  iterable: Iterable<T>
+): Iterable<T>;
 export function* dropWhile<T>(fn: Predicate<T>, iterable: Iterable<T>) {
   let take = false;
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (take === false) take = !fn(value);
@@ -360,16 +374,18 @@ export function* dropWhile<T>(fn: Predicate<T>, iterable: Iterable<T>) {
   }
 }
 
-
 // Return values -- an item from iterable collection, or a reduction
 
 /**
  * Find the first item that test returns true for.
  */
-export function find<T, U extends T>(test: Guard<T, U>, iterable: Iterable<T>): U;
+export function find<T, U extends T>(
+  test: Guard<T, U>,
+  iterable: Iterable<T>
+): U;
 export function find<T>(test: Predicate<T>, iterable: Iterable<T>): T;
 export function find<T>(test: Predicate<T>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (test(value) === true) return value;
@@ -380,11 +396,14 @@ export function find<T>(test: Predicate<T>, iterable: Iterable<T>) {
 /**
  * Find the last item that the test returns true for.
  */
-export function findLast<T, U extends T>(test: Guard<T, U>, iterable: Iterable<T>): U;
+export function findLast<T, U extends T>(
+  test: Guard<T, U>,
+  iterable: Iterable<T>
+): U;
 export function findLast<T>(test: Predicate<T>, iterable: Iterable<T>): T;
 export function findLast<T>(test: Predicate<T>, iterable: Iterable<T>) {
-  let last: T|void;
-  for (let iter = iterable[Symbol.iterator]();;) {
+  let last: T | void;
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (test(value)) last = value;
@@ -397,8 +416,8 @@ export function first<T>(iterable: Iterable<T>) {
 }
 
 export function last<T>(iterable: Iterable<T>) {
-  let last: T|void;
-  for (let iter = iterable[Symbol.iterator]();;) {
+  let last: T | void;
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     last = value;
@@ -411,11 +430,11 @@ export function rest<T>(iterable: Iterable<T>) {
 }
 
 export function includes<T>(item: T, iterable: Iterable<T>): boolean {
-  return some(t => t === item, iterable);
+  return some((t) => t === item, iterable);
 }
 
 export function every<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (test(value) === false) return false;
@@ -424,7 +443,7 @@ export function every<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
 }
 
 export function some<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (test(value) === true) return true;
@@ -435,9 +454,13 @@ export function some<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
 /**
  * Reduce collection to a single value.
  */
-export function reduce<T, U>(fn: Reducer<T, U>, seedValue: U, iterable: Iterable<T>): U {
-  let result = seedValue
-  for (let iter = iterable[Symbol.iterator]();;) {
+export function reduce<T, U>(
+  fn: Reducer<T, U>,
+  seedValue: U,
+  iterable: Iterable<T>
+): U {
+  let result = seedValue;
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     result = fn(result, value);
@@ -448,4 +471,3 @@ export function reduce<T, U>(fn: Reducer<T, U>, seedValue: U, iterable: Iterable
 export function join<T>(separator: string, iterable: Iterable<T>): string {
   return Array.from(iterable).join(separator);
 }
-

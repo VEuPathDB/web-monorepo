@@ -13,7 +13,8 @@
       overflow: visible;
       position: relative;
 
-      .DataTable-Header, .DataTable-Body {
+      .DataTable-Header,
+      .DataTable-Body {
         display: block;
         overflow: visible;
         overflow-y: auto;

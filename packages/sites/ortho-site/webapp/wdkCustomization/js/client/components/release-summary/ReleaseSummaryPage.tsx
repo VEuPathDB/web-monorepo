@@ -1,7 +1,10 @@
 import React from 'react';
 
 import { OrthoDataTable } from 'ortho-client/components/OrthoDataTable';
-import { DataTableColumnKey, DataTableColumns } from 'ortho-client/utils/dataTables';
+import {
+  DataTableColumnKey,
+  DataTableColumns,
+} from 'ortho-client/utils/dataTables';
 
 interface Props<R, C extends DataTableColumnKey<R>> {
   containerClassName?: string;

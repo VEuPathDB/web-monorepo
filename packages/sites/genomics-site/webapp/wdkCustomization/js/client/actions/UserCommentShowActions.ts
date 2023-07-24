@@ -1,4 +1,7 @@
-import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import {
+  makeActionCreator,
+  InferAction,
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { UserCommentGetResponse } from '../types/userCommentTypes';
 
 export const openUserCommentShow = makeActionCreator(
@@ -8,12 +11,16 @@ export const openUserCommentShow = makeActionCreator(
 
 export const closeUserCommentShow = makeActionCreator(
   'user-comment-show/close-user-comment-show',
-  () => ({ })
+  () => ({})
 );
 
 export const fulfillUserComments = makeActionCreator(
   'user-comment-show/fulfill-user-comments',
-  (targetType: string, targetId: string, userComments: UserCommentGetResponse[]) => ({ targetType, targetId, userComments })
+  (
+    targetType: string,
+    targetId: string,
+    userComments: UserCommentGetResponse[]
+  ) => ({ targetType, targetId, userComments })
 );
 
 export const requestDeleteUserComment = makeActionCreator(

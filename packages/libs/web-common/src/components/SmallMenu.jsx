@@ -7,32 +7,37 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 /**
  * Small menu that appears in header
  */
-const SmallMenu = ({ items, webAppUrl }) => isEmpty(items) ? null : (
-  <ul className="eupathdb-SmallMenu">
-    {items.filter(identity).map((item, index) =>
-      <Item key={item.id || '_' + index} item={item} webAppUrl={webAppUrl}/>
-    )}
-  </ul>
-)
+const SmallMenu = ({ items, webAppUrl }) =>
+  isEmpty(items) ? null : (
+    <ul className="eupathdb-SmallMenu">
+      {items.filter(identity).map((item, index) => (
+        <Item key={item.id || '_' + index} item={item} webAppUrl={webAppUrl} />
+      ))}
+    </ul>
+  );
 
 SmallMenu.propTypes = {
   webAppUrl: PropTypes.string.isRequired,
-  items: PropTypes.array
-}
+  items: PropTypes.array,
+};
 
-export default SmallMenu
+export default SmallMenu;
 
 const Item = (props) => (
   <li className={'eupathdb-SmallMenuItem ' + (props.item.liClassName || '')}>
-
-    { props.item.url ? <ItemUrl {...props}/>
-    : props.item.webAppUrl ? <ItemWebAppUrl {...props}/>
-    : props.item.route ? <ItemRoute {...props}/>
-    : safeHtml(props.item.text) }
+    {props.item.url ? (
+      <ItemUrl {...props} />
+    ) : props.item.webAppUrl ? (
+      <ItemWebAppUrl {...props} />
+    ) : props.item.route ? (
+      <ItemRoute {...props} />
+    ) : (
+      safeHtml(props.item.text)
+    )}
 
     <SmallMenu {...props} items={props.item.children} />
   </li>
-)
+);
 
 const ItemUrl = ({ item }) => (
   <a
@@ -41,8 +46,10 @@ const ItemUrl = ({ item }) => (
     href={item.url}
     target={item.target}
     onClick={item.onClick}
-  >{safeHtml(item.text)}</a>
-)
+  >
+    {safeHtml(item.text)}
+  </a>
+);
 
 const ItemWebAppUrl = ({ item, webAppUrl }) => (
   <a
@@ -51,8 +58,10 @@ const ItemWebAppUrl = ({ item, webAppUrl }) => (
     href={`${webAppUrl}${item.webAppUrl}`}
     onClick={item.onClick}
     target={item.target}
-  >{safeHtml(item.text)}</a>
-)
+  >
+    {safeHtml(item.text)}
+  </a>
+);
 
 const ItemRoute = ({ item, webAppUrl }) => (
   <Link
@@ -61,5 +70,7 @@ const ItemRoute = ({ item, webAppUrl }) => (
     to={item.route}
     onClick={item.onClick}
     target={item.target}
-  >{safeHtml(item.text)}</Link>
-)
+  >
+    {safeHtml(item.text)}
+  </Link>
+);

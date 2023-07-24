@@ -14,26 +14,23 @@ interface PubmedIdPreviewProps {
 export const PubmedIdPreview: React.SFC<PubmedIdPreviewProps> = ({
   onClose,
   previewData,
-  className
-}) => (
-  previewData
-    ? (
-      <div className={className}>
-        <a href="#" onClick={event => {
+  className,
+}) =>
+  previewData ? (
+    <div className={className}>
+      <a
+        href="#"
+        onClick={(event) => {
           event.preventDefault();
           onClose();
-        }}>
-          <i className="fa fa-times" />
-        </a>
-        {
-          previewData.map((previewDatum, index) => (
-            <PubmedIdEntry 
-              key={index}
-              {...previewDatum}
-            />
-          ))
-        }
-      </div>
-    )
-    : <Loading />
-);
+        }}
+      >
+        <i className="fa fa-times" />
+      </a>
+      {previewData.map((previewDatum, index) => (
+        <PubmedIdEntry key={index} {...previewDatum} />
+      ))}
+    </div>
+  ) : (
+    <Loading />
+  );

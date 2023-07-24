@@ -12,9 +12,11 @@ export default function InvalidFilterList(props) {
 
   return (
     <div className="invalid-values">
-      <p>Some of the options you previously selected are no longer available:</p>
+      <p>
+        Some of the options you previously selected are no longer available:
+      </p>
       <ul>
-        {map(filters, filter => (
+        {map(filters, (filter) => (
           <li className="invalid">
             {JSON.stringify(pick(filter, 'field', 'value', 'includeUnknown'))}
           </li>
@@ -25,5 +27,5 @@ export default function InvalidFilterList(props) {
 }
 
 InvalidFilterList.propTypes = {
-  filters: PropTypes.array
-}
+  filters: PropTypes.array,
+};

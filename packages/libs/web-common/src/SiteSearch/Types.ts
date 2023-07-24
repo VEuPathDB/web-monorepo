@@ -1,8 +1,20 @@
-import { record, string, arrayOf, constant, combine, Unpack, oneOf, objectOf, number, boolean, optional } from "@veupathdb/wdk-client/lib/Utils/Json";
+import {
+  record,
+  string,
+  arrayOf,
+  constant,
+  combine,
+  Unpack,
+  oneOf,
+  objectOf,
+  number,
+  boolean,
+  optional,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
 
 const siteSearchCategory = record({
   name: string,
-  documentTypes: arrayOf(string)
+  documentTypes: arrayOf(string),
 });
 
 const siteSearchDocumentTypeField = record({
@@ -10,7 +22,7 @@ const siteSearchDocumentTypeField = record({
   displayName: string,
   // wdk search vocab term
   term: string,
-  isSubtitle: boolean
+  isSubtitle: boolean,
 });
 
 const siteSearchDocumentTypeBase = record({
@@ -20,13 +32,13 @@ const siteSearchDocumentTypeBase = record({
   count: number,
   hasOrganismField: boolean,
   summaryFields: arrayOf(siteSearchDocumentTypeField),
-  searchFields: arrayOf(siteSearchDocumentTypeField)
+  searchFields: arrayOf(siteSearchDocumentTypeField),
 });
 
 const standardSiteSearchDocumentType = combine(
   siteSearchDocumentTypeBase,
   record({
-    isWdkRecordType: constant(false)
+    isWdkRecordType: constant(false),
   })
 );
 
@@ -34,11 +46,14 @@ const wdkSiteSearchDocumentType = combine(
   siteSearchDocumentTypeBase,
   record({
     isWdkRecordType: constant(true),
-    wdkSearchName: string
+    wdkSearchName: string,
   })
 );
 
-const siteSearchDocumentType = oneOf(standardSiteSearchDocumentType, wdkSiteSearchDocumentType);
+const siteSearchDocumentType = oneOf(
+  standardSiteSearchDocumentType,
+  wdkSiteSearchDocumentType
+);
 
 const siteSearchDocument = record({
   documentType: string,
@@ -52,7 +67,7 @@ const siteSearchDocument = record({
 
 const siteSearchResults = record({
   totalCount: number,
-  documents: arrayOf(siteSearchDocument)
+  documents: arrayOf(siteSearchDocument),
 });
 
 export const siteSearchResponse = record({
@@ -60,14 +75,15 @@ export const siteSearchResponse = record({
   documentTypes: arrayOf(siteSearchDocumentType),
   organismCounts: objectOf(number),
   fieldCounts: optional(objectOf(number)),
-  searchResults: siteSearchResults
+  searchResults: siteSearchResults,
 });
 
 export type SiteSearchDocument = Unpack<typeof siteSearchDocument>;
 export type SiteSearchDocumentType = Unpack<typeof siteSearchDocumentType>;
-export type SiteSearchDocumentTypeField = Unpack<typeof siteSearchDocumentTypeField>;
+export type SiteSearchDocumentTypeField = Unpack<
+  typeof siteSearchDocumentTypeField
+>;
 export type SiteSearchResponse = Unpack<typeof siteSearchResponse>;
-
 
 export interface SiteSearchRequest {
   searchText: string;
