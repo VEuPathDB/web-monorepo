@@ -60,7 +60,6 @@ export function BubbleMarkerConfigurationMenu({
         Color:
       </p>
       <InputVariables
-        showClearSelectionButton={false}
         inputs={[
           { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
         ]}

@@ -289,6 +289,8 @@ export function useStandaloneMapMarkers(
     dependentAxisLogScale
   ) as NumberRange;
 
+  const vocabulary = rawPromise.value?.vocabulary;
+
   /**
    * Merge the overlay data into the basicMarkerData, if available,
    * and create markers.
@@ -330,7 +332,6 @@ export function useStandaloneMapMarkers(
       return diameter;
     };
 
-    const vocabulary = rawPromise.value?.vocabulary;
     return rawPromise.value?.rawMarkersData.mapElements.map(
       ({
         geoAggregateValue,
