@@ -103,8 +103,13 @@ export function disabledVariablesForInput(
       prevSelectedVariable.entityId,
       entities
     );
+    const siblings = descendantEntitiesForEntityId(
+      prevSelectedVariable.entityId,
+      entities,
+      (entity) => !entity.isManyToOneWithParent
+    );
     const excludedEntities = entities.filter(
-      (entity) => !ancestors.includes(entity)
+      (entity) => !ancestors.includes(entity) && !siblings.includes(entity)
     );
     const excludedVariables = excludedEntities.flatMap((entity) =>
       entity.variables.map((variable) => ({
@@ -123,8 +128,13 @@ export function disabledVariablesForInput(
       nextSelectedVariable.entityId,
       entities
     );
+    const siblings = ancestorEntitiesForEntityId(
+      nextSelectedVariable.entityId,
+      entities,
+      (entity) => !entity.isManyToOneWithParent
+    );
     const excludedEntities = entities.filter(
-      (entity) => !descendants.includes(entity)
+      (entity) => !descendants.includes(entity) && !siblings.includes(entity)
     );
     const excludedVariables = excludedEntities.flatMap((entity) =>
       entity.variables.map((variable) => ({
@@ -420,10 +430,16 @@ export function mergeMaxNumValues(
  */
 export function ancestorEntitiesForEntityId(
   entityId: string,
-  entities: StudyEntity[]
+  entities: StudyEntity[],
+  childFilter: (entity: StudyEntity) => boolean = () => true
 ): StudyEntity[] {
   const ancestors = entities.reduceRight((ancestors, entity) => {
-    if (entity.id === entityId || entity.children?.includes(ancestors[0])) {
+    if (
+      entity.id === entityId ||
+      (ancestors[0] != null &&
+        childFilter(ancestors[0]) &&
+        entity.children?.includes(ancestors[0]))
+    ) {
       ancestors.unshift(entity);
     }
     return ancestors;
@@ -437,12 +453,15 @@ export function ancestorEntitiesForEntityId(
  */
 function descendantEntitiesForEntityId(
   entityId: string,
-  entities: StudyEntity[]
+  entities: StudyEntity[],
+  childFilter: (entity: StudyEntity) => boolean = () => true
 ): StudyEntity[] {
   const entity = entities.find((entity) => entity.id === entityId);
   if (entity == null) throw new Error('Unkonwn entity: ' + entityId);
   const descendants = Array.from(
-    preorder(entity, (entity) => entity.children ?? [])
+    preorder(entity, (entity) =>
+      entity.children ? entity.children.filter(childFilter) : []
+    )
   );
   return descendants;
 }
