@@ -8,49 +8,48 @@ import { main as start } from '../scripts/start.js';
 
 const script = process.argv[2];
 
-const {
-  compile,
-  copyAssets
-} = configureBuildScripts({
+const { compile, copyAssets } = configureBuildScripts({
   srcDir: process.argv[3],
-  targetDir: process.argv[4]
+  targetDir: process.argv[4],
 });
 
 const siteConfigPath = [
   path.resolve(process.cwd(), '.env.local'),
-  path.resolve(process.cwd(), '.env')
+  path.resolve(process.cwd(), '.env'),
 ];
 
-switch(script) {
-  case "run-site-dev-server":
+switch (script) {
+  case 'run-site-dev-server':
     runSiteDevServer({
       siteConfigPath,
-      cliArgs: process.argv.slice(3)
+      cliArgs: process.argv.slice(3),
     }).catch(handleError);
     break;
-  case "start":
+  case 'start':
     start({
-      siteConfigPath
+      siteConfigPath,
     }).catch(handleError);
     break;
-  case "compile":
+  case 'compile':
     compile().catch(handleError);
     break;
-  case "copy-assets":
+  case 'copy-assets':
     copyAssets().catch(handleError);
     break;
-  case "prepare":
+  case 'prepare':
     compile().then(copyAssets).catch(handleError);
     break;
   default:
-    spawn('npx', ['react-app-rewired', ...process.argv.slice(2)], { stdio: 'inherit'});
+    spawn('npx', ['react-app-rewired', ...process.argv.slice(2)], {
+      stdio: 'inherit',
+    });
     break;
 }
 
 function configureBuildScripts({ srcDir = 'src/lib', targetDir = 'lib' }) {
   return {
     compile: () => compileMain(targetDir),
-    copyAssets: () => copyAssetsMain(srcDir, targetDir)
+    copyAssets: () => copyAssetsMain(srcDir, targetDir),
   };
 }
 

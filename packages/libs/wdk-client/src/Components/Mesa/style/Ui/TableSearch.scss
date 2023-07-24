@@ -18,7 +18,7 @@
       background: transparent;
       transition: all 0.4s ease;
 
-      &:not([value=""]) {
+      &:not([value='']) {
         font-size: 25px;
         border: 1px solid transparent;
         border-bottom-color: $borderColor;

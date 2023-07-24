@@ -1,14 +1,18 @@
-import React, {Component} from 'react';
-import {CollapsibleSection} from '@veupathdb/wdk-client/lib/Components';
-import {pure} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {CompoundStructure} from '../common/Compound';
+import React, { Component } from 'react';
+import { CollapsibleSection } from '@veupathdb/wdk-client/lib/Components';
+import { pure } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { CompoundStructure } from '../common/Compound';
 import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
 
 let expressionRE = /MassSpecGraphs$/;
 export function RecordTable(props) {
-  return props.table.name === 'Structures'   ? <CompoundStructures {...props}/>
-       : expressionRE.test(props.table.name) ? <DatasetGraphTable {...props} />
-                                             : <props.DefaultComponent {...props}/>;
+  return props.table.name === 'Structures' ? (
+    <CompoundStructures {...props} />
+  ) : expressionRE.test(props.table.name) ? (
+    <DatasetGraphTable {...props} />
+  ) : (
+    <props.DefaultComponent {...props} />
+  );
 }
 
 /**
@@ -24,7 +28,7 @@ class CompoundStructures extends Component {
   }
 
   render() {
-    let [ primary, ...other ] = this.props.value;
+    let [primary, ...other] = this.props.value;
     return (
       <div className="eupathdb-CompoundStructures">
         <div>
@@ -37,9 +41,12 @@ class CompoundStructures extends Component {
             isCollapsed={!this.state.otherVisible}
             className="eupathdb-OtherCompoundStructures"
           >
-            {other.map(row => {
+            {other.map((row) => {
               return (
-                <CompoundStructure key={row.struct_num} moleculeString={row.structure} />
+                <CompoundStructure
+                  key={row.struct_num}
+                  moleculeString={row.structure}
+                />
               );
             })}
           </CollapsibleSection>
@@ -50,19 +57,28 @@ class CompoundStructures extends Component {
 }
 
 const DatasetGraphTable = pure(function DatasetGraphTable(props) {
-  let dataTable = Object.assign({}, {
-    value: props.record.tables.MassSpecGraphsDataTable,
-    table: props.recordClass.tables.find(obj => obj.name == "MassSpecGraphsDataTable"),
-    record: props.record,
-    recordClass: props.recordClass,
-    DefaultComponent: props.DefaultComponent
-  });
+  let dataTable = Object.assign(
+    {},
+    {
+      value: props.record.tables.MassSpecGraphsDataTable,
+      table: props.recordClass.tables.find(
+        (obj) => obj.name == 'MassSpecGraphsDataTable'
+      ),
+      record: props.record,
+      recordClass: props.recordClass,
+      DefaultComponent: props.DefaultComponent,
+    }
+  );
 
   return (
     <props.DefaultComponent
       {...props}
-      childRow={childProps =>
-        <DatasetGraph  rowData={props.value[childProps.rowIndex]} dataTable={dataTable}  />}
+      childRow={(childProps) => (
+        <DatasetGraph
+          rowData={props.value[childProps.rowIndex]}
+          dataTable={dataTable}
+        />
+      )}
     />
   );
 });

@@ -1,4 +1,4 @@
-$red: #DD314E;
+$red: #dd314e;
 
 .StudyMenuItem {
   min-width: 300px;
@@ -6,9 +6,9 @@ $red: #DD314E;
   align-items: center;
   flex-wrap: nowrap;
   font-weight: 400;
-  [class*=ebrc-icon] {
+  [class*='ebrc-icon'] {
     font-size: 1.4em;
-    margin-right: .5ex;
+    margin-right: 0.5ex;
   }
   .StudyMenuItem-Name {
     flex: 0 0 auto;
@@ -40,7 +40,7 @@ $red: #DD314E;
   }
 }
 
-span:has(> div.StudyMenuItem--disabled) { 
+span:has(> div.StudyMenuItem--disabled) {
   display: none;
 }
 
@@ -49,11 +49,10 @@ span:has(> div.StudyMenuItem--disabled) {
   opacity: 0.5;
   * { pointer-events: none !important; }
   */
-  display: none; 
+  display: none;
 }
 
 div.prerelease {
   font-style: italic;
   padding: 0.4em; /* try consistent with .SiteMenuItem-Text in SiteMenuItem.scss*/
 }
-

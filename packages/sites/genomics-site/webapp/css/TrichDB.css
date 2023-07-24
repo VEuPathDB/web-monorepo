@@ -3,48 +3,55 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(../images/TrichDB/background_s.jpg);
+  background-image: url(../images/TrichDB/background_s.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #header2 {
-	background-image: url(../images/TrichDB/backgroundtop_s.jpg);
+  background-image: url(../images/TrichDB/backgroundtop_s.jpg);
 }
 
-#header_rt, #header_rt a:link, #header_rt a:visited {
-   color:  #455F15;  
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
+  color: #455f15;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#nav-top, #nav-top a:link, #nav-top a:visited {
-	color:  #455F15;
+#nav-top,
+#nav-top a:link,
+#nav-top a:visited {
+  color: #455f15;
 }
 
-#nav-top li ul {  /* second-level lists */
-	border-color: #455F15;
-	list-style-image: url(../images/TrichDB/bullet_arrow.gif);
+#nav-top li ul {
+  /* second-level lists */
+  border-color: #455f15;
+  list-style-image: url(../images/TrichDB/bullet_arrow.gif);
 }
 
-#nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #455F15;
+#nav-top li ul a:link,
+#nav-top li ul a:visited {
+  color: #455f15;
 }
 
-#nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #997852;
+#nav-top li ul a:hover,
+#nav-top li ul a:active {
+  color: #997852;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .threecolumndiv div.heading {
-  background-color: #6e8446;  /* #8ba758; */  /* #718747; */
+  background-color: #6e8446; /* #8ba758; */ /* #718747; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,10 +59,9 @@ body {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #455F15;  
+  border-color: #455f15;
 }
 
 #menu_lefttop a.heading {
-	background-color: #997852;  /* #cadbaf; */
+  background-color: #997852; /* #cadbaf; */
 }
-

@@ -242,5 +242,4 @@ SidebarResize.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
 };

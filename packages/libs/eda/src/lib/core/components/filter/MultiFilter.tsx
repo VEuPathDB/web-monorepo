@@ -148,9 +148,8 @@ export function MultiFilter(props: Props) {
   // Filter assocated with this variable. This is used to retreive counts.
   // We're using state so that we can defer updating counts until the user
   // clicks on an "update counts" button.
-  const [thisFilter, setThisFilter] = useState<MultiFilterType | undefined>(
-    _thisFilter
-  );
+  const [thisFilter, setThisFilter] =
+    useState<MultiFilterType | undefined>(_thisFilter);
 
   // debounce time needs to be linear with the number of sub-filters, see notes at the end of this file
   // but a minimum of 2 seconds seems reasonable too
@@ -160,14 +159,15 @@ export function MultiFilter(props: Props) {
     [debounceTime]
   );
   // Cancel any pending requests when this component is unmounted.
-  useEffect(() => debouncedSetThisFilter.cancel, [
-    debouncedSetThisFilter.cancel,
-  ]);
+  useEffect(
+    () => debouncedSetThisFilter.cancel,
+    [debouncedSetThisFilter.cancel]
+  );
   // watch for changes in _thisFilter, then setThisFilter in a regulated manner
-  useEffect(() => debouncedSetThisFilter(_thisFilter), [
-    debouncedSetThisFilter,
-    _thisFilter,
-  ]);
+  useEffect(
+    () => debouncedSetThisFilter(_thisFilter),
+    [debouncedSetThisFilter, _thisFilter]
+  );
 
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const otherFilters = useDeepValue(

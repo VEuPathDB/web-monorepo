@@ -13,10 +13,8 @@ import * as userCommentShow from './storeModules/UserCommentShowStoreModule';
 import * as genomeSummaryView from './storeModules/GenomeSummaryViewStoreModule';
 
 export default flowRight(
-  useUserDatasetsWorkspace
-    ? addUserDatasetStoreModules
-    : identity,
-  storeModules => ({
+  useUserDatasetsWorkspace ? addUserDatasetStoreModules : identity,
+  (storeModules) => ({
     ...storeModules,
     record,
     globalData: {
@@ -24,7 +22,7 @@ export default flowRight(
       reduce: (state, action) => {
         state = storeModules.globalData.reduce(state, action);
         return globalData.reduce(state, action);
-      }
+      },
     },
     userCommentForm,
     userCommentShow,

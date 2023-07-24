@@ -17,17 +17,16 @@ type Props = {
 
   /** Whether or not the element is spinning */
   spinning: boolean;
-}
+};
 
 /**
  * See http://fgnass.github.io/spin.js/
  */
 class Spinnable extends React.Component<Props> {
-
   static defaultProps = {
     className: '',
     spinnerOptions: {},
-    style: {}
+    style: {},
   };
 
   private spinner?: Spinner;
@@ -68,7 +67,6 @@ class Spinnable extends React.Component<Props> {
       </div>
     );
   }
-
 }
 
 const enhance = flow(delay<Props>(200), wrappable);

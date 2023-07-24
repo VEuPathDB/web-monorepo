@@ -22,19 +22,18 @@ export default {
 
 const Template: Story<DataGridProps> = (args) => {
   return (
-  <UIThemeProvider
-    theme={{
-      palette: {
-        primary: { hue: cyan, level: 600 },
-        secondary: { hue: purple, level: 500 },
-      },
-    }}
-  >
-    <DataGrid {...args} columns={columns({ role: args.themeRole })}/>
-  </UIThemeProvider>
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: cyan, level: 600 },
+          secondary: { hue: purple, level: 500 },
+        },
+      }}
+    >
+      <DataGrid {...args} columns={columns({ role: args.themeRole })} />
+    </UIThemeProvider>
   );
 };
-
 
 export const Basic = Template.bind({});
 Basic.args = {
@@ -60,7 +59,8 @@ WithPagination.args = {
   },
 };
 
-const reportSelectedRows = (rows) => console.log(`checked rows: ${rows.map((row) => row.original.record_id)}`);
+const reportSelectedRows = (rows) =>
+  console.log(`checked rows: ${rows.map((row) => row.original.record_id)}`);
 
 export const WithRowSelection = Template.bind({});
 WithRowSelection.args = {
@@ -132,8 +132,9 @@ WithServerControlledPagination.args = {
   title: 'Data Grid w/ Server Pagination',
 };
 
-export const WithServerControlledPaginationAndSorting: Story<DataGridProps> =
-  (args) => <WithServerControlledPagination {...args} />;
+export const WithServerControlledPaginationAndSorting: Story<DataGridProps> = (
+  args
+) => <WithServerControlledPagination {...args} />;
 WithServerControlledPaginationAndSorting.args = {
   title: 'Data Grid w/ Server Pagination and Sorting',
   sortable: true,

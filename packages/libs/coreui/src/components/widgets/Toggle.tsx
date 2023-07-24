@@ -1,23 +1,23 @@
-import { CSSProperties } from "react";
-import { Subset } from "../../definitions/types";
+import { CSSProperties } from 'react';
+import { Subset } from '../../definitions/types';
 
-import { ColorDescriptor, ThemeRole } from "../theming/types";
-import { useMemo, useState } from "react";
+import { ColorDescriptor, ThemeRole } from '../theming/types';
+import { useMemo, useState } from 'react';
 
 // Definitions
-import { primaryFont } from "../../styleDefinitions/typography";
-import { blue } from "@material-ui/core/colors";
-import { gray } from "../../definitions/colors";
-import { useUITheme } from "../theming";
-import { merge, uniqueId } from "lodash";
-import { ParagraphStyleSpec } from "../typography/Paragraph";
+import { primaryFont } from '../../styleDefinitions/typography';
+import { blue } from '@material-ui/core/colors';
+import { gray } from '../../definitions/colors';
+import { useUITheme } from '../theming';
+import { merge, uniqueId } from 'lodash';
+import { ParagraphStyleSpec } from '../typography/Paragraph';
 
 // Type definitions for working with styles.
 type ToggleColorStyleSpec = {
-  backgroundColor: CSSProperties["color"];
-  labelColor: CSSProperties["color"];
-  knobColor: CSSProperties["color"];
-  borderColor: CSSProperties["color"];
+  backgroundColor: CSSProperties['color'];
+  labelColor: CSSProperties['color'];
+  knobColor: CSSProperties['color'];
+  borderColor: CSSProperties['color'];
 };
 
 type ToggleValueStyleSpec = {
@@ -50,14 +50,14 @@ export type ToggleProps = {
    * override this behavior. */
   label?: React.ReactNode;
   /** Position of label. Optional, defaults to left. */
-  labelPosition?: "left" | "right";
+  labelPosition?: 'left' | 'right';
   /** ARIA label to apply. Not needed if a label prop with descriptive text is
    * provided. Optional. */
   ariaLabel?: string;
   /** Primary or secondary. Optional. */
   themeRole?: ThemeRole;
   /** Size of toggle. Optional, defaults to medium. */
-  size?: "medium" | "small";
+  size?: 'medium' | 'small';
   /** Specification on how toggle should be styled. Optional. */
   styleOverrides?: ToggleStyleSpecSubset;
 };
@@ -68,14 +68,14 @@ export default function Toggle({
   onChange,
   disabled,
   label,
-  labelPosition = "left",
+  labelPosition = 'left',
   ariaLabel,
   themeRole,
-  size = "medium",
+  size = 'medium',
   styleOverrides,
 }: ToggleProps) {
   const theme = useUITheme();
-  const [hoverState, setHoverState] = useState<"default" | "hover">("default");
+  const [hoverState, setHoverState] = useState<'default' | 'hover'>('default');
 
   const styleSpec: ToggleStyleSpec = useMemo(() => {
     const mainColor =
@@ -92,14 +92,14 @@ export default function Toggle({
       container: {},
       default: {
         off: {
-          backgroundColor: "none",
+          backgroundColor: 'none',
           knobColor: mainHue[mainLevel],
           borderColor: mainHue[mainLevel],
           labelColor: enabledLabelColor,
         },
         on: {
           backgroundColor: mainHue[mainLevel],
-          knobColor: "white",
+          knobColor: 'white',
           borderColor: mainHue[mainLevel],
           labelColor: enabledLabelColor,
         },
@@ -113,28 +113,28 @@ export default function Toggle({
         },
         on: {
           backgroundColor: mainHue[Math.min(mainLevel + 200, 900)],
-          knobColor: "white",
+          knobColor: 'white',
           borderColor: mainHue[Math.min(mainLevel + 200, 900)],
           labelColor: enabledLabelColor,
         },
       },
       disabled: {
         off: {
-          backgroundColor: "none",
+          backgroundColor: 'none',
           knobColor: disabledColor,
           borderColor: disabledColor,
           labelColor: disabledColor,
         },
         on: {
           backgroundColor: disabledColor,
-          knobColor: "white",
+          knobColor: 'white',
           borderColor: disabledColor,
           labelColor: disabledColor,
         },
       },
       label: {
         fontFamily: `'Roboto', 'San Francisco', 'Frutiger', 'Univers', 'Helvetica Neue', 'Helvetica'`,
-      }
+      },
     };
 
     return merge({}, defaultStyleSpec, styleOverrides);
@@ -147,7 +147,7 @@ export default function Toggle({
    * and (3) whether the toggle is disabled.
    */
   const currentStyles = useMemo(() => {
-    const selectedOption = value ? "on" : "off";
+    const selectedOption = value ? 'on' : 'off';
 
     return disabled
       ? styleSpec.disabled[selectedOption]
@@ -155,37 +155,37 @@ export default function Toggle({
   }, [hoverState, value, styleSpec, disabled]);
 
   const finalAriaLabel =
-    ariaLabel ?? (label !== undefined ? undefined : "Toggle");
+    ariaLabel ?? (label !== undefined ? undefined : 'Toggle');
   const labelId = useMemo(
     () =>
       ariaLabel === undefined && label !== undefined
-        ? uniqueId("toggle-label-")
+        ? uniqueId('toggle-label-')
         : undefined,
     [label, ariaLabel]
   );
 
-  const width = size === "medium" ? 30 : 20;
-  const height = size === "medium" ? 17 : 11;
-  const borderWidth = size === "medium" ? 1.5 : 1;
-  const knobSize = size === "medium" ? 9 : 6;
-  const knobOffset = size === "medium" ? 3 : 2;
+  const width = size === 'medium' ? 30 : 20;
+  const height = size === 'medium' ? 17 : 11;
+  const borderWidth = size === 'medium' ? 1.5 : 1;
+  const knobSize = size === 'medium' ? 9 : 6;
+  const knobOffset = size === 'medium' ? 3 : 2;
 
   return (
     <div
       css={{
-        display: "flex",
-        alignItems: "center",
-        pointerEvents: disabled ? "none" : "auto",
+        display: 'flex',
+        alignItems: 'center',
+        pointerEvents: disabled ? 'none' : 'auto',
         fontFamily: primaryFont,
         fontSize: 13,
         fontWeight: 400,
         ...styleSpec.container,
       }}
     >
-      {label && labelPosition === "left" && (
+      {label && labelPosition === 'left' && (
         <span
           css={{
-            marginRight: size === "medium" ? 10 : 5,
+            marginRight: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
             ...styleSpec.label,
           }}
@@ -200,11 +200,11 @@ export default function Toggle({
         aria-labelledby={labelId}
         aria-checked={value}
         css={{
-          display: "flex",
-          position: "relative",
-          boxSizing: "border-box",
-          transition: "all ease .33s",
-          alignItems: "center",
+          display: 'flex',
+          position: 'relative',
+          boxSizing: 'border-box',
+          transition: 'all ease .33s',
+          alignItems: 'center',
           width,
           height,
           borderRadius: height / 2,
@@ -213,42 +213,42 @@ export default function Toggle({
             ? {
                 borderColor: currentStyles.borderColor,
                 borderWidth,
-                borderStyle: "solid",
+                borderStyle: 'solid',
               }
             : {
-                border: "none",
+                border: 'none',
               }),
         }}
         onKeyDown={(event) => {
-          if (["Space", "Enter"].includes(event.code)) {
+          if (['Space', 'Enter'].includes(event.code)) {
             onChange(!value);
           }
         }}
-        onFocus={() => setHoverState("hover")}
-        onBlur={() => setHoverState("default")}
-        onMouseEnter={() => setHoverState("hover")}
-        onMouseLeave={() => setHoverState("default")}
+        onFocus={() => setHoverState('hover')}
+        onBlur={() => setHoverState('default')}
+        onMouseEnter={() => setHoverState('hover')}
+        onMouseLeave={() => setHoverState('default')}
         onClick={() => onChange(!value)}
         tabIndex={0}
       >
         <div
           css={{
-            position: "absolute",
+            position: 'absolute',
             width: knobSize,
             height: knobSize,
             borderRadius: knobSize / 2,
             left: !value
               ? knobOffset
               : width - knobSize - 2 * borderWidth - knobOffset,
-            transition: "ease all .33s",
+            transition: 'ease all .33s',
             backgroundColor: currentStyles.knobColor,
           }}
         />
       </div>
-      {label && labelPosition === "right" && (
+      {label && labelPosition === 'right' && (
         <span
           css={{
-            marginLeft: size === "medium" ? 10 : 5,
+            marginLeft: size === 'medium' ? 10 : 5,
             color: currentStyles.labelColor,
             ...styleSpec.label,
           }}

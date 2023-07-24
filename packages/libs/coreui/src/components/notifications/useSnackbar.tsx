@@ -1,14 +1,14 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { Grow } from "@material-ui/core";
+import { Grow } from '@material-ui/core';
 import {
   OptionsObject,
   ProviderContext,
   SnackbarMessage,
   useSnackbar as useNotistackSnackbar,
-} from "notistack";
+} from 'notistack';
 
-import DismissButton from "./DismissButton";
+import DismissButton from './DismissButton';
 
 /**
  * A wrapping of notistack's (https://www.iamhosseindhv.com/notistack)
@@ -28,7 +28,7 @@ export default function useSnackbar(): ProviderContext {
     () => ({
       enqueueSnackbar(message: SnackbarMessage, options?: OptionsObject) {
         return enqueueSnackbar(message, {
-          variant: "info",
+          variant: 'info',
           TransitionComponent: Grow as React.ComponentType,
           action:
             options?.persist === true

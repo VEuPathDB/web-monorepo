@@ -7,11 +7,11 @@ export interface FormRowProps {
   fieldClassName?: string;
 }
 
-export const FormRow: React.SFC<FormRowProps> = ({ 
-  label, 
-  field, 
+export const FormRow: React.SFC<FormRowProps> = ({
+  label,
+  field,
   labelClassName,
-  fieldClassName
+  fieldClassName,
 }) => (
   <>
     <label className={labelClassName}>{label}</label>

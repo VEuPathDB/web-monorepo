@@ -11,6 +11,11 @@ export interface RouteEntry {
   readonly isFullscreen?: boolean;
 }
 
-export function parseQueryString(props: RouteComponentProps<any>): Record<string, string> {
-  return mapValues(parse(props.location.search.slice(1)), (arrayOrString = '') => String(arrayOrString));
+export function parseQueryString(
+  props: RouteComponentProps<any>
+): Record<string, string> {
+  return mapValues(
+    parse(props.location.search.slice(1)),
+    (arrayOrString = '') => String(arrayOrString)
+  );
 }

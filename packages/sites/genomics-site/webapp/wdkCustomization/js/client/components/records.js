@@ -14,17 +14,19 @@ export function findComponent(componentName, recordClassName) {
     if (moduleNames.includes(moduleName)) {
       component = req(moduleName)[componentName];
     }
-  }
-  catch(e) {
+  } catch (e) {
     // Log and throw error. Throwing this error will cause React to crash, which
     // will leave the page in an unfinished state, without any error indication
     // displayed.
     console.error(e);
-    alert("An error was found attempting to load module `" + moduleName + "`." +
-      " See the browser's console for a detailed error.");
+    alert(
+      'An error was found attempting to load module `' +
+        moduleName +
+        '`.' +
+        " See the browser's console for a detailed error."
+    );
     throw e;
-  }
-  finally {
+  } finally {
     return component;
   }
 }
@@ -40,12 +42,17 @@ export function findComponent(componentName, recordClassName) {
 export function makeDynamicWrapper(componentName, ParentComponent) {
   return function dynamicWrapper(DefaultComponent) {
     return function DynamicWrapper(props) {
-      let ResolvedComponent = findComponent(componentName, props.recordClass.fullName)
-        || DefaultComponent;
-      let resolvedElement = <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>;
-      return ParentComponent == null ? resolvedElement : (
-        <ParentComponent {...props} children={resolvedElement}/>
+      let ResolvedComponent =
+        findComponent(componentName, props.recordClass.fullName) ||
+        DefaultComponent;
+      let resolvedElement = (
+        <ResolvedComponent {...props} DefaultComponent={DefaultComponent} />
       );
-    }
-  }
+      return ParentComponent == null ? (
+        resolvedElement
+      ) : (
+        <ParentComponent {...props} children={resolvedElement} />
+      );
+    };
+  };
 }

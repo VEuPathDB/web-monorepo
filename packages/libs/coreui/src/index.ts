@@ -1,27 +1,27 @@
 // Typography
-export * from "./components/typography";
+export * from './components/typography';
 
 // Buttons
-export { default as FilledButton } from "./components/buttons/FilledButton";
-export { default as FloatingButton } from "./components/buttons/FloatingButton";
-export { default as MesaButton } from "./components/buttons/MesaButton";
-export { default as OutlinedButton } from "./components/buttons/OutlinedButton";
+export { default as FilledButton } from './components/buttons/FilledButton';
+export { default as FloatingButton } from './components/buttons/FloatingButton';
+export { default as MesaButton } from './components/buttons/MesaButton';
+export { default as OutlinedButton } from './components/buttons/OutlinedButton';
 
 // Widgets
-export { Checkbox, Chip } from "./components/widgets";
-export { default as Toggle } from "./components/widgets/Toggle";
+export { Checkbox, Chip } from './components/widgets';
+export { default as Toggle } from './components/widgets/Toggle';
 
 // Containers
-export { Card, ExpandablePanel, Modal } from "./components/containers";
+export { Card, ExpandablePanel, Modal } from './components/containers';
 
 // Grids
-export { DataGrid, TabbedDisplay } from "./components/grids";
+export { DataGrid, TabbedDisplay } from './components/grids';
 
 // Forms
-export { FormField, MultilineTextField } from "./components/forms";
+export { FormField, MultilineTextField } from './components/forms';
 
-export { default as styles } from "./styleDefinitions";
-export { default as colors } from "./definitions/colors";
+export { default as styles } from './styleDefinitions';
+export { default as colors } from './definitions/colors';
 
 // Icons
-export * from "./components/icons";
+export * from './components/icons';

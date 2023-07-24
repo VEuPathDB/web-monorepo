@@ -1,4 +1,4 @@
-import{ debounce } from 'lodash';
+import { debounce } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -14,13 +14,12 @@ type Props = {
 
 type State = {
   internalValue: number | string;
-}
+};
 
 /**
  * Widget for selecting a single number
  */
 class NumberSelector extends React.Component<Props, State> {
-
   static propTypes = {
     start: PropTypes.number,
     end: PropTypes.number,
@@ -28,28 +27,31 @@ class NumberSelector extends React.Component<Props, State> {
     onChange: PropTypes.func,
     step: PropTypes.number,
     size: PropTypes.number,
-    required: PropTypes.bool
+    required: PropTypes.bool,
   };
 
   debouncedNotifyChange = debounce(this.notifyChange, 750);
 
-  constructor (props:Props) {
+  constructor(props: Props) {
     super(props);
     this.handleBlurEvent = this.handleBlurEvent.bind(this);
     this.handleChangeEvent = this.handleChangeEvent.bind(this);
     this.state = { internalValue: props.value };
   }
 
-  componentWillReceiveProps(nextProps:Props) {
+  componentWillReceiveProps(nextProps: Props) {
     this.setState({ internalValue: nextProps.value });
   }
 
-  handleChangeEvent (e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ internalValue: e.target.value }, () => this.debouncedNotifyChange());
+  handleChangeEvent(e: React.ChangeEvent<HTMLInputElement>) {
+    this.setState({ internalValue: e.target.value }, () =>
+      this.debouncedNotifyChange()
+    );
   }
 
-  handleBlurEvent (e: React.FocusEvent<HTMLInputElement>) {
-    const value = e.currentTarget.value === '' ? this.props.value : e.currentTarget.value;
+  handleBlurEvent(e: React.FocusEvent<HTMLInputElement>) {
+    const value =
+      e.currentTarget.value === '' ? this.props.value : e.currentTarget.value;
     this.setState({ internalValue: value }, () => this.notifyChange());
   }
 
@@ -64,7 +66,7 @@ class NumberSelector extends React.Component<Props, State> {
     onChange(Number(internalValue));
   }
 
-  render () {
+  render() {
     let { start, end, step, size, required = false } = this.props;
     let { internalValue: value } = this.state;
     if (!step) step = 1;

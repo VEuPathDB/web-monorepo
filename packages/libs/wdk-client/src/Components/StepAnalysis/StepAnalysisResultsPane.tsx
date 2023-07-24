@@ -5,7 +5,9 @@ export type StepAnalysisResultPaneProps = StepAnalysisResultState & {
   resultRenderer: (props: StepAnalysisResultPluginProps) => React.ReactNode;
 };
 
-export type StepAnalysisResultState = ({ type: 'complete-result' } & CompleteResultState) | ({ type: 'incomplete-result' } & IncompleteResultState);
+export type StepAnalysisResultState =
+  | ({ type: 'complete-result' } & CompleteResultState)
+  | ({ type: 'incomplete-result' } & IncompleteResultState);
 
 export type StepAnalysisResultPluginProps = CompleteResultState;
 
@@ -21,24 +23,24 @@ export interface IncompleteResultState {
   reason: ReactNode;
 }
 
-export const StepAnalysisResultsPane: React.SFC<StepAnalysisResultPaneProps> = props => (
+export const StepAnalysisResultsPane: React.SFC<StepAnalysisResultPaneProps> = (
+  props
+) => (
   <div>
-    {
-      props.type === 'incomplete-result' &&
+    {props.type === 'incomplete-result' && (
       <div className={props.className}>
         <h3>{props.header}</h3>
         <p>{props.reason}</p>
       </div>
-    }
-    {
-      props.type === 'complete-result' &&
+    )}
+    {props.type === 'complete-result' && (
       <div className="step-analysis-subpane step-analysis-results-pane">
         {props.resultRenderer({
           analysisResult: props.analysisResult,
           analysisConfig: props.analysisConfig,
-          webAppUrl: props.webAppUrl
+          webAppUrl: props.webAppUrl,
         })}
       </div>
-    }
+    )}
   </div>
 );

@@ -31,7 +31,7 @@ const ModalContent = ({
       </Paragraph>
     </div>
     <FilledButton
-      text='Example Button'
+      text="Example Button"
       onPress={() => null}
       themeRole={themeRole}
     />

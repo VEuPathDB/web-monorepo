@@ -1,21 +1,21 @@
 @import './palette';
 
 /* General Mixins -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
-@mixin transition ($duration: 0.3s) {
+@mixin transition($duration: 0.3s) {
   transition: all $duration;
   -webkit-transition: all $duration;
 }
 
 /* Table Mixins -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
-@mixin flex () {
+@mixin flex() {
   display: -webkit-flex;
   display: -moz-box;
   display: -ms-flexbox;
   display: flex;
 }
 
-@mixin row () {
+@mixin row() {
   -webkit-flex-direction: row;
   -moz-box-orient: horizontal;
   -moz-box-direction: normal;
@@ -23,19 +23,19 @@
   flex-direction: row;
 }
 
-@mixin alignCenter () {
+@mixin alignCenter() {
   -webkit-align-items: center;
   -moz-box-align: center;
   -ms-flex-align: center;
   align-items: center;
 }
 
-@mixin truncated () {
+@mixin truncated() {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-@mixin buttonStyle ($base) {
+@mixin buttonStyle($base) {
   background-color: $base;
   color: $white;
 }

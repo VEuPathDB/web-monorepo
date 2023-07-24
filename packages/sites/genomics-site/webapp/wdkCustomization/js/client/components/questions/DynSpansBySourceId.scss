@@ -40,14 +40,14 @@
     }
 
     .wdk-DatasetParamLabel {
-      flex: 2.5
+      flex: 2.5;
     }
   }
 
   &MutuallyExclusiveParams {
-    border-right: .25em double black;
-    padding-right: .5em;
-    margin-right: .5em;
+    border-right: 0.25em double black;
+    padding-right: 0.5em;
+    margin-right: 0.5em;
   }
 
   &AddLocationButton {
@@ -57,9 +57,9 @@
     margin: 1.5em 0;
   }
 
-  &AddLocationArrows{
+  &AddLocationArrows {
     font-size: 1.5em;
-    margin: 0 .25em;
+    margin: 0 0.25em;
   }
 
   &PhaseHeader {

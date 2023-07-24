@@ -28,15 +28,17 @@
     font-size: 1.2em;
   }
 
-  summary, details {
+  summary,
+  details {
     &:focus {
       outline: none;
     }
   }
 
-  h2, h3 {
+  h2,
+  h3 {
     font-size: 1.2em;
-    padding: .4em 0;
+    padding: 0.4em 0;
   }
 
   > button {
@@ -53,7 +55,7 @@
   &--Details {
     overflow: auto;
     max-height: calc(100vh - 35em);
-    font-size: .9em;
+    font-size: 0.9em;
     color: #000000e6;
 
     h3 {
@@ -70,7 +72,7 @@
     margin: 1em 0;
     padding: 1em;
     background: #ff00001a;
-    border-radius: .5em;
+    border-radius: 0.5em;
     color: #e22222;
   }
 
@@ -78,7 +80,7 @@
     margin: 0;
     padding: 1em;
     background: #8888881a;
-    border-radius: .5em;
+    border-radius: 0.5em;
     color: #333;
   }
 }

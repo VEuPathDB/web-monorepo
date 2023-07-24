@@ -1,12 +1,21 @@
 import React from 'react';
 import { StepAnalysisLinks } from './StepAnalysisLinks';
 import { StepAnalysisDescription } from './StepAnalysisDescription';
-import { StepAnalysisFormPane, StepAnalysisFormPluginState, StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
-import { StepAnalysisResultsPane, StepAnalysisResultState, StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
+import {
+  StepAnalysisFormPane,
+  StepAnalysisFormPluginState,
+  StepAnalysisFormPluginProps,
+} from './StepAnalysisFormPane';
+import {
+  StepAnalysisResultsPane,
+  StepAnalysisResultState,
+  StepAnalysisResultPluginProps,
+} from './StepAnalysisResultsPane';
 import { StepAnalysisEventHandlers } from './StepAnalysisView';
 import { LoadingOverlay } from '../../Components';
 
-export type StepAnalysisSelectedPaneProps = StepAnalysisSelectedPaneStateProps & StepAnalysisEventHandlers;
+export type StepAnalysisSelectedPaneProps = StepAnalysisSelectedPaneStateProps &
+  StepAnalysisEventHandlers;
 
 export interface StepAnalysisSelectedPaneStateProps {
   analysisName: string;
@@ -34,61 +43,58 @@ interface PluginRenderers {
   resultRenderer: (props: StepAnalysisResultPluginProps) => React.ReactNode;
 }
 
-export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> = ({
-  analysisName,
-  descriptionState,
-  formSaving,
-  formState,
-  resultState,
-  toggleDescription,
-  toggleParameters,
-  updateParamValues,
-  onFormSubmit,
-  renameAnalysis,
-  duplicateAnalysis,
-  pluginRenderers: {
-    formRenderer,
-    resultRenderer
-  }
-}) => {
-  return (
-    <div className="step-analysis-pane">
-      {formSaving && (
-        <LoadingOverlay>Updating analysis...</LoadingOverlay>
-      )}
-      <div>
-        <StepAnalysisLinks
-          renameAnalysis={renameAnalysis}
-          duplicateAnalysis={duplicateAnalysis}
-        />
-        {/* FIXME Make this configurable */ formState.hasParameters &&
-          <>
-            <h2 id="step-analysis-title">{analysisName}</h2>
-            <StepAnalysisDescription
-              {...descriptionState}
-              toggleDescription={toggleDescription}
+export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> =
+  ({
+    analysisName,
+    descriptionState,
+    formSaving,
+    formState,
+    resultState,
+    toggleDescription,
+    toggleParameters,
+    updateParamValues,
+    onFormSubmit,
+    renameAnalysis,
+    duplicateAnalysis,
+    pluginRenderers: { formRenderer, resultRenderer },
+  }) => {
+    return (
+      <div className="step-analysis-pane">
+        {formSaving && <LoadingOverlay>Updating analysis...</LoadingOverlay>}
+        <div>
+          <StepAnalysisLinks
+            renameAnalysis={renameAnalysis}
+            duplicateAnalysis={duplicateAnalysis}
+          />
+          {
+            /* FIXME Make this configurable */ formState.hasParameters && (
+              <>
+                <h2 id="step-analysis-title">{analysisName}</h2>
+                <StepAnalysisDescription
+                  {...descriptionState}
+                  toggleDescription={toggleDescription}
+                />
+              </>
+            )
+          }
+        </div>
+        <div className="step-analysis-subpane">
+          {formState.hasParameters && (
+            <StepAnalysisFormPane
+              {...formState}
+              toggleParameters={toggleParameters}
+              formRenderer={formRenderer}
+              updateParamValues={updateParamValues}
+              onFormSubmit={onFormSubmit}
             />
-          </>
-        }
+          )}
+          {resultState && (
+            <StepAnalysisResultsPane
+              {...resultState}
+              resultRenderer={resultRenderer}
+            />
+          )}
+        </div>
       </div>
-      <div className="step-analysis-subpane">
-        {formState.hasParameters &&
-          <StepAnalysisFormPane
-            {...formState}
-            toggleParameters={toggleParameters}
-            formRenderer={formRenderer}
-            updateParamValues={updateParamValues}
-            onFormSubmit={onFormSubmit}
-          />
-        }
-        {
-          resultState &&
-          <StepAnalysisResultsPane
-            {...resultState}
-            resultRenderer={resultRenderer}
-          />
-        }
-      </div>
-    </div>
-  );
-}
+    );
+  };
