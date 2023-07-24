@@ -18,11 +18,9 @@ initialize({
   componentWrappers,
   wrapWdkDependencies: partial(
     wrapWdkDependencies,
-    useEda
-      ? edaServiceUrl 
-      : undefined
+    useEda ? edaServiceUrl : undefined
   ),
   wrapStoreModules,
   wrapWdkService,
   wrapRoutes,
-})
+});

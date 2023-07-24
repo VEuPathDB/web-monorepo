@@ -1,10 +1,10 @@
 /** Proof of concept for EuPathDB SPA in Globus **/
 
-void function bootstrap(container) {
-  workflows().then(function(ws) {
+void (function bootstrap(container) {
+  workflows().then(function (ws) {
     render(dom(ws), container);
-  })
-}(container());
+  });
+})(container());
 
 function render(element, rootNode) {
   for (var i = 0; i < rootNode.children.length; i++) {
@@ -17,8 +17,8 @@ function container() {
   var container = document.getElementById('eupathdb-container');
 
   if (container == null) {
-    container = element('div', { id: 'eupathdb-container'});
-    document.body.insertBefore(container, document.body.children[0])
+    container = element('div', { id: 'eupathdb-container' });
+    document.body.insertBefore(container, document.body.children[0]);
   }
 
   return container;
@@ -33,16 +33,35 @@ function dom(workflows) {
     'div',
     null,
     element('h1', null, text('Hello EuPathDB User')),
-    element('p', null, text(workflows.length ? 'Here are your workflows:' : 'You don\'t have any workflows.')),
-    workflows.length ? element('ol', null, workflows.map(function(w) {
-      return element(
-        'li', null,
-        element('a', {
-          href: '/workflow/display_by_id?id=' + w.id,
-          target: '_parent'
-        }, text(w.name))
-      );
-    })) : null
+    element(
+      'p',
+      null,
+      text(
+        workflows.length
+          ? 'Here are your workflows:'
+          : "You don't have any workflows."
+      )
+    ),
+    workflows.length
+      ? element(
+          'ol',
+          null,
+          workflows.map(function (w) {
+            return element(
+              'li',
+              null,
+              element(
+                'a',
+                {
+                  href: '/workflow/display_by_id?id=' + w.id,
+                  target: '_parent',
+                },
+                text(w.name)
+              )
+            );
+          })
+        )
+      : null
   );
 }
 
@@ -50,8 +69,7 @@ function element(name, props /*, ...children */) {
   var children = flatten(rest(arguments, 2));
   var e = document.createElement(name);
   for (var i = 0; i < children.length; i++) {
-    if (children[i] != null)
-      e.appendChild(children[i]);
+    if (children[i] != null) e.appendChild(children[i]);
   }
   for (var propKey in props) {
     e[propKey] = props[propKey];

@@ -4,7 +4,10 @@
       width: 50%;
       position: relative;
 
-      > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
+      > .wdk-CheckboxTreeList
+        > .wdk-CheckboxTreeItem
+        > .wdk-CheckboxTreeNodeWrapper
+        > i {
         visibility: hidden;
       }
 
@@ -31,7 +34,7 @@
       left: 9.5em;
       z-index: 1;
       margin: 0 0 0 1rem;
-      
+
       > div {
         text-align: left;
       }
@@ -65,7 +68,7 @@
   }
 
   &ProfileNodeDisplay {
-    margin: 0 .25em;
+    margin: 0 0.25em;
 
     &__root-node {
       font-weight: bold;

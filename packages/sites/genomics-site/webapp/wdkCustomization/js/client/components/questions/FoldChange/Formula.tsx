@@ -14,10 +14,11 @@ interface FormulaProps {
 export const Formula: React.FunctionComponent<FormulaProps> = ({
   leftHandSide,
   operator,
-  rightHandSide
-}) =>
+  rightHandSide,
+}) => (
   <div className={cx()}>
     <div className={cx('LeftHandSide')}>{leftHandSide}</div>
     <div className={cx('Operator')}>{operator}</div>
     <div className={cx('RightHandSide')}>{rightHandSide}</div>
-  </div>;
+  </div>
+);

@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -13,7 +7,7 @@ import {
   decode,
   oneOf,
   record,
-  string
+  string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
@@ -33,7 +27,10 @@ const STUDY_ACTION_CLASS_NAME = 'study-action';
 const STUDY_ID_DATA_ATTRIBUTE = 'data-study-id';
 const ARGS_DATA_ATTRIBUTE = 'data-args';
 
-export type CompleteApprovalStatus = 'approved' | 'not-approved' | 'study-not-found';
+export type CompleteApprovalStatus =
+  | 'approved'
+  | 'not-approved'
+  | 'study-not-found';
 
 export type ApprovalStatus = CompleteApprovalStatus | 'loading';
 
@@ -44,9 +41,8 @@ export type ApprovalStatus = CompleteApprovalStatus | 'loading';
  * perform the specified "action" for the study with id "studyId"
  */
 export function useApprovalStatus(studyId: string, action: string) {
-  const [approvalStatus, setApprovalStatus] = useState<ApprovalStatus>(
-    'loading'
-  );
+  const [approvalStatus, setApprovalStatus] =
+    useState<ApprovalStatus>('loading');
 
   const attemptActionTask = useAttemptActionTask(studyId, action);
 
@@ -122,13 +118,15 @@ export function useAttemptActionTask<E>(
   return useMemo(
     () =>
       new Task<DataRestrictionAction, E>(function (fulfill, reject) {
-        const attemptAction$ = attemptAction(action, { studyId })(wdkDependencies);
+        const attemptAction$ = attemptAction(action, { studyId })(
+          wdkDependencies
+        );
 
         attemptAction$.then(fulfill, reject);
       }).map((attemptedAction) => {
         if (
-          (!unrestricted.isOfType(attemptedAction) &&
-            !restricted.isOfType(attemptedAction))
+          !unrestricted.isOfType(attemptedAction) &&
+          !restricted.isOfType(attemptedAction)
         ) {
           // A study is considered "not found" if:
           // (1) the study DOES NOT exist on the backend
@@ -158,14 +156,17 @@ export function useAttemptActionCallback() {
   const dispatch = useDispatch();
   const wdkDependencies = useWdkDependenciesWithStudyAccessApi();
 
-  return useCallback(async (
-    action: string,
-    details: ActionAttemptDetails
-  ) => {
-    const attemptedAction = await attemptAction(action, details)(wdkDependencies);
+  return useCallback(
+    async (action: string, details: ActionAttemptDetails) => {
+      const attemptedAction = await attemptAction(
+        action,
+        details
+      )(wdkDependencies);
 
-    dispatch(attemptedAction);
-  }, [ dispatch, wdkDependencies ]);
+      dispatch(attemptedAction);
+    },
+    [dispatch, wdkDependencies]
+  );
 }
 
 export function useAttemptActionClickHandler() {
@@ -183,13 +184,13 @@ export function useAttemptActionClickHandler() {
         if (studyId == null || actionArgsStr == null) {
           const missingAttributes = [
             !studyId && STUDY_ID_DATA_ATTRIBUTE,
-            !actionArgsStr && ARGS_DATA_ATTRIBUTE
-          ].filter(x => x);
+            !actionArgsStr && ARGS_DATA_ATTRIBUTE,
+          ].filter((x) => x);
 
           const missingAttributesMessage = label(
             `Clicked on a ${STUDY_ACTION_CLASS_NAME} button with the following missing attribute(s): ` +
-            missingAttributes.join(', ') +
-            '. A Data Restriction action will not be attempted.'
+              missingAttributes.join(', ') +
+              '. A Data Restriction action will not be attempted.'
           );
 
           console.warn(missingAttributesMessage);
@@ -199,13 +200,10 @@ export function useAttemptActionClickHandler() {
 
         const parsedActionArgs = decode(actionArgs, actionArgsStr);
 
-        attemptAction(
-          parsedActionArgs.type,
-          {
-            studyId,
-            ...makeDataRestrictionCallbacks(parsedActionArgs, event)
-          }
-        );
+        attemptAction(parsedActionArgs.type, {
+          studyId,
+          ...makeDataRestrictionCallbacks(parsedActionArgs, event),
+        });
       }
     }
 
@@ -214,19 +212,22 @@ export function useAttemptActionClickHandler() {
     return () => {
       document.removeEventListener('click', handleActionButtonClick);
     };
-  }, [ attemptAction ]);
+  }, [attemptAction]);
 }
 
 const actionArgs = oneOf(
   record({
     type: constant('download'),
-    downloadUrl: string
+    downloadUrl: string,
   })
 );
 
 type ActionArgs = Unpack<typeof actionArgs>;
 
-function makeDataRestrictionCallbacks(actionArgs: ActionArgs, event: MouseEvent): Pick<ActionAttemptDetails, 'onAllow' | 'onDeny'> {
+function makeDataRestrictionCallbacks(
+  actionArgs: ActionArgs,
+  event: MouseEvent
+): Pick<ActionAttemptDetails, 'onAllow' | 'onDeny'> {
   switch (actionArgs.type) {
     case 'download': {
       const { ctrlKey } = event;
@@ -236,7 +237,7 @@ function makeDataRestrictionCallbacks(actionArgs: ActionArgs, event: MouseEvent)
         onAllow: () => {
           if (ctrlKey) window.open(downloadUrl, '_blank');
           else window.location.assign(downloadUrl);
-        }
+        },
       };
     }
   }

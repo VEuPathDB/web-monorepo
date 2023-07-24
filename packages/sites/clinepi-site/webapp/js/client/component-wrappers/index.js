@@ -14,9 +14,7 @@ import {
   getIdFromRecordClassName,
   isStudyRecordClass,
 } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUtils';
-import {
-  Action
-} from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
+import { Action } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionUiActions';
 import { attemptAction } from '@veupathdb/study-data-access/lib/data-restriction/DataRestrictionActionCreators';
 import { withPermissions } from '@veupathdb/study-data-access/lib/data-restriction/Permissions';
 import { RestrictedPage } from '@veupathdb/study-data-access/lib/data-restriction/RestrictedPage';
@@ -44,10 +42,11 @@ export default {
   IndexController,
   SiteHeader,
 
-  ServerSideAttributeFilter: () => ServerSideAttributeFilter.withOptions({
-    histogramScaleYAxisDefault: false,
-    histogramTruncateYAxisDefault: true
-  }),
+  ServerSideAttributeFilter: () =>
+    ServerSideAttributeFilter.withOptions({
+      histogramScaleYAxisDefault: false,
+      histogramTruncateYAxisDefault: true,
+    }),
 
   // Related visits/case-control wizard steps
   ActiveGroup,
@@ -62,10 +61,13 @@ export default {
     QuestionWizardController
   ),
   DownloadFormController: compose(
-    withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
+    withRestrictionHandler(
+      Action.downloadPage,
+      (state) => state.downloadForm.recordClass
+    ),
     availableStudyGuard(
       downloadFormIsLoading,
-      state => {
+      (state) => {
         const { recordClass, resultType } = state.downloadForm;
 
         if (
@@ -76,31 +78,33 @@ export default {
           return undefined;
         }
 
-        const primaryKey = resultType.answerSpec.searchConfig.parameters.primaryKeys;
+        const primaryKey =
+          resultType.answerSpec.searchConfig.parameters.primaryKeys;
 
-        return getStudyIdFromRecordClassAndPrimaryKey(
-          recordClass,
-          primaryKey
-        );
+        return getStudyIdFromRecordClassAndPrimaryKey(recordClass, primaryKey);
       },
       StudyNotFoundPage
     )
   ),
   RecordController: useEda
-    ? DefaultComponent => function ClinEpiRecordContoller(props) {
-        if (props.ownProps.recordClass === 'dataset') {
-          return (
-            <EdaStudyRecordController
-              {...props}
-              DefaultComponent={DefaultComponent}
-            />
-          )
-        }
+    ? (DefaultComponent) =>
+        function ClinEpiRecordContoller(props) {
+          if (props.ownProps.recordClass === 'dataset') {
+            return (
+              <EdaStudyRecordController
+                {...props}
+                DefaultComponent={DefaultComponent}
+              />
+            );
+          }
 
-        return <DefaultComponent {...props} />;
-      }
+          return <DefaultComponent {...props} />;
+        }
     : compose(
-        withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
+        withRestrictionHandler(
+          Action.recordPage,
+          (state) => state.record.recordClass
+        ),
         availableStudyGuard(
           recordPageIsLoading,
           (state, props) => {
@@ -113,108 +117,121 @@ export default {
             );
           },
           StudyNotFoundPage
-      )
-  ),
+        )
+      ),
   // FIXME Add restricted results panel
   RecordHeading,
-  RecordNavigationSection: function(DefaultComponent) {
-    return props => <DefaultComponent {...props} visibilityFilter={() => true} />;
+  RecordNavigationSection: function (DefaultComponent) {
+    return (props) => (
+      <DefaultComponent {...props} visibilityFilter={() => true} />
+    );
   },
   RecordTable,
-  ContactUsController: function(DefaultComponent) {
+  ContactUsController: function (DefaultComponent) {
     const specialInstructions = <SpecialContactUsInstructions />;
 
     return () => <DefaultComponent specialInstructions={specialInstructions} />;
   },
   DownloadLink: withPermissions,
-  Page
-}
+  Page,
+};
 
 function guard(propsPredicate) {
   return function makeGuardedComponent(Component) {
     return function GuardedComponent(props) {
-      return propsPredicate(props)
-        ? <Component {...props} />
-        : null;
-    }
-  }
+      return propsPredicate(props) ? <Component {...props} /> : null;
+    };
+  };
 }
 
 function withRestrictionHandler(action, getRecordClassSelector) {
   const enhance = connect(
-    (state, props) => ({ recordClass: getRecordClassSelector(state, props), dataRestriction: state.dataRestriction }),
+    (state, props) => ({
+      recordClass: getRecordClassSelector(state, props),
+      dataRestriction: state.dataRestriction,
+    }),
     { attemptAction },
-    (stateProps, dispatchProps, childProps) => ({ stateProps, dispatchProps, childProps })
-  )
-  return Child => enhance(class RestrictionHandler extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { allowed: null };
-    }
-    componentDidMount() {
-      this.doAttemptAction();
-    }
-    componentDidUpdate(prevProps) {
-      if (this.props.stateProps.recordClass == null) return;
-
-      if (!isStudyRecordClass(this.props.stateProps.recordClass) && this.state.allowed == null) {
-        this.setState({ allowed: true });
-      }
-
-      else if (this.props.stateProps.recordClass !== prevProps.stateProps.recordClass) {
-        this.doAttemptAction();
-      }
-    }
-    doAttemptAction() {
-      if (this.props.stateProps.recordClass == null) return;
-
-      const studyId = getIdFromRecordClassName(this.props.stateProps.recordClass.fullName);
-      this.props.dispatchProps.attemptAction(action, {
-        studyId,
-        onDeny: () => {
-          // document.body.style.overflow = 'hidden';
-          this.setState({ allowed: false })
-        },
-        onAllow: () => {
-          this.setState({ allowed: true })
+    (stateProps, dispatchProps, childProps) => ({
+      stateProps,
+      dispatchProps,
+      childProps,
+    })
+  );
+  return (Child) =>
+    enhance(
+      class RestrictionHandler extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { allowed: null };
         }
-      });
-    }
-    render() {
-      const { allowed } = this.state
-      const child = <Child {...this.props.childProps}/>;
+        componentDidMount() {
+          this.doAttemptAction();
+        }
+        componentDidUpdate(prevProps) {
+          if (this.props.stateProps.recordClass == null) return;
 
-      // always wrap child with a div to prevent child from being unmounted
+          if (
+            !isStudyRecordClass(this.props.stateProps.recordClass) &&
+            this.state.allowed == null
+          ) {
+            this.setState({ allowed: true });
+          } else if (
+            this.props.stateProps.recordClass !==
+            prevProps.stateProps.recordClass
+          ) {
+            this.doAttemptAction();
+          }
+        }
+        doAttemptAction() {
+          if (this.props.stateProps.recordClass == null) return;
 
-      if (allowed == null) return (
-        <div style={{visibility: 'hidden'}}>{child}</div>
-      )
+          const studyId = getIdFromRecordClassName(
+            this.props.stateProps.recordClass.fullName
+          );
+          this.props.dispatchProps.attemptAction(action, {
+            studyId,
+            onDeny: () => {
+              // document.body.style.overflow = 'hidden';
+              this.setState({ allowed: false });
+            },
+            onAllow: () => {
+              this.setState({ allowed: true });
+            },
+          });
+        }
+        render() {
+          const { allowed } = this.state;
+          const child = <Child {...this.props.childProps} />;
 
-      if (allowed) return (
-        <div>{child}</div>
-      )
+          // always wrap child with a div to prevent child from being unmounted
 
-      return (
-        <div
-          style={{
-            pointerEvents: 'none',
-            filter: 'blur(6px)'
-          }}
-          onSubmit={stopEvent}
-          onSelect={stopEvent}
-          onClickCapture={stopEvent}
-          onChangeCapture={stopEvent}
-          onInputCapture={stopEvent}
-          onFocusCapture={stopEvent}
-          onKeyDownCapture={stopEvent}
-          onKeyUpCapture={stopEvent}
-          onKeyPressCapture={stopEvent}
-        >
-          {child}
-        </div>
-      );
-    }
-  });
+          if (allowed == null)
+            return <div style={{ visibility: 'hidden' }}>{child}</div>;
+
+          if (allowed) return <div>{child}</div>;
+
+          return (
+            <div
+              style={{
+                pointerEvents: 'none',
+                filter: 'blur(6px)',
+              }}
+              onSubmit={stopEvent}
+              onSelect={stopEvent}
+              onClickCapture={stopEvent}
+              onChangeCapture={stopEvent}
+              onInputCapture={stopEvent}
+              onFocusCapture={stopEvent}
+              onKeyDownCapture={stopEvent}
+              onKeyUpCapture={stopEvent}
+              onKeyPressCapture={stopEvent}
+            >
+              {child}
+            </div>
+          );
+        }
+      }
+    );
 }
 
 function stopEvent(event) {
@@ -222,12 +239,16 @@ function stopEvent(event) {
   event.preventDefault();
 }
 
-function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, NotFound) {
+function availableStudyGuard(
+  getRecordClassLoadingSelector,
+  getStudyIdSelector,
+  NotFound
+) {
   return function (DefaultComponent) {
-    return function(props) {
+    return function (props) {
       const studies = useWdkService(fetchStudies, []);
 
-      const state = useSelector(state => state);
+      const state = useSelector((state) => state);
 
       const recordClassLoading = getRecordClassLoadingSelector(state, props);
 
@@ -236,11 +257,7 @@ function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, 
       const defaultElement = <DefaultComponent {...props} />;
 
       if (studies == null || recordClassLoading) {
-        return (
-          <div style={{ visibility: 'hidden' }}>
-            {defaultElement}
-          </div>
-        );
+        return <div style={{ visibility: 'hidden' }}>{defaultElement}</div>;
       }
 
       const allValidStudies = studies[0];
@@ -249,15 +266,13 @@ function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, 
         ({ id, disabled }) => id === targetId && !disabled
       );
 
-      return (
-        targetId != null && !studyIsAvailable
-          ? <NotFound />
-          : <div>
-              {defaultElement}
-            </div>
+      return targetId != null && !studyIsAvailable ? (
+        <NotFound />
+      ) : (
+        <div>{defaultElement}</div>
       );
-    }
-  }
+    };
+  };
 }
 
 function StudyNotFoundPage() {

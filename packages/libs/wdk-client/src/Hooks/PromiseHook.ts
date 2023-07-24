@@ -10,18 +10,20 @@ interface PromiseFactory<T> {
  * If the provided function does not handle Promise rejection, it will be lost.
  */
 export function usePromise<T>(factory: PromiseFactory<T>, deps?: any[]) {
-  const [ value, setValue ] = useState<T>();
-  const [ loading, setLoading ] = useState(false);
+  const [value, setValue] = useState<T>();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     let doSetValue = true;
     setLoading(true);
-    factory().then(value => {
+    factory().then((value) => {
       if (doSetValue) {
         setValue(value);
         setLoading(false);
       }
     });
-    return () => { doSetValue = false };
+    return () => {
+      doSetValue = false;
+    };
   }, deps);
   return { value, loading };
 }

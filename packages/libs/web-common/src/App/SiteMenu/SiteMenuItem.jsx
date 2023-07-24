@@ -4,22 +4,22 @@ import './SiteMenuItem.scss';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 
 class SiteMenuItem extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = { isFocused: false };
     this.focus = this.focus.bind(this);
     this.blur = this.blur.bind(this);
   }
 
-  focus (event) {
+  focus(event) {
     this.setState({ isFocused: true });
   }
 
-  blur (event) {
+  blur(event) {
     this.setState({ isFocused: false });
   }
 
-  render () {
+  render() {
     const { focus, blur } = this;
     const { isFocused } = this.state;
     const { item, config, actions, user } = this.props;
@@ -37,22 +37,26 @@ class SiteMenuItem extends React.Component {
         e.stopPropagation();
         showLoginWarning('use this feature', e.currentTarget.href);
       }
-    }
+    };
 
-    const children = (typeof item.children === 'function')
-      ? item.children({ webAppUrl, projectId, isFocused })
-      : item.children;
+    const children =
+      typeof item.children === 'function'
+        ? item.children({ webAppUrl, projectId, isFocused })
+        : item.children;
 
-    const destination = appUrl && appUrl.length
+    const destination =
+      appUrl && appUrl.length
         ? webAppUrl + appUrl
         : url && url.length
-          ? url
-          : null;
- 
-    const className = 'SiteMenuItem' + (children && children.length ? ' SiteMenuItem--HasSubmenu' : '');
+        ? url
+        : null;
+
+    const className =
+      'SiteMenuItem' +
+      (children && children.length ? ' SiteMenuItem--HasSubmenu' : '');
     const touchToggle = {
       onTouchStart: isFocused ? blur : focus,
-      style: { display: 'inline-block '}
+      style: { display: 'inline-block ' },
     };
     return (
       <div
@@ -61,34 +65,55 @@ class SiteMenuItem extends React.Component {
         onMouseEnter={focus}
         onMouseLeave={blur}
       >
+        {destination ? (
+          <a
+            onClick={handleClick}
+            className="SiteMenuItem-Link"
+            href={destination}
+            target={target}
+          >
+            {text}
+          </a>
+        ) : route ? (
+          <Link
+            onClick={handleClick}
+            className="SiteMenuItem-Link"
+            to={route}
+            target={target}
+          >
+            {text}
+          </Link>
+        ) : (
+          <span className="SiteMenuItem-Text" {...touchToggle}>
+            {text}
+          </span>
+        )}
 
-      { destination ? <a onClick={handleClick} className="SiteMenuItem-Link" href={destination} target={target}>{text}</a>
-          : route ? <Link onClick={handleClick} className="SiteMenuItem-Link" to={route} target={target}>{text}</Link>
-          : <span className="SiteMenuItem-Text" {...touchToggle}>{text}</span>
-      }
-
-        {children && children.length
-          ? <div {...touchToggle}><Icon fa="caret-down" /></div>
-          : null
-        }
-        {children && children.length
-          ? (
-            <div className={'SiteMenuItem-Submenu' + (isFocused ? '' : ' SiteMenuItem-Submenu--hidden')}>
-              <div className="SiteMenu-Item-Submenu-Inner">
-                {children.map((child, idx) => (
-                  <SiteMenuItem
-                    key={idx}
-                    item={child}
-                    config={config}
-                    actions={actions}
-                    user={user}
-                  />
-                ))}
-              </div>
+        {children && children.length ? (
+          <div {...touchToggle}>
+            <Icon fa="caret-down" />
+          </div>
+        ) : null}
+        {children && children.length ? (
+          <div
+            className={
+              'SiteMenuItem-Submenu' +
+              (isFocused ? '' : ' SiteMenuItem-Submenu--hidden')
+            }
+          >
+            <div className="SiteMenu-Item-Submenu-Inner">
+              {children.map((child, idx) => (
+                <SiteMenuItem
+                  key={idx}
+                  item={child}
+                  config={config}
+                  actions={actions}
+                  user={user}
+                />
+              ))}
             </div>
-          )
-          : null
-        }
+          </div>
+        ) : null}
       </div>
     );
   }

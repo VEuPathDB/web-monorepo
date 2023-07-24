@@ -66,10 +66,6 @@ export const AppState = t.intersection([
       center: t.tuple([t.number, t.number]),
       zoom: t.number,
     }),
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
-    }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
   }),
@@ -118,7 +114,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     if (analysis && !appState) {
       const defaultAppState: AppState = {
         viewport: defaultViewport,
-        mouseMode: 'default',
         activeMarkerConfigurationType: 'pie',
         markerConfigurations: [
           {
@@ -176,7 +171,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
-    setMouseMode: useSetter('mouseMode'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
   };

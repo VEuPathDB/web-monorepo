@@ -356,6 +356,26 @@ export const ScatterplotResponse = intersection([
   }),
 ]);
 
+// Volcano plot
+// The volcano plot response type MUST be the same as the VolcanoPlotData type defined in the components package
+export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
+
+// TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
+export const VolcanoPlotResponse = array(
+  partial({
+    log2foldChange: string,
+    pValue: string,
+    adjustedPValue: string,
+    pointID: string,
+  })
+);
+
+export interface VolcanoPlotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {}; // Empty viz config because there are no viz input vars
+}
+
 ////////////////
 // Table Data //
 ////////////////

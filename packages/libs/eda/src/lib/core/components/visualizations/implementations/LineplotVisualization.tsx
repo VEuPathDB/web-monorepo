@@ -365,6 +365,13 @@ function LineplotViz(props: VisualizationProps<Options>) {
   const [truncatedDependentAxisWarning, setTruncatedDependentAxisWarning] =
     useState<string>('');
 
+  // for checking if this is lineplot or timeline plot
+  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
+
+  // always enable useBinning for timeline Viz
+  const alwaysEnableUseBinning =
+    showMarginalHistogram && xAxisVariable?.dataShape === 'continuous';
+
   const handleInputVariableChange = useCallback(
     (selectedVariables: VariablesByInputName) => {
       const keepIndependentAxisSettings = isEqual(
@@ -375,6 +382,17 @@ function LineplotViz(props: VisualizationProps<Options>) {
         selectedVariables.yAxisVariable,
         vizConfig.yAxisVariable
       );
+
+      // need to get xAxisVariable based on vizConfig.xAxisVariable and selectedVariables
+      const { variable: xAxisVar } =
+        findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+      const { variable: selectedXAxisVar } =
+        findEntityAndVariable(selectedVariables.xAxisVariable) ?? {};
+
+      // check useBinning condition for independent axis
+      const keepIndependentAxisUseBinning =
+        xAxisVar?.dataShape === 'continuous' &&
+        selectedXAxisVar?.dataShape === 'continuous';
 
       // need to get the yAxisVariable metadata right here, right now
       // (we can't use the more generally scoped 'yAxisVariable' because it's based on vizConfig and is out of date)
@@ -425,6 +443,11 @@ function LineplotViz(props: VisualizationProps<Options>) {
             ? 'Full'
             : 'Auto-zoom'
           : 'Full',
+        // udpate useBinning with conditions
+        useBinning: keepIndependentAxisUseBinning
+          ? vizConfig.useBinning
+          : showMarginalHistogram &&
+            selectedXAxisVar?.dataShape === 'continuous',
       });
       // axis range control: close truncation warnings here
       setTruncatedIndependentAxisWarning('');
@@ -656,8 +679,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     vizConfig.independentAxisLogScale && vizConfig.useBinning;
   const showDependentAxisBanner =
     vizConfig.dependentAxisLogScale && vizConfig.showErrorBars;
-
-  const showMarginalHistogram = options?.showMarginalHistogram ?? false;
 
   const data = usePromise(
     useCallback(async (): Promise<LinePlotDataWithCoverage | undefined> => {
@@ -1131,7 +1152,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
       independentAxisRange: undefined,
       independentAxisLogScale: false,
       independentAxisValueSpec: 'Full',
-      useBinning: false,
+      useBinning: alwaysEnableUseBinning,
       binWidth: undefined,
       binWidthTimeUnit: undefined,
     });
@@ -1341,15 +1362,18 @@ function LineplotViz(props: VisualizationProps<Options>) {
                 containerStyles={{ maxWidth: '350px', marginBottom: '1em' }}
               />
             ) : null}
-            <Toggle
-              label={'Binning'}
-              value={vizConfig.useBinning}
-              onChange={(newValue: boolean) => {
-                onUseBinningChange(newValue);
-              }}
-              disabled={neverUseBinning}
-              themeRole="primary"
-            />
+            {/* hide Binning toggle for timeline Viz */}
+            {!alwaysEnableUseBinning ? (
+              <Toggle
+                label={'Binning'}
+                value={vizConfig.useBinning}
+                onChange={(newValue: boolean) => {
+                  onUseBinningChange(newValue);
+                }}
+                disabled={neverUseBinning}
+                themeRole="primary"
+              />
+            ) : null}
             <BinWidthControl
               binWidth={data0?.binWidthSlider?.binWidth}
               onBinWidthChange={onBinWidthChange}
@@ -1374,7 +1398,12 @@ function LineplotViz(props: VisualizationProps<Options>) {
                     ? '250px'
                     : '350px',
               }}
-              disabled={!vizConfig.useBinning || neverUseBinning}
+              // always enable binning for timeline Viz
+              disabled={
+                alwaysEnableUseBinning
+                  ? undefined
+                  : !vizConfig.useBinning || neverUseBinning
+              }
             />
           </div>
 
@@ -1742,11 +1771,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <Tooltip title={'Required parameter'}>
-            <div className={classes.label}>
-              Function<sup>*</sup>
-            </div>
-          </Tooltip>
+          <div className={classes.label}>Function</div>
           <SingleSelect
             onSelect={onValueSpecChange}
             value={vizConfig.valueSpecConfig}

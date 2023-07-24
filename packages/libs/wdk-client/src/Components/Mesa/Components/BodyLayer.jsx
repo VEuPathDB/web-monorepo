@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 class BodyLayer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     // XXX This will have to be guarded if we ever use server side rendering
     this.el = document.createElement('div');
@@ -10,11 +10,11 @@ class BodyLayer extends React.Component {
     document.body.appendChild(this.el);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     document.body.removeChild(this.el);
   }
 
-  render () {
+  render() {
     return ReactDOM.createPortal(<div {...this.props} />, this.el);
   }
 }

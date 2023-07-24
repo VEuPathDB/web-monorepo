@@ -13,17 +13,15 @@ type JBrowseControllerProps = RouteComponentProps<{}>;
 export const JBrowseController = (props: JBrowseControllerProps) => {
   useJBrowseDocumentTitle();
   const src = webAppUrl + '/jbrowse/index.html' + props.location.search;
-  return <Jbrowse src={src}/>
+  return <Jbrowse src={src} />;
 };
 
 const useJBrowseDocumentTitle = () => {
   const projectDisplayName = useSelector(
-    (state: RootState) => (
-      state.globalData.config && 
-      state.globalData.config.displayName  
-    )
+    (state: RootState) =>
+      state.globalData.config && state.globalData.config.displayName
   );
-  
+
   const title = projectDisplayName
     ? `${projectDisplayName} :: JBrowse`
     : 'JBrowse';

@@ -13,5 +13,5 @@ initialize({
   pluginConfig,
   wrapRoutes,
   wrapStoreModules,
-  wrapWdkService
+  wrapWdkService,
 });

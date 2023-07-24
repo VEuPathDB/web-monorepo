@@ -16,11 +16,15 @@ export const PubmedIdEntry: React.SFC<PubmedIdEntryProps> = ({
   title,
   author,
   journal,
-  url
+  url,
 }) => (
   <div className="wdk-PubmedIdEntry">
     <label>PMID</label>
-    <div><a href={url} target="_blank">{id}</a></div>
+    <div>
+      <a href={url} target="_blank">
+        {id}
+      </a>
+    </div>
 
     <label>Title:</label>
     <div>{title}</div>

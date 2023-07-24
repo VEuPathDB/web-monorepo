@@ -180,12 +180,14 @@ const ErrorMessage = (message: string) => (
 );
 const AllUploads = (props: Props) => {
   const uploads = useMemo(() => props.uploadList ?? [], [props.uploadList]);
-  const ongoingUploads = useMemo(() => uploads.filter((u) => u.isOngoing), [
-    uploads,
-  ]);
-  const finishedUploads = useMemo(() => uploads.filter((u) => !u.isOngoing), [
-    uploads,
-  ]);
+  const ongoingUploads = useMemo(
+    () => uploads.filter((u) => u.isOngoing),
+    [uploads]
+  );
+  const finishedUploads = useMemo(
+    () => uploads.filter((u) => !u.isOngoing),
+    [uploads]
+  );
 
   const projectInfo = useWdkService(async (wdkService) => {
     const config = await wdkService.getConfig();

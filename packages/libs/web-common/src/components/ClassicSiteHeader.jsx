@@ -9,23 +9,28 @@ import { makeMenuItems } from '../util/menuItems';
 import QuickSearch from './QuickSearch';
 import SmallMenu from './SmallMenu';
 import Menu from './Menu';
-import { loadBasketCounts, loadQuickSearches } from '../actioncreators/GlobalActionCreators';
+import {
+  loadBasketCounts,
+  loadQuickSearches,
+} from '../actioncreators/GlobalActionCreators';
 
 /** Site header */
-const enhance = connect(
-  (state) => state.globalData,
-  { ...UserSessionActions, ...UserActions, loadBasketCounts, loadQuickSearches }
-);
+const enhance = connect((state) => state.globalData, {
+  ...UserSessionActions,
+  ...UserActions,
+  loadBasketCounts,
+  loadQuickSearches,
+});
 
 class ClassicSiteHeader extends React.Component {
-
   componentDidMount() {
     const { quickSearchReferences } = this.props;
-    if (quickSearchReferences != null) this.props.loadQuickSearches(quickSearchReferences);
+    if (quickSearchReferences != null)
+      this.props.loadQuickSearches(quickSearchReferences);
     this.props.loadBasketCounts();
   }
 
-  render () {
+  render() {
     const {
       quickSearches,
       quickSearchReferences,
@@ -38,65 +43,76 @@ class ClassicSiteHeader extends React.Component {
       isPartOfEuPathDB = true,
     } = this.props;
 
-    const {
-      projectId,
-      webAppUrl,
-    } = siteConfig;
+    const { projectId, webAppUrl } = siteConfig;
 
-    const {
-      buildNumber,
-      releaseDate
-    } = config;
+    const { buildNumber, releaseDate } = config;
 
     const menuItems = makeMenuItems(this.props);
-    const mainMenuItems = makeMainMenuItems && makeMainMenuItems(this.props, menuItems);
-    const smallMenuItems = makeSmallMenuItems && makeSmallMenuItems(this.props, menuItems);
+    const mainMenuItems =
+      makeMainMenuItems && makeMainMenuItems(this.props, menuItems);
+    const smallMenuItems =
+      makeSmallMenuItems && makeSmallMenuItems(this.props, menuItems);
 
     return (
       <React.Fragment>
-        <link rel="stylesheet" type="text/css" href={`${webAppUrl}/css/${projectId}.css`}/>
+        <link
+          rel="stylesheet"
+          type="text/css"
+          href={`${webAppUrl}/css/${projectId}.css`}
+        />
         <div id="header">
           <div id="header2">
             <div id="header_rt">
               <div id="toplink">
-                {isPartOfEuPathDB &&
+                {isPartOfEuPathDB && (
                   <a href="http://eupathdb.org">
-                    <img alt="Link to EuPathDB homepage" src={webAppUrl + '/images/' + projectId + '/partofeupath.png'}/>
+                    <img
+                      alt="Link to EuPathDB homepage"
+                      src={
+                        webAppUrl + '/images/' + projectId + '/partofeupath.png'
+                      }
+                    />
                   </a>
-                }
+                )}
               </div>
               <QuickSearch
                 webAppUrl={webAppUrl}
                 references={quickSearchReferences}
                 questions={quickSearches}
               />
-              <SmallMenu
-                webAppUrl={webAppUrl}
-                items={smallMenuItems}
-              />
+              <SmallMenu webAppUrl={webAppUrl} items={smallMenuItems} />
             </div>
             <div className="eupathdb-Logo">
               <a href="/">
-                <img className="eupathdb-LogoImage" alt={"Link to " + projectId + " homepage"} src={webAppUrl + "/images/" + projectId + "/title_s.png"}/>
+                <img
+                  className="eupathdb-LogoImage"
+                  alt={'Link to ' + projectId + ' homepage'}
+                  src={webAppUrl + '/images/' + projectId + '/title_s.png'}
+                />
               </a>
               <span className="eupathdb-LogoRelease">
                 Release {buildNumber}
-                <br/>
+                <br />
                 {releaseDate && formatReleaseDate(releaseDate)}
               </span>
             </div>
           </div>
           {/* TODO Put items into an external JSON file. */}
           <Sticky>
-            {({isFixed}) => (
-              <div className={'eupathdb-MenuContainer' + (
-                isFixed ? ' eupathdb-MenuContainer__fixed' : '')}>
+            {({ isFixed }) => (
+              <div
+                className={
+                  'eupathdb-MenuContainer' +
+                  (isFixed ? ' eupathdb-MenuContainer__fixed' : '')
+                }
+              >
                 <Menu
                   webAppUrl={webAppUrl}
                   projectId={projectId}
                   showLoginWarning={showLoginWarning}
                   isGuest={user ? user.isGuest : true}
-                  items={mainMenuItems}/>
+                  items={mainMenuItems}
+                />
               </div>
             )}
           </Sticky>

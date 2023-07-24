@@ -13,7 +13,8 @@
 
     // reduce padding/margin around heading elements
     .HeadingCell {
-      button, .SortTrigger {
+      button,
+      .SortTrigger {
         padding: 1px;
         font-size: 120%;
         margin-left: 0;
@@ -27,7 +28,6 @@
       button i.fa-times-circle {
         font-size: 110%;
       }
-
     }
 
     // Force PagniationMenu to come before Toolbar
@@ -97,8 +97,8 @@
   }
 
   .MesaComponent {
-
-    th, td {
+    th,
+    td {
       padding: 4px;
       padding-right: 6px;
       vertical-align: middle;
@@ -110,7 +110,6 @@
       text-align: center;
       width: 4em;
     }
-
   }
 
   // Add padding to basket button (increase clickable area)
@@ -135,6 +134,4 @@
   .btn.ResultTable-AddColumnsButton {
     margin: 1em auto;
   }
-
-
 }

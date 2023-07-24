@@ -6,14 +6,14 @@ import {
   RadioList,
   SliderInput,
   TextBox,
-  Tooltip
+  Tooltip,
 } from '@veupathdb/wdk-client/lib/Components';
 
 import {
   EDGE_OPTIONS_HELP,
   EdgeTypeOption,
   NODE_OPTIONS_HELP,
-  NodeDisplayType
+  NodeDisplayType,
 } from 'ortho-client/utils/clusterGraph';
 
 import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccordion';
@@ -32,7 +32,7 @@ export function GraphControls({
   selectedNodeDisplayType,
   setSelectedNodeDisplayType,
   legendEntries,
-  legendHeaders
+  legendHeaders,
 }: Props) {
   return (
     <div className="GraphControls">
@@ -67,21 +67,20 @@ function EdgeOptions({
   minEValueExp,
   maxEValueExp,
   eValueExp,
-  selectEValueExp
+  selectEValueExp,
 }: EdgeOptionsProps) {
-  const { internalEValueText, setInternalEValueText } = useInternalEValueTextState(
-    minEValueExp,
-    maxEValueExp,
-    eValueExp,
-    selectEValueExp
-  );
+  const { internalEValueText, setInternalEValueText } =
+    useInternalEValueTextState(
+      minEValueExp,
+      maxEValueExp,
+      eValueExp,
+      selectEValueExp
+    );
 
   const title = (
     <div>
       Edge Options
-      <HelpIcon>
-        {EDGE_OPTIONS_HELP}
-      </HelpIcon>
+      <HelpIcon>{EDGE_OPTIONS_HELP}</HelpIcon>
     </div>
   );
 
@@ -89,39 +88,34 @@ function EdgeOptions({
     <div className="EdgeOptions">
       <GraphAccordion title={title}>
         <fieldset className="EdgeTypeControl">
-          <legend>
-            Edge Type
-          </legend>
+          <legend>Edge Type</legend>
           <div className="EdgeTypeOptions">
-            {
-              edgeTypeOptions.map(
-                ({ key, display, isSelected, onChange, onMouseOver, onMouseOut }) =>
-                  <div
-                    className="EdgeTypeOption"
-                    key={key}
-                    onMouseOver={onMouseOver}
-                    onMouseOut={onMouseOut}
-                  >
-                    <Checkbox
-                      value={isSelected}
-                      onChange={onChange}
-                    />
-                    <label>
-                      {display}
-                    </label>
-                  </div>
+            {edgeTypeOptions.map(
+              ({
+                key,
+                display,
+                isSelected,
+                onChange,
+                onMouseOver,
+                onMouseOut,
+              }) => (
+                <div
+                  className="EdgeTypeOption"
+                  key={key}
+                  onMouseOver={onMouseOver}
+                  onMouseOut={onMouseOut}
+                >
+                  <Checkbox value={isSelected} onChange={onChange} />
+                  <label>{display}</label>
+                </div>
               )
-            }
+            )}
           </div>
         </fieldset>
         <fieldset className="ScoreControl">
-          <legend>
-            E-Value Cutoff
-          </legend>
+          <legend>E-Value Cutoff</legend>
           <div className="EValueHeader">
-            <span>
-              Max E-Value:
-            </span>
+            <span>Max E-Value:</span>
             <span className="EValueText">
               1E
               <TextBox
@@ -150,11 +144,13 @@ function useInternalEValueTextState(
   eValueExp: EdgeOptionsProps['eValueExp'],
   selectEValueExp: EdgeOptionsProps['selectEValueExp']
 ) {
-  const [ internalEValueText, setInternalEValueText ] = useState(String(eValueExp));
+  const [internalEValueText, setInternalEValueText] = useState(
+    String(eValueExp)
+  );
 
   useEffect(() => {
     setInternalEValueText(String(eValueExp));
-  }, [ eValueExp ]);
+  }, [eValueExp]);
 
   useEffect(() => {
     const numericValue = Number(internalEValueText);
@@ -166,16 +162,20 @@ function useInternalEValueTextState(
     ) {
       selectEValueExp(numericValue);
     }
-  }, [ internalEValueText ]);
+  }, [internalEValueText]);
 
   return {
     internalEValueText,
-    setInternalEValueText
+    setInternalEValueText,
   };
 }
 
 interface NodeOptionsProps {
-  nodeDisplayTypeOptions: { value: NodeDisplayType, display: React.ReactNode, disabled?: boolean }[];
+  nodeDisplayTypeOptions: {
+    value: NodeDisplayType;
+    display: React.ReactNode;
+    disabled?: boolean;
+  }[];
   selectedNodeDisplayType: NodeDisplayType;
   setSelectedNodeDisplayType: (newNodeDisplayType: NodeDisplayType) => void;
   legendEntries: Record<NodeDisplayType, LegendEntryProps[]>;
@@ -187,18 +187,19 @@ function NodeOptions({
   selectedNodeDisplayType,
   setSelectedNodeDisplayType,
   legendEntries,
-  legendHeaders
+  legendHeaders,
 }: NodeOptionsProps) {
-  const onNodeDisplayTypeChange = useCallback((newValue: string) => {
-    setSelectedNodeDisplayType(newValue as NodeDisplayType);
-  }, [ setSelectedNodeDisplayType ]);
+  const onNodeDisplayTypeChange = useCallback(
+    (newValue: string) => {
+      setSelectedNodeDisplayType(newValue as NodeDisplayType);
+    },
+    [setSelectedNodeDisplayType]
+  );
 
   const title = (
     <div>
       Node Options
-      <HelpIcon>
-        {NODE_OPTIONS_HELP}
-      </HelpIcon>
+      <HelpIcon>{NODE_OPTIONS_HELP}</HelpIcon>
     </div>
   );
 
@@ -206,9 +207,7 @@ function NodeOptions({
     <div className="NodeOptions">
       <GraphAccordion title={title}>
         <fieldset>
-          <legend>
-            Show Nodes By
-          </legend>
+          <legend>Show Nodes By</legend>
           <RadioList
             name="node-display-type"
             value={selectedNodeDisplayType}
@@ -221,11 +220,9 @@ function NodeOptions({
             {legendHeaders[selectedNodeDisplayType]}
           </div>
           <div className="LegendContent">
-            {
-              legendEntries[selectedNodeDisplayType].map(
-                taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
-              )
-            }
+            {legendEntries[selectedNodeDisplayType].map((taxonLegendEntry) => (
+              <LegendEntry {...taxonLegendEntry} />
+            ))}
           </div>
         </div>
       </GraphAccordion>
@@ -244,20 +241,32 @@ export interface LegendEntryProps {
 
 const TOOLTIP_POSITION = {
   my: 'top left',
-  at: 'bottom right'
+  at: 'bottom right',
 };
 
-function LegendEntry({ symbol, tooltip, description, onMouseOver, onMouseOut }: LegendEntryProps) {
+function LegendEntry({
+  symbol,
+  tooltip,
+  description,
+  onMouseOver,
+  onMouseOut,
+}: LegendEntryProps) {
   const legendContent = (
-    <div className="LegendEntry" onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
+    <div
+      className="LegendEntry"
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
+    >
       {symbol}
       {description}
     </div>
   );
 
-  return tooltip == null
-    ? legendContent
-    : <Tooltip content={tooltip} showDelay={0} position={TOOLTIP_POSITION}>
-        {legendContent}
-      </Tooltip>;
+  return tooltip == null ? (
+    legendContent
+  ) : (
+    <Tooltip content={tooltip} showDelay={0} position={TOOLTIP_POSITION}>
+      {legendContent}
+    </Tooltip>
+  );
 }

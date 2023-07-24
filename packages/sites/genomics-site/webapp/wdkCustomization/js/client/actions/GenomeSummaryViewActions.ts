@@ -1,6 +1,6 @@
 import {
   makeActionCreator,
-  InferAction
+  InferAction,
 } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';

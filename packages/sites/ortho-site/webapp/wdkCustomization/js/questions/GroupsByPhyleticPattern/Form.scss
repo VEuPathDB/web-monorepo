@@ -5,7 +5,7 @@
     .PhyleticExpression--Instructions {
       .fa-caret-right.wdk-Icon {
         font-size: 1.2em;
-        color: #AAA;
+        color: #aaa;
       }
     }
 
@@ -119,7 +119,11 @@
       width: 41em;
     }
 
-    .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
+    .wdk-CheckboxTree
+      > .wdk-CheckboxTreeList
+      > .wdk-CheckboxTreeItem
+      > .wdk-CheckboxTreeNodeWrapper
+      > i {
       display: none;
     }
 

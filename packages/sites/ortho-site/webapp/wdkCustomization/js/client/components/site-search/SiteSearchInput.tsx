@@ -18,21 +18,27 @@ export function SiteSearchInput(DefaultComponent: React.ComponentType<Props>) {
 }
 
 function usePlaceholderText() {
-  return useWdkService(async wdkService => {
-    const [ idExample, textExample ] = await Promise.all([
-      fetchIdExample(wdkService).catch(_ => undefined),
-      fetchTextExample(wdkService).catch(_ => undefined)
+  return useWdkService(async (wdkService) => {
+    const [idExample, textExample] = await Promise.all([
+      fetchIdExample(wdkService).catch((_) => undefined),
+      fetchTextExample(wdkService).catch((_) => undefined),
     ]);
 
-    const examples = [ idExample, textExample, `"binding protein"` ].filter(v => v).join(' or ');
+    const examples = [idExample, textExample, `"binding protein"`]
+      .filter((v) => v)
+      .join(' or ');
     return 'Site search, e.g. ' + examples;
   }, []);
 }
 
 async function fetchIdExample(wdkService: WdkService) {
-  const groupIdSearch = await wdkService.getQuestionAndParameters('GroupsByNameList');
+  const groupIdSearch = await wdkService.getQuestionAndParameters(
+    'GroupsByNameList'
+  );
 
-  const defaultIdList = groupIdSearch.parameters.find((p): p is DatasetParam => p.name === 'group_names')?.defaultIdList;
+  const defaultIdList = groupIdSearch.parameters.find(
+    (p): p is DatasetParam => p.name === 'group_names'
+  )?.defaultIdList;
 
   const defaultIds = idListToArray(defaultIdList);
 
@@ -40,9 +46,13 @@ async function fetchIdExample(wdkService: WdkService) {
 }
 
 async function fetchTextExample(wdkService: WdkService) {
-  const accessionSearch = await wdkService.getQuestionAndParameters('ByAccession');
+  const accessionSearch = await wdkService.getQuestionAndParameters(
+    'ByAccession'
+  );
 
-  const accessionExample = accessionSearch.parameters.find(p => p.name === 'accession')?.initialDisplayValue;
+  const accessionExample = accessionSearch.parameters.find(
+    (p) => p.name === 'accession'
+  )?.initialDisplayValue;
 
   return accessionExample == null || accessionExample.includes('*')
     ? accessionExample

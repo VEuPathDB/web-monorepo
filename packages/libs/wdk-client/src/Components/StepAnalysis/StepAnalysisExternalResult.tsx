@@ -2,11 +2,11 @@ import {
   downloadUrlQueryParamFactory,
   propertiesUrlQueryParamFactory,
   contextHashQueryParamFactory,
-  stepAnalysisExternalResultFactory
+  stepAnalysisExternalResultFactory,
 } from './StepAnalysisExternalResultFactory';
 
 export const StepAnalysisExternalResult = stepAnalysisExternalResultFactory([
   ['contextHash', contextHashQueryParamFactory],
   ['dataUrl', downloadUrlQueryParamFactory],
-  ['propertiesUrl', propertiesUrlQueryParamFactory]
+  ['propertiesUrl', propertiesUrlQueryParamFactory],
 ]);

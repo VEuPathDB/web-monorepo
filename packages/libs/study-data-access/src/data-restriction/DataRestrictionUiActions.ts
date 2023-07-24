@@ -37,7 +37,7 @@ export const strictActions = new Set([
   Action.analysis,
   Action.results,
   Action.recordPage,
-  Action.downloadPage
+  Action.downloadPage,
 ]);
 
 export const actionCategories: Record<Action, keyof ActionAuthorization> = {

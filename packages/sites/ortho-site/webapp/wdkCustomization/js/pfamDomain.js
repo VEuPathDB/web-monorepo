@@ -1,70 +1,72 @@
-wdk.namespace("eupathdb.pfamDomain", function(ns, $) {
+wdk.namespace('eupathdb.pfamDomain', function (ns, $) {
   // change this to have more/less bands
   var BAND_COUNT = 4;
   // 13 colors used for 4-band domain coloring
   var COLORS = [
-    "rgb(71, 145, 213)",  // dark blue
-    "rgb(193, 235, 248)", // light blue
-    "orange",
-    "rgb(235, 235, 0)",  // yellow
-    "black",
-    "rgb(190, 190, 190)", // grey
-    "rgb(255, 192, 203)", // light red
-    "rgb(223, 42, 42)",   // dark red
-    "rgb(144, 238, 144)", // light green
-    "rgb(0, 145, 0)",     // dark green
-    "rgb(216, 87, 216)",  // purple
-    "rgb(206, 169, 73)",  // brown
-    "white"
+    'rgb(71, 145, 213)', // dark blue
+    'rgb(193, 235, 248)', // light blue
+    'orange',
+    'rgb(235, 235, 0)', // yellow
+    'black',
+    'rgb(190, 190, 190)', // grey
+    'rgb(255, 192, 203)', // light red
+    'rgb(223, 42, 42)', // dark red
+    'rgb(144, 238, 144)', // light green
+    'rgb(0, 145, 0)', // dark green
+    'rgb(216, 87, 216)', // purple
+    'rgb(206, 169, 73)', // brown
+    'white',
   ];
 
   function initializePfams() {
-      var manager = new PfamManager();
-      manager.initialize();
+    var manager = new PfamManager();
+    manager.initialize();
   }
 
   function PfamManager() {
-    this.initialize = function() {
+    this.initialize = function () {
       var manager = this;
       var domains = manager.loadDomains();
       manager.loadProteins(domains);
-    }
+    };
 
-    this.loadDomains = function() {
-      var domains = { };
+    this.loadDomains = function () {
+      var domains = {};
       var manager = this;
-      $("#Record_Views #domains .domain").each(function() {
-        var name = $(this).attr("id");
-        var domainNode = $(this).find(".legend");
-        $.each(manager.assignColors(name), function(idx, color) {
-          $("<div/>").css("background-color", color).appendTo(domainNode);
+      $('#Record_Views #domains .domain').each(function () {
+        var name = $(this).attr('id');
+        var domainNode = $(this).find('.legend');
+        $.each(manager.assignColors(name), function (idx, color) {
+          $('<div/>').css('background-color', color).appendTo(domainNode);
         });
       });
       return domains;
     };
 
-    this.loadProteins = function(domains) {
-      var maxLength = parseInt($("#Record_Views #proteins").attr("maxlength"));
+    this.loadProteins = function (domains) {
+      var maxLength = parseInt($('#Record_Views #proteins').attr('maxlength'));
       var manager = this;
-      $("#Record_Views #proteins .protein").each(function() {
-        var length = parseInt($(this).find(".length").text());
-        var width = (100.0 * length / maxLength).toString() + "%";
-        $(this).find(".protein-graph").width(width);
-        $(this).find(".domains .domain").each(function(idx, domainNode) {
-          var name = $(this).attr("id");
-          var start = parseInt($(this).attr("start"));
-          var end = parseInt($(this).attr("end"));
-          var dw = (100.0 * (end - start + 1) / maxLength).toString() + "%";
-          var x = (100.0 * start / maxLength).toString() + "%";
-          $(this).css("width", dw).css("left", x);
-          $.each(manager.assignColors(name), function(idx, color) {
-            $("<div/>").css("background-color", color).appendTo(domainNode);
+      $('#Record_Views #proteins .protein').each(function () {
+        var length = parseInt($(this).find('.length').text());
+        var width = ((100.0 * length) / maxLength).toString() + '%';
+        $(this).find('.protein-graph').width(width);
+        $(this)
+          .find('.domains .domain')
+          .each(function (idx, domainNode) {
+            var name = $(this).attr('id');
+            var start = parseInt($(this).attr('start'));
+            var end = parseInt($(this).attr('end'));
+            var dw = ((100.0 * (end - start + 1)) / maxLength).toString() + '%';
+            var x = ((100.0 * start) / maxLength).toString() + '%';
+            $(this).css('width', dw).css('left', x);
+            $.each(manager.assignColors(name), function (idx, color) {
+              $('<div/>').css('background-color', color).appendTo(domainNode);
+            });
           });
-        });
       });
-    }
+    };
 
-    this.assignColors = function(pfamId) {
+    this.assignColors = function (pfamId) {
       // COLORS is a curated list of colors. Four colors are combined based on
       // the pfam ID (see below) to create a 4-band coloring. The number 4 was
       // chosen with the idea that the number of pfam domains would not surpass
@@ -90,7 +92,7 @@ wdk.namespace("eupathdb.pfamDomain", function(ns, $) {
 
       // pad with zeros so we can get the number of colors needed
       while (terms.length < BAND_COUNT) {
-        terms = "0" + terms;
+        terms = '0' + terms;
       }
 
       // push colors into array
@@ -100,7 +102,7 @@ wdk.namespace("eupathdb.pfamDomain", function(ns, $) {
 
       return colors;
     };
-  };
+  }
 
   ns.init = initializePfams;
   ns.PfamManager = PfamManager;

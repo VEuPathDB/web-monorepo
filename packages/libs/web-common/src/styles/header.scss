@@ -18,9 +18,9 @@
 
     @media screen and (max-width: $cramped-header-width) {
       grid-template-areas:
-        "site-branding .         project-branding project-branding "
-        "site-branding searchbar .                .                "
-        ".             menubar   social           login            ";
+        'site-branding .         project-branding project-branding '
+        'site-branding searchbar .                .                '
+        '.             menubar   social           login            ';
 
       .ebrc-HeaderBrandingContainer {
         align-self: flex-start;
@@ -84,9 +84,9 @@
     position: relative;
 
     grid-template-areas:
-      "site-branding site-branding     social    login"
-      "hamburger     searchbar         searchbar searchbar"
-      "menubar       menubar           menubar   menubar";
+      'site-branding site-branding     social    login'
+      'hamburger     searchbar         searchbar searchbar'
+      'menubar       menubar           menubar   menubar';
 
     grid-template-columns: auto auto 1fr;
 

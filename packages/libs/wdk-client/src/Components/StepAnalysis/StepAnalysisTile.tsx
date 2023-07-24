@@ -14,8 +14,8 @@ interface StepAnalysisTileProps {
 }
 
 const TOOLTIP_POSITION = {
-  my: "top center",
-  at: "bottom center"
+  my: 'top center',
+  at: 'bottom center',
 };
 
 export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
@@ -25,24 +25,27 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
   inactive,
   newRelease,
   loading,
-  loadChoice
+  loadChoice,
 }) => (
   <Tooltip content={shortDescription} position={TOOLTIP_POSITION}>
-    <div className={`${inactive ? 'inactive ' : ''}analysis-selector`}
+    <div
+      className={`${inactive ? 'inactive ' : ''}analysis-selector`}
       title={shortDescription}
       onClick={inactive ? NOOP : loadChoice}
       onKeyDown={inactive ? NOOP : onKeyDownFactory(loadChoice)}
       tabIndex={0}
     >
-      {
-        inactive &&
+      {inactive && (
         <div className="analysis-selection-banner">Coming soon...</div>
-      }
-      {
-        newRelease &&
+      )}
+      {newRelease && (
         <div className="analysis-selection-banner new-analysis"></div>
-      }
-      <Spinnable className="analysis-selector-image" style={tileStyle(customThumbnailUrl)} spinning={loading} />
+      )}
+      <Spinnable
+        className="analysis-selector-image"
+        style={tileStyle(customThumbnailUrl)}
+        spinning={loading}
+      />
       <div className="analysis-selector-content">
         <div className="analysis-selector-title">{displayName}</div>
         <p className="analysis-selector-description">{shortDescription}</p>
@@ -53,20 +56,22 @@ export const StepAnalysisTile: React.SFC<StepAnalysisTileProps> = ({
 
 const ENTER_KEY_CODE = 13;
 
-const onKeyDownFactory = memoize((loadChoice: () => void) => (event: React.KeyboardEvent<HTMLDivElement>) => {
-  if (event.which === ENTER_KEY_CODE) {
-    loadChoice();
+const onKeyDownFactory = memoize(
+  (loadChoice: () => void) => (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.which === ENTER_KEY_CODE) {
+      loadChoice();
+    }
   }
-});
+);
 
-const NOOP = () => { };
+const NOOP = () => {};
 
 const tileStyle = (customThumbnailUrl?: string): React.CSSProperties =>
   customThumbnailUrl
     ? {
-      backgroundImage: `url(${customThumbnailUrl})`,
-      height: '140px'
-    }
+        backgroundImage: `url(${customThumbnailUrl})`,
+        height: '140px',
+      }
     : {
-      height: '140px'
-    };
+        height: '140px',
+      };

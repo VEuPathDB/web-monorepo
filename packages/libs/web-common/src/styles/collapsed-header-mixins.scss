@@ -11,8 +11,8 @@ $small-branding-scale-factor: 0.57142857142em;
   height: auto;
   padding: 0.5em 0.75em;
   grid-template-areas:
-    "site-branding searchbar social login"
-    "site-branding menubar social login";
+    'site-branding searchbar social login'
+    'site-branding menubar social login';
 
   box-shadow: 0 2px 4px #00000066;
 
@@ -21,7 +21,8 @@ $small-branding-scale-factor: 0.57142857142em;
   }
 
   .ebrc-HeaderSearchBar {
-    input, form {
+    input,
+    form {
       line-height: normal;
     }
 
@@ -43,7 +44,9 @@ $small-branding-scale-factor: 0.57142857142em;
     align-self: flex-end;
   }
 
-  .ebrc-HeaderMenuBar > .ebrc-HeaderMenuItemGroup > .ebrc-HeaderMenuItemContent {
+  .ebrc-HeaderMenuBar
+    > .ebrc-HeaderMenuItemGroup
+    > .ebrc-HeaderMenuItemContent {
     row-gap: 0.5em;
     padding: 0 0.5em;
 
