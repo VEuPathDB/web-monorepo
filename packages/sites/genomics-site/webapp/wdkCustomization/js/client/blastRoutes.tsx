@@ -4,16 +4,19 @@ import { Redirect, RouteComponentProps } from 'react-router';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-const BlastWorkspaceRouter = React.lazy(() => import('./controllers/BlastWorkspaceRouter'));
+const BlastWorkspaceRouter = React.lazy(
+  () => import('./controllers/BlastWorkspaceRouter')
+);
 
 export const blastRoutes: RouteEntry[] = [
   {
     path: '/workspace/blast',
     exact: false,
-    component: () => 
+    component: () => (
       <Suspense fallback={<Loading />}>
         <BlastWorkspaceRouter />
-      </Suspense>,
+      </Suspense>
+    ),
   },
   {
     path: '/search/:recordClass/:searchName(.*MultiBlast)',
@@ -26,5 +29,5 @@ export const blastRoutes: RouteEntry[] = [
         to={`/workspace/blast/new?recordType=${props.match.params.recordClass}`}
       />
     ),
-  }
+  },
 ];

@@ -7,13 +7,13 @@ import { Mesa, MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
-  parseSearchQueryString
+  parseSearchQueryString,
 } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 import {
   DataTableColumnKey,
   DataTableColumns,
-  DataTableSortObject
+  DataTableSortObject,
 } from 'ortho-client/utils/dataTables';
 
 interface Props<R, C extends DataTableColumnKey<R>> {
@@ -25,48 +25,70 @@ interface Props<R, C extends DataTableColumnKey<R>> {
   tableBodyMaxHeight?: string;
 }
 
-export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
-  {
-    rows,
-    columns,
-    columnOrder,
-    onRowMouseOver,
-    onRowMouseOut,
-    tableBodyMaxHeight = 'calc(80vh - 275px)'
-  }: Props<R, C>
-) {
-  const [ searchTerm, setSearchTerm ] = useState('');
+export function OrthoDataTable<R, C extends DataTableColumnKey<R>>({
+  rows,
+  columns,
+  columnOrder,
+  onRowMouseOver,
+  onRowMouseOut,
+  tableBodyMaxHeight = 'calc(80vh - 275px)',
+}: Props<R, C>) {
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const initialSortUiState: DataTableSortObject<R, C> =
-    { columnKey: columns[columnOrder[0]].key, direction: 'asc' };
-  const [ sortUiState, setSortUiState ] = useState(initialSortUiState);
+  const initialSortUiState: DataTableSortObject<R, C> = {
+    columnKey: columns[columnOrder[0]].key,
+    direction: 'asc',
+  };
+  const [sortUiState, setSortUiState] = useState(initialSortUiState);
 
   const mesaRows = useMemo(
     () => makeMesaRows(rows, columns, sortUiState),
-    [ rows, columns, sortUiState ]
+    [rows, columns, sortUiState]
   );
 
-  const mesaFilteredRows = useMesaFilteredRows(mesaRows, columns, columnOrder, searchTerm);
+  const mesaFilteredRows = useMesaFilteredRows(
+    mesaRows,
+    columns,
+    columnOrder,
+    searchTerm
+  );
 
-  const mesaColumns = useMemo(() => makeMesaColumns(columns, columnOrder), [ columns, columnOrder ]);
+  const mesaColumns = useMemo(
+    () => makeMesaColumns(columns, columnOrder),
+    [columns, columnOrder]
+  );
 
   const mesaOptions = useMemo(
     () => makeMesaOptions(onRowMouseOver, onRowMouseOut, tableBodyMaxHeight),
-    [ onRowMouseOver, onRowMouseOut, tableBodyMaxHeight ]
+    [onRowMouseOver, onRowMouseOut, tableBodyMaxHeight]
   );
-  const mesaEventHandlers = useMemo(() => makeMesaEventHandlers(setSortUiState), []);
-  const mesaUiState = useMemo(() => makeMesaUiState(sortUiState), [ sortUiState ]);
+  const mesaEventHandlers = useMemo(
+    () => makeMesaEventHandlers(setSortUiState),
+    []
+  );
+  const mesaUiState = useMemo(
+    () => makeMesaUiState(sortUiState),
+    [sortUiState]
+  );
 
   const mesaState = useMemo(
-    () => MesaState.create({
-      rows: mesaRows,
-      filteredRows: mesaFilteredRows,
-      columns: mesaColumns,
-      options: mesaOptions,
-      eventHandlers: mesaEventHandlers,
-      uiState: mesaUiState
-    }),
-    [ mesaRows, mesaFilteredRows, mesaColumns, mesaOptions, mesaEventHandlers, mesaUiState ]
+    () =>
+      MesaState.create({
+        rows: mesaRows,
+        filteredRows: mesaFilteredRows,
+        columns: mesaColumns,
+        options: mesaOptions,
+        eventHandlers: mesaEventHandlers,
+        uiState: mesaUiState,
+      }),
+    [
+      mesaRows,
+      mesaFilteredRows,
+      mesaColumns,
+      mesaOptions,
+      mesaEventHandlers,
+      mesaUiState,
+    ]
   );
 
   return (
@@ -107,41 +129,39 @@ function useMesaFilteredRows<R, C extends DataTableColumnKey<R>>(
 ) {
   const searchTerms = useMemo(
     () => parseSearchQueryString(searchTerm),
-    [ searchTerm ]
+    [searchTerm]
   );
 
   const rowsWithSearchableString = useMemo(
-    () => Seq.from(rows).map(row => {
-      const searchableColumnStrings = columnOrder.map(columnKey => {
-        const { makeSearchableString } = columns[columnKey];
+    () =>
+      Seq.from(rows).map((row) => {
+        const searchableColumnStrings = columnOrder.map((columnKey) => {
+          const { makeSearchableString } = columns[columnKey];
 
-        return makeSearchableString == null
-          ? String(row[columnKey])
-          : makeSearchableString(row[columnKey]);
-      });
+          return makeSearchableString == null
+            ? String(row[columnKey])
+            : makeSearchableString(row[columnKey]);
+        });
 
-      const searchableRowString = searchableColumnStrings.join('\0');
+        const searchableRowString = searchableColumnStrings.join('\0');
 
-      return {
-        row,
-        searchableRowString
-      };
-    }),
-    [ rows, columns, columnOrder ]
+        return {
+          row,
+          searchableRowString,
+        };
+      }),
+    [rows, columns, columnOrder]
   );
 
   return useMemo(
-    () => (
+    () =>
       rowsWithSearchableString
-        .filter(
-          ({ searchableRowString }) => areTermsInString(searchTerms, searchableRowString)
+        .filter(({ searchableRowString }) =>
+          areTermsInString(searchTerms, searchableRowString)
         )
-        .map(
-          ({ row }) => row
-        )
-        .toArray()
-    ),
-    [ rowsWithSearchableString, searchTerms ]
+        .map(({ row }) => row)
+        .toArray(),
+    [rowsWithSearchableString, searchTerms]
   );
 }
 
@@ -149,22 +169,27 @@ function makeMesaColumns<R, C extends DataTableColumnKey<R>>(
   columns: Props<R, C>['columns'],
   columnOrder: Props<R, C>['columnOrder']
 ) {
-  return columnOrder.map(columnKey => columns[columnKey]);
+  return columnOrder.map((columnKey) => columns[columnKey]);
 }
 
 function makeMesaEventHandlers<R, C extends DataTableColumnKey<R>>(
   setSortUiState: (newSort: DataTableSortObject<R, C>) => void
 ) {
   return {
-    onSort: ({ key }: { key: C }, direction: DataTableSortObject<R, C>['direction']) => {
+    onSort: (
+      { key }: { key: C },
+      direction: DataTableSortObject<R, C>['direction']
+    ) => {
       setSortUiState({ columnKey: key, direction });
-    }
+    },
   };
-};
+}
 
-function makeMesaUiState<R, C extends DataTableColumnKey<R>>(sort: DataTableSortObject<R, C>) {
+function makeMesaUiState<R, C extends DataTableColumnKey<R>>(
+  sort: DataTableSortObject<R, C>
+) {
   return {
-    sort
+    sort,
   };
 }
 
@@ -178,6 +203,6 @@ function makeMesaOptions<R>(
     useStickyHeader: true,
     tableBodyMaxHeight,
     onRowMouseOver,
-    onRowMouseOut
+    onRowMouseOut,
   };
 }

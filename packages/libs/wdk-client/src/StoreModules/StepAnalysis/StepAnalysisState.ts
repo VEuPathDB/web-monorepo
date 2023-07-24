@@ -1,4 +1,7 @@
-import { StepAnalysisConfig, StepAnalysisType } from '../../Utils/StepAnalysisUtils';
+import {
+  StepAnalysisConfig,
+  StepAnalysisType,
+} from '../../Utils/StepAnalysisUtils';
 import { Parameter } from '../../Utils/WdkModel';
 
 export const UNINITIALIZED_PANEL_STATE = 'UNINITIALIZED_PANEL_STATE';
@@ -17,7 +20,11 @@ export interface StepAnalysesState {
   analysisPanelOrder: number[];
 }
 
-export type AnalysisPanelState = UninitializedAnalysisPanelState | AnalysisMenuState | UnsavedAnalysisState | SavedAnalysisState;
+export type AnalysisPanelState =
+  | UninitializedAnalysisPanelState
+  | AnalysisMenuState
+  | UnsavedAnalysisState
+  | SavedAnalysisState;
 
 // This state is for analyses that have been saved during previous visits to Step Analysis
 export interface UninitializedAnalysisPanelState {
@@ -42,15 +49,17 @@ export interface UnsavedAnalysisState extends AnalysisFormState {
   analysisName: string;
   analysisType: StepAnalysisType;
   pollCountdown: number;
-  panelUiState: { descriptionExpanded: boolean, formExpanded: boolean };
+  panelUiState: { descriptionExpanded: boolean; formExpanded: boolean };
 }
 
-export interface SavedAnalysisState extends AnalysisFormState, AnalysisResultState {
+export interface SavedAnalysisState
+  extends AnalysisFormState,
+    AnalysisResultState {
   type: typeof SAVED_ANALYSIS_STATE;
   analysisConfig: StepAnalysisConfig;
   analysisConfigStatus: 'LOADING' | 'COMPLETE' | 'ERROR';
   pollCountdown: number;
-  panelUiState: { descriptionExpanded: boolean, formExpanded: boolean };
+  panelUiState: { descriptionExpanded: boolean; formExpanded: boolean };
 }
 
 interface AnalysisFormState {

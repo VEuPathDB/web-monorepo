@@ -1,9 +1,10 @@
 .wdk-Fraction {
-  .wdk-FractionNumerator, .wdk-FractionDenominator {
+  .wdk-FractionNumerator,
+  .wdk-FractionDenominator {
     padding: 0 0.3em;
   }
 
   .wdk-FractionNumerator {
-    border-bottom: 0.15em solid #AAA;
+    border-bottom: 0.15em solid #aaa;
   }
 }

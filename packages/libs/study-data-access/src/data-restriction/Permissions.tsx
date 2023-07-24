@@ -12,12 +12,14 @@ import { usePermissions } from '../data-restriction/permissionsHooks';
  * "Component" whenever the "Component" should be rendered concurrently
  * with the fetching of the UserPermissions.
  */
- export function withPermissions<P>(Component: React.ComponentType<P & { permissions: UserPermissions }>): React.ComponentType<P> {
-  return function(props) {
+export function withPermissions<P>(
+  Component: React.ComponentType<P & { permissions: UserPermissions }>
+): React.ComponentType<P> {
+  return function (props) {
     const permissionsValue = usePermissions();
 
-    return permissionsValue.loading
-      ? null
-      : <Component {...props} permissions={permissionsValue.permissions} />;
-  }
+    return permissionsValue.loading ? null : (
+      <Component {...props} permissions={permissionsValue.permissions} />
+    );
+  };
 }

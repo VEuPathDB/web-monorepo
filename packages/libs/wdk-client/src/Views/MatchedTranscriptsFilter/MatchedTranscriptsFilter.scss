@@ -1,5 +1,4 @@
 .MatchedTranscriptsFilter {
-
   &-Heading {
     /* font-weight: bold; */
   }
@@ -38,19 +37,23 @@
     }
     > * > * {
       display: table-cell;
-      padding: 0 .2em .5em .2em;
+      padding: 0 0.2em 0.5em 0.2em;
       vertical-align: baseline;
     }
   }
 
   &-FilterOption {
-    &__YY, &__YN, &__NY, &__NN {
+    &__YY,
+    &__YN,
+    &__NY,
+    &__NN {
       img {
         height: 3em;
         vertical-align: bottom;
       }
     }
-    &__Y, &__N {
+    &__Y,
+    &__N {
       img {
         height: 1.5em;
         vertical-align: bottom;
@@ -59,8 +62,10 @@
   }
 
   &-FilterOption__disabled {
-    > *:nth-child(2), > *:nth-child(4), > *:nth-child(5) {
-      opacity: .4;
+    > *:nth-child(2),
+    > *:nth-child(4),
+    > *:nth-child(5) {
+      opacity: 0.4;
     }
   }
 
@@ -69,5 +74,4 @@
     display: flex;
     justify-content: center;
   }
-
 }

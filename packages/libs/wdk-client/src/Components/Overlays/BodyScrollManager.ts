@@ -32,13 +32,12 @@ export function useBodyScrollManager(isDisabled: boolean) {
   useEffect(() => {
     if (isDisabled) {
       bodyScrollManager.blockScroll(ref.current);
-    }
-    else {
+    } else {
       bodyScrollManager.unblockScroll(ref.current);
     }
 
     return () => {
       bodyScrollManager.unblockScroll(ref.current);
-    }
+    };
   }, [isDisabled]);
 }

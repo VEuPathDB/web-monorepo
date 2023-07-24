@@ -9,7 +9,7 @@ import {
   HistoryTableSectionConfig,
   OpenDialogConfig,
   ProviderTableSectionConfig,
-  StaffTableSectionConfig
+  StaffTableSectionConfig,
 } from '../studyAccessHooks';
 
 import './StudyAccess.scss';
@@ -31,7 +31,7 @@ export function StudyAccess({
   providerTableConfig,
   endUserTableConfig,
   historyTableConfig,
-  openDialogConfig
+  openDialogConfig,
 }: Props) {
   return (
     <div className={cx()}>
@@ -42,10 +42,7 @@ export function StudyAccess({
       <UserTableSection {...providerTableConfig} />
       <UserTableSection {...staffTableConfig} />
       <UserTableSection {...historyTableConfig} />
-      {
-        openDialogConfig &&
-        <UserTableDialog {...openDialogConfig} />
-      }
+      {openDialogConfig && <UserTableDialog {...openDialogConfig} />}
     </div>
   );
 }

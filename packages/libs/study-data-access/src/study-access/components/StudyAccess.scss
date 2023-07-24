@@ -39,16 +39,20 @@
     margin: 0.5em 0;
   }
 
-  &--UsersAddedContent p, &--UsersAddedContent ul {
+  &--UsersAddedContent p,
+  &--UsersAddedContent ul {
     font-size: 1.2em;
   }
 
-  &--AccessDenialSubmit, &--AddUsersSubmit, &--UsersAddedConfirm {
+  &--AccessDenialSubmit,
+  &--AddUsersSubmit,
+  &--UsersAddedConfirm {
     display: flex;
     justify-content: center;
   }
 
-  &--NameCell, &--TimestampCell {
+  &--NameCell,
+  &--TimestampCell {
     white-space: nowrap;
   }
 }

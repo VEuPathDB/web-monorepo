@@ -1,24 +1,29 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  DataTables sorting
 */
-.dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
-    display: inline-block;
-    margin-bottom: 5px;
- /*   margin-left: 3px; */
- /*   padding-bottom: 3px; */
+.dataTables_length,
+.dataTables_filter,
+.dataTables_info,
+.dataTables_paginate {
+  display: inline-block;
+  margin-bottom: 5px;
+  /*   margin-left: 3px; */
+  /*   padding-bottom: 3px; */
 }
-.dataTables_filter, .dataTables_paginate {
-/*    border-left: 2px solid #FFFFFF; */
-    margin-left: 10px;
-    padding-left: 10px;
+.dataTables_filter,
+.dataTables_paginate {
+  /*    border-left: 2px solid #FFFFFF; */
+  margin-left: 10px;
+  padding-left: 10px;
 }
 
-table.dataTable th, table.dataTable td {
-/*  border-left: 1px dotted #CCCCCC; */
-/*  border-right: 1px dotted #CCCCCC; */
+table.dataTable th,
+table.dataTable td {
+  /*  border-left: 1px dotted #CCCCCC; */
+  /*  border-right: 1px dotted #CCCCCC; */
 }
 table.dataTable th {
-	font-weight:bold;
+  font-weight: bold;
 }
 
 table.dataTable thead th.sortable {
@@ -35,17 +40,21 @@ table.dataTable thead th div.DataTables_sort_wrapper span {
   margin-top: -8px;
   right: 0;
 }
-table.dataTable td { border-bottom: 1px dotted #CCCCCC; }
-table.dataTable tr.odd { background-color: #EEEEFF; }
-table.dataTable tr.even { background-color: #FFFFFF; }
-
-
+table.dataTable td {
+  border-bottom: 1px dotted #cccccc;
+}
+table.dataTable tr.odd {
+  background-color: #eeeeff;
+}
+table.dataTable tr.even {
+  background-color: #ffffff;
+}
 
 .ui-widget-header {
-    padding:3px;
-    font-weight:normal;
+  padding: 3px;
+  font-weight: normal;
 }
 
 .ui-widget {
-    font-family: Arial,Helvetica,sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }

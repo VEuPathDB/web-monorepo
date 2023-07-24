@@ -59,7 +59,7 @@ const ModalContent = ({
       </ul>
     </div>
     <FilledButton
-      text='Example Button'
+      text="Example Button"
       onPress={() => null}
       themeRole={themeRole}
     />
@@ -132,7 +132,7 @@ ThemedDefaultPreset.args = {
   ...DefaultPreset.args,
   title: 'Themed Expandable Panel',
   themeRole: 'primary',
-  children: <ModalContent themeRole='primary' />,
+  children: <ModalContent themeRole="primary" />,
 } as ExpandablePanelProps;
 
 export const StyleOverrides: Story<ExpandablePanelProps> = (args) => {

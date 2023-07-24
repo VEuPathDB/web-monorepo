@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 class Sticky extends React.Component {
-
   constructor(props) {
     super(props);
     this.updateIsFixed = this.updateIsFixed.bind(this);
@@ -34,14 +33,13 @@ class Sticky extends React.Component {
       this.setState({
         isFixed: true,
         height: rect.height,
-        width: contentRect.width
+        width: contentRect.width,
       });
-    }
-    else if (rect.top >= 0 && this.state.isFixed === true) {
+    } else if (rect.top >= 0 && this.state.isFixed === true) {
       this.setState({
         isFixed: false,
         height: null,
-        width: null
+        width: null,
       });
     }
   }
@@ -54,11 +52,10 @@ class Sticky extends React.Component {
       </div>
     );
   }
-
 }
 
 Sticky.propTypes = {
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
 };
 
 export default Sticky;

@@ -41,9 +41,8 @@ export const useValuesMap = (entities: StudyEntity[]) =>
     for (const entity of entities) {
       for (const variable of entity.variables) {
         if (variable.type !== 'category' && variable.vocabulary) {
-          valuesMap[`${entity.id}/${variable.id}`] = variable.vocabulary.join(
-            ' '
-          );
+          valuesMap[`${entity.id}/${variable.id}`] =
+            variable.vocabulary.join(' ');
         }
       }
     }

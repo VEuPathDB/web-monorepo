@@ -20,7 +20,13 @@ import * as WdkComponents from '@veupathdb/wdk-client/lib/Components';
 import * as WdkControllers from '@veupathdb/wdk-client/lib/Controllers';
 
 import * as siteConfig from './config';
-import { rootUrl, rootElement, endpoint, retainContainerContent, requireLogin } from './config';
+import {
+  rootUrl,
+  rootElement,
+  endpoint,
+  retainContainerContent,
+  requireLogin,
+} from './config';
 import pluginConfig from './pluginConfig';
 import { loadSiteConfig } from './actioncreators/GlobalActionCreators';
 import * as EbrcComponentWrappers from './component-wrappers';
@@ -58,7 +64,7 @@ export function initialize(options = {}) {
     wrapStoreModules = identity,
     wrapWdkDependencies = identity,
     wrapWdkService = identity,
-    additionalMiddleware
+    additionalMiddleware,
   } = options;
 
   unaliasWebappUrl();
@@ -80,10 +86,10 @@ export function initialize(options = {}) {
     endpoint,
     onLocationChange: makeLocationHandler(),
     pluginConfig: sitePluginConfig.concat(pluginConfig),
-    additionalMiddleware
+    additionalMiddleware,
   });
 
-  (window.ebrc || (window.ebrc = {})).context = context
+  (window.ebrc || (window.ebrc = {})).context = context;
 
   context.store.dispatch(loadSiteConfig(siteConfig));
 
@@ -99,7 +105,11 @@ function unaliasWebappUrl() {
     let pathname = window.location.pathname;
     let aliasUrl = rootUrl.replace(/^\/[^/]+\/(.*)$/, '/a/$1');
     if (pathname.startsWith(aliasUrl)) {
-      window.history.replaceState(null, '', pathname.replace(aliasUrl, rootUrl) + location.search + location.hash);
+      window.history.replaceState(
+        null,
+        '',
+        pathname.replace(aliasUrl, rootUrl) + location.search + location.hash
+      );
     }
   }
 }
@@ -109,9 +119,13 @@ function unaliasWebappUrl() {
  */
 function removeJsessionid() {
   // remove jsessionid from url
-  window.history.replaceState(null, '',
+  window.history.replaceState(
+    null,
+    '',
     window.location.pathname.replace(/;jsessionid=\w{32}/i, '') +
-    window.location.search + window.location.hash);
+      window.location.search +
+      window.location.hash
+  );
 }
 
 /** Create location handler */
@@ -126,14 +140,15 @@ function makeLocationHandler() {
 
     // skip if the previous pathname and new pathname are the same, since
     // hash changes are currently detected.
-    if (previousLocation && previousLocation.pathname === location.pathname) return;
+    if (previousLocation && previousLocation.pathname === location.pathname)
+      return;
 
     // update previousLocation
     previousLocation = location;
 
     window.ga('send', 'pageview', {
       page: location.pathname,
-      title: location.pathname
+      title: location.pathname,
     });
   }, 1000);
 }
@@ -153,12 +168,15 @@ function mergeWrapperObjects(siteWrapperObject, ebrcWrapperObject) {
 
   const siteKeys = Object.keys(siteWrapperObject);
   const ebrcKeys = Object.keys(ebrcWrapperObject);
-  return uniq(siteKeys.concat(ebrcKeys))
-    .reduce(function mergeWrappers(mergedWrappers, key) {
-      return Object.assign(mergedWrappers, {
-        [key]: composeWrappers(siteWrapperObject[key], ebrcWrapperObject[key])
-      });
-    }, {});
+  return uniq(siteKeys.concat(ebrcKeys)).reduce(function mergeWrappers(
+    mergedWrappers,
+    key
+  ) {
+    return Object.assign(mergedWrappers, {
+      [key]: composeWrappers(siteWrapperObject[key], ebrcWrapperObject[key]),
+    });
+  },
+  {});
 }
 
 /**
@@ -166,9 +184,9 @@ function mergeWrapperObjects(siteWrapperObject, ebrcWrapperObject) {
  * The ebrc wrapper is applied before the site wrapper.
  */
 function composeWrappers(siteWrapper = identity, ebrcWrapper = identity) {
-  return function(wdkEntity) {
+  return function (wdkEntity) {
     return siteWrapper(ebrcWrapper(wdkEntity));
-  }
+  };
 }
 
 /**
@@ -176,28 +194,32 @@ function composeWrappers(siteWrapper = identity, ebrcWrapper = identity) {
  */
 function wrapComponents(wrappersByComponentName) {
   if (wrappersByComponentName == null) return;
-  Object.entries(wrappersByComponentName).forEach(function([ componentName, componentWrapper ]) {
-    const Component = (
+  Object.entries(wrappersByComponentName).forEach(function ([
+    componentName,
+    componentWrapper,
+  ]) {
+    const Component =
       WdkComponents[componentName] ||
       WdkControllers[componentName] ||
       EbrcComponents[componentName] ||
-      EbrcControllers[componentName]
-    );
+      EbrcControllers[componentName];
 
     if (Component == null) {
       console.warn('Skipping unknown component wrapper `%s`.', componentName);
-    }
-
-    else if (typeof Component.wrapComponent !== 'function') {
-      console.warn('Warning: Component `%s` is not wrappable. Default version will be used.', componentName);
-    }
-
-    else {
+    } else if (typeof Component.wrapComponent !== 'function') {
+      console.warn(
+        'Warning: Component `%s` is not wrappable. Default version will be used.',
+        componentName
+      );
+    } else {
       try {
         Component.wrapComponent(componentWrapper);
-      }
-      catch(error) {
-        console.error('Could not apply component wrapper `%s`.', componentName, error);
+      } catch (error) {
+        console.error(
+          'Could not apply component wrapper `%s`.',
+          componentName,
+          error
+        );
       }
     }
   });
@@ -205,8 +227,8 @@ function wrapComponents(wrappersByComponentName) {
 
 function preventButtonOutlineOnClick() {
   if (window.document == null) return;
-  window.addEventListener('mouseup', function(event) {
+  window.addEventListener('mouseup', function (event) {
     const { target } = event;
     if (target instanceof HTMLButtonElement) target.blur();
-  })
+  });
 }

@@ -15,7 +15,11 @@ export function isPreferredOrganism(
 
   if (typeof nameAttribute !== 'string') {
     if (organismRecord.recordClassName === ORGANISM_RECORD_CLASS_NAME) {
-      throw new Error(`Expected '${ORGANISM_NAME_ATTR}' string attribute for organism record ${JSON.stringify(organismRecord.id)}`);
+      throw new Error(
+        `Expected '${ORGANISM_NAME_ATTR}' string attribute for organism record ${JSON.stringify(
+          organismRecord.id
+        )}`
+      );
     }
 
     return false;
@@ -32,7 +36,11 @@ export function isPreferredDataset(
 
   if (versionTable == null) {
     if (datasetRecord.recordClassName === DATASET_RECORD_CLASS_NAME) {
-      throw new Error(`Failed to resolve expected '${VERSION_TABLE}' table for dataset record ${JSON.stringify(datasetRecord.id)}`);
+      throw new Error(
+        `Failed to resolve expected '${VERSION_TABLE}' table for dataset record ${JSON.stringify(
+          datasetRecord.id
+        )}`
+      );
     }
 
     return false;
@@ -44,16 +52,13 @@ export function isPreferredDataset(
     return true;
   }
 
-  return versionTable.some(
-    ({ [ORGANISM_COLUMN]: organism }) => {
-      if (typeof organism !== 'string') {
-        throw new Error(`Expected the '${VERSION_TABLE}' table to have a string-valued '${ORGANISM_COLUMN}' column`);
-      }
-
-      return (
-        preferredOrganisms.has(organism) ||
-        organism === 'ALL'
+  return versionTable.some(({ [ORGANISM_COLUMN]: organism }) => {
+    if (typeof organism !== 'string') {
+      throw new Error(
+        `Expected the '${VERSION_TABLE}' table to have a string-valued '${ORGANISM_COLUMN}' column`
       );
     }
-  );
+
+    return preferredOrganisms.has(organism) || organism === 'ALL';
+  });
 }

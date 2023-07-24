@@ -1,5 +1,4 @@
 .AttributeAnalysis {
-
   $popup-width: 825px;
 
   width: $popup-width;
@@ -12,9 +11,9 @@
     height: 22px;
     transition: border-color 250ms;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
       border-color: #999;
     }
   }
-
 }

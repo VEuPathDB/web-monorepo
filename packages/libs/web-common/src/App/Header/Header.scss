@@ -2,7 +2,6 @@
   text-shadow: 3px 3px 0px fade-out(#02171b, 0.5);
 }
 
-
 .Header--Home ~ .Footer {
   position: fixed;
   width: 100%;
@@ -12,7 +11,7 @@
 }
 
 .Footer {
-  border-top: 0.0625rem solid #C0C0C0;
+  border-top: 0.0625rem solid #c0c0c0;
   font-size: 120%;
 
   .copyright {
@@ -22,25 +21,23 @@
   }
 
   .contact-us {
-    font-style: italic; 
-  }  
-
+    font-style: italic;
+  }
 }
 
 .Footer > div {
   margin: 0.5em;
 }
 
-
 .Header {
   color: #fff;
   min-width: 1250px;
   width: 100%;
   background-color: #333;
-  border-bottom: 4px solid #DD314E;
+  border-bottom: 4px solid #dd314e;
 
   &.Header--Home {
-/*    border-bottom-width: 10px;*/
+    /*    border-bottom-width: 10px;*/
   }
 
   * {
@@ -59,10 +56,10 @@
   }
 
   h3 {
-   /* @include shadowed;*/
+    /* @include shadowed;*/
     font-style: italic;
     font-weight: 300;
-  /*  padding: 0 0 2.4em; */
+    /*  padding: 0 0 2.4em; */
     padding: 0;
     color: white;
     text-align: center;
@@ -78,4 +75,3 @@
 .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
   top: 40px;
 }
-

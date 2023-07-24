@@ -1771,11 +1771,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
             alignItems: 'center',
           }}
         >
-          <Tooltip title={'Required parameter'}>
-            <div className={classes.label}>
-              Function<sup>*</sup>
-            </div>
-          </Tooltip>
+          <div className={classes.label}>Function</div>
           <SingleSelect
             onSelect={onValueSpecChange}
             value={vizConfig.valueSpecConfig}

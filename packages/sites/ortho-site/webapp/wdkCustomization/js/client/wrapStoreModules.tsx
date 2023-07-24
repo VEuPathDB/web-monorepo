@@ -8,15 +8,17 @@ import * as orthoRecord from 'ortho-client/store-modules/RecordStoreModule';
 // been converted to TypeScript
 type EbrcStoreModules = typeof storeModules;
 interface OrthoMclStoreModules extends EbrcStoreModules {
-  [blastSummaryView.key]: typeof blastSummaryView
+  [blastSummaryView.key]: typeof blastSummaryView;
 }
 
-export function wrapStoreModules(ebrcStoreModules: EbrcStoreModules): OrthoMclStoreModules {
+export function wrapStoreModules(
+  ebrcStoreModules: EbrcStoreModules
+): OrthoMclStoreModules {
   return {
     ...ebrcStoreModules,
     record: {
       ...ebrcStoreModules.record,
-      ...orthoRecord
+      ...orthoRecord,
     },
     blastSummaryView,
   };

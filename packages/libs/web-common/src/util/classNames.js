@@ -13,13 +13,20 @@
  * @param {string} element Suffix to append to baseClassName.
  * @param {string[]} ...modifiers Variants to append to classNames
  */
-export const classNameHelper = baseClassName => (element = '', ...modifiers) => {
-  const className = baseClassName + element;
-  const modifiedClassNames = modifiers.filter(modifier => modifier).map(function(modifier) {
-    return ' ' + className + '__' + modifier;
-  }).join('');
+export const classNameHelper =
+  (baseClassName) =>
+  (element = '', ...modifiers) => {
+    const className = baseClassName + element;
+    const modifiedClassNames = modifiers
+      .filter((modifier) => modifier)
+      .map(function (modifier) {
+        return ' ' + className + '__' + modifier;
+      })
+      .join('');
 
-  return className + modifiedClassNames;
-}
+    return className + modifiedClassNames;
+  };
 
-export const makeQuestionWizardClassName = classNameHelper('ebrc-QuestionWizard');
+export const makeQuestionWizardClassName = classNameHelper(
+  'ebrc-QuestionWizard'
+);

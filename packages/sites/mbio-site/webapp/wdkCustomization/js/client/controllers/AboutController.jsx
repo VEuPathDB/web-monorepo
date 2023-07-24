@@ -4,6 +4,6 @@ import About from '../components/About';
 
 export default class AboutController extends PageController {
   renderView() {
-    return <About/>
+    return <About />;
   }
 }

@@ -51,7 +51,10 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
       }
     }
 
-    &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+    &__selected:active,
+    &__selected:hover,
+    &__selected:link,
+    &__selected:visited {
       border-color: $dark-color;
     }
   }
@@ -66,7 +69,8 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
       padding-bottom: 8em;
     }
 
-    .vpdb-SearchPane, .vpdb-MainContent {
+    .vpdb-SearchPane,
+    .vpdb-MainContent {
       padding-bottom: 10em;
     }
 

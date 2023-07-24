@@ -19,21 +19,23 @@ import './OrthoMCLHomePageController.scss';
 export function OrthoMCLHomePageController() {
   const searchTree = useSearchTree();
 
-  const [ isNewsExpanded, setIsNewsExpanded ] = useSessionBackedState(
+  const [isNewsExpanded, setIsNewsExpanded] = useSessionBackedState(
     false,
     IS_NEWS_EXPANDED_SESSION_KEY,
     encodeIsNewsExpanded,
     parseIsNewsExpanded
   );
-  const toggleNews = useCallback(
-    () => {
-      setIsNewsExpanded(!isNewsExpanded);
-    },
-    [ isNewsExpanded, setIsNewsExpanded ]
-  );
+  const toggleNews = useCallback(() => {
+    setIsNewsExpanded(!isNewsExpanded);
+  }, [isNewsExpanded, setIsNewsExpanded]);
 
   return (
-    <div className={cx('LandingContent', isNewsExpanded ? 'news-expanded' : 'news-collapsed')}>
+    <div
+      className={cx(
+        'LandingContent',
+        isNewsExpanded ? 'news-expanded' : 'news-collapsed'
+      )}
+    >
       <SearchPane
         containerClassName={`${cx('SearchPane')} ${cx('BgWash')}`}
         searchTree={searchTree}
@@ -44,7 +46,10 @@ export function OrthoMCLHomePageController() {
         <WorkshopExercises />
       </div>
       <NewsPane
-        containerClassName={cx('NewsPane', isNewsExpanded ? 'news-expanded' : 'news-collapsed')}
+        containerClassName={cx(
+          'NewsPane',
+          isNewsExpanded ? 'news-expanded' : 'news-collapsed'
+        )}
         isNewsExpanded={isNewsExpanded}
         toggleNews={toggleNews}
       />
@@ -52,5 +57,5 @@ export function OrthoMCLHomePageController() {
   );
 }
 
-const encodeIsNewsExpanded = (b: boolean) => b ? 'y' : '';
+const encodeIsNewsExpanded = (b: boolean) => (b ? 'y' : '');
 const parseIsNewsExpanded = (s: string) => !!s;

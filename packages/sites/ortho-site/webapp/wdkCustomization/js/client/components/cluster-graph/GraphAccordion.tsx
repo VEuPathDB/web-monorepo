@@ -7,21 +7,20 @@ interface Props {
   containerClassName?: string;
 }
 
-export const GraphAccordion: React.FunctionComponent<Props> = function({
+export const GraphAccordion: React.FunctionComponent<Props> = function ({
   title,
   containerClassName,
-  children
+  children,
 }) {
-  const className = containerClassName == null
-    ? 'GraphAccordion'
-    : `GraphAccordion ${containerClassName}`;
+  const className =
+    containerClassName == null
+      ? 'GraphAccordion'
+      : `GraphAccordion ${containerClassName}`;
 
   return (
     <details className={className} open>
       <summary className="GraphAccordionHeader">{title}</summary>
-      <div className="GraphAccordionContent">
-        {children}
-      </div>
+      <div className="GraphAccordionContent">{children}</div>
     </details>
   );
 };

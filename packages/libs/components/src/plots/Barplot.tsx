@@ -176,30 +176,29 @@ const Barplot = makePlotlyPlotComponent(
       dependentAxisLogScale
     ) as NumberRange | undefined;
     // make rectangular layout shapes for truncated axis/missing data
-    const truncatedAxisHighlighting:
-      | Partial<Shape>[]
-      | undefined = useMemo(() => {
-      if (data.series.length > 0) {
-        const filteredTruncationLayoutShapes = truncationLayoutShapes(
-          orientation,
-          undefined, // send undefined for independentAxisRange
-          standardDependentAxisRange,
-          undefined, // send undefined for independentAxisRange
-          extendedDependentAxisRange,
-          axisTruncationConfig
-        );
+    const truncatedAxisHighlighting: Partial<Shape>[] | undefined =
+      useMemo(() => {
+        if (data.series.length > 0) {
+          const filteredTruncationLayoutShapes = truncationLayoutShapes(
+            orientation,
+            undefined, // send undefined for independentAxisRange
+            standardDependentAxisRange,
+            undefined, // send undefined for independentAxisRange
+            extendedDependentAxisRange,
+            axisTruncationConfig
+          );
 
-        return filteredTruncationLayoutShapes;
-      } else {
-        return [];
-      }
-    }, [
-      standardDependentAxisRange,
-      extendedDependentAxisRange,
-      orientation,
-      data.series,
-      axisTruncationConfig,
-    ]);
+          return filteredTruncationLayoutShapes;
+        } else {
+          return [];
+        }
+      }, [
+        standardDependentAxisRange,
+        extendedDependentAxisRange,
+        orientation,
+        data.series,
+        axisTruncationConfig,
+      ]);
 
     const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
       automargin: true,

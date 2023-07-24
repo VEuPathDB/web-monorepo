@@ -1,5 +1,6 @@
-#data-sets { padding: 5px; }
-
+#data-sets {
+  padding: 5px;
+}
 
 /* h4 was used in genome history
 #data-sets h4 {
@@ -25,15 +26,14 @@
 }
 */
 
-
-#data-sets ul { 
-	list-style: disc inside none; 
-	font-size:120%;
+#data-sets ul {
+  list-style: disc inside none;
+  font-size: 120%;
 }
 
-#data-sets .smallitalics { 
-	font-size:90%;
-	font-style:italic; 
+#data-sets .smallitalics {
+  font-size: 90%;
+  font-style: italic;
 }
 
 #data-sets .anchor {
@@ -46,25 +46,24 @@
 }
 
 #data-sets .category div.ctitle {
-	background-color:lightgrey;  /* #d3d3d3 */
-	padding:10px;
-	margin-top:10px;
-	border-top:3px solid grey;
+  background-color: lightgrey; /* #d3d3d3 */
+  padding: 10px;
+  margin-top: 10px;
+  border-top: 3px solid grey;
 }
 
 #data-sets .category-content .data-set {
-	margin-bottom:10px;
-
-} 
+  margin-bottom: 10px;
+}
 #data-sets .category-content .data-set .dstitle {
-	font-size:120%;
-	margin-left:5px;
-	padding:5px 0;
-	font-weight:bold;
+  font-size: 120%;
+  margin-left: 5px;
+  padding: 5px 0;
+  font-weight: bold;
 }
 
 #data-sets .category-content .data-set div.detail {
-	margin-left:15px;
+  margin-left: 15px;
 }
 
 #data-sets .toggle-all {
@@ -72,32 +71,32 @@
   text-align: center;
   border: 3px double;
   padding: 5px;
-  position:relative;
-  left:150px;
+  position: relative;
+  left: 150px;
 }
 
 #data-sets .category-content .data-set .wdk-toggle {
-	font-family: Arial;
-	font-size: 100%;
+  font-family: Arial;
+  font-size: 100%;
 }
 
 /* cancelling jquery styles in this page*/
-#data-sets .category-content .data-set .wdk-toggle h3.ui-state-default, 
+#data-sets .category-content .data-set .wdk-toggle h3.ui-state-default,
 #data-sets .category-content .data-set .wdk-toggle h3.ui-state-hover,
 #data-sets .category-content .data-set .wdk-toggle h3.ui-state-active,
 #data-sets .category-content .data-set .wdk-toggle .ui-widget-content {
-	border:0;
-	background:0;
+  border: 0;
+  background: 0;
 }
 
 #data-sets .category-content .data-set .wdk-toggle .ui-accordion {
-	padding:0;
-	margin-left:5px;
+  padding: 0;
+  margin-left: 5px;
 }
 
 #data-sets .category-content .data-set .wdk-toggle > h3 {
-	text-decoration:underline;
-	padding:0;
+  text-decoration: underline;
+  padding: 0;
   font-size: 1em;
   margin-top: 0;
   margin-bottom: 0;
@@ -110,18 +109,18 @@
 }
 
 #data-sets .category-content .data-set li {
-	font-size: 85%;
+  font-size: 85%;
 }
 
 #data-sets .wdk-toggle-content th {
-	color: #555;
+  color: #555;
 }
 
 #data-sets #beta-page {
-  float:right;
-  font-style:italic;
+  float: right;
+  font-style: italic;
   font-size: 1.2em;
-  position:relative;
-  bottom:60px;
-  right:20px;
+  position: relative;
+  bottom: 60px;
+  right: 20px;
 }

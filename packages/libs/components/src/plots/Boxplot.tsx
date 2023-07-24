@@ -71,9 +71,10 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   // get the order of the provided category values (labels shown along x-axis)
   // get them in the given order, and trivially unique-ify them, if traces have different values
   // this will also be used as tooltip text for axis tick labels
-  const categoryOrder = useMemo(() => uniq(flatMap(plotData, (d) => d.label)), [
-    plotData,
-  ]);
+  const categoryOrder = useMemo(
+    () => uniq(flatMap(plotData, (d) => d.label)),
+    [plotData]
+  );
 
   // change categoriOrder to have ellipsis
   const categoryOrderEllipsis = useMemo(
@@ -177,30 +178,29 @@ const Boxplot = makePlotlyPlotComponent('Boxplot', (props: BoxplotProps) => {
   ) as NumberRange | undefined;
 
   // make rectangular layout shapes for truncated axis/missing data
-  const truncatedAxisHighlighting:
-    | Partial<Shape>[]
-    | undefined = useMemo(() => {
-    if (data.length > 0) {
-      const filteredTruncationLayoutShapes = truncationLayoutShapes(
-        orientation,
-        undefined, // send undefined for independentAxisRange
-        standardDependentAxisRange,
-        undefined, // send undefined for independentAxisRange
-        extendedDependentAxisRange,
-        axisTruncationConfig
-      );
+  const truncatedAxisHighlighting: Partial<Shape>[] | undefined =
+    useMemo(() => {
+      if (data.length > 0) {
+        const filteredTruncationLayoutShapes = truncationLayoutShapes(
+          orientation,
+          undefined, // send undefined for independentAxisRange
+          standardDependentAxisRange,
+          undefined, // send undefined for independentAxisRange
+          extendedDependentAxisRange,
+          axisTruncationConfig
+        );
 
-      return filteredTruncationLayoutShapes;
-    } else {
-      return [];
-    }
-  }, [
-    standardDependentAxisRange,
-    extendedDependentAxisRange,
-    orientation,
-    data,
-    axisTruncationConfig,
-  ]);
+        return filteredTruncationLayoutShapes;
+      } else {
+        return [];
+      }
+    }, [
+      standardDependentAxisRange,
+      extendedDependentAxisRange,
+      orientation,
+      data,
+      axisTruncationConfig,
+    ]);
 
   const layout: Partial<Layout> = {
     [independentAxis]: {

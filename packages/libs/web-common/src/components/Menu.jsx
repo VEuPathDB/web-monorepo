@@ -29,7 +29,7 @@ Menu.propTypes = {
   showLoginWarning: PropTypes.func,
   items: PropTypes.array.isRequired,
   isGuest: PropTypes.bool,
-  projectId: PropTypes.string.isRequired
+  projectId: PropTypes.string.isRequired,
 };
 
 /**
@@ -49,32 +49,61 @@ function MenuItem(props) {
       e.stopPropagation();
       showLoginWarning('use this feature', e.currentTarget.href);
     }
-  }
+  };
   let baseClassName = 'eupathdb-MenuItemText';
-  let className = baseClassName + ' ' + baseClassName + '__' + item.id +
+  let className =
+    baseClassName +
+    ' ' +
+    baseClassName +
+    '__' +
+    item.id +
     (item.beta ? ' ' + baseClassName + '__beta' : '') +
     (item.new ? ' ' + baseClassName + '__new' : '') +
     (!isEmpty(item.children) ? ' ' + baseClassName + '__parent' : '');
 
   return (
     <li className={`eupathdb-MenuItem eupathdb-MenuItem__${item.id}`}>
+      {item.url ? (
+        <a
+          onClick={handleClick}
+          className={className}
+          title={item.tooltip}
+          href={item.url}
+          target={item.target}
+        >
+          {renderItemText(item.text)}
+        </a>
+      ) : item.webAppUrl ? (
+        <a
+          onClick={handleClick}
+          className={className}
+          title={item.tooltip}
+          href={webAppUrl + item.webAppUrl}
+        >
+          {renderItemText(item.text)}
+        </a>
+      ) : item.route ? (
+        <Link
+          onClick={handleClick}
+          className={className}
+          title={item.tooltip}
+          to={item.route}
+        >
+          {renderItemText(item.text)}
+        </Link>
+      ) : (
+        <div className={className} title={item.tooltip}>
+          {renderItemText(item.text)}
+        </div>
+      )}
 
-      { item.url ? <a onClick={handleClick} className={className} title={item.tooltip} href={item.url} target={item.target}>{renderItemText(item.text)}</a>
-      : item.webAppUrl ? <a onClick={handleClick} className={className} title={item.tooltip} href={webAppUrl + item.webAppUrl}>{renderItemText(item.text)}</a>
-      : item.route ?  <Link onClick={handleClick} className={className} title={item.tooltip} to={item.route}>{renderItemText(item.text)}</Link>
-      : <div className={className} title={item.tooltip}>{renderItemText(item.text)}</div> }
-
-      { !isEmpty(item.children) &&
+      {!isEmpty(item.children) && (
         <ul className="eupathdb-Submenu">
-          {item.children.filter(identity).map((childItem, index) =>
-            <MenuItem
-              {...props}
-              key={childItem.id || index}
-              item={childItem}
-            />
-          )}
-        </ul> }
-
+          {item.children.filter(identity).map((childItem, index) => (
+            <MenuItem {...props} key={childItem.id || index} item={childItem} />
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
@@ -84,7 +113,7 @@ MenuItem.propTypes = {
   showLoginWarning: PropTypes.func,
   item: PropTypes.object.isRequired,
   isGuest: PropTypes.bool,
-  projectId: PropTypes.string.isRequired
+  projectId: PropTypes.string.isRequired,
 };
 
 /**
@@ -92,9 +121,11 @@ MenuItem.propTypes = {
  */
 function include(item, projectId) {
   const { include, exclude } = item;
-  return (include == null && exclude == null)
-    || (include != null && include.indexOf(projectId) !== -1)
-    || (exclude != null && exclude.indexOf(projectId) === -1);
+  return (
+    (include == null && exclude == null) ||
+    (include != null && include.indexOf(projectId) !== -1) ||
+    (exclude != null && exclude.indexOf(projectId) === -1)
+  );
 }
 
 /**
