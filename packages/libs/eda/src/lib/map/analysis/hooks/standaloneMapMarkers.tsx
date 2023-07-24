@@ -144,7 +144,7 @@ export function useStandaloneMapMarkers(
             variableId:
               // if boundsZoomLevel is undefined, we'll default to geoConfig.aggregationVariableIds[0]
               geoConfig.aggregationVariableIds[
-                boundsZoomLevel
+                boundsZoomLevel?.zoomLevel != null
                   ? geoConfig.zoomLevelToAggregationLevel(
                       boundsZoomLevel.zoomLevel
                     ) - 1
@@ -237,6 +237,7 @@ export function useStandaloneMapMarkers(
       boundsZoomLevel,
       geoConfig,
       markerType,
+      overlayType,
     ])
   );
 
