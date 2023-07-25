@@ -185,11 +185,34 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
   );
 
   useEffect(() => {
-    if (analysis && !appState) {
-      setVariableUISettings((prev) => ({
-        ...prev,
-        [uiStateKey]: defaultAppState,
-      }));
+    if (analysis) {
+      if (!appState) {
+        setVariableUISettings((prev) => ({
+          ...prev,
+          [uiStateKey]: defaultAppState,
+        }));
+      } else {
+        const missingMarkerConfigs =
+          defaultAppState.markerConfigurations.filter(
+            (defaultConfig) =>
+              !appState.markerConfigurations.some(
+                (config) => config.type === defaultConfig.type
+              )
+          );
+
+        if (missingMarkerConfigs.length > 0) {
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              markerConfigurations: [
+                ...appState.markerConfigurations,
+                ...missingMarkerConfigs,
+              ],
+            },
+          }));
+        }
+      }
     }
   }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
