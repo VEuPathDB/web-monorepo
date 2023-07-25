@@ -232,9 +232,10 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     },
   };
 
-  // Truncation indicators padding
+  // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
-  // ensure the truncation bars appear.
+  // ensure the truncation bars appear. The folowing showTruncationBar variables will
+  // be either 0 (do not show bar) or 1 (show bar).
   const showXMinTruncationBar = Number(dataXMin < xAxisMin);
   const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
@@ -260,6 +261,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         <XYChart
           xScale={{
             type: 'linear',
+            // showTruncationBar vars are 0 or 1, so we only expand the x axis by xTruncationBarWidth when a bar will be drawn
             domain: [
               xAxisMin - showXMinTruncationBar * xTruncationBarWidth,
               xAxisMax + showXMaxTruncationBar * xTruncationBarWidth,
@@ -268,6 +270,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           }}
           yScale={{
             type: 'linear',
+            // showTruncationBar vars are 0 or 1, so we only expand the y axis by yTruncationBarHeight when a bar will be drawn
             domain: [
               yAxisMin - showYMinTruncationBar * yTruncationBarHeight,
               yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
