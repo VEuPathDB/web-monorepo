@@ -4,6 +4,7 @@ import { range } from 'lodash';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
 import { VolcanoPlotData } from '../../types/plots/volcanoplot';
 import { NumberRange } from '../../types/general';
+import { yellow } from '@veupathdb/coreui/lib/definitions/colors';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -90,6 +91,7 @@ interface TemplateProps {
   independentAxisRange?: NumberRange;
   dependentAxisRange?: NumberRange;
   comparisonLabels?: string[];
+  truncationBarFill?: string;
   showSpinner?: boolean;
 }
 
@@ -114,6 +116,7 @@ const Template: Story<TemplateProps> = (args) => {
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
     dependentAxisRange: args.dependentAxisRange,
+    truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
   };
 
@@ -136,8 +139,8 @@ Simple.args = {
   log2FoldChangeThreshold: 1,
   significanceThreshold: 0.01,
   comparisonLabels: ['up in group a', 'up in group b'],
-  independentAxisRange: { min: -8, max: 9 },
-  dependentAxisRange: { min: -1, max: 9 },
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
 };
 
 // Most volcano plots will have thousands of points, since each point
@@ -149,8 +152,20 @@ ManyPoints.args = {
   markerBodyOpacity: 0.5,
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
-  independentAxisRange: { min: -8, max: 9 },
-  dependentAxisRange: { min: -1, max: 9 },
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: 0, max: 9 },
+};
+
+// Test truncation indicators
+export const Truncation = Template.bind({});
+Truncation.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.5,
+  log2FoldChangeThreshold: 2,
+  significanceThreshold: 0.01,
+  independentAxisRange: { min: -3, max: 3 },
+  dependentAxisRange: { min: 1, max: 3 },
+  truncationBarFill: yellow[300],
 };
 
 // Test the spinner
@@ -165,10 +180,3 @@ Spinner.args = {
   dependentAxisRange: { min: -1, max: 9 },
   showSpinner: true,
 };
-
-// Add story for truncation
-// export const Truncation = Template.bind({})
-// Truncation.args = {
-//   data: dataSetVolcano,
-//   independentAxisRange: []
-// }
