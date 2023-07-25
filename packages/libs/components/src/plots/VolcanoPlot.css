@@ -1,0 +1,14 @@
+.VolcanoPlotTooltip > ul {
+  margin: 0;
+  padding: 0.25em;
+  list-style: none;
+  line-height: 1.5em;
+}
+
+.VolcanoPlotTooltip > ul > li {
+  font-weight: normal;
+}
+
+.VolcanoPlotTooltip > ul > li > span {
+  font-weight: bold;
+}

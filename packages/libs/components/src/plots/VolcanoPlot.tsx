@@ -19,7 +19,10 @@ import {
   Annotation,
   AnnotationLineSubject,
   AnnotationLabel,
-} from '@visx/xychart';
+  Tooltip,
+  // } from '@visx/xychart';
+} from '../../../../../../visx/packages/visx-xychart';
+import findNearestDatumXY from '@visx/xychart/lib/utils/findNearestDatumXY';
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
 import {
@@ -33,6 +36,7 @@ import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
+import './VolcanoPlot.css';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -212,6 +216,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             zero: false,
             clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
           }}
+          findNearestDatumOverride={findNearestDatumXY}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
           <Grid numTicks={6} lineStyle={gridStyles} />
@@ -295,9 +300,11 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           <Group opacity={markerBodyOpacity ?? 1}>
             <GlyphSeries
               dataKey={'data'} // unique key
-              data={data} // data as an array of obejcts (points). Accessed with dataAccessors
+              data={[...data].sort(
+                (a, b) => Number(a.log2foldChange) - Number(b.log2foldChange)
+              )} // data as an array of obejcts (points). Accessed with dataAccessors
               {...dataAccessors}
-              colorAccessor={(d) => {
+              colorAccessor={(d: VolcanoPlotDataPoint) => {
                 return assignSignificanceColor(
                   Number(d.log2foldChange),
                   Number(d.pValue),
@@ -306,8 +313,38 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   significanceColors
                 );
               }}
+              findNearestDatumOverride={findNearestDatumXY}
             />
           </Group>
+          <Tooltip<VolcanoPlotDataPoint>
+            snapTooltipToDatumX
+            snapTooltipToDatumY
+            showVerticalCrosshair
+            showHorizontalCrosshair
+            renderTooltip={(d) => {
+              const data = d.tooltipData?.nearestDatum?.datum;
+              return (
+                <ul>
+                  <li>
+                    <span>Point ID:</span> {data?.pointID}
+                  </li>
+                  <li>
+                    <span>log2 Fold Change:</span> {data?.log2foldChange}
+                  </li>
+                  <li>
+                    <span>P Value:</span> {data?.pValue}
+                  </li>
+                  <li>
+                    <span>Adjusted P Value:</span>{' '}
+                    {data?.adjustedPValue ?? 'n/a'}
+                  </li>
+                </ul>
+              );
+            }}
+            horizontalCrosshairStyle={{ stroke: 'red' }}
+            verticalCrosshairStyle={{ stroke: 'red' }}
+            className="VolcanoPlotTooltip"
+          />
         </XYChart>
         {showSpinner && <Spinner />}
       </div>
