@@ -1,13 +1,9 @@
-import { isEqual, partition, groupBy } from 'lodash';
-import { Seq } from '../../../../Utils/IterableUtils';
-import { preorder } from '../../../../Utils/TreeUtils';
+import { isEqual, partition } from 'lodash';
 import { combineEpics, Epic } from 'redux-observable';
-import { concat, EMPTY, empty, from, merge, Observable, of } from 'rxjs';
+import { concat, EMPTY, from, merge, Observable, of } from 'rxjs';
 import {
   debounceTime,
-  delay,
   filter,
-  map,
   mergeMap,
   switchMap,
   takeUntil,
@@ -15,17 +11,14 @@ import {
 import WdkService from '../../../../Service/WdkService';
 import {
   CHANGE_GROUP_VISIBILITY,
-  QUESTION_LOADED,
   UNLOAD_QUESTION,
   UPDATE_DEPENDENT_PARAMS,
   ChangeGroupVisibilityAction,
-  QuestionLoadedAction,
   UnloadQuestionAction,
   UpdateDependentParamsAction,
   paramError,
   InitParamAction,
   INIT_PARAM,
-  initParam,
   updateParamValue,
 } from '../../../../Actions/QuestionActions';
 import {
@@ -67,10 +60,7 @@ import {
 } from '../../../../Actions/FilterParamActions';
 import {
   Filter,
-  MemberFilter,
   MultiFilter,
-  RangeField,
-  RangeFilter,
 } from '../../../../Components/AttributeFilter/Types';
 import { Action } from '../../../../Actions';
 import {
@@ -169,7 +159,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
     mergeMap((action) => {
       const { searchName, parameter } = action.payload;
       const questionState = getQuestionState(state$.value, searchName);
-      if (questionState == null || !isType(parameter)) return empty();
+      if (questionState == null || !isType(parameter)) return EMPTY;
       const isVisible = (paramName: string) => {
         const state = getQuestionState(state$.value, searchName);
         if (state == null) return false;
@@ -192,7 +182,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
         mergeMap((action) => {
           const { prevFilters, filters } = action.payload;
           const questionState = getQuestionState(state$.value, searchName);
-          if (questionState == null) return empty() as Observable<LoadDeps>;
+          if (questionState == null) return EMPTY as Observable<LoadDeps>;
 
           const { activeOntologyTerm, fieldStates } =
             questionState.paramUIState[paramName];
@@ -226,7 +216,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
           ),
           mergeMap(() => {
             const questionState = getQuestionState(state$.value, searchName);
-            if (questionState == null) return empty() as Observable<LoadDeps>;
+            if (questionState == null) return EMPTY as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates }: FilterParamState =
               questionState.paramUIState[paramName];
@@ -242,7 +232,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
                   questionState.paramUIState[paramName].activeOntologyTerm,
               });
             }
-            return empty() as Observable<LoadDeps>;
+            return EMPTY as Observable<LoadDeps>;
           })
         );
 
@@ -259,7 +249,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
           ),
           mergeMap(() => {
             const questionState = getQuestionState(state$.value, searchName);
-            if (questionState == null) return empty() as Observable<LoadDeps>;
+            if (questionState == null) return EMPTY as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates }: FilterParamState =
               questionState.paramUIState[paramName];
@@ -274,7 +264,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
                 loadSummaryFor: activeOntologyTerm,
               });
             }
-            return empty() as Observable<LoadDeps>;
+            return EMPTY as Observable<LoadDeps>;
           })
         );
 
@@ -286,11 +276,11 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
         filter(({ paramName }) => isVisible(paramName)),
         switchMap(({ paramName, loadCounts, loadSummaryFor }) => {
           const questionState = getQuestionState(state$.value, searchName);
-          if (questionState == null) return empty() as Observable<LoadDeps>;
+          if (questionState == null) return EMPTY as Observable<LoadDeps>;
           return merge(
             loadCounts
               ? getSummaryCounts(services.wdkService, paramName, questionState)
-              : empty(),
+              : EMPTY,
             loadSummaryFor
               ? getOntologyTermSummary(
                   services.wdkService,
@@ -298,7 +288,7 @@ const observeQuestionLoaded: Observer = (action$, state$, services) =>
                   questionState,
                   loadSummaryFor
                 )
-              : empty()
+              : EMPTY
           ) as Observable<Action>;
         }),
         takeUntil(getUnloadQuestionStream(action$, searchName))
@@ -348,7 +338,7 @@ const observeUpdateDependentParamsActiveField: Observer = (
     mergeMap((action: UpdateDependentParamsAction) => {
       const { searchName, updatedParameter } = action.payload;
       const questionState = getQuestionState(state$.value, searchName);
-      if (questionState == null) return empty() as Observable<Action>;
+      if (questionState == null) return EMPTY as Observable<Action>;
       const { paramValues, paramUIState } = questionState;
       const dependentParameters = getAllDependencies(
         updatedParameter,
@@ -392,10 +382,10 @@ const observeUpdateDependentParamsActiveField: Observer = (
                   questionState,
                   activeField
                 )
-              : (empty() as Observable<Action>),
+              : (EMPTY as Observable<Action>),
             belongsToVisibleGroup
               ? getSummaryCounts(wdkService, parameter.name, questionState)
-              : (empty() as Observable<Action>)
+              : (EMPTY as Observable<Action>)
           );
         }),
         takeUntil(getUnloadQuestionStream(action$, searchName))
@@ -451,7 +441,7 @@ function getOntologyTermSummary(
   const searchName = question.urlSegment;
   const parameter = getFilterParamNewFromState(state, paramName);
 
-  if (ontologyTerm == null) return empty();
+  if (ontologyTerm == null) return EMPTY;
   // FIXME Add loading and invalid for fieldState
   const filtersIncludingThisOne = JSON.parse(paramValues[parameter.name])
     .filters as Filter[];
