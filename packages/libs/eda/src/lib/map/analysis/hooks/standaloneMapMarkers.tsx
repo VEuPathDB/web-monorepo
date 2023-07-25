@@ -390,7 +390,7 @@ export function useStandaloneMapMarkers(
               }
             )
         : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
-    [markerType, rawPromise.value?.rawMarkersData]
+    [markerType, rawPromise.value]
   );
 
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -412,10 +412,8 @@ export function useStandaloneMapMarkers(
       markerType === 'bubble'
         ? rawPromise.value?.rawMarkersData
           ? Math.max(
-              ...rawPromise.value.rawMarkersData.mapElements.map((mapElement) =>
-                'overlayValue' in mapElement
-                  ? mapElement.overlayValue
-                  : mapElement.entityCount
+              ...rawPromise.value.rawMarkersData.mapElements.map(
+                (mapElement) => mapElement.entityCount
               )
             )
           : 0
@@ -530,21 +528,17 @@ export function useStandaloneMapMarkers(
             } as DonutMarkerProps;
           }
           case 'bubble': {
-            const bubbleCount =
-              'overlayValue' in otherProps
-                ? otherProps.overlayValue
-                : entityCount;
             const bubbleData = [
               {
                 label: '',
-                value: bubbleCount,
+                value: entityCount,
               },
             ];
 
             return {
               ...commonMarkerProps,
               data: bubbleData,
-              markerLabel: String(bubbleCount),
+              markerLabel: String(entityCount),
               // dependentAxisRange: defaultDependentAxisRange,
               valueToDiameterMapper: bubbleValueToDiameterMapper,
             } as BubbleMarkerProps;
