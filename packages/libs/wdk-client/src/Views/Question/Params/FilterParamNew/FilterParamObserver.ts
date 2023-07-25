@@ -73,9 +73,15 @@ const defaultMultiFieldSort: MultiFieldState['sort'] = {
   direction: 'asc',
 };
 
-const defaultMemberFieldSort: MemberFieldState['sort'] = {
+const defaultMemberFieldSort_asc: MemberFieldState['sort'] = {
   columnKey: 'value',
   direction: 'asc',
+  groupBySelected: false,
+};
+
+const defaultMemberFieldSort_desc: MemberFieldState['sort'] = {
+  columnKey: 'value',
+  direction: 'desc',
   groupBySelected: false,
 };
 
@@ -564,20 +570,24 @@ function updateOntologyTermSummary(
       )
       .then(
         (summary) => {
+          const ontologyItem = parameter.ontology.find(
+            (field) => field.term === ontologyTerm
+          );
+          const sort =
+            ontologyItem?.type === 'number'
+              ? defaultMemberFieldSort_desc
+              : defaultMemberFieldSort_asc;
           const fieldState: FieldState = isMemberField(parameter, ontologyTerm)
             ? {
                 invalid: false,
                 loading: false,
-                sort: defaultMemberFieldSort,
+                sort,
                 currentPage: 1,
                 rowsPerPage: 100,
                 searchTerm: '',
                 summary: {
                   ...summary,
-                  valueCounts: sortDistribution(
-                    summary.valueCounts,
-                    defaultMemberFieldSort
-                  ),
+                  valueCounts: sortDistribution(summary.valueCounts, sort),
                 },
               }
             : {
