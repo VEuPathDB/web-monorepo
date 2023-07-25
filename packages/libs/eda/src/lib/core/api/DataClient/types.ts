@@ -148,6 +148,13 @@ const plotConfig = intersection([
   }),
 ]);
 
+// to be distinguised from geo-viewports
+export type NumericViewport = TypeOf<typeof numericViewport>;
+const numericViewport = type({
+  xMin: string,
+  xMax: string,
+});
+
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -164,10 +171,7 @@ export interface HistogramRequestParams {
       value?: number;
       units?: TimeUnit;
     };
-    viewport?: {
-      xMin: string;
-      xMax: string;
-    };
+    viewport?: NumericViewport;
     showMissingness?: 'TRUE' | 'FALSE';
   };
 }
@@ -180,13 +184,6 @@ const histogramSummary = type({
   mean: string,
   q3: string,
   max: string,
-});
-
-// to be distinguised from geo-viewports
-export type NumericViewport = TypeOf<typeof numericViewport>;
-const numericViewport = type({
-  xMin: string,
-  xMax: string,
 });
 
 export type HistogramConfig = TypeOf<typeof histogramConfig>;
@@ -408,10 +405,7 @@ export interface LineplotRequestParams {
     overlayVariable?: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
     binSpec: BinSpec;
-    viewport?: {
-      xMin: string;
-      xMax: string;
-    };
+    viewport?: NumericViewport;
     showMissingness?: 'TRUE' | 'FALSE';
     valueSpec: 'mean' | 'median' | 'geometricMean' | 'proportion';
     errorBars: 'TRUE' | 'FALSE';
@@ -666,6 +660,18 @@ export const BoxplotResponse = intersection([
   }),
 ]);
 
+export type LatLonViewport = TypeOf<typeof latLonViewport>;
+const latLonViewport = type({
+  latitude: type({
+    xMin: number,
+    xMax: number,
+  }),
+  longitude: type({
+    left: number,
+    right: number,
+  }),
+});
+
 export interface MapMarkersRequestParams {
   studyId: string;
   filters: Filter[];
@@ -674,16 +680,7 @@ export interface MapMarkersRequestParams {
     geoAggregateVariable: VariableDescriptor;
     latitudeVariable: VariableDescriptor;
     longitudeVariable: VariableDescriptor;
-    viewport: {
-      latitude: {
-        xMin: number;
-        xMax: number;
-      };
-      longitude: {
-        left: number;
-        right: number;
-      };
-    };
+    viewport: LatLonViewport;
   };
 }
 
@@ -722,16 +719,7 @@ export interface MapMarkersOverlayRequestParams {
     longitudeVariable: VariableDescriptor;
     geoAggregateVariable: VariableDescriptor;
     valueSpec: 'count' | 'proportion';
-    viewport: {
-      latitude: {
-        xMin: number;
-        xMax: number;
-      };
-      longitude: {
-        left: number;
-        right: number;
-      };
-    };
+    viewport: LatLonViewport;
   };
 }
 
@@ -739,16 +727,7 @@ export type MapMarkersOverlayConfig = TypeOf<typeof mapMarkersOverlayConfig>;
 const mapMarkersOverlayConfig = intersection([
   plotConfig,
   type({
-    viewport: type({
-      latitude: type({
-        xMin: number,
-        xMax: number,
-      }),
-      longitude: type({
-        left: number,
-        right: number,
-      }),
-    }),
+    viewport: latLonViewport,
   }),
   partial({
     binSpec: BinSpec,
@@ -793,12 +772,15 @@ export const AllValuesDefinition = type({
   count: number,
 });
 
+export type CommonOverlayConfig = TypeOf<typeof CommonOverlayConfig>;
+export const CommonOverlayConfig = type({
+  overlayVariable: VariableDescriptor,
+});
+
 export type OverlayConfig = TypeOf<typeof OverlayConfig>;
 export const OverlayConfig = intersection([
-  type({
-    overlayType: keyof({ categorical: null, continuous: null }),
-    overlayVariable: VariableDescriptor,
-  }),
+  CommonOverlayConfig,
+  // type({overlayType: keyof({ categorical: null, continuous: null })}),
   union([
     type({
       overlayType: literal('categorical'),
@@ -811,6 +793,24 @@ export const OverlayConfig = intersection([
   ]),
 ]);
 
+export type BubbleOverlayConfig = TypeOf<typeof BubbleOverlayConfig>;
+export const BubbleOverlayConfig = intersection([
+  CommonOverlayConfig,
+  type({
+    aggregationConfig: union([
+      type({
+        overlayType: literal('categorical'),
+        numeratorValues: array(string),
+        denominatorValues: array(string),
+      }),
+      type({
+        overlayType: literal('continuous'),
+        aggregator: keyof({ mean: null, median: null }),
+      }),
+    ]),
+  }),
+]);
+
 export interface StandaloneMapMarkersRequestParams {
   studyId: string;
   filters: Filter[];
@@ -821,16 +821,7 @@ export interface StandaloneMapMarkersRequestParams {
     longitudeVariable: VariableDescriptor;
     overlayConfig?: Omit<OverlayConfig, 'binningMethod'>;
     valueSpec: 'count' | 'proportion';
-    viewport: {
-      latitude: {
-        xMin: number;
-        xMax: number;
-      };
-      longitude: {
-        left: number;
-        right: number;
-      };
-    };
+    viewport: LatLonViewport;
   };
 }
 
@@ -855,6 +846,39 @@ export const StandaloneMapMarkersResponse = type({
           }),
         ])
       ),
+      avgLat: number,
+      avgLon: number,
+      minLat: number,
+      minLon: number,
+      maxLat: number,
+      maxLon: number,
+    })
+  ),
+});
+
+export interface StandaloneMapBubblesRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    geoAggregateVariable: VariableDescriptor;
+    latitudeVariable: VariableDescriptor;
+    longitudeVariable: VariableDescriptor;
+    overlayConfig?: BubbleOverlayConfig;
+    valueSpec: 'count';
+    viewport: LatLonViewport;
+  };
+}
+
+export type StandaloneMapBubblesResponse = TypeOf<
+  typeof StandaloneMapBubblesResponse
+>;
+export const StandaloneMapBubblesResponse = type({
+  mapElements: array(
+    type({
+      geoAggregateValue: string,
+      entityCount: number,
+      overlayValue: number,
       avgLat: number,
       avgLon: number,
       minLat: number,

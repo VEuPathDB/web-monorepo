@@ -27,6 +27,8 @@ import {
   MapMarkersOverlayResponse,
   StandaloneMapMarkersResponse,
   StandaloneMapMarkersRequestParams,
+  StandaloneMapBubblesResponse,
+  StandaloneMapBubblesRequestParams,
   ContinousVariableMetadataRequestParams,
   ContinousVariableMetadataResponse,
 } from './types';
@@ -183,6 +185,19 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers',
       params,
       StandaloneMapMarkersResponse
+    );
+  }
+
+  // standalone bubble markers
+  getStandaloneBubbles(
+    computationName: string,
+    params: StandaloneMapBubblesRequestParams
+  ): Promise<StandaloneMapBubblesResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers/bubbles',
+      params,
+      StandaloneMapBubblesResponse
     );
   }
 

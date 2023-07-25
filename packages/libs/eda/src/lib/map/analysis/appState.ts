@@ -18,6 +18,14 @@ const MarkerType = t.keyof({
   bubble: null,
 });
 
+// // Display names to internal names
+// export const valueSpecLookup = {
+//   'Arithmetic mean': 'mean',
+//   Median: 'median',
+//   // 'Geometric mean': 'geometricMean',
+//   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
+// } as const;
+
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MarkerConfiguration = t.intersection([
@@ -58,21 +66,33 @@ export const MarkerConfiguration = t.intersection([
         t.undefined,
       ]),
     }),
-    t.type({
-      type: t.literal('bubble'),
-      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
-      binningMethod: t.union([
-        t.literal('equalInterval'),
-        t.literal('quantile'),
-        t.literal('standardDeviation'),
-        t.undefined,
-      ]),
-      selectedCountsOption: t.union([
-        t.literal('filtered'),
-        t.literal('visible'),
-        t.undefined,
-      ]),
-    }),
+    // here
+    t.intersection([
+      t.type({
+        type: t.literal('bubble'),
+        // not needed for bubbles?
+        selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+        // not needed for bubbles
+        binningMethod: t.union([
+          t.literal('equalInterval'),
+          t.literal('quantile'),
+          t.literal('standardDeviation'),
+          t.undefined,
+        ]),
+        // valueSpecConfig: t.literal('count'),
+        // not needed for bubbles?
+        selectedCountsOption: t.union([
+          t.literal('filtered'),
+          t.literal('visible'),
+          t.undefined,
+        ]),
+      }),
+      t.partial({
+        aggregator: t.union([t.literal('mean'), t.literal('median')]),
+        numeratorValues: t.union([t.array(t.string), t.undefined]),
+        denominatorValues: t.union([t.array(t.string), t.undefined]),
+      }),
+    ]),
   ]),
 ]);
 
@@ -153,6 +173,10 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           selectedVariable: defaultVariable,
           selectedValues: undefined,
           binningMethod: undefined,
+          // valueSpecConfig: 'Arithmetic mean',
+          aggregator: 'mean',
+          numeratorValues: undefined,
+          denominatorValues: undefined,
           selectedCountsOption: 'filtered',
         },
       ],

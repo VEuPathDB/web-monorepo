@@ -3,6 +3,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AllValuesDefinition,
   AnalysisState,
+  BubbleOverlayConfig,
   CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
@@ -372,8 +373,11 @@ function MapAnalysisImpl(props: ImplProps) {
 
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
+  // here
   const activeOverlayConfig = usePromise(
-    useCallback(async (): Promise<OverlayConfig | undefined> => {
+    useCallback(async (): Promise<
+      OverlayConfig | BubbleOverlayConfig | undefined
+    > => {
       // Use `selectedValues` to generate the overlay config for categorical variables
       if (
         activeMarkerConfiguration?.selectedValues &&
@@ -396,17 +400,31 @@ function MapAnalysisImpl(props: ImplProps) {
         overlayEntity,
         dataClient,
         subsettingClient,
+        markerType: activeMarkerConfiguration?.type,
         binningMethod: activeMarkerConfiguration?.binningMethod,
+        aggregator:
+          activeMarkerConfiguration && 'aggregator' in activeMarkerConfiguration
+            ? activeMarkerConfiguration.aggregator
+            : undefined,
+        numeratorValues:
+          activeMarkerConfiguration &&
+          'numeratorValues' in activeMarkerConfiguration
+            ? activeMarkerConfiguration.numeratorValues
+            : undefined,
+        denominatorValues:
+          activeMarkerConfiguration &&
+          'denominatorValues' in activeMarkerConfiguration
+            ? activeMarkerConfiguration.denominatorValues
+            : undefined,
       });
     }, [
-      dataClient,
-      filters,
-      overlayEntity,
+      activeMarkerConfiguration,
       overlayVariable,
       studyId,
+      filters,
+      overlayEntity,
+      dataClient,
       subsettingClient,
-      activeMarkerConfiguration?.selectedValues,
-      activeMarkerConfiguration?.binningMethod,
     ])
   );
 
@@ -423,6 +441,8 @@ function MapAnalysisImpl(props: ImplProps) {
         return 'pie';
     }
   })();
+
+  console.log({ activeOverlayConfig });
 
   const {
     markersData,
@@ -697,7 +717,9 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     toggleStarredVariable={toggleStarredVariable}
                     constraints={markerVariableConstraints}
-                    overlayConfiguration={activeOverlayConfig.value}
+                    overlayConfiguration={
+                      activeOverlayConfig.value as OverlayConfig
+                    }
                     overlayVariable={overlayVariable}
                     subsettingClient={subsettingClient}
                     studyId={studyId}
@@ -734,7 +756,9 @@ function MapAnalysisImpl(props: ImplProps) {
                     toggleStarredVariable={toggleStarredVariable}
                     configuration={activeMarkerConfiguration}
                     constraints={markerVariableConstraints}
-                    overlayConfiguration={activeOverlayConfig.value}
+                    overlayConfiguration={
+                      activeOverlayConfig.value as OverlayConfig
+                    }
                     overlayVariable={overlayVariable}
                     subsettingClient={subsettingClient}
                     studyId={studyId}
@@ -1265,8 +1289,10 @@ function MapAnalysisImpl(props: ImplProps) {
                             : 0
                         }
                         valueToDiameterMapper={
-                          (markersData as BubbleMarkerProps[])[0]
-                            .valueToDiameterMapper
+                          markersData.length > 0
+                            ? (markersData as BubbleMarkerProps[])[0]
+                                .valueToDiameterMapper
+                            : undefined
                         }
                         containerStyles={{
                           border: 'none',

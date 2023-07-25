@@ -11,14 +11,16 @@ import { NumberRange } from '../types/general';
 
 // Don't need some of these props, but have to have them because of the general marker API/type definitions
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
-  data: {
-    value: number;
-    label: string;
-    color?: string;
-  }[];
+  data: [
+    {
+      value: number;
+      label: string;
+      color?: string;
+    }
+  ];
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
-  dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
+  // dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
   valueToDiameterMapper: (value: number) => number;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
 }
@@ -88,7 +90,7 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   diameter: number;
 } {
   // const scale = props.markerScale ?? MarkerScaleDefault;
-  console.log({ dependentAxisRange: props.dependentAxisRange });
+  // console.log({ dependentAxisRange: props.dependentAxisRange });
   const diameter = props.valueToDiameterMapper(props.data[0].value);
   const radius = diameter / 2;
   // set outer white circle size to describe white boundary

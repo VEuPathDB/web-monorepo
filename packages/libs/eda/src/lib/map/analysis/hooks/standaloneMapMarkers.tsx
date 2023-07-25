@@ -3,7 +3,10 @@ import { usePromise } from '../../../core/hooks/promise';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../core/types/geoConfig';
 import DataClient, {
+  BubbleOverlayConfig,
   OverlayConfig,
+  StandaloneMapBubblesRequestParams,
+  StandaloneMapBubblesResponse,
   StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
 } from '../../../core/api/DataClient';
@@ -66,7 +69,7 @@ export interface StandaloneMapMarkersProps {
   /** What is the full configuration for that overlay?
    * This is (sometimes) determined asynchronously from back end requests.
    */
-  overlayConfig: OverlayConfig | undefined;
+  overlayConfig: OverlayConfig | BubbleOverlayConfig | undefined;
   outputEntityId: string | undefined;
   markerType: 'count' | 'proportion' | 'pie' | 'bubble';
   dependentAxisLogScale?: boolean;
@@ -115,7 +118,11 @@ export function useStandaloneMapMarkers(
   // when switching between pie and bar markers when using the same variable
   const selectedOverlayVariable = useDeepValue(sov);
   const overlayConfig = useDeepValue(oc);
-  const overlayType = overlayConfig?.overlayType;
+  const overlayType = overlayConfig
+    ? 'overlayType' in overlayConfig
+      ? overlayConfig.overlayType
+      : overlayConfig.aggregationConfig.overlayType
+    : undefined;
 
   const dataClient: DataClient = useDataClient();
 
@@ -162,10 +169,24 @@ export function useStandaloneMapMarkers(
 
   const rawPromise = usePromise<
     | {
-        rawMarkersData: StandaloneMapMarkersResponse;
+        rawMarkersData:
+          | StandaloneMapMarkersResponse
+          | StandaloneMapBubblesResponse;
         vocabulary: string[] | undefined;
       }
     | undefined
+    // const overlayType = overlayConfig?.overlayType;
+    // const vocabulary =
+    //   overlayConfig && 'overlayValues' in overlayConfig
+    //     ? overlayType === 'categorical' // switch statement style guide time!!
+    //       ? overlayConfig.overlayValues
+    //       : overlayType === 'continuous'
+    //       ? overlayConfig.overlayValues.map((ov) => ov.binLabel)
+    //       : undefined
+    //     : undefined;
+
+    // const rawMarkersData = usePromise<
+    //   StandaloneMapMarkersResponse | StandaloneMapBubblesResponse | undefined
   >(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -201,37 +222,120 @@ export function useStandaloneMapMarkers(
           }
         : GLOBAL_VIEWPORT;
 
-      // now prepare the rest of the request params
-      const requestParams: StandaloneMapMarkersRequestParams = {
-        studyId,
-        filters: filters || [],
-        config: {
-          geoAggregateVariable,
-          latitudeVariable,
-          longitudeVariable,
-          overlayConfig,
-          outputEntityId,
-          valueSpec:
-            markerType === 'pie' || markerType === 'bubble'
-              ? 'count'
-              : markerType,
-          viewport,
-        },
-      };
+      // // now prepare the rest of the request params
+      // const requestParams: StandaloneMapMarkersRequestParams = {
+      //   studyId,
+      //   filters: filters || [],
+      //   config: {
+      //     geoAggregateVariable,
+      //     latitudeVariable,
+      //     longitudeVariable,
+      //     overlayConfig,
+      //     outputEntityId,
+      //     valueSpec:
+      //       markerType === 'pie' || markerType === 'bubble'
+      //         ? 'count'
+      //         : markerType,
+      //     viewport,
+      //   },
+      // };
 
-      // now get and return the data
-      return {
-        rawMarkersData: await dataClient.getStandaloneMapMarkers(
-          'standalone-map',
-          requestParams
-        ),
-        vocabulary:
-          overlayType === 'categorical' // switch statement style guide time!!
-            ? overlayConfig?.overlayValues
-            : overlayType === 'continuous'
-            ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
-            : undefined,
-      };
+      // // now get and return the data
+      // return {
+      //   rawMarkersData: await dataClient.getStandaloneMapMarkers(
+      //     'standalone-map',
+      //     requestParams
+      //   ),
+      //   vocabulary:
+      //     overlayType === 'categorical' // switch statement style guide time!!
+      //       ? overlayConfig?.overlayValues
+      //       : overlayType === 'continuous'
+      //       ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
+      //       : undefined,
+      // };
+      if (markerType === 'bubble') {
+        const bubbleOverlayConfig = overlayConfig as
+          | BubbleOverlayConfig
+          | undefined;
+
+        if (
+          bubbleOverlayConfig &&
+          bubbleOverlayConfig.aggregationConfig.overlayType === 'categorical' &&
+          (bubbleOverlayConfig.aggregationConfig.numeratorValues.length === 0 ||
+            bubbleOverlayConfig.aggregationConfig.denominatorValues.length ===
+              0)
+        ) {
+          return {
+            rawMarkersData: {
+              mapElements: [],
+            },
+            vocabulary: undefined,
+          };
+        }
+
+        const requestParams: StandaloneMapBubblesRequestParams = {
+          studyId,
+          filters: filters || [],
+          config: {
+            geoAggregateVariable,
+            latitudeVariable,
+            longitudeVariable,
+            overlayConfig: bubbleOverlayConfig,
+            outputEntityId,
+            // need to get the actual valueSpec instead of just 'count'
+            valueSpec: 'count',
+            viewport,
+          },
+        };
+
+        // now get and return the data
+        return {
+          rawMarkersData: await dataClient.getStandaloneBubbles(
+            'standalone-map',
+            requestParams
+          ),
+          // vocabulary:
+          //   overlayType === 'categorical' // switch statement style guide time!!
+          //     ? overlayConfig?.overlayValues
+          //     : overlayType === 'continuous'
+          //     ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
+          //     : undefined,
+          vocabulary: undefined,
+        };
+      } else {
+        const standardOverlayConfig = overlayConfig as
+          | OverlayConfig
+          | undefined;
+        const requestParams: StandaloneMapMarkersRequestParams = {
+          studyId,
+          filters: filters || [],
+          config: {
+            geoAggregateVariable,
+            latitudeVariable,
+            longitudeVariable,
+            overlayConfig: standardOverlayConfig,
+            outputEntityId,
+            valueSpec: markerType === 'pie' ? 'count' : markerType,
+            viewport,
+          },
+        };
+
+        // now get and return the data
+        return {
+          rawMarkersData: await dataClient.getStandaloneMapMarkers(
+            'standalone-map',
+            requestParams
+          ),
+          vocabulary:
+            overlayType === 'categorical' // switch statement style guide time!!
+              ? (standardOverlayConfig?.overlayValues as string[])
+              : overlayType === 'continuous'
+              ? standardOverlayConfig?.overlayValues.map((ov) =>
+                  typeof ov === 'object' ? ov.binLabel : ''
+                )
+              : undefined,
+        };
+      }
     }, [
       studyId,
       filters,
@@ -249,18 +353,26 @@ export function useStandaloneMapMarkers(
     ])
   );
 
-  const totalVisibleEntityCount: number | undefined =
-    rawPromise.value?.rawMarkersData.mapElements.reduce((acc, curr) => {
-      return acc + curr.entityCount;
-    }, 0);
+  const totalVisibleEntityCount: number | undefined = rawPromise.value
+    ? (
+        rawPromise.value.rawMarkersData.mapElements as Array<{
+          entityCount: number;
+        }>
+      ).reduce((acc, curr) => {
+        return acc + curr.entityCount;
+      }, 0)
+    : undefined;
+
+  console.log({ rawPromise });
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
   const { valueMax, valueMinPos, countSum } = useMemo(
     () =>
-      rawPromise.value?.rawMarkersData
+      (markerType === 'count' || markerType === 'proportion') &&
+      rawPromise.value
         ? rawPromise.value.rawMarkersData.mapElements
-            .flatMap((el) => el.overlayValues)
+            .flatMap((el) => ('overlayValues' in el ? el.overlayValues : []))
             .reduce(
               ({ valueMax, valueMinPos, countSum }, elem) => ({
                 valueMax: Math.max(elem.value, valueMax),
@@ -278,7 +390,7 @@ export function useStandaloneMapMarkers(
               }
             )
         : { valueMax: undefined, valueMinPos: undefined, countSum: undefined },
-    [rawPromise.value?.rawMarkersData]
+    [markerType, rawPromise.value?.rawMarkersData]
   );
 
   const defaultDependentAxisRange = useDefaultAxisRange(
@@ -296,41 +408,42 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
-    const maxOverlayCount = rawPromise.value?.rawMarkersData
-      ? Math.max(
-          ...rawPromise.value.rawMarkersData.mapElements.map((mapElement) => {
-            const count =
-              vocabulary != null // if there's an overlay (all expected use cases)
-                ? mapElement.overlayValues.reduce(
-                    (sum, { count }) => (sum = sum + count),
-                    0
-                  )
-                : mapElement.entityCount;
-            return count;
-          })
-        )
-      : 0;
+    const maxOverlayCount =
+      markerType === 'bubble'
+        ? rawPromise.value?.rawMarkersData
+          ? Math.max(
+              ...rawPromise.value.rawMarkersData.mapElements.map((mapElement) =>
+                'overlayValue' in mapElement
+                  ? mapElement.overlayValue
+                  : mapElement.entityCount
+              )
+            )
+          : 0
+        : undefined;
 
-    const bubbleValueToDiameterMapper = (value: number) => {
-      // const largestCircleArea = 9000;
-      const largestCircleDiameter = 90;
+    const bubbleValueToDiameterMapper =
+      markerType === 'bubble' && maxOverlayCount
+        ? (value: number) => {
+            // const largestCircleArea = 9000;
+            const largestCircleDiameter = 90;
 
-      // Area scales directly with value
-      // const constant = largestCircleArea / maxOverlayCount;
-      // const area = value * constant;
-      // const radius = Math.sqrt(area / Math.PI);
+            // Area scales directly with value
+            // const constant = largestCircleArea / maxOverlayCount;
+            // const area = value * constant;
+            // const radius = Math.sqrt(area / Math.PI);
 
-      // Radius scales with log_10 of value
-      // const constant = 20;
-      // const radius = Math.log10(value) * constant;
+            // Radius scales with log_10 of value
+            // const constant = 20;
+            // const radius = Math.log10(value) * constant;
 
-      // Radius scales directly with value
-      const scalingFactor = largestCircleDiameter / maxOverlayCount;
-      const diameter = value * scalingFactor;
+            // Radius scales directly with value
+            const scalingFactor = largestCircleDiameter / maxOverlayCount;
+            const diameter = value * scalingFactor;
 
-      // return 2 * radius;
-      return diameter;
-    };
+            // return 2 * radius;
+            return diameter;
+          }
+        : undefined;
 
     return rawPromise.value?.rawMarkersData.mapElements.map(
       ({
@@ -342,13 +455,15 @@ export function useStandaloneMapMarkers(
         minLon,
         maxLat,
         maxLon,
-        overlayValues,
+        ...otherProps
       }) => {
         const bounds = {
           southWest: { lat: minLat, lng: minLon },
           northEast: { lat: maxLat, lng: maxLon },
         };
         const position = { lat: avgLat, lng: avgLon };
+        const overlayValues =
+          'overlayValues' in otherProps ? otherProps.overlayValues : undefined;
 
         const donutData =
           vocabulary && overlayValues && overlayValues.length
@@ -392,20 +507,11 @@ export function useStandaloneMapMarkers(
               ];
 
         const count =
-          vocabulary != null // if there's an overlay (all expected use cases)
+          vocabulary != null && overlayValues // if there's an overlay (all expected use cases)
             ? overlayValues
                 .filter(({ binLabel }) => vocabulary.includes(binLabel))
                 .reduce((sum, { count }) => (sum = sum + count), 0)
             : entityCount; // fallback if not
-
-        const bubbleData = [
-          {
-            label: reorderedData[0].label,
-            value: count,
-            color:
-              'color' in reorderedData[0] ? reorderedData[0].color : undefined,
-          },
-        ];
 
         const commonMarkerProps = {
           id: geoAggregateValue,
@@ -424,11 +530,22 @@ export function useStandaloneMapMarkers(
             } as DonutMarkerProps;
           }
           case 'bubble': {
+            const bubbleCount =
+              'overlayValue' in otherProps
+                ? otherProps.overlayValue
+                : entityCount;
+            const bubbleData = [
+              {
+                label: '',
+                value: bubbleCount,
+              },
+            ];
+
             return {
               ...commonMarkerProps,
               data: bubbleData,
-              markerLabel: String(count),
-              dependentAxisRange: defaultDependentAxisRange,
+              markerLabel: String(bubbleCount),
+              // dependentAxisRange: defaultDependentAxisRange,
               valueToDiameterMapper: bubbleValueToDiameterMapper,
             } as BubbleMarkerProps;
           }
@@ -446,6 +563,7 @@ export function useStandaloneMapMarkers(
     );
   }, [
     rawPromise,
+    vocabulary,
     markerType,
     overlayType,
     defaultDependentAxisRange,
@@ -457,7 +575,7 @@ export function useStandaloneMapMarkers(
    */
   const legendItems: LegendItemsProps[] = useMemo(() => {
     const vocabulary = rawPromise?.value?.vocabulary;
-    if (vocabulary == null) return [];
+    if (vocabulary == null || markerType === 'bubble') return [];
 
     return vocabulary.map((label) => ({
       label: fixLabelForOtherValues(label),
@@ -475,14 +593,19 @@ export function useStandaloneMapMarkers(
       // has any geo-facet got an array of overlay data
       // containing at least one element that satisfies label==label
       hasData: rawPromise.value?.rawMarkersData
-        ? some(rawPromise.value.rawMarkersData.mapElements, (el) =>
-            el.overlayValues.some((ov) => ov.binLabel === label)
+        ? some(
+            rawPromise.value.rawMarkersData.mapElements,
+            (el) =>
+              // TS says el could potentially be a number, and I don't know why
+              typeof el === 'object' &&
+              'overlayValues' in el &&
+              el.overlayValues.some((ov) => ov.binLabel === label)
           )
         : false,
       group: 1,
       rank: 1,
     }));
-  }, [rawPromise, overlayType]);
+  }, [markerType, overlayType, rawPromise]);
 
   return {
     markersData: finalMarkersData,
