@@ -34,8 +34,10 @@ export default function ExternalContentController(props: Props) {
 
     try {
       if (location.hash) {
-        // open detail with id matching location.hash
-        const target = ref.current.querySelector(location.hash);
+        const fragementId = location.hash.slice(1);
+        const querySelector = `[id=${fragementId}], [name=${fragementId}]`;
+        // open detail with id or name attribute matching location.hash
+        const target = ref.current.querySelector(querySelector);
         if (target instanceof HTMLDetailsElement) {
           target.open = true;
         }
