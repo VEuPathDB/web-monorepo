@@ -3,7 +3,7 @@
   visibility: hidden;
   display: block;
   font-size: 0;
-  content: " ";
+  content: ' ';
   clear: both;
   height: 0;
 }
@@ -32,7 +32,8 @@
   height: 100%;
 }
 
-.wdk-RecordMain, .wdk-RecordSidebar {
+.wdk-RecordMain,
+.wdk-RecordSidebar {
   padding: 2.5em 3em;
   transition: margin-left 250ms ease;
   transition: left 250ms ease;
@@ -77,10 +78,11 @@
   padding: 4px 8px;
 }
 
-.wdk-RecordSidebarToggle, h2.wdk-RecordNavigationSectionHeader {
-  word-wrap:break-word;
+.wdk-RecordSidebarToggle,
+h2.wdk-RecordNavigationSectionHeader {
+  word-wrap: break-word;
   color: black;
-  font-weight:400;
+  font-weight: 400;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordMain {
@@ -137,7 +139,7 @@
 
 .wdk-RecordNavigationSearchInput {
   width: calc(100% - 1.5em);
-  padding: .5em;
+  padding: 0.5em;
 }
 
 .wdk-RecordNavigationCategories {
@@ -179,7 +181,7 @@
 }
 
 .wdk-RecordSectionEnumeration {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .wdk-RecordSectionHeader {
@@ -199,7 +201,8 @@
   visibility: visible;
 }
 
-.wdk-RecordSectionHeader:before, .wdk-RecordSectionHeader__collapsed:before {
+.wdk-RecordSectionHeader:before,
+.wdk-RecordSectionHeader__collapsed:before {
   display: none;
 }
 
@@ -213,7 +216,6 @@
   border-bottom: 1px dotted;
   cursor: pointer;
 }
-
 
 .wdk-RecordSectionHeaderTopLink {
   position: absolute;
@@ -230,11 +232,14 @@
   display: inline-block;
 }
 
-.wdk-RecordAttributeSectionItem, .wdk-RecordTableContainer, .wdk-RecordSubsection {
+.wdk-RecordAttributeSectionItem,
+.wdk-RecordTableContainer,
+.wdk-RecordSubsection {
   margin: 1.5rem 1rem;
 }
 
-.wdk-RecordAttributeName, .wdk-RecordAttributeValue {
+.wdk-RecordAttributeName,
+.wdk-RecordAttributeValue {
   display: inline-block;
   vertical-align: middle;
   position: relative;
@@ -242,7 +247,7 @@
 }
 
 .wdk-RecordAttributeValue {
-  padding: 0 .5em;
+  padding: 0 0.5em;
   word-break: break-word;
   top: 1px;
 }

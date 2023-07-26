@@ -7,7 +7,7 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { getCategoryColor } from './CategoryUtils';
 
 class CategoryIcon extends React.Component {
-  render () {
+  render() {
     const { category } = this.props;
     if (!category || category === 'Unknown') return null;
     const categoryName = capitalize(category);
@@ -24,6 +24,6 @@ class CategoryIcon extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default CategoryIcon;

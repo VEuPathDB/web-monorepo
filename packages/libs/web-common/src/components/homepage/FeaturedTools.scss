@@ -44,7 +44,9 @@
         opacity: 0.5;
         font-size: 1.1em;
 
-        &:hover, &:active, &:focus {
+        &:hover,
+        &:active,
+        &:focus {
           opacity: 0.75;
         }
 
@@ -106,7 +108,7 @@
       &Caption {
         margin-top: 0.25em;
       }
-      
+
       &:hover {
         text-decoration: none;
 
@@ -115,7 +117,11 @@
         }
       }
 
-      &__selected, &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+      &__selected,
+      &__selected:active,
+      &__selected:hover,
+      &__selected:link,
+      &__selected:visited {
         outline: none;
         text-decoration: none;
         font-weight: bold;
@@ -147,12 +153,12 @@
       &Content {
         height: 250px; // FIXME: Use rem instead of px?
         overflow: hidden;
-  
+
         &__expanded {
           height: unset;
         }
       }
-      
+
       &ReadMore {
         font-size: 1.1em;
         font-weight: bold;

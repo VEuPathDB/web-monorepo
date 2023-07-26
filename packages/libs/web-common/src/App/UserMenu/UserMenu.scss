@@ -1,5 +1,5 @@
-$red: #DD314E;
-$white: #E0E0E0;
+$red: #dd314e;
+$white: #e0e0e0;
 
 .UserMenu {
   color: #fff;
@@ -9,7 +9,7 @@ $white: #E0E0E0;
   position: relative;
   flex-direction: column;
   padding-left: 2em;
-  margin: -.75em 0;
+  margin: -0.75em 0;
 
   .UserMenu-Icon {
     font-size: 30px;
@@ -55,10 +55,13 @@ $white: #E0E0E0;
     position: absolute;
     box-sizing: border-box;
     transform: rotateZ(45deg);
-    background-color: #E0E0E0;
+    background-color: #e0e0e0;
   }
   .UserMenu-Pane-Item {
-    &, &:link, &:active, &:visited {
+    &,
+    &:link,
+    &:active,
+    &:visited {
       color: black;
       text-decoration: none;
     }

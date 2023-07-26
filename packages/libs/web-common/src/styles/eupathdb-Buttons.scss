@@ -1,19 +1,19 @@
 @import './eupathdb-Palette.scss';
 
 a.eupathdb-BigButton,
-input[type="submit"],
-.filter-button input[type=submit],
+input[type='submit'],
+.filter-button input[type='submit'],
 button.btn,
 a.btn,
 a:link.btn {
-/*  @include transition; */
+  /*  @include transition; */
   padding: 8px 12px;
   font-size: 1em;
   border-radius: 6px;
   line-height: 1em;
   color: $darkgray;
   background-color: #f5f5f7;
-  border: 0.5px solid rgba(0,0,0,0.1);
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
   border-bottom: 3px solid #999;
   margin: 5px 5px 5px 5px;
   text-decoration: none;
@@ -22,7 +22,7 @@ a:link.btn {
     background-color: #f0f0f2;
     transform: scale(0.98);
     -webkit-transform: scale(0.98);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
   }
 
   .fa {
@@ -63,12 +63,12 @@ a:link.btn {
     }
   }
   &.btn-warning {
-/*    &:hover { @include buttonStyle($gold); } */
+    /*    &:hover { @include buttonStyle($gold); } */
     text-shadow: 0px 0px 5px darken($gold, 25%);
   }
 }
 
-.filter-button input[type=submit] {
+.filter-button input[type='submit'] {
   font-size: 1.5em;
 }
 
@@ -82,7 +82,7 @@ a:link.btn {
  * The enforcement of using it on an <a> element is to enforce accessibility.
  * See http://www.karlgroves.com/2013/05/14/links-are-not-buttons-neither-are-divs-and-spans/
  */
-input[type="button"],
+input[type='button'],
 button {
   background-color: #e8e8e8;
   background-color: -webkit-linear-gradient(#f4f4f4, #dddddd);
@@ -96,16 +96,15 @@ button {
   text-decoration: none;
 }
 
-
 a.btn:focus,
 a.eupathdb-BigButton:focus,
-input[type="submit"]:focus,
-input[type="button"]:focus,
+input[type='submit']:focus,
+input[type='button']:focus,
 button:focus,
 a.btn:hover,
 a.eupathdb-BigButton:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover,
+input[type='submit']:hover,
+input[type='button']:hover,
 button:hover {
   background-color: #ededed;
   background-color: -webkit-linear-gradient(#ededed, #dddddd);
@@ -116,22 +115,22 @@ button:hover {
 
 a.eupathdb-BigButton:focus,
 a.btn:focus,
-input[type="submit"]:focus,
-input[type="button"]:focus,
+input[type='submit']:focus,
+input[type='button']:focus,
 button:focus {
   border-color: #717171;
 }
 
 a.eupathdb-BigButton:active,
 a.btn:active,
-input[type="submit"]:active,
-input[type="button"]:active,
+input[type='submit']:active,
+input[type='button']:active,
 button:active {
   background-color: #ddd;
 }
 
-input[type="submit"][disabled],
-input[type="button"][disabled],
+input[type='submit'][disabled],
+input[type='button'][disabled],
 button[disabled] {
   color: #aaa;
   background-color: #f4f4f4;
@@ -140,7 +139,7 @@ button[disabled] {
 }
 
 a.eupathdb-BigButton,
-input[type="submit"],
-button[type="submit"] {
-  font-size:  0.9rem;
+input[type='submit'],
+button[type='submit'] {
+  font-size: 0.9rem;
 }

@@ -10,18 +10,19 @@ export function wrapRoutes(ebrcRoutes) {
   return [
     {
       path: '/about',
-      component: () => <AboutController/>
+      component: () => <AboutController />,
     },
     {
       path: '/search',
-      component: () => <SiteSearchController offerOrganismFilter={false} preferredOrganisms={false} />
-    },    
-    ...(
-      useUserDatasetsWorkspace
-        ? userDatasetRoutes
-        : []
-    ),
+      component: () => (
+        <SiteSearchController
+          offerOrganismFilter={false}
+          preferredOrganisms={false}
+        />
+      ),
+    },
+    ...(useUserDatasetsWorkspace ? userDatasetRoutes : []),
 
-    ...ebrcRoutes
+    ...ebrcRoutes,
   ];
 }

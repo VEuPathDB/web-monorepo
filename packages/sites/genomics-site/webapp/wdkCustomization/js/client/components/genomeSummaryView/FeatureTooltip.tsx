@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   GenomeViewFeatureModel,
   GenomeViewSequenceModel,
-  useIsPortalSite
+  useIsPortalSite,
 } from '../../util/GenomeSummaryViewUtils';
 
 interface FeatureTooltipProps {
@@ -23,19 +23,18 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
     <div id={feature.sourceId}>
       <h4>{feature.sourceId}</h4>
       <p>
-        start: {`${feature.startFormatted}, end: ${feature.endFormatted}, on ${feature.strand} strand of ${sequence.sourceId}`}
+        start:{' '}
+        {`${feature.startFormatted}, end: ${feature.endFormatted}, on ${feature.strand} strand of ${sequence.sourceId}`}
       </p>
-      <p>
-        {feature.description}
-      </p>
-      {
-        !isPortalSite &&
+      <p>{feature.description}</p>
+      {!isPortalSite && (
         <ul>
           <li>
-            <Link to={`/record/${recordType}/${feature.sourceId}`} target="_blank">
-              <u>
-                Record page
-              </u>
+            <Link
+              to={`/record/${recordType}/${feature.sourceId}`}
+              target="_blank"
+            >
+              <u>Record page</u>
             </Link>
           </li>
           {/* <li>
@@ -46,7 +45,7 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
             </Link>
           </li> */}
         </ul>
-      }
+      )}
     </div>
   );
 };

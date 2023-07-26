@@ -1,12 +1,12 @@
 .MesaComponent {
   th {
-    background:  rgba(0, 0, 10, 0.02);;
+    background: rgba(0, 0, 10, 0.02);
     transition: background 0.25s;
     position: relative;
     color: #444;
     text-align: left;
 
-    &[draggable="true"] {
+    &[draggable='true'] {
       cursor: -moz-grab;
       cursor: -webkit-grab;
       cursor: grab;
@@ -30,7 +30,8 @@
     /*overflow: auto;*/
   }
 
-  th, td {
+  th,
+  td {
     margin: 0;
     padding: 10px;
     margin-top: -1px;
@@ -48,7 +49,8 @@
     }
   }
 
-  th.SelectionCell, td.SelectionCell {
+  th.SelectionCell,
+  td.SelectionCell {
     text-align: center;
     padding-left: 1em;
     padding-right: 1em;

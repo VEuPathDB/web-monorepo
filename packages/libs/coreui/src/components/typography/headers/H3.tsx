@@ -7,7 +7,7 @@ function H3(
   props: HeaderVariantProps,
   forwardedRef: ForwardedRef<HTMLHeadingElement>
 ) {
-  return <Header ref={forwardedRef} {...props} size='h3' />;
+  return <Header ref={forwardedRef} {...props} size="h3" />;
 }
 
 export default forwardRef<HTMLHeadingElement, HeaderVariantProps>(H3);

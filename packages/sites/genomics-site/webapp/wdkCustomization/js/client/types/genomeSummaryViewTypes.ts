@@ -17,9 +17,9 @@ export interface GenomeViewSequence {
 }
 
 export interface GenomeViewRegion {
-  isForward: boolean,
-  percentStart: number,
-  percentLength: number,
+  isForward: boolean;
+  percentStart: number;
+  percentLength: number;
   features: GenomeViewFeature[];
 }
 

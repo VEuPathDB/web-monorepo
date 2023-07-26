@@ -3,12 +3,15 @@ import { selectReporterComponent } from '../util/reporter';
 
 export function DownloadForm() {
   return function EupathDownloadForm(props) {
-    let Reporter = selectReporterComponent(props.selectedReporter, props.recordClass.fullName);
+    let Reporter = selectReporterComponent(
+      props.selectedReporter,
+      props.recordClass.fullName
+    );
     return (
       <div>
-        <hr/>
-        <Reporter {...props}/>
+        <hr />
+        <Reporter {...props} />
       </div>
     );
-  }
+  };
 }

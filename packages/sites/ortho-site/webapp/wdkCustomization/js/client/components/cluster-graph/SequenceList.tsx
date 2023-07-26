@@ -7,30 +7,27 @@ import {
   GraphInformationTabProps,
   SequenceListRow,
   layoutToSequenceListRows,
-  renderSequenceLink
+  renderSequenceLink,
 } from 'ortho-client/utils/graphInformation';
 
 const TABLE_BODY_MAX_HEIGHT = '625px';
 
-export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInformationTabProps) {
-  const rows = useMemo(
-    () => layoutToSequenceListRows(layout),
-    [ layout ]
-  );
+export function SequenceList({
+  layout,
+  setHighlightedSequenceNodeId,
+}: GraphInformationTabProps) {
+  const rows = useMemo(() => layoutToSequenceListRows(layout), [layout]);
 
   const onSequenceRowMouseOver = useCallback(
     (row: SequenceListRow) => {
       setHighlightedSequenceNodeId(row.accession);
     },
-    [ setHighlightedSequenceNodeId ]
+    [setHighlightedSequenceNodeId]
   );
 
-  const onSequenceRowMouseOut = useCallback(
-    () => {
-      setHighlightedSequenceNodeId(undefined);
-    },
-    [ setHighlightedSequenceNodeId ]
-  );
+  const onSequenceRowMouseOut = useCallback(() => {
+    setHighlightedSequenceNodeId(undefined);
+  }, [setHighlightedSequenceNodeId]);
 
   return (
     <div className="SequenceList">
@@ -46,28 +43,36 @@ export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInfo
   );
 }
 
-const SEQUENCE_LIST_COLUMNS: DataTableColumns<SequenceListRow, 'accession' | 'taxon' | 'length' | 'description'> = {
+const SEQUENCE_LIST_COLUMNS: DataTableColumns<
+  SequenceListRow,
+  'accession' | 'taxon' | 'length' | 'description'
+> = {
   accession: {
     key: 'accession',
     name: 'Accession',
     sortable: true,
-    renderCell: ({ value }) => renderSequenceLink(value)
+    renderCell: ({ value }) => renderSequenceLink(value),
   },
   taxon: {
     key: 'taxon',
     name: 'Taxon',
-    sortable: true
+    sortable: true,
   },
   length: {
     key: 'length',
     name: 'Length',
-    sortable: true
+    sortable: true,
   },
   description: {
     key: 'description',
     name: 'Description',
-    sortable: true
-  }
+    sortable: true,
+  },
 };
 
-const SEQUENCE_LIST_COLUMN_ORDER = [ 'accession', 'taxon', 'length', 'description' ] as const;
+const SEQUENCE_LIST_COLUMN_ORDER = [
+  'accession',
+  'taxon',
+  'length',
+  'description',
+] as const;

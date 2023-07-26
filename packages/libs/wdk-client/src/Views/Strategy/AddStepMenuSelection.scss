@@ -8,7 +8,8 @@
 
   padding: 0.85em;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: white;
   }
 
@@ -21,7 +22,8 @@
     padding: 0.5em 0.5em 0.75em 0.5em;
     box-shadow: inset 0.2em 0.2em 0.35em #6a6a6a45;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       border: 0.35em solid #4f81bd;
       outline: none;
     }

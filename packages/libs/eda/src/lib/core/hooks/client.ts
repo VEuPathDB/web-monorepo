@@ -14,40 +14,40 @@ function useWdkServiceContext() {
 
 export function useConfiguredAnalysisClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(() => new AnalysisClient({ baseUrl }, wdkService), [
-    baseUrl,
-    wdkService,
-  ]);
+  return useMemo(
+    () => new AnalysisClient({ baseUrl }, wdkService),
+    [baseUrl, wdkService]
+  );
 }
 
 export function useConfiguredDataClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(() => new DataClient({ baseUrl }, wdkService), [
-    baseUrl,
-    wdkService,
-  ]);
+  return useMemo(
+    () => new DataClient({ baseUrl }, wdkService),
+    [baseUrl, wdkService]
+  );
 }
 
 export function useConfiguredSubsettingClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(() => new SubsettingClient({ baseUrl }, wdkService), [
-    baseUrl,
-    wdkService,
-  ]);
+  return useMemo(
+    () => new SubsettingClient({ baseUrl }, wdkService),
+    [baseUrl, wdkService]
+  );
 }
 
 export function useConfiguredDownloadClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(() => new DownloadClient({ baseUrl }, wdkService), [
-    baseUrl,
-    wdkService,
-  ]);
+  return useMemo(
+    () => new DownloadClient({ baseUrl }, wdkService),
+    [baseUrl, wdkService]
+  );
 }
 
 export function useConfiguredComputeClient(baseUrl: string) {
   const wdkService = useWdkServiceContext();
-  return useMemo(() => new ComputeClient({ baseUrl }, wdkService), [
-    baseUrl,
-    wdkService,
-  ]);
+  return useMemo(
+    () => new ComputeClient({ baseUrl }, wdkService),
+    [baseUrl, wdkService]
+  );
 }

@@ -11,15 +11,13 @@ interface Props {
 }
 
 export function PfamDomain({ pfamId, style, title }: Props) {
-  const colors = useMemo(() => assignColors(pfamId), [ pfamId ]);
+  const colors = useMemo(() => assignColors(pfamId), [pfamId]);
 
   return (
     <div className="PfamDomain" style={style} title={title}>
-      {
-        colors.map(
-          (color, i) => <div className="Band" key={i} style={{ backgroundColor: color }}></div>
-        )
-      }
+      {colors.map((color, i) => (
+        <div className="Band" key={i} style={{ backgroundColor: color }}></div>
+      ))}
     </div>
   );
 }

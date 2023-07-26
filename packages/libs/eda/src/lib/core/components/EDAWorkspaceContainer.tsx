@@ -71,9 +71,10 @@ function EDAWorkspaceContainerWithLoadedData({
   wdkStudyRecord,
   studyMetadata,
 }: LoadedDataProps) {
-  const entities = useMemo(() => entityTreeToArray(studyMetadata.rootEntity), [
-    studyMetadata.rootEntity,
-  ]);
+  const entities = useMemo(
+    () => entityTreeToArray(studyMetadata.rootEntity),
+    [studyMetadata.rootEntity]
+  );
   const variableTreeFields = useFlattenedFields(entities, 'variableTree');
   const variableTree = useFieldTree(variableTreeFields);
 

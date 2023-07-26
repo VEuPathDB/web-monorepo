@@ -7,21 +7,35 @@ interface StepAnalysisLinksProps {
 
 export const StepAnalysisLinks: React.SFC<StepAnalysisLinksProps> = ({
   renameAnalysis,
-  duplicateAnalysis
+  duplicateAnalysis,
 }) => (
   <div style={{ textAlign: 'right' }}>
     <span>
-      [ <a onClick={event => {
-        event.preventDefault();
-        const newDisplayName = window.prompt('New name:');
+      [{' '}
+      <a
+        onClick={(event) => {
+          event.preventDefault();
+          const newDisplayName = window.prompt('New name:');
 
-        if (newDisplayName !== null) {
-          renameAnalysis(newDisplayName);
-        }
-      }} href="#">Rename This Analysis</a> | <a onClick={event => {
+          if (newDisplayName !== null) {
+            renameAnalysis(newDisplayName);
+          }
+        }}
+        href="#"
+      >
+        Rename This Analysis
+      </a>{' '}
+      |{' '}
+      <a
+        onClick={(event) => {
           event.preventDefault();
           duplicateAnalysis();
-        }} href="#">Duplicate</a> ]
+        }}
+        href="#"
+      >
+        Duplicate
+      </a>{' '}
+      ]
     </span>
   </div>
 );
