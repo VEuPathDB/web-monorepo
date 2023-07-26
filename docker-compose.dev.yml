@@ -1,0 +1,9 @@
+version: "3.5"
+
+services:
+  client-host:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "9000:80"
