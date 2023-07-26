@@ -31,6 +31,8 @@ import {
   StandaloneMapBubblesRequestParams,
   ContinousVariableMetadataRequestParams,
   ContinousVariableMetadataResponse,
+  StandaloneMapBubblesLegendRequestParams,
+  StandaloneMapBubblesLegendResponse,
 } from './types';
 
 export default class DataClient extends FetchClientWithCredentials {
@@ -198,6 +200,18 @@ export default class DataClient extends FetchClientWithCredentials {
       'map-markers/bubbles',
       params,
       StandaloneMapBubblesResponse
+    );
+  }
+
+  getStandaloneBubblesLegend(
+    computationName: string,
+    params: StandaloneMapBubblesLegendRequestParams
+  ): Promise<StandaloneMapBubblesLegendResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'map-markers/bubbles/legend',
+      params,
+      StandaloneMapBubblesLegendResponse
     );
   }
 

@@ -772,14 +772,11 @@ export const AllValuesDefinition = type({
   count: number,
 });
 
-export type CommonOverlayConfig = TypeOf<typeof CommonOverlayConfig>;
-export const CommonOverlayConfig = type({
-  overlayVariable: VariableDescriptor,
-});
-
 export type OverlayConfig = TypeOf<typeof OverlayConfig>;
 export const OverlayConfig = intersection([
-  CommonOverlayConfig,
+  type({
+    overlayVariable: VariableDescriptor,
+  }),
   // type({overlayType: keyof({ categorical: null, continuous: null })}),
   union([
     type({
@@ -794,22 +791,20 @@ export const OverlayConfig = intersection([
 ]);
 
 export type BubbleOverlayConfig = TypeOf<typeof BubbleOverlayConfig>;
-export const BubbleOverlayConfig = intersection([
-  CommonOverlayConfig,
-  type({
-    aggregationConfig: union([
-      type({
-        overlayType: literal('categorical'),
-        numeratorValues: array(string),
-        denominatorValues: array(string),
-      }),
-      type({
-        overlayType: literal('continuous'),
-        aggregator: keyof({ mean: null, median: null }),
-      }),
-    ]),
-  }),
-]);
+export const BubbleOverlayConfig = type({
+  overlayVariable: VariableDescriptor,
+  aggregationConfig: union([
+    type({
+      overlayType: literal('categorical'),
+      numeratorValues: array(string),
+      denominatorValues: array(string),
+    }),
+    type({
+      overlayType: literal('continuous'),
+      aggregator: keyof({ mean: null, median: null }),
+    }),
+  ]),
+});
 
 export interface StandaloneMapMarkersRequestParams {
   studyId: string;
@@ -887,6 +882,31 @@ export const StandaloneMapBubblesResponse = type({
       maxLon: number,
     })
   ),
+});
+
+export interface StandaloneMapBubblesLegendRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    colorLegendConfig: {
+      geoAggregateVariable: VariableDescriptor;
+      quantitativeOverlayConfig: BubbleOverlayConfig;
+    };
+    sizeConfig: {
+      geoAggregateVariable: VariableDescriptor;
+    };
+  };
+}
+
+export type StandaloneMapBubblesLegendResponse = TypeOf<
+  typeof StandaloneMapBubblesLegendResponse
+>;
+export const StandaloneMapBubblesLegendResponse = type({
+  minColorValue: number,
+  maxColorValue: number,
+  minSizeValue: number,
+  maxSizeValue: number,
 });
 
 export interface ContinousVariableMetadataRequestParams {

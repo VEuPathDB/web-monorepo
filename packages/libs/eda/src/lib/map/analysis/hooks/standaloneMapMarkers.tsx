@@ -5,6 +5,7 @@ import { GeoConfig } from '../../../core/types/geoConfig';
 import DataClient, {
   BubbleOverlayConfig,
   OverlayConfig,
+  StandaloneMapBubblesLegendRequestParams,
   StandaloneMapBubblesRequestParams,
   StandaloneMapBubblesResponse,
   StandaloneMapMarkersRequestParams,
@@ -173,6 +174,12 @@ export function useStandaloneMapMarkers(
           | StandaloneMapMarkersResponse
           | StandaloneMapBubblesResponse;
         vocabulary: string[] | undefined;
+        bubbleLegendData?: {
+          minColorValue: number;
+          maxColorValue: number;
+          minSizeValue: number;
+          maxSizeValue: number;
+        };
       }
     | undefined
     // const overlayType = overlayConfig?.overlayType;
@@ -253,27 +260,26 @@ export function useStandaloneMapMarkers(
       //       ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
       //       : undefined,
       // };
+      console.log({ markerType });
+
       if (markerType === 'bubble') {
         const bubbleOverlayConfig = overlayConfig as
           | BubbleOverlayConfig
           | undefined;
 
         if (
-          bubbleOverlayConfig &&
-          bubbleOverlayConfig.aggregationConfig.overlayType === 'categorical' &&
-          (bubbleOverlayConfig.aggregationConfig.numeratorValues.length === 0 ||
-            bubbleOverlayConfig.aggregationConfig.denominatorValues.length ===
-              0)
+          !bubbleOverlayConfig ||
+          (bubbleOverlayConfig.aggregationConfig.overlayType ===
+            'categorical' &&
+            (bubbleOverlayConfig.aggregationConfig.numeratorValues.length ===
+              0 ||
+              bubbleOverlayConfig.aggregationConfig.denominatorValues.length ===
+                0))
         ) {
-          return {
-            rawMarkersData: {
-              mapElements: [],
-            },
-            vocabulary: undefined,
-          };
+          return undefined;
         }
 
-        const requestParams: StandaloneMapBubblesRequestParams = {
+        const markerRequestParams: StandaloneMapBubblesRequestParams = {
           studyId,
           filters: filters || [],
           config: {
@@ -282,18 +288,49 @@ export function useStandaloneMapMarkers(
             longitudeVariable,
             overlayConfig: bubbleOverlayConfig,
             outputEntityId,
-            // need to get the actual valueSpec instead of just 'count'
+            // is valueSpec always count?
             valueSpec: 'count',
             viewport,
           },
         };
 
-        // now get and return the data
-        return {
-          rawMarkersData: await dataClient.getStandaloneBubbles(
+        const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
+          studyId,
+          filters: filters || [],
+          config: {
+            outputEntityId,
+            colorLegendConfig: {
+              geoAggregateVariable: {
+                entityId: geoConfig.entity.id,
+                variableId: geoConfig.aggregationVariableIds.at(-1) as string,
+              },
+              quantitativeOverlayConfig: bubbleOverlayConfig,
+            },
+            sizeConfig: {
+              geoAggregateVariable: {
+                entityId: geoConfig.entity.id,
+                variableId: geoConfig.aggregationVariableIds[0],
+              },
+            },
+          },
+        };
+
+        const [rawMarkersData, bubbleLegendData] = await Promise.all([
+          dataClient.getStandaloneBubbles(
             'standalone-map',
-            requestParams
+            markerRequestParams
           ),
+          dataClient.getStandaloneBubblesLegend(
+            'standalone-map',
+            legendRequestParams
+          ),
+        ]);
+
+        console.log({ rawMarkersData, bubbleLegendData });
+
+        return {
+          rawMarkersData,
+          bubbleLegendData,
           // vocabulary:
           //   overlayType === 'categorical' // switch statement style guide time!!
           //     ? overlayConfig?.overlayValues
@@ -408,22 +445,25 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
-    const maxOverlayCount =
-      markerType === 'bubble'
-        ? rawPromise.value?.rawMarkersData
-          ? Math.max(
-              ...rawPromise.value.rawMarkersData.mapElements.map(
-                (mapElement) => mapElement.entityCount
-              )
-            )
-          : 0
-        : undefined;
+    // const maxOverlayCount =
+    //   markerType === 'bubble'
+    //     ? rawPromise.value?.rawMarkersData
+    //       ? Math.max(
+    //           ...rawPromise.value.rawMarkersData.mapElements.map(
+    //             (mapElement) => mapElement.entityCount
+    //           )
+    //         )
+    //       : 0
+    //     : undefined;
 
     const bubbleValueToDiameterMapper =
-      markerType === 'bubble' && maxOverlayCount
+      markerType === 'bubble' && rawPromise.value?.bubbleLegendData
         ? (value: number) => {
+            const bubbleLegendData = rawPromise.value!.bubbleLegendData!;
+
             // const largestCircleArea = 9000;
             const largestCircleDiameter = 90;
+            const smallestCircleDiameter = 10;
 
             // Area scales directly with value
             // const constant = largestCircleArea / maxOverlayCount;
@@ -435,8 +475,14 @@ export function useStandaloneMapMarkers(
             // const radius = Math.log10(value) * constant;
 
             // Radius scales directly with value
-            const scalingFactor = largestCircleDiameter / maxOverlayCount;
-            const diameter = value * scalingFactor;
+            // y = mx + b, m = (y2 - y1) / (x2 - x1), b = y1 - m * x1
+            const m =
+              (largestCircleDiameter - smallestCircleDiameter) /
+              (bubbleLegendData.maxSizeValue - bubbleLegendData.minSizeValue);
+            const b =
+              smallestCircleDiameter - m * bubbleLegendData.minSizeValue;
+            // const scalingFactor = largestCircleDiameter / maxOverlayCount;
+            const diameter = m * value + b;
 
             // return 2 * radius;
             return diameter;

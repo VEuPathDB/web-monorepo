@@ -527,13 +527,15 @@ function MapAnalysisImpl(props: ImplProps) {
     }
   }, [previewMarkerData]);
 
+  console.log('here2');
+
   const markers = useMemo(
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
           <DonutMarkerComponent {...markerProps} />
         ) : markerType === 'bubble' ? (
-          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
+          <BubbleMarkerComponent {...markerProps} />
         ) : (
           <ChartMarkerComponent {...markerProps} />
         )
