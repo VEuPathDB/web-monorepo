@@ -1,29 +1,32 @@
-import { useMemo } from 'react';
 import SelectList from '@veupathdb/coreui/lib/components/inputs/SelectList';
+import { ReactNode } from 'react';
 import { ClearSelectionButton } from '../../variableTrees/VariableTreeDropdown';
 
 export type ValuePickerProps = {
   allowedValues?: string[];
   selectedValues?: string[];
+  disabledValues?: string[];
   /** Change communicated when [Save] button is clicked. */
   onSelectedValuesChange: (newValues: string[]) => void;
+  disabledCheckboxTooltipContent?: ReactNode;
 };
 
-const EMPTY_ARRAY: string[] = [];
+const EMPTY_ALLOWED_VALUES_ARRAY: string[] = [];
+const EMPTY_SELECTED_VALUES_ARRAY: string[] = [];
+const EMPTY_DISABLED_VALUES_ARRAY: string[] = [];
 
 export function ValuePicker({
-  allowedValues = EMPTY_ARRAY,
-  selectedValues = EMPTY_ARRAY,
+  allowedValues = EMPTY_ALLOWED_VALUES_ARRAY,
+  selectedValues = EMPTY_SELECTED_VALUES_ARRAY,
+  disabledValues = EMPTY_DISABLED_VALUES_ARRAY,
   onSelectedValuesChange,
+  disabledCheckboxTooltipContent,
 }: ValuePickerProps) {
-  const items = useMemo(
-    () =>
-      allowedValues.map((value) => ({
-        display: <span>{value}</span>,
-        value,
-      })),
-    [allowedValues]
-  );
+  const items = allowedValues.map((value) => ({
+    display: <span>{value}</span>,
+    value,
+    disabled: disabledValues.includes(value),
+  }));
 
   return (
     <>
@@ -32,6 +35,7 @@ export function ValuePicker({
         items={items}
         onChange={onSelectedValuesChange}
         value={selectedValues}
+        disabledCheckboxTooltipContent={disabledCheckboxTooltipContent}
       />
       <ClearSelectionButton
         onClick={() => onSelectedValuesChange([])}
