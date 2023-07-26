@@ -18,6 +18,7 @@ import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange
 import { isEqual, max, some } from 'lodash';
 import {
   ColorPaletteDefault,
+  getValueToGradientColorMapper,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots';
 import {
@@ -489,6 +490,14 @@ export function useStandaloneMapMarkers(
           }
         : undefined;
 
+    const bubbleValueToColorMapper =
+      markerType === 'bubble' && rawPromise.value?.bubbleLegendData
+        ? getValueToGradientColorMapper(
+            rawPromise.value.bubbleLegendData.minColorValue,
+            rawPromise.value.bubbleLegendData.maxColorValue
+          )
+        : undefined;
+
     return rawPromise.value?.rawMarkersData.mapElements.map(
       ({
         geoAggregateValue,
@@ -578,6 +587,9 @@ export function useStandaloneMapMarkers(
               {
                 label: '',
                 value: entityCount,
+                color:
+                  'overlayValue' in otherProps &&
+                  bubbleValueToColorMapper?.(otherProps.overlayValue),
               },
             ];
 

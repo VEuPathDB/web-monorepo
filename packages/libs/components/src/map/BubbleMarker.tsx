@@ -11,6 +11,7 @@ import { NumberRange } from '../types/general';
 
 // Don't need some of these props, but have to have them because of the general marker API/type definitions
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
+  // There should only be one element in this array
   data: {
     value: number;
     label: string;

@@ -292,11 +292,10 @@ export function BubbleMarkerConfigurationMenu({
             title: (
               <>
                 <span style={{ marginRight: '0.5em' }}>
-                  Y-axis aggregation{' '}
                   {selectedVariable
                     ? categoricalMode
-                      ? '(categorical Y)'
-                      : '(continuous Y)'
+                      ? 'Aggregation (categorical variable)'
+                      : 'Proportion (continuous variable)'
                     : ''}
                 </span>
                 <HelpIcon children={aggregationHelp} />
