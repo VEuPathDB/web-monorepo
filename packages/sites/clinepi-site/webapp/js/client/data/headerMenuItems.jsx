@@ -29,6 +29,7 @@ export default function makeHeaderMenuItemsFactory(
     const siteData = getStaticSiteData(state);
     const { studies } = siteData;
     const { youtubeUrl } = siteConfig;
+    const { requireLogin } = siteConfig;
     const socialIcons = iconMenuItemsFromSocials(siteConfig);
     const socialLinks = menuItemsFromSocials(siteConfig);
     const searchTerm = props.searchTerm;
@@ -160,6 +161,23 @@ export default function makeHeaderMenuItemsFactory(
               text: 'Public Analyses',
               route: `${makeEdaRoute()}/public`,
             },
+            ...(useEda && requireLogin
+              ? [
+                  {
+                    text: 'Studies with geolocation data',
+                    children: [
+                      {
+                        text: 'Monkeypox - World',
+                        route: '/workspace/maps/DS_e0765cae4d/new',
+                      },
+                      {
+                        text: 'Monkeypox - ECDC',
+                        route: '/workspace/maps/DS_28cc5ab0d2/new',
+                      },
+                    ],
+                  },
+                ]
+              : []),
           ],
         },
         {
