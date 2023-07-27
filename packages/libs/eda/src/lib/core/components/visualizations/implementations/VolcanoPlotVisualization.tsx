@@ -218,6 +218,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           minValue={0}
           value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
           containerStyles={{ flex: 1 }}
+          step={0.001}
         />
       </LabelledGroup>
 
