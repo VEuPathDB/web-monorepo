@@ -45,12 +45,11 @@ export default function makeHeaderMenuItemsFactory(
     const submenuStyle = {
       color: 'black',
       fontWeight: '400',
-      marginBottom: '.25em',
+      marginBottom: '.5em',
     };
     const submenuLinkStyle = {
-      marginTop: '.25em',
+      marginTop: '.5em',
       fontWeight: '400',
-      fontSize: '90%',
     };
 
     const filteredUserStudies = (
@@ -217,8 +216,8 @@ export default function makeHeaderMenuItemsFactory(
                               className="SiteMenuItem-Link"
                               to="/workspace/maps/DS_6bd7dbd802/new"
                             >
-                              SCORE Seasonal Transmission S. haematobium Cluster
-                              Randomized Trial
+                              SCORE Seasonal Transmission <i>S. haematobium</i>{' '}
+                              Cluster Randomized Trial
                             </Link>
                           </li>
                           <li style={submenuLinkStyle}>
