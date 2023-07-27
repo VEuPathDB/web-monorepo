@@ -35,6 +35,8 @@ import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
 import { yellow } from '@material-ui/core/colors';
+import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
+import { significanceColors } from '@veupathdb/components/lib/types/plots';
 
 // end imports
 
@@ -189,8 +191,37 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   // TODO
   const controlsNode = <> </>;
 
-  // TODO
-  const legendNode = {};
+  const legendNode = data.value && (
+    <PlotLegend
+      type="list"
+      legendTitle="Legend"
+      legendItems={[
+        {
+          label: 'Inconclusive',
+          marker: 'circle',
+          hasData: true,
+          markerColor: significanceColors[0],
+        },
+        {
+          label: `Up regulated in ${computationConfiguration.comparator.groupB?.join(
+            ', '
+          )}`,
+          marker: 'circle',
+          hasData: true,
+          markerColor: significanceColors[1],
+        },
+        {
+          label: `Up regulated in ${computationConfiguration.comparator.groupA?.join(
+            ', '
+          )}`,
+          marker: 'circle',
+          hasData: true,
+          markerColor: significanceColors[2],
+        },
+      ]}
+      showCheckbox={false}
+    />
+  );
 
   // TODO
   const tableGroupNode = <> </>;
@@ -230,7 +261,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       /> */}
       <LayoutComponent
         isFaceted={false}
-        legendNode={true}
+        legendNode={legendNode}
         plotNode={plotNode}
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
