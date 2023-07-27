@@ -40,6 +40,10 @@ import { yellow } from '@material-ui/core/colors';
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
 const DEFAULT_FC_THRESHOLD = 2;
+const EMPTY_VIZ_AXIS_RANGES = {
+  independentAxisRange: { min: -8, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+};
 
 const plotContainerStyles = {
   width: 750,
@@ -173,14 +177,31 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       : [];
 
   const volcanoPlotProps: VolcanoPlotProps = {
-    data: data.value ? Object.values(data.value) : [],
-    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
+    /**
+     * VolcanoPlot defines an EmptyVolcanoPlotData variable that will be assigned when data is undefined.
+     * In order to display an empty viz, EmptyVolcanoPlotData is defined as:
+     *    const EmptyVolcanoPlotData: VolcanoPlotData = [{log2foldChange: '0', pValue: '1'}];
+     */
+    data: data.value ? Object.values(data.value) : undefined,
+    /**
+     * Since we are rendering a single point in order to display an empty viz, let's hide the data point
+     * by setting the marker opacity to 0 when data.value doesn't exist
+     */
+    markerBodyOpacity: data.value ? vizConfig.markerBodyOpacity ?? 0.5 : 0,
     significanceThreshold: vizConfig.significanceThreshold ?? 0.05,
     log2FoldChangeThreshold: vizConfig.log2FoldChangeThreshold ?? 3,
     containerStyles: plotContainerStyles,
-    comparisonLabels: comparisonLabels,
+    /**
+     * Let's not display comparisonLabels before we have data for the viz. This prevents what may be
+     * confusing behavior where selecting group values displays on the empty viz placeholder.
+     */
+    comparisonLabels: data.value ? comparisonLabels : [],
     showSpinner: data.pending,
     truncationBarFill: yellow[300],
+    /**
+     * As sophisticated aesthetes, let's specify axis ranges for the empty viz placeholder
+     */
+    ...(data.value ? {} : EMPTY_VIZ_AXIS_RANGES),
   };
 
   // @ts-ignore
