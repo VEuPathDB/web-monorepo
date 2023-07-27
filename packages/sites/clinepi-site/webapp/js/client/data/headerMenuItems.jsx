@@ -42,6 +42,17 @@ export default function makeHeaderMenuItemsFactory(
       bottom: '-.25em',
     };
 
+    const submenuStyle = {
+      color: 'black',
+      fontWeight: '400',
+      marginBottom: '.25em',
+    };
+    const submenuLinkStyle = {
+      marginTop: '.25em',
+      fontWeight: '400',
+      fontSize: '90%',
+    };
+
     const filteredUserStudies = (
       useEda && useUserDatasetsWorkspace ? diyDatasets : []
     )?.filter((study) =>
@@ -149,7 +160,7 @@ export default function makeHeaderMenuItemsFactory(
               text: 'My Analyses',
               route: makeEdaRoute(),
             },
-            ...(useEda && useUserDatasetsWorkspace
+            ...(useUserDatasetsWorkspace
               ? [
                   {
                     text: 'My Studies',
@@ -161,23 +172,61 @@ export default function makeHeaderMenuItemsFactory(
               text: 'Public Analyses',
               route: `${makeEdaRoute()}/public`,
             },
-            ...(useEda && requireLogin
+            ...(requireLogin
               ? [
                   {
                     text: (
                       <div>
-                        <div>
-                          <strong>Studies with gelocation data</strong>
-                        </div>
-                        <ul style={{ marginTop: '.5em' }}>
-                          <li>
-                            <Link to="/workspace/maps/DS_e0765cae4d/new">
+                        <div style={submenuStyle}>Interactive Maps</div>
+                        <ul>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_28cc5ab0d2/new"
+                            >
+                              Monkeypox - ECDC
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_e0765cae4d/new"
+                            >
                               Monkeypox - World
                             </Link>
                           </li>
-                          <li>
-                            <Link to="/workspace/maps/DS_28cc5ab0d2/new">
-                              Monkeypox - ECDC
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_d6a1141fbf/new"
+                            >
+                              SCORE <i>S. mansoni</i> Cluster Randomized Trial
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_cc143c9cef/new"
+                            >
+                              SCORE Mozambique <i>S. haematobium</i> Cluster
+                              Randomized Trial
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_6bd7dbd802/new"
+                            >
+                              SCORE Seasonal Transmission S. haematobium Cluster
+                              Randomized Trial
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_24899fbd90/new"
+                            >
+                              WWARN Cross-sectional
                             </Link>
                           </li>
                         </ul>
