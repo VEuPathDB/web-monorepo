@@ -1,0 +1,20 @@
+version: "3.5"
+
+name: "web-client"
+
+networks:
+  traefik:
+    external: true
+
+services:
+  client-host:
+    image: veupathdb/web-client-bundle-service:${WEB_CLIENT_VERSION:-latest}
+    networks:
+      - traefik
+    labels:
+      - "com.centurylinklabs.watchtower.enable=${WEB_CLIENT_WATCHTOWER:-false}"
+      - "traefik.http.services.${TRAEFIK_ROUTER:-web-client-dev}.loadbalancer.server.port=${WEB_CLIENT_PORT:-80}"
+      - "traefik.http.routers.${TRAEFIK_ROUTER:-web-client-dev}.rule=Host(`${TRAEFIK_HOST:-web-client.local.apidb.org}`)"
+      - "traefik.http.routers.${TRAEFIK_ROUTER:-web-client-dev}.tls=${TRAEFIK_USE_TLS:-true}"
+      - "traefik.http.routers.${TRAEFIK_ROUTER:-web-client-dev}.entrypoints=${TRAEFIK_ENTRYPOINTS:-local}"
+      - "traefik.docker.network=traefik"

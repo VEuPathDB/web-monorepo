@@ -258,7 +258,7 @@ export function DifferentialAbundanceConfiguration(
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group A</div>
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration?.comparator?.groupA ?? []}
+          selectedValues={configuration?.comparator?.groupA}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
               variable: configuration?.comparator?.variable ?? undefined,
@@ -270,7 +270,7 @@ export function DifferentialAbundanceConfiguration(
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration?.comparator?.groupB ?? []}
+          selectedValues={configuration?.comparator?.groupB}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
               variable: configuration?.comparator?.variable ?? undefined,

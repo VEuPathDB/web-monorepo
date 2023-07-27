@@ -34,6 +34,7 @@ import DataClient, {
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
+import { yellow } from '@material-ui/core/colors';
 
 // end imports
 
@@ -179,6 +180,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     containerStyles: plotContainerStyles,
     comparisonLabels: comparisonLabels,
     showSpinner: data.pending,
+    truncationBarFill: yellow[300],
   };
 
   // @ts-ignore
@@ -216,6 +218,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           minValue={0}
           value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
           containerStyles={{ flex: 1 }}
+          step={0.001}
         />
       </LabelledGroup>
 
