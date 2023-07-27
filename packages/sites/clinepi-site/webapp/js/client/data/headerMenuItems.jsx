@@ -20,6 +20,8 @@ import {
   makeEdaRoute,
 } from '@veupathdb/web-common/lib/routes';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+// @ts-ignore
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 
 export default function makeHeaderMenuItemsFactory(
   permissionsValue,
@@ -176,7 +178,9 @@ export default function makeHeaderMenuItemsFactory(
                   {
                     text: (
                       <div>
-                        <div style={submenuStyle}>Interactive Maps</div>
+                        <div style={submenuStyle}>
+                          Interactive Maps <img alt="BETA" src={betaImage} />
+                        </div>
                         <ul>
                           <li style={submenuLinkStyle}>
                             <Link
