@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   StudyMenuItem,
   StudyMenuSearch,
@@ -10,6 +11,7 @@ import {
 } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
 import {
+  requireLogin,
   useEda,
   useUserDatasetsWorkspace,
 } from '@veupathdb/web-common/lib/config';
@@ -28,8 +30,6 @@ export default function makeHeaderMenuItemsFactory(
     const { siteConfig } = state.globalData;
     const siteData = getStaticSiteData(state);
     const { studies } = siteData;
-    const { youtubeUrl } = siteConfig;
-    const { requireLogin } = siteConfig;
     const socialIcons = iconMenuItemsFromSocials(siteConfig);
     const socialLinks = menuItemsFromSocials(siteConfig);
     const searchTerm = props.searchTerm;
@@ -164,17 +164,25 @@ export default function makeHeaderMenuItemsFactory(
             ...(useEda && requireLogin
               ? [
                   {
-                    text: 'Studies with geolocation data',
-                    children: [
-                      {
-                        text: 'Monkeypox - World',
-                        route: '/workspace/maps/DS_e0765cae4d/new',
-                      },
-                      {
-                        text: 'Monkeypox - ECDC',
-                        route: '/workspace/maps/DS_28cc5ab0d2/new',
-                      },
-                    ],
+                    text: (
+                      <div>
+                        <div>
+                          <strong>Studies with gelocation data</strong>
+                        </div>
+                        <ul style={{ marginTop: '.5em' }}>
+                          <li>
+                            <Link to="/workspace/maps/DS_e0765cae4d/new">
+                              Monkeypox - World
+                            </Link>
+                          </li>
+                          <li>
+                            <Link to="/workspace/maps/DS_28cc5ab0d2/new">
+                              Monkeypox - ECDC
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    ),
                   },
                 ]
               : []),
