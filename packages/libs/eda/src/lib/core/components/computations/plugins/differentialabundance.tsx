@@ -311,6 +311,10 @@ export function DifferentialAbundanceConfiguration(
                 disabled={
                   disableGroupValueSelectors || disableSwapGroupValuesButton
                 }
+                /**
+                 * For some reason the tooltip content renders when the parent container is in the disabled state.
+                 * To prevent such ghastly behavior, let's not pass in the tooltip prop when the parent is disabled.
+                 */
                 {...(!disableGroupValueSelectors
                   ? { tooltip: 'Swap Group A and Group B values' }
                   : {})}
