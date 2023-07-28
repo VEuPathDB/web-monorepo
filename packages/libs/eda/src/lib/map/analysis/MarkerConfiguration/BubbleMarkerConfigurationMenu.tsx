@@ -323,6 +323,7 @@ export function BubbleMarkerConfigurationMenu({
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
         constraints={constraints}
+        flexDirection="column"
       />
     </div>
   );
