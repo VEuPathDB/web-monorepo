@@ -10,7 +10,10 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import { sharedConfigCssStyles } from './abundance';
+import './Plugins.scss';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+const cx = makeClassNameHelper('StepOneConfigurationContainer');
 
 export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -168,16 +171,9 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div style={sharedConfigCssStyles}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1em',
-            justifyItems: 'start',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
+      <div className={cx()}>
+        <div className={cx('-InputContainer')}>
+          <span>Data</span>
           <SingleSelect
             value={
               selectedCollectionVar
@@ -192,9 +188,9 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>
-            Dissimilarity method
-          </div>
+        </div>
+        <div className={cx('-InputContainer')}>
+          <span>Dissimilarity method</span>
           <SingleSelect
             value={betaDivDissimilarityMethod ?? 'Select a method'}
             buttonDisplayContent={

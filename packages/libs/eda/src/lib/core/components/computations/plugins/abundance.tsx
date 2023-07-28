@@ -11,14 +11,10 @@ import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
+import './Plugins.scss';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-export const sharedConfigCssStyles = {
-  display: 'flex',
-  gap: '0 2em',
-  padding: '1em 0',
-  alignItems: 'center',
-  marginLeft: '3em',
-};
+const cx = makeClassNameHelper('StepOneConfigurationContainer');
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -188,16 +184,9 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div style={sharedConfigCssStyles}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1em',
-            justifyItems: 'start',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
+      <div className={cx()}>
+        <div className={cx('-InputContainer')}>
+          <span>Data</span>
           <SingleSelect
             value={
               selectedCollectionVar
@@ -212,7 +201,9 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
-          <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
+        </div>
+        <div className={cx('-InputContainer')}>
+          <span>Method</span>
           <SingleSelect
             value={rankingMethod ?? 'Select a method'}
             buttonDisplayContent={rankingMethod ?? 'Select a method'}

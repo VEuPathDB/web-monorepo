@@ -10,7 +10,10 @@ import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import { sharedConfigCssStyles } from './abundance';
+import './Plugins.scss';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+const cx = makeClassNameHelper('StepOneConfigurationContainer');
 
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -165,16 +168,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div style={sharedConfigCssStyles}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1em',
-            justifyItems: 'start',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
+      <div className={cx()}>
+        <div className={cx('-InputContainer')}>
+          <span>Data</span>
           <SingleSelect
             value={
               selectedCollectionVar
@@ -189,7 +185,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Method</div>
+        </div>
+        <div className={cx('-InputContainer')}>
+          <span>Method</span>
           <SingleSelect
             value={alphaDivMethod ?? 'Select a method'}
             buttonDisplayContent={alphaDivMethod ?? 'Select a method'}
