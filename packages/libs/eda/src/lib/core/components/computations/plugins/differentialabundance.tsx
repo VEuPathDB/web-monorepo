@@ -15,6 +15,8 @@ import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { Filter } from '../../..';
+import { FloatingButton } from '@veupathdb/coreui';
+import { SwapHorizOutlined } from '@material-ui/icons';
 
 /**
  * Differential abundance
@@ -268,6 +270,20 @@ export function DifferentialAbundanceConfiguration(
             })
           }
           disabledCheckboxTooltipContent="Values cannot overlap between groups"
+          showClearSelectionButton={false}
+          disableInput={!configuration?.comparator?.variable}
+        />
+        <FloatingButton
+          icon={SwapHorizOutlined}
+          text=""
+          onPress={() =>
+            changeConfigHandler('comparator', {
+              variable: configuration?.comparator?.variable ?? undefined,
+              groupA: configuration?.comparator?.groupB ?? undefined,
+              groupB: configuration?.comparator?.groupA ?? undefined,
+            })
+          }
+          tooltip="Swap Group A and Group B values"
         />
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
         <ValuePicker
@@ -282,6 +298,8 @@ export function DifferentialAbundanceConfiguration(
             })
           }
           disabledCheckboxTooltipContent="Values cannot overlap between groups"
+          showClearSelectionButton={false}
+          disableInput={!configuration?.comparator?.variable}
         />
       </div>
     </ComputationStepContainer>
