@@ -111,10 +111,10 @@ function DifferentialAbundanceConfigDescriptionComponent({
     )
   );
   return (
-    <>
-      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+    <div className="ConfigDescriptionContainer">
+      <h4>
         Data:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {updatedCollectionVariable ? (
             `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
           ) : (
@@ -122,9 +122,9 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4 style={{ padding: 0, marginLeft: 20 }}>
+      <h4>
         Comparator Variable:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {comparatorVariable ? (
             comparatorVariable.variable.displayName
           ) : (
@@ -132,7 +132,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-    </>
+    </div>
   );
 }
 

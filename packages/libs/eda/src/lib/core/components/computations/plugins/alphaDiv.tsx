@@ -82,10 +82,10 @@ function AlphaDivConfigDescriptionComponent({
     )
   );
   return (
-    <>
-      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+    <div className="ConfigDescriptionContainer">
+      <h4>
         Data:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {updatedCollectionVariable ? (
             `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
           ) : (
@@ -93,9 +93,9 @@ function AlphaDivConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4 style={{ padding: 0, marginLeft: 20 }}>
+      <h4>
         Method:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {alphaDivMethod ? (
             alphaDivMethod[0].toUpperCase() + alphaDivMethod.slice(1)
           ) : (
@@ -103,7 +103,7 @@ function AlphaDivConfigDescriptionComponent({
           )}
         </span>
       </h4>
-    </>
+    </div>
   );
 }
 

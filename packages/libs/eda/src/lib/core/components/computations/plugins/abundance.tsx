@@ -99,10 +99,10 @@ function AbundanceConfigDescriptionComponent({
     )
   );
   return (
-    <>
-      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+    <div className="ConfigDescriptionContainer">
+      <h4>
         Data:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {updatedCollectionVariable ? (
             `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
           ) : (
@@ -110,9 +110,9 @@ function AbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4 style={{ padding: 0, marginLeft: 20 }}>
+      <h4>
         Method:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {rankingMethod ? (
             rankingMethod[0].toUpperCase() + rankingMethod.slice(1)
           ) : (
@@ -120,7 +120,7 @@ function AbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-    </>
+    </div>
   );
 }
 
