@@ -259,6 +259,7 @@ export function DifferentialAbundanceConfiguration(
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
           selectedValues={configuration?.comparator?.groupA}
+          disabledValues={configuration?.comparator?.groupB}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
               variable: configuration?.comparator?.variable ?? undefined,
@@ -266,11 +267,13 @@ export function DifferentialAbundanceConfiguration(
               groupB: configuration?.comparator?.groupB ?? undefined,
             })
           }
+          disabledCheckboxTooltipContent="Values cannot overlap between groups"
         />
         <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
         <ValuePicker
           allowedValues={selectedComparatorVariable?.variable.vocabulary}
           selectedValues={configuration?.comparator?.groupB}
+          disabledValues={configuration?.comparator?.groupA}
           onSelectedValuesChange={(newValues) =>
             changeConfigHandler('comparator', {
               variable: configuration?.comparator?.variable ?? undefined,
@@ -278,6 +281,7 @@ export function DifferentialAbundanceConfiguration(
               groupB: newValues.length ? newValues : undefined,
             })
           }
+          disabledCheckboxTooltipContent="Values cannot overlap between groups"
         />
       </div>
     </ComputationStepContainer>
