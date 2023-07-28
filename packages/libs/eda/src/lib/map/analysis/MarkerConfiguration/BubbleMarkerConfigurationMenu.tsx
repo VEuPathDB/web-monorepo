@@ -19,6 +19,7 @@ import { ValuePicker } from '../../../core/components/visualizations/implementat
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { useEffect } from 'react';
 import { BubbleOverlayConfig } from '../../../core';
+import PluginError from '../../../core/components/visualizations/PluginError';
 
 // // Display names to internal names
 // const valueSpecLookup = {
@@ -138,16 +139,10 @@ export function BubbleMarkerConfigurationMenu({
       : undefined;
 
   const classes = useInputStyles();
-
-  if (
-    numeratorValues !== undefined &&
-    denominatorValues !== undefined &&
-    !numeratorValues.every((value) => denominatorValues.includes(value))
-  ) {
-    throw new Error(
-      'To calculate a proportion, all selected numerator values must also be present in the denominator'
-    );
-  }
+  const proportionIsValid = validateProportionValues(
+    numeratorValues,
+    denominatorValues
+  );
 
   const aggregationInputs = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -179,67 +174,74 @@ export function BubbleMarkerConfigurationMenu({
           />
         </div>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, auto)',
-            gridTemplateRows: 'repeat(3, auto)',
-          }}
-        >
-          <Tooltip title={'Required parameter'}>
-            <div
-              className={classes.label}
-              style={{
-                gridColumn: 1,
-                gridRow: 2,
-                // color:
-                //   configuration.numeratorValues?.length &&
-                //   configuration.denominatorValues?.length
-                //     ? undefined
-                //     : requiredInputLabelStyle.color,
-              }}
-            >
-              Proportion<sup>*</sup>&nbsp;=
-            </div>
-          </Tooltip>
+        <div style={{ position: 'relative' }}>
           <div
-            className={classes.input}
             style={{
-              gridColumn: 2,
-              gridRow: 1,
-              marginBottom: 0,
-              justifyContent: 'center',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, auto)',
+              gridTemplateRows: 'repeat(3, auto)',
             }}
           >
-            <ValuePicker
-              allowedValues={vocabulary}
-              selectedValues={numeratorValues}
-              onSelectedValuesChange={(value) =>
-                onChange({
-                  ...configuration,
-                  numeratorValues: value,
-                })
-              }
-            />
+            <Tooltip title={'Required parameter'}>
+              <div
+                className={classes.label}
+                style={{
+                  gridColumn: 1,
+                  gridRow: 2,
+                  // color:
+                  //   configuration.numeratorValues?.length &&
+                  //   configuration.denominatorValues?.length
+                  //     ? undefined
+                  //     : requiredInputLabelStyle.color,
+                }}
+              >
+                Proportion<sup>*</sup>&nbsp;=
+              </div>
+            </Tooltip>
+            <div
+              className={classes.input}
+              style={{
+                gridColumn: 2,
+                gridRow: 1,
+                marginBottom: 0,
+                justifyContent: 'center',
+              }}
+            >
+              <ValuePicker
+                allowedValues={vocabulary}
+                selectedValues={numeratorValues}
+                onSelectedValuesChange={(value) =>
+                  onChange({
+                    ...configuration,
+                    numeratorValues: value,
+                  })
+                }
+              />
+            </div>
+            <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
+              <hr style={{ marginTop: '0.6em' }} />
+            </div>
+            <div
+              className={classes.input}
+              style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
+            >
+              <ValuePicker
+                allowedValues={vocabulary}
+                selectedValues={denominatorValues}
+                onSelectedValuesChange={(value) =>
+                  onChange({
+                    ...configuration,
+                    denominatorValues: value,
+                  })
+                }
+              />
+            </div>
           </div>
-          <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
-            <hr style={{ marginTop: '0.6em' }} />
-          </div>
-          <div
-            className={classes.input}
-            style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
-          >
-            <ValuePicker
-              allowedValues={vocabulary}
-              selectedValues={denominatorValues}
-              onSelectedValuesChange={(value) =>
-                onChange({
-                  ...configuration,
-                  denominatorValues: value,
-                })
-              }
-            />
-          </div>
+          {!proportionIsValid && (
+            <div style={{ position: 'absolute', width: '100%' }}>
+              <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -341,3 +343,12 @@ function isSuitableCategoricalVariable(variable?: VariableTreeNode): boolean {
     variable.distinctValuesCount != null
   );
 }
+
+// We currently call this function twice per value change. If the number of values becomes vary large, we may want to optimize this?
+export const validateProportionValues = (
+  numeratorValues: string[] | undefined,
+  denominatorValues: string[] | undefined
+) =>
+  numeratorValues === undefined ||
+  denominatorValues === undefined ||
+  numeratorValues.every((value) => denominatorValues.includes(value));

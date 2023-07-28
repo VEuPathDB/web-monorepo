@@ -34,6 +34,7 @@ import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
 import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
 import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
+import { validateProportionValues } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 
 /**
  * We can use this viewport to request all available data
@@ -270,15 +271,21 @@ export function useStandaloneMapMarkers(
         const bubbleOverlayConfig = overlayConfig as
           | BubbleOverlayConfig
           | undefined;
+        const aggregationConfig = bubbleOverlayConfig?.aggregationConfig;
+        const numeratorValues =
+          aggregationConfig && 'numeratorValues' in aggregationConfig
+            ? aggregationConfig.numeratorValues
+            : undefined;
+        const denominatorValues =
+          aggregationConfig && 'denominatorValues' in aggregationConfig
+            ? aggregationConfig.denominatorValues
+            : undefined;
 
         if (
-          !bubbleOverlayConfig ||
-          (bubbleOverlayConfig.aggregationConfig.overlayType ===
-            'categorical' &&
-            (bubbleOverlayConfig.aggregationConfig.numeratorValues.length ===
-              0 ||
-              bubbleOverlayConfig.aggregationConfig.denominatorValues.length ===
-                0))
+          !aggregationConfig ||
+          numeratorValues?.length === 0 ||
+          denominatorValues?.length === 0 ||
+          !validateProportionValues(numeratorValues, denominatorValues)
         ) {
           return undefined;
         }
