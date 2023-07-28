@@ -41,7 +41,7 @@ import { yellow } from '@material-ui/core/colors';
 const DEFAULT_SIG_THRESHOLD = 0.05;
 const DEFAULT_FC_THRESHOLD = 2;
 const EMPTY_VIZ_AXIS_RANGES = {
-  independentAxisRange: { min: -8, max: 9 },
+  independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
 };
 

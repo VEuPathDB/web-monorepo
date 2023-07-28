@@ -181,13 +181,13 @@ Spinner.args = {
   showSpinner: true,
 };
 
-// Test the spinner
+// Test empty placeholder viz
 export const Empty = Template.bind({});
 Empty.args = {
   data: undefined,
   markerBodyOpacity: 0,
   log2FoldChangeThreshold: 2,
   significanceThreshold: 0.05,
-  independentAxisRange: { min: -8, max: 9 },
+  independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
 };
