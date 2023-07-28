@@ -14,6 +14,7 @@ export function BubbleMarker(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 32.443 32.443"
       //  style={{enableBackground: 'new 0 0 32.443 32.443'}}
       xmlSpace="preserve"
+      {...props}
     >
       <style type="text/css">
         .st0&#123;fill:none;stroke:#262626;stroke-miterlimit:10;&#125;
