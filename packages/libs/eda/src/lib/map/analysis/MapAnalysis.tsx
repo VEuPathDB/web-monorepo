@@ -1292,7 +1292,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     <DraggableLegendPanel
                       panelTitle={overlayVariable?.displayName}
                       zIndex={legendZIndex}
-                      defaultPosition={{ x: window.innerWidth, y: 350 }}
+                      defaultPosition={{ x: window.innerWidth, y: 420 }}
                     >
                       <div style={{ padding: '5px 10px' }}>
                         <MapLegend
