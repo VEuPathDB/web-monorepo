@@ -29,7 +29,7 @@ import {
   useStudyEntities,
 } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { Variable } from '../../../types/study';
+import { StudyEntity, Variable } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -104,6 +104,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 // export
 export type BarplotDataWithStatistics = (
@@ -304,7 +305,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
   const findEntityAndVariable = useFindEntityAndVariable(filters);
   const {
     variable,
-    entity,
     overlayVariable,
     providedOverlayVariable,
     overlayEntity,
@@ -319,7 +319,6 @@ function BarplotViz(props: VisualizationProps<Options>) {
     const facetVariable = findEntityAndVariable(vizConfig.facetVariable);
     return {
       variable: xAxisVariable?.variable,
-      entity: xAxisVariable?.entity,
       overlayVariable: overlayVariable?.variable,
       providedOverlayVariable: providedOverlayVariable?.variable,
       overlayEntity: overlayVariable?.entity,
@@ -333,6 +332,12 @@ function BarplotViz(props: VisualizationProps<Options>) {
     vizConfig.facetVariable,
     providedOverlayVariableDescriptor,
   ]);
+
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable'
+  );
 
   const inputs = useMemo(
     (): InputSpec[] => [
@@ -380,7 +385,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     useCallback(async (): Promise<BarplotDataWithStatistics | undefined> => {
       if (
         variable == null ||
-        entity == null ||
+        outputEntity == null ||
         filteredCounts.pending ||
         filteredCounts.value == null
       )
@@ -408,7 +413,14 @@ function BarplotViz(props: VisualizationProps<Options>) {
           studyId,
           filters,
           vizConfig: dataRequestConfig,
-        }) ?? getRequestParams(studyId, filters ?? [], dataRequestConfig);
+          outputEntityId: outputEntity.id,
+        }) ??
+        getRequestParams(
+          studyId,
+          filters ?? [],
+          dataRequestConfig,
+          outputEntity
+        );
 
       const response = await dataClient.getBarplot(
         computation.descriptor.type,
@@ -422,7 +434,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         hasIncompleteCases(
           overlayEntity,
           overlayVariable,
-          entity,
+          outputEntity,
           filteredCounts.value,
           response.completeCasesTable
         );
@@ -431,7 +443,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         hasIncompleteCases(
           facetEntity,
           facetVariable,
-          entity,
+          outputEntity,
           filteredCounts.value,
           response.completeCasesTable
         );
@@ -469,7 +481,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       );
     }, [
       variable,
-      entity,
+      outputEntity,
       filteredCounts.pending,
       filteredCounts.value,
       overlayVariable,
@@ -837,7 +849,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         completeCasesAxesVars={
           data.pending ? undefined : data.value?.completeCasesAxesVars
         }
-        outputEntity={entity}
+        outputEntity={outputEntity}
         stratificationIsActive={overlayVariable != null}
         enableSpinner={vizConfig.xAxisVariable != null && !data.error}
         totalCounts={totalCounts.value}
@@ -846,7 +858,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
       <VariableCoverageTable
         completeCases={data.pending ? undefined : data.value?.completeCases}
         filteredCounts={filteredCounts}
-        outputEntityId={vizConfig.xAxisVariable?.entityId}
+        outputEntityId={outputEntity?.id}
         variableSpecs={[
           {
             role: 'Main',
@@ -901,12 +913,12 @@ function BarplotViz(props: VisualizationProps<Options>) {
               : undefined
           }
           showMissingness={vizConfig.showMissingness}
-          outputEntity={entity}
+          outputEntity={outputEntity}
         />
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle entity={entity} outputSize={outputSize} />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
@@ -997,14 +1009,15 @@ type DataRequestConfig = Pick<
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  config: DataRequestConfig
+  config: DataRequestConfig,
+  outputEntity: StudyEntity
 ): BarplotRequestParams {
   return {
     studyId,
     filters,
     config: {
       // is outputEntityId correct?
-      outputEntityId: config.xAxisVariable!.entityId,
+      outputEntityId: outputEntity.id,
       xAxisVariable: config.xAxisVariable!,
       overlayVariable: config.overlayVariable,
       facetVariable: config.facetVariable ? [config.facetVariable] : [],

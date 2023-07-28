@@ -3,6 +3,7 @@
 
 // ### THIS NEEDS TO BE FIRST
 import './publicPath';
+import './externalLinkHandler';
 // ###
 import 'custom-event-polyfill';
 import 'whatwg-fetch';

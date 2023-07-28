@@ -18,6 +18,7 @@ export default function SelectList<T>({
   children,
   defaultButtonDisplayContent,
   isDisabled = false,
+  ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
   const [buttonDisplayContent, setButtonDisplayContent] = useState<ReactNode>(
@@ -72,6 +73,7 @@ export default function SelectList<T>({
           value={selected}
           onChange={setSelected}
           linksPosition={linksPosition}
+          {...props}
         />
         {children}
       </div>
