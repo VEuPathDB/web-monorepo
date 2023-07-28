@@ -374,6 +374,7 @@ const useHeaderMenuItems = (
             display: record.displayName,
             type: 'reactRoute',
             url: `/workspace/maps/${record.id[0].value}/new`,
+            target: '_blank',
           }));
       } catch (error) {
         console.error(error);
@@ -433,6 +434,7 @@ const useHeaderMenuItems = (
           tooltip: 'Instantaneous, collaborative, genome annotation editor',
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
+          target: '_blank',
           metadata: {
             include: [
               AmoebaDB,
@@ -457,6 +459,7 @@ const useHeaderMenuItems = (
           display: 'BLAST (multi-query capable)',
           type: 'reactRoute',
           url: '/workspace/blast/new',
+          target: '_blank',
         },
         {
           key: 'companion',
@@ -510,12 +513,14 @@ const useHeaderMenuItems = (
           display: 'Galaxy',
           type: 'reactRoute',
           url: '/galaxy-orientation',
+          target: '_blank',
         },
         {
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
           url: '/jbrowse?data=/a/service/jbrowse/tracks/default',
+          target: '_blank',
           metadata: {
             exclude: [EuPathDB],
           },
@@ -536,6 +541,7 @@ const useHeaderMenuItems = (
           tooltip: 'Free to use pictures of vectors',
           type: 'reactRoute',
           url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
+          target: '_blank',
           metadata: {
             include: [VectorBase],
           },
@@ -557,6 +563,7 @@ const useHeaderMenuItems = (
           display: 'PlasmoAP',
           type: 'reactRoute',
           url: '/plasmoap',
+          target: '_blank',
           metadata: {
             include: [PlasmoDB],
           },
@@ -624,12 +631,14 @@ const useHeaderMenuItems = (
           display: 'Sequence retrieval',
           type: 'reactRoute',
           url: '/fasta-tool',
+          target: '_blank',
         },
         {
           key: 'webservices',
           display: 'Web services',
           type: 'reactRoute',
           url: makeStaticPageRoute(`/content/${displayName}/webServices.html`),
+          target: '_blank',
         },
       ],
     },
