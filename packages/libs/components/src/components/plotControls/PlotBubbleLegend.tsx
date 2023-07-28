@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 // set props for custom legend function
 export interface PlotLegendBubbleProps {
+  legendMin: number;
   legendMax: number;
   //   legendMin: number;
   valueToDiameterMapper: ((value: number) => number) | undefined;
@@ -20,6 +21,7 @@ export interface PlotLegendBubbleProps {
 
 // make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend if we need
 export default function PlotBubbleLegend({
+  legendMin,
   legendMax,
   //   legendMin,
   valueToDiameterMapper,

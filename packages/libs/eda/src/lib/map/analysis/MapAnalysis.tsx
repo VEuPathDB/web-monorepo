@@ -109,6 +109,8 @@ import ChartMarkerComponent, {
 import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
+import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
+import _ from 'lodash';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -449,6 +451,8 @@ function MapAnalysisImpl(props: ImplProps) {
     pending,
     error,
     legendItems,
+    bubbleLegendData,
+    bubbleValueToColorMapper,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
   } = useStandaloneMapMarkers({
@@ -525,7 +529,7 @@ function MapAnalysisImpl(props: ImplProps) {
         />
       );
     }
-  }, [previewMarkerData]);
+  }, [activeMarkerConfiguration, markerType, previewMarkerData]);
 
   console.log('here2');
 
@@ -792,6 +796,12 @@ function MapAnalysisImpl(props: ImplProps) {
                     entities={studyEntities}
                     onChange={updateMarkerConfigurations}
                     configuration={activeMarkerConfiguration}
+                    overlayConfiguration={
+                      activeOverlayConfig.value &&
+                      'aggregationConfig' in activeOverlayConfig.value
+                        ? activeOverlayConfig.value
+                        : undefined
+                    }
                     starredVariables={
                       analysisState.analysis?.descriptor.starredVariables ?? []
                     }
@@ -1241,71 +1251,63 @@ function MapAnalysisImpl(props: ImplProps) {
                 </div>
 
                 {(markerType === 'count' || markerType === 'proportion') && (
-                  <DraggablePanel
-                    isOpen
-                    showPanelTitle
-                    panelTitle={overlayVariable?.displayName || 'Legend'}
-                    confineToParentContainer
-                    defaultPosition={{ x: window.innerWidth, y: 225 }}
-                    styleOverrides={{
-                      zIndex: legendZIndex,
-                    }}
+                  <DraggableLegendPanel
+                    panelTitle={overlayVariable?.displayName}
+                    zIndex={legendZIndex}
                   >
                     <div style={{ padding: '5px 10px' }}>
                       <MapLegend
                         isLoading={legendItems.length === 0}
-                        legendItems={legendItems}
+                        plotLegendProps={{ type: 'list', legendItems }}
                         // control to show checkbox. default: true
                         showCheckbox={false}
                       />
                     </div>
-                  </DraggablePanel>
+                  </DraggableLegendPanel>
                 )}
 
                 {/* Maybe should reintroduce loading placeholder */}
-                {markerType === 'bubble' && markersData !== undefined && (
-                  <DraggablePanel
-                    isOpen
-                    showPanelTitle
-                    panelTitle={overlayVariable?.displayName || 'Legend'}
-                    confineToParentContainer
-                    defaultPosition={{ x: window.innerWidth, y: 225 }}
-                    styleOverrides={{
-                      zIndex: legendZIndex,
-                    }}
-                  >
-                    <div style={{ padding: '5px 10px' }}>
-                      <PlotLegend
-                        type="bubble"
-                        // isLoading={legendItems.length === 0}
-                        // legendItems={legendItems}
-                        // control to show checkbox. default: true
-                        // showCheckbox={false}
-                        legendMax={
-                          markersData
-                            ? Math.max(
-                                ...markersData.map(
-                                  (markerData) => markerData.data[0].value ?? 0
-                                )
-                              )
-                            : 0
-                        }
-                        valueToDiameterMapper={
-                          markersData.length > 0
-                            ? (markersData as BubbleMarkerProps[])[0]
-                                .valueToDiameterMapper
-                            : undefined
-                        }
-                        containerStyles={{
-                          border: 'none',
-                          boxShadow: 'none',
-                          padding: 0,
-                          width: 'auto',
-                          maxWidth: 400,
-                        }}
-                      />
-                    </div>
-                  </DraggablePanel>
+                {markerType === 'bubble' && (
+                  <>
+                    <DraggableLegendPanel
+                      panelTitle="Count"
+                      zIndex={legendZIndex}
+                    >
+                      <div style={{ padding: '5px 10px' }}>
+                        <MapLegend
+                          isLoading={pending}
+                          plotLegendProps={{
+                            type: 'bubble',
+                            legendMin: bubbleLegendData?.minSizeValue ?? 0,
+                            legendMax: bubbleLegendData?.maxSizeValue ?? 0,
+                            valueToDiameterMapper:
+                              markersData && markersData.length > 0
+                                ? (markersData as BubbleMarkerProps[])[0]
+                                    .valueToDiameterMapper
+                                : undefined,
+                          }}
+                        />
+                      </div>
+                    </DraggableLegendPanel>
+                    <DraggableLegendPanel
+                      panelTitle={overlayVariable?.displayName}
+                      zIndex={legendZIndex}
+                      defaultPosition={{ x: window.innerWidth, y: 350 }}
+                    >
+                      <div style={{ padding: '5px 10px' }}>
+                        <MapLegend
+                          isLoading={pending}
+                          plotLegendProps={{
+                            type: 'colorscale',
+                            legendMin: bubbleLegendData?.minColorValue ?? 0,
+                            legendMax: bubbleLegendData?.maxColorValue ?? 0,
+                            valueToColorMapper:
+                              bubbleValueToColorMapper ?? (() => 'white'),
+                          }}
+                        />
+                      </div>
+                    </DraggableLegendPanel>
+                  </>
                 )}
 
                 {/* <FloatingDiv
@@ -1520,3 +1522,23 @@ function SideNavigationItems({
     </div>
   );
 }
+
+const DraggableLegendPanel = (props: {
+  zIndex: number;
+  panelTitle?: string;
+  defaultPosition?: DraggablePanelCoordinatePair;
+  children: React.ReactNode;
+}) => (
+  <DraggablePanel
+    isOpen
+    showPanelTitle
+    panelTitle={props.panelTitle ?? 'Legend'}
+    confineToParentContainer
+    defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
+    styleOverrides={{
+      zIndex: props.zIndex,
+    }}
+  >
+    {props.children}
+  </DraggablePanel>
+);

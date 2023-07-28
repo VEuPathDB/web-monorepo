@@ -48,8 +48,8 @@ export async function getDefaultOverlayConfig(
     markerType,
     binningMethod = 'equalInterval',
     aggregator = 'mean',
-    numeratorValues = [],
-    denominatorValues = [],
+    numeratorValues,
+    denominatorValues,
   } = props;
 
   if (overlayVariable != null && overlayEntity != null) {
@@ -58,6 +58,8 @@ export async function getDefaultOverlayConfig(
       entityId: overlayEntity.id,
     };
 
+    console.log({ denominatorValues, vocab: overlayVariable.vocabulary });
+
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
       if (markerType === 'bubble') {
@@ -65,8 +67,9 @@ export async function getDefaultOverlayConfig(
           overlayVariable: overlayVariableDescriptor,
           aggregationConfig: {
             overlayType: 'categorical',
-            numeratorValues,
-            denominatorValues,
+            numeratorValues: numeratorValues ?? [],
+            denominatorValues:
+              denominatorValues ?? overlayVariable.vocabulary ?? [],
           },
         };
       } else {

@@ -51,14 +51,14 @@ interface Props
   > {
   onChange: (configuration: BubbleMarkerConfiguration) => void;
   configuration: BubbleMarkerConfiguration;
-  // overlayConfiguration: BubbleOverlayConfig | undefined;
+  overlayConfiguration: BubbleOverlayConfig | undefined;
 }
 
 // Currently identical to pie marker configuration menu
 export function BubbleMarkerConfigurationMenu({
   entities,
   configuration,
-  // overlayConfiguration,
+  overlayConfiguration,
   onChange,
   starredVariables,
   toggleStarredVariable,
@@ -118,21 +118,35 @@ export function BubbleMarkerConfigurationMenu({
   // }, []);
 
   const categoricalMode = isSuitableCategoricalVariable(selectedVariable);
+
+  const aggregationConfig = overlayConfiguration?.aggregationConfig;
+  const numeratorValues =
+    aggregationConfig && 'numeratorValues' in aggregationConfig
+      ? aggregationConfig.numeratorValues
+      : undefined;
+  const denominatorValues =
+    aggregationConfig && 'denominatorValues' in aggregationConfig
+      ? aggregationConfig.denominatorValues
+      : undefined;
+  const aggregator =
+    aggregationConfig && 'aggregator' in aggregationConfig
+      ? aggregationConfig.aggregator
+      : undefined;
+  const vocabulary =
+    selectedVariable && 'vocabulary' in selectedVariable
+      ? selectedVariable.vocabulary
+      : undefined;
+
   const classes = useInputStyles();
 
   if (
-    categoricalMode &&
-    configuration.numeratorValues !== undefined &&
-    configuration.denominatorValues !== undefined
+    numeratorValues !== undefined &&
+    denominatorValues !== undefined &&
+    !numeratorValues.every((value) => denominatorValues.includes(value))
   ) {
-    if (
-      !configuration.numeratorValues.every((value) =>
-        configuration.denominatorValues?.includes(value)
-      )
-    )
-      throw new Error(
-        'To calculate a proportion, all selected numerator values must also be present in the denominator'
-      );
+    throw new Error(
+      'To calculate a proportion, all selected numerator values must also be present in the denominator'
+    );
   }
 
   const aggregationInputs = (
@@ -156,8 +170,8 @@ export function BubbleMarkerConfigurationMenu({
                 aggregator: value,
               })
             }
-            value={configuration.aggregator}
-            buttonDisplayContent={configuration.aggregator}
+            value={aggregator}
+            buttonDisplayContent={aggregator}
             items={aggregatorOptions.map((option) => ({
               value: option,
               display: option,
@@ -198,12 +212,8 @@ export function BubbleMarkerConfigurationMenu({
             }}
           >
             <ValuePicker
-              allowedValues={
-                selectedVariable && 'vocabulary' in selectedVariable
-                  ? selectedVariable.vocabulary
-                  : undefined
-              }
-              selectedValues={configuration.numeratorValues}
+              allowedValues={vocabulary}
+              selectedValues={numeratorValues}
               onSelectedValuesChange={(value) =>
                 onChange({
                   ...configuration,
@@ -220,12 +230,8 @@ export function BubbleMarkerConfigurationMenu({
             style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
           >
             <ValuePicker
-              allowedValues={
-                selectedVariable && 'vocabulary' in selectedVariable
-                  ? selectedVariable.vocabulary
-                  : undefined
-              }
-              selectedValues={configuration.denominatorValues}
+              allowedValues={vocabulary}
+              selectedValues={denominatorValues}
               onSelectedValuesChange={(value) =>
                 onChange({
                   ...configuration,

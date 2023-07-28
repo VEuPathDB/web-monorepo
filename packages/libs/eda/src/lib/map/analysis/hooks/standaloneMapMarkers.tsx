@@ -6,6 +6,7 @@ import DataClient, {
   BubbleOverlayConfig,
   OverlayConfig,
   StandaloneMapBubblesLegendRequestParams,
+  StandaloneMapBubblesLegendResponse,
   StandaloneMapBubblesRequestParams,
   StandaloneMapBubblesResponse,
   StandaloneMapMarkersRequestParams,
@@ -95,6 +96,8 @@ interface MapMarkers {
   //  vocabulary: string[] | undefined;
   /** data for creating a legend */
   legendItems: LegendItemsProps[];
+  bubbleLegendData?: StandaloneMapBubblesLegendResponse;
+  bubbleValueToColorMapper?: (value: number) => string;
   /** is the request pending? */
   pending: boolean;
   /** any error returned from the data request */
@@ -440,28 +443,12 @@ export function useStandaloneMapMarkers(
   ) as NumberRange;
 
   const vocabulary = rawPromise.value?.vocabulary;
+  const bubbleLegendData = rawPromise.value?.bubbleLegendData;
 
-  /**
-   * Merge the overlay data into the basicMarkerData, if available,
-   * and create markers.
-   */
-  const finalMarkersData = useMemo(() => {
-    // const maxOverlayCount =
-    //   markerType === 'bubble'
-    //     ? rawPromise.value?.rawMarkersData
-    //       ? Math.max(
-    //           ...rawPromise.value.rawMarkersData.mapElements.map(
-    //             (mapElement) => mapElement.entityCount
-    //           )
-    //         )
-    //       : 0
-    //     : undefined;
-
-    const bubbleValueToDiameterMapper =
-      markerType === 'bubble' && rawPromise.value?.bubbleLegendData
+  const bubbleValueToDiameterMapper = useMemo(
+    () =>
+      markerType === 'bubble' && bubbleLegendData
         ? (value: number) => {
-            const bubbleLegendData = rawPromise.value!.bubbleLegendData!;
-
             // const largestCircleArea = 9000;
             const largestCircleDiameter = 90;
             const smallestCircleDiameter = 10;
@@ -488,15 +475,36 @@ export function useStandaloneMapMarkers(
             // return 2 * radius;
             return diameter;
           }
-        : undefined;
+        : undefined,
+    [bubbleLegendData, markerType]
+  );
 
-    const bubbleValueToColorMapper =
-      markerType === 'bubble' && rawPromise.value?.bubbleLegendData
+  const bubbleValueToColorMapper = useMemo(
+    () =>
+      markerType === 'bubble' && bubbleLegendData
         ? getValueToGradientColorMapper(
-            rawPromise.value.bubbleLegendData.minColorValue,
-            rawPromise.value.bubbleLegendData.maxColorValue
+            bubbleLegendData.minColorValue,
+            bubbleLegendData.maxColorValue
           )
-        : undefined;
+        : undefined,
+    [bubbleLegendData, markerType]
+  );
+
+  /**
+   * Merge the overlay data into the basicMarkerData, if available,
+   * and create markers.
+   */
+  const finalMarkersData = useMemo(() => {
+    // const maxOverlayCount =
+    //   markerType === 'bubble'
+    //     ? rawPromise.value?.rawMarkersData
+    //       ? Math.max(
+    //           ...rawPromise.value.rawMarkersData.mapElements.map(
+    //             (mapElement) => mapElement.entityCount
+    //           )
+    //         )
+    //       : 0
+    //     : undefined;
 
     return rawPromise.value?.rawMarkersData.mapElements.map(
       ({
@@ -614,10 +622,12 @@ export function useStandaloneMapMarkers(
       }
     );
   }, [
-    rawPromise,
+    rawPromise.value?.rawMarkersData.mapElements,
     vocabulary,
     markerType,
     overlayType,
+    bubbleValueToColorMapper,
+    bubbleValueToDiameterMapper,
     defaultDependentAxisRange,
     dependentAxisLogScale,
   ]);
@@ -664,6 +674,8 @@ export function useStandaloneMapMarkers(
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
+    bubbleLegendData,
+    bubbleValueToColorMapper,
     pending: rawPromise.pending,
     error: rawPromise.error,
   };

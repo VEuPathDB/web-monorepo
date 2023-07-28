@@ -556,6 +556,7 @@ export const BubbleMarkerLegend = () => {
     <div style={{ padding: 15 }}>
       <PlotLegend
         type="bubble"
+        legendMin={0}
         legendMax={maxValue}
         // legendMin={5}
         valueToDiameterMapper={valueToDiameterMapper}
