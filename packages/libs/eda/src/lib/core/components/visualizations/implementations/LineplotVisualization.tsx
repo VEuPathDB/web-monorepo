@@ -1728,41 +1728,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
-  const classes = useInputStyles();
-
-  const aggregationHelp = (
-    <div>
-      <p>
-        “Mean” and “Median” are y-axis aggregation functions that can only be
-        used when continuous variables{' '}
-        <i className="fa fa-bar-chart-o  wdk-Icon"> </i> are selected for the
-        y-axis.
-      </p>
-      <ul>
-        <li>
-          Mean = Sum of values for all data points / Number of all data points
-        </li>
-        <li>
-          Median = The middle number in a sorted list of numbers. The median is
-          a better measure of central tendency than the mean when data are not
-          normally distributed.
-        </li>
-      </ul>
-      <p>
-        “Proportion” is the only y-axis aggregation function that can be used
-        when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
-        selected for the y-axis.
-      </p>
-      <ul>
-        <li>Proportion = Numerator count / Denominator count</li>
-      </ul>
-      <p>
-        The y-axis variable's values that count towards numerator and
-        denominator must be selected in the two drop-downs.
-      </p>
-    </div>
-  );
-
   const aggregationInputs = (
     <AggregationInputs
       {...(vizConfig.valueSpecConfig !== 'Proportion'
@@ -2755,7 +2720,7 @@ type AggregationConfig<F extends string, P extends Array<string>> =
       options: P;
     };
 
-function AggregationInputs<F extends string, P extends Array<string>>(
+export function AggregationInputs<F extends string, P extends Array<string>>(
   props: AggregationConfig<F, P>
 ) {
   const classes = useInputStyles();
@@ -2836,3 +2801,35 @@ function AggregationInputs<F extends string, P extends Array<string>>(
     </div>
   );
 }
+
+export const aggregationHelp = (
+  <div>
+    <p>
+      “Mean” and “Median” are y-axis aggregation functions that can only be used
+      when continuous variables <i className="fa fa-bar-chart-o  wdk-Icon"> </i>{' '}
+      are selected for the y-axis.
+    </p>
+    <ul>
+      <li>
+        Mean = Sum of values for all data points / Number of all data points
+      </li>
+      <li>
+        Median = The middle number in a sorted list of numbers. The median is a
+        better measure of central tendency than the mean when data are not
+        normally distributed.
+      </li>
+    </ul>
+    <p>
+      “Proportion” is the only y-axis aggregation function that can be used when
+      categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
+      selected for the y-axis.
+    </p>
+    <ul>
+      <li>Proportion = Numerator count / Denominator count</li>
+    </ul>
+    <p>
+      The y-axis variable's values that count towards numerator and denominator
+      must be selected in the two drop-downs.
+    </p>
+  </div>
+);

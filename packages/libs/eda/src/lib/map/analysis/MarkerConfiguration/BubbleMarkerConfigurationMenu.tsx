@@ -20,6 +20,10 @@ import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 import { useEffect } from 'react';
 import { BubbleOverlayConfig } from '../../../core';
 import PluginError from '../../../core/components/visualizations/PluginError';
+import {
+  aggregationHelp,
+  AggregationInputs,
+} from '../../../core/components/visualizations/implementations/LineplotVisualization';
 
 // // Display names to internal names
 // const valueSpecLookup = {
@@ -29,6 +33,7 @@ import PluginError from '../../../core/components/visualizations/PluginError';
 //   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
 // } as const;
 
+type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
 
 interface MarkerConfiguration<T extends string> {
@@ -39,7 +44,7 @@ export interface BubbleMarkerConfiguration
   extends MarkerConfiguration<'bubble'>,
     SharedMarkerConfigurations {
   // valueSpecConfig: 'Arithmetic mean' | 'Median' | 'Proportion';
-  aggregator?: typeof aggregatorOptions[number];
+  aggregator?: AggregatorOption;
   numeratorValues?: string[];
   denominatorValues?: string[];
   // selectedVariable: VariableDescriptor;
@@ -144,140 +149,141 @@ export function BubbleMarkerConfigurationMenu({
     denominatorValues
   );
 
+  // const aggregationInputs = (
+  //   <div style={{ display: 'flex', flexDirection: 'column' }}>
+  //     {!categoricalMode ? (
+  //       <div
+  //         style={{
+  //           display: 'flex',
+  //           alignItems: 'center',
+  //         }}
+  //       >
+  //         <Tooltip title={'Required parameter'}>
+  //           <div className={classes.label}>
+  //             Function<sup>*</sup>
+  //           </div>
+  //         </Tooltip>
+  //         <SingleSelect
+  //           onSelect={(value) =>
+  //             onChange({
+  //               ...configuration,
+  //               aggregator: value,
+  //             })
+  //           }
+  //           value={aggregator}
+  //           buttonDisplayContent={aggregator}
+  //           items={aggregatorOptions.map((option) => ({
+  //             value: option,
+  //             display: option,
+  //           }))}
+  //         />
+  //       </div>
+  //     ) : (
+  //       <div style={{ position: 'relative' }}>
+  //         <div
+  //           style={{
+  //             display: 'grid',
+  //             gridTemplateColumns: 'repeat(2, auto)',
+  //             gridTemplateRows: 'repeat(3, auto)',
+  //           }}
+  //         >
+  //           <Tooltip title={'Required parameter'}>
+  //             <div
+  //               className={classes.label}
+  //               style={{
+  //                 gridColumn: 1,
+  //                 gridRow: 2,
+  //                 // color:
+  //                 //   configuration.numeratorValues?.length &&
+  //                 //   configuration.denominatorValues?.length
+  //                 //     ? undefined
+  //                 //     : requiredInputLabelStyle.color,
+  //               }}
+  //             >
+  //               Proportion<sup>*</sup>&nbsp;=
+  //             </div>
+  //           </Tooltip>
+  //           <div
+  //             className={classes.input}
+  //             style={{
+  //               gridColumn: 2,
+  //               gridRow: 1,
+  //               marginBottom: 0,
+  //               justifyContent: 'center',
+  //             }}
+  //           >
+  //             <ValuePicker
+  //               allowedValues={vocabulary}
+  //               selectedValues={numeratorValues}
+  //               onSelectedValuesChange={(value) =>
+  //                 onChange({
+  //                   ...configuration,
+  //                   numeratorValues: value,
+  //                 })
+  //               }
+  //             />
+  //           </div>
+  //           <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
+  //             <hr style={{ marginTop: '0.6em' }} />
+  //           </div>
+  //           <div
+  //             className={classes.input}
+  //             style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
+  //           >
+  //             <ValuePicker
+  //               allowedValues={vocabulary}
+  //               selectedValues={denominatorValues}
+  //               onSelectedValuesChange={(value) =>
+  //                 onChange({
+  //                   ...configuration,
+  //                   denominatorValues: value,
+  //                 })
+  //               }
+  //             />
+  //           </div>
+  //         </div>
+  //         {!proportionIsValid && (
+  //           <div style={{ position: 'absolute', width: '100%' }}>
+  //             <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
+  //           </div>
+  //         )}
+  //       </div>
+  //     )}
+  //   </div>
+  // );
+
+  // need to reintroduce proportion validation
   const aggregationInputs = (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {!categoricalMode ? (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <Tooltip title={'Required parameter'}>
-            <div className={classes.label}>
-              Function<sup>*</sup>
-            </div>
-          </Tooltip>
-          <SingleSelect
-            onSelect={(value) =>
+    <AggregationInputs
+      {...(!categoricalMode
+        ? {
+            aggregationType: 'function',
+            // Superfluous array destructuring is to appease TS
+            options: [...aggregatorOptions],
+            aggregationFunction: aggregator ?? 'mean',
+            onFunctionChange: (value: AggregatorOption) =>
               onChange({
                 ...configuration,
                 aggregator: value,
-              })
-            }
-            value={aggregator}
-            buttonDisplayContent={aggregator}
-            items={aggregatorOptions.map((option) => ({
-              value: option,
-              display: option,
-            }))}
-          />
-        </div>
-      ) : (
-        <div style={{ position: 'relative' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, auto)',
-              gridTemplateRows: 'repeat(3, auto)',
-            }}
-          >
-            <Tooltip title={'Required parameter'}>
-              <div
-                className={classes.label}
-                style={{
-                  gridColumn: 1,
-                  gridRow: 2,
-                  // color:
-                  //   configuration.numeratorValues?.length &&
-                  //   configuration.denominatorValues?.length
-                  //     ? undefined
-                  //     : requiredInputLabelStyle.color,
-                }}
-              >
-                Proportion<sup>*</sup>&nbsp;=
-              </div>
-            </Tooltip>
-            <div
-              className={classes.input}
-              style={{
-                gridColumn: 2,
-                gridRow: 1,
-                marginBottom: 0,
-                justifyContent: 'center',
-              }}
-            >
-              <ValuePicker
-                allowedValues={vocabulary}
-                selectedValues={numeratorValues}
-                onSelectedValuesChange={(value) =>
-                  onChange({
-                    ...configuration,
-                    numeratorValues: value,
-                  })
-                }
-              />
-            </div>
-            <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
-              <hr style={{ marginTop: '0.6em' }} />
-            </div>
-            <div
-              className={classes.input}
-              style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
-            >
-              <ValuePicker
-                allowedValues={vocabulary}
-                selectedValues={denominatorValues}
-                onSelectedValuesChange={(value) =>
-                  onChange({
-                    ...configuration,
-                    denominatorValues: value,
-                  })
-                }
-              />
-            </div>
-          </div>
-          {!proportionIsValid && (
-            <div style={{ position: 'absolute', width: '100%' }}>
-              <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-
-  const aggregationHelp = (
-    <div>
-      <p>
-        “Mean” and “Median” are y-axis aggregation functions that can only be
-        used when continuous variables{' '}
-        <i className="fa fa-bar-chart-o  wdk-Icon"> </i> are selected for the
-        y-axis.
-      </p>
-      <ul>
-        <li>
-          Mean = Sum of values for all data points / Number of all data points
-        </li>
-        <li>
-          Median = The middle number in a sorted list of numbers. The median is
-          a better measure of central tendency than the mean when data are not
-          normally distributed.
-        </li>
-      </ul>
-      <p>
-        “Proportion” is the only y-axis aggregation function that can be used
-        when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
-        selected for the y-axis.
-      </p>
-      <ul>
-        <li>Proportion = Numerator count / Denominator count</li>
-      </ul>
-      <p>
-        The y-axis variable's values that count towards numerator and
-        denominator must be selected in the two drop-downs.
-      </p>
-    </div>
+              }),
+          }
+        : {
+            aggregationType: 'proportion',
+            options: vocabulary ?? [],
+            numeratorValues: numeratorValues ?? [],
+            onNumeratorChange: (value) =>
+              onChange({
+                ...configuration,
+                numeratorValues: value,
+              }),
+            denominatorValues: denominatorValues ?? [],
+            onDenominatorChange: (value) =>
+              onChange({
+                ...configuration,
+                denominatorValues: value,
+              }),
+          })}
+    />
   );
 
   return (
