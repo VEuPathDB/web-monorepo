@@ -1250,7 +1250,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   />
                 </div>
 
-                {(markerType === 'count' || markerType === 'proportion') && (
+                {markerType !== 'bubble' ? (
                   <DraggableLegendPanel
                     panelTitle={overlayVariable?.displayName}
                     zIndex={legendZIndex}
@@ -1264,10 +1264,7 @@ function MapAnalysisImpl(props: ImplProps) {
                       />
                     </div>
                   </DraggableLegendPanel>
-                )}
-
-                {/* Maybe should reintroduce loading placeholder */}
-                {markerType === 'bubble' && (
+                ) : (
                   <>
                     <DraggableLegendPanel
                       panelTitle="Count"
