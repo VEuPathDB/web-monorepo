@@ -18,6 +18,7 @@ import {
   GlyphSeries,
   Annotation,
   AnnotationLineSubject,
+  DataContext,
   AnnotationLabel,
 } from '@visx/xychart';
 import { Group } from '@visx/group';
@@ -28,6 +29,9 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
+import { Polygon } from '@visx/shape';
+import { useContext } from 'react';
+import { PatternLines } from '@visx/visx';
 import Spinner from '../components/Spinner';
 // For screenshotting
 import { ToImgopts } from 'plotly.js';
@@ -36,7 +40,7 @@ import domToImage from 'dom-to-image';
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
-  data: VolcanoPlotData;
+  data: VolcanoPlotData | undefined;
   /**
    * Used to set the fold change thresholds. Will
    * set two thresholds at +/- this number. Affects point colors
@@ -58,6 +62,8 @@ export interface VolcanoPlotProps {
   plotTitle?: string;
   /** marker fill opacity: range from 0 to 1 */
   markerBodyOpacity?: number;
+  /** Truncation bar fill color. If no color provided, truncation bars will be filled with a black and white pattern */
+  truncationBarFill?: string;
   /** container name */
   containerClass?: string;
   /** styling for the plot's container */
@@ -66,7 +72,38 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
 }
 
-const EmptyVolcanoPlotData: VolcanoPlotData = [];
+const EmptyVolcanoPlotData: VolcanoPlotData = [
+  { log2foldChange: '0', pValue: '1' },
+];
+
+interface TruncationRectangleProps {
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+  fill: string;
+}
+
+// MUST be used within a visx DataProvider component because it
+// relies on the DataContext to give plot scales
+function TruncationRectangle(props: TruncationRectangleProps) {
+  const { x1, x2, y1, y2, fill } = props;
+  const { xScale, yScale } = useContext(DataContext);
+
+  return xScale && yScale ? (
+    <Polygon
+      points={[
+        [Number(xScale(x1)), Number(yScale(y1))],
+        [Number(xScale(x2)), Number(yScale(y1))],
+        [Number(xScale(x2)), Number(yScale(y2))],
+        [Number(xScale(x1)), Number(yScale(y2))],
+      ]}
+      fill={fill}
+    />
+  ) : (
+    <></>
+  );
+}
 
 /**
  * The Volcano Plot displays points on a (magnitude change) by (significance) xy axis.
@@ -85,6 +122,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     containerClass = 'web-components-plot',
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     comparisonLabels,
+    truncationBarFill,
     showSpinner = false,
   } = props;
 
@@ -109,10 +147,10 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
    */
 
   // Find maxes and mins of the data itself
-  const dataXMin = min(data.map((d) => Number(d.log2foldChange)));
-  const dataXMax = max(data.map((d) => Number(d.log2foldChange)));
-  const dataYMin = min(data.map((d) => Number(d.pValue)));
-  const dataYMax = max(data.map((d) => Number(d.pValue)));
+  const dataXMin = min(data.map((d) => Number(d.log2foldChange))) ?? 0;
+  const dataXMax = max(data.map((d) => Number(d.log2foldChange))) ?? 0;
+  const dataYMin = min(data.map((d) => Number(d.pValue))) ?? 0;
+  const dataYMax = max(data.map((d) => Number(d.pValue))) ?? 0;
 
   // Determine mins, maxes of axes in the plot.
   // These are different than the data mins/maxes because
@@ -123,7 +161,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   let yAxisMin: number;
   let yAxisMax: number;
   const AXIS_PADDING_FACTOR = 0.05; // The padding ensures we don't clip off part of the glyphs that represent
-  // the most extreme points.
+  // the most extreme points. We could have also used d3.scale.nice but then we dont have precise control of where
+  // the extremes are, which is important for user-defined ranges and truncation bars.
 
   // X axis
   if (independentAxisRange) {
@@ -166,12 +205,21 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
    */
 
   // For the actual volcano plot data
+  // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => {
-      return Number(d?.log2foldChange);
+      const log2foldChange = Number(d?.log2foldChange);
+
+      return log2foldChange <= xAxisMax && log2foldChange >= xAxisMin
+        ? log2foldChange
+        : null;
     },
     yAccessor: (d: VolcanoPlotDataPoint) => {
-      return -Math.log10(Number(d?.pValue));
+      const transformedPValue = -Math.log10(Number(d?.pValue));
+
+      return transformedPValue <= yAxisMax && transformedPValue >= yAxisMin
+        ? transformedPValue
+        : null;
     },
   };
 
@@ -185,6 +233,18 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
       return d?.y;
     },
   };
+
+  // Truncation indicators
+  // If we have truncation indicators, we'll need to expand the plot range just a tad to
+  // ensure the truncation bars appear. The folowing showTruncationBar variables will
+  // be either 0 (do not show bar) or 1 (show bar).
+  const showXMinTruncationBar = Number(dataXMin < xAxisMin);
+  const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
+  const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
+
+  const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
+  const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
+  const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
@@ -203,14 +263,21 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         <XYChart
           xScale={{
             type: 'linear',
-            domain: [xAxisMin, xAxisMax],
-            clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
+            // showTruncationBar vars are 0 or 1, so we only expand the x axis by xTruncationBarWidth when a bar will be drawn
+            domain: [
+              xAxisMin - showXMinTruncationBar * xTruncationBarWidth,
+              xAxisMax + showXMaxTruncationBar * xTruncationBarWidth,
+            ],
+            zero: false,
           }}
           yScale={{
             type: 'linear',
-            domain: [yAxisMin, yAxisMax],
+            // showTruncationBar vars are 0 or 1, so we only expand the y axis by yTruncationBarHeight when a bar will be drawn
+            domain: [
+              yAxisMin - showYMinTruncationBar * yTruncationBarHeight,
+              yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
+            ],
             zero: false,
-            clamp: true, // do not render points that fall outside of the scale domain (outside of the axis range)
           }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
@@ -225,7 +292,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                 <Annotation
                   datum={{
                     x: [xAxisMin, xAxisMax][ind], // Labels go at extremes of x axis
-                    y: yAxisMin,
+                    y: yAxisMin - showYMinTruncationBar * yTruncationBarHeight,
                   }}
                   dx={0}
                   dy={-15}
@@ -290,8 +357,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
 
           {/* The data itself */}
           {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
-          a bunch of glyphs which are <circles> so there should be a way to pass opacity
-          down to those elements, but I haven't found it yet */}
+            a bunch of glyphs which are <circles> so there should be a way to pass opacity
+            down to those elements, but I haven't found it yet */}
           <Group opacity={markerBodyOpacity ?? 1}>
             <GlyphSeries
               dataKey={'data'} // unique key
@@ -308,6 +375,56 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               }}
             />
           </Group>
+
+          {/* Truncation indicators */}
+          {/* Example from https://airbnb.io/visx/docs/pattern */}
+          {!truncationBarFill && (
+            <PatternLines
+              id="lines"
+              height={5}
+              width={5}
+              stroke={'black'}
+              strokeWidth={1}
+              orientation={['diagonal']}
+              background="#FFF"
+            />
+          )}
+          {showXMinTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMin - xTruncationBarWidth}
+              x2={xAxisMin}
+              y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
+              y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+          {showXMaxTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMax}
+              x2={xAxisMax + xTruncationBarWidth}
+              y1={yAxisMin - showYMinTruncationBar * yTruncationBarHeight}
+              y2={yAxisMax + showYMaxTruncationBar * yTruncationBarHeight}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+          {showYMaxTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
+              x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
+              y1={yAxisMax}
+              y2={yAxisMax + yTruncationBarHeight}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
+          {showYMinTruncationBar && (
+            <TruncationRectangle
+              x1={xAxisMin - showXMinTruncationBar * xTruncationBarWidth}
+              x2={xAxisMax + showXMaxTruncationBar * xTruncationBarWidth}
+              y1={yAxisMin - yTruncationBarHeight}
+              y2={yAxisMin}
+              fill={truncationBarFill ?? "url('#lines')"}
+            />
+          )}
         </XYChart>
         {showSpinner && <Spinner />}
       </div>

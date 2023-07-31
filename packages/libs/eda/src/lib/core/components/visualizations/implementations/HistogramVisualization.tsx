@@ -43,7 +43,12 @@ import {
   useStudyEntities,
 } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { DateVariable, NumberVariable, Variable } from '../../../types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StudyEntity,
+  Variable,
+} from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -117,6 +122,7 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -346,17 +352,21 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
-    const { entity, variable } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+  const { xAxisVariable, valueType } = useMemo(() => {
+    const { variable } = findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
     const valueType: 'number' | 'date' =
       variable?.type === 'date' ? 'date' : 'number';
     return {
-      outputEntity: entity,
       xAxisVariable: variable,
       valueType,
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
+
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable'
+  );
 
   const getOverlayVariable = options?.getOverlayVariable;
 
@@ -483,6 +493,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         valueType,
         dataRequestConfig,
         xAxisVariable,
+        outputEntity,
         options?.getRequestParams
       );
       const response = await dataClient.getHistogram(
@@ -1389,6 +1400,7 @@ function getRequestParams(
   valueType: 'number' | 'date',
   config: DataRequestConfig,
   variable: Variable,
+  outputEntity: StudyEntity,
   customMakeRequestParams?: (
     props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
   ) => HistogramRequestParams
@@ -1437,7 +1449,7 @@ function getRequestParams(
       studyId,
       filters,
       vizConfig: config,
-      outputEntityId: xAxisVariable!.entityId,
+      outputEntityId: outputEntity.id,
       binSpec,
       valueSpec,
       viewport,
@@ -1446,7 +1458,7 @@ function getRequestParams(
       studyId,
       filters,
       config: {
-        outputEntityId: xAxisVariable!.entityId,
+        outputEntityId: outputEntity.id,
         xAxisVariable,
         barMode: 'stack',
         overlayVariable: overlayVariable,
