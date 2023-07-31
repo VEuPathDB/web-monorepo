@@ -18,6 +18,7 @@ import { FloatingButton, H6 } from '@veupathdb/coreui';
 import { SwapHorizOutlined } from '@material-ui/icons';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Tooltip } from '@material-ui/core';
 
 const cx = makeClassNameHelper('StepOneConfigurationContainer');
 
@@ -265,77 +266,87 @@ export function DifferentialAbundanceConfiguration(
                 }}
               />
             </div>
-            <div
-              className={cx(
-                '-InputContainer',
-                disableGroupValueSelectors && 'disabled'
-              )}
+            <Tooltip
               title={
                 disableGroupValueSelectors
                   ? 'Please select a Group Comparison variable first'
                   : ''
               }
             >
-              <span>Group A</span>
-              <ValuePicker
-                allowedValues={selectedComparatorVariable?.variable.vocabulary}
-                selectedValues={configuration?.comparator?.groupA}
-                disabledValues={configuration?.comparator?.groupB}
-                onSelectedValuesChange={(newValues) =>
-                  changeConfigHandler('comparator', {
-                    variable: configuration?.comparator?.variable ?? undefined,
-                    groupA: newValues.length ? newValues : undefined,
-                    groupB: configuration?.comparator?.groupB ?? undefined,
-                  })
-                }
-                disabledCheckboxTooltipContent="Values cannot overlap between groups"
-                showClearSelectionButton={false}
-                disableInput={disableGroupValueSelectors}
-              />
-              <FloatingButton
-                icon={SwapHorizOutlined}
-                text=""
-                onPress={() =>
-                  changeConfigHandler('comparator', {
-                    variable: configuration?.comparator?.variable ?? undefined,
-                    groupA: configuration?.comparator?.groupB ?? undefined,
-                    groupB: configuration?.comparator?.groupA ?? undefined,
-                  })
-                }
-                styleOverrides={{
-                  container: {
-                    padding: 0,
-                    margin: '0 5px',
-                  },
-                }}
-                disabled={
-                  disableGroupValueSelectors || disableSwapGroupValuesButton
-                }
-                /**
-                 * For some reason the tooltip content renders when the parent container is in the disabled state.
-                 * To prevent such ghastly behavior, let's not pass in the tooltip prop when the parent is disabled.
-                 */
-                {...(!disableGroupValueSelectors
-                  ? { tooltip: 'Swap Group A and Group B values' }
-                  : {})}
-              />
-              <span>Group B</span>
-              <ValuePicker
-                allowedValues={selectedComparatorVariable?.variable.vocabulary}
-                selectedValues={configuration?.comparator?.groupB}
-                disabledValues={configuration?.comparator?.groupA}
-                onSelectedValuesChange={(newValues) =>
-                  changeConfigHandler('comparator', {
-                    variable: configuration?.comparator?.variable ?? undefined,
-                    groupA: configuration?.comparator?.groupA ?? undefined,
-                    groupB: newValues.length ? newValues : undefined,
-                  })
-                }
-                disabledCheckboxTooltipContent="Values cannot overlap between groups"
-                showClearSelectionButton={false}
-                disableInput={disableGroupValueSelectors}
-              />
-            </div>
+              <div
+                className={cx(
+                  '-InputContainer',
+                  disableGroupValueSelectors && 'disabled'
+                )}
+              >
+                <span>Group A</span>
+                <ValuePicker
+                  allowedValues={
+                    selectedComparatorVariable?.variable.vocabulary
+                  }
+                  selectedValues={configuration?.comparator?.groupA}
+                  disabledValues={configuration?.comparator?.groupB}
+                  onSelectedValuesChange={(newValues) =>
+                    changeConfigHandler('comparator', {
+                      variable:
+                        configuration?.comparator?.variable ?? undefined,
+                      groupA: newValues.length ? newValues : undefined,
+                      groupB: configuration?.comparator?.groupB ?? undefined,
+                    })
+                  }
+                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  showClearSelectionButton={false}
+                  disableInput={disableGroupValueSelectors}
+                />
+                <FloatingButton
+                  icon={SwapHorizOutlined}
+                  text=""
+                  onPress={() =>
+                    changeConfigHandler('comparator', {
+                      variable:
+                        configuration?.comparator?.variable ?? undefined,
+                      groupA: configuration?.comparator?.groupB ?? undefined,
+                      groupB: configuration?.comparator?.groupA ?? undefined,
+                    })
+                  }
+                  styleOverrides={{
+                    container: {
+                      padding: 0,
+                      margin: '0 5px',
+                    },
+                  }}
+                  disabled={
+                    disableGroupValueSelectors || disableSwapGroupValuesButton
+                  }
+                  /**
+                   * For some reason the tooltip content renders when the parent container is in the disabled state.
+                   * To prevent such ghastly behavior, let's not pass in the tooltip prop when the parent is disabled.
+                   */
+                  {...(!disableGroupValueSelectors
+                    ? { tooltip: 'Swap Group A and Group B values' }
+                    : {})}
+                />
+                <span>Group B</span>
+                <ValuePicker
+                  allowedValues={
+                    selectedComparatorVariable?.variable.vocabulary
+                  }
+                  selectedValues={configuration?.comparator?.groupB}
+                  disabledValues={configuration?.comparator?.groupA}
+                  onSelectedValuesChange={(newValues) =>
+                    changeConfigHandler('comparator', {
+                      variable:
+                        configuration?.comparator?.variable ?? undefined,
+                      groupA: configuration?.comparator?.groupA ?? undefined,
+                      groupB: newValues.length ? newValues : undefined,
+                    })
+                  }
+                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  showClearSelectionButton={false}
+                  disableInput={disableGroupValueSelectors}
+                />
+              </div>
+            </Tooltip>
           </div>
         </div>
       </div>
