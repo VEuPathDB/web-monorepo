@@ -83,7 +83,7 @@ const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
 };
 
 interface TemplateProps {
-  data: VEuPathDBVolcanoPlotData;
+  data: VEuPathDBVolcanoPlotData | undefined;
   markerBodyOpacity: number;
   log2FoldChangeThreshold: number;
   significanceThreshold: number;
@@ -98,13 +98,13 @@ interface TemplateProps {
 const Template: Story<TemplateProps> = (args) => {
   // Process input data. Take the object of arrays and turn it into
   // an array of data points. Note the backend will do this for us!
-  const volcanoDataPoints: VolcanoPlotData =
-    args.data.volcanoplot.log2foldChange.map((l2fc, index) => {
+  const volcanoDataPoints: VolcanoPlotData | undefined =
+    args.data?.volcanoplot.log2foldChange.map((l2fc, index) => {
       return {
         log2foldChange: l2fc,
-        pValue: args.data.volcanoplot.pValue[index],
-        adjustedPValue: args.data.volcanoplot.adjustedPValue[index],
-        pointID: args.data.volcanoplot.pointID[index],
+        pValue: args.data?.volcanoplot.pValue[index],
+        adjustedPValue: args.data?.volcanoplot.adjustedPValue[index],
+        pointID: args.data?.volcanoplot.pointID[index],
       };
     });
 
@@ -179,4 +179,15 @@ Spinner.args = {
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
   showSpinner: true,
+};
+
+// Test empty placeholder viz
+export const Empty = Template.bind({});
+Empty.args = {
+  data: undefined,
+  markerBodyOpacity: 0,
+  log2FoldChangeThreshold: 2,
+  significanceThreshold: 0.05,
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
 };
