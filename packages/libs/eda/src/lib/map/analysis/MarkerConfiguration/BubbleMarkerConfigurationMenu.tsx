@@ -143,147 +143,51 @@ export function BubbleMarkerConfigurationMenu({
       ? selectedVariable.vocabulary
       : undefined;
 
-  const classes = useInputStyles();
   const proportionIsValid = validateProportionValues(
     numeratorValues,
     denominatorValues
   );
 
-  // const aggregationInputs = (
-  //   <div style={{ display: 'flex', flexDirection: 'column' }}>
-  //     {!categoricalMode ? (
-  //       <div
-  //         style={{
-  //           display: 'flex',
-  //           alignItems: 'center',
-  //         }}
-  //       >
-  //         <Tooltip title={'Required parameter'}>
-  //           <div className={classes.label}>
-  //             Function<sup>*</sup>
-  //           </div>
-  //         </Tooltip>
-  //         <SingleSelect
-  //           onSelect={(value) =>
-  //             onChange({
-  //               ...configuration,
-  //               aggregator: value,
-  //             })
-  //           }
-  //           value={aggregator}
-  //           buttonDisplayContent={aggregator}
-  //           items={aggregatorOptions.map((option) => ({
-  //             value: option,
-  //             display: option,
-  //           }))}
-  //         />
-  //       </div>
-  //     ) : (
-  //       <div style={{ position: 'relative' }}>
-  //         <div
-  //           style={{
-  //             display: 'grid',
-  //             gridTemplateColumns: 'repeat(2, auto)',
-  //             gridTemplateRows: 'repeat(3, auto)',
-  //           }}
-  //         >
-  //           <Tooltip title={'Required parameter'}>
-  //             <div
-  //               className={classes.label}
-  //               style={{
-  //                 gridColumn: 1,
-  //                 gridRow: 2,
-  //                 // color:
-  //                 //   configuration.numeratorValues?.length &&
-  //                 //   configuration.denominatorValues?.length
-  //                 //     ? undefined
-  //                 //     : requiredInputLabelStyle.color,
-  //               }}
-  //             >
-  //               Proportion<sup>*</sup>&nbsp;=
-  //             </div>
-  //           </Tooltip>
-  //           <div
-  //             className={classes.input}
-  //             style={{
-  //               gridColumn: 2,
-  //               gridRow: 1,
-  //               marginBottom: 0,
-  //               justifyContent: 'center',
-  //             }}
-  //           >
-  //             <ValuePicker
-  //               allowedValues={vocabulary}
-  //               selectedValues={numeratorValues}
-  //               onSelectedValuesChange={(value) =>
-  //                 onChange({
-  //                   ...configuration,
-  //                   numeratorValues: value,
-  //                 })
-  //               }
-  //             />
-  //           </div>
-  //           <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
-  //             <hr style={{ marginTop: '0.6em' }} />
-  //           </div>
-  //           <div
-  //             className={classes.input}
-  //             style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
-  //           >
-  //             <ValuePicker
-  //               allowedValues={vocabulary}
-  //               selectedValues={denominatorValues}
-  //               onSelectedValuesChange={(value) =>
-  //                 onChange({
-  //                   ...configuration,
-  //                   denominatorValues: value,
-  //                 })
-  //               }
-  //             />
-  //           </div>
-  //         </div>
-  //         {!proportionIsValid && (
-  //           <div style={{ position: 'absolute', width: '100%' }}>
-  //             <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
-  //           </div>
-  //         )}
-  //       </div>
-  //     )}
-  //   </div>
-  // );
-
-  // need to reintroduce proportion validation
   const aggregationInputs = (
-    <AggregationInputs
-      {...(!categoricalMode
-        ? {
-            aggregationType: 'function',
-            // Superfluous array destructuring is to appease TS
-            options: [...aggregatorOptions],
-            aggregationFunction: aggregator ?? 'mean',
-            onFunctionChange: (value: AggregatorOption) =>
-              onChange({
-                ...configuration,
-                aggregator: value,
-              }),
-          }
-        : {
-            aggregationType: 'proportion',
-            options: vocabulary ?? [],
-            numeratorValues: numeratorValues ?? [],
-            onNumeratorChange: (value) =>
-              onChange({
-                ...configuration,
-                numeratorValues: value,
-              }),
-            denominatorValues: denominatorValues ?? [],
-            onDenominatorChange: (value) =>
-              onChange({
-                ...configuration,
-                denominatorValues: value,
-              }),
-          })}
-    />
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <AggregationInputs
+        {...(!categoricalMode
+          ? {
+              aggregationType: 'function',
+              // Superfluous array destructuring is to appease TS
+              options: [...aggregatorOptions],
+              aggregationFunction: aggregator ?? 'mean',
+              onFunctionChange: (value: AggregatorOption) =>
+                onChange({
+                  ...configuration,
+                  aggregator: value,
+                }),
+            }
+          : {
+              aggregationType: 'proportion',
+              options: vocabulary ?? [],
+              numeratorValues: numeratorValues ?? [],
+              onNumeratorChange: (value) =>
+                onChange({
+                  ...configuration,
+                  numeratorValues: value,
+                }),
+              denominatorValues: denominatorValues ?? [],
+              onDenominatorChange: (value) =>
+                onChange({
+                  ...configuration,
+                  denominatorValues: value,
+                }),
+            })}
+      />
+      {!proportionIsValid && (
+        <div style={{ position: 'relative' }}>
+          <div style={{ position: 'absolute', width: '100%' }}>
+            <PluginError error="To calculate a proportion, all selected numerator values must also be present in the denominator" />
+          </div>
+        </div>
+      )}
+    </div>
   );
 
   return (
