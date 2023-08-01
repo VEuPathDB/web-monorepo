@@ -4,7 +4,6 @@ import ScatterPlot, {
 } from '@veupathdb/components/lib/plots/ScatterPlot';
 
 import * as t from 'io-ts';
-import { scaleLinear } from 'd3-scale';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
@@ -84,8 +83,6 @@ import { gray } from '../colors';
 import {
   ColorPaletteDefault,
   ColorPaletteDark,
-  gradientSequentialColorscaleMap,
-  gradientDivergingColorscaleMap,
   SequentialGradientColorscale,
   getValueToGradientColorMapper,
 } from '@veupathdb/components/lib/types/plots/addOns';
@@ -2411,7 +2408,6 @@ function processInputData<T extends number | string>(
             Number.isNaN(element)
           )
         ) {
-          // here
           markerColorsGradient = seriesGradientColorscale.map((a: number) =>
             overlayValueToColorMapper(a)
           );

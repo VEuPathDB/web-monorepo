@@ -558,11 +558,7 @@ export const BubbleMarkerLegend = () => {
         type="bubble"
         legendMin={0}
         legendMax={maxValue}
-        // legendMin={5}
         valueToDiameterMapper={valueToDiameterMapper}
-        // pass legend title
-        // nTicks={5}
-        // showMissingness
       />
     </div>
   );

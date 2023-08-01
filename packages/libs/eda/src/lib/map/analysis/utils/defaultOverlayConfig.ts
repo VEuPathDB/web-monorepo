@@ -11,7 +11,7 @@ import {
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
-import { MarkerConfiguration } from '../appState';
+import { BinningMethod, MarkerConfiguration } from '../appState';
 import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 
 // This async function fetches the default overlay config.
@@ -29,7 +29,7 @@ export interface DefaultOverlayConfigProps {
   dataClient: DataClient;
   subsettingClient: SubsettingClient;
   markerType?: MarkerConfiguration['type'];
-  binningMethod?: MarkerConfiguration['binningMethod'];
+  binningMethod?: BinningMethod;
   aggregator?: BubbleMarkerConfiguration['aggregator'];
   numeratorValues?: BubbleMarkerConfiguration['numeratorValues'];
   denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
@@ -57,8 +57,6 @@ export async function getDefaultOverlayConfig(
       variableId: overlayVariable.id,
       entityId: overlayEntity.id,
     };
-
-    console.log({ denominatorValues, vocab: overlayVariable.vocabulary });
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
@@ -88,6 +86,7 @@ export async function getDefaultOverlayConfig(
         };
       }
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
+      // continuous
       if (markerType === 'bubble') {
         return {
           overlayVariable: overlayVariableDescriptor,
@@ -97,7 +96,6 @@ export async function getDefaultOverlayConfig(
           },
         };
       } else {
-        // continuous
         const overlayBins = await getBinRanges({
           studyId,
           ...overlayVariableDescriptor,
@@ -161,7 +159,7 @@ type GetBinRangesProps = {
   entityId: string;
   dataClient: DataClient;
   filters: Filter[];
-  binningMethod: MarkerConfiguration['binningMethod'];
+  binningMethod: BinningMethod;
 };
 
 // get the equal spaced bin definitions (for now at least)

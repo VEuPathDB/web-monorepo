@@ -16,7 +16,7 @@ import { Filter } from '../../../core/types/filter';
 import { useDataClient } from '../../../core/hooks/workspace';
 import { NumberRange } from '../../../core/types/general';
 import { useDefaultAxisRange } from '../../../core/hooks/computeDefaultAxisRange';
-import { isEqual, max, some } from 'lodash';
+import { isEqual, some } from 'lodash';
 import {
   ColorPaletteDefault,
   getValueToGradientColorMapper,
@@ -188,18 +188,6 @@ export function useStandaloneMapMarkers(
         };
       }
     | undefined
-    // const overlayType = overlayConfig?.overlayType;
-    // const vocabulary =
-    //   overlayConfig && 'overlayValues' in overlayConfig
-    //     ? overlayType === 'categorical' // switch statement style guide time!!
-    //       ? overlayConfig.overlayValues
-    //       : overlayType === 'continuous'
-    //       ? overlayConfig.overlayValues.map((ov) => ov.binLabel)
-    //       : undefined
-    //     : undefined;
-
-    // const rawMarkersData = usePromise<
-    //   StandaloneMapMarkersResponse | StandaloneMapBubblesResponse | undefined
   >(
     useCallback(async () => {
       // check all required vizConfigs are provided
@@ -235,39 +223,6 @@ export function useStandaloneMapMarkers(
           }
         : GLOBAL_VIEWPORT;
 
-      // // now prepare the rest of the request params
-      // const requestParams: StandaloneMapMarkersRequestParams = {
-      //   studyId,
-      //   filters: filters || [],
-      //   config: {
-      //     geoAggregateVariable,
-      //     latitudeVariable,
-      //     longitudeVariable,
-      //     overlayConfig,
-      //     outputEntityId,
-      //     valueSpec:
-      //       markerType === 'pie' || markerType === 'bubble'
-      //         ? 'count'
-      //         : markerType,
-      //     viewport,
-      //   },
-      // };
-
-      // // now get and return the data
-      // return {
-      //   rawMarkersData: await dataClient.getStandaloneMapMarkers(
-      //     'standalone-map',
-      //     requestParams
-      //   ),
-      //   vocabulary:
-      //     overlayType === 'categorical' // switch statement style guide time!!
-      //       ? overlayConfig?.overlayValues
-      //       : overlayType === 'continuous'
-      //       ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
-      //       : undefined,
-      // };
-      console.log({ markerType });
-
       if (markerType === 'bubble') {
         const bubbleOverlayConfig = overlayConfig as
           | BubbleOverlayConfig
@@ -300,7 +255,6 @@ export function useStandaloneMapMarkers(
             longitudeVariable,
             overlayConfig: bubbleOverlayConfig,
             outputEntityId,
-            // is valueSpec always count?
             valueSpec: 'count',
             viewport,
           },
@@ -338,17 +292,9 @@ export function useStandaloneMapMarkers(
           ),
         ]);
 
-        console.log({ rawMarkersData, bubbleLegendData });
-
         return {
           rawMarkersData,
           bubbleLegendData,
-          // vocabulary:
-          //   overlayType === 'categorical' // switch statement style guide time!!
-          //     ? overlayConfig?.overlayValues
-          //     : overlayType === 'continuous'
-          //     ? overlayConfig?.overlayValues.map((ov) => ov.binLabel)
-          //     : undefined,
           vocabulary: undefined,
         };
       } else {
@@ -411,8 +357,6 @@ export function useStandaloneMapMarkers(
         return acc + curr.entityCount;
       }, 0)
     : undefined;
-
-  console.log({ rawPromise });
 
   // calculate minPos, max and sum for chart marker dependent axis
   // assumes the value is a count! (so never negative)
@@ -477,7 +421,6 @@ export function useStandaloneMapMarkers(
               (bubbleLegendData.maxSizeValue - bubbleLegendData.minSizeValue);
             const b =
               smallestCircleDiameter - m * bubbleLegendData.minSizeValue;
-            // const scalingFactor = largestCircleDiameter / maxOverlayCount;
             const diameter = m * value + b;
 
             // return 2 * radius;
@@ -503,17 +446,6 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
-    // const maxOverlayCount =
-    //   markerType === 'bubble'
-    //     ? rawPromise.value?.rawMarkersData
-    //       ? Math.max(
-    //           ...rawPromise.value.rawMarkersData.mapElements.map(
-    //             (mapElement) => mapElement.entityCount
-    //           )
-    //         )
-    //       : 0
-    //     : undefined;
-
     return rawPromise.value?.rawMarkersData.mapElements.map(
       ({
         geoAggregateValue,

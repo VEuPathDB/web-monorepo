@@ -6,10 +6,7 @@ import _ from 'lodash';
 export interface PlotLegendBubbleProps {
   legendMin: number;
   legendMax: number;
-  //   legendMin: number;
   valueToDiameterMapper: ((value: number) => number) | undefined;
-  //   nTicks?: number;
-  //   showMissingness?: boolean;
 }
 
 // legend ellipsis function for legend title and legend items (from custom legend work)
@@ -19,15 +16,11 @@ export interface PlotLegendBubbleProps {
 //     : label;
 // };
 
-// make gradient colorscale legend into a component so it can be more easily incorporated into DK's custom legend if we need
 export default function PlotBubbleLegend({
   legendMin,
   legendMax,
-  //   legendMin,
   valueToDiameterMapper,
-}: //   nTicks = 5,
-//   showMissingness,
-PlotLegendBubbleProps) {
+}: PlotLegendBubbleProps) {
   if (valueToDiameterMapper) {
     // Declare constants
     const tickFontSize = '0.8em';
@@ -35,12 +28,6 @@ PlotLegendBubbleProps) {
     const circleStrokeWidth = 3;
     const padding = 5;
     const numCircles = 3;
-
-    // the value of the largest circle in the legend will be the smallest power of 10 that's larger than legendMax
-    // const largestCircleValue = Math.pow(10, Math.ceil(Math.log10(legendMax)));
-    // const circleValues = range(numCircles).map(
-    //   (i) => largestCircleValue / Math.pow(10, i)
-    // );
 
     const legendMaxLog10 = Math.floor(Math.log10(legendMax));
     const largestCircleValue =

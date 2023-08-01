@@ -5,7 +5,7 @@
 import { CSSProperties } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
 import { scaleLinear } from 'd3-scale';
-import { interpolateLab, extent, range } from 'd3';
+import { interpolateLab, range } from 'd3';
 import { rgb, lab } from 'd3-color';
 
 /** PlotProps addons */
@@ -267,8 +267,7 @@ export const getValueToGradientColorMapper = (
     // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
     const maxAbsOverlay =
       Math.abs(minValue) > maxValue ? Math.abs(minValue) : maxValue;
-    // For each point, normalize the data to [-1, 1], then retrieve the
-    // corresponding color
+    // For each point, normalize the data to [-1, 1]
     normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
   } else {
     normalize.domain([minValue, maxValue]);
@@ -279,8 +278,7 @@ export const getValueToGradientColorMapper = (
       normalize.range([1, 0]);
     } else {
       // Then we use the sequential (from 0 to inf) colorscale.
-      // For each point, normalize the data to [0, 1], then retrieve the
-      // corresponding color
+      // For each point, normalize the data to [0, 1]
       normalize.range([0, 1]);
     }
   }

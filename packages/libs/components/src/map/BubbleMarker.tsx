@@ -2,12 +2,7 @@
 import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
-import {
-  MarkerScaleAddon,
-  MarkerScaleDefault,
-  ContainerStylesAddon,
-} from '../types/plots';
-import { NumberRange } from '../types/general';
+import { ContainerStylesAddon } from '../types/plots';
 
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
@@ -24,8 +19,6 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
  * this is a SVG bubble marker icon
  */
 export default function BubbleMarker(props: BubbleMarkerProps) {
-  console.log({ props });
-
   const { html: svgHTML, diameter: size } = bubbleMarkerSVGIcon(props);
 
   // set icon as divIcon
@@ -87,7 +80,6 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
   diameter: number;
 } {
   // const scale = props.markerScale ?? MarkerScaleDefault;
-  // console.log({ dependentAxisRange: props.dependentAxisRange });
   const diameter = props.data.diameter;
   const radius = diameter / 2;
   // set outer white circle size to describe white boundary

@@ -18,13 +18,27 @@ const MarkerType = t.keyof({
   bubble: null,
 });
 
-// // Display names to internal names
-// export const valueSpecLookup = {
-//   'Arithmetic mean': 'mean',
-//   Median: 'median',
-//   // 'Geometric mean': 'geometricMean',
-//   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
-// } as const;
+// user-specified selection
+export type SelectedValues = t.TypeOf<typeof SelectedValues>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedValues = t.union([t.array(t.string), t.undefined]);
+
+export type BinningMethod = t.TypeOf<typeof BinningMethod>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const BinningMethod = t.union([
+  t.literal('equalInterval'),
+  t.literal('quantile'),
+  t.literal('standardDeviation'),
+  t.undefined,
+]);
+
+export type SelectedCountsOption = t.TypeOf<typeof SelectedCountsOption>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedCountsOption = t.union([
+  t.literal('filtered'),
+  t.literal('visible'),
+  t.undefined,
+]);
 
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -36,56 +50,21 @@ export const MarkerConfiguration = t.intersection([
   t.union([
     t.type({
       type: t.literal('barplot'),
-      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+      selectedValues: SelectedValues,
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
-      binningMethod: t.union([
-        t.literal('equalInterval'),
-        t.literal('quantile'),
-        t.literal('standardDeviation'),
-        t.undefined,
-      ]),
+      binningMethod: BinningMethod,
       dependentAxisLogScale: t.boolean,
-      selectedCountsOption: t.union([
-        t.literal('filtered'),
-        t.literal('visible'),
-        t.undefined,
-      ]),
+      selectedCountsOption: SelectedCountsOption,
     }),
     t.type({
       type: t.literal('pie'),
-      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
-      binningMethod: t.union([
-        t.literal('equalInterval'),
-        t.literal('quantile'),
-        t.literal('standardDeviation'),
-        t.undefined,
-      ]),
-      selectedCountsOption: t.union([
-        t.literal('filtered'),
-        t.literal('visible'),
-        t.undefined,
-      ]),
+      selectedValues: SelectedValues,
+      binningMethod: BinningMethod,
+      selectedCountsOption: SelectedCountsOption,
     }),
-    // here
     t.intersection([
       t.type({
         type: t.literal('bubble'),
-        // not needed for bubbles?
-        selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
-        // not needed for bubbles
-        binningMethod: t.union([
-          t.literal('equalInterval'),
-          t.literal('quantile'),
-          t.literal('standardDeviation'),
-          t.undefined,
-        ]),
-        // valueSpecConfig: t.literal('count'),
-        // not needed for bubbles?
-        selectedCountsOption: t.union([
-          t.literal('filtered'),
-          t.literal('visible'),
-          t.undefined,
-        ]),
       }),
       t.partial({
         aggregator: t.union([t.literal('mean'), t.literal('median')]),
@@ -171,13 +150,9 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
         {
           type: 'bubble',
           selectedVariable: defaultVariable,
-          selectedValues: undefined,
-          binningMethod: undefined,
-          // valueSpecConfig: 'Arithmetic mean',
           aggregator: 'mean',
           numeratorValues: undefined,
           denominatorValues: undefined,
-          selectedCountsOption: 'filtered',
         },
       ],
     }),

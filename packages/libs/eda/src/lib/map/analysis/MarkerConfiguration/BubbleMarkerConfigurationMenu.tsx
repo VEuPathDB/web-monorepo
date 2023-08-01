@@ -1,37 +1,18 @@
-import { keys } from 'lodash';
 import {
   InputVariables,
   Props as InputVariablesProps,
 } from '../../../core/components/visualizations/InputVariables';
-import { useInputStyles } from '../../../core/components/visualizations/inputStyles';
-import { useFindEntityAndVariable } from '../../../core/hooks/workspace';
-import { Variable, VariableTreeNode } from '../../../core/types/study';
-import { VariableDescriptor } from '../../../core/types/variable';
+import { VariableTreeNode } from '../../../core/types/study';
 import { VariablesByInputName } from '../../../core/utils/data-element-constraints';
-import {
-  EntityAndVariable,
-  findEntityAndVariable,
-} from '../../../core/utils/study-metadata';
+import { findEntityAndVariable } from '../../../core/utils/study-metadata';
 import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
-import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
-import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { ValuePicker } from '../../../core/components/visualizations/implementations/ValuePicker';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
-import { useEffect } from 'react';
 import { BubbleOverlayConfig } from '../../../core';
 import PluginError from '../../../core/components/visualizations/PluginError';
 import {
   aggregationHelp,
   AggregationInputs,
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
-
-// // Display names to internal names
-// const valueSpecLookup = {
-//   'Arithmetic mean': 'mean',
-//   Median: 'median',
-//   // 'Geometric mean': 'geometricMean',
-//   Proportion: 'proportion', // used to be 'Ratio or proportion' hence the lookup rather than simple lowercasing
-// } as const;
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -43,12 +24,9 @@ interface MarkerConfiguration<T extends string> {
 export interface BubbleMarkerConfiguration
   extends MarkerConfiguration<'bubble'>,
     SharedMarkerConfigurations {
-  // valueSpecConfig: 'Arithmetic mean' | 'Median' | 'Proportion';
   aggregator?: AggregatorOption;
   numeratorValues?: string[];
   denominatorValues?: string[];
-  // selectedVariable: VariableDescriptor;
-  // selectedValues: string[] | undefined;
 }
 interface Props
   extends Omit<
@@ -60,7 +38,6 @@ interface Props
   overlayConfiguration: BubbleOverlayConfig | undefined;
 }
 
-// Currently identical to pie marker configuration menu
 export function BubbleMarkerConfigurationMenu({
   entities,
   configuration,
@@ -70,16 +47,6 @@ export function BubbleMarkerConfigurationMenu({
   toggleStarredVariable,
   constraints,
 }: Props) {
-  // const getValueSpec = (
-  //   variable?: VariableTreeNode
-  // ): keyof typeof valueSpecLookup => {
-  //   return isSuitableCategoricalVariable(variable)
-  //     ? 'Proportion'
-  //     : configuration.valueSpecConfig === 'Proportion'
-  //     ? 'Arithmetic mean'
-  //     : configuration.valueSpecConfig;
-  // };
-
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
       console.error(
@@ -88,20 +55,11 @@ export function BubbleMarkerConfigurationMenu({
       return;
     }
 
-    // const selectedVariable = findEntityAndVariable(
-    //   entities,
-    //   selection.overlayVariable
-    // )?.variable;
-
-    // const valueSpec = getValueSpec(selectedVariable);
-
     onChange({
       ...configuration,
       selectedVariable: selection.overlayVariable,
       numeratorValues: undefined,
       denominatorValues: undefined,
-      // selectedValues: undefined,
-      // valueSpecConfig: valueSpec,
     });
   }
 
@@ -109,19 +67,6 @@ export function BubbleMarkerConfigurationMenu({
     entities,
     configuration.selectedVariable
   )?.variable;
-
-  // useEffect(() => {
-  //   // The first time the component is rendered, check that the valueSpec is
-  //   // correct for the given variable. If not, update it.
-  //   const valueSpec = getValueSpec(selectedVariable);
-
-  //   if (configuration.valueSpecConfig !== valueSpec) {
-  //     onChange({
-  //       ...configuration,
-  //       valueSpecConfig: valueSpec,
-  //     });
-  //   }
-  // }, []);
 
   const categoricalMode = isSuitableCategoricalVariable(selectedVariable);
 

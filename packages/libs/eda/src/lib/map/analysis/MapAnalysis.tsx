@@ -95,9 +95,7 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
 import BubbleMarkerComponent, {
   BubbleMarkerProps,
-  BubbleMarkerStandalone,
 } from '@veupathdb/components/lib/map/BubbleMarker';
-import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import DonutMarkerComponent, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -110,7 +108,6 @@ import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/Categori
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
 import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
-import _ from 'lodash';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -352,7 +349,9 @@ function MapAnalysisImpl(props: ImplProps) {
       if (
         !overlayVariable ||
         !CategoricalVariableDataShape.is(overlayVariable.dataShape) ||
-        activeMarkerConfiguration?.selectedCountsOption !== 'visible'
+        (activeMarkerConfiguration &&
+          'selectedCountsOption' in activeMarkerConfiguration &&
+          activeMarkerConfiguration.selectedCountsOption !== 'visible')
       )
         return;
 
@@ -364,25 +363,26 @@ function MapAnalysisImpl(props: ImplProps) {
         filters: filtersIncludingViewport,
       });
     }, [
-      overlayEntity,
       overlayVariable,
+      activeMarkerConfiguration,
+      overlayEntity,
       subsettingClient,
       studyId,
       filtersIncludingViewport,
-      activeMarkerConfiguration?.selectedCountsOption,
     ])
   );
 
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
-  // here
   const activeOverlayConfig = usePromise(
     useCallback(async (): Promise<
       OverlayConfig | BubbleOverlayConfig | undefined
     > => {
       // Use `selectedValues` to generate the overlay config for categorical variables
       if (
-        activeMarkerConfiguration?.selectedValues &&
+        activeMarkerConfiguration &&
+        'selectedValues' in activeMarkerConfiguration &&
+        activeMarkerConfiguration.selectedValues &&
         CategoricalVariableDataShape.is(overlayVariable?.dataShape)
       ) {
         return {
@@ -403,7 +403,11 @@ function MapAnalysisImpl(props: ImplProps) {
         dataClient,
         subsettingClient,
         markerType: activeMarkerConfiguration?.type,
-        binningMethod: activeMarkerConfiguration?.binningMethod,
+        binningMethod:
+          activeMarkerConfiguration &&
+          'binningMethod' in activeMarkerConfiguration
+            ? activeMarkerConfiguration.binningMethod
+            : undefined,
         aggregator:
           activeMarkerConfiguration && 'aggregator' in activeMarkerConfiguration
             ? activeMarkerConfiguration.aggregator
@@ -443,8 +447,6 @@ function MapAnalysisImpl(props: ImplProps) {
         return 'pie';
     }
   })();
-
-  console.log({ activeOverlayConfig });
 
   const {
     markersData,
@@ -536,8 +538,6 @@ function MapAnalysisImpl(props: ImplProps) {
       );
     }
   }, [activeMarkerConfiguration, markerType, previewMarkerData]);
-
-  console.log('here2');
 
   const markers = useMemo(
     () =>

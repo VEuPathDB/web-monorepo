@@ -2,7 +2,6 @@ import Spinner from '@veupathdb/components/lib/components/Spinner';
 import PlotLegend, {
   PlotLegendProps,
 } from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 
 interface Props {
   plotLegendProps: PlotLegendProps;

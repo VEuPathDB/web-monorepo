@@ -138,7 +138,6 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { FloatingLineplotExtraProps } from '../../../../map/analysis/hooks/plugins/lineplot';
 
 import * as DateMath from 'date-arithmetic';
-import { F } from 'lodash/fp';
 
 const plotContainerStyles = {
   width: 750,
