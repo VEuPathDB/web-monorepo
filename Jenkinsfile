@@ -8,6 +8,6 @@ node('centos8') {
   def builder = new Builder(this)
 
   builder.gitClone()
-  builder.buildContainers([[name: 'web-client-bundle-service']])
+  builder.buildContainers([[name: 'web-assets']])
 
 }
