@@ -9,6 +9,8 @@ export type ValuePickerProps = {
   /** Change communicated when [Save] button is clicked. */
   onSelectedValuesChange: (newValues: string[]) => void;
   disabledCheckboxTooltipContent?: ReactNode;
+  disableInput?: boolean;
+  showClearSelectionButton?: boolean;
 };
 
 const EMPTY_ALLOWED_VALUES_ARRAY: string[] = [];
@@ -21,6 +23,8 @@ export function ValuePicker({
   disabledValues = EMPTY_DISABLED_VALUES_ARRAY,
   onSelectedValuesChange,
   disabledCheckboxTooltipContent,
+  disableInput = false,
+  showClearSelectionButton = true,
 }: ValuePickerProps) {
   const items = allowedValues.map((value) => ({
     display: <span>{value}</span>,
@@ -36,12 +40,15 @@ export function ValuePicker({
         onChange={onSelectedValuesChange}
         value={selectedValues}
         disabledCheckboxTooltipContent={disabledCheckboxTooltipContent}
+        isDisabled={disableInput}
       />
-      <ClearSelectionButton
-        onClick={() => onSelectedValuesChange([])}
-        disabled={!selectedValues.length}
-        style={{ marginLeft: '0.5em' }}
-      />
+      {showClearSelectionButton && (
+        <ClearSelectionButton
+          onClick={() => onSelectedValuesChange([])}
+          disabled={!selectedValues.length}
+          style={{ marginLeft: '0.5em' }}
+        />
+      )}
     </>
   );
 }
