@@ -452,6 +452,7 @@ function MapAnalysisImpl(props: ImplProps) {
     error,
     legendItems,
     bubbleLegendData,
+    bubbleValueToDiameterMapper,
     bubbleValueToColorMapper,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
@@ -483,7 +484,12 @@ function MapAnalysisImpl(props: ImplProps) {
   });
 
   const continuousMarkerPreview = useMemo(() => {
-    if (!previewMarkerData || !previewMarkerData.length) return;
+    if (
+      !previewMarkerData ||
+      !previewMarkerData.length ||
+      !Array.isArray(previewMarkerData[0].data)
+    )
+      return;
     const initialDataObject = previewMarkerData[0].data.map((data) => ({
       label: data.label,
       value: 0,
@@ -537,11 +543,11 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarkerComponent {...markerProps} />
+          <DonutMarkerComponent {...(markerProps as DonutMarkerProps)} />
         ) : markerType === 'bubble' ? (
-          <BubbleMarkerComponent {...markerProps} />
+          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
         ) : (
-          <ChartMarkerComponent {...markerProps} />
+          <ChartMarkerComponent {...(markerProps as ChartMarkerProps)} />
         )
       ) || [],
     [markersData, markerType]
@@ -1277,11 +1283,7 @@ function MapAnalysisImpl(props: ImplProps) {
                             type: 'bubble',
                             legendMin: bubbleLegendData?.minSizeValue ?? 0,
                             legendMax: bubbleLegendData?.maxSizeValue ?? 0,
-                            valueToDiameterMapper:
-                              markersData && markersData.length > 0
-                                ? (markersData as BubbleMarkerProps[])[0]
-                                    .valueToDiameterMapper
-                                : undefined,
+                            valueToDiameterMapper: bubbleValueToDiameterMapper,
                           }}
                         />
                       </div>

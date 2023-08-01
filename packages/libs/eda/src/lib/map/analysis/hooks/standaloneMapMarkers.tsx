@@ -98,6 +98,7 @@ interface MapMarkers {
   /** data for creating a legend */
   legendItems: LegendItemsProps[];
   bubbleLegendData?: StandaloneMapBubblesLegendResponse;
+  bubbleValueToDiameterMapper?: (value: number) => number;
   bubbleValueToColorMapper?: (value: number) => string;
   /** is the request pending? */
   pending: boolean;
@@ -598,22 +599,18 @@ export function useStandaloneMapMarkers(
             } as DonutMarkerProps;
           }
           case 'bubble': {
-            const bubbleData = [
-              {
-                label: '',
-                value: entityCount,
-                color:
-                  'overlayValue' in otherProps &&
-                  bubbleValueToColorMapper?.(otherProps.overlayValue),
-              },
-            ];
+            const bubbleData = {
+              value: entityCount,
+              diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
+              color:
+                'overlayValue' in otherProps &&
+                bubbleValueToColorMapper?.(otherProps.overlayValue),
+            };
 
             return {
               ...commonMarkerProps,
               data: bubbleData,
               markerLabel: String(entityCount),
-              // dependentAxisRange: defaultDependentAxisRange,
-              valueToDiameterMapper: bubbleValueToDiameterMapper,
             } as BubbleMarkerProps;
           }
           default: {
@@ -677,11 +674,12 @@ export function useStandaloneMapMarkers(
   }, [markerType, overlayType, rawPromise]);
 
   return {
-    markersData: finalMarkersData,
+    markersData: finalMarkersData as MapMarkers['markersData'],
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
     bubbleLegendData,
+    bubbleValueToDiameterMapper,
     bubbleValueToColorMapper,
     pending: rawPromise.pending,
     error: rawPromise.error,
