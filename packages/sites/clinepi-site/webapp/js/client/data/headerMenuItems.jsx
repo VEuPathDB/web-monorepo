@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   StudyMenuItem,
   StudyMenuSearch,
@@ -10,6 +11,7 @@ import {
 } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
 import {
+  requireLogin,
   useEda,
   useUserDatasetsWorkspace,
 } from '@veupathdb/web-common/lib/config';
@@ -18,6 +20,8 @@ import {
   makeEdaRoute,
 } from '@veupathdb/web-common/lib/routes';
 import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
+// @ts-ignore
+import betaImage from '@veupathdb/wdk-client/lib/Core/Style/images/beta2-30.png';
 
 export default function makeHeaderMenuItemsFactory(
   permissionsValue,
@@ -28,7 +32,6 @@ export default function makeHeaderMenuItemsFactory(
     const { siteConfig } = state.globalData;
     const siteData = getStaticSiteData(state);
     const { studies } = siteData;
-    const { youtubeUrl } = siteConfig;
     const socialIcons = iconMenuItemsFromSocials(siteConfig);
     const socialLinks = menuItemsFromSocials(siteConfig);
     const searchTerm = props.searchTerm;
@@ -39,6 +42,16 @@ export default function makeHeaderMenuItemsFactory(
       marginRight: '.25em',
       position: 'relative',
       bottom: '-.25em',
+    };
+
+    const submenuStyle = {
+      color: 'black',
+      fontWeight: '400',
+      marginBottom: '.5em',
+    };
+    const submenuLinkStyle = {
+      marginTop: '.5em',
+      fontWeight: '400',
     };
 
     const filteredUserStudies = (
@@ -148,7 +161,7 @@ export default function makeHeaderMenuItemsFactory(
               text: 'My Analyses',
               route: makeEdaRoute(),
             },
-            ...(useEda && useUserDatasetsWorkspace
+            ...(useUserDatasetsWorkspace
               ? [
                   {
                     text: 'My Studies',
@@ -160,6 +173,71 @@ export default function makeHeaderMenuItemsFactory(
               text: 'Public Analyses',
               route: `${makeEdaRoute()}/public`,
             },
+            ...(requireLogin
+              ? [
+                  {
+                    text: (
+                      <div>
+                        <div style={submenuStyle}>
+                          Interactive Maps <img alt="BETA" src={betaImage} />
+                        </div>
+                        <ul>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_28cc5ab0d2/new"
+                            >
+                              Monkeypox - ECDC
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_e0765cae4d/new"
+                            >
+                              Monkeypox - World
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_d6a1141fbf/new"
+                            >
+                              SCORE <i>S. mansoni</i> Cluster Randomized Trial
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_cc143c9cef/new"
+                            >
+                              SCORE Mozambique <i>S. haematobium</i> Cluster
+                              Randomized Trial
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_6bd7dbd802/new"
+                            >
+                              SCORE Seasonal Transmission <i>S. haematobium</i>{' '}
+                              Cluster Randomized Trial
+                            </Link>
+                          </li>
+                          <li style={submenuLinkStyle}>
+                            <Link
+                              className="SiteMenuItem-Link"
+                              to="/workspace/maps/DS_24899fbd90/new"
+                            >
+                              WWARN Cross-sectional
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    ),
+                  },
+                ]
+              : []),
           ],
         },
         {
