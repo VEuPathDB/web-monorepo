@@ -13,7 +13,7 @@ import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-const cx = makeClassNameHelper('StepOneConfigurationContainer');
+const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type AlphaDivConfig = t.TypeOf<typeof AlphaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare

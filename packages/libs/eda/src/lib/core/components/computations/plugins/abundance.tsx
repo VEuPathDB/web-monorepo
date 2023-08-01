@@ -14,7 +14,7 @@ import { ComputationStepContainer } from '../ComputationStepContainer';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-const cx = makeClassNameHelper('StepOneConfigurationContainer');
+const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare

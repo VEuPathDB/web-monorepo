@@ -20,7 +20,7 @@ import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Tooltip } from '@material-ui/core';
 
-const cx = makeClassNameHelper('StepOneConfigurationContainer');
+const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 /**
  * Differential abundance
