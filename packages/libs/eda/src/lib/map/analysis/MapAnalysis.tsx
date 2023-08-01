@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   AllValuesDefinition,
@@ -45,7 +45,7 @@ import Subsetting from '../../workspace/Subsetting';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
-import { MapSideNavigation } from './MapSideNavigation';
+import { MapSidePanel } from './MapSidePanel';
 import { SiteInformationProps } from '..';
 import MapVizManagement from './MapVizManagement';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
@@ -57,7 +57,6 @@ import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
-import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import Login from '../../workspace/sharing/Login';
 import { useLoginCallbacks } from '../../workspace/sharing/hooks';
@@ -98,6 +97,8 @@ import ChartMarkerComponent, {
 import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
+import { SidePanelItem, SidePanelMenuEntry } from './Types';
+import { SideNavigationItems } from './MapSideNavigation';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -115,60 +116,9 @@ enum MarkerTypeLabels {
   barplot = 'Bar plots',
 }
 
-type SideNavigationItemConfigurationObject = {
-  href?: string;
-  labelText: MapSideNavItemLabels;
-  icon: ReactNode;
-  renderSideNavigationPanel: (apps: ComputationAppOverview[]) => ReactNode;
-  onToggleSideMenuItem?: (isActive: boolean) => void;
-  isExpandable?: boolean;
-  isExpanded?: boolean;
-  subMenuConfig?: SubMenuItems[];
-};
-
-type SubMenuItems = {
-  /**
-   * id is derived by concatentating the parent and sub-menu labels, since:
-   *  A) parent labels must be unique (makes no sense to offer the same label in a menu!)
-   *  B) sub-menu labels must be unique
-   */
-  id: string;
-  labelText: string;
-  icon?: ReactNode;
-  onClick: () => void;
-  isActive: boolean;
-};
-
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
-};
-
-/**
- * The following code and styles are for demonstration purposes
- * at this point. After #1671 is merged, we can implement these
- * menu buttons and their associated panels for real.
- */
-const buttonStyles: React.CSSProperties = {
-  alignItems: 'center',
-  background: 'transparent',
-  borderColor: 'transparent',
-  display: 'flex',
-  fontSize: '1.3em',
-  justifyContent: 'flex-start',
-  margin: 0,
-  padding: 0,
-  width: '100%',
-};
-const iconStyles: React.CSSProperties = {
-  alignItems: 'center',
-  display: 'flex',
-  height: '1.5em',
-  width: '1.5em',
-  justifyContent: 'center',
-};
-const labelStyles: React.CSSProperties = {
-  marginLeft: '0.5em',
 };
 
 export const defaultAnimation = {
@@ -232,8 +182,8 @@ function MapAnalysisImpl(props: ImplProps) {
     setSubsetVariableAndEntity,
     sharingUrl,
     setIsSubsetPanelOpen = () => {},
-    setActiveMarkerConfigurationType,
     setMarkerConfigurations,
+    setActiveMarkerConfigurationType,
     geoConfigs,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
@@ -622,372 +572,450 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
-  const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
-    [
-      {
-        labelText: MapSideNavItemLabels.ConfigureMap,
-        icon: <EditLocation />,
-        isExpandable: true,
-        subMenuConfig: [
-          {
-            // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
-            labelText: MarkerTypeLabels.pie,
-            icon: <DonutMarker style={{ height: '1.25em' }} />,
-            onClick: () => setActiveMarkerConfigurationType('pie'),
-            isActive: activeMarkerConfigurationType === 'pie',
-          },
-          {
-            // concatenating the parent and subMenu labels creates a unique ID
-            id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
-            labelText: MarkerTypeLabels.barplot,
-            icon: <BarPlotMarker style={{ height: '1.25em' }} />,
-            onClick: () => setActiveMarkerConfigurationType('barplot'),
-            isActive: activeMarkerConfigurationType === 'barplot',
-          },
-        ],
-        renderSideNavigationPanel: (apps) => {
-          const markerVariableConstraints = apps
-            .find((app) => app.name === 'standalone-map')
-            ?.visualizations.find(
-              (viz) => viz.name === 'map-markers'
-            )?.dataElementConstraints;
-
-          const markerConfigurationObjects: MarkerConfigurationOption[] = [
+  const sidePanelMenuEntries: SidePanelMenuEntry[] = [
+    {
+      type: 'heading',
+      labelText: MapSideNavItemLabels.ConfigureMap,
+      leftIcon: <EditLocation />,
+      children: [
+        {
+          type: 'subheading',
+          labelText: 'Single Variable Maps',
+          children: [
             {
-              type: 'pie',
-              displayName: MarkerTypeLabels.pie,
-              icon: (
-                <DonutMarker
-                  style={{ height: '1.5em', marginLeft: '0.25em' }}
-                />
-              ),
-              configurationMenu:
-                activeMarkerConfiguration?.type === 'pie' ? (
-                  <PieMarkerConfigurationMenu
-                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
-                    entities={studyEntities}
-                    onChange={updateMarkerConfigurations}
-                    configuration={activeMarkerConfiguration}
-                    starredVariables={
-                      analysisState.analysis?.descriptor.starredVariables ?? []
-                    }
-                    toggleStarredVariable={toggleStarredVariable}
-                    constraints={markerVariableConstraints}
-                    overlayConfiguration={activeOverlayConfig.value}
-                    overlayVariable={overlayVariable}
-                    subsettingClient={subsettingClient}
-                    studyId={studyId}
-                    filters={filters}
-                    allFilteredCategoricalValues={
-                      allFilteredCategoricalValues.value
-                    }
-                    allVisibleCategoricalValues={
-                      allVisibleCategoricalValues.value
-                    }
-                    continuousMarkerPreview={continuousMarkerPreview}
-                  />
-                ) : (
-                  <></>
-                ),
+              type: 'item',
+              // concatenating the parent and subMenu labels creates a unique ID
+              id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
+              labelText: MarkerTypeLabels.pie,
+              rightIcon: <DonutMarker style={{ height: '1.25em' }} />,
+              leftIcon:
+                activeMarkerConfigurationType === 'pie' ? <CheckIcon /> : null,
+              onActive: () => {
+                setActiveMarkerConfigurationType('pie');
+              },
+              renderSidePanelDrawer(apps) {
+                const markerVariableConstraints = apps
+                  .find((app) => app.name === 'standalone-map')
+                  ?.visualizations.find(
+                    (viz) => viz.name === 'map-markers'
+                  )?.dataElementConstraints;
+
+                const markerConfiguration: MarkerConfigurationOption = {
+                  type: 'pie',
+                  displayName: MarkerTypeLabels.pie,
+                  icon: (
+                    <DonutMarker
+                      style={{ height: '1.5em', marginLeft: '0.25em' }}
+                    />
+                  ),
+                  configurationMenu:
+                    activeMarkerConfiguration?.type === 'pie' ? (
+                      <PieMarkerConfigurationMenu
+                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        configuration={activeMarkerConfiguration}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        constraints={markerVariableConstraints}
+                        overlayConfiguration={activeOverlayConfig.value}
+                        overlayVariable={overlayVariable}
+                        subsettingClient={subsettingClient}
+                        studyId={studyId}
+                        filters={filters}
+                        allFilteredCategoricalValues={
+                          allFilteredCategoricalValues.value
+                        }
+                        allVisibleCategoricalValues={
+                          allVisibleCategoricalValues.value
+                        }
+                        continuousMarkerPreview={continuousMarkerPreview}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                };
+
+                const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+                  'markers' | 'plots'
+                >['tabs'] = [
+                  {
+                    key: 'markers',
+                    displayName: 'Markers',
+                    content: markerConfiguration.configurationMenu,
+                  },
+                  {
+                    key: 'plots',
+                    displayName: 'Supporting Plots',
+                    content: (
+                      <MapVizManagement
+                        analysisState={analysisState}
+                        setActiveVisualizationId={setActiveVisualizationId}
+                        apps={apps}
+                        activeVisualizationId={appState.activeVisualizationId}
+                        plugins={plugins}
+                        geoConfigs={geoConfigs}
+                        mapType={activeMarkerConfigurationType}
+                      />
+                    ),
+                  },
+                ];
+
+                return (
+                  <div
+                    style={{
+                      padding: '1em',
+                      maxWidth: '1500px',
+                    }}
+                  >
+                    <MapTypeConfigurationMenu
+                      markerConfiguration={markerConfiguration}
+                      mapTypeConfigurationMenuTabs={
+                        mapTypeConfigurationMenuTabs
+                      }
+                    />
+                  </div>
+                );
+              },
             },
             {
-              type: 'barplot',
-              displayName: MarkerTypeLabels.barplot,
-              icon: (
-                <BarPlotMarker
-                  style={{ height: '1.5em', marginLeft: '0.25em' }}
-                />
-              ),
-              configurationMenu:
-                activeMarkerConfiguration?.type === 'barplot' ? (
-                  <BarPlotMarkerConfigurationMenu
-                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
-                    entities={studyEntities}
-                    onChange={updateMarkerConfigurations}
-                    starredVariables={
-                      analysisState.analysis?.descriptor.starredVariables ?? []
-                    }
-                    toggleStarredVariable={toggleStarredVariable}
-                    configuration={activeMarkerConfiguration}
-                    constraints={markerVariableConstraints}
-                    overlayConfiguration={activeOverlayConfig.value}
-                    overlayVariable={overlayVariable}
-                    subsettingClient={subsettingClient}
-                    studyId={studyId}
-                    filters={filters}
-                    allFilteredCategoricalValues={
-                      allFilteredCategoricalValues.value
-                    }
-                    allVisibleCategoricalValues={
-                      allVisibleCategoricalValues.value
-                    }
-                    continuousMarkerPreview={continuousMarkerPreview}
-                  />
-                ) : (
-                  <></>
-                ),
+              type: 'item',
+              // concatenating the parent and subMenu labels creates a unique ID
+              id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
+              labelText: MarkerTypeLabels.barplot,
+              leftIcon:
+                activeMarkerConfigurationType === 'barplot' ? (
+                  <CheckIcon />
+                ) : null,
+              rightIcon: <BarPlotMarker style={{ height: '1.25em' }} />,
+              onActive: () => {
+                setActiveMarkerConfigurationType('barplot');
+              },
+              renderSidePanelDrawer(apps) {
+                const markerVariableConstraints = apps
+                  .find((app) => app.name === 'standalone-map')
+                  ?.visualizations.find(
+                    (viz) => viz.name === 'map-markers'
+                  )?.dataElementConstraints;
+
+                const markerConfiguration: MarkerConfigurationOption = {
+                  type: 'barplot',
+                  displayName: MarkerTypeLabels.barplot,
+                  icon: (
+                    <BarPlotMarker
+                      style={{ height: '1.5em', marginLeft: '0.25em' }}
+                    />
+                  ),
+                  configurationMenu:
+                    activeMarkerConfiguration?.type === 'barplot' ? (
+                      <BarPlotMarkerConfigurationMenu
+                        inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        configuration={activeMarkerConfiguration}
+                        constraints={markerVariableConstraints}
+                        overlayConfiguration={activeOverlayConfig.value}
+                        overlayVariable={overlayVariable}
+                        subsettingClient={subsettingClient}
+                        studyId={studyId}
+                        filters={filters}
+                        allFilteredCategoricalValues={
+                          allFilteredCategoricalValues.value
+                        }
+                        allVisibleCategoricalValues={
+                          allVisibleCategoricalValues.value
+                        }
+                        continuousMarkerPreview={continuousMarkerPreview}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                };
+
+                const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+                  'markers' | 'plots'
+                >['tabs'] = [
+                  {
+                    key: 'markers',
+                    displayName: 'Markers',
+                    content: markerConfiguration.configurationMenu,
+                  },
+                  {
+                    key: 'plots',
+                    displayName: 'Supporting Plots',
+                    content: (
+                      <MapVizManagement
+                        analysisState={analysisState}
+                        setActiveVisualizationId={setActiveVisualizationId}
+                        apps={apps}
+                        activeVisualizationId={appState.activeVisualizationId}
+                        plugins={plugins}
+                        geoConfigs={geoConfigs}
+                        mapType={activeMarkerConfigurationType}
+                      />
+                    ),
+                  },
+                ];
+
+                return (
+                  <div
+                    style={{
+                      padding: '1em',
+                      maxWidth: '1500px',
+                    }}
+                  >
+                    <MapTypeConfigurationMenu
+                      markerConfiguration={markerConfiguration}
+                      mapTypeConfigurationMenuTabs={
+                        mapTypeConfigurationMenuTabs
+                      }
+                    />
+                  </div>
+                );
+              },
             },
-          ];
-
-          const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
-            'markers' | 'plots'
-          >['tabs'] = [
-            {
-              key: 'markers',
-              displayName: 'Markers',
-              content: markerConfigurationObjects.find(
-                ({ type }) => type === activeMarkerConfigurationType
-              )?.configurationMenu,
-            },
-            {
-              key: 'plots',
-              displayName: 'Supporting Plots',
-              content: (
-                <MapVizManagement
-                  analysisState={analysisState}
-                  setActiveVisualizationId={setActiveVisualizationId}
-                  apps={apps}
-                  activeVisualizationId={appState.activeVisualizationId}
-                  plugins={plugins}
-                  geoConfigs={geoConfigs}
-                  mapType={activeMarkerConfigurationType}
-                />
-              ),
-            },
-          ];
-
-          return (
-            <div
-              style={{
-                padding: '1em',
-                maxWidth: '1500px',
-              }}
-            >
-              <MapTypeConfigurationMenu
-                activeMarkerConfigurationType={activeMarkerConfigurationType}
-                markerConfigurations={markerConfigurationObjects}
-                mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
-              />
-            </div>
-          );
+          ],
         },
-      },
-      {
-        labelText: MapSideNavItemLabels.Filter,
-        icon: <FilterIcon />,
-        renderSideNavigationPanel: () => {
-          return (
-            <div
-              style={{
-                width: '70vw',
-                maxWidth: 1500,
-                maxHeight: 650,
-                padding: '0 25px',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <EntityDiagram
-                  expanded
-                  orientation="horizontal"
-                  selectedEntity={subsetVariableAndEntity.entityId}
-                  selectedVariable={subsetVariableAndEntity.variableId}
-                  entityCounts={totalCounts.value}
-                  filteredEntityCounts={filteredCounts.value}
-                  filteredEntities={filteredEntities}
-                  variableLinkConfig={{
-                    type: 'button',
-                    onClick: (variableValue) => {
-                      setSubsetVariableAndEntity({
-                        entityId: variableValue?.entityId,
-                        variableId: variableValue?.variableId
-                          ? variableValue.variableId
-                          : getDefaultVariableDescriptor(
-                              variableValue?.entityId
-                            ).variableId,
-                      });
-                    },
-                  }}
-                />
-              </div>
-              <Subsetting
-                variableLinkConfig={{
-                  type: 'button',
-                  onClick: setSubsetVariableAndEntity,
-                }}
-                entityId={subsetVariableAndEntity?.entityId ?? ''}
-                variableId={subsetVariableAndEntity.variableId ?? ''}
-                analysisState={analysisState}
-                totalCounts={totalCounts.value}
-                filteredCounts={filteredCounts.value}
-                // gets passed to variable tree in order to disable scrollIntoView
-                scope="map"
-              />
-            </div>
-          );
-        },
-        onToggleSideMenuItem: (isActive) => {
-          setIsSubsetPanelOpen(!isActive);
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.Download,
-        icon: <Download />,
-        renderSideNavigationPanel: () => {
-          return (
-            <div
-              style={{
-                padding: '1em',
-                width: '70vw',
-                maxWidth: '1500px',
-              }}
-            >
-              <DownloadTab
-                downloadClient={downloadClient}
-                analysisState={analysisState}
-                totalCounts={totalCounts.value}
-                filteredCounts={filteredCounts.value}
-              />
-            </div>
-          );
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.Share,
-        icon: <Share />,
-        renderSideNavigationPanel: () => {
-          if (!analysisState.analysis) return null;
-
-          function getShareMenuContent() {
-            if (!userLoggedIn) {
-              return <Login {...loginCallbacks} showCloseButton={false} />;
-            }
-            if (
-              analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME
-            ) {
-              return (
-                <NameAnalysis
-                  currentName={analysisState.analysis.displayName}
-                  updateName={analysisState.setName}
-                />
-              );
-            }
-            return <ConfirmShareAnalysis sharingUrl={sharingUrl} />;
-          }
-
-          return (
+      ],
+    },
+    {
+      type: 'item',
+      id: 'filter',
+      labelText: MapSideNavItemLabels.Filter,
+      leftIcon: <FilterIcon />,
+      renderSidePanelDrawer: () => {
+        return (
+          <div
+            style={{
+              width: '70vw',
+              maxWidth: 1500,
+              maxHeight: 650,
+              padding: '0 25px',
+            }}
+          >
             <div
               style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: '0 15px',
               }}
             >
-              {getShareMenuContent()}
-            </div>
-          );
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.Notes,
-        icon: <Notes />,
-        renderSideNavigationPanel: () => {
-          return (
-            <div
-              style={{
-                padding: '1em',
-                width: '70vw',
-                maxWidth: '1500px',
-              }}
-            >
-              <NotesTab analysisState={analysisState} />
-            </div>
-          );
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.MyAnalyses,
-        icon: <Table />,
-        renderSideNavigationPanel: () => {
-          return (
-            <div
-              css={{
-                h1: {
-                  fontSize: '1.75em',
-                  margin: '25px 0 0 0',
-                  padding: '0 0 1em 0',
-                },
-                '.MesaComponent .DataTable': {
-                  fontSize: 'inherit',
-                },
-              }}
-              style={{
-                padding: '1em',
-                width: '70vw',
-                maxWidth: '1500px',
-              }}
-            >
-              <AllAnalyses
-                analysisClient={analysisClient}
-                activeAnalysisId={
-                  isSavedAnalysis(analysisState.analysis)
-                    ? analysisState.analysis.analysisId
-                    : undefined
-                }
-                subsettingClient={subsettingClient}
-                studyId={getStudyId(studyRecord)}
-                showLoginForm={showLoginForm}
+              <EntityDiagram
+                expanded
+                orientation="horizontal"
+                selectedEntity={subsetVariableAndEntity.entityId}
+                selectedVariable={subsetVariableAndEntity.variableId}
+                entityCounts={totalCounts.value}
+                filteredEntityCounts={filteredCounts.value}
+                filteredEntities={filteredEntities}
+                variableLinkConfig={{
+                  type: 'button',
+                  onClick: (variableValue) => {
+                    setSubsetVariableAndEntity({
+                      entityId: variableValue?.entityId,
+                      variableId: variableValue?.variableId
+                        ? variableValue.variableId
+                        : getDefaultVariableDescriptor(variableValue?.entityId)
+                            .variableId,
+                    });
+                  },
+                }}
               />
             </div>
-          );
-        },
-      },
-      {
-        labelText: MapSideNavItemLabels.StudyDetails,
-        icon: <InfoOutlined />,
-        renderSideNavigationPanel: () => {
-          return (
-            <div
-              style={{
-                padding: '1em',
-                width: '70vw',
-                maxWidth: '1500px',
-                fontSize: '.95em',
+            <Subsetting
+              variableLinkConfig={{
+                type: 'button',
+                onClick: setSubsetVariableAndEntity,
               }}
-            >
-              <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
-              <RecordController
-                recordClass="dataset"
-                primaryKey={studyRecord.id.map((p) => p.value).join('/')}
-              />
-            </div>
-          );
-        },
+              entityId={subsetVariableAndEntity?.entityId ?? ''}
+              variableId={subsetVariableAndEntity.variableId ?? ''}
+              analysisState={analysisState}
+              totalCounts={totalCounts.value}
+              filteredCounts={filteredCounts.value}
+              // gets passed to variable tree in order to disable scrollIntoView
+              scope="map"
+            />
+          </div>
+        );
       },
-    ];
+    },
+    {
+      type: 'item',
+      id: 'download',
+      labelText: MapSideNavItemLabels.Download,
+      leftIcon: <Download />,
+      renderSidePanelDrawer: () => {
+        return (
+          <div
+            style={{
+              padding: '1em',
+              width: '70vw',
+              maxWidth: '1500px',
+            }}
+          >
+            <DownloadTab
+              downloadClient={downloadClient}
+              analysisState={analysisState}
+              totalCounts={totalCounts.value}
+              filteredCounts={filteredCounts.value}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      type: 'item',
+      id: 'share',
+      labelText: MapSideNavItemLabels.Share,
+      leftIcon: <Share />,
+      renderSidePanelDrawer: () => {
+        if (!analysisState.analysis) return null;
+
+        function getShareMenuContent() {
+          if (!userLoggedIn) {
+            return <Login {...loginCallbacks} showCloseButton={false} />;
+          }
+          if (analysisState?.analysis?.displayName === DEFAULT_ANALYSIS_NAME) {
+            return (
+              <NameAnalysis
+                currentName={analysisState.analysis.displayName}
+                updateName={analysisState.setName}
+              />
+            );
+          }
+          return <ConfirmShareAnalysis sharingUrl={sharingUrl} />;
+        }
+
+        return (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '0 15px',
+            }}
+          >
+            {getShareMenuContent()}
+          </div>
+        );
+      },
+    },
+    {
+      type: 'item',
+      id: 'notes',
+      labelText: MapSideNavItemLabels.Notes,
+      leftIcon: <Notes />,
+      renderSidePanelDrawer: () => {
+        return (
+          <div
+            style={{
+              padding: '1em',
+              width: '70vw',
+              maxWidth: '1500px',
+            }}
+          >
+            <NotesTab analysisState={analysisState} />
+          </div>
+        );
+      },
+    },
+    {
+      type: 'item',
+      id: 'my-analyses',
+      labelText: MapSideNavItemLabels.MyAnalyses,
+      leftIcon: <Table />,
+      renderSidePanelDrawer: () => {
+        return (
+          <div
+            css={{
+              h1: {
+                fontSize: '1.75em',
+                margin: '25px 0 0 0',
+                padding: '0 0 1em 0',
+              },
+              '.MesaComponent .DataTable': {
+                fontSize: 'inherit',
+              },
+            }}
+            style={{
+              padding: '1em',
+              width: '70vw',
+              maxWidth: '1500px',
+            }}
+          >
+            <AllAnalyses
+              analysisClient={analysisClient}
+              activeAnalysisId={
+                isSavedAnalysis(analysisState.analysis)
+                  ? analysisState.analysis.analysisId
+                  : undefined
+              }
+              subsettingClient={subsettingClient}
+              studyId={getStudyId(studyRecord)}
+              showLoginForm={showLoginForm}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      type: 'item',
+      id: 'study-details',
+      labelText: MapSideNavItemLabels.StudyDetails,
+      leftIcon: <InfoOutlined />,
+      renderSidePanelDrawer: () => {
+        return (
+          <div
+            style={{
+              padding: '1em',
+              width: '70vw',
+              maxWidth: '1500px',
+              fontSize: '.95em',
+            }}
+          >
+            <H5 additionalStyles={{ margin: '25px 0 0 0' }}>Study Details</H5>
+            <RecordController
+              recordClass="dataset"
+              primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+            />
+          </div>
+        );
+      },
+    },
+  ];
+
+  function findActiveSidePanelItem(
+    entries: SidePanelMenuEntry[] = sidePanelMenuEntries
+  ): SidePanelItem | undefined {
+    for (const entry of entries) {
+      switch (entry.type) {
+        case 'heading':
+        case 'subheading':
+          const activeChild = findActiveSidePanelItem(entry.children);
+          if (activeChild) return activeChild;
+          break;
+        case 'item':
+          if (entry.id === activeSideMenuId) {
+            return entry;
+          }
+          break;
+      }
+    }
+  }
 
   function isMapTypeSubMenuItemSelected() {
-    const mapTypeSideNavObject = sideNavigationButtonConfigurationObjects.find(
+    const mapTypeSideNavObject = sidePanelMenuEntries.filter(
       (navObject) => navObject.labelText === MapSideNavItemLabels.ConfigureMap
     );
-    if (
-      mapTypeSideNavObject &&
-      'subMenuConfig' in mapTypeSideNavObject &&
-      mapTypeSideNavObject.subMenuConfig
-    ) {
-      return !!mapTypeSideNavObject.subMenuConfig.find(
-        (mapType) => mapType.id === activeSideMenuId
-      );
-    } else {
-      return false;
-    }
+    return findActiveSidePanelItem(mapTypeSideNavObject) != null;
   }
 
   function areMapTypeAndActiveVizCompatible() {
@@ -1067,23 +1095,9 @@ function MapAnalysisImpl(props: ImplProps) {
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
-        const activeSideNavigationItemMenu = getSideNavigationItemMenu();
-
-        function getSideNavigationItemMenu() {
-          if (activeSideMenuId == null) return <></>;
-          return sideNavigationButtonConfigurationObjects
-            .find((navItem) => {
-              if (navItem.labelText === activeSideMenuId) return true;
-              if ('subMenuConfig' in navItem && navItem.subMenuConfig) {
-                return navItem.subMenuConfig.find(
-                  (subNavItem) => subNavItem.id === activeSideMenuId
-                );
-              }
-              return false;
-            })
-            ?.renderSideNavigationPanel(apps);
-        }
-
+        const activePanelItem = findActiveSidePanelItem();
+        const activeSideNavigationItemMenu =
+          activePanelItem?.renderSidePanelDrawer(apps) ?? null;
         return (
           <ShowHideVariableContextProvider>
             <DocumentationContainer>
@@ -1126,22 +1140,20 @@ function MapAnalysisImpl(props: ImplProps) {
                     pointerEvents: 'none',
                   }}
                 >
-                  <MapSideNavigation
+                  <MapSidePanel
                     isExpanded={sideNavigationIsExpanded}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }
                     siteInformationProps={props.siteInformationProps}
-                    activeNavigationMenu={activeSideNavigationItemMenu}
+                    sidePanelDrawerContents={activeSideNavigationItemMenu}
                   >
                     <SideNavigationItems
                       activeSideMenuId={activeSideMenuId}
-                      itemConfigObjects={
-                        sideNavigationButtonConfigurationObjects
-                      }
+                      menuEntries={sidePanelMenuEntries}
                       setActiveSideMenuId={setActiveSideMenuId}
                     />
-                  </MapSideNavigation>
+                  </MapSidePanel>
                   <MapVEuMap
                     height="100%"
                     width="100%"
@@ -1244,157 +1256,5 @@ function MapAnalysisImpl(props: ImplProps) {
         );
       }}
     </PromiseResult>
-  );
-}
-
-type SideNavItemsProps = {
-  itemConfigObjects: SideNavigationItemConfigurationObject[];
-  activeSideMenuId: string | undefined;
-  setActiveSideMenuId: React.Dispatch<React.SetStateAction<string | undefined>>;
-};
-
-function SideNavigationItems({
-  itemConfigObjects,
-  activeSideMenuId,
-  setActiveSideMenuId,
-}: SideNavItemsProps) {
-  const theme = useUITheme();
-  const sideNavigationItems = itemConfigObjects.map(
-    ({
-      labelText,
-      icon,
-      onToggleSideMenuItem = () => {},
-      subMenuConfig = [],
-    }) => {
-      /**
-       * if subMenuConfig.length doesn't exist, we render menu items the same as before sub-menus were added
-       */
-      if (!subMenuConfig.length) {
-        const isActive = activeSideMenuId === labelText;
-        return (
-          <li
-            key={labelText}
-            style={{
-              // These styles format the lefthand side menu items.
-              // Nothing special here. We can conditionally apply
-              // styles based on in/active states, if we like.
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              width: '100%',
-              transition: 'background 0.1s ease',
-              padding: '5px 10px',
-              fontWeight: isActive ? 'bold' : 'normal',
-              background: isActive
-                ? theme?.palette.primary.hue[100]
-                : 'inherit',
-            }}
-          >
-            <button
-              style={buttonStyles}
-              onClick={() => {
-                onToggleSideMenuItem(activeSideMenuId === labelText);
-                setActiveSideMenuId((currentId) => {
-                  return currentId === labelText ? undefined : labelText;
-                });
-              }}
-            >
-              <span style={iconStyles} aria-hidden>
-                {icon}
-              </span>
-              <span style={labelStyles}>{labelText}</span>
-            </button>
-          </li>
-        );
-      } else {
-        /**
-         * If subMenuConfig has items, we nest a <ul> and map over the items.
-         * Note that the isActive style gets applied to the nested <ul> items, not the parent
-         */
-        return (
-          <li
-            key={labelText}
-            style={{
-              // These styles format the lefthand side menu items.
-              // Nothing special here. We can conditionally apply
-              // styles based on in/active states, if we like.
-              width: '100%',
-              transition: 'background 0.1s ease',
-              padding: '5px 10px',
-              fontWeight: 'normal',
-              background: 'inherit',
-            }}
-          >
-            <button style={buttonStyles}>
-              <span style={iconStyles} aria-hidden>
-                {icon}
-              </span>
-              <span style={labelStyles}>{labelText}</span>
-            </button>
-            <ul>
-              {subMenuConfig.map((item) => {
-                return (
-                  <li
-                    key={item.id}
-                    style={{
-                      // These styles format the lefthand side menu items.
-                      // Nothing special here. We can conditionally apply
-                      // styles based on in/active states, if we like.
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'flex-start',
-                      width: '100%',
-                      transition: 'background 0.1s ease',
-                      padding: '5px 10px',
-                      fontWeight:
-                        activeSideMenuId === item.id ? 'bold' : 'normal',
-                      background:
-                        activeSideMenuId === item.id
-                          ? theme?.palette.primary.hue[100]
-                          : 'inherit',
-                    }}
-                  >
-                    <button
-                      style={buttonStyles}
-                      onClick={() => {
-                        onToggleSideMenuItem(activeSideMenuId === item.id);
-                        setActiveSideMenuId((currentId) => {
-                          return currentId === item.id ? undefined : item.id;
-                        });
-                        item.onClick();
-                      }}
-                    >
-                      {/* *
-                       * This div contains a checkmark that indicates which map type is active. The checkmark persists even if a different side nav item is selected.
-                       */}
-                      <div
-                        style={{
-                          marginRight: '0.5em',
-                          width: '1em',
-                          height: '1em',
-                        }}
-                      >
-                        {item.isActive && <CheckIcon />}
-                      </div>
-                      <span style={{ fontSize: '0.9em', marginRight: '0.5em' }}>
-                        {item.labelText}
-                      </span>
-                      <span style={iconStyles} aria-hidden>
-                        {item.icon}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </li>
-        );
-      }
-    }
-  );
-  return (
-    <div>
-      <ul style={{ margin: 0, padding: 0 }}>{sideNavigationItems}</ul>
-    </div>
   );
 }

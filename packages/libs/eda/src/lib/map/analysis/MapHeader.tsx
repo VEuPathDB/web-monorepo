@@ -7,8 +7,8 @@ import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './MapHeader.scss';
 import {
-  mapNavigationBackgroundColor,
-  mapNavigationBorder,
+  mapSidePanelBackgroundColor,
+  mapSidePanelBorder,
   SiteInformationProps,
 } from '..';
 import { StudyEntity } from '../../core';
@@ -61,7 +61,7 @@ export function MapHeader({
         background:
           siteName === 'VectorBase'
             ? '#F5FAF1'
-            : theme?.palette.primary.hue[100] ?? mapNavigationBackgroundColor,
+            : theme?.palette.primary.hue[100] ?? mapSidePanelBackgroundColor,
         // Mimics shadow used in Google maps
         boxShadow:
           '0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15)',
