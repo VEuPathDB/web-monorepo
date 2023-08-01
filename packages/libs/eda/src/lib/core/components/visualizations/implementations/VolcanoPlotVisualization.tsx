@@ -1,10 +1,12 @@
 // load scatter plot component
 import VolcanoPlot, {
   VolcanoPlotProps,
+  assignSignificanceColor,
+  RawDataMinMaxValues,
 } from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
-import { useCallback } from 'react';
+import { useCallback, useState, useMemo } from 'react';
 
 import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -37,11 +39,18 @@ import { DifferentialAbundanceConfig } from '../../computations/plugins/differen
 import { yellow } from '@material-ui/core/colors';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { significanceColors } from '@veupathdb/components/lib/types/plots';
-
+import { NumberRange } from '../../../types/general';
+import { max, min } from 'lodash';
 // end imports
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
 const DEFAULT_FC_THRESHOLD = 2;
+/**
+ * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
+ * We could have also used d3.scale.nice but then we dont have precise control of where the extremes
+ * are, which is important for user-defined ranges and truncation bars.
+ */
+const AXIS_PADDING_FACTOR = 0.05;
 
 const plotContainerStyles = {
   width: 750,
@@ -150,6 +159,146 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     ])
   );
 
+  /**
+   * Find mins and maxes of the data and for the plot.
+   * The standard x axis is the log2 fold change. The standard
+   * y axis is -log10 raw p value.
+   */
+
+  // Find maxes and mins of the data itself
+  const rawDataMinMaxValues: RawDataMinMaxValues = useMemo(() => {
+    if (!data.value)
+      return {
+        x: { min: 0, max: 0 },
+        y: { min: 0, max: 0 },
+      };
+    const dataXMin = min(data.value.map((d) => Number(d.log2foldChange))) ?? 0;
+    const dataXMax = max(data.value.map((d) => Number(d.log2foldChange))) ?? 0;
+    const dataYMin = min(data.value.map((d) => Number(d.pValue))) ?? 0;
+    const dataYMax = max(data.value.map((d) => Number(d.pValue))) ?? 0;
+    return {
+      x: { min: dataXMin, max: dataXMax },
+      y: { min: dataYMin, max: dataYMax },
+    };
+  }, [data.value]);
+
+  // Determine mins, maxes of axes in the plot. These are different than the data mins/maxes because
+  // of the log transform and the little bit of padding, or because axis ranges are supplied.
+  // NOTE: this state may be unnecessary depending on how we implement user-controlled axis ranges
+  const [xAxisRange, setXAxisRange] =
+    useState<NumberRange | undefined>(undefined);
+  const independentAxisRange = useMemo(() => {
+    if (!data.value) return undefined;
+    if (xAxisRange) {
+      return xAxisRange;
+    } else {
+      const {
+        x: { min: dataXMin, max: dataXMax },
+      } = rawDataMinMaxValues;
+      if (dataXMin && dataXMax) {
+        // We can use the dataMin and dataMax here because we don't have a further transform
+        // Add a little padding to prevent clipping the glyph representing the extreme points
+        return {
+          min: dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
+          max: dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
+        };
+      } else {
+        return { min: 0, max: 0 };
+      }
+    }
+  }, [data.value, xAxisRange, rawDataMinMaxValues]);
+
+  // NOTE: this state may be unnecessary depending on how we implement user-controlled axis ranges
+  const [yAxisRange, setYAxisRange] =
+    useState<NumberRange | undefined>(undefined);
+  const dependentAxisRange = useMemo(() => {
+    if (!data.value) return undefined;
+    if (yAxisRange) {
+      return yAxisRange;
+    } else {
+      const {
+        y: { min: dataYMin, max: dataYMax },
+      } = rawDataMinMaxValues;
+      if (dataYMin && dataYMax) {
+        // Standard volcano plots have -log10(raw p value) as the y axis
+        const yAxisMin = -Math.log10(dataYMax);
+        const yAxisMax = -Math.log10(dataYMin);
+        // Add a little padding to prevent clipping the glyph representing the extreme points
+        return {
+          min: yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
+          max: yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
+        };
+      } else {
+        return { min: 0, max: 0 };
+      }
+    }
+  }, [data.value, yAxisRange, rawDataMinMaxValues]);
+
+  const significanceThreshold =
+    vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD;
+  const log2FoldChangeThreshold =
+    vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD;
+
+  /**
+   * Let's filter out data that falls outside of the plot axis ranges and then
+   * assign a significance color to the visible data
+   * This version of the data will get passed to the VolcanoPlot component
+   */
+  const finalData = useMemo(() => {
+    if (data.value && independentAxisRange && dependentAxisRange) {
+      // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
+      return data.value
+        .filter((d) => {
+          const log2foldChange = Number(d?.log2foldChange);
+          const transformedPValue = -Math.log10(Number(d?.pValue));
+          return (
+            log2foldChange <= independentAxisRange.max &&
+            log2foldChange >= independentAxisRange.min &&
+            transformedPValue <= dependentAxisRange.max &&
+            transformedPValue >= dependentAxisRange.min
+          );
+        })
+        .map((d) => ({
+          ...d,
+          significanceColor: assignSignificanceColor(
+            Number(d.log2foldChange),
+            Number(d.pValue),
+            significanceThreshold,
+            log2FoldChangeThreshold,
+            significanceColors
+          ),
+        }));
+    }
+  }, [
+    data.value,
+    independentAxisRange,
+    dependentAxisRange,
+    significanceThreshold,
+    log2FoldChangeThreshold,
+    significanceColors,
+  ]);
+
+  // TODO: Given that I cannot figure out how to type this correctly, I suspect there's a simpler, cleaner
+  // way to get the counts.
+  const countsData = useMemo(() => {
+    if (!finalData) return;
+    return finalData.reduce(
+      (prev: any, curr: any) => {
+        if (curr.significanceColor) {
+          return {
+            ...prev,
+            [curr.significanceColor]: ++prev[curr.significanceColor],
+          };
+        }
+      },
+      {
+        [significanceColors['inconclusive']]: 0,
+        [significanceColors['high']]: 0,
+        [significanceColors['low']]: 0,
+      }
+    );
+  }, [finalData, significanceColors]);
+
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
@@ -175,14 +324,17 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       : [];
 
   const volcanoPlotProps: VolcanoPlotProps = {
-    data: data.value ? Object.values(data.value) : [],
+    data: finalData ? Object.values(finalData) : [],
     markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
-    significanceThreshold: vizConfig.significanceThreshold ?? 0.05,
-    log2FoldChangeThreshold: vizConfig.log2FoldChangeThreshold ?? 3,
+    significanceThreshold,
+    log2FoldChangeThreshold,
     containerStyles: plotContainerStyles,
     comparisonLabels: comparisonLabels,
     showSpinner: data.pending,
     truncationBarFill: yellow[300],
+    independentAxisRange,
+    dependentAxisRange,
+    rawDataMinMaxValues,
   };
 
   // @ts-ignore
@@ -191,32 +343,34 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   // TODO
   const controlsNode = <> </>;
 
-  const legendNode = data.value && (
+  const legendNode = finalData && countsData && (
     <PlotLegend
       type="list"
       legendTitle="Legend"
       legendItems={[
         {
-          label: 'Inconclusive',
+          label: `Inconclusive (${
+            countsData[significanceColors['inconclusive']]
+          })`,
           marker: 'circle',
           hasData: true,
-          markerColor: significanceColors[0],
+          markerColor: significanceColors['inconclusive'],
         },
         {
           label: `Up regulated in ${computationConfiguration.comparator.groupB?.join(
             ', '
-          )}`,
+          )} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
-          markerColor: significanceColors[1],
+          markerColor: significanceColors['high'],
         },
         {
           label: `Up regulated in ${computationConfiguration.comparator.groupA?.join(
             ', '
-          )}`,
+          )} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,
-          markerColor: significanceColors[2],
+          markerColor: significanceColors['low'],
         },
       ]}
       showCheckbox={false}
