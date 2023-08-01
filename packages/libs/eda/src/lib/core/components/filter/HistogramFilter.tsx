@@ -129,6 +129,7 @@ export function HistogramFilter(props: Props) {
   }, [variableUISettings, uiStateKey, defaultUIState]);
   const uiStateForData = useDebounce(uiState, 1000);
   const subsettingClient = useSubsettingClient();
+
   const getData = useCallback(
     async (
       dataParams: UIState
@@ -181,6 +182,7 @@ export function HistogramFilter(props: Props) {
           variable.type
         ),
       ];
+
       const binWidth: NumberOrTimeDelta = NumberVariable.is(variable)
         ? dataParams.binWidth
         : {
@@ -796,7 +798,7 @@ function HistogramPlotWithControls({
   );
 }
 
-function distributionResponseToDataSeries(
+export function distributionResponseToDataSeries(
   name: string,
   response: DistributionResponse,
   color: string,

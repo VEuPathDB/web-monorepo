@@ -99,7 +99,10 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
-import { UIState } from '../../filter/HistogramFilter';
+import {
+  UIState,
+  distributionResponseToDataSeries,
+} from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
@@ -123,6 +126,12 @@ import { useDeepValue } from '../../../hooks/immutability';
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
 import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+
+import { getDistribution } from '../../filter/util';
+import { DistributionResponse } from '../../../api/SubsettingClient';
+import { useSubsettingClient } from '../../../hooks/workspace';
+import { red } from '../../filter/colors';
+import { min, max } from 'lodash';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -442,6 +451,85 @@ function HistogramViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
+  // get distribution data
+  const subsettingClient = useSubsettingClient();
+
+  const getData = useCallback(async () => {
+    if (vizConfig.xAxisVariable != null && xAxisVariable != null) {
+      const [displayRangeMin, displayRangeMax, binWidth, binUnits] =
+        NumberVariable.is(xAxisVariable)
+          ? [
+              xAxisVariable.distributionDefaults.displayRangeMin ??
+                xAxisVariable.distributionDefaults.rangeMin,
+              xAxisVariable.distributionDefaults.displayRangeMax ??
+                xAxisVariable.distributionDefaults.rangeMax,
+              xAxisVariable.distributionDefaults.binWidth,
+              undefined,
+            ]
+          : [
+              (xAxisVariable as DateVariable).distributionDefaults
+                .displayRangeMin ??
+                (xAxisVariable as DateVariable).distributionDefaults.rangeMin,
+              (xAxisVariable as DateVariable).distributionDefaults
+                .displayRangeMax ??
+                (xAxisVariable as DateVariable).distributionDefaults.rangeMax,
+              (xAxisVariable as DateVariable).distributionDefaults.binWidth,
+              (xAxisVariable as DateVariable).distributionDefaults.binUnits,
+            ];
+
+      const distribution = await getDistribution<DistributionResponse>(
+        {
+          entityId: vizConfig.xAxisVariable?.entityId ?? '',
+          variableId: vizConfig.xAxisVariable?.variableId ?? '',
+          filters: filters,
+        },
+        (filters) => {
+          return subsettingClient.getDistribution(
+            studyMetadata.id,
+            vizConfig.xAxisVariable?.entityId ?? '',
+            vizConfig.xAxisVariable?.variableId ?? '',
+            {
+              valueSpec: 'count',
+              filters,
+              binSpec: {
+                // Note: technically any arbitrary values can be used here for displayRangeMin/Max
+                // but used more accurate value anyway
+                displayRangeMin: DateVariable.is(xAxisVariable)
+                  ? displayRangeMin + 'T00:00:00Z'
+                  : displayRangeMin,
+                displayRangeMax: DateVariable.is(xAxisVariable)
+                  ? displayRangeMax + 'T00:00:00Z'
+                  : displayRangeMax,
+                binWidth: binWidth ?? 1,
+                binUnits: binUnits,
+              },
+            }
+          );
+        }
+      );
+
+      // return series using foreground response
+      const series = {
+        series: [
+          distributionResponseToDataSeries(
+            'Subset',
+            distribution.foreground,
+            red,
+            NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+          ),
+        ],
+      };
+
+      return series;
+    }
+
+    return undefined;
+  }, [filters, xAxisVariable, vizConfig.xAxisVariable]);
+
+  const getDistributionData = usePromise(
+    useCallback(() => getData(), [getData])
+  );
+
   const dataRequestConfig: DataRequestConfig = useDeepValue(
     pick(vizConfig, [
       'valueSpec',
@@ -468,6 +556,10 @@ function HistogramViz(props: VisualizationProps<Options>) {
         filteredCounts.pending ||
         filteredCounts.value == null
       )
+        return undefined;
+
+      // wait till getDistributionData is ready
+      if (getDistributionData.pending || getDistributionData.value == null)
         return undefined;
 
       if (
@@ -565,13 +657,52 @@ function HistogramViz(props: VisualizationProps<Options>) {
       computation.descriptor.type,
       overlayEntity,
       facetEntity,
+      getDistributionData.pending,
+      getDistributionData.value,
     ])
   );
 
-  const independentAxisMinMax = useMemo(
-    () => histogramDefaultIndependentAxisMinMax(data),
-    [data]
-  );
+  // Note: Histogram distribution data contains statistical values such as summary.min/max,
+  // however, it does not fully respect multiple filters.
+  // Similarly, distribution data also partially reflect filtered data.
+  // A solution is to compute both min/max values from data-based and summary-based ones,
+  // then take max of min values and min of max values,
+  // which will result in correct min/max value for multiple filters
+  // More specifically, data-based min and summary-based max are correct values
+  const dataBasedIndependentAxisMinMax = useMemo(() => {
+    return histogramDefaultIndependentAxisMinMax(getDistributionData);
+  }, [getDistributionData]);
+
+  const summaryBasedIndependentAxisMinMax = useMemo(() => {
+    if (getDistributionData.value != null)
+      return {
+        min: DateVariable.is(xAxisVariable)
+          ? (
+              (getDistributionData?.value?.series[0]?.summary?.min as string) ??
+              ''
+            ).split('T')[0]
+          : getDistributionData?.value?.series[0]?.summary?.min,
+        max: DateVariable.is(xAxisVariable)
+          ? (
+              (getDistributionData?.value?.series[0]?.summary?.max as string) ??
+              ''
+            ).split('T')[0]
+          : getDistributionData?.value?.series[0]?.summary?.max,
+      };
+  }, [getDistributionData]);
+
+  const independentAxisMinMax = useMemo(() => {
+    return {
+      min: max([
+        dataBasedIndependentAxisMinMax?.min,
+        summaryBasedIndependentAxisMinMax?.min,
+      ]),
+      max: min([
+        dataBasedIndependentAxisMinMax?.max,
+        summaryBasedIndependentAxisMinMax?.max,
+      ]),
+    };
+  }, [getDistributionData]);
 
   // Note: defaultIndependentRange in the Histogram Viz should keep its initial range
   // regardless of the change of the data to ensure the truncation behavior
@@ -586,9 +717,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
       ? undefined
       : independentAxisMinMax?.max,
     undefined,
-    vizConfig.independentAxisValueSpec,
-    // pass true for histogramViz (default is false)
-    true
+    vizConfig.independentAxisValueSpec
   );
 
   // separate minPosMax from dependentMinPosMax

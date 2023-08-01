@@ -12,16 +12,14 @@ export function numberDateDefaultAxisRange(
   observedMax: number | string | undefined,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full',
-  histogramViz: boolean = false
+  axisRangeSpec = 'Full'
 ): NumberOrDateRange | undefined {
   if (Variable.is(variable)) {
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
       if (logScale && observedMinPos == null) return undefined; // return nothing - there will be no plottable data anyway
       // set default range of Custom to be Auto-zoom and check Histogram Viz
-      return axisRangeSpec === 'Full' ||
-        (histogramViz && axisRangeSpec === 'Custom')
+      return axisRangeSpec === 'Full'
         ? {
             min:
               logScale &&
@@ -58,8 +56,7 @@ export function numberDateDefaultAxisRange(
     } else if (variable.type === 'date') {
       const defaults = variable.distributionDefaults;
       // considering axis range control option such as Full, Auto-zoom, and Custom for date type
-      return axisRangeSpec === 'Full' ||
-        (histogramViz && axisRangeSpec === 'Custom')
+      return axisRangeSpec === 'Full'
         ? defaults.displayRangeMin != null && defaults.displayRangeMax != null
           ? {
               min:
@@ -129,8 +126,7 @@ export function numberDateDefaultAxisRange(
     variable.displayRangeMin != null &&
     variable.displayRangeMax != null
   ) {
-    return axisRangeSpec === 'Full' ||
-      (histogramViz && axisRangeSpec === 'Custom')
+    return axisRangeSpec === 'Full'
       ? {
           min: logScale
             ? (observedMinPos as number)

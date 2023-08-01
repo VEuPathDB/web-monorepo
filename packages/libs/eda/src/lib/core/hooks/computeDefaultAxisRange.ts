@@ -22,9 +22,7 @@ export function useDefaultAxisRange(
   max?: number | string,
   /** are we using a log scale */
   logScale?: boolean,
-  axisRangeSpec = 'Full',
-  // check histogramViz
-  histogramViz: boolean = false
+  axisRangeSpec = 'Full'
 ): NumberOrDateRange | undefined {
   const defaultAxisRange = useMemo(() => {
     // Check here to make sure number ranges (min, minPos, max) came with number variables
@@ -47,8 +45,7 @@ export function useDefaultAxisRange(
         minPos,
         max,
         logScale,
-        axisRangeSpec,
-        histogramViz
+        axisRangeSpec
       );
 
       // 4 significant figures
