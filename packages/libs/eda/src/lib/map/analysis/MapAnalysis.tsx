@@ -798,7 +798,6 @@ function MapAnalysisImpl(props: ImplProps) {
               configurationMenu:
                 activeMarkerConfiguration?.type === 'bubble' ? (
                   <BubbleMarkerConfigurationMenu
-                    inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
                     entities={studyEntities}
                     onChange={updateMarkerConfigurations}
                     configuration={activeMarkerConfiguration}

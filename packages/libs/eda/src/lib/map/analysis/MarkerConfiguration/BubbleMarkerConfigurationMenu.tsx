@@ -28,10 +28,15 @@ export interface BubbleMarkerConfiguration
   numeratorValues?: string[];
   denominatorValues?: string[];
 }
+
 interface Props
   extends Omit<
     InputVariablesProps,
-    'onChange' | 'selectedVariables' | 'selectedPlotMode' | 'onPlotSelected'
+    | 'inputs'
+    | 'onChange'
+    | 'selectedVariables'
+    | 'selectedPlotMode'
+    | 'onPlotSelected'
   > {
   onChange: (configuration: BubbleMarkerConfiguration) => void;
   configuration: BubbleMarkerConfiguration;
@@ -148,7 +153,12 @@ export function BubbleMarkerConfigurationMenu({
       </p>
       <InputVariables
         inputs={[
-          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+          {
+            name: 'overlayVariable',
+            label: 'Variable',
+            titleOverride: ' ',
+            isNonNullable: true,
+          },
         ]}
         customSections={[
           {
