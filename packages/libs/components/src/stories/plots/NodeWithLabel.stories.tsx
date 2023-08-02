@@ -1,8 +1,5 @@
-import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { Graph, DefaultNode } from '@visx/network';
-import { Text } from '@visx/text';
-import { Node, Link, NetworkData } from '../../types/plots/network';
+import { Node } from '../../types/plots/network';
 import { NodeWithLabel } from '../../plots/Network';
 import { Group } from '@visx/group';
 
@@ -43,7 +40,6 @@ const myNode = {
   x: 100,
   y: 100,
   id: 'id',
-  r: 6,
 };
 
 export const NodeWithALabel = Template.bind({});
@@ -59,7 +55,7 @@ const myFancyNode = {
   label: 'a fancy long label',
   r: 9,
   color: '#118899',
-  strokeColor: '#000',
+  stroke: '#000',
   strokeWidth: 3,
 };
 
@@ -68,3 +64,5 @@ FancyNodeWithLabel.args = {
   data: myFancyNode,
   labelPosition: 'right',
 };
+
+// Make story with on click node changes color

@@ -1,10 +1,3 @@
-import {
-  CSSProperties,
-  forwardRef,
-  Ref,
-  useImperativeHandle,
-  useRef,
-} from 'react';
 import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { Node } from '../types/plots/network';
@@ -17,42 +10,44 @@ interface NodeWithLabelProps {
 
 // This should take node color and such. It should do zero thinking except
 // for where to place the label.
+
+// To Dos
+// [ ] Style text with whatevs
+// [ ] Style node with whatevs (maybe onClick gets moved to restProps?)
+
 export function NodeWithLabel(props: NodeWithLabelProps) {
   const { node, onClick, labelPosition = 'right' } = props;
 
-  // @ANN set some default consts like node.r
+  const { id, label } = node;
 
-  const { x, y, id, label } = node;
+  const nodeRadius = node.r ?? 4;
 
   // Calculate some things for the text label
-  let textX: number;
-  let textY: number = 0;
+  let textXOffset: number;
   let textAnchor: 'start' | 'end';
 
   if (labelPosition === 'right') {
-    textX = 4;
-    if (node.r) textX = textX + node.r;
-    if (node.strokeWidth) textX = textX + node.strokeWidth;
+    textXOffset = 4 + nodeRadius;
+    if (node.strokeWidth) textXOffset = textXOffset + node.strokeWidth;
     textAnchor = 'start';
   } else {
-    textX = -4;
-    if (node.r) textX = textX - node.r;
-    if (node.strokeWidth) textX = textX - node.strokeWidth;
+    textXOffset = -4 - nodeRadius;
+    if (node.strokeWidth) textXOffset = textXOffset - node.strokeWidth;
     textAnchor = 'end';
   }
 
   return (
     <>
       <DefaultNode
-        r={node.r ?? 4}
+        r={nodeRadius}
         fill={node.color ?? '#aaa'}
         onClick={onClick}
-        stroke={node.strokeColor}
+        stroke={node.stroke}
         strokeWidth={node.strokeWidth ?? 1}
+        // @ANN should just take {...nodeProps or whatevs}
       />
       <Text
-        x={textX}
-        y={textY}
+        x={textXOffset}
         textAnchor={textAnchor}
         fontSize={'1em'}
         verticalAnchor="middle"

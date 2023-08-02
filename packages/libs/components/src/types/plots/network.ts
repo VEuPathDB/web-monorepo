@@ -6,7 +6,7 @@ export type Node = {
   r?: number;
   id: string;
   label?: string;
-  strokeColor?: string;
+  stroke?: string;
   strokeWidth?: number;
 };
 
