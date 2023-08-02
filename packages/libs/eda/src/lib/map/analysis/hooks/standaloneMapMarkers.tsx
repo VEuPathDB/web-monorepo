@@ -534,9 +534,14 @@ export function useStandaloneMapMarkers(
             const bubbleData = {
               value: entityCount,
               diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
+              colorValue:
+                'overlayValue' in otherProps
+                  ? otherProps.overlayValue
+                  : undefined,
               color:
-                'overlayValue' in otherProps &&
-                bubbleValueToColorMapper?.(otherProps.overlayValue),
+                ('overlayValue' in otherProps &&
+                  bubbleValueToColorMapper?.(otherProps.overlayValue)) ||
+                undefined,
             };
 
             return {

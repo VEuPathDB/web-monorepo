@@ -6,8 +6,11 @@ import { ContainerStylesAddon } from '../types/plots';
 
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
+    // The size value
     value: number;
     diameter: number;
+    // The color value
+    colorValue?: number;
     color?: string;
   };
   // isAtomic: add a special thumbtack icon if this is true
@@ -32,6 +35,17 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
   // anim check duration exists or not
   const duration: number = props.duration ? props.duration : 300;
 
+  const popupContent = (
+    <div style={{ fontSize: 16, lineHeight: '150%' }}>
+      <div style={{ marginBottom: '0.5em' }}>
+        <b>Count (size)</b> {props.data.value}
+      </div>
+      <div>
+        <b>Aggregation value (color)</b> {props.data.colorValue}
+      </div>
+    </div>
+  );
+
   return (
     <BoundsDriftMarker
       id={props.id}
@@ -40,6 +54,14 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       icon={SVGBubbleIcon as L.Icon}
       duration={duration}
       zIndexOffset={-props.data.value * 1000}
+      popupContent={{
+        content: popupContent,
+        size: {
+          width: 200,
+          height: 100,
+        },
+      }}
+      showPopup={props.showPopup}
     />
   );
 }
@@ -123,10 +145,10 @@ function bubbleMarkerSVGIcon(props: BubbleMarkerStandaloneProps): {
 
   //TODO: do we need to show total number for bubble marker?
   // adding total number text/label and centering it
-  svgHTML +=
-    '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="white" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
-    props.data.value +
-    '</text>';
+  // svgHTML +=
+  //   '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="white" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-size="1em">' +
+  //   props.data.value +
+  //   '</text>';
 
   // check isAtomic: draw pushpin if true
   if (props.isAtomic) {
