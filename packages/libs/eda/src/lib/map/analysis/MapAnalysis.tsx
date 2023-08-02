@@ -109,6 +109,8 @@ enum MapSideNavItemLabels {
   StudyDetails = 'View Study Details',
   MyAnalyses = 'My Analyses',
   ConfigureMap = 'Configure Map',
+  SingleVariableMaps = 'Single Variable Maps',
+  GroupedVariableMaps = 'Grouped Variable Maps',
 }
 
 enum MarkerTypeLabels {
@@ -177,7 +179,6 @@ function MapAnalysisImpl(props: ImplProps) {
     appState,
     analysisState,
     setViewport,
-    setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
     sharingUrl,
@@ -230,6 +231,17 @@ function MapAnalysisImpl(props: ImplProps) {
       setMarkerConfigurations(nextMarkerConfigurations);
     },
     [markerConfigurations, setMarkerConfigurations]
+  );
+
+  const setActiveVisualizationId = useCallback(
+    (activeVisualizationId?: string) => {
+      if (activeMarkerConfiguration == null) return;
+      updateMarkerConfigurations({
+        ...activeMarkerConfiguration,
+        activeVisualizationId,
+      });
+    },
+    [activeMarkerConfiguration, updateMarkerConfigurations]
   );
 
   const filtersIncludingViewport = useMemo(() => {
@@ -580,12 +592,12 @@ function MapAnalysisImpl(props: ImplProps) {
       children: [
         {
           type: 'subheading',
-          labelText: 'Single Variable Maps',
+          labelText: MapSideNavItemLabels.SingleVariableMaps,
           children: [
             {
               type: 'item',
               // concatenating the parent and subMenu labels creates a unique ID
-              id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
+              id: 'single-variable-pie',
               labelText: MarkerTypeLabels.pie,
               rightIcon: <DonutMarker style={{ height: '1.25em' }} />,
               leftIcon:
@@ -654,8 +666,10 @@ function MapAnalysisImpl(props: ImplProps) {
                       <MapVizManagement
                         analysisState={analysisState}
                         setActiveVisualizationId={setActiveVisualizationId}
+                        activeVisualizationId={
+                          activeMarkerConfiguration?.activeVisualizationId
+                        }
                         apps={apps}
-                        activeVisualizationId={appState.activeVisualizationId}
                         plugins={plugins}
                         geoConfigs={geoConfigs}
                         mapType={activeMarkerConfigurationType}
@@ -684,7 +698,7 @@ function MapAnalysisImpl(props: ImplProps) {
             {
               type: 'item',
               // concatenating the parent and subMenu labels creates a unique ID
-              id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
+              id: 'single-variable-bar',
               labelText: MarkerTypeLabels.barplot,
               leftIcon:
                 activeMarkerConfigurationType === 'barplot' ? (
@@ -756,7 +770,9 @@ function MapAnalysisImpl(props: ImplProps) {
                         analysisState={analysisState}
                         setActiveVisualizationId={setActiveVisualizationId}
                         apps={apps}
-                        activeVisualizationId={appState.activeVisualizationId}
+                        activeVisualizationId={
+                          activeMarkerConfiguration?.activeVisualizationId
+                        }
                         plugins={plugins}
                         geoConfigs={geoConfigs}
                         mapType={activeMarkerConfigurationType}
@@ -1011,42 +1027,9 @@ function MapAnalysisImpl(props: ImplProps) {
     }
   }
 
-  function isMapTypeSubMenuItemSelected() {
-    const mapTypeSideNavObject = sidePanelMenuEntries.filter(
-      (navObject) => navObject.labelText === MapSideNavItemLabels.ConfigureMap
-    );
-    return findActiveSidePanelItem(mapTypeSideNavObject) != null;
-  }
-
-  function areMapTypeAndActiveVizCompatible() {
-    if (!appState.activeVisualizationId) return false;
-    const visualization = analysisState.getVisualization(
-      appState.activeVisualizationId
-    );
-    return (
-      visualization?.descriptor.applicationContext ===
-      activeMarkerConfigurationType
-    );
-  }
-
-  const intialActiveSideMenuId: string | undefined = (() => {
-    if (
-      appState.activeVisualizationId &&
-      appState.activeMarkerConfigurationType &&
-      MarkerTypeLabels[appState.activeMarkerConfigurationType]
-    )
-      return (
-        MapSideNavItemLabels.ConfigureMap +
-        MarkerTypeLabels[appState.activeMarkerConfigurationType]
-      );
-
-    return undefined;
-  })();
-
   // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
-  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
-    intialActiveSideMenuId
-  );
+  const [activeSideMenuId, setActiveSideMenuId] =
+    useState<string | undefined>();
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -1198,45 +1181,24 @@ function MapAnalysisImpl(props: ImplProps) {
                   </div>
                 </DraggablePanel>
 
-                {/* <FloatingDiv
-                  style={{
-                    top: 250,
-                    left: 500,
-                    left: 100,
-                  }}
-                >
-                  <div>
-                    {safeHtml(studyRecord.displayName)} ({totalEntityCount})
-                  </div>
-                  <div>
-                    Showing {entity?.displayName} variable {variable?.displayName}
-                  </div>
-                  <div>
-                    <FilledButton
-                      text="Open Filters"
-                      onPress={() => setIsSubsetPanelOpen(true)}
-                    />
-                  </div>
-      */}
-                {activeSideMenuId && isMapTypeSubMenuItemSelected() && (
-                  <DraggableVisualization
-                    analysisState={analysisState}
-                    setActiveVisualizationId={setActiveVisualizationId}
-                    appState={appState}
-                    apps={apps}
-                    plugins={plugins}
-                    geoConfigs={geoConfigs}
-                    totalCounts={totalCounts}
-                    filteredCounts={filteredCounts}
-                    toggleStarredVariable={toggleStarredVariable}
-                    filters={filtersIncludingViewport}
-                    // onTouch={moveVizToTop}
-                    zIndexForStackingContext={getZIndexByPanelTitle(
-                      DraggablePanelIds.VIZ_PANEL
-                    )}
-                    additionalRenderCondition={areMapTypeAndActiveVizCompatible}
-                  />
-                )}
+                <DraggableVisualization
+                  analysisState={analysisState}
+                  visualizationId={
+                    activeMarkerConfiguration?.activeVisualizationId
+                  }
+                  setActiveVisualizationId={setActiveVisualizationId}
+                  apps={apps}
+                  plugins={plugins}
+                  geoConfigs={geoConfigs}
+                  totalCounts={totalCounts}
+                  filteredCounts={filteredCounts}
+                  toggleStarredVariable={toggleStarredVariable}
+                  filters={filtersIncludingViewport}
+                  // onTouch={moveVizToTop}
+                  zIndexForStackingContext={getZIndexByPanelTitle(
+                    DraggablePanelIds.VIZ_PANEL
+                  )}
+                />
 
                 {error && (
                   <FloatingDiv

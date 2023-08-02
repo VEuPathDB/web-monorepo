@@ -24,6 +24,9 @@ export const MarkerConfiguration = t.intersection([
     type: MarkerType,
     selectedVariable: VariableDescriptor,
   }),
+  t.partial({
+    activeVisualizationId: t.string,
+  }),
   t.union([
     t.type({
       type: t.literal('barplot'),
@@ -70,7 +73,6 @@ export const AppState = t.intersection([
     markerConfigurations: t.array(MarkerConfiguration),
   }),
   t.partial({
-    activeVisualizationId: t.string,
     boundsZoomLevel: t.type({
       zoomLevel: t.number,
       bounds: t.type({
@@ -168,7 +170,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
       'activeMarkerConfigurationType'
     ),
     setMarkerConfigurations: useSetter('markerConfigurations'),
-    setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),

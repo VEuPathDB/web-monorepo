@@ -13,7 +13,7 @@ import { useVizIconColors } from '../../core/components/visualizations/implement
 import { GeoConfig } from '../../core/types/geoConfig';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import './MapVizManagement.scss';
-import { MarkerConfiguration, useAppState } from './appState';
+import { MarkerConfiguration } from './appState';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 import { VisualizationPlugin } from '../../core/components/visualizations/VisualizationPlugin';
 import { StartPage } from '../../core/components/computations/StartPage';
@@ -21,9 +21,7 @@ import { StartPage } from '../../core/components/computations/StartPage';
 interface Props {
   activeVisualizationId: string | undefined;
   analysisState: AnalysisState;
-  setActiveVisualizationId: ReturnType<
-    typeof useAppState
-  >['setActiveVisualizationId'];
+  setActiveVisualizationId: (id?: string) => void;
   apps: ComputationAppOverview[];
   plugins: Partial<Record<string, ComputationPlugin>>;
   //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
