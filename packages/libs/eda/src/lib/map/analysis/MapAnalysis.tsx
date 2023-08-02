@@ -108,6 +108,7 @@ import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/Categori
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
 import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
+import _ from 'lodash';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -403,25 +404,13 @@ function MapAnalysisImpl(props: ImplProps) {
         dataClient,
         subsettingClient,
         markerType: activeMarkerConfiguration?.type,
-        binningMethod:
-          activeMarkerConfiguration &&
-          'binningMethod' in activeMarkerConfiguration
-            ? activeMarkerConfiguration.binningMethod
-            : undefined,
-        aggregator:
-          activeMarkerConfiguration && 'aggregator' in activeMarkerConfiguration
-            ? activeMarkerConfiguration.aggregator
-            : undefined,
-        numeratorValues:
-          activeMarkerConfiguration &&
-          'numeratorValues' in activeMarkerConfiguration
-            ? activeMarkerConfiguration.numeratorValues
-            : undefined,
-        denominatorValues:
-          activeMarkerConfiguration &&
-          'denominatorValues' in activeMarkerConfiguration
-            ? activeMarkerConfiguration.denominatorValues
-            : undefined,
+        binningMethod: _.get(activeMarkerConfiguration, 'binningMethod'),
+        aggregator: _.get(activeMarkerConfiguration, 'aggregator'),
+        numeratorValues: _.get(activeMarkerConfiguration, 'numeratorValues'),
+        denominatorValues: _.get(
+          activeMarkerConfiguration,
+          'denominatorValues'
+        ),
       });
     }, [
       activeMarkerConfiguration,

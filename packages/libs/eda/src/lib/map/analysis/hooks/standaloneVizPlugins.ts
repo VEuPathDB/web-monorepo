@@ -29,6 +29,7 @@ import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
 //TO DO import timeline SVGIcon
 import LineSVG from '../../../core/components/visualizations/implementations/selectorIcons/LineSVG';
+import _ from 'lodash';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
@@ -52,11 +53,8 @@ export function useStandaloneVizPlugins({
         // part of this interface.
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
         getOverlayType: () =>
-          selectedOverlayConfig
-            ? 'overlayType' in selectedOverlayConfig
-              ? selectedOverlayConfig.overlayType
-              : selectedOverlayConfig.aggregationConfig.overlayType
-            : undefined,
+          _.get(selectedOverlayConfig, 'overlayType') ??
+          _.get(selectedOverlayConfig, 'aggregationConfig.overlayType'),
         getOverlayVocabulary: () => {
           const overlayValues =
             selectedOverlayConfig && 'overlayValues' in selectedOverlayConfig
