@@ -1,3 +1,7 @@
+.visx-tooltip {
+  z-index: 1;
+}
+
 .VolcanoPlotTooltip > ul {
   margin: 0;
   padding: 0.25em;

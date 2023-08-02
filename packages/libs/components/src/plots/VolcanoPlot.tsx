@@ -20,8 +20,7 @@ import {
   AnnotationLineSubject,
   AnnotationLabel,
   Tooltip,
-  // } from '@visx/xychart';
-} from '../../../../../../visx/packages/visx-xychart';
+} from '@visx/xychart';
 import findNearestDatumXY from '@visx/xychart/lib/utils/findNearestDatumXY';
 import { Group } from '@visx/group';
 import { max, min } from 'lodash';
@@ -203,7 +202,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
         {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
-
         <XYChart
           xScale={{
             type: 'linear',
@@ -321,6 +319,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             snapTooltipToDatumY
             showVerticalCrosshair
             showHorizontalCrosshair
+            horizontalCrosshairStyle={{ stroke: 'red' }}
+            verticalCrosshairStyle={{ stroke: 'red' }}
+            className="VolcanoPlotTooltip"
             renderTooltip={(d) => {
               const data = d.tooltipData?.nearestDatum?.datum;
               return (
@@ -341,9 +342,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                 </ul>
               );
             }}
-            horizontalCrosshairStyle={{ stroke: 'red' }}
-            verticalCrosshairStyle={{ stroke: 'red' }}
-            className="VolcanoPlotTooltip"
           />
         </XYChart>
         {showSpinner && <Spinner />}
