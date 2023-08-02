@@ -37,11 +37,12 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
 
   const popupContent = (
     <div style={{ fontSize: 16, lineHeight: '150%' }}>
-      <div style={{ marginBottom: '0.5em' }}>
-        <b>Count (size)</b> {props.data.value}
+      <div style={{ marginBottom: '0.5rem' }}>
+        <b style={{ marginRight: '0.15rem' }}>Count</b> {props.data.value}
       </div>
       <div>
-        <b>Aggregation value (color)</b> {props.data.colorValue}
+        <b style={{ marginRight: '0.15rem' }}>Color value</b>{' '}
+        {props.data.colorValue}
       </div>
     </div>
   );
@@ -57,7 +58,7 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       popupContent={{
         content: popupContent,
         size: {
-          width: 200,
+          width: 170,
           height: 100,
         },
       }}
