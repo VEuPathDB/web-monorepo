@@ -47,7 +47,7 @@ export default function PlotBubbleLegend({
 
     return (
       <svg
-        width={largestCircleDiameter + (tickLength - largestCircleRadius) + 40}
+        width={largestCircleDiameter + (tickLength - largestCircleRadius) + 50}
         height={largestCircleDiameter + circleStrokeWidth * 2 + padding * 2}
       >
         {circleValues.map((value, i) => {
