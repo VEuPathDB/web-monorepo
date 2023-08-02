@@ -54,6 +54,9 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
       bounds={props.bounds}
       icon={SVGBubbleIcon as L.Icon}
       duration={duration}
+      // This makes sure smaller markers are on top of larger ones.
+      // The factor of 1000 ensures that the offset dominates over
+      // the default zIndex, which itself varies.
       zIndexOffset={-props.data.value * 1000}
       popupContent={{
         content: popupContent,

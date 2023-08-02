@@ -315,7 +315,6 @@ export function useStandaloneMapMarkers(
           },
         };
 
-        // now get and return the data
         return {
           rawMarkersData: await dataClient.getStandaloneMapMarkers(
             'standalone-map',

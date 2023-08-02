@@ -148,7 +148,7 @@ const plotConfig = intersection([
   }),
 ]);
 
-// to be distinguised from geo-viewports
+// to be distinguished from geo-viewports
 export type NumericViewport = TypeOf<typeof numericViewport>;
 const numericViewport = type({
   xMin: string,

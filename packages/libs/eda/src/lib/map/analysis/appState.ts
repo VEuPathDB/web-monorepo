@@ -167,6 +167,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           [uiStateKey]: defaultAppState,
         }));
       } else {
+        // Ensures forward compatibility of analyses with new marker types
         const missingMarkerConfigs =
           defaultAppState.markerConfigurations.filter(
             (defaultConfig) =>

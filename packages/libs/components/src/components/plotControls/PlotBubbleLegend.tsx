@@ -29,6 +29,9 @@ export default function PlotBubbleLegend({
     const padding = 5;
     const numCircles = 3;
 
+    // The largest circle's value will be the first number that's larger than
+    // legendMax and has only one significant digit. Each smaller circle will
+    // be half the size of the last (rounded and >= 1)
     const legendMaxLog10 = Math.floor(Math.log10(legendMax));
     const largestCircleValue =
       legendMax <= 10

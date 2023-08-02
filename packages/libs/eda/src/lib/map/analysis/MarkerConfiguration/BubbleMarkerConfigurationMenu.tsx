@@ -199,7 +199,9 @@ function isSuitableCategoricalVariable(variable?: VariableTreeNode): boolean {
   );
 }
 
-// We currently call this function twice per value change. If the number of values becomes vary large, we may want to optimize this?
+// We currently call this function twice per value change.
+// If the number of values becomes vary large, we may want to optimize this?
+// Maybe O(n^2) isn't that bad though.
 export const validateProportionValues = (
   numeratorValues: string[] | undefined,
   denominatorValues: string[] | undefined
