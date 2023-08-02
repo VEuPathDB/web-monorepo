@@ -6,7 +6,7 @@ import { Tooltip } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { mapNavigationBorder } from '..';
+import { mapSidePanelBorder } from '..';
 import { AnalysisState } from '../../core';
 import PlaceholderIcon from '../../core/components/visualizations/PlaceholderIcon';
 import { useVizIconColors } from '../../core/components/visualizations/implementations/selectorIcons/types';
@@ -128,7 +128,7 @@ export default function MapVizManagement({
       {isVizSelectorVisible && totalVisualizationCount > 0 && (
         <div
           style={{
-            borderLeft: mapNavigationBorder,
+            borderLeft: mapSidePanelBorder,
           }}
           className={mapVizManagementClassName('-NewVizPicker')}
         >

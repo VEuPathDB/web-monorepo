@@ -9,8 +9,8 @@ export type SiteInformationProps = {
   siteLogoSrc: string;
 };
 
-export const mapNavigationBackgroundColor = 'white';
-export const mapNavigationBorder: CSSProperties['border'] = '1px solid #D9D9D9';
+export const mapSidePanelBackgroundColor = 'white';
+export const mapSidePanelBorder: CSSProperties['border'] = '1px solid #D9D9D9';
 
 // Back end overlay values contain a special token for the "Other" category:
 export const UNSELECTED_TOKEN = '__UNSELECTED__';
