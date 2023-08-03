@@ -596,7 +596,6 @@ function MapAnalysisImpl(props: ImplProps) {
           children: [
             {
               type: 'item',
-              // concatenating the parent and subMenu labels creates a unique ID
               id: 'single-variable-pie',
               labelText: MarkerTypeLabels.pie,
               rightIcon: <DonutMarker style={{ height: '1.25em' }} />,
@@ -697,7 +696,6 @@ function MapAnalysisImpl(props: ImplProps) {
             },
             {
               type: 'item',
-              // concatenating the parent and subMenu labels creates a unique ID
               id: 'single-variable-bar',
               labelText: MarkerTypeLabels.barplot,
               leftIcon:
