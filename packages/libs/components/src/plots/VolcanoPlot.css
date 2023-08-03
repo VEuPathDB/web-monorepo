@@ -2,14 +2,24 @@
   z-index: 1;
 }
 
-.VolcanoPlotTooltip > ul {
-  margin: 0;
-  padding: 0.25em;
-  list-style: none;
-  line-height: 1.5em;
+.VolcanoPlotTooltip {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 2px;
+  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.5);
 }
 
-.VolcanoPlotTooltip > ul > li {
+.VolcanoPlotTooltip > .pseudo-hr {
+  margin: 5px auto;
+  height: 1px;
+  width: 100%;
+}
+
+.VolcanoPlotTooltip > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.5em;
   font-weight: normal;
 }
 
