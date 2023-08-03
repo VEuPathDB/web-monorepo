@@ -256,7 +256,7 @@ export const getValueToGradientColorMapper = (
         : 'divergent'
       : undefined;
 
-  if (gradientColorscaleType === null) {
+  if (gradientColorscaleType == null) {
     return undefined;
   }
 
