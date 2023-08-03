@@ -274,25 +274,18 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     log2FoldChangeThreshold,
   ]);
 
-  // TODO: Given that I cannot figure out how to type this correctly, I suspect there's a simpler, cleaner
-  // way to get the counts.
+  // For the legend, we need the counts of each assigned significance value
   const countsData = useMemo(() => {
     if (!finalData) return;
-    return finalData.reduce(
-      (prev: any, curr: any) => {
-        if (curr.significanceColor) {
-          return {
-            ...prev,
-            [curr.significanceColor]: ++prev[curr.significanceColor],
-          };
-        }
-      },
-      {
-        [significanceColors['inconclusive']]: 0,
-        [significanceColors['high']]: 0,
-        [significanceColors['low']]: 0,
-      }
-    );
+    const counts = {
+      [significanceColors['inconclusive']]: 0,
+      [significanceColors['high']]: 0,
+      [significanceColors['low']]: 0,
+    };
+    for (const entry of finalData) {
+      counts[entry.significanceColor]++;
+    }
+    return counts;
   }, [finalData]);
 
   const plotRef = useUpdateThumbnailEffect(
