@@ -147,9 +147,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       computeJobStatus,
       filteredCounts.pending,
       filteredCounts.value,
-      entities,
-      dataElementConstraints,
-      dataElementDependencyOrder,
       filters,
       studyId,
       computationConfiguration,
@@ -275,7 +272,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
-    significanceColors,
   ]);
 
   // TODO: Given that I cannot figure out how to type this correctly, I suspect there's a simpler, cleaner
@@ -297,7 +293,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         [significanceColors['low']]: 0,
       }
     );
-  }, [finalData, significanceColors]);
+  }, [finalData]);
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
