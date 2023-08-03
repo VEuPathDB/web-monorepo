@@ -75,7 +75,7 @@ export interface VolcanoPlotProps {
   /** shall we show the loading spinner? */
   showSpinner?: boolean;
   /** used to determine truncation logic */
-  rawDataMinMaxValues?: RawDataMinMaxValues;
+  rawDataMinMaxValues: RawDataMinMaxValues;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [];
@@ -146,10 +146,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   );
 
   // Set maxes and mins of the data itself from rawDataMinMaxValues prop
-  const dataXMin = rawDataMinMaxValues?.x.min ?? 0;
-  const dataXMax = rawDataMinMaxValues?.x.max ?? 0;
-  const dataYMin = rawDataMinMaxValues?.y.min ?? 0;
-  const dataYMax = rawDataMinMaxValues?.y.max ?? 0;
+  const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
+  const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
   // Set mins, maxes of axes in the plot using axis range props
   const xAxisMin = independentAxisRange?.min ?? 0;
