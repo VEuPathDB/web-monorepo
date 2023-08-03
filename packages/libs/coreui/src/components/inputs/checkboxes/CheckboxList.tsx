@@ -5,6 +5,7 @@ import { merge } from 'lodash';
 import { useMemo } from 'react';
 import { UITheme } from '../../theming/types';
 import useUITheme from '../../theming/useUITheme';
+import { Tooltip } from '@material-ui/core';
 
 export type CheckboxListStyleSpec = {
   container: {
@@ -72,6 +73,7 @@ enum LinksPosition {
 export type Item<T> = {
   display: ReactNode;
   value: T;
+  disabled?: boolean;
 };
 
 export type CheckboxListProps<T> = {
@@ -94,6 +96,7 @@ export type CheckboxListProps<T> = {
 
   themeRole?: keyof UITheme['palette'];
   styleOverrides?: Partial<CheckboxListStyleSpec>;
+  disabledCheckboxTooltipContent?: ReactNode;
 };
 
 export default function CheckboxList<T>({
@@ -104,6 +107,7 @@ export default function CheckboxList<T>({
   linksPosition = LinksPosition.Bottom,
   themeRole,
   styleOverrides,
+  disabledCheckboxTooltipContent,
 }: CheckboxListProps<T>) {
   const theme = useUITheme();
   const themeStyle = useMemo<Partial<CheckboxListStyleSpec>>(
@@ -164,7 +168,7 @@ export default function CheckboxList<T>({
   };
 
   const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
-    onChange(items.map((item) => item.value));
+    onChange(items.filter((item) => !item.disabled).map((item) => item.value));
     e.preventDefault();
   };
 
@@ -178,6 +182,13 @@ export default function CheckboxList<T>({
       {linksPosition & LinksPosition.Top ? links : null}
       <div>
         {items.map((item) => {
+          const sharedInputAttributes = {
+            type: 'checkbox',
+            name,
+            value: JSON.stringify(item.value),
+            checked: value.includes(item.value),
+            onChange: () => onChangeHandler(item.value),
+          };
           return (
             <div
               key={JSON.stringify(item.value)}
@@ -187,16 +198,17 @@ export default function CheckboxList<T>({
                 fontSize: finalStyle.options.fontSize,
               }}
             >
-              <label>
-                <input
-                  type="checkbox"
-                  name={name}
-                  value={JSON.stringify(item.value)}
-                  checked={value.includes(item.value)}
-                  onChange={() => onChangeHandler(item.value)}
-                />{' '}
-                {item.display}
-              </label>
+              {item.disabled ? (
+                <Tooltip title={disabledCheckboxTooltipContent ?? ''}>
+                  <label style={{ color: 'lightgrey' }}>
+                    <input {...sharedInputAttributes} disabled /> {item.display}
+                  </label>
+                </Tooltip>
+              ) : (
+                <label>
+                  <input {...sharedInputAttributes} /> {item.display}
+                </label>
+              )}
             </div>
           );
         })}

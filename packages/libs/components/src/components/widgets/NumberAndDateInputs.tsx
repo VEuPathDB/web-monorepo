@@ -34,7 +34,7 @@ type BaseProps<M extends NumberOrDate> = {
   disabled?: boolean;
 };
 
-export type NumberInputProps = BaseProps<number>;
+export type NumberInputProps = BaseProps<number> & { step?: number };
 
 export function NumberInput(props: NumberInputProps) {
   return <BaseInput {...props} valueType="number" />;
@@ -82,6 +82,7 @@ function BaseInput({
   containerStyles,
   displayRangeViolationWarnings = true,
   disabled = false,
+  ...props
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
     console.log(
@@ -184,6 +185,9 @@ function BaseInput({
     [boundsCheckedValue, debouncedOnChange]
   );
 
+  const step =
+    valueType === 'number' && 'step' in props ? props.step : undefined;
+
   return (
     <div
       // containerStyles is not used here - but bin control uses this!
@@ -202,6 +206,7 @@ function BaseInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
+          inputProps={{ step }}
           value={
             localValue == null
               ? ''
