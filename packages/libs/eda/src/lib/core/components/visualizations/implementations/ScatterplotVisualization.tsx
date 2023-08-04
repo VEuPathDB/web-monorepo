@@ -166,6 +166,24 @@ const modalPlotContainerStyles = {
   margin: 'auto',
 };
 
+// implement gradient color for slider opacity
+export const colorSpecProps: SliderWidgetProps['colorSpec'] = {
+  type: 'gradient',
+  tooltip: '#aaa',
+  knobColor: '#aaa',
+  // normal slider color: e.g., from 0 to 1
+  trackGradientStart: '#fff',
+  trackGradientEnd: '#000',
+};
+
+// slider settings
+const markerBodyOpacityContainerStyles = {
+  height: '4em',
+  width: '20em',
+  marginLeft: '1em',
+  marginBottom: '0.5em',
+};
+
 // define ScatterPlotDataWithCoverage and export
 export interface ScatterPlotDataWithCoverage extends CoverageStatistics {
   dataSetProcess: ScatterPlotData | FacetedData<ScatterPlotData>;
@@ -1299,24 +1317,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     truncationConfigDependentAxisMax,
     setTruncatedDependentAxisWarning,
   ]);
-
-  // slider settings
-  const markerBodyOpacityContainerStyles = {
-    height: '4em',
-    width: '20em',
-    marginLeft: '1em',
-    marginBottom: '0.5em',
-  };
-
-  // implement gradient color for slider opacity
-  const colorSpecProps: SliderWidgetProps['colorSpec'] = {
-    type: 'gradient',
-    tooltip: '#aaa',
-    knobColor: '#aaa',
-    // normal slider color: e.g., from 0 to 1
-    trackGradientStart: '#fff',
-    trackGradientEnd: '#000',
-  };
 
   const scatterplotProps: ScatterPlotProps = {
     interactive: !isFaceted(data.value?.dataSetProcess) ? true : false,
