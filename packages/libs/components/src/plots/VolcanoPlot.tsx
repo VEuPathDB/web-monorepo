@@ -44,7 +44,7 @@ export interface RawDataMinMaxValues {
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
-  data: VolcanoPlotData;
+  data: VolcanoPlotData | undefined;
   /**
    * Used to set the fold change thresholds. Will
    * set two thresholds at +/- this number. Affects point colors
@@ -78,7 +78,9 @@ export interface VolcanoPlotProps {
   rawDataMinMaxValues: RawDataMinMaxValues;
 }
 
-const EmptyVolcanoPlotData: VolcanoPlotData = [];
+const EmptyVolcanoPlotData: VolcanoPlotData = [
+  { log2foldChange: '0', pValue: '1' },
+];
 
 interface TruncationRectangleProps {
   x1: number;

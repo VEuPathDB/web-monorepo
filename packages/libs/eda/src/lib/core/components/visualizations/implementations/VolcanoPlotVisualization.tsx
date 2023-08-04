@@ -51,6 +51,10 @@ const DEFAULT_FC_THRESHOLD = 2;
  * are, which is important for user-defined ranges and truncation bars.
  */
 const AXIS_PADDING_FACTOR = 0.05;
+const EMPTY_VIZ_AXIS_RANGES = {
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+};
 
 const plotContainerStyles = {
   width: 750,
@@ -167,7 +171,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     if (!data.value)
       return {
         x: { min: 0, max: 0 },
-        y: { min: 0, max: 0 },
+        y: { min: 1, max: 1 },
       };
     const dataXMin = min(data.value.map((d) => Number(d.log2foldChange))) ?? 0;
     const dataXMax = max(data.value.map((d) => Number(d.log2foldChange))) ?? 0;
@@ -192,16 +196,12 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       const {
         x: { min: dataXMin, max: dataXMax },
       } = rawDataMinMaxValues;
-      if (dataXMin && dataXMax) {
-        // We can use the dataMin and dataMax here because we don't have a further transform
-        // Add a little padding to prevent clipping the glyph representing the extreme points
-        return {
-          min: dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
-          max: dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
-        };
-      } else {
-        return { min: 0, max: 0 };
-      }
+      // We can use the dataMin and dataMax here because we don't have a further transform
+      // Add a little padding to prevent clipping the glyph representing the extreme points
+      return {
+        min: dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
+        max: dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
+      };
     }
   }, [data.value, xAxisRange, rawDataMinMaxValues]);
 
@@ -216,18 +216,14 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       const {
         y: { min: dataYMin, max: dataYMax },
       } = rawDataMinMaxValues;
-      if (dataYMin && dataYMax) {
-        // Standard volcano plots have -log10(raw p value) as the y axis
-        const yAxisMin = -Math.log10(dataYMax);
-        const yAxisMax = -Math.log10(dataYMin);
-        // Add a little padding to prevent clipping the glyph representing the extreme points
-        return {
-          min: yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
-          max: yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
-        };
-      } else {
-        return { min: 0, max: 0 };
-      }
+      // Standard volcano plots have -log10(raw p value) as the y axis
+      const yAxisMin = -Math.log10(dataYMax);
+      const yAxisMax = -Math.log10(dataYMin);
+      // Add a little padding to prevent clipping the glyph representing the extreme points
+      return {
+        min: yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
+        max: yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
+      };
     }
   }, [data.value, yAxisRange, rawDataMinMaxValues]);
 
@@ -313,17 +309,34 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       : [];
 
   const volcanoPlotProps: VolcanoPlotProps = {
-    data: finalData ? Object.values(finalData) : [],
-    markerBodyOpacity: vizConfig.markerBodyOpacity ?? 0.5,
+    /**
+     * VolcanoPlot defines an EmptyVolcanoPlotData variable that will be assigned when data is undefined.
+     * In order to display an empty viz, EmptyVolcanoPlotData is defined as:
+     *    const EmptyVolcanoPlotData: VolcanoPlotData = [{log2foldChange: '0', pValue: '1'}];
+     */
+    data: finalData ? Object.values(finalData) : undefined,
     significanceThreshold,
     log2FoldChangeThreshold,
+    /**
+     * Since we are rendering a single point in order to display an empty viz, let's hide the data point
+     * by setting the marker opacity to 0 when data.value doesn't exist
+     */
+    markerBodyOpacity: data.value ? vizConfig.markerBodyOpacity ?? 0.5 : 0,
     containerStyles: plotContainerStyles,
-    comparisonLabels: comparisonLabels,
+    /**
+     * Let's not display comparisonLabels before we have data for the viz. This prevents what may be
+     * confusing behavior where selecting group values displays on the empty viz placeholder.
+     */
+    comparisonLabels: data.value ? comparisonLabels : [],
     showSpinner: data.pending,
     truncationBarFill: yellow[300],
     independentAxisRange,
     dependentAxisRange,
     rawDataMinMaxValues,
+    /**
+     * As sophisticated aesthetes, let's specify axis ranges for the empty viz placeholder
+     */
+    ...(data.value ? {} : EMPTY_VIZ_AXIS_RANGES),
   };
 
   // @ts-ignore

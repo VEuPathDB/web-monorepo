@@ -242,6 +242,7 @@ const _StudyEntityBase = t.intersection([
      * to actual sub-entities.
      * */
     variables: t.array(VariableTreeNode),
+    isManyToOneWithParent: t.boolean,
   }),
   t.partial({
     displayNamePlural: t.string,

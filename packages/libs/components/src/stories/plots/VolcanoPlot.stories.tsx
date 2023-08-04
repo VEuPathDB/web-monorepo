@@ -85,7 +85,7 @@ const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
 };
 
 interface TemplateProps {
-  data: VEuPathDBVolcanoPlotData;
+  data: VEuPathDBVolcanoPlotData | undefined;
   markerBodyOpacity: number;
   log2FoldChangeThreshold: number;
   significanceThreshold: number;
@@ -100,14 +100,14 @@ interface TemplateProps {
 const Template: Story<TemplateProps> = (args) => {
   // Process input data. Take the object of arrays and turn it into
   // an array of data points. Note the backend will do this for us!
-  const volcanoDataPoints: VolcanoPlotData =
-    args.data.volcanoplot.log2foldChange
+  const volcanoDataPoints: VolcanoPlotData | undefined =
+    args.data?.volcanoplot.log2foldChange
       .map((l2fc, index) => {
         return {
           log2foldChange: l2fc,
-          pValue: args.data.volcanoplot.pValue[index],
-          adjustedPValue: args.data.volcanoplot.adjustedPValue[index],
-          pointID: args.data.volcanoplot.pointID[index],
+          pValue: args.data?.volcanoplot.pValue[index],
+          adjustedPValue: args.data?.volcanoplot.adjustedPValue[index],
+          pointID: args.data?.volcanoplot.pointID[index],
         };
       })
       .map((d) => ({
@@ -124,15 +124,27 @@ const Template: Story<TemplateProps> = (args) => {
   const rawDataMinMaxValues = {
     x: {
       min:
-        Math.min(...volcanoDataPoints.map((d) => Number(d.log2foldChange))) ??
+        (volcanoDataPoints &&
+          Math.min(
+            ...volcanoDataPoints.map((d) => Number(d.log2foldChange))
+          )) ??
         0,
       max:
-        Math.max(...volcanoDataPoints.map((d) => Number(d.log2foldChange))) ??
+        (volcanoDataPoints &&
+          Math.max(
+            ...volcanoDataPoints.map((d) => Number(d.log2foldChange))
+          )) ??
         0,
     },
     y: {
-      min: Math.min(...volcanoDataPoints.map((d) => Number(d.pValue))) ?? 0,
-      max: Math.max(...volcanoDataPoints.map((d) => Number(d.pValue))) ?? 0,
+      min:
+        (volcanoDataPoints &&
+          Math.min(...volcanoDataPoints.map((d) => Number(d.pValue)))) ??
+        1,
+      max:
+        (volcanoDataPoints &&
+          Math.max(...volcanoDataPoints.map((d) => Number(d.pValue)))) ??
+        1,
     },
   };
 
@@ -208,4 +220,15 @@ Spinner.args = {
   independentAxisRange: { min: -8, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
   showSpinner: true,
+};
+
+// Test empty placeholder viz
+export const Empty = Template.bind({});
+Empty.args = {
+  data: undefined,
+  markerBodyOpacity: 0,
+  log2FoldChangeThreshold: 2,
+  significanceThreshold: 0.05,
+  independentAxisRange: { min: -9, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
 };
