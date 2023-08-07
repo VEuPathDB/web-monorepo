@@ -1,4 +1,9 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  ContinuousVariableDataShape,
+  useCollectionVariables,
+  usePromise,
+  useStudyMetadata,
+} from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -7,8 +12,11 @@ import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useFindEntityAndVariable } from '../../../hooks/workspace';
-import { useMemo } from 'react';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+} from '../../../hooks/workspace';
+import { useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -19,6 +27,11 @@ import { SwapHorizOutlined } from '@material-ui/icons';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Tooltip } from '@material-ui/core';
+import { DataClient } from '../../../api';
+import {
+  GetBinRangesProps,
+  getBinRanges,
+} from '../../../../map/analysis/utils/defaultOverlayConfig';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -111,6 +124,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
       collectionVariable
     )
   );
+
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -150,6 +164,7 @@ export function DifferentialAbundanceConfiguration(
   const configuration = computation.descriptor
     .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
+  const dataClient = useDataClient();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
@@ -207,9 +222,35 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [configuration, findEntityAndVariable]);
 
+  // For continuous variables, use quantiles as vocabulary
+
+  const continuousVariableBins = usePromise(
+    useCallback(async () => {
+      if (
+        !ContinuousVariableDataShape.is(
+          selectedComparatorVariable?.variable.dataShape
+        )
+      )
+        return;
+      const binRangeProps: GetBinRangesProps = {
+        studyId: studyMetadata.id,
+        ...configuration.comparator.variable,
+        filters: filters ?? [],
+        dataClient,
+        binningMethod: 'quantile',
+      };
+      const bins = await getBinRanges(binRangeProps);
+      return bins;
+    }, [dataClient, configuration.comparator.variable])
+  );
+
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
   const disableGroupValueSelectors = !configuration?.comparator?.variable;
+
+  const groupValueOptions = continuousVariableBins.value
+    ? continuousVariableBins.value.map((bin) => bin.binLabel)
+    : selectedComparatorVariable?.variable.vocabulary;
 
   return (
     <ComputationStepContainer
@@ -281,9 +322,7 @@ export function DifferentialAbundanceConfiguration(
               >
                 <span>Group A</span>
                 <ValuePicker
-                  allowedValues={
-                    selectedComparatorVariable?.variable.vocabulary
-                  }
+                  allowedValues={groupValueOptions}
                   selectedValues={configuration?.comparator?.groupA}
                   disabledValues={configuration?.comparator?.groupB}
                   onSelectedValuesChange={(newValues) =>
@@ -328,9 +367,7 @@ export function DifferentialAbundanceConfiguration(
                 />
                 <span>Group B</span>
                 <ValuePicker
-                  allowedValues={
-                    selectedComparatorVariable?.variable.vocabulary
-                  }
+                  allowedValues={groupValueOptions}
                   selectedValues={configuration?.comparator?.groupB}
                   disabledValues={configuration?.comparator?.groupA}
                   onSelectedValuesChange={(newValues) =>
