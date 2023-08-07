@@ -206,8 +206,8 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       // We can use the dataMin and dataMax here because we don't have a further transform
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
-        min: dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
-        max: dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
+        min: Math.floor(dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR),
+        max: Math.ceil(dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR),
       };
     }
   }, [data.value, vizConfig.independentAxisRange, rawDataMinMaxValues]);
@@ -225,8 +225,8 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       const yAxisMax = -Math.log10(dataYMin);
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
-        min: yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
-        max: yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
+        min: Math.floor(yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
+        max: Math.ceil(yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
       };
     }
   }, [data.value, vizConfig.dependentAxisRange, rawDataMinMaxValues]);
@@ -412,6 +412,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
                 independentAxisRange: typeCheckedNewRange,
               });
             }}
+            step={0.01}
           />
         </div>
         {/** vertical line to separate x from y range controls*/}
@@ -457,6 +458,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
                 dependentAxisRange: typeCheckedNewRange,
               });
             }}
+            step={0.01}
           />
         </div>
       </div>
