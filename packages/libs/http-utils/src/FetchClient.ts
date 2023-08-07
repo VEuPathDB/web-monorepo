@@ -41,7 +41,7 @@ export interface FetchApiOptions {
    * Callback that can be used for reporting errors. A Promise rejection will
    * still occur.
    */
-  onNonSuccessResponse?: (response: unknown) => void;
+  onNonSuccessResponse?: (error: Error) => void;
 }
 
 class FetchClientError extends Error {
@@ -49,6 +49,9 @@ class FetchClientError extends Error {
 }
 
 export abstract class FetchClient {
+  /** Default callback used, if none is specified to constructor. */
+  private static onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
+
   protected readonly baseUrl: string;
   protected readonly init: RequestInit;
   protected readonly fetchApi: Window['fetch'];
@@ -60,7 +63,22 @@ export abstract class FetchClient {
     this.baseUrl = options.baseUrl;
     this.init = options.init ?? {};
     this.fetchApi = options.fetchApi ?? window.fetch;
-    this.onNonSuccessResponse = options.onNonSuccessResponse;
+    this.onNonSuccessResponse =
+      options.onNonSuccessResponse ?? FetchClient.onNonSuccessResponse;
+  }
+
+  /**
+   * Set a default callback for all instances. Should only be called once.
+   */
+  public static setOnNonSuccessResponse(
+    callback: FetchApiOptions['onNonSuccessResponse']
+  ) {
+    if (this.onNonSuccessResponse) {
+      console.warn(
+        'FetchClient.setOnNonSuccessResponse() should only be called once.'
+      );
+    }
+    this.onNonSuccessResponse = callback;
   }
 
   protected async fetch<T>(apiRequest: ApiRequest<T>): Promise<T> {
