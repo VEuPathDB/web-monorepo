@@ -1,0 +1,46 @@
+.AppStepConfigurationContainer {
+  display: flex;
+  gap: 0 2em;
+  padding: 1em 0;
+  align-items: center;
+  margin-left: 3em;
+
+  &-DiffAbundanceOuterConfigContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    span {
+      white-space: nowrap;
+    }
+    &GroupComparison {
+      display: flex;
+      gap: 1.5em;
+    }
+  }
+
+  &-InputContainer {
+    display: flex;
+    gap: 0.75em;
+    align-items: center;
+    span {
+      font-weight: 500;
+    }
+    &__disabled {
+      cursor: not-allowed;
+      span {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.ConfigDescriptionContainer {
+  margin-left: 20px;
+  margin-top: 15px;
+  h4 {
+    padding: 0;
+    span {
+      font-weight: 300;
+    }
+  }
+}

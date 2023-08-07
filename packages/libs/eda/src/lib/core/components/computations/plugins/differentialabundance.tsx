@@ -10,11 +10,17 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useFindEntityAndVariable } from '../../../hooks/workspace';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import { sharedConfigCssStyles } from './abundance';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
 import { useToggleStarredVariable } from '../../../hooks/starredVariables';
 import { Filter } from '../../..';
+import { FloatingButton, H6 } from '@veupathdb/coreui';
+import { SwapHorizOutlined } from '@material-ui/icons';
+import './Plugins.scss';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Tooltip } from '@material-ui/core';
+
+const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 /**
  * Differential abundance
@@ -106,10 +112,10 @@ function DifferentialAbundanceConfigDescriptionComponent({
     )
   );
   return (
-    <>
-      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+    <div className="ConfigDescriptionContainer">
+      <h4>
         Data:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {updatedCollectionVariable ? (
             `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
           ) : (
@@ -117,9 +123,9 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4 style={{ padding: 0, marginLeft: 20 }}>
+      <h4>
         Comparator Variable:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {comparatorVariable ? (
             comparatorVariable.variable.displayName
           ) : (
@@ -127,7 +133,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-    </>
+    </div>
   );
 }
 
@@ -201,6 +207,10 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [configuration, findEntityAndVariable]);
 
+  const disableSwapGroupValuesButton =
+    !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
+  const disableGroupValueSelectors = !configuration?.comparator?.variable;
+
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -208,81 +218,137 @@ export function DifferentialAbundanceConfiguration(
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div style={sharedConfigCssStyles}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1em',
-            justifyItems: 'start',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
-          <SingleSelect
-            value={
-              selectedCollectionVar
-                ? selectedCollectionVar.value
-                : 'Select the data'
-            }
-            buttonDisplayContent={
-              selectedCollectionVar
-                ? selectedCollectionVar.display
-                : 'Select the data'
-            }
-            items={collectionVarItems}
-            onSelect={partial(changeConfigHandler, 'collectionVariable')}
-          />
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>
-            Comparator Variable
+      <div className={cx()}>
+        <div className={cx('-DiffAbundanceOuterConfigContainer')}>
+          <H6>Input Data</H6>
+          <div className={cx('-InputContainer')}>
+            <span>Data</span>
+            <SingleSelect
+              value={
+                selectedCollectionVar
+                  ? selectedCollectionVar.value
+                  : 'Select the data'
+              }
+              buttonDisplayContent={
+                selectedCollectionVar
+                  ? selectedCollectionVar.display
+                  : 'Select the data'
+              }
+              items={collectionVarItems}
+              onSelect={partial(changeConfigHandler, 'collectionVariable')}
+            />
           </div>
-          <VariableTreeDropdown
-            showClearSelectionButton={false}
-            scope="variableTree"
-            showMultiFilterDescendants
-            starredVariables={
-              analysisState.analysis?.descriptor.starredVariables
-            }
-            toggleStarredVariable={toggleStarredVariable}
-            entityId={configuration?.comparator?.variable?.entityId}
-            variableId={configuration?.comparator?.variable?.variableId}
-            variableLinkConfig={{
-              type: 'button',
-              onClick: (variable) => {
-                changeConfigHandler('comparator', {
-                  variable: variable as VariableDescriptor,
-                });
-              },
-            }}
-          />
         </div>
-        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group A</div>
-        <ValuePicker
-          allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration?.comparator?.groupA}
-          disabledValues={configuration?.comparator?.groupB}
-          onSelectedValuesChange={(newValues) =>
-            changeConfigHandler('comparator', {
-              variable: configuration?.comparator?.variable ?? undefined,
-              groupA: newValues.length ? newValues : undefined,
-              groupB: configuration?.comparator?.groupB ?? undefined,
-            })
-          }
-          disabledCheckboxTooltipContent="Values cannot overlap between groups"
-        />
-        <div style={{ justifySelf: 'end', fontWeight: 500 }}>Group B</div>
-        <ValuePicker
-          allowedValues={selectedComparatorVariable?.variable.vocabulary}
-          selectedValues={configuration?.comparator?.groupB}
-          disabledValues={configuration?.comparator?.groupA}
-          onSelectedValuesChange={(newValues) =>
-            changeConfigHandler('comparator', {
-              variable: configuration?.comparator?.variable ?? undefined,
-              groupA: configuration?.comparator?.groupA ?? undefined,
-              groupB: newValues.length ? newValues : undefined,
-            })
-          }
-          disabledCheckboxTooltipContent="Values cannot overlap between groups"
-        />
+        <div className={cx('-DiffAbundanceOuterConfigContainer')}>
+          <H6>Group Comparison</H6>
+          <div
+            className={cx('-DiffAbundanceOuterConfigContainerGroupComparison')}
+          >
+            <div className={cx('-InputContainer')}>
+              <span>Variable</span>
+              <VariableTreeDropdown
+                showClearSelectionButton={false}
+                scope="variableTree"
+                showMultiFilterDescendants
+                starredVariables={
+                  analysisState.analysis?.descriptor.starredVariables
+                }
+                toggleStarredVariable={toggleStarredVariable}
+                entityId={configuration?.comparator?.variable?.entityId}
+                variableId={configuration?.comparator?.variable?.variableId}
+                variableLinkConfig={{
+                  type: 'button',
+                  onClick: (variable) => {
+                    changeConfigHandler('comparator', {
+                      variable: variable as VariableDescriptor,
+                    });
+                  },
+                }}
+              />
+            </div>
+            <Tooltip
+              title={
+                disableGroupValueSelectors
+                  ? 'Please select a Group Comparison variable first'
+                  : ''
+              }
+            >
+              <div
+                className={cx(
+                  '-InputContainer',
+                  disableGroupValueSelectors && 'disabled'
+                )}
+              >
+                <span>Group A</span>
+                <ValuePicker
+                  allowedValues={
+                    selectedComparatorVariable?.variable.vocabulary
+                  }
+                  selectedValues={configuration?.comparator?.groupA}
+                  disabledValues={configuration?.comparator?.groupB}
+                  onSelectedValuesChange={(newValues) =>
+                    changeConfigHandler('comparator', {
+                      variable:
+                        configuration?.comparator?.variable ?? undefined,
+                      groupA: newValues.length ? newValues : undefined,
+                      groupB: configuration?.comparator?.groupB ?? undefined,
+                    })
+                  }
+                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  showClearSelectionButton={false}
+                  disableInput={disableGroupValueSelectors}
+                />
+                <FloatingButton
+                  icon={SwapHorizOutlined}
+                  text=""
+                  onPress={() =>
+                    changeConfigHandler('comparator', {
+                      variable:
+                        configuration?.comparator?.variable ?? undefined,
+                      groupA: configuration?.comparator?.groupB ?? undefined,
+                      groupB: configuration?.comparator?.groupA ?? undefined,
+                    })
+                  }
+                  styleOverrides={{
+                    container: {
+                      padding: 0,
+                      margin: '0 5px',
+                    },
+                  }}
+                  disabled={
+                    disableGroupValueSelectors || disableSwapGroupValuesButton
+                  }
+                  /**
+                   * For some reason the tooltip content renders when the parent container is in the disabled state.
+                   * To prevent such ghastly behavior, let's not pass in the tooltip prop when the parent is disabled.
+                   */
+                  {...(!disableGroupValueSelectors
+                    ? { tooltip: 'Swap Group A and Group B values' }
+                    : {})}
+                />
+                <span>Group B</span>
+                <ValuePicker
+                  allowedValues={
+                    selectedComparatorVariable?.variable.vocabulary
+                  }
+                  selectedValues={configuration?.comparator?.groupB}
+                  disabledValues={configuration?.comparator?.groupA}
+                  onSelectedValuesChange={(newValues) =>
+                    changeConfigHandler('comparator', {
+                      variable:
+                        configuration?.comparator?.variable ?? undefined,
+                      groupA: configuration?.comparator?.groupA ?? undefined,
+                      groupB: newValues.length ? newValues : undefined,
+                    })
+                  }
+                  disabledCheckboxTooltipContent="Values cannot overlap between groups"
+                  showClearSelectionButton={false}
+                  disableInput={disableGroupValueSelectors}
+                />
+              </div>
+            </Tooltip>
+          </div>
+        </div>
       </div>
     </ComputationStepContainer>
   );
