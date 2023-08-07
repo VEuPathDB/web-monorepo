@@ -269,6 +269,8 @@ export const getValueToGradientColorMapper = (
       Math.abs(minValue) > maxValue ? Math.abs(minValue) : maxValue;
     // For each point, normalize the data to [-1, 1]
     normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+
+    return (value) => gradientDivergingColorscaleMap(normalize(value));
   } else {
     normalize.domain([minValue, maxValue]);
 
@@ -281,9 +283,9 @@ export const getValueToGradientColorMapper = (
       // For each point, normalize the data to [0, 1]
       normalize.range([0, 1]);
     }
-  }
 
-  return (value) => gradientDivergingColorscaleMap(normalize(value));
+    return (value) => gradientSequentialColorscaleMap(normalize(value));
+  }
 };
 
 // Lighten in LAB space, then convert to RGB for plotting.
