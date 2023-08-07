@@ -1,11 +1,10 @@
 /**
  * Additional reusable modules to extend PlotProps and PlotData props
  */
-
 import { CSSProperties } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
 import { scaleLinear } from 'd3-scale';
-import { interpolateLab, extent, range } from 'd3';
+import { interpolateLab, range } from 'd3';
 import { rgb, lab } from 'd3-color';
 
 /** PlotProps addons */
@@ -283,8 +282,16 @@ export const gradientConvergingColorscaleMap = scaleLinear<string>()
   .range(ConvergingGradientColorscale)
   .interpolate(interpolateLab);
 
-// Significance colors (not significant, high, low)
-export const significanceColors = ['#B5B8B4', '#AC3B4E', '#0E8FAB'];
+export type SignificanceColors = {
+  inconclusive: string;
+  high: string;
+  low: string;
+};
+export const significanceColors: SignificanceColors = {
+  inconclusive: '#B5B8B4',
+  high: '#AC3B4E',
+  low: '#0E8FAB',
+};
 
 /** truncated axis flags */
 export type AxisTruncationAddon = {
