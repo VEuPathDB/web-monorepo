@@ -193,31 +193,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
-  const tooltipHappyData = data
-    // Convert pointID data into an array of a single string value
-    .map((d) => ({ ...d, pointID: [d.pointID] }))
-    // In the reduce function, we're going to check if data exists in the accumulator that equals the (x,y) of the current data
-    //    No? - add the data to the accumulator's array
-    //    Yes? - update the matched data in the accumulator's array by adding the current data's pointID to the matched data's pointID array
-    .reduce((prev: any, curr: any) => {
-      const foundIndex = prev.findIndex(
-        (d: any) =>
-          d.log2foldChange === curr.log2foldChange && d.pValue === curr.pValue
-      );
-      if (foundIndex === -1) return prev.concat(curr);
-      prev[foundIndex] = {
-        ...prev[foundIndex],
-        pointID: [...prev[foundIndex].pointID, ...curr.pointID],
-      };
-      return prev;
-    }, [])
-    // sort data in ascending order for tooltips to work appropriately
-    .sort(
-      (a: any, b: any) => Number(a.log2foldChange) - Number(b.log2foldChange)
-    );
-
-  console.log(tooltipHappyData);
-
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div
@@ -334,12 +309,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           <Group opacity={markerBodyOpacity ?? 1}>
             <GlyphSeries
               dataKey={'data'} // unique key
-              // data={[...data].sort(
-              //   (a, b) => Number(a.log2foldChange) - Number(b.log2foldChange)
-              // )} // data as an array of obejcts (points). Accessed with dataAccessors
-              data={tooltipHappyData}
+              data={data}
               {...dataAccessors}
-              colorAccessor={(d) => d.significanceColor}
+              colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
               findNearestDatumOverride={findNearestDatumXY}
             />
           </Group>
@@ -375,9 +347,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   }}
                 >
                   <ul>
-                    {/* @ts-ignore */}
                     {data?.pointID?.map((id) => (
-                      <li>
+                      <li key={id}>
                         <span>{id}</span>
                       </li>
                     ))}
