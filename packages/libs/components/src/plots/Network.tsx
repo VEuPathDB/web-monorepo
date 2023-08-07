@@ -6,17 +6,23 @@ interface NodeWithLabelProps {
   node: Node;
   onClick: () => void;
   labelPosition?: 'right' | 'left';
+  labelFontSize?: string;
+  fontWeight?: number;
+  labelColor?: string;
 }
 
 // This should take node color and such. It should do zero thinking except
 // for where to place the label.
 
-// To Dos
-// [ ] Style text with whatevs
-// [ ] Style node with whatevs (maybe onClick gets moved to restProps?)
-
 export function NodeWithLabel(props: NodeWithLabelProps) {
-  const { node, onClick, labelPosition = 'right' } = props;
+  const {
+    node,
+    onClick,
+    labelPosition = 'right',
+    labelFontSize = '1em',
+    fontWeight = 200,
+    labelColor = '#000',
+  } = props;
 
   const { id, label } = node;
 
@@ -44,16 +50,18 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         onClick={onClick}
         stroke={node.stroke}
         strokeWidth={node.strokeWidth ?? 1}
-        // @ANN should just take {...nodeProps or whatevs}
       />
+      {/* Note that Text becomes a tspan */}
       <Text
         x={textXOffset}
         textAnchor={textAnchor}
-        fontSize={'1em'}
+        fontSize={labelFontSize}
         verticalAnchor="middle"
         onClick={onClick}
+        fontWeight={fontWeight}
+        fill={labelColor}
       >
-        {label ?? id}
+        {label}
       </Text>
     </>
   );

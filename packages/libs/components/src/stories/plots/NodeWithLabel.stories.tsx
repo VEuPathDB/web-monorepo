@@ -2,6 +2,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { Node } from '../../types/plots/network';
 import { NodeWithLabel } from '../../plots/Network';
 import { Group } from '@visx/group';
+import { SyntheticEvent } from 'react';
 
 export default {
   title: 'Plots/Network',
@@ -10,16 +11,21 @@ export default {
 
 interface TemplateProps {
   data: Node;
+  onClick: () => void;
   labelPosition?: 'right' | 'left';
+  fontWeight?: number;
+  labelColor?: string;
 }
 
 const Template: Story<TemplateProps> = (args) => {
-  const { data, labelPosition } = args;
+  const { data, labelPosition, fontWeight, labelColor, onClick } = args;
 
   const nodeWithLabelProps = {
     node: data,
-    onClick: () => 'i was clicked!', // still not sure about this prop
+    onClick: onClick, // still not sure about this prop
     labelPosition: labelPosition,
+    fontWeight: fontWeight,
+    labelColor: labelColor,
   };
 
   return (
@@ -40,6 +46,7 @@ const myNode = {
   x: 100,
   y: 100,
   id: 'id',
+  label: 'label',
 };
 
 export const NodeWithALabel = Template.bind({});
@@ -63,6 +70,18 @@ export const FancyNodeWithLabel = Template.bind({});
 FancyNodeWithLabel.args = {
   data: myFancyNode,
   labelPosition: 'right',
+  labelColor: '#008822',
+  fontWeight: 600,
 };
 
 // Make story with on click node changes color
+export const ClickNodeOrLabel = Template.bind({});
+ClickNodeOrLabel.args = {
+  data: myNode,
+  labelPosition: 'right',
+  labelColor: '#008822',
+  fontWeight: 600,
+  onClick: () => {
+    console.log('clicked!');
+  },
+};
