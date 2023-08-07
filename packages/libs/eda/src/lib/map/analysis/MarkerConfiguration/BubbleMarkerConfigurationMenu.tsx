@@ -167,8 +167,8 @@ export function BubbleMarkerConfigurationMenu({
                 <span style={{ marginRight: '0.5em' }}>
                   {selectedVariable
                     ? categoricalMode
-                      ? 'Aggregation (categorical variable)'
-                      : 'Proportion (continuous variable)'
+                      ? 'Proportion (categorical variable)'
+                      : 'Aggregation (continuous variable)'
                     : ''}
                 </span>
                 <HelpIcon children={aggregationHelp} />
