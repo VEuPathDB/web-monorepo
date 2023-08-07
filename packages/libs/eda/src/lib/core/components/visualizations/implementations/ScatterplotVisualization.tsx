@@ -138,7 +138,7 @@ import { ResetButtonCoreUI } from '../../ResetButton';
 
 // add Slider and SliderWidgetProps
 import SliderWidget, {
-  SliderWidgetProps,
+  plotsSliderOpacityGradientColorSpec,
 } from '@veupathdb/components/lib/components/widgets/Slider';
 import { FloatingScatterplotExtraProps } from '../../../../map/analysis/hooks/plugins/scatterplot';
 
@@ -164,16 +164,6 @@ const modalPlotContainerStyles = {
   width: '85%',
   height: '100%',
   margin: 'auto',
-};
-
-// implement gradient color for slider opacity
-export const colorSpecProps: SliderWidgetProps['colorSpec'] = {
-  type: 'gradient',
-  tooltip: '#aaa',
-  knobColor: '#aaa',
-  // normal slider color: e.g., from 0 to 1
-  trackGradientStart: '#fff',
-  trackGradientEnd: '#000',
 };
 
 // slider settings
@@ -1626,7 +1616,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         containerStyles={markerBodyOpacityContainerStyles}
         showLimits={true}
         label={'Marker opacity'}
-        colorSpec={colorSpecProps}
+        colorSpec={plotsSliderOpacityGradientColorSpec}
       />
 
       {/* axis range control UIs */}
