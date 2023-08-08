@@ -1,13 +1,11 @@
-import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { Graph, DefaultNode } from '@visx/network';
-import { Text } from '@visx/text';
-import { Node, Link, NetworkData } from '../../types/plots/network';
-import { NodeWithLabel } from '../../plots/Network';
+import { Graph } from '@visx/network';
+import { Node, NetworkData } from '../../types/plots/network';
+import { Link, NodeWithLabel } from '../../plots/Network';
 
 export default {
   title: 'Plots/Network',
-  component: VolcanoPlot,
+  component: NodeWithLabel,
 } as Meta;
 
 interface TemplateProps {
@@ -21,23 +19,15 @@ const Template: Story<TemplateProps> = (args) => {
     <svg width={500} height={500}>
       <Graph
         graph={data}
-        linkComponent={({ link: { source, target } }) => (
-          <line
-            x1={source.x}
-            y1={source.y}
-            x2={target.x}
-            y2={target.y}
-            strokeWidth={2}
-            stroke={'#faa'}
-            onClick={() => console.log('click link')}
-          />
-        )}
+        // Our Link component has nice defaults and in the future can
+        // carry more complex events.
+        linkComponent={({ link }) => <Link link={link} />}
         // The node components are already transformed using x and y.
         // So inside the node component all coords should be relative to this
         // initial transform.
-        nodeComponent={({ node: { x, y, id } }) => {
+        nodeComponent={({ node }) => {
           const nodeWithLabelProps = {
-            node: { x, y, id },
+            node: node,
             onClick: () => console.log('clicked node'),
           };
           return <NodeWithLabel {...nodeWithLabelProps} />;
@@ -64,7 +54,7 @@ ManyPoints.args = {
   data: manyPointsData,
 };
 
-// Make bipartite network from number of nodes in each column
+// Gerenate a network with a given number of nodes and random edges
 function genNetwork(nNodes: number) {
   const nodes = [...Array(nNodes).keys()].map((i) => {
     return {

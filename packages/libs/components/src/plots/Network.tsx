@@ -1,19 +1,18 @@
-import { DefaultNode } from '@visx/network';
+import { DefaultNode, Graph } from '@visx/network';
 import { Text } from '@visx/text';
-import { Node } from '../types/plots/network';
+import { Link, NetworkData, Node } from '../types/plots/network';
 
 interface NodeWithLabelProps {
   node: Node;
-  onClick: () => void;
+  onClick?: () => void;
   labelPosition?: 'right' | 'left';
   labelFontSize?: string;
   fontWeight?: number;
   labelColor?: string;
 }
 
-// This should take node color and such. It should do zero thinking except
-// for where to place the label.
-
+// NodeWithLabel creates one node with an optional label. Both the node and
+// label can be styled.
 export function NodeWithLabel(props: NodeWithLabelProps) {
   const {
     node,
@@ -24,21 +23,22 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     labelColor = '#000',
   } = props;
 
-  const { id, label } = node;
+  const { color, label, stroke, strokeWidth } = node;
 
   const nodeRadius = node.r ?? 4;
 
-  // Calculate some things for the text label
+  // Calculate where the label should be posiitoned based on
+  // total size of the node.
   let textXOffset: number;
   let textAnchor: 'start' | 'end';
 
   if (labelPosition === 'right') {
     textXOffset = 4 + nodeRadius;
-    if (node.strokeWidth) textXOffset = textXOffset + node.strokeWidth;
+    if (strokeWidth) textXOffset = textXOffset + strokeWidth;
     textAnchor = 'start';
   } else {
     textXOffset = -4 - nodeRadius;
-    if (node.strokeWidth) textXOffset = textXOffset - node.strokeWidth;
+    if (strokeWidth) textXOffset = textXOffset - strokeWidth;
     textAnchor = 'end';
   }
 
@@ -46,10 +46,10 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
     <>
       <DefaultNode
         r={nodeRadius}
-        fill={node.color ?? '#aaa'}
+        fill={color ?? '#aaa'}
         onClick={onClick}
-        stroke={node.stroke}
-        strokeWidth={node.strokeWidth ?? 1}
+        stroke={stroke}
+        strokeWidth={strokeWidth ?? 1}
       />
       {/* Note that Text becomes a tspan */}
       <Text
@@ -64,5 +64,27 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         {label}
       </Text>
     </>
+  );
+}
+
+// Link Component
+export interface LinkProps {
+  link: Link;
+  // onClick?: () => void; To add in the future, maybe also some hover action
+}
+
+export function Link(props: LinkProps) {
+  const { link } = props;
+
+  return (
+    <line
+      x1={link.source.x}
+      y1={link.source.y}
+      x2={link.target.x}
+      y2={link.target.y}
+      strokeWidth={link.strokeWidth ?? 1}
+      stroke={link.color ?? '#222'}
+      strokeOpacity={link.opacity ?? 0.95}
+    />
   );
 }

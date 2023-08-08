@@ -74,7 +74,7 @@ FancyNodeWithLabel.args = {
   fontWeight: 600,
 };
 
-// Make story with on click node changes color
+// Make story with some clicking action
 export const ClickNodeOrLabel = Template.bind({});
 ClickNodeOrLabel.args = {
   data: myNode,
