@@ -141,12 +141,12 @@ Props) {
           {/* InputVariables does not work yet */}
           <div style={{ marginTop: '-0.5em' }}>
             <InputVariables
-              showClearSelectionButton={false}
               inputs={[
                 {
                   name: 'overlayVariable',
                   label: 'Variable',
                   titleOverride: ' ',
+                  isNonNullable: true,
                 },
               ]}
               entities={entities}
