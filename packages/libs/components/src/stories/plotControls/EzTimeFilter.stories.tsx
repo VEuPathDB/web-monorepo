@@ -1,15 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { LinePlotProps } from '../../plots/LinePlot';
-import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
-import { NumberOrDateRange } from '../../types/general';
-import { Toggle } from '@veupathdb/coreui';
-import { LinePlotDataSeries } from '../../types/plots';
-
 import EzTimeFilter, {
   EZTimeFilterDataProp,
 } from '../../components/plotControls/EzTimeFilter';
-import { Undo } from '@veupathdb/coreui';
+import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 
 export default {
   title: 'Plot Controls/EzTimeFilter',
@@ -264,97 +259,127 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
     end: timeFilterData[timeFilterData.length - 1].x,
   });
 
-  // set forwardRef to call handleResetClick function from EzTimeFilter component
-  const childRef = useRef<{ handleResetClick: () => void }>(null);
+  // set time filter width
+  const timeFilterWidth = 750;
+
+  // set initial position: shrink
+  const [defaultPosition, setDefaultPosition] = useState({
+    x: window.innerWidth / 2 - timeFilterWidth / 2,
+    y: 0,
+  });
+
+  // set DraggablePanel key
+  const [key, setKey] = useState(0);
+
+  // set button text
+  const [buttonText, setButtonText] = useState('Expand');
+
+  const expandPosition = () => {
+    setButtonText('Shrink');
+    setKey((currentKey) => currentKey + 1);
+    setDefaultPosition({
+      x: window.innerWidth / 2 - timeFilterWidth / 2,
+      y: 50,
+    });
+  };
+
+  const resetPosition = () => {
+    setButtonText('Expand');
+    setKey((currentKey) => currentKey + 1);
+    setDefaultPosition({
+      x: window.innerWidth / 2 - timeFilterWidth / 2,
+      y: 0,
+    });
+    // initialize range
+    setSelectedRange({
+      start: timeFilterData[0].x,
+      end: timeFilterData[timeFilterData.length - 1].x,
+    });
+  };
 
   // set constant values
   const defaultSymbolSize = 0.8;
-  const defaultColor = 'lightgray';
+  const defaultColor = '#333';
 
   return (
-    <div
-      style={{
-        width: 750,
-        height: 170,
-        border: '1px solid #dedede',
-        boxShadow: '1px 1px 4px #00000066',
-        marginTop: '10em',
-        marginLeft: '10em',
+    <DraggablePanel
+      key={key}
+      showPanelTitle
+      panelTitle={'Time slider'}
+      defaultPosition={defaultPosition}
+      isOpen={true}
+      styleOverrides={{
+        zIndex: 10,
       }}
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr repeat(1, auto) 1fr',
-          gridColumnGap: '5px',
-          justifyContent: 'center',
-          paddingTop: '1em',
+          width: timeFilterWidth,
+          height: 160,
         }}
       >
-        {/* display start to end value */}
-        <div style={{ gridColumnStart: 2 }}>
-          {selectedRange?.start} ~ {selectedRange?.end}
-        </div>
-        {/* button to reset selectedRange */}
         <div
           style={{
-            marginLeft: 'auto',
-            marginTop: '-0.1em',
-            paddingRight: '1.5em',
+            display: 'grid',
+            gridTemplateColumns: '1fr repeat(1, auto) 1fr',
+            gridColumnGap: '5px',
+            justifyContent: 'center',
+            paddingTop: '1em',
           }}
         >
-          <a
-            href="#"
-            title="Reset filter"
-            role="button"
-            aria-label="Reset filter"
-            onClick={childRef.current?.handleResetClick}
-          >
-            <Undo width={'1.5em'} height={'1.5em'} fill={'#4A6BD6'} />
-          </a>
+          {/* display start to end value */}
+          <div style={{ gridColumnStart: 2 }}>
+            {selectedRange?.start} ~ {selectedRange?.end}
+          </div>
+        </div>
+        <EzTimeFilter
+          data={timeFilterData}
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          width={720}
+          height={100}
+          // line color of the selectedRange
+          brushColor={'lightblue'}
+          // add opacity
+          brushOpacity={0.4}
+          // axis tick and tick label color
+          axisColor={'#000'}
+          // whether movement of Brush should be disabled
+          disableDraggingSelection={buttonText === 'Expand'}
+          // disable brush selection: pass []
+          resizeTriggerAreas={buttonText === 'Expand' ? [] : ['left', 'right']}
+        />
+        {/* add a Expand or something like that to change position */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'right',
+            fontSize: defaultSymbolSize + 'em',
+          }}
+        >
+          {/* reset position to hide panel title */}
+          <div style={{ marginTop: '-0.3em', marginRight: '1em' }}>
+            <button
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                color: 'blue',
+                cursor: 'pointer',
+              }}
+              type="button"
+              onClick={buttonText === 'Expand' ? expandPosition : resetPosition}
+            >
+              {buttonText === 'Expand' ? (
+                <i className="fa fa-expand" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-compress" aria-hidden="true"></i>
+              )}
+              &nbsp; {buttonText}
+            </button>
+          </div>
         </div>
       </div>
-      <EzTimeFilter
-        ref={childRef}
-        data={timeFilterData}
-        selectedRange={selectedRange}
-        setSelectedRange={setSelectedRange}
-        width={720}
-        height={100}
-        // line color of the selectedRange
-        accentColor={'#4A6BD6'}
-        // axis tick and tick label color
-        axisColor={'#000'}
-      />
-      {/* add a legend */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: defaultSymbolSize + 'em',
-        }}
-      >
-        <div
-          style={{
-            height: defaultSymbolSize + 'em',
-            width: defaultSymbolSize + 'em',
-            borderWidth: '0',
-            backgroundColor: defaultColor,
-          }}
-        />
-        <div>&nbsp;&nbsp;Has visible data on the map</div>
-        <div
-          style={{
-            marginLeft: '5em',
-            height: defaultSymbolSize / 2 + 'em',
-            width: defaultSymbolSize + 'em',
-            borderWidth: '0',
-            backgroundColor: defaultColor,
-          }}
-        />
-        <div>&nbsp;&nbsp;Has no visible data on the map</div>
-      </div>
-    </div>
+    </DraggablePanel>
   );
 };

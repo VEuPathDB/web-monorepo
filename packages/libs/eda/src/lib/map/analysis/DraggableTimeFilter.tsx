@@ -51,18 +51,44 @@ Props) {
     end: timeFilterData[timeFilterData.length - 1].x,
   });
 
-  // set forwardRef to call handleResetClick function from EzTimeFilter component
-  const childRef = useRef<{ handleResetClick: () => void }>(null);
+  // set time slider width and y position
   const timeFilterWidth = 750;
+  const yPosition = 0;
 
-  // control panel open/close
-  const [panelOpen, setPanelOpen] = useState(false);
-  const panelTitle = 'Time filter';
-  function handleOnPanelDismiss() {
-    // reset time filter
-    childRef.current?.handleResetClick();
-    setPanelOpen(!panelOpen);
-  }
+  // set initial position: shrink
+  const [defaultPosition, setDefaultPosition] = useState({
+    x: window.innerWidth / 2 - timeFilterWidth / 2,
+    y: yPosition,
+  });
+
+  // set DraggablePanel key
+  const [key, setKey] = useState(0);
+
+  // set button text
+  const [buttonText, setButtonText] = useState('Expand');
+
+  const expandSlider = () => {
+    setButtonText('Shrink');
+    setKey((currentKey) => currentKey + 1);
+    setDefaultPosition({
+      x: window.innerWidth / 2 - timeFilterWidth / 2,
+      y: 100,
+    });
+  };
+
+  const shrinkSlider = () => {
+    setButtonText('Expand');
+    setKey((currentKey) => currentKey + 1);
+    setDefaultPosition({
+      x: window.innerWidth / 2 - timeFilterWidth / 2,
+      y: yPosition,
+    });
+    // initialize range
+    setSelectedRange({
+      start: timeFilterData[0].x,
+      end: timeFilterData[timeFilterData.length - 1].x,
+    });
+  };
 
   // inputVariables onChange function
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
@@ -83,159 +109,110 @@ Props) {
 
   // set constant values
   const defaultSymbolSize = 0.9;
-  const defaultColor = 'lightgray';
 
   return (
-    <>
+    <DraggablePanel
+      key={'TimeSlider-' + key}
+      showPanelTitle
+      panelTitle={'Time Slider'}
+      confineToParentContainer
+      defaultPosition={defaultPosition}
+      isOpen={true}
+      styleOverrides={{
+        // check appropriate zIndex
+        zIndex: 5,
+      }}
+    >
       <div
         style={{
-          position: 'absolute',
-          top: 200,
-          right: 300,
-          zIndex: zIndex,
-        }}
-      >
-        <button
-          onClick={() => {
-            // reset time filter here when closing
-            childRef.current?.handleResetClick();
-            setPanelOpen(!panelOpen);
-          }}
-          style={{ backgroundColor: panelOpen ? 'tomato' : 'lightgreen' }}
-        >
-          <span
-            style={{
-              fontSize: 16,
-              fontWeight: 'bold',
-              padding: '0.25rem 0.5rem',
-            }}
-          >
-            {panelOpen ? 'Close' : 'Open'} {panelTitle}
-          </span>
-        </button>
-      </div>
-
-      <DraggablePanel
-        key={panelTitle}
-        showPanelTitle
-        panelTitle={'Time filter'}
-        confineToParentContainer
-        defaultPosition={{
-          x: window.innerWidth / 2 - timeFilterWidth / 2,
-          y: 100,
-        }}
-        isOpen={panelOpen}
-        onPanelDismiss={handleOnPanelDismiss}
-        styleOverrides={{
-          zIndex: panelOpen ? zIndex : 0,
+          width: timeFilterWidth,
+          height: 170,
         }}
       >
         <div
           style={{
-            width: timeFilterWidth,
-            height: 200,
-            marginTop: '-1em',
-            marginLeft: '0em',
+            display: 'grid',
+            gridTemplateColumns: '1fr repeat(1, auto) 1fr',
+            gridColumnGap: '5px',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr repeat(1, auto) 1fr',
-              gridColumnGap: '5px',
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingTop: '1em',
-            }}
-          >
-            {/* InputVariables does not work yet */}
-            <div style={{ marginTop: '-0.5em' }}>
-              <InputVariables
-                showClearSelectionButton={false}
-                inputs={[
-                  {
-                    name: 'overlayVariable',
-                    label: 'Variable',
-                    titleOverride: ' ',
-                  },
-                ]}
-                entities={entities}
-                selectedVariables={{
-                  overlayVariable: configuration?.selectedVariable,
-                }}
-                onChange={handleInputVariablesOnChange}
-                // configuration={activeMarkerConfiguration}
-                starredVariables={starredVariables}
-                toggleStarredVariable={toggleStarredVariable}
-                // constraints={constraints}
-              />
-            </div>
-            {/* display start to end value */}
-            <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
-              {selectedRange?.start} ~ {selectedRange?.end}
-            </div>
-            {/* button to reset selectedRange */}
-            <div
-              style={{
-                marginLeft: 'auto',
-                marginTop: '-0.1em',
-                paddingRight: '1.5em',
+          {/* InputVariables does not work yet */}
+          <div style={{ marginTop: '-0.5em' }}>
+            <InputVariables
+              showClearSelectionButton={false}
+              inputs={[
+                {
+                  name: 'overlayVariable',
+                  label: 'Variable',
+                  titleOverride: ' ',
+                },
+              ]}
+              entities={entities}
+              selectedVariables={{
+                overlayVariable: configuration?.selectedVariable,
               }}
-            >
-              <a
-                href="#"
-                title="Reset filter"
-                role="button"
-                aria-label="Reset filter"
-                onClick={childRef.current?.handleResetClick}
-              >
-                <Undo width={'1.5em'} height={'1.5em'} fill={'#4A6BD6'} />
-              </a>
-            </div>
+              onChange={handleInputVariablesOnChange}
+              // configuration={activeMarkerConfiguration}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              // constraints={constraints}
+            />
           </div>
-          <EzTimeFilter
-            ref={childRef}
-            data={timeFilterData}
-            selectedRange={selectedRange}
-            setSelectedRange={setSelectedRange}
-            width={timeFilterWidth - 30}
-            height={100}
-            // line color of the selectedRange
-            accentColor={'#4A6BD6'}
-            // axis tick and tick label color
-            axisColor={'#000'}
-          />
-          {/* DKDK add a legend */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: defaultSymbolSize + 'em',
-            }}
-          >
-            <div
-              style={{
-                height: defaultSymbolSize + 'em',
-                width: defaultSymbolSize + 'em',
-                borderWidth: '0',
-                backgroundColor: defaultColor,
-              }}
-            />
-            <div>&nbsp;&nbsp;Has visible data on the map</div>
-            <div
-              style={{
-                marginLeft: '5em',
-                height: defaultSymbolSize / 2 + 'em',
-                width: defaultSymbolSize + 'em',
-                borderWidth: '0',
-                backgroundColor: defaultColor,
-              }}
-            />
-            <div>&nbsp;&nbsp;Has no visible data on the map</div>
+          {/* display start to end value */}
+          <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
+            {selectedRange?.start} ~ {selectedRange?.end}
           </div>
         </div>
-      </DraggablePanel>
-    </>
+        <EzTimeFilter
+          data={timeFilterData}
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          width={timeFilterWidth - 30}
+          height={100}
+          // line color of the selectedRange
+          brushColor={'lightblue'}
+          // add opacity
+          brushOpacity={0.4}
+          // axis tick and tick label color
+          axisColor={'#000'}
+          // whether movement of Brush should be disabled
+          disableDraggingSelection={buttonText === 'Expand'}
+          // disable brush selection: pass []
+          resizeTriggerAreas={buttonText === 'Expand' ? [] : ['left', 'right']}
+        />
+        {/* add a button to expand/shrink */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'right',
+            fontSize: defaultSymbolSize + 'em',
+          }}
+        >
+          {/* reset position to hide panel title */}
+          <div style={{ marginTop: '-0.3em', marginRight: '0.5em' }}>
+            <button
+              style={{
+                backgroundColor: 'transparent',
+                border: 'none',
+                color: 'blue',
+                cursor: 'pointer',
+              }}
+              type="button"
+              onClick={buttonText === 'Expand' ? expandSlider : shrinkSlider}
+            >
+              {buttonText === 'Expand' ? (
+                <i className="fa fa-expand" aria-hidden="true"></i>
+              ) : (
+                <i className="fa fa-compress" aria-hidden="true"></i>
+              )}
+              &nbsp; {buttonText}
+            </button>
+          </div>
+        </div>
+      </div>
+    </DraggablePanel>
   );
 }

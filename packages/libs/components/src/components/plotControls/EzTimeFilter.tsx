@@ -1,20 +1,13 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, {
-  useRef,
-  useEffect,
-  useMemo,
-  useImperativeHandle,
-  forwardRef,
-  ForwardedRef,
-} from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { Brush } from '@visx/brush';
-import { Bounds } from '@visx/brush/lib/types';
+// add ResizeTriggerAreas type
+import { Bounds, ResizeTriggerAreas } from '@visx/brush/lib/types';
 import BaseBrush, {
   BaseBrushState,
   UpdateBrush,
 } from '@visx/brush/lib/BaseBrush';
-import { PatternLines } from '@visx/pattern';
 import { Group } from '@visx/group';
 import { max, extent } from 'd3-array';
 import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
@@ -22,7 +15,6 @@ import { AxisBottom } from '@visx/axis';
 import { millisecondTodate } from '../../utils/date-format-change';
 import { Bar } from '@visx/shape';
 import { debounce } from 'lodash';
-import { LineSubject } from '@visx/annotation';
 
 export type EZTimeFilterDataProp = {
   x: string;
@@ -40,28 +32,34 @@ export type EzTimeFilterProps = {
   width?: number;
   /** height */
   height?: number;
-  /** line color of the selected range */
-  accentColor?: string;
+  /** color of the selected range */
+  brushColor?: string;
   /** axis tick and tick label color */
   axisColor?: string;
+  /** opacity of selected brush */
+  brushOpacity?: number;
+  /** whether movement of Brush should be disabled */
+  disableDraggingSelection?: boolean;
+  /** disable brush selection */
+  resizeTriggerAreas?: ResizeTriggerAreas[];
   /** debounce rate in millisecond */
   debounceRateMs?: number;
 };
 
 // using forwardRef
-function EzTimeFilter(
-  props: EzTimeFilterProps,
-  ref: ForwardedRef<{ handleResetClick: () => void }>
-) {
+function EzTimeFilter(props: EzTimeFilterProps) {
   const {
     data,
     // set default width and height
     width = 720,
     height = 125,
-    accentColor = '#4A6BD6',
+    brushColor = 'lightblue',
     axisColor = '#000',
+    brushOpacity = 0.4,
     selectedRange,
     setSelectedRange,
+    disableDraggingSelection = false,
+    resizeTriggerAreas = ['left', 'right'],
     // set a default debounce time in milliseconds
     debounceRateMs = 500,
   } = props;
@@ -70,10 +68,12 @@ function EzTimeFilter(
 
   // define default values
   const margin = { top: 10, bottom: 10, left: 10, right: 10 };
-  const PATTERN_ID = 'brush_pattern';
   const selectedBrushStyle = {
-    fill: `url(#${PATTERN_ID})`,
-    stroke: accentColor,
+    fill: brushColor,
+    stroke: brushColor,
+    fillOpacity: brushOpacity,
+    // need to set this to be 1?
+    strokeOpacity: 1,
   };
 
   // axis props
@@ -137,38 +137,6 @@ function EzTimeFilter(
     [data, xBrushScale]
   );
 
-  // reset brush position to be initial one
-  const handleResetClick = () => {
-    if (brushRef?.current) {
-      const updater: UpdateBrush = (prevBrush) => {
-        const newExtent = brushRef.current!.getExtent(
-          initialBrushPosition.start,
-          initialBrushPosition.end
-        );
-
-        const newState: BaseBrushState = {
-          ...prevBrush,
-          start: { y: newExtent.y0, x: newExtent.x0 },
-          end: { y: newExtent.y1, x: newExtent.x1 },
-          extent: newExtent,
-        };
-
-        return newState;
-      };
-
-      brushRef.current.updateBrush(updater);
-    }
-  };
-
-  // forwardRef: handleResetClick function to be used at the parent component
-  useImperativeHandle(
-    ref,
-    () => ({
-      handleResetClick,
-    }),
-    []
-  );
-
   // compute bar width manually as scaleTime is used for Bar chart
   const barWidth = xBrushMax / data.length;
 
@@ -184,7 +152,7 @@ function EzTimeFilter(
     [onBrushEnd]
   );
 
-  const defaultColor = 'lightgray';
+  const defaultColor = '#333';
 
   // Cancel pending onBrushEnd request when this component is unmounted
   useEffect(() => {
@@ -234,14 +202,6 @@ function EzTimeFilter(
             tickStroke={axisColor}
             tickLabelProps={axisBottomTickLabelProps}
           />
-          <PatternLines
-            id={PATTERN_ID}
-            height={8}
-            width={8}
-            stroke={accentColor}
-            strokeWidth={1}
-            orientation={['diagonal']}
-          />
           <Brush
             xScale={xBrushScale}
             yScale={yBrushScale}
@@ -250,29 +210,17 @@ function EzTimeFilter(
             margin={margin}
             handleSize={8}
             innerRef={brushRef}
-            resizeTriggerAreas={['left', 'right']}
+            // resize
+            resizeTriggerAreas={resizeTriggerAreas}
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
             onChange={onBrushChange}
-            onClick={handleResetClick}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
+            disableDraggingSelection={disableDraggingSelection}
             onBrushEnd={debouncedOnBrushEnd}
             renderBrushHandle={(props) => <BrushHandle {...props} />}
           />
-          {/* horizontal center line for no data */}
-          <>
-            <g>
-              <LineSubject
-                orientation="horizontal"
-                min={0}
-                max={xBrushMax}
-                y={yBrushMax / 2}
-                stroke={defaultColor}
-                strokeWidth={5}
-              />
-            </g>
-          </>
         </Group>
       </svg>
     </div>
@@ -299,5 +247,4 @@ function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
   );
 }
 
-// forwardRef
-export default forwardRef(EzTimeFilter);
+export default EzTimeFilter;
