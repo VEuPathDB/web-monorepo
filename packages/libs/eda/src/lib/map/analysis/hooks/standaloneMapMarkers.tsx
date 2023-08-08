@@ -444,13 +444,6 @@ export function useStandaloneMapMarkers(
             const largestCircleDiameter = 90;
             const smallestCircleDiameter = 10;
 
-            if (
-              adjustedBubbleLegendData.minSizeValue ===
-              adjustedBubbleLegendData.maxSizeValue
-            ) {
-              return (largestCircleDiameter + smallestCircleDiameter) / 2;
-            }
-
             // Area scales directly with value
             // const constant = largestCircleArea / maxOverlayCount;
             // const area = value * constant;
