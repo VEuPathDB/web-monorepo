@@ -445,131 +445,36 @@ export function useStandaloneMapMarkers(
    * and create markers.
    */
   const finalMarkersData = useMemo(() => {
-    return rawPromise.value?.rawMarkersData.mapElements.map(
-      ({
-        geoAggregateValue,
-        entityCount,
-        avgLat,
-        avgLon,
-        minLat,
-        minLon,
-        maxLat,
-        maxLon,
-        ...otherProps
-      }) => {
-        const bounds = {
-          southWest: { lat: minLat, lng: minLon },
-          northEast: { lat: maxLat, lng: maxLon },
-        };
-        const position = { lat: avgLat, lng: avgLon };
-        const overlayValues =
-          'overlayValues' in otherProps ? otherProps.overlayValues : undefined;
+    if (rawPromise.value == null) return undefined;
 
-        const donutData =
-          vocabulary && overlayValues && overlayValues.length
-            ? overlayValues.map(({ binLabel, value }) => ({
-                label: binLabel,
-                value: value,
-                color:
-                  overlayType === 'categorical'
-                    ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
-                    : gradientSequentialColorscaleMap(
-                        vocabulary.length > 1
-                          ? vocabulary.indexOf(binLabel) /
-                              (vocabulary.length - 1)
-                          : 0.5
-                      ),
-              }))
-            : [];
-
-        // TO DO: address diverging colorscale (especially if there are use-cases)
-
-        // now reorder the data, adding zeroes if necessary.
-        const reorderedData =
-          vocabulary != null
-            ? vocabulary.map(
-                (
-                  overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
-                ) =>
-                  donutData.find(({ label }) => label === overlayLabel) ?? {
-                    label: fixLabelForOtherValues(overlayLabel),
-                    value: 0,
-                  }
-              )
-            : // however, if there is no overlay data
-              // provide a simple entity count marker in the palette's first colour
-              [
-                {
-                  label: 'unknown',
-                  value: entityCount,
-                  color: '#333',
-                },
-              ];
-
-        const count =
-          vocabulary != null && overlayValues // if there's an overlay (all expected use cases)
-            ? overlayValues
-                .filter(({ binLabel }) => vocabulary.includes(binLabel))
-                .reduce((sum, { count }) => (sum = sum + count), 0)
-            : entityCount; // fallback if not
-
-        const commonMarkerProps = {
-          id: geoAggregateValue,
-          key: geoAggregateValue,
-          bounds: bounds,
-          position: position,
-          duration: defaultAnimationDuration,
-        };
-
-        switch (markerType) {
-          case 'pie': {
-            return {
-              ...commonMarkerProps,
-              data: reorderedData,
-              markerLabel: kFormatter(count),
-            } as DonutMarkerProps;
-          }
-          case 'bubble': {
-            const bubbleData = {
-              value: entityCount,
-              diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
-              colorValue:
-                'overlayValue' in otherProps
-                  ? otherProps.overlayValue
-                  : undefined,
-              color:
-                ('overlayValue' in otherProps &&
-                  bubbleValueToColorMapper?.(otherProps.overlayValue)) ||
-                undefined,
-            };
-
-            return {
-              ...commonMarkerProps,
-              data: bubbleData,
-              markerLabel: String(entityCount),
-            } as BubbleMarkerProps;
-          }
-          default: {
-            return {
-              ...commonMarkerProps,
-              data: reorderedData,
-              markerLabel: mFormatter(count),
-              dependentAxisRange: defaultDependentAxisRange,
-              dependentAxisLogScale,
-            } as ChartMarkerProps;
-          }
-        }
-      }
-    );
+    return markerType === 'bubble'
+      ? processRawBubblesData(
+          (rawPromise.value.rawMarkersData as StandaloneMapBubblesResponse)
+            .mapElements,
+          (props.overlayConfig as BubbleOverlayConfig | undefined)
+            ?.aggregationConfig,
+          bubbleValueToDiameterMapper,
+          bubbleValueToColorMapper
+        )
+      : processRawMarkersData(
+          (rawPromise.value.rawMarkersData as StandaloneMapMarkersResponse)
+            .mapElements,
+          markerType,
+          defaultDependentAxisRange,
+          dependentAxisLogScale,
+          vocabulary,
+          overlayType
+        );
   }, [
-    rawPromise.value?.rawMarkersData.mapElements,
-    vocabulary,
-    markerType,
-    overlayType,
     bubbleValueToColorMapper,
     bubbleValueToDiameterMapper,
     defaultDependentAxisRange,
     dependentAxisLogScale,
+    markerType,
+    overlayType,
+    props.overlayConfig,
+    rawPromise.value,
+    vocabulary,
   ]);
 
   /**
@@ -621,6 +526,181 @@ export function useStandaloneMapMarkers(
     error: rawPromise.error,
   };
 }
+
+const processRawMarkersData = (
+  mapElements: StandaloneMapMarkersResponse['mapElements'],
+  markerType: 'count' | 'proportion' | 'pie',
+  defaultDependentAxisRange: NumberRange,
+  dependentAxisLogScale: boolean,
+  vocabulary?: string[],
+  overlayType?: 'categorical' | 'continuous'
+) => {
+  return mapElements.map(
+    ({
+      geoAggregateValue,
+      entityCount,
+      avgLat,
+      avgLon,
+      minLat,
+      minLon,
+      maxLat,
+      maxLon,
+      overlayValues,
+    }) => {
+      const { bounds, position } = getBoundsAndPosition(
+        minLat,
+        minLon,
+        maxLat,
+        maxLon,
+        avgLat,
+        avgLon
+      );
+
+      const donutData =
+        vocabulary && overlayValues && overlayValues.length
+          ? overlayValues.map(({ binLabel, value }) => ({
+              label: binLabel,
+              value: value,
+              color:
+                overlayType === 'categorical'
+                  ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
+                  : gradientSequentialColorscaleMap(
+                      vocabulary.length > 1
+                        ? vocabulary.indexOf(binLabel) / (vocabulary.length - 1)
+                        : 0.5
+                    ),
+            }))
+          : [];
+
+      // TO DO: address diverging colorscale (especially if there are use-cases)
+
+      // now reorder the data, adding zeroes if necessary.
+      const reorderedData =
+        vocabulary != null
+          ? vocabulary.map(
+              (
+                overlayLabel // overlay label can be 'female' or a bin label '(0,100]'
+              ) =>
+                donutData.find(({ label }) => label === overlayLabel) ?? {
+                  label: fixLabelForOtherValues(overlayLabel),
+                  value: 0,
+                }
+            )
+          : // however, if there is no overlay data
+            // provide a simple entity count marker in the palette's first colour
+            [
+              {
+                label: 'unknown',
+                value: entityCount,
+                color: '#333',
+              },
+            ];
+
+      const count =
+        vocabulary != null && overlayValues // if there's an overlay (all expected use cases)
+          ? overlayValues
+              .filter(({ binLabel }) => vocabulary.includes(binLabel))
+              .reduce((sum, { count }) => (sum = sum + count), 0)
+          : entityCount; // fallback if not
+
+      const commonMarkerProps = {
+        data: reorderedData,
+        id: geoAggregateValue,
+        key: geoAggregateValue,
+        bounds,
+        position,
+        duration: defaultAnimationDuration,
+      };
+
+      switch (markerType) {
+        case 'pie': {
+          return {
+            ...commonMarkerProps,
+            markerLabel: kFormatter(count),
+          } as DonutMarkerProps;
+        }
+        default: {
+          return {
+            ...commonMarkerProps,
+            markerLabel: mFormatter(count),
+            dependentAxisRange: defaultDependentAxisRange,
+            dependentAxisLogScale,
+          } as ChartMarkerProps;
+        }
+      }
+    }
+  );
+};
+
+const processRawBubblesData = (
+  mapElements: StandaloneMapBubblesResponse['mapElements'],
+  aggregationConfig?: BubbleOverlayConfig['aggregationConfig'],
+  bubbleValueToDiameterMapper?: (value: number) => number,
+  bubbleValueToColorMapper?: (value: number) => string
+) => {
+  return mapElements.map(
+    ({
+      geoAggregateValue,
+      entityCount,
+      avgLat,
+      avgLon,
+      minLat,
+      minLon,
+      maxLat,
+      maxLon,
+      overlayValue,
+    }) => {
+      const { bounds, position } = getBoundsAndPosition(
+        minLat,
+        minLon,
+        maxLat,
+        maxLon,
+        avgLat,
+        avgLon
+      );
+
+      // TO DO: address diverging colorscale (especially if there are use-cases)
+
+      const bubbleData = {
+        value: entityCount,
+        diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
+        colorValue: overlayValue,
+        colorLabel: aggregationConfig
+          ? aggregationConfig.overlayType === 'continuous'
+            ? aggregationConfig.aggregator
+            : 'Proportion'
+          : undefined,
+        color: bubbleValueToColorMapper?.(overlayValue) || undefined,
+      };
+
+      return {
+        id: geoAggregateValue,
+        key: geoAggregateValue,
+        bounds,
+        position,
+        duration: defaultAnimationDuration,
+        data: bubbleData,
+        markerLabel: String(entityCount),
+      } as BubbleMarkerProps;
+    }
+  );
+};
+
+const getBoundsAndPosition = (
+  minLat: number,
+  minLon: number,
+  maxLat: number,
+  maxLon: number,
+  avgLat: number,
+  avgLon: number
+) => {
+  const bounds = {
+    southWest: { lat: minLat, lng: minLon },
+    northEast: { lat: maxLat, lng: maxLon },
+  };
+  const position = { lat: avgLat, lng: avgLon };
+  return { bounds, position };
+};
 
 function fixLabelForOtherValues(input: string): string {
   return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
