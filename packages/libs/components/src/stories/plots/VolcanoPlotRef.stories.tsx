@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useRef } from 'react';
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Story } from '@storybook/react/types-6-0';
 import VolcanoPlot, { VolcanoPlotProps } from '../../plots/VolcanoPlot';
 import { range } from 'lodash';
 import { VolcanoPlotData } from '../../types/plots/volcanoplot';
 import { getNormallyDistributedRandomNumber } from './ScatterPlot.storyData';
+import { assignSignificanceColor } from '../../plots/VolcanoPlot';
+import { significanceColors } from '../../types/plots';
 
 export default {
   title: 'Plots/VolcanoPlot',
@@ -63,15 +65,40 @@ const Template: Story<TemplateProps> = (args) => {
   }, []);
 
   // Wrangle data to get it into the nice form for plot component.
-  const volcanoDataPoints: VolcanoPlotData =
-    data.volcanoplot.log2foldChange.map((l2fc, index) => {
+  const volcanoDataPoints: VolcanoPlotData = data.volcanoplot.log2foldChange
+    .map((l2fc, index) => {
       return {
         log2foldChange: l2fc,
         pValue: data.volcanoplot.pValue[index],
         adjustedPValue: data.volcanoplot.adjustedPValue[index],
         pointID: data.volcanoplot.pointID[index],
       };
-    });
+    })
+    .map((d) => ({
+      ...d,
+      significanceColor: assignSignificanceColor(
+        Number(d.log2foldChange),
+        Number(d.pValue),
+        args.significanceThreshold,
+        args.log2FoldChangeThreshold,
+        significanceColors
+      ),
+    }));
+
+  const rawDataMinMaxValues = {
+    x: {
+      min:
+        Math.min(...volcanoDataPoints.map((d) => Number(d.log2foldChange))) ??
+        0,
+      max:
+        Math.max(...volcanoDataPoints.map((d) => Number(d.log2foldChange))) ??
+        0,
+    },
+    y: {
+      min: Math.min(...volcanoDataPoints.map((d) => Number(d.pValue))) ?? 0,
+      max: Math.max(...volcanoDataPoints.map((d) => Number(d.pValue))) ?? 0,
+    },
+  };
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
@@ -79,6 +106,9 @@ const Template: Story<TemplateProps> = (args) => {
     log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
     comparisonLabels: args.comparisonLabels,
+    rawDataMinMaxValues,
+    independentAxisRange: { min: -9, max: 9 },
+    dependentAxisRange: { min: 0, max: 9 },
   };
 
   return (
