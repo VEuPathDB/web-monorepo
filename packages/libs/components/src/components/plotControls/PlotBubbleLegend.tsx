@@ -4,7 +4,6 @@ import _ from 'lodash';
 
 // set props for custom legend function
 export interface PlotLegendBubbleProps {
-  legendMin: number;
   legendMax: number;
   valueToDiameterMapper: ((value: number) => number) | undefined;
 }
@@ -17,7 +16,6 @@ export interface PlotLegendBubbleProps {
 // };
 
 export default function PlotBubbleLegend({
-  legendMin,
   legendMax,
   valueToDiameterMapper,
 }: PlotLegendBubbleProps) {

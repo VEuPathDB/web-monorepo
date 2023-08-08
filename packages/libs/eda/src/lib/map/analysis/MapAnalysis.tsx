@@ -1269,7 +1269,6 @@ function MapAnalysisImpl(props: ImplProps) {
                           isLoading={pending}
                           plotLegendProps={{
                             type: 'bubble',
-                            legendMin: bubbleLegendData?.minSizeValue ?? 0,
                             legendMax: bubbleLegendData?.maxSizeValue ?? 0,
                             valueToDiameterMapper: bubbleValueToDiameterMapper,
                           }}

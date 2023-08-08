@@ -719,7 +719,7 @@ const processRawBubblesData = (
             ? _.capitalize(aggregationConfig.aggregator)
             : 'Proportion'
           : undefined,
-        color: bubbleValueToColorMapper?.(overlayValue) || undefined,
+        color: bubbleValueToColorMapper?.(overlayValue),
       };
 
       return {
@@ -742,14 +742,13 @@ const getBoundsAndPosition = (
   maxLon: number,
   avgLat: number,
   avgLon: number
-) => {
-  const bounds = {
+) => ({
+  bounds: {
     southWest: { lat: minLat, lng: minLon },
     northEast: { lat: maxLat, lng: maxLon },
-  };
-  const position = { lat: avgLat, lng: avgLon };
-  return { bounds, position };
-};
+  },
+  position: { lat: avgLat, lng: avgLon },
+});
 
 function fixLabelForOtherValues(input: string): string {
   return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
