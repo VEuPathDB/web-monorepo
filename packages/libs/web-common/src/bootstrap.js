@@ -95,7 +95,7 @@ export function initialize(options = {}) {
 
   context.store.dispatch(loadSiteConfig(siteConfig));
 
-  // Add non-status response handler for FetchClient instances
+  // Add non-success response handler for FetchClient instances
   FetchClient.setOnNonSuccessResponse((error) => {
     context.wdkService.submitError(error);
   });
