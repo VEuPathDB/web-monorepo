@@ -7,7 +7,7 @@ export default function NewWindowLink(props) {
     className,
     windowName = 'apidb_window',
     onClick = () => {},
-    children
+    children,
   } = props;
   return (
     <a
@@ -20,29 +20,33 @@ export default function NewWindowLink(props) {
           openPopup(e.currentTarget.href, windowName);
         }
       }}
-    >{children}</a>
-  )
+    >
+      {children}
+    </a>
+  );
 }
 
 function openPopup(windowUrl, windowName) {
   var windowWidth = 1050;
   var windowHeight = 740;
-  var windowLeft = screen.width/2 - windowWidth/2;
-  var windowTop = screen.height/2 - windowHeight/2;
+  var windowLeft = screen.width / 2 - windowWidth / 2;
+  var windowTop = screen.height / 2 - windowHeight / 2;
   var defaultFeatures = {
-    location:    "no",
-    menubar:     "no",
-    toolbar:     "no",
-    personalbar: "no",
-    resizable:   "yes",
-    scrollbars:  "yes",
-    status:      "yes",
-    width:       windowWidth,
-    height:      windowHeight,
-    top:         windowTop,
-    left:        windowLeft
+    location: 'no',
+    menubar: 'no',
+    toolbar: 'no',
+    personalbar: 'no',
+    resizable: 'yes',
+    scrollbars: 'yes',
+    status: 'yes',
+    width: windowWidth,
+    height: windowHeight,
+    top: windowTop,
+    left: windowLeft,
   };
 
-  let windowFeatures = map(defaultFeatures, function(v, k) { return k + "=" + v; }).join(",");
-  window.open(windowUrl, windowName.replace(/-/g, "_"), windowFeatures).focus();
+  let windowFeatures = map(defaultFeatures, function (v, k) {
+    return k + '=' + v;
+  }).join(',');
+  window.open(windowUrl, windowName.replace(/-/g, '_'), windowFeatures).focus();
 }

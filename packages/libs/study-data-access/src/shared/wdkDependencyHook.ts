@@ -5,10 +5,9 @@ import { areCompatibleWdkDependencies } from './wrapWdkDependencies';
 
 const useRefinedWdkDependenciesContext = makeUseRefinedContext(
   areCompatibleWdkDependencies,
-  _ => (
+  (_) =>
     'In order to use data restrictions, ' +
     'a study access API must be included in the WDK dependencies.'
-  )
 );
 
 export function useWdkDependenciesWithStudyAccessApi() {

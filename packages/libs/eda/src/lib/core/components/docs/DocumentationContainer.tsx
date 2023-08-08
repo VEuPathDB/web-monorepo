@@ -10,9 +10,8 @@ import { Documentation } from './Documentation';
 interface DocumentContextValue {
   setActiveDocument(name?: string): void;
 }
-const DocumentationContext = React.createContext<DocumentContextValue | null>(
-  null
-);
+const DocumentationContext =
+  React.createContext<DocumentContextValue | null>(null);
 
 export function useActiveDocument() {
   return useNonNullableContext(DocumentationContext);

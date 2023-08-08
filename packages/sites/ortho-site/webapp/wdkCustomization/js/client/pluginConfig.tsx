@@ -6,23 +6,27 @@ import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/Clien
 import { Form as GroupsByPhyleticPatternForm } from '../questions/GroupsByPhyleticPattern/Form';
 
 const BlastSummaryViewPlugin = React.lazy(
-  () => import('@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController')
+  () =>
+    import(
+      '@veupathdb/blast-summary-view/lib/Controllers/BlastSummaryViewController'
+    )
 );
 
 const orthoPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     searchName: 'GroupsByPhyleticPattern',
-    component: GroupsByPhyleticPatternForm
+    component: GroupsByPhyleticPatternForm,
   },
   {
     type: 'summaryView',
     name: 'blast-view',
-    component: (props) =>
+    component: (props) => (
       <Suspense fallback={<Loading />}>
         <BlastSummaryViewPlugin {...props} />
       </Suspense>
-  }
+    ),
+  },
 ];
 
 export default orthoPluginConfig;

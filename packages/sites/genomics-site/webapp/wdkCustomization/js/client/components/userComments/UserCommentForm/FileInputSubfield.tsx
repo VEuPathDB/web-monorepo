@@ -20,31 +20,21 @@ export const FileInputSubfield: React.SFC<FileInputSubfieldProps> = ({
   filename,
   description,
   disabled,
-  className
+  className,
 }) => (
   <div className={className}>
+    {disabled ? (
+      <FormRow label="Select a file:" field={filename} />
+    ) : (
+      <FormRow
+        label="Select a file:"
+        field={<FileInput required onChange={onFileChange} />}
+      />
+    )}
     {
-      disabled
-      ? (
-        <FormRow
-          label="Select a file:"
-          field={filename}
-        />
-      )
-      : (
-        <FormRow
-          label="Select a file:"
-          field={(
-            <FileInput
-              required
-              onChange={onFileChange}
-            />
-          )}
-        />
-      )
-    }
-    {
-      <a href="#" onClick={(event) => {
+      <a
+        href="#"
+        onClick={(event) => {
           event.preventDefault();
           onRemove();
         }}
@@ -53,14 +43,14 @@ export const FileInputSubfield: React.SFC<FileInputSubfieldProps> = ({
       </a>
     }
     <FormRow
-      label={(
+      label={
         <>
           Brief Description:
           <br />
           (4000 max characters)
         </>
-      )}
-      field={(
+      }
+      field={
         <TextArea
           required
           maxLength={4000}
@@ -68,7 +58,7 @@ export const FileInputSubfield: React.SFC<FileInputSubfieldProps> = ({
           onChange={onDescriptionChange}
           value={description}
         />
-      )}
+      }
     />
   </div>
 );

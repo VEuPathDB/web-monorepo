@@ -98,6 +98,9 @@ function handleConfigurationChanges<ConfigType>(
   url: string,
   history: RouterChildContext['router']['history']
 ) {
+  if (isEqual(computation.descriptor.configuration, updatedConfiguration))
+    return;
+
   // when a config value changes:
   // 1. remove viz from current computation
   // 2. check if the newConfig exists

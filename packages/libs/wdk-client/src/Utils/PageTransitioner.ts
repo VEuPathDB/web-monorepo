@@ -1,9 +1,12 @@
 import { History } from 'history';
 
 export type TransitionOptions = {
-  replace?: boolean // defaults to false
-}
-export type TransitionFunction = (url: string, options?: TransitionOptions) => void;
+  replace?: boolean; // defaults to false
+};
+export type TransitionFunction = (
+  url: string,
+  options?: TransitionOptions
+) => void;
 
 export interface PageTransitioner {
   transitionToExternalPage: TransitionFunction;
@@ -13,10 +16,10 @@ export interface PageTransitioner {
 /**
  * Creates a page transitioner service that provides convenience methods for
  * navigating seamlessly to an internal page, or to an external page.
- * 
+ *
  * This provides a centralized location to perform page transition logic
  * from action creators.
- * 
+ *
  * @param {History} history
  */
 export function getTransitioner(history: History) {

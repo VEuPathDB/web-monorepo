@@ -1,4 +1,3 @@
-
 .wdk-QuestionFormFoldChange {
   display: flex;
   margin-top: 0.5em;
@@ -52,17 +51,19 @@
         border-image: initial;
         border-radius: 4px;
 
-        .wdk-CheckboxList > div, .wdk-CheckboxTree {
+        .wdk-CheckboxList > div,
+        .wdk-CheckboxTree {
           background: white;
           border-radius: 4px;
           padding: 2px;
         }
 
-        .wdk-CheckboxList > div:first-child, .wdk-CheckboxTree {
+        .wdk-CheckboxList > div:first-child,
+        .wdk-CheckboxTree {
           height: 100px;
           overflow-y: scroll;
-          border: 1px solid #AAA;
-          padding: 0 .3em;
+          border: 1px solid #aaa;
+          padding: 0 0.3em;
         }
 
         .wdk-CheckboxTree {
@@ -96,7 +97,8 @@
     margin: 1em auto;
   }
 
-  .wdk-FoldChangeHelpComplete,.wdk-FoldChangeHelpIncomplete {
+  .wdk-FoldChangeHelpComplete,
+  .wdk-FoldChangeHelpIncomplete {
     margin-left: 1em;
   }
 
@@ -105,7 +107,8 @@
     font-weight: bold;
   }
 
-  .wdk-FoldChangeTitle, .wdk-FoldChangeSubtitle {
+  .wdk-FoldChangeTitle,
+  .wdk-FoldChangeSubtitle {
     text-align: center;
   }
 
@@ -122,11 +125,13 @@
     margin-right: 4px;
   }
 
-  input[type=text],select {
+  input[type='text'],
+  select {
     margin-left: 4px;
   }
 
-  .wdk-CheckboxList, .wdk-TreeBoxParam {
+  .wdk-CheckboxList,
+  .wdk-TreeBoxParam {
     width: 100%;
   }
 }

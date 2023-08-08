@@ -105,8 +105,6 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
     },
     [setMarkerElements]
   );
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   return (
     <>
@@ -118,8 +116,6 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -137,7 +133,6 @@ AllInOneRequest.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 export const FirstRequest: Story<MapVEuMapProps> = (args) => {
@@ -162,9 +157,6 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
     [setMarkerElements]
   );
 
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
-
   return (
     <>
       <MapVEuMap
@@ -175,8 +167,6 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -194,7 +184,6 @@ FirstRequest.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 export const TwoRequests: Story<MapVEuMapProps> = (args) => {
@@ -219,9 +208,6 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     },
     [setBvp]
   );
-
-  // define mouseMode
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   useEffect(() => {
     // track if effect has been cancelled
@@ -262,8 +248,6 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         markers={markerElements}
         animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        mouseMode={mouseMode}
-        onMouseModeChange={setMouseMode}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -281,12 +265,10 @@ TwoRequests.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
   const [viewport] = useState<Viewport>({ center: [13, 16], zoom: 4 });
-  const [mouseMode, setMouseMode] = useState<MouseMode>(defaultMouseMode);
 
   const markerElements: ReactElement<DonutMarkerProps>[] = [
     <DonutMarker
@@ -355,8 +337,6 @@ export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
       onBoundsChanged={() => {}}
       animation={defaultAnimation}
       zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-      mouseMode={mouseMode}
-      onMouseModeChange={setMouseMode}
     />
   );
 };
@@ -365,7 +345,6 @@ CumulativeMarkers.args = {
   height: '100vh',
   width: '100vw',
   showGrid: true,
-  showMouseToolbar: true,
 };
 
 export const Standalone: Story<MapVEuMapProps> = () => {

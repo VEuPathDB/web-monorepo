@@ -25,15 +25,15 @@ body.vpdb-Body .vpdb-RootContainer {
   }
 
   .wdk-Showcase {
-    margin: 0
+    margin: 0;
   }
   .News-Section .News .NewsList {
     max-height: 145px;
-    border-color: rgba(15,70,100,.12);
+    border-color: rgba(15, 70, 100, 0.12);
     border-style: solid;
     border-width: 1px 0;
   }
-  .News-Section .News .NewsList .NewsTeaser{
+  .News-Section .News .NewsList .NewsTeaser {
     display: none;
   }
   .News-Section .AllNewsLink {

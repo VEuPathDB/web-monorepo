@@ -11,7 +11,7 @@
   font-size: 1.4em;
   padding: 0;
   height: 2em;
-  margin-top: .5em;
+  margin-top: 0.5em;
 }
 
 .StrategyPanel--CloseButton {
@@ -28,7 +28,7 @@
   border-left: 1px solid #666;
   content: ' ';
   font-size: 2em;
-  height: .85em;
+  height: 0.85em;
   position: absolute;
   left: 0;
 }
@@ -53,7 +53,7 @@
   flex-flow: row-reverse nowrap;
   justify-content: space-between;
   background-color: #fafafa;
-  border: .17em solid #666;
+  border: 0.17em solid #666;
   border-radius: 1em;
   white-space: nowrap;
   min-height: 11.5em;
@@ -72,7 +72,7 @@
 }
 
 .StrategyPanel--NestedTitle {
-  margin: 2em 2em .5em 4em;
+  margin: 2em 2em 0.5em 4em;
 }
 
 .StrategyPanel .StrategyControls--Controls {

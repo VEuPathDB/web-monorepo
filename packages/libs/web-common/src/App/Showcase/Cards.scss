@@ -34,7 +34,7 @@
     }
 
     input.wdk-RealTimeSearchBoxInput {
-      border-radius: .35em;
+      border-radius: 0.35em;
       padding: 0 1em;
       border-color: #cccccc;
       height: 36px;
@@ -48,7 +48,7 @@
     position: relative;
     overflow-x: auto;
     overflow-y: hidden;
-/*    padding: 10px 0; */
+    /*    padding: 10px 0; */
     margin: 1em 0;
   }
 
@@ -67,7 +67,7 @@
     margin-left: auto !important;
     z-index: 1;
     position: absolute;
-    top: .75em;
+    top: 0.75em;
     right: 1em;
   }
 
@@ -75,7 +75,7 @@
     font-weight: 500;
     font-size: 120%;
     position: absolute;
-    top: .75em;
+    top: 0.75em;
     left: 1em;
     z-index: 1;
   }
@@ -114,12 +114,11 @@
     text-shadow: #b4b4b4 2px 2px 3px;
     background: #efefef80;
   }
-
 }
 .Card {
   flex: 0 0 300px;
   width: 300px;
-  margin: 0 .5em;
+  margin: 0 0.5em;
   font-size: 0.9rem;
   min-height: 250px;
   color: $textColor;
@@ -130,9 +129,19 @@
   flex-flow: column;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: #dcf1f8;
-  background: -moz-radial-gradient(12% 5%, ellipse cover,  #dcf1f8 0%, #ffffff 40%);
-  background: -webkit-radial-gradient(12% 5%, ellipse cover,  #dcf1f8 0%, #ffffff 40%);
-  background: radial-gradient(ellipse at 12% 5%,  #dcf1f8 0%, #ffffff 40%);
+  background: -moz-radial-gradient(
+    12% 5%,
+    ellipse cover,
+    #dcf1f8 0%,
+    #ffffff 40%
+  );
+  background: -webkit-radial-gradient(
+    12% 5%,
+    ellipse cover,
+    #dcf1f8 0%,
+    #ffffff 40%
+  );
+  background: radial-gradient(ellipse at 12% 5%, #dcf1f8 0%, #ffffff 40%);
 
   &.disabled {
     opacity: 0.3;
@@ -146,9 +155,9 @@
 
   .row.ribbon {
     background-color: #e62f44;
-    color: #FFF;
+    color: #fff;
     padding: 10px;
-    text-align:center;
+    text-align: center;
     justify-content: center;
     font-weight: 300;
     width: 100%;
@@ -157,26 +166,66 @@
 
   &.red-fade-bg {
     background: #edb2b7;
-    background: -moz-radial-gradient(100% 0%, ellipse cover,  #edb2b7 -20%, #ffffff 100%);
-    background: -webkit-radial-gradient(100% 0%, ellipse cover,  #edb2b7 -20%, #ffffff 100%);
-    background: radial-gradient(ellipse at 100% 0%,  #edb2b7 -20%, #ffffff 100%);
+    background: -moz-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #edb2b7 -20%,
+      #ffffff 100%
+    );
+    background: -webkit-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #edb2b7 -20%,
+      #ffffff 100%
+    );
+    background: radial-gradient(ellipse at 100% 0%, #edb2b7 -20%, #ffffff 100%);
   }
   &.blue-fade-bg {
     background: #c4f0ff;
-    background: -moz-radial-gradient(100% 0%, ellipse cover,  #c4f0ff -20%, #ffffff 100%);
-    background: -webkit-radial-gradient(100% 0%, ellipse cover,  #c4f0ff -20%, #ffffff 100%);
-    background: radial-gradient(ellipse at 100% 0%,  #c4f0ff -20%, #ffffff 100%);
+    background: -moz-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #c4f0ff -20%,
+      #ffffff 100%
+    );
+    background: -webkit-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #c4f0ff -20%,
+      #ffffff 100%
+    );
+    background: radial-gradient(ellipse at 100% 0%, #c4f0ff -20%, #ffffff 100%);
   }
   &.yellow-fade-bg {
     background: #ffedb8;
-    background: -moz-radial-gradient(100% 0%, ellipse cover,  #ffedb8 -20%, #ffffff 100%);
-    background: -webkit-radial-gradient(100% 0%, ellipse cover,  #ffedb8 -20%, #ffffff 100%);
-    background: radial-gradient(ellipse at 100% 0%,  #ffedb8 -20%, #ffffff 100%);
+    background: -moz-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #ffedb8 -20%,
+      #ffffff 100%
+    );
+    background: -webkit-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #ffedb8 -20%,
+      #ffffff 100%
+    );
+    background: radial-gradient(ellipse at 100% 0%, #ffedb8 -20%, #ffffff 100%);
   }
   &.green-fade-bg {
     background: #dbf0cc;
-    background: -moz-radial-gradient(100% 0%, ellipse cover,  #dbf0cc -20%, #ffffff 100%);
-    background: -webkit-radial-gradient(100% 0%, ellipse cover,  #dbf0cc -20%, #ffffff 100%);
-    background: radial-gradient(ellipse at 100% 0%,  #dbf0cc -20%, #ffffff 100%);
+    background: -moz-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #dbf0cc -20%,
+      #ffffff 100%
+    );
+    background: -webkit-radial-gradient(
+      100% 0%,
+      ellipse cover,
+      #dbf0cc -20%,
+      #ffffff 100%
+    );
+    background: radial-gradient(ellipse at 100% 0%, #dbf0cc -20%, #ffffff 100%);
   }
 }

@@ -30,7 +30,7 @@ export type DataGridStyleSpec = {
   paginationControls?: {
     top?: PaginationControlsStyleSpec;
     bottom?: PaginationControlsStyleSpec;
-  }
+  };
 };
 
 const mesa: DataGridStyleSpec = {
@@ -101,7 +101,7 @@ const stylePresets: {
     size: {
       width: 'auto',
       height: 'auto',
-    }
+    },
   },
   mesa,
 };

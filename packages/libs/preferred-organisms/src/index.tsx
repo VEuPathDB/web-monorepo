@@ -50,11 +50,12 @@ initialize({
   ] as ClientPluginRegistryEntry<any>[],
   componentWrappers: {
     SiteHeader: () => Header,
-    Page: (DefaultComponent: React.ComponentType) => (props: any) => (
-      <RecoilRoot>
-        <DefaultComponent {...props} />
-      </RecoilRoot>
-    ),
+    Page: (DefaultComponent: React.ComponentType) => (props: any) =>
+      (
+        <RecoilRoot>
+          <DefaultComponent {...props} />
+        </RecoilRoot>
+      ),
   },
   endpoint,
 } as any);

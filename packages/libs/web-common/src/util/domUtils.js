@@ -34,26 +34,43 @@ export function getBestPosition(element, aroundElement = null) {
     top: 0,
     bottom: window.innerHeight,
     width: window.innerWidth,
-    height: window.innerHeight
+    height: window.innerHeight,
   };
 
-  let centerLeft = (containerRectangle.left + (containerRectangle.width / 2)) - (elementRectangle.width / 2);
-  let centerTop = (containerRectangle.top + (containerRectangle.height / 2)) - (elementRectangle.height / 2);
+  let centerLeft =
+    containerRectangle.left +
+    containerRectangle.width / 2 -
+    elementRectangle.width / 2;
+  let centerTop =
+    containerRectangle.top +
+    containerRectangle.height / 2 -
+    elementRectangle.height / 2;
 
   if (aroundElement != null) {
     let aroundRectangle = aroundElement.getBoundingClientRect();
-    let goRight = containerRectangle.right - aroundRectangle.right > elementRectangle.width;
-    let goLeft = !goRight && aroundRectangle.left - containerRectangle.left > elementRectangle.width;
-    let goUp = aroundRectangle.top - containerRectangle.top > elementRectangle.height;
-    let goDown = !goUp && containerRectangle.bottom - aroundRectangle.bottom > elementRectangle.height;
+    let goRight =
+      containerRectangle.right - aroundRectangle.right > elementRectangle.width;
+    let goLeft =
+      !goRight &&
+      aroundRectangle.left - containerRectangle.left > elementRectangle.width;
+    let goUp =
+      aroundRectangle.top - containerRectangle.top > elementRectangle.height;
+    let goDown =
+      !goUp &&
+      containerRectangle.bottom - aroundRectangle.bottom >
+        elementRectangle.height;
 
-    let offsetLeft = goRight ? aroundRectangle.right
-             : goLeft ? aroundRectangle.left - elementRectangle.width
-             : centerLeft;
+    let offsetLeft = goRight
+      ? aroundRectangle.right
+      : goLeft
+      ? aroundRectangle.left - elementRectangle.width
+      : centerLeft;
 
-    let offsetTop = goDown ? aroundRectangle.bottom
-            : goUp ? aroundRectangle.top - elementRectangle.height
-            : centerTop;
+    let offsetTop = goDown
+      ? aroundRectangle.bottom
+      : goUp
+      ? aroundRectangle.top - elementRectangle.height
+      : centerTop;
 
     return { offsetTop, offsetLeft };
   }
@@ -61,4 +78,5 @@ export function getBestPosition(element, aroundElement = null) {
   return { offestTop: centerTop, offsetLeft: centerLeft };
 }
 
-export const findChildren = childSelector => node => node.querySelectorAll(childSelector);
+export const findChildren = (childSelector) => (node) =>
+  node.querySelectorAll(childSelector);

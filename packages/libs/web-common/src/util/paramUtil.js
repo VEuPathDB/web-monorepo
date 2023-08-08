@@ -6,7 +6,7 @@ const paramEventHandlerPropTypes = {
   onOntologyTermSort: PropTypes.func.isRequired,
   onOntologyTermSearch: PropTypes.func.isRequired,
   onParamValueChange: PropTypes.func.isRequired,
-  onParamStateChange: PropTypes.func.isRequired
+  onParamStateChange: PropTypes.func.isRequired,
 };
 
 export const paramGroupPropTypes = {
@@ -21,5 +21,5 @@ export const paramPropTypes = {
   ...paramEventHandlerPropTypes,
   param: PropTypes.object.isRequired,
   value: PropTypes.string.isRequired,
-  uiState: PropTypes.object.isRequired
+  uiState: PropTypes.object.isRequired,
 };

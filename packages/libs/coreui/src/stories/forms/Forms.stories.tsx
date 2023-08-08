@@ -38,11 +38,11 @@ export const Example: Story = (args) => {
     >
       <div css={{ display: 'flex' }}>
         <FormField
-          type='text'
-          label='Username'
-          instructions='Should be an email address'
-          placeholder='Username'
-          width='200px'
+          type="text"
+          label="Username"
+          instructions="Should be an email address"
+          placeholder="Username"
+          width="200px"
           value={value}
           onValueChange={(value) => {
             setValue(value);
@@ -52,9 +52,9 @@ export const Example: Story = (args) => {
           status={status}
         />
         <FormField
-          type='password'
-          label='Password'
-          width='200px'
+          type="password"
+          label="Password"
+          width="200px"
           value={value}
           onValueChange={(value) => {
             setValue(value);
@@ -66,10 +66,10 @@ export const Example: Story = (args) => {
         />
       </div>
       <MultilineTextField
-        heading='Tell us about yourself'
-        instructions='Blah blah blah'
-        height='35vh'
-        width='50vw'
+        heading="Tell us about yourself"
+        instructions="Blah blah blah"
+        height="35vh"
+        width="50vw"
         value={value}
         onValueChange={(value) => {
           setValue(value);

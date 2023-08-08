@@ -4,26 +4,28 @@ import './SiteMenu.scss';
 import SiteMenuItem from './SiteMenuItem';
 
 class SiteMenu extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
   }
 
-  render () {
-    const { items, config, actions, user} = this.props;
+  render() {
+    const { items, config, actions, user } = this.props;
     return (
       <div className="SiteMenu">
-        {!items ? null : items.map((item, key) => (
-          <SiteMenuItem
-            key={key}
-            item={item}
-            config={config}
-            actions={actions}
-            user={user}
-          />
-        ))}
+        {!items
+          ? null
+          : items.map((item, key) => (
+              <SiteMenuItem
+                key={key}
+                item={item}
+                config={config}
+                actions={actions}
+                user={user}
+              />
+            ))}
       </div>
     );
   }
-};
+}
 
 export default SiteMenu;

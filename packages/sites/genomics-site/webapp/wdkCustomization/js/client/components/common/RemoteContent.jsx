@@ -7,7 +7,6 @@ import $ from 'jquery';
 import React from 'react';
 
 export default class RemoteContent extends React.PureComponent {
-
   componentDidMount() {
     this.loadContent(this.props.url);
   }
@@ -22,21 +21,19 @@ export default class RemoteContent extends React.PureComponent {
     // Fetch the html and append it.
     // Handling script tags in the received html is hard, so using jquery for the time being.
     $(this.node).html('Loading...');
-    $.get(url)
-    .always(response => {
-      let html = typeof response === 'string' ? response : response.responseText;
+    $.get(url).always((response) => {
+      let html =
+        typeof response === 'string' ? response : response.responseText;
       $(this.node).html(html);
       this.props.onLoad(this.node);
     });
   }
 
   render() {
-    return (
-      <div ref={node => this.node = node}/>
-    );
+    return <div ref={(node) => (this.node = node)} />;
   }
 }
 
 RemoteContent.defaultProps = {
-  onLoad() {}
+  onLoad() {},
 };

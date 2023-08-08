@@ -17,6 +17,7 @@ import {
   AttributeSortingSpec,
   SearchConfig,
 } from '../Utils/WdkModel';
+import { partition } from 'lodash';
 
 /*
 * TODO: this file should be updated to offer request/update/fulfill actions and handlers from request/update to fulfill.  application store modules will call them, and reduce the fulfills into their store state
@@ -61,7 +62,26 @@ export async function getResultTableColumnsPref(
     : columnsPref
     ? columnsPref.trim().split(/,\s*/)
     : question.defaultAttributes;
-  return uniq(fixedColumns.concat(columns));
+
+  const [knownColumns, unknownColumns] = partition(
+    columns,
+    (columnName) => columnName in recordClass.attributesMap
+  );
+
+  if (unknownColumns.length > 0) {
+    await wdkService.submitError(
+      new Error(
+        'The following unknown attributes were encountered from either user preferences or step details.\n\n' +
+          'Search name: ' +
+          searchName +
+          '\n' +
+          (step ? 'Step ID: ' + step.id + '\n' : '') +
+          'Unknown attributes: ' +
+          unknownColumns.join(', ')
+      )
+    );
+  }
+  return uniq(fixedColumns.concat(knownColumns));
 }
 
 export async function setResultTableColumnsPref(

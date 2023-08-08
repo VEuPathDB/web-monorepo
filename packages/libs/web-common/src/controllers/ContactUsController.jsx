@@ -5,15 +5,15 @@ import { connect } from 'react-redux';
 import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { 
+import {
   updateField,
   changeAttachmentMetadata,
   addAttachmentMetadata,
   removeAttachmentMetadata,
   addScreenshotMetadata,
   removeScreenshotMetadata,
-  submitDetails  
-} from  '../actioncreators/ContactUsActionCreators';
+  submitDetails,
+} from '../actioncreators/ContactUsActionCreators';
 
 import ContactUsFinished from '../components/ContactUs/ContactUsFinished';
 import ContactUsSubmission from '../components/ContactUs/ContactUsSubmission';
@@ -22,8 +22,8 @@ import SupportFormBase from '../components/SupportForm/SupportFormBase';
 import {
   submitDisabled,
   submissionFailed,
-  submissionSuccessful, 
-  responseMessage, 
+  submissionSuccessful,
+  responseMessage,
   subjectValue,
   reporterEmailValue,
   ccEmailsValue,
@@ -32,15 +32,12 @@ import {
   reporterEmailValidity,
   ccEmailsValidity,
   validatedAttachmentMetadata,
-  screenshotMetadata
+  screenshotMetadata,
 } from '../selectors/ContactUsSelectors';
 
 class ContactUsView extends PageController {
   isRenderDataLoaded() {
-    const {
-      displayName,
-      user
-    } = this.props.stateProps;
+    const { displayName, user } = this.props.stateProps;
 
     return displayName && user;
   }
@@ -53,8 +50,8 @@ class ContactUsView extends PageController {
     }
   }
 
-  getTitle() { 
-    const { displayName } = this.props.stateProps
+  getTitle() {
+    const { displayName } = this.props.stateProps;
 
     return `${displayName} :: Help`;
   }
@@ -74,7 +71,7 @@ class ContactUsView extends PageController {
       ccEmailsValidity,
       messageValidity,
       validatedAttachmentMetadata,
-      screenshotMetadata
+      screenshotMetadata,
     } = this.props.stateProps;
 
     const {
@@ -87,45 +84,43 @@ class ContactUsView extends PageController {
       removeFile,
       addScreenshot,
       removeScreenshot,
-      submitDetails
+      submitDetails,
     } = this.props.dispatchProps;
 
     return (
       <SupportFormBase>
-        {
-          submissionSuccessful
-            ? <ContactUsFinished
-                message={
-                  `Your message has been sent to the ${displayName} team.
-                  For your records, a copy has been sent to your email.`
-                } 
-              />
-            : <ContactUsSubmission
-                submitDisabled={submitDisabled}
-                submissionFailed={submissionFailed}
-                responseMessage={responseMessage}
-                subjectValue={subjectValue}
-                reporterEmailValue={reporterEmailValue}
-                ccEmailsValue={ccEmailsValue}
-                messageValue={messageValue}
-                updateSubject={updateSubject}
-                updateReporterEmail={updateReporterEmail}
-                updateCcEmails={updateCcEmails}
-                updateMessage={updateMessage}
-                changeFile={changeFile}
-                addFile={addFile}
-                removeFile={removeFile}
-                addScreenshot={addScreenshot}
-                removeScreenshot={removeScreenshot}
-                reporterEmailValidity={reporterEmailValidity}
-                ccEmailsValidity={ccEmailsValidity}
-                messageValidity={messageValidity}
-                validatedAttachmentMetadata={validatedAttachmentMetadata}
-                screenshotMetadata={screenshotMetadata}
-                submitDetails={submitDetails}
-                specialInstructions={this.props.specialInstructions}
-              />
-        }
+        {submissionSuccessful ? (
+          <ContactUsFinished
+            message={`Your message has been sent to the ${displayName} team.
+                  For your records, a copy has been sent to your email.`}
+          />
+        ) : (
+          <ContactUsSubmission
+            submitDisabled={submitDisabled}
+            submissionFailed={submissionFailed}
+            responseMessage={responseMessage}
+            subjectValue={subjectValue}
+            reporterEmailValue={reporterEmailValue}
+            ccEmailsValue={ccEmailsValue}
+            messageValue={messageValue}
+            updateSubject={updateSubject}
+            updateReporterEmail={updateReporterEmail}
+            updateCcEmails={updateCcEmails}
+            updateMessage={updateMessage}
+            changeFile={changeFile}
+            addFile={addFile}
+            removeFile={removeFile}
+            addScreenshot={addScreenshot}
+            removeScreenshot={removeScreenshot}
+            reporterEmailValidity={reporterEmailValidity}
+            ccEmailsValidity={ccEmailsValidity}
+            messageValidity={messageValidity}
+            validatedAttachmentMetadata={validatedAttachmentMetadata}
+            screenshotMetadata={screenshotMetadata}
+            submitDetails={submitDetails}
+            specialInstructions={this.props.specialInstructions}
+          />
+        )}
       </SupportFormBase>
     );
   }
@@ -133,9 +128,9 @@ class ContactUsView extends PageController {
 
 const targetValue = ({ target: { value } }) => value;
 
-const mapStateToProps = ({ 
-  contactUs: contactUsState, 
-  globalData: globalDataState 
+const mapStateToProps = ({
+  contactUs: contactUsState,
+  globalData: globalDataState,
 }) => ({
   displayName: get('config.displayName', globalDataState),
   user: get('user', globalDataState),
@@ -151,7 +146,7 @@ const mapStateToProps = ({
   ccEmailsValidity: ccEmailsValidity(contactUsState),
   messageValidity: messageValidity(contactUsState),
   validatedAttachmentMetadata: validatedAttachmentMetadata(contactUsState),
-  screenshotMetadata: screenshotMetadata(contactUsState)
+  screenshotMetadata: screenshotMetadata(contactUsState),
 });
 
 const mapDispatchToProps = {
@@ -163,20 +158,20 @@ const mapDispatchToProps = {
   changeFile: (index, files) => {
     return files.length === 0
       ? changeAttachmentMetadata(index, { file: null })
-      : changeAttachmentMetadata(index, { file: files[0] })
+      : changeAttachmentMetadata(index, { file: files[0] });
   },
   addFile: () => addAttachmentMetadata({}),
-  removeFile: index => removeAttachmentMetadata(index),
-  addScreenshot: file => addScreenshotMetadata({ file }),
-  removeScreenshot: index => removeScreenshotMetadata(index),
-  submitDetails
+  removeFile: (index) => removeAttachmentMetadata(index),
+  addScreenshot: (file) => addScreenshotMetadata({ file }),
+  removeScreenshot: (index) => removeScreenshotMetadata(index),
+  submitDetails,
 };
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   stateProps,
   dispatchProps,
   specialInstructions: ownProps.specialInstructions || null,
-  context: ownProps.context || ''
+  context: ownProps.context || '',
 });
 
 const ContactUsController = connect(

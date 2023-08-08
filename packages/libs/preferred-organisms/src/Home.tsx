@@ -20,9 +20,10 @@ export default function Home() {
 
   const referenceStrains = useReferenceStrains();
 
-  const referenceStrainsList = useMemo(() => [...referenceStrains].sort(), [
-    referenceStrains,
-  ]);
+  const referenceStrainsList = useMemo(
+    () => [...referenceStrains].sort(),
+    [referenceStrains]
+  );
 
   const newOrganisms = useNewOrganisms();
 

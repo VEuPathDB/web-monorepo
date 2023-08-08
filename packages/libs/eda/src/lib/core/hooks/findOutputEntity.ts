@@ -23,7 +23,7 @@ export function useFindOutputEntity(
   return useMemo(() => {
     if (providedEntityId)
       return entities.find((e) => e.id === providedEntityId);
-    const variableNames = dataElementDependencyOrder?.[0] ?? [
+    const variableNames = dataElementDependencyOrder?.flat() ?? [
       fallbackVariableName,
     ];
 

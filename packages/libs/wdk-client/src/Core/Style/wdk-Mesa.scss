@@ -1,13 +1,15 @@
 .MesaComponent {
-  .HelpTrigger, .Trigger.Active {
+  .HelpTrigger,
+  .Trigger.Active {
     color: $blue;
   }
 
   .ActionToolbar {
-    a { color: $blue; }
+    a {
+      color: $blue;
+    }
     .ActionToolbar-Children {
       padding-right: 15px;
     }
   }
-
 }

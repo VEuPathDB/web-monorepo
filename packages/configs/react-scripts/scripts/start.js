@@ -9,6 +9,5 @@ export async function main({ siteConfigPath }) {
 
   const env = { ...process.env, VEUPATHDB_AUTH_TKT: authCookie };
 
-  spawn('npx', [ 'react-app-rewired', 'start' ], { env, stdio: 'inherit' });
-
+  spawn('npx', ['react-app-rewired', 'start'], { env, stdio: 'inherit' });
 }
