@@ -351,7 +351,28 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
   const controlsNode = (
-    <div style={{ margin: '1em' }}>
+    <div style={{ margin: '1em 1em 2em 1em' }}>
+      <LabelledGroup
+        label="Plot controls"
+        containerStyles={{
+          paddingLeft: 0,
+        }}
+      >
+        <SliderWidget
+          minimum={0}
+          maximum={1}
+          step={0.1}
+          value={vizConfig.markerBodyOpacity ?? DEFAULT_MARKER_OPACITY}
+          debounceRateMs={250}
+          onChange={(newValue: number) => {
+            updateVizConfig({ markerBodyOpacity: newValue });
+          }}
+          containerStyles={{ width: '20em', marginTop: '0.5em' }}
+          showLimits={true}
+          label={'Marker opacity'}
+          colorSpec={plotsSliderOpacityGradientColorSpec}
+        />
+      </LabelledGroup>
       <div
         style={{
           display: 'flex',
@@ -451,20 +472,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           />
         </div>
       </div>
-      <SliderWidget
-        minimum={0}
-        maximum={1}
-        step={0.1}
-        value={vizConfig.markerBodyOpacity ?? DEFAULT_MARKER_OPACITY}
-        debounceRateMs={250}
-        onChange={(newValue: number) => {
-          updateVizConfig({ markerBodyOpacity: newValue });
-        }}
-        containerStyles={{ width: '20em', marginTop: '1.5em' }}
-        showLimits={true}
-        label={'Marker opacity'}
-        colorSpec={plotsSliderOpacityGradientColorSpec}
-      />
     </div>
   );
 
