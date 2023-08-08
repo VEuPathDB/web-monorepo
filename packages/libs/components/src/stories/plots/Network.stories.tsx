@@ -1,6 +1,6 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { Graph } from '@visx/network';
-import { Node, NetworkData } from '../../types/plots/network';
+import { NodeData, LinkData, NetworkData } from '../../types/plots/network';
 import { Link, NodeWithLabel } from '../../plots/Network';
 
 export default {
@@ -12,13 +12,12 @@ interface TemplateProps {
   data: NetworkData;
 }
 
+// This template is a simple network that highlights our NodeWithLabel and Link components.
 const Template: Story<TemplateProps> = (args) => {
-  const { data } = args;
-
   return (
     <svg width={500} height={500}>
       <Graph
-        graph={data}
+        graph={args.data}
         // Our Link component has nice defaults and in the future can
         // carry more complex events.
         linkComponent={({ link }) => <Link link={link} />}
@@ -28,7 +27,6 @@ const Template: Story<TemplateProps> = (args) => {
         nodeComponent={({ node }) => {
           const nodeWithLabelProps = {
             node: node,
-            onClick: () => console.log('clicked node'),
           };
           return <NodeWithLabel {...nodeWithLabelProps} />;
         }}
@@ -41,30 +39,34 @@ const Template: Story<TemplateProps> = (args) => {
  * Stories
  */
 
-// Proof of concept
-const simpleData = genNetwork(20);
+// A simple network with node labels
+const simpleData = genNetwork(20, true);
 export const Simple = Template.bind({});
 Simple.args = {
   data: simpleData,
 };
 
-const manyPointsData = genNetwork(30);
+// A network with lots and lots of points!
+const manyPointsData = genNetwork(100, false);
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: manyPointsData,
 };
 
 // Gerenate a network with a given number of nodes and random edges
-function genNetwork(nNodes: number) {
-  const nodes = [...Array(nNodes).keys()].map((i) => {
+function genNetwork(nNodes: number, addNodeLabel: boolean) {
+  // Create nodes with random positioning, an id, and optionally a label
+  const nodes: NodeData[] = [...Array(nNodes).keys()].map((i) => {
     return {
       x: Math.floor(Math.random() * 500),
       y: 15 + 20 * i,
       id: String(i),
-    } as Node;
+      label: addNodeLabel ? 'Node ' + String(i) : undefined,
+    };
   });
 
-  const links = [...Array(nodes.length).keys()].map(() => {
+  // Create {nNodes} links. Just basic links no weighting or colors for now.
+  const links: LinkData[] = [...Array(nodes.length).keys()].map(() => {
     return {
       source: nodes[Math.floor(Math.random() * nNodes)],
       target: nodes[Math.floor(Math.random() * nNodes)],

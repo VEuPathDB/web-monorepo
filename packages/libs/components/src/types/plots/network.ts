@@ -1,28 +1,48 @@
 // Types required for creating networks
-export type Node = {
-  x?: number; // Maybe if these aren't provided then the network just puts the nodes in a circle?
-  y?: number;
-  color?: string;
-  r?: number;
+export type NodeData = {
+  /** For now x and y are required. Eventually the network should have a default layout so that
+   * these become unnecessary in certain situations.
+   */
+  /** The x coordinate of the node */
+  x: number;
+  /** The y coordinate of the node */
+  y: number;
+  /** Node ID. Must be unique in the network! */
   id: string;
+  /** Node color */
+  color?: string;
+  /** Node radius */
+  r?: number;
+  /** User-friendly node label */
   label?: string;
+  /** Color for the stroke of the node */
   stroke?: string;
+  /** Width of node stroke */
   strokeWidth?: number;
 };
 
-export type Link = {
-  source: Node;
-  target: Node;
-  strokeWidth: number;
-  color: string;
-  opacity: number;
+export type LinkData = {
+  /** The beginning node of the link */
+  source: NodeData;
+  /** The ending node of the link */
+  target: NodeData;
+  /** Link stroke width */
+  strokeWidth?: number;
+  /** Link color */
+  color?: string;
+  /** Link opacity. Must be between 0 and 1 */
+  opacity?: number;
 };
 
+/** NetworkData is the same format accepted by visx's Graph component. */
 export type NetworkData = {
-  nodes: Node[];
-  links: Link[];
+  nodes: NodeData[];
+  links: LinkData[];
 };
 
+/** Bipartite network data is a regular network with addiitonal declarations of
+ * nodes in each of the two columns. IDs in columnXNodeIDs must match node ids exactly.
+ */
 export type BipartiteNetworkData = {
   column1NodeIDs: string[];
   column2NodeIDs: string[];
