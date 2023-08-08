@@ -253,20 +253,29 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             transformedPValue >= dependentAxisRange.min
           );
         })
-        // Assign significanceColor and re-assign any defined pointID to be an array of strings. Some data share coordinates
-        // but correspond to a different pointID. By defining pointID as an array of strings, we can later aggregate data
-        // that share coordinates and then render one tooltip that lists all pointIDs corresponding to the point on the plot
-        .map((d) => ({
-          ...d,
-          pointID: d.pointID ? [d.pointID] : undefined,
-          significanceColor: assignSignificanceColor(
-            Number(d.log2foldChange),
-            Number(d.pValue),
-            significanceThreshold,
-            log2FoldChangeThreshold,
-            significanceColors
-          ),
-        }))
+        /**
+         * Okay, this map function is doing a number of things.
+         *  1.  We're going to remove the pointID property and replace it with a pointIDs property that is an array of strings.
+         *      Some data share coordinates but correspond to a different pointID. By converting pointID to pointIDs, we can
+         *      later aggregate data that share coordinates and then render one tooltip that lists all pointIDs corresponding
+         *      to the point on the plot
+         *  2.  We also add a significanceColor property that is assigned a value that gets used in VolcanoPlot when rendering
+         *      the data point and the data point's tooltip. The property is also used in the countsData logic.
+         */
+        .map((d) => {
+          const { pointID, ...remainingProperties } = d;
+          return {
+            ...remainingProperties,
+            pointIDs: pointID ? [pointID] : undefined,
+            significanceColor: assignSignificanceColor(
+              Number(d.log2foldChange),
+              Number(d.pValue),
+              significanceThreshold,
+              log2FoldChangeThreshold,
+              significanceColors
+            ),
+          };
+        })
         // Sort data in ascending order for tooltips to work most effectively
         .sort((a, b) => Number(a.log2foldChange) - Number(b.log2foldChange));
 
@@ -284,16 +293,19 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         if (foundIndex === -1) {
           aggregatedData.push(entry);
         } else {
-          const { pointID } = aggregatedData[foundIndex];
-          if (pointID) {
+          const { pointIDs } = aggregatedData[foundIndex];
+          if (pointIDs) {
             aggregatedData[foundIndex] = {
               ...aggregatedData[foundIndex],
-              pointID: [...pointID, ...(entry.pointID ? entry.pointID : [])],
+              pointIDs: [
+                ...pointIDs,
+                ...(entry.pointIDs ? entry.pointIDs : []),
+              ],
             };
           } else {
             aggregatedData[foundIndex] = {
               ...aggregatedData[foundIndex],
-              pointID: entry.pointID,
+              pointIDs: entry.pointIDs,
             };
           }
         }
@@ -321,7 +333,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         // Recall that finalData combines data with shared coords into one point in order to display a
         // single tooltip that lists all the pointIDs for that shared point. This means we need to use
         // the length of the pointID array to accurately reflect the counts of unique data (not unique coords).
-        const addend = entry.pointID?.length ?? 1;
+        const addend = entry.pointIDs?.length ?? 1;
         counts[entry.significanceColor] =
           addend + counts[entry.significanceColor];
       }

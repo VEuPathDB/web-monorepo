@@ -8,7 +8,7 @@ export type VolcanoPlotDataPoint = {
   // Used for thresholding and tooltip
   adjustedPValue?: string;
   // Used for tooltip
-  pointID?: string[];
+  pointIDs?: string[];
   // Used to determine color of data point in the plot
   significanceColor?: string;
 };

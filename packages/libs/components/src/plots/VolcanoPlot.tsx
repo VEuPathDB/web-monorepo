@@ -347,7 +347,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   }}
                 >
                   <ul>
-                    {data?.pointID?.map((id) => (
+                    {data?.pointIDs?.map((id) => (
                       <li key={id}>
                         <span>{id}</span>
                       </li>
