@@ -77,6 +77,7 @@ export abstract class FetchClient {
       console.warn(
         'FetchClient.setOnNonSuccessResponse() should only be called once.'
       );
+      return;
     }
     this.onNonSuccessResponse = callback;
   }
