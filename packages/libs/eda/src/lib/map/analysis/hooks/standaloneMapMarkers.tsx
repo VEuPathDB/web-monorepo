@@ -396,13 +396,59 @@ export function useStandaloneMapMarkers(
   const vocabulary = rawPromise.value?.vocabulary;
   const bubbleLegendData = rawPromise.value?.bubbleLegendData;
 
+  const adjustedSizeData = useMemo(
+    () =>
+      bubbleLegendData &&
+      bubbleLegendData.minSizeValue === bubbleLegendData.maxSizeValue
+        ? {
+            minSizeValue: 0,
+            maxSizeValue: bubbleLegendData.maxSizeValue || 1,
+          }
+        : undefined,
+    [bubbleLegendData]
+  );
+  const adjustedColorData = useMemo(
+    () =>
+      bubbleLegendData &&
+      bubbleLegendData.minColorValue === bubbleLegendData.maxColorValue
+        ? bubbleLegendData.maxColorValue >= 0
+          ? {
+              minColorValue: 0,
+              maxColorValue: bubbleLegendData.maxColorValue || 1,
+            }
+          : {
+              minColorValue: bubbleLegendData.minColorValue,
+              maxColorValue: 0,
+            }
+        : undefined,
+    [bubbleLegendData]
+  );
+  const adjustedBubbleLegendData = useMemo(
+    () =>
+      bubbleLegendData
+        ? {
+            ...bubbleLegendData,
+            ...adjustedSizeData,
+            ...adjustedColorData,
+          }
+        : undefined,
+    [adjustedColorData, adjustedSizeData, bubbleLegendData]
+  );
+
   const bubbleValueToDiameterMapper = useMemo(
     () =>
-      markerType === 'bubble' && bubbleLegendData
+      markerType === 'bubble' && adjustedBubbleLegendData
         ? (value: number) => {
             // const largestCircleArea = 9000;
             const largestCircleDiameter = 90;
             const smallestCircleDiameter = 10;
+
+            if (
+              adjustedBubbleLegendData.minSizeValue ===
+              adjustedBubbleLegendData.maxSizeValue
+            ) {
+              return (largestCircleDiameter + smallestCircleDiameter) / 2;
+            }
 
             // Area scales directly with value
             // const constant = largestCircleArea / maxOverlayCount;
@@ -417,27 +463,29 @@ export function useStandaloneMapMarkers(
             // y = mx + b, m = (y2 - y1) / (x2 - x1), b = y1 - m * x1
             const m =
               (largestCircleDiameter - smallestCircleDiameter) /
-              (bubbleLegendData.maxSizeValue - bubbleLegendData.minSizeValue);
+              (adjustedBubbleLegendData.maxSizeValue -
+                adjustedBubbleLegendData.minSizeValue);
             const b =
-              smallestCircleDiameter - m * bubbleLegendData.minSizeValue;
+              smallestCircleDiameter -
+              m * adjustedBubbleLegendData.minSizeValue;
             const diameter = m * value + b;
 
             // return 2 * radius;
             return diameter;
           }
         : undefined,
-    [bubbleLegendData, markerType]
+    [adjustedBubbleLegendData, markerType]
   );
 
   const bubbleValueToColorMapper = useMemo(
     () =>
-      markerType === 'bubble' && bubbleLegendData
+      markerType === 'bubble' && adjustedBubbleLegendData
         ? getValueToGradientColorMapper(
-            bubbleLegendData.minColorValue,
-            bubbleLegendData.maxColorValue
+            adjustedBubbleLegendData.minColorValue,
+            adjustedBubbleLegendData.maxColorValue
           )
         : undefined,
-    [bubbleLegendData, markerType]
+    [adjustedBubbleLegendData, markerType]
   );
 
   /**
@@ -519,7 +567,7 @@ export function useStandaloneMapMarkers(
     totalVisibleWithOverlayEntityCount: countSum,
     totalVisibleEntityCount,
     legendItems,
-    bubbleLegendData,
+    bubbleLegendData: adjustedBubbleLegendData,
     bubbleValueToDiameterMapper,
     bubbleValueToColorMapper,
     pending: rawPromise.pending,
