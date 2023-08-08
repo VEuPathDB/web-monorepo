@@ -6,11 +6,13 @@ import { ContainerStylesAddon } from '../types/plots';
 
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
-    // The size value
+    /* The size value */
     value: number;
     diameter: number;
-    // The color value
+    /* The color value (shown in the popup) */
     colorValue?: number;
+    /* Label shown next to the color value in the popup */
+    colorLabel?: string;
     color?: string;
   };
   // isAtomic: add a special thumbtack icon if this is true
@@ -37,13 +39,15 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
 
   const popupContent = (
     <div style={{ fontSize: 16, lineHeight: '150%' }}>
-      <div style={{ marginBottom: '0.5rem' }}>
+      <div>
         <b style={{ marginRight: '0.15rem' }}>Count</b> {props.data.value}
       </div>
-      <div>
-        <b style={{ marginRight: '0.15rem' }}>Color value</b>{' '}
-        {props.data.colorValue}
-      </div>
+      {props.data.colorValue && (
+        <div style={{ marginTop: '0.5rem' }}>
+          <b style={{ marginRight: '0.15rem' }}>{props.data.colorLabel}</b>{' '}
+          {props.data.colorValue}
+        </div>
+      )}
     </div>
   );
 

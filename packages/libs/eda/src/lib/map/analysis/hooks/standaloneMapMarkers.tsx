@@ -35,6 +35,7 @@ import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
 import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
 import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
 import { validateProportionValues } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
+import _ from 'lodash';
 
 /**
  * We can use this viewport to request all available data
@@ -715,7 +716,7 @@ const processRawBubblesData = (
         colorValue: overlayValue,
         colorLabel: aggregationConfig
           ? aggregationConfig.overlayType === 'continuous'
-            ? aggregationConfig.aggregator
+            ? _.capitalize(aggregationConfig.aggregator)
             : 'Proportion'
           : undefined,
         color: bubbleValueToColorMapper?.(overlayValue) || undefined,
