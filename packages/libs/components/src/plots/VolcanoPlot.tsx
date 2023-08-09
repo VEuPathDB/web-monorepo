@@ -190,6 +190,18 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
+  /**
+   * Check whether each threshold line is within the graph's axis ranges so we can
+   * prevent the line from rendering outside the graph.
+   */
+  const showNegativeFoldChangeThresholdLine =
+    -log2FoldChangeThreshold > xAxisMin;
+  const showPositiveFoldChangeThresholdLine =
+    log2FoldChangeThreshold < xAxisMax;
+  const showSignificanceThresholdLine =
+    -Math.log10(Number(significanceThreshold)) > yAxisMin &&
+    -Math.log10(Number(significanceThreshold)) < yAxisMax;
+
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div
@@ -261,7 +273,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           is on the points instead of the line connecting them. */}
 
           {/* Draw horizontal significance threshold */}
-          {significanceThreshold && (
+          {significanceThreshold && showSignificanceThresholdLine && (
             <Annotation
               datum={{
                 x: 0, // horizontal line so x could be anything
@@ -278,24 +290,28 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           {/* Draw both vertical log2 fold change threshold lines */}
           {log2FoldChangeThreshold && (
             <>
-              <Annotation
-                datum={{
-                  x: -log2FoldChangeThreshold,
-                  y: 0, // vertical line so y could be anything
-                }}
-                {...xyAccessors}
-              >
-                <AnnotationLineSubject {...thresholdLineStyles} />
-              </Annotation>
-              <Annotation
-                datum={{
-                  x: log2FoldChangeThreshold,
-                  y: 0, // vertical line so y could be anything
-                }}
-                {...xyAccessors}
-              >
-                <AnnotationLineSubject {...thresholdLineStyles} />
-              </Annotation>
+              {showNegativeFoldChangeThresholdLine && (
+                <Annotation
+                  datum={{
+                    x: -log2FoldChangeThreshold,
+                    y: 0, // vertical line so y could be anything
+                  }}
+                  {...xyAccessors}
+                >
+                  <AnnotationLineSubject {...thresholdLineStyles} />
+                </Annotation>
+              )}
+              {showPositiveFoldChangeThresholdLine && (
+                <Annotation
+                  datum={{
+                    x: log2FoldChangeThreshold,
+                    y: 0, // vertical line so y could be anything
+                  }}
+                  {...xyAccessors}
+                >
+                  <AnnotationLineSubject {...thresholdLineStyles} />
+                </Annotation>
+              )}
             </>
           )}
 
