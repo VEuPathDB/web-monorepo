@@ -59,7 +59,7 @@ function genNetwork(nNodes: number, addNodeLabel: boolean) {
   const nodes: NodeData[] = [...Array(nNodes).keys()].map((i) => {
     return {
       x: Math.floor(Math.random() * 500),
-      y: 15 + 20 * i,
+      y: Math.floor(Math.random() * 500),
       id: String(i),
       label: addNodeLabel ? 'Node ' + String(i) : undefined,
     };

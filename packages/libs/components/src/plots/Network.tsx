@@ -70,6 +70,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         onClick={onClick}
         fontWeight={fontWeight}
         fill={labelColor}
+        style={{ cursor: 'pointer' }}
       >
         {label}
       </Text>
