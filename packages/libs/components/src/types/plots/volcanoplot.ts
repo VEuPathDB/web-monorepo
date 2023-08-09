@@ -9,6 +9,8 @@ export type VolcanoPlotDataPoint = {
   adjustedPValue?: string;
   // Used for tooltip
   pointID?: string;
+  // Used to determine color of data point in the plot
+  significanceColor?: string;
 };
 
 export type VolcanoPlotData = Array<VolcanoPlotDataPoint>;

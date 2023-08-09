@@ -5,12 +5,12 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react';
-import { significanceColors } from '../types/plots';
 import {
   VolcanoPlotData,
   VolcanoPlotDataPoint,
 } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
+import { SignificanceColors } from '../types/plots';
 import {
   XYChart,
   Axis,
@@ -22,7 +22,6 @@ import {
   AnnotationLabel,
 } from '@visx/xychart';
 import { Group } from '@visx/group';
-import { max, min } from 'lodash';
 import {
   gridStyles,
   thresholdLineStyles,
@@ -37,6 +36,11 @@ import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
+
+export interface RawDataMinMaxValues {
+  x: NumberRange;
+  y: NumberRange;
+}
 
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
@@ -70,6 +74,8 @@ export interface VolcanoPlotProps {
   containerStyles?: CSSProperties;
   /** shall we show the loading spinner? */
   showSpinner?: boolean;
+  /** used to determine truncation logic */
+  rawDataMinMaxValues: RawDataMinMaxValues;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [
@@ -124,6 +130,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     comparisonLabels,
     truncationBarFill,
     showSpinner = false,
+    rawDataMinMaxValues,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -140,87 +147,24 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     []
   );
 
-  /**
-   * Find mins and maxes of the data and for the plot.
-   * The standard x axis is the log2 fold change. The standard
-   * y axis is -log10 raw p value.
-   */
+  // Set maxes and mins of the data itself from rawDataMinMaxValues prop
+  const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
+  const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
-  // Find maxes and mins of the data itself
-  const dataXMin = min(data.map((d) => Number(d.log2foldChange))) ?? 0;
-  const dataXMax = max(data.map((d) => Number(d.log2foldChange))) ?? 0;
-  const dataYMin = min(data.map((d) => Number(d.pValue))) ?? 0;
-  const dataYMax = max(data.map((d) => Number(d.pValue))) ?? 0;
-
-  // Determine mins, maxes of axes in the plot.
-  // These are different than the data mins/maxes because
-  // of the log transform and the little bit of padding, or because axis ranges
-  // are supplied.
-  let xAxisMin: number;
-  let xAxisMax: number;
-  let yAxisMin: number;
-  let yAxisMax: number;
-  const AXIS_PADDING_FACTOR = 0.05; // The padding ensures we don't clip off part of the glyphs that represent
-  // the most extreme points. We could have also used d3.scale.nice but then we dont have precise control of where
-  // the extremes are, which is important for user-defined ranges and truncation bars.
-
-  // X axis
-  if (independentAxisRange) {
-    xAxisMin = independentAxisRange.min;
-    xAxisMax = independentAxisRange.max;
-  } else {
-    if (dataXMin && dataXMax) {
-      // We can use the dataMin and dataMax here because we don't have a further transform
-      xAxisMin = dataXMin;
-      xAxisMax = dataXMax;
-      // Add a little padding to prevent clipping the glyph representing the extreme points
-      xAxisMin = xAxisMin - (xAxisMax - xAxisMin) * AXIS_PADDING_FACTOR;
-      xAxisMax = xAxisMax + (xAxisMax - xAxisMin) * AXIS_PADDING_FACTOR;
-    } else {
-      xAxisMin = 0;
-      xAxisMax = 0;
-    }
-  }
-
-  // Y axis
-  if (dependentAxisRange) {
-    yAxisMin = dependentAxisRange.min;
-    yAxisMax = dependentAxisRange.max;
-  } else {
-    if (dataYMin && dataYMax) {
-      // Standard volcano plots have -log10(raw p value) as the y axis
-      yAxisMin = -Math.log10(dataYMax);
-      yAxisMax = -Math.log10(dataYMin);
-      // Add a little padding to prevent clipping the glyph representing the extreme points
-      yAxisMin = yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR;
-      yAxisMax = yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR;
-    } else {
-      yAxisMin = 0;
-      yAxisMax = 0;
-    }
-  }
+  // Set mins, maxes of axes in the plot using axis range props
+  const xAxisMin = independentAxisRange?.min ?? 0;
+  const xAxisMax = independentAxisRange?.max ?? 0;
+  const yAxisMin = dependentAxisRange?.min ?? 0;
+  const yAxisMax = dependentAxisRange?.max ?? 0;
 
   /**
    * Accessors - tell visx which value of the data point we should use and where.
    */
 
   // For the actual volcano plot data
-  // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
   const dataAccessors = {
-    xAccessor: (d: VolcanoPlotDataPoint) => {
-      const log2foldChange = Number(d?.log2foldChange);
-
-      return log2foldChange <= xAxisMax && log2foldChange >= xAxisMin
-        ? log2foldChange
-        : null;
-    },
-    yAccessor: (d: VolcanoPlotDataPoint) => {
-      const transformedPValue = -Math.log10(Number(d?.pValue));
-
-      return transformedPValue <= yAxisMax && transformedPValue >= yAxisMin
-        ? transformedPValue
-        : null;
-    },
+    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
+    yAccessor: (d: VolcanoPlotDataPoint) => -Math.log10(Number(d?.pValue)),
   };
 
   // For all other situations where we need to access point values. For example
@@ -364,15 +308,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               dataKey={'data'} // unique key
               data={data} // data as an array of obejcts (points). Accessed with dataAccessors
               {...dataAccessors}
-              colorAccessor={(d) => {
-                return assignSignificanceColor(
-                  Number(d.log2foldChange),
-                  Number(d.pValue),
-                  significanceThreshold,
-                  log2FoldChangeThreshold,
-                  significanceColors
-                );
-              }}
+              colorAccessor={(d) => d.significanceColor}
             />
           </Group>
 
@@ -435,35 +371,30 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
 /**
  * Assign color to point based on significance and magnitude change thresholds
  */
-function assignSignificanceColor(
+export function assignSignificanceColor(
   log2foldChange: number,
   pValue: number,
   significanceThreshold: number,
   log2FoldChangeThreshold: number,
-  significanceColors: string[] // Assuming the order is [insignificant, high (up regulated), low (down regulated)]
+  significanceColors: SignificanceColors
 ) {
-  // Name indices of the significanceColors array for easier accessing.
-  const INSIGNIFICANT = 0;
-  const HIGH = 1;
-  const LOW = 2;
-
   // Test 1. If the y value is higher than the significance threshold, just return not significant
   if (pValue >= significanceThreshold) {
-    return significanceColors[INSIGNIFICANT];
+    return significanceColors['inconclusive'];
   }
 
   // Test 2. So the y is significant. Is the x larger than the positive foldChange threshold?
   if (log2foldChange >= log2FoldChangeThreshold) {
-    return significanceColors[HIGH];
+    return significanceColors['high'];
   }
 
   // Test 3. Is the x value lower than the negative foldChange threshold?
   if (log2foldChange <= -log2FoldChangeThreshold) {
-    return significanceColors[LOW];
+    return significanceColors['low'];
   }
 
   // If we're still here, it must be a non significant point.
-  return significanceColors[INSIGNIFICANT];
+  return significanceColors['inconclusive'];
 }
 
 export default forwardRef(VolcanoPlot);
