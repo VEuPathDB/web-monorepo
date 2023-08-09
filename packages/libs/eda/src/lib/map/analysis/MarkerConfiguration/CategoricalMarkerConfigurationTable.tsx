@@ -6,8 +6,8 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../';
-import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import { orderBy } from 'lodash';
+import { SelectedCountsOption } from '../appState';
 
 type Props<T> = {
   overlayValues: string[];
@@ -16,7 +16,7 @@ type Props<T> = {
   uncontrolledSelections: Set<string>;
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
-  selectedCountsOption: SharedMarkerConfigurations['selectedCountsOption'];
+  selectedCountsOption: SelectedCountsOption;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {

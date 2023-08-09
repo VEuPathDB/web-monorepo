@@ -22,6 +22,8 @@ export interface AxisRangeControlProps
   disabled?: boolean;
   /** is this for a log scale axis? If so, we'll validate the min value to be > 0 */
   logScale?: boolean;
+  /** specify step for increment/decrement buttons in MUI number inputs; MUI's default is 1 */
+  step?: number;
 }
 
 export default function AxisRangeControl({
@@ -33,6 +35,7 @@ export default function AxisRangeControl({
   // add disabled prop to disable input fields: default is false
   disabled = false,
   logScale = false,
+  step = undefined,
 }: AxisRangeControlProps) {
   const validator = useCallback(
     (
@@ -87,6 +90,7 @@ export default function AxisRangeControl({
         validator={validator}
         // add disabled prop to disable input fields
         disabled={disabled}
+        step={step}
       />
     )
   ) : null;
