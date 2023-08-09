@@ -18,7 +18,7 @@ export function numberDateDefaultAxisRange(
     if (variable.type === 'number' || variable.type === 'integer') {
       const defaults = variable.distributionDefaults;
       if (logScale && observedMinPos == null) return undefined; // return nothing - there will be no plottable data anyway
-      // set default range of Custom to be Auto-zoom
+      // set default range of Custom to be Auto-zoom and check Histogram Viz
       return axisRangeSpec === 'Full'
         ? {
             min:
@@ -39,7 +39,7 @@ export function numberDateDefaultAxisRange(
                   (min([
                     defaults.displayRangeMin ?? 0,
                     defaults.rangeMin,
-                    observedMin as number,
+                    observedMin,
                   ]) as number),
             max: max([
               defaults.displayRangeMax,

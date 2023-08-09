@@ -16,6 +16,7 @@ import { debounce, identity, uniq, flow } from 'lodash';
 
 // TODO Remove auth_tkt from url before proceeding
 
+import { FetchClient } from '@veupathdb/http-utils';
 import { initialize as initializeWdk_ } from '@veupathdb/wdk-client/lib/Core/main';
 import * as WdkComponents from '@veupathdb/wdk-client/lib/Components';
 import * as WdkControllers from '@veupathdb/wdk-client/lib/Controllers';
@@ -93,6 +94,11 @@ export function initialize(options = {}) {
   (window.ebrc || (window.ebrc = {})).context = context;
 
   context.store.dispatch(loadSiteConfig(siteConfig));
+
+  // Add non-success response handler for FetchClient instances
+  FetchClient.setOnNonSuccessResponse((error) => {
+    context.wdkService.submitError(error);
+  });
 
   return context;
 }
