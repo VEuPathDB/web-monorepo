@@ -4,7 +4,6 @@ import ScatterPlot, {
 } from '@veupathdb/components/lib/plots/ScatterPlot';
 
 import * as t from 'io-ts';
-import { scaleLinear } from 'd3-scale';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 
 // need to set for Scatterplot
@@ -84,9 +83,8 @@ import { gray } from '../colors';
 import {
   ColorPaletteDefault,
   ColorPaletteDark,
-  gradientSequentialColorscaleMap,
-  gradientDivergingColorscaleMap,
   SequentialGradientColorscale,
+  getValueToGradientColorMapper,
 } from '@veupathdb/components/lib/types/plots/addOns';
 import { VariablesByInputName } from '../../../utils/data-element-constraints';
 import { useRouteMatch } from 'react-router';
@@ -580,22 +578,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       ? overlayVariable?.distributionDefaults?.rangeMax
       : 0;
 
-  // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
-  const maxAbsOverlay =
-    Math.abs(overlayMin) > overlayMax ? Math.abs(overlayMin) : overlayMax;
-  const gradientColorscaleType:
-    | 'sequential'
-    | 'sequential reversed'
-    | 'divergent'
-    | undefined =
-    overlayMin != null && overlayMax != null
-      ? overlayMin >= 0 && overlayMax >= 0
-        ? 'sequential'
-        : overlayMin <= 0 && overlayMax <= 0
-        ? 'sequential reversed'
-        : 'divergent'
-      : undefined;
-
   const inputsForValidation = useMemo(
     (): InputSpec[] => [
       {
@@ -728,37 +710,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      let overlayValueToColorMapper: ((a: number) => string) | undefined;
-
-      if (
+      const overlayValueToColorMapper: ((a: number) => string) | undefined =
         response.scatterplot.data.every(
           (series) => 'seriesGradientColorscale' in series
         ) &&
         (overlayVariable?.type === 'integer' ||
           overlayVariable?.type === 'number')
-      ) {
-        // create the value to color mapper (continuous overlay)
-        // Initialize normalization function.
-        const normalize = scaleLinear();
-
-        if (gradientColorscaleType === 'divergent') {
-          // For each point, normalize the data to [-1, 1], then retrieve the corresponding color
-          normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
-          overlayValueToColorMapper = (a) =>
-            gradientDivergingColorscaleMap(normalize(a));
-        } else if (gradientColorscaleType === 'sequential reversed') {
-          // Normalize data to [1, 0], so that the colorscale goes in reverse. NOTE: can remove once we add the ability for users to set colorscale range.
-          normalize.domain([overlayMin, overlayMax]).range([1, 0]);
-          overlayValueToColorMapper = (a) =>
-            gradientSequentialColorscaleMap(normalize(a));
-        } else {
-          // Then we use the sequential (from 0 to inf) colorscale.
-          // For each point, normalize the data to [0, 1], then retrieve the corresponding color
-          normalize.domain([overlayMin, overlayMax]).range([0, 1]);
-          overlayValueToColorMapper = (a) =>
-            gradientSequentialColorscaleMap(normalize(a));
-        }
-      }
+          ? getValueToGradientColorMapper(overlayMin, overlayMax)
+          : undefined;
 
       const overlayVocabulary = computedOverlayVariableDescriptor
         ? response.scatterplot.config.variables.find(
@@ -830,8 +789,6 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       facetEntity,
       computedOverlayVariableDescriptor,
       neutralPaletteProps.colorPalette,
-      gradientColorscaleType,
-      maxAbsOverlay,
       overlayMin,
       overlayMax,
     ])
