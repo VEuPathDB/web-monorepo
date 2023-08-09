@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AllValuesDefinition,
   AnalysisState,
+  BubbleOverlayConfig,
   CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
   EntityDiagram,
@@ -71,8 +72,13 @@ import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   BarPlotMarkerConfigurationMenu,
   PieMarkerConfigurationMenu,
+  BubbleMarkerConfigurationMenu,
 } from './MarkerConfiguration';
-import { BarPlotMarker, DonutMarker } from './MarkerConfiguration/icons';
+import {
+  BarPlotMarker,
+  DonutMarker,
+  BubbleMarker,
+} from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
@@ -86,6 +92,9 @@ import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
+import BubbleMarkerComponent, {
+  BubbleMarkerProps,
+} from '@veupathdb/components/lib/map/BubbleMarker';
 import DonutMarkerComponent, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -99,6 +108,8 @@ import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
 import { SidePanelItem, SidePanelMenuEntry } from './Types';
 import { SideNavigationItems } from './MapSideNavigation';
+import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
+import _ from 'lodash';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -116,6 +127,7 @@ enum MapSideNavItemLabels {
 enum MarkerTypeLabels {
   pie = 'Donuts',
   barplot = 'Bar plots',
+  bubble = 'Bubbles',
 }
 
 const mapStyle: React.CSSProperties = {
@@ -300,7 +312,9 @@ function MapAnalysisImpl(props: ImplProps) {
       if (
         !overlayVariable ||
         !CategoricalVariableDataShape.is(overlayVariable.dataShape) ||
-        activeMarkerConfiguration?.selectedCountsOption !== 'visible'
+        (activeMarkerConfiguration &&
+          'selectedCountsOption' in activeMarkerConfiguration &&
+          activeMarkerConfiguration.selectedCountsOption !== 'visible')
       )
         return;
 
@@ -312,22 +326,26 @@ function MapAnalysisImpl(props: ImplProps) {
         filters: filtersIncludingViewport,
       });
     }, [
-      overlayEntity,
       overlayVariable,
+      activeMarkerConfiguration,
+      overlayEntity,
       subsettingClient,
       studyId,
       filtersIncludingViewport,
-      activeMarkerConfiguration?.selectedCountsOption,
     ])
   );
 
   // If the variable or filters have changed on the active marker config
   // get the default overlay config.
   const activeOverlayConfig = usePromise(
-    useCallback(async (): Promise<OverlayConfig | undefined> => {
+    useCallback(async (): Promise<
+      OverlayConfig | BubbleOverlayConfig | undefined
+    > => {
       // Use `selectedValues` to generate the overlay config for categorical variables
       if (
-        activeMarkerConfiguration?.selectedValues &&
+        activeMarkerConfiguration &&
+        'selectedValues' in activeMarkerConfiguration &&
+        activeMarkerConfiguration.selectedValues &&
         CategoricalVariableDataShape.is(overlayVariable?.dataShape)
       ) {
         return {
@@ -347,17 +365,23 @@ function MapAnalysisImpl(props: ImplProps) {
         overlayEntity,
         dataClient,
         subsettingClient,
-        binningMethod: activeMarkerConfiguration?.binningMethod,
+        markerType: activeMarkerConfiguration?.type,
+        binningMethod: _.get(activeMarkerConfiguration, 'binningMethod'),
+        aggregator: _.get(activeMarkerConfiguration, 'aggregator'),
+        numeratorValues: _.get(activeMarkerConfiguration, 'numeratorValues'),
+        denominatorValues: _.get(
+          activeMarkerConfiguration,
+          'denominatorValues'
+        ),
       });
     }, [
-      dataClient,
-      filters,
-      overlayEntity,
+      activeMarkerConfiguration,
       overlayVariable,
       studyId,
+      filters,
+      overlayEntity,
+      dataClient,
       subsettingClient,
-      activeMarkerConfiguration?.selectedValues,
-      activeMarkerConfiguration?.binningMethod,
     ])
   );
 
@@ -367,6 +391,8 @@ function MapAnalysisImpl(props: ImplProps) {
       case 'barplot': {
         return activeMarkerConfiguration?.selectedPlotMode; // count or proportion
       }
+      case 'bubble':
+        return 'bubble';
       case 'pie':
       default:
         return 'pie';
@@ -378,6 +404,9 @@ function MapAnalysisImpl(props: ImplProps) {
     pending,
     error,
     legendItems,
+    bubbleLegendData,
+    bubbleValueToDiameterMapper,
+    bubbleValueToColorMapper,
     totalVisibleEntityCount,
     totalVisibleWithOverlayEntityCount,
   } = useStandaloneMapMarkers({
@@ -408,7 +437,12 @@ function MapAnalysisImpl(props: ImplProps) {
   });
 
   const continuousMarkerPreview = useMemo(() => {
-    if (!previewMarkerData || !previewMarkerData.length) return;
+    if (
+      !previewMarkerData ||
+      !previewMarkerData.length ||
+      !Array.isArray(previewMarkerData[0].data)
+    )
+      return;
     const initialDataObject = previewMarkerData[0].data.map((data) => ({
       label: data.label,
       value: 0,
@@ -454,15 +488,17 @@ function MapAnalysisImpl(props: ImplProps) {
         />
       );
     }
-  }, [previewMarkerData]);
+  }, [activeMarkerConfiguration, markerType, previewMarkerData]);
 
   const markers = useMemo(
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarkerComponent {...markerProps} />
+          <DonutMarkerComponent {...(markerProps as DonutMarkerProps)} />
+        ) : markerType === 'bubble' ? (
+          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
         ) : (
-          <ChartMarkerComponent {...markerProps} />
+          <ChartMarkerComponent {...(markerProps as ChartMarkerProps)} />
         )
       ) || [],
     [markersData, markerType]
@@ -610,6 +646,11 @@ function MapAnalysisImpl(props: ImplProps) {
                   ?.visualizations.find(
                     (viz) => viz.name === 'map-markers'
                   )?.dataElementConstraints;
+                const overlayConfig = OverlayConfig.is(
+                  activeOverlayConfig.value
+                )
+                  ? activeOverlayConfig.value
+                  : undefined;
 
                 const markerConfiguration: MarkerConfigurationOption = {
                   type: 'pie',
@@ -632,7 +673,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         }
                         toggleStarredVariable={toggleStarredVariable}
                         constraints={markerVariableConstraints}
-                        overlayConfiguration={activeOverlayConfig.value}
+                        overlayConfiguration={overlayConfig}
                         overlayVariable={overlayVariable}
                         subsettingClient={subsettingClient}
                         studyId={studyId}
@@ -712,6 +753,11 @@ function MapAnalysisImpl(props: ImplProps) {
                   ?.visualizations.find(
                     (viz) => viz.name === 'map-markers'
                   )?.dataElementConstraints;
+                const overlayConfig = OverlayConfig.is(
+                  activeOverlayConfig.value
+                )
+                  ? activeOverlayConfig.value
+                  : undefined;
 
                 const markerConfiguration: MarkerConfigurationOption = {
                   type: 'barplot',
@@ -734,7 +780,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         toggleStarredVariable={toggleStarredVariable}
                         configuration={activeMarkerConfiguration}
                         constraints={markerVariableConstraints}
-                        overlayConfiguration={activeOverlayConfig.value}
+                        overlayConfiguration={overlayConfig}
                         overlayVariable={overlayVariable}
                         subsettingClient={subsettingClient}
                         studyId={studyId}
@@ -746,6 +792,99 @@ function MapAnalysisImpl(props: ImplProps) {
                           allVisibleCategoricalValues.value
                         }
                         continuousMarkerPreview={continuousMarkerPreview}
+                      />
+                    ) : (
+                      <></>
+                    ),
+                };
+
+                const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+                  'markers' | 'plots'
+                >['tabs'] = [
+                  {
+                    key: 'markers',
+                    displayName: 'Markers',
+                    content: markerConfiguration.configurationMenu,
+                  },
+                  {
+                    key: 'plots',
+                    displayName: 'Supporting Plots',
+                    content: (
+                      <MapVizManagement
+                        analysisState={analysisState}
+                        setActiveVisualizationId={setActiveVisualizationId}
+                        apps={apps}
+                        activeVisualizationId={
+                          activeMarkerConfiguration?.activeVisualizationId
+                        }
+                        plugins={plugins}
+                        geoConfigs={geoConfigs}
+                        mapType={activeMarkerConfigurationType}
+                      />
+                    ),
+                  },
+                ];
+
+                return (
+                  <div
+                    style={{
+                      padding: '1em',
+                      maxWidth: '1500px',
+                    }}
+                  >
+                    <MapTypeConfigurationMenu
+                      markerConfiguration={markerConfiguration}
+                      mapTypeConfigurationMenuTabs={
+                        mapTypeConfigurationMenuTabs
+                      }
+                    />
+                  </div>
+                );
+              },
+            },
+            {
+              type: 'item',
+              id: 'single-variable-bubble',
+              labelText: MarkerTypeLabels.bubble,
+              rightIcon: <BubbleMarker style={{ height: '1.25em' }} />,
+              leftIcon:
+                activeMarkerConfigurationType === 'bubble' ? (
+                  <CheckIcon />
+                ) : null,
+              onActive: () => setActiveMarkerConfigurationType('bubble'),
+              renderSidePanelDrawer(apps) {
+                const markerVariableConstraints = apps
+                  .find((app) => app.name === 'standalone-map')
+                  ?.visualizations.find(
+                    (viz) => viz.name === 'map-markers'
+                  )?.dataElementConstraints;
+
+                const markerConfiguration: MarkerConfigurationOption = {
+                  type: 'bubble',
+                  displayName: MarkerTypeLabels.bubble,
+                  icon: (
+                    <BubbleMarker
+                      style={{ height: '1.5em', marginLeft: '0.25em' }}
+                    />
+                  ),
+                  configurationMenu:
+                    activeMarkerConfiguration?.type === 'bubble' ? (
+                      <BubbleMarkerConfigurationMenu
+                        entities={studyEntities}
+                        onChange={updateMarkerConfigurations}
+                        configuration={activeMarkerConfiguration}
+                        overlayConfiguration={
+                          activeOverlayConfig.value &&
+                          'aggregationConfig' in activeOverlayConfig.value
+                            ? activeOverlayConfig.value
+                            : undefined
+                        }
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        constraints={markerVariableConstraints}
                       />
                     ) : (
                       <></>
@@ -1159,25 +1298,57 @@ function MapAnalysisImpl(props: ImplProps) {
                   />
                 </div>
 
-                <DraggablePanel
-                  isOpen
-                  showPanelTitle
-                  panelTitle={overlayVariable?.displayName || 'Legend'}
-                  confineToParentContainer
-                  defaultPosition={{ x: window.innerWidth, y: 225 }}
-                  styleOverrides={{
-                    zIndex: legendZIndex,
-                  }}
-                >
-                  <div style={{ padding: '5px 10px' }}>
-                    <MapLegend
-                      isLoading={legendItems.length === 0}
-                      legendItems={legendItems}
-                      // control to show checkbox. default: true
-                      showCheckbox={false}
-                    />
-                  </div>
-                </DraggablePanel>
+                {markerType !== 'bubble' ? (
+                  <DraggableLegendPanel
+                    panelTitle={overlayVariable?.displayName}
+                    zIndex={legendZIndex}
+                  >
+                    <div style={{ padding: '5px 10px' }}>
+                      <MapLegend
+                        isLoading={legendItems.length === 0}
+                        plotLegendProps={{ type: 'list', legendItems }}
+                        // control to show checkbox. default: true
+                        showCheckbox={false}
+                      />
+                    </div>
+                  </DraggableLegendPanel>
+                ) : (
+                  <>
+                    <DraggableLegendPanel
+                      panelTitle="Count"
+                      zIndex={legendZIndex}
+                    >
+                      <div style={{ padding: '5px 10px' }}>
+                        <MapLegend
+                          isLoading={pending}
+                          plotLegendProps={{
+                            type: 'bubble',
+                            legendMax: bubbleLegendData?.maxSizeValue ?? 0,
+                            valueToDiameterMapper: bubbleValueToDiameterMapper,
+                          }}
+                        />
+                      </div>
+                    </DraggableLegendPanel>
+                    <DraggableLegendPanel
+                      panelTitle={overlayVariable?.displayName}
+                      zIndex={legendZIndex}
+                      defaultPosition={{ x: window.innerWidth, y: 420 }}
+                    >
+                      <div style={{ padding: '5px 10px' }}>
+                        <MapLegend
+                          isLoading={pending}
+                          plotLegendProps={{
+                            type: 'colorscale',
+                            legendMin: bubbleLegendData?.minColorValue ?? 0,
+                            legendMax: bubbleLegendData?.maxColorValue ?? 0,
+                            valueToColorMapper:
+                              bubbleValueToColorMapper ?? (() => 'white'),
+                          }}
+                        />
+                      </div>
+                    </DraggableLegendPanel>
+                  </>
+                )}
 
                 <DraggableVisualization
                   analysisState={analysisState}
@@ -1218,3 +1389,23 @@ function MapAnalysisImpl(props: ImplProps) {
     </PromiseResult>
   );
 }
+
+const DraggableLegendPanel = (props: {
+  zIndex: number;
+  panelTitle?: string;
+  defaultPosition?: DraggablePanelCoordinatePair;
+  children: React.ReactNode;
+}) => (
+  <DraggablePanel
+    isOpen
+    showPanelTitle
+    panelTitle={props.panelTitle ?? 'Legend'}
+    confineToParentContainer
+    defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
+    styleOverrides={{
+      zIndex: props.zIndex,
+    }}
+  >
+    {props.children}
+  </DraggablePanel>
+);
