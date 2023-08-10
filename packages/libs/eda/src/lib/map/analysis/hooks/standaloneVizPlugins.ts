@@ -27,8 +27,8 @@ import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
 import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
-//TO DO import timeline SVGIcon
-import LineSVG from '../../../core/components/visualizations/implementations/selectorIcons/LineSVG';
+
+import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
 import _ from 'lodash';
 
 interface Props {
@@ -123,7 +123,7 @@ export function useStandaloneVizPlugins({
                 .withOptions({
                   showMarginalHistogram: true,
                 })
-                .withSelectorIcon(LineSVG)
+                .withSelectorIcon(TimeSeriesSVG)
             ),
             lineplotRequest
           ),
