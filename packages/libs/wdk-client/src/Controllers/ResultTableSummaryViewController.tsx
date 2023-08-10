@@ -79,6 +79,7 @@ type OwnProps = {
   resultType: ResultType;
   tableActions?: TableAction[];
   showIdAttributeColumn?: boolean;
+  showCount?: boolean;
 };
 
 type Props = OwnProps &
@@ -96,6 +97,7 @@ function ResultTableSummaryViewController(props: Props) {
     viewId,
     derivedData,
     tableActions,
+    showCount,
     showIdAttributeColumn,
   } = props;
 
@@ -115,6 +117,7 @@ function ResultTableSummaryViewController(props: Props) {
       viewId={viewId}
       resultType={resultType}
       actions={tableActions}
+      showCount={showCount}
       showIdAttributeColumn={showIdAttributeColumn}
       {...viewData}
       {...derivedData}
@@ -279,9 +282,14 @@ const ConnectedController = connect<
   })
 )(wrappable(ResultTableSummaryViewController));
 
+type WithOptionsPropName =
+  | 'tableActions'
+  | 'showIdAttributeColumn'
+  | 'showCount';
+
 export default Object.assign(ConnectedController, {
   withOptions:
-    (options: Pick<OwnProps, 'tableActions' | 'showIdAttributeColumn'>) =>
-    (props: Exclude<OwnProps, 'tableActions' | 'showIdAttributeColumn'>) =>
+    (options: Pick<OwnProps, WithOptionsPropName>) =>
+    (props: Exclude<OwnProps, WithOptionsPropName>) =>
       <ConnectedController {...props} {...options} />,
 });
