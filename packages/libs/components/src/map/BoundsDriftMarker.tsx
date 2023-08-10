@@ -38,6 +38,7 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
+  zIndexOffset,
 }: BoundsDriftMarkerProps) {
   const map = useMap();
   const boundingBox = new LatLngBounds([
@@ -300,6 +301,7 @@ export default function BoundsDriftMarker({
         mouseout: (e: LeafletMouseEvent) => handleMouseOut(e),
         dblclick: handleDoubleClick,
       }}
+      zIndexOffset={zIndexOffset}
       {...optionalIconProp}
     >
       {showPopup && popup}

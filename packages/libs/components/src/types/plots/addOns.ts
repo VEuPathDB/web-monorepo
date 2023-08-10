@@ -241,6 +241,52 @@ const Berlin = [
   'rgb(229, 149, 144)',
   'rgb(255, 173, 173)',
 ];
+
+export const getValueToGradientColorMapper = (
+  minValue: number,
+  maxValue: number
+): ((value: number) => string) | undefined => {
+  const gradientColorscaleType =
+    minValue != null && maxValue != null
+      ? minValue >= 0 && maxValue >= 0
+        ? 'sequential'
+        : minValue <= 0 && maxValue <= 0
+        ? 'sequential reversed'
+        : 'divergent'
+      : undefined;
+
+  if (gradientColorscaleType == null) {
+    return undefined;
+  }
+
+  // Initialize normalization function.
+  const normalize = scaleLinear();
+
+  if (gradientColorscaleType === 'divergent') {
+    // Diverging colorscale, assume 0 is midpoint. Colorscale must be symmetric around the midpoint
+    const maxAbsOverlay =
+      Math.abs(minValue) > maxValue ? Math.abs(minValue) : maxValue;
+    // For each point, normalize the data to [-1, 1]
+    normalize.domain([-maxAbsOverlay, maxAbsOverlay]).range([-1, 1]);
+
+    return (value) => gradientDivergingColorscaleMap(normalize(value));
+  } else {
+    normalize.domain([minValue, maxValue]);
+
+    if (gradientColorscaleType === 'sequential reversed') {
+      // Normalize data to [1, 0], so that the colorscale goes in reverse.
+      // NOTE: can remove once we add the ability for users to set colorscale range.
+      normalize.range([1, 0]);
+    } else {
+      // Then we use the sequential (from 0 to inf) colorscale.
+      // For each point, normalize the data to [0, 1]
+      normalize.range([0, 1]);
+    }
+
+    return (value) => gradientSequentialColorscaleMap(normalize(value));
+  }
+};
+
 // Lighten in LAB space, then convert to RGB for plotting.
 export const ConvergingGradientColorscale = Berlin.map((color) =>
   rgb(lab(color).darker(-1)).toString()

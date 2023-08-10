@@ -35,6 +35,8 @@ export interface MarkerProps {
       height: number;
     };
   };
+  /* This offset gets added to the default zIndex */
+  zIndexOffset?: number;
 }
 
 export type AnimationFunction = ({

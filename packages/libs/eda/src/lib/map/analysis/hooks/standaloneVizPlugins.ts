@@ -17,7 +17,11 @@ import { scatterplotVisualization } from '../../../core/components/visualization
 import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
-import { BinDefinitions, OverlayConfig } from '../../../core';
+import {
+  BinDefinitions,
+  OverlayConfig,
+  BubbleOverlayConfig,
+} from '../../../core';
 import { boxplotRequest } from './plugins/boxplot';
 import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
@@ -25,9 +29,10 @@ import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
 //TO DO import timeline SVGIcon
 import LineSVG from '../../../core/components/visualizations/implementations/selectorIcons/LineSVG';
+import _ from 'lodash';
 
 interface Props {
-  selectedOverlayConfig?: OverlayConfig;
+  selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
 }
 
 type StandaloneVizOptions = LayoutOptions & OverlayOptions;
@@ -47,9 +52,14 @@ export function useStandaloneVizPlugins({
         // one object? Because in the pre-SAM world, getOverlayVariable was already
         // part of this interface.
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
-        getOverlayType: () => selectedOverlayConfig?.overlayType,
+        getOverlayType: () =>
+          _.get(selectedOverlayConfig, 'overlayType') ??
+          _.get(selectedOverlayConfig, 'aggregationConfig.overlayType'),
         getOverlayVocabulary: () => {
-          const overlayValues = selectedOverlayConfig?.overlayValues;
+          const overlayValues =
+            selectedOverlayConfig && 'overlayValues' in selectedOverlayConfig
+              ? selectedOverlayConfig.overlayValues
+              : undefined;
           if (overlayValues == null) return undefined;
           if (BinDefinitions.is(overlayValues)) {
             return overlayValues.map((bin) => bin.binLabel);
@@ -74,7 +84,7 @@ export function useStandaloneVizPlugins({
       requestFunction: (
         props: RequestOptionProps<ConfigType> &
           ExtraProps & {
-            overlayConfig: OverlayConfig | undefined;
+            overlayConfig: OverlayConfig | BubbleOverlayConfig | undefined;
           }
       ) => RequestParamsType
     ) {
