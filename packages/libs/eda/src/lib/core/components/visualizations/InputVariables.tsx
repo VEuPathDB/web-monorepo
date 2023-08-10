@@ -16,6 +16,7 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
 export interface InputSpec {
   name: string;
@@ -143,6 +144,7 @@ export interface Props {
   onShowMissingnessChange?: (newState: boolean) => void;
   /** output entity, required for toggle switch label */
   outputEntity?: StudyEntity;
+  flexDirection?: CSSProperties['flexDirection'];
 }
 
 export function InputVariables(props: Props) {
@@ -161,8 +163,9 @@ export function InputVariables(props: Props) {
     onShowMissingnessChange,
     outputEntity,
     customSections,
+    flexDirection,
   } = props;
-  const classes = useInputStyles();
+  const classes = useInputStyles(flexDirection);
   const handleChange = (
     inputName: string,
     selectedVariable?: VariableDescriptor

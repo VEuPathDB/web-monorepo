@@ -1727,115 +1727,26 @@ function LineplotViz(props: VisualizationProps<Options>) {
     </>
   );
 
-  const classes = useInputStyles();
-
-  const aggregationHelp = (
-    <div>
-      <p>
-        “Mean” and “Median” are y-axis aggregation functions that can only be
-        used when continuous variables{' '}
-        <i className="fa fa-bar-chart-o  wdk-Icon"> </i> are selected for the
-        y-axis.
-      </p>
-      <ul>
-        <li>
-          Mean = Sum of values for all data points / Number of all data points
-        </li>
-        <li>
-          Median = The middle number in a sorted list of numbers. The median is
-          a better measure of central tendency than the mean when data are not
-          normally distributed.
-        </li>
-      </ul>
-      <p>
-        “Proportion” is the only y-axis aggregation function that can be used
-        when categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
-        selected for the y-axis.
-      </p>
-      <ul>
-        <li>Proportion = Numerator count / Denominator count</li>
-      </ul>
-      <p>
-        The y-axis variable's values that count towards numerator and
-        denominator must be selected in the two drop-downs.
-      </p>
-    </div>
-  );
-
   const aggregationInputs = (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {vizConfig.valueSpecConfig !== 'Proportion' ? (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <div className={classes.label}>Function</div>
-          <SingleSelect
-            onSelect={onValueSpecChange}
-            value={vizConfig.valueSpecConfig}
-            buttonDisplayContent={vizConfig.valueSpecConfig}
-            items={keys(valueSpecLookup)
-              .filter((option) => option !== 'Proportion')
-              .map((option) => ({ value: option, display: option }))}
-          />
-        </div>
-      ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, auto)',
-            gridTemplateRows: 'repeat(3, auto)',
-          }}
-        >
-          <Tooltip title={'Required parameter'}>
-            <div
-              className={classes.label}
-              style={{
-                gridColumn: 1,
-                gridRow: 2,
-                color:
-                  vizConfig.numeratorValues?.length &&
-                  vizConfig.denominatorValues?.length
-                    ? undefined
-                    : requiredInputLabelStyle.color,
-              }}
-            >
-              Proportion<sup>*</sup>&nbsp;=
-            </div>
-          </Tooltip>
-          <div
-            className={classes.input}
-            style={{
-              gridColumn: 2,
-              gridRow: 1,
-              marginBottom: 0,
-              justifyContent: 'center',
-            }}
-          >
-            <ValuePicker
-              allowedValues={yAxisVariable?.vocabulary}
-              selectedValues={vizConfig.numeratorValues}
-              onSelectedValuesChange={onNumeratorValuesChange}
-            />
-          </div>
-          <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
-            <hr style={{ marginTop: '0.6em' }} />
-          </div>
-          <div
-            className={classes.input}
-            style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
-          >
-            <ValuePicker
-              allowedValues={yAxisVariable?.vocabulary}
-              selectedValues={vizConfig.denominatorValues}
-              onSelectedValuesChange={onDenominatorValuesChange}
-            />
-          </div>
-        </div>
-      )}
-    </div>
+    <AggregationInputs
+      {...(vizConfig.valueSpecConfig !== 'Proportion'
+        ? {
+            aggregationType: 'function',
+            options: keys(valueSpecLookup).filter(
+              (option) => option !== 'Proportion'
+            ),
+            aggregationFunction: vizConfig.valueSpecConfig,
+            onFunctionChange: onValueSpecChange,
+          }
+        : {
+            aggregationType: 'proportion',
+            options: yAxisVariable?.vocabulary ?? [],
+            numeratorValues: vizConfig.numeratorValues ?? [],
+            onNumeratorChange: onNumeratorValuesChange,
+            denominatorValues: vizConfig.denominatorValues ?? [],
+            onDenominatorChange: onDenominatorValuesChange,
+          })}
+    />
   );
 
   const LayoutComponent = options?.layoutComponent ?? PlotLayout;
@@ -2791,3 +2702,133 @@ function useDefaultDependentAxisRangeProportion(
 
   return defaultDependentAxisRange;
 }
+
+type AggregationConfig<F extends string, P extends Array<string>> =
+  | {
+      aggregationType: 'function';
+      aggregationFunction: F;
+      onFunctionChange: (value: F) => void;
+      options: Array<F>;
+    }
+  | {
+      aggregationType: 'proportion';
+      numeratorValues: Array<P[number]>;
+      onNumeratorChange: (value: Array<P[number]>) => void;
+      denominatorValues: Array<P[number]>;
+      onDenominatorChange: (value: Array<P[number]>) => void;
+      options: P;
+    };
+
+export function AggregationInputs<F extends string, P extends Array<string>>(
+  props: AggregationConfig<F, P>
+) {
+  const classes = useInputStyles();
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {props.aggregationType === 'function' ? (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <div className={classes.label}>Function</div>
+          <SingleSelect
+            onSelect={props.onFunctionChange}
+            value={props.aggregationFunction}
+            buttonDisplayContent={props.aggregationFunction}
+            items={props.options.map((option) => ({
+              value: option,
+              display: option,
+            }))}
+          />
+        </div>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, auto)',
+            gridTemplateRows: 'repeat(3, auto)',
+          }}
+        >
+          <Tooltip title={'Required parameter'}>
+            <div
+              className={classes.label}
+              style={{
+                gridColumn: 1,
+                gridRow: 2,
+                color:
+                  props.numeratorValues.length && props.denominatorValues.length
+                    ? undefined
+                    : requiredInputLabelStyle.color,
+              }}
+            >
+              Proportion<sup>*</sup>&nbsp;=
+            </div>
+          </Tooltip>
+          <div
+            className={classes.input}
+            style={{
+              gridColumn: 2,
+              gridRow: 1,
+              marginBottom: 0,
+              justifyContent: 'center',
+            }}
+          >
+            <ValuePicker
+              allowedValues={props.options}
+              selectedValues={props.numeratorValues}
+              onSelectedValuesChange={props.onNumeratorChange}
+            />
+          </div>
+          <div style={{ gridColumn: 2, gridRow: 2, marginRight: '2em' }}>
+            <hr style={{ marginTop: '0.6em' }} />
+          </div>
+          <div
+            className={classes.input}
+            style={{ gridColumn: 2, gridRow: 3, justifyContent: 'center' }}
+          >
+            <ValuePicker
+              allowedValues={props.options}
+              selectedValues={props.denominatorValues}
+              onSelectedValuesChange={props.onDenominatorChange}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export const aggregationHelp = (
+  <div>
+    <p>
+      “Mean” and “Median” are y-axis aggregation functions that can only be used
+      when continuous variables <i className="fa fa-bar-chart-o  wdk-Icon"> </i>{' '}
+      are selected for the y-axis.
+    </p>
+    <ul>
+      <li>
+        Mean = Sum of values for all data points / Number of all data points
+      </li>
+      <li>
+        Median = The middle number in a sorted list of numbers. The median is a
+        better measure of central tendency than the mean when data are not
+        normally distributed.
+      </li>
+    </ul>
+    <p>
+      “Proportion” is the only y-axis aggregation function that can be used when
+      categorical variables <i className="fa fa-list  wdk-Icon"> </i> are
+      selected for the y-axis.
+    </p>
+    <ul>
+      <li>Proportion = Numerator count / Denominator count</li>
+    </ul>
+    <p>
+      The y-axis variable's values that count towards numerator and denominator
+      must be selected in the two drop-downs.
+    </p>
+  </div>
+);

@@ -6,6 +6,7 @@ import { NumberInput, DateInput } from './NumberAndDateInputs';
 import Button from './Button';
 import Notification from './Notification';
 import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
@@ -44,7 +45,7 @@ export type BaseProps<M extends NumberOrDateRange> = {
   disabled?: boolean;
 };
 
-export type NumberRangeInputProps = BaseProps<NumberRange>;
+export type NumberRangeInputProps = BaseProps<NumberRange> & { step?: number };
 
 export function NumberRangeInput(props: NumberRangeInputProps) {
   return <BaseInput {...props} valueType="number" />;
@@ -85,6 +86,7 @@ function BaseInput({
   clearButtonLabel = 'Clear',
   // add disabled prop to disable input fields
   disabled = false,
+  ...props
 }: BaseInputProps) {
   if (validator && required)
     console.log(
@@ -161,6 +163,7 @@ function BaseInput({
   ]);
 
   const { min, max } = localRange ?? {};
+  const step = 'step' in props ? props.step : undefined;
 
   return (
     <div style={{ ...containerStyles }}>
@@ -188,6 +191,7 @@ function BaseInput({
             }}
             // add disabled prop to disable input fields
             disabled={disabled}
+            step={step}
           />
         ) : (
           <DateInput
@@ -236,6 +240,7 @@ function BaseInput({
             }}
             // add disabled prop to disable input fields
             disabled={disabled}
+            step={step}
           />
         ) : (
           <DateInput

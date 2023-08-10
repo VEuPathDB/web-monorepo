@@ -65,7 +65,7 @@ export interface VolcanoPlotProps {
   /** Title of the plot */
   plotTitle?: string;
   /** marker fill opacity: range from 0 to 1 */
-  markerBodyOpacity?: number;
+  markerBodyOpacity: number;
   /** Truncation bar fill color. If no color provided, truncation bars will be filled with a black and white pattern */
   truncationBarFill?: string;
   /** container name */
@@ -120,8 +120,8 @@ function TruncationRectangle(props: TruncationRectangleProps) {
 function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     data = EmptyVolcanoPlotData,
-    independentAxisRange, // not yet implemented - expect this to be set by user
-    dependentAxisRange, // not yet implemented - expect this to be set by user
+    independentAxisRange,
+    dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
@@ -197,7 +197,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
       style={{ ...containerStyles, position: 'relative' }}
     >
       <div
-        ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work wiht domToImage
+        ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work with domToImage
         style={{ width: '100%', height: '100%' }}
       >
         {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
@@ -303,7 +303,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
             down to those elements, but I haven't found it yet */}
-          <Group opacity={markerBodyOpacity ?? 1}>
+          <Group opacity={markerBodyOpacity}>
             <GlyphSeries
               dataKey={'data'} // unique key
               data={data} // data as an array of obejcts (points). Accessed with dataAccessors

@@ -107,6 +107,9 @@ dist
 # TernJS port file
 .tern-port
 
+# VSCode config files
+.vscode
+
 .editorconfig
 
 .pnp.*
