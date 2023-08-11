@@ -2,9 +2,13 @@ import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionAc
 import { QuestionController } from '@veupathdb/wdk-client/lib/Controllers';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import {
+  ParameterList,
+  Props as FormProps,
+} from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { mapValues } from 'lodash';
 
 interface Props {
   recordName: string;
@@ -43,6 +47,32 @@ export function DownloadsFilter(props: Props) {
 }
 
 function FormComponent(props: FormProps) {
-  const { parameterElements } = props;
-  return <>{Object.values(parameterElements)}</>;
+  const { state } = props;
+  // Need to add `isSearchPage` prop so that organism prefs are used
+  const parameterElements = mapValues(
+    props.parameterElements,
+    (parameterElement) => {
+      return React.isValidElement(parameterElement)
+        ? React.cloneElement(
+            parameterElement,
+            {
+              pluginProps: {
+                ...parameterElement.props.pluginProps,
+                isSearchPage: true,
+              },
+            } as any,
+            parameterElement.props.chilren
+          )
+        : parameterElement;
+    }
+  );
+  return (
+    <ParameterList
+      parameterElements={parameterElements}
+      parameterMap={state.question.parametersByName}
+      parameters={state.question.groups[0].parameters}
+      paramDependenciesUpdating={state.paramsUpdatingDependencies}
+    />
+  );
+  // return <>{Object.values(parameterElements)}</>;
 }
