@@ -136,3 +136,8 @@
   top: -3em;
   margin-left: 310px;
 }
+
+.wdk-DataTableCountsContainer {
+  margin: auto 0 auto 1em;
+  font-size: 0.9em;
+}
