@@ -737,7 +737,7 @@ function MapAnalysisImpl(props: ImplProps) {
             },
             {
               type: 'item',
-              id: 'single-variable-bar',
+              id: 'single-variable-barplot',
               labelText: MarkerTypeLabels.barplot,
               leftIcon:
                 activeMarkerConfigurationType === 'barplot' ? (
@@ -1165,8 +1165,9 @@ function MapAnalysisImpl(props: ImplProps) {
   }
 
   // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
-  const [activeSideMenuId, setActiveSideMenuId] =
-    useState<string | undefined>();
+  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
+    'single-variable-' + appState.activeMarkerConfigurationType
+  );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
