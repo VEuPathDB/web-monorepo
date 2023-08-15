@@ -42,6 +42,7 @@ export function DownloadsFilter(props: Props) {
       submissionMetadata={submissionMetadata}
       FormComponent={FormComponent}
       initialParamData={initialParamData}
+      prepopulateWithLastParamValues
     />
   );
 }
