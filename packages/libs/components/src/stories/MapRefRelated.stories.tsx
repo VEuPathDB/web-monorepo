@@ -28,6 +28,7 @@ import MapVEuLegendSampleList, {
 import geohashAnimation from '../map/animation_functions/geohash';
 // import PlotRef
 import { PlotRef } from '../types/plots';
+import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
   title: 'Map/Map ref related',
@@ -112,15 +113,18 @@ export const MapFlyTo: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        // pass FlyTo
-        flyToMarkers={true}
-        // set a bit longer delay for a demonstrate purpose at story
-        flyToMarkersDelay={2000}
-      />
+      >
+        <SemanticMarkers
+          onBoundsChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={defaultAnimation}
+          // pass FlyTo
+          flyToMarkers={true}
+          // set a bit longer delay for a demonstrate purpose at story
+          flyToMarkersDelay={2000}
+        />
+      </MapVEuMap>
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
@@ -180,13 +184,16 @@ export const MapThumbnail: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         // pass ref
         ref={ref}
-      />
+      >
+        <SemanticMarkers
+          onBoundsChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={defaultAnimation}
+        />
+      </MapVEuMap>
       <br />
       <br />
       <h4>Partial screenshot</h4>
@@ -235,16 +242,19 @@ export const ChangeViewportAndBaseLayer: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         onViewportChanged={setViewport}
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
-        flyToMarkers={true}
-        // set a bit longer delay for a demonstrate purpose at story
-        flyToMarkersDelay={2000}
         baseLayer={baseLayer}
         onBaseLayerChanged={setBaseLayer}
-      />
+      >
+        <SemanticMarkers
+          onBoundsChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={defaultAnimation}
+          flyToMarkers={true}
+          // set a bit longer delay for a demonstrate purpose at story
+          flyToMarkersDelay={2000}
+        />
+      </MapVEuMap>
     </>
   );
 };

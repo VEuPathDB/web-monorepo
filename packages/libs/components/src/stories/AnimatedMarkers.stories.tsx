@@ -11,6 +11,7 @@ import geohashAnimation from '../map/animation_functions/geohash';
 import { defaultAnimationDuration } from '../map/config/map';
 import { leafletZoomLevelToGeohashLevel } from '../map/utils/leaflet-geohash';
 import { Viewport } from '../map/MapVEuMap';
+import SemanticMarkers from '../map/SemanticMarkers';
 
 export default {
   title: 'Map/Zoom animation',
@@ -179,12 +180,15 @@ export const Default: Story<MapVEuMapProps> = (args) => {
       viewport={viewport}
       // add onViewportChanged to test showScale
       onViewportChanged={onViewportChanged}
-      onBoundsChanged={handleViewportChanged}
-      markers={markerElements}
-      animation={defaultAnimation}
       // test showScale: currently set to show from zoom = 5
       showScale={viewport.zoom != null && viewport.zoom > 4 ? true : false}
-    />
+    >
+      <SemanticMarkers
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={defaultAnimation}
+      />
+    </MapVEuMap>
   );
 };
 Default.args = {
@@ -216,18 +220,17 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
   });
 
   return (
-    <MapVEuMap
-      {...args}
-      viewport={viewport}
-      onViewportChanged={setViewport}
-      onBoundsChanged={handleViewportChanged}
-      markers={markerElements}
-      animation={{
-        method: 'geohash',
-        animationFunction: geohashAnimation,
-        duration: args.animationDuration,
-      }}
-    />
+    <MapVEuMap {...args} viewport={viewport} onViewportChanged={setViewport}>
+      <SemanticMarkers
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={{
+          method: 'geohash',
+          animationFunction: geohashAnimation,
+          duration: args.animationDuration,
+        }}
+      />
+    </MapVEuMap>
   );
 };
 DifferentSpeeds.args = {
@@ -254,14 +257,13 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
   });
 
   return (
-    <MapVEuMap
-      {...args}
-      viewport={viewport}
-      onViewportChanged={setViewport}
-      onBoundsChanged={handleViewportChanged}
-      markers={markerElements}
-      animation={null}
-    />
+    <MapVEuMap {...args} viewport={viewport} onViewportChanged={setViewport}>
+      <SemanticMarkers
+        onBoundsChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={null}
+      />
+    </MapVEuMap>
   );
 };
 NoAnimation.args = {
