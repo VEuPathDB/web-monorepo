@@ -3,10 +3,10 @@ import { QuestionController } from '@veupathdb/wdk-client/lib/Controllers';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
-  ParameterList,
   Props as FormProps,
+  renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { mapValues } from 'lodash';
 
@@ -50,30 +50,35 @@ export function DownloadsFilter(props: Props) {
 function FormComponent(props: FormProps) {
   const { state } = props;
   // Need to add `isSearchPage` prop so that organism prefs are used
-  const parameterElements = mapValues(
-    props.parameterElements,
-    (parameterElement) => {
-      return React.isValidElement(parameterElement)
-        ? React.cloneElement(
-            parameterElement,
-            {
-              pluginProps: {
-                ...parameterElement.props.pluginProps,
-                isSearchPage: true,
-              },
-            } as any,
-            parameterElement.props.chilren
-          )
-        : parameterElement;
-    }
+  const parameterElements = useMemo(
+    () =>
+      mapValues(props.parameterElements, (parameterElement) => {
+        return React.isValidElement(parameterElement)
+          ? React.cloneElement(
+              parameterElement,
+              {
+                pluginProps: {
+                  ...parameterElement.props.pluginProps,
+                  isSearchPage: true,
+                },
+              } as any,
+              parameterElement.props.chilren
+            )
+          : parameterElement;
+      }),
+    [props.parameterElements]
   );
+
+  const updatedProps = useMemo(
+    () => ({ ...props, parameterElements }),
+    [props, parameterElements]
+  );
+
   return (
-    <ParameterList
-      parameterElements={parameterElements}
-      parameterMap={state.question.parametersByName}
-      parameters={state.question.groups[0].parameters}
-      paramDependenciesUpdating={state.paramsUpdatingDependencies}
-    />
+    <>
+      {state.question.groups
+        .filter((group) => group.displayType !== 'hidden')
+        .map((group) => renderDefaultParamGroup(group, updatedProps))}
+    </>
   );
-  // return <>{Object.values(parameterElements)}</>;
 }
