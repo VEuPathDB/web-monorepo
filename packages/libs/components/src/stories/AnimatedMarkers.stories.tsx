@@ -182,12 +182,9 @@ export const Default: Story<MapVEuMapProps> = (args) => {
       onViewportChanged={onViewportChanged}
       // test showScale: currently set to show from zoom = 5
       showScale={viewport.zoom != null && viewport.zoom > 4 ? true : false}
+      onBoundsChanged={handleViewportChanged}
     >
-      <SemanticMarkers
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={defaultAnimation}
-      />
+      <SemanticMarkers markers={markerElements} animation={defaultAnimation} />
     </MapVEuMap>
   );
 };
@@ -220,9 +217,13 @@ export const DifferentSpeeds: Story<MapVEuMapProps & DurationExtraProps> = (
   });
 
   return (
-    <MapVEuMap {...args} viewport={viewport} onViewportChanged={setViewport}>
+    <MapVEuMap
+      {...args}
+      viewport={viewport}
+      onViewportChanged={setViewport}
+      onBoundsChanged={handleViewportChanged}
+    >
       <SemanticMarkers
-        onBoundsChanged={handleViewportChanged}
         markers={markerElements}
         animation={{
           method: 'geohash',
@@ -257,12 +258,13 @@ export const NoAnimation: Story<MapVEuMapProps> = (args) => {
   });
 
   return (
-    <MapVEuMap {...args} viewport={viewport} onViewportChanged={setViewport}>
-      <SemanticMarkers
-        onBoundsChanged={handleViewportChanged}
-        markers={markerElements}
-        animation={null}
-      />
+    <MapVEuMap
+      {...args}
+      viewport={viewport}
+      onViewportChanged={setViewport}
+      onBoundsChanged={handleViewportChanged}
+    >
+      <SemanticMarkers markers={markerElements} animation={null} />
     </MapVEuMap>
   );
 };

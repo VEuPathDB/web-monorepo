@@ -107,9 +107,9 @@ export const Spinner: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -158,9 +158,9 @@ export const NoDataOverlay: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -209,9 +209,9 @@ export const Windowed: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -281,10 +281,10 @@ ScreenshotOnLoad.args = {
     showGrid: true,
     viewport: { center: [13, 16], zoom: 4 },
     onViewportChanged: () => {},
+    onBoundsChanged: () => {},
   },
   markerProps: {
     markers: [],
-    onBoundsChanged: () => {},
     animation: null,
   },
 };
@@ -317,9 +317,9 @@ export const Tiny: Story<MapVEuMapProps> = (args) => {
         {...args}
         viewport={viewport}
         zoomLevelToGeohashLevel={tinyLeafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -407,9 +407,9 @@ export const ScrollAndZoom: Story<MapVEuMapProps> = (args) => {
           onViewportChanged={setViewport}
           zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
           scrollingEnabled={mapScroll}
+          onBoundsChanged={handleViewportChanged}
         >
           <SemanticMarkers
-            onBoundsChanged={handleViewportChanged}
             markers={markerElements}
             animation={defaultAnimation}
           />

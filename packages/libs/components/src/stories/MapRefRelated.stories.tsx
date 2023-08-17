@@ -114,9 +114,9 @@ export const MapFlyTo: Story<MapVEuMapProps> = (args) => {
         viewport={viewport}
         onViewportChanged={setViewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
           // pass FlyTo
@@ -187,9 +187,9 @@ export const MapThumbnail: Story<MapVEuMapProps> = (args) => {
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         // pass ref
         ref={ref}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -245,9 +245,9 @@ export const ChangeViewportAndBaseLayer: Story<MapVEuMapProps> = (args) => {
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
         baseLayer={baseLayer}
         onBaseLayerChanged={setBaseLayer}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
           flyToMarkers={true}

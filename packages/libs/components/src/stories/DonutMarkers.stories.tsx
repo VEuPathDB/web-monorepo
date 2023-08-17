@@ -114,9 +114,9 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         viewport={viewport}
         onViewportChanged={setViewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -168,9 +168,9 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
         viewport={viewport}
         onViewportChanged={setViewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -252,9 +252,9 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         viewport={viewport}
         onViewportChanged={setViewport}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -344,12 +344,9 @@ export const CumulativeMarkers: Story<MapVEuMapProps> = (args) => {
       {...args}
       viewport={viewport}
       zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+      onBoundsChanged={() => {}}
     >
-      <SemanticMarkers
-        markers={markerElements}
-        onBoundsChanged={() => {}}
-        animation={defaultAnimation}
-      />
+      <SemanticMarkers markers={markerElements} animation={defaultAnimation} />
     </MapVEuMap>
   );
 };

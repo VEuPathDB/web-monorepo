@@ -8,7 +8,7 @@ import React, {
   useCallback,
   useRef,
 } from 'react';
-import { BoundsViewport, AnimationFunction } from './Types';
+import { BoundsViewport, AnimationFunction, Bounds } from './Types';
 import {
   MapContainer,
   TileLayer,
@@ -24,7 +24,7 @@ import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
 import NoDataOverlay from '../components/NoDataOverlay';
-import { Map, DomEvent } from 'leaflet';
+import { Map, DomEvent, LatLngBounds } from 'leaflet';
 import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
@@ -103,6 +103,8 @@ export interface MapVEuMapProps {
   /** update handler */
   onViewportChanged: (viewport: Viewport) => void;
 
+  onBoundsChanged: (boundsViewport: BoundsViewport) => void;
+
   /** Height and width of plot element */
   height: CSSProperties['height'];
   width: CSSProperties['width'];
@@ -159,6 +161,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     width,
     style,
     onViewportChanged,
+    onBoundsChanged,
     showGrid,
     zoomLevelToGeohashLevel,
     baseLayer,
@@ -186,8 +189,12 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     (map: Map) => {
       mapRef.current = map;
       sharedPlotCreation.run();
+      onBoundsChanged({
+        bounds: constrainLongitudeToMainWorld(boundsToGeoBBox(map.getBounds())),
+        zoomLevel: map.getZoom(),
+      });
     },
-    [sharedPlotCreation]
+    [onBoundsChanged, sharedPlotCreation]
   );
 
   useEffect(() => {
@@ -275,6 +282,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
+        onBoundsChanged={onBoundsChanged}
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
@@ -288,24 +296,39 @@ export default forwardRef(MapVEuMap);
 
 interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
+  onBoundsChanged: (bondsViewport: BoundsViewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
-  const { onViewportChanged, onBaseLayerChanged } = props;
+  const { onViewportChanged, onBaseLayerChanged, onBoundsChanged } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
       onViewportChanged({
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
+      const boundsViewport: BoundsViewport = {
+        bounds: constrainLongitudeToMainWorld(
+          boundsToGeoBBox(mapEvents.getBounds())
+        ),
+        zoomLevel: mapEvents.getZoom(),
+      };
+      onBoundsChanged(boundsViewport);
     },
     moveend: () => {
       onViewportChanged({
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
+      const boundsViewport: BoundsViewport = {
+        bounds: constrainLongitudeToMainWorld(
+          boundsToGeoBBox(mapEvents.getBounds())
+        ),
+        zoomLevel: mapEvents.getZoom(),
+      };
+      onBoundsChanged(boundsViewport);
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
@@ -412,4 +435,60 @@ function CustomZoomControl(props: CustomZoomControlProps) {
       </div>
     </div>
   );
+}
+
+function boundsToGeoBBox(bounds: LatLngBounds): Bounds {
+  var south = bounds.getSouth();
+  if (south < -90) {
+    south = -90;
+  }
+  var north = bounds.getNorth();
+  if (north > 90) {
+    north = 90;
+  }
+  var east = bounds.getEast();
+  var west = bounds.getWest();
+
+  if (east - west > 360) {
+    const center = (east + west) / 2;
+    west = center - 180;
+    east = center + 180;
+  }
+
+  return {
+    southWest: { lat: south, lng: west },
+    northEast: { lat: north, lng: east },
+  };
+}
+
+// put longitude bounds within normal -180 to 180 range
+function constrainLongitudeToMainWorld({
+  southWest: { lat: south, lng: west },
+  northEast: { lat: north, lng: east },
+}: Bounds): Bounds {
+  let newEast = east;
+  let newWest = west;
+  while (newEast > 180) {
+    newEast -= 360;
+  }
+  while (newEast < -180) {
+    newEast += 360;
+  }
+  while (newWest < -180) {
+    newWest += 360;
+  }
+  while (newWest > 180) {
+    newWest -= 360;
+  }
+
+  // fully zoomed out, the longitude bounds are often the same
+  // but we need to make sure that west is slightly greater than east
+  // so that they "wrap around" the whole globe
+  // (if west was slightly less than east, it would represent a very tiny sliver)
+  if (Math.abs(newEast - newWest) < 1e-8) newWest = newEast + 1e-8;
+
+  return {
+    southWest: { lat: south, lng: newWest },
+    northEast: { lat: north, lng: newEast },
+  };
 }

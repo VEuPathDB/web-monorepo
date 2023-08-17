@@ -228,9 +228,12 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
           <p>Help/Tutorial</p>
         </Tab>
       </Sidebar>
-      <MapVEuMap {...args} viewport={viewport}>
+      <MapVEuMap
+        {...args}
+        viewport={viewport}
+        onBoundsChanged={handleViewportChanged}
+      >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />

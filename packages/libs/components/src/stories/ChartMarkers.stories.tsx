@@ -103,9 +103,9 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         onViewportChanged={setViewport}
         showGrid={true}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -199,9 +199,9 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         onViewportChanged={setViewport}
         showGrid={true}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
@@ -278,9 +278,9 @@ export const LogScale: Story<MapVEuMapProps> = (args) => {
         onViewportChanged={setViewport}
         showGrid={true}
         zoomLevelToGeohashLevel={leafletZoomLevelToGeohashLevel}
+        onBoundsChanged={handleViewportChanged}
       >
         <SemanticMarkers
-          onBoundsChanged={handleViewportChanged}
           markers={markerElements}
           animation={defaultAnimation}
         />
