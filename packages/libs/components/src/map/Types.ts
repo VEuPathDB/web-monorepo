@@ -1,7 +1,5 @@
 import { ReactElement } from 'react';
 import { LatLngLiteral, Icon } from 'leaflet';
-import { PlotProps } from '../plots/PlotlyPlot';
-import { BoundsDriftMarkerProps } from '../../lib/map/BoundsDriftMarker';
 
 export type LatLng = LatLngLiteral;
 // from leaflet:
