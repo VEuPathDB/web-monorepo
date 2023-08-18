@@ -36,6 +36,7 @@ export interface Props {
   resultType: ResultType;
   viewId: string;
   actions?: Action[];
+  showCount?: boolean;
   selectedIds?: string[];
   showIdAttributeColumn: boolean;
   activeAttributeAnalysisName: string | undefined;
@@ -72,6 +73,7 @@ function ResultTable(props: Props) {
     showHideAddColumnsDialog,
     requestAddStepToBasket,
     actions,
+    showCount,
     selectedIds,
     userIsGuest,
     showLoginWarning,
@@ -106,6 +108,7 @@ function ResultTable(props: Props) {
         recordInstance.attributes[recordClass.recordIdAttributeName] as string
       );
     },
+    showCount,
   };
   const tableState = MesaState.create({
     options,

@@ -1,4 +1,4 @@
-import { keyBy, mapValues, pick, toString } from 'lodash';
+import { isEmpty, keyBy, mapValues, pick, toString } from 'lodash';
 import { Seq } from '../Utils/IterableUtils';
 import {
   combineEpics,
@@ -1101,7 +1101,7 @@ async function fetchInitialParams(
 ) {
   if (step != null) {
     return initialParamDataFromStep(step);
-  } else if (initialParamData != null) {
+  } else if (!isEmpty(initialParamData)) {
     return extracParamValues(initialParamData, question.paramNames);
   } else if (prepopulateWithLastParamValues) {
     return (
