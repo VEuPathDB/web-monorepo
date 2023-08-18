@@ -282,7 +282,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           return {
             ...remainingProperties,
             pointIDs: pointID ? [pointID] : undefined,
-            displayLabel: displayLabel ? [displayLabel] : undefined,
+            displayLabels: displayLabel ? [displayLabel] : undefined,
             significanceColor: assignSignificanceColor(
               Number(d.log2foldChange),
               Number(d.pValue),
@@ -309,7 +309,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         if (foundIndex === -1) {
           aggregatedData.push(entry);
         } else {
-          const { pointIDs } = aggregatedData[foundIndex];
+          const { pointIDs, displayLabels } = aggregatedData[foundIndex];
           if (pointIDs) {
             aggregatedData[foundIndex] = {
               ...aggregatedData[foundIndex],
@@ -317,11 +317,16 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
                 ...pointIDs,
                 ...(entry.pointIDs ? entry.pointIDs : []),
               ],
+              displayLabels: displayLabels && [
+                ...displayLabels,
+                ...(entry.displayLabels ? entry.displayLabels : []),
+              ],
             };
           } else {
             aggregatedData[foundIndex] = {
               ...aggregatedData[foundIndex],
               pointIDs: entry.pointIDs,
+              displayLabels: entry.displayLabels,
             };
           }
         }

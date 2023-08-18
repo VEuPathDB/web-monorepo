@@ -363,8 +363,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   }}
                 >
                   <ul>
-                    {data?.displayLabel
-                      ? data.displayLabel.map((label) => (
+                    {data?.displayLabels
+                      ? data.displayLabels.map((label) => (
                           <li key={label}>
                             <span>{label}</span>
                           </li>
