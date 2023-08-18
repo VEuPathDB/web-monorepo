@@ -31,6 +31,7 @@ interface MarkerConfiguration<T extends string> {
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
+  activeVisualizationId?: string;
 }
 export interface PieMarkerConfiguration
   extends MarkerConfiguration<'pie'>,

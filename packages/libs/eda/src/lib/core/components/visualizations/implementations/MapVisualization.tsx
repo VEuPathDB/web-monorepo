@@ -42,6 +42,7 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { Toggle } from '@veupathdb/coreui';
 import { LayoutOptions } from '../../layouts/types';
 import { useMapMarkers } from '../../../hooks/mapMarkers';
+import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 
 export const mapVisualization = createVisualizationPlugin({
   selectorIcon: MapSVG,
@@ -248,8 +249,6 @@ function MapViz(props: VisualizationProps<Options>) {
         viewport={{ center: [latitude, longitude], zoom: zoomLevel }}
         onViewportChanged={handleViewportChanged}
         onBoundsChanged={setBoundsZoomLevel}
-        markers={markers ?? []}
-        animation={defaultAnimation}
         height={height}
         width={width}
         showGrid={geoConfig?.zoomLevelToAggregationLevel != null}
@@ -259,8 +258,6 @@ function MapViz(props: VisualizationProps<Options>) {
         onBaseLayerChanged={(newBaseLayer) =>
           updateVizConfig({ baseLayer: newBaseLayer })
         }
-        flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
-        flyToMarkersDelay={500}
         showSpinner={pending}
         // whether to show scale at map
         showScale={zoomLevel != null && zoomLevel > 4 ? true : false}
@@ -272,7 +269,14 @@ function MapViz(props: VisualizationProps<Options>) {
           ],
           zoom: defaultConfig.mapCenterAndZoom.zoomLevel,
         }}
-      />
+      >
+        <SemanticMarkers
+          markers={markers ?? []}
+          animation={defaultAnimation}
+          flyToMarkers={markers && markers.length > 0 && willFlyTo && !pending}
+          flyToMarkersDelay={500}
+        />
+      </MapVEuMap>
     </>
   );
 

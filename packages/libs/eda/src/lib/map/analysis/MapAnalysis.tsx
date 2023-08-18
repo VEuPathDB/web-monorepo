@@ -55,8 +55,6 @@ import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
 import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
-import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
-import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
 import DraggableVisualization from './DraggableVisualization';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import Login from '../../workspace/sharing/Login';
@@ -88,7 +86,6 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from './MarkerConfiguration/MapTypeConfigurationMenu';
-import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -108,8 +105,10 @@ import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
 import { SidePanelItem, SidePanelMenuEntry } from './Types';
 import { SideNavigationItems } from './MapSideNavigation';
-import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
 import _ from 'lodash';
+import { DraggableLegendPanel } from './DraggableLegendPanel';
+import { defaultAnimation } from './mapTypes/shared';
+import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -133,12 +132,6 @@ enum MarkerTypeLabels {
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
-};
-
-export const defaultAnimation = {
-  method: 'geohash',
-  animationFunction: geohashAnimation,
-  duration: defaultAnimationDuration,
 };
 
 enum DraggablePanelIds {
@@ -365,14 +358,14 @@ function MapAnalysisImpl(props: ImplProps) {
         overlayEntity,
         dataClient,
         subsettingClient,
-        markerType: activeMarkerConfiguration?.type,
+        // markerType: activeMarkerConfiguration?.type,
         binningMethod: _.get(activeMarkerConfiguration, 'binningMethod'),
-        aggregator: _.get(activeMarkerConfiguration, 'aggregator'),
-        numeratorValues: _.get(activeMarkerConfiguration, 'numeratorValues'),
-        denominatorValues: _.get(
-          activeMarkerConfiguration,
-          'denominatorValues'
-        ),
+        // aggregator: _.get(activeMarkerConfiguration, 'aggregator'),
+        // numeratorValues: _.get(activeMarkerConfiguration, 'numeratorValues'),
+        // denominatorValues: _.get(
+        // activeMarkerConfiguration,
+        // 'denominatorValues'
+        // ),
       });
     }, [
       activeMarkerConfiguration,
@@ -1280,13 +1273,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     style={mapStyle}
                     showLayerSelector={false}
                     showSpinner={pending}
-                    animation={defaultAnimation}
                     viewport={appState.viewport}
-                    markers={markers}
-                    flyToMarkers={
-                      markers && markers.length > 0 && willFlyTo && !pending
-                    }
-                    flyToMarkersDelay={500}
                     onBoundsChanged={setBoundsZoomLevel}
                     onViewportChanged={setViewport}
                     showGrid={geoConfig?.zoomLevelToAggregationLevel !== null}
@@ -1295,7 +1282,16 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
-                  />
+                  >
+                    <SemanticMarkers
+                      animation={defaultAnimation}
+                      markers={markers}
+                      flyToMarkers={
+                        markers && markers.length > 0 && willFlyTo && !pending
+                      }
+                      flyToMarkersDelay={500}
+                    />
+                  </MapVEuMap>
                 </div>
 
                 {markerType !== 'bubble' ? (
@@ -1389,23 +1385,3 @@ function MapAnalysisImpl(props: ImplProps) {
     </PromiseResult>
   );
 }
-
-const DraggableLegendPanel = (props: {
-  zIndex: number;
-  panelTitle?: string;
-  defaultPosition?: DraggablePanelCoordinatePair;
-  children: React.ReactNode;
-}) => (
-  <DraggablePanel
-    isOpen
-    showPanelTitle
-    panelTitle={props.panelTitle ?? 'Legend'}
-    confineToParentContainer
-    defaultPosition={props.defaultPosition ?? { x: window.innerWidth, y: 225 }}
-    styleOverrides={{
-      zIndex: props.zIndex,
-    }}
-  >
-    {props.children}
-  </DraggablePanel>
-);
