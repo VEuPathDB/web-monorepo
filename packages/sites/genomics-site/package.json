@@ -8,6 +8,7 @@
     "clean": "rm -rf dist && mkdir dist",
     "copy:webapp": "cp -r webapp/* dist",
     "copy:images": "cp -r ../../../node_modules/@veupathdb/web-common/images dist",
+    "compile:check": "tsc --noEmit",
     "bundle:dev": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=development",
     "bundle:npm": "npm-run-all clean copy:webapp copy:images && BROWSERSLIST_ENV=modern webpack --mode=production && BROWSERSLIST_ENV=legacy webpack --mode=production"
   },
