@@ -52,6 +52,7 @@ import SliderWidget, {
 } from '@veupathdb/components/lib/components/widgets/Slider';
 import { ResetButtonCoreUI } from '../../ResetButton';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { fixVarIdLabel } from '../../../utils/visualization';
 // end imports
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
@@ -270,9 +271,18 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
          */
         .map((d) => {
           const { pointID, ...remainingProperties } = d;
+          // Try to find a user-friendly label for the point. Note that pointIDs are in entityID.variableID format.
+          const displayLabel =
+            pointID &&
+            fixVarIdLabel(
+              pointID.split('.')[1],
+              pointID.split('.')[0],
+              entities
+            );
           return {
             ...remainingProperties,
             pointIDs: pointID ? [pointID] : undefined,
+            displayLabel: displayLabel ? [displayLabel] : undefined,
             significanceColor: assignSignificanceColor(
               Number(d.log2foldChange),
               Number(d.pValue),

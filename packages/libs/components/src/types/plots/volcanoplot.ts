@@ -11,6 +11,8 @@ export type VolcanoPlotDataPoint = {
   pointIDs?: string[];
   // Used to determine color of data point in the plot
   significanceColor?: string;
+  // Optional user-friendly label. One for each pointID
+  displayLabel?: string[];
 };
 
 export type VolcanoPlotData = Array<VolcanoPlotDataPoint>;
