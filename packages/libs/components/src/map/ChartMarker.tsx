@@ -315,3 +315,13 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
     sumValuesString,
   };
 }
+
+export function getChartMarkerDependentAxisRange(
+  data: ChartMarkerProps['data'],
+  isLogScale: boolean
+) {
+  return {
+    min: isLogScale ? 0.1 : 0, // matches what we pass into map markers
+    max: Math.max(...data.map((d) => d.value)),
+  };
+}

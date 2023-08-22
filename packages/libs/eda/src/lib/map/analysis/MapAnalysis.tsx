@@ -103,6 +103,7 @@ import DonutMarkerComponent, {
 import ChartMarkerComponent, {
   ChartMarkerProps,
   ChartMarkerStandalone,
+  getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
@@ -512,16 +513,21 @@ function MapAnalysisImpl(props: ImplProps) {
         />
       );
     } else {
+      const dependentAxisLogScale =
+        activeMarkerConfiguration &&
+        'dependentAxisLogScale' in activeMarkerConfiguration
+          ? activeMarkerConfiguration.dependentAxisLogScale
+          : false;
       return (
         <ChartMarkerStandalone
           data={finalData}
           markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
-          dependentAxisLogScale={
-            activeMarkerConfiguration &&
-            'dependentAxisLogScale' in activeMarkerConfiguration
-              ? activeMarkerConfiguration.dependentAxisLogScale
-              : false
-          }
+          dependentAxisLogScale={dependentAxisLogScale}
+          // pass in an axis range to mimic map markers, especially in log scale
+          dependentAxisRange={getChartMarkerDependentAxisRange(
+            finalData,
+            dependentAxisLogScale
+          )}
           {...sharedStandaloneMarkerProperties}
         />
       );
