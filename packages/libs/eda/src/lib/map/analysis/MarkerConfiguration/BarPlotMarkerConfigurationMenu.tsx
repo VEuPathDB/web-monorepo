@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -133,6 +133,7 @@ export function BarPlotMarkerConfigurationMenu({
         color: '#333',
       };
     }, [
+      studyId,
       overlayVariable,
       overlayConfiguration?.overlayType,
       subsettingClient,
