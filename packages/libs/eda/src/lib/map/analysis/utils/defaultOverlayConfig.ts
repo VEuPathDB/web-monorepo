@@ -65,7 +65,8 @@ export async function getDefaultOverlayConfig(
           overlayVariable: overlayVariableDescriptor,
           aggregationConfig: {
             overlayType: 'categorical',
-            numeratorValues: numeratorValues ?? [],
+            numeratorValues:
+              numeratorValues ?? overlayVariable.vocabulary ?? [],
             denominatorValues:
               denominatorValues ?? overlayVariable.vocabulary ?? [],
           },
