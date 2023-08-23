@@ -1,7 +1,5 @@
 version: "3.5"
 
-name: "web-client"
-
 networks:
   traefik:
     external: true

@@ -363,11 +363,17 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   }}
                 >
                   <ul>
-                    {data?.pointIDs?.map((id) => (
-                      <li key={id}>
-                        <span>{id}</span>
-                      </li>
-                    ))}
+                    {data?.displayLabels
+                      ? data.displayLabels.map((label) => (
+                          <li key={label}>
+                            <span>{label}</span>
+                          </li>
+                        ))
+                      : data?.pointIDs?.map((id) => (
+                          <li key={id}>
+                            <span>{id}</span>
+                          </li>
+                        ))}
                   </ul>
                   <div
                     className="pseudo-hr"
