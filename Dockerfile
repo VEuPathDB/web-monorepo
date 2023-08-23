@@ -33,7 +33,10 @@ COPY package.json package.json
 COPY yarn.lock yarn.lock
 COPY packages packages
 
+ARG NODE_OPTIONS=--max-old-space-size=4096
+
 # Build the client bundles
+RUN echo "Building with NODE_OPTIONS=$NODE_OPTIONS"
 RUN yarn \
     && yarn nx bundle:npm @veupathdb/clinepi-site \
     && yarn nx bundle:npm @veupathdb/genomics-site \
