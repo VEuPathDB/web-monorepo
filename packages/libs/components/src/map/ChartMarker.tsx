@@ -23,6 +23,7 @@ export interface ChartMarkerProps
   borderWidth?: number;
   data: {
     value: number;
+    count?: number;
     label: string;
     color?: string;
   }[];

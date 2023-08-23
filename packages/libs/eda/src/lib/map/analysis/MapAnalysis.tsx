@@ -485,17 +485,26 @@ function MapAnalysisImpl(props: ImplProps) {
     const initialDataObject = previewMarkerData[0].data.map((data) => ({
       label: data.label,
       value: 0,
+      count: 0,
       ...(data.color ? { color: data.color } : {}),
     }));
     const typedData =
       markerType === 'pie'
         ? ([...previewMarkerData] as DonutMarkerProps[])
         : ([...previewMarkerData] as ChartMarkerProps[]);
-    const finalData = typedData.reduce(
+    /**
+     * This version of data can be used in markers that either don't have proportion mode
+     * or proportion mode is false. In proportion mode, the values are pre-calculated proportion
+     * values, so adding them together is inaccurate. By reducing the counts data alongside the
+     * proportion value, we can later use the aggregated counts to recalculate a final proportion
+     * (see below)
+     */
+    const finalNonProportionModeData = typedData.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
           value: data.value + prevData[index].value,
+          count: (data.count ?? 0) + prevData[index].count,
           ...('color' in prevData[index]
             ? { color: prevData[index].color }
             : 'color' in data
@@ -504,11 +513,15 @@ function MapAnalysisImpl(props: ImplProps) {
         })),
       initialDataObject
     );
+    const totalCount = finalNonProportionModeData.reduce(
+      (p, c) => p + c.count,
+      0
+    );
     if (markerType === 'pie') {
       return (
         <DonutMarkerStandalone
-          data={finalData}
-          markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+          data={finalNonProportionModeData}
+          markerLabel={kFormatter(totalCount)}
           {...sharedStandaloneMarkerProperties}
         />
       );
@@ -518,14 +531,26 @@ function MapAnalysisImpl(props: ImplProps) {
         'dependentAxisLogScale' in activeMarkerConfiguration
           ? activeMarkerConfiguration.dependentAxisLogScale
           : false;
+      const isPlotModeProportion =
+        activeMarkerConfiguration &&
+        'selectedPlotMode' in activeMarkerConfiguration &&
+        activeMarkerConfiguration.selectedPlotMode === 'proportion';
+      const finalChartMarkerData = isPlotModeProportion
+        ? // If proportion mode is true, we need to recalculate the proportion value using
+          // the aggregated counts property
+          finalNonProportionModeData.map((d) => ({
+            ...d,
+            value: d.count / totalCount,
+          }))
+        : finalNonProportionModeData;
       return (
         <ChartMarkerStandalone
-          data={finalData}
-          markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+          data={finalChartMarkerData}
+          markerLabel={mFormatter(totalCount)}
           dependentAxisLogScale={dependentAxisLogScale}
           // pass in an axis range to mimic map markers, especially in log scale
           dependentAxisRange={getChartMarkerDependentAxisRange(
-            finalData,
+            finalChartMarkerData,
             dependentAxisLogScale
           )}
           {...sharedStandaloneMarkerProperties}

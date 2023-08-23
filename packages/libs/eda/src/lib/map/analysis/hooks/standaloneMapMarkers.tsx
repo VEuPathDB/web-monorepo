@@ -600,9 +600,10 @@ const processRawMarkersData = (
 
       const donutData =
         vocabulary && overlayValues && overlayValues.length
-          ? overlayValues.map(({ binLabel, value }) => ({
+          ? overlayValues.map(({ binLabel, value, count }) => ({
               label: binLabel,
-              value: value,
+              value,
+              count,
               color:
                 overlayType === 'categorical'
                   ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
@@ -626,6 +627,7 @@ const processRawMarkersData = (
                 donutData.find(({ label }) => label === overlayLabel) ?? {
                   label: fixLabelForOtherValues(overlayLabel),
                   value: 0,
+                  count: 0,
                 }
             )
           : // however, if there is no overlay data

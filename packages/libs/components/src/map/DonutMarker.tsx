@@ -18,6 +18,7 @@ export interface DonutMarkerProps
     MarkerScaleAddon {
   data: {
     value: number;
+    count?: number;
     label: string;
     color?: string;
   }[];
