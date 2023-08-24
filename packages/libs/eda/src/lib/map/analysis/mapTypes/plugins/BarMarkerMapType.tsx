@@ -53,6 +53,13 @@ import { useToggleStarredVariable } from '../../../../core/hooks/starredVariable
 import { leastAncestralEntity } from '../../../../core/utils/data-element-constraints';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
+import {
+  MapTypeConfigurationMenu,
+  MarkerConfigurationOption,
+} from '../../MarkerConfiguration/MapTypeConfigurationMenu';
+import { BarPlotMarker } from '../../MarkerConfiguration/icons';
+import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
+import MapVizManagement from '../../MapVizManagement';
 
 interface BarMarkerData {
   markersData: ChartMarkerProps[];
@@ -74,7 +81,6 @@ export const plugin: MapTypePlugin<BarMarkerData> = {
 
 async function getData(props: GetDataProps): Promise<BarMarkerData> {
   const {
-    appState,
     geoConfigs,
     configuration,
     studyId,
@@ -82,9 +88,8 @@ async function getData(props: GetDataProps): Promise<BarMarkerData> {
     studyEntities,
     dataClient,
     subsettingClient,
+    boundsZoomLevel,
   } = props;
-
-  const { boundsZoomLevel } = appState;
 
   const {
     selectedVariable,
@@ -298,10 +303,10 @@ async function getData(props: GetDataProps): Promise<BarMarkerData> {
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const {
+    apps,
     analysisState,
     appState,
     geoConfigs,
-    configuration,
     updateConfiguration,
     studyId,
     studyEntities,
@@ -311,8 +316,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const geoConfig = geoConfigs[0];
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
+  const configuration = props.configuration as BarPlotMarkerConfiguration;
   const { selectedVariable, binningMethod, dependentAxisLogScale } =
-    configuration as BarPlotMarkerConfiguration;
+    configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -341,16 +347,13 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           }
         )
       : [];
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...viewportFilters,
-    ];
+    return [...(filters ?? []), ...viewportFilters];
   }, [
     appState.boundsZoomLevel,
     geoConfig.entity.id,
     geoConfig.latitudeVariableId,
     geoConfig.longitudeVariableId,
-    props.analysisState.analysis?.descriptor.subset.descriptor,
+    filters,
   ]);
 
   const allFilteredCategoricalValues = usePromise(
@@ -407,8 +410,29 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
   const previewMarkerResult = usePromise(
     useCallback(
-      () => getData({ ...props, dataClient, subsettingClient }),
-      [dataClient, props, subsettingClient]
+      async () =>
+        appState.boundsZoomLevel
+          ? getData({
+              dataClient,
+              subsettingClient,
+              boundsZoomLevel: appState.boundsZoomLevel,
+              studyId,
+              filters,
+              studyEntities,
+              geoConfigs,
+              configuration,
+            })
+          : undefined,
+      [
+        appState.boundsZoomLevel,
+        configuration,
+        dataClient,
+        filters,
+        geoConfigs,
+        studyEntities,
+        studyId,
+        subsettingClient,
+      ]
     )
   );
 
@@ -475,7 +499,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     )
   );
 
-  return (
+  const configurationMenu = (
     <BarPlotMarkerConfigurationMenu
       onChange={updateConfiguration}
       configuration={configuration as BarPlotMarkerConfiguration}
@@ -494,6 +518,67 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       }
       toggleStarredVariable={toggleStarredVariable}
     />
+  );
+
+  const markerConfigurationOption: MarkerConfigurationOption = {
+    type: 'bubble',
+    displayName,
+    icon: <BarPlotMarker style={{ height: '1.5em', marginLeft: '0.25em' }} />,
+    configurationMenu,
+  };
+
+  const setActiveVisualizationId = useCallback(
+    (activeVisualizationId?: string) => {
+      if (configuration == null) return;
+      updateConfiguration({
+        ...configuration,
+        activeVisualizationId,
+      });
+    },
+    [configuration, updateConfiguration]
+  );
+
+  const plugins = useStandaloneVizPlugins({
+    selectedOverlayConfig: overlayConfiguration.value,
+  });
+
+  const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+    'markers' | 'plots'
+  >['tabs'] = [
+    {
+      key: 'markers',
+      displayName: 'Markers',
+      content: configurationMenu,
+    },
+    {
+      key: 'plots',
+      displayName: 'Supporting Plots',
+      content: (
+        <MapVizManagement
+          analysisState={analysisState}
+          setActiveVisualizationId={setActiveVisualizationId}
+          apps={apps}
+          activeVisualizationId={configuration.activeVisualizationId}
+          plugins={plugins}
+          geoConfigs={geoConfigs}
+          mapType="bubble"
+        />
+      ),
+    },
+  ];
+
+  return (
+    <div
+      style={{
+        padding: '1em',
+        maxWidth: '1500px',
+      }}
+    >
+      <MapTypeConfigurationMenu
+        markerConfiguration={markerConfigurationOption}
+        mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
+      />
+    </div>
   );
 }
 
@@ -531,7 +616,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<BarMarkerData>) {
     <>
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
-        zIndex={2}
+        zIndex={3}
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
@@ -553,7 +638,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<BarMarkerData>) {
         toggleStarredVariable={toggleStarredVariable}
         filters={props.filtersIncludingViewport}
         // onTouch={moveVizToTop}
-        zIndexForStackingContext={3}
+        zIndexForStackingContext={2}
       />
     </>
   );

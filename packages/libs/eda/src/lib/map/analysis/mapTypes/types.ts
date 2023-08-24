@@ -10,6 +10,7 @@ import { ComputationAppOverview } from '../../../core/types/visualization';
 import { AppState } from '../appState';
 import { DataClient, SubsettingClient } from '../../../core/api';
 import { EntityCounts } from '../../../core/hooks/entityCounts';
+import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 
 export interface MapTypeConfigPanelProps {
   apps: ComputationAppOverview[];
@@ -41,9 +42,15 @@ export interface MapTypeMapLayerProps<T> {
   filtersIncludingViewport: Filter[];
 }
 
-export interface GetDataProps extends MapTypeConfigPanelProps {
+export interface GetDataProps {
   dataClient: DataClient;
   subsettingClient: SubsettingClient;
+  boundsZoomLevel: BoundsViewport;
+  studyId: string;
+  filters: Filter[] | undefined;
+  studyEntities: StudyEntity[];
+  geoConfigs: GeoConfig[];
+  configuration: unknown;
 }
 
 /**

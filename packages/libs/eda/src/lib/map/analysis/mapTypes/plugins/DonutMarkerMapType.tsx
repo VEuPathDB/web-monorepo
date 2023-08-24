@@ -48,6 +48,13 @@ import {
 import { leastAncestralEntity } from '../../../../core/utils/data-element-constraints';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
+import {
+  MapTypeConfigurationMenu,
+  MarkerConfigurationOption,
+} from '../../MarkerConfiguration/MapTypeConfigurationMenu';
+import { DonutMarkers } from '../../MarkerConfiguration/icons';
+import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
+import MapVizManagement from '../../MapVizManagement';
 
 const displayName = 'Donuts';
 
@@ -69,7 +76,7 @@ export const plugin: MapTypePlugin<DonutMakerData> = {
 
 async function getData(props: GetDataProps): Promise<DonutMakerData> {
   const {
-    appState,
+    boundsZoomLevel,
     configuration,
     geoConfigs,
     studyId,
@@ -78,8 +85,6 @@ async function getData(props: GetDataProps): Promise<DonutMakerData> {
     dataClient,
     subsettingClient,
   } = props;
-
-  const { boundsZoomLevel } = appState;
 
   const geoConfig = geoConfigs[0];
 
@@ -269,10 +274,10 @@ async function getData(props: GetDataProps): Promise<DonutMakerData> {
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const {
+    apps,
     analysisState,
     appState,
     geoConfigs,
-    configuration,
     updateConfiguration,
     studyId,
     studyEntities,
@@ -282,8 +287,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const geoConfig = geoConfigs[0];
   const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
-  const { selectedVariable, binningMethod } =
-    configuration as PieMarkerConfiguration;
+  const configuration = props.configuration as PieMarkerConfiguration;
+  const { selectedVariable, binningMethod } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -312,16 +317,13 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           }
         )
       : [];
-    return [
-      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
-      ...viewportFilters,
-    ];
+    return [...(filters ?? []), ...viewportFilters];
   }, [
     appState.boundsZoomLevel,
     geoConfig.entity.id,
     geoConfig.latitudeVariableId,
     geoConfig.longitudeVariableId,
-    props.analysisState.analysis?.descriptor.subset.descriptor,
+    filters,
   ]);
 
   const allFilteredCategoricalValues = usePromise(
@@ -378,8 +380,29 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
   const previewMarkerResult = usePromise(
     useCallback(
-      () => getData({ ...props, dataClient, subsettingClient }),
-      [dataClient, props, subsettingClient]
+      async () =>
+        appState.boundsZoomLevel
+          ? getData({
+              dataClient,
+              subsettingClient,
+              boundsZoomLevel: appState.boundsZoomLevel,
+              studyId,
+              filters,
+              studyEntities,
+              geoConfigs,
+              configuration,
+            })
+          : undefined,
+      [
+        appState.boundsZoomLevel,
+        configuration,
+        dataClient,
+        filters,
+        geoConfigs,
+        studyEntities,
+        studyId,
+        subsettingClient,
+      ]
     )
   );
 
@@ -444,7 +467,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       ]
     )
   );
-  return (
+  const configurationMenu = (
     <PieMarkerConfigurationMenu
       onChange={updateConfiguration}
       configuration={configuration as PieMarkerConfiguration}
@@ -463,6 +486,67 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       }
       toggleStarredVariable={toggleStarredVariable}
     />
+  );
+
+  const markerConfigurationOption: MarkerConfigurationOption = {
+    type: 'bubble',
+    displayName,
+    icon: <DonutMarkers style={{ height: '1.5em', marginLeft: '0.25em' }} />,
+    configurationMenu,
+  };
+
+  const plugins = useStandaloneVizPlugins({
+    selectedOverlayConfig: overlayConfiguration.value,
+  });
+
+  const setActiveVisualizationId = useCallback(
+    (activeVisualizationId?: string) => {
+      if (configuration == null) return;
+      updateConfiguration({
+        ...configuration,
+        activeVisualizationId,
+      });
+    },
+    [configuration, updateConfiguration]
+  );
+
+  const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
+    'markers' | 'plots'
+  >['tabs'] = [
+    {
+      key: 'markers',
+      displayName: 'Markers',
+      content: configurationMenu,
+    },
+    {
+      key: 'plots',
+      displayName: 'Supporting Plots',
+      content: (
+        <MapVizManagement
+          analysisState={analysisState}
+          setActiveVisualizationId={setActiveVisualizationId}
+          apps={apps}
+          activeVisualizationId={configuration.activeVisualizationId}
+          plugins={plugins}
+          geoConfigs={geoConfigs}
+          mapType="bubble"
+        />
+      ),
+    },
+  ];
+
+  return (
+    <div
+      style={{
+        padding: '1em',
+        maxWidth: '1500px',
+      }}
+    >
+      <MapTypeConfigurationMenu
+        markerConfiguration={markerConfigurationOption}
+        mapTypeConfigurationMenuTabs={mapTypeConfigurationMenuTabs}
+      />
+    </div>
   );
 }
 
@@ -499,7 +583,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<DonutMakerData>) {
     <>
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
-        zIndex={2}
+        zIndex={3}
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
@@ -521,7 +605,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<DonutMakerData>) {
         toggleStarredVariable={toggleStarredVariable}
         filters={props.filtersIncludingViewport}
         // onTouch={moveVizToTop}
-        zIndexForStackingContext={3}
+        zIndexForStackingContext={2}
       />
     </>
   );

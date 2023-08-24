@@ -70,7 +70,7 @@ interface BubbleMarkerData {
 
 async function getData(props: GetDataProps): Promise<BubbleMarkerData> {
   const {
-    appState,
+    boundsZoomLevel,
     configuration,
     geoConfigs,
     studyId,
@@ -80,8 +80,6 @@ async function getData(props: GetDataProps): Promise<BubbleMarkerData> {
   } = props;
 
   const geoConfig = geoConfigs[0];
-
-  const { boundsZoomLevel } = appState;
 
   const { selectedVariable, numeratorValues, denominatorValues, aggregator } =
     configuration as BubbleMarkerConfiguration;
@@ -505,7 +503,7 @@ function BubbleLegends(props: MapTypeMapLayerProps<BubbleMarkerData>) {
       </DraggableLegendPanel>
       <DraggableLegendPanel
         panelTitle={overlayVariable?.displayName}
-        zIndex={2}
+        zIndex={3}
         defaultPosition={{ x: window.innerWidth, y: 420 }}
       >
         <div style={{ padding: '5px 10px' }}>
@@ -532,7 +530,7 @@ function BubbleLegends(props: MapTypeMapLayerProps<BubbleMarkerData>) {
         toggleStarredVariable={toggleStarredVariable}
         filters={props.filtersIncludingViewport}
         // onTouch={moveVizToTop}
-        zIndexForStackingContext={3}
+        zIndexForStackingContext={2}
       />
 
       {error && (

@@ -689,11 +689,9 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const activeMapTypeData = usePromise(
     useCallback(async () => {
-      if (appsPromiseState.value == null) return;
+      if (appState.boundsZoomLevel == null) return;
       return activeMapTypePlugin?.getData({
-        analysisState,
-        appState,
-        apps: appsPromiseState.value,
+        boundsZoomLevel: appState.boundsZoomLevel,
         configuration: activeMarkerConfiguration,
         dataClient,
         subsettingClient,
@@ -701,13 +699,10 @@ function MapAnalysisImpl(props: ImplProps) {
         geoConfigs,
         studyEntities,
         studyId,
-        updateConfiguration: updateMarkerConfigurations as any,
       });
     }, [
-      appsPromiseState.value,
       activeMapTypePlugin,
-      analysisState,
-      appState,
+      appState.boundsZoomLevel,
       activeMarkerConfiguration,
       dataClient,
       subsettingClient,
@@ -715,7 +710,6 @@ function MapAnalysisImpl(props: ImplProps) {
       geoConfigs,
       studyEntities,
       studyId,
-      updateMarkerConfigurations,
     ])
   );
 
