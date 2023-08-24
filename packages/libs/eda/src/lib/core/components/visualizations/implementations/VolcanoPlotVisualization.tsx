@@ -339,6 +339,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
+    entities,
   ]);
 
   // For the legend, we need the counts of the data
