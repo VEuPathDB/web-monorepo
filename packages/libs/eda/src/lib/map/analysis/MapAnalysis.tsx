@@ -89,12 +89,6 @@ enum MapSideNavItemLabels {
   GroupedVariableMaps = 'Grouped Variable Maps',
 }
 
-enum MarkerTypeLabels {
-  pie = 'Donuts',
-  barplot = 'Bar plots',
-  bubble = 'Bubbles',
-}
-
 const mapStyle: React.CSSProperties = {
   zIndex: 1,
   pointerEvents: 'auto',
@@ -350,7 +344,7 @@ function MapAnalysisImpl(props: ImplProps) {
             {
               type: 'item',
               id: 'single-variable-pie',
-              labelText: MarkerTypeLabels.pie,
+              labelText: donutMarkerPlugin.displayName,
               rightIcon: <DonutMarker style={{ height: '1.25em' }} />,
               leftIcon:
                 activeMarkerConfigurationType === 'pie' ? <CheckIcon /> : null,
@@ -376,7 +370,7 @@ function MapAnalysisImpl(props: ImplProps) {
             {
               type: 'item',
               id: 'single-variable-bar',
-              labelText: MarkerTypeLabels.barplot,
+              labelText: barMarkerPlugin.displayName,
               leftIcon:
                 activeMarkerConfigurationType === 'barplot' ? (
                   <CheckIcon />
@@ -404,7 +398,7 @@ function MapAnalysisImpl(props: ImplProps) {
             {
               type: 'item',
               id: 'single-variable-bubble',
-              labelText: MarkerTypeLabels.bubble,
+              labelText: bubbleMarkerPlugin.displayName,
               rightIcon: <BubbleMarker style={{ height: '1.25em' }} />,
               leftIcon:
                 activeMarkerConfigurationType === 'bubble' ? (
