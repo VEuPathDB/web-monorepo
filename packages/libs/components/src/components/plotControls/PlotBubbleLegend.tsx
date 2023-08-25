@@ -30,11 +30,13 @@ export default function PlotBubbleLegend({
     // The largest circle's value will be the first number that's larger than
     // legendMax and has only one significant digit. Each smaller circle will
     // be half the size of the last (rounded and >= 1)
-    const legendMaxLog10 = Math.floor(Math.log10(legendMax));
+    const roundedOneSigFig = Number(legendMax.toPrecision(1));
     const largestCircleValue =
       legendMax <= 10
         ? legendMax
-        : (Number(legendMax.toPrecision(1)[0]) + 1) * 10 ** legendMaxLog10;
+        : roundedOneSigFig < legendMax
+        ? roundedOneSigFig + 10 ** Math.floor(Math.log10(legendMax)) // effectively rounding up
+        : roundedOneSigFig; // no need to adjust - already rounded up
     const circleValues = _.uniq(
       range(numCircles)
         .map((i) => Math.round(largestCircleValue / 2 ** i))
