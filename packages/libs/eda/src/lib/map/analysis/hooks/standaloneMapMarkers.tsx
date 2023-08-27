@@ -182,10 +182,10 @@ export function useStandaloneMapMarkers(
           | StandaloneMapBubblesResponse;
         vocabulary: string[] | undefined;
         bubbleLegendData?: {
-          minColorValue: number;
-          maxColorValue: number;
-          minSizeValue: number;
-          maxSizeValue: number;
+          minColorValue: string;
+          maxColorValue: string;
+          minSizeValue: string;
+          maxSizeValue: string;
         };
       }
     | undefined

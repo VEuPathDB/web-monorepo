@@ -9,6 +9,7 @@ import {
   OverlayConfig,
   StudyEntity,
   Variable,
+  VariableType,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
 import { BinningMethod, MarkerConfiguration } from '../appState';
@@ -92,7 +93,7 @@ export async function getDefaultOverlayConfig(
         return {
           overlayVariable: overlayVariableDescriptor,
           aggregationConfig: {
-            overlayType: 'continuous',
+            overlayType: overlayVariable.type === 'date' ? 'date' : 'number',
             aggregator,
           },
         };

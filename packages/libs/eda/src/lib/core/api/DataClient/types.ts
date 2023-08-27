@@ -797,7 +797,7 @@ export const BubbleOverlayConfig = type({
       denominatorValues: array(string),
     }),
     type({
-      overlayType: literal('continuous'),
+      overlayType: keyof({ number: null, date: null }), // was literal('continuous'),
       aggregator: keyof({ mean: null, median: null }),
     }),
   ]),
@@ -855,7 +855,7 @@ export const StandaloneMapBubblesResponse = type({
     intersection([
       MapElement,
       type({
-        overlayValue: number,
+        overlayValue: string,
       }),
     ])
   ),
@@ -880,10 +880,10 @@ export type StandaloneMapBubblesLegendResponse = TypeOf<
   typeof StandaloneMapBubblesLegendResponse
 >;
 export const StandaloneMapBubblesLegendResponse = type({
-  minColorValue: number,
-  maxColorValue: number,
-  minSizeValue: number,
-  maxSizeValue: number,
+  minColorValue: string,
+  maxColorValue: string,
+  minSizeValue: string,
+  maxSizeValue: string,
 });
 
 export interface ContinousVariableMetadataRequestParams {
