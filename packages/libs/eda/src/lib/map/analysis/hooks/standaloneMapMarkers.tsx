@@ -181,12 +181,7 @@ export function useStandaloneMapMarkers(
           | StandaloneMapMarkersResponse
           | StandaloneMapBubblesResponse;
         vocabulary: string[] | undefined;
-        bubbleLegendData?: {
-          minColorValue: string;
-          maxColorValue: string;
-          minSizeValue: string;
-          maxSizeValue: string;
-        };
+        bubbleLegendData?: StandaloneMapBubblesLegendResponse;
       }
     | undefined
   >(
