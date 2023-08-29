@@ -882,8 +882,8 @@ export type StandaloneMapBubblesLegendResponse = TypeOf<
 export const StandaloneMapBubblesLegendResponse = type({
   minColorValue: string,
   maxColorValue: string,
-  minSizeValue: string,
-  maxSizeValue: string,
+  minSizeValue: number,
+  maxSizeValue: number,
 });
 
 export interface ContinousVariableMetadataRequestParams {
