@@ -98,7 +98,13 @@ interface MapMarkers {
   //  vocabulary: string[] | undefined;
   /** data for creating a legend */
   legendItems: LegendItemsProps[];
-  bubbleLegendData?: StandaloneMapBubblesLegendResponse;
+  bubbleLegendData?: // TO DO for dates: use StandaloneMapBubblesLegendResponse instead;
+  {
+    minColorValue: number;
+    maxColorValue: number;
+    minSizeValue: number;
+    maxSizeValue: number;
+  };
   bubbleValueToDiameterMapper?: (value: number) => number;
   bubbleValueToColorMapper?: (value: number) => string;
   /** is the request pending? */
@@ -390,7 +396,18 @@ export function useStandaloneMapMarkers(
   ) as NumberRange;
 
   const vocabulary = rawPromise.value?.vocabulary;
-  const bubbleLegendData = rawPromise.value?.bubbleLegendData;
+
+  // temporarily convert potentially date-strings to numbers
+  // but don't worry - we are also temporarily disabling date variables from bubble mode
+  const temp = rawPromise.value?.bubbleLegendData;
+  const bubbleLegendData = temp
+    ? {
+        minColorValue: Number(temp.minColorValue),
+        maxColorValue: Number(temp.maxColorValue),
+        minSizeValue: temp.minSizeValue,
+        maxSizeValue: temp.maxSizeValue,
+      }
+    : undefined;
 
   const adjustedSizeData = useMemo(
     () =>
@@ -701,13 +718,13 @@ const processRawBubblesData = (
       const bubbleData = {
         value: entityCount,
         diameter: bubbleValueToDiameterMapper?.(entityCount) ?? 0,
-        colorValue: overlayValue,
+        colorValue: Number(overlayValue), // TO DO for dates: handle dates!
         colorLabel: aggregationConfig
           ? aggregationConfig.overlayType === 'continuous'
             ? _.capitalize(aggregationConfig.aggregator)
             : 'Proportion'
           : undefined,
-        color: bubbleValueToColorMapper?.(overlayValue),
+        color: bubbleValueToColorMapper?.(Number(overlayValue)),
       };
 
       return {

@@ -93,7 +93,7 @@ export async function getDefaultOverlayConfig(
         return {
           overlayVariable: overlayVariableDescriptor,
           aggregationConfig: {
-            overlayType: overlayVariable.type === 'date' ? 'date' : 'number',
+            overlayType: 'continuous', // TO DO for dates: might do `overlayVariable.type === 'date' ? 'date' : 'number'`
             aggregator,
           },
         };
