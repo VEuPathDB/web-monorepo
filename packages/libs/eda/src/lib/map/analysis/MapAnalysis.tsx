@@ -194,7 +194,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
     sharingUrl,
-    setIsSubsetPanelOpen = () => {},
+    setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
     geoConfigs,
@@ -551,9 +551,8 @@ function MapAnalysisImpl(props: ImplProps) {
       : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
-    setIsSubsetPanelOpen(true);
     setActiveSideMenuId(MapSideNavItemLabels.Filter);
-    setSideNavigationIsExpanded(true);
+    setIsSidePanelExpanded(true);
   }
 
   const FilterChipListForHeader = () => {
@@ -582,7 +581,7 @@ function MapAnalysisImpl(props: ImplProps) {
           disabled={
             // You don't need this button if whenever the filter
             // section is active and expanded.
-            sideNavigationIsExpanded &&
+            appState.isSidePanelExpanded &&
             activeSideMenuId === MapSideNavItemLabels.Filter
           }
           themeRole="primary"
@@ -737,7 +736,7 @@ function MapAnalysisImpl(props: ImplProps) {
             },
             {
               type: 'item',
-              id: 'single-variable-bar',
+              id: 'single-variable-barplot',
               labelText: MarkerTypeLabels.barplot,
               leftIcon:
                 activeMarkerConfigurationType === 'barplot' ? (
@@ -1165,13 +1164,11 @@ function MapAnalysisImpl(props: ImplProps) {
   }
 
   // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
-  const [activeSideMenuId, setActiveSideMenuId] =
-    useState<string | undefined>();
+  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
+    'single-variable-' + appState.activeMarkerConfigurationType
+  );
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
-
-  const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
-    useState<boolean>(true);
 
   // for flyTo functionality
   const [willFlyTo, setWillFlyTo] = useState(false);
@@ -1204,7 +1201,7 @@ function MapAnalysisImpl(props: ImplProps) {
     const index = zIndicies.findIndex(
       (panelTitle) => panelTitle === requestedPanelTitle
     );
-    const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+    const zIndexFactor = appState.isSidePanelExpanded ? 2 : 10;
     return index + zIndexFactor;
   }
 
@@ -1261,9 +1258,9 @@ function MapAnalysisImpl(props: ImplProps) {
                   }}
                 >
                   <MapSidePanel
-                    isExpanded={sideNavigationIsExpanded}
+                    isExpanded={appState.isSidePanelExpanded}
                     onToggleIsExpanded={() =>
-                      setSideNavigationIsExpanded((isExpanded) => !isExpanded)
+                      setIsSidePanelExpanded(!appState.isSidePanelExpanded)
                     }
                     siteInformationProps={props.siteInformationProps}
                     sidePanelDrawerContents={activeSideNavigationItemMenu}

@@ -86,6 +86,7 @@ export const AppState = t.intersection([
     }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
+    isSidePanelExpanded: t.boolean,
   }),
   t.partial({
     boundsZoomLevel: t.type({
@@ -99,7 +100,6 @@ export const AppState = t.intersection([
       entityId: t.string,
       variableId: t.string,
     }),
-    isSubsetPanelOpen: t.boolean,
   }),
 ]);
 
@@ -132,6 +132,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
+      isSidePanelExpanded: true,
       markerConfigurations: [
         {
           type: 'pie',
@@ -222,7 +223,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     ),
     setMarkerConfigurations: useSetter('markerConfigurations'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
-    setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
+    setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
   };
