@@ -1,55 +1,184 @@
-import { useState, useRef } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import EzTimeFilter, {
   EZTimeFilterDataProp,
 } from '@veupathdb/components/lib/components/plotControls/EzTimeFilter';
-import { Undo } from '@veupathdb/coreui';
+import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import {
-  InputSpec,
-  InputVariables,
-  requiredInputLabelStyle,
-} from '../../core/components/visualizations/InputVariables';
-import { VariablesByInputName } from '../../core/utils/data-element-constraints';
-import { AnalysisState } from '../../core';
+  VariablesByInputName,
+  DataElementConstraintRecord,
+} from '../../core/utils/data-element-constraints';
+import { AnalysisState, usePromise } from '../../core';
 import { StudyEntity } from '../../core/types/study';
 import { VariableDescriptor } from '../../core/types/variable';
 
+import { SubsettingClient } from '../../core/api';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { useFindEntityAndVariable, Filter } from '../../core';
+import {
+  DateRange,
+  NumberRange,
+} from '@veupathdb/components/lib/types/general';
+import { DateRangeFilter, NumberRangeFilter } from '../../core/types/filter';
+import { Tooltip } from '@material-ui/core';
+
 interface Props {
-  data: any;
-  zIndex: number;
+  studyId: string;
   entities: StudyEntity[];
-  // to handle filters in the near future
+  // to handle filters
   analysisState: AnalysisState;
-  // not quite sure yet if configuration is necessary but typed as any for now
-  configuration: any;
+  subsettingClient: SubsettingClient;
+  filters: Filter[] | undefined;
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
-  // constraints: any;
 }
 
 export default function DraggableTimeFilter({
-  data,
+  studyId,
   analysisState,
-  zIndex,
-  starredVariables,
   entities,
-  configuration,
+  subsettingClient,
+  filters,
+  starredVariables,
   toggleStarredVariable,
-}: // constraints,
-Props) {
-  // converting lineplot data to visx format
-  // temporarily set to 1 (with data) and 0 (no data) manually for demo purpose
-  const timeFilterData: EZTimeFilterDataProp[] = data.series[0].x.map(
-    (value: any, index: number) => {
-      return { x: value, y: data.series[0].y[index] >= 9 ? 1 : 0 };
-    }
+}: Props) {
+  // filter constraint for time slider inputVariables component
+  const timeSliderVariableConstraints: DataElementConstraintRecord[] = [
+    {
+      overlayVariable: {
+        isRequired: true,
+        minNumVars: 1,
+        maxNumVars: 1,
+        // TODO: testing with SCORE S. mansoni Cluster Randomized Trial study
+        // however, this study does not have date variable, thus temporarily use below for test purpose
+        // i.e., additionally allowing 'integer'
+        allowedTypes: ['date', 'integer'],
+        // TODO: below two are correct ones
+        // allowedTypes: ['date'],
+        // isTemporal: true,
+      },
+    },
+  ];
+
+  // find initial variable id for time slider
+  const defaultTimeSliderVariabeId = useMemo(
+    () =>
+      entities
+        .map((data) => {
+          return data.variables.find(
+            (variable) =>
+              // TODO temporarily allows integer for test purpose
+              // no need to allow 'integer' for actual purpose
+              (variable.type === 'date' || variable.type === 'integer') &&
+              // TODO: thus, below is correct one instead of above
+              // (variable.type === 'date') &&
+              variable.dataShape === 'continuous' &&
+              variable.isTemporal
+          );
+        })
+        .filter((data) => data != null)[0]?.id,
+    [entities]
   );
 
-  // set initial selectedRange
-  const [selectedRange, setSelectedRange] = useState({
-    start: timeFilterData[0].x,
-    end: timeFilterData[timeFilterData.length - 1].x,
+  // find initial entity id for time slider
+  const defaultTimeSliderEntityId = useMemo(
+    () =>
+      entities
+        .map((data) => {
+          if (
+            data.variables.find(
+              (variable) => variable.id === defaultTimeSliderVariabeId
+            )
+          )
+            return data;
+        })
+        .filter((data) => data != null)[0]?.id,
+    [entities]
+  );
+
+  // set initial variable so that time slider loads data in the beginning
+  const [timeSliderVariable, setTimeSliderVariable] =
+    useState<VariableDescriptor>({
+      entityId: defaultTimeSliderEntityId ?? '',
+      variableId: defaultTimeSliderVariabeId ?? '',
+    });
+
+  // find variable metadata: use timeSliderVariable, not defaultTimeSlider ids
+  const findEntityAndVariable = useFindEntityAndVariable();
+  const timeSliderVariableMetadata = findEntityAndVariable({
+    entityId: timeSliderVariable.entityId ?? '',
+    variableId: timeSliderVariable.variableId ?? '',
   });
+
+  // set initial selectedRange as empty, then change it at useEffect due to data request
+  const [selectedRange, setSelectedRange] = useState({
+    start: '',
+    end: '',
+  });
+
+  // data request to distribution for time slider
+  const getTimeSliderData = usePromise(
+    useCallback(async () => {
+      // no data request if no variable is available
+      if (
+        timeSliderVariableMetadata == null ||
+        !('distributionDefaults' in timeSliderVariableMetadata.variable)
+      )
+        return;
+
+      const binSpec = {
+        displayRangeMin:
+          timeSliderVariableMetadata.variable.distributionDefaults.rangeMin +
+          (timeSliderVariableMetadata.variable.type === 'date'
+            ? 'T00:00:00Z'
+            : ''),
+        displayRangeMax:
+          timeSliderVariableMetadata.variable.distributionDefaults.rangeMax +
+          (timeSliderVariableMetadata.variable.type === 'date'
+            ? 'T00:00:00Z'
+            : ''),
+        binWidth:
+          timeSliderVariableMetadata.variable.distributionDefaults.binWidth ??
+          1,
+        binUnits:
+          'binUnits' in timeSliderVariableMetadata.variable.distributionDefaults
+            ? timeSliderVariableMetadata.variable.distributionDefaults.binUnits
+            : undefined,
+      };
+      const distributionResponse = await subsettingClient.getDistribution(
+        studyId,
+        timeSliderVariable.entityId,
+        timeSliderVariable.variableId,
+        {
+          valueSpec: 'count',
+          filters: filters ?? [],
+          binSpec,
+        }
+      );
+
+      return {
+        x: distributionResponse.histogram.map((d) => d.binStart),
+        // conditionally set y-values to be 1 (with data) and 0 (no data)
+        y: distributionResponse.histogram.map((d) => (d.value >= 1 ? 1 : 0)),
+      };
+    }, [
+      timeSliderVariableMetadata?.variable,
+      timeSliderVariable,
+      subsettingClient,
+      filters,
+    ])
+  );
+
+  // converting data to visx format
+  const timeFilterData: EZTimeFilterDataProp[] = useMemo(
+    () =>
+      !getTimeSliderData.pending && getTimeSliderData.value != null
+        ? getTimeSliderData?.value?.x.map((value: string, index: number) => {
+            return { x: value, y: getTimeSliderData.value!.y[index] };
+          })
+        : [],
+    [getTimeSliderData]
+  );
 
   // set time slider width and y position
   const timeFilterWidth = 750;
@@ -61,15 +190,15 @@ Props) {
     y: yPosition,
   });
 
-  // set DraggablePanel key
-  const [key, setKey] = useState(0);
+  // set DraggablePanel key to update time slider
+  const [draggablePanelKey, setDraggablePanelKey] = useState(0);
 
   // set button text
   const [buttonText, setButtonText] = useState('Expand');
 
   const expandSlider = () => {
     setButtonText('Shrink');
-    setKey((currentKey) => currentKey + 1);
+    setDraggablePanelKey((currentKey) => currentKey + 1);
     setDefaultPosition({
       x: window.innerWidth / 2 - timeFilterWidth / 2,
       y: 100,
@@ -78,7 +207,7 @@ Props) {
 
   const shrinkSlider = () => {
     setButtonText('Expand');
-    setKey((currentKey) => currentKey + 1);
+    setDraggablePanelKey((currentKey) => currentKey + 1);
     setDefaultPosition({
       x: window.innerWidth / 2 - timeFilterWidth / 2,
       y: yPosition,
@@ -99,34 +228,110 @@ Props) {
       return;
     }
 
-    // temporarily blocked
-    // onChange({
-    //   ...configuration,
-    //   selectedVariable: selection.overlayVariable,
-    //   selectedValues: undefined,
-    // });
+    // set time slider variable
+    setTimeSliderVariable(selection.overlayVariable);
   }
+
+  // set filter function
+  const { setFilters } = analysisState;
+
+  const filter = filters?.find(
+    (f): f is NumberRangeFilter | DateRangeFilter =>
+      f.variableId === timeSliderVariable.variableId &&
+      f.entityId === timeSliderVariable.entityId &&
+      (f.type === 'dateRange' || f.type === 'numberRange')
+  );
+
+  // the format of selectedRange at filter is min/max, not start/end
+  // NOTE: currently, this considers both dateRange and numberRange for test purpose: indeed only dateRange is required
+  // But perhaps this is just okay even if numberRange parts are redundant
+  const updateFilter = useCallback(
+    (selectedRange?: NumberRange | DateRange) => {
+      const otherFilters = filters?.filter((f) => f !== filter) ?? [];
+      if (selectedRange == null) {
+        if (otherFilters.length !== filters?.length) setFilters(otherFilters);
+      } else {
+        if (
+          filter &&
+          (filter.type === 'dateRange' || filter.type === 'numberRange') &&
+          filter.min === selectedRange.min &&
+          filter.max === selectedRange.max
+        )
+          return;
+        setFilters(
+          otherFilters.concat([
+            timeSliderVariableMetadata?.variable.type === 'date'
+              ? {
+                  variableId: timeSliderVariable.variableId,
+                  entityId: timeSliderVariable.entityId,
+                  type: 'dateRange',
+                  ...(selectedRange as DateRange),
+                }
+              : {
+                  variableId: timeSliderVariable.variableId,
+                  entityId: timeSliderVariable.entityId,
+                  type: 'numberRange',
+                  ...(selectedRange as NumberRange),
+                },
+          ])
+        );
+      }
+    },
+    [
+      filters,
+      filter,
+      setFilters,
+      timeSliderVariable.entityId,
+      timeSliderVariable.variableId,
+      timeSliderVariableMetadata?.variable.type,
+    ]
+  );
+
+  // submit/add filter
+  const onSubmitTimeSlider = () => {
+    if (updateFilter != null)
+      // TODO: below is correct format
+      // updateFilter({ min: selectedDomain.start, max: selectedDomain.end })
+      // since there is no date variable, use number variable for test purpose
+      // in this case, the value should consider the first value before dash and change it to number, not string
+      updateFilter({
+        min: Number(selectedRange.start.split('-')[0]),
+        max: Number(selectedRange.end.split('-')[0]),
+      });
+  };
 
   // set constant values
   const defaultSymbolSize = 0.9;
 
-  return (
+  // change selectedRange considering async data request
+  useEffect(() => {
+    if (!getTimeSliderData.pending && getTimeSliderData.value != null) {
+      setSelectedRange({
+        start: getTimeSliderData.value.x[0],
+        end: getTimeSliderData.value.x[getTimeSliderData.value.x.length - 1],
+      });
+    }
+  }, [getTimeSliderData]);
+
+  // if no variable in a study is suitable to time slider, do not show time slider
+  return defaultTimeSliderVariabeId != null ? (
     <DraggablePanel
-      key={'TimeSlider-' + key}
+      key={'TimeSlider-' + draggablePanelKey}
       showPanelTitle
       panelTitle={'Time Slider'}
       confineToParentContainer
       defaultPosition={defaultPosition}
       isOpen={true}
       styleOverrides={{
-        // check appropriate zIndex
         zIndex: 5,
       }}
     >
       <div
         style={{
           width: timeFilterWidth,
-          height: 170,
+          // TODO: 170 is okay when using single lined variable name but 180 is for a variable name with two lines
+          // height: 170,
+          height: 180,
         }}
       >
         <div
@@ -138,7 +343,6 @@ Props) {
             alignItems: 'center',
           }}
         >
-          {/* InputVariables does not work yet */}
           <div style={{ marginTop: '-0.5em' }}>
             <InputVariables
               inputs={[
@@ -151,68 +355,102 @@ Props) {
               ]}
               entities={entities}
               selectedVariables={{
-                overlayVariable: configuration?.selectedVariable,
+                overlayVariable: timeSliderVariable,
               }}
               onChange={handleInputVariablesOnChange}
-              // configuration={activeMarkerConfiguration}
               starredVariables={starredVariables}
               toggleStarredVariable={toggleStarredVariable}
-              // constraints={constraints}
+              constraints={timeSliderVariableConstraints}
             />
           </div>
           {/* display start to end value */}
           <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
             {selectedRange?.start} ~ {selectedRange?.end}
           </div>
-        </div>
-        <EzTimeFilter
-          data={timeFilterData}
-          selectedRange={selectedRange}
-          setSelectedRange={setSelectedRange}
-          width={timeFilterWidth - 30}
-          height={100}
-          // line color of the selectedRange
-          brushColor={'lightblue'}
-          // add opacity
-          brushOpacity={0.4}
-          // axis tick and tick label color
-          axisColor={'#000'}
-          // whether movement of Brush should be disabled
-          disableDraggingSelection={buttonText === 'Expand'}
-          // disable brush selection: pass []
-          resizeTriggerAreas={buttonText === 'Expand' ? [] : ['left', 'right']}
-        />
-        {/* add a button to expand/shrink */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'right',
-            fontSize: defaultSymbolSize + 'em',
-          }}
-        >
-          {/* reset position to hide panel title */}
-          <div style={{ marginTop: '-0.3em', marginRight: '0.5em' }}>
-            <button
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                color: 'blue',
-                cursor: 'pointer',
-              }}
-              type="button"
-              onClick={buttonText === 'Expand' ? expandSlider : shrinkSlider}
-            >
-              {buttonText === 'Expand' ? (
-                <i className="fa fa-expand" aria-hidden="true"></i>
-              ) : (
-                <i className="fa fa-compress" aria-hidden="true"></i>
-              )}
-              &nbsp; {buttonText}
-            </button>
+          {/* button to reset selectedRange */}
+          <div
+            style={{
+              marginLeft: 'auto',
+              paddingRight: '1.5em',
+            }}
+          >
+            <Tooltip title={'filtering selected range'}>
+              <button
+                role="button"
+                aria-label="submit"
+                style={{ padding: '0.25em' }}
+                onClick={onSubmitTimeSlider}
+              >
+                Submit
+              </button>
+            </Tooltip>
           </div>
         </div>
+        {/* display data loading spinner while requesting data to the backend */}
+        {getTimeSliderData.pending && (
+          <div style={{ marginTop: '2em', height: 50, position: 'relative' }}>
+            <Spinner size={50} />
+          </div>
+        )}
+        {/* conditional loading for EzTimeFilter */}
+        {!getTimeSliderData.pending &&
+          getTimeSliderData.value != null &&
+          timeFilterData.length > 0 && (
+            <>
+              <EzTimeFilter
+                data={timeFilterData}
+                selectedRange={selectedRange}
+                setSelectedRange={setSelectedRange}
+                width={timeFilterWidth - 30}
+                height={100}
+                // line color of the selectedRange
+                brushColor={'lightblue'}
+                // add opacity
+                brushOpacity={0.4}
+                // axis tick and tick label color
+                axisColor={'#000'}
+                // whether movement of Brush should be disabled
+                disableDraggingSelection={buttonText === 'Expand'}
+                // disable brush selection: pass []
+                resizeTriggerAreas={
+                  buttonText === 'Expand' ? [] : ['left', 'right']
+                }
+              />
+              {/* add a button to expand/shrink */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'right',
+                  fontSize: defaultSymbolSize + 'em',
+                }}
+              >
+                {/* reset position to hide panel title */}
+                <div style={{ marginTop: '-0.3em', marginRight: '0.5em' }}>
+                  <button
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: 'blue',
+                      cursor: 'pointer',
+                    }}
+                    type="button"
+                    onClick={
+                      buttonText === 'Expand' ? expandSlider : shrinkSlider
+                    }
+                  >
+                    {buttonText === 'Expand' ? (
+                      <i className="fa fa-expand" aria-hidden="true"></i>
+                    ) : (
+                      <i className="fa fa-compress" aria-hidden="true"></i>
+                    )}
+                    &nbsp; {buttonText}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
       </div>
     </DraggablePanel>
-  );
+  ) : null;
 }

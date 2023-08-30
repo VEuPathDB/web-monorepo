@@ -122,8 +122,10 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     () =>
       scaleLinear({
         range: [yBrushMax, 0],
-        domain: [0, max(data, getYData) || 0],
-        nice: true,
+        domain: [0, max(data, getYData) || 1],
+        // set zero: false so that it does not include zero line in the middle of y-axis
+        // this is useful when all data have zeros
+        zero: false,
       }),
     [data, yBrushMax]
   );
@@ -140,10 +142,33 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   // compute bar width manually as scaleTime is used for Bar chart
   const barWidth = xBrushMax / data.length;
 
-  // after dragging ends
-  const onBrushEnd = () => {
-    //TO-DO a sort of submitting action for a filtered range later is required here
-    console.log('brush dragging ends!!!');
+  // make an event after dragging ends
+  const onBrushEnd = () => {};
+
+  // data bar color
+  const defaultColor = '#333';
+
+  // onclick to reset
+  const handleResetClick = () => {
+    if (brushRef?.current) {
+      const updater: UpdateBrush = (prevBrush) => {
+        const newExtent = brushRef.current!.getExtent(
+          initialBrushPosition.start,
+          initialBrushPosition.end
+        );
+
+        const newState: BaseBrushState = {
+          ...prevBrush,
+          start: { y: newExtent.y0, x: newExtent.x0 },
+          end: { y: newExtent.y1, x: newExtent.x1 },
+          extent: newExtent,
+        };
+
+        return newState;
+      };
+
+      brushRef.current.updateBrush(updater);
+    }
   };
 
   // debounce function for onBrushEnd: will be used for submitting filtered range later
@@ -151,8 +176,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     () => debounce(onBrushEnd, debounceRateMs),
     [onBrushEnd]
   );
-
-  const defaultColor = '#333';
 
   // Cancel pending onBrushEnd request when this component is unmounted
   useEffect(() => {
@@ -215,6 +238,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
             onChange={onBrushChange}
+            onClick={handleResetClick}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
             disableDraggingSelection={disableDraggingSelection}
