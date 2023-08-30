@@ -240,12 +240,21 @@ export function TableFilter({
   );
 
   const handleSearch = useCallback(
-    (_: unknown, searchTerm: string) => {
+    /**
+     * shouldResetPaging is true when the number of filtered rows is no longer enough to render
+     * rows on the currentPage
+     *
+     * Example:
+     *  We are on page 3 and each page has 50 rows. If our search returns 100 or less rows, page 3
+     *  would no longer have any rows to display. Thus, we reset the currentPage to 1.
+     */
+    (_: unknown, searchTerm: string, shouldResetPaging: boolean = false) => {
       analysisState.setVariableUISettings((currentState) => ({
         ...currentState,
         [uiStateKey]: {
           ...uiState,
           searchTerm,
+          ...(shouldResetPaging ? { currentPage: 1 } : {}),
         },
       }));
     },

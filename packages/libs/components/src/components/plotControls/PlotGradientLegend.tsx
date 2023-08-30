@@ -81,7 +81,11 @@ export default function PlotGradientLegend({
 
   return (
     <div>
-      <svg id="gradientLegend" height={gradientBoxHeight + 20} width={150}>
+      <svg
+        id="gradientLegend"
+        height={gradientBoxHeight + 20}
+        width={gradientBoxWidth + 60}
+      >
         <defs>
           <linearGradient id="linearGradient" x1="0" x2="0" y1="1" y2="0">
             {stopPoints}

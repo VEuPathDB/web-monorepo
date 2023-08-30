@@ -10,7 +10,7 @@ import {
   VolcanoPlotDataPoint,
 } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
-import { SignificanceColors } from '../types/plots';
+import { SignificanceColors, significanceColors } from '../types/plots';
 import {
   XYChart,
   Axis,
@@ -20,7 +20,9 @@ import {
   AnnotationLineSubject,
   DataContext,
   AnnotationLabel,
+  Tooltip,
 } from '@visx/xychart';
+import findNearestDatumXY from '@visx/xychart/lib/utils/findNearestDatumXY';
 import { Group } from '@visx/group';
 import {
   gridStyles,
@@ -36,6 +38,7 @@ import Spinner from '../components/Spinner';
 import { ToImgopts } from 'plotly.js';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import domToImage from 'dom-to-image';
+import './VolcanoPlot.css';
 
 export interface RawDataMinMaxValues {
   x: NumberRange;
@@ -65,7 +68,7 @@ export interface VolcanoPlotProps {
   /** Title of the plot */
   plotTitle?: string;
   /** marker fill opacity: range from 0 to 1 */
-  markerBodyOpacity?: number;
+  markerBodyOpacity: number;
   /** Truncation bar fill color. If no color provided, truncation bars will be filled with a black and white pattern */
   truncationBarFill?: string;
   /** container name */
@@ -120,8 +123,8 @@ function TruncationRectangle(props: TruncationRectangleProps) {
 function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     data = EmptyVolcanoPlotData,
-    independentAxisRange, // not yet implemented - expect this to be set by user
-    dependentAxisRange, // not yet implemented - expect this to be set by user
+    independentAxisRange,
+    dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
@@ -190,6 +193,18 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
+  /**
+   * Check whether each threshold line is within the graph's axis ranges so we can
+   * prevent the line from rendering outside the graph.
+   */
+  const showNegativeFoldChangeThresholdLine =
+    -log2FoldChangeThreshold > xAxisMin;
+  const showPositiveFoldChangeThresholdLine =
+    log2FoldChangeThreshold < xAxisMax;
+  const showSignificanceThresholdLine =
+    -Math.log10(Number(significanceThreshold)) > yAxisMin &&
+    -Math.log10(Number(significanceThreshold)) < yAxisMax;
+
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
     <div
@@ -197,13 +212,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
       style={{ ...containerStyles, position: 'relative' }}
     >
       <div
-        ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work wiht domToImage
+        ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work with domToImage
         style={{ width: '100%', height: '100%' }}
       >
         {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
           so use caution when ordering the children (ex. draw axes before data).  */}
-
         <XYChart
           xScale={{
             type: 'linear',
@@ -223,6 +237,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             ],
             zero: false,
           }}
+          findNearestDatumOverride={findNearestDatumXY}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
           <Grid numTicks={6} lineStyle={gridStyles} />
@@ -261,7 +276,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           is on the points instead of the line connecting them. */}
 
           {/* Draw horizontal significance threshold */}
-          {significanceThreshold && (
+          {significanceThreshold && showSignificanceThresholdLine && (
             <Annotation
               datum={{
                 x: 0, // horizontal line so x could be anything
@@ -278,24 +293,28 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           {/* Draw both vertical log2 fold change threshold lines */}
           {log2FoldChangeThreshold && (
             <>
-              <Annotation
-                datum={{
-                  x: -log2FoldChangeThreshold,
-                  y: 0, // vertical line so y could be anything
-                }}
-                {...xyAccessors}
-              >
-                <AnnotationLineSubject {...thresholdLineStyles} />
-              </Annotation>
-              <Annotation
-                datum={{
-                  x: log2FoldChangeThreshold,
-                  y: 0, // vertical line so y could be anything
-                }}
-                {...xyAccessors}
-              >
-                <AnnotationLineSubject {...thresholdLineStyles} />
-              </Annotation>
+              {showNegativeFoldChangeThresholdLine && (
+                <Annotation
+                  datum={{
+                    x: -log2FoldChangeThreshold,
+                    y: 0, // vertical line so y could be anything
+                  }}
+                  {...xyAccessors}
+                >
+                  <AnnotationLineSubject {...thresholdLineStyles} />
+                </Annotation>
+              )}
+              {showPositiveFoldChangeThresholdLine && (
+                <Annotation
+                  datum={{
+                    x: log2FoldChangeThreshold,
+                    y: 0, // vertical line so y could be anything
+                  }}
+                  {...xyAccessors}
+                >
+                  <AnnotationLineSubject {...thresholdLineStyles} />
+                </Annotation>
+              )}
             </>
           )}
 
@@ -303,14 +322,79 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
             down to those elements, but I haven't found it yet */}
-          <Group opacity={markerBodyOpacity ?? 1}>
+          <Group opacity={markerBodyOpacity}>
             <GlyphSeries
               dataKey={'data'} // unique key
-              data={data} // data as an array of obejcts (points). Accessed with dataAccessors
+              data={data}
               {...dataAccessors}
-              colorAccessor={(d) => d.significanceColor}
+              colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
+              findNearestDatumOverride={findNearestDatumXY}
             />
           </Group>
+          <Tooltip<VolcanoPlotDataPoint>
+            snapTooltipToDatumX
+            snapTooltipToDatumY
+            showVerticalCrosshair
+            showHorizontalCrosshair
+            horizontalCrosshairStyle={{ stroke: 'red' }}
+            verticalCrosshairStyle={{ stroke: 'red' }}
+            unstyled
+            applyPositionStyle
+            renderTooltip={(d) => {
+              const data = d.tooltipData?.nearestDatum?.datum;
+              /**
+               * Notes regarding colors in the tooltips:
+               *  1. We use the data point's significanceColor property for background color
+               *  2. For color contrast reasons, color for text and hr's border is set conditionally:
+               *      - if significanceColor matches the 'inconclusive' color (grey), we use black
+               *      - else, we use white
+               *   (white font meets contrast ratio threshold (min 3:1 for UI-y things) w/ #AC3B4E (red) and #0E8FAB (blue))
+               */
+              const color =
+                data?.significanceColor === significanceColors['inconclusive']
+                  ? 'black'
+                  : 'white';
+              return (
+                <div
+                  className="VolcanoPlotTooltip"
+                  style={{
+                    color,
+                    background: data?.significanceColor,
+                  }}
+                >
+                  <ul>
+                    {data?.displayLabels
+                      ? data.displayLabels.map((label) => (
+                          <li key={label}>
+                            <span>{label}</span>
+                          </li>
+                        ))
+                      : data?.pointIDs?.map((id) => (
+                          <li key={id}>
+                            <span>{id}</span>
+                          </li>
+                        ))}
+                  </ul>
+                  <div
+                    className="pseudo-hr"
+                    style={{ borderBottom: `1px solid ${color}` }}
+                  ></div>
+                  <ul>
+                    <li>
+                      <span>log2 Fold Change:</span> {data?.log2foldChange}
+                    </li>
+                    <li>
+                      <span>P Value:</span> {data?.pValue}
+                    </li>
+                    <li>
+                      <span>Adjusted P Value:</span>{' '}
+                      {data?.adjustedPValue ?? 'n/a'}
+                    </li>
+                  </ul>
+                </div>
+              );
+            }}
+          />
 
           {/* Truncation indicators */}
           {/* Example from https://airbnb.io/visx/docs/pattern */}

@@ -76,6 +76,7 @@ const Template: Story<TemplateProps> = (args) => {
     })
     .map((d) => ({
       ...d,
+      pointID: d.pointID ? [d.pointID] : undefined,
       significanceColor: assignSignificanceColor(
         Number(d.log2foldChange),
         Number(d.pValue),

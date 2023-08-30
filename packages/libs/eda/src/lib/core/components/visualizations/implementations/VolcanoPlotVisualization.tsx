@@ -6,7 +6,7 @@ import VolcanoPlot, {
 } from '@veupathdb/components/lib/plots/VolcanoPlot';
 
 import * as t from 'io-ts';
-import { useCallback, useState, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
@@ -33,18 +33,31 @@ import DataClient, {
   VolcanoPlotRequestParams,
   VolcanoPlotResponse,
 } from '../../../api/DataClient';
+import {
+  VolcanoPlotData,
+  VolcanoPlotDataPoint,
+} from '@veupathdb/components/lib/types/plots/volcanoplot';
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { NumberOrDate } from '@veupathdb/components/lib/types/general';
 import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
 import { yellow } from '@material-ui/core/colors';
 import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 import { significanceColors } from '@veupathdb/components/lib/types/plots';
-import { NumberRange } from '../../../types/general';
+import { NumberOrDateRange, NumberRange } from '../../../types/general';
 import { max, min } from 'lodash';
+
+// plot controls
+import SliderWidget, {
+  plotsSliderOpacityGradientColorSpec,
+} from '@veupathdb/components/lib/components/widgets/Slider';
+import { ResetButtonCoreUI } from '../../ResetButton';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import { fixVarIdLabel } from '../../../utils/visualization';
 // end imports
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
 const DEFAULT_FC_THRESHOLD = 2;
+const DEFAULT_MARKER_OPACITY = 0.7;
 /**
  * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
  * We could have also used d3.scale.nice but then we dont have precise control of where the extremes
@@ -74,16 +87,20 @@ function createDefaultConfig(): VolcanoPlotConfig {
   return {
     log2FoldChangeThreshold: DEFAULT_FC_THRESHOLD,
     significanceThreshold: DEFAULT_SIG_THRESHOLD,
-    markerBodyOpacity: 0.5,
+    markerBodyOpacity: DEFAULT_MARKER_OPACITY,
+    independentAxisRange: undefined,
+    dependentAxisRange: undefined,
   };
 }
 
 export type VolcanoPlotConfig = t.TypeOf<typeof VolcanoPlotConfig>;
-
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const VolcanoPlotConfig = t.partial({
   log2FoldChangeThreshold: t.number,
   significanceThreshold: t.number,
   markerBodyOpacity: t.number,
+  independentAxisRange: NumberRange,
+  dependentAxisRange: NumberRange,
 });
 
 interface Options
@@ -93,7 +110,7 @@ interface Options
 // Volcano Plot Visualization
 // The volcano plot visualization takes no input variables. The received data populates all parts of the plot.
 // The user can control the threshold lines, which affect the marker colors. Additional controls
-// will include axis ranges.
+// include axis ranges and marker opacity slider.
 function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const {
     options,
@@ -185,13 +202,10 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   // Determine mins, maxes of axes in the plot. These are different than the data mins/maxes because
   // of the log transform and the little bit of padding, or because axis ranges are supplied.
-  // NOTE: this state may be unnecessary depending on how we implement user-controlled axis ranges
-  const [xAxisRange, setXAxisRange] =
-    useState<NumberRange | undefined>(undefined);
   const independentAxisRange = useMemo(() => {
     if (!data.value) return undefined;
-    if (xAxisRange) {
-      return xAxisRange;
+    if (vizConfig.independentAxisRange) {
+      return vizConfig.independentAxisRange;
     } else {
       const {
         x: { min: dataXMin, max: dataXMax },
@@ -199,19 +213,16 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       // We can use the dataMin and dataMax here because we don't have a further transform
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
-        min: dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
-        max: dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR,
+        min: Math.floor(dataXMin - (dataXMax - dataXMin) * AXIS_PADDING_FACTOR),
+        max: Math.ceil(dataXMax + (dataXMax - dataXMin) * AXIS_PADDING_FACTOR),
       };
     }
-  }, [data.value, xAxisRange, rawDataMinMaxValues]);
+  }, [data.value, vizConfig.independentAxisRange, rawDataMinMaxValues]);
 
-  // NOTE: this state may be unnecessary depending on how we implement user-controlled axis ranges
-  const [yAxisRange, setYAxisRange] =
-    useState<NumberRange | undefined>(undefined);
   const dependentAxisRange = useMemo(() => {
     if (!data.value) return undefined;
-    if (yAxisRange) {
-      return yAxisRange;
+    if (vizConfig.dependentAxisRange) {
+      return vizConfig.dependentAxisRange;
     } else {
       const {
         y: { min: dataYMin, max: dataYMax },
@@ -221,11 +232,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       const yAxisMax = -Math.log10(dataYMin);
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
-        min: yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
-        max: yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR,
+        min: Math.floor(yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
+        max: Math.ceil(yAxisMax + (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
       };
     }
-  }, [data.value, yAxisRange, rawDataMinMaxValues]);
+  }, [data.value, vizConfig.dependentAxisRange, rawDataMinMaxValues]);
 
   const significanceThreshold =
     vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD;
@@ -233,14 +244,12 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD;
 
   /**
-   * Let's filter out data that falls outside of the plot axis ranges and then
-   * assign a significance color to the visible data
    * This version of the data will get passed to the VolcanoPlot component
    */
   const finalData = useMemo(() => {
     if (data.value && independentAxisRange && dependentAxisRange) {
-      // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
-      return data.value
+      const cleanedData = data.value
+        // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
         .filter((d) => {
           const log2foldChange = Number(d?.log2foldChange);
           const transformedPValue = -Math.log10(Number(d?.pValue));
@@ -251,16 +260,78 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             transformedPValue >= dependentAxisRange.min
           );
         })
-        .map((d) => ({
-          ...d,
-          significanceColor: assignSignificanceColor(
-            Number(d.log2foldChange),
-            Number(d.pValue),
-            significanceThreshold,
-            log2FoldChangeThreshold,
-            significanceColors
-          ),
-        }));
+        /**
+         * Okay, this map function is doing a number of things.
+         *  1.  We're going to remove the pointID property and replace it with a pointIDs property that is an array of strings.
+         *      Some data share coordinates but correspond to a different pointID. By converting pointID to pointIDs, we can
+         *      later aggregate data that share coordinates and then render one tooltip that lists all pointIDs corresponding
+         *      to the point on the plot
+         *  2.  We also add a significanceColor property that is assigned a value that gets used in VolcanoPlot when rendering
+         *      the data point and the data point's tooltip. The property is also used in the countsData logic.
+         */
+        .map((d) => {
+          const { pointID, ...remainingProperties } = d;
+          // Try to find a user-friendly label for the point. Note that pointIDs are in entityID.variableID format.
+          const displayLabel =
+            pointID &&
+            fixVarIdLabel(
+              pointID.split('.')[1],
+              pointID.split('.')[0],
+              entities
+            );
+          return {
+            ...remainingProperties,
+            pointIDs: pointID ? [pointID] : undefined,
+            displayLabels: displayLabel ? [displayLabel] : undefined,
+            significanceColor: assignSignificanceColor(
+              Number(d.log2foldChange),
+              Number(d.pValue),
+              significanceThreshold,
+              log2FoldChangeThreshold,
+              significanceColors
+            ),
+          };
+        })
+        // Sort data in ascending order for tooltips to work most effectively
+        .sort((a, b) => Number(a.log2foldChange) - Number(b.log2foldChange));
+
+      // Here we're going to loop through the cleanedData to aggregate any data with shared coordinates.
+      // For each entry, we'll check if our aggregatedData includes an item with the same coordinates:
+      //  Yes? => update the matched aggregatedData element's pointID array to include the pointID of the matching entry
+      //  No? => just push the entry onto the aggregatedData array since no match was found
+      const aggregatedData: VolcanoPlotData = [];
+      for (const entry of cleanedData) {
+        const foundIndex = aggregatedData.findIndex(
+          (d: VolcanoPlotDataPoint) =>
+            d.log2foldChange === entry.log2foldChange &&
+            d.pValue === entry.pValue
+        );
+        if (foundIndex === -1) {
+          aggregatedData.push(entry);
+        } else {
+          const { pointIDs, displayLabels } = aggregatedData[foundIndex];
+          if (pointIDs) {
+            aggregatedData[foundIndex] = {
+              ...aggregatedData[foundIndex],
+              pointIDs: [
+                ...pointIDs,
+                ...(entry.pointIDs ? entry.pointIDs : []),
+              ],
+              displayLabels: displayLabels && [
+                ...displayLabels,
+                ...(entry.displayLabels ? entry.displayLabels : []),
+              ],
+            };
+          } else {
+            aggregatedData[foundIndex] = {
+              ...aggregatedData[foundIndex],
+              pointIDs: entry.pointIDs,
+              displayLabels: entry.displayLabels,
+            };
+          }
+        }
+      }
+      return aggregatedData;
     }
   }, [
     data.value,
@@ -270,7 +341,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     log2FoldChangeThreshold,
   ]);
 
-  // For the legend, we need the counts of each assigned significance value
+  // For the legend, we need the counts of the data
   const countsData = useMemo(() => {
     if (!finalData) return;
     const counts = {
@@ -279,7 +350,14 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       [significanceColors['low']]: 0,
     };
     for (const entry of finalData) {
-      counts[entry.significanceColor]++;
+      if (entry.significanceColor) {
+        // Recall that finalData combines data with shared coords into one point in order to display a
+        // single tooltip that lists all the pointIDs for that shared point. This means we need to use
+        // the length of the pointID array to accurately reflect the counts of unique data (not unique coords).
+        const addend = entry.pointIDs?.length ?? 1;
+        counts[entry.significanceColor] =
+          addend + counts[entry.significanceColor];
+      }
     }
     return counts;
   }, [finalData]);
@@ -288,10 +366,10 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     updateThumbnail,
     plotContainerStyles,
     [
-      data,
+      finalData,
       // vizConfig.checkedLegendItems, TODO
-      // vizConfig.independentAxisRange, TODO
-      // vizConfig.dependentAxisRange, TODO
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
       vizConfig.markerBodyOpacity,
     ]
   );
@@ -321,7 +399,9 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
      * Since we are rendering a single point in order to display an empty viz, let's hide the data point
      * by setting the marker opacity to 0 when data.value doesn't exist
      */
-    markerBodyOpacity: data.value ? vizConfig.markerBodyOpacity ?? 0.5 : 0,
+    markerBodyOpacity: data.value
+      ? vizConfig.markerBodyOpacity ?? DEFAULT_MARKER_OPACITY
+      : 0,
     containerStyles: plotContainerStyles,
     /**
      * Let's not display comparisonLabels before we have data for the viz. This prevents what may be
@@ -342,8 +422,130 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   // @ts-ignore
   const plotNode = <VolcanoPlot {...volcanoPlotProps} ref={plotRef} />;
 
-  // TODO
-  const controlsNode = <> </>;
+  const controlsNode = (
+    <div style={{ margin: '1em 1em 2em 1em' }}>
+      <LabelledGroup
+        label="Plot controls"
+        containerStyles={{
+          paddingLeft: 0,
+        }}
+      >
+        <SliderWidget
+          minimum={0}
+          maximum={1}
+          step={0.1}
+          value={vizConfig.markerBodyOpacity ?? DEFAULT_MARKER_OPACITY}
+          debounceRateMs={250}
+          onChange={(newValue: number) => {
+            updateVizConfig({ markerBodyOpacity: newValue });
+          }}
+          containerStyles={{ width: '20em', marginTop: '0.5em' }}
+          showLimits={true}
+          label={'Marker opacity'}
+          colorSpec={plotsSliderOpacityGradientColorSpec}
+        />
+      </LabelledGroup>
+      <div
+        style={{
+          display: 'flex',
+          gap: 20,
+        }}
+      >
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup
+              label="X-axis range"
+              children={<></>}
+              containerStyles={{
+                marginRight: 0,
+                paddingLeft: 0,
+              }}
+            />
+            <ResetButtonCoreUI
+              size={'medium'}
+              text={''}
+              themeRole={'primary'}
+              tooltip={'Reset to defaults'}
+              disabled={!vizConfig.independentAxisRange}
+              onPress={() =>
+                updateVizConfig({ independentAxisRange: undefined })
+              }
+            />
+          </div>
+          <AxisRangeControl
+            containerStyles={{ maxWidth: '350px' }}
+            valueType="number"
+            range={independentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              const typeCheckedNewRange =
+                typeof newRange?.min === 'number' &&
+                typeof newRange?.max === 'number'
+                  ? {
+                      min: newRange.min,
+                      max: newRange.max,
+                    }
+                  : undefined;
+              updateVizConfig({
+                independentAxisRange: typeCheckedNewRange,
+              });
+            }}
+            step={0.01}
+          />
+        </div>
+        {/** vertical line to separate x from y range controls */}
+        <div style={{ borderRight: '2px solid lightgray' }}></div>
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <LabelledGroup
+              label="Y-axis range"
+              children={<></>}
+              containerStyles={{
+                marginRight: 0,
+                paddingLeft: 0,
+              }}
+            />
+            <ResetButtonCoreUI
+              size={'medium'}
+              text={''}
+              themeRole={'primary'}
+              tooltip={'Reset to defaults'}
+              disabled={!vizConfig.dependentAxisRange}
+              onPress={() => updateVizConfig({ dependentAxisRange: undefined })}
+            />
+          </div>
+          <AxisRangeControl
+            containerStyles={{ maxWidth: '350px' }}
+            valueType="number"
+            range={dependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              const typeCheckedNewRange =
+                typeof newRange?.min === 'number' &&
+                typeof newRange?.max === 'number'
+                  ? {
+                      min: newRange.min,
+                      max: newRange.max,
+                    }
+                  : undefined;
+              updateVizConfig({
+                dependentAxisRange: typeCheckedNewRange,
+              });
+            }}
+            step={0.01}
+          />
+        </div>
+      </div>
+    </div>
+  );
 
   const legendNode = finalData && countsData && (
     <PlotLegend
