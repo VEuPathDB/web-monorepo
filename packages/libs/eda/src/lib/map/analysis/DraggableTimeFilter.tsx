@@ -7,9 +7,15 @@ import { InputVariables } from '../../core/components/visualizations/InputVariab
 import {
   VariablesByInputName,
   DataElementConstraintRecord,
+  filterVariablesByConstraint,
 } from '../../core/utils/data-element-constraints';
 import { AnalysisState, usePromise } from '../../core';
-import { StudyEntity } from '../../core/types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StudyEntity,
+  Variable,
+} from '../../core/types/study';
 import { VariableDescriptor } from '../../core/types/variable';
 
 import { SubsettingClient } from '../../core/api';
@@ -21,6 +27,7 @@ import {
 } from '@veupathdb/components/lib/types/general';
 import { DateRangeFilter, NumberRangeFilter } from '../../core/types/filter';
 import { Tooltip } from '@material-ui/core';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 interface Props {
   studyId: string;
@@ -60,59 +67,48 @@ export default function DraggableTimeFilter({
     },
   ];
 
-  // find initial variable id for time slider
-  const defaultTimeSliderVariabeId = useMemo(
-    () =>
-      entities
-        .map((data) => {
-          return data.variables.find(
-            (variable) =>
-              // TODO temporarily allows integer for test purpose
-              // no need to allow 'integer' for actual purpose
-              (variable.type === 'date' || variable.type === 'integer') &&
-              // TODO: thus, below is correct one instead of above
-              // (variable.type === 'date') &&
-              variable.dataShape === 'continuous' &&
-              variable.isTemporal
-          );
-        })
-        .filter((data) => data != null)[0]?.id,
-    [entities]
+  const temporalVariableTree = filterVariablesByConstraint(
+    entities[0],
+    timeSliderVariableConstraints[0]['overlayVariable']
   );
 
-  // find initial entity id for time slider
-  const defaultTimeSliderEntityId = useMemo(
-    () =>
-      entities
-        .map((data) => {
-          if (
-            data.variables.find(
-              (variable) => variable.id === defaultTimeSliderVariabeId
-            )
-          )
-            return data;
-        })
-        .filter((data) => data != null)[0]?.id,
-    [entities]
-  );
+  // take the first suitable variable from the filtered variable tree
+
+  // first find the first entity with some variables that passed the filter
+  const defaultTimeSliderEntity: StudyEntity | undefined = Array.from(
+    preorder(temporalVariableTree, (entity) => entity.children ?? [])
+  )
+    // not all `variables` are actually variables, so we filter to be sure
+    .filter(
+      (entity) =>
+        entity.variables.filter((variable) => Variable.is(variable)).length > 0
+    )[0];
+
+  // then take the first variable from it
+  const defaultTimeSliderVariable: Variable | undefined =
+    defaultTimeSliderEntity.variables.filter((variable): variable is Variable =>
+      Variable.is(variable)
+    )[0];
 
   // set initial variable so that time slider loads data in the beginning
-  const [timeSliderVariable, setTimeSliderVariable] =
-    useState<VariableDescriptor>({
-      entityId: defaultTimeSliderEntityId ?? '',
-      variableId: defaultTimeSliderVariabeId ?? '',
-    });
+  const [timeSliderVariable, setTimeSliderVariable] = useState<
+    VariableDescriptor | undefined
+  >(
+    defaultTimeSliderEntity && defaultTimeSliderVariable
+      ? {
+          entityId: defaultTimeSliderEntity.id,
+          variableId: defaultTimeSliderVariable.id,
+        }
+      : undefined
+  );
 
   // find variable metadata: use timeSliderVariable, not defaultTimeSlider ids
   const findEntityAndVariable = useFindEntityAndVariable();
-  const timeSliderVariableMetadata = findEntityAndVariable({
-    entityId: timeSliderVariable.entityId ?? '',
-    variableId: timeSliderVariable.variableId ?? '',
-  });
+  const timeSliderVariableMetadata = findEntityAndVariable(timeSliderVariable);
 
   // set initial selectedRange as empty, then change it at useEffect due to data request
   const [selectedRange, setSelectedRange] = useState({
-    start: '',
+    start: '', // TO DO: use undefined
     end: '',
   });
 
@@ -122,7 +118,11 @@ export default function DraggableTimeFilter({
       // no data request if no variable is available
       if (
         timeSliderVariableMetadata == null ||
-        !('distributionDefaults' in timeSliderVariableMetadata.variable)
+        timeSliderVariable == null ||
+        !(
+          NumberVariable.is(timeSliderVariableMetadata.variable) ||
+          DateVariable.is(timeSliderVariableMetadata.variable)
+        )
       )
         return;
 
@@ -182,7 +182,7 @@ export default function DraggableTimeFilter({
 
   // set time slider width and y position
   const timeFilterWidth = 750;
-  const yPosition = 0;
+  const yPosition = 100; // TEMP: moved it down so I can see it all
 
   // set initial position: shrink
   const [defaultPosition, setDefaultPosition] = useState({
@@ -237,6 +237,7 @@ export default function DraggableTimeFilter({
 
   const filter = filters?.find(
     (f): f is NumberRangeFilter | DateRangeFilter =>
+      timeSliderVariable != null &&
       f.variableId === timeSliderVariable.variableId &&
       f.entityId === timeSliderVariable.entityId &&
       (f.type === 'dateRange' || f.type === 'numberRange')
@@ -251,6 +252,7 @@ export default function DraggableTimeFilter({
       if (selectedRange == null) {
         if (otherFilters.length !== filters?.length) setFilters(otherFilters);
       } else {
+        if (timeSliderVariable == null) return;
         if (
           filter &&
           (filter.type === 'dateRange' || filter.type === 'numberRange') &&
@@ -262,14 +264,12 @@ export default function DraggableTimeFilter({
           otherFilters.concat([
             timeSliderVariableMetadata?.variable.type === 'date'
               ? {
-                  variableId: timeSliderVariable.variableId,
-                  entityId: timeSliderVariable.entityId,
+                  ...timeSliderVariable,
                   type: 'dateRange',
                   ...(selectedRange as DateRange),
                 }
               : {
-                  variableId: timeSliderVariable.variableId,
-                  entityId: timeSliderVariable.entityId,
+                  ...timeSliderVariable,
                   type: 'numberRange',
                   ...(selectedRange as NumberRange),
                 },
@@ -281,8 +281,7 @@ export default function DraggableTimeFilter({
       filters,
       filter,
       setFilters,
-      timeSliderVariable.entityId,
-      timeSliderVariable.variableId,
+      timeSliderVariable,
       timeSliderVariableMetadata?.variable.type,
     ]
   );
@@ -314,7 +313,7 @@ export default function DraggableTimeFilter({
   }, [getTimeSliderData]);
 
   // if no variable in a study is suitable to time slider, do not show time slider
-  return defaultTimeSliderVariabeId != null ? (
+  return defaultTimeSliderVariable != null ? (
     <DraggablePanel
       key={'TimeSlider-' + draggablePanelKey}
       showPanelTitle
