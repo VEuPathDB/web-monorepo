@@ -100,7 +100,6 @@ export const AppState = t.intersection([
       entityId: t.string,
       variableId: t.string,
     }),
-    isSubsetPanelOpen: t.boolean,
   }),
 ]);
 
@@ -225,7 +224,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setMarkerConfigurations: useSetter('markerConfigurations'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
-    setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
   };

@@ -195,7 +195,6 @@ function MapAnalysisImpl(props: ImplProps) {
     setSubsetVariableAndEntity,
     sharingUrl,
     setIsSidePanelExpanded,
-    setIsSubsetPanelOpen = () => {},
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
     geoConfigs,
@@ -552,7 +551,6 @@ function MapAnalysisImpl(props: ImplProps) {
       : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
-    setIsSubsetPanelOpen(true);
     setActiveSideMenuId(MapSideNavItemLabels.Filter);
     setIsSidePanelExpanded(true);
   }
