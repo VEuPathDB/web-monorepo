@@ -178,15 +178,11 @@ export function useAnalysis(
       throw new Error("Attempt to save an analysis that hasn't been loaded.");
 
     if (!isSavedAnalysis(analysis)) {
-      console.log('creating analysis');
       createAnalysis(analysis);
-      console.log('created analysis');
     }
     // Only save if the analysis has changed
     else if (analysis !== analysisCache.get(analysis.analysisId)) {
-      console.log('updating analysis');
       await analysisClient.updateAnalysis(analysis.analysisId, analysis);
-      console.log('updated analysis');
       analysisCache.set(analysis.analysisId, analysis);
     }
   }, [analysisClient, createAnalysis]);
@@ -232,24 +228,14 @@ export function useAnalysis(
     const scheduleUpdate = analysisId != null || createIfUnsaved;
     return useCallback(
       (nestedValue: T | ((nestedValue: T) => T)) => {
-        console.log({ scheduleUpdate });
-        console.log({ nestedValue, nestedValueLens });
         setAnalysis((analysis) => {
           if (analysis == null)
             throw new Error(
               "Cannot update an analysis before it's been loaded."
             );
-          const localUpdateAnalysis = updateAnalysis(
-            analysis,
-            nestedValueLens,
-            nestedValue
-          );
-          console.log({ localUpdateAnalysis });
-          return localUpdateAnalysis;
+          return updateAnalysis(analysis, nestedValueLens, nestedValue);
         });
-        console.log('before setUpdateScheduled');
         setUpdateScheduled(scheduleUpdate);
-        console.log('after setUpdateScheduled');
       },
       [nestedValueLens, scheduleUpdate]
     );
@@ -389,9 +375,7 @@ export function useAnalysis(
   useEffect(() => {
     const id = setTimeout(function deferredSave() {
       if (updateScheduled) {
-        console.log('saving analysis');
         saveAnalysis();
-        console.log('saved analysis');
         setUpdateScheduled(false);
       }
     }, 1000);

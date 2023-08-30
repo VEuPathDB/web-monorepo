@@ -142,7 +142,6 @@ export function AllAnalyses(props: Props) {
     () => (redirectURL ? history.push(redirectURL) : null),
     [history, redirectURL]
   );
-  console.log({ redirectURL });
 
   const searchTextQueryParam = useMemo(() => {
     if (!synchronizeWithUrl) return '';
