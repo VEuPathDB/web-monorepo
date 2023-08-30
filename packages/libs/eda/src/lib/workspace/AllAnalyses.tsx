@@ -342,7 +342,6 @@ export function AllAnalyses(props: Props) {
           selectedAnalyses.has(analysis.analysisId),
       },
       actions: [
-        // A button to create a new analysis
         {
           element:
             activeAnalysisId && redirectToNewAnalysis ? (
