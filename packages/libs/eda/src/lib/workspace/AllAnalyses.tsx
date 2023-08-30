@@ -761,9 +761,7 @@ export function AllAnalyses(props: Props) {
           setIsOpen={setIsAnalysisNameDialogOpen}
           initialAnalysisName={analysis.displayName}
           setAnalysisName={analysisState.setName}
-          redirectToNewAnalysis={() => {
-            setTimeout(redirectToNewAnalysis, 1200);
-          }}
+          redirectToNewAnalysis={redirectToNewAnalysis}
         />
       )}
     </>
