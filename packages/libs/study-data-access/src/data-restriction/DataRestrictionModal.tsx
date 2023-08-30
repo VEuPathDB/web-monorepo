@@ -11,7 +11,11 @@ import {
   actionRequiresApproval,
 } from './DataRestrictionUtils';
 import Modal from '@veupathdb/wdk-client/lib/Components/Overlays/Modal';
-import { IconAlt as Icon, Link, Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import {
+  IconAlt as Icon,
+  Link,
+  Tooltip,
+} from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { getStudyAccess, getStudyId, getStudyName } from '../shared/studies';
 
@@ -85,7 +89,10 @@ function Message(props: Props) {
 
 function PolicyNotice(props: Props) {
   const { study, user, permissions, action } = props;
-  const message = action === 'download' ? 'This study requires you to submit an access request' : getRestrictionMessage({ action, permissions, study, user });
+  const message =
+    action === 'download'
+      ? 'This study requires you to submit an access request'
+      : getRestrictionMessage({ action, permissions, study, user });
   const policyUrl = getPolicyUrl(study);
   return isPrereleaseStudy(
     getStudyAccess(study),
@@ -93,7 +100,8 @@ function PolicyNotice(props: Props) {
     permissions
   ) ? null : !policyUrl ? null : getRequestNeedsApproval(study) == '0' ? (
     <p>
-      {message}. Data access will be granted immediately upon request submission.
+      {message}. Data access will be granted immediately upon request
+      submission.
       <br />
       <br />
       Please read the{' '}
@@ -147,7 +155,7 @@ function Buttons(props: Props) {
       Submit Data Access Request
       <Icon fa="envelope-open-o right-side" />
     </button>
-)
+  );
 
   return isPrereleaseStudy(
     getStudyAccess(study),
@@ -188,12 +196,14 @@ function Buttons(props: Props) {
           <Icon fa="sign-in right-side" />
         </button>
       )}
-      {!approvalRequired ? null : (
-        user.isGuest ? (
-          <Tooltip content={'You must be logged in to request data access'} showDelay={0}>
-            {submitDataAccessButton}
-          </Tooltip> 
-        ) : 
+      {!approvalRequired ? null : user.isGuest ? (
+        <Tooltip
+          content={'You must be logged in to request data access'}
+          showDelay={0}
+        >
+          {submitDataAccessButton}
+        </Tooltip>
+      ) : (
         submitDataAccessButton
       )}
       {!strict ? (

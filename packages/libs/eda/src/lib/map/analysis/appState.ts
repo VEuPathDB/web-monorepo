@@ -2,10 +2,9 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
   AnalysisState,
-  BinDefinitions,
   useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
@@ -16,7 +15,30 @@ const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 const MarkerType = t.keyof({
   barplot: null,
   pie: null,
+  bubble: null,
 });
+
+// user-specified selection
+export type SelectedValues = t.TypeOf<typeof SelectedValues>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedValues = t.union([t.array(t.string), t.undefined]);
+
+export type BinningMethod = t.TypeOf<typeof BinningMethod>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const BinningMethod = t.union([
+  t.literal('equalInterval'),
+  t.literal('quantile'),
+  t.literal('standardDeviation'),
+  t.undefined,
+]);
+
+export type SelectedCountsOption = t.TypeOf<typeof SelectedCountsOption>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedCountsOption = t.union([
+  t.literal('filtered'),
+  t.literal('visible'),
+  t.undefined,
+]);
 
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -28,13 +50,28 @@ export const MarkerConfiguration = t.intersection([
   t.union([
     t.type({
       type: t.literal('barplot'),
-      selectedValues: t.union([BinDefinitions, t.undefined]), // user-specified selection
+      selectedValues: SelectedValues,
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
+      binningMethod: BinningMethod,
+      dependentAxisLogScale: t.boolean,
+      selectedCountsOption: SelectedCountsOption,
     }),
     t.type({
       type: t.literal('pie'),
-      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+      selectedValues: SelectedValues,
+      binningMethod: BinningMethod,
+      selectedCountsOption: SelectedCountsOption,
     }),
+    t.intersection([
+      t.type({
+        type: t.literal('bubble'),
+      }),
+      t.partial({
+        aggregator: t.union([t.literal('mean'), t.literal('median')]),
+        numeratorValues: t.union([t.array(t.string), t.undefined]),
+        denominatorValues: t.union([t.array(t.string), t.undefined]),
+      }),
+    ]),
   ]),
 ]);
 
@@ -43,10 +80,6 @@ export const AppState = t.intersection([
     viewport: t.type({
       center: t.tuple([t.number, t.number]),
       zoom: t.number,
-    }),
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
     }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
@@ -92,32 +125,72 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     studyMetadata.rootEntity.id
   );
 
+  const defaultAppState: AppState = useMemo(
+    () => ({
+      viewport: defaultViewport,
+      mouseMode: 'default',
+      activeMarkerConfigurationType: 'pie',
+      markerConfigurations: [
+        {
+          type: 'pie',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          selectedCountsOption: 'filtered',
+        },
+        {
+          type: 'barplot',
+          selectedPlotMode: 'count',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          dependentAxisLogScale: false,
+          selectedCountsOption: 'filtered',
+        },
+        {
+          type: 'bubble',
+          selectedVariable: defaultVariable,
+          aggregator: 'mean',
+          numeratorValues: undefined,
+          denominatorValues: undefined,
+        },
+      ],
+    }),
+    [defaultVariable]
+  );
+
   useEffect(() => {
-    if (analysis && !appState) {
-      const defaultAppState: AppState = {
-        viewport: defaultViewport,
-        mouseMode: 'default',
-        activeMarkerConfigurationType: 'pie',
-        markerConfigurations: [
-          {
-            type: 'pie',
-            selectedVariable: defaultVariable,
-            selectedValues: undefined,
-          },
-          {
-            type: 'barplot',
-            selectedPlotMode: 'count',
-            selectedVariable: defaultVariable,
-            selectedValues: undefined,
-          },
-        ],
-      };
-      setVariableUISettings((prev) => ({
-        ...prev,
-        [uiStateKey]: defaultAppState,
-      }));
+    if (analysis) {
+      if (!appState) {
+        setVariableUISettings((prev) => ({
+          ...prev,
+          [uiStateKey]: defaultAppState,
+        }));
+      } else {
+        // Ensures forward compatibility of analyses with new marker types
+        const missingMarkerConfigs =
+          defaultAppState.markerConfigurations.filter(
+            (defaultConfig) =>
+              !appState.markerConfigurations.some(
+                (config) => config.type === defaultConfig.type
+              )
+          );
+
+        if (missingMarkerConfigs.length > 0) {
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              markerConfigurations: [
+                ...appState.markerConfigurations,
+                ...missingMarkerConfigs,
+              ],
+            },
+          }));
+        }
+      }
     }
-  }, [analysis, appState, defaultVariable, setVariableUISettings, uiStateKey]);
+  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(
@@ -149,7 +222,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
-    setMouseMode: useSetter('mouseMode'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
   };

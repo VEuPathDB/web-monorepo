@@ -177,6 +177,7 @@ export const STUB_ENTITY: StudyEntity = {
   idColumnName: 'stub',
   displayName: 'stub',
   description: 'This is a stub entity. It does not exist in the database.',
+  isManyToOneWithParent: false,
   variables: [],
 };
 

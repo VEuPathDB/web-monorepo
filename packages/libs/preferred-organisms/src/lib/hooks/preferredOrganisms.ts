@@ -48,10 +48,8 @@ export function usePreferredQuestions() {
 }
 
 export function useSavePreferredOrganisms(newPreferredOrganisms: string[]) {
-  const {
-    buildNumber,
-    organismPreference,
-  } = usePreferredOrganismsRecoilState();
+  const { buildNumber, organismPreference } =
+    usePreferredOrganismsRecoilState();
 
   const buildNumberValue = useRecoilValue(buildNumber);
   const setOrganismPreference = useSetRecoilState(organismPreference);

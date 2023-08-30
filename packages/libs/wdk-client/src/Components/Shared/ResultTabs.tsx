@@ -27,14 +27,17 @@ type Props<TabKey extends string> = {
   loadingTabs: boolean;
 };
 
-export default wrappable(function ResultTabs<T extends string>({ tabs, ...rest }: Props<T>) {
-  return <Tabs
-    tabs={tabs.map(
-      ({ tooltip, display, ...otherOptions }) => ({
+export default wrappable(function ResultTabs<T extends string>({
+  tabs,
+  ...rest
+}: Props<T>) {
+  return (
+    <Tabs
+      tabs={tabs.map(({ tooltip, display, ...otherOptions }) => ({
         ...otherOptions,
-        display: <span title={tooltip}>{display}</span>
-      })
-    )}
-    {...rest}
-  />;
+        display: <span title={tooltip}>{display}</span>,
+      }))}
+      {...rest}
+    />
+  );
 });

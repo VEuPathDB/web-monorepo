@@ -1,17 +1,26 @@
 import React from 'react';
 
 class RowCounter extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
   }
 
-  render () {
+  render() {
     let { count, noun, filteredRowCount, start, end } = this.props;
-    let filterString = !filteredRowCount ? null : <span className="faded"> (filtered from a total of {count})</span>;
-    const remainingRowCount = !filteredRowCount ? count : count - filteredRowCount;
+    let filterString = !filteredRowCount ? null : (
+      <span className="faded"> (filtered from a total of {count})</span>
+    );
+    const remainingRowCount = !filteredRowCount
+      ? count
+      : count - filteredRowCount;
 
-    let countString = (<span><b>{remainingRowCount}</b> {noun}</span>);
-    let allResultsShown = (!start || !end || (start === 1 && end === remainingRowCount));
+    let countString = (
+      <span>
+        <b>{remainingRowCount}</b> {noun}
+      </span>
+    );
+    let allResultsShown =
+      !start || !end || (start === 1 && end === remainingRowCount);
 
     if (!allResultsShown) {
       countString = (
@@ -28,6 +37,6 @@ class RowCounter extends React.PureComponent {
       </div>
     );
   }
-};
+}
 
 export default RowCounter;

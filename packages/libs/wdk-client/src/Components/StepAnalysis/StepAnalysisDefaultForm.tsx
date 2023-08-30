@@ -4,42 +4,35 @@ import { HelpIcon } from '../../Components';
 import { Parameter } from '../../Utils/WdkModel';
 import { StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
 
-export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisFormPluginProps> = ({
-  formKey,
-  paramSpecs,
-  paramValues,
-  updateParamValues,
-  onFormSubmit
-}) => (
-  <table style={tableStyle}>
-    <tbody>
-      {
-        paramSpecs
-          .filter(paramSpec => paramSpec.isVisible)
-          .map(paramSpec =>
+export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisFormPluginProps> =
+  ({ formKey, paramSpecs, paramValues, updateParamValues, onFormSubmit }) => (
+    <table style={tableStyle}>
+      <tbody>
+        {paramSpecs
+          .filter((paramSpec) => paramSpec.isVisible)
+          .map((paramSpec) => (
             <StepAnalysisParamRow
               key={paramSpec.name}
               formKey={formKey}
               displayName={<ParamDisplayName paramSpec={paramSpec} />}
               paramValues={paramValues}
               paramSpec={paramSpec}
-              onChange={value => {
+              onChange={(value) => {
                 updateParamValues({
                   ...paramValues,
-                  [paramSpec.name]: value
+                  [paramSpec.name]: value,
                 });
               }}
             />
-          )
-      }
-      <tr>
-        <td colSpan={2} style={submitTdStyle}>
-          <input onClick={onFormSubmit} type="submit" value="Submit" />
-        </td>
-      </tr>
-    </tbody>
-  </table>
-)
+          ))}
+        <tr>
+          <td colSpan={2} style={submitTdStyle}>
+            <input onClick={onFormSubmit} type="submit" value="Submit" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
 
 interface StepAnalysisRowProps {
   formKey: string;
@@ -54,16 +47,13 @@ const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
   displayName,
   paramValues,
   paramSpec,
-  onChange
-}) =>
+  onChange,
+}) => (
   <tr>
     <td style={fieldTdStyle}>
       <label>
         <span style={labelSpanStyle}>{displayName}</span>
-        {
-          paramSpec.help &&
-          <HelpIcon>{paramSpec.help}</HelpIcon>
-        }
+        {paramSpec.help && <HelpIcon>{paramSpec.help}</HelpIcon>}
       </label>
     </td>
     <td>
@@ -71,7 +61,7 @@ const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
         ctx={{
           searchName: formKey,
           parameter: paramSpec,
-          paramValues
+          paramValues,
         }}
         parameter={paramSpec}
         value={paramValues[paramSpec.name]}
@@ -79,51 +69,47 @@ const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
         dispatch={NOOP}
         onParamValueChange={onChange}
       />
-      {
-        paramSpec.type === 'number' &&
+      {paramSpec.type === 'number' && (
         <span style={numberParamRangeSpanStyle}>
           ({paramSpec.min} - {paramSpec.max})
         </span>
-      }
+      )}
     </td>
   </tr>
+);
 
 interface ParamDisplayNameProps {
   paramSpec: Parameter;
 }
 
-const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
-  paramSpec
-}) => (
-  <>
-    {paramSpec.displayName}
-  </>
+const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({ paramSpec }) => (
+  <>{paramSpec.displayName}</>
 );
 
 const uiState = {};
-const NOOP = () => { };
+const NOOP = () => {};
 
 const tableStyle: React.CSSProperties = {
-  margin: '0px auto'
+  margin: '0px auto',
 };
 
 const fieldTdStyle: React.CSSProperties = {
   textAlign: 'left',
-  verticalAlign: 'top'
+  verticalAlign: 'top',
 };
 
 const labelSpanStyle: React.CSSProperties = {
   display: 'inline-block',
   marginTop: '4px',
   fontWeight: 'bold',
-  paddingRight: '.5em'
+  paddingRight: '.5em',
 };
 
 const submitTdStyle: React.CSSProperties = {
-  textAlign: 'center'
+  textAlign: 'center',
 };
 
 const numberParamRangeSpanStyle: React.CSSProperties = {
   color: 'gray',
-  marginLeft: '0.5em'
+  marginLeft: '0.5em',
 };

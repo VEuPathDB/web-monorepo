@@ -28,14 +28,20 @@ const useStyles = makeStyles({
  * Renders a button that display `children` in a popover widget.
  */
 export default function PopoverButton(props: PopoverButtonProps) {
-  const { children, buttonDisplayContent, onClose, setIsPopoverOpen, isDisabled = false } = props;
-  const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
+  const {
+    children,
+    buttonDisplayContent,
+    onClose,
+    setIsPopoverOpen,
+    isDisabled = false,
+  } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const classes = useStyles();
 
   const onCloseHandler = () => {
     setAnchorEl(null);
     onClose && onClose();
-  }
+  };
 
   useEffect(() => {
     if (!setIsPopoverOpen) return;
@@ -44,7 +50,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
     } else {
       setIsPopoverOpen(false);
     }
-  }, [anchorEl])
+  }, [anchorEl]);
 
   const menu = (
     <Popover
@@ -63,14 +69,14 @@ export default function PopoverButton(props: PopoverButtonProps) {
       }}
       keepMounted
     >
-        {children}
+      {children}
     </Popover>
   );
 
   const button = (
     <Button
       classes={{
-        focusVisible: classes.focusVisible
+        focusVisible: classes.focusVisible,
       }}
       disableRipple
       aria-controls="dropdown"
@@ -80,7 +86,13 @@ export default function PopoverButton(props: PopoverButtonProps) {
       onClick={(event) => {
         setAnchorEl(event.currentTarget);
       }}
-      endIcon={<i className="fa fa-caret-down" aria-hidden="true" style={{width: '20px'} }/>}
+      endIcon={
+        <i
+          className="fa fa-caret-down"
+          aria-hidden="true"
+          style={{ width: '20px' }}
+        />
+      }
       style={{
         textTransform: 'none',
       }}
@@ -91,10 +103,12 @@ export default function PopoverButton(props: PopoverButtonProps) {
   );
 
   return (
-    <div style={{
-      width: 'fit-content', 
-      ...(isDisabled ? { cursor: 'not-allowed' } : {})
-    }}>
+    <div
+      style={{
+        width: 'fit-content',
+        ...(isDisabled ? { cursor: 'not-allowed' } : {}),
+      }}
+    >
       {button}
       {menu}
     </div>

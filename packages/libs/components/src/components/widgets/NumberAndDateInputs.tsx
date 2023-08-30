@@ -18,9 +18,10 @@ type BaseProps<M extends NumberOrDate> = {
   /** Optional validator function. Should return {validity: true, message: ''} if value is allowed.
    * If provided, minValue and maxValue and required will have no effect.
    */
-  validator?: (
-    newValue?: NumberOrDate
-  ) => { validity: boolean; message: string };
+  validator?: (newValue?: NumberOrDate) => {
+    validity: boolean;
+    message: string;
+  };
   /** Function to invoke when value changes. */
   onValueChange: (newValue?: NumberOrDate) => void;
   /** UI Label for the widget. Optional */
@@ -33,7 +34,7 @@ type BaseProps<M extends NumberOrDate> = {
   disabled?: boolean;
 };
 
-export type NumberInputProps = BaseProps<number>;
+export type NumberInputProps = BaseProps<number> & { step?: number };
 
 export function NumberInput(props: NumberInputProps) {
   return <BaseInput {...props} valueType="number" />;
@@ -81,6 +82,7 @@ function BaseInput({
   containerStyles,
   displayRangeViolationWarnings = true,
   disabled = false,
+  ...props
 }: BaseInputProps) {
   if (validator && (required || minValue != null || maxValue != null))
     console.log(
@@ -103,9 +105,10 @@ function BaseInput({
     },
   })();
 
-  const debouncedOnChange = useMemo(() => debounce(onValueChange, 500), [
-    onValueChange,
-  ]);
+  const debouncedOnChange = useMemo(
+    () => debounce(onValueChange, 500),
+    [onValueChange]
+  );
 
   // Cancel pending onChange request when this component is unmounted.
   useEffect(() => debouncedOnChange.cancel, []);
@@ -182,6 +185,9 @@ function BaseInput({
     [boundsCheckedValue, debouncedOnChange]
   );
 
+  const step =
+    valueType === 'number' && 'step' in props ? props.step : undefined;
+
   return (
     <div
       // containerStyles is not used here - but bin control uses this!
@@ -200,6 +206,7 @@ function BaseInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
+          inputProps={{ step }}
           value={
             localValue == null
               ? ''

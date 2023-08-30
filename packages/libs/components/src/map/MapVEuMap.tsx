@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useEffect,
   CSSProperties,
   ReactElement,
@@ -29,7 +28,6 @@ import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
 import './styles/map-styles.css';
 import CustomGridLayer from './CustomGridLayer';
-import MouseTools, { MouseMode } from './MouseTools';
 import { PlotRef } from '../types/plots';
 import { ToImgopts } from 'plotly.js';
 import Spinner from '../components/Spinner';
@@ -145,14 +143,6 @@ export interface MapVEuMapProps {
   /** What's the minimum leaflet zoom level allowed? Default = 1 */
   minZoom?: number;
   /**
-   * Should the mouse-mode (regular/magnifying glass) icons be shown and active?
-   **/
-  showMouseToolbar?: boolean;
-  /** mouseMode control */
-  mouseMode?: MouseMode;
-  /** a function for changing mouseMode */
-  onMouseModeChange?: (value: MouseMode) => void;
-  /**
    * The name of the tile layer to use. If omitted, defaults to Street.
    */
   baseLayer?: BaseLayerChoice;
@@ -197,7 +187,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showGrid,
     zoomLevelToGeohashLevel,
     minZoom = 1,
-    showMouseToolbar,
     baseLayer,
     onBaseLayerChanged,
     flyToMarkers,
@@ -209,14 +198,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     showAttribution = true,
     showZoomControl = true,
     scrollingEnabled = true,
-    mouseMode,
-    onMouseModeChange,
     interactive = true,
     defaultViewport,
   } = props;
-
-  // Whether the user is currently dragging the map
-  const [isDragging, setIsDragging] = useState<boolean>(false);
 
   // use a ref to avoid unneeded renders
   const mapRef = useRef<Map>();
@@ -266,10 +250,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
   );
 
   const finalMarkers = useMemo(() => {
-    if (mouseMode === 'magnification' && !isDragging)
-      return markers.map((marker) => cloneElement(marker, { showPopup: true }));
-    return markers;
-  }, [markers, isDragging, mouseMode]);
+    return markers.map((marker) => cloneElement(marker, { showPopup: true }));
+  }, [markers]);
 
   const disabledInteractiveProps = {
     dragging: false,
@@ -285,7 +267,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       center={viewport.center}
       zoom={viewport.zoom}
       style={{ height, width, ...style }}
-      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
       minZoom={1}
       worldCopyJump={false}
       whenCreated={onCreated}
@@ -304,13 +285,6 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         animation={animation}
         recenterMarkers={recenterMarkers}
       />
-
-      {showMouseToolbar && (
-        <MouseTools
-          mouseMode={mouseMode}
-          onMouseModeChange={onMouseModeChange}
-        />
-      )}
 
       {showGrid && zoomLevelToGeohashLevel ? (
         <CustomGridLayer zoomLevelToGeohashLevel={zoomLevelToGeohashLevel} />

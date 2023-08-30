@@ -18,14 +18,14 @@
 
 .wdk-DataTable .HelpTrigger {
   position: absolute;
-  right: .5em;
-  top: calc(50% - .5rem);
+  right: 0.5em;
+  top: calc(50% - 0.5rem);
 }
 
 .wdk-DataTable th {
   background-color: #ddd;
   border: 1px solid #aaa;
-  padding: .6em;
+  padding: 0.6em;
 }
 
 .wdk-DataTable td {
@@ -67,14 +67,14 @@
 
 .wdk-DataTableCellExpand:before {
   font-family: FontAwesome;
-  content: "\f0da"; /* caret-right */
+  content: '\f0da'; /* caret-right */
   font-size: 1.6em;
   text-align: center;
   display: block;
 }
 
 .wdk-DataTableRow__expanded .wdk-DataTableCellExpand:before {
-  content: "\f0d7"; /* caret-down */
+  content: '\f0d7'; /* caret-down */
   color: initial;
 }
 
@@ -110,7 +110,7 @@
   top: calc(50% - 6px);
 }
 .wdk-DataTableContainer table.dataTable thead th.sorting:before {
-  content: "\f175\f176";
+  content: '\f175\f176';
   color: #aaa;
   padding-top: 0.12em;
 }
@@ -118,14 +118,14 @@
   color: #888;
 }
 .wdk-DataTableContainer table.dataTable thead th.sorting_asc:before {
-  content: "\f160";
+  content: '\f160';
 }
 .wdk-DataTableContainer table.dataTable thead th.sorting_desc:before {
-  content: "\f161";
+  content: '\f161';
 }
 
 .wdk-DataTableContainer .dataTables_scrollBody table.dataTable thead th:before {
-  content: "" !important;
+  content: '' !important;
 }
 
 .wdk-DataTableContainer .dataTables_info {
@@ -135,4 +135,9 @@
   position: absolute;
   top: -3em;
   margin-left: 310px;
+}
+
+.wdk-DataTableCountsContainer {
+  margin: auto 0 auto 1em;
+  font-size: 0.9em;
 }

@@ -4,7 +4,9 @@ import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
 import { PageLoading } from './components/common/PageLoading';
 
-const PreferredOrganismsConfigController = React.lazy(() => import('./controllers/PreferredOrganismsConfigController'));
+const PreferredOrganismsConfigController = React.lazy(
+  () => import('./controllers/PreferredOrganismsConfigController')
+);
 
 export const preferredOrganismsRoutes: RouteEntry[] = [
   {

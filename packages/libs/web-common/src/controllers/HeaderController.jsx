@@ -5,6 +5,6 @@ import { Header } from '@veupathdb/wdk-client/lib/Components';
 // Used for legacy jsp pages
 export default class HeaderController extends ViewController {
   renderView() {
-    return <Header/>;
+    return <Header />;
   }
 }

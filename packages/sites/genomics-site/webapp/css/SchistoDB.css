@@ -1,66 +1,67 @@
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =TAGS 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(../images/SchistoDB/background_s.jpg);
+  background-image: url(../images/SchistoDB/background_s.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #header2 {
-	background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
+  background-image: url(../images/SchistoDB/backgroundtop_s.jpg);
 }
 
-
-#header_rt, #header_rt a:link, #header_rt a:visited {
-   color: #865584;
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
+  color: #865584;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
-#nav_top, #nav-top a:link, #nav-top a:visited {
-	color: #865584;
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+#nav_top,
+#nav-top a:link,
+#nav-top a:visited {
+  color: #865584;
 }
 
-#nav_top li ul {  /* second-level lists */
-	border-color: #865584;
-	list-style-image: url(../images/SchistoDB/bullet_arrow.gif);
+#nav_top li ul {
+  /* second-level lists */
+  border-color: #865584;
+  list-style-image: url(../images/SchistoDB/bullet_arrow.gif);
 }
 
-#nav_top li ul a:link, #nav_top li ul a:visited {
-	color:  #865584;
+#nav_top li ul a:link,
+#nav_top li ul a:visited {
+  color: #865584;
 }
 
-#nav_top li ul a:hover, #nav_top li ul a:active {
-	color: #346079;
+#nav_top li ul a:hover,
+#nav_top li ul a:active {
+  color: #346079;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .threecolumndiv div.heading {
-  background-color:  #346079;
+  background-color: #346079;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =Menu Lists
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 .menu_lefttop_drop {
-   border-color: #865584;
+  border-color: #865584;
 }
 
 #menu_lefttop a.heading {
-		background-color: #865584;
+  background-color: #865584;
 }
 
-
-
 /*THE END */
-

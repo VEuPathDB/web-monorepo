@@ -19,23 +19,29 @@ export function GroupClusterGraphController({ groupName }: Props) {
   const corePeripheralMap = useCorePeripheralMap();
 
   const layoutResponse = useOrthoService(
-    orthoService => orthoService.getGroupLayout(groupName),
-    [ groupName ]
+    (orthoService) => orthoService.getGroupLayout(groupName),
+    [groupName]
   );
 
   const taxonUiMetadata = useTaxonUiMetadata();
 
-  return corePeripheralMap == null || layoutResponse == null || taxonUiMetadata == null
-    ? <Loading />
-    : layoutResponse.layoutOffered === false
-    ? <div>
-        <h1>Cluster Graph Unavailable for {groupName}</h1>
-        <p>Cluster graph is available for ortholog groups of 2 to 499 proteins.</p>
-      </div>
-    : <ClusterGraphDisplay
-        corePeripheralMap={corePeripheralMap}
-        groupName={groupName}
-        layout={layoutResponse}
-        taxonUiMetadata={taxonUiMetadata}
-      />;
+  return corePeripheralMap == null ||
+    layoutResponse == null ||
+    taxonUiMetadata == null ? (
+    <Loading />
+  ) : layoutResponse.layoutOffered === false ? (
+    <div>
+      <h1>Cluster Graph Unavailable for {groupName}</h1>
+      <p>
+        Cluster graph is available for ortholog groups of 2 to 499 proteins.
+      </p>
+    </div>
+  ) : (
+    <ClusterGraphDisplay
+      corePeripheralMap={corePeripheralMap}
+      groupName={groupName}
+      layout={layoutResponse}
+      taxonUiMetadata={taxonUiMetadata}
+    />
+  );
 }

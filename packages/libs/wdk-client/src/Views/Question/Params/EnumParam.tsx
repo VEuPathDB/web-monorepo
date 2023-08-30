@@ -25,6 +25,7 @@ import {
   isMultiPick,
   toMultiValueString,
   toMultiValueArray,
+  countInBounds,
 } from '../../../Views/Question/Params/EnumParamUtils';
 
 // TODO: Move TreeBox state into TreeBoxEnumParam component
@@ -39,11 +40,16 @@ export default createParamModule({
 
 function isParamValueValid(context: Context<EnumParam>) {
   let value = context.paramValues[context.parameter.name];
-  return (
-    typeof value === 'string' &&
-    (context.parameter.type !== 'multi-pick-vocabulary' ||
-      isValidEnumJson(value))
-  );
+  if (context.parameter.type === 'multi-pick-vocabulary') {
+    if (!isValidEnumJson(value)) return false;
+    const typedValue = toMultiValueArray(value);
+    return countInBounds(
+      typedValue.length,
+      context.parameter.minSelectedCount,
+      context.parameter.maxSelectedCount
+    );
+  }
+  return typeof value === 'string';
 }
 
 function isType(parameter: Parameter): parameter is EnumParam {

@@ -6,7 +6,7 @@
 
   &DatasetItem {
     margin: 0.25em;
-    padding: .16666666667em 0;
+    padding: 0.16666666667em 0;
 
     > a {
       font-weight: bold;
@@ -31,9 +31,10 @@
     color: red;
   }
 
-  &SearchDescriptionHeader, &SearchDatasetsHeader {
+  &SearchDescriptionHeader,
+  &SearchDatasetsHeader {
     font-size: 1.6em;
     margin: 0.5em 0 1em 0;
     padding: 0;
-  }  
+  }
 }

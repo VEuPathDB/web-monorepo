@@ -7,19 +7,19 @@
 }
 
 .wdk-UserProfile-modified {
-  background: lightblue
+  background: lightblue;
 }
 
 .wdk-UserProfile-pending {
-  background: lightyellow
+  background: lightyellow;
 }
 
 .wdk-UserProfile-error {
-  background: rgba(125, 0, 0, 0.4)
+  background: rgba(125, 0, 0, 0.4);
 }
 
 .wdk-UserProfile-success {
-  background: rgba(0, 125, 0, 0.4)
+  background: rgba(0, 125, 0, 0.4);
 }
 
 .wdk-UserProfile-profileForm fieldset {
@@ -38,7 +38,7 @@
   margin-right: 0.4em;
 }
 
-.wdk-UserProfile-profileForm fieldset>div {
+.wdk-UserProfile-profileForm fieldset > div {
   padding: 0.3em;
 }
 
@@ -51,7 +51,7 @@
   width: 11em;
   font-weight: bold;
   padding-right: 1em;
-  text-align:right;
+  text-align: right;
   vertical-align: top;
 }
 
@@ -59,16 +59,16 @@
   display: inline-block;
 }
 
-.wdk-UserProfile-profileForm  .wdk-CheckboxListItem {
+.wdk-UserProfile-profileForm .wdk-CheckboxListItem {
   display: inline;
   line-height: 1.5em;
 }
 
-.wdk-UserProfile-profileForm  .wdk-CheckboxListItem label {
+.wdk-UserProfile-profileForm .wdk-CheckboxListItem label {
   text-align: left;
 }
 
-.wdk-UserProfile-profileForm  .wdk-CheckboxListItem:nth-child(6n):after {
+.wdk-UserProfile-profileForm .wdk-CheckboxListItem:nth-child(6n):after {
   content: ' ';
   display: block;
 }

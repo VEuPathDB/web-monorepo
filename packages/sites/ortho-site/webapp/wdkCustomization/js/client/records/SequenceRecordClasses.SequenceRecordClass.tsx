@@ -15,12 +15,12 @@ import {
   makeDomainAccessionLink,
   transformAttributeFieldsUsingSpecs,
   makePfamLegendMarkup,
-  extractPfamDomain
+  extractPfamDomain,
 } from 'ortho-client/records/utils';
 
 import {
   RecordTableProps,
-  WrappedComponentProps
+  WrappedComponentProps,
 } from 'ortho-client/records/Types';
 
 import './SequenceRecordClasses.SequenceRecordClass.scss';
@@ -34,21 +34,27 @@ const DOMAIN_LENGTH_ATTRIBUTE_NAME = 'length';
 const DOMAIN_DESCRIPTION_ATTRIBUTE_NAME = 'description';
 const DOMAIN_SYMBOL_ATTRIBUTE_NAME = 'symbol';
 
-export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
-  const Component = recordAttributeSectionWrappers[props.attribute.name] ?? props.DefaultComponent;
+export function RecordAttributeSection(
+  props: WrappedComponentProps<RecordAttributeSectionProps>
+) {
+  const Component =
+    recordAttributeSectionWrappers[props.attribute.name] ??
+    props.DefaultComponent;
 
   return <Component {...props} />;
 }
 
 export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
-  const Component = recordTableWrappers[props.table.name] ?? props.DefaultComponent;
+  const Component =
+    recordTableWrappers[props.table.name] ?? props.DefaultComponent;
 
   return <Component {...props} />;
 }
 
 function SequenceAttributeSection(props: RecordAttributeSectionProps) {
   const { isCollapsed, onCollapsedChange } = props;
-  const { name: attributeName, displayName: attributeDisplayName } = props.attribute;
+  const { name: attributeName, displayName: attributeDisplayName } =
+    props.attribute;
 
   const sequence = props.record.attributes[attributeName];
 
@@ -60,16 +66,17 @@ function SequenceAttributeSection(props: RecordAttributeSectionProps) {
       isCollapsed={isCollapsed}
       onCollapsedChange={onCollapsedChange}
     >
-      {
-        typeof sequence !== 'string'
-          ? <div className="MissingAttribute">
-              We cannot display the sequence for {props.recordClass.displayName} {props.record.displayName} at this time.
-              If this problem persists, please <Link to="/contact-us" >contact us</Link>.
-            </div>
-          : <div className="SequenceAttribute">
-              <Sequence sequence={sequence} />
-            </div>
-      }
+      {typeof sequence !== 'string' ? (
+        <div className="MissingAttribute">
+          We cannot display the sequence for {props.recordClass.displayName}{' '}
+          {props.record.displayName} at this time. If this problem persists,
+          please <Link to="/contact-us">contact us</Link>.
+        </div>
+      ) : (
+        <div className="SequenceAttribute">
+          <Sequence sequence={sequence} />
+        </div>
+      )}
     </CollapsibleSection>
   );
 }
@@ -77,25 +84,25 @@ function SequenceAttributeSection(props: RecordAttributeSectionProps) {
 const makePfamDomainsAttributeFields = transformAttributeFieldsUsingSpecs([
   {
     name: DOMAIN_ACCESSION_ATTRIBUTE_NAME,
-    displayName: 'Accession'
+    displayName: 'Accession',
   },
   {
     name: DOMAIN_SYMBOL_ATTRIBUTE_NAME,
-    displayName: 'Name'
+    displayName: 'Name',
   },
   {
     name: DOMAIN_DESCRIPTION_ATTRIBUTE_NAME,
-    displayName: 'Description'
+    displayName: 'Description',
   },
   {
     name: DOMAIN_START_ATTRIBUTE_NAME,
-    displayName: 'Start'
+    displayName: 'Start',
   },
   {
     name: DOMAIN_END_ATTRIBUTE_NAME,
-    displayName: 'End'
+    displayName: 'End',
   },
-  PFAM_LEGEND_ATTRIBUTE_FIELD
+  PFAM_LEGEND_ATTRIBUTE_FIELD,
 ]);
 
 function makePfamDomainsTableRow(row: Record<string, AttributeValue>) {
@@ -103,12 +110,14 @@ function makePfamDomainsTableRow(row: Record<string, AttributeValue>) {
 
   return {
     ...row,
-    [DOMAIN_ACCESSION_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
-      ? makeDomainAccessionLink(accessionValue)
-      : accessionValue,
-    [PFAM_LEGEND_ATTRIBUTE_FIELD.name]: typeof accessionValue === 'string'
-      ? makePfamLegendMarkup(accessionValue)
-      : accessionValue
+    [DOMAIN_ACCESSION_ATTRIBUTE_NAME]:
+      typeof accessionValue === 'string'
+        ? makeDomainAccessionLink(accessionValue)
+        : accessionValue,
+    [PFAM_LEGEND_ATTRIBUTE_FIELD.name]:
+      typeof accessionValue === 'string'
+        ? makePfamLegendMarkup(accessionValue)
+        : accessionValue,
   };
 }
 
@@ -117,32 +126,35 @@ const PfamDomainsTable = makeCommonRecordTableWrapper(
   makePfamDomainsTableRow
 );
 
-function RecordTable_PfamDomains(props: WrappedComponentProps<RecordTableProps>) {
+function RecordTable_PfamDomains(
+  props: WrappedComponentProps<RecordTableProps>
+) {
   const length = Number(props.record.attributes[DOMAIN_LENGTH_ATTRIBUTE_NAME]);
 
   const domains = useMemo(
     () => props.value.flatMap(extractPfamDomain),
-    [ props.value ]
+    [props.value]
   );
 
   return (
     <div className="PfamDomainsContent">
-      <div className="DomainArchitectureHeader">
-        Domain Architecture
-      </div>
-      <PfamDomainArchitecture
-        length={length}
-        domains={domains}
-      />
+      <div className="DomainArchitectureHeader">Domain Architecture</div>
+      <PfamDomainArchitecture length={length} domains={domains} />
       <PfamDomainsTable {...props} />
     </div>
-  )
+  );
 }
 
-const recordAttributeSectionWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordAttributeSectionProps>>> = {
-  [SEQUENCE_TEXT_ATTRIBUTE_NAME]: SequenceAttributeSection
+const recordAttributeSectionWrappers: Record<
+  string,
+  React.ComponentType<WrappedComponentProps<RecordAttributeSectionProps>>
+> = {
+  [SEQUENCE_TEXT_ATTRIBUTE_NAME]: SequenceAttributeSection,
 };
 
-const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
-  [PFAM_DOMAINS_TABLE_NAME]: RecordTable_PfamDomains
+const recordTableWrappers: Record<
+  string,
+  React.ComponentType<WrappedComponentProps<RecordTableProps>>
+> = {
+  [PFAM_DOMAINS_TABLE_NAME]: RecordTable_PfamDomains,
 };

@@ -4,17 +4,23 @@ interface StepAnalysisButtonArrayProps {
   configs: StepAnalysisButtonConfig[];
 }
 
-export const StepAnalysisButtonArray: React.SFC<StepAnalysisButtonArrayProps> = ({
-  configs
-}) => (
-  <div style={{ textAlign: 'right', display: 'block', float: 'right', paddingTop: '35px'}}>
-    {
-      configs.map(config => <StepAnalysisButton {...config} />)
-    }
-  </div>
-);
+export const StepAnalysisButtonArray: React.SFC<StepAnalysisButtonArrayProps> =
+  ({ configs }) => (
+    <div
+      style={{
+        textAlign: 'right',
+        display: 'block',
+        float: 'right',
+        paddingTop: '35px',
+      }}
+    >
+      {configs.map((config) => (
+        <StepAnalysisButton {...config} />
+      ))}
+    </div>
+  );
 
-type StepAnalysisButtonConfig = StepAnalysisButtonProps & { key: string; };
+type StepAnalysisButtonConfig = StepAnalysisButtonProps & { key: string };
 
 interface StepAnalysisButtonProps {
   onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
@@ -29,18 +35,21 @@ const StepAnalysisButton: React.SFC<StepAnalysisButtonProps> = ({
   customButton,
   href,
   iconClassName,
-  contents
+  contents,
 }) => (
-  <div style={{ display: 'inline-block', margin: '5px'}}>
-    {
-      customButton || (
-        <a href={href} onClick={onClick}>
-          <button className="btn" style={{ fontSize: '12px' }}>
-            <i className={iconClassName} style={{ marginLeft: 0, paddingLeft: 0}}> </i>
-            {contents}
-          </button>
-        </a>
-      )
-    }
+  <div style={{ display: 'inline-block', margin: '5px' }}>
+    {customButton || (
+      <a href={href} onClick={onClick}>
+        <button className="btn" style={{ fontSize: '12px' }}>
+          <i
+            className={iconClassName}
+            style={{ marginLeft: 0, paddingLeft: 0 }}
+          >
+            {' '}
+          </i>
+          {contents}
+        </button>
+      </a>
+    )}
   </div>
 );

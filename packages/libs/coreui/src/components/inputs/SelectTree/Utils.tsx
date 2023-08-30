@@ -1,4 +1,4 @@
-import "regenerator-runtime/runtime";
+import 'regenerator-runtime/runtime';
 // Field types
 // -----------
 
@@ -19,10 +19,14 @@ export type FieldTreeNode = TreeNode<Field>;
 /**
  * Create an array of ancestor nodes for a given node predicate.
  */
-export function findAncestorFields(tree: FieldTreeNode, term: string): Seq<Field> {
+export function findAncestorFields(
+  tree: FieldTreeNode,
+  term: string
+): Seq<Field> {
   if (tree.field.term === term) return Seq.of(tree.field);
-  const ancestors = Seq.from(tree.children)
-    .flatMap(child => findAncestorFields(child, term));
+  const ancestors = Seq.from(tree.children).flatMap((child) =>
+    findAncestorFields(child, term)
+  );
   if (ancestors.isEmpty()) return Seq.empty();
   return Seq.of(tree.field).concat(ancestors);
 }
@@ -35,7 +39,7 @@ export interface ChildrenGetter<T> {
 
 export type Node<T> = T & {
   children: Array<Node<T>>;
-}
+};
 
 /**
  * Create a Seq of tree nodes in preorder sequence.
@@ -56,7 +60,7 @@ export type Node<T> = T & {
  * @return {Seq}
  */
 export function preorderSeq<T>(root: Node<T>) {
-  return Seq.from(preorder(root, n => n.children));
+  return Seq.from(preorder(root, (n) => n.children));
 }
 
 /**
@@ -69,9 +73,13 @@ export function preorderSeq<T>(root: Node<T>) {
  * @param {Function} getChildren A function that returns an iterable object over a node's children.
  * @param {any} root The root node of the tree whose structure is being mapped.
  */
-export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, getChildren: ChildrenGetter<T>, root: T): U {
+export function mapStructure<T, U>(
+  mapFn: (node: T, mappedChildren: U[]) => U,
+  getChildren: ChildrenGetter<T>,
+  root: T
+): U {
   let mappedChildren = Seq.from(getChildren(root))
-    .map(child => mapStructure(mapFn, getChildren, child))
+    .map((child) => mapStructure(mapFn, getChildren, child))
     .toArray();
   return mapFn(root, mappedChildren);
 }
@@ -81,9 +89,9 @@ export function mapStructure<T, U>(mapFn: (node: T, mappedChildren: U[]) => U, g
  * @param {Object} node representing root of subtree (possibly a leaf)
  * @return {Boolean} indicates true if the node is a leaf and false otherwise
  */
-export function isLeaf <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+export function isLeaf<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
   return getNodeChildren(node).length === 0;
- }
+}
 
 /**
  * Determine if a node is a branch
@@ -94,28 +102,39 @@ export function isBranch<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
   return !isLeaf(node, getNodeChildren);
 }
 
- /**
+/**
  * Using recursion to return all the leaf nodes for the given node.
  * @param {Object} node representing root of subtree
  * @param {Array} initial list of leaf nodes (optional)
  * @return {Array} updated list of leaf nodes
  */
-export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
-  return Seq.from(preorder(node, getNodeChildren)).filter(node => isLeaf(node, getNodeChildren)).toArray();
-}
-  
-  /**
-   * Using recursion to return all the branch nodes for a given node
-   * @param {Object} node representing root of subtree
-   * @param {Array} initial list of branch nodes (optional)
-   * @return {Array} updated list of branch nodes
-   */
-export function getBranches <T>(node: T, getNodeChildren: ChildrenGetter<T>, branches: T[] = []) {
-  return Seq.from(preorder(node, getNodeChildren)).filter(node => isBranch(node, getNodeChildren)).toArray();
+export function getLeaves<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+  return Seq.from(preorder(node, getNodeChildren))
+    .filter((node) => isLeaf(node, getNodeChildren))
+    .toArray();
 }
 
-  /** top-down tree node iterator */
-export function* preorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable<T> {
+/**
+ * Using recursion to return all the branch nodes for a given node
+ * @param {Object} node representing root of subtree
+ * @param {Array} initial list of branch nodes (optional)
+ * @return {Array} updated list of branch nodes
+ */
+export function getBranches<T>(
+  node: T,
+  getNodeChildren: ChildrenGetter<T>,
+  branches: T[] = []
+) {
+  return Seq.from(preorder(node, getNodeChildren))
+    .filter((node) => isBranch(node, getNodeChildren))
+    .toArray();
+}
+
+/** top-down tree node iterator */
+export function* preorder<T>(
+  root: T,
+  getChildren: ChildrenGetter<T>
+): Iterable<T> {
   yield root;
   let children = getChildren(root);
   let length = children.length;
@@ -123,9 +142,8 @@ export function* preorder<T>(root: T, getChildren: ChildrenGetter<T>): Iterable<
     yield* preorder(children[i], getChildren);
   }
 }
-  
 
- /** From IterableUtils */
+/** From IterableUtils */
 
 // Type definitions
 interface Mapper<T, U> {
@@ -146,7 +164,7 @@ interface Reducer<T, U> {
 interface Iterable<T> {
   [Symbol.iterator](): Iterator<T>;
 }
-  
+
 /**
  * Useful operators for Iterables.
  *
@@ -180,7 +198,6 @@ interface Iterable<T> {
  * Wraps `iterable` in an object with collection operations.
  */
 export class Seq<T> {
-
   private static readonly EMPTY = new Seq([]);
 
   // constructors
@@ -204,10 +221,9 @@ export class Seq<T> {
   private _iterator?: Iterator<T>;
   private readonly _cache: T[] = [];
 
-  private constructor(private _iterable: Iterable<T>) { }
+  private constructor(private _iterable: Iterable<T>) {}
 
   *[Symbol.iterator]() {
-
     // Since this._iterator can be a generator object, we cache the iteration
     // so it can be replayed. Generator objects are stateful, so this is
     // necessary.
@@ -219,8 +235,7 @@ export class Seq<T> {
       const { done, value } = this._iterator.next();
       if (done) {
         break;
-      }
-      else {
+      } else {
         this._cache.push(value);
         yield value;
       }
@@ -265,37 +280,36 @@ export class Seq<T> {
     return !this.some(() => true);
   }
 }
-  
-  
+
 // XXX The for..of loop construct is not being used because babel adds a
 // try-catch to the loop body, which deoptimizes the code path. See
 // https://github.com/google/traceur-compiler/issues/1773.
-  
+
 export function* concat<T>(...iterables: Iterable<T>[]) {
   for (let i = 0; i < iterables.length; i++) {
     yield* iterables[i];
   }
 }
-  
+
 export function* map<T, U>(fn: Mapper<T, U>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     yield fn(value);
   }
 }
-  
+
 export function* flatMap<T, U>(fn: FlatMapper<T, U>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     yield* fn(value);
   }
 }
-  
+
 export function* uniq<T>(iterable: Iterable<T>) {
   let values = new Set();
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (values.has(value) === false) {
@@ -304,53 +318,81 @@ export function* uniq<T>(iterable: Iterable<T>) {
     }
   }
 }
-  
-export function filter<T, U extends T>(fn: Guard<T, U>, iterable: Iterable<T>): Iterable<U>;
+
+export function filter<T, U extends T>(
+  fn: Guard<T, U>,
+  iterable: Iterable<T>
+): Iterable<U>;
 export function filter<T>(fn: Predicate<T>, iterable: Iterable<T>): Iterable<T>;
 export function* filter<T>(fn: Predicate<T>, iterable: Iterable<T>) {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (fn(value)) yield value;
   }
 }
-  
+
 export function some<T>(test: Predicate<T>, iterable: Iterable<T>): boolean {
-  for (let iter = iterable[Symbol.iterator]();;) {
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     if (test(value) === true) return true;
   }
   return false;
 }
-  
+
 /**
  * Reduce collection to a single value.
  */
-export function reduce<T, U>(fn: Reducer<T, U>, seedValue: U, iterable: Iterable<T>): U {
-  let result = seedValue
-  for (let iter = iterable[Symbol.iterator]();;) {
+export function reduce<T, U>(
+  fn: Reducer<T, U>,
+  seedValue: U,
+  iterable: Iterable<T>
+): U {
+  let result = seedValue;
+  for (let iter = iterable[Symbol.iterator](); ; ) {
     let { done, value } = iter.next();
     if (done) break;
     result = fn(result, value);
   }
   return result;
 }
-  
+
 /** From ComponentUtils */
 
 /** Create a React Element using preformatted HTML */
-export function safeHtml<P>(str: string, props?: P, Component?: React.ComponentClass<P>): JSX.Element;
-export function safeHtml<P>(str: string, props?: P, Component?: React.StatelessComponent<P>): JSX.Element;
-export function safeHtml<P>(str: string, props?: P, Component?: string): JSX.Element;
-export function safeHtml<P>(str = '', props?: P, Component: any = 'span'): JSX.Element {
+export function safeHtml<P>(
+  str: string,
+  props?: P,
+  Component?: React.ComponentClass<P>
+): JSX.Element;
+export function safeHtml<P>(
+  str: string,
+  props?: P,
+  Component?: React.StatelessComponent<P>
+): JSX.Element;
+export function safeHtml<P>(
+  str: string,
+  props?: P,
+  Component?: string
+): JSX.Element;
+export function safeHtml<P>(
+  str = '',
+  props?: P,
+  Component: any = 'span'
+): JSX.Element {
   if (str.indexOf('<') === -1) {
-    return <Component {...props}>{str}</Component>
+    return <Component {...props}>{str}</Component>;
   }
   // Use innerHTML to auto close tags
   let container = document.createElement('div');
   container.innerHTML = str;
-  return <Component {...props} dangerouslySetInnerHTML={{ __html: container.innerHTML }}/>;
+  return (
+    <Component
+      {...props}
+      dangerouslySetInnerHTML={{ __html: container.innerHTML }}
+    />
+  );
 }
 
 /**
@@ -360,12 +402,12 @@ export function safeHtml<P>(str = '', props?: P, Component: any = 'span'): JSX.E
  * @param {<T>} value to check against
  * @return {Array<T>} modified copy of original array
  */
-export function addOrRemove<T>(array: T[], value: T) : T[] {
-  return (array.indexOf(value) == -1 ?
-    // not currently present; add
-    array.concat(value) :
-    // already there; remove
-    array.filter(elem => elem != value));
+export function addOrRemove<T>(array: T[], value: T): T[] {
+  return array.indexOf(value) == -1
+    ? // not currently present; add
+      array.concat(value)
+    : // already there; remove
+      array.filter((elem) => elem != value);
 }
 
 /** From SearchUtils */

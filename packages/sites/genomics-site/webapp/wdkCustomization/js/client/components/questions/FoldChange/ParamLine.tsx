@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 
-import { HelpIcon }  from '@veupathdb/wdk-client/lib/Components';
+import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
@@ -23,23 +23,19 @@ export const ParamLine: React.FunctionComponent<ParamLineProps> = ({
   parameterElement,
   parameter,
   postParameterContent,
-  hideParameter
+  hideParameter,
 }) => (
   <div>
     {preParameterContent}
     {parameterElement}
     {parameterElement && !hideParameter && (
       <HelpIcon>
-        <>
-          {' '}{safeHtml(parameter.help)}
-        </>
+        <> {safeHtml(parameter.help)}</>
       </HelpIcon>
     )}
     {hideParameter && (
       <HelpIcon>
-        <>
-          {' '}{safeHtml(parameter.help)}
-        </>
+        <> {safeHtml(parameter.help)}</>
       </HelpIcon>
     )}
     {postParameterContent}

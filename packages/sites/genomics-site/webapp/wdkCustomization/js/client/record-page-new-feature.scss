@@ -1,10 +1,7 @@
 // This CSS adds the NEW icon next to the attribute name on record pages
-#alphafold_url,
-#AlphaFoldLinkouts,
-#Cellxgene
-{
+#Cellxgene {
   .wdk-CollapsibleSectionHeader:after {
     content: url('~@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png');
-    margin-left: .5ch;
+    margin-left: 0.5ch;
   }
 }

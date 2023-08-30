@@ -83,18 +83,23 @@ export function useSendToBasketConfig(
   | undefined {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!clearFirst) {
-      dispatch(requestBasketCounts());
+  const basketCount = useSelector((state: RootState) => {
+    if (resultType.type === 'step') {
+      return state.basket.counts?.[resultType.step.recordClassName] ?? 0;
     }
-  }, [clearFirst, dispatch]);
-
-  const basketCounts = useSelector((state: RootState) => state.basket.counts);
+    return 0;
+  });
 
   const isGuest = useWdkService(
     async (wdkService) => (await wdkService.getCurrentUser()).isGuest,
     []
   );
+
+  useEffect(() => {
+    if (!clearFirst && !(isGuest ?? true)) {
+      dispatch(requestBasketCounts());
+    }
+  }, [clearFirst, dispatch, isGuest]);
 
   return useMemo(
     () =>
@@ -115,11 +120,7 @@ export function useSendToBasketConfig(
                     Basket (
                     {clearFirst
                       ? 'replace'
-                      : 'add to ' +
-                        basketCounts?.[
-                          resultType.step.recordClassName
-                        ].toLocaleString() +
-                        ' genes'}
+                      : 'add to ' + basketCount.toLocaleString() + ' genes'}
                     )
                   </span>
                 </div>
@@ -132,7 +133,7 @@ export function useSendToBasketConfig(
             onSelectionFulfillment: dispatch,
           }
         : undefined,
-    [resultType, clearFirst, dispatch, isGuest, basketCounts]
+    [resultType, clearFirst, dispatch, isGuest, basketCount]
   );
 }
 

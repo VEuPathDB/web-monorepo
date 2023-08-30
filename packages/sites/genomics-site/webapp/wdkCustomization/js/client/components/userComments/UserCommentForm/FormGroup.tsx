@@ -16,23 +16,14 @@ export const FormGroup: React.SFC<FormGroupProps> = ({
   className,
   headerClassName,
   bodyClassName,
-  formRows
+  formRows,
 }) => (
   <div className={className}>
-    <div className={headerClassName}>
-      {headerContent}
-    </div>
+    <div className={headerClassName}>{headerContent}</div>
     <div className={bodyClassName}>
-      {
-        formRows.map(
-          ({ key, ...formRow }) => (
-            <FormRow
-              key={`${groupKey}/${key}`}
-              {...formRow}
-            />
-          )
-        )
-      }
+      {formRows.map(({ key, ...formRow }) => (
+        <FormRow key={`${groupKey}/${key}`} {...formRow} />
+      ))}
     </div>
   </div>
 );

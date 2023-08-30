@@ -48,6 +48,7 @@ interface Props {
   columnsDialogSearchString?: string;
   columnsDialogExpandedNodes?: string[];
   columnsTree?: CategoryTreeNode;
+  showCount?: boolean;
   requestSortingUpdate: RequestSortingUpdate;
   requestColumnsChoiceUpdate: RequestColumnsChoiceUpdate;
   requestUpdateBasket: RequestUpdateBasket;
@@ -80,6 +81,7 @@ export default function ResultTableSummaryView({
   question,
   userIsGuest,
   basketStatusArray,
+  showCount,
   requestColumnsChoiceUpdate,
   requestSortingUpdate,
   requestUpdateBasket,
@@ -130,6 +132,7 @@ export default function ResultTableSummaryView({
           answer={answer}
           viewId={viewId}
           actions={actions}
+          showCount={showCount}
           selectedIds={selectedIds}
           showIdAttributeColumn={showIdAttributeColumn}
           activeAttributeAnalysisName={activeAttributeAnalysisName}

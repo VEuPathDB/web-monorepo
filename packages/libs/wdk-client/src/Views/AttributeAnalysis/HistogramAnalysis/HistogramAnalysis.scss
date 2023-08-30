@@ -1,9 +1,9 @@
 .HistogramAnalysis {
-
   $graph-height: 400px;
   $graph-width: 700px;
 
-  &AttrLabel, &RecordCountLabel {
+  &AttrLabel,
+  &RecordCountLabel {
     display: flex;
     justify-content: center;
     align-items: baseline;
@@ -23,33 +23,30 @@
   }
 
   &Summary {
-
     dl {
       display: flex;
       justify-content: center;
     }
 
     dd {
-      margin-left: .5em;
+      margin-left: 0.5em;
       margin-right: 1em;
     }
-
   }
 
   &Controls {
     align-items: center;
     background: #eee;
     display: flex;
-    margin: .5em 0;
+    margin: 0.5em 0;
     padding: 1em;
 
     > * {
-      margin: 0 .5em;
+      margin: 0 0.5em;
     }
   }
 
   &Slider {
     flex-grow: 2;
   }
-
 }

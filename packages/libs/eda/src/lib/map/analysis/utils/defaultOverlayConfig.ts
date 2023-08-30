@@ -2,6 +2,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { UNSELECTED_TOKEN } from '../..';
 import {
   BinRange,
+  BubbleOverlayConfig,
   CategoricalVariableDataShape,
   ContinuousVariableDataShape,
   Filter,
@@ -10,6 +11,8 @@ import {
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
+import { BinningMethod, MarkerConfiguration } from '../appState';
+import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 
 // This async function fetches the default overlay config.
 // For continuous variables, this involves calling the filter-aware-metadata/continuous-variable
@@ -25,11 +28,16 @@ export interface DefaultOverlayConfigProps {
   overlayEntity: StudyEntity | undefined;
   dataClient: DataClient;
   subsettingClient: SubsettingClient;
+  markerType?: MarkerConfiguration['type'];
+  binningMethod?: BinningMethod;
+  aggregator?: BubbleMarkerConfiguration['aggregator'];
+  numeratorValues?: BubbleMarkerConfiguration['numeratorValues'];
+  denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
 }
 
 export async function getDefaultOverlayConfig(
   props: DefaultOverlayConfigProps
-): Promise<OverlayConfig | undefined> {
+): Promise<OverlayConfig | BubbleOverlayConfig | undefined> {
   const {
     studyId,
     filters,
@@ -37,6 +45,11 @@ export async function getDefaultOverlayConfig(
     overlayEntity,
     dataClient,
     subsettingClient,
+    markerType,
+    binningMethod = 'equalInterval',
+    aggregator = 'mean',
+    numeratorValues,
+    denominatorValues,
   } = props;
 
   if (overlayVariable != null && overlayEntity != null) {
@@ -47,33 +60,57 @@ export async function getDefaultOverlayConfig(
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
-      const overlayValues = await getMostFrequentValues({
-        studyId: studyId,
-        ...overlayVariableDescriptor,
-        filters: filters ?? [],
-        numValues: ColorPaletteDefault.length - 1,
-        subsettingClient,
-      });
+      if (markerType === 'bubble') {
+        return {
+          overlayVariable: overlayVariableDescriptor,
+          aggregationConfig: {
+            overlayType: 'categorical',
+            numeratorValues:
+              numeratorValues ?? overlayVariable.vocabulary ?? [],
+            denominatorValues:
+              denominatorValues ?? overlayVariable.vocabulary ?? [],
+          },
+        };
+      } else {
+        const overlayValues = await getMostFrequentValues({
+          studyId: studyId,
+          ...overlayVariableDescriptor,
+          filters: filters ?? [],
+          numValues: ColorPaletteDefault.length - 1,
+          subsettingClient,
+        });
 
-      return {
-        overlayType: 'categorical',
-        overlayVariable: overlayVariableDescriptor,
-        overlayValues,
-      };
+        return {
+          overlayType: 'categorical',
+          overlayVariable: overlayVariableDescriptor,
+          overlayValues,
+        };
+      }
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
       // continuous
-      const overlayBins = await getBinRanges({
-        studyId,
-        ...overlayVariableDescriptor,
-        filters: filters ?? [],
-        dataClient,
-      });
+      if (markerType === 'bubble') {
+        return {
+          overlayVariable: overlayVariableDescriptor,
+          aggregationConfig: {
+            overlayType: 'continuous',
+            aggregator,
+          },
+        };
+      } else {
+        const overlayBins = await getBinRanges({
+          studyId,
+          ...overlayVariableDescriptor,
+          filters: filters ?? [],
+          dataClient,
+          binningMethod,
+        });
 
-      return {
-        overlayType: 'continuous',
-        overlayValues: overlayBins,
-        overlayVariable: overlayVariableDescriptor,
-      };
+        return {
+          overlayType: 'continuous',
+          overlayValues: overlayBins,
+          overlayVariable: overlayVariableDescriptor,
+        };
+      }
     } else {
       return;
     }
@@ -89,8 +126,7 @@ type GetMostFrequentValuesProps = {
   subsettingClient: SubsettingClient;
 };
 
-// get the most frequent values for the entire dataset, no filters at all
-// (for now at least)
+// get the most frequent values for the entire dataset
 async function getMostFrequentValues({
   studyId,
   variableId,
@@ -112,6 +148,7 @@ async function getMostFrequentValues({
   const sortedValues = distributionResponse.histogram
     .sort((bin1, bin2) => bin2.value - bin1.value)
     .map((bin) => bin.binLabel);
+
   return sortedValues.length <= numValues
     ? sortedValues
     : [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
@@ -123,6 +160,7 @@ type GetBinRangesProps = {
   entityId: string;
   dataClient: DataClient;
   filters: Filter[];
+  binningMethod: BinningMethod;
 };
 
 // get the equal spaced bin definitions (for now at least)
@@ -132,6 +170,7 @@ async function getBinRanges({
   entityId,
   dataClient,
   filters,
+  binningMethod = 'equalInterval',
 }: GetBinRangesProps): Promise<BinRange[]> {
   const response = await dataClient.getContinousVariableMetadata({
     studyId,
@@ -145,6 +184,6 @@ async function getBinRanges({
     },
   });
 
-  const binRanges = response.binRanges?.equalInterval!; // if asking for binRanges, the response WILL contain binRanges
+  const binRanges = response.binRanges?.[binningMethod]!; // if asking for binRanges, the response WILL contain binRanges
   return binRanges;
 }

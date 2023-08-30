@@ -22,7 +22,7 @@ import HeaderCell from './HeaderCell';
 import PaginationControls from './PaginationControls';
 import { UITheme } from '../../theming/types';
 
-export type SortBy = Array<{id: string, desc: boolean}>;
+export type SortBy = Array<{ id: string; desc: boolean }>;
 
 export type DataGridProps = {
   /**
@@ -179,17 +179,18 @@ export default function DataGrid({
             Header: ({ getToggleAllPageRowsSelectedProps }: any) => {
               const props = getToggleAllPageRowsSelectedProps();
               return (
-              <div>
-                <IndeterminateCheckbox
-                  checked={props.checked ?? false}
-                  indeterminate={props.indeterminate ?? false}
-                  onChange={props.onChange}
-                  value={''}
-                  name={''}
-                  // themeRole={themeRole}
-                />
-              </div>
-            )},
+                <div>
+                  <IndeterminateCheckbox
+                    checked={props.checked ?? false}
+                    indeterminate={props.indeterminate ?? false}
+                    onChange={props.onChange}
+                    value={''}
+                    name={''}
+                    // themeRole={themeRole}
+                  />
+                </div>
+              );
+            },
             // The cell can use the individual row's getToggleRowSelectedProps method
             // to the render a checkbox.
             // The `checked` prop returned by getToggleRowSelectedProps is not fit for purpose
@@ -198,17 +199,18 @@ export default function DataGrid({
             Cell: ({ row }: any) => {
               const props = row.getToggleRowSelectedProps();
               return (
-              <div>
-                <IndeterminateCheckbox
-	                checked={row.isSelected}
-                  indeterminate={props.indeterminate ?? false}
-                  onChange={props.onChange}
-                  name={''}
-                  value={row.id}
-                  // themeRole={themeRole}
-                />
-              </div>
-            )},
+                <div>
+                  <IndeterminateCheckbox
+                    checked={row.isSelected}
+                    indeterminate={props.indeterminate ?? false}
+                    onChange={props.onChange}
+                    name={''}
+                    value={row.id}
+                    // themeRole={themeRole}
+                  />
+                </div>
+              );
+            },
           },
           ...columns,
         ]);
@@ -220,7 +222,8 @@ export default function DataGrid({
   // when that would be the case and I couldn't force an example. Filter out
   // undefined values to conform with our better-defined SortBy type
   const filteredSortBy = useMemo(
-    () => sortBy.filter((column) => column.desc !== undefined), [sortBy]
+    () => sortBy.filter((column) => column.desc !== undefined),
+    [sortBy]
   ) as SortBy;
 
   /**
@@ -245,20 +248,30 @@ export default function DataGrid({
   // Fix from https://github.com/TanStack/react-table/issues/2459#issuecomment-851523333
   // to properly set selected state from incoming `isSelected` prop in data
   useEffect(() => {
-    rows.forEach(({ id, original } : {id: string, original: { isSelected?: boolean }}) => {
-      if (original.isSelected != null) {
-	toggleRowSelected(id, original.isSelected);
+    rows.forEach(
+      ({
+        id,
+        original,
+      }: {
+        id: string;
+        original: { isSelected?: boolean };
+      }) => {
+        if (original.isSelected != null) {
+          toggleRowSelected(id, original.isSelected);
+        }
       }
-    });
+    );
   }, [rows, toggleRowSelected]);
-  
+
   return (
-    <div css={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: finalStyle.size?.height,
-      width: finalStyle.size?.width,
-    }}>
+    <div
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: finalStyle.size?.height,
+        width: finalStyle.size?.width,
+      }}
+    >
       {title && <H3 text={title} additionalStyles={{ marginBottom: 20 }} />}
       {['top', 'both'].includes(pagination?.controlsLocation ?? '') && (
         <PaginationControls
@@ -277,10 +290,12 @@ export default function DataGrid({
           styleOverrides={finalStyle.paginationControls?.top}
         />
       )}
-      <div css={{
-        height: '100%',
-        overflow: finalStyle.table.overflow,
-      }}>
+      <div
+        css={{
+          height: '100%',
+          overflow: finalStyle.table.overflow,
+        }}
+      >
         <table
           {...getTableProps()}
           css={{

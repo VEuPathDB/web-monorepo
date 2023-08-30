@@ -3,47 +3,51 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(../images/OrthoMCL/background_s.jpg);
+  background-image: url(../images/OrthoMCL/background_s.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #header2 {
-	background-image: url(../images/OrthoMCL/backgroundtop_s.jpg);
-	min-width: 1032px; /* prevent logo from wrapping on smaller resolutions */
+  background-image: url(../images/OrthoMCL/backgroundtop_s.jpg);
+  min-width: 1032px; /* prevent logo from wrapping on smaller resolutions */
 }
 
-#header_rt, #header_rt a:link, #header_rt a:visited {
-   color: #ffffff;
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
+  color: #ffffff;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU (in WDK)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#nav-top a:link, #nav-top a:visited {
-	color:  white;
+#nav-top a:link,
+#nav-top a:visited {
+  color: white;
 }
 
-#nav-top > li > ul { 
-	border-color:#345ca1;
-	list-style-image: url(../images/OrthoMCL/bullet_arrow.gif);
+#nav-top > li > ul {
+  border-color: #345ca1;
+  list-style-image: url(../images/OrthoMCL/bullet_arrow.gif);
 }
 
-#nav-top > li > ul a:link, #nav-top > li > ul a:visited {
-	color: #2a3469;
+#nav-top > li > ul a:link,
+#nav-top > li > ul a:visited {
+  color: #2a3469;
 }
 
-#nav-top > li > ul a:hover, #nav-top > li > ul a:active {
-	color: #7a3838;
+#nav-top > li > ul a:hover,
+#nav-top > li > ul a:active {
+  color: #7a3838;
 }
 
 table#quick-search a {
-  color:white;
+  color: white;
 }
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -60,47 +64,45 @@ table#quick-search a {
 }
 
 #bubbles .infobottom {
-        margin: auto;
+  margin: auto;
 }
 #bubbles .info {
-   width: 209px;
-   min-height: 319px;
-   height: 100%;
-   background-image: url(../images/bubble_backgrnd.png);
-   background-repeat: repeat-y;
-   text-align: left;
-   padding-top: 2px;
-   padding-right: 19px;
-   padding-bottom: 1px;
-   padding-left: 19px;
-   list-style: none;
+  width: 209px;
+  min-height: 319px;
+  height: 100%;
+  background-image: url(../images/bubble_backgrnd.png);
+  background-repeat: repeat-y;
+  text-align: left;
+  padding-top: 2px;
+  padding-right: 19px;
+  padding-bottom: 1px;
+  padding-left: 19px;
+  list-style: none;
 }
 
 #bubbles .infobottom {
-        width: 209px;
-        min-height: 35px;    /* trying to keep buckest same size */
-        background-image: url(../images/bubble_bottom.png);
-        background-position: bottom;
-        background-repeat: no-repeat;
-        text-align: center;
-        padding-top: 2px;
-        padding-right: 19px;
-        padding-bottom: 0px;
-        padding-left: 19px;
+  width: 209px;
+  min-height: 35px; /* trying to keep buckest same size */
+  background-image: url(../images/bubble_bottom.png);
+  background-position: bottom;
+  background-repeat: no-repeat;
+  text-align: center;
+  padding-top: 2px;
+  padding-right: 19px;
+  padding-bottom: 0px;
+  padding-left: 19px;
 }
-
-
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =SIDEBAR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #sidebar a.heading {
-		background-color:  #785457;  /* #412d2f; */
+  background-color: #785457; /* #412d2f; */
 }
 
 #menu_lefttop a.heading {
-		background-color:  #785457;  /* #412d2f; */
+  background-color: #785457; /* #412d2f; */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,5 +111,4 @@ table#quick-search a {
 
 #fixed-footer {
   background-color: #f0f0f0;
-
 }

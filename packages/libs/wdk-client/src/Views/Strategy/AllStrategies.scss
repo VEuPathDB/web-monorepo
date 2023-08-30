@@ -10,7 +10,7 @@
 
   &--InfoIcon {
     font-size: 1.6em;
-    margin-right: .5em;
+    margin-right: 0.5em;
   }
 
   > .wdk-TabContent > .MesaComponent:nth-of-type(3) {
@@ -28,13 +28,13 @@
   &--Title {
     padding: 0;
     white-space: nowrap;
-    margin-right: .5em;
+    margin-right: 0.5em;
   }
 
   &--OpenedRow {
     font-weight: bold;
   }
-  
+
   &--InvalidIcon {
     color: #d62d2d;
   }
@@ -44,7 +44,7 @@
   }
 
   &--TableCell.DataCell {
-    padding: .3em;
+    padding: 0.3em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -52,7 +52,6 @@
   }
 
   &--TableCell {
-
     &__name.DataCell {
       overflow: visible;
       white-space: break-spaces;
@@ -66,7 +65,7 @@
       text-align: right;
       padding-left: 10px;
       padding-right: 10px;
-    }  
+    }
 
     &__leafAndTransformStepCount,
     &__estimatedSize {
@@ -74,9 +73,7 @@
     }
 
     &__actions:not(.HeadingCell) {
-      font-size: .8em;
+      font-size: 0.8em;
     }
-
   }
-
 }

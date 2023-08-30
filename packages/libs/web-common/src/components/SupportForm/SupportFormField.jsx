@@ -4,9 +4,7 @@ const SupportFormField = ({ label, inputElement }) => (
     <td>
       <b>{label}</b>
     </td>
-    <td>
-      {inputElement}
-    </td>
+    <td>{inputElement}</td>
   </tr>
 );
 

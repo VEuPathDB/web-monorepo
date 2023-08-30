@@ -130,6 +130,8 @@ export function BlastWorkspaceResult(props: Props) {
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />
+  ) : jobResult.value != null && jobResult.value.status === 'error' ? (
+    <BlastRerunError {...props} />
   ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
     <ErrorPage message="We were unable to queue your job." />
   ) : queryResult.value != null && queryResult.value.status === 'error' ? (
@@ -180,6 +182,29 @@ function LoadingBlastResult(props: Props) {
           </p>
         </div>
       </Loading>
+    </div>
+  );
+}
+
+function BlastRerunError(props: Props) {
+  return (
+    <div className={blastWorkspaceCx('Result', 'Loading')}>
+      <h1>BLAST Job - error</h1>
+      <p className="JobId">
+        <span className="InlineHeader">Job Id:</span> {props.jobId}
+      </p>
+      <div className="Caption">
+        <p className="Status">
+          <span className="InlineHeader">Status:</span> error
+        </p>
+        <p>
+          We were unable to rerun your BLAST job due to a server error.{' '}
+          <Link to="/contact-us" target="_blank">
+            Contact us
+          </Link>{' '}
+          for more information.
+        </p>
+      </div>
     </div>
   );
 }
@@ -438,7 +463,7 @@ interface JobPollingError {
 async function makeJobPollingPromise(
   blastApi: BlastApi,
   jobId: string
-): Promise<JobPollingResult> {
+): Promise<JobPollingResult | ApiResultError<ErrorDetails>> {
   const jobRequest = await blastApi.fetchJob(jobId);
 
   if (jobRequest.status === 'ok') {
@@ -452,7 +477,10 @@ async function makeJobPollingPromise(
     }
 
     if (job.status === 'expired') {
-      await blastApi.rerunJob(job.id);
+      const apiResult = await blastApi.rerunJob(job.id);
+      if (apiResult.status === 'error') {
+        return apiResult;
+      }
     }
 
     await waitForNextPoll();

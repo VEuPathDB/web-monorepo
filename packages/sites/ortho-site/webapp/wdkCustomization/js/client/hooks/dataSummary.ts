@@ -7,17 +7,19 @@ import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
 export function useProteomeSummaryRows() {
   return useOrthoService(
-    orthoService => orthoService.getProteomeSummary(),
+    (orthoService) => orthoService.getProteomeSummary(),
     []
   );
 }
 
-function makeCorePeripheralMap(proteomeSummaryRows: ProteomeSummaryRows): Record<string, ProteinType> {
+function makeCorePeripheralMap(
+  proteomeSummaryRows: ProteomeSummaryRows
+): Record<string, ProteinType> {
   const speciesByAbbrev = keyBy(proteomeSummaryRows, 'three_letter_abbrev');
 
   return mapValues(
     speciesByAbbrev,
-    proteomeSummaryRow => proteomeSummaryRow.core_peripheral
+    (proteomeSummaryRow) => proteomeSummaryRow.core_peripheral
   );
 }
 

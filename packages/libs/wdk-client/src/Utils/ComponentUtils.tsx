@@ -261,7 +261,12 @@ export function safeHtml<P>(
   Component: any = 'span'
 ): JSX.Element {
   str = str ?? '';
-  if (str.indexOf('<') === -1) {
+  /**
+   * To improve performance, let's skip the element creation and innerHTML magic
+   * when we detect neither HTML nor an HTML entity in the string
+   */
+  const isHtmlEntityFound = /(\&(.+?);)/.test(str);
+  if (str.indexOf('<') === -1 && !isHtmlEntityFound) {
     return <Component {...props}>{str}</Component>;
   }
   // Use innerHTML to auto close tags

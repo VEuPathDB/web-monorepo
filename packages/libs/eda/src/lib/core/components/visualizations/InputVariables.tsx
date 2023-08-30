@@ -16,6 +16,7 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { isEqual } from 'lodash';
 import { red } from '@veupathdb/coreui/lib/definitions/colors';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 
 export interface InputSpec {
   name: string;
@@ -42,6 +43,13 @@ export interface InputSpec {
    */
   titleOverride?: ReactNode;
   styleOverride?: React.CSSProperties;
+  /**
+   * If an input is pre-populated and cannot be null, set this as true in order to prevent any
+   * "required" input logic.
+   */
+  isNonNullable?: boolean;
+  /** If isNonNullable is true, the clear button will not be rendered regardless of a true value */
+  showClearSelectionButton?: boolean;
 }
 
 interface SectionSpec {
@@ -132,11 +140,11 @@ export interface Props {
   enableShowMissingnessToggle?: boolean;
   /** controlled state of stratification variables' showMissingness toggle switch (optional) */
   showMissingness?: boolean;
-  showClearSelectionButton?: boolean;
   /** handler for showMissingness state change */
   onShowMissingnessChange?: (newState: boolean) => void;
   /** output entity, required for toggle switch label */
   outputEntity?: StudyEntity;
+  flexDirection?: CSSProperties['flexDirection'];
 }
 
 export function InputVariables(props: Props) {
@@ -155,9 +163,9 @@ export function InputVariables(props: Props) {
     onShowMissingnessChange,
     outputEntity,
     customSections,
-    showClearSelectionButton,
+    flexDirection,
   } = props;
-  const classes = useInputStyles();
+  const classes = useInputStyles(flexDirection);
   const handleChange = (
     inputName: string,
     selectedVariable?: VariableDescriptor
@@ -232,6 +240,7 @@ export function InputVariables(props: Props) {
                     <Tooltip
                       title={
                         !input.readonlyValue &&
+                        !input.isNonNullable &&
                         constraints &&
                         constraints.length &&
                         constraints[0][input.name]?.isRequired
@@ -243,6 +252,7 @@ export function InputVariables(props: Props) {
                         className={classes.label}
                         style={
                           !input.readonlyValue &&
+                          !input.isNonNullable &&
                           constraints &&
                           constraints.length &&
                           constraints[0][input.name]?.isRequired &&
@@ -263,6 +273,7 @@ export function InputVariables(props: Props) {
                             ? ' (fixed)'
                             : '')}
                         {!input.readonlyValue &&
+                        !input.isNonNullable &&
                         constraints &&
                         constraints.length &&
                         constraints[0][input.name]?.isRequired ? (
@@ -309,7 +320,9 @@ export function InputVariables(props: Props) {
                     ) : (
                       <VariableTreeDropdown
                         showClearSelectionButton={
-                          showClearSelectionButton ?? true
+                          input.isNonNullable
+                            ? false
+                            : input.showClearSelectionButton ?? true
                         }
                         scope="variableTree"
                         showMultiFilterDescendants
