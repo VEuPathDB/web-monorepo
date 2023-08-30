@@ -825,6 +825,7 @@ export const StandaloneMapMarkersResponse = type({
             type({
               label: string,
               value: number,
+              count: number,
             }),
             partial({
               min: string,
