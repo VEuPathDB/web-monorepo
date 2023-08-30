@@ -62,7 +62,7 @@ export default function DraggableTimeFilter({
         allowedTypes: ['date', 'integer'],
         // TODO: below two are correct ones
         // allowedTypes: ['date'],
-        // isTemporal: true,
+        isTemporal: true,
       },
     },
   ];
