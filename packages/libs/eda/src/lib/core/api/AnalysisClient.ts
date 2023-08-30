@@ -136,6 +136,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
       'studyVersion',
     ]);
 
+    console.log('fetching in createAnalysis');
     return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
         path: this.makeAnalysesPath(user.id, projectId),
@@ -158,6 +159,7 @@ export class AnalysisClient extends FetchClientWithCredentials {
       'isPublic',
     ]);
 
+    console.log('fetching in updateAnalysis');
     return this.fetchWithDetails((user, projectId) =>
       createJsonRequest({
         path: `${this.makeAnalysesPath(user.id, projectId)}/${analysisId}`,

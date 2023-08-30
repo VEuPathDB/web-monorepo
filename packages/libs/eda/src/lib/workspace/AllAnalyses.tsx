@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 import Path from 'path';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 
 import {
   Button,
@@ -35,11 +35,15 @@ import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/Ov
 
 import {
   AnalysisClient,
+  AnalysisState,
   AnalysisSummary,
+  DEFAULT_ANALYSIS_NAME,
+  StudyRecord,
   useAnalysisList,
   usePinnedAnalyses,
 } from '../core';
 import SubsettingClient from '../core/api/SubsettingClient';
+import { getAnalysisId } from '../core/utils/analysis';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import {
@@ -47,9 +51,11 @@ import {
   makeCurrentProvenanceString,
   makeOnImportProvenanceString,
 } from '../core/utils/analysis';
+import { AnalysisNameDialog } from './AnalysisNameDialog';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
 import { Checkbox, Toggle, colors } from '@veupathdb/coreui';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -68,14 +74,15 @@ interface Props {
   exampleAnalysesAuthor?: number;
   /**
    * When provided, the table is filtered to the study,
-   * and the study column is not displayed.
+   * and the study column is not displayed. This, along with analysisState, is
+   * necessary for a new analysis button to be shown
    */
-  studyId?: string | null;
+  studyRecord?: StudyRecord;
   /**
-   * If the analysis with this ID is displayed,
-   * indicate it is "active"
+   * If there is an active analysis, indicate the active analysis in the table
+   * and show a new analysis button if studyRecord is also provided
    */
-  activeAnalysisId?: string;
+  analysisState?: AnalysisState;
   /**
    * Determines if the search term is stored as a query
    * param in the url
@@ -111,15 +118,31 @@ export function AllAnalyses(props: Props) {
     analysisClient,
     exampleAnalysesAuthor,
     showLoginForm,
-    studyId,
+    studyRecord,
     synchronizeWithUrl,
     updateDocumentTitle,
-    activeAnalysisId,
+    analysisState,
   } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
+  const [isAnalysisNameDialogOpen, setIsAnalysisNameDialogOpen] =
+    useState(false);
+  const analysis = analysisState?.analysis;
+  const activeAnalysisId = getAnalysisId(analysis);
+  const studyId = studyRecord ? getStudyId(studyRecord) : null;
+  const { url } = useRouteMatch();
+  const redirectURL = studyId
+    ? url.endsWith(studyId)
+      ? `/workspace/${url}/new`
+      : Path.resolve(url, '../new')
+    : null;
+  const redirectToNewAnalysis = useCallback(
+    () => (redirectURL ? history.push(redirectURL) : null),
+    [history, redirectURL]
+  );
+  console.log({ redirectURL });
 
   const searchTextQueryParam = useMemo(() => {
     if (!synchronizeWithUrl) return '';
@@ -320,6 +343,25 @@ export function AllAnalyses(props: Props) {
           selectedAnalyses.has(analysis.analysisId),
       },
       actions: [
+        // A button to create a new analysis
+        {
+          element:
+            activeAnalysisId && redirectToNewAnalysis ? (
+              <Button
+                type="button"
+                startIcon={<Icon color="action" className="fa fa-plus" />}
+                onClick={
+                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
+                    ? () => setIsAnalysisNameDialogOpen(true)
+                    : redirectToNewAnalysis
+                }
+              >
+                Create new analysis
+              </Button>
+            ) : (
+              <></>
+            ),
+        },
         {
           element: (
             <Button
@@ -640,73 +682,91 @@ export function AllAnalyses(props: Props) {
       exampleAnalysesAuthor,
       user,
       studyId,
+      activeAnalysisId,
+      analysis,
+      redirectToNewAnalysis,
     ]
   );
 
   useSetDocumentTitle(updateDocumentTitle ? 'My Analyses' : document.title);
 
   return (
-    <div className={classes.root}>
-      <ShareFromAnalysesList
-        analysis={
-          analysesAndDatasets?.find(
-            (potentialMatch) =>
-              potentialMatch.analysis.analysisId === selectedAnalysisId
-          )?.analysis
-        }
-        updateAnalysis={updateAnalysis}
-        visible={sharingModalVisible}
-        toggleVisible={setSharingModalVisible}
-        showLoginForm={showLoginForm}
-      />
+    <>
+      <div className={classes.root}>
+        <ShareFromAnalysesList
+          analysis={
+            analysesAndDatasets?.find(
+              (potentialMatch) =>
+                potentialMatch.analysis.analysisId === selectedAnalysisId
+            )?.analysis
+          }
+          updateAnalysis={updateAnalysis}
+          visible={sharingModalVisible}
+          toggleVisible={setSharingModalVisible}
+          showLoginForm={showLoginForm}
+        />
 
-      <h1>My Analyses</h1>
-      {(loading || datasets == null || analyses == null || user == null) && (
-        <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
-      )}
-      {error && <ContentError>{error}</ContentError>}
-      {analyses && datasets && user ? (
-        <Mesa.Mesa state={tableState}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1ex',
-            }}
-          >
-            <TextField
-              variant="outlined"
-              size="small"
-              label="Search analyses"
-              inputProps={{ size: 50 }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="Clear search text"
-                      onClick={() => setSearchText('')}
-                      style={{
-                        visibility:
-                          debouncedSearchText.length > 0 ? 'visible' : 'hidden',
-                      }}
-                      edge="end"
-                      size="small"
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
+        <h1>My Analyses</h1>
+        {(loading || datasets == null || analyses == null || user == null) && (
+          <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
+        )}
+        {error && <ContentError>{error}</ContentError>}
+        {analyses && datasets && user ? (
+          <Mesa.Mesa state={tableState}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1ex',
               }}
-              value={searchText}
-              onChange={onFilterFieldChange}
-            />
-            <span>
-              Showing {filteredAnalysesAndDatasets?.length} of {analyses.length}{' '}
-              analyses
-            </span>
-          </div>
-        </Mesa.Mesa>
-      ) : null}
-    </div>
+            >
+              <TextField
+                variant="outlined"
+                size="small"
+                label="Search analyses"
+                inputProps={{ size: 50 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Clear search text"
+                        onClick={() => setSearchText('')}
+                        style={{
+                          visibility:
+                            debouncedSearchText.length > 0
+                              ? 'visible'
+                              : 'hidden',
+                        }}
+                        edge="end"
+                        size="small"
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                value={searchText}
+                onChange={onFilterFieldChange}
+              />
+              <span>
+                Showing {filteredAnalysesAndDatasets?.length} of{' '}
+                {analyses.length} analyses
+              </span>
+            </div>
+          </Mesa.Mesa>
+        ) : null}
+      </div>
+      {analysis && (
+        <AnalysisNameDialog
+          isOpen={isAnalysisNameDialogOpen}
+          setIsOpen={setIsAnalysisNameDialogOpen}
+          initialAnalysisName={analysis.displayName}
+          setAnalysisName={analysisState.setName}
+          redirectToNewAnalysis={() => {
+            setTimeout(redirectToNewAnalysis, 1200);
+          }}
+        />
+      )}
+    </>
   );
 }
