@@ -330,6 +330,10 @@ const VEuPathDB = 'VEuPathDB';
 const UniDB = 'UniDB';
 const DB = 'DB';
 
+// TODO Update this const once we know the question name to use.
+// const QUESTION_FOR_MAP_DATASETS = 'DatasetsForMapMenu';
+const QUESTION_FOR_MAP_DATASETS = 'AllDatasets';
+
 function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
 }
@@ -361,7 +365,7 @@ const useHeaderMenuItems = (
 
   const mapMenuItemsQuestion = useSelector((state: RootState) =>
     state.globalData.questions?.find(
-      (q) => q.urlSegment === 'DatasetsForMapMenu'
+      (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
     )
   );
   const showInteractiveMaps = mapMenuItemsQuestion != null;
