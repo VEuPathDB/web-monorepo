@@ -57,7 +57,7 @@ import { fixVarIdLabel } from '../../../utils/visualization';
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
 const DEFAULT_FC_THRESHOLD = 2;
-const DEFAULT_MARKER_OPACITY = 0.7;
+const DEFAULT_MARKER_OPACITY = 0.8;
 /**
  * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
  * We could have also used d3.scale.nice but then we dont have precise control of where the extremes
