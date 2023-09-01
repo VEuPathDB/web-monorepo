@@ -234,14 +234,14 @@ export function DifferentialAbundanceConfiguration(
         return;
       const binRangeProps: GetBinRangesProps = {
         studyId: studyMetadata.id,
-        ...configuration.comparator.variable,
+        ...configuration.comparator?.variable,
         filters: filters ?? [],
         dataClient,
         binningMethod: 'quantile',
       };
       const bins = await getBinRanges(binRangeProps);
       return bins;
-    }, [dataClient, configuration.comparator.variable])
+    }, [dataClient, configuration])
   );
 
   const disableSwapGroupValuesButton =
