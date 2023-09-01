@@ -2,21 +2,21 @@
 
 body.vpdb-Body .vpdb-RootContainer {
   grid-template-areas:
-  "header"
-  "subheader"
-  "banner"
-  "content"
-  "footer";
+    'header'
+    'subheader'
+    'banner'
+    'content'
+    'footer';
 
   grid-template-rows: 11em auto auto 1fr auto;
 
   &__home {
     grid-template-areas:
-      "header header header"
-      "subheader subheader subheader"
-      "banner banner banner"
-      "nav content side"
-      "footer footer footer";
+      'header header header'
+      'subheader subheader subheader'
+      'banner banner banner'
+      'nav content side'
+      'footer footer footer';
 
     .vpdb-Main {
       overflow: hidden;
@@ -24,13 +24,13 @@ body.vpdb-Body .vpdb-RootContainer {
 
     @media screen and (max-width: $tablet-width) {
       grid-template-areas:
-        "header header header"
-        "subheader subheader subheader"
-        "banner banner banner"
-        "nav content content"
-        "nav content content"
-        "nav side side"
-        "footer footer footer";
+        'header header header'
+        'subheader subheader subheader'
+        'banner banner banner'
+        'nav content content'
+        'nav content content'
+        'nav side side'
+        'footer footer footer';
     }
   }
 
@@ -44,7 +44,9 @@ body.vpdb-Body .vpdb-RootContainer {
 
   @media screen and (min-width: $hamburger-width + 1) {
     &__home {
-      .vpdb-SearchPane, .vpdb-Main, .vpdb-NewsPane {
+      .vpdb-SearchPane,
+      .vpdb-Main,
+      .vpdb-NewsPane {
         padding-bottom: 12em;
       }
 
@@ -53,6 +55,7 @@ body.vpdb-Body .vpdb-RootContainer {
         position: fixed;
         bottom: 0;
         width: 100%;
+        z-index: 1;
       }
 
       .vpdb-Footer__thin {
@@ -68,7 +71,8 @@ body.vpdb-Body .vpdb-RootContainer {
   }
 
   @media screen and (max-width: $mobile-width) {
-    &__home.vpdb-RootContainer__news-expanded, &__home.vpdb-RootContainer__news-collapsed {
+    &__home.vpdb-RootContainer__news-expanded,
+    &__home.vpdb-RootContainer__news-collapsed {
       grid-template-columns: 100%;
     }
   }

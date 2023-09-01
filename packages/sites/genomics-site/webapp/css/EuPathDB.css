@@ -3,7 +3,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(../images/EuPathDB/background_s.jpg);
+  background-image: url(../images/EuPathDB/background_s.jpg);
 }
 
 body.home {
@@ -15,32 +15,39 @@ body.home {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #header2 {
-	background-image: url(../images/EuPathDB/backgroundtop_s.jpg);
+  background-image: url(../images/EuPathDB/backgroundtop_s.jpg);
 }
 
-#header_rt, #header_rt a:link, #header_rt a:visited {
-   color: #33587a;
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
+  color: #33587a;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#nav-top, #nav-top a:link, #nav-top a:visited {
-	color: #255f95;
+#nav-top,
+#nav-top a:link,
+#nav-top a:visited {
+  color: #255f95;
 }
 
-#nav-top li ul {  /* second-level lists */
-	border-color:#14426d;
-	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
+#nav-top li ul {
+  /* second-level lists */
+  border-color: #14426d;
+  list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
 }
 
-#nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #255f95;
+#nav-top li ul a:link,
+#nav-top li ul a:visited {
+  color: #255f95;
 }
 
-#nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #717775;
+#nav-top li ul a:hover,
+#nav-top li ul a:active {
+  color: #717775;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,8 +59,8 @@ body.home {
 }
 
 #about_us_left {
-	background-color: #b8c9da;
-	list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
+  background-color: #b8c9da;
+  list-style-image: url(../images/EuPathDB/bullet_arrow.gif);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,12 +68,11 @@ body.home {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #14426D;  /* color as in contentcolumn border */
+  border-color: #14426d; /* color as in contentcolumn border */
 }
 
 #menu_lefttop a.heading {
-	background-color: #546c83;
+  background-color: #546c83;
 }
-
 
 /*THE END */

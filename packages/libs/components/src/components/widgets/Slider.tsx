@@ -8,6 +8,17 @@ import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { debounce } from 'lodash';
 import { NumberOrDate } from '../../types/general';
 
+// a color spec shared among plot components that implements the track gradient
+export const plotsSliderOpacityGradientColorSpec: SliderWidgetProps['colorSpec'] =
+  {
+    type: 'gradient',
+    tooltip: '#aaa',
+    knobColor: '#aaa',
+    // normal slider color: e.g., from 0 to 1
+    trackGradientStart: '#fff',
+    trackGradientEnd: '#000',
+  };
+
 export type SliderWidgetProps = {
   /** The minimum value of the slider. */
   minimum?: number;
@@ -125,9 +136,10 @@ export default function SliderWidget({
   const [localValue, setLocalValue] = useState<number | undefined>(value);
 
   // XXX We may want a generic useDebouncedCallback hook.
-  const debouncedOnChange = useMemo(() => debounce(onChange, debounceRateMs), [
-    onChange,
-  ]);
+  const debouncedOnChange = useMemo(
+    () => debounce(onChange, debounceRateMs),
+    [onChange]
+  );
 
   // cancel any lingering calls to onChange (via useEffect cleanup fn)
   useEffect(() => debouncedOnChange.cancel, []);

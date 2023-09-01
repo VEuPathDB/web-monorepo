@@ -27,7 +27,7 @@ const ContactUsSubmission = ({
   validatedAttachmentMetadata,
   screenshotMetadata,
   submitDetails,
-  specialInstructions
+  specialInstructions,
 }) => (
   <Fragment>
     <ContactUsSubmissionHeader />

@@ -15,7 +15,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     {
       path: '/',
       component: OrthoMCLHomePageController,
-      rootClassNameModifier: 'home-page'
+      rootClassNameModifier: 'home-page',
     },
     {
       path: '/cluster-graph/:groupName',
@@ -23,16 +23,16 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
         const groupName = props.match.params.groupName;
 
         return <GroupClusterGraphController groupName={groupName} />;
-      }
+      },
     },
     {
       path: '/release-summary',
-      component: ProteomeSummaryController
+      component: ProteomeSummaryController,
     },
     {
       path: '/search',
-      component: () => <SiteSearchController offerOrganismFilter={false} />
+      component: () => <SiteSearchController offerOrganismFilter={false} />,
     },
-    ...ebrcRoutes
+    ...ebrcRoutes,
   ];
 }

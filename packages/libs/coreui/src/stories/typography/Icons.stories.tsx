@@ -1,5 +1,5 @@
-import React from "react";
-import { Story, Meta } from "@storybook/react/types-6-0";
+import React from 'react';
+import { Story, Meta } from '@storybook/react/types-6-0';
 
 import {
   IconProps,
@@ -8,7 +8,7 @@ import {
   CaretUp,
   DoubleArrow,
   Cancel,
-} from "../../assets/icons";
+} from '../../assets/icons';
 import {
   ArrowDown,
   ArrowRight,
@@ -36,18 +36,18 @@ import {
   Trash,
   Undo,
   Warning,
-} from "../../components/icons";
-import { gray } from "../../definitions/colors";
-import { H5 } from "../../components/typography";
-import { grey } from "@material-ui/core/colors";
+} from '../../components/icons';
+import { gray } from '../../definitions/colors';
+import { H5 } from '../../components/typography';
+import { grey } from '@material-ui/core/colors';
 
 export default {
-  title: "Typography/Icons",
+  title: 'Typography/Icons',
   component: Arrow,
   argTypes: {
     color: {
       control: {
-        type: "color",
+        type: 'color',
       },
     },
   },
@@ -66,10 +66,10 @@ const IconDisplay = ({
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         rowGap: 10,
       }}
     >
@@ -80,8 +80,8 @@ const IconDisplay = ({
         style={{
           color: args.color,
           fontSize: 14,
-          fontFamily: "sans-serif",
-          fontWeight: "bold",
+          fontFamily: 'sans-serif',
+          fontWeight: 'bold',
         }}
       >
         {name}
@@ -93,17 +93,17 @@ const IconDisplay = ({
 export const AllIcons: Story<IconProps> = (args) => {
   return (
     <div>
-      <H5 additionalStyles={{margin: '0.75em 0'}}>Icons</H5>
+      <H5 additionalStyles={{ margin: '0.75em 0' }}>Icons</H5>
       <div
         style={{
-          display: "grid",
+          display: 'grid',
           gap: 40,
           gridTemplateColumns: 'repeat(6, auto)',
           padding: 20,
           backgroundColor: grey[200],
           borderRadius: 10,
-          width: "100%",
-          boxSizing: "border-box",
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
         <IconDisplay {...args} name="Arrow" component={Arrow} />
@@ -117,7 +117,11 @@ export const AllIcons: Story<IconProps> = (args) => {
         <IconDisplay {...args} name="ChevronRight" component={ChevronRight} />
         <IconDisplay {...args} name="Close" component={Close} />
         <IconDisplay {...args} name="CloseCircle" component={CloseCircle} />
-        <IconDisplay {...args} name="CloseFullscreen" component={CloseFullscreen} />
+        <IconDisplay
+          {...args}
+          name="CloseFullscreen"
+          component={CloseFullscreen}
+        />
         <IconDisplay {...args} name="Copy" component={Copy} />
         <IconDisplay {...args} name="DoubleArrow" component={DoubleArrow} />
         <IconDisplay {...args} name="Download" component={Download} />
@@ -127,13 +131,25 @@ export const AllIcons: Story<IconProps> = (args) => {
         <IconDisplay {...args} name="Loading" component={Loading} />
         <IconDisplay {...args} name="NoEdit" component={NoEdit} />
         <IconDisplay {...args} name="Pencil" component={Pencil} />
-        <IconDisplay {...args} name="SampleDetailsDark" component={SampleDetailsDark} />
-        <IconDisplay {...args} name="SampleDetailsLight" component={SampleDetailsLight} />
+        <IconDisplay
+          {...args}
+          name="SampleDetailsDark"
+          component={SampleDetailsDark}
+        />
+        <IconDisplay
+          {...args}
+          name="SampleDetailsLight"
+          component={SampleDetailsLight}
+        />
         <IconDisplay {...args} name="Share" component={Share} />
         <IconDisplay {...args} name="TableDownload" component={TableDownload} />
         <IconDisplay {...args} name="Table" component={Table} />
         <IconDisplay {...args} name="TaxaQueryDark" component={TaxaQueryDark} />
-        <IconDisplay {...args} name="TaxaQueryLight" component={TaxaQueryLight} />
+        <IconDisplay
+          {...args}
+          name="TaxaQueryLight"
+          component={TaxaQueryLight}
+        />
         <IconDisplay {...args} name="Trash" component={Trash} />
         <IconDisplay {...args} name="Undo" component={Undo} />
         <IconDisplay {...args} name="Warning" component={Warning} />

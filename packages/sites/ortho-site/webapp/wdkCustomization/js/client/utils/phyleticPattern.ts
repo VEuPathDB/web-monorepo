@@ -1,7 +1,10 @@
 import { groupBy, map, mapValues, orderBy, partition } from 'lodash';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { foldStructure, mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  foldStructure,
+  mapStructure,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { TaxonTree } from 'ortho-client/utils/taxons';
 
@@ -31,17 +34,13 @@ export function makePhyleticExpressionUiTree(taxonTree: TaxonTree) {
   const phyleticExpressionUiTree = mapStructure(
     (node: TaxonTree, mappedChildren: PhyleticExpressionUiTree[]) => ({
       ...node,
-      children: orderBy(
-        mappedChildren,
-        child => child.species,
-        'desc'
-      ),
+      children: orderBy(mappedChildren, (child) => child.species, 'desc'),
       speciesCount: node.species
         ? 1
         : mappedChildren.reduce(
             (memo, { speciesCount }) => memo + speciesCount,
             0
-          )
+          ),
     }),
     (node: TaxonTree) => node.children,
     taxonTree
@@ -51,18 +50,23 @@ export function makePhyleticExpressionUiTree(taxonTree: TaxonTree) {
 
   return phyleticExpressionUiTree;
 
-  function _addParentRefs(node: PhyleticExpressionUiTree, parent: PhyleticExpressionUiTree | undefined) {
+  function _addParentRefs(
+    node: PhyleticExpressionUiTree,
+    parent: PhyleticExpressionUiTree | undefined
+  ) {
     if (parent != null) {
       node.parent = parent;
     }
 
-    node.children.forEach(child => {
+    node.children.forEach((child) => {
       _addParentRefs(child, node);
     });
   }
 }
 
-export function makeInitialConstraintStates(phyleticExpressionUiTree: PhyleticExpressionUiTree) {
+export function makeInitialConstraintStates(
+  phyleticExpressionUiTree: PhyleticExpressionUiTree
+) {
   return foldStructure(
     (constraintStates: ConstraintStates, node: PhyleticExpressionUiTree) => {
       constraintStates[node.abbrev] = 'free';
@@ -73,22 +77,32 @@ export function makeInitialConstraintStates(phyleticExpressionUiTree: PhyleticEx
   );
 }
 
-export function getNextConstraintState(currentState: ConstraintState, isSpecies: boolean): HomogeneousConstraintState {
+export function getNextConstraintState(
+  currentState: ConstraintState,
+  isSpecies: boolean
+): HomogeneousConstraintState {
   if (currentState === 'mixed') {
     return 'include-all';
   }
 
-  const stateOrder = isSpecies
-    ? SPECIES_STATE_ORDER
-    : NON_SPECIES_STATE_ORDER;
+  const stateOrder = isSpecies ? SPECIES_STATE_ORDER : NON_SPECIES_STATE_ORDER;
 
   const stateIndex = stateOrder.indexOf(currentState);
 
   return stateOrder[(stateIndex + 1) % stateOrder.length];
 }
 
-const NON_SPECIES_STATE_ORDER = [ 'free', 'include-all', 'include-at-least-one', 'exclude' ] as const;
-const SPECIES_STATE_ORDER = [ 'free', 'include-all', 'exclude' ] as HomogeneousConstraintState[];
+const NON_SPECIES_STATE_ORDER = [
+  'free',
+  'include-all',
+  'include-at-least-one',
+  'exclude',
+] as const;
+const SPECIES_STATE_ORDER = [
+  'free',
+  'include-all',
+  'exclude',
+] as HomogeneousConstraintState[];
 
 export function updateParentConstraintStates(
   node: PhyleticExpressionUiTree,
@@ -99,17 +113,14 @@ export function updateParentConstraintStates(
 
   if (parent != null) {
     const distinctChildConstraintTypes = new Set(
-      parent.children.map(
-        child => draftConstraintStates[child.abbrev]
-      )
+      parent.children.map((child) => draftConstraintStates[child.abbrev])
     );
 
-    const newParentState = (
+    const newParentState =
       distinctChildConstraintTypes.size === 1 &&
-      changedState !== 'include-at-least-one'     
-    )
-      ? changedState
-      : 'mixed';
+      changedState !== 'include-at-least-one'
+        ? changedState
+        : 'mixed';
 
     draftConstraintStates[parent.abbrev] = newParentState;
 
@@ -122,7 +133,7 @@ export function updateChildConstraintStates(
   draftConstraintStates: ConstraintStates,
   changedState: HomogeneousConstraintState
 ): void {
-  node.children.forEach(child => {
+  node.children.forEach((child) => {
     if (changedState === 'include-at-least-one') {
       draftConstraintStates[child.abbrev] = 'free';
     } else {
@@ -143,29 +154,32 @@ export function makePhyleticExpression(
 
   _traverse(phyleticExpressionUiTree);
 
-  const nonSpeciesSubexpression = nonSpeciesExpressionTerms.length == 0
-    ? undefined
-    : nonSpeciesExpressionTerms.join(' AND ');
+  const nonSpeciesSubexpression =
+    nonSpeciesExpressionTerms.length == 0
+      ? undefined
+      : nonSpeciesExpressionTerms.join(' AND ');
 
-  const includedSpeciesSubexpression = includedSpeciesWithMixedParents.length == 0
-    ? undefined
-    : `${includedSpeciesWithMixedParents.join('+')}=${includedSpeciesWithMixedParents.length}T`;
+  const includedSpeciesSubexpression =
+    includedSpeciesWithMixedParents.length == 0
+      ? undefined
+      : `${includedSpeciesWithMixedParents.join('+')}=${
+          includedSpeciesWithMixedParents.length
+        }T`;
 
-  const excludedSpeciesSubexpression = excludedSpeciesWithMixedParents.length == 0
-    ? undefined
-    : `${excludedSpeciesWithMixedParents.join('+')}=0T`;
+  const excludedSpeciesSubexpression =
+    excludedSpeciesWithMixedParents.length == 0
+      ? undefined
+      : `${excludedSpeciesWithMixedParents.join('+')}=0T`;
 
   const subexpressions = [
     nonSpeciesSubexpression,
     includedSpeciesSubexpression,
-    excludedSpeciesSubexpression
+    excludedSpeciesSubexpression,
   ];
 
-  return (
-    subexpressions
-      .filter(subexpression => subexpression != null)
-      .join(' AND ')
-  );
+  return subexpressions
+    .filter((subexpression) => subexpression != null)
+    .join(' AND ');
 
   function _traverse(node: PhyleticExpressionUiTree) {
     const nextConstraintType = constraintStates[node.abbrev];
@@ -177,23 +191,25 @@ export function makePhyleticExpression(
     } else if (nextConstraintType === 'exclude') {
       nonSpeciesExpressionTerms.push(`${node.abbrev}=0T`);
     } else if (nextConstraintType === 'mixed') {
-      const [ speciesChildren, nonSpeciesChildren ] = partition(
+      const [speciesChildren, nonSpeciesChildren] = partition(
         node.children,
-        child => child.species
+        (child) => child.species
       );
 
       const speciesChildrenAbbrevs = map(
         speciesChildren,
-        speciesChild => speciesChild.abbrev
+        (speciesChild) => speciesChild.abbrev
       );
 
       const speciesChildrenAbbrevsByState = groupBy(
         speciesChildrenAbbrevs,
-        speciesChildAbbrev => constraintStates[speciesChildAbbrev]
+        (speciesChildAbbrev) => constraintStates[speciesChildAbbrev]
       );
 
-      const includedSpeciesAbbrevs = speciesChildrenAbbrevsByState['include-all'] ?? [];
-      const excludedSpeciesAbbrevs = speciesChildrenAbbrevsByState['exclude'] ?? [];
+      const includedSpeciesAbbrevs =
+        speciesChildrenAbbrevsByState['include-all'] ?? [];
+      const excludedSpeciesAbbrevs =
+        speciesChildrenAbbrevsByState['exclude'] ?? [];
 
       includedSpeciesWithMixedParents.push(...includedSpeciesAbbrevs);
       excludedSpeciesWithMixedParents.push(...excludedSpeciesAbbrevs);

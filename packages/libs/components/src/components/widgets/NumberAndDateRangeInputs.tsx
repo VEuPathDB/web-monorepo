@@ -6,6 +6,7 @@ import { NumberInput, DateInput } from './NumberAndDateInputs';
 import Button from './Button';
 import Notification from './Notification';
 import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
+import { propTypes } from 'react-bootstrap/esm/Image';
 
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
@@ -24,9 +25,10 @@ export type BaseProps<M extends NumberOrDateRange> = {
    * If a validator is provided, `required` is no longer useful, and
    * rangeBounds will only be used for auto-filling empty inputs.
    */
-  validator?: (
-    newRange?: NumberOrDateRange
-  ) => { validity: boolean; message: string };
+  validator?: (newRange?: NumberOrDateRange) => {
+    validity: boolean;
+    message: string;
+  };
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */
@@ -43,7 +45,7 @@ export type BaseProps<M extends NumberOrDateRange> = {
   disabled?: boolean;
 };
 
-export type NumberRangeInputProps = BaseProps<NumberRange>;
+export type NumberRangeInputProps = BaseProps<NumberRange> & { step?: number };
 
 export function NumberRangeInput(props: NumberRangeInputProps) {
   return <BaseInput {...props} valueType="number" />;
@@ -84,15 +86,15 @@ function BaseInput({
   clearButtonLabel = 'Clear',
   // add disabled prop to disable input fields
   disabled = false,
+  ...props
 }: BaseInputProps) {
   if (validator && required)
     console.log(
       'WARNING: NumberRangeInput or DateRangeInput will ignore `required` prop because validator was provided.'
     );
 
-  const [localRange, setLocalRange] = useState<
-    NumberRange | DateRange | undefined
-  >(range);
+  const [localRange, setLocalRange] =
+    useState<NumberRange | DateRange | undefined>(range);
   const [isReceiving, setIsReceiving] = useState<boolean>(false);
   const [validationWarning, setValidationWarning] = useState<string>('');
 
@@ -161,6 +163,7 @@ function BaseInput({
   ]);
 
   const { min, max } = localRange ?? {};
+  const step = 'step' in props ? props.step : undefined;
 
   return (
     <div style={{ ...containerStyles }}>
@@ -188,6 +191,7 @@ function BaseInput({
             }}
             // add disabled prop to disable input fields
             disabled={disabled}
+            step={step}
           />
         ) : (
           <DateInput
@@ -236,6 +240,7 @@ function BaseInput({
             }}
             // add disabled prop to disable input fields
             disabled={disabled}
+            step={step}
           />
         ) : (
           <DateInput

@@ -124,6 +124,8 @@ interface State {
   childRows: [HTMLElement, ChildRowProps][];
   selectedColumnFilters: string[];
   showFieldSelector: boolean;
+  /** Used to display row counts to user */
+  numberOfRowsVisible: number | null;
 }
 
 /**
@@ -158,6 +160,7 @@ class DataTable extends PureComponent<Props, State> {
     childRows: [],
     selectedColumnFilters: [],
     showFieldSelector: false,
+    numberOfRowsVisible: null,
   };
 
   _childRowContainers: Map<HTMLTableRowElement, HTMLElement> = new Map();
@@ -430,6 +433,11 @@ class DataTable extends PureComponent<Props, State> {
         .search(searchTermRegex, true, false, true)
         .draw();
     }
+    /** set row count after .draw() for correct count */
+    this.setState((state) => ({
+      ...state,
+      numberOfRowsVisible: dataTable.page.info().recordsDisplay,
+    }));
   }
 
   _updateSorting(dataTable: DataTables.Api) {
@@ -662,6 +670,21 @@ class DataTable extends PureComponent<Props, State> {
                   </ul>
                 </div>
               </HelpIcon>
+              <div className="wdk-DataTableCountsContainer">
+                <span>
+                  <strong>
+                    {this.state.numberOfRowsVisible ?? this.props.data.length}
+                  </strong>{' '}
+                  rows
+                </span>{' '}
+                {(this.state.numberOfRowsVisible === 0 ||
+                  this.state.numberOfRowsVisible) &&
+                  this.state.numberOfRowsVisible < this.props.data.length && (
+                    <span className="MesaComponent faded">
+                      (filtered from a total of {this.props.data.length})
+                    </span>
+                  )}
+              </div>
             </div>
             {this.state.showFieldSelector && (
               <DataTableFilterSelector

@@ -519,6 +519,11 @@ class UserDatasetDetail extends React.Component {
 
    -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= */
 
+  // This is needed to resolve downstream typescript errors.
+  // TypeScript infers that this method returns JSX.Element[].
+  // Some classes extending this will return (JSX.Element | null)[].
+  // The ReactNode type is better suited, here, since it allows for null values.
+  /** @return {import("react").ReactNode[]} */
   getPageSections() {
     return [
       this.renderHeaderSection,

@@ -10,13 +10,26 @@
   }
 
   &-Filter-Container {
-    outline: 2px solid #acacac;
-    margin: 2em auto 3em;
-    width: 60vw;
-    border-radius: 8px;
-    // height: 25em;
+    .wdk-QuestionFormParameterList {
+      width: 60vw;
+      margin: auto;
+    }
+
+    .wdk-QuestionFormParameterHeading h2 {
+      font-size: 1.3em;
+    }
+
+    .OrganismParam {
+      max-width: 47em;
+    }
 
     .filter-param {
+      outline: 2px solid #acacac;
+      // margin: 2em auto 3em;
+      // width: 60vw;
+      border-radius: 8px;
+      // height: 25em;
+
       h3 {
         padding: 0.25em 0;
       }
@@ -64,6 +77,10 @@
     }
 
     .TableToolbar {
+      order: -3;
+    }
+
+    .TableToolbar-Children {
       display: none;
     }
 

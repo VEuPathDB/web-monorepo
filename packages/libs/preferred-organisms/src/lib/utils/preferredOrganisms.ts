@@ -43,13 +43,11 @@ export const makePreferredOrganismsRecoilState = memoize(
 
     const { wdkService } = wdkDependencies;
 
-    const { organismMetadata } = makeOrganismMetadataRecoilState(
-      wdkDependencies
-    );
+    const { organismMetadata } =
+      makeOrganismMetadataRecoilState(wdkDependencies);
 
-    const { questions, datasetMetadata } = makeDatasetMetadataRecoilState(
-      wdkDependencies
-    );
+    const { questions, datasetMetadata } =
+      makeDatasetMetadataRecoilState(wdkDependencies);
 
     const config = selector({
       key: 'wdk-service-config',

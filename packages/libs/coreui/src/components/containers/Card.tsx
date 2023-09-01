@@ -135,7 +135,7 @@ export default function Card({
       }}
     >
       <div
-        key='titleBar'
+        key="titleBar"
         css={{
           display: 'flex',
           flexDirection: 'column',
@@ -155,7 +155,7 @@ export default function Card({
           <TitleComponent
             ref={observe}
             text={title}
-            color='white'
+            color="white"
             additionalStyles={{
               margin: 0,
               marginRight: 15,

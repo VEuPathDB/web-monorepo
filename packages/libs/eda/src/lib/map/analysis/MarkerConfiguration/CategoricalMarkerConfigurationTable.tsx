@@ -6,8 +6,8 @@ import { Tooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import { UNSELECTED_TOKEN } from '../../';
-import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import { orderBy } from 'lodash';
+import { SelectedCountsOption } from '../appState';
 
 type Props<T> = {
   overlayValues: string[];
@@ -16,7 +16,7 @@ type Props<T> = {
   uncontrolledSelections: Set<string>;
   setUncontrolledSelections: (v: Set<string>) => void;
   allCategoricalValues: AllValuesDefinition[] | undefined;
-  selectedCountsOption: SharedMarkerConfigurations['selectedCountsOption'];
+  selectedCountsOption: SelectedCountsOption;
 };
 
 const DEFAULT_SORTING: MesaSortObject = {
@@ -40,6 +40,7 @@ export function CategoricalMarkerConfigurationTable<T>({
     (prev, curr) => prev + curr.count,
     0
   );
+  const numberOfAvailableValues = allCategoricalValues.length;
 
   function handleSelection(data: AllValuesDefinition) {
     if (overlayValues.length < MAXIMUM_ALLOWABLE_VALUES) {
@@ -50,16 +51,21 @@ export function CategoricalMarkerConfigurationTable<T>({
       setUncontrolledSelections(nextSelections);
       // check if we have the "All other values" label so we can do some extra processing as needed
       if (overlayValues.includes(UNSELECTED_TOKEN)) {
+        // remove UNSELECTED_TOKEN if all selections are made and we're not exceeding the max
+        const newArrayValues = [data.label].concat(
+          numberOfAvailableValues <= MAXIMUM_ALLOWABLE_VALUES &&
+            nextSelections.size - 1 === numberOfAvailableValues
+            ? []
+            : [UNSELECTED_TOKEN]
+        );
         onChange({
           ...configuration,
-          /**
-           * This logic ensures that the "All other values" label:
-           *  1. renders as the last overlayValue value
-           *  2. renders as the last legend item
-           */
+          // this logic plus the logic for newArrayValues ensures that, when present, the "All other values"
+          // attribute is the last item in the overlayValues array, thus rendering it as the last item
+          // in the legend
           selectedValues: overlayValues
             .slice(0, overlayValues.length - 1)
-            .concat(data.label, UNSELECTED_TOKEN),
+            .concat(newArrayValues),
         });
         // can set the new configuration without worrying about the "All other values" data
       } else {
@@ -126,7 +132,7 @@ export function CategoricalMarkerConfigurationTable<T>({
           nextSelections.add(UNSELECTED_TOKEN);
         }
         setUncontrolledSelections(nextSelections);
-        if (nextSelections.size < MAXIMUM_ALLOWABLE_VALUES) {
+        if (nextSelections.size <= MAXIMUM_ALLOWABLE_VALUES) {
           onChange({
             ...configuration,
             selectedValues: allCategoricalValues.map((v) => v.label),

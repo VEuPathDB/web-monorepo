@@ -3,9 +3,7 @@ import './SupportFormBase.scss';
 
 const SupportFormBase = ({ children }) => (
   <div className="support-form-base">
-    <div className="support-form-contents">
-      {children}
-    </div>
+    <div className="support-form-contents">{children}</div>
   </div>
 );
 

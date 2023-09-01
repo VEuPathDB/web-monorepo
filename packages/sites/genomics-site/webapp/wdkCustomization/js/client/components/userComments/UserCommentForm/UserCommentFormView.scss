@@ -40,7 +40,7 @@
         grid-template-columns: 1fr;
         margin-top: 1em;
 
-        // TODO: Once (if?) we drop IE11 support, we can use 
+        // TODO: Once (if?) we drop IE11 support, we can use
         // "row-gap" instead of applying "margin-bottom"
         // to the direct descendants
         > * {
@@ -61,18 +61,18 @@
 
     .wdk-UserComments-Form-Group {
       .wdk-UserComments-Form-Group-Header {
-        background-color: #88AACA;
-        color: #FFFFFF;
+        background-color: #88aaca;
+        color: #ffffff;
         font-weight: bold;
         padding: 0.25em;
       }
-  
+
       .wdk-UserComments-Form-Group-Body {
         display: grid;
         grid-template-columns: 17em 1fr;
         margin-top: 0.5em;
 
-        // TODO: Once (if?) we drop IE11 support, we can use 
+        // TODO: Once (if?) we drop IE11 support, we can use
         // "row-gap" instead of applying "margin-bottom"
         // to the direct descendants
         > * {
@@ -83,7 +83,7 @@
           margin-left: 1em;
         }
 
-        > div > input[type=text] {
+        > div > input[type='text'] {
           box-sizing: content-box;
           width: calc(100ch + 4px);
         }
@@ -106,14 +106,14 @@
           grid-template-columns: 20ch 1fr;
           padding: 0.5em 0.5em 0 0.5em;
 
-          // TODO: Once (if?) we drop IE11 support, we can use 
+          // TODO: Once (if?) we drop IE11 support, we can use
           // "row-gap" instead of applying "margin-bottom"
           // to the direct descendants
           > * {
             margin-bottom: 0.5em;
           }
 
-          input[type=text] {
+          input[type='text'] {
             width: calc(100% - 2.5em);
           }
         }
@@ -127,8 +127,8 @@
             margin-bottom: 0.5em;
             display: grid;
             grid-template-columns: 20ch 1fr 1em;
-            
-            // TODO: Once (if?) we drop IE11 support, we can use 
+
+            // TODO: Once (if?) we drop IE11 support, we can use
             // "row-gap" instead of applying "margin-bottom"
             // to the direct descendants
             > * {
@@ -160,7 +160,7 @@
             > input {
               width: calc(100% - 2.5em);
             }
-          } 
+          }
 
           .wdk-PubMedIdSearchField {
             margin: 1em 0;
@@ -191,13 +191,14 @@
               border-bottom: 1px rgb(128, 128, 128) solid;
               margin-bottom: 1em;
               display: grid;
-              grid-template-columns: 10ch 1fr;    
-              
+              grid-template-columns: 10ch 1fr;
+
               > * {
                 padding: 0.5em;
               }
 
-              > *:nth-child(1), > *:nth-child(2) {
+              > *:nth-child(1),
+              > *:nth-child(2) {
                 background-color: lightgrey;
               }
             }

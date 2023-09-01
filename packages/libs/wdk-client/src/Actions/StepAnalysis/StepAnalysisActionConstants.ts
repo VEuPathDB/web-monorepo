@@ -1,10 +1,15 @@
-export const START_LOADING_TAB_LISTING = 'step-analysis/start-loading-tab-listing';
-export const FINISH_LOADING_TAB_LISTING = 'step-analysis/finish-loading-tab-listing';
+export const START_LOADING_TAB_LISTING =
+  'step-analysis/start-loading-tab-listing';
+export const FINISH_LOADING_TAB_LISTING =
+  'step-analysis/finish-loading-tab-listing';
 export const SELECT_TAB = 'step-analysis/select-tab';
 export const START_LOADING_SAVED_TAB = 'step-analysis/start-loading-saved-tab';
-export const FINISH_LOADING_SAVED_TAB = 'step-analysis/finish-loading-saved-tab';
-export const START_LOADING_CHOSEN_ANALYSIS_TAB = 'step-analysis/start-loading-chosen-analysis-tab';
-export const FINISH_LOADING_CHOSEN_ANALYSIS_TAB = 'step-analysis/finish-loading-chosen-analysis-tab';
+export const FINISH_LOADING_SAVED_TAB =
+  'step-analysis/finish-loading-saved-tab';
+export const START_LOADING_CHOSEN_ANALYSIS_TAB =
+  'step-analysis/start-loading-chosen-analysis-tab';
+export const FINISH_LOADING_CHOSEN_ANALYSIS_TAB =
+  'step-analysis/finish-loading-chosen-analysis-tab';
 export const CREATE_NEW_TAB = 'step-analysis/create-new-tab';
 export const DELETE_ANALYSIS = 'step-analysis/delete-analysis';
 export const REMOVE_TAB = 'step-analysis/remove-tab';

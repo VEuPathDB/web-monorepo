@@ -5,7 +5,7 @@
     min-width: 1000px;
     max-width: 95vw;
   }
-  
+
   &--Header {
     display: flex;
     justify-content: space-between;
@@ -20,7 +20,7 @@
     grid-template-columns: auto 1em 60em;
     align-items: flex-start;
     grid-gap: 1em;
-    grid-template-areas: "menu-selector . selected-menu";
+    grid-template-areas: 'menu-selector . selected-menu';
   }
 
   &--MenuSelector {
@@ -58,7 +58,7 @@
         display: inline-flex;
         justify-content: center;
         align-items: center;
-        margin-right: .5em;
+        margin-right: 0.5em;
         color: white;
       }
     }

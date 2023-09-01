@@ -6,10 +6,10 @@ import { combineClassNames } from './Utils';
 const cx = makeClassNameHelper('ebrc-Main');
 
 type Props = {
-  containerClassName?: string
+  containerClassName?: string;
 };
 
-export const Main: FunctionComponent<Props> = props => (
+export const Main: FunctionComponent<Props> = (props) => (
   <main className={combineClassNames(cx(), props.containerClassName)}>
     {props.children}
   </main>

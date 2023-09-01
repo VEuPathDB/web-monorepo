@@ -2,15 +2,16 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { useStateWithHistory } from '../StateWithHistory';
 
 describe('useStateWithHistory', () => {
-
   it('should work with size = 1', () => {
-    const { result } = renderHook(() => useStateWithHistory('foo', { size: 1 }));
+    const { result } = renderHook(() =>
+      useStateWithHistory('foo', { size: 1 })
+    );
     expect(result.current.current).toBe('foo');
     expect(result.current.canRedo).toBeFalsy();
     expect(result.current.canUndo).toBeFalsy();
     act(() => {
       result.current.setCurrent('bar');
-    })
+    });
     expect(result.current.current).toBe('bar');
   });
 
@@ -49,22 +50,24 @@ describe('useStateWithHistory', () => {
   it('should allow functional state updates', () => {
     const { result } = renderHook(() => useStateWithHistory(1, { size: 2 }));
     act(() => {
-      result.current.setCurrent(n => n * 3);
+      result.current.setCurrent((n) => n * 3);
     });
     expect(result.current.current).toBe(3);
     act(() => {
-      result.current.setCurrent(n => n * 3);
+      result.current.setCurrent((n) => n * 3);
     });
     expect(result.current.current).toBe(9);
   });
 
   it('should allow to initialize with undefined', () => {
-    const { result } = renderHook(() => useStateWithHistory<number>({ size: 2 }));
+    const { result } = renderHook(() =>
+      useStateWithHistory<number>({ size: 2 })
+    );
     expect(result.current.current).toBeUndefined();
     act(() => {
       result.current.setCurrent(1);
       result.current.setCurrent(2);
     });
     expect(result.current.current).toBe(2);
-  })
-})
+  });
+});

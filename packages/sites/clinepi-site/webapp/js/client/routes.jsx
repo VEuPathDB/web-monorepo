@@ -7,29 +7,31 @@ import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSear
 import AccessRequestController from './controllers/AccessRequestController';
 import { userDatasetRoutes } from './routes/userDatasetRoutes';
 
-export const wrapRoutes = ebrcRoutes => { 
+export const wrapRoutes = (ebrcRoutes) => {
   return [
-
     {
       path: '/request-access/:datasetId',
-      component: props => <AccessRequestController {...props.match.params}/>
+      component: (props) => <AccessRequestController {...props.match.params} />,
     },
 
     // Redirect dataset record page to eda analysis page
     {
       path: '/record/dataset/:datasetId',
-      component: props => <Redirect to={makeEdaRoute(props.match.params.datasetId) + '/new'}/>
+      component: (props) => (
+        <Redirect to={makeEdaRoute(props.match.params.datasetId) + '/new'} />
+      ),
     },
     {
       path: '/search',
-      component: () => <SiteSearchController offerOrganismFilter={false} preferredOrganisms={false} />
+      component: () => (
+        <SiteSearchController
+          offerOrganismFilter={false}
+          preferredOrganisms={false}
+        />
+      ),
     },
-    ...(
-      useUserDatasetsWorkspace
-        ? userDatasetRoutes
-        : []
-    ),
+    ...(useUserDatasetsWorkspace ? userDatasetRoutes : []),
 
-    ...ebrcRoutes.filter(route => !route.path.startsWith('/downloads'))
+    ...ebrcRoutes.filter((route) => !route.path.startsWith('/downloads')),
   ];
 };

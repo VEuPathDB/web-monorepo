@@ -14,7 +14,8 @@ import { VariableMapping } from '../api/DataClient/types';
 
 // calculate min/max of default independent axis range
 export function histogramDefaultIndependentAxisMinMax(
-  data: PromiseHookState<HistogramDataWithCoverageStatistics | undefined>
+  // use distribution data
+  data: PromiseHookState<HistogramData | undefined>
 ) {
   if (isFaceted(data.value)) {
     const facetMinMaxes =

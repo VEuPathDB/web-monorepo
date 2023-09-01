@@ -196,9 +196,8 @@ const expandedDivSize = {
 };
 
 export const EntityDiagramUnified = () => {
-  const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
-    'vertical'
-  );
+  const [orientation, setOrientation] =
+    useState<'horizontal' | 'vertical'>('vertical');
   const [expanded, setExpanded] = useState<boolean>(false);
   const size = expanded ? expandedSize : miniSize;
   const divSize = expanded ? expandedDivSize : miniDivSize;
@@ -244,11 +243,10 @@ export const EntityDiagramUnified = () => {
   );
 };
 
-const Template: Story<
-  EntityDiagramProps & { width: number; height: number }
-> = ({ width, height, ...args }) => (
-  <EntityDiagram {...args} size={{ width: width, height: height }} />
-);
+const Template: Story<EntityDiagramProps & { width: number; height: number }> =
+  ({ width, height, ...args }) => (
+    <EntityDiagram {...args} size={{ width: width, height: height }} />
+  );
 
 export const EntityDiagramControls = Template.bind({});
 EntityDiagramControls.args = {

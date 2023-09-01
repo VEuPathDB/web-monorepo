@@ -148,6 +148,13 @@ const plotConfig = intersection([
   }),
 ]);
 
+// to be distinguished from geo-viewports
+export type NumericViewport = TypeOf<typeof numericViewport>;
+const numericViewport = type({
+  xMin: string,
+  xMax: string,
+});
+
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -164,10 +171,7 @@ export interface HistogramRequestParams {
       value?: number;
       units?: TimeUnit;
     };
-    viewport?: {
-      xMin: string;
-      xMax: string;
-    };
+    viewport?: NumericViewport;
     showMissingness?: 'TRUE' | 'FALSE';
   };
 }
@@ -180,13 +184,6 @@ const histogramSummary = type({
   mean: string,
   q3: string,
   max: string,
-});
-
-// to be distinguised from geo-viewports
-export type NumericViewport = TypeOf<typeof numericViewport>;
-const numericViewport = type({
-  xMin: string,
-  xMax: string,
 });
 
 export type HistogramConfig = TypeOf<typeof histogramConfig>;
@@ -356,6 +353,26 @@ export const ScatterplotResponse = intersection([
   }),
 ]);
 
+// Volcano plot
+// The volcano plot response type MUST be the same as the VolcanoPlotData type defined in the components package
+export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
+
+// TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
+export const VolcanoPlotResponse = array(
+  partial({
+    log2foldChange: string,
+    pValue: string,
+    adjustedPValue: string,
+    pointID: string,
+  })
+);
+
+export interface VolcanoPlotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {}; // Empty viz config because there are no viz input vars
+}
+
 ////////////////
 // Table Data //
 ////////////////
@@ -388,10 +405,7 @@ export interface LineplotRequestParams {
     overlayVariable?: VariableDescriptor;
     facetVariable?: ZeroToTwoVariables;
     binSpec: BinSpec;
-    viewport?: {
-      xMin: string;
-      xMax: string;
-    };
+    viewport?: NumericViewport;
     showMissingness?: 'TRUE' | 'FALSE';
     valueSpec: 'mean' | 'median' | 'geometricMean' | 'proportion';
     errorBars: 'TRUE' | 'FALSE';
@@ -646,41 +660,47 @@ export const BoxplotResponse = intersection([
   }),
 ]);
 
+export type LatLonViewport = TypeOf<typeof latLonViewport>;
+const latLonViewport = type({
+  latitude: type({
+    xMin: number,
+    xMax: number,
+  }),
+  longitude: type({
+    left: number,
+    right: number,
+  }),
+});
+
+interface MapMarkersConfig {
+  outputEntityId: string;
+  geoAggregateVariable: VariableDescriptor;
+  latitudeVariable: VariableDescriptor;
+  longitudeVariable: VariableDescriptor;
+  viewport: LatLonViewport;
+}
+
 export interface MapMarkersRequestParams {
   studyId: string;
   filters: Filter[];
-  config: {
-    outputEntityId: string;
-    geoAggregateVariable: VariableDescriptor;
-    latitudeVariable: VariableDescriptor;
-    longitudeVariable: VariableDescriptor;
-    viewport: {
-      latitude: {
-        xMin: number;
-        xMax: number;
-      };
-      longitude: {
-        left: number;
-        right: number;
-      };
-    };
-  };
+  config: MapMarkersConfig;
 }
+
+type MapElement = TypeOf<typeof MapElement>;
+const MapElement = type({
+  geoAggregateValue: string,
+  entityCount: number,
+  avgLat: number,
+  avgLon: number,
+  minLat: number,
+  minLon: number,
+  maxLat: number,
+  maxLon: number,
+});
 
 export type MapMarkersResponse = TypeOf<typeof MapMarkersResponse>;
 export const MapMarkersResponse = type({
-  mapElements: array(
-    type({
-      geoAggregateValue: string,
-      entityCount: number,
-      avgLat: number,
-      avgLon: number,
-      minLat: number,
-      minLon: number,
-      maxLat: number,
-      maxLon: number,
-    })
-  ),
+  mapElements: array(MapElement),
   config: type({
     completeCasesGeoVar: number,
   }),
@@ -689,8 +709,7 @@ export const MapMarkersResponse = type({
 export interface MapMarkersOverlayRequestParams {
   studyId: string;
   filters: Filter[];
-  config: {
-    outputEntityId: string;
+  config: MapMarkersConfig & {
     showMissingness:
       | 'TRUE'
       | 'FALSE'
@@ -698,20 +717,7 @@ export interface MapMarkersOverlayRequestParams {
       | 'allVariables'
       | 'strataVariables';
     xAxisVariable: VariableDescriptor;
-    latitudeVariable: VariableDescriptor;
-    longitudeVariable: VariableDescriptor;
-    geoAggregateVariable: VariableDescriptor;
     valueSpec: 'count' | 'proportion';
-    viewport: {
-      latitude: {
-        xMin: number;
-        xMax: number;
-      };
-      longitude: {
-        left: number;
-        right: number;
-      };
-    };
   };
 }
 
@@ -719,16 +725,7 @@ export type MapMarkersOverlayConfig = TypeOf<typeof mapMarkersOverlayConfig>;
 const mapMarkersOverlayConfig = intersection([
   plotConfig,
   type({
-    viewport: type({
-      latitude: type({
-        xMin: number,
-        xMax: number,
-      }),
-      longitude: type({
-        left: number,
-        right: number,
-      }),
-    }),
+    viewport: latLonViewport,
   }),
   partial({
     binSpec: BinSpec,
@@ -776,7 +773,6 @@ export const AllValuesDefinition = type({
 export type OverlayConfig = TypeOf<typeof OverlayConfig>;
 export const OverlayConfig = intersection([
   type({
-    overlayType: keyof({ categorical: null, continuous: null }),
     overlayVariable: VariableDescriptor,
   }),
   union([
@@ -791,26 +787,28 @@ export const OverlayConfig = intersection([
   ]),
 ]);
 
+export type BubbleOverlayConfig = TypeOf<typeof BubbleOverlayConfig>;
+export const BubbleOverlayConfig = type({
+  overlayVariable: VariableDescriptor,
+  aggregationConfig: union([
+    type({
+      overlayType: literal('categorical'),
+      numeratorValues: array(string),
+      denominatorValues: array(string),
+    }),
+    type({
+      overlayType: literal('continuous'),
+      aggregator: keyof({ mean: null, median: null }),
+    }),
+  ]),
+});
+
 export interface StandaloneMapMarkersRequestParams {
   studyId: string;
   filters: Filter[];
-  config: {
-    outputEntityId: string;
-    geoAggregateVariable: VariableDescriptor;
-    latitudeVariable: VariableDescriptor;
-    longitudeVariable: VariableDescriptor;
+  config: MapMarkersConfig & {
     overlayConfig?: Omit<OverlayConfig, 'binningMethod'>;
     valueSpec: 'count' | 'proportion';
-    viewport: {
-      latitude: {
-        xMin: number;
-        xMax: number;
-      };
-      longitude: {
-        left: number;
-        right: number;
-      };
-    };
   };
 }
 
@@ -819,30 +817,73 @@ export type StandaloneMapMarkersResponse = TypeOf<
 >;
 export const StandaloneMapMarkersResponse = type({
   mapElements: array(
-    type({
-      geoAggregateValue: string,
-      entityCount: number,
-      overlayValues: array(
-        intersection([
-          type({
-            binLabel: string,
-            value: number,
-            count: number,
-          }),
-          partial({
-            binStart: string,
-            binEnd: string,
-          }),
-        ])
-      ),
-      avgLat: number,
-      avgLon: number,
-      minLat: number,
-      minLon: number,
-      maxLat: number,
-      maxLon: number,
-    })
+    intersection([
+      MapElement,
+      type({
+        overlayValues: array(
+          intersection([
+            type({
+              binLabel: string,
+              value: number,
+              count: number,
+            }),
+            partial({
+              binStart: string,
+              binEnd: string,
+            }),
+          ])
+        ),
+      }),
+    ])
   ),
+});
+
+export interface StandaloneMapBubblesRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: MapMarkersConfig & {
+    overlayConfig?: BubbleOverlayConfig;
+    valueSpec: 'count';
+  };
+}
+
+export type StandaloneMapBubblesResponse = TypeOf<
+  typeof StandaloneMapBubblesResponse
+>;
+export const StandaloneMapBubblesResponse = type({
+  mapElements: array(
+    intersection([
+      MapElement,
+      type({
+        overlayValue: number,
+      }),
+    ])
+  ),
+});
+
+export interface StandaloneMapBubblesLegendRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    colorLegendConfig: {
+      geoAggregateVariable: VariableDescriptor;
+      quantitativeOverlayConfig: BubbleOverlayConfig;
+    };
+    sizeConfig: {
+      geoAggregateVariable: VariableDescriptor;
+    };
+  };
+}
+
+export type StandaloneMapBubblesLegendResponse = TypeOf<
+  typeof StandaloneMapBubblesLegendResponse
+>;
+export const StandaloneMapBubblesLegendResponse = type({
+  minColorValue: number,
+  maxColorValue: number,
+  minSizeValue: number,
+  maxSizeValue: number,
 });
 
 export interface ContinousVariableMetadataRequestParams {

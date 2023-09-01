@@ -48,23 +48,24 @@ export function WorkspaceContainer({
   const { url } = useRouteMatch();
 
   const initializeMakeVariableLink = useCallback(
-    (fieldTree: TreeNode<FieldWithMetadata>) => ({
-      entityId: maybeEntityId,
-      variableId: maybeVariableId,
-    }: Partial<VariableDescriptor>) => {
-      const entityId = maybeEntityId ?? fieldTree.field.term.split(':')[1];
+    (fieldTree: TreeNode<FieldWithMetadata>) =>
+      ({
+        entityId: maybeEntityId,
+        variableId: maybeVariableId,
+      }: Partial<VariableDescriptor>) => {
+        const entityId = maybeEntityId ?? fieldTree.field.term.split(':')[1];
 
-      const variableId =
-        maybeVariableId ??
-        (entityId &&
-          findFirstVariable(fieldTree, entityId)?.field.term.split('/')[1]);
+        const variableId =
+          maybeVariableId ??
+          (entityId &&
+            findFirstVariable(fieldTree, entityId)?.field.term.split('/')[1]);
 
-      return entityId && variableId
-        ? `${url}/variables/${entityId}/${variableId}`
-        : entityId
-        ? `${url}/variables/${entityId}`
-        : `${url}/variables`;
-    },
+        return entityId && variableId
+          ? `${url}/variables/${entityId}/${variableId}`
+          : entityId
+          ? `${url}/variables/${entityId}`
+          : `${url}/variables`;
+      },
     [url]
   );
   const classes = useStyles();

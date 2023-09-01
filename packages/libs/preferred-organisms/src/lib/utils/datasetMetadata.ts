@@ -30,9 +30,7 @@ export const makeDatasetMetadataRecoilState = memoize(
 
     const { wdkService } = wdkDependencies;
 
-    const questions$: Promise<
-      Question[]
-    > = wdkService
+    const questions$: Promise<Question[]> = wdkService
       .getQuestions()
       .catch((e) => wdkService.submitError(e).then((_) => []));
 

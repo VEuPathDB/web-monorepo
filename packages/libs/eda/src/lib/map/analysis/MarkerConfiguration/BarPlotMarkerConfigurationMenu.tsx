@@ -20,6 +20,11 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import { Toggle } from '@veupathdb/coreui';
 import { SharedMarkerConfigurations } from './PieMarkerConfigurationMenu';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
+import {
+  BinningMethod,
+  SelectedCountsOption,
+  SelectedValues,
+} from '../appState';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -30,6 +35,9 @@ export interface BarPlotMarkerConfiguration
     SharedMarkerConfigurations {
   selectedPlotMode: 'count' | 'proportion';
   dependentAxisLogScale: boolean;
+  binningMethod: BinningMethod;
+  selectedValues: SelectedValues;
+  selectedCountsOption: SelectedCountsOption;
 }
 
 interface Props
@@ -178,9 +186,13 @@ export function BarPlotMarkerConfigurationMenu({
         Color:
       </p>
       <InputVariables
-        showClearSelectionButton={false}
         inputs={[
-          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+          {
+            name: 'overlayVariable',
+            label: 'Variable',
+            titleOverride: ' ',
+            isNonNullable: true,
+          },
         ]}
         entities={entities}
         selectedVariables={{ overlayVariable: configuration.selectedVariable }}

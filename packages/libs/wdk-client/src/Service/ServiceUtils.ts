@@ -8,7 +8,7 @@ export const appendUrlAndRethrow = (url: string) => (error: unknown) => {
       : `${message} (Attempting to request ${url}.)`;
   }
   throw error;
-}
+};
 
 export function makeTraceid() {
   return uuid().replaceAll('-', '');

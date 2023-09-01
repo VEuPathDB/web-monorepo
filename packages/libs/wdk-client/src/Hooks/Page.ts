@@ -9,8 +9,8 @@ export function useScrollUpOnRouteChange() {
   const location = useLocation<LocationState | undefined>();
   const history = useHistory<LocationState | undefined>();
 
-  const [ prevPathname, setPrevPathname ] = useState(location.pathname);
-  const [ prevQueryString, setPrevQueryString ] = useState(location.search);
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  const [prevQueryString, setPrevQueryString] = useState(location.search);
 
   useEffect(() => {
     const removeHistoryListener = history.listen((newLocation, action) => {
@@ -20,15 +20,15 @@ export function useScrollUpOnRouteChange() {
       if (
         newLocation.state?.scrollToTop === false ||
         action === 'REPLACE' ||
-        newLocation.hash || (
-          prevPathname === newLocation.pathname &&
-          prevQueryString === newLocation.search
-        )
-      ) return;
+        newLocation.hash ||
+        (prevPathname === newLocation.pathname &&
+          prevQueryString === newLocation.search)
+      )
+        return;
 
       window.scrollTo(0, 0);
     });
 
     return removeHistoryListener;
-  } , []);
+  }, []);
 }

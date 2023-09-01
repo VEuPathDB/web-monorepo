@@ -3,49 +3,55 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 body {
-	background-image: url(../images/FungiDB/background_s.jpg);
+  background-image: url(../images/FungiDB/background_s.jpg);
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #header2 {
-	background-image: url(../images/FungiDB/backgroundtop_s.jpg);
+  background-image: url(../images/FungiDB/backgroundtop_s.jpg);
 }
 
 /*  quick search  blue-greyish */
-#header_rt, #header_rt a:link, #header_rt a:visited {
-   color: #067387;
+#header_rt,
+#header_rt a:link,
+#header_rt a:visited {
+  color: #067387;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HEADER DROPDOWN MENU
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#nav-top, #nav-top a:link, #nav-top a:visited {
-	color:  #067387;
+#nav-top,
+#nav-top a:link,
+#nav-top a:visited {
+  color: #067387;
 }
 
-#nav-top li ul { 
-	border-color:#067387;
-	list-style-image: url(../images/FungiDB/bullet_arrow.gif);
+#nav-top li ul {
+  border-color: #067387;
+  list-style-image: url(../images/FungiDB/bullet_arrow.gif);
 }
 
-#nav-top li ul a:link, #nav-top li ul a:visited {
-	color: #067387;    /* blue-greyish */
+#nav-top li ul a:link,
+#nav-top li ul a:visited {
+  color: #067387; /* blue-greyish */
 }
 
-#nav-top li ul a:hover, #nav-top li ul a:active {
-	color: #672a87;  /* purplish */
+#nav-top li ul a:hover,
+#nav-top li ul a:active {
+  color: #672a87; /* purplish */
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 =HOME 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .threecolumndiv div.heading {
-  background-color: #32b6cd;  
+  background-color: #32b6cd;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,12 +59,11 @@ body {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 .menu_lefttop_drop {
-   border-color: #9c5bbe; 
+  border-color: #9c5bbe;
 }
 
 #menu_lefttop a.heading {
-  background-color: #9c5bbe; 
+  background-color: #9c5bbe;
 }
-
 
 /*THE END */

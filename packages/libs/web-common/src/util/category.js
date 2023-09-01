@@ -1,7 +1,10 @@
-import {Seq} from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import {pruneDescendantNodes} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import {getTree} from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
-import {getRecordClassName, isQualifying} from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { getTree } from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
+import {
+  getRecordClassName,
+  isQualifying,
+} from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
 
@@ -18,7 +21,7 @@ let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
  * @returns RecordClassTree
  */
 export function getSearchMenuCategoryTree(ontology, recordClasses) {
-  let recordClassMap = new Map(recordClasses.map( rc => [ rc.fullName, rc ] ));
+  let recordClassMap = new Map(recordClasses.map((rc) => [rc.fullName, rc]));
   // get searches scoped for menu
   let categoryTree = getTree(ontology, isSearchMenuScope);
   return groupByRecordClass(categoryTree, recordClassMap);
@@ -33,7 +36,7 @@ export function getSearchMenuCategoryTree(ontology, recordClasses) {
  */
 function groupByRecordClass(categoryTree, recordClassMap) {
   let recordClassCategories = Seq.from(recordClassMap.keys())
-    .map(name => recordClassMap.get(name))
+    .map((name) => recordClassMap.get(name))
     .map(getRecordClassTree(categoryTree))
     .filter(isDefined)
     .toArray();
@@ -45,21 +48,27 @@ function isDefined(maybe) {
 }
 
 function getRecordClassTree(categoryTree) {
-  return function(recordClass) {
-    let tree = pruneDescendantNodes(isRecordClassTreeNode(recordClass), categoryTree);
+  return function (recordClass) {
+    let tree = pruneDescendantNodes(
+      isRecordClassTreeNode(recordClass),
+      categoryTree
+    );
     if (tree.children.length === 0) return;
     return {
       properties: {
         label: [recordClass.fullName],
-        'EuPathDB alternative term': [recordClass.displayNamePlural]
+        'EuPathDB alternative term': [recordClass.displayNamePlural],
       },
-      children: tree.children
+      children: tree.children,
     };
-  }
+  };
 }
 
 function isRecordClassTreeNode(recordClass) {
-  return function(node) {
-    return node.children.length !== 0 || getRecordClassName(node) === recordClass.fullName;
-  }
+  return function (node) {
+    return (
+      node.children.length !== 0 ||
+      getRecordClassName(node) === recordClass.fullName
+    );
+  };
 }

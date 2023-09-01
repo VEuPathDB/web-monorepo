@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
   InputVariables,
   Props as InputVariablesProps,
@@ -19,6 +19,11 @@ import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
+import {
+  BinningMethod,
+  SelectedCountsOption,
+  SelectedValues,
+} from '../appState';
 
 interface MarkerConfiguration<T extends string> {
   type: T;
@@ -26,13 +31,14 @@ interface MarkerConfiguration<T extends string> {
 
 export interface SharedMarkerConfigurations {
   selectedVariable: VariableDescriptor;
-  binningMethod: 'equalInterval' | 'quantile' | 'standardDeviation' | undefined;
-  selectedCountsOption: 'filtered' | 'visible' | undefined;
-  selectedValues: string[] | undefined;
 }
 export interface PieMarkerConfiguration
   extends MarkerConfiguration<'pie'>,
-    SharedMarkerConfigurations {}
+    SharedMarkerConfigurations {
+  binningMethod: BinningMethod;
+  selectedValues: SelectedValues;
+  selectedCountsOption: SelectedCountsOption;
+}
 
 interface Props
   extends Omit<
@@ -167,9 +173,13 @@ export function PieMarkerConfigurationMenu({
         Color:
       </p>
       <InputVariables
-        showClearSelectionButton={false}
         inputs={[
-          { name: 'overlayVariable', label: 'Variable', titleOverride: ' ' },
+          {
+            name: 'overlayVariable',
+            label: 'Variable',
+            titleOverride: ' ',
+            isNonNullable: true,
+          },
         ]}
         entities={entities}
         selectedVariables={{ overlayVariable: configuration.selectedVariable }}

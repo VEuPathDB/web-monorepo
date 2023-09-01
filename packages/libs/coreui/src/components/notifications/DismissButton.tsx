@@ -1,5 +1,5 @@
-import Close from "@material-ui/icons/Close";
-import { screenReaderOnly } from "../../styleDefinitions/typography";
+import Close from '@material-ui/icons/Close';
+import { screenReaderOnly } from '../../styleDefinitions/typography';
 
 interface Props {
   className?: string;
@@ -16,18 +16,18 @@ export default function DismissButton(props: Props) {
       className={props.className}
       onClick={props.onClick}
       css={{
-        border: "none",
-        background: "transparent",
-        padding: "none",
-        margin: "none",
-        cursor: "pointer",
+        border: 'none',
+        background: 'transparent',
+        padding: 'none',
+        margin: 'none',
+        cursor: 'pointer',
       }}
     >
       <Close
         height="1.5em"
         width="1.5em"
         css={{
-          verticalAlign: "middle",
+          verticalAlign: 'middle',
         }}
       />
       <span css={screenReaderOnly}>{props.buttonText}</span>

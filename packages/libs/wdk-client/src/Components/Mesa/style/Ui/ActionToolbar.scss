@@ -16,7 +16,8 @@
       display: flex;
     }
 
-    .ActionToolbar-Item, .ActionToolbar-Children {
+    .ActionToolbar-Item,
+    .ActionToolbar-Children {
       flex: 0 0 auto;
       margin: 10px 2.5px;
       &.ActionToolbar-Item--disabled {
