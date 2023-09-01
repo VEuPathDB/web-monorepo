@@ -98,10 +98,21 @@ export const SiteSearchInput = wrappable(function ({
     <form
       ref={formRef}
       action={SITE_SEARCH_ROUTE}
+      className={cx('--SearchBox', hasFilters && 'with-filters')}
       onSubmit={preventEventWith(handleSubmitWithFilters)}
-      className={cx('--SearchBox')}
       autoComplete="off"
     >
+      {hasFilters ? (
+        <Tooltip content="Run a new search, without your existing filters">
+          <button
+            className="reset"
+            type="button"
+            onClick={handleSubmitWithoutFilters}
+          >
+            Clear filters
+          </button>
+        </Tooltip>
+      ) : null}
       {docType && (
         <input type="hidden" name={DOCUMENT_TYPE_PARAM} value={docType} />
       )}
@@ -116,17 +127,6 @@ export const SiteSearchInput = wrappable(function ({
       {fields.map((field) => (
         <input key={field} type="hidden" name={FILTERS_PARAM} value={field} />
       ))}
-      {hasFilters ? (
-        <Tooltip content="Run a new search, without your existing filters">
-          <button
-            className="reset"
-            type="button"
-            onClick={handleSubmitWithoutFilters}
-          >
-            Clear filters
-          </button>
-        </Tooltip>
-      ) : null}
       <TypeAheadInput
         siteSearchURL={siteSearchURL}
         inputReference={inputRef}

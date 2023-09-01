@@ -96,6 +96,16 @@
     border-radius: 1.5em;
     position: relative;
 
+    > :first-child {
+      border-radius: 1.5em 0 0 1.5em;
+      overflow: hidden;
+    }
+
+    > :last-child {
+      border-radius: 0 1.5em 1.5em 0;
+      overflow: hidden;
+    }
+
     &:focus-within {
       box-shadow: 0 0 3pt 2pt #0067f4;
     }
@@ -108,7 +118,6 @@
 
         input {
           border: none !important;
-          border-radius: 1.5em 0 0 1.5em;
           padding: 0.4em 0.9em !important;
           width: 100%;
 
@@ -139,9 +148,10 @@
         position: absolute;
         background: #ededed;
         overflow: hidden;
-        width: 100%;
         border-radius: 1em;
         box-shadow: 0 0 1em rgba(0, 48, 76, 0.5);
+        left: 0;
+        right: 0;
 
         li.type-ahead-hint {
           padding: 0.2em 0 0.2em 1em;
@@ -164,6 +174,16 @@
       }
     }
 
+    &__with-filters {
+      div.type-ahead {
+        ul.type-ahead-hints {
+          li.type-ahead-hint {
+            padding-left: 13ex;
+          }
+        }
+      }
+    }
+
     button {
       border: none;
       border-radius: 0;
@@ -174,10 +194,6 @@
       align-items: center;
       padding-left: 0.9em;
       padding-right: 1em;
-
-      &:last-child {
-        border-radius: 0 1.5em 1.5em 0;
-      }
 
       &:not(:last-of-type) {
         border-right: 1px solid #00000042;

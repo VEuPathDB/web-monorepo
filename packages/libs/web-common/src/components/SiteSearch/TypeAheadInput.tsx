@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SEARCH_TERM_PARAM } from './SiteSearchConstants';
-import * as io from 'io-ts'
+import * as io from 'io-ts';
 
 import './SiteSearch.scss';
-import {createJsonRequest, FetchClient, ioTransformer} from "@veupathdb/http-utils";
+import {
+  createJsonRequest,
+  FetchClient,
+  ioTransformer,
+} from '@veupathdb/http-utils';
 
 // region Keyboard
 
@@ -127,7 +131,9 @@ const kbIsEscape = (e: React.KeyboardEvent<any>) =>
  * @return The last word of the given string.
  */
 const lastWordOf = (value: string) =>
-  ((arr: Array<string>) => arr.length > 0 ? arr[arr.length - 1] : '')(value.split(/ +/));
+  ((arr: Array<string>) => (arr.length > 0 ? arr[arr.length - 1] : ''))(
+    value.split(/ +/)
+  );
 
 /**
  * Replaces the last word in the given `original` string with the given
@@ -164,7 +170,6 @@ const replaceLastWord = (original: string, replacement: string) =>
  */
 type Debouncer<T> = (func: (value: T) => void) => (value: T) => void;
 
-
 /**
  * Builds a new `Debouncer` function that may be used to build one or more
  * functions that debounce on the same timer.
@@ -191,19 +196,20 @@ function buildDebouncer<T>(delay: number): Debouncer<T> {
 
 const TYPEAHEAD_PATH: string = 'suggest';
 
-const TypeAheadResponse = io.array(io.string)
+const TypeAheadResponse = io.array(io.string);
 
 /**
  * Wrapper for the SiteSearch Type-Ahead HTTP API.
  */
 class TypeAheadAPI extends FetchClient {
   typeAhead(query: string, cb: (values: Array<string>) => any) {
-    this.fetch(createJsonRequest({
-      method: 'GET',
-      path: "?searchText=" + encodeURIComponent(query),
-      transformResponse: ioTransformer(TypeAheadResponse)
-    }))
-      .then(cb)
+    this.fetch(
+      createJsonRequest({
+        method: 'GET',
+        path: '?searchText=' + encodeURIComponent(query),
+        transformResponse: ioTransformer(TypeAheadResponse),
+      })
+    ).then(cb);
   }
 }
 
@@ -223,10 +229,12 @@ export interface TypeAheadInputProps {
 export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const [suggestions, setSuggestions] = useState<Array<string>>([]);
   const [hintValue, setHintValue] = useState('');
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(props.searchString);
 
   const typeAheadAPI = new TypeAheadAPI({
-    baseUrl: (ep => (ep.endsWith('/') ? ep : ep + '/') + TYPEAHEAD_PATH)(props.siteSearchURL)
+    baseUrl: ((ep) => (ep.endsWith('/') ? ep : ep + '/') + TYPEAHEAD_PATH)(
+      props.siteSearchURL
+    ),
   });
   const ulReference = useRef<HTMLUListElement>(null);
   const ulClassName =
@@ -287,7 +295,6 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   ) => {
     // Filter keyboard events with modifiers:
     if (kbHasModifier(e)) {
-
       // If the event was specifically a <Shift>+<Tab> combination then we want
       // to reverse the focus by one element, either selecting the suggestion
       // above the event source, or if the event source was the first
@@ -299,7 +306,9 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
         if (ulReference.current?.firstElementChild === e.currentTarget) {
           props.inputReference.current?.focus();
         } else {
-          (e.currentTarget.previousElementSibling as HTMLLIElement | null)?.focus();
+          (
+            e.currentTarget.previousElementSibling as HTMLLIElement | null
+          )?.focus();
         }
       }
 
@@ -341,7 +350,9 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       if (ulReference.current?.firstElementChild === e.currentTarget) {
         props.inputReference.current?.focus();
       } else {
-        (e.currentTarget.previousElementSibling as HTMLLIElement | null)?.focus();
+        (
+          e.currentTarget.previousElementSibling as HTMLLIElement | null
+        )?.focus();
       }
     }
 
@@ -358,7 +369,9 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
       e.stopPropagation();
 
       if (ulReference.current?.lastElementChild === e.currentTarget) {
-        (ulReference.current?.firstElementChild as HTMLLIElement | null)?.focus();
+        (
+          ulReference.current?.firstElementChild as HTMLLIElement | null
+        )?.focus();
       } else {
         (e.currentTarget.nextElementSibling as HTMLLIElement | null)?.focus();
       }
@@ -442,7 +455,10 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   ));
 
   const clickHandler = (e: MouseEvent) => {
-    if (e.target instanceof HTMLElement && e.target.parentElement !== ulReference.current)
+    if (
+      e.target instanceof HTMLElement &&
+      e.target.parentElement !== ulReference.current
+    )
       setSuggestions([]);
   };
 
