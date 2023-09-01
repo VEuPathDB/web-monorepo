@@ -1,5 +1,6 @@
 import {
   ContinuousVariableDataShape,
+  LabeledRange,
   useCollectionVariables,
   usePromise,
   useStudyMetadata,
@@ -27,7 +28,6 @@ import { SwapHorizOutlined } from '@material-ui/icons';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Tooltip } from '@material-ui/core';
-import { DataClient } from '../../../api';
 import {
   GetBinRangesProps,
   getBinRanges,
@@ -57,8 +57,8 @@ export type DifferentialAbundanceConfig = t.TypeOf<
 
 const Comparator = t.intersection([
   t.partial({
-    groupA: t.array(t.string),
-    groupB: t.array(t.string),
+    groupA: t.array(LabeledRange),
+    groupB: t.array(LabeledRange),
   }),
   t.type({
     variable: VariableDescriptor,
@@ -241,16 +241,38 @@ export function DifferentialAbundanceConfiguration(
       };
       const bins = await getBinRanges(binRangeProps);
       return bins;
-    }, [dataClient, configuration])
+    }, [
+      dataClient,
+      configuration,
+      filters,
+      selectedComparatorVariable,
+      studyMetadata.id,
+    ])
   );
 
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
   const disableGroupValueSelectors = !configuration?.comparator?.variable;
 
+  // We have to send an array of LabeledRanges so go ahead and map everything to that format
   const groupValueOptions = continuousVariableBins.value
-    ? continuousVariableBins.value.map((bin) => bin.binLabel)
-    : selectedComparatorVariable?.variable.vocabulary;
+    ? continuousVariableBins.value.map((bin) => {
+        return {
+          min: bin.binStart,
+          max: bin.binEnd,
+          label: bin.binLabel,
+        } as LabeledRange;
+      })
+    : selectedComparatorVariable?.variable.vocabulary?.map((value) => {
+        return {
+          label: value,
+        } as LabeledRange;
+      });
+
+  console.log(
+    '🚀 ~ file: differentialabundance.tsx:253 ~ groupValueOptions:',
+    groupValueOptions
+  );
 
   return (
     <ComputationStepContainer
@@ -322,17 +344,27 @@ export function DifferentialAbundanceConfiguration(
               >
                 <span>Group A</span>
                 <ValuePicker
-                  allowedValues={groupValueOptions}
-                  selectedValues={configuration?.comparator?.groupA}
-                  disabledValues={configuration?.comparator?.groupB}
-                  onSelectedValuesChange={(newValues) =>
+                  allowedValues={groupValueOptions?.map(
+                    (option) => option.label
+                  )}
+                  selectedValues={configuration?.comparator?.groupA?.map(
+                    (bin) => bin.label
+                  )}
+                  disabledValues={configuration?.comparator?.groupB?.map(
+                    (bin) => bin.label
+                  )}
+                  onSelectedValuesChange={(newValues) => {
+                    console.log(newValues);
+                    console.log(configuration?.comparator?.groupA);
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
-                      groupA: newValues.length ? newValues : undefined,
+                      groupA: groupValueOptions?.filter((bin) =>
+                        newValues.includes(bin.label)
+                      ),
                       groupB: configuration?.comparator?.groupB ?? undefined,
-                    })
-                  }
+                    });
+                  }}
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
@@ -367,15 +399,23 @@ export function DifferentialAbundanceConfiguration(
                 />
                 <span>Group B</span>
                 <ValuePicker
-                  allowedValues={groupValueOptions}
-                  selectedValues={configuration?.comparator?.groupB}
-                  disabledValues={configuration?.comparator?.groupA}
+                  allowedValues={groupValueOptions?.map(
+                    (option) => option.label
+                  )}
+                  selectedValues={configuration?.comparator?.groupB?.map(
+                    (bin) => bin.label
+                  )}
+                  disabledValues={configuration?.comparator?.groupA?.map(
+                    (bin) => bin.label
+                  )}
                   onSelectedValuesChange={(newValues) =>
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
                       groupA: configuration?.comparator?.groupA ?? undefined,
-                      groupB: newValues.length ? newValues : undefined,
+                      groupB: groupValueOptions?.filter((bin) =>
+                        newValues.includes(bin.label)
+                      ),
                     })
                   }
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
