@@ -2,6 +2,7 @@ import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
 import { UNSELECTED_TOKEN } from '../..';
 import {
   BinRange,
+  BubbleOverlayConfig,
   CategoricalVariableDataShape,
   ContinuousVariableDataShape,
   Filter,
@@ -10,7 +11,8 @@ import {
   Variable,
 } from '../../../core';
 import { DataClient, SubsettingClient } from '../../../core/api';
-import { MarkerConfiguration } from '../appState';
+import { BinningMethod, MarkerConfiguration } from '../appState';
+import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 
 // This async function fetches the default overlay config.
 // For continuous variables, this involves calling the filter-aware-metadata/continuous-variable
@@ -26,12 +28,16 @@ export interface DefaultOverlayConfigProps {
   overlayEntity: StudyEntity | undefined;
   dataClient: DataClient;
   subsettingClient: SubsettingClient;
-  binningMethod?: MarkerConfiguration['binningMethod'];
+  markerType?: MarkerConfiguration['type'];
+  binningMethod?: BinningMethod;
+  aggregator?: BubbleMarkerConfiguration['aggregator'];
+  numeratorValues?: BubbleMarkerConfiguration['numeratorValues'];
+  denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
 }
 
 export async function getDefaultOverlayConfig(
   props: DefaultOverlayConfigProps
-): Promise<OverlayConfig | undefined> {
+): Promise<OverlayConfig | BubbleOverlayConfig | undefined> {
   const {
     studyId,
     filters,
@@ -39,7 +45,11 @@ export async function getDefaultOverlayConfig(
     overlayEntity,
     dataClient,
     subsettingClient,
+    markerType,
     binningMethod = 'equalInterval',
+    aggregator = 'mean',
+    numeratorValues,
+    denominatorValues,
   } = props;
 
   if (overlayVariable != null && overlayEntity != null) {
@@ -50,34 +60,57 @@ export async function getDefaultOverlayConfig(
 
     if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
       // categorical
-      const overlayValues = await getMostFrequentValues({
-        studyId: studyId,
-        ...overlayVariableDescriptor,
-        filters: filters ?? [],
-        numValues: ColorPaletteDefault.length - 1,
-        subsettingClient,
-      });
+      if (markerType === 'bubble') {
+        return {
+          overlayVariable: overlayVariableDescriptor,
+          aggregationConfig: {
+            overlayType: 'categorical',
+            numeratorValues:
+              numeratorValues ?? overlayVariable.vocabulary ?? [],
+            denominatorValues:
+              denominatorValues ?? overlayVariable.vocabulary ?? [],
+          },
+        };
+      } else {
+        const overlayValues = await getMostFrequentValues({
+          studyId: studyId,
+          ...overlayVariableDescriptor,
+          filters: filters ?? [],
+          numValues: ColorPaletteDefault.length - 1,
+          subsettingClient,
+        });
 
-      return {
-        overlayType: 'categorical',
-        overlayVariable: overlayVariableDescriptor,
-        overlayValues,
-      };
+        return {
+          overlayType: 'categorical',
+          overlayVariable: overlayVariableDescriptor,
+          overlayValues,
+        };
+      }
     } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
       // continuous
-      const overlayBins = await getBinRanges({
-        studyId,
-        ...overlayVariableDescriptor,
-        filters: filters ?? [],
-        dataClient,
-        binningMethod,
-      });
+      if (markerType === 'bubble') {
+        return {
+          overlayVariable: overlayVariableDescriptor,
+          aggregationConfig: {
+            overlayType: 'continuous',
+            aggregator,
+          },
+        };
+      } else {
+        const overlayBins = await getBinRanges({
+          studyId,
+          ...overlayVariableDescriptor,
+          filters: filters ?? [],
+          dataClient,
+          binningMethod,
+        });
 
-      return {
-        overlayType: 'continuous',
-        overlayValues: overlayBins,
-        overlayVariable: overlayVariableDescriptor,
-      };
+        return {
+          overlayType: 'continuous',
+          overlayValues: overlayBins,
+          overlayVariable: overlayVariableDescriptor,
+        };
+      }
     } else {
       return;
     }
@@ -127,7 +160,7 @@ export type GetBinRangesProps = {
   entityId: string;
   dataClient: DataClient;
   filters: Filter[];
-  binningMethod: MarkerConfiguration['binningMethod'];
+  binningMethod: BinningMethod;
 };
 
 // get the equal spaced bin definitions (for now at least)

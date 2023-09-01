@@ -1,4 +1,4 @@
-import { keyBy, mapValues, pick, toString } from 'lodash';
+import { isEmpty, keyBy, mapValues, pick, toString } from 'lodash';
 import { Seq } from '../Utils/IterableUtils';
 import {
   combineEpics,
@@ -535,34 +535,6 @@ const observeLoadQuestionSuccess: QuestionEpic = (action$) =>
     )
   );
 
-const observeStoreUpdatedParams: QuestionEpic = (
-  action$,
-  state$,
-  { paramValueStore }
-) =>
-  action$.pipe(
-    ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE),
-    mergeMap(async (action: UpdateParamValueAction) => {
-      const searchName = action.payload.searchName;
-      const questionState = state$.value.question.questions[searchName];
-
-      if (questionState == null) {
-        return EMPTY;
-      }
-
-      const { globalParamMapping, paramValues: newParamValues } = questionState;
-
-      await updateLastParamValues(
-        paramValueStore,
-        searchName,
-        newParamValues,
-        globalParamMapping
-      );
-      return EMPTY;
-    }),
-    mergeAll()
-  );
-
 type ActionAffectingGroupCount =
   | ChangeGroupVisibilityAction
   | UpdateParamValueAction;
@@ -757,13 +729,6 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) =>
               wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight,
             };
 
-            updateLastParamValues(
-              services.paramValueStore,
-              searchName,
-              paramValues,
-              globalParamMapping
-            );
-
             if (submissionMetadata.type === 'edit-step') {
               return of(
                 requestReviseStep(
@@ -957,6 +922,16 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) =>
                 )
             );
           })
+          .then((nextAction) => {
+            const { paramValues, globalParamMapping, question } = questionState;
+            updateLastParamValues(
+              services.paramValueStore,
+              question.urlSegment,
+              paramValues,
+              globalParamMapping
+            );
+            return nextAction;
+          })
       ).pipe(
         mergeAll(),
         catchError((error: any) =>
@@ -989,7 +964,6 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeAutoRun,
-  observeStoreUpdatedParams,
   observeUpdateDependentParams,
   observeLoadGroupCount,
   observeQuestionSubmit,
@@ -1063,13 +1037,6 @@ async function loadQuestion(
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
-    await updateLastParamValues(
-      paramValueStore,
-      searchName,
-      paramValues,
-      globalParamMapping
-    );
-
     return questionLoaded({
       autoRun,
       prepopulateWithLastParamValues,
@@ -1101,7 +1068,7 @@ async function fetchInitialParams(
 ) {
   if (step != null) {
     return initialParamDataFromStep(step);
-  } else if (initialParamData != null) {
+  } else if (!isEmpty(initialParamData)) {
     return extracParamValues(initialParamData, question.paramNames);
   } else if (prepopulateWithLastParamValues) {
     return (
@@ -1137,7 +1104,7 @@ function extracParamValues(
   return pick(initialParamData, paramNames);
 }
 
-function updateLastParamValues(
+export function updateLastParamValues(
   paramValueStore: ParamValueStore,
   searchName: string,
   newParamValues: ParameterValues,

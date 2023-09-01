@@ -65,7 +65,9 @@ export async function getResultTableColumnsPref(
 
   const [knownColumns, unknownColumns] = partition(
     columns,
-    (columnName) => columnName in recordClass.attributesMap
+    (columnName) =>
+      recordClass.attributes.some((a) => a.name === columnName) ||
+      question.dynamicAttributes.some((a) => a.name === columnName)
   );
 
   if (unknownColumns.length > 0) {

@@ -1,15 +1,16 @@
 import Spinner from '@veupathdb/components/lib/components/Spinner';
-import PlotLegend from '@veupathdb/components/lib/components/plotControls/PlotLegend';
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
+import PlotLegend, {
+  PlotLegendProps,
+} from '@veupathdb/components/lib/components/plotControls/PlotLegend';
 
 interface Props {
-  legendItems: LegendItemsProps[];
+  plotLegendProps: PlotLegendProps;
   isLoading: boolean;
   showCheckbox?: boolean;
 }
 
 export function MapLegend(props: Props) {
-  const { legendItems, isLoading, showCheckbox } = props;
+  const { plotLegendProps, isLoading, showCheckbox } = props;
 
   return isLoading ? (
     <div style={{ marginTop: '1em', height: 50, position: 'relative' }}>
@@ -17,9 +18,9 @@ export function MapLegend(props: Props) {
     </div>
   ) : (
     <PlotLegend
-      type="list"
-      legendItems={legendItems}
-      showOverlayLegend
+      {...(plotLegendProps.type !== 'colorscale'
+        ? { showOverlayLegend: true, showCheckbox: showCheckbox }
+        : undefined)}
       containerStyles={{
         border: 'none',
         boxShadow: 'none',
@@ -27,7 +28,7 @@ export function MapLegend(props: Props) {
         width: 'auto',
         maxWidth: 400,
       }}
-      showCheckbox={showCheckbox}
+      {...plotLegendProps}
     />
   );
 }
