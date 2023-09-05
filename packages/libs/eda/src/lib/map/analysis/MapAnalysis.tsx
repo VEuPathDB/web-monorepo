@@ -1305,7 +1305,6 @@ function MapAnalysisImpl(props: ImplProps) {
                   entities={studyEntities}
                   subsettingClient={subsettingClient}
                   filters={filters}
-                  analysisState={analysisState}
                   starredVariables={
                     analysisState.analysis?.descriptor.starredVariables ?? []
                   }

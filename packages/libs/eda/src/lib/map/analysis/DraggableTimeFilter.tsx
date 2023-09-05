@@ -28,12 +28,12 @@ import {
 import { DateRangeFilter, NumberRangeFilter } from '../../core/types/filter';
 import { Tooltip } from '@material-ui/core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { zip } from 'lodash';
 
 interface Props {
   studyId: string;
   entities: StudyEntity[];
   // to handle filters
-  analysisState: AnalysisState;
   subsettingClient: SubsettingClient;
   filters: Filter[] | undefined;
   starredVariables: VariableDescriptor[];
@@ -42,7 +42,6 @@ interface Props {
 
 export default function DraggableTimeFilter({
   studyId,
-  analysisState,
   entities,
   subsettingClient,
   filters,
@@ -169,13 +168,27 @@ export default function DraggableTimeFilter({
     ])
   );
 
+  type Data = { x: number[]; y: number[] } | undefined;
+  const data: Data =
+    Math.random() < 0.5 ? { x: [1, 2, 3], y: [10, 20, 30] } : undefined;
+  const z =
+    data != null
+      ? data.x.map((value, index) => {
+          value + data.y[index];
+        })
+      : [];
+
   // converting data to visx format
   const timeFilterData: EZTimeFilterDataProp[] = useMemo(
     () =>
       !getTimeSliderData.pending && getTimeSliderData.value != null
-        ? getTimeSliderData?.value?.x.map((value: string, index: number) => {
-            return { x: value, y: getTimeSliderData.value!.y[index] };
-          })
+        ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
+            .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
+            // and a type guard filter to avoid any `!` assertions.
+            .filter(
+              (val): val is EZTimeFilterDataProp =>
+                val.x != null && val.y != null
+            )
         : [],
     [getTimeSliderData]
   );
@@ -205,17 +218,6 @@ export default function DraggableTimeFilter({
     // set time slider variable
     setTimeSliderVariable(selection.overlayVariable);
   }
-
-  // set filter function
-  const { setFilters } = analysisState;
-
-  const filter = filters?.find(
-    (f): f is NumberRangeFilter | DateRangeFilter =>
-      timeSliderVariable != null &&
-      f.variableId === timeSliderVariable.variableId &&
-      f.entityId === timeSliderVariable.entityId &&
-      (f.type === 'dateRange' || f.type === 'numberRange')
-  );
 
   // change selectedRange considering async data request
   useEffect(() => {
