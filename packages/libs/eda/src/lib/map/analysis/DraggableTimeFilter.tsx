@@ -184,40 +184,14 @@ export default function DraggableTimeFilter({
   const timeFilterWidth = 750;
   const yPosition = 100; // TEMP: moved it down so I can see it all
 
-  // set initial position: shrink
-  const [defaultPosition, setDefaultPosition] = useState({
+  const defaultPosition = {
     x: window.innerWidth / 2 - timeFilterWidth / 2,
     y: yPosition,
-  });
+  };
 
   // set DraggablePanel key to update time slider
+  // TO DO: leaving this here for now but may need to remove?
   const [draggablePanelKey, setDraggablePanelKey] = useState(0);
-
-  // set button text
-  const [buttonText, setButtonText] = useState('Expand');
-
-  const expandSlider = () => {
-    setButtonText('Shrink');
-    setDraggablePanelKey((currentKey) => currentKey + 1);
-    setDefaultPosition({
-      x: window.innerWidth / 2 - timeFilterWidth / 2,
-      y: 100,
-    });
-  };
-
-  const shrinkSlider = () => {
-    setButtonText('Expand');
-    setDraggablePanelKey((currentKey) => currentKey + 1);
-    setDefaultPosition({
-      x: window.innerWidth / 2 - timeFilterWidth / 2,
-      y: yPosition,
-    });
-    // initialize range
-    setSelectedRange({
-      start: timeFilterData[0].x,
-      end: timeFilterData[timeFilterData.length - 1].x,
-    });
-  };
 
   // inputVariables onChange function
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
@@ -298,9 +272,6 @@ export default function DraggableTimeFilter({
         max: Number(selectedRange.end.split('-')[0]),
       });
   };
-
-  // set constant values
-  const defaultSymbolSize = 0.9;
 
   // change selectedRange considering async data request
   useEffect(() => {
@@ -408,45 +379,11 @@ export default function DraggableTimeFilter({
                 brushOpacity={0.4}
                 // axis tick and tick label color
                 axisColor={'#000'}
-                // whether movement of Brush should be disabled
-                disableDraggingSelection={buttonText === 'Expand'}
-                // disable brush selection: pass []
-                resizeTriggerAreas={
-                  buttonText === 'Expand' ? [] : ['left', 'right']
-                }
+                // whether movement of Brush should be disabled - false for now
+                disableDraggingSelection={false}
+                // if needing to disable brush selection: use []
+                resizeTriggerAreas={['left', 'right']}
               />
-              {/* add a button to expand/shrink */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'right',
-                  fontSize: defaultSymbolSize + 'em',
-                }}
-              >
-                {/* reset position to hide panel title */}
-                <div style={{ marginTop: '-0.3em', marginRight: '0.5em' }}>
-                  <button
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      color: 'blue',
-                      cursor: 'pointer',
-                    }}
-                    type="button"
-                    onClick={
-                      buttonText === 'Expand' ? expandSlider : shrinkSlider
-                    }
-                  >
-                    {buttonText === 'Expand' ? (
-                      <i className="fa fa-expand" aria-hidden="true"></i>
-                    ) : (
-                      <i className="fa fa-compress" aria-hidden="true"></i>
-                    )}
-                    &nbsp; {buttonText}
-                  </button>
-                </div>
-              </div>
             </>
           )}
       </div>
