@@ -168,16 +168,6 @@ export default function DraggableTimeFilter({
     ])
   );
 
-  type Data = { x: number[]; y: number[] } | undefined;
-  const data: Data =
-    Math.random() < 0.5 ? { x: [1, 2, 3], y: [10, 20, 30] } : undefined;
-  const z =
-    data != null
-      ? data.x.map((value, index) => {
-          value + data.y[index];
-        })
-      : [];
-
   // converting data to visx format
   const timeFilterData: EZTimeFilterDataProp[] = useMemo(
     () =>
