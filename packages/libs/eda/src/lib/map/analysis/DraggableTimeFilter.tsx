@@ -217,62 +217,6 @@ export default function DraggableTimeFilter({
       (f.type === 'dateRange' || f.type === 'numberRange')
   );
 
-  // the format of selectedRange at filter is min/max, not start/end
-  // NOTE: currently, this considers both dateRange and numberRange for test purpose: indeed only dateRange is required
-  // But perhaps this is just okay even if numberRange parts are redundant
-  const updateFilter = useCallback(
-    (selectedRange?: NumberRange | DateRange) => {
-      const otherFilters = filters?.filter((f) => f !== filter) ?? [];
-      if (selectedRange == null) {
-        if (otherFilters.length !== filters?.length) setFilters(otherFilters);
-      } else {
-        if (timeSliderVariable == null) return;
-        if (
-          filter &&
-          (filter.type === 'dateRange' || filter.type === 'numberRange') &&
-          filter.min === selectedRange.min &&
-          filter.max === selectedRange.max
-        )
-          return;
-        setFilters(
-          otherFilters.concat([
-            timeSliderVariableMetadata?.variable.type === 'date'
-              ? {
-                  ...timeSliderVariable,
-                  type: 'dateRange',
-                  ...(selectedRange as DateRange),
-                }
-              : {
-                  ...timeSliderVariable,
-                  type: 'numberRange',
-                  ...(selectedRange as NumberRange),
-                },
-          ])
-        );
-      }
-    },
-    [
-      filters,
-      filter,
-      setFilters,
-      timeSliderVariable,
-      timeSliderVariableMetadata?.variable.type,
-    ]
-  );
-
-  // submit/add filter
-  const onSubmitTimeSlider = () => {
-    if (updateFilter != null)
-      // TODO: below is correct format
-      // updateFilter({ min: selectedDomain.start, max: selectedDomain.end })
-      // since there is no date variable, use number variable for test purpose
-      // in this case, the value should consider the first value before dash and change it to number, not string
-      updateFilter({
-        min: Number(selectedRange.start.split('-')[0]),
-        max: Number(selectedRange.end.split('-')[0]),
-      });
-  };
-
   // change selectedRange considering async data request
   useEffect(() => {
     if (!getTimeSliderData.pending && getTimeSliderData.value != null) {
@@ -336,24 +280,6 @@ export default function DraggableTimeFilter({
           {/* display start to end value */}
           <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
             {selectedRange?.start} ~ {selectedRange?.end}
-          </div>
-          {/* button to reset selectedRange */}
-          <div
-            style={{
-              marginLeft: 'auto',
-              paddingRight: '1.5em',
-            }}
-          >
-            <Tooltip title={'filtering selected range'}>
-              <button
-                role="button"
-                aria-label="submit"
-                style={{ padding: '0.25em' }}
-                onClick={onSubmitTimeSlider}
-              >
-                Submit
-              </button>
-            </Tooltip>
           </div>
         </div>
         {/* display data loading spinner while requesting data to the backend */}
