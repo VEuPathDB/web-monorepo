@@ -105,9 +105,10 @@ export abstract class FetchClient {
       return await transformResponse(responseBody);
     }
     const fetchError = new FetchClientError(
-      `${request.method.toUpperCase()} ${request.url}: ${response.status} ${
+      `${response.status} ${
         response.statusText
-      }${'\n'}${await response.text()}`
+      }: ${request.method.toUpperCase()} ${request.url}
+      ${'\n'}${await response.text()}`
     );
     this.onNonSuccessResponse?.(fetchError);
     throw fetchError;
