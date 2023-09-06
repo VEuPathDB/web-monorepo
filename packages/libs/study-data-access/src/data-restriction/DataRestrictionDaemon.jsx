@@ -27,9 +27,9 @@ function DataRestrictionDaemon(props) {
 
   useEffect(() => {
     clearRestrictions();
-  }, [location.pathname]);
+  }, [location.pathname, clearRestrictions]);
 
-  const permissionsValue = usePermissions();
+  const permissionsValue = usePermissions({ force: true });
 
   if (dataRestriction == null || user == null || permissionsValue.loading)
     return null;

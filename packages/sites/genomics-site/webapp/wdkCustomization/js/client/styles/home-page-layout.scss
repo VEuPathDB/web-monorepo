@@ -55,6 +55,7 @@ body.vpdb-Body .vpdb-RootContainer {
         position: fixed;
         bottom: 0;
         width: 100%;
+        z-index: 1;
       }
 
       .vpdb-Footer__thin {
