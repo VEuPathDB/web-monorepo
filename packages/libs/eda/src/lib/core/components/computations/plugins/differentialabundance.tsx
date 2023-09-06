@@ -301,6 +301,7 @@ export function DifferentialAbundanceConfiguration(
                 <FloatingButton
                   icon={SwapHorizOutlined}
                   text=""
+                  themeRole="primary"
                   onPress={() =>
                     changeConfigHandler('comparator', {
                       variable:

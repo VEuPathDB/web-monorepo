@@ -70,6 +70,7 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
           'bulk_download_url',
           'request_needs_approval',
           'is_public',
+          'study_access',
         ])
         .filter((attribute) => attribute in studyRecordClass.attributesMap);
       const studyRecord = await wdkService
