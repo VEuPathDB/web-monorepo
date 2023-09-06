@@ -1186,14 +1186,14 @@ export const VEuPathDBHomePage = connect(mapStateToProps)(
 
 function useMapMenuItems(question?: Question) {
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
-  const studyAccessApi = useStudyAccessApi();
+  const studyAccessApi = useStudyAccessApi_tryCatch();
   const subsettingClient = useMemo(
     () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
     [wdkService]
   );
   const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItem[]>();
   useEffect(() => {
-    if (question == null) return;
+    if (question == null || studyAccessApi == null) return;
     getWdkStudyRecords(
       { studyAccessApi, subsettingClient, wdkService },
       { searchName: question.urlSegment }
@@ -1226,4 +1226,12 @@ function useMapMenuItems(question?: Question) {
     );
   }, [question, studyAccessApi, subsettingClient, wdkService]);
   return mapMenuItems;
+}
+
+function useStudyAccessApi_tryCatch() {
+  try {
+    return useStudyAccessApi();
+  } catch {
+    return;
+  }
 }
