@@ -1,20 +1,16 @@
+import { mapValues } from 'lodash';
+import React, { useMemo } from 'react';
 import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import { QuestionController } from '@veupathdb/wdk-client/lib/Controllers';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   Props as FormProps,
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
-import React, { useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { mapValues } from 'lodash';
 
 interface Props {
   recordName: string;
   questionName: string;
   initialParamData: Record<string, string>;
-  onChange: (searchConfig: SearchConfig) => void;
 }
 
 const submissionMetadata: SubmissionMetadata = {
@@ -23,17 +19,7 @@ const submissionMetadata: SubmissionMetadata = {
 };
 
 export function DownloadsFilter(props: Props) {
-  const { recordName, questionName, initialParamData, onChange } = props;
-  const paramValues = useSelector(
-    (state: RootState) => state.question.questions[questionName]?.paramValues
-  );
-  useEffect(() => {
-    if (paramValues) {
-      onChange({
-        parameters: paramValues,
-      });
-    }
-  }, [paramValues, onChange]);
+  const { recordName, questionName, initialParamData } = props;
 
   return (
     <QuestionController
