@@ -98,6 +98,12 @@ export const AppState = t.intersection([
       variableId: t.string,
     }),
     isSubsetPanelOpen: t.boolean,
+    timeSliderVariable: VariableDescriptor,
+    timeSliderSelectedRange: t.type({
+      start: t.string,
+      end: t.string,
+    }),
+    timeSliderActive: t.boolean,
   }),
 ]);
 
@@ -224,5 +230,8 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
+    setTimeSliderVariable: useSetter('timeSliderVariable'),
+    setTimeSliderSelectedRange: useSetter('timeSliderSelectedRange'),
+    setTimeSliderActive: useSetter('timeSliderActive'),
   };
 }

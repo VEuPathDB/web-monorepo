@@ -133,10 +133,10 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   // initial selectedRange position
   const initialBrushPosition = useMemo(
     () => ({
-      start: { x: xBrushScale(getXData(data[0])) },
-      end: { x: xBrushScale(getXData(data[data.length - 1])) },
+      start: { x: xBrushScale(Number(new Date(selectedRange.start))) },
+      end: { x: xBrushScale(Number(new Date(selectedRange.end))) },
     }),
-    [data, xBrushScale]
+    [selectedRange, xBrushScale]
   );
 
   // compute bar width manually as scaleTime is used for Bar chart
@@ -148,7 +148,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   // data bar color
   const defaultColor = '#333';
 
-  // onclick to reset
+  // TO DO: this no longer works as intended because initialBrushPosition isn't the "reset position" any more
+  // but consider a separate reset button anyway? (which would just setSelectedRange to undefined I think)
   const handleResetClick = () => {
     if (brushRef?.current) {
       const updater: UpdateBrush = (prevBrush) => {
@@ -226,6 +227,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             tickLabelProps={axisBottomTickLabelProps}
           />
           <Brush
+            key={initialBrushPosition.start + ':' + initialBrushPosition.end}
             xScale={xBrushScale}
             yScale={yBrushScale}
             width={xBrushMax}

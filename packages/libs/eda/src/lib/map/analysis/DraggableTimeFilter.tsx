@@ -29,6 +29,7 @@ import { DateRangeFilter, NumberRangeFilter } from '../../core/types/filter';
 import { Tooltip } from '@material-ui/core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { zip } from 'lodash';
+import { AppState } from './appState';
 
 interface Props {
   studyId: string;
@@ -38,6 +39,13 @@ interface Props {
   filters: Filter[] | undefined;
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
+
+  variable: AppState['timeSliderVariable'];
+  setVariable: (newVariable: AppState['timeSliderVariable']) => void;
+  selectedRange: AppState['timeSliderSelectedRange'];
+  setSelectedRange: (newRange: AppState['timeSliderSelectedRange']) => void;
+  active: AppState['timeSliderActive'];
+  setActive: (newState: AppState['timeSliderActive']) => void;
 }
 
 export default function DraggableTimeFilter({
@@ -47,6 +55,12 @@ export default function DraggableTimeFilter({
   filters,
   starredVariables,
   toggleStarredVariable,
+  variable,
+  setVariable,
+  selectedRange,
+  setSelectedRange,
+  active, // to do - add a toggle to enable/disable
+  setActive, // the small filter and grey everything out
 }: Props) {
   // filter constraint for time slider inputVariables component
   const timeSliderVariableConstraints: DataElementConstraintRecord[] = [
@@ -61,7 +75,7 @@ export default function DraggableTimeFilter({
         allowedTypes: ['date', 'integer'],
         // TODO: below two are correct ones
         // allowedTypes: ['date'],
-        isTemporal: true,
+        //        isTemporal: true,
       },
     },
   ];
@@ -89,65 +103,51 @@ export default function DraggableTimeFilter({
       Variable.is(variable)
     )[0];
 
-  // set initial variable so that time slider loads data in the beginning
-  const [timeSliderVariable, setTimeSliderVariable] = useState<
-    VariableDescriptor | undefined
-  >(
-    defaultTimeSliderEntity && defaultTimeSliderVariable
-      ? {
-          entityId: defaultTimeSliderEntity.id,
-          variableId: defaultTimeSliderVariable.id,
-        }
-      : undefined
-  );
+  // sorry, a useEffect for initialising the default variable
+  useEffect(() => {
+    if (variable == null && defaultTimeSliderVariable != null) {
+      setVariable({
+        variableId: defaultTimeSliderVariable.id,
+        entityId: defaultTimeSliderEntity.id,
+      });
+    }
+  }, [variable, defaultTimeSliderVariable]);
 
   // find variable metadata: use timeSliderVariable, not defaultTimeSlider ids
   const findEntityAndVariable = useFindEntityAndVariable();
-  const timeSliderVariableMetadata = findEntityAndVariable(timeSliderVariable);
-
-  // set initial selectedRange as empty, then change it at useEffect due to data request
-  const [selectedRange, setSelectedRange] = useState({
-    start: '', // TO DO: use undefined
-    end: '',
-  });
+  const variableMetadata = findEntityAndVariable(variable);
 
   // data request to distribution for time slider
   const getTimeSliderData = usePromise(
     useCallback(async () => {
       // no data request if no variable is available
       if (
-        timeSliderVariableMetadata == null ||
-        timeSliderVariable == null ||
+        variableMetadata == null ||
+        variable == null ||
         !(
-          NumberVariable.is(timeSliderVariableMetadata.variable) ||
-          DateVariable.is(timeSliderVariableMetadata.variable)
+          NumberVariable.is(variableMetadata.variable) ||
+          DateVariable.is(variableMetadata.variable)
         )
       )
         return;
 
       const binSpec = {
         displayRangeMin:
-          timeSliderVariableMetadata.variable.distributionDefaults.rangeMin +
-          (timeSliderVariableMetadata.variable.type === 'date'
-            ? 'T00:00:00Z'
-            : ''),
+          variableMetadata.variable.distributionDefaults.rangeMin +
+          (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
         displayRangeMax:
-          timeSliderVariableMetadata.variable.distributionDefaults.rangeMax +
-          (timeSliderVariableMetadata.variable.type === 'date'
-            ? 'T00:00:00Z'
-            : ''),
-        binWidth:
-          timeSliderVariableMetadata.variable.distributionDefaults.binWidth ??
-          1,
+          variableMetadata.variable.distributionDefaults.rangeMax +
+          (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
+        binWidth: variableMetadata.variable.distributionDefaults.binWidth ?? 1,
         binUnits:
-          'binUnits' in timeSliderVariableMetadata.variable.distributionDefaults
-            ? timeSliderVariableMetadata.variable.distributionDefaults.binUnits
+          'binUnits' in variableMetadata.variable.distributionDefaults
+            ? variableMetadata.variable.distributionDefaults.binUnits
             : undefined,
       };
       const distributionResponse = await subsettingClient.getDistribution(
         studyId,
-        timeSliderVariable.entityId,
-        timeSliderVariable.variableId,
+        variable.entityId,
+        variable.variableId,
         {
           valueSpec: 'count',
           filters: filters ?? [],
@@ -160,12 +160,7 @@ export default function DraggableTimeFilter({
         // conditionally set y-values to be 1 (with data) and 0 (no data)
         y: distributionResponse.histogram.map((d) => (d.value >= 1 ? 1 : 0)),
       };
-    }, [
-      timeSliderVariableMetadata?.variable,
-      timeSliderVariable,
-      subsettingClient,
-      filters,
-    ])
+    }, [variableMetadata?.variable, variable, subsettingClient, filters])
   );
 
   // converting data to visx format
@@ -192,10 +187,6 @@ export default function DraggableTimeFilter({
     y: yPosition,
   };
 
-  // set DraggablePanel key to update time slider
-  // TO DO: leaving this here for now but may need to remove?
-  const [draggablePanelKey, setDraggablePanelKey] = useState(0);
-
   // inputVariables onChange function
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
     if (!selection.overlayVariable) {
@@ -206,10 +197,13 @@ export default function DraggableTimeFilter({
     }
 
     // set time slider variable
-    setTimeSliderVariable(selection.overlayVariable);
+    setVariable(selection.overlayVariable);
+    setSelectedRange(undefined);
   }
 
-  // change selectedRange considering async data request
+  // update selectedRange when the time slider data changes
+  // TO DO: consider only resetting range when the variable changes
+  // so probably when selectedRange is nullish
   useEffect(() => {
     if (!getTimeSliderData.pending && getTimeSliderData.value != null) {
       setSelectedRange({
@@ -222,7 +216,6 @@ export default function DraggableTimeFilter({
   // if no variable in a study is suitable to time slider, do not show time slider
   return defaultTimeSliderVariable != null ? (
     <DraggablePanel
-      key={'TimeSlider-' + draggablePanelKey}
       showPanelTitle
       panelTitle={'Time Slider'}
       confineToParentContainer
@@ -261,7 +254,7 @@ export default function DraggableTimeFilter({
               ]}
               entities={entities}
               selectedVariables={{
-                overlayVariable: timeSliderVariable,
+                overlayVariable: variable,
               }}
               onChange={handleInputVariablesOnChange}
               starredVariables={starredVariables}
@@ -283,6 +276,7 @@ export default function DraggableTimeFilter({
         {/* conditional loading for EzTimeFilter */}
         {!getTimeSliderData.pending &&
           getTimeSliderData.value != null &&
+          selectedRange != null &&
           timeFilterData.length > 0 && (
             <>
               <EzTimeFilter

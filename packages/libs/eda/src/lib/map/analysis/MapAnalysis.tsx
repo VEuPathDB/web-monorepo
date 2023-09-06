@@ -250,6 +250,9 @@ function MapAnalysisImpl(props: ImplProps) {
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
     geoConfigs,
+    setTimeSliderVariable,
+    setTimeSliderSelectedRange,
+    setTimeSliderActive,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -1309,6 +1312,12 @@ function MapAnalysisImpl(props: ImplProps) {
                     analysisState.analysis?.descriptor.starredVariables ?? []
                   }
                   toggleStarredVariable={toggleStarredVariable}
+                  variable={appState.timeSliderVariable}
+                  setVariable={setTimeSliderVariable}
+                  selectedRange={appState.timeSliderSelectedRange}
+                  setSelectedRange={setTimeSliderSelectedRange}
+                  active={appState.timeSliderActive}
+                  setActive={setTimeSliderActive}
                 />
 
                 {/* )} */}
