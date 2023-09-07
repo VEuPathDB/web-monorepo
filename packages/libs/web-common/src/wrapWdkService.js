@@ -1,10 +1,9 @@
-import { useEda } from './config';
 import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 export default (wdkService) => ({
   ...wdkService,
-  async getStudies(attributes, tables = []) {
-    const datasets = await wdkService.sendRequest(ok, {
+  getStudies(attributes, tables = []) {
+    return wdkService.sendRequest(ok, {
       useCache: true,
       cacheId: 'studies',
       method: 'post',
@@ -24,15 +23,6 @@ export default (wdkService) => ({
         },
       }),
     });
-
-    if (useEda) {
-      // TODO Mark non-eda studies as prerelease, instead of removing
-      datasets.records = datasets.records.filter(
-        (record) => record.attributes.eda_study_id != null
-      );
-    }
-
-    return datasets;
   },
   getSiteMessages: () =>
     wdkService.sendRequest(ok, {

@@ -10,6 +10,8 @@ export interface LabelledGroupProps {
   label: ReactNode;
   /** Additional styles to apply to the widget container. */
   containerStyles?: React.CSSProperties;
+  /** Aligns children horizontally beneath the label; defaults to false */
+  alignChildrenHorizontally?: boolean;
 }
 
 /**
@@ -18,7 +20,12 @@ export interface LabelledGroupProps {
  * But renders nothing if no children are contained within it.
  */
 export default function LabelledGroup(props: LabelledGroupProps) {
-  const { children, label, containerStyles } = props;
+  const {
+    children,
+    label,
+    containerStyles,
+    alignChildrenHorizontally = false,
+  } = props;
 
   // don't render anything if all the children (or no children) are null
   if (every(React.Children.toArray(children), (child) => child == null))
@@ -40,11 +47,22 @@ export default function LabelledGroup(props: LabelledGroupProps) {
       }}
     >
       {/* wrapper div to prevent from inline-flex */}
-      <div>
+      <div
+        style={
+          alignChildrenHorizontally
+            ? { display: 'flex', width: '100%', flexWrap: 'wrap' }
+            : undefined
+        }
+      >
         {label && (
           <Typography
             variant="button"
-            style={{ color: DARKEST_GRAY, fontWeight: 500, fontSize: '1.2em' }}
+            style={{
+              color: DARKEST_GRAY,
+              fontWeight: 500,
+              fontSize: '1.2em',
+              ...(alignChildrenHorizontally ? { width: '100%' } : {}),
+            }}
           >
             {label}
           </Typography>
