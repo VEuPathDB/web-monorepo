@@ -4,10 +4,6 @@ import { scaleTime, scaleLinear } from '@visx/scale';
 import { Brush } from '@visx/brush';
 // add ResizeTriggerAreas type
 import { Bounds, ResizeTriggerAreas } from '@visx/brush/lib/types';
-import BaseBrush, {
-  BaseBrushState,
-  UpdateBrush,
-} from '@visx/brush/lib/BaseBrush';
 import { Group } from '@visx/group';
 import { max, extent } from 'd3-array';
 import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
@@ -63,8 +59,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     // set a default debounce time in milliseconds
     debounceRateMs = 500,
   } = props;
-
-  const brushRef = useRef<BaseBrush | null>(null);
 
   // define default values
   const margin = { top: 10, bottom: 10, left: 10, right: 10 };
@@ -210,7 +204,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             height={yBrushMax}
             margin={margin}
             handleSize={8}
-            innerRef={brushRef}
             // resize
             resizeTriggerAreas={resizeTriggerAreas}
             brushDirection="horizontal"
