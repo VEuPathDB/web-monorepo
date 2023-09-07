@@ -157,10 +157,13 @@
           padding: 0.2em 0 0.2em 1em;
           text-align: left;
 
-          &:focus,
-          &:active,
-          &:hover {
-            background: #dedede;
+          &[tabindex] {
+            cursor: pointer;
+            &:focus,
+            &:active,
+            &:hover {
+              background: #dedede;
+            }
           }
 
           &:first-child {
@@ -184,7 +187,7 @@
       }
     }
 
-    button {
+    > button {
       border: none;
       border-radius: 0;
       background: #6c757d;

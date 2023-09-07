@@ -8,6 +8,7 @@ import {
   FetchClient,
   ioTransformer,
 } from '@veupathdb/http-utils';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 
 // region Keyboard
 
@@ -224,12 +225,17 @@ export interface TypeAheadInputProps {
   readonly inputReference: React.RefObject<HTMLInputElement>;
   readonly searchString: string;
   readonly placeHolderText?: string;
+  readonly recentSearches: string[];
+  readonly onRecentSearchSelect: (recentSearch: string) => void;
+  readonly onClearRecentSearches: () => void;
 }
 
 export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
   const [suggestions, setSuggestions] = useState<Array<string>>([]);
   const [hintValue, setHintValue] = useState('');
   const [inputValue, setInputValue] = useState(props.searchString);
+  // "focus" follows mouse clicks, but not tabbing
+  const [hasFocus, setHasFocus] = useState(false);
 
   const typeAheadAPI = new TypeAheadAPI({
     baseUrl: ((ep) => (ep.endsWith('/') ? ep : ep + '/') + TYPEAHEAD_PATH)(
@@ -237,6 +243,7 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     ),
   });
   const ulReference = useRef<HTMLUListElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const ulClassName =
     suggestions.length == 0 ? 'type-ahead-hints hidden' : 'type-ahead-hints';
 
@@ -422,6 +429,11 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     else if (kbIsEscape(e)) {
       resetInput();
     }
+
+    // If an item is selected, remove "focus"
+    else if (kbIsEnter(e)) {
+      setHasFocus(false);
+    }
   };
 
   const typeAhead = debounce((fn: () => string) => {
@@ -440,6 +452,16 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     if (lastWordOf(element.value).length >= 3) typeAhead(() => element.value);
   };
 
+  const selectRecentSearch = (recentSearch: string) => {
+    props.onRecentSearchSelect(recentSearch);
+    setInputValue(recentSearch);
+    setHasFocus(false);
+  };
+
+  // Show history if input is empty, or if input matches the term in the url
+  const showHistory =
+    hasFocus && (inputValue === '' || props.searchString === inputValue);
+
   const suggestionItems = suggestions.map((suggestion) => (
     <li
       className="type-ahead-hint"
@@ -454,37 +476,76 @@ export function TypeAheadInput(props: TypeAheadInputProps): JSX.Element {
     </li>
   ));
 
-  const clickHandler = (e: MouseEvent) => {
-    if (
-      e.target instanceof HTMLElement &&
-      e.target.parentElement !== ulReference.current
-    )
-      setSuggestions([]);
-  };
+  const historyMenu = props.recentSearches.length
+    ? [
+        <li className="type-ahead-hint">
+          <strong>Your recent searches</strong>
+        </li>,
+        ...props.recentSearches.map((recentSearch) => (
+          <li
+            key={recentSearch}
+            className="type-ahead-hint"
+            tabIndex={0}
+            onClick={() => selectRecentSearch(recentSearch)}
+            onKeyDown={(e) => {
+              if (kbIsEnter(e)) {
+                selectRecentSearch(recentSearch);
+              }
+            }}
+          >
+            {recentSearch}
+          </li>
+        )),
+        <li
+          className="type-ahead-hint link"
+          tabIndex={0}
+          onClick={props.onClearRecentSearches}
+          onKeyDown={(e) => {
+            if (kbIsEnter(e)) {
+              props.onClearRecentSearches();
+            }
+          }}
+        >
+          Clear search history
+        </li>,
+      ]
+    : null;
 
   useEffect(() => {
+    const clickHandler = (e: MouseEvent) => {
+      if (!(e.target instanceof HTMLElement)) return;
+      if (e.target.parentElement !== ulReference.current) {
+        setSuggestions([]);
+      }
+      if (!containerRef.current?.contains(e.target)) {
+        setHasFocus(false);
+      }
+    };
+
     document.addEventListener('click', clickHandler);
-    return () => removeEventListener('click', clickHandler);
+    return () => {
+      removeEventListener('click', clickHandler);
+    };
   }, []);
 
   return (
-    <div className="type-ahead">
+    <div ref={containerRef} className="type-ahead">
       <div className="type-ahead-input">
         <input
           name={SEARCH_TERM_PARAM}
           type="input"
           ref={props.inputReference}
           value={inputValue}
-          defaultValue={props.searchString}
           key={props.searchString}
           onChange={onInputChange}
           onKeyDown={onInputKeyDown}
           placeholder={props.placeHolderText}
+          onClick={() => setHasFocus(true)}
         />
         <input type="text" value={hintValue} tabIndex={-1} />
       </div>
       <ul className={ulClassName} ref={ulReference}>
-        {suggestionItems}
+        {showHistory ? historyMenu : suggestionItems}
       </ul>
     </div>
   );
