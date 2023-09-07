@@ -37,6 +37,11 @@
         "^build-npm-modules"
       ]
     },
+    "compile:check": {
+      "dependsOn": [
+        "^build-npm-modules"
+      ]
+    },
     "bundle:dev": {
       "dependsOn": [
         "^build-npm-modules"
