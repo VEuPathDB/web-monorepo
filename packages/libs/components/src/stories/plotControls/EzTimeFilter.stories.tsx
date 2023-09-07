@@ -254,7 +254,9 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
   );
 
   // set initial selectedRange
-  const [selectedRange, setSelectedRange] = useState({
+  const [selectedRange, setSelectedRange] = useState<
+    { start: string; end: string } | undefined
+  >({
     start: timeFilterData[0].x,
     end: timeFilterData[timeFilterData.length - 1].x,
   });

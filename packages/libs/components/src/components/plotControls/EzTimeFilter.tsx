@@ -21,9 +21,11 @@ export type EzTimeFilterProps = {
   /** Ez time filter data  */
   data: EZTimeFilterDataProp[];
   /** current state of selectedRange */
-  selectedRange: { start: string; end: string };
+  selectedRange: { start: string; end: string } | undefined;
   /** update function selectedRange */
-  setSelectedRange: (selectedRange: EzTimeFilterProps['selectedRange']) => void;
+  setSelectedRange: (
+    selectedRange: { start: string; end: string } | undefined
+  ) => void;
   /** width */
   width?: number;
   /** height */
@@ -82,19 +84,30 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   const getXData = (d: EZTimeFilterDataProp) => new Date(d.x);
   const getYData = (d: EZTimeFilterDataProp) => d.y;
 
-  const onBrushChange = (domain: Bounds | null) => {
-    if (!domain) return;
+  const onBrushChange = useMemo(
+    () =>
+      debounce((domain: Bounds | null) => {
+        if (!domain) return;
 
-    const { x0, x1 } = domain;
+        const { x0, x1 } = domain;
 
-    const selectedDomain = {
-      // x0 and x1 are millisecond value
-      start: millisecondTodate(x0),
-      end: millisecondTodate(x1),
+        const selectedDomain = {
+          // x0 and x1 are millisecond value
+          start: millisecondTodate(x0),
+          end: millisecondTodate(x1),
+        };
+
+        setSelectedRange(selectedDomain);
+      }, debounceRateMs),
+    [setSelectedRange]
+  );
+
+  // Cancel pending onBrushEnd request when this component is unmounted
+  useEffect(() => {
+    return () => {
+      onBrushChange.cancel();
     };
-
-    setSelectedRange(selectedDomain);
-  };
+  }, []);
 
   // bounds
   const xBrushMax = Math.max(width - margin.left - margin.right, 0);
@@ -126,34 +139,27 @@ function EzTimeFilter(props: EzTimeFilterProps) {
 
   // initial selectedRange position
   const initialBrushPosition = useMemo(
-    () => ({
-      start: { x: xBrushScale(new Date(selectedRange.start)) },
-      end: { x: xBrushScale(new Date(selectedRange.end)) },
-    }),
+    () =>
+      selectedRange != null
+        ? {
+            start: { x: xBrushScale(new Date(selectedRange.start)) },
+            end: { x: xBrushScale(new Date(selectedRange.end)) },
+          }
+        : undefined,
     [selectedRange, xBrushScale]
   );
 
   // compute bar width manually as scaleTime is used for Bar chart
   const barWidth = xBrushMax / data.length;
 
-  // make an event after dragging ends
-  const onBrushEnd = () => {};
-
   // data bar color
   const defaultColor = '#333';
 
-  // debounce function for onBrushEnd: will be used for submitting filtered range later
-  const debouncedOnBrushEnd = useMemo(
-    () => debounce(onBrushEnd, debounceRateMs),
-    [onBrushEnd]
-  );
-
-  // Cancel pending onBrushEnd request when this component is unmounted
-  useEffect(() => {
-    return () => {
-      debouncedOnBrushEnd.cancel();
-    };
-  }, []);
+  // this makes/fakes the brush as a controlled component
+  const brushKey =
+    initialBrushPosition != null
+      ? initialBrushPosition.start + ':' + initialBrushPosition.end
+      : 'no_brush';
 
   return (
     <div
@@ -197,7 +203,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             tickLabelProps={axisBottomTickLabelProps}
           />
           <Brush
-            key={initialBrushPosition.start + ':' + initialBrushPosition.end}
+            key={brushKey}
             xScale={xBrushScale}
             yScale={yBrushScale}
             width={xBrushMax}
@@ -209,10 +215,10 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
             onChange={onBrushChange}
+            onClick={() => setSelectedRange(undefined)}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
             disableDraggingSelection={disableDraggingSelection}
-            onBrushEnd={debouncedOnBrushEnd}
             renderBrushHandle={(props) => <BrushHandle {...props} />}
           />
         </Group>

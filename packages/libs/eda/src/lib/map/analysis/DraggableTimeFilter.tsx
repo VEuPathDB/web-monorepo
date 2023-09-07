@@ -137,18 +137,6 @@ export default function DraggableTimeFilter({
     setSelectedRange(undefined);
   }
 
-  // update selectedRange when the time slider data changes
-  // TO DO: consider only resetting range when the variable changes
-  // so probably when selectedRange is nullish
-  useEffect(() => {
-    if (!getTimeSliderData.pending && getTimeSliderData.value != null) {
-      setSelectedRange({
-        start: getTimeSliderData.value.x[0],
-        end: getTimeSliderData.value.x[getTimeSliderData.value.x.length - 1],
-      });
-    }
-  }, [getTimeSliderData]);
-
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null ? (
     <DraggablePanel
@@ -212,7 +200,6 @@ export default function DraggableTimeFilter({
         {/* conditional loading for EzTimeFilter */}
         {!getTimeSliderData.pending &&
           getTimeSliderData.value != null &&
-          selectedRange != null &&
           timeFilterData.length > 0 && (
             <>
               <EzTimeFilter
