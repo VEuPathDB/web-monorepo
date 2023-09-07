@@ -133,8 +133,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   // initial selectedRange position
   const initialBrushPosition = useMemo(
     () => ({
-      start: { x: xBrushScale(Number(new Date(selectedRange.start))) },
-      end: { x: xBrushScale(Number(new Date(selectedRange.end))) },
+      start: { x: xBrushScale(new Date(selectedRange.start)) },
+      end: { x: xBrushScale(new Date(selectedRange.end)) },
     }),
     [selectedRange, xBrushScale]
   );
@@ -147,30 +147,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
 
   // data bar color
   const defaultColor = '#333';
-
-  // TO DO: this no longer works as intended because initialBrushPosition isn't the "reset position" any more
-  // but consider a separate reset button anyway? (which would just setSelectedRange to undefined I think)
-  const handleResetClick = () => {
-    if (brushRef?.current) {
-      const updater: UpdateBrush = (prevBrush) => {
-        const newExtent = brushRef.current!.getExtent(
-          initialBrushPosition.start,
-          initialBrushPosition.end
-        );
-
-        const newState: BaseBrushState = {
-          ...prevBrush,
-          start: { y: newExtent.y0, x: newExtent.x0 },
-          end: { y: newExtent.y1, x: newExtent.x1 },
-          extent: newExtent,
-        };
-
-        return newState;
-      };
-
-      brushRef.current.updateBrush(updater);
-    }
-  };
 
   // debounce function for onBrushEnd: will be used for submitting filtered range later
   const debouncedOnBrushEnd = useMemo(
@@ -240,7 +216,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
             onChange={onBrushChange}
-            onClick={handleResetClick}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
             disableDraggingSelection={disableDraggingSelection}
