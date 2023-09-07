@@ -601,7 +601,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           display: (
             <>
-              <img alt="BETA" src={betaImage} /> Multi-study Interactive Map
+              Multi-study Interactive Map <img alt="BETA" src={betaImage} />
             </>
           ),
           key: 'map--mega-study',
