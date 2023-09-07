@@ -142,6 +142,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
       timeSliderVariable: defaultTimeVariable,
+      timeSliderActive: true,
       markerConfigurations: [
         {
           type: 'pie',

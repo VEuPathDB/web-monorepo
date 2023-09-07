@@ -1,5 +1,6 @@
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
+import { Toggle } from '@veupathdb/coreui';
 import EzTimeFilter, {
   EZTimeFilterDataProp,
 } from '@veupathdb/components/lib/components/plotControls/EzTimeFilter';
@@ -162,11 +163,12 @@ export default function DraggableTimeFilter({
             display: 'grid',
             gridTemplateColumns: '1fr repeat(1, auto) 1fr',
             gridColumnGap: '5px',
+            padding: '0 10px 0 10px',
             justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-          <div style={{ marginTop: '-0.5em' }}>
+          <div style={{ gridColumnStart: 1, marginTop: '-0.5em' }}>
             <InputVariables
               inputs={[
                 {
@@ -186,9 +188,28 @@ export default function DraggableTimeFilter({
               constraints={timeSliderVariableConstraints}
             />
           </div>
-          {/* display start to end value */}
-          <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
-            {selectedRange?.start} ~ {selectedRange?.end}
+          {/* display start to end value
+	      TO DO: make these date inputs
+	    */}
+          {selectedRange && (
+            <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
+              {selectedRange?.start} ~ {selectedRange?.end}
+            </div>
+          )}
+
+          <div
+            style={{
+              gridColumnStart: 3,
+              display: 'grid',
+              justifyContent: 'end',
+            }}
+          >
+            <Toggle
+              label={active ? 'On' : 'Off'}
+              labelPosition="left"
+              value={!!active}
+              onChange={setActive}
+            />
           </div>
         </div>
         {/* display data loading spinner while requesting data to the backend */}

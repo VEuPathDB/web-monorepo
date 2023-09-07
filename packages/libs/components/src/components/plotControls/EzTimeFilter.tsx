@@ -102,7 +102,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     [setSelectedRange]
   );
 
-  // Cancel pending onBrushEnd request when this component is unmounted
+  // Cancel any pending onBrushChange requests when this component is unmounted
   useEffect(() => {
     return () => {
       onBrushChange.cancel();
