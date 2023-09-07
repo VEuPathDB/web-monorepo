@@ -606,6 +606,7 @@ const useHeaderMenuItems = (
           ),
           key: 'map--mega-study',
           url: '/workspace/maps/DS_480c976ef9/new',
+          target: '_blank',
           metadata: {
             test: () => showInteractiveMaps,
           },
