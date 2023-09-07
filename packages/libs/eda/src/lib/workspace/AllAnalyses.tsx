@@ -41,7 +41,6 @@ import {
   StudyRecord,
   useAnalysisList,
   usePinnedAnalyses,
-  useSubsettingClient,
 } from '../core';
 import SubsettingClient from '../core/api/SubsettingClient';
 import { getAnalysisId } from '../core/utils/analysis';
@@ -117,6 +116,7 @@ const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 export function AllAnalyses(props: Props) {
   const {
     analysisClient,
+    subsettingClient,
     exampleAnalysesAuthor,
     showLoginForm,
     studyRecord,
@@ -192,7 +192,6 @@ export function AllAnalyses(props: Props) {
     removePinnedAnalysis,
   } = usePinnedAnalyses(analysisClient);
 
-  const subsettingClient = useSubsettingClient();
   const datasets = useWdkStudyRecords(subsettingClient, {
     attributes: WDK_STUDY_RECORD_ATTRIBUTES,
   });
