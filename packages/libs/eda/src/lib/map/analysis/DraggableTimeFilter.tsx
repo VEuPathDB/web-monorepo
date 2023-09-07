@@ -1,33 +1,21 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import EzTimeFilter, {
   EZTimeFilterDataProp,
 } from '@veupathdb/components/lib/components/plotControls/EzTimeFilter';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
-import {
-  VariablesByInputName,
-  DataElementConstraintRecord,
-  filterVariablesByConstraint,
-} from '../../core/utils/data-element-constraints';
-import { AnalysisState, usePromise } from '../../core';
+import { VariablesByInputName } from '../../core/utils/data-element-constraints';
+import { timeSliderVariableConstraints, usePromise } from '../../core';
 import {
   DateVariable,
   NumberVariable,
   StudyEntity,
-  Variable,
 } from '../../core/types/study';
 import { VariableDescriptor } from '../../core/types/variable';
 
 import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
-import {
-  DateRange,
-  NumberRange,
-} from '@veupathdb/components/lib/types/general';
-import { DateRangeFilter, NumberRangeFilter } from '../../core/types/filter';
-import { Tooltip } from '@material-ui/core';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { zip } from 'lodash';
 import { AppState } from './appState';
 
@@ -62,58 +50,6 @@ export default function DraggableTimeFilter({
   active, // to do - add a toggle to enable/disable
   setActive, // the small filter and grey everything out
 }: Props) {
-  // filter constraint for time slider inputVariables component
-  const timeSliderVariableConstraints: DataElementConstraintRecord[] = [
-    {
-      overlayVariable: {
-        isRequired: true,
-        minNumVars: 1,
-        maxNumVars: 1,
-        // TODO: testing with SCORE S. mansoni Cluster Randomized Trial study
-        // however, this study does not have date variable, thus temporarily use below for test purpose
-        // i.e., additionally allowing 'integer'
-        allowedTypes: ['date', 'integer'],
-        // TODO: below two are correct ones
-        // allowedTypes: ['date'],
-        //        isTemporal: true,
-      },
-    },
-  ];
-
-  const temporalVariableTree = filterVariablesByConstraint(
-    entities[0],
-    timeSliderVariableConstraints[0]['overlayVariable']
-  );
-
-  // take the first suitable variable from the filtered variable tree
-
-  // first find the first entity with some variables that passed the filter
-  const defaultTimeSliderEntity: StudyEntity | undefined = Array.from(
-    preorder(temporalVariableTree, (entity) => entity.children ?? [])
-  )
-    // not all `variables` are actually variables, so we filter to be sure
-    .filter(
-      (entity) =>
-        entity.variables.filter((variable) => Variable.is(variable)).length > 0
-    )[0];
-
-  // then take the first variable from it
-  const defaultTimeSliderVariable: Variable | undefined =
-    defaultTimeSliderEntity.variables.filter((variable): variable is Variable =>
-      Variable.is(variable)
-    )[0];
-
-  // sorry, a useEffect for initialising the default variable
-  useEffect(() => {
-    if (variable == null && defaultTimeSliderVariable != null) {
-      setVariable({
-        variableId: defaultTimeSliderVariable.id,
-        entityId: defaultTimeSliderEntity.id,
-      });
-    }
-  }, [variable, defaultTimeSliderVariable]);
-
-  // find variable metadata: use timeSliderVariable, not defaultTimeSlider ids
   const findEntityAndVariable = useFindEntityAndVariable();
   const variableMetadata = findEntityAndVariable(variable);
 
@@ -214,7 +150,7 @@ export default function DraggableTimeFilter({
   }, [getTimeSliderData]);
 
   // if no variable in a study is suitable to time slider, do not show time slider
-  return defaultTimeSliderVariable != null ? (
+  return variable != null ? (
     <DraggablePanel
       showPanelTitle
       panelTitle={'Time Slider'}

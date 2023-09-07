@@ -5,6 +5,7 @@ import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo } from 'react';
 import {
   AnalysisState,
+  useGetDefaultTimeVariableDescriptor,
   useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
@@ -131,11 +132,16 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     studyMetadata.rootEntity.id
   );
 
+  const getDefaultTimeVariableDescriptor =
+    useGetDefaultTimeVariableDescriptor();
+  const defaultTimeVariable = getDefaultTimeVariableDescriptor();
+
   const defaultAppState: AppState = useMemo(
     () => ({
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
+      timeSliderVariable: defaultTimeVariable,
       markerConfigurations: [
         {
           type: 'pie',
@@ -182,11 +188,16 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
               )
           );
 
-        if (missingMarkerConfigs.length > 0) {
+        const timeVariableIsMissing = appState.timeSliderVariable == null;
+
+        if (missingMarkerConfigs.length > 0 || timeVariableIsMissing) {
           setVariableUISettings((prev) => ({
             ...prev,
             [uiStateKey]: {
               ...appState,
+              ...(timeVariableIsMissing
+                ? { timeSliderVariable: defaultTimeVariable }
+                : {}),
               markerConfigurations: [
                 ...appState.markerConfigurations,
                 ...missingMarkerConfigs,
@@ -196,7 +207,14 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
         }
       }
     }
-  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
+  }, [
+    analysis,
+    appState,
+    setVariableUISettings,
+    uiStateKey,
+    defaultAppState,
+    defaultTimeVariable,
+  ]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(
