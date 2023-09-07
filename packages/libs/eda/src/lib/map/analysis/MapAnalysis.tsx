@@ -6,7 +6,11 @@ import {
   BubbleOverlayConfig,
   CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
+  DateRangeFilter,
+  DateVariable,
   EntityDiagram,
+  NumberRangeFilter,
+  NumberVariable,
   OverlayConfig,
   PromiseResult,
   useAnalysis,
@@ -277,6 +281,9 @@ function MapAnalysisImpl(props: ImplProps) {
   const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
+  const { variable: timeVariableMetadata } =
+    findEntityAndVariable(appState.timeSliderVariable) ?? {};
+
   const outputEntity = useMemo(() => {
     if (geoConfig == null || geoConfig.entity.id == null) return;
 
@@ -300,31 +307,79 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
+  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined = useMemo(
+    () =>
+      timeVariableMetadata &&
+      appState.timeSliderActive &&
+      appState.timeSliderVariable &&
+      appState.timeSliderSelectedRange
+        ? DateVariable.is(timeVariableMetadata)
+          ? {
+              type: 'dateRange',
+              ...appState.timeSliderVariable,
+              min: appState.timeSliderSelectedRange.start,
+              max: appState.timeSliderSelectedRange.end,
+            }
+          : NumberVariable.is(timeVariableMetadata)
+          ? {
+              type: 'numberRange', // this is temporary - I think we should NOT handle non-date variables when we roll this out
+              ...appState.timeSliderVariable, // TO DO: remove number variable handling
+              min: Number(appState.timeSliderSelectedRange.start.split(/-/)[0]), // just take the year number
+              max: Number(appState.timeSliderSelectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
+            }
+          : undefined
+        : undefined,
+    [
+      timeVariableMetadata,
+      appState.timeSliderActive,
+      appState.timeSliderVariable,
+      appState.timeSliderSelectedRange,
+    ]
+  );
+
+  const viewportFilters = useMemo(
+    () =>
+      appState.boundsZoomLevel
+        ? filtersFromBoundingBox(
+            appState.boundsZoomLevel.bounds,
+            {
+              variableId: geoConfig.latitudeVariableId,
+              entityId: geoConfig.entity.id,
+            },
+            {
+              variableId: geoConfig.longitudeVariableId,
+              entityId: geoConfig.entity.id,
+            }
+          )
+        : [],
+    [
+      appState.boundsZoomLevel,
+      geoConfig.entity.id,
+      geoConfig.latitudeVariableId,
+      geoConfig.longitudeVariableId,
+    ]
+  );
+
+  // needed for floaters
+  const filtersIncludingViewportAndTimeSlider = useMemo(() => {
     return [
       ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
       ...viewportFilters,
+      ...(timeFilter != null ? [timeFilter] : []),
     ];
   }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
     props.analysisState.analysis?.descriptor.subset.descriptor,
+    viewportFilters,
+    timeFilter,
   ]);
+
+  // needed for markers
+  const filtersIncludingTimeSlider = useMemo(() => {
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...(timeFilter != null ? [timeFilter] : []),
+    ];
+  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilter]);
 
   const allFilteredCategoricalValues = usePromise(
     useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
@@ -367,7 +422,7 @@ function MapAnalysisImpl(props: ImplProps) {
         subsettingClient,
         studyId,
         overlayVariable,
-        filters: filtersIncludingViewport,
+        filters: filtersIncludingViewportAndTimeSlider, // TO DO: decide whether to filter on time slider here
       });
     }, [
       overlayVariable,
@@ -375,7 +430,7 @@ function MapAnalysisImpl(props: ImplProps) {
       overlayEntity,
       subsettingClient,
       studyId,
-      filtersIncludingViewport,
+      filtersIncludingViewportAndTimeSlider,
     ])
   );
 
@@ -457,7 +512,7 @@ function MapAnalysisImpl(props: ImplProps) {
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId,
-    filters,
+    filters: filtersIncludingTimeSlider,
     markerType,
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
     overlayConfig: activeOverlayConfig.value,
@@ -1353,7 +1408,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     totalCounts={totalCounts}
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
-                    filters={filtersIncludingViewport}
+                    filters={filtersIncludingViewportAndTimeSlider}
                     // onTouch={moveVizToTop}
                     zIndexForStackingContext={getZIndexByPanelTitle(
                       DraggablePanelIds.VIZ_PANEL

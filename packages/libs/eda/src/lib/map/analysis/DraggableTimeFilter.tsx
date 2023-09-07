@@ -133,9 +133,9 @@ export default function DraggableTimeFilter({
       return;
     }
 
-    // set time slider variable
     setVariable(selection.overlayVariable);
     setSelectedRange(undefined);
+    setActive(true);
   }
 
   // if no variable in a study is suitable to time slider, do not show time slider
