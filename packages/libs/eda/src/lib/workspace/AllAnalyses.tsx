@@ -115,6 +115,7 @@ export function AllAnalyses(props: Props) {
     synchronizeWithUrl,
     updateDocumentTitle,
     activeAnalysisId,
+    subsettingClient,
   } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
@@ -169,7 +170,9 @@ export function AllAnalyses(props: Props) {
     removePinnedAnalysis,
   } = usePinnedAnalyses(analysisClient);
 
-  const datasets = useWdkStudyRecords(WDK_STUDY_RECORD_ATTRIBUTES);
+  const datasets = useWdkStudyRecords(subsettingClient, {
+    attributes: WDK_STUDY_RECORD_ATTRIBUTES,
+  });
 
   const { analyses, deleteAnalyses, updateAnalysis, loading, error } =
     useAnalysisList(analysisClient);
