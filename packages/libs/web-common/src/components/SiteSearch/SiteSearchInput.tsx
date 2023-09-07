@@ -70,7 +70,9 @@ export const SiteSearchInput = wrappable(function ({
 
   const saveSearchString = useCallback(() => {
     if (inputRef.current?.value) {
-      setRecentSearches(uniq([inputRef.current.value].concat(recentSearches)));
+      setRecentSearches(
+        uniq([inputRef.current.value].concat(recentSearches)).slice(0, 10)
+      );
     }
   }, [setRecentSearches, recentSearches]);
 
