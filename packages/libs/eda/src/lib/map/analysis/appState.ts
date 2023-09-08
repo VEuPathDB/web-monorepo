@@ -2,7 +2,7 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   AnalysisState,
   useGetDefaultTimeVariableDescriptor,
@@ -169,10 +169,14 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
         },
       ],
     }),
-    [defaultVariable]
+    [defaultVariable, defaultTimeVariable]
   );
 
+  // make some backwards compatability updates to the appstate retrieved from the back end
+  const appStateCheckedRef = useRef(false);
+
   useEffect(() => {
+    if (appStateCheckedRef.current) return;
     if (analysis) {
       if (!appState) {
         setVariableUISettings((prev) => ({
@@ -207,6 +211,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           }));
         }
       }
+      appStateCheckedRef.current = true;
     }
   }, [
     analysis,

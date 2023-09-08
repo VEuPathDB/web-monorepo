@@ -279,10 +279,10 @@ export const timeSliderVariableConstraints: DataElementConstraintRecord[] = [
       // TODO: testing with SCORE S. mansoni Cluster Randomized Trial study
       // however, this study does not have date variable, thus temporarily use below for test purpose
       // i.e., additionally allowing 'integer'
-      allowedTypes: ['date', 'integer'],
+      // allowedTypes: ['date', 'integer'],
       // TODO: below two are correct ones
-      // allowedTypes: ['date'],
-      //        isTemporal: true,
+      allowedTypes: ['date'],
+      //      isTemporal: true,
     },
   },
 ];
@@ -301,21 +301,14 @@ export function useGetDefaultTimeVariableDescriptor() {
       // take the first suitable variable from the filtered variable tree
 
       // first find the first entity with some variables that passed the filter
-      const defaultTimeSliderEntity: StudyEntity | undefined = Array.from(
-        preorder(temporalVariableTree, (entity) => entity.children ?? [])
-      )
-        // not all `variables` are actually variables, so we filter to be sure
-        .filter(
-          (entity) =>
-            entity.variables.filter((variable) => Variable.is(variable))
-              .length > 0
-        )[0];
+      const defaultTimeSliderEntity = Array.from(
+        preorder(temporalVariableTree, (node) => node.children ?? [])
+      ).find((entity) => entity.variables.some(Variable.is));
 
       // then take the first variable from it
-      const defaultTimeSliderVariable: Variable | undefined =
-        defaultTimeSliderEntity.variables.filter(
-          (variable): variable is Variable => Variable.is(variable)
-        )[0];
+      const defaultTimeSliderVariable = defaultTimeSliderEntity?.variables.find(
+        Variable.is
+      );
 
       return defaultTimeSliderEntity != null &&
         defaultTimeSliderVariable != null
