@@ -32,6 +32,7 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
+import { collect } from 'fp-ts/lib/ReadonlyRecord';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -190,14 +191,21 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
+    return collections
+      .filter((collectionVar) => {
+        return (
+          !collectionVar.isProportion &&
+          collectionVar.normalizationMethod === 'NULL'
+        );
+      })
+      .map((collectionVar) => ({
+        value: {
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        display:
+          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+      }));
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
