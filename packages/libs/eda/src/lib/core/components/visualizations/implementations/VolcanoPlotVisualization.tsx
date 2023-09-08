@@ -199,7 +199,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       y: { min: dataYMin, max: dataYMax },
     };
   }, [data.value]);
-  console.log(rawDataMinMaxValues);
 
   // Determine mins, maxes of axes in the plot. These are different than the data mins/maxes because
   // of the log transform and the little bit of padding, or because axis ranges are supplied.
@@ -231,10 +230,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       // Standard volcano plots have -log10(raw p value) as the y axis
       const yAxisMin = -Math.log10(dataYMax);
       const yAxisMax = dataYMin > 0 ? -Math.log10(dataYMin) : 20;
-      console.log(
-        '🚀 ~ file: VolcanoPlotVisualization.tsx:233 ~ dependentAxisRange ~ yAxisMax:',
-        yAxisMax
-      );
+
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
         min: Math.floor(yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
@@ -242,7 +238,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       };
     }
   }, [data.value, vizConfig.dependentAxisRange, rawDataMinMaxValues]);
-  console.log(dependentAxisRange);
 
   const significanceThreshold =
     vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD;
@@ -259,7 +254,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         .filter((d) => {
           const log2foldChange = Number(d?.log2foldChange);
           const transformedPValue = -Math.log10(Number(d?.pValue));
-          if (d?.pValue === '0') console.log(d);
           return (
             log2foldChange <= independentAxisRange.max &&
             log2foldChange >= independentAxisRange.min &&
@@ -347,7 +341,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     significanceThreshold,
     log2FoldChangeThreshold,
   ]);
-  console.log(finalData);
 
   // For the legend, we need the counts of the data
   const countsData = useMemo(() => {

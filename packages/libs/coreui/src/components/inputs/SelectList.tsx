@@ -1,12 +1,15 @@
 import { ReactNode, useEffect, useState } from 'react';
 import PopoverButton from '../buttons/PopoverButton/PopoverButton';
 import CheckboxList, { CheckboxListProps } from './checkboxes/CheckboxList';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
 
 export interface SelectListProps<T> extends CheckboxListProps<T> {
   children?: ReactNode;
   /** A button's content if/when no values are currently selected */
   defaultButtonDisplayContent: ReactNode;
   isDisabled?: boolean;
+  /** Are contents loading? */
+  isLoading?: boolean;
 }
 
 export default function SelectList<T>({
@@ -18,6 +21,7 @@ export default function SelectList<T>({
   children,
   defaultButtonDisplayContent,
   isDisabled = false,
+  isLoading = false,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
@@ -67,6 +71,11 @@ export default function SelectList<T>({
           margin: '0.5em',
         }}
       >
+        {isLoading && (
+          <div css={{ height: '60px' }}>
+            <Spinner size={30} />
+          </div>
+        )}
         <CheckboxList
           name={name}
           items={items}

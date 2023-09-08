@@ -269,11 +269,6 @@ export function DifferentialAbundanceConfiguration(
         } as LabeledRange;
       });
 
-  console.log(
-    '🚀 ~ file: differentialabundance.tsx:253 ~ groupValueOptions:',
-    groupValueOptions
-  );
-
   return (
     <ComputationStepContainer
       computationStepInfo={{
@@ -344,9 +339,11 @@ export function DifferentialAbundanceConfiguration(
               >
                 <span>Group A</span>
                 <ValuePicker
-                  allowedValues={groupValueOptions?.map(
-                    (option) => option.label
-                  )}
+                  allowedValues={
+                    !continuousVariableBins.pending
+                      ? groupValueOptions?.map((option) => option.label)
+                      : undefined
+                  }
                   selectedValues={configuration?.comparator?.groupA?.map(
                     (bin) => bin.label
                   )}
@@ -354,8 +351,6 @@ export function DifferentialAbundanceConfiguration(
                     (bin) => bin.label
                   )}
                   onSelectedValuesChange={(newValues) => {
-                    console.log(newValues);
-                    console.log(configuration?.comparator?.groupA);
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
@@ -368,6 +363,7 @@ export function DifferentialAbundanceConfiguration(
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
+                  isLoading={continuousVariableBins.pending}
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}
@@ -399,9 +395,11 @@ export function DifferentialAbundanceConfiguration(
                 />
                 <span>Group B</span>
                 <ValuePicker
-                  allowedValues={groupValueOptions?.map(
-                    (option) => option.label
-                  )}
+                  allowedValues={
+                    !continuousVariableBins.pending
+                      ? groupValueOptions?.map((option) => option.label)
+                      : undefined
+                  }
                   selectedValues={configuration?.comparator?.groupB?.map(
                     (bin) => bin.label
                   )}
