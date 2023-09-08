@@ -229,7 +229,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       } = rawDataMinMaxValues;
       // Standard volcano plots have -log10(raw p value) as the y axis
       const yAxisMin = -Math.log10(dataYMax);
-      const yAxisMax = dataYMin > 0 ? -Math.log10(dataYMin) : 20;
+      const yAxisMax = -Math.log10(dataYMin);
 
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
@@ -384,11 +384,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       ? [
           'Up in ' +
             computationConfiguration.comparator.groupA
-              .map((bin) => bin.label)
+              .map((entry) => entry.label)
               .join(','),
           'Up in ' +
             computationConfiguration.comparator.groupB
-              .map((bin) => bin.label)
+              .map((entry) => entry.label)
               .join(','),
         ]
       : [];
@@ -569,7 +569,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         },
         {
           label: `Up regulated in ${computationConfiguration.comparator.groupB
-            ?.map((bin) => bin.label)
+            ?.map((entry) => entry.label)
             .join(',')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
@@ -577,7 +577,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         },
         {
           label: `Up regulated in ${computationConfiguration.comparator.groupA
-            ?.map((bin) => bin.label)
+            ?.map((entry) => entry.label)
             .join(',')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,

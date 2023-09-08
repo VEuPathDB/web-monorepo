@@ -222,8 +222,7 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [configuration, findEntityAndVariable]);
 
-  // For continuous variables, use quantiles as vocabulary
-
+  // If the variable is continuous, ask the backend for a list of bins
   const continuousVariableBins = usePromise(
     useCallback(async () => {
       if (
@@ -232,6 +231,7 @@ export function DifferentialAbundanceConfiguration(
         )
       )
         return;
+
       const binRangeProps: GetBinRangesProps = {
         studyId: studyMetadata.id,
         ...configuration.comparator?.variable,
@@ -254,7 +254,8 @@ export function DifferentialAbundanceConfiguration(
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
   const disableGroupValueSelectors = !configuration?.comparator?.variable;
 
-  // We have to send an array of LabeledRanges so go ahead and map everything to that format
+  // Create the options for groupA and groupB. Organizing into the LabeledRange[] format
+  // here in order to keep the later code clean.
   const groupValueOptions = continuousVariableBins.value
     ? continuousVariableBins.value.map((bin) => {
         return {
@@ -345,18 +346,20 @@ export function DifferentialAbundanceConfiguration(
                       : undefined
                   }
                   selectedValues={configuration?.comparator?.groupA?.map(
-                    (bin) => bin.label
+                    (entry) => entry.label
                   )}
                   disabledValues={configuration?.comparator?.groupB?.map(
-                    (bin) => bin.label
+                    (entry) => entry.label
                   )}
                   onSelectedValuesChange={(newValues) => {
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
-                      groupA: groupValueOptions?.filter((bin) =>
-                        newValues.includes(bin.label)
-                      ),
+                      groupA: newValues.length
+                        ? groupValueOptions?.filter((option) =>
+                            newValues.includes(option.label)
+                          )
+                        : undefined,
                       groupB: configuration?.comparator?.groupB ?? undefined,
                     });
                   }}
@@ -401,19 +404,21 @@ export function DifferentialAbundanceConfiguration(
                       : undefined
                   }
                   selectedValues={configuration?.comparator?.groupB?.map(
-                    (bin) => bin.label
+                    (entry) => entry.label
                   )}
                   disabledValues={configuration?.comparator?.groupA?.map(
-                    (bin) => bin.label
+                    (entry) => entry.label
                   )}
                   onSelectedValuesChange={(newValues) =>
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
                       groupA: configuration?.comparator?.groupA ?? undefined,
-                      groupB: groupValueOptions?.filter((bin) =>
-                        newValues.includes(bin.label)
-                      ),
+                      groupB: newValues.length
+                        ? groupValueOptions?.filter((option) =>
+                            newValues.includes(option.label)
+                          )
+                        : undefined,
                     })
                   }
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
