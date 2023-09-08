@@ -38,7 +38,6 @@ import {
   AnalysisSummary,
   useAnalysisList,
   usePinnedAnalyses,
-  useSubsettingClient,
 } from '../core';
 import SubsettingClient from '../core/api/SubsettingClient';
 import { useDebounce } from '../core/hooks/debouncing';
@@ -116,6 +115,7 @@ export function AllAnalyses(props: Props) {
     synchronizeWithUrl,
     updateDocumentTitle,
     activeAnalysisId,
+    subsettingClient,
   } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
@@ -170,7 +170,6 @@ export function AllAnalyses(props: Props) {
     removePinnedAnalysis,
   } = usePinnedAnalyses(analysisClient);
 
-  const subsettingClient = useSubsettingClient();
   const datasets = useWdkStudyRecords(subsettingClient, {
     attributes: WDK_STUDY_RECORD_ATTRIBUTES,
   });
