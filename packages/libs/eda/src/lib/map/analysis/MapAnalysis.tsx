@@ -114,7 +114,7 @@ import { getCategoricalValues } from './utils/categoricalValues';
 import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
 import _ from 'lodash';
 
-import DraggableTimeFilter from './DraggableTimeFilter';
+import EZTimeFilter from './EZTimeFilter';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -317,8 +317,8 @@ function MapAnalysisImpl(props: ImplProps) {
           ? {
               type: 'dateRange',
               ...appState.timeSliderVariable,
-              min: appState.timeSliderSelectedRange.start,
-              max: appState.timeSliderSelectedRange.end,
+              min: appState.timeSliderSelectedRange.start + 'T00:00:00Z',
+              max: appState.timeSliderSelectedRange.end + 'T00:00:00Z',
             }
           : NumberVariable.is(timeVariableMetadata)
           ? {
@@ -1249,7 +1249,26 @@ function MapAnalysisImpl(props: ImplProps) {
                     totalVisibleEntityCount
                   }
                   overlayActive={overlayVariable != null}
-                />
+                >
+                  {/* child elements will be distributed across, 'hanging' below the header */}
+                  {/*  Time slider component */}
+                  <EZTimeFilter
+                    studyId={studyId}
+                    entities={studyEntities}
+                    subsettingClient={subsettingClient}
+                    filters={filters}
+                    starredVariables={
+                      analysisState.analysis?.descriptor.starredVariables ?? []
+                    }
+                    toggleStarredVariable={toggleStarredVariable}
+                    variable={appState.timeSliderVariable}
+                    setVariable={setTimeSliderVariable}
+                    selectedRange={appState.timeSliderSelectedRange}
+                    setSelectedRange={setTimeSliderSelectedRange}
+                    active={appState.timeSliderActive}
+                    setActive={setTimeSliderActive}
+                  />
+                </MapHeader>
                 <div
                   style={{
                     // Make a div that completely fills its parent.
@@ -1356,24 +1375,6 @@ function MapAnalysisImpl(props: ImplProps) {
                     </DraggableLegendPanel>
                   </>
                 )}
-
-                {/*  Time slider component */}
-                <DraggableTimeFilter
-                  studyId={studyId}
-                  entities={studyEntities}
-                  subsettingClient={subsettingClient}
-                  filters={filters}
-                  starredVariables={
-                    analysisState.analysis?.descriptor.starredVariables ?? []
-                  }
-                  toggleStarredVariable={toggleStarredVariable}
-                  variable={appState.timeSliderVariable}
-                  setVariable={setTimeSliderVariable}
-                  selectedRange={appState.timeSliderSelectedRange}
-                  setSelectedRange={setTimeSliderSelectedRange}
-                  active={appState.timeSliderActive}
-                  setActive={setTimeSliderActive}
-                />
 
                 {/* )} */}
                 {/* <FloatingDiv

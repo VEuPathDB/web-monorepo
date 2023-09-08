@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, ReactNode } from 'react';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { Toggle } from '@veupathdb/coreui';
 import EzTimeFilter, {
@@ -37,7 +37,7 @@ interface Props {
   setActive: (newState: AppState['timeSliderActive']) => void;
 }
 
-export default function DraggableTimeFilter({
+export default function EZTimeFilter({
   studyId,
   entities,
   subsettingClient,
@@ -117,12 +117,6 @@ export default function DraggableTimeFilter({
 
   // set time slider width and y position
   const timeFilterWidth = 750;
-  const yPosition = 100; // TEMP: moved it down so I can see it all
-
-  const defaultPosition = {
-    x: window.innerWidth / 2 - timeFilterWidth / 2,
-    y: yPosition,
-  };
 
   // inputVariables onChange function
   function handleInputVariablesOnChange(selection: VariablesByInputName) {
@@ -140,109 +134,99 @@ export default function DraggableTimeFilter({
 
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null ? (
-    <DraggablePanel
-      showPanelTitle
-      panelTitle={'Time Slider'}
-      confineToParentContainer
-      defaultPosition={defaultPosition}
-      isOpen={true}
-      styleOverrides={{
-        zIndex: 5,
+    <div
+      style={{
+        width: timeFilterWidth,
+        // TODO: 170 is okay when using single lined variable name but 180 is for a variable name with two lines
+        // height: 170,
+        height: 180,
+        background: '#FFFFFF50',
       }}
     >
       <div
         style={{
-          width: timeFilterWidth,
-          // TODO: 170 is okay when using single lined variable name but 180 is for a variable name with two lines
-          // height: 170,
-          height: 180,
+          display: 'grid',
+          gridTemplateColumns: '1fr repeat(1, auto) 1fr',
+          gridColumnGap: '5px',
+          padding: '0 10px 0 10px',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr repeat(1, auto) 1fr',
-            gridColumnGap: '5px',
-            padding: '0 10px 0 10px',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ gridColumnStart: 1, marginTop: '-0.5em' }}>
-            <InputVariables
-              inputs={[
-                {
-                  name: 'overlayVariable',
-                  label: 'Variable',
-                  titleOverride: ' ',
-                  isNonNullable: true,
-                },
-              ]}
-              entities={entities}
-              selectedVariables={{
-                overlayVariable: variable,
-              }}
-              onChange={handleInputVariablesOnChange}
-              starredVariables={starredVariables}
-              toggleStarredVariable={toggleStarredVariable}
-              constraints={timeSliderVariableConstraints}
-            />
-          </div>
-          {/* display start to end value
+        <div style={{ gridColumnStart: 1, marginTop: '-0.5em' }}>
+          <InputVariables
+            inputs={[
+              {
+                name: 'overlayVariable',
+                label: 'Variable',
+                titleOverride: ' ',
+                isNonNullable: true,
+              },
+            ]}
+            entities={entities}
+            selectedVariables={{
+              overlayVariable: variable,
+            }}
+            onChange={handleInputVariablesOnChange}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            constraints={timeSliderVariableConstraints}
+          />
+        </div>
+        {/* display start to end value
 	      TO DO: make these date inputs
 	    */}
-          {selectedRange && (
-            <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
-              {selectedRange?.start} ~ {selectedRange?.end}
-            </div>
-          )}
-
-          <div
-            style={{
-              gridColumnStart: 3,
-              display: 'grid',
-              justifyContent: 'end',
-            }}
-          >
-            <Toggle
-              label={active ? 'On' : 'Off'}
-              labelPosition="left"
-              value={!!active}
-              onChange={setActive}
-            />
-          </div>
-        </div>
-        {/* display data loading spinner while requesting data to the backend */}
-        {getTimeSliderData.pending && (
-          <div style={{ marginTop: '2em', height: 50, position: 'relative' }}>
-            <Spinner size={50} />
+        {selectedRange && (
+          <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
+            {selectedRange?.start} ~ {selectedRange?.end}
           </div>
         )}
-        {/* conditional loading for EzTimeFilter */}
-        {!getTimeSliderData.pending &&
-          getTimeSliderData.value != null &&
-          timeFilterData.length > 0 && (
-            <>
-              <EzTimeFilter
-                data={timeFilterData}
-                selectedRange={selectedRange}
-                setSelectedRange={setSelectedRange}
-                width={timeFilterWidth - 30}
-                height={100}
-                // line color of the selectedRange
-                brushColor={'lightblue'}
-                // add opacity
-                brushOpacity={0.4}
-                // axis tick and tick label color
-                axisColor={'#000'}
-                // whether movement of Brush should be disabled - false for now
-                disableDraggingSelection={false}
-                // if needing to disable brush selection: use []
-                resizeTriggerAreas={['left', 'right']}
-              />
-            </>
-          )}
+
+        <div
+          style={{
+            gridColumnStart: 3,
+            display: 'grid',
+            justifyContent: 'end',
+          }}
+        >
+          <Toggle
+            label={active ? 'On' : 'Off'}
+            labelPosition="left"
+            value={!!active}
+            onChange={setActive}
+          />
+        </div>
       </div>
-    </DraggablePanel>
+      {/* display data loading spinner while requesting data to the backend */}
+      {getTimeSliderData.pending && (
+        <div style={{ marginTop: '2em', height: 50, position: 'relative' }}>
+          <Spinner size={50} />
+        </div>
+      )}
+      {/* conditional loading for EzTimeFilter */}
+      {!getTimeSliderData.pending &&
+        getTimeSliderData.value != null &&
+        timeFilterData.length > 0 && (
+          <>
+            <EzTimeFilter
+              data={timeFilterData}
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              width={timeFilterWidth - 30}
+              height={100}
+              // line color of the selectedRange
+              brushColor={'lightblue'}
+              // add opacity
+              brushOpacity={0.4}
+              // axis tick and tick label color
+              axisColor={'#000'}
+              // whether movement of Brush should be disabled - false for now
+              disableDraggingSelection={false}
+              // if needing to disable brush selection: use []
+              resizeTriggerAreas={['left', 'right']}
+            />
+          </>
+        )}
+    </div>
   ) : null;
 }
