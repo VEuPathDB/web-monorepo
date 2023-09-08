@@ -22,7 +22,7 @@ export default function SelectionInfo(props: Props) {
       ? `${
           isSingleSelect ? '' : 'between ' + minSelectedCount + ' and '
         }${maxSelectedCount} ${valueDescription(maxSelectedCount)} required`
-      : hasMin && selectedCount > 0
+      : hasMin && (selectedCount > 0 || minSelectedCount === 1)
       ? `at least ${minSelectedCount} ${valueDescription(
           minSelectedCount
         )} required`

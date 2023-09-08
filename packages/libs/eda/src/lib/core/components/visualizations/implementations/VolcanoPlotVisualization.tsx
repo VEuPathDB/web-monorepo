@@ -339,6 +339,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
+    entities,
   ]);
 
   // For the legend, we need the counts of the data
@@ -588,7 +589,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <LabelledGroup label="Threshold lines">
+      <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
         <NumberInput
           onValueChange={(newValue?: NumberOrDate) =>
             updateVizConfig({ log2FoldChangeThreshold: Number(newValue) })
@@ -596,7 +597,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           label="log2(Fold Change)"
           minValue={0}
           value={vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD}
-          containerStyles={{ flex: 1 }}
+          containerStyles={{ marginRight: 10 }}
         />
 
         <NumberInput
@@ -606,7 +607,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           }
           minValue={0}
           value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
-          containerStyles={{ flex: 1 }}
+          containerStyles={{ marginLeft: 10 }}
           step={0.001}
         />
       </LabelledGroup>

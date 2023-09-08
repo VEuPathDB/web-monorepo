@@ -360,7 +360,7 @@ const siteAnnouncements = [
             >
               GWHAMMI00000000
             </a>
-            may differ from this, especially for non-coding genes.
+            ) may differ from this, especially for non-coding genes.
           </div>
         );
       }
@@ -392,7 +392,7 @@ const siteAnnouncements = [
             >
               GWHAMMK00000000
             </a>
-            may differ from this, especially for non-coding genes.
+            ) may differ from this, especially for non-coding genes.
           </div>
         );
       }
@@ -424,7 +424,7 @@ const siteAnnouncements = [
             >
               GWHAMMH00000000.1
             </a>
-            may differ from this, especially for non-coding genes.
+            ) may differ from this, especially for non-coding genes.
           </div>
         );
       }
