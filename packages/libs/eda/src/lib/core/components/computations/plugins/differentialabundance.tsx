@@ -195,7 +195,8 @@ export function DifferentialAbundanceConfiguration(
       .filter((collectionVar) => {
         return (
           !collectionVar.isProportion &&
-          collectionVar.normalizationMethod === 'NULL'
+          collectionVar.normalizationMethod === 'NULL' &&
+          !collectionVar.displayName?.includes('pathway')
         );
       })
       .map((collectionVar) => ({
