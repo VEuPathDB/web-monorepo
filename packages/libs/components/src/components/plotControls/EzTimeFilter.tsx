@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { Brush } from '@visx/brush';
 // add ResizeTriggerAreas type
@@ -36,12 +36,10 @@ export type EzTimeFilterProps = {
   axisColor?: string;
   /** opacity of selected brush */
   brushOpacity?: number;
-  /** whether movement of Brush should be disabled */
-  disableDraggingSelection?: boolean;
-  /** disable brush selection */
-  resizeTriggerAreas?: ResizeTriggerAreas[];
   /** debounce rate in millisecond */
   debounceRateMs?: number;
+  /** all user-interaction disabled */
+  disabled?: boolean;
 };
 
 // using forwardRef
@@ -50,23 +48,26 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     data,
     // set default width and height
     width = 720,
-    height = 125,
+    height = 100,
     brushColor = 'lightblue',
     axisColor = '#000',
     brushOpacity = 0.4,
     selectedRange,
     setSelectedRange,
-    disableDraggingSelection = false,
-    resizeTriggerAreas = ['left', 'right'],
     // set a default debounce time in milliseconds
     debounceRateMs = 500,
+    disabled = false,
   } = props;
 
+  const resizeTriggerAreas: ResizeTriggerAreas[] = disabled
+    ? []
+    : ['left', 'right'];
+
   // define default values
-  const margin = { top: 10, bottom: 10, left: 10, right: 10 };
+  const margin = { top: 0, bottom: 10, left: 10, right: 10 };
   const selectedBrushStyle = {
-    fill: brushColor,
-    stroke: brushColor,
+    fill: disabled ? 'lightgray' : brushColor,
+    stroke: disabled ? 'lightgray' : brushColor,
     fillOpacity: brushOpacity,
     // need to set this to be 1?
     strokeOpacity: 1,
@@ -166,6 +167,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
       style={{
         // centering time filter
         textAlign: 'center',
+        pointerEvents: disabled ? 'none' : 'all',
       }}
     >
       <svg width={width} height={height}>
@@ -215,10 +217,10 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
             onChange={onBrushChange}
-            onClick={() => setSelectedRange(undefined)}
+            onClick={disabled ? () => {} : () => setSelectedRange(undefined)}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
-            disableDraggingSelection={disableDraggingSelection}
+            disableDraggingSelection={disabled}
             renderBrushHandle={(props) => <BrushHandle {...props} />}
           />
         </Group>

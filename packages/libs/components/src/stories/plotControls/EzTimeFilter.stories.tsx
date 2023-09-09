@@ -347,9 +347,7 @@ export const TimeFilter: Story<LinePlotProps> = (args: any) => {
           // axis tick and tick label color
           axisColor={'#000'}
           // whether movement of Brush should be disabled
-          disableDraggingSelection={buttonText === 'Expand'}
-          // disable brush selection: pass []
-          resizeTriggerAreas={buttonText === 'Expand' ? [] : ['left', 'right']}
+          disabled={buttonText === 'Expand'}
         />
         {/* add a Expand or something like that to change position */}
         <div

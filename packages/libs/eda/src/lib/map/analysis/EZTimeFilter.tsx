@@ -1,6 +1,6 @@
-import { useMemo, useCallback } from 'react';
-import { Toggle } from '@veupathdb/coreui';
-import EzTimeFilter, {
+import { useMemo, useCallback, useState } from 'react';
+import { H6, Toggle } from '@veupathdb/coreui';
+import EzTimeFilterWidget, {
   EZTimeFilterDataProp,
 } from '@veupathdb/components/lib/components/plotControls/EzTimeFilter';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
@@ -44,6 +44,7 @@ export default function EZTimeFilter({
   updateConfig,
 }: Props) {
   const findEntityAndVariable = useFindEntityAndVariable();
+  const [minimized, setMinimized] = useState(true);
 
   const { variable, active, selectedRange } = config;
   const variableMetadata = findEntityAndVariable(variable);
@@ -129,62 +130,40 @@ export default function EZTimeFilter({
   }
 
   // if no variable in a study is suitable to time slider, do not show time slider
-  return variable != null ? (
+  return variable != null && variableMetadata != null ? (
     <div
       style={{
         width: timeFilterWidth,
-        // TODO: 170 is okay when using single lined variable name but 180 is for a variable name with two lines
-        // height: 170,
-        height: 180,
+        height: minimized ? 110 : 150,
         background: '#FFFFFF50',
       }}
+      onMouseEnter={() => setMinimized(false)}
+      onMouseLeave={() => setMinimized(true)}
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr repeat(1, auto) 1fr',
-          gridColumnGap: '5px',
-          padding: '0 10px 0 10px',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: 'flex',
+          padding: '10px 10px 0px 10px',
+          justifyContent: 'space-between',
         }}
       >
-        <div style={{ gridColumnStart: 1, marginTop: '-0.5em' }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'overlayVariable',
-                label: '',
-                titleOverride: ' ',
-                isNonNullable: true,
-              },
-            ]}
-            entities={entities}
-            selectedVariables={{
-              overlayVariable: variable,
-            }}
-            onChange={handleInputVariablesOnChange}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            constraints={timeSliderVariableConstraints}
-          />
+        <div style={{}}>
+          <H6>
+            {variableMetadata.variable.displayName +
+              (active && selectedRange
+                ? ` [${selectedRange?.start} to ${selectedRange?.end}]`
+                : ' (all dates)')}
+          </H6>
         </div>
         {/* display start to end value
-	      TO DO: make these date inputs
-	    */}
+	      TO DO: make these date inputs?
         {selectedRange && (
           <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
             {selectedRange?.start} ~ {selectedRange?.end}
           </div>
         )}
-
-        <div
-          style={{
-            gridColumnStart: 3,
-            display: 'grid',
-            justifyContent: 'end',
-          }}
-        >
+	  */}
+        <div style={{}}>
           <Toggle
             label={active ? 'On' : 'Off'}
             labelPosition="left"
@@ -203,28 +182,45 @@ export default function EZTimeFilter({
       {!getTimeSliderData.pending &&
         getTimeSliderData.value != null &&
         timeFilterData.length > 0 && (
-          <>
-            <EzTimeFilter
-              data={timeFilterData}
-              selectedRange={selectedRange}
-              setSelectedRange={(selectedRange) =>
-                updateConfig({ ...config, selectedRange })
-              }
-              width={timeFilterWidth - 30}
-              height={100}
-              // line color of the selectedRange
-              brushColor={'lightblue'}
-              // add opacity
-              brushOpacity={0.4}
-              // axis tick and tick label color
-              axisColor={'#000'}
-              // whether movement of Brush should be disabled - false for now
-              disableDraggingSelection={false}
-              // if needing to disable brush selection: use []
-              resizeTriggerAreas={['left', 'right']}
-            />
-          </>
+          <EzTimeFilterWidget
+            data={timeFilterData}
+            selectedRange={selectedRange}
+            setSelectedRange={(selectedRange) =>
+              updateConfig({ ...config, selectedRange })
+            }
+            width={timeFilterWidth - 30}
+            height={75}
+            // fill color of the selectedRange
+            brushColor={'lightpink'}
+            brushOpacity={0.4}
+            // axis tick and tick label color
+            axisColor={'#000'}
+            // disable user-interaction
+            disabled={!active}
+          />
         )}
+      {!minimized && (
+        <div>
+          <InputVariables
+            inputs={[
+              {
+                name: 'overlayVariable',
+                label: 'Choose a different date variable:',
+                noTitle: true,
+                isNonNullable: true,
+              },
+            ]}
+            entities={entities}
+            selectedVariables={{
+              overlayVariable: variable,
+            }}
+            onChange={handleInputVariablesOnChange}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            constraints={timeSliderVariableConstraints}
+          />
+        </div>
+      )}
     </div>
   ) : null;
 }
