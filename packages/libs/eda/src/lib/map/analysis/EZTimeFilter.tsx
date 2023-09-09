@@ -29,12 +29,8 @@ interface Props {
   starredVariables: VariableDescriptor[];
   toggleStarredVariable: (targetVariableId: VariableDescriptor) => void;
 
-  variable: AppState['timeSliderVariable'];
-  setVariable: (newVariable: AppState['timeSliderVariable']) => void;
-  selectedRange: AppState['timeSliderSelectedRange'];
-  setSelectedRange: (newRange: AppState['timeSliderSelectedRange']) => void;
-  active: AppState['timeSliderActive'];
-  setActive: (newState: AppState['timeSliderActive']) => void;
+  config: NonNullable<AppState['timeSliderConfig']>;
+  updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
 }
 
 export default function EZTimeFilter({
@@ -44,14 +40,12 @@ export default function EZTimeFilter({
   filters,
   starredVariables,
   toggleStarredVariable,
-  variable,
-  setVariable,
-  selectedRange,
-  setSelectedRange,
-  active, // to do - add a toggle to enable/disable
-  setActive, // the small filter and grey everything out
+  config,
+  updateConfig,
 }: Props) {
   const findEntityAndVariable = useFindEntityAndVariable();
+
+  const { variable, active, selectedRange } = config;
   const variableMetadata = findEntityAndVariable(variable);
 
   // data request to distribution for time slider
@@ -127,9 +121,11 @@ export default function EZTimeFilter({
       return;
     }
 
-    setVariable(selection.overlayVariable);
-    setSelectedRange(undefined);
-    setActive(true);
+    updateConfig({
+      variable: selection.overlayVariable,
+      selectedRange: undefined,
+      active: true,
+    });
   }
 
   // if no variable in a study is suitable to time slider, do not show time slider
@@ -193,7 +189,7 @@ export default function EZTimeFilter({
             label={active ? 'On' : 'Off'}
             labelPosition="left"
             value={!!active}
-            onChange={setActive}
+            onChange={(active) => updateConfig({ ...config, active })}
           />
         </div>
       </div>
@@ -211,7 +207,9 @@ export default function EZTimeFilter({
             <EzTimeFilter
               data={timeFilterData}
               selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
+              setSelectedRange={(selectedRange) =>
+                updateConfig({ ...config, selectedRange })
+              }
               width={timeFilterWidth - 30}
               height={100}
               // line color of the selectedRange

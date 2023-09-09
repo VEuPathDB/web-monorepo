@@ -254,9 +254,7 @@ function MapAnalysisImpl(props: ImplProps) {
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
     geoConfigs,
-    setTimeSliderVariable,
-    setTimeSliderSelectedRange,
-    setTimeSliderActive,
+    setTimeSliderConfig,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -281,9 +279,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const { variable: overlayVariable, entity: overlayEntity } =
     findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
 
-  const { variable: timeVariableMetadata } =
-    findEntityAndVariable(appState.timeSliderVariable) ?? {};
-
   const outputEntity = useMemo(() => {
     if (geoConfig == null || geoConfig.entity.id == null) return;
 
@@ -307,35 +302,33 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined = useMemo(
-    () =>
-      timeVariableMetadata &&
-      appState.timeSliderActive &&
-      appState.timeSliderVariable &&
-      appState.timeSliderSelectedRange
+  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined =
+    useMemo(() => {
+      if (appState.timeSliderConfig == null) return undefined;
+
+      const { active, variable, selectedRange } = appState.timeSliderConfig;
+
+      const { variable: timeVariableMetadata } =
+        findEntityAndVariable(variable) ?? {};
+
+      return active && variable && selectedRange
         ? DateVariable.is(timeVariableMetadata)
           ? {
               type: 'dateRange',
-              ...appState.timeSliderVariable,
-              min: appState.timeSliderSelectedRange.start + 'T00:00:00Z',
-              max: appState.timeSliderSelectedRange.end + 'T00:00:00Z',
+              ...variable,
+              min: selectedRange.start + 'T00:00:00Z',
+              max: selectedRange.end + 'T00:00:00Z',
             }
           : NumberVariable.is(timeVariableMetadata)
           ? {
               type: 'numberRange', // this is temporary - I think we should NOT handle non-date variables when we roll this out
-              ...appState.timeSliderVariable, // TO DO: remove number variable handling
-              min: Number(appState.timeSliderSelectedRange.start.split(/-/)[0]), // just take the year number
-              max: Number(appState.timeSliderSelectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
+              ...variable, // TO DO: remove number variable handling
+              min: Number(selectedRange.start.split(/-/)[0]), // just take the year number
+              max: Number(selectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
             }
           : undefined
-        : undefined,
-    [
-      timeVariableMetadata,
-      appState.timeSliderActive,
-      appState.timeSliderVariable,
-      appState.timeSliderSelectedRange,
-    ]
-  );
+        : undefined;
+    }, [appState.timeSliderConfig, findEntityAndVariable]);
 
   const viewportFilters = useMemo(
     () =>
@@ -1251,23 +1244,23 @@ function MapAnalysisImpl(props: ImplProps) {
                   overlayActive={overlayVariable != null}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
-                  {/*  Time slider component */}
-                  <EZTimeFilter
-                    studyId={studyId}
-                    entities={studyEntities}
-                    subsettingClient={subsettingClient}
-                    filters={filters}
-                    starredVariables={
-                      analysisState.analysis?.descriptor.starredVariables ?? []
-                    }
-                    toggleStarredVariable={toggleStarredVariable}
-                    variable={appState.timeSliderVariable}
-                    setVariable={setTimeSliderVariable}
-                    selectedRange={appState.timeSliderSelectedRange}
-                    setSelectedRange={setTimeSliderSelectedRange}
-                    active={appState.timeSliderActive}
-                    setActive={setTimeSliderActive}
-                  />
+                  {/*  Time slider component - only if prerequisite variable is available */}
+                  {appState.timeSliderConfig &&
+                    appState.timeSliderConfig.variable && (
+                      <EZTimeFilter
+                        studyId={studyId}
+                        entities={studyEntities}
+                        subsettingClient={subsettingClient}
+                        filters={filters}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        config={appState.timeSliderConfig}
+                        updateConfig={setTimeSliderConfig}
+                      />
+                    )}
                 </MapHeader>
                 <div
                   style={{

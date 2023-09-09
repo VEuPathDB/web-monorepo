@@ -99,12 +99,17 @@ export const AppState = t.intersection([
       variableId: t.string,
     }),
     isSubsetPanelOpen: t.boolean,
-    timeSliderVariable: VariableDescriptor,
-    timeSliderSelectedRange: t.type({
-      start: t.string,
-      end: t.string,
+    timeSliderConfig: t.type({
+      variable: t.union([VariableDescriptor, t.undefined]),
+      selectedRange: t.union([
+        t.type({
+          start: t.string,
+          end: t.string,
+        }),
+        t.undefined,
+      ]),
+      active: t.boolean,
     }),
-    timeSliderActive: t.boolean,
   }),
 ]);
 
@@ -141,8 +146,11 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
-      timeSliderVariable: defaultTimeVariable,
-      timeSliderActive: true,
+      timeSliderConfig: {
+        variable: defaultTimeVariable,
+        active: true,
+        selectedRange: undefined,
+      },
       markerConfigurations: [
         {
           type: 'pie',
@@ -193,15 +201,15 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
               )
           );
 
-        const timeVariableIsMissing = appState.timeSliderVariable == null;
+        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
 
-        if (missingMarkerConfigs.length > 0 || timeVariableIsMissing) {
+        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
           setVariableUISettings((prev) => ({
             ...prev,
             [uiStateKey]: {
               ...appState,
-              ...(timeVariableIsMissing
-                ? { timeSliderVariable: defaultTimeVariable }
+              ...(timeSliderConfigIsMissing
+                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
                 : {}),
               markerConfigurations: [
                 ...appState.markerConfigurations,
@@ -213,14 +221,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
       }
       appStateCheckedRef.current = true;
     }
-  }, [
-    analysis,
-    appState,
-    setVariableUISettings,
-    uiStateKey,
-    defaultAppState,
-    defaultTimeVariable,
-  ]);
+  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(
@@ -254,8 +255,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
-    setTimeSliderVariable: useSetter('timeSliderVariable'),
-    setTimeSliderSelectedRange: useSetter('timeSliderSelectedRange'),
-    setTimeSliderActive: useSetter('timeSliderActive'),
+    setTimeSliderConfig: useSetter('timeSliderConfig'),
   };
 }
