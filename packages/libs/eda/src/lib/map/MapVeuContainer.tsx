@@ -24,6 +24,7 @@ import './MapVEu.scss';
 import { SiteInformationProps } from '.';
 import { StudyList } from './StudyList';
 import { PublicAnalysesRoute } from '../workspace/PublicAnalysesRoute';
+import { ImportAnalysis } from '../workspace/ImportAnalysis';
 
 interface Props {
   edaServiceUrl: string;
@@ -77,6 +78,22 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
             subsettingClient={edaClient}
           />
         )}
+      />
+      <Route
+        exact
+        path={`${path}/:analysisId/import`}
+        render={(
+          props: RouteComponentProps<{
+            analysisId: string;
+          }>
+        ) => {
+          return (
+            <ImportAnalysis
+              {...props.match.params}
+              analysisClient={analysisClient}
+            />
+          );
+        }}
       />
       <Route
         path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}

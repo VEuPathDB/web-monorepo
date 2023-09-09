@@ -245,11 +245,12 @@ function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
+    analysisId,
     setViewport,
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    sharingUrl,
+    // sharingUrl,
     setIsSubsetPanelOpen = () => {},
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
@@ -267,6 +268,11 @@ function MapAnalysisImpl(props: ImplProps) {
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
+  const history = useHistory();
+
+  // FIXME use the sharingUrl prop to construct this
+  const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
+    .href;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
@@ -601,7 +607,6 @@ function MapAnalysisImpl(props: ImplProps) {
     return !user.isGuest;
   });
 
-  const history = useHistory();
   function showLoginForm() {
     const currentUrl = window.location.href;
     const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
