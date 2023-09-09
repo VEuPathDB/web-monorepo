@@ -5,11 +5,11 @@ import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   AnalysisState,
-  useGetDefaultTimeVariableDescriptor,
   useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
+import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 

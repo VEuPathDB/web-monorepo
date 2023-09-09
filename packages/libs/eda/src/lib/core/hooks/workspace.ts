@@ -24,20 +24,13 @@ import {
 import { ComputeClient } from '../api/ComputeClient';
 import { DownloadClient } from '../api';
 import { Filter } from '../types/filter';
-import {
-  mapStructure,
-  preorder,
-} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   useFeaturedFieldsFromTree,
   useFieldTree,
   useFlattenedFields,
 } from '../components/variableTrees/hooks';
 import { findFirstVariable } from '../../workspace/Utils';
-import {
-  DataElementConstraintRecord,
-  filterVariablesByConstraint,
-} from '../utils/data-element-constraints';
 
 /** Return the study identifier and a hierarchy of the study entities. */
 export function useStudyMetadata(): StudyMetadata {
@@ -267,57 +260,5 @@ export function useGetDefaultVariableDescriptor() {
       return { entityId: finalEntityId, variableId: finalVariableId };
     },
     [entities, featuredFields, fieldTree]
-  );
-}
-
-export const timeSliderVariableConstraints: DataElementConstraintRecord[] = [
-  {
-    overlayVariable: {
-      isRequired: true,
-      minNumVars: 1,
-      maxNumVars: 1,
-      // TODO: testing with SCORE S. mansoni Cluster Randomized Trial study
-      // however, this study does not have date variable, thus temporarily use below for test purpose
-      // i.e., additionally allowing 'integer'
-      // allowedTypes: ['date', 'integer'],
-      // TODO: below two are correct ones
-      allowedTypes: ['date'],
-      //      isTemporal: true,
-    },
-  },
-];
-
-export function useGetDefaultTimeVariableDescriptor() {
-  const entities = useStudyEntities();
-  // filter constraint for time slider inputVariables component
-
-  return useCallback(
-    function getDefaultTimeVariableDescriptor() {
-      const temporalVariableTree = filterVariablesByConstraint(
-        entities[0],
-        timeSliderVariableConstraints[0]['overlayVariable']
-      );
-
-      // take the first suitable variable from the filtered variable tree
-
-      // first find the first entity with some variables that passed the filter
-      const defaultTimeSliderEntity = Array.from(
-        preorder(temporalVariableTree, (node) => node.children ?? [])
-      ).find((entity) => entity.variables.some(Variable.is));
-
-      // then take the first variable from it
-      const defaultTimeSliderVariable = defaultTimeSliderEntity?.variables.find(
-        Variable.is
-      );
-
-      return defaultTimeSliderEntity != null &&
-        defaultTimeSliderVariable != null
-        ? {
-            entityId: defaultTimeSliderEntity.id,
-            variableId: defaultTimeSliderVariable.id,
-          }
-        : undefined;
-    },
-    [entities, timeSliderVariableConstraints]
   );
 }

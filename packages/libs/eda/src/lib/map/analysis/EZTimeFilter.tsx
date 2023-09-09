@@ -1,12 +1,11 @@
-import { useMemo, useCallback, ReactNode } from 'react';
-import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
+import { useMemo, useCallback } from 'react';
 import { Toggle } from '@veupathdb/coreui';
 import EzTimeFilter, {
   EZTimeFilterDataProp,
 } from '@veupathdb/components/lib/components/plotControls/EzTimeFilter';
 import { InputVariables } from '../../core/components/visualizations/InputVariables';
 import { VariablesByInputName } from '../../core/utils/data-element-constraints';
-import { timeSliderVariableConstraints, usePromise } from '../../core';
+import { usePromise } from '../../core';
 import {
   DateVariable,
   NumberVariable,
@@ -19,6 +18,7 @@ import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
 import { AppState } from './appState';
+import { timeSliderVariableConstraints } from './config/eztimeslider';
 
 interface Props {
   studyId: string;
@@ -158,7 +158,7 @@ export default function EZTimeFilter({
             inputs={[
               {
                 name: 'overlayVariable',
-                label: 'Variable',
+                label: '',
                 titleOverride: ' ',
                 isNonNullable: true,
               },
