@@ -200,7 +200,7 @@ export default function EZTimeFilter({
           />
         )}
       {!minimized && (
-        <div>
+        <div style={{ marginRight: '10px' }}>
           <InputVariables
             inputs={[
               {
@@ -218,6 +218,7 @@ export default function EZTimeFilter({
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             constraints={timeSliderVariableConstraints}
+            flexDirection="row-reverse"
           />
         </div>
       )}
