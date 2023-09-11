@@ -435,6 +435,7 @@ export function DifferentialAbundanceConfiguration(
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
+                  isLoading={continuousVariableBins.pending}
                 />
               </div>
             </Tooltip>
