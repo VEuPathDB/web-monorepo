@@ -26,6 +26,9 @@ export type MapNavigationProps = {
   totalEntityInSubsetCount: number | undefined;
   visibleEntityCount: number | undefined;
   overlayActive: boolean;
+  /** children of this component will be rendered in flex children
+     distributed across the bottom edge of the header, hanging down like tabs */
+  children: ReactNode;
 };
 
 /**
@@ -44,6 +47,7 @@ export function MapHeader({
   totalEntityInSubsetCount = 0,
   visibleEntityCount = 0,
   overlayActive,
+  children,
 }: MapNavigationProps) {
   const mapHeader = makeClassNameHelper('MapHeader');
   const { format } = new Intl.NumberFormat();
@@ -138,7 +142,25 @@ export function MapHeader({
           </table>
         </div>
       )}
+      <HangingTabs>{children}</HangingTabs>
     </header>
+  );
+}
+
+function HangingTabs({ children }: { children: ReactNode }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        width: '100%',
+        top: '100%',
+        bottom: 0,
+        display: 'flex',
+        justifyContent: 'space-evenly',
+      }}
+    >
+      {children}
+    </div>
   );
 }
 
