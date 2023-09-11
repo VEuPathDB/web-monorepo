@@ -17,7 +17,6 @@ import { CategoricalMarkerPreview } from './CategoricalMarkerPreview';
 import Barplot from '@veupathdb/components/lib/plots/Barplot';
 import { SubsettingClient } from '../../../core/api';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { useUncontrolledSelections } from '../hooks/uncontrolledSelections';
 import {
   BinningMethod,
@@ -172,22 +171,27 @@ export function PieMarkerConfigurationMenu({
       >
         Color:
       </p>
-      <InputVariables
-        inputs={[
-          {
-            name: 'overlayVariable',
-            label: 'Variable',
-            titleOverride: ' ',
-            isNonNullable: true,
-          },
-        ]}
-        entities={entities}
-        selectedVariables={{ overlayVariable: configuration.selectedVariable }}
-        onChange={handleInputVariablesOnChange}
-        starredVariables={starredVariables}
-        toggleStarredVariable={toggleStarredVariable}
-        constraints={constraints}
-      />
+      {/* limit inputVariables width */}
+      <div style={{ maxWidth: '350px' }}>
+        <InputVariables
+          inputs={[
+            {
+              name: 'overlayVariable',
+              label: 'Variable',
+              titleOverride: ' ',
+              isNonNullable: true,
+            },
+          ]}
+          entities={entities}
+          selectedVariables={{
+            overlayVariable: configuration.selectedVariable,
+          }}
+          onChange={handleInputVariablesOnChange}
+          starredVariables={starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          constraints={constraints}
+        />
+      </div>
       <div style={{ margin: '5px 0 0 0' }}>
         <span style={{ fontWeight: 'bold' }}>
           Summary marker (all filtered data)
@@ -203,21 +207,17 @@ export function PieMarkerConfigurationMenu({
           continuousMarkerPreview
         )}
       </div>
-      <LabelledGroup label="Donut marker controls">
+      {overlayConfiguration?.overlayType === 'continuous' && (
         <RadioButtonGroup
           containerStyles={
             {
               // marginTop: 20,
             }
           }
-          label="Binning method"
+          label="Binning method (Dev. = Deviation)"
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
-          optionLabels={[
-            'Equal interval',
-            'Quantile (10)',
-            'Standard deviation',
-          ]}
+          optionLabels={['Equal interval', 'Quantile (10)', 'Standard dev.']}
           buttonColor={'primary'}
           // margins={['0em', '0', '0', '1em']}
           onOptionSelected={handleBinningMethodSelection}
@@ -227,7 +227,7 @@ export function PieMarkerConfigurationMenu({
               : ['equalInterval', 'quantile', 'standardDeviation']
           }
         />
-      </LabelledGroup>
+      )}
       {overlayConfiguration?.overlayType === 'categorical' && (
         <CategoricalMarkerConfigurationTable
           overlayValues={overlayConfiguration.overlayValues}
@@ -261,7 +261,9 @@ export function PieMarkerConfigurationMenu({
               marginBottom: 0,
             }}
             containerStyles={{
-              height: 300,
+              // set barplot maxWidth
+              height: '300px',
+              maxWidth: '360px',
             }}
           />
         </div>

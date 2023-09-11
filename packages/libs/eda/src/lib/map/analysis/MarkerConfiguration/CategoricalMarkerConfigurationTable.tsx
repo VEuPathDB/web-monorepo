@@ -194,14 +194,14 @@ export function CategoricalMarkerConfigurationTable<T>({
   return (
     <div
       style={{
-        padding: 15,
+        padding: 10,
         border: `1px solid rgb(204,204,204)`,
         width: 'fit-content',
       }}
     >
       <div
         style={{
-          maxWidth: '50vw',
+          maxWidth: '340px',
           maxHeight: 300,
           overflow: 'auto',
         }}
@@ -221,7 +221,7 @@ export function CategoricalMarkerConfigurationTable<T>({
         options={['filtered', 'visible']}
         optionLabels={['Filtered', 'Visible']}
         buttonColor={'primary'}
-        // margins={['0em', '0', '0', '1em']}
+        margins={['1em', '0', '0', '0em']}
         onOptionSelected={handleCountsSelection}
       />
     </div>
