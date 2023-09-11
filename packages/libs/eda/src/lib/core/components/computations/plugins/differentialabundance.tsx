@@ -175,14 +175,22 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
+    return collections
+      .filter((collectionVar) => {
+        return collectionVar.normalizationMethod
+          ? !collectionVar.isProportion &&
+              collectionVar.normalizationMethod === 'NULL' &&
+              !collectionVar.displayName?.includes('pathway')
+          : true;
+      })
+      .map((collectionVar) => ({
+        value: {
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        display:
+          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+      }));
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
