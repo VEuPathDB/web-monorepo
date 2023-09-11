@@ -10,7 +10,7 @@ import {
   observeCountDown,
   observeRenameAnalysis,
   observeDuplicateAnalysis,
-  observeRemoveTab
+  observeRemoveTab,
 } from './StepAnalysis/StepAnalysisObservers';
 import { StepAnalysesState } from './StepAnalysis/StepAnalysisState';
 import { RootState } from '../Core/State/Types';
@@ -22,18 +22,24 @@ import { map } from 'rxjs/operators';
 
 const key = 'stepAnalysis';
 const reduce = stepAnalysisReducer;
-const observe = (action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies) => {
+const observe = (
+  action$: ActionsObservable<Action>,
+  state$: StateObservable<RootState>,
+  dependencies: EpicDependencies
+) => {
   const stepAnalysisState$ = new StateObservable(
-    state$.pipe(
-      map(state => state[key])
-    ) as Subject<StepAnalysesState>,
+    state$.pipe(map((state) => state[key])) as Subject<StepAnalysesState>,
     state$.value[key]
   );
 
   return merge(
     observeStartLoadingTabListing(action$, stepAnalysisState$, dependencies),
     observeStartLoadingSavedTab(action$, stepAnalysisState$, dependencies),
-    observeStartLoadingChosenAnalysisTab(action$, stepAnalysisState$, dependencies),
+    observeStartLoadingChosenAnalysisTab(
+      action$,
+      stepAnalysisState$,
+      dependencies
+    ),
     observeDeleteAnalysis(action$, stepAnalysisState$, dependencies),
     observeRemoveTab(action$, stepAnalysisState$, dependencies),
     observeStartFormSubmission(action$, stepAnalysisState$, dependencies),
@@ -45,8 +51,4 @@ const observe = (action$: ActionsObservable<Action>, state$: StateObservable<Roo
   );
 };
 
-export {
-  key,
-  reduce,
-  observe
-};
+export { key, reduce, observe };

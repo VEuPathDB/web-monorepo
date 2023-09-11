@@ -58,8 +58,8 @@ export default function PaginationControls({
         bottom: 10,
         left: 0,
         right: 0,
-      }
-    }
+      },
+    };
     return merge({}, defaultStyle, styleOverrides);
   }, [styleOverrides]);
 

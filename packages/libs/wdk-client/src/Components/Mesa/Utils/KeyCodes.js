@@ -168,7 +168,7 @@ const KeyCodes = {
   singleQuote: 222,
   doubleQuote: 222,
   quote: 222,
-  backtick: 223
+  backtick: 223,
 };
 
 export default KeyCodes;

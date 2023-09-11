@@ -35,6 +35,7 @@ import {
   requestGlobalViewFilters,
   updateGlobalViewFilters,
   fulfillGlobalViewFilters,
+  updateInBasketFilter,
   reportAnswerFulfillmentError,
   requestResultTypeDetails,
   fulfillResultTypeDetails,
@@ -98,6 +99,7 @@ type ViewState = {
   columnsDialogExpandedNodes?: Array<string>;
   selectedIds?: string[];
   globalViewFilters: GlobalViewFilters;
+  inBaskeFilterEnabled: boolean;
 };
 
 export type State = IndexedState<ViewState>;
@@ -107,6 +109,7 @@ const initialViewState: ViewState = {
   addingStepToBasket: false,
   columnsDialogIsOpen: false,
   globalViewFilters: {},
+  inBaskeFilterEnabled: false,
 };
 
 // return complete basket status array, setting some elements to 'loading'
@@ -255,6 +258,10 @@ function reduceView(
       };
     }
 
+    case updateInBasketFilter.type: {
+      return { ...state, inBaskeFilterEnabled: action.payload.enabled };
+    }
+
     default: {
       return state;
     }
@@ -269,6 +276,14 @@ async function getFirstPageNumber(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof viewPageNumber>> {
   return viewPageNumber(openAction.payload.viewId, 1);
+}
+
+async function getInBasketFilterValue(
+  [openAction]: [InferAction<typeof openRTS>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof updateInBasketFilter>> {
+  return updateInBasketFilter(openAction.payload.viewId, false);
 }
 
 async function getRequestResultTypeDetails(
@@ -550,6 +565,7 @@ async function getRequestAnswer(
     fulfillColumnsChoiceAction,
     fulfillSortingAction,
     fulfillGlobalViewFiltersAction,
+    updateInBasketFilterAction,
   ]: [
     InferAction<typeof openRTS>,
     InferAction<typeof fulfillResultTypeDetails>,
@@ -557,7 +573,8 @@ async function getRequestAnswer(
     InferAction<typeof fulfillPageSize>,
     InferAction<typeof fulfillColumnsChoice>,
     InferAction<typeof fulfillSorting>,
-    InferAction<typeof fulfillGlobalViewFilters>
+    InferAction<typeof fulfillGlobalViewFilters>,
+    InferAction<typeof updateInBasketFilter>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
@@ -569,13 +586,19 @@ async function getRequestAnswer(
   let attributes = fulfillColumnsChoiceAction.payload.columns;
   let sorting = fulfillSortingAction.payload.sorting;
   let columnsConfig: AttributesConfig = { attributes, sorting };
-  let { viewFilters } = fulfillGlobalViewFiltersAction.payload;
+  let { viewFilters = [] } = fulfillGlobalViewFiltersAction.payload;
+
   return requestAnswer(
     openAction.payload.viewId,
     resultType,
     columnsConfig,
     pagination,
-    viewFilters
+    updateInBasketFilterAction.payload.enabled
+      ? viewFilters.concat({
+          name: 'in_basket_filter',
+          value: {},
+        })
+      : viewFilters
   );
 }
 
@@ -587,6 +610,7 @@ function filterRequestAnswerActions([
   fulfillColumnsChoiceAction,
   fulfillSortingAction,
   fulfillGlobalViewFiltersAction,
+  updateInBasketFilterAction,
 ]: [
   InferAction<typeof openRTS>,
   InferAction<typeof fulfillResultTypeDetails>,
@@ -594,7 +618,8 @@ function filterRequestAnswerActions([
   InferAction<typeof fulfillPageSize>,
   InferAction<typeof fulfillColumnsChoice>,
   InferAction<typeof fulfillSorting>,
-  InferAction<typeof fulfillGlobalViewFilters>
+  InferAction<typeof fulfillGlobalViewFilters>,
+  InferAction<typeof updateInBasketFilter>
 ]) {
   const { viewId } = openAction.payload;
   const { searchName, recordClassName } =
@@ -606,6 +631,7 @@ function filterRequestAnswerActions([
     fulfillColumnsChoiceAction.payload.viewId === viewId &&
     fulfillSortingAction.payload.viewId === viewId &&
     fulfillGlobalViewFiltersAction.payload.viewId === viewId &&
+    updateInBasketFilterAction.payload.viewId === viewId &&
     searchName === fulfillColumnsChoiceAction.payload.searchName &&
     searchName === fulfillColumnsChoiceAction.payload.searchName &&
     searchName === fulfillSortingAction.payload.searchName &&
@@ -843,6 +869,7 @@ export const observe = takeEpicInWindow(
     // FIXME Change to getRequestSearchDetails => { searchName, recordClassName }
     smrate([openRTS], getRequestResultTypeDetails),
     smrate([openRTS], getFirstPageNumber),
+    smrate([openRTS], getInBasketFilterValue),
     smrate([openRTS], getRequestPageSize),
     smrate([openRTS, requestResultTypeDetails], getFulfillResultTypeDetails, {
       areActionsCoherent: filterResultTypeDetailsActions,
@@ -910,6 +937,7 @@ export const observe = takeEpicInWindow(
         fulfillColumnsChoice,
         fulfillSorting,
         fulfillGlobalViewFilters,
+        updateInBasketFilter,
       ],
       getRequestAnswer,
       { areActionsCoherent: filterRequestAnswerActions }

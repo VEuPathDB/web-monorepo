@@ -27,7 +27,7 @@
   }
 
   .vpdb-BdDark {
-    border-color: $primary-color; 
+    border-color: $primary-color;
   }
 
   .vpdb-Header {
@@ -76,7 +76,7 @@
         content: $small-logo;
       }
     }
-    
+
     @media screen and (max-width: $cramped-header-width) {
       .ebrc-HeaderBrandingContainer {
         .vpdb-HeaderBrandingSuperscript {
@@ -143,17 +143,20 @@
       }
     }
 
-    &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+    &__selected:active,
+    &__selected:hover,
+    &__selected:link,
+    &__selected:visited {
       border-color: $primary-color;
     }
   }
 
   // site search overrides
-  .SiteSearch--CountsContainer, .SiteSearch--ResultTypeWidgetContainer {
+  .SiteSearch--CountsContainer,
+  .SiteSearch--ResultTypeWidgetContainer {
     border: 1px solid themed('secondary-color-border');
-    background: themed('secondary-color')
+    background: themed('secondary-color');
   }
-
 }
 
 // Fix for question page sticky header
@@ -162,7 +165,12 @@ body.vpdb-Body .wdk-QuestionFormQuestionHeader {
 }
 
 // Fix for All Datasets sticky header
-body.vpdb-Body .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+body.vpdb-Body
+  .wdk-Answer
+  .MesaComponent
+  .DataTable
+  .DataTable-Sticky
+  .DataTable-Header {
   top: 103px;
 }
 
@@ -200,13 +208,13 @@ body.vpdb-Body .wdk-RecordSidebarContainer {
 body.vpdb-Body .vpdb-RootContainer {
   @media screen and (max-width: $mobile-width) {
     grid-template-areas:
-      "header"
-      "subheader"
-      "banner"
-      "nav"
-      "content"
-      "side"
-      "footer";
+      'header'
+      'subheader'
+      'banner'
+      'nav'
+      'content'
+      'side'
+      'footer';
 
     grid-template-rows: auto auto auto auto 1fr auto auto;
   }

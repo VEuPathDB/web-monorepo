@@ -12,9 +12,10 @@ const cx = makeClassNameHelper('wdk-Fraction');
 
 export const Fraction: React.FunctionComponent<FractionProps> = ({
   numerator,
-  denominator
-}) =>
+  denominator,
+}) => (
   <div className={cx()}>
     <div className={cx('Numerator')}>{numerator}</div>
     <div className={cx('Denominator')}>{denominator}</div>
-  </div>;
+  </div>
+);

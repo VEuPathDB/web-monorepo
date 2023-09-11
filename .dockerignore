@@ -1,0 +1,10 @@
+.gitignore
+.husky
+.git
+
+node_modules
+dist
+Dockerfile
+docker-compose.dev.yml
+docker-compose.yml
+docker-compose.env

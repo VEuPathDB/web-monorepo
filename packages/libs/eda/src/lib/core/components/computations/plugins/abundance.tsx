@@ -11,14 +11,10 @@ import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
+import './Plugins.scss';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-export const sharedConfigCssStyles = {
-  display: 'flex',
-  gap: '0 2em',
-  padding: '1em 0',
-  alignItems: 'center',
-  marginLeft: '3em',
-};
+const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -103,10 +99,10 @@ function AbundanceConfigDescriptionComponent({
     )
   );
   return (
-    <>
-      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+    <div className="ConfigDescriptionContainer">
+      <h4>
         Data:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {updatedCollectionVariable ? (
             `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
           ) : (
@@ -114,9 +110,9 @@ function AbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4 style={{ padding: 0, marginLeft: 20 }}>
+      <h4>
         Method:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {rankingMethod ? (
             rankingMethod[0].toUpperCase() + rankingMethod.slice(1)
           ) : (
@@ -124,7 +120,7 @@ function AbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-    </>
+    </div>
   );
 }
 
@@ -154,14 +150,20 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
   );
 
   const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
+    return collections
+      .filter((collectionVar) => {
+        return collectionVar.normalizationMethod
+          ? collectionVar.normalizationMethod !== 'NULL'
+          : true;
+      })
+      .map((collectionVar) => ({
+        value: {
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        display:
+          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+      }));
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
@@ -188,16 +190,9 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div style={sharedConfigCssStyles}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1em',
-            justifyItems: 'start',
-            alignItems: 'center',
-          }}
-        >
-          <span style={{ justifySelf: 'end', fontWeight: 500 }}>Data</span>
+      <div className={cx()}>
+        <div className={cx('-InputContainer')}>
+          <span>Data</span>
           <SingleSelect
             value={
               selectedCollectionVar
@@ -212,7 +207,9 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
-          <span style={{ justifySelf: 'end', fontWeight: 500 }}>Method</span>
+        </div>
+        <div className={cx('-InputContainer')}>
+          <span>Method</span>
           <SingleSelect
             value={rankingMethod ?? 'Select a method'}
             buttonDisplayContent={rankingMethod ?? 'Select a method'}

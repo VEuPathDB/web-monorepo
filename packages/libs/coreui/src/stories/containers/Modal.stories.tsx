@@ -21,7 +21,7 @@ const ModalContent = ({
     }}
   >
     <div>
-      <Paragraph textSize='medium'>This is an example of a modal.</Paragraph>
+      <Paragraph textSize="medium">This is an example of a modal.</Paragraph>
       <Paragraph>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Mi quis hendrerit
@@ -40,7 +40,7 @@ const ModalContent = ({
       </Paragraph>
     </div>
     <FilledButton
-      text='Example Button'
+      text="Example Button"
       onPress={() => null}
       themeRole={themeRole}
     />
@@ -67,7 +67,7 @@ const Template: Story<ModalProps> = (args) => {
         },
       }}
     >
-      <H1 text='Background Content' />
+      <H1 text="Background Content" />
       <CoreUIModal
         {...rest}
         visible={modalVisible}

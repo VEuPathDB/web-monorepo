@@ -2,21 +2,44 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   AnalysisState,
-  BinDefinitions,
   useGetDefaultVariableDescriptor,
   useStudyMetadata,
 } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
+import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
 const MarkerType = t.keyof({
   barplot: null,
   pie: null,
+  bubble: null,
 });
+
+// user-specified selection
+export type SelectedValues = t.TypeOf<typeof SelectedValues>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedValues = t.union([t.array(t.string), t.undefined]);
+
+export type BinningMethod = t.TypeOf<typeof BinningMethod>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const BinningMethod = t.union([
+  t.literal('equalInterval'),
+  t.literal('quantile'),
+  t.literal('standardDeviation'),
+  t.undefined,
+]);
+
+export type SelectedCountsOption = t.TypeOf<typeof SelectedCountsOption>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const SelectedCountsOption = t.union([
+  t.literal('filtered'),
+  t.literal('visible'),
+  t.undefined,
+]);
 
 export type MarkerConfiguration = t.TypeOf<typeof MarkerConfiguration>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -28,13 +51,28 @@ export const MarkerConfiguration = t.intersection([
   t.union([
     t.type({
       type: t.literal('barplot'),
-      selectedValues: t.union([BinDefinitions, t.undefined]), // user-specified selection
+      selectedValues: SelectedValues,
       selectedPlotMode: t.union([t.literal('count'), t.literal('proportion')]),
+      binningMethod: BinningMethod,
+      dependentAxisLogScale: t.boolean,
+      selectedCountsOption: SelectedCountsOption,
     }),
     t.type({
       type: t.literal('pie'),
-      selectedValues: t.union([t.array(t.string), t.undefined]), // user-specified selection
+      selectedValues: SelectedValues,
+      binningMethod: BinningMethod,
+      selectedCountsOption: SelectedCountsOption,
     }),
+    t.intersection([
+      t.type({
+        type: t.literal('bubble'),
+      }),
+      t.partial({
+        aggregator: t.union([t.literal('mean'), t.literal('median')]),
+        numeratorValues: t.union([t.array(t.string), t.undefined]),
+        denominatorValues: t.union([t.array(t.string), t.undefined]),
+      }),
+    ]),
   ]),
 ]);
 
@@ -43,10 +81,6 @@ export const AppState = t.intersection([
     viewport: t.type({
       center: t.tuple([t.number, t.number]),
       zoom: t.number,
-    }),
-    mouseMode: t.keyof({
-      default: null,
-      magnification: null,
     }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
@@ -65,6 +99,17 @@ export const AppState = t.intersection([
       variableId: t.string,
     }),
     isSubsetPanelOpen: t.boolean,
+    timeSliderConfig: t.type({
+      variable: t.union([VariableDescriptor, t.undefined]),
+      selectedRange: t.union([
+        t.type({
+          start: t.string,
+          end: t.string,
+        }),
+        t.undefined,
+      ]),
+      active: t.boolean,
+    }),
   }),
 ]);
 
@@ -86,38 +131,94 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     getOrElseW(() => undefined)
   );
 
-  const studyMetadata = useStudyMetadata();
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
-  const defaultVariable = getDefaultVariableDescriptor(
-    studyMetadata.rootEntity.id
+  const defaultVariable = getDefaultVariableDescriptor();
+
+  const getDefaultTimeVariableDescriptor =
+    useGetDefaultTimeVariableDescriptor();
+  const defaultTimeVariable = getDefaultTimeVariableDescriptor();
+
+  const defaultAppState: AppState = useMemo(
+    () => ({
+      viewport: defaultViewport,
+      mouseMode: 'default',
+      activeMarkerConfigurationType: 'pie',
+      timeSliderConfig: {
+        variable: defaultTimeVariable,
+        active: true,
+        selectedRange: undefined,
+      },
+      markerConfigurations: [
+        {
+          type: 'pie',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          selectedCountsOption: 'filtered',
+        },
+        {
+          type: 'barplot',
+          selectedPlotMode: 'count',
+          selectedVariable: defaultVariable,
+          selectedValues: undefined,
+          binningMethod: undefined,
+          dependentAxisLogScale: false,
+          selectedCountsOption: 'filtered',
+        },
+        {
+          type: 'bubble',
+          selectedVariable: defaultVariable,
+          aggregator: 'mean',
+          numeratorValues: undefined,
+          denominatorValues: undefined,
+        },
+      ],
+    }),
+    [defaultVariable, defaultTimeVariable]
   );
 
+  // make some backwards compatability updates to the appstate retrieved from the back end
+  const appStateCheckedRef = useRef(false);
+
   useEffect(() => {
-    if (analysis && !appState) {
-      const defaultAppState: AppState = {
-        viewport: defaultViewport,
-        mouseMode: 'default',
-        activeMarkerConfigurationType: 'pie',
-        markerConfigurations: [
-          {
-            type: 'pie',
-            selectedVariable: defaultVariable,
-            selectedValues: undefined,
-          },
-          {
-            type: 'barplot',
-            selectedPlotMode: 'count',
-            selectedVariable: defaultVariable,
-            selectedValues: undefined,
-          },
-        ],
-      };
-      setVariableUISettings((prev) => ({
-        ...prev,
-        [uiStateKey]: defaultAppState,
-      }));
+    if (appStateCheckedRef.current) return;
+    if (analysis) {
+      if (!appState) {
+        setVariableUISettings((prev) => ({
+          ...prev,
+          [uiStateKey]: defaultAppState,
+        }));
+      } else {
+        // Ensures forward compatibility of analyses with new marker types
+        const missingMarkerConfigs =
+          defaultAppState.markerConfigurations.filter(
+            (defaultConfig) =>
+              !appState.markerConfigurations.some(
+                (config) => config.type === defaultConfig.type
+              )
+          );
+
+        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
+
+        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
+          setVariableUISettings((prev) => ({
+            ...prev,
+            [uiStateKey]: {
+              ...appState,
+              ...(timeSliderConfigIsMissing
+                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
+                : {}),
+              markerConfigurations: [
+                ...appState.markerConfigurations,
+                ...missingMarkerConfigs,
+              ],
+            },
+          }));
+        }
+      }
+      appStateCheckedRef.current = true;
     }
-  }, [analysis, appState, defaultVariable, setVariableUISettings, uiStateKey]);
+  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(
@@ -149,8 +250,8 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     setActiveVisualizationId: useSetter('activeVisualizationId'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
     setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
-    setMouseMode: useSetter('mouseMode'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
+    setTimeSliderConfig: useSetter('timeSliderConfig'),
   };
 }

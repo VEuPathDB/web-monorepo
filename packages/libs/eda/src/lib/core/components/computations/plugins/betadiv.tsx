@@ -10,7 +10,10 @@ import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import ScatterBetadivSVG from '../../visualizations/implementations/selectorIcons/ScatterBetadivSVG';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import { sharedConfigCssStyles } from './abundance';
+import './Plugins.scss';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+
+const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
 export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -81,10 +84,10 @@ function BetaDivConfigDescriptionComponent({
     )
   );
   return (
-    <>
-      <h4 style={{ padding: '15px 0 0 0', marginLeft: 20 }}>
+    <div className="ConfigDescriptionContainer">
+      <h4>
         Data:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {updatedCollectionVariable ? (
             `${updatedCollectionVariable?.entityDisplayName} > ${updatedCollectionVariable?.displayName}`
           ) : (
@@ -92,9 +95,9 @@ function BetaDivConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4 style={{ padding: 0, marginLeft: 20 }}>
+      <h4>
         Dissimilarity method:{' '}
-        <span style={{ fontWeight: 300 }}>
+        <span>
           {betaDivDissimilarityMethod ? (
             betaDivDissimilarityMethod[0].toUpperCase() +
             betaDivDissimilarityMethod.slice(1)
@@ -103,7 +106,7 @@ function BetaDivConfigDescriptionComponent({
           )}
         </span>
       </h4>
-    </>
+    </div>
   );
 }
 
@@ -133,14 +136,20 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
   );
 
   const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
+    return collections
+      .filter((collectionVar) => {
+        return collectionVar.normalizationMethod
+          ? collectionVar.normalizationMethod !== 'NULL'
+          : true;
+      })
+      .map((collectionVar) => ({
+        value: {
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        display:
+          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+      }));
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
@@ -168,16 +177,9 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
         stepTitle: `Configure ${computationAppOverview.displayName}`,
       }}
     >
-      <div style={sharedConfigCssStyles}>
-        <div
-          style={{
-            display: 'flex',
-            gap: '1em',
-            justifyItems: 'start',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>Data</div>
+      <div className={cx()}>
+        <div className={cx('-InputContainer')}>
+          <span>Data</span>
           <SingleSelect
             value={
               selectedCollectionVar
@@ -192,9 +194,9 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
             items={collectionVarItems}
             onSelect={partial(changeConfigHandler, 'collectionVariable')}
           />
-          <div style={{ justifySelf: 'end', fontWeight: 500 }}>
-            Dissimilarity method
-          </div>
+        </div>
+        <div className={cx('-InputContainer')}>
+          <span>Dissimilarity method</span>
           <SingleSelect
             value={betaDivDissimilarityMethod ?? 'Select a method'}
             buttonDisplayContent={

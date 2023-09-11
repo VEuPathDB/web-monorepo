@@ -21,7 +21,7 @@ export const StudyResponse = type({
 });
 
 export interface DistributionRequestParams {
-  filters: Filter[];
+  filters?: Filter[];
   binSpec?: {
     displayRangeMin: number | string;
     displayRangeMax: number | string;

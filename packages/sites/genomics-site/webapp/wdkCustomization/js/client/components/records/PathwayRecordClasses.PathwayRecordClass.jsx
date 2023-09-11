@@ -535,7 +535,7 @@ function makeCy(
             'font-size': 12,
             'background-image': 'data(smallImage)',
             'background-fit': 'contain',
-            label: null,
+            label: '',
           },
         },
 
@@ -575,7 +575,7 @@ function makeCy(
             'background-color': 'white',
             'border-width': 1,
             'background-image-opacity': 0,
-            label: null,
+            label: '',
           },
         },
 
@@ -634,7 +634,7 @@ function makeCy(
             'background-color': 'white',
             'background-image': 'data(image)',
             'background-fit': 'contain',
-            label: null,
+            label: '',
           },
         },
 

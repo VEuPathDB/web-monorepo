@@ -11,7 +11,6 @@ import { pure, wrappable } from '../../Utils/ComponentUtils';
 import { Mesa, MesaState } from '../../Components/Mesa';
 import Link from '../../Components/Link';
 import BasketCell from '../../Views/ResultTableSummaryView/BasketCell';
-import BasketHeading from '../../Views/ResultTableSummaryView/BasketHeading';
 import PrimaryKeyCell from '../../Views/ResultTableSummaryView/PrimaryKeyCell';
 import AttributeCell from '../../Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from '../../Views/ResultTableSummaryView/AttributeHeading';
@@ -37,6 +36,7 @@ export interface Props {
   resultType: ResultType;
   viewId: string;
   actions?: Action[];
+  showCount?: boolean;
   selectedIds?: string[];
   showIdAttributeColumn: boolean;
   activeAttributeAnalysisName: string | undefined;
@@ -73,6 +73,7 @@ function ResultTable(props: Props) {
     showHideAddColumnsDialog,
     requestAddStepToBasket,
     actions,
+    showCount,
     selectedIds,
     userIsGuest,
     showLoginWarning,
@@ -107,6 +108,7 @@ function ResultTable(props: Props) {
         recordInstance.attributes[recordClass.recordIdAttributeName] as string
       );
     },
+    showCount,
   };
   const tableState = MesaState.create({
     options,
@@ -151,7 +153,7 @@ function ResultTable(props: Props) {
           }
           onClick={() => {
             if (userIsGuest) showLoginWarning('use baskets');
-            else requestAddStepToBasket(resultType.step.id);
+            else requestAddStepToBasket(resultType.step.id, false);
           }}
         >
           <IconAlt fa="shopping-basket" /> Add to Basket

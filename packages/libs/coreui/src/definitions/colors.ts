@@ -319,5 +319,5 @@ export default {
   mutedPurple,
   warning,
   error,
-  success
+  success,
 };

@@ -10,7 +10,7 @@
     //display: flex;
     //flex-direction: column;
     //padding: 1em;
- 
+
     .support-form-body {
       align-self: center;
       font-size: 120%;
@@ -18,11 +18,11 @@
       h4 {
         margin: 1em 0em;
       }
-    
+
       p {
         font-size: 120%;
-      }  
-    
+      }
+
       ul {
         list-style: disc outside none;
         margin: 1em 0em;
@@ -31,13 +31,13 @@
       }
 
       table {
-    //    margin: 2em auto;
+        //    margin: 2em auto;
       }
 
       .center {
         text-align: center;
       }
-      
+
       .instructions {
         text-align: left;
       }
@@ -46,7 +46,7 @@
         td {
           vertical-align: top;
         }
-      } 
+      }
     }
   }
 }

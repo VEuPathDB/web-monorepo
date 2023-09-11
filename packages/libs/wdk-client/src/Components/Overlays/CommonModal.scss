@@ -1,5 +1,4 @@
 .CommonModal {
-
   &Header {
     background: white;
     button {
@@ -26,9 +25,9 @@
     padding: 1em 2em;
   }
 
-  &LeftButtons, &RightButtons {
+  &LeftButtons,
+  &RightButtons {
     align-self: flex-start;
     color: #8e8e8e;
   }
-
 }

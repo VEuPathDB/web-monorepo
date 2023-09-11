@@ -6,7 +6,7 @@ import {
   CombinedClassKey,
   SnackbarProvider,
   SnackbarProviderProps,
-  VariantClassKey
+  VariantClassKey,
 } from 'notistack';
 
 import {
@@ -14,15 +14,14 @@ import {
   mutedBlue,
   success,
   error,
-  warning
+  warning,
 } from '../../definitions/colors';
 import { UITheme, useUITheme } from '../theming';
 
 export type SnackbarStyleProps<T> = T & { theme?: UITheme };
 
-export interface WrappedSnackbarProviderProps<
-  StyleProps
-> extends SnackbarProviderProps {
+export interface WrappedSnackbarProviderProps<StyleProps>
+  extends SnackbarProviderProps {
   styleProps: Omit<SnackbarStyleProps<StyleProps>, 'theme'>;
 }
 
@@ -46,9 +45,7 @@ export default function makeSnackbarProvider<
     variantError: makeSnackbarVariantStyles(error),
     variantWarning: makeSnackbarVariantStyles(warning),
     variantInfo({ theme }) {
-      return makeSnackbarVariantStyles(
-        theme?.palette.primary.hue ?? mutedBlue
-      )
+      return makeSnackbarVariantStyles(theme?.palette.primary.hue ?? mutedBlue);
     },
     ...styles,
   } as StyleRules<ClassKey | VariantClassKey, StyleProps>);
@@ -60,10 +57,11 @@ export default function makeSnackbarProvider<
     const theme = useUITheme();
 
     const fullStyleProps = useMemo(
-      () => ({
-        ...styleProps,
-        theme
-      } as StyleProps),
+      () =>
+        ({
+          ...styleProps,
+          theme,
+        } as StyleProps),
       [theme, styleProps]
     );
 
@@ -81,9 +79,7 @@ export default function makeSnackbarProvider<
   return WrappedSnackbarProvider;
 }
 
-export function makeSnackbarVariantStyles(
-  variantHue: ColorHue,
-): CSSProperties {
+export function makeSnackbarVariantStyles(variantHue: ColorHue): CSSProperties {
   return {
     backgroundColor: variantHue[100],
     border: `1px solid ${variantHue[600]}`,
@@ -95,6 +91,6 @@ export function makeSnackbarVariantStyles(
     },
     '& svg': {
       fill: variantHue[600],
-    }
+    },
   };
 }

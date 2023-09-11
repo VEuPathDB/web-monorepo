@@ -27,6 +27,10 @@ import SubsettingClient from '../api/SubsettingClient';
 
 // Hooks
 import { useStudyRecord } from '..';
+import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
+import { getWdkStudyRecords } from '../utils/study-records';
+import { useDeepValue } from './immutability';
+import { usePermissions } from '@veupathdb/study-data-access/lib/data-restriction/permissionsHooks';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -49,7 +53,9 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         STUDY_RECORD_CLASS_NAME
       );
       const ontology = await wdkService.getOntology(
-        (await wdkService.getConfig()).categoriesOntologyName
+        (
+          await wdkService.getConfig()
+        ).categoriesOntologyName
       );
       const attributes = preorderSeq(ontology.tree)
         .filter(
@@ -59,7 +65,13 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
         )
         .map(getNodeId)
         .toArray()
-        .concat(['bulk_download_url', 'request_needs_approval', 'is_public'])
+        .concat([
+          'dataset_id',
+          'bulk_download_url',
+          'request_needs_approval',
+          'is_public',
+          'study_access',
+        ])
         .filter((attribute) => attribute in studyRecordClass.attributesMap);
       const studyRecord = await wdkService
         .getRecord(
@@ -97,44 +109,30 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
   );
 }
 
-const DEFAULT_STUDY_ATTRIBUTES = ['dataset_id', 'eda_study_id'];
-const DEFAULT_STUDY_TABLES: string[] = [];
-const EMPTY_ARRAY: string[] = [];
+interface WdkStudyRecordsOptions {
+  attributes?: AnswerJsonFormatConfig['attributes'];
+  tables?: AnswerJsonFormatConfig['tables'];
+  searchName?: string;
+}
 
 export function useWdkStudyRecords(
-  attributes: AnswerJsonFormatConfig['attributes'] = EMPTY_ARRAY,
-  tables: AnswerJsonFormatConfig['tables'] = EMPTY_ARRAY
+  subsettingClient: SubsettingClient,
+  options?: WdkStudyRecordsOptions
 ): StudyRecord[] | undefined {
+  const studyAccessApi = useStudyAccessApi();
+  const stableOptions = useDeepValue(options);
   return useWdkService(
-    async (wdkService) => {
-      const recordClass = await wdkService.findRecordClass('dataset');
-      const finalAttributes = DEFAULT_STUDY_ATTRIBUTES.concat(
-        attributes
-      ).filter((attribute) => attribute in recordClass.attributesMap);
-      const finalTables = DEFAULT_STUDY_TABLES.concat(tables).filter(
-        (table) => table in recordClass.tablesMap
-      );
-      return wdkService.getAnswerJson(
+    (wdkService) =>
+      getWdkStudyRecords(
         {
-          searchName: 'Studies',
-          searchConfig: {
-            parameters: {},
-          },
+          studyAccessApi,
+          subsettingClient,
+          wdkService,
         },
-        {
-          attributes: finalAttributes,
-          tables: finalTables,
-          sorting: [
-            {
-              attributeName: 'display_name',
-              direction: 'ASC',
-            },
-          ],
-        }
-      );
-    },
-    [attributes, tables]
-  )?.records.filter((record) => record.attributes.eda_study_id != null);
+        stableOptions
+      ),
+    [studyAccessApi, subsettingClient, stableOptions]
+  );
 }
 
 /**
@@ -180,6 +178,7 @@ export const STUB_ENTITY: StudyEntity = {
   idColumnName: 'stub',
   displayName: 'stub',
   description: 'This is a stub entity. It does not exist in the database.',
+  isManyToOneWithParent: false,
   variables: [],
 };
 
@@ -188,10 +187,13 @@ export function isStubEntity(entity: StudyEntity) {
 }
 
 export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
+  const permissionsResponse = usePermissions();
   return useWdkServiceWithRefresh(
     async (wdkService) => {
+      if (permissionsResponse.loading) return;
+      const { permissions } = permissionsResponse;
       const recordClass = await wdkService.findRecordClass('dataset');
-      const attributes = ['dataset_id', 'eda_study_id', 'study_access'].filter(
+      const attributes = ['dataset_id', 'study_access'].filter(
         (attribute) => attribute in recordClass.attributesMap
       );
       const studyRecord = await wdkService
@@ -221,22 +223,20 @@ export function useStudyMetadata(datasetId: string, client: SubsettingClient) {
             tableErrors: [],
           } as RecordInstance;
         });
-      if (typeof studyRecord.attributes.eda_study_id !== 'string')
-        throw new Error(
-          'Could not find study with associated dataset id `' + datasetId + '`.'
-        );
+      const studyId =
+        permissions.perDataset[studyRecord.attributes.dataset_id as string]
+          ?.studyId;
+      if (studyId == null) throw new Error('Not an eda study');
       try {
-        return await client.getStudyMetadata(
-          studyRecord.attributes.eda_study_id
-        );
+        return await client.getStudyMetadata(studyId);
       } catch (error) {
         console.error(error);
         return {
-          id: studyRecord.attributes.eda_study_id,
+          id: studyId,
           rootEntity: STUB_ENTITY,
         };
       }
     },
-    [datasetId, client]
+    [datasetId, client, permissionsResponse]
   );
 }

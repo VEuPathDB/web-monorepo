@@ -220,6 +220,9 @@ export const CollectionVariableTreeNode = t.intersection([
     units: t.string,
     entityId: t.string,
     entityDisplayName: t.string,
+    isCompositional: t.boolean,
+    isProportion: t.boolean,
+    normalizationMethod: t.string,
   }),
 ]);
 
@@ -242,6 +245,7 @@ const _StudyEntityBase = t.intersection([
      * to actual sub-entities.
      * */
     variables: t.array(VariableTreeNode),
+    isManyToOneWithParent: t.boolean,
   }),
   t.partial({
     displayNamePlural: t.string,

@@ -43,7 +43,12 @@ import {
   useStudyEntities,
 } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { DateVariable, NumberVariable, Variable } from '../../../types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StudyEntity,
+  Variable,
+} from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -94,7 +99,10 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 // use Notification for truncation warning message
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
-import { UIState } from '../../filter/HistogramFilter';
+import {
+  UIState,
+  distributionResponseToDataSeries,
+} from '../../filter/HistogramFilter';
 // change defaultIndependentAxisRange to hook
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
@@ -117,6 +125,13 @@ import { useDeepValue } from '../../../hooks/immutability';
 // reset to defaults button
 import { ResetButtonCoreUI } from '../../ResetButton';
 import { FloatingHistogramExtraProps } from '../../../../map/analysis/hooks/plugins/histogram';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
+
+import { getDistribution } from '../../filter/util';
+import { DistributionResponse } from '../../../api/SubsettingClient';
+import { useSubsettingClient } from '../../../hooks/workspace';
+import { red } from '../../filter/colors';
+import { min, max } from 'lodash';
 
 export type HistogramDataWithCoverageStatistics = (
   | HistogramData
@@ -346,17 +361,21 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
-    const { entity, variable } =
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
+  const { xAxisVariable, valueType } = useMemo(() => {
+    const { variable } = findEntityAndVariable(vizConfig.xAxisVariable) ?? {};
     const valueType: 'number' | 'date' =
       variable?.type === 'date' ? 'date' : 'number';
     return {
-      outputEntity: entity,
       xAxisVariable: variable,
       valueType,
     };
   }, [findEntityAndVariable, vizConfig.xAxisVariable]);
+
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable'
+  );
 
   const getOverlayVariable = options?.getOverlayVariable;
 
@@ -432,6 +451,78 @@ function HistogramViz(props: VisualizationProps<Options>) {
     [options, providedOverlayVariable, providedOverlayVariableDescriptor]
   );
 
+  // get distribution data
+  const subsettingClient = useSubsettingClient();
+
+  const getDistributionData = useCallback(async () => {
+    if (vizConfig.xAxisVariable != null && xAxisVariable != null) {
+      const [displayRangeMin, displayRangeMax, binWidth, binUnits] =
+        NumberVariable.is(xAxisVariable)
+          ? [
+              xAxisVariable.distributionDefaults.displayRangeMin ??
+                xAxisVariable.distributionDefaults.rangeMin,
+              xAxisVariable.distributionDefaults.displayRangeMax ??
+                xAxisVariable.distributionDefaults.rangeMax,
+              xAxisVariable.distributionDefaults.binWidth,
+              undefined,
+            ]
+          : [
+              (xAxisVariable as DateVariable).distributionDefaults
+                .displayRangeMin ??
+                (xAxisVariable as DateVariable).distributionDefaults.rangeMin,
+              (xAxisVariable as DateVariable).distributionDefaults
+                .displayRangeMax ??
+                (xAxisVariable as DateVariable).distributionDefaults.rangeMax,
+              (xAxisVariable as DateVariable).distributionDefaults.binWidth,
+              (xAxisVariable as DateVariable).distributionDefaults.binUnits,
+            ];
+
+      // try to call once
+      const distribution = await subsettingClient.getDistribution(
+        studyMetadata.id,
+        vizConfig.xAxisVariable?.entityId ?? '',
+        vizConfig.xAxisVariable?.variableId ?? '',
+        {
+          valueSpec: 'count',
+          filters,
+          binSpec: {
+            // Note: technically any arbitrary values can be used here for displayRangeMin/Max
+            // but used more accurate value anyway
+            displayRangeMin: DateVariable.is(xAxisVariable)
+              ? displayRangeMin + 'T00:00:00Z'
+              : displayRangeMin,
+            displayRangeMax: DateVariable.is(xAxisVariable)
+              ? displayRangeMax + 'T00:00:00Z'
+              : displayRangeMax,
+            binWidth: binWidth ?? 1,
+            binUnits: binUnits,
+          },
+        }
+      );
+
+      // return series using foreground response
+      const series = {
+        series: [
+          distributionResponseToDataSeries(
+            'Subset',
+            distribution,
+            red,
+            NumberVariable.is(xAxisVariable) ? 'number' : 'date'
+          ),
+        ],
+      };
+
+      return series;
+    }
+
+    return undefined;
+  }, [filters, xAxisVariable, vizConfig.xAxisVariable, subsettingClient]);
+
+  // need useCallback to avoid infinite loop
+  const distributionDataPromise = usePromise(
+    useCallback(() => getDistributionData(), [getDistributionData])
+  );
+
   const dataRequestConfig: DataRequestConfig = useDeepValue(
     pick(vizConfig, [
       'valueSpec',
@@ -460,6 +551,13 @@ function HistogramViz(props: VisualizationProps<Options>) {
       )
         return undefined;
 
+      // wait till distributionDataPromise is ready
+      if (
+        distributionDataPromise.pending ||
+        distributionDataPromise.value == null
+      )
+        return undefined;
+
       if (
         !variablesAreUnique([
           xAxisVariable,
@@ -483,6 +581,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
         valueType,
         dataRequestConfig,
         xAxisVariable,
+        outputEntity,
         options?.getRequestParams
       );
       const response = await dataClient.getHistogram(
@@ -554,14 +653,59 @@ function HistogramViz(props: VisualizationProps<Options>) {
       computation.descriptor.type,
       overlayEntity,
       facetEntity,
+      distributionDataPromise.pending,
+      distributionDataPromise.value,
     ])
   );
 
-  const independentAxisMinMax = useMemo(
-    () => histogramDefaultIndependentAxisMinMax(data),
-    [data]
-  );
+  // Note: Histogram distribution data contains statistical values such as summary.min/max,
+  // however, it does not fully respect multiple filters.
+  // Similarly, distribution data also partially reflect filtered data.
+  // A solution is to compute both min/max values from data-based and summary-based ones,
+  // then take max of min values and min of max values,
+  // which will result in correct min/max value for multiple filters
+  // More specifically, data-based min and summary-based max are correct values
+  const dataBasedIndependentAxisMinMax = useMemo(() => {
+    return histogramDefaultIndependentAxisMinMax(distributionDataPromise);
+  }, [distributionDataPromise]);
 
+  const summaryBasedIndependentAxisMinMax = useMemo(() => {
+    if (
+      !distributionDataPromise.pending &&
+      distributionDataPromise.value != null
+    )
+      return {
+        min: DateVariable.is(xAxisVariable)
+          ? (
+              (distributionDataPromise?.value?.series[0]?.summary
+                ?.min as string) ?? ''
+            ).split('T')[0]
+          : distributionDataPromise?.value?.series[0]?.summary?.min,
+        max: DateVariable.is(xAxisVariable)
+          ? (
+              (distributionDataPromise?.value?.series[0]?.summary
+                ?.max as string) ?? ''
+            ).split('T')[0]
+          : distributionDataPromise?.value?.series[0]?.summary?.max,
+      };
+  }, [distributionDataPromise]);
+
+  const independentAxisMinMax = useMemo(() => {
+    return {
+      min: max([
+        dataBasedIndependentAxisMinMax?.min,
+        summaryBasedIndependentAxisMinMax?.min,
+      ]),
+      max: min([
+        dataBasedIndependentAxisMinMax?.max,
+        summaryBasedIndependentAxisMinMax?.max,
+      ]),
+    };
+  }, [distributionDataPromise]);
+
+  // Note: defaultIndependentRange in the Histogram Viz should keep its initial range
+  // regardless of the change of the data to ensure the truncation behavior
+  // Thus, pass an additional prop to useDefaultAxisRange() if Histogram Viz
   const defaultIndependentRange = useDefaultAxisRange(
     xAxisVariable,
     vizConfig.independentAxisValueSpec === 'Full'
@@ -731,16 +875,29 @@ function HistogramViz(props: VisualizationProps<Options>) {
     truncationConfigIndependentAxisMax,
     truncationConfigDependentAxisMin,
     truncationConfigDependentAxisMax,
-  } = truncationConfig(
-    {
-      ...defaultUIState, // using annotated range, NOT the actual data
-      ...(minPosMax != null && minPosMax.min != null && minPosMax.max != null
-        ? { dependentAxisRange: minPosMax }
-        : {}),
-    },
-    vizConfig,
-    {}, // no overrides
-    true // use inclusive less than equal for the range min
+  } = useMemo(
+    () =>
+      truncationConfig(
+        {
+          ...defaultUIState, // using annotated range, NOT the actual data
+          ...(minPosMax != null &&
+          minPosMax.min != null &&
+          minPosMax.max != null
+            ? { dependentAxisRange: minPosMax }
+            : {}),
+        },
+        vizConfig,
+        {}, // no overrides
+        true // use inclusive less than equal for the range min
+      ),
+    [
+      defaultUIState,
+      dependentMinPosMax,
+      vizConfig.independentAxisRange,
+      vizConfig.dependentAxisRange,
+      vizConfig.independentAxisValueSpec,
+      vizConfig.dependentAxisValueSpec,
+    ]
   );
 
   // axis range control
@@ -1371,6 +1528,7 @@ function getRequestParams(
   valueType: 'number' | 'date',
   config: DataRequestConfig,
   variable: Variable,
+  outputEntity: StudyEntity,
   customMakeRequestParams?: (
     props: RequestOptionProps<HistogramConfig> & FloatingHistogramExtraProps
   ) => HistogramRequestParams
@@ -1419,7 +1577,7 @@ function getRequestParams(
       studyId,
       filters,
       vizConfig: config,
-      outputEntityId: xAxisVariable!.entityId,
+      outputEntityId: outputEntity.id,
       binSpec,
       valueSpec,
       viewport,
@@ -1428,7 +1586,7 @@ function getRequestParams(
       studyId,
       filters,
       config: {
-        outputEntityId: xAxisVariable!.entityId,
+        outputEntityId: outputEntity.id,
         xAxisVariable,
         barMode: 'stack',
         overlayVariable: overlayVariable,

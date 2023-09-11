@@ -1,4 +1,4 @@
 function loadSampleStrat(url) {
-        $.blockUI();
-        window.location = url;
+  $.blockUI();
+  window.location = url;
 }

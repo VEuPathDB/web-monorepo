@@ -37,53 +37,49 @@ export default function BirdsEyePlot({
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
       data.bars
-        .map(
-          (bar): Partial<PlotData> => {
-            // check data exist
-            if (bar.label && bar.value != null) {
-              return {
-                x: [bar.value],
-                y: [''],
-                name: bar.label, // legend name
-                orientation: 'h',
-                type: 'bar',
-                marker: {
-                  opacity: 1,
-                  ...(bar.color ? { color: bar.color } : {}),
-                },
-                showlegend: true,
-              };
-            } else {
-              return {};
-            }
+        .map((bar): Partial<PlotData> => {
+          // check data exist
+          if (bar.label && bar.value != null) {
+            return {
+              x: [bar.value],
+              y: [''],
+              name: bar.label, // legend name
+              orientation: 'h',
+              type: 'bar',
+              marker: {
+                opacity: 1,
+                ...(bar.color ? { color: bar.color } : {}),
+              },
+              showlegend: true,
+            };
+          } else {
+            return {};
           }
-        )
+        })
         .concat(
           // make some invisible traces for the brackets
           // so that we get mouseover functionality
           // (using scatter/lines to get the popup legend to show them as
           // lines - I'm not sure how they ended up being invisible -
           // maybe because a line needs more than one point?)
-          data.brackets.map(
-            (bracket): Partial<PlotData> => {
-              if (bracket.value != null) {
-                return {
-                  x: [bracket.value],
-                  y: [''],
-                  type: 'scatter',
-                  mode: 'lines',
-                  name: bracket.label,
-                  orientation: 'h',
-                  showlegend: false,
-                  marker: {
-                    color: 'black',
-                  },
-                };
-              } else {
-                return {};
-              }
+          data.brackets.map((bracket): Partial<PlotData> => {
+            if (bracket.value != null) {
+              return {
+                x: [bracket.value],
+                y: [''],
+                type: 'scatter',
+                mode: 'lines',
+                name: bracket.label,
+                orientation: 'h',
+                showlegend: false,
+                marker: {
+                  color: 'black',
+                },
+              };
+            } else {
+              return {};
             }
-          )
+          })
         ),
     [data]
   );

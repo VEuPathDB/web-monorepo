@@ -1,11 +1,9 @@
 import React from 'react';
 const ContactUsSubmittedBody = ({ message }) => (
   <div>
-    {
-      message
-        .split('\n')
-        .map(line => <p key={line}>{line}</p>)
-    }
+    {message.split('\n').map((line) => (
+      <p key={line}>{line}</p>
+    ))}
   </div>
 );
 

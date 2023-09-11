@@ -17,15 +17,22 @@ import { scatterplotVisualization } from '../../../core/components/visualization
 import { lineplotVisualization } from '../../../core/components/visualizations/implementations/LineplotVisualization';
 import { barplotVisualization } from '../../../core/components/visualizations/implementations/BarplotVisualization';
 import { boxplotVisualization } from '../../../core/components/visualizations/implementations/BoxplotVisualization';
-import { BinDefinitions, OverlayConfig } from '../../../core';
+import {
+  BinDefinitions,
+  OverlayConfig,
+  BubbleOverlayConfig,
+} from '../../../core';
 import { boxplotRequest } from './plugins/boxplot';
 import { barplotRequest } from './plugins/barplot';
 import { lineplotRequest } from './plugins/lineplot';
 import { histogramRequest } from './plugins/histogram';
 import { scatterplotRequest } from './plugins/scatterplot';
 
+import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
+import _ from 'lodash';
+
 interface Props {
-  selectedOverlayConfig?: OverlayConfig;
+  selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
 }
 
 type StandaloneVizOptions = LayoutOptions & OverlayOptions;
@@ -40,18 +47,19 @@ export function useStandaloneVizPlugins({
       return visualization.withOptions({
         hideFacetInputs: true, // will also enable table-only mode for mosaic
         hideShowMissingnessToggle: true,
-        // TODO: need to distinguish lineplot from lineplot with marginal histogram?
-        // perhaps need to make another function only for lineplot with marginal histogram
-        // or define xxx.withOptions({}) directly at corresponding visualizationPlugins below
-        showMarginalHistogram: false,
         layoutComponent: FloatingLayout,
         // why are we providing three functions to access the properties of
         // one object? Because in the pre-SAM world, getOverlayVariable was already
         // part of this interface.
         getOverlayVariable: (_) => selectedOverlayConfig?.overlayVariable,
-        getOverlayType: () => selectedOverlayConfig?.overlayType,
+        getOverlayType: () =>
+          _.get(selectedOverlayConfig, 'overlayType') ??
+          _.get(selectedOverlayConfig, 'aggregationConfig.overlayType'),
         getOverlayVocabulary: () => {
-          const overlayValues = selectedOverlayConfig?.overlayValues;
+          const overlayValues =
+            selectedOverlayConfig && 'overlayValues' in selectedOverlayConfig
+              ? selectedOverlayConfig.overlayValues
+              : undefined;
           if (overlayValues == null) return undefined;
           if (BinDefinitions.is(overlayValues)) {
             return overlayValues.map((bin) => bin.binLabel);
@@ -76,7 +84,7 @@ export function useStandaloneVizPlugins({
       requestFunction: (
         props: RequestOptionProps<ConfigType> &
           ExtraProps & {
-            overlayConfig: OverlayConfig | undefined;
+            overlayConfig: OverlayConfig | BubbleOverlayConfig | undefined;
           }
       ) => RequestParamsType
     ) {
@@ -106,6 +114,17 @@ export function useStandaloneVizPlugins({
           ),
           lineplot: vizWithCustomizedGetRequest(
             vizWithOptions(lineplotVisualization),
+            lineplotRequest
+          ),
+          // activate timeline Viz
+          timeseries: vizWithCustomizedGetRequest(
+            vizWithOptions(
+              lineplotVisualization
+                .withOptions({
+                  showMarginalHistogram: true,
+                })
+                .withSelectorIcon(TimeSeriesSVG)
+            ),
             lineplotRequest
           ),
         },

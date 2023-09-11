@@ -1,4 +1,4 @@
-$white: #E0E0E0;
+$white: #e0e0e0;
 
 .SiteMenuItem {
   font-size: 20px;
@@ -17,7 +17,10 @@ $white: #E0E0E0;
     margin-left: 10px;
   }
 
-  a, a:link, a:active, a:visited {
+  a,
+  a:link,
+  a:active,
+  a:visited {
     color: #fff;
     text-decoration: none;
   }
@@ -25,7 +28,7 @@ $white: #E0E0E0;
     opacity: 1;
   }
   .SiteMenuItem-Submenu {
-    left: -.25em;
+    left: -0.25em;
     top: 100%;
     padding: 10px 5px;
     z-index: 10000;
@@ -54,8 +57,10 @@ $white: #E0E0E0;
       background-color: #ededed;
     }
 
-
-    a, a:link, a:active, a:visited {
+    a,
+    a:link,
+    a:active,
+    a:visited {
       color: #222;
       text-decoration: none;
     }
@@ -86,7 +91,8 @@ $white: #E0E0E0;
       background-color: #ededed;
       transition: all 0.5s;
 
-      &>.SiteMenuItem-Link, &>.SiteMenuItem-Text {
+      & > .SiteMenuItem-Link,
+      & > .SiteMenuItem-Text {
         margin: 0;
         width: 100%;
         display: block;
@@ -104,7 +110,7 @@ $white: #E0E0E0;
         color: #288b99;
       }
 
-      &>.SiteMenuItem-Text {
+      & > .SiteMenuItem-Text {
         margin: 0;
         width: 100%;
         font-weight: 300;

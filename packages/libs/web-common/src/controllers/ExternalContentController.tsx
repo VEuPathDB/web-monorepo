@@ -23,20 +23,21 @@ export default function ExternalContentController(props: Props) {
       const response = await fetch(url, { mode: 'cors' });
       if (response.ok) return response.text();
       return `<h1>${response.statusText}</h1>`;
-    }
-    catch (error) {
+    } catch (error) {
       console.error(error);
       return `<h1>Oops... something went wrong.</h1>`;
     }
-  }, [ url ]);
+  }, [url]);
 
   useEffect(() => {
     if (content == null || ref.current == null) return;
 
     try {
       if (location.hash) {
-        // open detail with id matching location.hash
-        const target = ref.current.querySelector(location.hash);
+        const fragementId = location.hash.slice(1);
+        const querySelector = `[id=${fragementId}], [name=${fragementId}]`;
+        // open detail with id or name attribute matching location.hash
+        const target = ref.current.querySelector(querySelector);
         if (target instanceof HTMLDetailsElement) {
           target.open = true;
         }
@@ -45,19 +46,18 @@ export default function ExternalContentController(props: Props) {
           scrollIntoView(target);
         }
       }
-    }
-    catch(error) {
+    } catch (error) {
       console.error(error);
     }
-  }, [ location.hash, content ]);
+  }, [location.hash, content]);
 
-  if (content == null) return <Loading/>;
+  if (content == null) return <Loading />;
 
   return safeHtml(
     content,
     {
       className: EXTERNAL_CONTENT_CONTROLLER_CLASSNAME,
-      ref
+      ref,
     },
     'div'
   );

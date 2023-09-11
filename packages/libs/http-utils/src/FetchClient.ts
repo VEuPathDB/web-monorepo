@@ -37,12 +37,25 @@ export interface FetchApiOptions {
   init?: RequestInit;
   /** Implementation of `fetch` function. Defaults to `window.fetch`. */
   fetchApi?: Window['fetch'];
+  /**
+   * Callback that can be used for reporting errors. A Promise rejection will
+   * still occur.
+   */
+  onNonSuccessResponse?: (error: Error) => void;
+}
+
+class FetchClientError extends Error {
+  name = 'FetchClientError';
 }
 
 export abstract class FetchClient {
+  /** Default callback used, if none is specified to constructor. */
+  private static onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
+
   protected readonly baseUrl: string;
   protected readonly init: RequestInit;
   protected readonly fetchApi: Window['fetch'];
+  protected readonly onNonSuccessResponse: FetchApiOptions['onNonSuccessResponse'];
   // Subclasses can set this to false to disable including a traceparent header with all requests.
   protected readonly includeTraceidHeader: boolean = true;
 
@@ -50,6 +63,23 @@ export abstract class FetchClient {
     this.baseUrl = options.baseUrl;
     this.init = options.init ?? {};
     this.fetchApi = options.fetchApi ?? window.fetch;
+    this.onNonSuccessResponse =
+      options.onNonSuccessResponse ?? FetchClient.onNonSuccessResponse;
+  }
+
+  /**
+   * Set a default callback for all instances. Should only be called once.
+   */
+  public static setOnNonSuccessResponse(
+    callback: FetchApiOptions['onNonSuccessResponse']
+  ) {
+    if (this.onNonSuccessResponse) {
+      console.warn(
+        'FetchClient.setOnNonSuccessResponse() should only be called once.'
+      );
+      return;
+    }
+    this.onNonSuccessResponse = callback;
   }
 
   protected async fetch<T>(apiRequest: ApiRequest<T>): Promise<T> {
@@ -74,9 +104,14 @@ export abstract class FetchClient {
 
       return await transformResponse(responseBody);
     }
-    throw new Error(
-      `${response.status} ${response.statusText}${'\n'}${await response.text()}`
+    const fetchError = new FetchClientError(
+      `${response.status} ${
+        response.statusText
+      }: ${request.method.toUpperCase()} ${request.url}
+      ${'\n'}${await response.text()}`
     );
+    this.onNonSuccessResponse?.(fetchError);
+    throw fetchError;
   }
 }
 

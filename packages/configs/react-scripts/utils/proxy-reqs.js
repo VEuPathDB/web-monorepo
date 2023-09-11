@@ -1,8 +1,5 @@
-export function addCookieToProxyReq(
-  cookieKey,
-  processEnvKey
-) {
-  return function(proxyReq) {
+export function addCookieToProxyReq(cookieKey, processEnvKey) {
+  return function (proxyReq) {
     if (proxyReq._isRedirect) return;
 
     const cookieRaw = proxyReq.getHeader('cookie');
@@ -16,7 +13,7 @@ export function addCookieToProxyReq(
     if (cookies != null) {
       proxyReq.setHeader('cookie', cookies);
     }
-  }
+  };
 }
 
 function addCookieToRawStr(cookieRaw, newKey, newValue) {
@@ -55,7 +52,7 @@ export function makeCommonEndpointProxy({ endpoint, target }) {
     logLevel: 'debug',
     onProxyReq: function (proxyReq) {
       addPrereleaseAuthCookieToProxyReq(proxyReq);
-    }
+    },
   };
 }
 
@@ -65,8 +62,8 @@ export function makeCommonProxyConfig(targetMap) {
       endpoint,
       makeCommonEndpointProxy({
         endpoint,
-        target
-      })
+        target,
+      }),
     ]
   );
 
@@ -76,12 +73,12 @@ export function makeCommonProxyConfig(targetMap) {
 export function makeLegacyWebAppProxyConfig({
   endpoint,
   target,
-  rootClientUrl
+  rootClientUrl,
 }) {
   return {
     ...makeCommonEndpointProxy({
       endpoint,
-      target
+      target,
     }),
     bypass: function (req, res, proxyOptions) {
       if (req.url.startsWith(rootClientUrl)) {

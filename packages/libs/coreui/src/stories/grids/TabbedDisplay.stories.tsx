@@ -77,24 +77,28 @@ const tabs = [
 ];
 
 const Template: Story<TabbedDisplayProps<string>> = (args) => {
-  const [ selectedTab, setSelectedTab ] = useState(tabs[0].key);
+  const [selectedTab, setSelectedTab] = useState(tabs[0].key);
   return (
-  <UIThemeProvider
-    theme={{
-      palette: {
-        primary: { hue: green, level: 600 },
-        secondary: { hue: purple, level: 500 },
-      },
-    }}
-  >
-    <TabbedDisplay {...args} activeTab={selectedTab} onTabSelected={setSelectedTab} />
-  </UIThemeProvider>
-  )
-}
+    <UIThemeProvider
+      theme={{
+        palette: {
+          primary: { hue: green, level: 600 },
+          secondary: { hue: purple, level: 500 },
+        },
+      }}
+    >
+      <TabbedDisplay
+        {...args}
+        activeTab={selectedTab}
+        onTabSelected={setSelectedTab}
+      />
+    </UIThemeProvider>
+  );
+};
 
 export const Basic = Template.bind({});
 Basic.args = {
   tabs,
   activeTab: 'tab1',
-  onTabSelected: (key: string) => null
+  onTabSelected: (key: string) => null,
 } as TabbedDisplayProps<string>;

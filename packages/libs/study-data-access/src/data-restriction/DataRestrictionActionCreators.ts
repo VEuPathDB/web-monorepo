@@ -1,4 +1,7 @@
-import { makeActionCreator, InferAction } from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
+import {
+  makeActionCreator,
+  InferAction,
+} from '@veupathdb/wdk-client/lib/Utils/ActionCreatorUtils';
 import { fetchStudies, getStudyId, Study } from '../shared/studies';
 import { WdkDependenciesWithStudyAccessApi } from '../shared/wrapWdkDependencies';
 
@@ -20,29 +23,30 @@ export interface ActionAttemptDetails {
   onDeny?: () => void;
 }
 
-export function attemptAction(action: DataRestrictionActionType, details: ActionAttemptDetails) {
-  return function run({ wdkService, studyAccessApi }: WdkDependenciesWithStudyAccessApi) {
+export function attemptAction(
+  action: DataRestrictionActionType,
+  details: ActionAttemptDetails
+) {
+  return function run({
+    wdkService,
+    studyAccessApi,
+  }: WdkDependenciesWithStudyAccessApi) {
     const user$ = wdkService.getCurrentUser();
     const studies$ = fetchStudies(wdkService);
 
-    return Promise.all([ user$, studies$ ]).then(([ user, studies ]) => {
-      return checkPermissions(user, studyAccessApi).then(permissions => {
-        return handleAction(
-          permissions,
-          studies.records,
-          action,
-          details
-        );
+    return Promise.all([user$, studies$]).then(([user, studies]) => {
+      return checkPermissions(user, studyAccessApi).then((permissions) => {
+        return handleAction(permissions, studies.records, action, details);
       });
-    })
-  }
+    });
+  };
 }
 
 export const restricted = makeActionCreator(
   'data-restriction/restricted',
   (study: Study, action: DataRestrictionActionType) => ({
     study,
-    action
+    action,
   })
 );
 
@@ -50,7 +54,7 @@ export const unrestricted = makeActionCreator(
   'data-restriction/unrestricted',
   (study: Study, action: DataRestrictionActionType) => ({
     study,
-    action
+    action,
   })
 );
 
@@ -64,10 +68,12 @@ function handleAction(
   { studyId, onAllow, onDeny }: Partial<ActionAttemptDetails> = {}
 ): Action {
   console.info(label('Restriction Encountered:'), { action, studyId });
-  const study = studies.find(study => studyId === getStudyId(study));
+  const study = studies.find((study) => studyId === getStudyId(study));
 
   if (study == null) {
-    const error = new Error(label(`Invalid reference: couldn't find study with id "${studyId}"`));
+    const error = new Error(
+      label(`Invalid reference: couldn't find study with id "${studyId}"`)
+    );
     console.warn('Allowing action `%s` for unknown study `%s`.', action, study);
     console.error(error);
     if (typeof onAllow === 'function') onAllow();

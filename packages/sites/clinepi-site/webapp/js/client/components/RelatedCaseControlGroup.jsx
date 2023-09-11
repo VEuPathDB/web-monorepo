@@ -1,25 +1,26 @@
 import React from 'react';
 import Param from '@veupathdb/web-common/lib/components/Param';
 
-import { createSettingsParser, groupGetter, parameterGetter } from '../util/questionSettings';
+import {
+  createSettingsParser,
+  groupGetter,
+  parameterGetter,
+} from '../util/questionSettings';
 
 const parseSettings = createSettingsParser('relatedCaseControlLayoutSettings', {
   getCaseControlGroup: groupGetter('relatedCaseControlGroupName'),
   getToggleParam: parameterGetter('toggleParamName'),
   getKeepRemoveParam: parameterGetter('keepRemoveParamName'),
   getFilterParam: parameterGetter('filterParamName'),
-  getCaseControlParam: parameterGetter('caseControlParamName')
+  getCaseControlParam: parameterGetter('caseControlParamName'),
 });
 
 export default class RelatedCaseControlGroup extends React.Component {
-
   static shouldUseLayout(props) {
     const settings = parseSettings(props.wizardState.question);
-    const activeGroup = props.wizardState.question.groups[props.wizardState.activeGroupIx];
-    return (
-      settings != null &&
-      settings.getCaseControlGroup() === activeGroup
-    );
+    const activeGroup =
+      props.wizardState.question.groups[props.wizardState.activeGroupIx];
+    return settings != null && settings.getCaseControlGroup() === activeGroup;
   }
 
   static handleParamChange(controller, param, paramValue) {
@@ -31,7 +32,8 @@ export default class RelatedCaseControlGroup extends React.Component {
     if (
       param === caseControlParam &&
       paramValue.startsWith('Both') &&
-      controller.state.paramValues[toggleParam.name] !== toggleParam.initialDisplayValue
+      controller.state.paramValues[toggleParam.name] !==
+        toggleParam.initialDisplayValue
     ) {
       controller.setParamValue(toggleParam, toggleParam.initialDisplayValue);
     }
@@ -61,49 +63,59 @@ export default class RelatedCaseControlGroup extends React.Component {
     if (settings == null) return true;
 
     const caseControlParam = settings.getCaseControlParam();
-    return !props.wizardState.paramValues[caseControlParam.name].startsWith('Both');
+    return !props.wizardState.paramValues[caseControlParam.name].startsWith(
+      'Both'
+    );
   }
 
   static isEnabled(props) {
     const settings = parseSettings(props.wizardState.question);
     if (settings == null) return true;
 
-    const toggleParam = settings.getToggleParam()
+    const toggleParam = settings.getToggleParam();
     return props.wizardState.paramValues[toggleParam.name] === 'Yes';
   }
 
   renderToggle() {
-    return RelatedCaseControlGroup.isUsable(this.props) && (
-      <div className="CaseControlMessage">
-        <label>
-          <input
-            type="checkbox"
-            checked={RelatedCaseControlGroup.isEnabled(this.props)}
-            onChange={() => {
-              const settings = parseSettings(this.props.wizardState.question);
-              this.props.parameterEventHandlers.onParamValueChange(
-                settings.getToggleParam(),
-                RelatedCaseControlGroup.isEnabled(this.props) ? 'No' : 'Yes'
-              );
-            }} /> Enable the advanced <strong>Related Case/Control</strong> filter below. It allows you to restrict Participants using information about their related case or control.
-        </label>
-      </div>
-    )
+    return (
+      RelatedCaseControlGroup.isUsable(this.props) && (
+        <div className="CaseControlMessage">
+          <label>
+            <input
+              type="checkbox"
+              checked={RelatedCaseControlGroup.isEnabled(this.props)}
+              onChange={() => {
+                const settings = parseSettings(this.props.wizardState.question);
+                this.props.parameterEventHandlers.onParamValueChange(
+                  settings.getToggleParam(),
+                  RelatedCaseControlGroup.isEnabled(this.props) ? 'No' : 'Yes'
+                );
+              }}
+            />{' '}
+            Enable the advanced <strong>Related Case/Control</strong> filter
+            below. It allows you to restrict Participants using information
+            about their related case or control.
+          </label>
+        </div>
+      )
+    );
   }
 
   renderWarning() {
-    return !RelatedCaseControlGroup.isUsable(this.props) && (
-      <div className="CaseControlMessage CaseControlMessage__warning">
-        Before using <strong>Related Case/Control</strong>, please specify
-        either <strong>Cases</strong> or <strong>Controls</strong> in the
-        <strong> First </strong> step.
-      </div>
+    return (
+      !RelatedCaseControlGroup.isUsable(this.props) && (
+        <div className="CaseControlMessage CaseControlMessage__warning">
+          Before using <strong>Related Case/Control</strong>, please specify
+          either <strong>Cases</strong> or <strong>Controls</strong> in the
+          <strong> First </strong> step.
+        </div>
+      )
     );
   }
 
   renderOverlay() {
     return RelatedCaseControlGroup.isEnabled(this.props) ? null : (
-      <div className="CaseControlLayoutOverlay"/>
+      <div className="CaseControlLayoutOverlay" />
     );
   }
 
@@ -127,30 +139,39 @@ export default class RelatedCaseControlGroup extends React.Component {
     const modifiedWizardState = Object.assign({}, this.props.wizardState, {
       question: {
         ...question,
-        parameters: question.parameters.map(p => ({
+        parameters: question.parameters.map((p) => ({
           ...p,
-          isVisible: false
-        }))
-      }
+          isVisible: false,
+        })),
+      },
     });
 
     const keepRemoveParam = settings.getKeepRemoveParam();
     const filterParam = settings.getFilterParam();
 
     return (
-      <div className={'CaseControlGroupWrapper CaseControlGroupWrapper__' +
-          (RelatedCaseControlGroup.isEnabled(this.props) ? 'on' : 'off')}>
-        <this.props.DefaultComponent {...this.props} wizardState={modifiedWizardState}/>
+      <div
+        className={
+          'CaseControlGroupWrapper CaseControlGroupWrapper__' +
+          (RelatedCaseControlGroup.isEnabled(this.props) ? 'on' : 'off')
+        }
+      >
+        <this.props.DefaultComponent
+          {...this.props}
+          wizardState={modifiedWizardState}
+        />
         {this.renderWarning()}
         {this.renderToggle()}
         <div className="CaseControlContainer">
-          <div style={{padding: '1em 0'}}>
-            {this.renderParam(keepRemoveParam)} <strong>Participants</strong> based on your choice of <strong>Related Case/Control</strong> Participants below
+          <div style={{ padding: '1em 0' }}>
+            {this.renderParam(keepRemoveParam)} <strong>Participants</strong>{' '}
+            based on your choice of <strong>Related Case/Control</strong>{' '}
+            Participants below
           </div>
           {this.renderParam(filterParam)}
           {this.renderOverlay()}
         </div>
       </div>
-    )
+    );
   }
 }

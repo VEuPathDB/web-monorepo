@@ -27,9 +27,8 @@ import {
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-const availableUploadTypes = process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim().split(
-  /\s*,\s*/g
-);
+const availableUploadTypes =
+  process.env.REACT_APP_AVAILABLE_UPLOAD_TYPES?.trim().split(/\s*,\s*/g);
 
 const hasDirectUpload = makeDatasetUploadPageConfig(
   availableUploadTypes,

@@ -18,6 +18,8 @@ interface Props {
   bulkSearchName: string;
 }
 
+const R = ResultTableSummaryViewController.withOptions({ showCount: true });
+
 export function DownloadsTable(props: Props) {
   const { searchConfig, tableSearchName, bulkSearchName } = props;
   const { wdkService } = useNonNullableContext(WdkDependenciesContext);
@@ -78,11 +80,13 @@ export function DownloadsTable(props: Props) {
   }, [bulkSearchName, wdkService]);
 
   return (
-    <ResultTableSummaryViewController
-      tableActions={tableActions}
-      viewId="DownloadPage"
-      resultType={tableResultType}
-      showIdAttributeColumn={false}
-    />
+    <>
+      <R
+        tableActions={tableActions}
+        viewId="DownloadPage"
+        resultType={tableResultType}
+        showIdAttributeColumn={false}
+      />
+    </>
   );
 }
