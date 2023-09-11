@@ -7,6 +7,8 @@ export interface SelectListProps<T> extends CheckboxListProps<T> {
   /** A button's content if/when no values are currently selected */
   defaultButtonDisplayContent: ReactNode;
   isDisabled?: boolean;
+  /** Are contents loading? */
+  isLoading?: boolean;
 }
 
 export default function SelectList<T>({
@@ -18,6 +20,7 @@ export default function SelectList<T>({
   children,
   defaultButtonDisplayContent,
   isDisabled = false,
+  isLoading = false,
   ...props
 }: SelectListProps<T>) {
   const [selected, setSelected] = useState<SelectListProps<T>['value']>(value);
@@ -67,6 +70,7 @@ export default function SelectList<T>({
           margin: '0.5em',
         }}
       >
+        {isLoading && <div css={{ height: '20px' }}>Loading...</div>}
         <CheckboxList
           name={name}
           items={items}
