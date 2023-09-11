@@ -243,7 +243,7 @@ export function DifferentialAbundanceConfiguration(
       return bins;
     }, [
       dataClient,
-      configuration,
+      configuration.comparator?.variable,
       filters,
       selectedComparatorVariable,
       studyMetadata.id,
@@ -257,17 +257,17 @@ export function DifferentialAbundanceConfiguration(
   // Create the options for groupA and groupB. Organizing into the LabeledRange[] format
   // here in order to keep the later code clean.
   const groupValueOptions = continuousVariableBins.value
-    ? continuousVariableBins.value.map((bin) => {
+    ? continuousVariableBins.value.map((bin): LabeledRange => {
         return {
           min: bin.binStart,
           max: bin.binEnd,
           label: bin.binLabel,
-        } as LabeledRange;
+        };
       })
-    : selectedComparatorVariable?.variable.vocabulary?.map((value) => {
+    : selectedComparatorVariable?.variable.vocabulary?.map((value): LabeledRange => {
         return {
           label: value,
-        } as LabeledRange;
+        };
       });
 
   return (
