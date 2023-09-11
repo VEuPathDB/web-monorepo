@@ -368,8 +368,9 @@ const useHeaderMenuItems = (
       (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
     )
   );
-  const showInteractiveMaps = mapMenuItemsQuestion != null;
-  const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
+  // const showInteractiveMaps = mapMenuItemsQuestion != null;
+  // const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
+  const showInteractiveMaps = projectId === VectorBase && !!useEda;
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -577,24 +578,39 @@ const useHeaderMenuItems = (
             include: [EuPathDB, UniDB],
           },
         },
+        // {
+        //   key: 'maps-alpha',
+        //   display: (
+        //     <>
+        //       Interactive maps <img alt="BETA" src={betaImage} />
+        //     </>
+        //   ),
+        //   type: 'subMenu',
+        //   metadata: {
+        //     test: () => showInteractiveMaps,
+        //   },
+        //   items: mapMenuItems ?? [
+        //     {
+        //       key: 'maps-loading',
+        //       type: 'custom',
+        //       display: <Loading radius={4} />,
+        //     },
+        //   ],
+        // },
         {
-          key: 'maps-alpha',
+          type: 'reactRoute',
           display: (
             <>
-              Interactive maps <img alt="BETA" src={betaImage} />
+              MapVEu - Multi-study Interactive Map{' '}
+              <img alt="BETA" src={betaImage} />
             </>
           ),
-          type: 'subMenu',
+          key: 'map--mega-study',
+          url: '/workspace/maps/DS_480c976ef9/new',
+          target: '_blank',
           metadata: {
             test: () => showInteractiveMaps,
           },
-          items: mapMenuItems ?? [
-            {
-              key: 'maps-loading',
-              type: 'custom',
-              display: <Loading radius={4} />,
-            },
-          ],
         },
         {
           key: 'pubcrawler',
