@@ -191,7 +191,7 @@ Simple.args = {
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: dataSetVolcanoManyPoints,
-  markerBodyOpacity: 0.5,
+  markerBodyOpacity: 0.8,
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
   independentAxisRange: { min: -9, max: 9 },
