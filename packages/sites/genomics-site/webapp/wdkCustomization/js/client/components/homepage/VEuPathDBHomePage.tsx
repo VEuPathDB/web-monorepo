@@ -601,11 +601,13 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           display: (
             <>
-              <img alt="BETA" src={betaImage} /> Multi-study Interactive Map
+              MapVEu - Multi-study Interactive Map{' '}
+              <img alt="BETA" src={betaImage} />
             </>
           ),
           key: 'map--mega-study',
           url: '/workspace/maps/DS_480c976ef9/new',
+          target: '_blank',
           metadata: {
             test: () => showInteractiveMaps,
           },

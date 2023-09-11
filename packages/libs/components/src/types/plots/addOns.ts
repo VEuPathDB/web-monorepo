@@ -334,9 +334,9 @@ export type SignificanceColors = {
   low: string;
 };
 export const significanceColors: SignificanceColors = {
-  inconclusive: '#B5B8B4',
-  high: '#AC3B4E',
-  low: '#0E8FAB',
+  inconclusive: '#8f8f8f',
+  high: '#a8484b',
+  low: '#007F5C',
 };
 
 /** truncated axis flags */
