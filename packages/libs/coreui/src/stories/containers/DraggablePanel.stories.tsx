@@ -257,3 +257,80 @@ function StackOrderingKeeper({
     </div>
   );
 }
+
+// single panel case
+export const SinglePanel: Story<DraggablePanelStoryProps> = (args) => {
+  const panelTitle = 'Panel 1';
+
+  const [panelOpen, setPanelOpen] = useState(true);
+
+  const draggablePanelWidth = 500;
+  const draggablePanelHeight = 200;
+
+  function handleOnPanelDismiss() {
+    setPanelOpen(!panelOpen);
+  }
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        height: '97vh',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          listStyle: 'none',
+        }}
+      >
+        <button
+          onClick={() => {
+            setPanelOpen(!panelOpen);
+          }}
+          style={{ backgroundColor: panelOpen ? 'tomato' : 'lightgreen' }}
+        >
+          <span
+            style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              padding: '0.25rem 0.5rem',
+            }}
+          >
+            {panelOpen ? 'Close' : 'Open'} {panelTitle}
+          </span>
+        </button>
+      </div>
+      <DraggablePanel
+        defaultPosition={{
+          x: window.innerWidth / 2 - draggablePanelWidth / 2,
+          y: 100,
+        }}
+        confineToParentContainer
+        key={panelTitle}
+        isOpen={panelOpen}
+        onPanelDismiss={handleOnPanelDismiss}
+        panelTitle={panelTitle}
+        showPanelTitle={true}
+      >
+        {/* This is just nonsense to fill the panel with content */}
+        <div
+          style={{
+            padding: '1rem',
+            fontFamily: 'sans-serif',
+            width: draggablePanelWidth + 'px',
+            height: draggablePanelHeight + 'px',
+            minHeight: '175px',
+            minWidth: '285px',
+          }}
+        >
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Saepe labore
+          ut quia harum expedita distinctio eius deserunt, officiis inventore
+          velit. Voluptatibus unde eum animi alias, illum eligendi ullam facilis
+          consectetur?
+        </div>
+      </DraggablePanel>
+    </div>
+  );
+};

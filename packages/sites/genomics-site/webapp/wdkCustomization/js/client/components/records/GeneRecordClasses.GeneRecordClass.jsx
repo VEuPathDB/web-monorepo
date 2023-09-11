@@ -296,6 +296,7 @@ export function RecordTable(props) {
         <props.DefaultComponent {...props} childRow={ExpressionChildRow} />
       );
 
+    case 'LOPITtryp':
     case 'GOTerms':
       return <SortKeyTable {...props} />;
 
