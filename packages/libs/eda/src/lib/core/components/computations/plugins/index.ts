@@ -12,7 +12,7 @@ export const plugins: Record<string, ComputationPlugin> = {
   abundance,
   alphadiv,
   betadiv,
-  differentialabundance,
+  // differentialabundance,
   countsandproportions,
   distributions,
   pass,
