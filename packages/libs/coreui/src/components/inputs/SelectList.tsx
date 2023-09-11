@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import PopoverButton from '../buttons/PopoverButton/PopoverButton';
 import CheckboxList, { CheckboxListProps } from './checkboxes/CheckboxList';
-import Spinner from '@veupathdb/components/lib/components/Spinner';
 
 export interface SelectListProps<T> extends CheckboxListProps<T> {
   children?: ReactNode;
@@ -71,11 +70,7 @@ export default function SelectList<T>({
           margin: '0.5em',
         }}
       >
-        {isLoading && (
-          <div css={{ height: '60px' }}>
-            <Spinner size={30} />
-          </div>
-        )}
+        {isLoading && <div css={{ height: '20px' }}>Loading...</div>}
         <CheckboxList
           name={name}
           items={items}

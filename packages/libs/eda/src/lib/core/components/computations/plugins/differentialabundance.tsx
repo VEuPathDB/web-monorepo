@@ -243,7 +243,7 @@ export function DifferentialAbundanceConfiguration(
       return bins;
     }, [
       dataClient,
-      configuration.comparator?.variable,
+      configuration?.comparator?.variable,
       filters,
       selectedComparatorVariable,
       studyMetadata.id,
@@ -264,11 +264,13 @@ export function DifferentialAbundanceConfiguration(
           label: bin.binLabel,
         };
       })
-    : selectedComparatorVariable?.variable.vocabulary?.map((value): LabeledRange => {
-        return {
-          label: value,
-        };
-      });
+    : selectedComparatorVariable?.variable.vocabulary?.map(
+        (value): LabeledRange => {
+          return {
+            label: value,
+          };
+        }
+      );
 
   return (
     <ComputationStepContainer
