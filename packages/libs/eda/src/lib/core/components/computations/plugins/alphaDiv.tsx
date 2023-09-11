@@ -135,7 +135,9 @@ export function AlphaDivConfiguration(props: ComputationConfigProps) {
   const collectionVarItems = useMemo(() => {
     return collections
       .filter((collectionVar) => {
-        return collectionVar.normalizationMethod !== 'NULL';
+        return collectionVar.normalizationMethod
+          ? collectionVar.normalizationMethod !== 'NULL'
+          : true;
       })
       .map((collectionVar) => ({
         value: {

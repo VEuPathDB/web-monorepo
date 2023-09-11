@@ -193,11 +193,11 @@ export function DifferentialAbundanceConfiguration(
   const collectionVarItems = useMemo(() => {
     return collections
       .filter((collectionVar) => {
-        return (
-          !collectionVar.isProportion &&
-          collectionVar.normalizationMethod === 'NULL' &&
-          !collectionVar.displayName?.includes('pathway')
-        );
+        return collectionVar.normalizationMethod
+          ? !collectionVar.isProportion &&
+              collectionVar.normalizationMethod === 'NULL' &&
+              !collectionVar.displayName?.includes('pathway')
+          : true;
       })
       .map((collectionVar) => ({
         value: {
