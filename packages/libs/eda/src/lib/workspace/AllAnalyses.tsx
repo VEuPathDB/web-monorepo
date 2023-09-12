@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { orderBy } from 'lodash';
 import Path from 'path';
-import { Link, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 
 import {
   Button,
@@ -35,14 +35,11 @@ import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/Ov
 
 import {
   AnalysisClient,
-  AnalysisState,
   AnalysisSummary,
-  StudyRecord,
   useAnalysisList,
   usePinnedAnalyses,
 } from '../core';
 import SubsettingClient from '../core/api/SubsettingClient';
-import { getAnalysisId } from '../core/utils/analysis';
 import { useDebounce } from '../core/hooks/debouncing';
 import { useWdkStudyRecords } from '../core/hooks/study';
 import {
@@ -53,7 +50,6 @@ import {
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
 import { Checkbox, Toggle, colors } from '@veupathdb/coreui';
-import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 
 interface AnalysisAndDataset {
   analysis: AnalysisSummary & {
@@ -72,15 +68,14 @@ interface Props {
   exampleAnalysesAuthor?: number;
   /**
    * When provided, the table is filtered to the study,
-   * and the study column is not displayed. This, along with analysisState, is
-   * necessary for a new analysis button to be shown
+   * and the study column is not displayed.
    */
-  studyRecord?: StudyRecord;
+  studyId?: string | null;
   /**
-   * If there is an active analysis, indicate the active analysis in the table
-   * and show a new analysis button if studyRecord is also provided
+   * If the analysis with this ID is displayed,
+   * indicate it is "active"
    */
-  analysisState?: AnalysisState;
+  activeAnalysisId?: string;
   /**
    * Determines if the search term is stored as a query
    * param in the url
@@ -114,31 +109,18 @@ const WDK_STUDY_RECORD_ATTRIBUTES = ['study_access'];
 export function AllAnalyses(props: Props) {
   const {
     analysisClient,
-    subsettingClient,
     exampleAnalysesAuthor,
     showLoginForm,
-    studyRecord,
+    studyId,
     synchronizeWithUrl,
     updateDocumentTitle,
-    analysisState,
+    activeAnalysisId,
+    subsettingClient,
   } = props;
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
-  const analysis = analysisState?.analysis;
-  const activeAnalysisId = getAnalysisId(analysis);
-  const studyId = studyRecord ? getStudyId(studyRecord) : null;
-  const { url } = useRouteMatch();
-  const redirectURL = studyId
-    ? url.endsWith(studyId)
-      ? `/workspace/${url}/new`
-      : Path.resolve(url, '../new')
-    : null;
-  const redirectToNewAnalysis = useCallback(
-    () => (redirectURL ? history.push(redirectURL) : null),
-    [history, redirectURL]
-  );
 
   const searchTextQueryParam = useMemo(() => {
     if (!synchronizeWithUrl) return '';
@@ -668,71 +650,67 @@ export function AllAnalyses(props: Props) {
   useSetDocumentTitle(updateDocumentTitle ? 'My Analyses' : document.title);
 
   return (
-    <>
-      <div className={classes.root}>
-        <ShareFromAnalysesList
-          analysis={
-            analysesAndDatasets?.find(
-              (potentialMatch) =>
-                potentialMatch.analysis.analysisId === selectedAnalysisId
-            )?.analysis
-          }
-          updateAnalysis={updateAnalysis}
-          visible={sharingModalVisible}
-          toggleVisible={setSharingModalVisible}
-          showLoginForm={showLoginForm}
-        />
+    <div className={classes.root}>
+      <ShareFromAnalysesList
+        analysis={
+          analysesAndDatasets?.find(
+            (potentialMatch) =>
+              potentialMatch.analysis.analysisId === selectedAnalysisId
+          )?.analysis
+        }
+        updateAnalysis={updateAnalysis}
+        visible={sharingModalVisible}
+        toggleVisible={setSharingModalVisible}
+        showLoginForm={showLoginForm}
+      />
 
-        <h1>My Analyses</h1>
-        {(loading || datasets == null || analyses == null || user == null) && (
-          <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
-        )}
-        {error && <ContentError>{error}</ContentError>}
-        {analyses && datasets && user ? (
-          <Mesa.Mesa state={tableState}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1ex',
+      <h1>My Analyses</h1>
+      {(loading || datasets == null || analyses == null || user == null) && (
+        <Loading style={{ position: 'absolute', left: '50%', top: '1em' }} />
+      )}
+      {error && <ContentError>{error}</ContentError>}
+      {analyses && datasets && user ? (
+        <Mesa.Mesa state={tableState}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1ex',
+            }}
+          >
+            <TextField
+              variant="outlined"
+              size="small"
+              label="Search analyses"
+              inputProps={{ size: 50 }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Clear search text"
+                      onClick={() => setSearchText('')}
+                      style={{
+                        visibility:
+                          debouncedSearchText.length > 0 ? 'visible' : 'hidden',
+                      }}
+                      edge="end"
+                      size="small"
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <TextField
-                variant="outlined"
-                size="small"
-                label="Search analyses"
-                inputProps={{ size: 50 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="Clear search text"
-                        onClick={() => setSearchText('')}
-                        style={{
-                          visibility:
-                            debouncedSearchText.length > 0
-                              ? 'visible'
-                              : 'hidden',
-                        }}
-                        edge="end"
-                        size="small"
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                value={searchText}
-                onChange={onFilterFieldChange}
-              />
-              <span>
-                Showing {filteredAnalysesAndDatasets?.length} of{' '}
-                {analyses.length} analyses
-              </span>
-            </div>
-          </Mesa.Mesa>
-        ) : null}
-      </div>
-    </>
+              value={searchText}
+              onChange={onFilterFieldChange}
+            />
+            <span>
+              Showing {filteredAnalysesAndDatasets?.length} of {analyses.length}{' '}
+              analyses
+            </span>
+          </div>
+        </Mesa.Mesa>
+      ) : null}
+    </div>
   );
 }
