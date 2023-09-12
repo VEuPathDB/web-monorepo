@@ -90,6 +90,7 @@ import {
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
+import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
 import {
   MapTypeConfigurationMenu,
@@ -1118,7 +1119,7 @@ function MapAnalysisImpl(props: ImplProps) {
               )}
               <AllAnalyses
                 analysisClient={analysisClient}
-                analysisId={
+                activeAnalysisId={
                   isSavedAnalysis(analysisState.analysis)
                     ? analysisState.analysis.analysisId
                     : undefined

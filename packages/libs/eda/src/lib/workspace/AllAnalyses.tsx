@@ -643,7 +643,6 @@ export function AllAnalyses(props: Props) {
       exampleAnalysesAuthor,
       user,
       studyId,
-      activeAnalysisId,
     ]
   );
 
