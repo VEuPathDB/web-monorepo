@@ -200,7 +200,7 @@ export function BubbleMarkerConfigurationMenu({
                   ...constraint[key],
                   allowedTypes: constraint[key]?.allowedTypes?.filter(
                     (t) => t !== 'date'
-                  ),
+                  ) ?? ['string', 'number', 'integer'],
                 } as DataElementConstraint, // assertion seems required due to spread operator
               ])
             );

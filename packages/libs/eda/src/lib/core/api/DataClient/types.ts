@@ -902,6 +902,17 @@ export const BinRange = type({
   binLabel: string,
 });
 
+export type LabeledRange = TypeOf<typeof LabeledRange>;
+export const LabeledRange = intersection([
+  type({
+    label: string,
+  }),
+  partial({
+    max: string,
+    min: string,
+  }),
+]);
+
 export type ContinousVariableMetadataResponse = TypeOf<
   typeof ContinousVariableMetadataResponse
 >;

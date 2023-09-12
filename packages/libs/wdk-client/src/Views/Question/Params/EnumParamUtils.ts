@@ -37,9 +37,14 @@ export function isMultiPick(parameter: Parameter): boolean {
 }
 
 export function isValidEnumJson(value: string): boolean {
-  const validationResult = enumJsonDecoder(value);
+  try {
+    const parsedValue = JSON.parse(value);
+    const validationResult = enumJsonDecoder(parsedValue);
 
-  return validationResult.status === 'ok';
+    return validationResult.status === 'ok';
+  } catch {
+    return false;
+  }
 }
 
 const enumJsonDecoder = arrayOf(string);

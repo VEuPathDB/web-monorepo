@@ -155,7 +155,7 @@ async function getMostFrequentValues({
     : [...sortedValues.slice(0, numValues), UNSELECTED_TOKEN];
 }
 
-type GetBinRangesProps = {
+export type GetBinRangesProps = {
   studyId: string;
   variableId: string;
   entityId: string;
@@ -165,7 +165,7 @@ type GetBinRangesProps = {
 };
 
 // get the equal spaced bin definitions (for now at least)
-async function getBinRanges({
+export async function getBinRanges({
   studyId,
   variableId,
   entityId,
