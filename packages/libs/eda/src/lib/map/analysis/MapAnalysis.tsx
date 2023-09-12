@@ -31,8 +31,10 @@ import { DocumentationContainer } from '../../core/components/docs/Documentation
 import {
   CheckIcon,
   Download,
+  Plus,
   FilledButton,
   Filter as FilterIcon,
+  FloatingButton,
   H5,
   Table,
 } from '@veupathdb/coreui';
@@ -69,9 +71,10 @@ import { useLoginCallbacks } from '../../workspace/sharing/hooks';
 import NameAnalysis from '../../workspace/sharing/NameAnalysis';
 import NotesTab from '../../workspace/NotesTab';
 import ConfirmShareAnalysis from '../../workspace/sharing/ConfirmShareAnalysis';
-import { useHistory } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 
 import { uniq } from 'lodash';
+import Path from 'path';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -87,7 +90,6 @@ import {
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
-import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
 import {
   MapTypeConfigurationMenu,
@@ -115,6 +117,7 @@ import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/c
 import _ from 'lodash';
 
 import EZTimeFilter from './EZTimeFilter';
+import AnalysisNameDialog from '../../workspace/AnalysisNameDialog';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -717,6 +720,23 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const filteredEntities = uniq(filters?.map((f) => f.entityId));
 
+  const [isAnalysisNameDialogOpen, setIsAnalysisNameDialogOpen] =
+    useState(false);
+  const { url: urlRouteMatch } = useRouteMatch();
+  const redirectURL = studyId
+    ? urlRouteMatch.endsWith(studyId)
+      ? `/workspace/${urlRouteMatch}/new`
+      : Path.resolve(urlRouteMatch, '../new')
+    : null;
+  const redirectToNewAnalysis = useCallback(() => {
+    if (redirectURL) {
+      history.push(redirectURL);
+      // push() alone doesn't seem to work in this context; the URL changes,
+      // but the page doesn't load, so we force a refresh
+      history.go(0);
+    }
+  }, [history, redirectURL]);
+
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
     [
       {
@@ -1071,6 +1091,31 @@ function MapAnalysisImpl(props: ImplProps) {
                 maxWidth: '1500px',
               }}
             >
+              {analysisId && redirectToNewAnalysis ? (
+                <div style={{ float: 'right' }}>
+                  <FloatingButton
+                    text="Create new analysis"
+                    icon={Plus}
+                    onPress={
+                      analysisState.analysis?.displayName ===
+                      DEFAULT_ANALYSIS_NAME
+                        ? () => setIsAnalysisNameDialogOpen(true)
+                        : redirectToNewAnalysis
+                    }
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
+              {analysisState.analysis && (
+                <AnalysisNameDialog
+                  isOpen={isAnalysisNameDialogOpen}
+                  setIsOpen={setIsAnalysisNameDialogOpen}
+                  initialAnalysisName={analysisState.analysis.displayName}
+                  setAnalysisName={analysisState.setName}
+                  redirectToNewAnalysis={redirectToNewAnalysis}
+                />
+              )}
               <AllAnalyses
                 analysisClient={analysisClient}
                 analysisState={

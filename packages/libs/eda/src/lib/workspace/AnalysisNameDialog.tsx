@@ -22,7 +22,7 @@ interface AnalysisNameDialogProps {
   redirectToNewAnalysis: () => void;
 }
 
-export function AnalysisNameDialog({
+export default function AnalysisNameDialog({
   isOpen,
   setIsOpen,
   initialAnalysisName,

@@ -37,7 +37,6 @@ import {
   AnalysisClient,
   AnalysisState,
   AnalysisSummary,
-  DEFAULT_ANALYSIS_NAME,
   StudyRecord,
   useAnalysisList,
   usePinnedAnalyses,
@@ -51,7 +50,6 @@ import {
   makeCurrentProvenanceString,
   makeOnImportProvenanceString,
 } from '../core/utils/analysis';
-import { AnalysisNameDialog } from './AnalysisNameDialog';
 import { convertISOToDisplayFormat } from '../core/utils/date-conversion';
 import ShareFromAnalysesList from './sharing/ShareFromAnalysesList';
 import { Checkbox, Toggle, colors } from '@veupathdb/coreui';
@@ -128,8 +126,6 @@ export function AllAnalyses(props: Props) {
   const history = useHistory();
   const location = useLocation();
   const classes = useStyles();
-  const [isAnalysisNameDialogOpen, setIsAnalysisNameDialogOpen] =
-    useState(false);
   const analysis = analysisState?.analysis;
   const activeAnalysisId = getAnalysisId(analysis);
   const studyId = studyRecord ? getStudyId(studyRecord) : null;
@@ -345,24 +341,6 @@ export function AllAnalyses(props: Props) {
           selectedAnalyses.has(analysis.analysisId),
       },
       actions: [
-        {
-          element:
-            activeAnalysisId && redirectToNewAnalysis ? (
-              <Button
-                type="button"
-                startIcon={<Icon color="action" className="fa fa-plus" />}
-                onClick={
-                  analysis && analysis.displayName === DEFAULT_ANALYSIS_NAME
-                    ? () => setIsAnalysisNameDialogOpen(true)
-                    : redirectToNewAnalysis
-                }
-              >
-                Create new analysis
-              </Button>
-            ) : (
-              <></>
-            ),
-        },
         {
           element: (
             <Button
@@ -684,8 +662,6 @@ export function AllAnalyses(props: Props) {
       user,
       studyId,
       activeAnalysisId,
-      analysis,
-      redirectToNewAnalysis,
     ]
   );
 
@@ -757,15 +733,6 @@ export function AllAnalyses(props: Props) {
           </Mesa.Mesa>
         ) : null}
       </div>
-      {analysis && (
-        <AnalysisNameDialog
-          isOpen={isAnalysisNameDialogOpen}
-          setIsOpen={setIsAnalysisNameDialogOpen}
-          initialAnalysisName={analysis.displayName}
-          setAnalysisName={analysisState.setName}
-          redirectToNewAnalysis={redirectToNewAnalysis}
-        />
-      )}
     </>
   );
 }
