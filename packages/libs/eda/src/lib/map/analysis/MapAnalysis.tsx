@@ -1118,13 +1118,13 @@ function MapAnalysisImpl(props: ImplProps) {
               )}
               <AllAnalyses
                 analysisClient={analysisClient}
-                analysisState={
+                analysisId={
                   isSavedAnalysis(analysisState.analysis)
-                    ? analysisState
+                    ? analysisState.analysis.analysisId
                     : undefined
                 }
                 subsettingClient={subsettingClient}
-                studyRecord={studyRecord}
+                studyId={getStudyId(studyRecord)}
                 showLoginForm={showLoginForm}
               />
             </div>
