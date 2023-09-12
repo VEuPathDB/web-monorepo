@@ -57,7 +57,11 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
-import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import {
+  ChartMarkerPropsWithCounts,
+  DonutMarkerPropsWithCounts,
+  useStandaloneMapMarkers,
+} from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
@@ -542,29 +546,29 @@ function MapAnalysisImpl(props: ImplProps) {
       !Array.isArray(previewMarkerData[0].data)
     )
       return;
-    const initialDataObject = previewMarkerData[0].data.map((data) => ({
+    const typedData =
+      markerType === 'pie'
+        ? (previewMarkerData as DonutMarkerPropsWithCounts[])
+        : (previewMarkerData as ChartMarkerPropsWithCounts[]);
+    const initialDataObject = typedData[0].data.map((data) => ({
       label: data.label,
       value: 0,
       count: 0,
       ...(data.color ? { color: data.color } : {}),
     }));
-    const typedData =
-      markerType === 'pie'
-        ? ([...previewMarkerData] as DonutMarkerProps[])
-        : ([...previewMarkerData] as ChartMarkerProps[]);
     /**
-     * This version of data can be used in markers that either don't have proportion mode
-     * or proportion mode is false. In proportion mode, the values are pre-calculated proportion
-     * values, so adding them together is inaccurate. By reducing the counts data alongside the
-     * proportion value, we can later use the aggregated counts to recalculate a final proportion
-     * (see below)
+     * In the chart marker's proportion mode, the values are pre-calculated proportion values so summing them for totalCount is inaccurate.
+     * Instead, we'll reduce the counts and use them later when determining totalCount and when determining the data for
+     * ChartMarkerStandalone.
+     *
+     * NOTE: the donut preview doesn't care about the counts, but it's receiving them anyway.
      */
-    const finalNonProportionModeData = typedData.reduce(
+    const dataWithCounts = typedData.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
           value: data.value + prevData[index].value,
-          count: (data.count ?? 0) + prevData[index].count,
+          count: data.count + prevData[index].count,
           ...('color' in prevData[index]
             ? { color: prevData[index].color }
             : 'color' in data
@@ -573,14 +577,11 @@ function MapAnalysisImpl(props: ImplProps) {
         })),
       initialDataObject
     );
-    const totalCount = finalNonProportionModeData.reduce(
-      (p, c) => p + c.count,
-      0
-    );
+    const totalCount = dataWithCounts.reduce((p, c) => p + c.count, 0);
     if (markerType === 'pie') {
       return (
         <DonutMarkerStandalone
-          data={finalNonProportionModeData}
+          data={dataWithCounts}
           markerLabel={kFormatter(totalCount)}
           {...sharedStandaloneMarkerProperties}
         />
@@ -591,26 +592,22 @@ function MapAnalysisImpl(props: ImplProps) {
         'dependentAxisLogScale' in activeMarkerConfiguration
           ? activeMarkerConfiguration.dependentAxisLogScale
           : false;
-      const isPlotModeProportion =
-        activeMarkerConfiguration &&
-        'selectedPlotMode' in activeMarkerConfiguration &&
-        activeMarkerConfiguration.selectedPlotMode === 'proportion';
-      const finalChartMarkerData = isPlotModeProportion
-        ? // If proportion mode is true, we need to recalculate the proportion value using
-          // the aggregated counts property
-          finalNonProportionModeData.map((d) => ({
-            ...d,
-            value: d.count / totalCount,
-          }))
-        : finalNonProportionModeData;
+      /**
+       * Let's recalculate the value property for the marker preview to be a now-correct proportion value.
+       * Since no axes/numbers are displayed, we don't need to condition this based on plot mode.
+       */
+      const chartMarkerData = dataWithCounts.map((d) => ({
+        ...d,
+        value: d.count / totalCount,
+      }));
       return (
         <ChartMarkerStandalone
-          data={finalChartMarkerData}
+          data={chartMarkerData}
           markerLabel={mFormatter(totalCount)}
           dependentAxisLogScale={dependentAxisLogScale}
           // pass in an axis range to mimic map markers, especially in log scale
           dependentAxisRange={getChartMarkerDependentAxisRange(
-            finalChartMarkerData,
+            chartMarkerData,
             dependentAxisLogScale
           )}
           {...sharedStandaloneMarkerProperties}

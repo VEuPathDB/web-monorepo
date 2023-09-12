@@ -32,7 +32,10 @@ import { VariableDescriptor } from '../../../core/types/variable';
 import { useDeepValue } from '../../../core/hooks/immutability';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../..';
 import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
-import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
+import {
+  ChartMarkerProps,
+  BaseMarkerData,
+} from '@veupathdb/components/lib/map/ChartMarker';
 import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
 import { validateProportionValues } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 import _ from 'lodash';
@@ -80,12 +83,28 @@ export interface StandaloneMapMarkersProps {
   dependentAxisLogScale?: boolean;
 }
 
+/** We use the count data in the marker previews for continuous vars */
+interface DonutMarkerDataWithCounts extends BaseMarkerData {
+  count: number;
+}
+interface ChartMarkerDataWithCounts extends BaseMarkerData {
+  count: number;
+}
+
+export type DonutMarkerPropsWithCounts = Omit<DonutMarkerProps, 'data'> & {
+  data: DonutMarkerDataWithCounts[];
+};
+
+export type ChartMarkerPropsWithCounts = Omit<ChartMarkerProps, 'data'> & {
+  data: ChartMarkerDataWithCounts[];
+};
+
 // what this hook returns
 interface MapMarkers {
   /** the markers */
   markersData:
-    | DonutMarkerProps[]
-    | ChartMarkerProps[]
+    | DonutMarkerPropsWithCounts[]
+    | ChartMarkerPropsWithCounts[]
     | BubbleMarkerProps[]
     | undefined;
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
