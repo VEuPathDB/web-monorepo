@@ -30,7 +30,7 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
-import { Polygon } from '@visx/shape';
+import { Circle, Polygon } from '@visx/shape';
 import { useContext } from 'react';
 import { PatternLines } from '@visx/visx';
 import Spinner from '../components/Spinner';
@@ -132,7 +132,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     log2FoldChangeThreshold,
     markerBodyOpacity,
     containerClass = 'web-components-plot',
-    containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
+    containerStyles = { width: '50', height: DEFAULT_CONTAINER_HEIGHT },
     comparisonLabels,
     truncationBarFill,
     showSpinner = false,
@@ -201,7 +201,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const infinityYAccessors = {
     xAccessor: dataAccessors.xAccessor,
     yAccessor: (d: VolcanoPlotDataPoint) =>
-      yAxisMax + showYMaxTruncationBar * yTruncationBarHeight, // draw at the tippy top of the plot
+      yAxisMax + (0 + showYMaxTruncationBar) * yTruncationBarHeight, // draw at the tippy top of the plot
   };
 
   // For all other situations where we need to access point values. For example
@@ -223,7 +223,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     >
       <div
         ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work with domToImage
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '80%', height: '100%' }}
       >
         {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
@@ -253,6 +253,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           <Grid numTicks={6} lineStyle={gridStyles} />
           <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
           <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
+          {/* <Axis orientation="top" {...axisStyles} hideTicks={true} tickComponent={() => null}/> */}
+          {/* <Axis orientation="right" {...axisStyles} hideTicks={true} tickComponent={() => null}/> */}
 
           {/* X axis annotations */}
           {comparisonLabels &&
@@ -327,6 +329,29 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               )}
             </>
           )}
+
+          {/* infinity y data annotation line */}
+          <Annotation
+            datum={{
+              x: xAxisMax,
+              y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
+            }}
+            {...xyAccessors}
+          >
+            <AnnotationLineSubject
+              {...thresholdLineStyles}
+              orientation="horizontal"
+            />
+            <AnnotationLabel
+              title={'Values above this line are capped'}
+              titleFontWeight={200}
+              titleFontSize={12}
+              horizontalAnchor="start"
+              verticalAnchor="middle"
+              showAnchorLine={false}
+              showBackground={false}
+            />
+          </Annotation>
 
           {/* The data itself */}
           {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
