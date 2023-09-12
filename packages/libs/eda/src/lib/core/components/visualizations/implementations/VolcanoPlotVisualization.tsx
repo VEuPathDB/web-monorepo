@@ -230,6 +230,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       // Standard volcano plots have -log10(raw p value) as the y axis
       const yAxisMin = -Math.log10(dataYMax);
       const yAxisMax = -Math.log10(dataYMin);
+
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
         min: Math.floor(yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
@@ -382,8 +383,14 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     computationConfiguration.comparator?.groupA &&
     computationConfiguration.comparator?.groupB
       ? [
-          'Up in ' + computationConfiguration.comparator.groupA.join(', '),
-          'Up in ' + computationConfiguration.comparator.groupB.join(', '),
+          'Up in ' +
+            computationConfiguration.comparator.groupA
+              .map((entry) => entry.label)
+              .join(','),
+          'Up in ' +
+            computationConfiguration.comparator.groupB
+              .map((entry) => entry.label)
+              .join(','),
         ]
       : [];
 
@@ -562,17 +569,17 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           markerColor: significanceColors['inconclusive'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupB?.join(
-            ', '
-          )} (${countsData[significanceColors['high']]})`,
+          label: `Up regulated in ${computationConfiguration.comparator.groupB
+            ?.map((entry) => entry.label)
+            .join(',')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['high'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupA?.join(
-            ', '
-          )} (${countsData[significanceColors['low']]})`,
+          label: `Up regulated in ${computationConfiguration.comparator.groupA
+            ?.map((entry) => entry.label)
+            .join(',')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['low'],
