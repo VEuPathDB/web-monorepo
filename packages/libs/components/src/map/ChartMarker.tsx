@@ -15,18 +15,19 @@ import {
   MarkerScaleDefault,
 } from '../types/plots';
 
+export type BaseMarkerData = {
+  value: number;
+  label: string;
+  color?: string;
+};
+
 export interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon,
     DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
-  data: {
-    value: number;
-    count?: number;
-    label: string;
-    color?: string;
-  }[];
+  data: BaseMarkerData[];
   isAtomic?: boolean; // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
