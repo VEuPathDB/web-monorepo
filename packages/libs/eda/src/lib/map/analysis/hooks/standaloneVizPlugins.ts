@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import * as t from 'io-ts';
 import { ComputationPlugin } from '../../../core/components/computations/Types';
 import { ZeroConfigWithButton } from '../../../core/components/computations/ZeroConfiguration';
@@ -33,12 +33,14 @@ import _ from 'lodash';
 
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
+  overlayHelp?: ReactNode;
 }
 
 type StandaloneVizOptions = LayoutOptions & OverlayOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
+  overlayHelp = 'The overlay variable can be selected via the top-right panel.',
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
@@ -67,8 +69,7 @@ export function useStandaloneVizPlugins({
             return overlayValues;
           }
         },
-        getOverlayVariableHelp: () =>
-          'The overlay variable can be selected via the top-right panel.',
+        getOverlayVariableHelp: () => overlayHelp,
       });
     }
 

@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { OverlayConfig } from '../../../api/DataClient';
 import { Filter } from '../../../types/filter';
 import { VariableDescriptor } from '../../../types/variable';
@@ -11,7 +12,7 @@ export interface OverlayOptions {
   getOverlayVariable?: (
     computeConfig: unknown
   ) => VariableDescriptor | undefined;
-  getOverlayVariableHelp?: () => string;
+  getOverlayVariableHelp?: () => ReactNode;
   getOverlayType?: () => OverlayConfig['overlayType'] | undefined;
   getOverlayVocabulary?: () => string[] | undefined;
   getCheckedLegendItems?: (computeConfig: unknown) => string[] | undefined;
