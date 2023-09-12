@@ -48,6 +48,8 @@ export interface RawDataMinMaxValues {
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
   data: VolcanoPlotData | undefined;
+  /** Data points with an infinity y value */
+  infinityYData?: VolcanoPlotData | undefined;
   /**
    * Used to set the fold change thresholds. Will
    * set two thresholds at +/- this number. Affects point colors
@@ -123,6 +125,7 @@ function TruncationRectangle(props: TruncationRectangleProps) {
 function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     data = EmptyVolcanoPlotData,
+    infinityYData = EmptyVolcanoPlotData,
     independentAxisRange,
     dependentAxisRange,
     significanceThreshold,
@@ -160,27 +163,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const yAxisMin = dependentAxisRange?.min ?? 0;
   const yAxisMax = dependentAxisRange?.max ?? 0;
 
-  /**
-   * Accessors - tell visx which value of the data point we should use and where.
-   */
-
-  // For the actual volcano plot data
-  const dataAccessors = {
-    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
-    yAccessor: (d: VolcanoPlotDataPoint) => -Math.log10(Number(d?.pValue)),
-  };
-
-  // For all other situations where we need to access point values. For example
-  // threshold lines and annotations.
-  const xyAccessors = {
-    xAccessor: (d: VisxPoint) => {
-      return d?.x;
-    },
-    yAccessor: (d: VisxPoint) => {
-      return d?.y;
-    },
-  };
-
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear. The folowing showTruncationBar variables will
@@ -204,6 +186,34 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const showSignificanceThresholdLine =
     -Math.log10(Number(significanceThreshold)) > yAxisMin &&
     -Math.log10(Number(significanceThreshold)) < yAxisMax;
+
+  /**
+   * Accessors - tell visx which value of the data point we should use and where.
+   */
+
+  // For the actual volcano plot data
+  const dataAccessors = {
+    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
+    yAccessor: (d: VolcanoPlotDataPoint) => -Math.log10(Number(d?.pValue)),
+  };
+
+  // For data points that would otherwise be plotted at infinity
+  const infinityYAccessors = {
+    xAccessor: dataAccessors.xAccessor,
+    yAccessor: (d: VolcanoPlotDataPoint) =>
+      yAxisMax + showYMaxTruncationBar * yTruncationBarHeight, // draw at the tippy top of the plot
+  };
+
+  // For all other situations where we need to access point values. For example
+  // threshold lines and annotations.
+  const xyAccessors = {
+    xAccessor: (d: VisxPoint) => {
+      return d?.x;
+    },
+    yAccessor: (d: VisxPoint) => {
+      return d?.y;
+    },
+  };
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
@@ -327,6 +337,13 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               dataKey={'data'} // unique key
               data={data}
               {...dataAccessors}
+              colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
+              findNearestDatumOverride={findNearestDatumXY}
+            />
+            <GlyphSeries
+              dataKey={'infinityYData'} // unique key
+              data={infinityYData}
+              {...infinityYAccessors}
               colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
               findNearestDatumOverride={findNearestDatumXY}
             />
