@@ -207,9 +207,9 @@ export function BarPlotMarkerConfigurationMenu({
         />
       </div>
       <div style={{ margin: '5px 0 0 0' }}>
-        <span style={{ fontWeight: 'bold' }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '0.5em' }}>
           Summary marker (all filtered data)
-        </span>
+        </div>
         {overlayConfiguration?.overlayType === 'categorical' ? (
           <>
             <CategoricalMarkerPreview
