@@ -660,7 +660,14 @@ function MapAnalysisImpl(props: ImplProps) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: activeOverlayConfig.value,
+    selectedOverlayConfig:
+      activeMarkerConfigurationType === 'bubble'
+        ? undefined
+        : activeOverlayConfig.value,
+    overlayHelp:
+      activeMarkerConfigurationType === 'bubble'
+        ? 'Overlay variables are not available for this map type'
+        : undefined,
   });
 
   const subsetVariableAndEntity = useMemo(() => {
@@ -1312,6 +1319,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 >
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
+                    isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }
