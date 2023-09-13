@@ -169,6 +169,10 @@ export function CategoricalMarkerConfigurationTable<T>({
          */
         key: 'label',
         name: 'Values',
+        style: {
+          wordBreak: 'break-word',
+          hyphens: 'auto',
+        },
         sortable: true,
         renderCell: (data: { row: AllValuesDefinition }) => (
           <>{data.row.label}</>

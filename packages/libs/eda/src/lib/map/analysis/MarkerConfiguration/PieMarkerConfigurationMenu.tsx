@@ -214,10 +214,10 @@ export function PieMarkerConfigurationMenu({
               // marginTop: 20,
             }
           }
-          label="Binning method (Dev. = Deviation)"
+          label="Binning method"
           selectedOption={configuration.binningMethod ?? 'equalInterval'}
           options={['equalInterval', 'quantile', 'standardDeviation']}
-          optionLabels={['Equal interval', 'Quantile (10)', 'Standard dev.']}
+          optionLabels={['Equal interval', 'Quantile (10)', 'Std. dev.']}
           buttonColor={'primary'}
           // margins={['0em', '0', '0', '1em']}
           onOptionSelected={handleBinningMethodSelection}
