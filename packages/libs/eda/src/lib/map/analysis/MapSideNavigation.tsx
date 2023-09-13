@@ -1,10 +1,11 @@
 import { ChevronRight } from '@veupathdb/coreui';
-import { Launch, LockOpen } from '@material-ui/icons';
+import { Launch, LockOpen, Person } from '@material-ui/icons';
 import {
   mapNavigationBackgroundColor,
   mapNavigationBorder,
   SiteInformationProps,
 } from '..';
+import { Link } from 'react-router-dom';
 
 export type MapSideNavigationProps = {
   /** The navigation is stateless. */
@@ -14,6 +15,7 @@ export type MapSideNavigationProps = {
   onToggleIsExpanded: () => void;
   activeNavigationMenu?: React.ReactNode;
   siteInformationProps: SiteInformationProps;
+  isUserLoggedIn: boolean | undefined;
 };
 
 const bottomLinkStyles: React.CSSProperties = {
@@ -34,6 +36,7 @@ export function MapSideNavigation({
   isExpanded,
   onToggleIsExpanded,
   siteInformationProps,
+  isUserLoggedIn,
 }: MapSideNavigationProps) {
   const sideMenuExpandButtonWidth = 20;
 
@@ -168,10 +171,23 @@ export function MapSideNavigation({
               </a>
             </li>
             <li>
-              <a style={bottomLinkStyles} href={siteInformationProps.loginUrl}>
-                <LockOpen />
-                <p style={{ margin: '0 0 0 5px' }}>Login</p>
-              </a>
+              {isUserLoggedIn == null ? null : isUserLoggedIn ? (
+                <Link style={bottomLinkStyles} to="/user/profile">
+                  <Person />
+                  <p style={{ margin: '0 0 0 5px' }}>My profile</p>
+                </Link>
+              ) : (
+                <Link
+                  style={bottomLinkStyles}
+                  to={
+                    siteInformationProps.loginUrl +
+                    `?destination=${window.location.href}`
+                  }
+                >
+                  <LockOpen />
+                  <p style={{ margin: '0 0 0 5px' }}>Login</p>
+                </Link>
+              )}
             </li>
           </ul>
         </div>
