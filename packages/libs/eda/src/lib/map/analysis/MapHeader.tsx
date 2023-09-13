@@ -180,30 +180,19 @@ function HeaderContent({
 
   return (
     <div className={headerContent()}>
-      <div className={headerContent('__SaveableTextEditorContainer')}>
-        <SaveableTextEditor
-          displayValue={(value: string, handleEdit: () => void) => {
-            return (
-              <h1
-                className={headerContent('__AnalysisTitle')}
-                onClick={handleEdit}
-              >
-                <span
-                  // This allows users to highlight the study name,
-                  // without editing the analysis name.
-                  onClick={(e) => e.stopPropagation()}
-                  className={headerContent('__StudyName')}
-                >
-                  {safeHtml(studyName, { style: { fontWeight: 'bold' } })}:{' '}
-                </span>
-                <span>{analysisName}</span>
-              </h1>
-            );
-          }}
-          maxLength={ANALYSIS_NAME_MAX_LENGTH}
-          onSave={onAnalysisNameEdit}
-          value={analysisName}
-        />
+      <div>
+        <h1 className={headerContent('__AnalysisTitle')}>
+          <strong>MapVEu &mdash; </strong>
+          <span className={headerContent('__StudyName')}>
+            {safeHtml(studyName)}
+          </span>
+          <SaveableTextEditor
+            displayValue={() => <span>{analysisName}</span>}
+            maxLength={ANALYSIS_NAME_MAX_LENGTH}
+            onSave={onAnalysisNameEdit}
+            value={analysisName}
+          />
+        </h1>
       </div>
       {filterList}
     </div>
