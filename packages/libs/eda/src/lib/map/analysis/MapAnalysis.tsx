@@ -1291,6 +1291,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 >
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
+                    isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }
