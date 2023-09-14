@@ -87,6 +87,8 @@ const EmptyVolcanoPlotData: VolcanoPlotData = [
   { log2foldChange: '0', pValue: '1' },
 ];
 
+const MARGIN_DEFAULT = 50;
+
 interface TruncationRectangleProps {
   x1: number;
   x2: number;
@@ -167,6 +169,9 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
       ? -Math.log10(minPValueCap)
       : dependentAxisRange.max
     : 0;
+
+  // Do we need to show the special annotation for the case when the y axis is maxxed out?
+  const showCappedDataAnnotation = yAxisMax === -Math.log10(minPValueCap);
 
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
@@ -253,6 +258,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             zero: false,
           }}
           findNearestDatumOverride={findNearestDatumXY}
+          margin={{
+            top: MARGIN_DEFAULT,
+            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT,
+            left: MARGIN_DEFAULT,
+            bottom: MARGIN_DEFAULT,
+          }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
           <Grid numTicks={6} lineStyle={gridStyles} />
@@ -336,7 +347,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           )}
 
           {/* infinity y data annotation line */}
-          {yAxisMax === -Math.log10(minPValueCap) && (
+          {showCappedDataAnnotation && (
             <Annotation
               datum={{
                 x: xAxisMax,

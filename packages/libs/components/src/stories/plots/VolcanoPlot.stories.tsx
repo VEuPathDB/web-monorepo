@@ -215,6 +215,10 @@ ManyPoints.args = {
   significanceThreshold: 0.01,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: 0, max: 9 },
+  comparisonLabels: [
+    'up in super long group name',
+    'up in other long group name',
+  ],
 };
 
 // Test truncation indicators
