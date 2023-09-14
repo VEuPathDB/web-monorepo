@@ -1,6 +1,6 @@
 import { SVGProps } from 'react';
 
-export function BubbleMarker(props: SVGProps<SVGSVGElement>) {
+export function BubbleMarkerIcon(props: SVGProps<SVGSVGElement>) {
   return (
     // <!-- Generator: Adobe Illustrator 27.7.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
     <svg
