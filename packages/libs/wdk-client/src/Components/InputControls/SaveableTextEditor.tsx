@@ -24,7 +24,9 @@ interface Props extends InputPropsWithoutOnChange {
   onSave: (value: string) => void;
   multiLine?: boolean;
   className?: string;
-  displayValue?: (value: string, handleEdit: () => void) => React.ReactNode;
+  displayValue?:
+    | React.ReactNode
+    | ((value: string, handleEdit: () => void) => React.ReactNode);
   emptyText?: string;
 }
 
