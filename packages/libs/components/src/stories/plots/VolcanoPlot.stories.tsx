@@ -49,6 +49,8 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
       '-8',
       '-4',
       '-3',
+      '-8.2',
+      '7',
     ],
     pValue: [
       '0.001',
@@ -63,9 +65,26 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
       '0.001',
       '0.0001',
       '0.002',
+      '0',
+      '0',
     ],
-    adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
-    pointID: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
+    adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02', '0', '0'],
+    pointID: [
+      'a',
+      'b',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'h',
+      'i',
+      'j',
+      'k',
+      'l',
+      'buzz',
+      'lightyear',
+    ],
   },
 };
 
@@ -112,7 +131,7 @@ const Template: Story<TemplateProps> = (args) => {
       })
       .map((d) => ({
         ...d,
-        pointID: d.pointID ? [d.pointID] : undefined,
+        pointIDs: d.pointID ? [d.pointID] : undefined,
         significanceColor: assignSignificanceColor(
           Number(d.log2foldChange),
           Number(d.pValue),
@@ -121,35 +140,6 @@ const Template: Story<TemplateProps> = (args) => {
           significanceColors
         ),
       }));
-
-  const infinityYData: VolcanoPlotData = [
-    {
-      log2foldChange: '8',
-      pValue: '0',
-      adjustedPValue: '0',
-      pointIDs: ['buzz'],
-      significanceColor: assignSignificanceColor(
-        8,
-        0,
-        args.significanceThreshold,
-        args.log2FoldChangeThreshold,
-        significanceColors
-      ),
-    },
-    {
-      log2foldChange: '-7',
-      pValue: '0',
-      adjustedPValue: '0',
-      pointIDs: ['lightyear'],
-      significanceColor: assignSignificanceColor(
-        -7,
-        0,
-        args.significanceThreshold,
-        args.log2FoldChangeThreshold,
-        significanceColors
-      ),
-    },
-  ];
 
   const rawDataMinMaxValues = {
     x: {
@@ -180,7 +170,6 @@ const Template: Story<TemplateProps> = (args) => {
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
-    infinityYData,
     significanceThreshold: args.significanceThreshold,
     log2FoldChangeThreshold: args.log2FoldChangeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,

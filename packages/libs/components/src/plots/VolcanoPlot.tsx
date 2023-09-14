@@ -30,7 +30,7 @@ import {
   VisxPoint,
   axisStyles,
 } from './visxVEuPathDB';
-import { Circle, Polygon } from '@visx/shape';
+import { Polygon } from '@visx/shape';
 import { useContext } from 'react';
 import { PatternLines } from '@visx/visx';
 import Spinner from '../components/Spinner';
@@ -48,8 +48,6 @@ export interface RawDataMinMaxValues {
 export interface VolcanoPlotProps {
   /** Data for the plot. An array of VolcanoPlotDataPoints */
   data: VolcanoPlotData | undefined;
-  /** Data points with an infinity y value */
-  infinityYData?: VolcanoPlotData | undefined;
   /**
    * Used to set the fold change thresholds. Will
    * set two thresholds at +/- this number. Affects point colors
@@ -81,6 +79,8 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
   /** used to determine truncation logic */
   rawDataMinMaxValues: RawDataMinMaxValues;
+  /** The maximum possible y axis value. Points with pValue=0 will get plotted at -log10(minPValueCap). */
+  minPValueCap?: number;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [
@@ -125,18 +125,18 @@ function TruncationRectangle(props: TruncationRectangleProps) {
 function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const {
     data = EmptyVolcanoPlotData,
-    infinityYData = EmptyVolcanoPlotData,
     independentAxisRange,
     dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
     markerBodyOpacity,
     containerClass = 'web-components-plot',
-    containerStyles = { width: '50', height: DEFAULT_CONTAINER_HEIGHT },
+    containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     comparisonLabels,
     truncationBarFill,
     showSpinner = false,
     rawDataMinMaxValues,
+    minPValueCap = 2e-300,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -158,21 +158,30 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
   // Set mins, maxes of axes in the plot using axis range props
+  // The y axis max should not be allowed to exceed -log10(minPValueCap)
   const xAxisMin = independentAxisRange?.min ?? 0;
   const xAxisMax = independentAxisRange?.max ?? 0;
   const yAxisMin = dependentAxisRange?.min ?? 0;
-  const yAxisMax = dependentAxisRange?.max ?? 0;
+  const yAxisMax = dependentAxisRange?.max
+    ? dependentAxisRange.max > -Math.log10(minPValueCap)
+      ? -Math.log10(minPValueCap)
+      : dependentAxisRange.max
+    : 0;
 
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear. The folowing showTruncationBar variables will
   // be either 0 (do not show bar) or 1 (show bar).
+  // The y axis has special logic because it gets capped at -log10(minPValueCap)
   const showXMinTruncationBar = Number(dataXMin < xAxisMin);
   const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
 
   const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
-  const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
+  const showYMaxTruncationBar =
+    dataYMin === 0
+      ? Number(-Math.log10(minPValueCap) > yAxisMax)
+      : Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   /**
@@ -194,14 +203,10 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   // For the actual volcano plot data
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
-    yAccessor: (d: VolcanoPlotDataPoint) => -Math.log10(Number(d?.pValue)),
-  };
-
-  // For data points that would otherwise be plotted at infinity
-  const infinityYAccessors = {
-    xAccessor: dataAccessors.xAccessor,
     yAccessor: (d: VolcanoPlotDataPoint) =>
-      yAxisMax + (0 + showYMaxTruncationBar) * yTruncationBarHeight, // draw at the tippy top of the plot
+      d.pValue === '0'
+        ? -Math.log10(minPValueCap)
+        : -Math.log10(Number(d?.pValue)),
   };
 
   // For all other situations where we need to access point values. For example
@@ -223,7 +228,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     >
       <div
         ref={plotRef} // Set ref here. Also tried setting innerRef of Group but that didnt work with domToImage
-        style={{ width: '80%', height: '100%' }}
+        style={{ width: '100%', height: '100%' }}
       >
         {/* The XYChart takes care of laying out the chart elements (children) appropriately. 
           It uses modularized React.context layers for data, events, etc. The following all becomes an svg,
@@ -331,27 +336,29 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           )}
 
           {/* infinity y data annotation line */}
-          <Annotation
-            datum={{
-              x: xAxisMax,
-              y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
-            }}
-            {...xyAccessors}
-          >
-            <AnnotationLineSubject
-              {...thresholdLineStyles}
-              orientation="horizontal"
-            />
-            <AnnotationLabel
-              title={'Values above this line are capped'}
-              titleFontWeight={200}
-              titleFontSize={12}
-              horizontalAnchor="start"
-              verticalAnchor="middle"
-              showAnchorLine={false}
-              showBackground={false}
-            />
-          </Annotation>
+          {yAxisMax === -Math.log10(minPValueCap) && (
+            <Annotation
+              datum={{
+                x: xAxisMax,
+                y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
+              }}
+              {...xyAccessors}
+            >
+              <AnnotationLineSubject
+                {...thresholdLineStyles}
+                orientation="horizontal"
+              />
+              <AnnotationLabel
+                title={'Values above this line are capped'}
+                titleFontWeight={200}
+                titleFontSize={12}
+                horizontalAnchor="start"
+                verticalAnchor="middle"
+                showAnchorLine={false}
+                showBackground={false}
+              />
+            </Annotation>
+          )}
 
           {/* The data itself */}
           {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
@@ -362,13 +369,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               dataKey={'data'} // unique key
               data={data}
               {...dataAccessors}
-              colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
-              findNearestDatumOverride={findNearestDatumXY}
-            />
-            <GlyphSeries
-              dataKey={'infinityYData'} // unique key
-              data={infinityYData}
-              {...infinityYAccessors}
               colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
               findNearestDatumOverride={findNearestDatumXY}
             />
