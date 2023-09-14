@@ -79,11 +79,15 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
   /** used to determine truncation logic */
   rawDataMinMaxValues: RawDataMinMaxValues;
+  /** The maximum possible y axis value. Points with pValue=0 will get plotted at -log10(minPValueCap). */
+  minPValueCap?: number;
 }
 
 const EmptyVolcanoPlotData: VolcanoPlotData = [
   { log2foldChange: '0', pValue: '1' },
 ];
+
+const MARGIN_DEFAULT = 50;
 
 interface TruncationRectangleProps {
   x1: number;
@@ -134,6 +138,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     truncationBarFill,
     showSpinner = false,
     rawDataMinMaxValues,
+    minPValueCap = 2e-300,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -155,42 +160,33 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
   // Set mins, maxes of axes in the plot using axis range props
+  // The y axis max should not be allowed to exceed -log10(minPValueCap)
   const xAxisMin = independentAxisRange?.min ?? 0;
   const xAxisMax = independentAxisRange?.max ?? 0;
   const yAxisMin = dependentAxisRange?.min ?? 0;
-  const yAxisMax = dependentAxisRange?.max ?? 0;
+  const yAxisMax = dependentAxisRange?.max
+    ? dependentAxisRange.max > -Math.log10(minPValueCap)
+      ? -Math.log10(minPValueCap)
+      : dependentAxisRange.max
+    : 0;
 
-  /**
-   * Accessors - tell visx which value of the data point we should use and where.
-   */
-
-  // For the actual volcano plot data
-  const dataAccessors = {
-    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
-    yAccessor: (d: VolcanoPlotDataPoint) => -Math.log10(Number(d?.pValue)),
-  };
-
-  // For all other situations where we need to access point values. For example
-  // threshold lines and annotations.
-  const xyAccessors = {
-    xAccessor: (d: VisxPoint) => {
-      return d?.x;
-    },
-    yAccessor: (d: VisxPoint) => {
-      return d?.y;
-    },
-  };
+  // Do we need to show the special annotation for the case when the y axis is maxxed out?
+  const showCappedDataAnnotation = yAxisMax === -Math.log10(minPValueCap);
 
   // Truncation indicators
   // If we have truncation indicators, we'll need to expand the plot range just a tad to
   // ensure the truncation bars appear. The folowing showTruncationBar variables will
   // be either 0 (do not show bar) or 1 (show bar).
+  // The y axis has special logic because it gets capped at -log10(minPValueCap)
   const showXMinTruncationBar = Number(dataXMin < xAxisMin);
   const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
   const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
 
   const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
-  const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
+  const showYMaxTruncationBar =
+    dataYMin === 0
+      ? Number(-Math.log10(minPValueCap) > yAxisMax)
+      : Number(-Math.log10(dataYMin) > yAxisMax);
   const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
 
   /**
@@ -204,6 +200,30 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
   const showSignificanceThresholdLine =
     -Math.log10(Number(significanceThreshold)) > yAxisMin &&
     -Math.log10(Number(significanceThreshold)) < yAxisMax;
+
+  /**
+   * Accessors - tell visx which value of the data point we should use and where.
+   */
+
+  // For the actual volcano plot data. Y axis points are capped at -Math.log10(minPValueCap)
+  const dataAccessors = {
+    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
+    yAccessor: (d: VolcanoPlotDataPoint) =>
+      d.pValue === '0'
+        ? -Math.log10(minPValueCap)
+        : -Math.log10(Number(d?.pValue)),
+  };
+
+  // For all other situations where we need to access point values. For example
+  // threshold lines and annotations.
+  const xyAccessors = {
+    xAccessor: (d: VisxPoint) => {
+      return d?.x;
+    },
+    yAccessor: (d: VisxPoint) => {
+      return d?.y;
+    },
+  };
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
@@ -238,6 +258,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             zero: false,
           }}
           findNearestDatumOverride={findNearestDatumXY}
+          margin={{
+            top: MARGIN_DEFAULT,
+            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT,
+            left: MARGIN_DEFAULT,
+            bottom: MARGIN_DEFAULT,
+          }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
           <Grid numTicks={6} lineStyle={gridStyles} />
@@ -316,6 +342,31 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                 </Annotation>
               )}
             </>
+          )}
+
+          {/* infinity y data annotation line */}
+          {showCappedDataAnnotation && (
+            <Annotation
+              datum={{
+                x: xAxisMax,
+                y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
+              }}
+              {...xyAccessors}
+            >
+              <AnnotationLineSubject
+                {...thresholdLineStyles}
+                orientation="horizontal"
+              />
+              <AnnotationLabel
+                title={'Values above this line are capped'}
+                titleFontWeight={200}
+                titleFontSize={12}
+                horizontalAnchor="start"
+                verticalAnchor="middle"
+                showAnchorLine={false}
+                showBackground={false}
+              />
+            </Annotation>
           )}
 
           {/* The data itself */}
