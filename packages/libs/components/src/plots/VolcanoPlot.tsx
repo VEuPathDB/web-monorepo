@@ -205,7 +205,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
    * Accessors - tell visx which value of the data point we should use and where.
    */
 
-  // For the actual volcano plot data
+  // For the actual volcano plot data. Y axis points are capped at -Math.log10(minPValueCap)
   const dataAccessors = {
     xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
     yAccessor: (d: VolcanoPlotDataPoint) =>
@@ -269,8 +269,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           <Grid numTicks={6} lineStyle={gridStyles} />
           <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
           <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
-          {/* <Axis orientation="top" {...axisStyles} hideTicks={true} tickComponent={() => null}/> */}
-          {/* <Axis orientation="right" {...axisStyles} hideTicks={true} tickComponent={() => null}/> */}
 
           {/* X axis annotations */}
           {comparisonLabels &&
