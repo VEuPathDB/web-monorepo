@@ -557,17 +557,19 @@ function MapAnalysisImpl(props: ImplProps) {
       ...(data.color ? { color: data.color } : {}),
     }));
     /**
-     * In the chart marker's proportion mode, the values are pre-calculated proportion values so summing them for totalCount is inaccurate.
-     * Instead, we'll reduce the counts and use them later when determining totalCount and when determining the data for
-     * ChartMarkerStandalone.
+     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
+     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
+     * previews, let's just overwrite the value property with the count property.
      *
-     * NOTE: the donut preview doesn't care about the counts, but it's receiving them anyway.
+     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
+     * needs nor consumes.
      */
-    const dataWithCounts = typedData.reduce(
+    const dataWithCountsOnly = typedData.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
-          value: data.value + prevData[index].value,
+          // here's the overwrite mentioned in the above comment
+          value: data.count + prevData[index].count,
           count: data.count + prevData[index].count,
           ...('color' in prevData[index]
             ? { color: prevData[index].color }
@@ -577,11 +579,12 @@ function MapAnalysisImpl(props: ImplProps) {
         })),
       initialDataObject
     );
-    const totalCount = dataWithCounts.reduce((p, c) => p + c.count, 0);
+    // NOTE: we could just as well reduce using c.value since we overwrite the value prop with the count data
+    const totalCount = dataWithCountsOnly.reduce((p, c) => p + c.count, 0);
     if (markerType === 'pie') {
       return (
         <DonutMarkerStandalone
-          data={dataWithCounts}
+          data={dataWithCountsOnly}
           markerLabel={kFormatter(totalCount)}
           {...sharedStandaloneMarkerProperties}
         />
@@ -592,22 +595,14 @@ function MapAnalysisImpl(props: ImplProps) {
         'dependentAxisLogScale' in activeMarkerConfiguration
           ? activeMarkerConfiguration.dependentAxisLogScale
           : false;
-      /**
-       * Let's recalculate the value property for the marker preview to be a now-correct proportion value.
-       * Since no axes/numbers are displayed, we don't need to condition this based on plot mode.
-       */
-      const chartMarkerData = dataWithCounts.map((d) => ({
-        ...d,
-        value: d.count / totalCount,
-      }));
       return (
         <ChartMarkerStandalone
-          data={chartMarkerData}
+          data={dataWithCountsOnly}
           markerLabel={mFormatter(totalCount)}
           dependentAxisLogScale={dependentAxisLogScale}
           // pass in an axis range to mimic map markers, especially in log scale
           dependentAxisRange={getChartMarkerDependentAxisRange(
-            chartMarkerData,
+            dataWithCountsOnly,
             dependentAxisLogScale
           )}
           {...sharedStandaloneMarkerProperties}

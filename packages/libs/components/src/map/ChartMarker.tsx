@@ -323,7 +323,12 @@ export function getChartMarkerDependentAxisRange(
   isLogScale: boolean
 ) {
   return {
-    min: isLogScale ? 0.1 : 0, // matches what we pass into map markers
+    min: isLogScale
+      ? Math.min(
+          0.1,
+          ...data.filter(({ value }) => value > 0).map(({ value }) => value)
+        )
+      : 0,
     max: Math.max(...data.map((d) => d.value)),
   };
 }
