@@ -30,11 +30,13 @@ export type EzTimeFilterProps = {
   width?: number;
   /** height */
   height?: number;
-  /** color of the selected range */
+  /** color of the 'has data' bars - default is black */
+  barColor?: string;
+  /** color of the selected range - default is lightblue */
   brushColor?: string;
-  /** axis tick and tick label color */
+  /** axis tick and tick label color - default is black */
   axisColor?: string;
-  /** opacity of selected brush */
+  /** opacity of selected brush - default is 0.4 */
   brushOpacity?: number;
   /** debounce rate in millisecond */
   debounceRateMs?: number;
@@ -50,6 +52,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     width = 720,
     height = 100,
     brushColor = 'lightblue',
+    barColor = '#333',
     axisColor = '#000',
     brushOpacity = 0.4,
     selectedRange,
@@ -153,9 +156,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   // compute bar width manually as scaleTime is used for Bar chart
   const barWidth = xBrushMax / data.length;
 
-  // data bar color
-  const defaultColor = '#333';
-
   // this makes/fakes the brush as a controlled component
   const brushKey =
     initialBrushPosition != null
@@ -191,7 +191,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
                   height={(1 / 2) * barHeight}
                   // set the last data's barWidth to be 0 so that it does not overflow to dragging area
                   width={i === data.length - 1 ? 0 : barWidth}
-                  fill={defaultColor}
+                  fill={barColor}
                 />
               </React.Fragment>
             );

@@ -16,7 +16,7 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
-import { zip } from 'lodash';
+import { debounce, zip } from 'lodash';
 import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 
@@ -45,6 +45,12 @@ export default function EZTimeFilter({
 }: Props) {
   const findEntityAndVariable = useFindEntityAndVariable();
   const [minimized, setMinimized] = useState(true);
+
+  const autoMinimizeTime = 5000;
+  const debouncedMinimize = useMemo(
+    () => debounce(() => setMinimized(true), autoMinimizeTime),
+    []
+  );
 
   const { variable, active, selectedRange } = config;
   const variableMetadata = findEntityAndVariable(variable);
@@ -129,49 +135,29 @@ export default function EZTimeFilter({
     });
   }
 
+  // (easily) centering the variable picker requires two same-width divs either side
+  const sideElementStyle = { width: '70px' };
+
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
     <div
       style={{
         width: timeFilterWidth,
-        height: minimized ? 110 : 150,
-        background: '#FFFFFF50',
+        height: minimized ? 70 : 140,
+        background: 'rgba(245, 250, 241, 0.9)', // or semi-transparent header color? 'rgba(245, 250, 241, 0.9)',
+        borderRadius: '0px 0px 7px 7px',
+        boxShadow:
+          'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
       }}
-      onMouseEnter={() => setMinimized(false)}
-      onMouseLeave={() => setMinimized(true)}
+      onMouseMove={() => {
+        setMinimized(false);
+        debouncedMinimize();
+      }}
+      onWheel={() => {
+        setMinimized(false);
+        debouncedMinimize();
+      }}
     >
-      <div
-        style={{
-          display: 'flex',
-          padding: '10px 10px 0px 10px',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{}}>
-          <H6>
-            {variableMetadata.variable.displayName +
-              (active && selectedRange
-                ? ` [${selectedRange?.start} to ${selectedRange?.end}]`
-                : ' (all dates)')}
-          </H6>
-        </div>
-        {/* display start to end value
-	      TO DO: make these date inputs?
-        {selectedRange && (
-          <div style={{ gridColumnStart: 2, fontSize: '1.5em' }}>
-            {selectedRange?.start} ~ {selectedRange?.end}
-          </div>
-        )}
-	  */}
-        <div style={{}}>
-          <Toggle
-            label={active ? 'On' : 'Off'}
-            labelPosition="left"
-            value={!!active}
-            onChange={(active) => updateConfig({ ...config, active })}
-          />
-        </div>
-      </div>
       {/* display data loading spinner while requesting data to the backend */}
       {getTimeSliderData.pending && (
         <div style={{ marginTop: '2em', height: 50, position: 'relative' }}>
@@ -189,37 +175,55 @@ export default function EZTimeFilter({
               updateConfig({ ...config, selectedRange })
             }
             width={timeFilterWidth - 30}
-            height={75}
+            height={minimized ? 60 : 75}
             // fill color of the selectedRange
             brushColor={'lightpink'}
             brushOpacity={0.4}
             // axis tick and tick label color
-            axisColor={'#000'}
+            barColor={!active ? '#aaa' : '#000'}
+            axisColor={!active ? '#888' : '#000'}
             // disable user-interaction
             disabled={!active}
           />
         )}
       {!minimized && (
-        <div style={{ marginRight: '10px' }}>
-          <InputVariables
-            inputs={[
-              {
-                name: 'overlayVariable',
-                label: 'Choose a different date variable:',
-                noTitle: true,
-                isNonNullable: true,
-              },
-            ]}
-            entities={entities}
-            selectedVariables={{
-              overlayVariable: variable,
-            }}
-            onChange={handleInputVariablesOnChange}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            constraints={timeSliderVariableConstraints}
-            flexDirection="row-reverse"
-          />
+        <div
+          style={{
+            display: 'flex',
+            padding: '10px 10px 0px 10px',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div style={sideElementStyle}></div>
+          <div style={{}}>
+            <InputVariables
+              inputs={[
+                {
+                  name: 'overlayVariable',
+                  label: '',
+                  noTitle: true,
+                  isNonNullable: true,
+                },
+              ]}
+              entities={entities}
+              selectedVariables={{
+                overlayVariable: variable,
+              }}
+              onChange={handleInputVariablesOnChange}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              constraints={timeSliderVariableConstraints}
+            />
+          </div>
+          <div style={sideElementStyle}>
+            <Toggle
+              label={active ? 'On' : 'Off'}
+              labelPosition="left"
+              value={!!active}
+              onChange={(active) => updateConfig({ ...config, active })}
+            />
+          </div>
         </div>
       )}
     </div>
