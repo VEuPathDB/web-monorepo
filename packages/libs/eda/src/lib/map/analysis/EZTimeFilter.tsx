@@ -19,6 +19,7 @@ import { useFindEntityAndVariable, Filter } from '../../core';
 import { zip } from 'lodash';
 import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
+import { trimArray } from '../../core/utils/trim';
 
 interface Props {
   studyId: string;
@@ -43,7 +44,7 @@ export default function EZTimeFilter({
   config,
   updateConfig,
 }: Props) {
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter aware
   const [minimized, setMinimized] = useState(true);
 
   const { variable, active, selectedRange } = config;
@@ -98,15 +99,18 @@ export default function EZTimeFilter({
   // converting data to visx format
   const timeFilterData: EZTimeFilterDataProp[] = useMemo(
     () =>
-      !getTimeSliderData.pending && getTimeSliderData.value != null
-        ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
-            .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
-            // and a type guard filter to avoid any `!` assertions.
-            .filter(
-              (val): val is EZTimeFilterDataProp =>
-                val.x != null && val.y != null
-            )
-        : [],
+      trimArray(
+        !getTimeSliderData.pending && getTimeSliderData.value != null
+          ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
+              .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
+              // and a type guard filter to avoid any `!` assertions.
+              .filter(
+                (val): val is EZTimeFilterDataProp =>
+                  val.x != null && val.y != null
+              )
+          : [],
+        ({ y }) => y === 0 // remove leading and trailing zeroes (filter sensitivity)
+      ),
     [getTimeSliderData]
   );
 
