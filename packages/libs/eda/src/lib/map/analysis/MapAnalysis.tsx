@@ -1271,6 +1271,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         toggleStarredVariable={toggleStarredVariable}
                         config={appState.timeSliderConfig}
                         updateConfig={setTimeSliderConfig}
+                        siteInformation={props.siteInformationProps}
                       />
                     )}
                 </MapHeader>

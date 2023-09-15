@@ -19,6 +19,8 @@ import { useFindEntityAndVariable, Filter } from '../../core';
 import { debounce, zip } from 'lodash';
 import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
+import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
+import { SiteInformationProps, mapNavigationBackgroundColor } from '..';
 
 interface Props {
   studyId: string;
@@ -31,6 +33,7 @@ interface Props {
 
   config: NonNullable<AppState['timeSliderConfig']>;
   updateConfig: (newConfig: NonNullable<AppState['timeSliderConfig']>) => void;
+  siteInformation: SiteInformationProps;
 }
 
 export default function EZTimeFilter({
@@ -42,8 +45,10 @@ export default function EZTimeFilter({
   toggleStarredVariable,
   config,
   updateConfig,
+  siteInformation,
 }: Props) {
   const findEntityAndVariable = useFindEntityAndVariable();
+  const theme = useUITheme();
   const [minimized, setMinimized] = useState(true);
 
   const autoMinimizeTime = 5000;
@@ -54,6 +59,7 @@ export default function EZTimeFilter({
 
   const { variable, active, selectedRange } = config;
   const variableMetadata = findEntityAndVariable(variable);
+  const { siteName } = siteInformation;
 
   // data request to distribution for time slider
   const getTimeSliderData = usePromise(
@@ -144,8 +150,12 @@ export default function EZTimeFilter({
       style={{
         width: timeFilterWidth,
         height: minimized ? 70 : 140,
-        background: 'rgba(245, 250, 241, 0.9)', // or semi-transparent header color? 'rgba(245, 250, 241, 0.9)',
-        borderRadius: '0px 0px 7px 7px',
+        background:
+          siteName === 'VectorBase'
+            ? '#F5FAF1D0'
+            : (theme?.palette.primary.hue[100] ??
+                mapNavigationBackgroundColor) + 'D0', // add transparency
+        borderRadius: '0px 0px 7px 7px', // TO DO: add border radius and box shadow to the theme?
         boxShadow:
           'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
       }}
