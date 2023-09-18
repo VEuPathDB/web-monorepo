@@ -1,14 +1,14 @@
 import { SVGProps } from 'react';
-export function BarPlotMarker(props: SVGProps<SVGSVGElement>) {
+export function DonutMarkerIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
+      xmlSpace="preserve"
       version="1.1"
       id="Layer_1"
-      xmlns="http://www.w3.org/2000/svg"
       x={0}
       y={0}
       viewBox="0 0 32.443 32.443"
-      xmlSpace="preserve"
       {...props}
     >
       <style>
@@ -17,37 +17,26 @@ export function BarPlotMarker(props: SVGProps<SVGSVGElement>) {
         }
       </style>
       <g>
-        <polyline
-          className="st0"
-          points="2.623,3.81 2.623,28.634 29.82,28.634 	"
+        <path
+          className="st6"
+          d="M6.79,9.862c-1.226,1.815-1.943,4.004-1.943,6.359c0,1.279,0.211,2.508,0.6,3.656"
         />
-        <rect
-          x="6.173"
-          y="21.45"
-          className="st1"
-          width="4.131"
-          height="4.561"
+        <path
+          className="st5"
+          d="M5.448,19.877c1.523,4.488,5.771,7.718,10.774,7.718c6.282,0,11.374-5.092,11.374-11.374
+          S22.503,4.847,16.222,4.847c-3.926,0-7.388,1.989-9.432,5.015"
         />
-        <rect
-          x="12.278"
-          y="13.804"
-          className="st2"
-          width="4.131"
-          height="12.206"
+        <path
+          className="st6"
+          d="M4.876,17.038c0.169,2.379,1.069,4.556,2.477,6.307"
         />
-        <rect
-          x="18.382"
-          y="4.92"
-          className="st3"
-          width="4.131"
-          height="21.09"
+        <path
+          className="st8"
+          d="M6.79,22.581c2.044,3.026,5.506,5.015,9.432,5.015c4.319,0,8.075-2.407,10.001-5.953"
         />
-        <rect
-          x="24.487"
-          y="13.912"
-          className="st4"
-          width="4.131"
-          height="12.098"
+        <path
+          className="st7"
+          d="M25.568,22.705c1.278-1.839,2.028-4.074,2.028-6.484c0-6.282-5.092-11.374-11.374-11.374"
         />
       </g>
     </svg>

@@ -1,4 +1,10 @@
-import { useCollectionVariables, useStudyMetadata } from '../../..';
+import {
+  ContinuousVariableDataShape,
+  LabeledRange,
+  useCollectionVariables,
+  usePromise,
+  useStudyMetadata,
+} from '../../..';
 import { VariableDescriptor } from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -7,8 +13,11 @@ import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
 import * as t from 'io-ts';
 import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
-import { useFindEntityAndVariable } from '../../../hooks/workspace';
-import { useMemo } from 'react';
+import {
+  useDataClient,
+  useFindEntityAndVariable,
+} from '../../../hooks/workspace';
+import { useCallback, useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
 import VariableTreeDropdown from '../../variableTrees/VariableTreeDropdown';
 import { ValuePicker } from '../../visualizations/implementations/ValuePicker';
@@ -19,6 +28,10 @@ import { SwapHorizOutlined } from '@material-ui/icons';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Tooltip } from '@material-ui/core';
+import {
+  GetBinRangesProps,
+  getBinRanges,
+} from '../../../../map/analysis/utils/defaultOverlayConfig';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -44,8 +57,8 @@ export type DifferentialAbundanceConfig = t.TypeOf<
 
 const Comparator = t.intersection([
   t.partial({
-    groupA: t.array(t.string),
-    groupB: t.array(t.string),
+    groupA: t.array(LabeledRange),
+    groupB: t.array(LabeledRange),
   }),
   t.type({
     variable: VariableDescriptor,
@@ -111,6 +124,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
       collectionVariable
     )
   );
+
   return (
     <div className="ConfigDescriptionContainer">
       <h4>
@@ -150,6 +164,7 @@ export function DifferentialAbundanceConfiguration(
   const configuration = computation.descriptor
     .configuration as DifferentialAbundanceConfig;
   const studyMetadata = useStudyMetadata();
+  const dataClient = useDataClient();
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
@@ -175,14 +190,22 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
-    return collections.map((collectionVar) => ({
-      value: {
-        variableId: collectionVar.id,
-        entityId: collectionVar.entityId,
-      },
-      display:
-        collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
-    }));
+    return collections
+      .filter((collectionVar) => {
+        return collectionVar.normalizationMethod
+          ? !collectionVar.isProportion &&
+              collectionVar.normalizationMethod === 'NULL' &&
+              !collectionVar.displayName?.includes('pathway')
+          : true;
+      })
+      .map((collectionVar) => ({
+        value: {
+          variableId: collectionVar.id,
+          entityId: collectionVar.entityId,
+        },
+        display:
+          collectionVar.entityDisplayName + ' > ' + collectionVar.displayName,
+      }));
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
@@ -207,9 +230,55 @@ export function DifferentialAbundanceConfiguration(
     }
   }, [configuration, findEntityAndVariable]);
 
+  // If the variable is continuous, ask the backend for a list of bins
+  const continuousVariableBins = usePromise(
+    useCallback(async () => {
+      if (
+        !ContinuousVariableDataShape.is(
+          selectedComparatorVariable?.variable.dataShape
+        )
+      )
+        return;
+
+      const binRangeProps: GetBinRangesProps = {
+        studyId: studyMetadata.id,
+        ...configuration.comparator?.variable,
+        filters: filters ?? [],
+        dataClient,
+        binningMethod: 'quantile',
+      };
+      const bins = await getBinRanges(binRangeProps);
+      return bins;
+    }, [
+      dataClient,
+      configuration?.comparator?.variable,
+      filters,
+      selectedComparatorVariable,
+      studyMetadata.id,
+    ])
+  );
+
   const disableSwapGroupValuesButton =
     !configuration?.comparator?.groupA && !configuration?.comparator?.groupB;
   const disableGroupValueSelectors = !configuration?.comparator?.variable;
+
+  // Create the options for groupA and groupB. Organizing into the LabeledRange[] format
+  // here in order to keep the later code clean.
+  const groupValueOptions = continuousVariableBins.value
+    ? continuousVariableBins.value.map((bin): LabeledRange => {
+        return {
+          min: bin.binStart,
+          max: bin.binEnd,
+          label: bin.binLabel,
+        };
+      })
+    : selectedComparatorVariable?.variable.vocabulary?.map(
+        (value): LabeledRange => {
+          return {
+            label: value,
+          };
+        }
+      );
 
   return (
     <ComputationStepContainer
@@ -282,21 +351,32 @@ export function DifferentialAbundanceConfiguration(
                 <span>Group A</span>
                 <ValuePicker
                   allowedValues={
-                    selectedComparatorVariable?.variable.vocabulary
+                    !continuousVariableBins.pending
+                      ? groupValueOptions?.map((option) => option.label)
+                      : undefined
                   }
-                  selectedValues={configuration?.comparator?.groupA}
-                  disabledValues={configuration?.comparator?.groupB}
-                  onSelectedValuesChange={(newValues) =>
+                  selectedValues={configuration?.comparator?.groupA?.map(
+                    (entry) => entry.label
+                  )}
+                  disabledValues={configuration?.comparator?.groupB?.map(
+                    (entry) => entry.label
+                  )}
+                  onSelectedValuesChange={(newValues) => {
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
-                      groupA: newValues.length ? newValues : undefined,
+                      groupA: newValues.length
+                        ? groupValueOptions?.filter((option) =>
+                            newValues.includes(option.label)
+                          )
+                        : undefined,
                       groupB: configuration?.comparator?.groupB ?? undefined,
-                    })
-                  }
+                    });
+                  }}
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
+                  isLoading={continuousVariableBins.pending}
                 />
                 <FloatingButton
                   icon={SwapHorizOutlined}
@@ -330,21 +410,32 @@ export function DifferentialAbundanceConfiguration(
                 <span>Group B</span>
                 <ValuePicker
                   allowedValues={
-                    selectedComparatorVariable?.variable.vocabulary
+                    !continuousVariableBins.pending
+                      ? groupValueOptions?.map((option) => option.label)
+                      : undefined
                   }
-                  selectedValues={configuration?.comparator?.groupB}
-                  disabledValues={configuration?.comparator?.groupA}
+                  selectedValues={configuration?.comparator?.groupB?.map(
+                    (entry) => entry.label
+                  )}
+                  disabledValues={configuration?.comparator?.groupA?.map(
+                    (entry) => entry.label
+                  )}
                   onSelectedValuesChange={(newValues) =>
                     changeConfigHandler('comparator', {
                       variable:
                         configuration?.comparator?.variable ?? undefined,
                       groupA: configuration?.comparator?.groupA ?? undefined,
-                      groupB: newValues.length ? newValues : undefined,
+                      groupB: newValues.length
+                        ? groupValueOptions?.filter((option) =>
+                            newValues.includes(option.label)
+                          )
+                        : undefined,
                     })
                   }
                   disabledCheckboxTooltipContent="Values cannot overlap between groups"
                   showClearSelectionButton={false}
                   disableInput={disableGroupValueSelectors}
+                  isLoading={continuousVariableBins.pending}
                 />
               </div>
             </Tooltip>

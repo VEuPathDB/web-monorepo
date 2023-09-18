@@ -52,7 +52,6 @@ import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcem
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
-import { useWdkStudyRecords } from '@veupathdb/eda/lib/core/hooks/study';
 import { getWdkStudyRecords } from '@veupathdb/eda/lib/core/utils/study-records';
 
 import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
@@ -63,14 +62,16 @@ import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import './VEuPathDBHomePage.scss';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  makeClassNameHelper,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
 import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-import { StudyRecord } from '@veupathdb/eda/lib/core/types/study';
 import { Warning } from '@veupathdb/coreui';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -368,6 +369,13 @@ const useHeaderMenuItems = (
       (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
     )
   );
+  const mapStudy = useWdkService(
+    (wdkService) =>
+      wdkService
+        .getRecord('dataset', [{ name: 'dataset_id', value: 'DS_480c976ef9' }])
+        .catch(() => {}),
+    []
+  );
   // const showInteractiveMaps = mapMenuItemsQuestion != null;
   // const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
   const showInteractiveMaps = projectId === VectorBase && !!useEda;
@@ -601,13 +609,15 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           display: (
             <>
-              <img alt="BETA" src={betaImage} /> Multi-study Interactive Map
+              MapVEu - {safeHtml(mapStudy?.displayName ?? '')}{' '}
+              <img alt="BETA" src={betaImage} />
             </>
           ),
           key: 'map--mega-study',
           url: '/workspace/maps/DS_480c976ef9/new',
+          target: '_blank',
           metadata: {
-            test: () => showInteractiveMaps,
+            test: () => showInteractiveMaps && mapStudy != null,
           },
         },
         {

@@ -6,7 +6,11 @@ import {
   BubbleOverlayConfig,
   CategoricalVariableDataShape,
   DEFAULT_ANALYSIS_NAME,
+  DateRangeFilter,
+  DateVariable,
   EntityDiagram,
+  NumberRangeFilter,
+  NumberVariable,
   OverlayConfig,
   PromiseResult,
   useAnalysis,
@@ -76,9 +80,9 @@ import {
   BubbleMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import {
-  BarPlotMarker,
-  DonutMarker,
-  BubbleMarker,
+  BarPlotMarkerIcon,
+  DonutMarkerIcon,
+  BubbleMarkerIcon,
 } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
@@ -93,14 +97,14 @@ import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import BubbleMarkerComponent, {
+import BubbleMarker, {
   BubbleMarkerProps,
 } from '@veupathdb/components/lib/map/BubbleMarker';
-import DonutMarkerComponent, {
+import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
 } from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarkerComponent, {
+import ChartMarker, {
   ChartMarkerProps,
   ChartMarkerStandalone,
 } from '@veupathdb/components/lib/map/ChartMarker';
@@ -109,6 +113,8 @@ import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
 import { getCategoricalValues } from './utils/categoricalValues';
 import { DraggablePanelCoordinatePair } from '@veupathdb/coreui/lib/components/containers/DraggablePanel';
 import _ from 'lodash';
+
+import EZTimeFilter from './EZTimeFilter';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -205,6 +211,7 @@ export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   const geoConfigs = useGeoConfig(useStudyEntities());
+
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
       <Banner
@@ -238,15 +245,17 @@ function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
+    analysisId,
     setViewport,
     setActiveVisualizationId,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    sharingUrl,
+    // sharingUrl,
     setIsSubsetPanelOpen = () => {},
     setActiveMarkerConfigurationType,
     setMarkerConfigurations,
     geoConfigs,
+    setTimeSliderConfig,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -259,6 +268,11 @@ function MapAnalysisImpl(props: ImplProps) {
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
+  const history = useHistory();
+
+  // FIXME use the sharingUrl prop to construct this
+  const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
+    .href;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
@@ -294,31 +308,77 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
+  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined =
+    useMemo(() => {
+      if (appState.timeSliderConfig == null) return undefined;
+
+      const { active, variable, selectedRange } = appState.timeSliderConfig;
+
+      const { variable: timeVariableMetadata } =
+        findEntityAndVariable(variable) ?? {};
+
+      return active && variable && selectedRange
+        ? DateVariable.is(timeVariableMetadata)
+          ? {
+              type: 'dateRange',
+              ...variable,
+              min: selectedRange.start + 'T00:00:00Z',
+              max: selectedRange.end + 'T00:00:00Z',
+            }
+          : NumberVariable.is(timeVariableMetadata)
+          ? {
+              type: 'numberRange', // this is temporary - I think we should NOT handle non-date variables when we roll this out
+              ...variable, // TO DO: remove number variable handling
+              min: Number(selectedRange.start.split(/-/)[0]), // just take the year number
+              max: Number(selectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
+            }
+          : undefined
+        : undefined;
+    }, [appState.timeSliderConfig, findEntityAndVariable]);
+
+  const viewportFilters = useMemo(
+    () =>
+      appState.boundsZoomLevel
+        ? filtersFromBoundingBox(
+            appState.boundsZoomLevel.bounds,
+            {
+              variableId: geoConfig.latitudeVariableId,
+              entityId: geoConfig.entity.id,
+            },
+            {
+              variableId: geoConfig.longitudeVariableId,
+              entityId: geoConfig.entity.id,
+            }
+          )
+        : [],
+    [
+      appState.boundsZoomLevel,
+      geoConfig.entity.id,
+      geoConfig.latitudeVariableId,
+      geoConfig.longitudeVariableId,
+    ]
+  );
+
+  // needed for floaters
+  const filtersIncludingViewportAndTimeSlider = useMemo(() => {
     return [
       ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
       ...viewportFilters,
+      ...(timeFilter != null ? [timeFilter] : []),
     ];
   }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
     props.analysisState.analysis?.descriptor.subset.descriptor,
+    viewportFilters,
+    timeFilter,
   ]);
+
+  // needed for markers
+  const filtersIncludingTimeSlider = useMemo(() => {
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...(timeFilter != null ? [timeFilter] : []),
+    ];
+  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilter]);
 
   const allFilteredCategoricalValues = usePromise(
     useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
@@ -361,7 +421,7 @@ function MapAnalysisImpl(props: ImplProps) {
         subsettingClient,
         studyId,
         overlayVariable,
-        filters: filtersIncludingViewport,
+        filters: filtersIncludingViewportAndTimeSlider, // TO DO: decide whether to filter on time slider here
       });
     }, [
       overlayVariable,
@@ -369,7 +429,7 @@ function MapAnalysisImpl(props: ImplProps) {
       overlayEntity,
       subsettingClient,
       studyId,
-      filtersIncludingViewport,
+      filtersIncludingViewportAndTimeSlider,
     ])
   );
 
@@ -451,7 +511,7 @@ function MapAnalysisImpl(props: ImplProps) {
     boundsZoomLevel: appState.boundsZoomLevel,
     geoConfig: geoConfig,
     studyId,
-    filters,
+    filters: filtersIncludingTimeSlider,
     markerType,
     selectedOverlayVariable: activeMarkerConfiguration?.selectedVariable,
     overlayConfig: activeOverlayConfig.value,
@@ -532,11 +592,11 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarkerComponent {...(markerProps as DonutMarkerProps)} />
+          <DonutMarker {...(markerProps as DonutMarkerProps)} />
         ) : markerType === 'bubble' ? (
-          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
+          <BubbleMarker {...(markerProps as BubbleMarkerProps)} />
         ) : (
-          <ChartMarkerComponent {...(markerProps as ChartMarkerProps)} />
+          <ChartMarker {...(markerProps as ChartMarkerProps)} />
         )
       ) || [],
     [markersData, markerType]
@@ -547,7 +607,6 @@ function MapAnalysisImpl(props: ImplProps) {
     return !user.isGuest;
   });
 
-  const history = useHistory();
   function showLoginForm() {
     const currentUrl = window.location.href;
     const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
@@ -573,7 +632,14 @@ function MapAnalysisImpl(props: ImplProps) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: activeOverlayConfig.value,
+    selectedOverlayConfig:
+      activeMarkerConfigurationType === 'bubble'
+        ? undefined
+        : activeOverlayConfig.value,
+    overlayHelp:
+      activeMarkerConfigurationType === 'bubble'
+        ? 'Overlay variables are not available for this map type'
+        : undefined,
   });
 
   const subsetVariableAndEntity = useMemo(() => {
@@ -669,7 +735,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
             labelText: MarkerTypeLabels.pie,
-            icon: <DonutMarker style={{ height: '1.25em' }} />,
+            icon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
             isActive: activeMarkerConfigurationType === 'pie',
           },
@@ -677,7 +743,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
             labelText: MarkerTypeLabels.barplot,
-            icon: <BarPlotMarker style={{ height: '1.25em' }} />,
+            icon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
           },
@@ -685,7 +751,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.bubble,
             labelText: MarkerTypeLabels.bubble,
-            icon: <BubbleMarker style={{ height: '1.25em' }} />,
+            icon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('bubble'),
             isActive: activeMarkerConfigurationType === 'bubble',
           },
@@ -702,7 +768,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'pie',
               displayName: MarkerTypeLabels.pie,
               icon: (
-                <DonutMarker
+                <DonutMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -741,7 +807,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'barplot',
               displayName: MarkerTypeLabels.barplot,
               icon: (
-                <BarPlotMarker
+                <BarPlotMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -780,7 +846,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'bubble',
               displayName: MarkerTypeLabels.bubble,
               icon: (
-                <BubbleMarker
+                <BubbleMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -1188,7 +1254,26 @@ function MapAnalysisImpl(props: ImplProps) {
                     totalVisibleEntityCount
                   }
                   overlayActive={overlayVariable != null}
-                />
+                >
+                  {/* child elements will be distributed across, 'hanging' below the header */}
+                  {/*  Time slider component - only if prerequisite variable is available */}
+                  {appState.timeSliderConfig &&
+                    appState.timeSliderConfig.variable && (
+                      <EZTimeFilter
+                        studyId={studyId}
+                        entities={studyEntities}
+                        subsettingClient={subsettingClient}
+                        filters={filters}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        config={appState.timeSliderConfig}
+                        updateConfig={setTimeSliderConfig}
+                      />
+                    )}
+                </MapHeader>
                 <div
                   style={{
                     // Make a div that completely fills its parent.
@@ -1206,6 +1291,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 >
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
+                    isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }
@@ -1296,6 +1382,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   </>
                 )}
 
+                {/* )} */}
                 {/* <FloatingDiv
                   style={{
                     top: 250,
@@ -1315,7 +1402,8 @@ function MapAnalysisImpl(props: ImplProps) {
                       onPress={() => setIsSubsetPanelOpen(true)}
                     />
                   </div>
-      */}
+                */}
+
                 {activeSideMenuId && isMapTypeSubMenuItemSelected() && (
                   <DraggableVisualization
                     analysisState={analysisState}
@@ -1327,7 +1415,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     totalCounts={totalCounts}
                     filteredCounts={filteredCounts}
                     toggleStarredVariable={toggleStarredVariable}
-                    filters={filtersIncludingViewport}
+                    filters={filtersIncludingViewportAndTimeSlider}
                     // onTouch={moveVizToTop}
                     zIndexForStackingContext={getZIndexByPanelTitle(
                       DraggablePanelIds.VIZ_PANEL
