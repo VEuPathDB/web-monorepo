@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const sharedStandaloneMarkerProperties = {
-  markerScale: 3,
+  markerScale: 2.5,
   containerStyles: {
     width: 'fit-content',
     height: 'fit-content',

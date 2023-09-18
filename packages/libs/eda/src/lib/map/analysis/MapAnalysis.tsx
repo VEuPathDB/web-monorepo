@@ -83,9 +83,9 @@ import {
   BubbleMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import {
-  BarPlotMarker,
-  DonutMarker,
-  BubbleMarker,
+  BarPlotMarkerIcon,
+  DonutMarkerIcon,
+  BubbleMarkerIcon,
 } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
@@ -100,14 +100,14 @@ import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import BubbleMarkerComponent, {
+import BubbleMarker, {
   BubbleMarkerProps,
 } from '@veupathdb/components/lib/map/BubbleMarker';
-import DonutMarkerComponent, {
+import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
 } from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarkerComponent, {
+import ChartMarker, {
   ChartMarkerProps,
   ChartMarkerStandalone,
 } from '@veupathdb/components/lib/map/ChartMarker';
@@ -596,11 +596,11 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarkerComponent {...(markerProps as DonutMarkerProps)} />
+          <DonutMarker {...(markerProps as DonutMarkerProps)} />
         ) : markerType === 'bubble' ? (
-          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
+          <BubbleMarker {...(markerProps as BubbleMarkerProps)} />
         ) : (
-          <ChartMarkerComponent {...(markerProps as ChartMarkerProps)} />
+          <ChartMarker {...(markerProps as ChartMarkerProps)} />
         )
       ) || [],
     [markersData, markerType]
@@ -756,7 +756,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
             labelText: MarkerTypeLabels.pie,
-            icon: <DonutMarker style={{ height: '1.25em' }} />,
+            icon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
             isActive: activeMarkerConfigurationType === 'pie',
           },
@@ -764,7 +764,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
             labelText: MarkerTypeLabels.barplot,
-            icon: <BarPlotMarker style={{ height: '1.25em' }} />,
+            icon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
           },
@@ -772,7 +772,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.bubble,
             labelText: MarkerTypeLabels.bubble,
-            icon: <BubbleMarker style={{ height: '1.25em' }} />,
+            icon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('bubble'),
             isActive: activeMarkerConfigurationType === 'bubble',
           },
@@ -789,7 +789,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'pie',
               displayName: MarkerTypeLabels.pie,
               icon: (
-                <DonutMarker
+                <DonutMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -828,7 +828,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'barplot',
               displayName: MarkerTypeLabels.barplot,
               icon: (
-                <BarPlotMarker
+                <BarPlotMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -867,7 +867,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'bubble',
               displayName: MarkerTypeLabels.bubble,
               icon: (
-                <BubbleMarker
+                <BubbleMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -1337,6 +1337,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 >
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
+                    isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }

@@ -187,7 +187,7 @@ function HeaderContent({
             {safeHtml(studyName)}
           </span>
           <SaveableTextEditor
-            displayValue={() => <span>{analysisName}</span>}
+            displayValue={analysisName}
             maxLength={ANALYSIS_NAME_MAX_LENGTH}
             onSave={onAnalysisNameEdit}
             value={analysisName}
