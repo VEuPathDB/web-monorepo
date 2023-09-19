@@ -6,7 +6,7 @@ const Plus = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="-16 176 352 224"
+      viewBox="0 0 100 100"
       height={height}
       width={width}
       {...props}
