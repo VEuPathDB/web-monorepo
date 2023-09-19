@@ -62,17 +62,16 @@
   align-items: flex-start;
   flex-direction: column;
 
-  &__SaveableTextEditorContainer {
-    cursor: text;
-    font-size: 19px;
+  .wdk-SaveableTextEditor {
+    font-style: italic;
   }
 
   &__StudyName {
     cursor: default;
+    margin-right: 1em;
   }
 
   &__AnalysisTitle {
-    font-style: italic;
     padding: 0;
     font-size: 19px;
   }

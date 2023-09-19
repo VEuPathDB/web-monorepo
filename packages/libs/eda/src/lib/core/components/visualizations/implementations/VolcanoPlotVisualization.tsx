@@ -57,7 +57,7 @@ import { fixVarIdLabel } from '../../../utils/visualization';
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
 const DEFAULT_FC_THRESHOLD = 2;
-const DEFAULT_MARKER_OPACITY = 0.7;
+const DEFAULT_MARKER_OPACITY = 0.8;
 /**
  * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
  * We could have also used d3.scale.nice but then we dont have precise control of where the extremes
@@ -230,6 +230,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       // Standard volcano plots have -log10(raw p value) as the y axis
       const yAxisMin = -Math.log10(dataYMax);
       const yAxisMax = -Math.log10(dataYMin);
+
       // Add a little padding to prevent clipping the glyph representing the extreme points
       return {
         min: Math.floor(yAxisMin - (yAxisMax - yAxisMin) * AXIS_PADDING_FACTOR),
@@ -339,6 +340,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     dependentAxisRange,
     significanceThreshold,
     log2FoldChangeThreshold,
+    entities,
   ]);
 
   // For the legend, we need the counts of the data
@@ -381,8 +383,14 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     computationConfiguration.comparator?.groupA &&
     computationConfiguration.comparator?.groupB
       ? [
-          'Up in ' + computationConfiguration.comparator.groupA.join(', '),
-          'Up in ' + computationConfiguration.comparator.groupB.join(', '),
+          'Up in ' +
+            computationConfiguration.comparator.groupA
+              .map((entry) => entry.label)
+              .join(','),
+          'Up in ' +
+            computationConfiguration.comparator.groupB
+              .map((entry) => entry.label)
+              .join(','),
         ]
       : [];
 
@@ -561,17 +569,17 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           markerColor: significanceColors['inconclusive'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupB?.join(
-            ', '
-          )} (${countsData[significanceColors['high']]})`,
+          label: `Up regulated in ${computationConfiguration.comparator.groupB
+            ?.map((entry) => entry.label)
+            .join(',')} (${countsData[significanceColors['high']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['high'],
         },
         {
-          label: `Up regulated in ${computationConfiguration.comparator.groupA?.join(
-            ', '
-          )} (${countsData[significanceColors['low']]})`,
+          label: `Up regulated in ${computationConfiguration.comparator.groupA
+            ?.map((entry) => entry.label)
+            .join(',')} (${countsData[significanceColors['low']]})`,
           marker: 'circle',
           hasData: true,
           markerColor: significanceColors['low'],
@@ -588,7 +596,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <LabelledGroup label="Threshold lines">
+      <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
         <NumberInput
           onValueChange={(newValue?: NumberOrDate) =>
             updateVizConfig({ log2FoldChangeThreshold: Number(newValue) })
@@ -596,7 +604,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           label="log2(Fold Change)"
           minValue={0}
           value={vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD}
-          containerStyles={{ flex: 1 }}
+          containerStyles={{ marginRight: 10 }}
         />
 
         <NumberInput
@@ -606,7 +614,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           }
           minValue={0}
           value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
-          containerStyles={{ flex: 1 }}
+          containerStyles={{ marginLeft: 10 }}
           step={0.001}
         />
       </LabelledGroup>

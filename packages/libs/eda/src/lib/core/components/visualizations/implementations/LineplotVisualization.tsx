@@ -768,10 +768,15 @@ function LineplotViz(props: VisualizationProps<Options>) {
           response.completeCasesTable
         );
 
-      const xAxisVocabulary = fixLabelsForNumberVariables(
-        xAxisVariable?.vocabulary,
-        xAxisVariable
-      );
+      // This is used for reordering series data.
+      // We don't want to do this for non-continuous variables.
+      const xAxisVocabulary =
+        xAxisVariable.dataShape === 'continuous'
+          ? []
+          : fixLabelsForNumberVariables(
+              xAxisVariable?.vocabulary,
+              xAxisVariable
+            );
       const overlayVocabulary =
         (overlayVariable && options?.getOverlayVocabulary?.()) ??
         fixLabelsForNumberVariables(

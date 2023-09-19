@@ -70,7 +70,7 @@ export default function DraggableVisualization({
       panelTitle={activeVizOverview?.displayName || ''}
       defaultPosition={{
         x: 535,
-        y: 142,
+        y: 220,
       }}
       onPanelDismiss={() => setActiveVisualizationId(undefined)}
     >

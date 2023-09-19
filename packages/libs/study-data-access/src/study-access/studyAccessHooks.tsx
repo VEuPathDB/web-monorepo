@@ -289,7 +289,7 @@ export function useStaffTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'Staff',
+            title: 'VEuPathDB Staff',
             value: {
               rows: value.result.data.map(({ user, staffId, isOwner }) => ({
                 userId: user.userId,
@@ -545,7 +545,7 @@ export function useEndUserTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'End Users',
+            title: 'Data Requesters',
             value: {
               rows: value.result.data.map(
                 ({
@@ -738,7 +738,7 @@ export function useHistoryTableSectionConfig(
           }
         : {
             status: 'success',
-            title: 'End User Table Updates',
+            title: 'Data Requester Table Updates',
             value: {
               rows: value.result.results
                 .filter(
@@ -1127,7 +1127,7 @@ function makeProviderTableActions(
         element: (
           <button type="button" className="btn">
             <IconAlt fa="plus" />
-            Add Providers
+            Add Team members
           </button>
         ),
         callback: () => {
@@ -1189,7 +1189,7 @@ function makeProviderTableActions(
             disabled={selection.length === 0}
           >
             <IconAlt fa="trash" />
-            Remove {selection.length === 1 ? 'Provider' : 'Providers'}
+            Remove {selection.length === 1 ? 'Team member' : 'Team members'}
           </button>
         ),
         callback: async (selection: ProviderTableFullRow[]) => {
@@ -1226,7 +1226,7 @@ function makeEndUserTableActions(
         element: (
           <button type="button" className="btn">
             <IconAlt fa="plus" />
-            Add End Users
+            Add Data Requesters
           </button>
         ),
         callback: () => {
@@ -1297,7 +1297,8 @@ function makeEndUserTableActions(
             disabled={selection.length === 0}
           >
             <IconAlt fa="trash" />
-            Remove {selection.length === 1 ? 'End User' : 'End Users'}
+            Remove{' '}
+            {selection.length === 1 ? 'Data Requester' : 'Data Requesters'}
           </button>
         ),
         callback: async (selection: EndUserTableFullRow[]) => {

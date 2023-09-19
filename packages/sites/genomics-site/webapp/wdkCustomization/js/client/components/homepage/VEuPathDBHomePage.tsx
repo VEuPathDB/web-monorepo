@@ -6,7 +6,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
@@ -24,6 +24,7 @@ import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { useStudyAccessApi } from '@veupathdb/study-data-access/lib/study-access/studyAccessHooks';
 
 import Announcements from '@veupathdb/web-common/lib/components/Announcements';
 import CookieBanner from '@veupathdb/web-common/lib/components/CookieBanner';
@@ -45,11 +46,13 @@ import {
 import {
   useUserDatasetsWorkspace,
   useEda,
+  edaServiceUrl,
 } from '@veupathdb/web-common/lib/config';
 import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
+import { getWdkStudyRecords } from '@veupathdb/eda/lib/core/utils/study-records';
 
 import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
 
@@ -59,9 +62,16 @@ import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import './VEuPathDBHomePage.scss';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import {
+  makeClassNameHelper,
+  safeHtml,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import SubsettingClient from '@veupathdb/eda/lib/core/api/SubsettingClient';
+import { WdkDependenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Warning } from '@veupathdb/coreui';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -321,6 +331,10 @@ const VEuPathDB = 'VEuPathDB';
 const UniDB = 'UniDB';
 const DB = 'DB';
 
+// TODO Update this const once we know the question name to use.
+// const QUESTION_FOR_MAP_DATASETS = 'DatasetsForMapMenu';
+const QUESTION_FOR_MAP_DATASETS = 'AllDatasets';
+
 function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
 }
@@ -350,49 +364,21 @@ const useHeaderMenuItems = (
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const communitySite = useCommunitySiteRootUrl();
 
-  const showInteractiveMaps = Boolean(useEda && projectId === 'VectorBase');
-
-  const mapMenuItems = useWdkService(
-    async (wdkService): Promise<HeaderMenuItem[]> => {
-      if (!showInteractiveMaps) return [];
-      try {
-        const anwser = await wdkService.getAnswerJson(
-          {
-            searchName: 'AllDatasets',
-            searchConfig: {
-              parameters: {},
-            },
-          },
-          {
-            attributes: ['eda_study_id'],
-          }
-        );
-        return anwser.records
-          .filter((record) => record.attributes.eda_study_id != null)
-          .map((record) => ({
-            key: `map-${record.id[0].value}`,
-            display: record.displayName,
-            type: 'reactRoute',
-            url: `/workspace/maps/${record.id[0].value}/new`,
-            target: '_blank',
-          }));
-      } catch (error) {
-        console.error(error);
-        return [
-          {
-            key: 'maps-error',
-            display: (
-              <>
-                <Warning /> Could not load map data
-              </>
-            ),
-            type: 'custom',
-          },
-        ];
-      }
-    },
-    [showInteractiveMaps]
+  const mapMenuItemsQuestion = useSelector((state: RootState) =>
+    state.globalData.questions?.find(
+      (q) => q.urlSegment === QUESTION_FOR_MAP_DATASETS
+    )
   );
+  const mapStudy = useWdkService(
+    (wdkService) =>
+      wdkService
+        .getRecord('dataset', [{ name: 'dataset_id', value: 'DS_480c976ef9' }])
+        .catch(() => {}),
+    []
+  );
+  // const showInteractiveMaps = mapMenuItemsQuestion != null;
+  // const mapMenuItems = useMapMenuItems(mapMenuItemsQuestion);
+  const showInteractiveMaps = projectId === VectorBase && !!useEda;
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [
@@ -600,24 +586,39 @@ const useHeaderMenuItems = (
             include: [EuPathDB, UniDB],
           },
         },
+        // {
+        //   key: 'maps-alpha',
+        //   display: (
+        //     <>
+        //       Interactive maps <img alt="BETA" src={betaImage} />
+        //     </>
+        //   ),
+        //   type: 'subMenu',
+        //   metadata: {
+        //     test: () => showInteractiveMaps,
+        //   },
+        //   items: mapMenuItems ?? [
+        //     {
+        //       key: 'maps-loading',
+        //       type: 'custom',
+        //       display: <Loading radius={4} />,
+        //     },
+        //   ],
+        // },
         {
-          key: 'maps-alpha',
+          type: 'reactRoute',
           display: (
             <>
-              Interactive maps <img alt="BETA" src={betaImage} />
+              MapVEu - {safeHtml(mapStudy?.displayName ?? '')}{' '}
+              <img alt="BETA" src={betaImage} />
             </>
           ),
-          type: 'subMenu',
+          key: 'map--mega-study',
+          url: '/workspace/maps/DS_480c976ef9/new',
+          target: '_blank',
           metadata: {
-            test: () => showInteractiveMaps,
+            test: () => showInteractiveMaps && mapStudy != null,
           },
-          items: mapMenuItems ?? [
-            {
-              key: 'maps-loading',
-              type: 'custom',
-              display: <Loading radius={4} />,
-            },
-          ],
         },
         {
           key: 'pubcrawler',
@@ -1192,3 +1193,47 @@ const VEuPathDBSnackbarProvider = makeSnackbarProvider(
 export const VEuPathDBHomePage = connect(mapStateToProps)(
   VEuPathDBHomePageView
 );
+
+function useMapMenuItems(question?: Question) {
+  const { wdkService } = useNonNullableContext(WdkDependenciesContext);
+  const studyAccessApi = useStudyAccessApi();
+  const subsettingClient = useMemo(
+    () => new SubsettingClient({ baseUrl: edaServiceUrl }, wdkService),
+    [wdkService]
+  );
+  const [mapMenuItems, setMapMenuItems] = useState<HeaderMenuItem[]>();
+  useEffect(() => {
+    if (question == null) return;
+    getWdkStudyRecords(
+      { studyAccessApi, subsettingClient, wdkService },
+      { searchName: question.urlSegment }
+    ).then(
+      (records) => {
+        const menuItems = records.map(
+          (record): HeaderMenuItem => ({
+            key: `map-${record.id[0].value}`,
+            display: record.displayName,
+            type: 'reactRoute',
+            url: `/workspace/maps/${record.id[0].value}/new`,
+          })
+        );
+        setMapMenuItems(menuItems);
+      },
+      (error) => {
+        console.error(error);
+        setMapMenuItems([
+          {
+            key: 'map-error',
+            type: 'custom',
+            display: (
+              <>
+                <Warning /> Unable to load map datasets.
+              </>
+            ),
+          },
+        ]);
+      }
+    );
+  }, [question, studyAccessApi, subsettingClient, wdkService]);
+  return mapMenuItems;
+}

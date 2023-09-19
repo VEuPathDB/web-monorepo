@@ -49,6 +49,8 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
       '-8',
       '-4',
       '-3',
+      '-8.2',
+      '7',
     ],
     pValue: [
       '0.001',
@@ -63,9 +65,26 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
       '0.001',
       '0.0001',
       '0.002',
+      '0',
+      '0',
     ],
-    adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
-    pointID: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
+    adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02', '0', '0'],
+    pointID: [
+      'a',
+      'b',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'h',
+      'i',
+      'j',
+      'k',
+      'l',
+      'buzz',
+      'lightyear',
+    ],
   },
 };
 
@@ -112,7 +131,7 @@ const Template: Story<TemplateProps> = (args) => {
       })
       .map((d) => ({
         ...d,
-        pointID: d.pointID ? [d.pointID] : undefined,
+        pointIDs: d.pointID ? [d.pointID] : undefined,
         significanceColor: assignSignificanceColor(
           Number(d.log2foldChange),
           Number(d.pValue),
@@ -191,11 +210,15 @@ Simple.args = {
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: dataSetVolcanoManyPoints,
-  markerBodyOpacity: 0.5,
+  markerBodyOpacity: 0.8,
   log2FoldChangeThreshold: 3,
   significanceThreshold: 0.01,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: 0, max: 9 },
+  comparisonLabels: [
+    'up in super long group name',
+    'up in other long group name',
+  ],
 };
 
 // Test truncation indicators
