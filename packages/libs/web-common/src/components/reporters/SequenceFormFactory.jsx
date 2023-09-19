@@ -10,10 +10,11 @@ import {
 import { FeaturesList, ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
+import './ReporterForms.scss';
 
-let util = Object.assign({}, ComponentUtils, ReporterUtils);
+const util = Object.assign({}, ComponentUtils, ReporterUtils);
 
-let deflineFieldOptions = [
+const deflineFieldOptions = [
   { value: 'organism', display: 'Organism' },
   { value: 'description', display: 'Description' },
   { value: 'position', display: 'Location' },
@@ -21,9 +22,9 @@ let deflineFieldOptions = [
   { value: 'segment_length', display: 'Segment Length' },
 ];
 
-let sequenceOptions = (props) => {
-  let { formState, updateFormState, onSubmit, includeSubmit } = props;
-  let getUpdateHandler = (fieldName) =>
+const sequenceOptions = (props) => {
+  const { formState, updateFormState, onSubmit, includeSubmit } = props;
+  const getUpdateHandler = (fieldName) =>
     util.getChangeHandler(fieldName, updateFormState, formState);
   return (
     <React.Fragment>
@@ -48,19 +49,24 @@ let sequenceOptions = (props) => {
         )}
       </div>
       <h3>Sequence format:</h3>
-      <div style={{ marginLeft: '2em' }}>
+      <div
+        style={{
+          marginLeft: '2em',
+          display: 'grid',
+          gridTemplateColumns: 'auto 1fr',
+        }}
+      >
         <RadioList
           name="sequenceFormat"
           value={formState.sequenceFormat}
           onChange={getUpdateHandler('sequenceFormat')}
           items={[
+            { value: 'fixed_width', display: 'Fixed Width with' },
             { value: 'single_line', display: 'Single Line' },
-            { value: 'fixed_width', display: 'Fixed Width' },
           ]}
         />
-        {formState.sequenceFormat === 'single_line' ? null : (
-          <React.Fragment>
-            <span>Bases Per Line: </span>
+        {formState.sequenceFormat === 'fixed_width' && (
+          <div className="ebrc-FixedWidth-detail">
             <NumberSelector
               name={'basesPerLine'}
               start={0}
@@ -70,22 +76,23 @@ let sequenceOptions = (props) => {
               onChange={getUpdateHandler('basesPerLine')}
               size="6"
             />
-          </React.Fragment>
+            <span>bases per line</span>
+          </div>
         )}
       </div>
     </React.Fragment>
   );
 };
 
-let createSequenceForm = (
+const createSequenceForm = (
   formBeforeCommonOptions,
   formAfterSubmitButton,
   getFormInitialState,
   reportType
 ) => {
-  let Form = (props) => {
-    let { formState, updateFormState, onSubmit, includeSubmit } = props;
-    let getUpdateHandler = (fieldName) =>
+  const Form = (props) => {
+    const { formState, updateFormState, onSubmit, includeSubmit } = props;
+    const getUpdateHandler = (fieldName) =>
       util.getChangeHandler(fieldName, updateFormState, formState);
     return (
       <div>
