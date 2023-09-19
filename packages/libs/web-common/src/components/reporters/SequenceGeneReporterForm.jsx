@@ -17,50 +17,66 @@ import createSequenceForm from './SequenceFormFactory';
  * Similar to SequenceGeneReporterForm
  * (but with protein options)
  */
-let util = Object.assign({}, ComponentUtils, ReporterUtils);
+const util = Object.assign({}, ComponentUtils, ReporterUtils);
 
-let splicedGenomicOptions = [
+const splicedGenomicOptions = [
   { value: 'cds', display: 'Coding Sequence' },
   { value: 'transcript', display: 'Transcript' },
 ];
 
-let proteinFeatureOptions = [
+const proteinFeatureOptions = [
   { value: 'interpro', display: 'InterPro' },
   { value: 'signalp', display: 'SignalP' },
   { value: 'tmhmm', display: 'Transmembrane Domains' },
   { value: 'low_complexity', display: 'Low Complexity Regions' },
 ];
 
-let dnaComponentOptions = [
+const dnaComponentOptions = [
   { value: 'exon', display: 'Exon' },
   { value: 'intron', display: 'Intron' },
 ];
 
-let transcriptComponentOptions = [
+const transcriptComponentOptions = [
   { value: 'five_prime_utr', display: "5' UTR" },
   { value: 'cds', display: 'CDS' },
   { value: 'three_prime_utr', display: "3' UTR" },
 ];
 
-let genomicAnchorValues = [
+const genomicAnchorValues = [
   { value: 'Start', display: 'Transcription Start***' },
   { value: 'CodeStart', display: 'Translation Start (ATG)' },
   { value: 'CodeEnd', display: 'Translation Stop Codon' },
   { value: 'End', display: 'Transcription Stop***' },
 ];
 
-let proteinAnchorValues = [
+const proteinAnchorValues = [
   { value: 'DownstreamFromStart', display: 'Downstream from Start' },
   { value: 'UpstreamFromEnd', display: 'Upstream from End' },
 ];
 
-let signs = [
+const signs = [
   { value: 'plus', display: '+' },
   { value: 'minus', display: '-' },
 ];
 
-let SequenceRegionRange = (props) => {
-  let { label, anchor, sign, offset, formState, getUpdateHandler } = props;
+const formSequenceTypeOptions = [
+  { value: 'genomic', display: 'Unspliced Genomic Sequence' },
+  {
+    value: 'spliced_genomic',
+    display: (
+      <>
+        Spliced Genomic Region (<i>i.e. transcribed sequences</i>)
+      </>
+    ),
+  },
+  { value: 'dna_component', display: 'DNA Component' },
+  { value: 'transcript_component', display: 'Transcript Component' },
+  { value: 'protein', display: 'Protein Sequence' },
+  { value: 'protein_features', display: 'Protein Features' },
+];
+
+const SequenceRegionRange = (props) => {
+  const { label, anchor, sign, offset, formState, getUpdateHandler } = props;
   return (
     <React.Fragment>
       <span>{label}</span>
@@ -90,8 +106,8 @@ let SequenceRegionRange = (props) => {
   );
 };
 
-let ProteinRegionRange = (props) => {
-  let { label, anchor, offset, formState, getUpdateHandler } = props;
+const ProteinRegionRange = (props) => {
+  const { label, anchor, offset, formState, getUpdateHandler } = props;
   return (
     <React.Fragment>
       <span>{label}</span>
@@ -115,8 +131,8 @@ let ProteinRegionRange = (props) => {
   );
 };
 
-let GenomicSequenceRegionInputs = (props) => {
-  let { formState, getUpdateHandler } = props;
+const GenomicSequenceRegionInputs = (props) => {
+  const { formState, getUpdateHandler } = props;
   return (
     <div>
       <div style={{ marginLeft: '0.75em' }}>
@@ -157,8 +173,8 @@ let GenomicSequenceRegionInputs = (props) => {
     </div>
   );
 };
-let ProteinSequenceRegionInputs = (props) => {
-  let { formState, getUpdateHandler } = props;
+const ProteinSequenceRegionInputs = (props) => {
+  const { formState, getUpdateHandler } = props;
   return (
     <div>
       <div
@@ -191,14 +207,14 @@ let ProteinSequenceRegionInputs = (props) => {
 };
 
 /** @type import('./Types').ReporterFormComponent */
-let formBeforeCommonOptions = (props) => {
-  let { formState, updateFormState, onSubmit, includeSubmit } = props;
-  let getUpdateHandler = (fieldName) =>
+const formBeforeCommonOptions = (props) => {
+  const { formState, updateFormState, onSubmit, includeSubmit } = props;
+  const getUpdateHandler = (fieldName) =>
     util.getChangeHandler(fieldName, updateFormState, formState);
-  let typeUpdateHandler = function (newTypeValue) {
+  const typeUpdateHandler = function (newTypeValue) {
     updateFormState(Object.assign({}, formState, { type: newTypeValue }));
   };
-  let getTypeSpecificParams = () => {
+  const getTypeSpecificParams = () => {
     switch (formState.type) {
       case 'genomic':
         return (
@@ -254,28 +270,29 @@ let formBeforeCommonOptions = (props) => {
   };
   return (
     <React.Fragment>
-      <h3>Choose the type of result:</h3>
+      <h3>Choose the type of sequence:</h3>
       <div style={{ marginLeft: '2em' }}>
         <RadioList
           name="type"
           value={formState.type}
           onChange={typeUpdateHandler}
-          items={[
-            { value: 'genomic', display: 'Unspliced Genomic Sequence' },
-            { value: 'spliced_genomic', display: 'Spliced Genomic Sequence' },
-            { value: 'dna_component', display: 'DNA Component' },
-            { value: 'transcript_component', display: 'Transcript Component' },
-            { value: 'protein', display: 'Protein Sequence' },
-            { value: 'protein_features', display: 'Protein Features' },
-          ]}
+          items={formSequenceTypeOptions}
         />
-        <h4>Configure details:</h4>
+        <h4>
+          Configure details for{' '}
+          {
+            formSequenceTypeOptions.find(
+              (item) => item.value === formState.type
+            ).display
+          }
+          :
+        </h4>
         {getTypeSpecificParams()}
       </div>
     </React.Fragment>
   );
 };
-let formAfterSubmitButton = (props) => {
+const formAfterSubmitButton = (props) => {
   return (
     <React.Fragment>
       <div>
@@ -297,7 +314,7 @@ let formAfterSubmitButton = (props) => {
     </React.Fragment>
   );
 };
-let getFormInitialState = () => ({
+const getFormInitialState = () => ({
   type: 'genomic',
 
   // sequence region inputs for 'genomic'
