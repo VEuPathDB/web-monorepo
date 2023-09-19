@@ -6,6 +6,8 @@ import {
   useHistory,
 } from 'react-router';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
 import { AnalysisList } from './MapVeuAnalysisList';
@@ -48,73 +50,84 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
     history.push(loginUrl);
   }
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // We presume data will not go stale during the lifecycle of an application.
+        staleTime: Infinity,
+      },
+    },
+  });
+
   // This will get the matched path of the active parent route.
   // This is useful so we don't have to hardcode the path root.
   const { path } = useRouteMatch();
   return (
-    <Switch>
-      <Route
-        path={path}
-        exact
-        render={() => (
-          <AllAnalyses
-            analysisClient={analysisClient}
-            subsettingClient={edaClient}
-            showLoginForm={showLoginForm}
-          />
-        )}
-      />
-      <Route path={`${path}/studies`} exact render={() => <StudyList />} />
-      <Route
-        path={`${path}/public`}
-        render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
-      />
-      <Route
-        path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}
-        render={(
-          routeProps: RouteComponentProps<{
-            analysisId?: string;
-            studyId: string;
-          }>
-        ) => (
-          <EDAWorkspaceContainer
-            studyId={routeProps.match.params.studyId}
-            subsettingClient={edaClient}
-            analysisClient={analysisClient}
-            dataClient={dataClient}
-            downloadClient={downloadClient}
-            computeClient={computeClient}
-            className="MapVEu"
-          >
-            <MapAnalysis
-              analysisId={routeProps.match.params.analysisId}
-              siteInformationProps={siteInformationProps}
+    <QueryClientProvider client={queryClient}>
+      <Switch>
+        <Route
+          path={path}
+          exact
+          render={() => (
+            <AllAnalyses
+              analysisClient={analysisClient}
+              subsettingClient={edaClient}
+              showLoginForm={showLoginForm}
+            />
+          )}
+        />
+        <Route path={`${path}/studies`} exact render={() => <StudyList />} />
+        <Route
+          path={`${path}/public`}
+          render={() => <PublicAnalysesRoute analysisClient={analysisClient} />}
+        />
+        <Route
+          path={[`${path}/:studyId/new`, `${path}/:studyId/:analysisId`]}
+          render={(
+            routeProps: RouteComponentProps<{
+              analysisId?: string;
+              studyId: string;
+            }>
+          ) => (
+            <EDAWorkspaceContainer
               studyId={routeProps.match.params.studyId}
-              sharingUrl={sharingUrl}
-            />
-          </EDAWorkspaceContainer>
-        )}
-      />
-      <Route
-        path={`${path}/:studyId`}
-        render={(props: RouteComponentProps<{ studyId: string }>) => (
-          <EDAAnalysisListContainer
-            studyId={props.match.params.studyId}
-            analysisClient={analysisClient}
-            subsettingClient={edaClient}
-            dataClient={dataClient}
-            downloadClient={downloadClient}
-            computeClient={computeClient}
-            className="MapVEu"
-          >
-            <AnalysisList
+              subsettingClient={edaClient}
+              analysisClient={analysisClient}
+              dataClient={dataClient}
+              downloadClient={downloadClient}
+              computeClient={computeClient}
+              className="MapVEu"
+            >
+              <MapAnalysis
+                analysisId={routeProps.match.params.analysisId}
+                siteInformationProps={siteInformationProps}
+                studyId={routeProps.match.params.studyId}
+                sharingUrl={sharingUrl}
+              />
+            </EDAWorkspaceContainer>
+          )}
+        />
+        <Route
+          path={`${path}/:studyId`}
+          render={(props: RouteComponentProps<{ studyId: string }>) => (
+            <EDAAnalysisListContainer
               studyId={props.match.params.studyId}
-              analysisStore={analysisClient}
-              singleAppMode={singleAppMode}
-            />
-          </EDAAnalysisListContainer>
-        )}
-      />
-    </Switch>
+              analysisClient={analysisClient}
+              subsettingClient={edaClient}
+              dataClient={dataClient}
+              downloadClient={downloadClient}
+              computeClient={computeClient}
+              className="MapVEu"
+            >
+              <AnalysisList
+                studyId={props.match.params.studyId}
+                analysisStore={analysisClient}
+                singleAppMode={singleAppMode}
+              />
+            </EDAAnalysisListContainer>
+          )}
+        />
+      </Switch>
+    </QueryClientProvider>
   );
 }

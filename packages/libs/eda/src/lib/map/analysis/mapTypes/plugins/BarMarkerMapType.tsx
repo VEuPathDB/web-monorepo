@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   CategoricalVariableDataShape,
   Variable,
@@ -9,17 +10,17 @@ import {
   BarPlotMarkerConfigurationMenu,
 } from '../../MarkerConfiguration/BarPlotMarkerConfigurationMenu';
 import {
-  GetDataProps,
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import { getDefaultOverlayConfig } from '../../utils/defaultOverlayConfig';
-import { GLOBAL_VIEWPORT } from '../../hooks/standaloneMapMarkers';
 import {
-  AllValuesDefinition,
+  DefaultOverlayConfigProps,
+  getDefaultOverlayConfig,
+} from '../../utils/defaultOverlayConfig';
+import {
+  LatLonViewport,
   OverlayConfig,
-  StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
 } from '../../../../core/api/DataClient/types';
 import { getDefaultAxisRange } from '../../../../core/utils/computeDefaultAxisRange';
@@ -37,7 +38,7 @@ import {
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../..';
 import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
-import { defaultAnimation } from '../shared';
+import { defaultAnimation, useCommonData } from '../shared';
 import {
   useDataClient,
   useFindEntityAndVariable,
@@ -46,11 +47,10 @@ import {
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import { filtersFromBoundingBox } from '../../../../core/utils/visualization';
-import { usePromise } from '../../../../core';
+import { Filter, usePromise } from '../../../../core';
 import { getCategoricalValues } from '../../utils/categoricalValues';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
-import { leastAncestralEntity } from '../../../../core/utils/data-element-constraints';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import {
@@ -60,246 +60,16 @@ import {
 import { BarPlotMarker } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
-
-interface BarMarkerData {
-  markersData: ChartMarkerProps[];
-  totalVisibleWithOverlayEntityCount: number;
-  totalVisibleEntityCount: number;
-  legendItems: LegendItemsProps[];
-  overlayConfig: OverlayConfig;
-}
+import { VariableDescriptor } from '../../../../core/types/variable';
 
 const displayName = 'Bar plots';
 
-export const plugin: MapTypePlugin<BarMarkerData> = {
+export const plugin: MapTypePlugin<void> = {
   displayName,
-  getData,
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
 };
-
-async function getData(props: GetDataProps): Promise<BarMarkerData> {
-  const {
-    geoConfigs,
-    configuration,
-    studyId,
-    filters,
-    studyEntities,
-    dataClient,
-    subsettingClient,
-    boundsZoomLevel,
-  } = props;
-
-  const {
-    selectedVariable,
-    selectedPlotMode,
-    dependentAxisLogScale,
-    binningMethod,
-  } = configuration as BarPlotMarkerConfiguration;
-
-  const geoConfig = geoConfigs[0];
-
-  const { entity: overlayEntity, variable: overlayVariable } =
-    findEntityAndVariable(studyEntities, selectedVariable) ?? {};
-
-  if (overlayEntity == null || overlayVariable == null) {
-    throw new Error(
-      'Could not find overlay variable: ' + JSON.stringify(selectedVariable)
-    );
-  }
-
-  if (!Variable.is(overlayVariable)) {
-    throw new Error('Not a variable');
-  }
-
-  const outputEntity = leastAncestralEntity(
-    [overlayEntity, geoConfig.entity],
-    studyEntities
-  );
-  const outputEntityId = outputEntity?.id;
-
-  // prepare some info that the map-markers and overlay requests both need
-  const { latitudeVariable, longitudeVariable } =
-    geoConfig == null || geoConfig.entity.id == null
-      ? {
-          latitudeVariable: undefined,
-          longitudeVariable: undefined,
-        }
-      : {
-          latitudeVariable: {
-            entityId: geoConfig.entity.id,
-            variableId: geoConfig.latitudeVariableId,
-          },
-          longitudeVariable: {
-            entityId: geoConfig.entity.id,
-            variableId: geoConfig.longitudeVariableId,
-          },
-        };
-
-  // handle the geoAggregateVariable separately because it changes with zoom level
-  // and we don't want that to change overlayVariableAndEntity etc because that invalidates
-  // the overlayConfigPromise
-
-  const geoAggregateVariable =
-    geoConfig != null
-      ? {
-          entityId: geoConfig.entity.id,
-          variableId:
-            // if boundsZoomLevel is undefined, we'll default to geoConfig.aggregationVariableIds[0]
-            geoConfig.aggregationVariableIds[
-              boundsZoomLevel?.zoomLevel != null
-                ? geoConfig.zoomLevelToAggregationLevel(
-                    boundsZoomLevel.zoomLevel
-                  ) - 1
-                : 0
-            ],
-        }
-      : undefined;
-
-  const overlayConfig = await getDefaultOverlayConfig({
-    studyId,
-    filters,
-    overlayEntity,
-    overlayVariable,
-    dataClient,
-    subsettingClient,
-    binningMethod,
-  });
-
-  // check all required vizConfigs are provided
-  if (
-    overlayConfig == null ||
-    geoConfig == null ||
-    latitudeVariable == null ||
-    longitudeVariable == null ||
-    geoAggregateVariable == null ||
-    outputEntityId == null
-  )
-    throw new Error('Oops');
-
-  const viewport = boundsZoomLevel
-    ? {
-        latitude: {
-          xMin: boundsZoomLevel.bounds.southWest.lat,
-          xMax: boundsZoomLevel.bounds.northEast.lat,
-        },
-        longitude: {
-          left: boundsZoomLevel.bounds.southWest.lng,
-          right: boundsZoomLevel.bounds.northEast.lng,
-        },
-      }
-    : GLOBAL_VIEWPORT;
-
-  const requestParams: StandaloneMapMarkersRequestParams = {
-    studyId,
-    filters: filters || [],
-    config: {
-      geoAggregateVariable,
-      latitudeVariable,
-      longitudeVariable,
-      overlayConfig,
-      outputEntityId,
-      valueSpec: selectedPlotMode,
-      viewport,
-    },
-  };
-
-  const rawMarkersData = await dataClient.getStandaloneMapMarkers(
-    'standalone-map',
-    requestParams
-  );
-  const vocabulary =
-    overlayConfig?.overlayType === 'categorical' // switch statement style guide time!!
-      ? (overlayConfig.overlayValues as string[])
-      : overlayConfig?.overlayType === 'continuous'
-      ? overlayConfig.overlayValues.map((ov) =>
-          typeof ov === 'object' ? ov.binLabel : ''
-        )
-      : [];
-
-  const totalVisibleEntityCount: number | undefined =
-    rawMarkersData.mapElements.reduce((acc, curr) => {
-      return acc + curr.entityCount;
-    }, 0);
-
-  // calculate minPos, max and sum for chart marker dependent axis
-  // assumes the value is a count! (so never negative)
-  const { valueMax, valueMinPos, countSum } = rawMarkersData.mapElements
-    .flatMap((el) => ('overlayValues' in el ? el.overlayValues : []))
-    .reduce(
-      ({ valueMax, valueMinPos, countSum }, elem) => ({
-        valueMax: Math.max(elem.value, valueMax),
-        valueMinPos:
-          elem.value > 0 && (valueMinPos == null || elem.value < valueMinPos)
-            ? elem.value
-            : valueMinPos,
-        countSum: countSum + elem.count,
-      }),
-      {
-        valueMax: 0,
-        valueMinPos: Infinity,
-        countSum: 0,
-      }
-    );
-
-  const defaultDependentAxisRange = getDefaultAxisRange(
-    null,
-    0,
-    valueMinPos,
-    valueMax,
-    dependentAxisLogScale
-  ) as NumberRange;
-
-  /**
-   * Merge the overlay data into the basicMarkerData, if available,
-   * and create markers.
-   */
-  const finalMarkersData = processRawMarkersData(
-    rawMarkersData.mapElements,
-    defaultDependentAxisRange,
-    dependentAxisLogScale,
-    vocabulary,
-    overlayConfig?.overlayType
-  );
-
-  /**
-   * create custom legend data
-   */
-  const legendItems: LegendItemsProps[] = vocabulary?.map((label) => ({
-    label: fixLabelForOtherValues(label),
-    marker: 'square',
-    markerColor:
-      overlayConfig?.overlayType === 'categorical'
-        ? ColorPaletteDefault[vocabulary.indexOf(label)]
-        : overlayConfig?.overlayType === 'continuous'
-        ? gradientSequentialColorscaleMap(
-            vocabulary.length > 1
-              ? vocabulary.indexOf(label) / (vocabulary.length - 1)
-              : 0.5
-          )
-        : undefined,
-    // has any geo-facet got an array of overlay data
-    // containing at least one element that satisfies label==label
-    hasData: rawMarkersData.mapElements.some(
-      (el) =>
-        // TS says el could potentially be a number, and I don't know why
-        typeof el === 'object' &&
-        'overlayValues' in el &&
-        el.overlayValues.some((ov) => ov.binLabel === label)
-    ),
-    group: 1,
-    rank: 1,
-  }));
-
-  return {
-    markersData: finalMarkersData,
-    totalVisibleWithOverlayEntityCount: countSum,
-    totalVisibleEntityCount,
-    legendItems,
-    overlayConfig,
-  };
-}
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const {
@@ -356,11 +126,16 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
   ]);
 
-  const allFilteredCategoricalValues = usePromise(
-    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
-      /**
-       * We only need this data for categorical vars, so we can return early if var isn't categorical
-       */
+  const allFilteredCategoricalValues = useQuery({
+    queryKey: [
+      'barplot',
+      'allFilteredCategoricalValues',
+      studyId,
+      overlayVariable.id,
+      overlayEntity.id,
+      filters,
+    ],
+    queryFn: async function getFilteredCategoricalValues() {
       if (
         !overlayVariable ||
         !CategoricalVariableDataShape.is(overlayVariable.dataShape)
@@ -373,11 +148,19 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         overlayVariable,
         filters,
       });
-    }, [overlayEntity, overlayVariable, subsettingClient, studyId, filters])
-  );
+    },
+  });
 
-  const allVisibleCategoricalValues = usePromise(
-    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
+  const allVisibleCategoricalValues = useQuery({
+    queryKey: [
+      'barplot',
+      'allVisibleCategoricalValues',
+      studyId,
+      overlayVariable.id,
+      overlayEntity.id,
+      filtersIncludingViewport,
+    ],
+    queryFn: async function getVisibleCategoricalValues() {
       /**
        * Return early if:
        *  - overlay var isn't categorical
@@ -398,59 +181,49 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         overlayVariable,
         filters: filtersIncludingViewport,
       });
-    }, [
-      overlayVariable,
-      configuration,
-      overlayEntity,
-      subsettingClient,
-      studyId,
-      filtersIncludingViewport,
-    ])
+    },
+  });
+
+  const {
+    outputEntity,
+    latitudeVariable,
+    longitudeVariable,
+    geoAggregateVariable,
+    viewport,
+  } = useCommonData(
+    configuration.selectedVariable,
+    geoConfigs,
+    studyEntities,
+    appState.boundsZoomLevel
   );
 
-  const previewMarkerResult = usePromise(
-    useCallback(
-      async () =>
-        appState.boundsZoomLevel
-          ? getData({
-              dataClient,
-              subsettingClient,
-              boundsZoomLevel: appState.boundsZoomLevel,
-              studyId,
-              filters,
-              studyEntities,
-              geoConfigs,
-              configuration,
-            })
-          : undefined,
-      [
-        appState.boundsZoomLevel,
-        configuration,
-        dataClient,
-        filters,
-        geoConfigs,
-        studyEntities,
-        studyId,
-        subsettingClient,
-      ]
-    )
-  );
+  const previewMarkerData = useMarkerData({
+    studyId: props.studyId,
+    filters: props.filters,
+    geoAggregateVariable,
+    latitudeVariable,
+    longitudeVariable,
+    outputEntityId: outputEntity?.id,
+    overlayVariableDescriptor: configuration.selectedVariable,
+    selectedPlotMode: configuration.selectedPlotMode,
+    binningMethod: configuration.binningMethod,
+    dependentAxisLogScale: configuration.dependentAxisLogScale,
+    viewport,
+  });
 
   const continuousMarkerPreview = useMemo(() => {
     if (
-      !previewMarkerResult.value ||
-      !previewMarkerResult.value.markersData.length ||
-      !Array.isArray(previewMarkerResult.value.markersData[0].data)
+      !previewMarkerData ||
+      !previewMarkerData.length ||
+      !Array.isArray(previewMarkerData[0].data)
     )
       return;
-    const initialDataObject = previewMarkerResult.value.markersData[0].data.map(
-      (data) => ({
-        label: data.label,
-        value: 0,
-        ...(data.color ? { color: data.color } : {}),
-      })
-    );
-    const finalData = previewMarkerResult.value.markersData.reduce(
+    const initialDataObject = previewMarkerData[0].data.map((data) => ({
+      label: data.label,
+      value: 0,
+      ...(data.color ? { color: data.color } : {}),
+    }));
+    const finalData = previewMarkerData.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
@@ -471,7 +244,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         {...sharedStandaloneMarkerProperties}
       />
     );
-  }, [dependentAxisLogScale, previewMarkerResult.value]);
+  }, [dependentAxisLogScale, previewMarkerData]);
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
@@ -509,8 +282,8 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       studyId={studyId}
       filters={filters}
       continuousMarkerPreview={continuousMarkerPreview}
-      allFilteredCategoricalValues={allFilteredCategoricalValues.value}
-      allVisibleCategoricalValues={allVisibleCategoricalValues.value}
+      allFilteredCategoricalValues={allFilteredCategoricalValues.data}
+      allVisibleCategoricalValues={allVisibleCategoricalValues.data}
       inputs={[]}
       entities={studyEntities}
       starredVariables={
@@ -582,15 +355,47 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 }
 
-function MapLayerComponent(props: MapTypeMapLayerProps<BarMarkerData>) {
-  const markers = props.data.markersData.map((markerProps) => (
-    <ChartMarker {...markerProps} />
-  ));
+function MapLayerComponent(props: MapTypeMapLayerProps<void>) {
+  const {
+    geoAggregateVariable,
+    latitudeVariable,
+    longitudeVariable,
+    outputEntity,
+    viewport,
+  } = useCommonData(
+    (props.configuration as BarPlotMarkerConfiguration).selectedVariable,
+    props.geoConfigs,
+    props.studyEntities,
+    props.appState.boundsZoomLevel
+  );
+
+  const markerData = useMarkerData({
+    studyId: props.studyId,
+    filters: props.filters,
+    geoAggregateVariable,
+    latitudeVariable,
+    longitudeVariable,
+    outputEntityId: outputEntity.id,
+    binningMethod: (props.configuration as BarPlotMarkerConfiguration)
+      .binningMethod,
+    overlayVariableDescriptor: (
+      props.configuration as BarPlotMarkerConfiguration
+    ).selectedVariable,
+    dependentAxisLogScale: (props.configuration as BarPlotMarkerConfiguration)
+      .dependentAxisLogScale,
+    viewport,
+    selectedPlotMode: (props.configuration as BarPlotMarkerConfiguration)
+      .selectedPlotMode,
+  });
+
+  const markers =
+    markerData?.map((markerProps) => <ChartMarker {...markerProps} />) ?? [];
+
   return <SemanticMarkers markers={markers} animation={defaultAnimation} />;
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps<BarMarkerData>) {
-  const { data, updateConfiguration } = props;
+function MapOverlayComponent(props: MapTypeMapLayerProps<void>) {
+  const { updateConfiguration } = props;
   const configuration = props.configuration as BarPlotMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
@@ -606,8 +411,70 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<BarMarkerData>) {
     [configuration, updateConfiguration]
   );
 
+  const {
+    outputEntity,
+    latitudeVariable,
+    longitudeVariable,
+    geoAggregateVariable,
+    viewport,
+  } = useCommonData(
+    configuration.selectedVariable,
+    props.geoConfigs,
+    props.studyEntities,
+    props.appState.boundsZoomLevel
+  );
+
+  const { data: overlayConfig } = useOverlayConfig({
+    studyId: props.studyId,
+    filters: props.filters,
+    binningMethod: configuration.binningMethod,
+    overlayVariableDescriptor: configuration.selectedVariable,
+  });
+
+  const markerData = useMarkerData({
+    studyId: props.studyId,
+    filters: props.filters,
+    geoAggregateVariable,
+    latitudeVariable,
+    longitudeVariable,
+    outputEntityId: outputEntity?.id,
+    overlayVariableDescriptor: configuration.selectedVariable,
+    selectedPlotMode: configuration.selectedPlotMode,
+    binningMethod: configuration.binningMethod,
+    dependentAxisLogScale: configuration.dependentAxisLogScale,
+    viewport,
+  });
+
+  const vocabulary: string[] = overlayConfig
+    ? getVocabulary(overlayConfig)
+    : [];
+
+  const legendItems = vocabulary.map(
+    (label): LegendItemsProps => ({
+      label: fixLabelForOtherValues(label),
+      marker: 'square',
+      markerColor:
+        overlayConfig?.overlayType === 'categorical'
+          ? ColorPaletteDefault[vocabulary.indexOf(label)]
+          : overlayConfig?.overlayType === 'continuous'
+          ? gradientSequentialColorscaleMap(
+              vocabulary.length > 1
+                ? vocabulary.indexOf(label) / (vocabulary.length - 1)
+                : 0.5
+            )
+          : undefined,
+      // has any geo-facet got an array of overlay data
+      // containing at least one element that satisfies label==label
+      hasData:
+        markerData?.some((el) => el.data.some((d) => d.label === label)) ??
+        true,
+      group: 1,
+      rank: 1,
+    })
+  );
+
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: data.overlayConfig,
+    selectedOverlayConfig: overlayConfig,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
@@ -620,8 +487,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<BarMarkerData>) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={data.legendItems.length === 0}
-            plotLegendProps={{ type: 'list', legendItems: data.legendItems }}
+            isLoading={legendItems.length === 0}
+            plotLegendProps={{ type: 'list', legendItems }}
             showCheckbox={false}
           />
         </div>
@@ -751,4 +618,128 @@ const getBoundsAndPosition = (
 
 function fixLabelForOtherValues(input: string): string {
   return input === UNSELECTED_TOKEN ? UNSELECTED_DISPLAY_TEXT : input;
+}
+
+interface OverlayConfigProps {
+  studyId: string;
+  filters?: Filter[];
+  overlayVariableDescriptor: VariableDescriptor;
+  binningMethod: DefaultOverlayConfigProps['binningMethod'];
+}
+
+function useOverlayConfig(props: OverlayConfigProps) {
+  const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
+  const findEntityAndVariable = useFindEntityAndVariable();
+  return useQuery({
+    queryKey: ['barplotOverlayConfig', props],
+    queryFn: async function getOverlayConfig() {
+      const { entity: overlayEntity, variable: overlayVariable } =
+        findEntityAndVariable(props.overlayVariableDescriptor) ?? {};
+      return getDefaultOverlayConfig({
+        studyId: props.studyId,
+        filters: props.filters ?? [],
+        overlayEntity,
+        overlayVariable,
+        dataClient,
+        subsettingClient,
+        binningMethod: props.binningMethod,
+      });
+    },
+  });
+}
+
+interface MarkerProps {
+  studyId: string;
+  filters?: Filter[];
+  geoAggregateVariable: VariableDescriptor;
+  overlayVariableDescriptor: VariableDescriptor;
+  latitudeVariable: VariableDescriptor;
+  longitudeVariable: VariableDescriptor;
+  binningMethod: DefaultOverlayConfigProps['binningMethod'];
+  outputEntityId: string;
+  selectedPlotMode: 'count' | 'proportion';
+  viewport: LatLonViewport;
+  dependentAxisLogScale: boolean;
+}
+function useMarkerData(props: MarkerProps) {
+  const dataClient = useDataClient();
+  const { data: overlayConfig, isSuccess: overlayIsSuccess } = useOverlayConfig(
+    {
+      studyId: props.studyId,
+      filters: props.filters,
+      overlayVariableDescriptor: props.overlayVariableDescriptor,
+      binningMethod: props.binningMethod,
+    }
+  );
+  const { data: markerData } = useQuery({
+    queryKey: ['barplotMarkerData', props],
+    queryFn: async function getMarkerData() {
+      return dataClient.getStandaloneMapMarkers('standalone-map', {
+        studyId: props.studyId,
+        filters: props.filters ?? [],
+        config: {
+          geoAggregateVariable: props.geoAggregateVariable,
+          latitudeVariable: props.latitudeVariable,
+          longitudeVariable: props.longitudeVariable,
+          overlayConfig: overlayConfig,
+          outputEntityId: props.outputEntityId,
+          valueSpec: props.selectedPlotMode,
+          viewport: props.viewport,
+        },
+      });
+    },
+    enabled: overlayIsSuccess,
+  });
+
+  if (markerData == null || overlayConfig == null) return;
+
+  // calculate minPos, max and sum for chart marker dependent axis
+  // assumes the value is a count! (so never negative)
+  const { valueMax, valueMinPos } = markerData.mapElements
+    .flatMap((el) => ('overlayValues' in el ? el.overlayValues : []))
+    .reduce(
+      ({ valueMax, valueMinPos }, elem) => ({
+        valueMax: Math.max(elem.value, valueMax),
+        valueMinPos:
+          elem.value > 0 && (valueMinPos == null || elem.value < valueMinPos)
+            ? elem.value
+            : valueMinPos,
+      }),
+      {
+        valueMax: 0,
+        valueMinPos: Infinity,
+      }
+    );
+
+  const defaultDependentAxisRange = getDefaultAxisRange(
+    null,
+    0,
+    valueMinPos,
+    valueMax,
+    props.dependentAxisLogScale
+  ) as NumberRange;
+
+  /**
+   * Merge the overlay data into the basicMarkerData, if available,
+   * and create markers.
+   */
+  return processRawMarkersData(
+    markerData.mapElements,
+    defaultDependentAxisRange,
+    props.dependentAxisLogScale,
+    getVocabulary(overlayConfig),
+    overlayConfig.overlayType
+  );
+}
+
+function getVocabulary(overlayConfig: OverlayConfig) {
+  switch (overlayConfig.overlayType) {
+    case 'categorical':
+      return overlayConfig.overlayValues;
+    case 'continuous':
+      return overlayConfig.overlayValues.map((v) => v.binLabel);
+    default:
+      return [];
+  }
 }

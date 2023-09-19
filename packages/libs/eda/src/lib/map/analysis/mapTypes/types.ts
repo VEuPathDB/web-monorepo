@@ -65,7 +65,7 @@ export interface MapTypePlugin<T = unknown> {
   /**
    * Fetch and format data for use by MapLayerComponent and MapOverlayComponent
    */
-  getData: (props: GetDataProps) => Promise<T>;
+  getData?: (props: GetDataProps) => Promise<T>;
   /**
    * Returns a ReactNode used for configuring the map type
    */

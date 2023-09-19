@@ -24,8 +24,8 @@ import { BubbleMarkerConfiguration } from '../MarkerConfiguration/BubbleMarkerCo
 export interface DefaultBubbleOverlayConfigProps {
   studyId: string;
   filters: Filter[] | undefined;
-  overlayVariable: Variable | undefined;
-  overlayEntity: StudyEntity | undefined;
+  overlayVariable: Variable;
+  overlayEntity: StudyEntity;
   aggregator?: BubbleMarkerConfiguration['aggregator'];
   numeratorValues?: BubbleMarkerConfiguration['numeratorValues'];
   denominatorValues?: BubbleMarkerConfiguration['denominatorValues'];
@@ -33,7 +33,7 @@ export interface DefaultBubbleOverlayConfigProps {
 
 export function getDefaultBubbleOverlayConfig(
   props: DefaultBubbleOverlayConfigProps
-): BubbleOverlayConfig | undefined {
+): BubbleOverlayConfig {
   const {
     overlayVariable,
     overlayEntity,
@@ -42,33 +42,32 @@ export function getDefaultBubbleOverlayConfig(
     denominatorValues = overlayVariable?.vocabulary ?? [],
   } = props;
 
-  if (overlayVariable != null && overlayEntity != null) {
-    const overlayVariableDescriptor = {
-      variableId: overlayVariable.id,
-      entityId: overlayEntity.id,
-    };
+  const overlayVariableDescriptor = {
+    variableId: overlayVariable.id,
+    entityId: overlayEntity.id,
+  };
 
-    if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
-      // categorical
-      return {
-        overlayVariable: overlayVariableDescriptor,
-        aggregationConfig: {
-          overlayType: 'categorical',
-          numeratorValues,
-          denominatorValues,
-        },
-      };
-    } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
-      // continuous
-      return {
-        overlayVariable: overlayVariableDescriptor,
-        aggregationConfig: {
-          overlayType: 'continuous',
-          aggregator,
-        },
-      };
-    }
+  if (CategoricalVariableDataShape.is(overlayVariable.dataShape)) {
+    // categorical
+    return {
+      overlayVariable: overlayVariableDescriptor,
+      aggregationConfig: {
+        overlayType: 'categorical',
+        numeratorValues,
+        denominatorValues,
+      },
+    };
+  } else if (ContinuousVariableDataShape.is(overlayVariable.dataShape)) {
+    // continuous
+    return {
+      overlayVariable: overlayVariableDescriptor,
+      aggregationConfig: {
+        overlayType: 'continuous',
+        aggregator,
+      },
+    };
   }
+  throw new Error('Unknown variable datashape: ' + overlayVariable.dataShape);
 }
 
 export interface DefaultOverlayConfigProps {

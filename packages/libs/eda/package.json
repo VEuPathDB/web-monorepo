@@ -2,6 +2,7 @@
   "name": "@veupathdb/eda",
   "version": "4.1.12",
   "dependencies": {
+    "@tanstack/react-query": "^4.33.0",
     "@veupathdb/components": "workspace:^",
     "@veupathdb/coreui": "workspace:^",
     "@veupathdb/http-utils": "workspace:^",

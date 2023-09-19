@@ -689,7 +689,11 @@ function MapAnalysisImpl(props: ImplProps) {
 
   const activeMapTypeData = usePromise(
     useCallback(async () => {
-      if (appState.boundsZoomLevel == null) return;
+      if (
+        appState.boundsZoomLevel == null ||
+        activeMapTypePlugin?.getData == null
+      )
+        return;
       return activeMapTypePlugin?.getData({
         boundsZoomLevel: appState.boundsZoomLevel,
         configuration: activeMarkerConfiguration,
@@ -794,7 +798,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     defaultViewport={defaultViewport}
                   >
                     {activeMapTypePlugin?.MapLayerComponent &&
-                      activeMapTypeData.value && (
+                      (activeMapTypeData.value ||
+                        activeMapTypePlugin.getData == null) && (
                         <activeMapTypePlugin.MapLayerComponent
                           apps={apps}
                           analysisState={analysisState}
@@ -819,7 +824,8 @@ function MapAnalysisImpl(props: ImplProps) {
                 </div>
 
                 {activeMapTypePlugin?.MapOverlayComponent &&
-                  activeMapTypeData.value && (
+                  (activeMapTypeData.value ||
+                    activeMapTypePlugin.getData == null) && (
                     <activeMapTypePlugin.MapOverlayComponent
                       apps={apps}
                       analysisState={analysisState}

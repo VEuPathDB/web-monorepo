@@ -489,7 +489,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 
   const markerConfigurationOption: MarkerConfigurationOption = {
-    type: 'bubble',
+    type: 'pie',
     displayName,
     icon: <DonutMarkers style={{ height: '1.5em', marginLeft: '0.25em' }} />,
     configurationMenu,
