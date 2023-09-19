@@ -1245,6 +1245,9 @@ function useMapMenuItems(question?: Question) {
 }
 
 function useStudyAccessApi_tryCatch() {
+  // useStudyAccessApi() will throw if WdkService isn't configured for study
+  // access. We can ignore the error and return `undefined` to allow the
+  // application to handle the absence of the configuration.
   try {
     return useStudyAccessApi();
   } catch {
