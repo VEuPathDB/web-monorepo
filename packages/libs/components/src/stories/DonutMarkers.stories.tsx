@@ -228,6 +228,9 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         defaultAnimationDuration,
         setLegendData,
         handleMarkerClick,
+        // add two undefined props for selectedMarkers & setSelectedMarkers
+        undefined,
+        undefined,
         2000
       );
       if (!isCancelled) setMarkerElements(fullMarkers);

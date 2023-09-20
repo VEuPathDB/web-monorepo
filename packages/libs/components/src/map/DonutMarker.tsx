@@ -31,6 +31,10 @@ export interface DonutMarkerProps
    * value does not have to be 100.  2,4,6,8,10 would produce the same donut
    * (but with different mouse-overs in the enlarged version.) */
   cumulative?: boolean;
+  /* selectedMarkers state **/
+  selectedMarkers?: string[];
+  /* selectedMarkers setState **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 // convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -111,6 +115,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
     size,
     markerLabel,
     sliceTextOverrides,
+    // selectedMarkers state and setState
+    selectedMarkers,
+    setSelectedMarkers,
   } = donutMarkerSVGIcon(props);
 
   // set icon as divIcon
@@ -172,6 +179,10 @@ export default function DonutMarker(props: DonutMarkerProps) {
       }}
       showPopup={props.showPopup}
       popupClass="donut-popup"
+      // pass selectedMarkers state and setState
+      selectedMarkers={selectedMarkers}
+      setSelectedMarkers={setSelectedMarkers}
+      markerType={'donut'}
     />
   );
 }
@@ -212,6 +223,9 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
   size: number;
   sliceTextOverrides: string[];
   markerLabel: string;
+  // selectedMarkers state and setState
+  selectedMarkers?: string[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 } {
   const scale = props.markerScale ?? MarkerScaleDefault;
   const size = 40 * scale;
@@ -313,5 +327,13 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
 
   // closing svg tag
   svgHTML += '</svg>';
-  return { html: svgHTML, size, sliceTextOverrides, markerLabel: sumLabel };
+
+  return {
+    html: svgHTML,
+    size,
+    sliceTextOverrides,
+    markerLabel: sumLabel,
+    selectedMarkers: props.selectedMarkers,
+    setSelectedMarkers: props.setSelectedMarkers,
+  };
 }

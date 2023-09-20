@@ -171,6 +171,10 @@ export interface MapVEuMapProps {
   scrollingEnabled?: boolean;
   /** pass default viewport */
   defaultViewport?: Viewport;
+  /* selectedMarkers state **/
+  selectedMarkers?: string[];
+  /* selectedMarkers setState **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -200,6 +204,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     scrollingEnabled = true,
     interactive = true,
     defaultViewport,
+    selectedMarkers,
+    setSelectedMarkers,
   } = props;
 
   // use a ref to avoid unneeded renders
@@ -321,6 +327,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
+        // pass setSelectedMarkers
+        setSelectedMarkers={setSelectedMarkers}
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
@@ -376,26 +384,41 @@ function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
 interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
-  const { onViewportChanged, onBaseLayerChanged } = props;
+  const { onViewportChanged, onBaseLayerChanged, setSelectedMarkers } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
       onViewportChanged({
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
+      // remove selected highlight markers
+      removeClassName('highlight-donutmarker');
+      removeClassName('highlight-chartmarker');
+      if (setSelectedMarkers != null) setSelectedMarkers([]);
     },
     moveend: () => {
       onViewportChanged({
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
+      // remove selected highlight markers
+      removeClassName('highlight-donutmarker');
+      removeClassName('highlight-chartmarker');
+      if (setSelectedMarkers != null) setSelectedMarkers([]);
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);
+    },
+    // map click event: remove selected highlight markers
+    click: () => {
+      removeClassName('highlight-donutmarker');
+      removeClassName('highlight-chartmarker');
+      if (setSelectedMarkers != null) setSelectedMarkers([]);
     },
   });
 
@@ -552,4 +575,13 @@ function computeBoundingBox(markersBounds: MapVEuBounds | null) {
   } else {
     return undefined;
   }
+}
+
+// remove marker's highlight class
+function removeClassName(targetClass: string) {
+  const allElements = document.querySelectorAll('*');
+
+  allElements.forEach((element) => {
+    element.classList.remove(targetClass);
+  });
 }

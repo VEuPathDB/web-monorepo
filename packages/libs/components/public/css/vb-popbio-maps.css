@@ -95,16 +95,10 @@ body {
   text-align: left;
   line-height: 15px;
   color: #555555;
-  /* DKDK changed margin-bottom from 5 to 0 */
   margin-bottom: 0px !important;
   border-radius: 0 !important;
-  /* DKDK change these for mapveu v2
-    width         : 280px;
-    min-height    : 300px; */
   width: 250px;
   min-height: 210px;
-  /* DKDK combine with other CSS defined */
-  /* padding: 6px 8px 6px 8px; */
   padding: 0px 0px 0px 0px;
   background: white;
   /*max-width     : 230px;
@@ -128,17 +122,14 @@ body {
   min-width: 50px;
   text-align: right;
   font-weight: 600;
-  /*DKDK VB-8650*/
   width: 27%;
 }
 
 .summ-by-value {
   float: left;
-  /*DKDK VB-8650 */
-  /*width: 79%;*/
 }
 
-/*DKDK VB-8650 add below class to handle active-legend and external link separately*/
+/* VB-8650 add below class to handle active-legend and external link separately*/
 .active-legend-area {
   float: left;
   width: 73%;
@@ -150,17 +141,10 @@ body {
 
 .legend {
   position: absolute;
-  /* DKDK set bottom to be smaller
-    bottom: 40px; */
   bottom: 10px;
   right: 0px;
   z-index: 10000;
 }
-
-/* .legend > div {
-    /* DKDK change padding from 0 8px to 0 4px
-    padding: 0 2px;
-} */
 
 .legend p {
   font-size: smaller;
@@ -212,7 +196,7 @@ body {
 
 .mapboxbottom .overlaybottom {
   position: absolute;
-  /*DKDK VB-8707 change bottom from 3 to 25 px*/
+  /* VB-8707 change bottom from 3 to 25 px*/
   bottom: 25px;
   left: 40%;
   width: 30%;
@@ -278,12 +262,28 @@ path,
   text-shadow: -1px -1px 0 #ffffff, 1px -1px 0 #ffffff, -1px 1px 0 #ffffff,
     1px 1px 0 #ffffff;
 }
-.highlight-marker {
+
+/*  donut marker highlight */
+.highlight-donutmarker {
   background-clip: padding-box;
-  border-radius: 30px;
-  box-shadow: 0px 0px 0px 4px rgba(255, 255, 0, 1);
+  border-radius: 50%;
+  /* add inset to reduce a gap between the element and the box-shadow */
+  box-shadow: 2.5px 2.5px 0px 6px rgba(255, 255, 0, 1),
+    2.5px 2.5px 0px 2px rgba(255, 255, 0, 1) inset;
   z-index: 9999 !important;
 }
+
+/* chart marker highlight */
+.highlight-chartmarker {
+  background-clip: padding-box;
+  /* the rounded corner of the chart marker has 10px in radius */
+  border-radius: 10px;
+  /* add inset to reduce a gap between the element and the box-shadow */
+  box-shadow: -1px -0.5px 0px 6px rgba(255, 255, 0, 1),
+    -1px -0.5px 0px 2px rgba(255, 255, 0, 1) inset;
+  z-index: 9999 !important;
+}
+
 .top-marker {
   z-index: 3100 !important;
 }
@@ -449,7 +449,7 @@ path,
   fill: none;
   stroke: #000000;
   stroke-width: 1px;
-  /* DKDK temporarily block below */
+  /* temporarily block below */
   /* color-rendering : optimizeQuality !important; */
   shape-rendering: crispEdges !important;
   text-rendering: geometricPrecision !important;
@@ -541,7 +541,7 @@ html {
   border-radius: 0px;
   box-shadow: none;
 }
-/* x-jsrender active terms DKDK VB-8650 */
+/* x-jsrender active terms VB-8650 */
 .active-term,
 .active-legend,
 .active-others,
@@ -741,13 +741,13 @@ div.hint div {
   text-overflow: ellipsis;
 }
 
-/* DKDK VB-8650 */
+/* VB-8650 */
 .active-legend,
 .insertExternalLinkLegend {
   line-height: 17px;
 }
 
-/* DKDK VB-8650 */
+/* VB-8650 */
 /* .active-legend i, #Other-Terms-List i{ */
 .active-legend .summ-by-value .summ-by-value-item,
 .insertExternalLinkLegend .summ-by-value .summ-by-value-item,
@@ -1079,7 +1079,7 @@ div.hint div {
   text-align: center;
 }
 
-/*DKDK add vectorbase-icon*/
+/* add vectorbase-icon*/
 #vectorbase-icon {
   height: 40px;
   font-size: 12pt;
@@ -1274,7 +1274,7 @@ div.hint div {
   text-align: center;
 }
 
-/* DKDK VB-8112 disabling cursor change on pie chart legend */
+/* VB-8112 disabling cursor change on pie chart legend */
 .nvd3 .nv-legend .nv-series {
   cursor: default !important;
 }
@@ -1291,7 +1291,7 @@ div.hint div {
   cursor: ew-resize;
 }
 
-/* DKDK VB-8650 related CSS */
+/* VB-8650 related CSS */
 /*.insertExternalLinkLegend .insertExternalLink {
     float: initial;
 }

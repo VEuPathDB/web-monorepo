@@ -1,5 +1,5 @@
 import { useMap, Popup } from 'react-leaflet';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 // use new ReactLeafletDriftMarker instead of DriftMarker
 import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
@@ -10,6 +10,11 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   duration: number;
   // A class to add to the popup element
   popupClass?: string;
+  // selectedMarkers state and its setState
+  selectedMarkers?: string[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  // marker type to be used for highlighting markers
+  markerType?: 'donut' | 'chart';
 }
 
 /**
@@ -39,8 +44,13 @@ export default function BoundsDriftMarker({
   popupContent,
   popupClass,
   zIndexOffset,
+  selectedMarkers,
+  setSelectedMarkers,
+  markerType,
+  ...props
 }: BoundsDriftMarkerProps) {
   const map = useMap();
+
   const boundingBox = new LatLngBounds([
     [bounds.southWest.lat, bounds.southWest.lng],
     [bounds.northEast.lat, bounds.northEast.lng],
@@ -270,7 +280,39 @@ export default function BoundsDriftMarker({
     e.target.closePopup();
   };
 
+  // add click events for highlighting markers
   const handleClick = (e: LeafletMouseEvent) => {
+    // hightlight donutmarker and highlight chartmarker
+    if (
+      e.target._icon.classList.contains('highlight-donutmarker') ||
+      e.target._icon.classList.contains('highlight-chartmarker')
+    ) {
+      if (markerType === 'donut')
+        e.target._icon.classList.remove('highlight-donutmarker');
+      else if (markerType === 'chart')
+        e.target._icon.classList.remove('highlight-chartmarker');
+
+      if (selectedMarkers != null && setSelectedMarkers != null) {
+        // functional updates
+        setSelectedMarkers((prevselectedMarkers: string[]) =>
+          prevselectedMarkers.filter((item: string) => item !== props.id)
+        );
+      }
+    } else {
+      if (markerType === 'donut')
+        e.target._icon.classList.add('highlight-donutmarker');
+      else if (markerType === 'chart')
+        e.target._icon.classList.add('highlight-chartmarker');
+
+      if (selectedMarkers != null && setSelectedMarkers != null) {
+        // functional updates
+        setSelectedMarkers((prevselectedMarkers: string[]) => [
+          ...prevselectedMarkers,
+          props.id,
+        ]);
+      }
+    }
+
     // Sometimes clicking throws off the popup's orientation, so reorient it
     orientPopup(popupOrientationRef.current);
     // Default popup behavior is to open on marker click

@@ -35,6 +35,10 @@ export interface ChartMarkerProps
   /** cumulative mode: when true, the total count shown will be the last value, not the sum of the values.
    * See cumulative prop in DonutMarker.tsx for context. */
   cumulative?: boolean;
+  /* selectedMarkers state **/
+  selectedMarkers?: string[];
+  /* selectedMarkers setState **/
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 /**
@@ -44,7 +48,14 @@ export interface ChartMarkerProps
  * - accordingly icon size could be reduced
  */
 export default function ChartMarker(props: ChartMarkerProps) {
-  const { html: svgHTML, size, sumValuesString } = chartMarkerSVGIcon(props);
+  const {
+    html: svgHTML,
+    size,
+    sumValuesString,
+    // selectedMarkers state and setState
+    selectedMarkers,
+    setSelectedMarkers,
+  } = chartMarkerSVGIcon(props);
 
   // set icon
   let HistogramIcon: any = L.divIcon({
@@ -114,6 +125,10 @@ export default function ChartMarker(props: ChartMarkerProps) {
       }}
       showPopup={props.showPopup}
       popupClass="histogram-popup"
+      // pass // selectedMarkers state and setState
+      selectedMarkers={selectedMarkers}
+      setSelectedMarkers={setSelectedMarkers}
+      markerType={'chart'}
     />
   );
 }
@@ -153,6 +168,9 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   html: string;
   size: number;
   sumValuesString: string;
+  // selectedMarkers state and setState
+  selectedMarkers?: string[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
 } {
   const defaultLineColor = props.borderColor ?? '#7cb5ec'; // '#00000088' was also used before but unsure when
   const borderWidth = props.borderWidth ?? 1;
@@ -313,5 +331,8 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
     html: svgHTML,
     size: xSize + marginX + borderWidth,
     sumValuesString,
+    // selectedMarkers state and setState
+    selectedMarkers: props.selectedMarkers,
+    setSelectedMarkers: props.setSelectedMarkers,
   };
 }

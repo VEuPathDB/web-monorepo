@@ -284,6 +284,9 @@ export const Tiny: Story<MapVEuMapProps> = (args) => {
         defaultAnimationDuration,
         setLegendData,
         handleMarkerClick,
+        // add two undefined props for highlightedMarkers & setHighlightedMarkers
+        undefined,
+        undefined,
         0,
         tinyLeafletZoomLevelToGeohashLevel,
         20
