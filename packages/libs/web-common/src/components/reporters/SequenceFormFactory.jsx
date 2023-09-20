@@ -1,13 +1,9 @@
 import React from 'react';
 import {
   RadioList,
-  CheckboxList,
-  SingleSelect,
-  TextBox,
-  Checkbox,
   NumberSelector,
 } from '@veupathdb/wdk-client/lib/Components';
-import { FeaturesList, ComponentsList } from './SequenceFormElements';
+import { ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import './ReporterForms.scss';
@@ -15,6 +11,7 @@ import './ReporterForms.scss';
 const util = Object.assign({}, ComponentUtils, ReporterUtils);
 
 const deflineFieldOptions = [
+  { value: 'gene_id', display: 'Gene ID', disabled: true },
   { value: 'organism', display: 'Organism' },
   { value: 'description', display: 'Description' },
   { value: 'position', display: 'Location' },
@@ -23,23 +20,14 @@ const deflineFieldOptions = [
 ];
 
 const sequenceOptions = (props) => {
-  const { formState, updateFormState, onSubmit, includeSubmit } = props;
+  const { formState, updateFormState } = props;
   const getUpdateHandler = (fieldName) =>
     util.getChangeHandler(fieldName, updateFormState, formState);
   return (
     <React.Fragment>
       <h3>Fasta defline:</h3>
-      <div style={{ marginLeft: '2em' }}>
-        <RadioList
-          name="deflineType"
-          value={formState.deflineType}
-          onChange={getUpdateHandler('deflineType')}
-          items={[
-            { value: 'short', display: 'ID Only' },
-            { value: 'full', display: 'Full Fasta Header' },
-          ]}
-        />
-        {formState.deflineType === 'short' ? null : (
+      <div>
+        {formState.deflineType === 'full' && (
           <ComponentsList
             field="deflineFields"
             features={deflineFieldOptions}
@@ -122,8 +110,9 @@ const createSequenceForm = (
   Form.getInitialState = () => ({
     formState: {
       attachmentType: 'plain',
-      deflineType: 'short',
-      deflineFields: deflineFieldOptions.map((x) => x.value),
+      deflineType: 'full',
+      // QUESTION: should I remove this from formState when form is submitted or should backend expect this field?
+      deflineFields: ['gene_id'],
       sequenceFormat: 'fixed_width',
       basesPerLine: 60,
       ...getFormInitialState(),
