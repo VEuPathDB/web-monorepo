@@ -57,7 +57,7 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
-import { BarPlotMarker } from '../../MarkerConfiguration/icons';
+import { BarPlotMarkerIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
 import { VariableDescriptor } from '../../../../core/types/variable';
@@ -272,10 +272,17 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     )
   );
 
+  const markerVariableConstraints = apps
+    .find((app) => app.name === 'standalone-map')
+    ?.visualizations.find(
+      (viz) => viz.name === 'map-markers'
+    )?.dataElementConstraints;
+
   const configurationMenu = (
     <BarPlotMarkerConfigurationMenu
       onChange={updateConfiguration}
       configuration={configuration as BarPlotMarkerConfiguration}
+      constraints={markerVariableConstraints}
       overlayConfiguration={overlayConfiguration.value}
       overlayVariable={overlayVariable}
       subsettingClient={subsettingClient}
@@ -284,7 +291,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       continuousMarkerPreview={continuousMarkerPreview}
       allFilteredCategoricalValues={allFilteredCategoricalValues.data}
       allVisibleCategoricalValues={allVisibleCategoricalValues.data}
-      inputs={[]}
+      inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
       entities={studyEntities}
       starredVariables={
         analysisState.analysis?.descriptor.starredVariables ?? []
@@ -296,7 +303,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const markerConfigurationOption: MarkerConfigurationOption = {
     type: 'bubble',
     displayName,
-    icon: <BarPlotMarker style={{ height: '1.5em', marginLeft: '0.25em' }} />,
+    icon: (
+      <BarPlotMarkerIcon style={{ height: '1.5em', marginLeft: '0.25em' }} />
+    ),
     configurationMenu,
   };
 

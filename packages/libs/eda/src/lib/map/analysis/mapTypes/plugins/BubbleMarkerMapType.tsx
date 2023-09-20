@@ -33,7 +33,7 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
-import { BubbleMarker as BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
+import { BubbleMarkerIcon } from '../../MarkerConfiguration/icons';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import { getDefaultBubbleOverlayConfig } from '../../utils/defaultOverlayConfig';
 import { defaultAnimation, useCommonData } from '../shared';
@@ -209,7 +209,9 @@ function BubbleLegends(props: MapTypeMapLayerProps<void>) {
     [configuration, updateConfiguration]
   );
 
-  const plugins = useStandaloneVizPlugins({});
+  const plugins = useStandaloneVizPlugins({
+    overlayHelp: 'Overlay variables are not available for this map type',
+  });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
 

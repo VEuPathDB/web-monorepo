@@ -52,7 +52,7 @@ import {
   MapTypeConfigurationMenu,
   MarkerConfigurationOption,
 } from '../../MarkerConfiguration/MapTypeConfigurationMenu';
-import { DonutMarkers } from '../../MarkerConfiguration/icons';
+import { DonutMarkersIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
 
@@ -467,10 +467,18 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       ]
     )
   );
+
+  const markerVariableConstraints = apps
+    .find((app) => app.name === 'standalone-map')
+    ?.visualizations.find(
+      (viz) => viz.name === 'map-markers'
+    )?.dataElementConstraints;
+
   const configurationMenu = (
     <PieMarkerConfigurationMenu
       onChange={updateConfiguration}
       configuration={configuration as PieMarkerConfiguration}
+      constraints={markerVariableConstraints}
       overlayConfiguration={overlayConfiguration.value}
       overlayVariable={overlayVariable}
       subsettingClient={subsettingClient}
@@ -479,7 +487,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       continuousMarkerPreview={continuousMarkerPreview}
       allFilteredCategoricalValues={allFilteredCategoricalValues.value}
       allVisibleCategoricalValues={allVisibleCategoricalValues.value}
-      inputs={[]}
+      inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
       entities={studyEntities}
       starredVariables={
         analysisState.analysis?.descriptor.starredVariables ?? []
@@ -491,7 +499,9 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const markerConfigurationOption: MarkerConfigurationOption = {
     type: 'pie',
     displayName,
-    icon: <DonutMarkers style={{ height: '1.5em', marginLeft: '0.25em' }} />,
+    icon: (
+      <DonutMarkersIcon style={{ height: '1.5em', marginLeft: '0.25em' }} />
+    ),
     configurationMenu,
   };
 
