@@ -40,8 +40,8 @@ export function StudyAccess({
       </div>
       <UserTableSection {...endUserTableConfig} />
       <UserTableSection {...providerTableConfig} />
-      <UserTableSection {...staffTableConfig} />
       <UserTableSection {...historyTableConfig} />
+      <UserTableSection {...staffTableConfig} />
       {openDialogConfig && <UserTableDialog {...openDialogConfig} />}
     </div>
   );

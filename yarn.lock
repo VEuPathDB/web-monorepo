@@ -8108,6 +8108,7 @@ __metadata:
     "@veupathdb/react-scripts": "workspace:^"
     "@veupathdb/tsconfig": "workspace:^"
     "@visx/axis": ^3.1.0
+    "@visx/brush": ^3.0.1
     "@visx/gradient": ^1.0.0
     "@visx/group": ^1.0.0
     "@visx/hierarchy": ^1.0.0
@@ -9120,6 +9121,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@visx/brush@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@visx/brush@npm:3.0.1"
+  dependencies:
+    "@visx/drag": 3.0.1
+    "@visx/event": 3.0.1
+    "@visx/group": 3.0.0
+    "@visx/scale": 3.0.0
+    "@visx/shape": 3.0.0
+    classnames: ^2.3.1
+    prop-types: ^15.6.1
+  peerDependencies:
+    react: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+  checksum: 7e7d5a4b9663ca8b623245e7ba4dc63eeee912ca28cf0fff9ca15672e24984a2445b45fd8e8281ad309621dac0e7bad5413eedb1a93da66eba9572f0c75bfb03
+  languageName: node
+  linkType: hard
+
 "@visx/clip-path@npm:1.7.0":
   version: 1.7.0
   resolution: "@visx/clip-path@npm:1.7.0"
@@ -9175,6 +9193,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@visx/drag@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@visx/drag@npm:3.0.1"
+  dependencies:
+    "@types/react": "*"
+    "@visx/event": 3.0.1
+    "@visx/point": 3.0.1
+    prop-types: ^15.5.10
+  peerDependencies:
+    react: ^16.8.0-0 || ^17.0.0-0 || ^18.0.0-0
+  checksum: 256e4a7b649e29b2112f77a57a657cd3aedb76b605ebc8b49e6c3d4b152fea5d81de7820060dc569dda0c81a0e7b6668ce9fe071536198b26cf2ebd655a6e6a9
+  languageName: node
+  linkType: hard
+
 "@visx/drag@npm:3.3.0":
   version: 3.3.0
   resolution: "@visx/drag@npm:3.3.0"
@@ -9196,6 +9228,16 @@ __metadata:
     "@types/react": "*"
     "@visx/point": 1.7.0
   checksum: af4258e782b08d83b2efd05f0dd33781959939e52986dfe7bc2166d29f010718202033c784f3cc395e5baf642c692e0f42811e5b13fa9e13b791e410156e8d04
+  languageName: node
+  linkType: hard
+
+"@visx/event@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@visx/event@npm:3.0.1"
+  dependencies:
+    "@types/react": "*"
+    "@visx/point": 3.0.1
+  checksum: 0cb4dd578bbe54bd428a0cfae9e64db141b039c2c6c1412d1cd1d04e1613d193212b031124948ca3b7eed877cdea87d161cc3a008b973c6f217e21a8a2dd27b0
   languageName: node
   linkType: hard
 

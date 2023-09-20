@@ -13,6 +13,7 @@ import {
   aggregationHelp,
   AggregationInputs,
 } from '../../../core/components/visualizations/implementations/LineplotVisualization';
+import { DataElementConstraint } from '../../../core/types/visualization';
 
 type AggregatorOption = typeof aggregatorOptions[number];
 const aggregatorOptions = ['mean', 'median'] as const;
@@ -189,7 +190,22 @@ export function BubbleMarkerConfigurationMenu({
         onChange={handleInputVariablesOnChange}
         starredVariables={starredVariables}
         toggleStarredVariable={toggleStarredVariable}
-        constraints={constraints}
+        constraints={
+          // TEMPORARILY disable date vars; TO DO for dates - remove!
+          constraints?.map((constraint) => {
+            return Object.fromEntries(
+              Object.keys(constraint).map((key) => [
+                key,
+                {
+                  ...constraint[key],
+                  allowedTypes: constraint[key]?.allowedTypes?.filter(
+                    (t) => t !== 'date'
+                  ) ?? ['string', 'number', 'integer'],
+                } as DataElementConstraint, // assertion seems required due to spread operator
+              ])
+            );
+          })
+        }
         flexDirection="column"
       />
     </div>

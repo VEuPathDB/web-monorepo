@@ -11,6 +11,8 @@ export type ValuePickerProps = {
   disabledCheckboxTooltipContent?: ReactNode;
   disableInput?: boolean;
   showClearSelectionButton?: boolean;
+  /** Show loading spinner */
+  isLoading?: boolean;
 };
 
 const EMPTY_ALLOWED_VALUES_ARRAY: string[] = [];
@@ -25,6 +27,7 @@ export function ValuePicker({
   disabledCheckboxTooltipContent,
   disableInput = false,
   showClearSelectionButton = true,
+  isLoading = false,
 }: ValuePickerProps) {
   const items = allowedValues.map((value) => ({
     display: <span>{value}</span>,
@@ -41,6 +44,7 @@ export function ValuePicker({
         value={selectedValues}
         disabledCheckboxTooltipContent={disabledCheckboxTooltipContent}
         isDisabled={disableInput}
+        isLoading={isLoading}
       />
       {showClearSelectionButton && (
         <ClearSelectionButton

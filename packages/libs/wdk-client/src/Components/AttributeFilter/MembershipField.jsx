@@ -390,6 +390,23 @@ class MembershipTable extends React.PureComponent {
   }
 
   handleSearchTermChange(searchTerm) {
+    // When we are not on page 1, we need to determine if our currentPage position remains viable
+    // or if it should get reset to page 1 (see note in TableFilter.tsx's handleSearch callback definition)
+    if (this.props.activeFieldState.currentPage !== 1) {
+      const numberOfFilteredRows = filterBySearchTerm(
+        this.getRows(),
+        searchTerm
+      ).length;
+      const shouldResetPaging =
+        numberOfFilteredRows <=
+        this.props.activeFieldState.rowsPerPage *
+          (this.props.activeFieldState.currentPage - 1);
+      this.props.onMemberSearch(
+        this.props.activeField,
+        searchTerm,
+        shouldResetPaging
+      );
+    }
     this.props.onMemberSearch(this.props.activeField, searchTerm);
   }
 

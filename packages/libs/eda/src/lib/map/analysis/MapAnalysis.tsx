@@ -3,7 +3,11 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   AnalysisState,
   DEFAULT_ANALYSIS_NAME,
+  DateRangeFilter,
+  DateVariable,
   EntityDiagram,
+  NumberRangeFilter,
+  NumberVariable,
   PromiseResult,
   useAnalysis,
   useAnalysisClient,
@@ -58,9 +62,9 @@ import { uniq } from 'lodash';
 import DownloadTab from '../../workspace/DownloadTab';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
-  BarPlotMarker,
-  DonutMarker,
-  BubbleMarker,
+  BarPlotMarkerIcon,
+  DonutMarkerIcon,
+  BubbleMarkerIcon,
 } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
@@ -75,6 +79,9 @@ import {
   bubbleMarkerPlugin,
   donutMarkerPlugin,
 } from './mapTypes';
+
+import EZTimeFilter from './EZTimeFilter';
+import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -105,6 +112,7 @@ export function MapAnalysis(props: Props) {
   const analysisState = useAnalysis(props.analysisId, 'pass');
   const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
   const geoConfigs = useGeoConfig(useStudyEntities());
+
   if (geoConfigs == null || geoConfigs.length === 0)
     return (
       <Banner
@@ -138,14 +146,16 @@ function MapAnalysisImpl(props: ImplProps) {
   const {
     appState,
     analysisState,
+    analysisId,
     setViewport,
     setBoundsZoomLevel,
     setSubsetVariableAndEntity,
-    sharingUrl,
-    setIsSubsetPanelOpen = () => {},
+    // sharingUrl,
+    setIsSidePanelExpanded,
     setMarkerConfigurations,
     setActiveMarkerConfigurationType,
     geoConfigs,
+    setTimeSliderConfig,
   } = props;
   const { activeMarkerConfigurationType, markerConfigurations } = appState;
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
@@ -158,6 +168,11 @@ function MapAnalysisImpl(props: ImplProps) {
   const downloadClient = useDownloadClient();
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
+  const history = useHistory();
+
+  // FIXME use the sharingUrl prop to construct this
+  const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
+    .href;
 
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
 
@@ -193,38 +208,83 @@ function MapAnalysisImpl(props: ImplProps) {
     [markerConfigurations, setMarkerConfigurations]
   );
 
-  const filtersIncludingViewport = useMemo(() => {
-    const viewportFilters = appState.boundsZoomLevel
-      ? filtersFromBoundingBox(
-          appState.boundsZoomLevel.bounds,
-          {
-            variableId: geoConfig.latitudeVariableId,
-            entityId: geoConfig.entity.id,
-          },
-          {
-            variableId: geoConfig.longitudeVariableId,
-            entityId: geoConfig.entity.id,
-          }
-        )
-      : [];
+  const timeFilter: NumberRangeFilter | DateRangeFilter | undefined =
+    useMemo(() => {
+      if (appState.timeSliderConfig == null) return undefined;
+
+      const { active, variable, selectedRange } = appState.timeSliderConfig;
+
+      const { variable: timeVariableMetadata } =
+        findEntityAndVariable(variable) ?? {};
+
+      return active && variable && selectedRange
+        ? DateVariable.is(timeVariableMetadata)
+          ? {
+              type: 'dateRange',
+              ...variable,
+              min: selectedRange.start + 'T00:00:00Z',
+              max: selectedRange.end + 'T00:00:00Z',
+            }
+          : NumberVariable.is(timeVariableMetadata)
+          ? {
+              type: 'numberRange', // this is temporary - I think we should NOT handle non-date variables when we roll this out
+              ...variable, // TO DO: remove number variable handling
+              min: Number(selectedRange.start.split(/-/)[0]), // just take the year number
+              max: Number(selectedRange.end.split(/-/)[0]), // from the YYYY-MM-DD returned from the widget
+            }
+          : undefined
+        : undefined;
+    }, [appState.timeSliderConfig, findEntityAndVariable]);
+
+  const viewportFilters = useMemo(
+    () =>
+      appState.boundsZoomLevel
+        ? filtersFromBoundingBox(
+            appState.boundsZoomLevel.bounds,
+            {
+              variableId: geoConfig.latitudeVariableId,
+              entityId: geoConfig.entity.id,
+            },
+            {
+              variableId: geoConfig.longitudeVariableId,
+              entityId: geoConfig.entity.id,
+            }
+          )
+        : [],
+    [
+      appState.boundsZoomLevel,
+      geoConfig.entity.id,
+      geoConfig.latitudeVariableId,
+      geoConfig.longitudeVariableId,
+    ]
+  );
+
+  // needed for floaters
+  const filtersIncludingViewportAndTimeSlider = useMemo(() => {
     return [
       ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
       ...viewportFilters,
+      ...(timeFilter != null ? [timeFilter] : []),
     ];
   }, [
-    appState.boundsZoomLevel,
-    geoConfig.entity.id,
-    geoConfig.latitudeVariableId,
-    geoConfig.longitudeVariableId,
     props.analysisState.analysis?.descriptor.subset.descriptor,
+    viewportFilters,
+    timeFilter,
   ]);
+
+  // needed for markers
+  const filtersIncludingTimeSlider = useMemo(() => {
+    return [
+      ...(props.analysisState.analysis?.descriptor.subset.descriptor ?? []),
+      ...(timeFilter != null ? [timeFilter] : []),
+    ];
+  }, [props.analysisState.analysis?.descriptor.subset.descriptor, timeFilter]);
 
   const userLoggedIn = useWdkService(async (wdkService) => {
     const user = await wdkService.getCurrentUser();
     return !user.isGuest;
   });
 
-  const history = useHistory();
   function showLoginForm() {
     const currentUrl = window.location.href;
     const loginUrl = `${props.siteInformationProps.loginUrl}?destination=${currentUrl}`;
@@ -262,9 +322,8 @@ function MapAnalysisImpl(props: ImplProps) {
       : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
-    setIsSubsetPanelOpen(true);
     setActiveSideMenuId(MapSideNavItemLabels.Filter);
-    setSideNavigationIsExpanded(true);
+    setIsSidePanelExpanded(true);
   }
 
   const FilterChipListForHeader = () => {
@@ -293,7 +352,7 @@ function MapAnalysisImpl(props: ImplProps) {
           disabled={
             // You don't need this button if whenever the filter
             // section is active and expanded.
-            sideNavigationIsExpanded &&
+            appState.isSidePanelExpanded &&
             activeSideMenuId === MapSideNavItemLabels.Filter
           }
           themeRole="primary"
@@ -345,7 +404,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'item',
               id: 'single-variable-pie',
               labelText: donutMarkerPlugin.displayName,
-              rightIcon: <DonutMarker style={{ height: '1.25em' }} />,
+              rightIcon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
               leftIcon:
                 activeMarkerConfigurationType === 'pie' ? <CheckIcon /> : null,
               onActive: () => {
@@ -375,7 +434,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 activeMarkerConfigurationType === 'barplot' ? (
                   <CheckIcon />
                 ) : null,
-              rightIcon: <BarPlotMarker style={{ height: '1.25em' }} />,
+              rightIcon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
               onActive: () => {
                 setActiveMarkerConfigurationType('barplot');
               },
@@ -399,7 +458,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'item',
               id: 'single-variable-bubble',
               labelText: bubbleMarkerPlugin.displayName,
-              rightIcon: <BubbleMarker style={{ height: '1.25em' }} />,
+              rightIcon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
               leftIcon:
                 activeMarkerConfigurationType === 'bubble' ? (
                   <CheckIcon />
@@ -651,11 +710,11 @@ function MapAnalysisImpl(props: ImplProps) {
   }
 
   // activeSideMenuId is derived from the label text since labels must be unique in a navigation menu
-  const [activeSideMenuId, setActiveSideMenuId] =
-    useState<string | undefined>();
+  const [activeSideMenuId, setActiveSideMenuId] = useState<string | undefined>(
+    'single-variable-' + appState.activeMarkerConfigurationType
+  );
 
-  const [sideNavigationIsExpanded, setSideNavigationIsExpanded] =
-    useState<boolean>(true);
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
   // // for flyTo functionality
   // const [willFlyTo, setWillFlyTo] = useState(false);
@@ -751,7 +810,26 @@ function MapAnalysisImpl(props: ImplProps) {
                     activeMapTypeData.value?.totalVisibleEntityCount
                   }
                   overlayActive={overlayVariable != null}
-                />
+                >
+                  {/* child elements will be distributed across, 'hanging' below the header */}
+                  {/*  Time slider component - only if prerequisite variable is available */}
+                  {appState.timeSliderConfig &&
+                    appState.timeSliderConfig.variable && (
+                      <EZTimeFilter
+                        studyId={studyId}
+                        entities={studyEntities}
+                        subsettingClient={subsettingClient}
+                        filters={filters}
+                        starredVariables={
+                          analysisState.analysis?.descriptor.starredVariables ??
+                          []
+                        }
+                        toggleStarredVariable={toggleStarredVariable}
+                        config={appState.timeSliderConfig}
+                        updateConfig={setTimeSliderConfig}
+                      />
+                    )}
+                </MapHeader>
                 <div
                   style={{
                     // Make a div that completely fills its parent.
@@ -768,9 +846,10 @@ function MapAnalysisImpl(props: ImplProps) {
                   }}
                 >
                   <MapSidePanel
-                    isExpanded={sideNavigationIsExpanded}
+                    isExpanded={appState.isSidePanelExpanded}
+                    isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() =>
-                      setSideNavigationIsExpanded((isExpanded) => !isExpanded)
+                      setIsSidePanelExpanded(!appState.isSidePanelExpanded)
                     }
                     siteInformationProps={props.siteInformationProps}
                     sidePanelDrawerContents={activeSideNavigationItemMenu}
@@ -815,7 +894,9 @@ function MapAnalysisImpl(props: ImplProps) {
                           data={activeMapTypeData.value as any}
                           pending={activeMapTypeData.pending}
                           error={activeMapTypeData.error as any}
-                          filtersIncludingViewport={filtersIncludingViewport}
+                          filtersIncludingViewport={
+                            filtersIncludingViewportAndTimeSlider
+                          }
                           totalCounts={totalCounts}
                           filteredCounts={filteredCounts}
                         />
@@ -831,7 +912,7 @@ function MapAnalysisImpl(props: ImplProps) {
                       analysisState={analysisState}
                       appState={appState}
                       studyId={studyId}
-                      filters={filters}
+                      filters={filtersIncludingTimeSlider}
                       studyEntities={studyEntities}
                       geoConfigs={geoConfigs}
                       configuration={activeMarkerConfiguration}
@@ -839,7 +920,9 @@ function MapAnalysisImpl(props: ImplProps) {
                       data={activeMapTypeData.value as any}
                       pending={activeMapTypeData.pending}
                       error={activeMapTypeData.error as any}
-                      filtersIncludingViewport={filtersIncludingViewport}
+                      filtersIncludingViewport={
+                        filtersIncludingViewportAndTimeSlider
+                      }
                       totalCounts={totalCounts}
                       filteredCounts={filteredCounts}
                     />

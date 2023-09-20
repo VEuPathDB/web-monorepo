@@ -40,8 +40,17 @@ export interface InputSpec {
    * Can be used to override an input role's default title assigned in sectionInfo
    * when we want the behavior/logic of an existing role but with a different
    * title. Example: 2x2 mosaic's 'axis' variables.
+   * Note that the first input (of potentially many) found with this property sets the title.
+   * See also `noTitle` - because passing `null` to this doesn't get rid of the element.
    */
   titleOverride?: ReactNode;
+  /**
+   * To have no title at all. Default false; Same one-to-many issues as titleOverride
+   */
+  noTitle?: boolean;
+  /**
+   * apply custom styling to the input container
+   */
   styleOverride?: React.CSSProperties;
   /**
    * If an input is pre-populated and cannot be null, set this as true in order to prevent any
@@ -222,13 +231,18 @@ export function InputVariables(props: Props) {
               className={classes.inputGroup}
               style={{ order: sectionInfo[inputRole ?? 'default'].order }}
             >
-              <div className={classes.fullRow}>
-                <h4>
-                  {inputs.find(
-                    (input) => input.role === inputRole && input.titleOverride
-                  )?.titleOverride ?? sectionInfo[inputRole ?? 'default'].title}
-                </h4>
-              </div>
+              {!inputs.find(
+                (input) => input.role === inputRole && input.noTitle
+              ) && (
+                <div className={classes.fullRow}>
+                  <h4>
+                    {inputs.find(
+                      (input) => input.role === inputRole && input.titleOverride
+                    )?.titleOverride ??
+                      sectionInfo[inputRole ?? 'default'].title}
+                  </h4>
+                </div>
+              )}
               {inputs
                 .filter((input) => input.role === inputRole)
                 .map((input) => (

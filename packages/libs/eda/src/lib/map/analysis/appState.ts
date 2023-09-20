@@ -2,13 +2,10 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect, useMemo } from 'react';
-import {
-  AnalysisState,
-  useGetDefaultVariableDescriptor,
-  useStudyMetadata,
-} from '../../core';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { AnalysisState, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
+import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 
@@ -86,6 +83,7 @@ export const AppState = t.intersection([
     }),
     activeMarkerConfigurationType: MarkerType,
     markerConfigurations: t.array(MarkerConfiguration),
+    isSidePanelExpanded: t.boolean,
   }),
   t.partial({
     boundsZoomLevel: t.type({
@@ -100,6 +98,17 @@ export const AppState = t.intersection([
       variableId: t.string,
     }),
     isSubsetPanelOpen: t.boolean,
+    timeSliderConfig: t.type({
+      variable: t.union([VariableDescriptor, t.undefined]),
+      selectedRange: t.union([
+        t.type({
+          start: t.string,
+          end: t.string,
+        }),
+        t.undefined,
+      ]),
+      active: t.boolean,
+    }),
   }),
 ]);
 
@@ -121,17 +130,24 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     getOrElseW(() => undefined)
   );
 
-  const studyMetadata = useStudyMetadata();
   const getDefaultVariableDescriptor = useGetDefaultVariableDescriptor();
-  const defaultVariable = getDefaultVariableDescriptor(
-    studyMetadata.rootEntity.id
-  );
+  const defaultVariable = getDefaultVariableDescriptor();
+
+  const getDefaultTimeVariableDescriptor =
+    useGetDefaultTimeVariableDescriptor();
+  const defaultTimeVariable = getDefaultTimeVariableDescriptor();
 
   const defaultAppState: AppState = useMemo(
     () => ({
       viewport: defaultViewport,
       mouseMode: 'default',
       activeMarkerConfigurationType: 'pie',
+      isSidePanelExpanded: true,
+      timeSliderConfig: {
+        variable: defaultTimeVariable,
+        active: true,
+        selectedRange: undefined,
+      },
       markerConfigurations: [
         {
           type: 'pie',
@@ -158,10 +174,14 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
         },
       ],
     }),
-    [defaultVariable]
+    [defaultVariable, defaultTimeVariable]
   );
 
+  // make some backwards compatability updates to the appstate retrieved from the back end
+  const appStateCheckedRef = useRef(false);
+
   useEffect(() => {
+    if (appStateCheckedRef.current) return;
     if (analysis) {
       if (!appState) {
         setVariableUISettings((prev) => ({
@@ -178,11 +198,16 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
               )
           );
 
-        if (missingMarkerConfigs.length > 0) {
+        const timeSliderConfigIsMissing = appState.timeSliderConfig == null;
+
+        if (missingMarkerConfigs.length > 0 || timeSliderConfigIsMissing) {
           setVariableUISettings((prev) => ({
             ...prev,
             [uiStateKey]: {
               ...appState,
+              ...(timeSliderConfigIsMissing
+                ? { timeSliderConfig: defaultAppState.timeSliderConfig }
+                : {}),
               markerConfigurations: [
                 ...appState.markerConfigurations,
                 ...missingMarkerConfigs,
@@ -191,6 +216,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
           }));
         }
       }
+      appStateCheckedRef.current = true;
     }
   }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
 
@@ -222,8 +248,9 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     ),
     setMarkerConfigurations: useSetter('markerConfigurations'),
     setBoundsZoomLevel: useSetter('boundsZoomLevel'),
-    setIsSubsetPanelOpen: useSetter('isSubsetPanelOpen'),
+    setIsSidePanelExpanded: useSetter('isSidePanelExpanded'),
     setSubsetVariableAndEntity: useSetter('subsetVariableAndEntity'),
     setViewport: useSetter('viewport'),
+    setTimeSliderConfig: useSetter('timeSliderConfig'),
   };
 }
