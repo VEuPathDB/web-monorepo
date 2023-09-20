@@ -1,9 +1,7 @@
 import React from 'react';
 import {
   RadioList,
-  CheckboxList,
   SingleSelect,
-  TextBox,
   Checkbox,
   NumberSelector,
 } from '@veupathdb/wdk-client/lib/Components';
@@ -72,7 +70,14 @@ const formSequenceTypeOptions = [
   { value: 'dna_component', display: 'DNA Component' },
   { value: 'transcript_component', display: 'Transcript Component' },
   { value: 'protein', display: 'Protein Sequence' },
-  { value: 'protein_features', display: 'Protein Features' },
+  {
+    value: 'protein_features',
+    display: (
+      <>
+        Protein Features (<i>one per line</i>)
+      </>
+    ),
+  },
 ];
 
 const SequenceRegionRange = (props) => {
