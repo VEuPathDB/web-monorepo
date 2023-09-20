@@ -2,11 +2,17 @@ import React from 'react';
 import {
   RadioList,
   NumberSelector,
+  Checkbox,
 } from '@veupathdb/wdk-client/lib/Components';
 import { ComponentsList } from './SequenceFormElements';
 import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import './ReporterForms.scss';
+
+const SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE = {
+  name: 'representativeTranscriptOnly',
+  value: {},
+};
 
 const util = Object.assign({}, ComponentUtils, ReporterUtils);
 
@@ -79,9 +85,27 @@ const createSequenceForm = (
   reportType
 ) => {
   const Form = (props) => {
-    const { formState, updateFormState, onSubmit, includeSubmit } = props;
+    const {
+      formState,
+      updateFormState,
+      onSubmit,
+      includeSubmit,
+      viewFilters,
+      updateViewFilters,
+    } = props;
     const getUpdateHandler = (fieldName) =>
       util.getChangeHandler(fieldName, updateFormState, formState);
+    const transcriptPerGeneChangeHandler = (isChecked) => {
+      const nextViewFilters =
+        viewFilters?.filter(
+          (filterValue) =>
+            filterValue.name !== SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE.name
+        ) ?? [];
+      if (isChecked) {
+        nextViewFilters.push(SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE);
+      }
+      updateViewFilters(nextViewFilters);
+    };
     return (
       <div>
         {formBeforeCommonOptions(props)}
@@ -95,6 +119,22 @@ const createSequenceForm = (
           />
         </div>
         {reportType === 'Sequences' && sequenceOptions(props)}
+        <h3>Additional options:</h3>
+        <div style={{ marginLeft: '1.5em' }}>
+          <label>
+            <Checkbox
+              value={
+                viewFilters?.some(
+                  (f) => f.name === SINGLE_TRANSCRIPT_VIEW_FILTER_VALUE.name
+                ) ?? false
+              }
+              onChange={transcriptPerGeneChangeHandler}
+            />
+            <span style={{ marginLeft: '0.5em' }}>
+              Include only one transcript per gene (the longest)
+            </span>
+          </label>
+        </div>
         {includeSubmit && (
           <div style={{ margin: '0.8em' }}>
             <button className="btn" type="submit" onClick={onSubmit}>
@@ -107,18 +147,20 @@ const createSequenceForm = (
     );
   };
 
-  Form.getInitialState = () => ({
-    formState: {
-      attachmentType: 'plain',
-      deflineType: 'full',
-      // QUESTION: should I remove this from formState when form is submitted or should backend expect this field?
-      deflineFields: ['gene_id'],
-      sequenceFormat: 'fixed_width',
-      basesPerLine: 60,
-      ...getFormInitialState(),
-    },
-    formUiState: {},
-  });
+  Form.getInitialState = () => {
+    return {
+      formState: {
+        attachmentType: 'plain',
+        deflineType: 'full',
+        // QUESTION: should I remove this from formState when form is submitted or should backend expect this field?
+        deflineFields: ['gene_id'],
+        sequenceFormat: 'fixed_width',
+        basesPerLine: 60,
+        ...getFormInitialState(),
+      },
+      formUiState: {},
+    };
+  };
   return Form;
 };
 export default createSequenceForm;
