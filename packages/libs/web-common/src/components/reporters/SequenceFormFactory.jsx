@@ -62,7 +62,7 @@ const sequenceOptions = (props) => {
               value={formState['basesPerLine']}
               step={1}
               onChange={getUpdateHandler('basesPerLine')}
-              size="6"
+              size={6}
             />
             <span>bases per line</span>
           </div>
@@ -85,7 +85,7 @@ const createSequenceForm = (
     return (
       <div>
         {formBeforeCommonOptions(props)}
-        <h3>Download Type:</h3>
+        <h3>Download type:</h3>
         <div style={{ marginLeft: '2em' }}>
           <RadioList
             name="attachmentType"

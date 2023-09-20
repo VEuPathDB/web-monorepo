@@ -104,7 +104,7 @@ const SequenceRegionRange = (props) => {
         end={10000}
         step={1}
         onChange={getUpdateHandler(offset)}
-        size="6"
+        size={6}
       />
       nucleotides
     </React.Fragment>
@@ -129,7 +129,7 @@ const ProteinRegionRange = (props) => {
         end={10000}
         step={1}
         onChange={getUpdateHandler(offset)}
-        size="6"
+        size={6}
       />
       amino acids
     </React.Fragment>
@@ -213,7 +213,7 @@ const ProteinSequenceRegionInputs = (props) => {
 
 /** @type import('./Types').ReporterFormComponent */
 const formBeforeCommonOptions = (props) => {
-  const { formState, updateFormState, onSubmit, includeSubmit } = props;
+  const { formState, updateFormState, viewFilters } = props;
   const getUpdateHandler = (fieldName) =>
     util.getChangeHandler(fieldName, updateFormState, formState);
   const typeUpdateHandler = function (newTypeValue) {
