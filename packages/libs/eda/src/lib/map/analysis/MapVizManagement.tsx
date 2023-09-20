@@ -243,7 +243,12 @@ function VisualizationsList({
                               analysisState.deleteVisualization(
                                 viz.visualizationId
                               );
-                              setActiveVisualizationId(undefined);
+                              if (
+                                activeVisualization?.visualizationId ===
+                                viz.visualizationId
+                              ) {
+                                setActiveVisualizationId(undefined);
+                              }
                             }}
                           >
                             <i aria-hidden className="fa fa-trash"></i>
