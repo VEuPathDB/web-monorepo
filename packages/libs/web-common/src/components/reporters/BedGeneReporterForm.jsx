@@ -1,10 +1,7 @@
 import React from 'react';
 import {
   RadioList,
-  CheckboxList,
   SingleSelect,
-  TextBox,
-  Checkbox,
   NumberSelector,
 } from '@veupathdb/wdk-client/lib/Components';
 import { FeaturesList } from './SequenceFormElements';
