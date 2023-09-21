@@ -2,15 +2,13 @@ import { DefaultNode } from '@visx/network';
 import { Text } from '@visx/text';
 import { LinkData, NodeData } from '../types/plots/network';
 
-export type LabelPosition = 'right' | 'left';
-
 interface NodeWithLabelProps {
   /** Network node */
   node: NodeData;
   /** Function to run when a user clicks either the node or label */
   onClick?: () => void;
   /** Should the label be drawn to the left or right of the node? */
-  labelPosition?: LabelPosition;
+  labelPosition?: 'right' | 'left';
   /** Font size for the label. Ex. "1em" */
   fontSize?: string;
   /** Font weight for the label */

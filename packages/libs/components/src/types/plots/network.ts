@@ -1,20 +1,19 @@
 // Types required for creating networks
 export type NodeData = {
-  /** For now x and y are required. Eventually the network should have a default layout so that
-   * these become unnecessary in certain situations.
-   */
-  /** The x coordinate of the node */
-  x: number;
-  /** The y coordinate of the node */
-  y: number;
   /** Node ID. Must be unique in the network! */
   id: string;
+  /** The x coordinate of the node */
+  x?: number;
+  /** The y coordinate of the node */
+  y?: number;
   /** Node color */
   color?: string;
   /** Node radius */
   r?: number;
   /** User-friendly node label */
   label?: string;
+  /** Draw the label on the right or left of the node */
+  // labelPosition?: 'right' | 'left' | undefined;
   /** Color for the stroke of the node */
   stroke?: string;
   /** Width of node stroke */
