@@ -22,8 +22,7 @@ export interface BipartiteNetworkProps {
   showSpinner?: boolean;
 }
 
-// NodeWithLabel draws one node and an optional label for the node. Both the node and
-// label can be styled.
+// TODO Document
 export function BipartiteNetwork(props: BipartiteNetworkProps) {
   const {
     data,
@@ -34,9 +33,15 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
     showSpinner = false,
   } = props;
 
-  // BIPARTITE network should position nodes!!!
+  // Defaults
+  const DEFAULT_COLUMN1_X = 100;
+  const DEFAULT_COLUMN2_X = 300;
+  const DEFAULT_NODE_VERTICAL_SPACE = 30;
+  const DEFAULT_TOP_PADDING = 40;
 
-  // The backend can't do it because we eventually want to click nodes and have them reposition.
+  // In order to assign coordinates to each node, we'll separate the
+  // nodes based on their column, then will use their order in the column
+  // (given by columnXNodeIDs) to finally assign the coordinates.
   const nodesByColumn: NodeData[][] = partition(data.nodes, (node) => {
     return data.column1NodeIDs.includes(node.id);
   });
@@ -44,6 +49,7 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
   const nodesByColumnWithCoordinates = nodesByColumn.map(
     (column, columnIndex) => {
       const columnWithCoordinates = column.map((node) => {
+        // Find the index of the node in the column
         type ColumnName = keyof typeof data;
         const columnName = ('column' +
           (columnIndex + 1) +
@@ -53,8 +59,8 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
         );
 
         return {
-          x: 90 + (columnIndex + 1) * 100,
-          y: 40 + 30 * indexInColumn,
+          x: columnIndex ? DEFAULT_COLUMN2_X : DEFAULT_COLUMN1_X,
+          y: DEFAULT_TOP_PADDING + DEFAULT_NODE_VERTICAL_SPACE * indexInColumn,
           labelPosition: columnIndex ? 'right' : ('left' as LabelPosition),
           ...node,
         };
@@ -95,18 +101,26 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
         width={400}
         height={
           Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
-            30 +
-          50
+            DEFAULT_NODE_VERTICAL_SPACE +
+          DEFAULT_TOP_PADDING
         }
       >
         {/* Draw names of node colums if they exist */}
         {column1Name && (
-          <Text x={190} y={20} textAnchor="end">
+          <Text
+            x={DEFAULT_COLUMN1_X}
+            y={DEFAULT_TOP_PADDING / 2}
+            textAnchor="end"
+          >
             {column1Name}
           </Text>
         )}
         {column2Name && (
-          <Text x={290} y={20} textAnchor="start">
+          <Text
+            x={DEFAULT_COLUMN2_X}
+            y={DEFAULT_TOP_PADDING / 2}
+            textAnchor="start"
+          >
             {column2Name}
           </Text>
         )}
