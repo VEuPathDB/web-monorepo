@@ -1,11 +1,15 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { Graph } from '@visx/network';
 import {
   NodeData,
   LinkData,
   BipartiteNetworkData,
 } from '../../types/plots/network';
 import { LabelPosition, Link, NodeWithLabel } from '../../plots/Network';
+import { partition } from 'lodash';
+import {
+  BipartiteNetwork,
+  BipartiteNetworkProps,
+} from '../../plots/BipartiteNetwork';
 
 export default {
   title: 'Plots/BipartiteNetwork',
@@ -21,69 +25,10 @@ interface TemplateProps {
 
 // This template is a simple network that highlights our NodeWithLabel and Link components.
 const Template: Story<TemplateProps> = (args) => {
-  // BIPARTITE network should position nodes!!!
-
-  // The backend can't do it because we eventually want to click nodes and have them reposition.
-  const allNodes = args.data.nodes;
-  const nodes = allNodes.map((node) => {
-    const columnNumber = args.data.column1NodeIDs.includes(node.id) ? 0 : 1;
-
-    type ColumnName = keyof typeof args.data;
-    const columnName = ('column' +
-      (columnNumber + 1) +
-      'NodeIDs') as ColumnName;
-    const indexInColumn = args.data[columnName].findIndex(
-      (id) => id === node.id
-    );
-
-    return {
-      x: 90 + columnNumber * 100,
-      y: 30 + 30 * indexInColumn,
-      labelPosition: columnNumber === 0 ? 'left' : ('right' as LabelPosition),
-      ...node,
-    };
-  });
-
-  const links = args.data.links.map((link) => {
-    const sourceNode = nodes.find((node) => node.id === link.source.id);
-    const targetNode = nodes.find((node) => node.id === link.target.id);
-    return {
-      ...link,
-      source: {
-        x: sourceNode?.x,
-        y: sourceNode?.y,
-        ...link.source,
-      },
-      target: {
-        x: targetNode?.x,
-        y: targetNode?.y,
-        ...link.target,
-      },
-      color: link.color === 'positive' ? '#116699' : '#994411', //fake colors
-    };
-  });
-
-  // also bpnet should set the label left/right appropriatey
-  return (
-    <svg width={DEFAULT_PLOT_SIZE} height={nodes.length * 30}>
-      <Graph
-        graph={{ nodes, links }}
-        // Our Link component has nice defaults and in the future can
-        // carry more complex events.
-        linkComponent={({ link }) => <Link link={link} />}
-        // The node components are already transformed using x and y.
-        // So inside the node component all coords should be relative to this
-        // initial transform.
-        nodeComponent={({ node }) => {
-          const nodeWithLabelProps = {
-            node: node,
-            labelPosition: node.labelPosition,
-          };
-          return <NodeWithLabel {...nodeWithLabelProps} />;
-        }}
-      />
-    </svg>
-  );
+  const bipartiteNetworkProps: BipartiteNetworkProps = {
+    data: args.data,
+  };
+  return <BipartiteNetwork {...bipartiteNetworkProps} />;
 };
 
 /**
