@@ -6,6 +6,7 @@ import { Text } from '@visx/text';
 import { CSSProperties } from 'react';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
+import { twoColorPalette } from '../types/plots';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
@@ -22,7 +23,8 @@ export interface BipartiteNetworkProps {
   showSpinner?: boolean;
 }
 
-// TODO Document
+// The BipartiteNetwork function draws a two-column network using visx. This component handles
+// the positioning of each column, and consequently the positioning of nodes.
 export function BipartiteNetwork(props: BipartiteNetworkProps) {
   const {
     data,
@@ -69,7 +71,8 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
     }
   );
 
-  const links = data.links.map((link) => {
+  // Assign coordinates to links based on the newly created node coordinates
+  const linksWithCoordinates = data.links.map((link) => {
     const sourceNode = nodesByColumnWithCoordinates[0].find(
       (node) => node.id === link.source.id
     );
@@ -88,7 +91,8 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
         y: targetNode?.y,
         ...link.target,
       },
-      color: link.color === 'positive' ? '#116699' : '#994411', //fake colors
+      color:
+        link.color === 'positive' ? twoColorPalette[0] : twoColorPalette[1],
     };
   });
 
@@ -129,7 +133,7 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
             nodes: nodesByColumnWithCoordinates[0].concat(
               nodesByColumnWithCoordinates[1]
             ),
-            links,
+            links: linksWithCoordinates,
           }}
           // Our Link component has nice defaults and in the future can
           // carry more complex events.
