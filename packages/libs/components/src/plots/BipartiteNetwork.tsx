@@ -3,6 +3,9 @@ import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
+import { CSSProperties } from 'react';
+import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
+import Spinner from '../components/Spinner';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
@@ -11,12 +14,25 @@ export interface BipartiteNetworkProps {
   column1Name?: string;
   /** Name of column 2 */
   column2Name?: string;
+  /** styling for the plot's container */
+  containerStyles?: CSSProperties;
+  /** container name */
+  containerClass?: string;
+  /** shall we show the loading spinner? */
+  showSpinner?: boolean;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
 // label can be styled.
 export function BipartiteNetwork(props: BipartiteNetworkProps) {
-  const { data, column1Name, column2Name } = props;
+  const {
+    data,
+    column1Name,
+    column2Name,
+    containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
+    containerClass = 'web-components-plot',
+    showSpinner = false,
+  } = props;
 
   // BIPARTITE network should position nodes!!!
 
@@ -71,45 +87,58 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
   });
 
   return (
-    <svg
-      width={400}
-      height={
-        Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) * 30 +
-        50
-      }
+    <div
+      className={containerClass}
+      style={{ ...containerStyles, position: 'relative' }}
     >
-      {/* Draw names of node colums if they exist */}
-      {column1Name && (
-        <Text x={190} y={20} textAnchor="middle">
-          {column1Name}
-        </Text>
-      )}
-      {column2Name && (
-        <Text x={290} y={20} textAnchor="middle">
-          {column2Name}
-        </Text>
-      )}
-      <Graph
-        graph={{
-          nodes: nodesByColumnWithCoordinates[0].concat(
-            nodesByColumnWithCoordinates[1]
-          ),
-          links,
-        }}
-        // Our Link component has nice defaults and in the future can
-        // carry more complex events.
-        linkComponent={({ link }) => <Link link={link} />}
-        // The node components are already transformed using x and y.
-        // So inside the node component all coords should be relative to this
-        // initial transform.
-        nodeComponent={({ node }) => {
-          const nodeWithLabelProps = {
-            node: node,
-            labelPosition: node.labelPosition,
-          };
-          return <NodeWithLabel {...nodeWithLabelProps} />;
-        }}
-      />
-    </svg>
+      <svg
+        width={400}
+        height={
+          Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
+            30 +
+          50
+        }
+      >
+        {/* Draw names of node colums if they exist */}
+        {column1Name && (
+          <Text x={190} y={20} textAnchor="end">
+            {column1Name}
+          </Text>
+        )}
+        {column2Name && (
+          <Text x={290} y={20} textAnchor="start">
+            {column2Name}
+          </Text>
+        )}
+        <Graph
+          graph={{
+            nodes: nodesByColumnWithCoordinates[0].concat(
+              nodesByColumnWithCoordinates[1]
+            ),
+            links,
+          }}
+          // Our Link component has nice defaults and in the future can
+          // carry more complex events.
+          linkComponent={({ link }) => <Link link={link} />}
+          // The node components are already transformed using x and y.
+          // So inside the node component all coords should be relative to this
+          // initial transform.
+          nodeComponent={({ node }) => {
+            const nodeWithLabelProps = {
+              node: {
+                ...node,
+                stroke: '#111',
+                strokeWidth: 1,
+                color: '#fff',
+                r: 6,
+              },
+              labelPosition: node.labelPosition,
+            };
+            return <NodeWithLabel {...nodeWithLabelProps} />;
+          }}
+        />
+      </svg>
+      {showSpinner && <Spinner />}
+    </div>
   );
 }

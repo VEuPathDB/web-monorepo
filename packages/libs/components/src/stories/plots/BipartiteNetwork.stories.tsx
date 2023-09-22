@@ -21,6 +21,7 @@ interface TemplateProps {
   data: BipartiteNetworkData;
   column1Name?: string;
   column2Name?: string;
+  loading?: boolean;
 }
 
 // This template is a simple network that highlights our BipartiteNetwork component.
@@ -29,6 +30,7 @@ const Template: Story<TemplateProps> = (args) => {
     data: args.data,
     column1Name: args.column1Name,
     column2Name: args.column2Name,
+    showSpinner: args.loading,
   };
   return <BipartiteNetwork {...bipartiteNetworkProps} />;
 };
@@ -67,6 +69,15 @@ WithColumnNames.args = {
   data: simpleData,
   column1Name: 'Column 1',
   column2Name: 'Column 2',
+};
+
+// Loading with a spinner
+export const Loading = Template.bind({});
+Loading.args = {
+  data: simpleData,
+  column1Name: 'Column 1',
+  column2Name: 'Column 2',
+  loading: true,
 };
 
 // Gerenate a network with a given number of nodes and random edges
