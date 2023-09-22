@@ -21,6 +21,8 @@ export interface BipartiteNetworkProps {
   containerClass?: string;
   /** shall we show the loading spinner? */
   showSpinner?: boolean;
+  /** Array of colors to assign to links */
+  linkPalette?: string[];
 }
 
 // The BipartiteNetwork function draws a two-column network using visx. This component handles
@@ -33,6 +35,7 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     containerClass = 'web-components-plot',
     showSpinner = false,
+    linkPalette,
   } = props;
 
   // Defaults
@@ -91,8 +94,6 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
         y: targetNode?.y,
         ...link.target,
       },
-      color:
-        link.color === 'positive' ? twoColorPalette[0] : twoColorPalette[1],
     };
   });
 
@@ -128,6 +129,7 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
             {column2Name}
           </Text>
         )}
+
         <Graph
           graph={{
             nodes: nodesByColumnWithCoordinates[0].concat(
@@ -135,21 +137,12 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
             ),
             links: linksWithCoordinates,
           }}
-          // Our Link component has nice defaults and in the future can
-          // carry more complex events.
+          // Using our Link component so that it uses our nice defaults and
+          // can better expand to handle more complex events (hover and such).
           linkComponent={({ link }) => <Link link={link} />}
-          // The node components are already transformed using x and y.
-          // So inside the node component all coords should be relative to this
-          // initial transform.
           nodeComponent={({ node }) => {
             const nodeWithLabelProps = {
-              node: {
-                ...node,
-                stroke: '#111',
-                strokeWidth: 1,
-                color: '#fff',
-                r: 6,
-              },
+              node: node,
               labelPosition: node.labelPosition,
             };
             return <NodeWithLabel {...nodeWithLabelProps} />;

@@ -8,6 +8,7 @@ import {
   BipartiteNetwork,
   BipartiteNetworkProps,
 } from '../../plots/BipartiteNetwork';
+import { twoColorPalette } from '../../types/plots';
 
 export default {
   title: 'Plots/Network/BipartiteNetwork',
@@ -40,24 +41,14 @@ const Template: Story<TemplateProps> = (args) => {
  */
 
 // A simple network with node labels
-const simpleData = genBipartiteNetwork(
-  20,
-  10,
-  DEFAULT_PLOT_SIZE,
-  DEFAULT_PLOT_SIZE
-);
+const simpleData = genBipartiteNetwork(20, 10);
 export const Simple = Template.bind({});
 Simple.args = {
   data: simpleData,
 };
 
 // A network with lots and lots of points!
-const manyPointsData = genBipartiteNetwork(
-  1000,
-  100,
-  DEFAULT_PLOT_SIZE,
-  DEFAULT_PLOT_SIZE
-);
+const manyPointsData = genBipartiteNetwork(1000, 100);
 export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: manyPointsData,
@@ -81,12 +72,7 @@ Loading.args = {
 };
 
 // Gerenate a network with a given number of nodes and random edges
-function genBipartiteNetwork(
-  column1nNodes: number,
-  column2nNodes: number,
-  height: number,
-  width: number
-) {
+function genBipartiteNetwork(column1nNodes: number, column2nNodes: number) {
   // Create the first column of nodes
   const column1Nodes: NodeData[] = [...Array(column1nNodes).keys()].map((i) => {
     return {
@@ -110,7 +96,7 @@ function genBipartiteNetwork(
       source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
       target: column2Nodes[Math.floor(Math.random() * column2nNodes)],
       strokeWidth: Math.random() * 2,
-      color: Math.random() > 0.5 ? 'positive' : 'negative',
+      color: Math.random() > 0.5 ? twoColorPalette[0] : twoColorPalette[1],
     };
   });
 

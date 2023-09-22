@@ -22,9 +22,10 @@ interface NodeWithLabelProps {
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
 // label can be styled.
 export function NodeWithLabel(props: NodeWithLabelProps) {
-  const DEFAULT_NODE_RADIUS = 4;
-  const DEFAULT_NODE_COLOR = '#aaa';
+  const DEFAULT_NODE_RADIUS = 6;
+  const DEFAULT_NODE_COLOR = '#fff';
   const DEFAULT_STROKE_WIDTH = 1;
+  const DEFAULT_STROKE = '#111';
 
   const {
     node,
@@ -60,7 +61,7 @@ export function NodeWithLabel(props: NodeWithLabelProps) {
         r={nodeRadius}
         fill={color ?? DEFAULT_NODE_COLOR}
         onClick={onClick}
-        stroke={stroke}
+        stroke={stroke ?? DEFAULT_STROKE}
         strokeWidth={strokeWidth ?? DEFAULT_STROKE_WIDTH}
       />
       {/* Note that Text becomes a tspan */}
