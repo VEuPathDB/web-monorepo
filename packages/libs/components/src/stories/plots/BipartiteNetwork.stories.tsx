@@ -4,16 +4,14 @@ import {
   LinkData,
   BipartiteNetworkData,
 } from '../../types/plots/network';
-import { LabelPosition, Link, NodeWithLabel } from '../../plots/Network';
-import { partition } from 'lodash';
 import {
   BipartiteNetwork,
   BipartiteNetworkProps,
 } from '../../plots/BipartiteNetwork';
 
 export default {
-  title: 'Plots/BipartiteNetwork',
-  component: NodeWithLabel,
+  title: 'Plots/Network/BipartiteNetwork',
+  component: BipartiteNetwork,
 } as Meta;
 
 // For simplicity, make square svgs with the following height and width
@@ -21,12 +19,16 @@ const DEFAULT_PLOT_SIZE = 500;
 
 interface TemplateProps {
   data: BipartiteNetworkData;
+  column1Name?: string;
+  column2Name?: string;
 }
 
-// This template is a simple network that highlights our NodeWithLabel and Link components.
+// This template is a simple network that highlights our BipartiteNetwork component.
 const Template: Story<TemplateProps> = (args) => {
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: args.data,
+    column1Name: args.column1Name,
+    column2Name: args.column2Name,
   };
   return <BipartiteNetwork {...bipartiteNetworkProps} />;
 };
@@ -59,19 +61,13 @@ ManyPoints.args = {
   data: manyPointsData,
 };
 
-/** NetworkData is the same format accepted by visx's Graph component. */
-// export type NetworkData = {
-//   nodes: NodeData[];
-//   links: LinkData[];
-// };
-
-// /** Bipartite network data is a regular network with addiitonal declarations of
-//  * nodes in each of the two columns. IDs in columnXNodeIDs must match node ids exactly.
-//  */
-// export type BipartiteNetworkData = {
-//   column1NodeIDs: string[];
-//   column2NodeIDs: string[];
-// } & NetworkData;
+// With column names
+export const WithColumnNames = Template.bind({});
+WithColumnNames.args = {
+  data: simpleData,
+  column1Name: 'Column 1',
+  column2Name: 'Column 2',
+};
 
 // Gerenate a network with a given number of nodes and random edges
 function genBipartiteNetwork(
@@ -92,7 +88,7 @@ function genBipartiteNetwork(
   const column2Nodes: NodeData[] = [...Array(column2nNodes).keys()].map((i) => {
     return {
       id: String(i + column1nNodes),
-      label: 'Node ' + String(i),
+      label: 'Node ' + String(i + column1nNodes),
     };
   });
 

@@ -2,16 +2,21 @@ import { BipartiteNetworkData, NodeData } from '../types/plots/network';
 import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
+import { Text } from '@visx/text';
 
-interface BipartiteNetworkProps {
+export interface BipartiteNetworkProps {
   /** Bipartite network data */
   data: BipartiteNetworkData;
+  /** Name of column 1 */
+  column1Name?: string;
+  /** Name of column 2 */
+  column2Name?: string;
 }
 
 // NodeWithLabel draws one node and an optional label for the node. Both the node and
 // label can be styled.
 export function BipartiteNetwork(props: BipartiteNetworkProps) {
-  const { data } = props;
+  const { data, column1Name, column2Name } = props;
 
   // BIPARTITE network should position nodes!!!
 
@@ -33,7 +38,7 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
 
         return {
           x: 90 + (columnIndex + 1) * 100,
-          y: 30 + 30 * indexInColumn,
+          y: 40 + 30 * indexInColumn,
           labelPosition: columnIndex ? 'right' : ('left' as LabelPosition),
           ...node,
         };
@@ -65,7 +70,6 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
     };
   });
 
-  // also bpnet should set the label left/right appropriatey
   return (
     <svg
       width={400}
@@ -74,6 +78,17 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
         50
       }
     >
+      {/* Draw names of node colums if they exist */}
+      {column1Name && (
+        <Text x={190} y={20} textAnchor="middle">
+          {column1Name}
+        </Text>
+      )}
+      {column2Name && (
+        <Text x={290} y={20} textAnchor="middle">
+          {column2Name}
+        </Text>
+      )}
       <Graph
         graph={{
           nodes: nodesByColumnWithCoordinates[0].concat(
