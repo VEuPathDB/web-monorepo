@@ -3,11 +3,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-  AnalysisState,
-  useGetDefaultVariableDescriptor,
-  useStudyMetadata,
-} from '../../core';
+import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
 
@@ -122,7 +118,17 @@ export const defaultViewport: AppState['viewport'] = {
   zoom: 1,
 };
 
-export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
+export function useAppState(uiStateKey: string, analysisId?: string) {
+  const analysisState = useAnalysis(analysisId);
+
+  // make some backwards compatability updates to the appstate retrieved from the back end
+  const appStateCheckedRef = useRef(false);
+
+  useEffect(() => {
+    // flip bit when analysis id changes
+    appStateCheckedRef.current = false;
+  }, [analysisId]);
+
   const { analysis, setVariableUISettings } = analysisState;
   const appState = pipe(
     AppState.decode(
@@ -176,9 +182,6 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
     }),
     [defaultVariable, defaultTimeVariable]
   );
-
-  // make some backwards compatability updates to the appstate retrieved from the back end
-  const appStateCheckedRef = useRef(false);
 
   useEffect(() => {
     if (appStateCheckedRef.current) return;
@@ -243,6 +246,7 @@ export function useAppState(uiStateKey: string, analysisState: AnalysisState) {
 
   return {
     appState,
+    analysisState,
     setActiveMarkerConfigurationType: useSetter(
       'activeMarkerConfigurationType'
     ),

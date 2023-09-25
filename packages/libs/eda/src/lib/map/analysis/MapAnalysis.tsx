@@ -13,7 +13,6 @@ import {
   NumberVariable,
   OverlayConfig,
   PromiseResult,
-  useAnalysis,
   useAnalysisClient,
   useDataClient,
   useDownloadClient,
@@ -217,8 +216,7 @@ interface Props {
 }
 
 export function MapAnalysis(props: Props) {
-  const analysisState = useAnalysis(props.analysisId, 'pass');
-  const appStateAndSetters = useAppState('@@mapApp@@', analysisState);
+  const appStateAndSetters = useAppState('@@mapApp@@', props.analysisId);
   const geoConfigs = useGeoConfig(useStudyEntities());
 
   if (geoConfigs == null || geoConfigs.length === 0)
@@ -235,7 +233,6 @@ export function MapAnalysis(props: Props) {
     <MapAnalysisImpl
       {...props}
       {...(appStateAndSetters as CompleteAppState)}
-      analysisState={analysisState}
       geoConfigs={geoConfigs}
     />
   );
@@ -760,12 +757,7 @@ function MapAnalysisImpl(props: ImplProps) {
       : Path.resolve(urlRouteMatch, '../new')
     : null;
   const redirectToNewAnalysis = useCallback(() => {
-    if (redirectURL) {
-      history.push(redirectURL);
-      // push() alone doesn't seem to work in this context; the URL changes,
-      // but the page doesn't load, so we force a refresh
-      history.go(0);
-    }
+    if (redirectURL) history.push(redirectURL);
   }, [history, redirectURL]);
 
   const sideNavigationButtonConfigurationObjects: SideNavigationItemConfigurationObject[] =
