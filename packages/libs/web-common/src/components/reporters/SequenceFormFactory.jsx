@@ -59,20 +59,18 @@ const sequenceOptions = (props) => {
             { value: 'single_line', display: 'Single Line' },
           ]}
         />
-        {formState.sequenceFormat === 'fixed_width' && (
-          <div className="ebrc-FixedWidth-detail">
-            <NumberSelector
-              name={'basesPerLine'}
-              start={0}
-              end={10000}
-              value={formState['basesPerLine']}
-              step={1}
-              onChange={getUpdateHandler('basesPerLine')}
-              size={6}
-            />
-            <span>bases per line</span>
-          </div>
-        )}
+        <div className="ebrc-FixedWidth-detail">
+          <NumberSelector
+            name={'basesPerLine'}
+            start={0}
+            end={10000}
+            value={formState['basesPerLine']}
+            step={1}
+            onChange={getUpdateHandler('basesPerLine')}
+            size={6}
+          />
+          <span>bases per line</span>
+        </div>
       </div>
     </React.Fragment>
   );
