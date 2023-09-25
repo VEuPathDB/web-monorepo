@@ -1,6 +1,9 @@
 import { AllValuesDefinition, OverlayConfig } from '../../../core';
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
-import { ChartMarkerStandalone } from '@veupathdb/components/lib/map/ChartMarker';
+import {
+  ChartMarkerStandalone,
+  getChartMarkerDependentAxisRange,
+} from '@veupathdb/components/lib/map/ChartMarker';
 import { DonutMarkerStandalone } from '@veupathdb/components/lib/map/DonutMarker';
 import { UNSELECTED_TOKEN } from '../..';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
@@ -68,6 +71,10 @@ export function CategoricalMarkerPreview({
             0,
     }));
     if (mapType === 'barplot') {
+      const dependentAxisRange = getChartMarkerDependentAxisRange(
+        plotData,
+        isDependentAxisLogScaleActive
+      );
       return (
         <div
           style={{
@@ -79,6 +86,8 @@ export function CategoricalMarkerPreview({
             data={plotData}
             markerLabel={mFormatter(plotData.reduce((p, c) => p + c.value, 0))}
             dependentAxisLogScale={isDependentAxisLogScaleActive}
+            // pass in an axis range to mimic map markers, especially in log scale
+            dependentAxisRange={dependentAxisRange}
             {...sharedStandaloneMarkerProperties}
           />
         </div>
