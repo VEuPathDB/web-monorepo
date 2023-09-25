@@ -15,9 +15,6 @@ export default {
   component: BipartiteNetwork,
 } as Meta;
 
-// For simplicity, make square svgs with the following height and width
-const DEFAULT_PLOT_SIZE = 500;
-
 interface TemplateProps {
   data: BipartiteNetworkData;
   column1Name?: string;
@@ -25,7 +22,7 @@ interface TemplateProps {
   loading?: boolean;
 }
 
-// This template is a simple network that highlights our BipartiteNetwork component.
+// Template for showcasing our BipartiteNetwork component.
 const Template: Story<TemplateProps> = (args) => {
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: args.data,
@@ -40,7 +37,7 @@ const Template: Story<TemplateProps> = (args) => {
  * Stories
  */
 
-// A simple network with node labels
+// A basic bipartite network
 const simpleData = genBipartiteNetwork(20, 10);
 export const Simple = Template.bind({});
 Simple.args = {
@@ -71,8 +68,11 @@ Loading.args = {
   loading: true,
 };
 
-// Gerenate a network with a given number of nodes and random edges
-function genBipartiteNetwork(column1nNodes: number, column2nNodes: number) {
+// Gerenate a bipartite network with a given number of nodes and random edges
+function genBipartiteNetwork(
+  column1nNodes: number,
+  column2nNodes: number
+): BipartiteNetworkData {
   // Create the first column of nodes
   const column1Nodes: NodeData[] = [...Array(column1nNodes).keys()].map((i) => {
     return {
@@ -90,7 +90,9 @@ function genBipartiteNetwork(column1nNodes: number, column2nNodes: number) {
   });
 
   // Create links
-  // @ANN come back and mmake this more tunable
+  // Not worried about exactly how many edges we're adding just yet since this is
+  // used for stories only. Adding color here to mimic what the visualization
+  // will do.
   const links: LinkData[] = [...Array(column1nNodes * 2).keys()].map(() => {
     return {
       source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
@@ -109,5 +111,5 @@ function genBipartiteNetwork(column1nNodes: number, column2nNodes: number) {
     links,
     column1NodeIDs,
     column2NodeIDs,
-  } as BipartiteNetworkData;
+  };
 }

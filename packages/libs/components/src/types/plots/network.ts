@@ -12,8 +12,6 @@ export type NodeData = {
   r?: number;
   /** User-friendly node label */
   label?: string;
-  /** Draw the label on the right or left of the node */
-  // labelPosition?: 'right' | 'left' | undefined;
   /** Color for the stroke of the node */
   stroke?: string;
   /** Width of node stroke */

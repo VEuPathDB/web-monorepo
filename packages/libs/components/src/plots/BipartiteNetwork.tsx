@@ -6,7 +6,6 @@ import { Text } from '@visx/text';
 import { CSSProperties } from 'react';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
-import { twoColorPalette } from '../types/plots';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
@@ -21,12 +20,10 @@ export interface BipartiteNetworkProps {
   containerClass?: string;
   /** shall we show the loading spinner? */
   showSpinner?: boolean;
-  /** Array of colors to assign to links */
-  linkPalette?: string[];
 }
 
 // The BipartiteNetwork function draws a two-column network using visx. This component handles
-// the positioning of each column, and consequently the positioning of nodes.
+// the positioning of each column, and consequently the positioning of nodes and links.
 export function BipartiteNetwork(props: BipartiteNetworkProps) {
   const {
     data,
@@ -35,7 +32,6 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     containerClass = 'web-components-plot',
     showSpinner = false,
-    linkPalette,
   } = props;
 
   // Defaults
