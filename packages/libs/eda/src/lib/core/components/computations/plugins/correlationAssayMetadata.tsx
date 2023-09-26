@@ -112,6 +112,9 @@ export function CorrelationAssayMetadataConfiguration(
     visualizationId,
   } = props;
 
+  console.log(computation);
+  console.log(computationAppOverview);
+
   const configuration = computation.descriptor
     .configuration as CorrelationAssayMetadataConfig;
   const studyMetadata = useStudyMetadata();

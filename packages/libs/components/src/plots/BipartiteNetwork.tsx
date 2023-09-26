@@ -1,4 +1,8 @@
-import { BipartiteNetworkData, NodeData } from '../types/plots/network';
+import {
+  BipartiteNetworkData,
+  LinkData,
+  NodeData,
+} from '../types/plots/network';
 import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
@@ -6,6 +10,7 @@ import { Text } from '@visx/text';
 import { CSSProperties } from 'react';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
+import { twoColorPalette } from '../types/plots/addOns';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */

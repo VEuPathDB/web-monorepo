@@ -8,7 +8,7 @@ import {
   BipartiteNetwork,
   BipartiteNetworkProps,
 } from '../../plots/BipartiteNetwork';
-import { twoColorPalette } from '../../types/plots';
+import { twoColorPalette } from '../../types/plots/addOns';
 
 export default {
   title: 'Plots/Network/BipartiteNetwork',
