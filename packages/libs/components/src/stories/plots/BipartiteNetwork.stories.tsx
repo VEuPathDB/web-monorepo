@@ -42,6 +42,7 @@ const Template: Story<TemplateProps> = (args) => {
     column1Name: args.column1Name,
     column2Name: args.column2Name,
     showSpinner: args.loading,
+    width: 500,
   };
   return (
     <>

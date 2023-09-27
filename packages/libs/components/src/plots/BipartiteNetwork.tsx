@@ -33,6 +33,8 @@ export interface BipartiteNetworkProps {
   containerClass?: string;
   /** shall we show the loading spinner? */
   showSpinner?: boolean;
+  /** plot width */
+  width?: number;
 }
 
 // The BipartiteNetwork function draws a two-column network using visx. This component handles
@@ -48,13 +50,16 @@ function BipartiteNetwork(
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
     containerClass = 'web-components-plot',
     showSpinner = false,
+    width,
   } = props;
 
   // Defaults
-  const DEFAULT_COLUMN1_X = 100;
-  const DEFAULT_COLUMN2_X = 300;
+  // Many of the below can get optional props in the future as we figure out optimal layouts
+  const DEFAULT_WIDTH = 400;
   const DEFAULT_NODE_VERTICAL_SPACE = 30;
   const DEFAULT_TOP_PADDING = 40;
+  const DEFAULT_COLUMN1_X = 100;
+  const DEFAULT_COLUMN2_X = (width ?? DEFAULT_WIDTH) - DEFAULT_COLUMN1_X;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
   const plotRef = useRef<HTMLDivElement>(null);
@@ -90,9 +95,11 @@ function BipartiteNetwork(
         );
 
         return {
-          x: columnIndex ? DEFAULT_COLUMN2_X : DEFAULT_COLUMN1_X,
+          // columnIndex of 0 refers to the left-column nodes whereas 1 refers to right-column nodes
+          x: columnIndex === 0 ? DEFAULT_COLUMN1_X : DEFAULT_COLUMN2_X,
           y: DEFAULT_TOP_PADDING + DEFAULT_NODE_VERTICAL_SPACE * indexInColumn,
-          labelPosition: columnIndex ? 'right' : ('left' as LabelPosition),
+          labelPosition:
+            columnIndex === 0 ? 'left' : ('right' as LabelPosition),
           ...node,
         };
       });
@@ -130,7 +137,7 @@ function BipartiteNetwork(
     >
       <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
         <svg
-          width={400}
+          width={width ?? DEFAULT_WIDTH}
           height={
             Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
               DEFAULT_NODE_VERTICAL_SPACE +
