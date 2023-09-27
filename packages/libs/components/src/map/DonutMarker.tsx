@@ -11,6 +11,7 @@ import {
 } from '../types/plots';
 
 import { last } from 'lodash';
+import { BaseMarkerData } from './ChartMarker';
 
 import { markerDataProp } from './BoundsDriftMarker';
 
@@ -18,11 +19,7 @@ import { markerDataProp } from './BoundsDriftMarker';
 export interface DonutMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon {
-  data: {
-    value: number;
-    label: string;
-    color?: string;
-  }[];
+  data: BaseMarkerData[];
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;

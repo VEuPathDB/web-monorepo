@@ -17,17 +17,19 @@ import {
 
 import { markerDataProp } from './BoundsDriftMarker';
 
+export type BaseMarkerData = {
+  value: number;
+  label: string;
+  color?: string;
+};
+
 export interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon,
     DependentAxisLogScaleAddon {
   borderColor?: string;
   borderWidth?: number;
-  data: {
-    value: number;
-    label: string;
-    color?: string;
-  }[];
+  data: BaseMarkerData[];
   isAtomic?: boolean; // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   // changed to dependentAxisRange
   dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
@@ -359,5 +361,20 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
     // selectedMarkers state and setState
     selectedMarkers: props.selectedMarkers,
     setSelectedMarkers: props.setSelectedMarkers,
+  };
+}
+
+export function getChartMarkerDependentAxisRange(
+  data: ChartMarkerProps['data'],
+  isLogScale: boolean
+) {
+  return {
+    min: isLogScale
+      ? Math.min(
+          0.1,
+          ...data.filter(({ value }) => value > 0).map(({ value }) => value)
+        )
+      : 0,
+    max: Math.max(...data.map((d) => d.value)),
   };
 }
