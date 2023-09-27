@@ -1,10 +1,4 @@
-import React, {
-  ReactElement,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from 'react';
+import React, { ReactElement, useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
 import { BoundsViewport } from '../map/Types';
@@ -28,6 +22,8 @@ import MapVEuLegendSampleList, {
 } from '../map/MapVEuLegendSampleList';
 
 import geohashAnimation from '../map/animation_functions/geohash';
+
+import { markerDataProp } from '../map/BoundsDriftMarker';
 
 export default {
   title: 'Map/Marker Selection',
@@ -85,11 +81,13 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
     zoom: 4,
   });
 
-  // make an string array state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
+  // make an array of objects state to list highlighted markers
+  const [selectedMarkers, setSelectedMarkers] = useState<markerDataProp[]>([]);
 
-  //DKDK
   console.log('selectedMarkers =', selectedMarkers);
+
+  // check if map panning occured
+  const [isPanning, setIsPanning] = useState<boolean>(false);
 
   const handleMarkerClick = (e: LeafletMouseEvent) => {};
 
@@ -106,7 +104,9 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
       );
       setMarkerElements(markers);
     },
-    [setMarkerElements]
+    // Note: the dependency of the isPanning is required to pass the latest selectedMarkers to get function
+    // because the function calls Marker component (DonutMarker/ChartMarker)
+    [setMarkerElements, isPanning]
   );
 
   return (
@@ -122,6 +122,8 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         // pass selectedMarkers and its setState
         selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
+        // pass setIsPanning to check if map panning occurred
+        setIsPanning={setIsPanning}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -164,11 +166,13 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
 
   const duration = defaultAnimationDuration;
 
-  // make an string array state to list highlighted markers
-  const [selectedMarkers, setSelectedMarkers] = useState<string[]>([]);
+  // make an array of objects state to list highlighted markers
+  const [selectedMarkers, setSelectedMarkers] = useState<markerDataProp[]>([]);
 
-  //DKDK
   console.log('selectedMarkers =', selectedMarkers);
+
+  // check if map panning occured
+  const [isPanning, setIsPanning] = useState<boolean>(false);
 
   const handleMarkerClick = (e: LeafletMouseEvent) => {};
 
@@ -189,7 +193,9 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
       );
       setMarkerElements(markers);
     },
-    [setMarkerElements, legendRadioValue]
+    // Note: the dependency of the isPanning is required to pass the latest selectedMarkers to get function
+    // because the function calls Marker component (DonutMarker/ChartMarker)
+    [setMarkerElements, legendRadioValue, isPanning]
   );
 
   return (
@@ -206,6 +212,8 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         // pass selectedMarkers and its setState
         selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
+        // pass setIsPanning to check if map panning occurred
+        setIsPanning={setIsPanning}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

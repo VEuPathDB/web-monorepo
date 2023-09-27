@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
@@ -11,6 +11,8 @@ import {
 } from '../types/plots';
 
 import { last } from 'lodash';
+
+import { markerDataProp } from './BoundsDriftMarker';
 
 // ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps
@@ -32,9 +34,9 @@ export interface DonutMarkerProps
    * (but with different mouse-overs in the enlarged version.) */
   cumulative?: boolean;
   /* selectedMarkers state **/
-  selectedMarkers?: string[];
+  selectedMarkers?: markerDataProp[];
   /* selectedMarkers setState **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 }
 
 // convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -120,9 +122,34 @@ export default function DonutMarker(props: DonutMarkerProps) {
     setSelectedMarkers,
   } = donutMarkerSVGIcon(props);
 
+  // make a prop to pass to BoundsDriftMarker
+  const markerData: markerDataProp = {
+    id: props.id,
+    latLng: props.position,
+    data: props.data,
+    markerType: 'donut',
+  };
+
+  // add class, highlight-chartmarker, for panning
+  // Note: map panning calls for new data request, resulting that marker elements are completely regenerated, which causes new className without highlighting
+  // Thus, it is necessary to add a highlight for a marker based on whether it is included in the selectedMarkers
+  // One inevitable disadvantage is that this possibly results in on & off of highlighting (may look like a blink)
+  const addHighlightClassName =
+    selectedMarkers != null &&
+    selectedMarkers.length > 0 &&
+    selectedMarkers.some((selectedMarker) => selectedMarker.id === props.id)
+      ? ' highlight-donutmarker'
+      : '';
+
   // set icon as divIcon
   const SVGDonutIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon', // may need to change this className but just leave it as it for now
+    // add class, highlight-chartmarker, for panning
+    className:
+      'leaflet-canvas-icon ' +
+      'marker-id-' +
+      props.id +
+      ' donut-marker' +
+      addHighlightClassName,
     iconSize: new L.Point(size, size), // this will make icon to cover up SVG area!
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -183,6 +210,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
       markerType={'donut'}
+      markerData={markerData}
     />
   );
 }
@@ -224,8 +252,8 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
   sliceTextOverrides: string[];
   markerLabel: string;
   // selectedMarkers state and setState
-  selectedMarkers?: string[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedMarkers?: markerDataProp[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 } {
   const scale = props.markerScale ?? MarkerScaleDefault;
   const size = 40 * scale;

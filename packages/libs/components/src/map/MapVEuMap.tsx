@@ -37,6 +37,8 @@ import domToImage from 'dom-to-image';
 import { makeSharedPromise } from '../utils/promise-utils';
 import { Undo } from '@veupathdb/coreui';
 
+import { markerDataProp } from './BoundsDriftMarker';
+
 // define Viewport type
 export type Viewport = {
   center: [number, number];
@@ -172,9 +174,11 @@ export interface MapVEuMapProps {
   /** pass default viewport */
   defaultViewport?: Viewport;
   /* selectedMarkers state **/
-  selectedMarkers?: string[];
+  selectedMarkers?: markerDataProp[];
   /* selectedMarkers setState **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
+  /* setIsPanning that is used to check if map panning occurred */
+  setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -206,6 +210,7 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     defaultViewport,
     selectedMarkers,
     setSelectedMarkers,
+    setIsPanning,
   } = props;
 
   // use a ref to avoid unneeded renders
@@ -327,8 +332,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
       <MapVEuMapEvents
         onViewportChanged={onViewportChanged}
         onBaseLayerChanged={onBaseLayerChanged}
-        // pass setSelectedMarkers
+        selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
+        setIsPanning={setIsPanning}
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
@@ -384,21 +390,29 @@ function PerformFlyToMarkers(props: PerformFlyToMarkersProps) {
 interface MapVEuMapEventsProps {
   onViewportChanged: (viewport: Viewport) => void;
   onBaseLayerChanged?: (newBaseLayer: BaseLayerChoice) => void;
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedMarkers?: markerDataProp[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
+  setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
 function MapVEuMapEvents(props: MapVEuMapEventsProps) {
-  const { onViewportChanged, onBaseLayerChanged, setSelectedMarkers } = props;
+  const {
+    onViewportChanged,
+    onBaseLayerChanged,
+    selectedMarkers,
+    setSelectedMarkers,
+    setIsPanning,
+  } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
       onViewportChanged({
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
-      // remove selected highlight markers
-      removeClassName('highlight-donutmarker');
-      removeClassName('highlight-chartmarker');
+      // // remove selected highlight markers
+      // removeClassName('highlight-donutmarker');
+      // removeClassName('highlight-chartmarker');
       if (setSelectedMarkers != null) setSelectedMarkers([]);
     },
     moveend: () => {
@@ -406,10 +420,33 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
-      // remove selected highlight markers
-      removeClassName('highlight-donutmarker');
-      removeClassName('highlight-chartmarker');
-      if (setSelectedMarkers != null) setSelectedMarkers([]);
+
+      // map panning occurred
+      if (setIsPanning != null)
+        setIsPanning((prevMoveend: boolean) => !prevMoveend);
+
+      // check bounds to update selectedMarkers: excluding invisible markers in the selectedMarkers
+      if (
+        selectedMarkers != null &&
+        selectedMarkers.length > 0 &&
+        setSelectedMarkers != null
+      ) {
+        setSelectedMarkers(
+          (prevSelectedMarkers: markerDataProp[]): markerDataProp[] => {
+            const visibleMarkers = prevSelectedMarkers
+              .map((selectedMarker: markerDataProp) => {
+                if (mapEvents.getBounds().contains(selectedMarker.latLng)) {
+                  return selectedMarker;
+                }
+              })
+              .filter((item) => item != null);
+
+            if (visibleMarkers != null)
+              return visibleMarkers as markerDataProp[];
+            else return [];
+          }
+        );
+      }
     },
     baselayerchange: (e: { name: string }) => {
       onBaseLayerChanged && onBaseLayerChanged(e.name as BaseLayerChoice);

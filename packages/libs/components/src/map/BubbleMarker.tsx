@@ -4,6 +4,8 @@ import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import { ContainerStylesAddon } from '../types/plots';
 
+import { markerDataProp } from './BoundsDriftMarker';
+
 export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   data: {
     /* The size value */
@@ -18,6 +20,9 @@ export interface BubbleMarkerProps extends BoundsDriftMarkerProps {
   // isAtomic: add a special thumbtack icon if this is true
   isAtomic?: boolean;
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
+  /* add selectedMarkers state and its setState props but these are not used for this BubbleMarker **/
+  selectedMarkers?: markerDataProp[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 }
 
 /**

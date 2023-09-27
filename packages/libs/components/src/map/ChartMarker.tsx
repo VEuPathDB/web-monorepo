@@ -15,6 +15,8 @@ import {
   MarkerScaleDefault,
 } from '../types/plots';
 
+import { markerDataProp } from './BoundsDriftMarker';
+
 export interface ChartMarkerProps
   extends BoundsDriftMarkerProps,
     MarkerScaleAddon,
@@ -36,9 +38,9 @@ export interface ChartMarkerProps
    * See cumulative prop in DonutMarker.tsx for context. */
   cumulative?: boolean;
   /* selectedMarkers state **/
-  selectedMarkers?: string[];
+  selectedMarkers?: markerDataProp[];
   /* selectedMarkers setState **/
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 }
 
 /**
@@ -57,9 +59,31 @@ export default function ChartMarker(props: ChartMarkerProps) {
     setSelectedMarkers,
   } = chartMarkerSVGIcon(props);
 
+  // make a prop to pass to BoundsDriftMarker
+  const markerData: markerDataProp = {
+    id: props.id,
+    latLng: props.position,
+    data: props.data,
+    markerType: 'chart',
+  };
+
+  // add class, highlight-chartmarker, for panning
+  const addHighlightClassName =
+    selectedMarkers != null &&
+    selectedMarkers.length > 0 &&
+    selectedMarkers.some((selectedMarker) => selectedMarker.id === props.id)
+      ? ' highlight-chartmarker'
+      : '';
+
   // set icon
   let HistogramIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon',
+    // add class, highlight-chartmarker, for panning
+    className:
+      'leaflet-canvas-icon ' +
+      'marker-id-' +
+      props.id +
+      ' chart-marker' +
+      addHighlightClassName,
     iconSize: new L.Point(size, size),
     iconAnchor: new L.Point(size / 2, size / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, // divIcon HTML svg code generated above
@@ -129,6 +153,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       selectedMarkers={selectedMarkers}
       setSelectedMarkers={setSelectedMarkers}
       markerType={'chart'}
+      markerData={markerData}
     />
   );
 }
@@ -169,8 +194,8 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   size: number;
   sumValuesString: string;
   // selectedMarkers state and setState
-  selectedMarkers?: string[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedMarkers?: markerDataProp[];
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 } {
   const defaultLineColor = props.borderColor ?? '#7cb5ec'; // '#00000088' was also used before but unsure when
   const borderWidth = props.borderWidth ?? 1;

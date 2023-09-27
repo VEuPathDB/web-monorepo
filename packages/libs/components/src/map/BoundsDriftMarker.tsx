@@ -5,16 +5,34 @@ import ReactLeafletDriftMarker from 'react-leaflet-drift-marker';
 import { MarkerProps, Bounds } from './Types';
 import L, { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 
+// define markerData type to have as many info as possible
+export interface markerDataProp {
+  id: string;
+  latLng: {
+    lat: number;
+    lng: number;
+  };
+  data: {
+    value: number;
+    label: string;
+    color?: string;
+  }[];
+  markerType: 'donut' | 'chart';
+}
+
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
   // A class to add to the popup element
   popupClass?: string;
-  // selectedMarkers state and its setState
-  selectedMarkers?: string[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<string[]>>;
+  // selectedMarkers state
+  selectedMarkers?: markerDataProp[];
+  // selectedMarkers setState
+  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
   // marker type to be used for highlighting markers
   markerType?: 'donut' | 'chart';
+  // marker data
+  markerData?: markerDataProp;
 }
 
 /**
@@ -47,6 +65,7 @@ export default function BoundsDriftMarker({
   selectedMarkers,
   setSelectedMarkers,
   markerType,
+  markerData,
   ...props
 }: BoundsDriftMarkerProps) {
   const map = useMap();
@@ -292,10 +311,16 @@ export default function BoundsDriftMarker({
       else if (markerType === 'chart')
         e.target._icon.classList.remove('highlight-chartmarker');
 
-      if (selectedMarkers != null && setSelectedMarkers != null) {
+      if (
+        selectedMarkers != null &&
+        setSelectedMarkers != null &&
+        markerData != null
+      ) {
         // functional updates
-        setSelectedMarkers((prevselectedMarkers: string[]) =>
-          prevselectedMarkers.filter((item: string) => item !== props.id)
+        setSelectedMarkers((prevSelectedMarkers: markerDataProp[]) =>
+          prevSelectedMarkers.filter(
+            (item: markerDataProp) => item.id !== props.id
+          )
         );
       }
     } else {
@@ -304,11 +329,15 @@ export default function BoundsDriftMarker({
       else if (markerType === 'chart')
         e.target._icon.classList.add('highlight-chartmarker');
 
-      if (selectedMarkers != null && setSelectedMarkers != null) {
+      if (
+        selectedMarkers != null &&
+        setSelectedMarkers != null &&
+        markerData != null
+      ) {
         // functional updates
-        setSelectedMarkers((prevselectedMarkers: string[]) => [
-          ...prevselectedMarkers,
-          props.id,
+        setSelectedMarkers((prevSelectedMarkers: markerDataProp[]) => [
+          ...prevSelectedMarkers,
+          markerData,
         ]);
       }
     }
