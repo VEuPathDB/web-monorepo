@@ -1,9 +1,3 @@
-// load scatter plot component
-import VolcanoPlot, {
-  VolcanoPlotProps,
-  assignSignificanceColor,
-  RawDataMinMaxValues,
-} from '@veupathdb/components/lib/plots/VolcanoPlot';
 import {
   BipartiteNetwork,
   BipartiteNetworkProps,
@@ -33,8 +27,7 @@ import { RequestOptions } from '../options/types';
 // Bipartite network imports
 import VolcanoSVG from './selectorIcons/VolcanoSVG';
 import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
-import { NumberRange } from '../../../types/general';
-import { VolcanoPlotRequestParams } from '../../../api/DataClient/types';
+import { BipartiteNetworkRequestParams } from '../../../api/DataClient/types';
 import {
   BipartiteNetworkData,
   LinkData,
@@ -45,7 +38,8 @@ import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 // end imports
 
 // Defaults
-const DEFAULT_EDGE_THRESHOLD = 0.9;
+const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.9;
+const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05;
 
 const plotContainerStyles = {
   width: 750,
@@ -63,24 +57,25 @@ export const bipartiteNetworkVisualization = createVisualizationPlugin({
 
 function createDefaultConfig(): BipartiteNetworkConfig {
   return {
-    edgeThreshold: DEFAULT_EDGE_THRESHOLD,
+    correlationCoefThreshold: DEFAULT_CORRELATION_COEF_THRESHOLD,
+    significanceThreshold: DEFAULT_SIGNIFICANCE_THRESHOLD,
   };
 }
 
 export type BipartiteNetworkConfig = t.TypeOf<typeof BipartiteNetworkConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BipartiteNetworkConfig = t.partial({
-  edgeThreshold: t.number,
+  correlationCoefThreshold: t.number,
+  significanceThreshold: t.number,
 });
 
 interface Options
   extends LayoutOptions,
-    RequestOptions<BipartiteNetworkConfig, {}, VolcanoPlotRequestParams> {}
+    RequestOptions<BipartiteNetworkConfig, {}, BipartiteNetworkRequestParams> {}
 
-// Volcano Plot Visualization
-// The volcano plot visualization takes no input variables. The received data populates all parts of the plot.
-// The user can control the threshold lines, which affect the marker colors. Additional controls
-// include axis ranges and marker opacity slider.
+// Bipartite Network Visualization
+// The bipartite network takes no input variables, because the received data will complete the plot.
+// Eventually the user will be able to control the significance and correlation coefficient values.
 function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const {
     options,

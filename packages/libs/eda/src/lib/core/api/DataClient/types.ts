@@ -25,6 +25,7 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
+import { BipartiteNetworkData } from '@veupathdb/components/lib/types/plots/network';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),
@@ -371,6 +372,36 @@ export interface VolcanoPlotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {}; // Empty viz config because there are no viz input vars
+}
+
+// Bipartite network
+export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+
+const NodeData = type({
+  id: string,
+});
+
+export const BipartiteNetworkResponse = type({
+  column1NodeIDs: array(string),
+  column2NodeIDs: array(string),
+  nodes: array(NodeData),
+  links: array(
+    type({
+      source: NodeData,
+      target: NodeData,
+      strokeWidth: number,
+      color: string,
+    })
+  ),
+});
+
+export interface BipartiteNetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
 }
 
 ////////////////
