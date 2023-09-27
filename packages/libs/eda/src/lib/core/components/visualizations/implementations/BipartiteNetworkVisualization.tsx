@@ -44,19 +44,8 @@ import DataClient from '../../../api/DataClient';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
 // end imports
 
-const DEFAULT_SIG_THRESHOLD = 0.05;
-const DEFAULT_FC_THRESHOLD = 2;
-const DEFAULT_MARKER_OPACITY = 0.8;
-/**
- * The padding ensures we don't clip off part of the glyphs that represent the most extreme points.
- * We could have also used d3.scale.nice but then we dont have precise control of where the extremes
- * are, which is important for user-defined ranges and truncation bars.
- */
-const AXIS_PADDING_FACTOR = 0.05;
-const EMPTY_VIZ_AXIS_RANGES = {
-  independentAxisRange: { min: -9, max: 9 },
-  dependentAxisRange: { min: -1, max: 9 },
-};
+// Defaults
+const DEFAULT_EDGE_THRESHOLD = 0.9;
 
 const plotContainerStyles = {
   width: 750,
@@ -67,40 +56,32 @@ const plotContainerStyles = {
 };
 
 export const bipartiteNetworkVisualization = createVisualizationPlugin({
-  selectorIcon: VolcanoSVG,
-  fullscreenComponent: VolcanoPlotViz,
+  selectorIcon: VolcanoSVG, // TEMP
+  fullscreenComponent: BipartiteNetworkViz,
   createDefaultConfig: createDefaultConfig,
 });
 
-function createDefaultConfig(): VolcanoPlotConfig {
+function createDefaultConfig(): BipartiteNetworkConfig {
   return {
-    log2FoldChangeThreshold: DEFAULT_FC_THRESHOLD,
-    significanceThreshold: DEFAULT_SIG_THRESHOLD,
-    markerBodyOpacity: DEFAULT_MARKER_OPACITY,
-    independentAxisRange: undefined,
-    dependentAxisRange: undefined,
+    edgeThreshold: DEFAULT_EDGE_THRESHOLD,
   };
 }
 
-export type VolcanoPlotConfig = t.TypeOf<typeof VolcanoPlotConfig>;
+export type BipartiteNetworkConfig = t.TypeOf<typeof BipartiteNetworkConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const VolcanoPlotConfig = t.partial({
-  log2FoldChangeThreshold: t.number,
-  significanceThreshold: t.number,
-  markerBodyOpacity: t.number,
-  independentAxisRange: NumberRange,
-  dependentAxisRange: NumberRange,
+export const BipartiteNetworkConfig = t.partial({
+  edgeThreshold: t.number,
 });
 
 interface Options
   extends LayoutOptions,
-    RequestOptions<VolcanoPlotConfig, {}, VolcanoPlotRequestParams> {}
+    RequestOptions<BipartiteNetworkConfig, {}, VolcanoPlotRequestParams> {}
 
 // Volcano Plot Visualization
 // The volcano plot visualization takes no input variables. The received data populates all parts of the plot.
 // The user can control the threshold lines, which affect the marker colors. Additional controls
 // include axis ranges and marker opacity slider.
-function VolcanoPlotViz(props: VisualizationProps<Options>) {
+function BipartiteNetworkViz(props: VisualizationProps<Options>) {
   const {
     options,
     computation,
@@ -121,7 +102,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
-    VolcanoPlotConfig,
+    BipartiteNetworkConfig,
     createDefaultConfig,
     updateConfiguration
   );
@@ -129,17 +110,20 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   // Fake data
   const data: BipartiteNetworkData = genBipartiteNetwork(100, 10);
 
+  const plotRef = useUpdateThumbnailEffect(
+    updateThumbnail,
+    plotContainerStyles,
+    [data]
+  );
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    /**
-     * VolcanoPlot defines an EmptyVolcanoPlotData variable that will be assigned when data is undefined.
-     * In order to display an empty viz, EmptyVolcanoPlotData is defined as:
-     *    const EmptyVolcanoPlotData: VolcanoPlotData = [{log2foldChange: '0', pValue: '1'}];
-     */
     data: data,
   };
 
   // @ts-ignore
-  const plotNode = <BipartiteNetwork {...bipartiteNetworkProps} />;
+  const plotNode = (
+    <BipartiteNetwork {...bipartiteNetworkProps} ref={plotRef} />
+  );
 
   const controlsNode = <> </>;
   const legendNode = <> </>;
@@ -161,7 +145,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   );
 }
 
-// Gerenate a bipartite network with a given number of nodes and random edges
+// TEMP: Gerenate a bipartite network with a given number of nodes and random edges
 function genBipartiteNetwork(
   column1nNodes: number,
   column2nNodes: number

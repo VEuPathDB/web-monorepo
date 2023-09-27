@@ -1,11 +1,11 @@
+import { useState, useEffect, useRef } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NodeData,
   LinkData,
   BipartiteNetworkData,
 } from '../../types/plots/network';
-import {
-  BipartiteNetwork,
+import BipartiteNetwork, {
   BipartiteNetworkProps,
 } from '../../plots/BipartiteNetwork';
 import { twoColorPalette } from '../../types/plots/addOns';
@@ -20,17 +20,41 @@ interface TemplateProps {
   column1Name?: string;
   column2Name?: string;
   loading?: boolean;
+  showThumbnail?: boolean;
 }
 
 // Template for showcasing our BipartiteNetwork component.
 const Template: Story<TemplateProps> = (args) => {
+  // Generate a jpeg version of the network (svg).
+  // Mimicks the makePlotThumbnailUrl process in web-eda.
+  const ref = useRef<any>(null);
+  const [img, setImg] = useState('');
+  useEffect(() => {
+    setTimeout(() => {
+      ref.current
+        ?.toImage({ format: 'jpeg', height: 400, width: 600 })
+        .then((src: string) => setImg(src));
+    }, 2000);
+  }, []);
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: args.data,
     column1Name: args.column1Name,
     column2Name: args.column2Name,
     showSpinner: args.loading,
   };
-  return <BipartiteNetwork {...bipartiteNetworkProps} />;
+  return (
+    <>
+      <BipartiteNetwork ref={ref} {...bipartiteNetworkProps} />
+      {args.showThumbnail && (
+        <>
+          <br></br>
+          <h3>A snapshot of the plot will appear below after two sconds...</h3>
+          <img src={img} />
+        </>
+      )}
+    </>
+  );
 };
 
 /**
@@ -66,6 +90,15 @@ Loading.args = {
   column1Name: 'Column 1',
   column2Name: 'Column 2',
   loading: true,
+};
+
+// Show thumbnail
+export const Thumbnail = Template.bind({});
+Thumbnail.args = {
+  data: genBipartiteNetwork(10, 10),
+  column1Name: 'Column 1',
+  column2Name: 'Column 2',
+  showThumbnail: true,
 };
 
 // Gerenate a bipartite network with a given number of nodes and random edges

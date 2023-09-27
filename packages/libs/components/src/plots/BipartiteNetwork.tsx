@@ -7,10 +7,18 @@ import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
 import { Text } from '@visx/text';
-import { CSSProperties } from 'react';
+import {
+  CSSProperties,
+  Ref,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
 import { twoColorPalette } from '../types/plots/addOns';
+import { ToImgopts } from 'plotly.js';
+import domToImage from 'dom-to-image';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
@@ -29,7 +37,10 @@ export interface BipartiteNetworkProps {
 
 // The BipartiteNetwork function draws a two-column network using visx. This component handles
 // the positioning of each column, and consequently the positioning of nodes and links.
-export function BipartiteNetwork(props: BipartiteNetworkProps) {
+function BipartiteNetwork(
+  props: BipartiteNetworkProps,
+  ref: Ref<HTMLDivElement>
+) {
   const {
     data,
     column1Name,
@@ -44,6 +55,20 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
   const DEFAULT_COLUMN2_X = 300;
   const DEFAULT_NODE_VERTICAL_SPACE = 30;
   const DEFAULT_TOP_PADDING = 40;
+
+  // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
+  const plotRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle<HTMLDivElement, any>(
+    ref,
+    () => ({
+      // The thumbnail generator makePlotThumbnailUrl expects to call a toImage function
+      toImage: async (imageOpts: ToImgopts) => {
+        if (!plotRef.current) throw new Error('Plot not ready');
+        return domToImage.toPng(plotRef.current, imageOpts);
+      },
+    }),
+    []
+  );
 
   // In order to assign coordinates to each node, we'll separate the
   // nodes based on their column, then will use their order in the column
@@ -103,54 +128,58 @@ export function BipartiteNetwork(props: BipartiteNetworkProps) {
       className={containerClass}
       style={{ ...containerStyles, position: 'relative' }}
     >
-      <svg
-        width={400}
-        height={
-          Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
-            DEFAULT_NODE_VERTICAL_SPACE +
-          DEFAULT_TOP_PADDING
-        }
-      >
-        {/* Draw names of node colums if they exist */}
-        {column1Name && (
-          <Text
-            x={DEFAULT_COLUMN1_X}
-            y={DEFAULT_TOP_PADDING / 2}
-            textAnchor="end"
-          >
-            {column1Name}
-          </Text>
-        )}
-        {column2Name && (
-          <Text
-            x={DEFAULT_COLUMN2_X}
-            y={DEFAULT_TOP_PADDING / 2}
-            textAnchor="start"
-          >
-            {column2Name}
-          </Text>
-        )}
+      <div ref={plotRef} style={{ width: '100%', height: '100%' }}>
+        <svg
+          width={400}
+          height={
+            Math.max(data.column1NodeIDs.length, data.column2NodeIDs.length) *
+              DEFAULT_NODE_VERTICAL_SPACE +
+            DEFAULT_TOP_PADDING
+          }
+        >
+          {/* Draw names of node colums if they exist */}
+          {column1Name && (
+            <Text
+              x={DEFAULT_COLUMN1_X}
+              y={DEFAULT_TOP_PADDING / 2}
+              textAnchor="end"
+            >
+              {column1Name}
+            </Text>
+          )}
+          {column2Name && (
+            <Text
+              x={DEFAULT_COLUMN2_X}
+              y={DEFAULT_TOP_PADDING / 2}
+              textAnchor="start"
+            >
+              {column2Name}
+            </Text>
+          )}
 
-        <Graph
-          graph={{
-            nodes: nodesByColumnWithCoordinates[0].concat(
-              nodesByColumnWithCoordinates[1]
-            ),
-            links: linksWithCoordinates,
-          }}
-          // Using our Link component so that it uses our nice defaults and
-          // can better expand to handle more complex events (hover and such).
-          linkComponent={({ link }) => <Link link={link} />}
-          nodeComponent={({ node }) => {
-            const nodeWithLabelProps = {
-              node: node,
-              labelPosition: node.labelPosition,
-            };
-            return <NodeWithLabel {...nodeWithLabelProps} />;
-          }}
-        />
-      </svg>
-      {showSpinner && <Spinner />}
+          <Graph
+            graph={{
+              nodes: nodesByColumnWithCoordinates[0].concat(
+                nodesByColumnWithCoordinates[1]
+              ),
+              links: linksWithCoordinates,
+            }}
+            // Using our Link component so that it uses our nice defaults and
+            // can better expand to handle more complex events (hover and such).
+            linkComponent={({ link }) => <Link link={link} />}
+            nodeComponent={({ node }) => {
+              const nodeWithLabelProps = {
+                node: node,
+                labelPosition: node.labelPosition,
+              };
+              return <NodeWithLabel {...nodeWithLabelProps} />;
+            }}
+          />
+        </svg>
+        {showSpinner && <Spinner />}
+      </div>
     </div>
   );
 }
+
+export default forwardRef(BipartiteNetwork);
