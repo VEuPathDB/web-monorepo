@@ -1,4 +1,3 @@
-import { LegendItemsProps } from '@veupathdb/components/lib/components/plotControls/PlotListLegend';
 import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -9,19 +8,12 @@ import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
 } from '@veupathdb/components/lib/types/plots/addOns';
-import { sumBy } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../..';
+import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../../constants';
 import {
-  AllValuesDefinition,
-  CategoricalVariableDataShape,
-  OverlayConfig,
-  StandaloneMapMarkersRequestParams,
   StandaloneMapMarkersResponse,
   Variable,
-  useDataClient,
   useFindEntityAndVariable,
-  usePromise,
   useSubsettingClient,
 } from '../../../../core';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
@@ -35,17 +27,18 @@ import {
   PieMarkerConfiguration,
   PieMarkerConfigurationMenu,
 } from '../../MarkerConfiguration/PieMarkerConfigurationMenu';
-import { GLOBAL_VIEWPORT } from '../../hooks/standaloneMapMarkers';
-import { getCategoricalValues } from '../../utils/categoricalValues';
-import { getDefaultOverlayConfig } from '../../utils/defaultOverlayConfig';
-import { defaultAnimation } from '../shared';
 import {
-  GetDataProps,
+  DistributionMarkerDataProps,
+  defaultAnimation,
+  useCategoricalValues,
+  useDistributionMarkerData,
+  useDistributionOverlayConfig,
+} from '../shared';
+import {
   MapTypeConfigPanelProps,
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import { leastAncestralEntity } from '../../../../core/utils/data-element-constraints';
 import DraggableVisualization from '../../DraggableVisualization';
 import { useStandaloneVizPlugins } from '../../hooks/standaloneVizPlugins';
 import {
@@ -55,222 +48,17 @@ import {
 import { DonutMarkersIcon } from '../../MarkerConfiguration/icons';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import MapVizManagement from '../../MapVizManagement';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 
 const displayName = 'Donuts';
 
-interface DonutMakerData {
-  markersData: DonutMarkerProps[];
-  totalVisibleWithOverlayEntityCount: number;
-  totalVisibleEntityCount: number;
-  legendItems: LegendItemsProps[];
-  overlayConfig: OverlayConfig;
-}
-
-export const plugin: MapTypePlugin<DonutMakerData> = {
+export const plugin: MapTypePlugin = {
   displayName,
-  getData,
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
 };
-
-async function getData(props: GetDataProps): Promise<DonutMakerData> {
-  const {
-    boundsZoomLevel,
-    configuration,
-    geoConfigs,
-    studyId,
-    filters,
-    studyEntities,
-    dataClient,
-    subsettingClient,
-  } = props;
-
-  const geoConfig = geoConfigs[0];
-
-  if (geoConfig == null) throw new Error('Geoconfig is null');
-
-  const { selectedVariable, binningMethod } =
-    configuration as PieMarkerConfiguration;
-
-  const { entity: overlayEntity, variable: overlayVariable } =
-    findEntityAndVariable(studyEntities, selectedVariable) ?? {};
-
-  if (overlayEntity == null || overlayVariable == null) {
-    throw new Error(
-      'Could not find overlay variable: ' + JSON.stringify(selectedVariable)
-    );
-  }
-
-  if (!Variable.is(overlayVariable)) {
-    throw new Error('Not a variable');
-  }
-
-  const outputEntity = leastAncestralEntity(
-    [overlayEntity, geoConfig.entity],
-    studyEntities
-  );
-  const outputEntityId = outputEntity?.id;
-
-  // prepare some info that the map-markers and overlay requests both need
-  const { latitudeVariable, longitudeVariable } =
-    geoConfig == null || geoConfig.entity.id == null
-      ? {
-          latitudeVariable: undefined,
-          longitudeVariable: undefined,
-        }
-      : {
-          latitudeVariable: {
-            entityId: geoConfig.entity.id,
-            variableId: geoConfig.latitudeVariableId,
-          },
-          longitudeVariable: {
-            entityId: geoConfig.entity.id,
-            variableId: geoConfig.longitudeVariableId,
-          },
-        };
-
-  // handle the geoAggregateVariable separately because it changes with zoom level
-  // and we don't want that to change overlayVariableAndEntity etc because that invalidates
-  // the overlayConfigPromise
-
-  const geoAggregateVariable =
-    geoConfig != null
-      ? {
-          entityId: geoConfig.entity.id,
-          variableId:
-            // if boundsZoomLevel is undefined, we'll default to geoConfig.aggregationVariableIds[0]
-            geoConfig.aggregationVariableIds[
-              boundsZoomLevel?.zoomLevel != null
-                ? geoConfig.zoomLevelToAggregationLevel(
-                    boundsZoomLevel.zoomLevel
-                  ) - 1
-                : 0
-            ],
-        }
-      : undefined;
-
-  const overlayConfig = await getDefaultOverlayConfig({
-    studyId,
-    filters,
-    overlayEntity,
-    overlayVariable,
-    dataClient,
-    subsettingClient,
-    binningMethod,
-  });
-
-  if (overlayConfig == null) {
-    throw new Error('Could not get overlay config');
-  }
-
-  // check all required vizConfigs are provided
-  if (
-    geoConfig == null ||
-    latitudeVariable == null ||
-    longitudeVariable == null ||
-    geoAggregateVariable == null ||
-    outputEntityId == null
-  )
-    throw new Error('Oops');
-
-  const viewport = boundsZoomLevel
-    ? {
-        latitude: {
-          xMin: boundsZoomLevel.bounds.southWest.lat,
-          xMax: boundsZoomLevel.bounds.northEast.lat,
-        },
-        longitude: {
-          left: boundsZoomLevel.bounds.southWest.lng,
-          right: boundsZoomLevel.bounds.northEast.lng,
-        },
-      }
-    : GLOBAL_VIEWPORT;
-
-  const requestParams: StandaloneMapMarkersRequestParams = {
-    studyId,
-    filters: filters || [],
-    config: {
-      geoAggregateVariable,
-      latitudeVariable,
-      longitudeVariable,
-      overlayConfig: overlayConfig as OverlayConfig,
-      outputEntityId,
-      valueSpec: 'count',
-      viewport,
-    },
-  };
-
-  const rawMarkersData = await dataClient.getStandaloneMapMarkers(
-    'standalone-map',
-    requestParams
-  );
-  const vocabulary =
-    overlayConfig.overlayType === 'categorical' // switch statement style guide time!!
-      ? overlayConfig.overlayValues
-      : overlayConfig.overlayType === 'continuous'
-      ? overlayConfig.overlayValues.map((ov) =>
-          typeof ov === 'object' ? ov.binLabel : ''
-        )
-      : undefined;
-
-  const totalVisibleEntityCount = rawMarkersData.mapElements.reduce(
-    (acc, curr) => {
-      return acc + curr.entityCount;
-    },
-    0
-  );
-
-  const countSum = sumBy(rawMarkersData.mapElements, 'entityCount');
-
-  /**
-   * Merge the overlay data into the basicMarkerData, if available,
-   * and create markers.
-   */
-  const finalMarkersData = processRawMarkersData(
-    rawMarkersData.mapElements,
-    vocabulary,
-    overlayConfig.overlayType
-  );
-
-  /**
-   * create custom legend data
-   */
-  const legendItems: LegendItemsProps[] =
-    vocabulary?.map((label) => ({
-      label: fixLabelForOtherValues(label),
-      marker: 'square',
-      markerColor:
-        overlayConfig.overlayType === 'categorical'
-          ? ColorPaletteDefault[vocabulary.indexOf(label)]
-          : overlayConfig.overlayType === 'continuous'
-          ? gradientSequentialColorscaleMap(
-              vocabulary.length > 1
-                ? vocabulary.indexOf(label) / (vocabulary.length - 1)
-                : 0.5
-            )
-          : undefined,
-      // has any geo-facet got an array of overlay data
-      // containing at least one element that satisfies label==label
-      hasData: rawMarkersData.mapElements.some(
-        (el) =>
-          // TS says el could potentially be a number, and I don't know why
-          typeof el === 'object' &&
-          'overlayValues' in el &&
-          el.overlayValues.some((ov) => ov.binLabel === label)
-      ),
-      group: 1,
-      rank: 1,
-    })) ?? [];
-
-  return {
-    markersData: finalMarkersData,
-    totalVisibleWithOverlayEntityCount: countSum,
-    totalVisibleEntityCount,
-    legendItems,
-    overlayConfig,
-  };
-}
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const {
@@ -285,7 +73,6 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   } = props;
 
   const geoConfig = geoConfigs[0];
-  const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as PieMarkerConfiguration;
   const { selectedVariable, binningMethod } = configuration;
@@ -326,101 +113,46 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
   ]);
 
-  const allFilteredCategoricalValues = usePromise(
-    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
-      /**
-       * We only need this data for categorical vars, so we can return early if var isn't categorical
-       */
-      if (
-        !overlayVariable ||
-        !CategoricalVariableDataShape.is(overlayVariable.dataShape)
-      )
-        return;
-      return getCategoricalValues({
-        overlayEntity,
-        subsettingClient,
-        studyId,
-        overlayVariable,
-        filters,
-      });
-    }, [overlayEntity, overlayVariable, subsettingClient, studyId, filters])
-  );
+  const allFilteredCategoricalValues = useCategoricalValues({
+    overlayEntity,
+    studyId,
+    overlayVariable,
+    filters,
+  });
 
-  const allVisibleCategoricalValues = usePromise(
-    useCallback(async (): Promise<AllValuesDefinition[] | undefined> => {
-      /**
-       * Return early if:
-       *  - overlay var isn't categorical
-       *  - "Show counts for" toggle isn't set to 'visible'
-       */
-      if (
-        !overlayVariable ||
-        !CategoricalVariableDataShape.is(overlayVariable.dataShape) ||
-        (configuration as PieMarkerConfiguration).selectedCountsOption !==
-          'visible'
-      )
-        return;
+  const allVisibleCategoricalValues = useCategoricalValues({
+    overlayEntity,
+    studyId,
+    overlayVariable,
+    filters: filtersIncludingViewport,
+    enabled: configuration.selectedCountsOption === 'visible',
+  });
 
-      return getCategoricalValues({
-        overlayEntity,
-        subsettingClient,
-        studyId,
-        overlayVariable,
-        filters: filtersIncludingViewport,
-      });
-    }, [
-      overlayVariable,
-      configuration,
-      overlayEntity,
-      subsettingClient,
-      studyId,
-      filtersIncludingViewport,
-    ])
-  );
-
-  const previewMarkerResult = usePromise(
-    useCallback(
-      async () =>
-        appState.boundsZoomLevel
-          ? getData({
-              dataClient,
-              subsettingClient,
-              boundsZoomLevel: appState.boundsZoomLevel,
-              studyId,
-              filters,
-              studyEntities,
-              geoConfigs,
-              configuration,
-            })
-          : undefined,
-      [
-        appState.boundsZoomLevel,
-        configuration,
-        dataClient,
-        filters,
-        geoConfigs,
-        studyEntities,
-        studyId,
-        subsettingClient,
-      ]
-    )
-  );
+  const previewMarkerResult = useMarkerData({
+    studyId,
+    filters,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel: appState.boundsZoomLevel,
+    selectedVariable: configuration.selectedVariable,
+    binningMethod: configuration.binningMethod,
+  });
 
   const continuousMarkerPreview = useMemo(() => {
     if (
-      !previewMarkerResult.value ||
-      !previewMarkerResult.value.markersData.length ||
-      !Array.isArray(previewMarkerResult.value.markersData[0].data)
+      !previewMarkerResult ||
+      !previewMarkerResult.markerProps?.length ||
+      !Array.isArray(previewMarkerResult.markerProps[0].data)
     )
       return;
-    const initialDataObject = previewMarkerResult.value.markersData[0].data.map(
+    const initialDataObject = previewMarkerResult.markerProps[0].data.map(
       (data) => ({
         label: data.label,
         value: 0,
         ...(data.color ? { color: data.color } : {}),
       })
     );
-    const finalData = previewMarkerResult.value.markersData.reduce(
+    const finalData = previewMarkerResult.markerProps.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
@@ -440,33 +172,16 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
         {...sharedStandaloneMarkerProperties}
       />
     );
-  }, [previewMarkerResult.value]);
+  }, [previewMarkerResult]);
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const overlayConfiguration = usePromise(
-    useCallback(
-      () =>
-        getDefaultOverlayConfig({
-          studyId,
-          filters,
-          overlayEntity,
-          overlayVariable,
-          dataClient,
-          subsettingClient,
-          binningMethod,
-        }),
-      [
-        studyId,
-        filters,
-        overlayEntity,
-        overlayVariable,
-        dataClient,
-        subsettingClient,
-        binningMethod,
-      ]
-    )
-  );
+  const overlayConfiguration = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+  });
 
   const markerVariableConstraints = apps
     .find((app) => app.name === 'standalone-map')
@@ -479,14 +194,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       onChange={updateConfiguration}
       configuration={configuration as PieMarkerConfiguration}
       constraints={markerVariableConstraints}
-      overlayConfiguration={overlayConfiguration.value}
+      overlayConfiguration={overlayConfiguration.data}
       overlayVariable={overlayVariable}
       subsettingClient={subsettingClient}
       studyId={studyId}
       filters={filters}
       continuousMarkerPreview={continuousMarkerPreview}
-      allFilteredCategoricalValues={allFilteredCategoricalValues.value}
-      allVisibleCategoricalValues={allVisibleCategoricalValues.value}
+      allFilteredCategoricalValues={allFilteredCategoricalValues.data}
+      allVisibleCategoricalValues={allVisibleCategoricalValues.data}
       inputs={[{ name: 'overlayVariable', label: 'Overlay' }]}
       entities={studyEntities}
       starredVariables={
@@ -506,7 +221,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   };
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: overlayConfiguration.value,
+    selectedOverlayConfig: overlayConfiguration.data,
   });
 
   const setActiveVisualizationId = useCallback(
@@ -560,31 +275,66 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 }
 
-function MapLayerComponent(props: MapTypeMapLayerProps<DonutMakerData>) {
-  const markers = props.data.markersData.map((markerProps) => (
+function MapLayerComponent(props: MapTypeMapLayerProps) {
+  const { selectedVariable, binningMethod } =
+    props.configuration as PieMarkerConfiguration;
+  const markerDataResponse = useMarkerData({
+    studyId: props.studyId,
+    filters: props.filters,
+    studyEntities: props.studyEntities,
+    geoConfigs: props.geoConfigs,
+    boundsZoomLevel: props.appState.boundsZoomLevel,
+    selectedVariable,
+    binningMethod,
+  });
+
+  if (markerDataResponse.error)
+    return <MapFloatingErrorDiv error={markerDataResponse.error} />;
+
+  if (markerDataResponse.markerProps == null) return <Spinner />;
+
+  const markers = markerDataResponse.markerProps.map((markerProps) => (
     <DonutMarker {...markerProps} />
   ));
   return <SemanticMarkers markers={markers} animation={defaultAnimation} />;
 }
 
-function MapOverlayComponent(props: MapTypeMapLayerProps<DonutMakerData>) {
-  const { data, updateConfiguration } = props;
-  const configuration = props.configuration as PieMarkerConfiguration;
+function MapOverlayComponent(props: MapTypeMapLayerProps) {
+  const {
+    studyId,
+    filters,
+    studyEntities,
+    geoConfigs,
+    appState: { boundsZoomLevel },
+    updateConfiguration,
+  } = props;
+  const { selectedVariable, binningMethod, activeVisualizationId } =
+    props.configuration as PieMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
-    findEntityAndVariable(configuration.selectedVariable) ?? {};
+    findEntityAndVariable(selectedVariable) ?? {};
   const setActiveVisualizationId = useCallback(
     (activeVisualizationId?: string) => {
       updateConfiguration({
-        ...configuration,
+        ...(props.configuration as PieMarkerConfiguration),
         activeVisualizationId,
       });
     },
-    [configuration, updateConfiguration]
+    [props.configuration, updateConfiguration]
   );
 
+  const data = useMarkerData({
+    studyId,
+    filters,
+    studyEntities,
+    geoConfigs,
+    boundsZoomLevel,
+    binningMethod,
+    selectedVariable,
+  });
+
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: data.overlayConfig,
+    selectedOverlayConfig: data?.overlayConfig,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
@@ -597,15 +347,18 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<DonutMakerData>) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={data.legendItems.length === 0}
-            plotLegendProps={{ type: 'list', legendItems: data.legendItems }}
+            isLoading={data == null}
+            plotLegendProps={{
+              type: 'list',
+              legendItems: data?.legendItems ?? [],
+            }}
             showCheckbox={false}
           />
         </div>
       </DraggableLegendPanel>
       <DraggableVisualization
         analysisState={props.analysisState}
-        visualizationId={configuration.activeVisualizationId}
+        visualizationId={activeVisualizationId}
         setActiveVisualizationId={setActiveVisualizationId}
         apps={props.apps}
         plugins={plugins}
@@ -619,6 +372,48 @@ function MapOverlayComponent(props: MapTypeMapLayerProps<DonutMakerData>) {
       />
     </>
   );
+}
+
+function useMarkerData(props: DistributionMarkerDataProps) {
+  const { data: markerData, error } = useDistributionMarkerData(props);
+
+  if (markerData == null) return { error };
+
+  const {
+    mapElements,
+    totalVisibleEntityCount,
+    totalVisibleWithOverlayEntityCount,
+    legendItems,
+    overlayConfig,
+  } = markerData;
+
+  const vocabulary =
+    overlayConfig.overlayType === 'categorical' // switch statement style guide time!!
+      ? overlayConfig.overlayValues
+      : overlayConfig.overlayType === 'continuous'
+      ? overlayConfig.overlayValues.map((ov) =>
+          typeof ov === 'object' ? ov.binLabel : ''
+        )
+      : undefined;
+
+  /**
+   * Merge the overlay data into the basicMarkerData, if available,
+   * and create markers.
+   */
+  const markerProps = processRawMarkersData(
+    mapElements,
+    vocabulary,
+    overlayConfig.overlayType
+  );
+
+  return {
+    error,
+    markerProps,
+    totalVisibleWithOverlayEntityCount,
+    totalVisibleEntityCount,
+    legendItems,
+    overlayConfig,
+  };
 }
 
 const processRawMarkersData = (

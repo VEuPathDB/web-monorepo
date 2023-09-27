@@ -1,3 +1,6 @@
+// TODO #106 Augment header w/ "visible" counts
+// TODO #106 Implement flyto, either in SemanticMarkers, or in a wrapper component
+
 import { useCallback, useMemo, useState } from 'react';
 
 import {
@@ -34,19 +37,12 @@ import {
 } from '@veupathdb/coreui';
 import { useEntityCounts } from '../../core/hooks/entityCounts';
 import ShowHideVariableContextProvider from '../../core/utils/show-hide-variable-context';
-import {
-  AppState,
-  MarkerConfiguration,
-  useAppState,
-  defaultViewport,
-} from './appState';
-import { FloatingDiv } from './FloatingDiv';
+import { AppState, MarkerConfiguration, useAppState } from './appState';
 import Subsetting from '../../workspace/Subsetting';
 import { MapHeader } from './MapHeader';
 import FilterChipList from '../../core/components/FilterChipList';
 import { VariableLinkConfig } from '../../core/components/VariableLink';
 import { MapSidePanel } from './MapSidePanel';
-import { SiteInformationProps } from '..';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
@@ -72,7 +68,11 @@ import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import { SidePanelItem, SidePanelMenuEntry } from './Types';
+import {
+  SidePanelItem,
+  SidePanelMenuEntry,
+  SiteInformationProps,
+} from './Types';
 import { SideNavigationItems } from './MapSideNavigation';
 import {
   barMarkerPlugin,
@@ -82,6 +82,7 @@ import {
 
 import EZTimeFilter from './EZTimeFilter';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
+import { defaultViewport } from '../constants';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -746,36 +747,6 @@ function MapAnalysisImpl(props: ImplProps) {
       ? donutMarkerPlugin
       : undefined;
 
-  const activeMapTypeData = usePromise(
-    useCallback(async () => {
-      if (
-        appState.boundsZoomLevel == null ||
-        activeMapTypePlugin?.getData == null
-      )
-        return;
-      return activeMapTypePlugin?.getData({
-        boundsZoomLevel: appState.boundsZoomLevel,
-        configuration: activeMarkerConfiguration,
-        dataClient,
-        subsettingClient,
-        filters,
-        geoConfigs,
-        studyEntities,
-        studyId,
-      });
-    }, [
-      activeMapTypePlugin,
-      appState.boundsZoomLevel,
-      activeMarkerConfiguration,
-      dataClient,
-      subsettingClient,
-      filters,
-      geoConfigs,
-      studyEntities,
-      studyId,
-    ])
-  );
-
   return (
     <PromiseResult state={appsPromiseState}>
       {(apps: ComputationAppOverview[]) => {
@@ -804,11 +775,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   studyName={studyRecord.displayName}
                   totalEntityCount={outputEntityTotalCount}
                   totalEntityInSubsetCount={outputEntityFilteredCount}
-                  visibleEntityCount={
-                    activeMapTypeData.value
-                      ?.totalVisibleWithOverlayEntityCount ??
-                    activeMapTypeData.value?.totalVisibleEntityCount
-                  }
+                  visibleEntityCount={Infinity}
                   overlayActive={overlayVariable != null}
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
@@ -865,7 +832,7 @@ function MapAnalysisImpl(props: ImplProps) {
                     width="100%"
                     style={mapStyle}
                     showLayerSelector={false}
-                    showSpinner={activeMapTypeData.pending}
+                    showSpinner={false}
                     viewport={appState.viewport}
                     onBoundsChanged={setBoundsZoomLevel}
                     onViewportChanged={setViewport}
@@ -876,59 +843,47 @@ function MapAnalysisImpl(props: ImplProps) {
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
                   >
-                    {activeMapTypePlugin?.MapLayerComponent &&
-                      (activeMapTypeData.value ||
-                        activeMapTypePlugin.getData == null) && (
-                        <activeMapTypePlugin.MapLayerComponent
-                          apps={apps}
-                          analysisState={analysisState}
-                          appState={appState}
-                          studyId={studyId}
-                          filters={filters}
-                          studyEntities={studyEntities}
-                          geoConfigs={geoConfigs}
-                          configuration={activeMarkerConfiguration}
-                          updateConfiguration={
-                            updateMarkerConfigurations as any
-                          }
-                          data={activeMapTypeData.value as any}
-                          pending={activeMapTypeData.pending}
-                          error={activeMapTypeData.error as any}
-                          filtersIncludingViewport={
-                            filtersIncludingViewportAndTimeSlider
-                          }
-                          totalCounts={totalCounts}
-                          filteredCounts={filteredCounts}
-                        />
-                      )}
+                    {activeMapTypePlugin?.MapLayerComponent && (
+                      <activeMapTypePlugin.MapLayerComponent
+                        apps={apps}
+                        analysisState={analysisState}
+                        appState={appState}
+                        studyId={studyId}
+                        filters={filters}
+                        studyEntities={studyEntities}
+                        geoConfigs={geoConfigs}
+                        configuration={activeMarkerConfiguration}
+                        updateConfiguration={updateMarkerConfigurations as any}
+                        filtersIncludingViewport={
+                          filtersIncludingViewportAndTimeSlider
+                        }
+                        totalCounts={totalCounts}
+                        filteredCounts={filteredCounts}
+                      />
+                    )}
                   </MapVEuMap>
                 </div>
 
-                {activeMapTypePlugin?.MapOverlayComponent &&
-                  (activeMapTypeData.value ||
-                    activeMapTypePlugin.getData == null) && (
-                    <activeMapTypePlugin.MapOverlayComponent
-                      apps={apps}
-                      analysisState={analysisState}
-                      appState={appState}
-                      studyId={studyId}
-                      filters={filtersIncludingTimeSlider}
-                      studyEntities={studyEntities}
-                      geoConfigs={geoConfigs}
-                      configuration={activeMarkerConfiguration}
-                      updateConfiguration={updateMarkerConfigurations as any}
-                      data={activeMapTypeData.value as any}
-                      pending={activeMapTypeData.pending}
-                      error={activeMapTypeData.error as any}
-                      filtersIncludingViewport={
-                        filtersIncludingViewportAndTimeSlider
-                      }
-                      totalCounts={totalCounts}
-                      filteredCounts={filteredCounts}
-                    />
-                  )}
+                {activeMapTypePlugin?.MapOverlayComponent && (
+                  <activeMapTypePlugin.MapOverlayComponent
+                    apps={apps}
+                    analysisState={analysisState}
+                    appState={appState}
+                    studyId={studyId}
+                    filters={filtersIncludingTimeSlider}
+                    studyEntities={studyEntities}
+                    geoConfigs={geoConfigs}
+                    configuration={activeMarkerConfiguration}
+                    updateConfiguration={updateMarkerConfigurations as any}
+                    filtersIncludingViewport={
+                      filtersIncludingViewportAndTimeSlider
+                    }
+                    totalCounts={totalCounts}
+                    filteredCounts={filteredCounts}
+                  />
+                )}
 
-                {activeMapTypeData.error && (
+                {/*activeMapTypeData.error && (
                   <FloatingDiv
                     style={{
                       top: undefined,
@@ -939,7 +894,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   >
                     <div>{String(activeMapTypeData.error)}</div>
                   </FloatingDiv>
-                )}
+                  )*/}
               </div>
             </DocumentationContainer>
           </ShowHideVariableContextProvider>

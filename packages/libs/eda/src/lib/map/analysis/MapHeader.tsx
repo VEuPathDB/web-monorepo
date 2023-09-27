@@ -6,11 +6,8 @@ import {
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { ANALYSIS_NAME_MAX_LENGTH } from '../../core/utils/analysis';
 import './MapHeader.scss';
-import {
-  mapSidePanelBackgroundColor,
-  mapSidePanelBorder,
-  SiteInformationProps,
-} from '..';
+import { mapSidePanelBackgroundColor } from '../constants';
+import { SiteInformationProps } from './Types';
 import { StudyEntity } from '../../core';
 import { makeEntityDisplayName } from '../../core/utils/study-metadata';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';

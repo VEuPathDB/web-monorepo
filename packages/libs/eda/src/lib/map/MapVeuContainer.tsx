@@ -7,6 +7,7 @@ import {
 } from 'react-router';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 
@@ -23,7 +24,7 @@ import {
 } from '../core/hooks/client';
 
 import './MapVEu.scss';
-import { SiteInformationProps } from '.';
+import { SiteInformationProps } from './analysis/Types';
 import { StudyList } from './StudyList';
 import { PublicAnalysesRoute } from '../workspace/PublicAnalysesRoute';
 import { ImportAnalysis } from '../workspace/ImportAnalysis';
@@ -154,6 +155,7 @@ export function MapVeuContainer(mapVeuContainerProps: Props) {
           )}
         />
       </Switch>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

@@ -21,7 +21,6 @@ import {
 } from '../../../../core/api/DataClient/types';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
-import { FloatingDiv } from '../../FloatingDiv';
 import { MapLegend } from '../../MapLegend';
 import MapVizManagement from '../../MapVizManagement';
 import { BubbleMarkerConfigurationMenu } from '../../MarkerConfiguration';
@@ -47,12 +46,13 @@ import { VariableDescriptor } from '../../../../core/types/variable';
 import { useQuery } from '@tanstack/react-query';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
+import Spinner from '@veupathdb/components/lib/components/Spinner';
+import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 
 const displayName = 'Bubbles';
 
-export const plugin: MapTypePlugin<void> = {
+export const plugin: MapTypePlugin = {
   displayName,
-  // getData,
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
   MapOverlayComponent: BubbleLegends,
@@ -167,7 +167,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
 /**
  * Renders marker and legend components
  */
-function BubbleMapLayer(props: MapTypeMapLayerProps<void>) {
+function BubbleMapLayer(props: MapTypeMapLayerProps) {
   const { studyId, filters, appState, configuration, geoConfigs } = props;
   const markersData = useMarkerData({
     boundsZoomLevel: appState.boundsZoomLevel,
@@ -176,15 +176,19 @@ function BubbleMapLayer(props: MapTypeMapLayerProps<void>) {
     studyId,
     filters,
   });
-  if (markersData == null) return null;
+  if (markersData.error)
+    return <MapFloatingErrorDiv error={markersData.error} />;
 
-  const markers = markersData.markersData.map((markerProps) => (
-    <BubbleMarker {...markerProps} />
-  ));
+  if (markersData.fetchStatus === 'fetching') return <Spinner />;
+
+  const markers =
+    markersData.data?.markersData.map((markerProps) => (
+      <BubbleMarker {...markerProps} />
+    )) ?? [];
   return <SemanticMarkers markers={markers} animation={defaultAnimation} />;
 }
 
-function BubbleLegends(props: MapTypeMapLayerProps<void>) {
+function BubbleLegends(props: MapTypeMapLayerProps) {
   const { studyId, filters, geoConfigs, appState, updateConfiguration } = props;
   const configuration = props.configuration as BubbleMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
@@ -219,15 +223,21 @@ function BubbleLegends(props: MapTypeMapLayerProps<void>) {
     <>
       <DraggableLegendPanel panelTitle="Count" zIndex={2}>
         <div style={{ padding: '5px 10px' }}>
-          <MapLegend
-            isLoading={legendData.isLoading}
-            plotLegendProps={{
-              type: 'bubble',
-              legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
-              valueToDiameterMapper:
-                legendData.data?.bubbleValueToDiameterMapper,
-            }}
-          />
+          {legendData.error ? (
+            <div>
+              <pre>{String(legendData.error)}</pre>
+            </div>
+          ) : (
+            <MapLegend
+              isLoading={legendData.fetchStatus === 'fetching'}
+              plotLegendProps={{
+                type: 'bubble',
+                legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
+                valueToDiameterMapper:
+                  legendData.data?.bubbleValueToDiameterMapper,
+              }}
+            />
+          )}
         </div>
       </DraggableLegendPanel>
       <DraggableLegendPanel
@@ -237,7 +247,7 @@ function BubbleLegends(props: MapTypeMapLayerProps<void>) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendData.isLoading}
+            isLoading={legendData.fetchStatus === 'fetching'}
             plotLegendProps={{
               type: 'colorscale',
               legendMin: legendData.data?.bubbleLegendData?.minColorValue ?? 0,
@@ -262,19 +272,6 @@ function BubbleLegends(props: MapTypeMapLayerProps<void>) {
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
       />
-
-      {legendData.error && (
-        <FloatingDiv
-          style={{
-            top: undefined,
-            bottom: 50,
-            left: 100,
-            right: 100,
-          }}
-        >
-          <div>{String(legendData.error)}</div>
-        </FloatingDiv>
-      )}
     </>
   );
 }
@@ -417,7 +414,7 @@ function useLegendData(props: DataProps) {
   const { selectedVariable, numeratorValues, denominatorValues, aggregator } =
     configuration as BubbleMarkerConfiguration;
 
-  const { outputEntity, geoAggregateVariable } = useCommonData(
+  const { outputEntity, geoAggregateVariables } = useCommonData(
     selectedVariable,
     geoConfigs,
     studyEntities,
@@ -435,13 +432,10 @@ function useLegendData(props: DataProps) {
     denominatorValues,
   });
 
-  if (
+  const disabled =
     numeratorValues?.length === 0 ||
     denominatorValues?.length === 0 ||
-    !validateProportionValues(numeratorValues, denominatorValues)
-  ) {
-    throw new Error('Something is wrong with buuble config.');
-  }
+    !validateProportionValues(numeratorValues, denominatorValues);
 
   const legendRequestParams: StandaloneMapBubblesLegendRequestParams = {
     studyId,
@@ -449,11 +443,11 @@ function useLegendData(props: DataProps) {
     config: {
       outputEntityId,
       colorLegendConfig: {
-        geoAggregateVariable,
+        geoAggregateVariable: geoAggregateVariables.at(-1)!,
         quantitativeOverlayConfig: overlayConfig,
       },
       sizeConfig: {
-        geoAggregateVariable,
+        geoAggregateVariable: geoAggregateVariables[0],
       },
     },
   };
@@ -532,12 +526,20 @@ function useLegendData(props: DataProps) {
         bubbleValueToColorMapper,
       };
     },
+    enabled: !disabled,
   });
 }
 
 function useMarkerData(props: DataProps) {
   const { boundsZoomLevel, configuration, geoConfigs, studyId, filters } =
     props;
+
+  const { numeratorValues, denominatorValues } = configuration;
+
+  const disabled =
+    numeratorValues?.length === 0 ||
+    denominatorValues?.length === 0 ||
+    !validateProportionValues(numeratorValues, denominatorValues);
 
   const studyEntities = useStudyEntities();
   const dataClient = useDataClient();
@@ -563,17 +565,6 @@ function useMarkerData(props: DataProps) {
     ...configuration,
   });
 
-  if (
-    configuration.numeratorValues?.length === 0 ||
-    configuration.denominatorValues?.length === 0 ||
-    !validateProportionValues(
-      configuration.numeratorValues,
-      configuration.denominatorValues
-    )
-  ) {
-    throw new Error('Something is wrong with buuble config.');
-  }
-
   const markerRequestParams: StandaloneMapBubblesRequestParams = {
     studyId,
     filters: filters || [],
@@ -587,46 +578,48 @@ function useMarkerData(props: DataProps) {
       viewport,
     },
   };
+  const { data: legendData } = useLegendData(props);
 
-  const rawMarkersDataResponse = useQuery({
-    queryKey: ['bubblePlot', 'markerData', markerRequestParams],
-    queryFn: () =>
-      dataClient.getStandaloneBubbles('standalone-map', markerRequestParams),
-  });
+  // FIXME Don't make dependent on legend data
+  return useQuery({
+    queryKey: ['bubbleMarkers', 'markerData', markerRequestParams],
+    queryFn: async () => {
+      const rawMarkersData = await dataClient.getStandaloneBubbles(
+        'standalone-map',
+        markerRequestParams
+      );
+      const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } =
+        legendData ?? {};
 
-  const rawMarkersData = rawMarkersDataResponse.data;
-  const legendData = useLegendData(props).data;
+      const totalVisibleEntityCount = rawMarkersData.mapElements.reduce(
+        (acc, curr) => {
+          return acc + curr.entityCount;
+        },
+        0
+      );
 
-  if (rawMarkersData == null || legendData == null) return;
+      /**
+       * Merge the overlay data into the basicMarkerData, if available,
+       * and create markers.
+       */
+      const finalMarkersData = processRawBubblesData(
+        rawMarkersData.mapElements,
+        overlayConfig.aggregationConfig,
+        bubbleValueToDiameterMapper,
+        bubbleValueToColorMapper
+      );
 
-  const { bubbleValueToColorMapper, bubbleValueToDiameterMapper } = legendData;
+      const totalVisibleWithOverlayEntityCount = sumBy(
+        rawMarkersData.mapElements,
+        'entityCount'
+      );
 
-  const totalVisibleEntityCount = rawMarkersData.mapElements.reduce(
-    (acc, curr) => {
-      return acc + curr.entityCount;
+      return {
+        markersData: finalMarkersData,
+        totalVisibleWithOverlayEntityCount,
+        totalVisibleEntityCount,
+      };
     },
-    0
-  );
-
-  /**
-   * Merge the overlay data into the basicMarkerData, if available,
-   * and create markers.
-   */
-  const finalMarkersData = processRawBubblesData(
-    rawMarkersData.mapElements,
-    overlayConfig.aggregationConfig,
-    bubbleValueToDiameterMapper,
-    bubbleValueToColorMapper
-  );
-
-  const totalVisibleWithOverlayEntityCount = sumBy(
-    rawMarkersData.mapElements,
-    'entityCount'
-  );
-
-  return {
-    markersData: finalMarkersData,
-    totalVisibleWithOverlayEntityCount,
-    totalVisibleEntityCount,
-  };
+    enabled: !disabled,
+  });
 }

@@ -24,7 +24,7 @@ export interface MapTypeConfigPanelProps {
   updateConfiguration: (configuration: unknown) => void;
 }
 
-export interface MapTypeMapLayerProps<T> {
+export interface MapTypeMapLayerProps {
   apps: ComputationAppOverview[];
   analysisState: AnalysisState;
   appState: AppState;
@@ -34,9 +34,6 @@ export interface MapTypeMapLayerProps<T> {
   geoConfigs: GeoConfig[];
   configuration: unknown;
   updateConfiguration: (configuration: unknown) => void;
-  data: T;
-  pending: boolean;
-  error?: Error;
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
   filtersIncludingViewport: Filter[];
@@ -57,15 +54,11 @@ export interface GetDataProps {
  * A plugin containing the pieces needed to render
  * and configure a map type
  */
-export interface MapTypePlugin<T = unknown> {
+export interface MapTypePlugin {
   /**
    * Display name of map type used for menu, etc.
    */
   displayName: string;
-  /**
-   * Fetch and format data for use by MapLayerComponent and MapOverlayComponent
-   */
-  getData?: (props: GetDataProps) => Promise<T>;
   /**
    * Returns a ReactNode used for configuring the map type
    */
@@ -73,9 +66,9 @@ export interface MapTypePlugin<T = unknown> {
   /**
    * Returns a ReactNode that is rendered as a leaflet map layer
    */
-  MapLayerComponent?: ComponentType<MapTypeMapLayerProps<T>>;
+  MapLayerComponent?: ComponentType<MapTypeMapLayerProps>;
   /**
    * Returns a ReactNode that is rendered on top of the map
    */
-  MapOverlayComponent?: ComponentType<MapTypeMapLayerProps<T>>;
+  MapOverlayComponent?: ComponentType<MapTypeMapLayerProps>;
 }

@@ -28,3 +28,10 @@ export interface SidePanelSubheading extends SidePanelMenuItemBase {
   type: 'subheading';
   children: SidePanelItem[];
 }
+
+export interface SiteInformationProps {
+  siteHomeUrl: string;
+  loginUrl: string;
+  siteName: string;
+  siteLogoSrc: string;
+}

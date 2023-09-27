@@ -1,5 +1,5 @@
 import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots';
-import { UNSELECTED_TOKEN } from '../..';
+import { UNSELECTED_TOKEN } from '../../constants';
 import {
   BinRange,
   BubbleOverlayConfig,

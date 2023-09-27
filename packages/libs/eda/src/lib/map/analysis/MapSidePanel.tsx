@@ -1,10 +1,7 @@
 import { ChevronRight } from '@veupathdb/coreui';
 import { Launch, LockOpen, Person } from '@material-ui/icons';
-import {
-  mapSidePanelBackgroundColor,
-  mapSidePanelBorder,
-  SiteInformationProps,
-} from '..';
+import { mapSidePanelBackgroundColor, mapSidePanelBorder } from '../constants';
+import { SiteInformationProps } from './Types';
 
 import { Link } from 'react-router-dom';
 
