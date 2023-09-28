@@ -5,7 +5,10 @@ import {
   usePromise,
   useStudyMetadata,
 } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
@@ -67,7 +70,7 @@ const Comparator = t.intersection([
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
   differentialAbundanceMethod: t.string,
 });
@@ -151,6 +154,10 @@ function DifferentialAbundanceConfigDescriptionComponent({
   );
 }
 
+// Include available methods in this array.
+// TODO do we need the display names different to these internal strings?
+const DIFFERENTIAL_ABUNDANCE_METHODS = ['DESeq', 'Maaslin'];
+
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
 ) {
@@ -208,11 +215,12 @@ export function DifferentialAbundanceConfiguration(
       }));
   }, [collections]);
 
+  // TODO presumably to keep the saved analyses from breaking, we need to maintain support for a variableId
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
+          variableId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );
@@ -279,6 +287,12 @@ export function DifferentialAbundanceConfiguration(
           };
         }
       );
+
+  const differentialAbundanceMethod = useMemo(() => {
+    if (configuration && 'differentialAbundanceMethod' in configuration) {
+      return configuration.differentialAbundanceMethod;
+    }
+  }, [configuration]);
 
   return (
     <ComputationStepContainer
@@ -440,6 +454,24 @@ export function DifferentialAbundanceConfiguration(
               </div>
             </Tooltip>
           </div>
+        </div>
+
+        <div className={cx('-InputContainer')}>
+          <span>Method</span>
+          <SingleSelect
+            value={differentialAbundanceMethod ?? 'Select a method'}
+            buttonDisplayContent={
+              differentialAbundanceMethod ?? 'Select a method'
+            }
+            onSelect={partial(
+              changeConfigHandler,
+              'differentialAbundanceMethod'
+            )}
+            items={DIFFERENTIAL_ABUNDANCE_METHODS.map((method) => ({
+              value: method,
+              display: method,
+            }))}
+          />
         </div>
       </div>
     </ComputationStepContainer>

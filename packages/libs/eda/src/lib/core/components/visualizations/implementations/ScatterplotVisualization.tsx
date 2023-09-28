@@ -20,7 +20,10 @@ import {
 } from '../../../hooks/workspace';
 import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
 
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
@@ -243,7 +246,9 @@ interface Options
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
-  getComputedOverlayVariable?(config: unknown): VariableDescriptor | undefined;
+  getComputedOverlayVariable?(
+    config: unknown
+  ): VariableDescriptor | VariableCollectionDescriptor | undefined;
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
 }

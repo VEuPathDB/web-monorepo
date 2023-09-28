@@ -8,6 +8,7 @@ import {
 import {
   VolcanoPlotData,
   VolcanoPlotDataPoint,
+  VolcanoPlotStats,
 } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
 import { SignificanceColors, significanceColors } from '../types/plots';
@@ -46,13 +47,13 @@ export interface RawDataMinMaxValues {
 }
 
 export interface VolcanoPlotProps {
-  /** Data for the plot. An array of VolcanoPlotDataPoints */
+  /** Data for the plot. An effectSizeLabel and an array of VolcanoPlotDataPoints */
   data: VolcanoPlotData | undefined;
   /**
    * Used to set the fold change thresholds. Will
    * set two thresholds at +/- this number. Affects point colors
    */
-  log2FoldChangeThreshold: number;
+  effectSizeThreshold: number;
   /** Set the threshold for significance. Affects point colors */
   significanceThreshold: number;
   /** x-axis range  */
@@ -83,9 +84,14 @@ export interface VolcanoPlotProps {
   minPValueCap?: number;
 }
 
-const EmptyVolcanoPlotData: VolcanoPlotData = [
-  { log2foldChange: '0', pValue: '1' },
+const EmptyVolcanoPlotStats: VolcanoPlotStats = [
+  { effectSize: '0', pValue: '1' },
 ];
+
+const EmptyVolcanoPlotData: VolcanoPlotData = {
+  effectSizeLabel: 'log2(FoldChange)',
+  statistics: EmptyVolcanoPlotStats,
+};
 
 const MARGIN_DEFAULT = 50;
 
@@ -130,7 +136,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     independentAxisRange,
     dependentAxisRange,
     significanceThreshold,
-    log2FoldChangeThreshold,
+    effectSizeThreshold,
     markerBodyOpacity,
     containerClass = 'web-components-plot',
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
@@ -154,6 +160,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     }),
     []
   );
+
+  const effectSizeLabel = data?.effectSizeLabel;
 
   // Set maxes and mins of the data itself from rawDataMinMaxValues prop
   const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
@@ -193,10 +201,8 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
    * Check whether each threshold line is within the graph's axis ranges so we can
    * prevent the line from rendering outside the graph.
    */
-  const showNegativeFoldChangeThresholdLine =
-    -log2FoldChangeThreshold > xAxisMin;
-  const showPositiveFoldChangeThresholdLine =
-    log2FoldChangeThreshold < xAxisMax;
+  const showNegativeFoldChangeThresholdLine = -effectSizeThreshold > xAxisMin;
+  const showPositiveFoldChangeThresholdLine = effectSizeThreshold < xAxisMax;
   const showSignificanceThresholdLine =
     -Math.log10(Number(significanceThreshold)) > yAxisMin &&
     -Math.log10(Number(significanceThreshold)) < yAxisMax;
@@ -207,7 +213,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
 
   // For the actual volcano plot data. Y axis points are capped at -Math.log10(minPValueCap)
   const dataAccessors = {
-    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
+    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.effectSize),
     yAccessor: (d: VolcanoPlotDataPoint) =>
       d.pValue === '0'
         ? -Math.log10(minPValueCap)
@@ -268,7 +274,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
           <Grid numTicks={6} lineStyle={gridStyles} />
           <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
-          <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
+          <Axis orientation="bottom" label={effectSizeLabel} {...axisStyles} />
 
           {/* X axis annotations */}
           {comparisonLabels &&
@@ -316,13 +322,13 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               />
             </Annotation>
           )}
-          {/* Draw both vertical log2 fold change threshold lines */}
-          {log2FoldChangeThreshold && (
+          {/* Draw both vertical effect size threshold lines */}
+          {effectSizeThreshold && (
             <>
               {showNegativeFoldChangeThresholdLine && (
                 <Annotation
                   datum={{
-                    x: -log2FoldChangeThreshold,
+                    x: -effectSizeThreshold,
                     y: 0, // vertical line so y could be anything
                   }}
                   {...xyAccessors}
@@ -333,7 +339,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               {showPositiveFoldChangeThresholdLine && (
                 <Annotation
                   datum={{
-                    x: log2FoldChangeThreshold,
+                    x: effectSizeThreshold,
                     y: 0, // vertical line so y could be anything
                   }}
                   {...xyAccessors}
@@ -376,7 +382,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           <Group opacity={markerBodyOpacity}>
             <GlyphSeries
               dataKey={'data'} // unique key
-              data={data}
+              data={data.statistics}
               {...dataAccessors}
               colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
               findNearestDatumOverride={findNearestDatumXY}
@@ -432,7 +438,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   ></div>
                   <ul>
                     <li>
-                      <span>log2 Fold Change:</span> {data?.log2foldChange}
+                      <span>{effectSizeLabel}:</span> {data?.effectSize}
                     </li>
                     <li>
                       <span>P Value:</span> {data?.pValue}
@@ -507,10 +513,10 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
  * Assign color to point based on significance and magnitude change thresholds
  */
 export function assignSignificanceColor(
-  log2foldChange: number,
+  effectSize: number,
   pValue: number,
   significanceThreshold: number,
-  log2FoldChangeThreshold: number,
+  effectSizeThreshold: number,
   significanceColors: SignificanceColors
 ) {
   // Test 1. If the y value is higher than the significance threshold, just return not significant
@@ -519,12 +525,12 @@ export function assignSignificanceColor(
   }
 
   // Test 2. So the y is significant. Is the x larger than the positive foldChange threshold?
-  if (log2foldChange >= log2FoldChangeThreshold) {
+  if (effectSize >= effectSizeThreshold) {
     return significanceColors['high'];
   }
 
   // Test 3. Is the x value lower than the negative foldChange threshold?
-  if (log2foldChange <= -log2FoldChangeThreshold) {
+  if (effectSize <= -effectSizeThreshold) {
     return significanceColors['low'];
   }
 

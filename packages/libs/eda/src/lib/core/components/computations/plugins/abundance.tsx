@@ -1,6 +1,6 @@
 import { useStudyMetadata } from '../../..';
 import { useCollectionVariables } from '../../../hooks/workspace';
-import { VariableDescriptor } from '../../../types/variable';
+import { VariableCollectionDescriptor } from '../../../types/variable';
 import { boxplotVisualization } from '../../visualizations/implementations/BoxplotVisualization';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
@@ -19,7 +19,7 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 export type AbundanceConfig = t.TypeOf<typeof AbundanceConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AbundanceConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   rankingMethod: t.string,
 });
 
@@ -170,7 +170,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
+          variableId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );

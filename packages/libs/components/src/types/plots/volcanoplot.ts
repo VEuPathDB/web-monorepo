@@ -1,7 +1,7 @@
 // Can remove the | undefined from most of these after some other backend work is merged
 export type VolcanoPlotDataPoint = {
   // log2foldChange becomes the x axis. Also used for coloring points
-  log2foldChange?: string;
+  effectSize?: string;
   // pValue will be negative log transformed for the y axis. Also
   // needed as is (untransformed) in the tooltip and when coloring points
   pValue?: string;
@@ -15,4 +15,9 @@ export type VolcanoPlotDataPoint = {
   displayLabels?: string[];
 };
 
-export type VolcanoPlotData = Array<VolcanoPlotDataPoint>;
+export type VolcanoPlotStats = Array<VolcanoPlotDataPoint>;
+
+export type VolcanoPlotData = {
+  effectSizeLabel: string;
+  statistics: VolcanoPlotStats;
+};

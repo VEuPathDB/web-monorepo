@@ -16,3 +16,13 @@ export const StringVariableValue = t.intersection([
     value: t.string,
   }),
 ]);
+
+const _VariableCollectionBase = t.type({
+  entityId: t.string,
+  collectionId: t.string,
+});
+
+export type VariableCollectionDescriptor = t.TypeOf<
+  typeof VariableCollectionDescriptor
+>;
+export const VariableCollectionDescriptor = _VariableCollectionBase;
