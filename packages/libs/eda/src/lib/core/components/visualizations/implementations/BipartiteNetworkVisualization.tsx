@@ -101,8 +101,8 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     data: cleanedData,
   };
 
-  //@ts-ignore
   const plotNode = (
+    //@ts-ignore
     <BipartiteNetwork {...bipartiteNetworkProps} ref={plotRef} />
   );
 

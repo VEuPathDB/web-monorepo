@@ -18,7 +18,13 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 /**
  * Correlation
  *
- * info...
+ * The Correlation Assay vs Metadata app takes in a user-selected collection (ex. Species) and
+ * runs a correlation of that data against all appropriate metadata in the study. The result is
+ * a correlation coefficient and significance value for each (assay member, metadata variable) pair.
+ *
+ * Importantly, this is the first of a few correlation-type apps that are coming along in the near future.
+ * There will also be an Assay vs Assay app and a Metadata vs Metadata correlation app. It's possible that
+ * when those roll out we'll be able to do a little refactoring to make the code a bit nicer.
  */
 
 export type CorrelationAssayMetadataConfig = t.TypeOf<
@@ -42,7 +48,7 @@ export const plugin: ComputationPlugin = {
   },
 };
 
-// Yikes what a name
+// Renders on the thumbnail page to give a summary of the app instance
 function CorrelationAssayMetadataConfigDescriptionComponent({
   computation,
 }: {
@@ -101,6 +107,7 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
   );
 }
 
+// Shows as Step 1 in the full screen visualization page
 export function CorrelationAssayMetadataConfiguration(
   props: ComputationConfigProps
 ) {
@@ -110,9 +117,6 @@ export function CorrelationAssayMetadataConfiguration(
     analysisState,
     visualizationId,
   } = props;
-
-  console.log(computation);
-  console.log(computationAppOverview);
 
   const configuration = computation.descriptor
     .configuration as CorrelationAssayMetadataConfig;
