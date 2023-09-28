@@ -1,8 +1,4 @@
-import {
-  BipartiteNetworkData,
-  LinkData,
-  NodeData,
-} from '../types/plots/network';
+import { BipartiteNetworkData, NodeData } from '../types/plots/network';
 import { partition } from 'lodash';
 import { LabelPosition, Link, NodeWithLabel } from './Network';
 import { Graph } from '@visx/network';
@@ -16,7 +12,6 @@ import {
 } from 'react';
 import { DEFAULT_CONTAINER_HEIGHT } from './PlotlyPlot';
 import Spinner from '../components/Spinner';
-import { twoColorPalette } from '../types/plots/addOns';
 import { ToImgopts } from 'plotly.js';
 import domToImage from 'dom-to-image';
 

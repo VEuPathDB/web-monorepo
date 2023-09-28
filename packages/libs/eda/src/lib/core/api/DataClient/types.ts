@@ -25,7 +25,6 @@ import {
 } from '../../types/general';
 import { VariableDescriptor, StringVariableValue } from '../../types/variable';
 import { ComputationAppOverview } from '../../types/visualization';
-import { BipartiteNetworkData } from '@veupathdb/components/lib/types/plots/network';
 
 export const AppsResponse = type({
   apps: array(ComputationAppOverview),

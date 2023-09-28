@@ -8,7 +8,6 @@ import { Computation } from '../../../types/visualization';
 import SingleSelect from '@veupathdb/coreui/lib/components/inputs/SingleSelect';
 import { useMemo } from 'react';
 import { ComputationStepContainer } from '../ComputationStepContainer';
-import { Filter } from '../../..';
 import './Plugins.scss';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { H6 } from '@veupathdb/coreui';
