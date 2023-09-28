@@ -1,45 +1,32 @@
-import {
-  BipartiteNetwork,
-  BipartiteNetworkProps,
-} from '@veupathdb/components/lib/plots/BipartiteNetwork';
-
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
-
-import { usePromise } from '../../../hooks/promise';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
-import {
-  useDataClient,
-  useStudyEntities,
-  useStudyMetadata,
-} from '../../../hooks/workspace';
 import { PlotLayout } from '../../layouts/PlotLayout';
-
 import { VisualizationProps } from '../VisualizationTypes';
-
-// concerning axis range control
-import { useVizConfig } from '../../../hooks/visualizations';
 import { createVisualizationPlugin } from '../VisualizationPlugin';
-
 import { LayoutOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
 // Bipartite network imports
-import VolcanoSVG from './selectorIcons/VolcanoSVG';
-import { DifferentialAbundanceConfig } from '../../computations/plugins/differentialabundance';
+import BipartiteNetwork, {
+  BipartiteNetworkProps,
+} from '@veupathdb/components/lib/plots/BipartiteNetwork';
+import VolcanoSVG from './selectorIcons/VolcanoSVG'; // TEMP
 import { BipartiteNetworkRequestParams } from '../../../api/DataClient/types';
 import {
   BipartiteNetworkData,
   LinkData,
   NodeData,
 } from '@veupathdb/components/lib/types/plots/network';
-import DataClient from '../../../api/DataClient';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
+import { useMemo } from 'react';
+import { scaleOrdinal } from 'd3-scale';
+import { uniq } from 'lodash';
 // end imports
 
 // Defaults
 const DEFAULT_CORRELATION_COEF_THRESHOLD = 0.9;
 const DEFAULT_SIGNIFICANCE_THRESHOLD = 0.05;
+const DEFAULT_LINK_COLOR_DATA = '0';
 
 const plotContainerStyles = {
   width: 750,
@@ -77,45 +64,44 @@ interface Options
 // The bipartite network takes no input variables, because the received data will complete the plot.
 // Eventually the user will be able to control the significance and correlation coefficient values.
 function BipartiteNetworkViz(props: VisualizationProps<Options>) {
-  const {
-    options,
-    computation,
-    visualization,
-    updateConfiguration,
-    updateThumbnail,
-    filters,
-    filteredCounts,
-    computeJobStatus,
-  } = props;
-
-  const studyMetadata = useStudyMetadata();
-  const { id: studyId } = studyMetadata;
-  const entities = useStudyEntities(filters);
-  const dataClient: DataClient = useDataClient();
-  const computationConfiguration: DifferentialAbundanceConfig = computation
-    .descriptor.configuration as DifferentialAbundanceConfig;
-
-  const [vizConfig, updateVizConfig] = useVizConfig(
-    visualization.descriptor.configuration,
-    BipartiteNetworkConfig,
-    createDefaultConfig,
-    updateConfiguration
-  );
+  const { options, updateThumbnail } = props;
 
   // Fake data
-  const data: BipartiteNetworkData = genBipartiteNetwork(100, 10);
+  const data: BipartiteNetworkData = useMemo(
+    () => genBipartiteNetwork(100, 10),
+    []
+  );
+
+  // Assign color to links.
+  // Color palettes live here in the frontend, but the backend knows that the edges should be two colors.
+  // So we'll make it generalizable by mapping the values of the links.color prop to the palette.
+  const uniqueLinkColors = uniq(
+    data.links.map((link) => link.color ?? DEFAULT_LINK_COLOR_DATA)
+  );
+  const linkColorScale = scaleOrdinal<string>()
+    .domain(uniqueLinkColors)
+    .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts.
+  const cleanedData: BipartiteNetworkData = {
+    ...data,
+    links: data.links.map((link) => {
+      return {
+        ...link,
+        color: linkColorScale(link.color ?? DEFAULT_LINK_COLOR_DATA),
+      };
+    }),
+  };
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
-    [data]
+    [cleanedData]
   );
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: data,
+    data: cleanedData,
   };
 
-  // @ts-ignore
+  //@ts-ignore
   const plotNode = (
     <BipartiteNetwork {...bipartiteNetworkProps} ref={plotRef} />
   );
@@ -170,7 +156,7 @@ function genBipartiteNetwork(
       source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
       target: column2Nodes[Math.floor(Math.random() * column2nNodes)],
       strokeWidth: Math.random() * 2,
-      color: Math.random() > 0.5 ? twoColorPalette[0] : twoColorPalette[1],
+      color: Math.random() > 0.5 ? '0' : '1',
     };
   });
 
