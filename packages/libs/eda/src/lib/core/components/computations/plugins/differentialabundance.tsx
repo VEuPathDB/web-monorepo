@@ -117,6 +117,10 @@ function DifferentialAbundanceConfigDescriptionComponent({
     'comparator' in configuration
       ? findEntityAndVariable(configuration.comparator.variable)
       : undefined;
+  const differentialAbundanceMethod =
+    'differentialAbundanceMethod' in configuration
+      ? configuration.differentialAbundanceMethod
+      : undefined;
 
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -145,6 +149,16 @@ function DifferentialAbundanceConfigDescriptionComponent({
         <span>
           {comparatorVariable ? (
             comparatorVariable.variable.displayName
+          ) : (
+            <i>Not selected</i>
+          )}
+        </span>
+      </h4>
+      <h4>
+        Method:{' '}
+        <span>
+          {differentialAbundanceMethod ? (
+            differentialAbundanceMethod
           ) : (
             <i>Not selected</i>
           )}

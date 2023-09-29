@@ -29,12 +29,18 @@ export interface EntityAndVariableCollection {
 }
 
 export function isEntityAndVariable(object: any): object is EntityAndVariable {
+  if (!object) {
+    return false;
+  }
   return 'entity' in object && 'variable' in object;
 }
 
 export function isEntityAndVariableCollection(
   object: any
 ): object is EntityAndVariableCollection {
+  if (!object) {
+    return false;
+  }
   return 'entity' in object && 'variableCollection' in object;
 }
 
