@@ -26,3 +26,15 @@ export type VariableCollectionDescriptor = t.TypeOf<
   typeof VariableCollectionDescriptor
 >;
 export const VariableCollectionDescriptor = _VariableCollectionBase;
+
+export function isVariableDescriptor(
+  object: any
+): object is VariableDescriptor {
+  return 'entityId' in object && 'variableId' in object;
+}
+
+export function isVariableCollectionDescriptor(
+  object: any
+): object is VariableCollectionDescriptor {
+  return 'entityId' in object && 'collectionId' in object;
+}

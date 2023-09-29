@@ -158,7 +158,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
       })
       .map((collectionVar) => ({
         value: {
-          variableId: collectionVar.id,
+          collectionId: collectionVar.id,
           entityId: collectionVar.entityId,
         },
         display:
@@ -170,7 +170,7 @@ export function AbundanceConfiguration(props: ComputationConfigProps) {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.collectionId,
+          collectionId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );

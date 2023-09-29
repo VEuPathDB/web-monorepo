@@ -1,11 +1,17 @@
 import { keyBy } from 'lodash';
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
+  CollectionVariableTreeNode,
   MultiFilterVariable,
   StudyEntity,
   VariableTreeNode,
 } from '../types/study';
-import { VariableDescriptor } from '../types/variable';
+import {
+  VariableCollectionDescriptor,
+  VariableDescriptor,
+  isVariableCollectionDescriptor,
+  isVariableDescriptor,
+} from '../types/variable';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export function entityTreeToArray(rootEntity: StudyEntity) {
@@ -15,6 +21,35 @@ export function entityTreeToArray(rootEntity: StudyEntity) {
 export interface EntityAndVariable {
   entity: StudyEntity;
   variable: VariableTreeNode;
+}
+
+export interface EntityAndVariableCollection {
+  entity: StudyEntity;
+  variableCollection: CollectionVariableTreeNode;
+}
+
+export function isEntityAndVariable(object: any): object is EntityAndVariable {
+  return 'entity' in object && 'variable' in object;
+}
+
+export function isEntityAndVariableCollection(
+  object: any
+): object is EntityAndVariableCollection {
+  return 'entity' in object && 'variableCollection' in object;
+}
+
+export function getTreeNode(
+  entityAndDynamicData:
+    | EntityAndVariable
+    | EntityAndVariableCollection
+    | undefined
+): VariableTreeNode | CollectionVariableTreeNode | undefined {
+  if (entityAndDynamicData == null) return undefined;
+  if (isEntityAndVariable(entityAndDynamicData)) {
+    return entityAndDynamicData.variable;
+  } else if (isEntityAndVariableCollection(entityAndDynamicData)) {
+    return entityAndDynamicData.variableCollection;
+  }
 }
 
 export function findEntityAndVariable(
@@ -34,6 +69,40 @@ export function findEntityAndVariable(
     );
   if (entity == null || variable == null) return undefined;
   return { entity, variable };
+}
+
+export function findEntityAndVariableCollection(
+  entities: Iterable<StudyEntity>,
+  variableCollectionDescriptor?: VariableCollectionDescriptor
+): EntityAndVariableCollection | undefined {
+  if (variableCollectionDescriptor == null) return undefined;
+  const entity = find(
+    (entity) => entity.id === variableCollectionDescriptor.entityId,
+    entities
+  );
+  const variableCollection =
+    entity &&
+    find(
+      (variableCollection) =>
+        variableCollection.id === variableCollectionDescriptor.collectionId,
+      entity.collections ?? []
+    );
+  if (entity == null || variableCollection == null) return undefined;
+  return { entity, variableCollection };
+}
+
+export function findEntityAndDynamicData(
+  entities: Iterable<StudyEntity>,
+  dynamicDataDescriptor?: VariableDescriptor | VariableCollectionDescriptor
+): EntityAndVariable | EntityAndVariableCollection | undefined {
+  if (dynamicDataDescriptor == null) return undefined;
+  if (isVariableDescriptor(dynamicDataDescriptor)) {
+    return findEntityAndVariable(entities, dynamicDataDescriptor);
+  } else if (isVariableCollectionDescriptor(dynamicDataDescriptor)) {
+    return findEntityAndVariableCollection(entities, dynamicDataDescriptor);
+  } else {
+    return undefined;
+  }
 }
 
 export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {

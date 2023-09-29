@@ -190,10 +190,14 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         x: { min: 0, max: 0 },
         y: { min: 1, max: 1 },
       };
-    const dataXMin = min(data.value.map((d) => Number(d.log2foldChange))) ?? 0;
-    const dataXMax = max(data.value.map((d) => Number(d.log2foldChange))) ?? 0;
-    const dataYMin = min(data.value.map((d) => Number(d.pValue))) ?? 0;
-    const dataYMax = max(data.value.map((d) => Number(d.pValue))) ?? 0;
+    const dataXMin =
+      min(data.value.statistics.map((d) => Number(d.effectSize))) ?? 0;
+    const dataXMax =
+      max(data.value.statistics.map((d) => Number(d.effectSize))) ?? 0;
+    const dataYMin =
+      min(data.value.statistics.map((d) => Number(d.pValue))) ?? 0;
+    const dataYMax =
+      max(data.value.statistics.map((d) => Number(d.pValue))) ?? 0;
     return {
       x: { min: dataXMin, max: dataXMax },
       y: { min: dataYMin, max: dataYMax },
@@ -249,14 +253,14 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
    */
   const finalData = useMemo(() => {
     if (data.value && independentAxisRange && dependentAxisRange) {
-      const cleanedData = data.value
+      const cleanedData = data.value.statistics
         // Only return data if the points fall within the specified range! Otherwise they'll show up on the plot.
         .filter((d) => {
-          const log2foldChange = Number(d?.log2foldChange);
+          const effectSize = Number(d?.effectSize);
           const transformedPValue = -Math.log10(Number(d?.pValue));
           return (
-            log2foldChange <= independentAxisRange.max &&
-            log2foldChange >= independentAxisRange.min &&
+            effectSize <= independentAxisRange.max &&
+            effectSize >= independentAxisRange.min &&
             transformedPValue <= dependentAxisRange.max &&
             transformedPValue >= dependentAxisRange.min
           );
@@ -285,7 +289,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
             pointIDs: pointID ? [pointID] : undefined,
             displayLabels: displayLabel ? [displayLabel] : undefined,
             significanceColor: assignSignificanceColor(
-              Number(d.log2foldChange),
+              Number(d.effectSize),
               Number(d.pValue),
               significanceThreshold,
               log2FoldChangeThreshold,
@@ -294,7 +298,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           };
         })
         // Sort data in ascending order for tooltips to work most effectively
-        .sort((a, b) => Number(a.log2foldChange) - Number(b.log2foldChange));
+        .sort((a, b) => Number(a.effectSize) - Number(b.effectSize));
 
       // Here we're going to loop through the cleanedData to aggregate any data with shared coordinates.
       // For each entry, we'll check if our aggregatedData includes an item with the same coordinates:
@@ -304,8 +308,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       for (const entry of cleanedData) {
         const foundIndex = aggregatedData.findIndex(
           (d: VolcanoPlotDataPoint) =>
-            d.log2foldChange === entry.log2foldChange &&
-            d.pValue === entry.pValue
+            d.log2foldChange === entry.effectSize && d.pValue === entry.pValue
         );
         if (foundIndex === -1) {
           aggregatedData.push(entry);

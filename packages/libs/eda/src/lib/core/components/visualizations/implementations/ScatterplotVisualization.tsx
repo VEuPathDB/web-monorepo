@@ -23,6 +23,7 @@ import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from
 import {
   VariableDescriptor,
   VariableCollectionDescriptor,
+  isVariableDescriptor,
 } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -852,7 +853,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     if (computedOverlayVariableDescriptor) {
       return findCollectionVariableEntityAndVariable(
         entities,
-        computedOverlayVariableDescriptor
+        isVariableDescriptor(computedOverlayVariableDescriptor)
+          ? computedOverlayVariableDescriptor
+          : undefined
       )?.variable.displayName;
     }
     return variableDisplayWithUnit(overlayVariable);
@@ -1912,7 +1915,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Y-axis',
-            required: !computedOverlayVariableDescriptor?.variableId,
+            required: isVariableDescriptor(computedOverlayVariableDescriptor)
+              ? !computedOverlayVariableDescriptor?.variableId
+              : false,
             display: dependentAxisLabel,
             variable:
               !computedOverlayVariableDescriptor && computedYAxisDescriptor
@@ -1924,7 +1929,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             required: !!computedOverlayVariableDescriptor,
             display: legendTitle,
             variable:
-              computedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
+              isVariableDescriptor(computedOverlayVariableDescriptor) &&
+              computedOverlayVariableDescriptor != null
+                ? computedOverlayVariableDescriptor
+                : vizConfig.overlayVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
