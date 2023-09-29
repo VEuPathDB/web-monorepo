@@ -1,5 +1,20 @@
 import React, { ReactNode } from 'react';
 
+import {
+  TypeOf,
+  array,
+  boolean,
+  intersection,
+  literal,
+  number,
+  type,
+  union,
+  partial,
+  record,
+  string,
+  keyof,
+} from 'io-ts';
+
 export interface UserDatasetMeta {
   description: string;
   name: string;
@@ -146,3 +161,99 @@ export type DataNoun = {
   singular: string;
   plural: string;
 };
+
+// VDI types
+const userMetadata = partial({
+  firstName: string,
+  lastName: string,
+  email: string,
+  organization: string,
+});
+
+const ownerDetails = intersection([
+  type({
+    userID: number,
+  }),
+  userMetadata,
+]);
+
+const datasetTypeDetails = intersection([
+  type({
+    name: string,
+    version: string,
+  }),
+  partial({
+    displayName: string,
+  }),
+]);
+
+const installStatus = keyof({
+  complete: null,
+  'failed-validation': null,
+  'failed-installation': null,
+  'ready-for-reinstall': null,
+  'missing-dependency': null,
+});
+
+const installDetails = array(
+  intersection([
+    type({
+      projectID: string,
+    }),
+    partial({
+      metaStatus: installStatus,
+      metaMessage: string,
+      dataStatus: installStatus,
+      dataMessage: string,
+    }),
+  ])
+);
+
+const importStatus = keyof({
+  'in-progress': null,
+  complete: null,
+  invalid: null,
+  failed: null,
+});
+
+const statusDetails = intersection([
+  type({
+    import: importStatus,
+  }),
+  partial({
+    install: installDetails,
+  }),
+]);
+
+const visibility = keyof({
+  private: null,
+  protected: null,
+  public: null,
+});
+
+const shareDetails = type({
+  status: keyof({ grant: null, revoke: null }),
+  recipient: userMetadata,
+});
+
+export const userDataset = intersection([
+  type({
+    datasetID: string,
+    owner: ownerDetails,
+    datasetType: datasetTypeDetails,
+    visibility: visibility,
+    name: string,
+    origin: string,
+    projectIDs: array(string),
+    status: statusDetails,
+  }),
+  partial({
+    summary: string,
+    description: string,
+    sourceUrl: string,
+    shares: array(shareDetails),
+    importMessages: array(string),
+  }),
+]);
+
+export type UserDatasetVDI = TypeOf<typeof userDataset>;
