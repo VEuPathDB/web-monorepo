@@ -190,9 +190,6 @@ export function DifferentialAbundanceConfiguration(
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
-  if (configuration) configuration.differentialAbundanceMethod = 'DESeq';
-
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
