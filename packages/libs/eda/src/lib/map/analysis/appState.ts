@@ -2,7 +2,7 @@ import { getOrElseW } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAnalysis, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
@@ -122,11 +122,11 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
   const analysisState = useAnalysis(analysisId);
 
   // make some backwards compatability updates to the appstate retrieved from the back end
-  const appStateCheckedRef = useRef(false);
+  const [appStateChecked, setAppStateChecked] = useState(false);
 
   useEffect(() => {
     // flip bit when analysis id changes
-    appStateCheckedRef.current = false;
+    setAppStateChecked(false);
   }, [analysisId]);
 
   const { analysis, setVariableUISettings } = analysisState;
@@ -184,7 +184,7 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
   );
 
   useEffect(() => {
-    if (appStateCheckedRef.current) return;
+    if (appStateChecked) return;
     if (analysis) {
       if (!appState) {
         setVariableUISettings((prev) => ({
@@ -219,9 +219,16 @@ export function useAppState(uiStateKey: string, analysisId?: string) {
           }));
         }
       }
-      appStateCheckedRef.current = true;
+      setAppStateChecked(true);
     }
-  }, [analysis, appState, setVariableUISettings, uiStateKey, defaultAppState]);
+  }, [
+    analysis,
+    appState,
+    setVariableUISettings,
+    uiStateKey,
+    defaultAppState,
+    appStateChecked,
+  ]);
 
   function useSetter<T extends keyof AppState>(key: T) {
     return useCallback(
