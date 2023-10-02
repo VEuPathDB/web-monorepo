@@ -169,7 +169,6 @@ function DifferentialAbundanceConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-// TODO do we need the display names different to these internal strings?
 const DIFFERENTIAL_ABUNDANCE_METHODS = ['DESeq', 'Maaslin'];
 
 export function DifferentialAbundanceConfiguration(
@@ -210,10 +209,10 @@ export function DifferentialAbundanceConfiguration(
   const collectionVarItems = useMemo(() => {
     return collections
       .filter((collectionVar) => {
-        return collectionVar.normalizationMethod
-          ? !collectionVar.isProportion &&
-              collectionVar.normalizationMethod === 'NULL' &&
-              !collectionVar.displayName?.includes('pathway')
+        return collectionVar.normalizationMethod // i guess diy stuff doesnt have this prop?
+          ? //  !collectionVar.isProportion &&
+            //  collectionVar.normalizationMethod === 'NULL' &&
+            !collectionVar.displayName?.includes('pathway')
           : true;
       })
       .map((collectionVar) => ({
