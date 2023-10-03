@@ -6,9 +6,15 @@ import {
   ioTransformer,
 } from '@veupathdb/http-utils';
 
-import { UserDatasetVDI, userDataset, UserDatasetMeta } from '../Utils/types';
+import {
+  UserDatasetVDI,
+  userDataset,
+  UserDatasetMeta,
+  NewUserDatasetRequest,
+  NewUserDataset,
+} from '../Utils/types';
 
-import { array } from 'io-ts';
+import { array, type, TypeOf, string } from 'io-ts';
 
 const VDI_SERVICE = '/vdi-datasets';
 const CURRENT_USER_DATASET_PATH = `/users/current/${VDI_SERVICE}`;
@@ -41,6 +47,49 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       })
     );
   };
+
+  addDataset = (newUserDatasetConfig: NewUserDataset) => {
+    const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
+
+    const fileBody = new FormData();
+    if (uploadMethod.type === 'file') {
+      fileBody.append('uploadMethod', 'file');
+      fileBody.append('file', uploadMethod.file);
+    } else if (uploadMethod.type === 'url') {
+      fileBody.append('uploadMethod', 'url');
+      fileBody.append('url', uploadMethod.url);
+    } else {
+      throw new Error(
+        `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
+      );
+    }
+
+    const requestBody: NewUserDatasetRequest = {
+      meta: {
+        ...remainingConfig,
+        datasetType: {
+          name: newUserDatasetConfig.datasetType,
+          version: '1.0',
+        },
+        dependencies: [],
+        origin: 'direct-upload',
+      },
+      ...(uploadMethod.type === 'file'
+        ? { file: uploadMethod.file }
+        : { url: uploadMethod.url }),
+    };
+
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: VDI_SERVICE,
+        body: requestBody,
+        // TODO: figure out how to pull this from userDataset type instead
+        transformResponse: ioTransformer(type({ datasetID: string })),
+      })
+    );
+  };
+
   getUserDataset = (id: string) => {
     return this.fetch(
       createJsonRequest({
@@ -50,6 +99,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       })
     );
   };
+
   // double-check the expected requestBody type for VDI
   updateUserDataset = (id: string, requestBody: UserDatasetMeta) => {
     return this.fetch(
@@ -61,6 +111,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       })
     );
   };
+
   removeUserDataset = (id: string) => {
     return this.fetch(
       createJsonRequest({
@@ -70,6 +121,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       })
     );
   };
+
   getCommunityDatasets = () => {
     return this.fetch(
       createJsonRequest({

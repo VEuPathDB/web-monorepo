@@ -13,6 +13,7 @@ import {
   record,
   string,
   keyof,
+  any,
 } from 'io-ts';
 
 export interface UserDatasetMeta {
@@ -225,7 +226,7 @@ const statusDetails = intersection([
   }),
 ]);
 
-const visibility = keyof({
+const visibilityOptions = keyof({
   private: null,
   protected: null,
   public: null,
@@ -241,7 +242,7 @@ export const userDataset = intersection([
     datasetID: string,
     owner: ownerDetails,
     datasetType: datasetTypeDetails,
-    visibility: visibility,
+    visibility: visibilityOptions,
     name: string,
     origin: string,
     projectIDs: array(string),
@@ -255,5 +256,56 @@ export const userDataset = intersection([
     importMessages: array(string),
   }),
 ]);
+
+interface FileUpload {
+  file: File;
+}
+
+const newUserDataset = intersection([
+  type({
+    name: string,
+    datasetType: type({
+      name: string,
+      version: string,
+    }),
+    origin: string,
+    projects: array(string),
+    dependencies: array(
+      type({
+        resourceDisplayName: string,
+        resourceIdentifier: string,
+        resourceVersion: string,
+      })
+    ),
+  }),
+  partial({
+    visibility: visibilityOptions,
+    summary: string,
+    description: string,
+    url: string,
+  }),
+]);
+
+export interface NewUserDatasetRequest {
+  url?: string;
+  file?: File;
+  meta: {
+    name: string;
+    datasetType: {
+      name: string;
+      version: string;
+    };
+    origin: string;
+    projects: string[];
+    dependencies: {
+      resourceDisplayName: string;
+      resourceIdentifier: string;
+      resourceVersion: string;
+    }[];
+    visibility?: 'private' | 'public' | 'protected';
+    summary?: string;
+    description?: string;
+  };
+}
 
 export type UserDatasetVDI = TypeOf<typeof userDataset>;
