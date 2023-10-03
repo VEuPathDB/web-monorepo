@@ -161,7 +161,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     []
   );
 
-  const effectSizeLabel = data?.effectSizeLabel;
+  const effectSizeLabel = data.effectSizeLabel;
 
   // Set maxes and mins of the data itself from rawDataMinMaxValues prop
   const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
