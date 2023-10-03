@@ -17,9 +17,7 @@ import { Viewport } from '../map/MapVEuMap';
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import MapVEuMapSidebar from '../map/MapVEuMapSidebar';
 // import legend
-import MapVEuLegendSampleList, {
-  LegendProps,
-} from '../map/MapVEuLegendSampleList';
+import { LegendProps } from '../map/MapVEuLegendSampleList';
 
 import geohashAnimation from '../map/animation_functions/geohash';
 
@@ -34,41 +32,6 @@ const defaultAnimation = {
   method: 'geohash',
   animationFunction: geohashAnimation,
   duration: defaultAnimationDuration,
-};
-
-const legendType = 'categorical';
-const dropdownTitle: string = 'Species';
-const dropdownHref: string[] = [
-  '#/link-1',
-  '#/link-2',
-  '#/link-3',
-  '#/link-4',
-  '#/link-5',
-  '#/link-6',
-  '#/link-7',
-];
-const dropdownItemText: string[] = [
-  'Locus',
-  'Allele',
-  'Species',
-  'Sample type',
-  'Collection Protocol',
-  'Project',
-  'Protocol',
-];
-const legendInfoNumberText: string = 'Species';
-
-// for ChartMarkers
-const dropDownProps = {
-  dropdownTitle: 'Collection Date',
-  dropdownHref: ['#/link-1', '#/link-2', '#/link-3', '#/link-4', '#/link-5'],
-  dropdownItemText: ['Year', 'Month', 'Date', 'Hour', 'Minute'],
-};
-
-const variableProps = {
-  variableLabel: '<b>Collection date</b>',
-  quantityLabel: '<b>Record count</b>',
-  legendInfoNumberText: 'Collections',
 };
 
 export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
@@ -88,6 +51,11 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
 
   // check if map panning occured
   const [isPanning, setIsPanning] = useState<boolean>(false);
+
+  // set initial prevGeohashLevel state
+  const [prevGeohashLevel, setPrevGeohashLevel] = useState<number>(
+    leafletZoomLevelToGeohashLevel(viewport.zoom)
+  );
 
   const handleMarkerClick = (e: LeafletMouseEvent) => {};
 
@@ -124,14 +92,9 @@ export const DonutMarkers: Story<MapVEuMapProps> = (args) => {
         setSelectedMarkers={setSelectedMarkers}
         // pass setIsPanning to check if map panning occurred
         setIsPanning={setIsPanning}
-      />
-      <MapVEuLegendSampleList
-        legendType={legendType}
-        data={legendData}
-        dropdownTitle={dropdownTitle}
-        dropdownHref={dropdownHref}
-        dropdownItemText={dropdownItemText}
-        legendInfoNumberText={legendInfoNumberText}
+        // pass geohash level and setState
+        prevGeohashLevel={prevGeohashLevel}
+        setPrevGeohashLevel={setPrevGeohashLevel}
       />
     </>
   );
@@ -155,14 +118,9 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
     zoom: 6,
   });
 
-  const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLegendRadioValue(e.target.value);
-  };
   const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
     0, 0,
   ]);
-
-  const legendType = 'numeric';
 
   const duration = defaultAnimationDuration;
 
@@ -173,6 +131,11 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
 
   // check if map panning occured
   const [isPanning, setIsPanning] = useState<boolean>(false);
+
+  // set initial prevGeohashLevel state
+  const [prevGeohashLevel, setPrevGeohashLevel] = useState<number>(
+    leafletZoomLevelToGeohashLevel(viewport.zoom)
+  );
 
   const handleMarkerClick = (e: LeafletMouseEvent) => {};
 
@@ -214,15 +177,9 @@ export const ChartMarkers: Story<MapVEuMapProps> = (args) => {
         setSelectedMarkers={setSelectedMarkers}
         // pass setIsPanning to check if map panning occurred
         setIsPanning={setIsPanning}
-      />
-      <MapVEuLegendSampleList
-        legendType={legendType}
-        data={legendData}
-        {...dropDownProps}
-        {...variableProps}
-        onChange={legendRadioChange}
-        selectedOption={legendRadioValue}
-        dependentAxisRange={dependentAxisRange}
+        // pass geohash level and setState
+        prevGeohashLevel={prevGeohashLevel}
+        setPrevGeohashLevel={setPrevGeohashLevel}
       />
     </>
   );

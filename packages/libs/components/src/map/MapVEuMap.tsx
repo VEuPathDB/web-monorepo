@@ -9,6 +9,7 @@ import React, {
   forwardRef,
   useCallback,
   useRef,
+  useState,
 } from 'react';
 import {
   BoundsViewport,
@@ -179,6 +180,10 @@ export interface MapVEuMapProps {
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
   /* setIsPanning that is used to check if map panning occurred */
   setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
+  /* prevGeohashLevel state **/
+  prevGeohashLevel?: number;
+  /* prevGeohashLevel setState **/
+  setPrevGeohashLevel?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
@@ -211,6 +216,8 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
     selectedMarkers,
     setSelectedMarkers,
     setIsPanning,
+    prevGeohashLevel,
+    setPrevGeohashLevel,
   } = props;
 
   // use a ref to avoid unneeded renders
@@ -335,6 +342,9 @@ function MapVEuMap(props: MapVEuMapProps, ref: Ref<PlotRef>) {
         selectedMarkers={selectedMarkers}
         setSelectedMarkers={setSelectedMarkers}
         setIsPanning={setIsPanning}
+        zoomLevelToGeohashLevel={zoomLevelToGeohashLevel}
+        prevGeohashLevel={prevGeohashLevel}
+        setPrevGeohashLevel={setPrevGeohashLevel}
       />
       {/* set ScrollWheelZoom */}
       <MapScrollWheelZoom scrollingEnabled={scrollingEnabled} />
@@ -393,6 +403,9 @@ interface MapVEuMapEventsProps {
   selectedMarkers?: markerDataProp[];
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
   setIsPanning?: React.Dispatch<React.SetStateAction<boolean>>;
+  zoomLevelToGeohashLevel?: (leafletZoomLevel: number) => number;
+  prevGeohashLevel?: number;
+  setPrevGeohashLevel?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // function to handle map events such as onViewportChanged and baselayerchange
@@ -403,6 +416,9 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     selectedMarkers,
     setSelectedMarkers,
     setIsPanning,
+    zoomLevelToGeohashLevel,
+    prevGeohashLevel,
+    setPrevGeohashLevel,
   } = props;
   const mapEvents = useMapEvents({
     zoomend: () => {
@@ -410,10 +426,45 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
         center: [mapEvents.getCenter().lat, mapEvents.getCenter().lng],
         zoom: mapEvents.getZoom(),
       });
-      // // remove selected highlight markers
-      // removeClassName('highlight-donutmarker');
-      // removeClassName('highlight-chartmarker');
-      if (setSelectedMarkers != null) setSelectedMarkers([]);
+
+      // check selected markers are within the map viewport/bounds
+      if (
+        selectedMarkers != null &&
+        selectedMarkers.length > 0 &&
+        setSelectedMarkers != null &&
+        zoomLevelToGeohashLevel != null &&
+        setPrevGeohashLevel != null
+      ) {
+        if (prevGeohashLevel === zoomLevelToGeohashLevel(mapEvents.getZoom())) {
+          setSelectedMarkers(
+            (prevSelectedMarkers: markerDataProp[]): markerDataProp[] => {
+              const visibleMarkers = prevSelectedMarkers
+                .map((selectedMarker: markerDataProp) => {
+                  if (mapEvents.getBounds().contains(selectedMarker.latLng)) {
+                    return selectedMarker;
+                  }
+                })
+                .filter((item) => item != null);
+
+              if (visibleMarkers != null)
+                return visibleMarkers as markerDataProp[];
+              else return [];
+            }
+          );
+        } else {
+          // when geohash level is changed
+          setSelectedMarkers([]);
+        }
+      }
+
+      // update preGeohashLevel. Separate condition is made as this is not related to selectedMarkers
+      if (
+        zoomLevelToGeohashLevel != null &&
+        setPrevGeohashLevel != null &&
+        prevGeohashLevel !== zoomLevelToGeohashLevel(mapEvents.getZoom())
+      ) {
+        setPrevGeohashLevel(zoomLevelToGeohashLevel(mapEvents.getZoom()));
+      }
     },
     moveend: () => {
       onViewportChanged({
