@@ -5,7 +5,10 @@ import {
   usePromise,
   useStudyMetadata,
 } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
@@ -67,7 +70,7 @@ const Comparator = t.intersection([
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
   differentialAbundanceMethod: t.string,
 });
@@ -114,6 +117,10 @@ function DifferentialAbundanceConfigDescriptionComponent({
     'comparator' in configuration
       ? findEntityAndVariable(configuration.comparator.variable)
       : undefined;
+  const differentialAbundanceMethod =
+    'differentialAbundanceMethod' in configuration
+      ? configuration.differentialAbundanceMethod
+      : undefined;
 
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -147,9 +154,22 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
+      <h4>
+        Method:{' '}
+        <span>
+          {differentialAbundanceMethod ? (
+            differentialAbundanceMethod
+          ) : (
+            <i>Not selected</i>
+          )}
+        </span>
+      </h4>
     </div>
   );
 }
+
+// Include available methods in this array.
+const DIFFERENTIAL_ABUNDANCE_METHODS = ['DESeq', 'Maaslin'];
 
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
@@ -168,9 +188,6 @@ export function DifferentialAbundanceConfiguration(
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
-
-  // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
-  if (configuration) configuration.differentialAbundanceMethod = 'DESeq';
 
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -192,15 +209,15 @@ export function DifferentialAbundanceConfiguration(
   const collectionVarItems = useMemo(() => {
     return collections
       .filter((collectionVar) => {
-        return collectionVar.normalizationMethod
-          ? !collectionVar.isProportion &&
-              collectionVar.normalizationMethod === 'NULL' &&
-              !collectionVar.displayName?.includes('pathway')
+        return collectionVar.normalizationMethod // i guess diy stuff doesnt have this prop?
+          ? //  !collectionVar.isProportion &&
+            //  collectionVar.normalizationMethod === 'NULL' &&
+            !collectionVar.displayName?.includes('pathway')
           : true;
       })
       .map((collectionVar) => ({
         value: {
-          variableId: collectionVar.id,
+          collectionId: collectionVar.id,
           entityId: collectionVar.entityId,
         },
         display:
@@ -208,11 +225,12 @@ export function DifferentialAbundanceConfiguration(
       }));
   }, [collections]);
 
+  // TODO presumably to keep the saved analyses from breaking, we need to maintain support for a variableId
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
+          collectionId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );
@@ -279,6 +297,12 @@ export function DifferentialAbundanceConfiguration(
           };
         }
       );
+
+  const differentialAbundanceMethod = useMemo(() => {
+    if (configuration && 'differentialAbundanceMethod' in configuration) {
+      return configuration.differentialAbundanceMethod;
+    }
+  }, [configuration]);
 
   return (
     <ComputationStepContainer
@@ -440,6 +464,24 @@ export function DifferentialAbundanceConfiguration(
               </div>
             </Tooltip>
           </div>
+        </div>
+
+        <div className={cx('-InputContainer')}>
+          <span>Method</span>
+          <SingleSelect
+            value={differentialAbundanceMethod ?? 'Select a method'}
+            buttonDisplayContent={
+              differentialAbundanceMethod ?? 'Select a method'
+            }
+            onSelect={partial(
+              changeConfigHandler,
+              'differentialAbundanceMethod'
+            )}
+            items={DIFFERENTIAL_ABUNDANCE_METHODS.map((method) => ({
+              value: method,
+              display: method,
+            }))}
+          />
         </div>
       </div>
     </ComputationStepContainer>

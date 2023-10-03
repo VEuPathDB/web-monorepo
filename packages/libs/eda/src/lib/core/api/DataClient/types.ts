@@ -357,20 +357,54 @@ export const ScatterplotResponse = intersection([
 // The volcano plot response type MUST be the same as the VolcanoPlotData type defined in the components package
 export type VolcanoPlotResponse = TypeOf<typeof VolcanoPlotResponse>;
 
-// TEMP - Many of these can be simplified after some backend work is merged (microbiomeComputations #37)
-export const VolcanoPlotResponse = array(
+export const VolcanoPlotStatistics = array(
   partial({
-    log2foldChange: string,
+    effectSize: string,
     pValue: string,
     adjustedPValue: string,
     pointID: string,
   })
 );
 
+export const VolcanoPlotResponse = type({
+  effectSizeLabel: string,
+  statistics: VolcanoPlotStatistics,
+});
+
 export interface VolcanoPlotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {}; // Empty viz config because there are no viz input vars
+}
+
+// Bipartite network
+export type BipartiteNetworkResponse = TypeOf<typeof BipartiteNetworkResponse>;
+
+const NodeData = type({
+  id: string,
+});
+
+export const BipartiteNetworkResponse = type({
+  column1NodeIDs: array(string),
+  column2NodeIDs: array(string),
+  nodes: array(NodeData),
+  links: array(
+    type({
+      source: NodeData,
+      target: NodeData,
+      strokeWidth: number,
+      color: string,
+    })
+  ),
+});
+
+export interface BipartiteNetworkRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    correlationCoefThreshold?: number;
+    significanceThreshold?: number;
+  };
 }
 
 ////////////////

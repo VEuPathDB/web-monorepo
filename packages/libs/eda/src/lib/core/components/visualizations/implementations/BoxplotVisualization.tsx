@@ -90,7 +90,11 @@ import { truncationConfig } from '../../../utils/truncation-config-utils';
 import Notification from '@veupathdb/components/lib/components/widgets//Notification';
 import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 // alphadiv abundance this should be used for collection variable
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndDynamicData,
+  getTreeNode,
+  isVariableDescriptor,
+} from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import {
   BoxplotRequestParams,
@@ -652,12 +656,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
 
   // alphadiv abundance findEntityAndVariable does not work properly for collection variable
   const independentAxisEntityAndVariable = useMemo(
-    () =>
-      findCollectionVariableEntityAndVariable(entities, providedXAxisVariable),
+    () => findEntityAndDynamicData(entities, providedXAxisVariable),
     [entities, providedXAxisVariable]
   );
   const independentAxisLabel =
-    independentAxisEntityAndVariable?.variable.displayName ??
+    getTreeNode(independentAxisEntityAndVariable)?.displayName ??
     variableDisplayWithUnit(xAxisVariable) ??
     'X-axis';
 
@@ -752,6 +755,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     />
   );
 
+  // TODO understand how we know this is a collection without checking isCollection?
   // List variables in a collection one by one in the variable coverage table. Create these extra rows
   // here and then append to the variable coverage table rows array.
   const collectionVariableMetadata = data.value?.computedVariableMetadata?.find(
@@ -797,7 +801,11 @@ function BoxplotViz(props: VisualizationProps<Options>) {
             role: 'X-axis',
             required: true,
             display: independentAxisLabel,
-            variable: providedXAxisVariable ?? vizConfig.xAxisVariable,
+            variable:
+              isVariableDescriptor(providedOverlayVariable) &&
+              providedOverlayVariable != null
+                ? providedOverlayVariable
+                : vizConfig.xAxisVariable,
           },
           ...additionalVariableCoverageTableRows,
           {

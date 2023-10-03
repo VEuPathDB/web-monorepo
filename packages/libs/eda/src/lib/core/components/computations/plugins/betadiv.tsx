@@ -1,5 +1,5 @@
 import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import { VariableCollectionDescriptor } from '../../../types/variable';
 import { scatterplotVisualization } from '../../visualizations/implementations/ScatterplotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
@@ -18,7 +18,7 @@ const cx = makeClassNameHelper('AppStepConfigurationContainer');
 export type BetaDivConfig = t.TypeOf<typeof BetaDivConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const BetaDivConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   betaDivDissimilarityMethod: t.string,
 });
 
@@ -144,7 +144,7 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
       })
       .map((collectionVar) => ({
         value: {
-          variableId: collectionVar.id,
+          collectionId: collectionVar.id,
           entityId: collectionVar.entityId,
         },
         display:
@@ -156,7 +156,7 @@ export function BetaDivConfiguration(props: ComputationConfigProps) {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
+          collectionId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );
