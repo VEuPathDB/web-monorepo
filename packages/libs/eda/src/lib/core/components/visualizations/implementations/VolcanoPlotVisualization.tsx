@@ -157,6 +157,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         config: {},
         computeConfig: computationConfiguration,
       };
+
       const response = await dataClient.getVisualizationData(
         computation.descriptor.type,
         visualization.descriptor.type,
@@ -608,7 +609,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
           onValueChange={(newValue?: NumberOrDate) =>
             updateVizConfig({ effectSizeThreshold: Number(newValue) })
           }
-          label="log2(Fold Change)"
+          label={finalData?.effectSizeLabel ?? 'Effect Size'}
           minValue={0}
           value={vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD}
           containerStyles={{ marginRight: 10 }}
