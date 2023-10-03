@@ -9,7 +9,6 @@ import React, {
   forwardRef,
   useCallback,
   useRef,
-  useState,
 } from 'react';
 import {
   BoundsViewport,
