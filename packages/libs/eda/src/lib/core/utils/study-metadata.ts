@@ -9,8 +9,6 @@ import {
 import {
   VariableCollectionDescriptor,
   VariableDescriptor,
-  isVariableCollectionDescriptor,
-  isVariableDescriptor,
 } from '../types/variable';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
@@ -42,6 +40,24 @@ export function isEntityAndVariableCollection(
     return false;
   }
   return 'entity' in object && 'variableCollection' in object;
+}
+
+export function isVariableDescriptor(
+  object: any
+): object is VariableDescriptor {
+  if (!object) {
+    return false;
+  }
+  return 'entityId' in object && 'variableId' in object;
+}
+
+export function isVariableCollectionDescriptor(
+  object: any
+): object is VariableCollectionDescriptor {
+  if (!object) {
+    return false;
+  }
+  return 'entityId' in object && 'collectionId' in object;
 }
 
 export function getTreeNode(

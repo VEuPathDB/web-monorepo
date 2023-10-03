@@ -15,10 +15,7 @@ import {
 } from '../../../hooks/workspace';
 import { useUpdateThumbnailEffect } from '../../../hooks/thumbnails';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import {
-  isVariableDescriptor,
-  VariableDescriptor,
-} from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
@@ -96,6 +93,7 @@ import { useDefaultAxisRange } from '../../../hooks/computeDefaultAxisRange';
 import {
   findEntityAndDynamicData,
   getTreeNode,
+  isVariableDescriptor,
 } from '../../../utils/study-metadata';
 // type of computedVariableMetadata for computation apps such as alphadiv and abundance
 import {

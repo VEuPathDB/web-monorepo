@@ -18,12 +18,15 @@ import {
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndDynamicData,
+  getTreeNode,
+  isVariableDescriptor,
+} from '../../../utils/study-metadata';
 
 import {
   VariableDescriptor,
   VariableCollectionDescriptor,
-  isVariableDescriptor,
 } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -851,12 +854,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const legendTitle = useMemo(() => {
     if (computedOverlayVariableDescriptor) {
-      return findCollectionVariableEntityAndVariable(
-        entities,
-        isVariableDescriptor(computedOverlayVariableDescriptor)
-          ? computedOverlayVariableDescriptor
-          : undefined
-      )?.variable.displayName;
+      return getTreeNode(
+        findEntityAndDynamicData(
+          entities,
+          isVariableDescriptor(computedOverlayVariableDescriptor)
+            ? computedOverlayVariableDescriptor
+            : undefined
+        )
+      )?.displayName;
     }
     return variableDisplayWithUnit(overlayVariable);
   }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
