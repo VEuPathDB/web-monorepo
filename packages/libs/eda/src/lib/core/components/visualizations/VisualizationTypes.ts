@@ -31,6 +31,8 @@ export interface VisualizationProps<Options = undefined> {
   geoConfigs: GeoConfig[];
   otherVizOverviews: VisualizationOverview[];
   computeJobStatus?: JobStatus;
+  hideInputsAndControls?: boolean;
+  plotContainerStyles?: React.CSSProperties;
 }
 
 export interface IsEnabledInPickerParams {

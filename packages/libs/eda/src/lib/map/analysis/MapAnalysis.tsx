@@ -663,6 +663,9 @@ function MapAnalysisImpl(props: ImplProps) {
       activeMarkerConfigurationType === 'bubble'
         ? 'Overlay variables are not available for this map type'
         : undefined,
+    // vizOptions: {
+    //   hideInputsAndControls:
+    // }
   });
 
   const subsetVariableAndEntity = useMemo(() => {

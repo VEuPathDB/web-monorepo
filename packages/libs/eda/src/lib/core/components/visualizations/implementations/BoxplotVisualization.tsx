@@ -192,6 +192,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -871,38 +872,42 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={finalizedInputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          variablesForConstraints={variablesForConstraints}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            options?.hideShowMissingnessToggle
-              ? undefined
-              : onShowMissingnessChange
-          }
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={finalizedInputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            variablesForConstraints={variablesForConstraints}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              options?.hideShowMissingnessToggle
+                ? undefined
+                : onShowMissingnessChange
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
-      />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}
         legendNode={showOverlayLegend ? legendNode : null}
@@ -910,6 +915,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

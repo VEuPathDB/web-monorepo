@@ -223,6 +223,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -1364,35 +1365,39 @@ function HistogramViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={inputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
-          }
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={inputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              computation.descriptor.type === 'pass'
+                ? onShowMissingnessChange
+                : undefined
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
 
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        {!hideInputsAndControls && (
+          <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        )}
         <LayoutComponent
           isFaceted={isFaceted(data.value)}
           plotNode={plotNode}
@@ -1400,6 +1405,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
           legendNode={showOverlayLegend ? legendNode : null}
           tableGroupNode={tableGroupNode}
           showRequiredInputsPrompt={!areRequiredInputsSelected}
+          hideControls={hideInputsAndControls}
         />
       </div>
     </div>

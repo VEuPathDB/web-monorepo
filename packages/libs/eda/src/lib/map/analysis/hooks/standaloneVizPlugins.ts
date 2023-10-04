@@ -31,16 +31,18 @@ import { scatterplotRequest } from './plugins/scatterplot';
 import TimeSeriesSVG from '../../../core/components/visualizations/implementations/selectorIcons/TimeSeriesSVG';
 import _ from 'lodash';
 
+type StandaloneVizOptions = LayoutOptions & OverlayOptions;
+
 interface Props {
   selectedOverlayConfig?: OverlayConfig | BubbleOverlayConfig;
   overlayHelp?: ReactNode;
+  vizOptions?: StandaloneVizOptions;
 }
-
-type StandaloneVizOptions = LayoutOptions & OverlayOptions;
 
 export function useStandaloneVizPlugins({
   selectedOverlayConfig,
   overlayHelp = 'The overlay variable can be selected via the top-right panel.',
+  vizOptions,
 }: Props): Record<string, ComputationPlugin> {
   return useMemo(() => {
     function vizWithOptions(
@@ -70,6 +72,7 @@ export function useStandaloneVizPlugins({
           }
         },
         getOverlayVariableHelp: () => overlayHelp,
+        ...vizOptions,
       });
     }
 

@@ -66,6 +66,7 @@ interface Props {
   createComputeJob?: () => void;
   /** optional dynamic plugins */
   plugins?: Partial<Record<string, ComputationPlugin>>;
+  hideInputsAndControls?: boolean;
 }
 
 /**
@@ -449,7 +450,8 @@ type FullScreenVisualizationPropKeys =
   | 'disableThumbnailCreation'
   | 'computeJobStatus'
   | 'createComputeJob'
-  | 'plugins';
+  | 'plugins'
+  | 'hideInputsAndControls';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -479,6 +481,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     computeJobStatus,
     createComputeJob,
     plugins = staticPlugins,
+    hideInputsAndControls,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -643,20 +646,24 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
         </ContentError>
       ) : (
         <div>
-          <h3>
-            <SaveableTextEditor
-              value={viz.displayName ?? 'unnamed visualization'}
-              onSave={(value) => {
-                if (value)
-                  analysisState.updateVisualization({
-                    ...viz,
-                    displayName: value,
-                  });
-              }}
-            />
-          </h3>
-          <div className="Subtitle">{overview?.displayName}</div>
-          {plugin && analysisState.analysis && (
+          {!hideInputsAndControls && (
+            <>
+              <h3>
+                <SaveableTextEditor
+                  value={viz.displayName ?? 'unnamed visualization'}
+                  onSave={(value) => {
+                    if (value)
+                      analysisState.updateVisualization({
+                        ...viz,
+                        displayName: value,
+                      });
+                  }}
+                />
+              </h3>
+              <div className="Subtitle">{overview?.displayName}</div>
+            </>
+          )}
+          {!hideInputsAndControls && plugin && analysisState.analysis && (
             <div
               style={{
                 display: 'flex',
@@ -719,6 +726,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   geoConfigs={geoConfigs}
                   otherVizOverviews={overviews.others}
                   computeJobStatus={computeJobStatus}
+                  hideInputsAndControls={hideInputsAndControls}
                 />
               </div>
             </ComputationStepContainer>
@@ -741,6 +749,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               geoConfigs={geoConfigs}
               otherVizOverviews={overviews.others}
               computeJobStatus={computeJobStatus}
+              hideInputsAndControls={hideInputsAndControls}
             />
           )}
         </div>

@@ -263,6 +263,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -2026,29 +2027,31 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={inputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          variablesForConstraints={variablesForConstraints}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={
-            options?.hideShowMissingnessToggle
-              ? undefined
-              : onShowMissingnessChange
-          }
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={inputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            variablesForConstraints={variablesForConstraints}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={
+              options?.hideShowMissingnessToggle
+                ? undefined
+                : onShowMissingnessChange
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError
@@ -2071,11 +2074,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ]}
       />
 
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
-      />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value?.dataSetProcess)}
         legendNode={showOverlayLegend ? legendNode : null}
@@ -2083,6 +2088,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

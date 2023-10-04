@@ -123,6 +123,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     dataElementDependencyOrder,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -596,35 +597,37 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
-        <NumberInput
-          onValueChange={(newValue?: NumberOrDate) =>
-            updateVizConfig({ log2FoldChangeThreshold: Number(newValue) })
-          }
-          label="log2(Fold Change)"
-          minValue={0}
-          value={vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD}
-          containerStyles={{ marginRight: 10 }}
-        />
+      {!hideInputsAndControls && (
+        <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
+          <NumberInput
+            onValueChange={(newValue?: NumberOrDate) =>
+              updateVizConfig({ log2FoldChangeThreshold: Number(newValue) })
+            }
+            label="log2(Fold Change)"
+            minValue={0}
+            value={vizConfig.log2FoldChangeThreshold ?? DEFAULT_FC_THRESHOLD}
+            containerStyles={{ marginRight: 10 }}
+          />
 
-        <NumberInput
-          label="P-Value"
-          onValueChange={(newValue?: NumberOrDate) =>
-            updateVizConfig({ significanceThreshold: Number(newValue) })
-          }
-          minValue={0}
-          value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
-          containerStyles={{ marginLeft: 10 }}
-          step={0.001}
-        />
-      </LabelledGroup>
+          <NumberInput
+            label="P-Value"
+            onValueChange={(newValue?: NumberOrDate) =>
+              updateVizConfig({ significanceThreshold: Number(newValue) })
+            }
+            minValue={0}
+            value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
+            containerStyles={{ marginLeft: 10 }}
+            step={0.001}
+          />
+        </LabelledGroup>
+      )}
 
       {/* This should be populated with info from the colections var. So like "Showing 1000 taxa blah". Waiting on collections annotations. */}
-      {/* <OutputEntityTitle
+      {/* {!hideInputsAndControls && <OutputEntityTitle
         entity={outputEntity}
         outputSize={outputSize}
         subtitle={plotSubtitle}
-      /> */}
+      />} */}
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
@@ -632,6 +635,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={false}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

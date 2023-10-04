@@ -113,6 +113,8 @@ export type BarplotDataWithStatistics = (
 ) &
   CoverageStatistics;
 
+// Do we want to pull this out and pass it in as a prop?
+// If so, it will be harder to make sure we honor it as part of the API
 const plotContainerStyles = {
   height: 450,
   width: 750,
@@ -191,6 +193,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -892,33 +895,37 @@ function BarplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={inputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          toggleStarredVariable={toggleStarredVariable}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
-          }
-          showMissingness={vizConfig.showMissingness}
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={inputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            toggleStarredVariable={toggleStarredVariable}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              computation.descriptor.type === 'pass'
+                ? onShowMissingnessChange
+                : undefined
+            }
+            showMissingness={vizConfig.showMissingness}
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
@@ -926,6 +933,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

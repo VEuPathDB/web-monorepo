@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { AnalysisState, PromiseHookState } from '../../core';
 
 import { AppState, useAppState } from './appState';
@@ -10,6 +12,7 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
+import { FilledButton } from '@veupathdb/coreui';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 
@@ -44,6 +47,8 @@ export default function DraggableVisualization({
   zIndexForStackingContext = 10,
   additionalRenderCondition,
 }: Props) {
+  const [hideInputsAndControls, setHideInputsAndControls] = useState(false);
+
   const { computation: activeComputation, visualization: activeViz } =
     analysisState.getVisualizationAndComputation(
       appState.activeVisualizationId
@@ -89,7 +94,22 @@ export default function DraggableVisualization({
           minHeight: 200,
         }}
       >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            zIndex: 100,
+            padding: '0.5rem',
+          }}
+        >
+          <FilledButton
+            text={hideInputsAndControls ? 'Show Controls' : 'Hide Controls'}
+            onPress={() => setHideInputsAndControls(!hideInputsAndControls)}
+          />
+        </div>
         <FullScreenVisualization
+          // options={{}}
           analysisState={analysisState}
           computation={activeComputation!}
           visualizationPlugins={visualizationPlugins}
@@ -108,6 +128,7 @@ export default function DraggableVisualization({
           id={activeViz.visualizationId}
           actions={<></>}
           plugins={plugins}
+          hideInputsAndControls={hideInputsAndControls}
         />
       </div>
     </DraggablePanel>

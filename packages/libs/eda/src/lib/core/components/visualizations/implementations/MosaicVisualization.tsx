@@ -200,6 +200,7 @@ function MosaicViz(props: Props<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -982,36 +983,40 @@ function MosaicViz(props: Props<Options>) {
       )}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-          <InputVariables
-            inputs={inputs}
-            customSections={
-              isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
-            }
-            entities={entities}
-            selectedVariables={selectedVariables}
-            onChange={handleInputVariableChange}
-            constraints={dataElementConstraints}
-            dataElementDependencyOrder={dataElementDependencyOrder}
-            starredVariables={starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            enableShowMissingnessToggle={
-              facetVariable != null &&
-              data.value?.completeCasesAllVars !==
-                data.value?.completeCasesAxesVars
-            }
-            showMissingness={vizConfig.showMissingness}
-            // this can be used to show and hide no data control
-            onShowMissingnessChange={
-              computation.descriptor.type === 'pass'
-                ? onShowMissingnessChange
-                : undefined
-            }
-            outputEntity={outputEntity}
-          />
+          {!hideInputsAndControls && (
+            <InputVariables
+              inputs={inputs}
+              customSections={
+                isTwoByTwo ? twoByTwoReferenceValueInputs : undefined
+              }
+              entities={entities}
+              selectedVariables={selectedVariables}
+              onChange={handleInputVariableChange}
+              constraints={dataElementConstraints}
+              dataElementDependencyOrder={dataElementDependencyOrder}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
+              enableShowMissingnessToggle={
+                facetVariable != null &&
+                data.value?.completeCasesAllVars !==
+                  data.value?.completeCasesAxesVars
+              }
+              showMissingness={vizConfig.showMissingness}
+              // this can be used to show and hide no data control
+              onShowMissingnessChange={
+                computation.descriptor.type === 'pass'
+                  ? onShowMissingnessChange
+                  : undefined
+              }
+              outputEntity={outputEntity}
+            />
+          )}
         </div>
 
         <PluginError error={data.error} outputSize={outputSize} />
-        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        {!hideInputsAndControls && (
+          <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+        )}
         <LayoutComponent
           isFaceted={isFaceted(data.value)}
           plotNode={plotNode}
@@ -1019,6 +1024,7 @@ function MosaicViz(props: Props<Options>) {
           tableGroupNode={tableGroupNode}
           showRequiredInputsPrompt={!areRequiredInputsSelected}
           isMosaicPlot={true}
+          hideControls={hideInputsAndControls}
         />
       </div>
     </>
