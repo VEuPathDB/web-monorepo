@@ -121,6 +121,8 @@ import _ from 'lodash';
 
 import EZTimeFilter from './EZTimeFilter';
 
+import { markerDataProp } from '@veupathdb/components/lib/map/BoundsDriftMarker';
+
 enum MapSideNavItemLabels {
   Download = 'Download',
   Filter = 'Filter',
@@ -502,6 +504,20 @@ function MapAnalysisImpl(props: ImplProps) {
     }
   })();
 
+  // a series of useStates for multiple markers selection
+  // make an array of objects state to list highlighted markers
+  const [selectedMarkers, setSelectedMarkers] = useState<markerDataProp[]>([]);
+
+  console.log('selectedMarkers =', selectedMarkers);
+
+  // check if map panning occured for multiple markers selection
+  const [isPanning, setIsPanning] = useState<boolean>(false);
+
+  // set initial prevGeohashLevel state for multiple markers selection
+  const [prevGeohashLevel, setPrevGeohashLevel] = useState<number>(
+    geoConfig?.zoomLevelToAggregationLevel(appState.viewport.zoom)
+  );
+
   const {
     markersData,
     pending,
@@ -615,9 +631,19 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarker {...(markerProps as DonutMarkerProps)} />
+          <DonutMarker
+            // pass two new props for multiple markers selection
+            selectedMarkers={selectedMarkers}
+            setSelectedMarkers={setSelectedMarkers}
+            {...(markerProps as DonutMarkerProps)}
+          />
         ) : markerType === 'bubble' ? (
-          <BubbleMarker {...(markerProps as BubbleMarkerProps)} />
+          <BubbleMarker
+            // pass two new props for multiple markers selection
+            selectedMarkers={selectedMarkers}
+            setSelectedMarkers={setSelectedMarkers}
+            {...(markerProps as BubbleMarkerProps)}
+          />
         ) : (
           <ChartMarker {...(markerProps as ChartMarkerProps)} />
         )
@@ -1350,6 +1376,14 @@ function MapAnalysisImpl(props: ImplProps) {
                     }
                     // pass defaultViewport & isStandAloneMap props for custom zoom control
                     defaultViewport={defaultViewport}
+                    // pass selectedMarkers and its setState for multiple markers selection
+                    selectedMarkers={selectedMarkers}
+                    setSelectedMarkers={setSelectedMarkers}
+                    // pass setIsPanning to check if map panning occurred for multiple markers selection
+                    setIsPanning={setIsPanning}
+                    // pass geohash level and setState for multiple markers selection
+                    prevGeohashLevel={prevGeohashLevel}
+                    setPrevGeohashLevel={setPrevGeohashLevel}
                   />
                 </div>
 
