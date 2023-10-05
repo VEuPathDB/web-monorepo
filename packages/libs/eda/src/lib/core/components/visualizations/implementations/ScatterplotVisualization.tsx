@@ -18,9 +18,16 @@ import {
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndDynamicData,
+  getTreeNode,
+  isVariableDescriptor,
+} from '../../../utils/study-metadata';
 
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
@@ -243,7 +250,9 @@ interface Options
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
-  getComputedOverlayVariable?(config: unknown): VariableDescriptor | undefined;
+  getComputedOverlayVariable?(
+    config: unknown
+  ): VariableDescriptor | VariableCollectionDescriptor | undefined;
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
 }
@@ -845,10 +854,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const legendTitle = useMemo(() => {
     if (computedOverlayVariableDescriptor) {
-      return findCollectionVariableEntityAndVariable(
-        entities,
-        computedOverlayVariableDescriptor
-      )?.variable.displayName;
+      return getTreeNode(
+        findEntityAndDynamicData(
+          entities,
+          isVariableDescriptor(computedOverlayVariableDescriptor)
+            ? computedOverlayVariableDescriptor
+            : undefined
+        )
+      )?.displayName;
     }
     return variableDisplayWithUnit(overlayVariable);
   }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
@@ -1907,7 +1920,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Y-axis',
-            required: !computedOverlayVariableDescriptor?.variableId,
+            required: isVariableDescriptor(computedOverlayVariableDescriptor)
+              ? !computedOverlayVariableDescriptor?.variableId
+              : false,
             display: dependentAxisLabel,
             variable:
               !computedOverlayVariableDescriptor && computedYAxisDescriptor
@@ -1919,7 +1934,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             required: !!computedOverlayVariableDescriptor,
             display: legendTitle,
             variable:
-              computedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
+              isVariableDescriptor(computedOverlayVariableDescriptor) &&
+              computedOverlayVariableDescriptor != null
+                ? computedOverlayVariableDescriptor
+                : vizConfig.overlayVariable,
           },
           ...additionalVariableCoverageTableRows,
           {

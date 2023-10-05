@@ -12,7 +12,7 @@ export default {
   title: 'Plots/VolcanoPlot',
   component: VolcanoPlot,
   argTypes: {
-    log2FoldChangeThreshold: {
+    effectSizeThreshold: {
       control: { type: 'range', min: 0.5, max: 10, step: 0.01 },
     },
     significanceThreshold: {
@@ -26,46 +26,71 @@ export default {
 // of objects for actual use :)
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
-    log2foldChange: string[];
-    pValue: string[];
-    adjustedPValue: string[];
-    pointID: string[];
+    effectSizeLabel: string;
+    statistics: {
+      effectSize: string[];
+      pValue: string[];
+      adjustedPValue: string[];
+      pointID: string[];
+    };
   };
 }
 
 // Let's make some fake data!
 const dataSetVolcano: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    log2foldChange: [
-      '2',
-      '3',
-      '0.5',
-      '-0.1',
-      '1',
-      '-0.5',
-      '-1.2',
-      '4',
-      '0.2',
-      '-8',
-      '-4',
-      '-3',
-    ],
-    pValue: [
-      '0.001',
-      '0.0001',
-      '0.01',
-      '0.001',
-      '0.98',
-      '1',
-      '0.8',
-      '1',
-      '0.6',
-      '0.001',
-      '0.0001',
-      '0.002',
-    ],
-    adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02'],
-    pointID: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'],
+    effectSizeLabel: 'log2FoldChange',
+    statistics: {
+      effectSize: [
+        '2',
+        '3',
+        '0.5',
+        '-0.1',
+        '1',
+        '-0.5',
+        '-1.2',
+        '4',
+        '0.2',
+        '-8',
+        '-4',
+        '-3',
+        '-8.2',
+        '7',
+      ],
+      pValue: [
+        '0.001',
+        '0.0001',
+        '0.01',
+        '0.001',
+        '0.98',
+        '1',
+        '0.8',
+        '1',
+        '0.6',
+        '0.001',
+        '0.0001',
+        '0.002',
+        '0',
+        '0',
+      ],
+      adjustedPValue: ['0.01', '0.001', '0.01', '0.001', '0.02', '0', '0'],
+      pointID: [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'buzz',
+        'lightyear',
+      ],
+    },
   },
 };
 
@@ -73,21 +98,24 @@ const dataSetVolcano: VEuPathDBVolcanoPlotData = {
 const nPoints = 300;
 const dataSetVolcanoManyPoints: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    log2foldChange: range(1, nPoints).map((p) =>
-      String(Math.log2(Math.abs(getNormallyDistributedRandomNumber(0, 5))))
-    ),
-    pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
-    adjustedPValue: range(1, nPoints).map((p) =>
-      String(nPoints * Math.random())
-    ),
-    pointID: range(1, nPoints).map((p) => String(p)),
+    effectSizeLabel: 'log2FoldChange',
+    statistics: {
+      effectSize: range(1, nPoints).map((p) =>
+        String(Math.log2(Math.abs(getNormallyDistributedRandomNumber(0, 5))))
+      ),
+      pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
+      adjustedPValue: range(1, nPoints).map((p) =>
+        String(nPoints * Math.random())
+      ),
+      pointID: range(1, nPoints).map((p) => String(p)),
+    },
   },
 };
 
 interface TemplateProps {
   data: VEuPathDBVolcanoPlotData | undefined;
   markerBodyOpacity: number;
-  log2FoldChangeThreshold: number;
+  effectSizeThreshold: number;
   significanceThreshold: number;
   adjustedPValueGate: number;
   independentAxisRange?: NumberRange;
@@ -100,51 +128,54 @@ interface TemplateProps {
 const Template: Story<TemplateProps> = (args) => {
   // Process input data. Take the object of arrays and turn it into
   // an array of data points. Note the backend will do this for us!
-  const volcanoDataPoints: VolcanoPlotData | undefined =
-    args.data?.volcanoplot.log2foldChange
-      .map((l2fc, index) => {
+  const volcanoDataPoints: VolcanoPlotData | undefined = {
+    effectSizeLabel: args.data?.volcanoplot.effectSizeLabel ?? '',
+    statistics:
+      args.data?.volcanoplot.statistics.effectSize.map((effectSize, index) => {
         return {
-          log2foldChange: l2fc,
-          pValue: args.data?.volcanoplot.pValue[index],
-          adjustedPValue: args.data?.volcanoplot.adjustedPValue[index],
-          pointID: args.data?.volcanoplot.pointID[index],
+          effectSize: effectSize,
+          pValue: args.data?.volcanoplot.statistics.pValue[index],
+          adjustedPValue:
+            args.data?.volcanoplot.statistics.adjustedPValue[index],
+          pointID: args.data?.volcanoplot.statistics.pointID[index],
+          significanceColor: assignSignificanceColor(
+            Number(effectSize),
+            Number(args.data?.volcanoplot.statistics.pValue[index]),
+            args.significanceThreshold,
+            args.effectSizeThreshold,
+            significanceColors
+          ),
         };
-      })
-      .map((d) => ({
-        ...d,
-        pointID: d.pointID ? [d.pointID] : undefined,
-        significanceColor: assignSignificanceColor(
-          Number(d.log2foldChange),
-          Number(d.pValue),
-          args.significanceThreshold,
-          args.log2FoldChangeThreshold,
-          significanceColors
-        ),
-      }));
+      }) ?? [],
+  };
 
   const rawDataMinMaxValues = {
     x: {
       min:
         (volcanoDataPoints &&
           Math.min(
-            ...volcanoDataPoints.map((d) => Number(d.log2foldChange))
+            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
           )) ??
         0,
       max:
         (volcanoDataPoints &&
           Math.max(
-            ...volcanoDataPoints.map((d) => Number(d.log2foldChange))
+            ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
           )) ??
         0,
     },
     y: {
       min:
         (volcanoDataPoints &&
-          Math.min(...volcanoDataPoints.map((d) => Number(d.pValue)))) ??
+          Math.min(
+            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+          )) ??
         1,
       max:
         (volcanoDataPoints &&
-          Math.max(...volcanoDataPoints.map((d) => Number(d.pValue)))) ??
+          Math.max(
+            ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+          )) ??
         1,
     },
   };
@@ -152,7 +183,7 @@ const Template: Story<TemplateProps> = (args) => {
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
     significanceThreshold: args.significanceThreshold,
-    log2FoldChangeThreshold: args.log2FoldChangeThreshold,
+    effectSizeThreshold: args.effectSizeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
     comparisonLabels: args.comparisonLabels,
     independentAxisRange: args.independentAxisRange,
@@ -178,7 +209,7 @@ export const Simple = Template.bind({});
 Simple.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.8,
-  log2FoldChangeThreshold: 1,
+  effectSizeThreshold: 1,
   significanceThreshold: 0.01,
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -9, max: 9 },
@@ -192,10 +223,14 @@ export const ManyPoints = Template.bind({});
 ManyPoints.args = {
   data: dataSetVolcanoManyPoints,
   markerBodyOpacity: 0.8,
-  log2FoldChangeThreshold: 3,
+  effectSizeThreshold: 3,
   significanceThreshold: 0.01,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: 0, max: 9 },
+  comparisonLabels: [
+    'up in super long group name',
+    'up in other long group name',
+  ],
 };
 
 // Test truncation indicators
@@ -203,7 +238,7 @@ export const Truncation = Template.bind({});
 Truncation.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.5,
-  log2FoldChangeThreshold: 2,
+  effectSizeThreshold: 2,
   significanceThreshold: 0.01,
   independentAxisRange: { min: -3, max: 3 },
   dependentAxisRange: { min: 1, max: 3 },
@@ -215,7 +250,7 @@ export const Spinner = Template.bind({});
 Spinner.args = {
   data: dataSetVolcano,
   markerBodyOpacity: 0.8,
-  log2FoldChangeThreshold: 1,
+  effectSizeThreshold: 1,
   significanceThreshold: 0.01,
   comparisonLabels: ['up in group a', 'up in group b'],
   independentAxisRange: { min: -8, max: 9 },
@@ -228,7 +263,7 @@ export const Empty = Template.bind({});
 Empty.args = {
   data: undefined,
   markerBodyOpacity: 0,
-  log2FoldChangeThreshold: 2,
+  effectSizeThreshold: 2,
   significanceThreshold: 0.05,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },

@@ -9,7 +9,7 @@ const isFilter = (filter) =>
 const isNotFilter = negate(isFilter);
 
 // selector to determine if filter is enabled
-export function isTranscripFilterEnabled(state, props) {
+export function isTranscriptFilterEnabled(state, props) {
   const viewFilters = get(
     [
       'resultTableSummaryView',

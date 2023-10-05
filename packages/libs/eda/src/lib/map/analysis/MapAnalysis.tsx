@@ -57,7 +57,11 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
-import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import {
+  ChartMarkerPropsWithCounts,
+  DonutMarkerPropsWithCounts,
+  useStandaloneMapMarkers,
+} from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
@@ -80,9 +84,9 @@ import {
   BubbleMarkerConfigurationMenu,
 } from './MarkerConfiguration';
 import {
-  BarPlotMarker,
-  DonutMarker,
-  BubbleMarker,
+  BarPlotMarkerIcon,
+  DonutMarkerIcon,
+  BubbleMarkerIcon,
 } from './MarkerConfiguration/icons';
 import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { getDefaultOverlayConfig } from './utils/defaultOverlayConfig';
@@ -97,16 +101,17 @@ import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { GeoConfig } from '../../core/types/geoConfig';
 import Banner from '@veupathdb/coreui/lib/components/banners/Banner';
-import BubbleMarkerComponent, {
+import BubbleMarker, {
   BubbleMarkerProps,
 } from '@veupathdb/components/lib/map/BubbleMarker';
-import DonutMarkerComponent, {
+import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
 } from '@veupathdb/components/lib/map/DonutMarker';
-import ChartMarkerComponent, {
+import ChartMarker, {
   ChartMarkerProps,
   ChartMarkerStandalone,
+  getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
@@ -541,20 +546,31 @@ function MapAnalysisImpl(props: ImplProps) {
       !Array.isArray(previewMarkerData[0].data)
     )
       return;
-    const initialDataObject = previewMarkerData[0].data.map((data) => ({
-      label: data.label,
-      value: 0,
-      ...(data.color ? { color: data.color } : {}),
-    }));
     const typedData =
       markerType === 'pie'
-        ? ([...previewMarkerData] as DonutMarkerProps[])
-        : ([...previewMarkerData] as ChartMarkerProps[]);
-    const finalData = typedData.reduce(
+        ? (previewMarkerData as DonutMarkerPropsWithCounts[])
+        : (previewMarkerData as ChartMarkerPropsWithCounts[]);
+    const initialDataObject = typedData[0].data.map((data) => ({
+      label: data.label,
+      value: 0,
+      count: 0,
+      ...(data.color ? { color: data.color } : {}),
+    }));
+    /**
+     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
+     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
+     * previews, let's just overwrite the value property with the count property.
+     *
+     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
+     * needs nor consumes.
+     */
+    const dataWithCountsOnly = typedData.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
-          value: data.value + prevData[index].value,
+          // here's the overwrite mentioned in the above comment
+          value: data.count + prevData[index].count,
+          count: data.count + prevData[index].count,
           ...('color' in prevData[index]
             ? { color: prevData[index].color }
             : 'color' in data
@@ -563,25 +579,32 @@ function MapAnalysisImpl(props: ImplProps) {
         })),
       initialDataObject
     );
+    // NOTE: we could just as well reduce using c.value since we overwrite the value prop with the count data
+    const totalCount = dataWithCountsOnly.reduce((p, c) => p + c.count, 0);
     if (markerType === 'pie') {
       return (
         <DonutMarkerStandalone
-          data={finalData}
-          markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+          data={dataWithCountsOnly}
+          markerLabel={kFormatter(totalCount)}
           {...sharedStandaloneMarkerProperties}
         />
       );
     } else {
+      const dependentAxisLogScale =
+        activeMarkerConfiguration &&
+        'dependentAxisLogScale' in activeMarkerConfiguration
+          ? activeMarkerConfiguration.dependentAxisLogScale
+          : false;
       return (
         <ChartMarkerStandalone
-          data={finalData}
-          markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
-          dependentAxisLogScale={
-            activeMarkerConfiguration &&
-            'dependentAxisLogScale' in activeMarkerConfiguration
-              ? activeMarkerConfiguration.dependentAxisLogScale
-              : false
-          }
+          data={dataWithCountsOnly}
+          markerLabel={mFormatter(totalCount)}
+          dependentAxisLogScale={dependentAxisLogScale}
+          // pass in an axis range to mimic map markers, especially in log scale
+          dependentAxisRange={getChartMarkerDependentAxisRange(
+            dataWithCountsOnly,
+            dependentAxisLogScale
+          )}
           {...sharedStandaloneMarkerProperties}
         />
       );
@@ -592,11 +615,11 @@ function MapAnalysisImpl(props: ImplProps) {
     () =>
       markersData?.map((markerProps) =>
         markerType === 'pie' ? (
-          <DonutMarkerComponent {...(markerProps as DonutMarkerProps)} />
+          <DonutMarker {...(markerProps as DonutMarkerProps)} />
         ) : markerType === 'bubble' ? (
-          <BubbleMarkerComponent {...(markerProps as BubbleMarkerProps)} />
+          <BubbleMarker {...(markerProps as BubbleMarkerProps)} />
         ) : (
-          <ChartMarkerComponent {...(markerProps as ChartMarkerProps)} />
+          <ChartMarker {...(markerProps as ChartMarkerProps)} />
         )
       ) || [],
     [markersData, markerType]
@@ -735,7 +758,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.pie,
             labelText: MarkerTypeLabels.pie,
-            icon: <DonutMarker style={{ height: '1.25em' }} />,
+            icon: <DonutMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('pie'),
             isActive: activeMarkerConfigurationType === 'pie',
           },
@@ -743,7 +766,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.barplot,
             labelText: MarkerTypeLabels.barplot,
-            icon: <BarPlotMarker style={{ height: '1.25em' }} />,
+            icon: <BarPlotMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('barplot'),
             isActive: activeMarkerConfigurationType === 'barplot',
           },
@@ -751,7 +774,7 @@ function MapAnalysisImpl(props: ImplProps) {
             // concatenating the parent and subMenu labels creates a unique ID
             id: MapSideNavItemLabels.ConfigureMap + MarkerTypeLabels.bubble,
             labelText: MarkerTypeLabels.bubble,
-            icon: <BubbleMarker style={{ height: '1.25em' }} />,
+            icon: <BubbleMarkerIcon style={{ height: '1.25em' }} />,
             onClick: () => setActiveMarkerConfigurationType('bubble'),
             isActive: activeMarkerConfigurationType === 'bubble',
           },
@@ -768,7 +791,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'pie',
               displayName: MarkerTypeLabels.pie,
               icon: (
-                <DonutMarker
+                <DonutMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -807,7 +830,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'barplot',
               displayName: MarkerTypeLabels.barplot,
               icon: (
-                <BarPlotMarker
+                <BarPlotMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -846,7 +869,7 @@ function MapAnalysisImpl(props: ImplProps) {
               type: 'bubble',
               displayName: MarkerTypeLabels.bubble,
               icon: (
-                <BubbleMarker
+                <BubbleMarkerIcon
                   style={{ height: '1.5em', marginLeft: '0.25em' }}
                 />
               ),
@@ -1291,6 +1314,7 @@ function MapAnalysisImpl(props: ImplProps) {
                 >
                   <MapSideNavigation
                     isExpanded={sideNavigationIsExpanded}
+                    isUserLoggedIn={userLoggedIn}
                     onToggleIsExpanded={() =>
                       setSideNavigationIsExpanded((isExpanded) => !isExpanded)
                     }

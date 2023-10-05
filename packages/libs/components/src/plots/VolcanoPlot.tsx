@@ -8,6 +8,7 @@ import {
 import {
   VolcanoPlotData,
   VolcanoPlotDataPoint,
+  VolcanoPlotStats,
 } from '../types/plots/volcanoplot';
 import { NumberRange } from '../types/general';
 import { SignificanceColors, significanceColors } from '../types/plots';
@@ -46,13 +47,13 @@ export interface RawDataMinMaxValues {
 }
 
 export interface VolcanoPlotProps {
-  /** Data for the plot. An array of VolcanoPlotDataPoints */
+  /** Data for the plot. An effectSizeLabel and an array of VolcanoPlotDataPoints */
   data: VolcanoPlotData | undefined;
   /**
    * Used to set the fold change thresholds. Will
    * set two thresholds at +/- this number. Affects point colors
    */
-  log2FoldChangeThreshold: number;
+  effectSizeThreshold: number;
   /** Set the threshold for significance. Affects point colors */
   significanceThreshold: number;
   /** x-axis range  */
@@ -79,11 +80,20 @@ export interface VolcanoPlotProps {
   showSpinner?: boolean;
   /** used to determine truncation logic */
   rawDataMinMaxValues: RawDataMinMaxValues;
+  /** The maximum possible y axis value. Points with pValue=0 will get plotted at -log10(minPValueCap). */
+  minPValueCap?: number;
 }
 
-const EmptyVolcanoPlotData: VolcanoPlotData = [
-  { log2foldChange: '0', pValue: '1' },
+const EmptyVolcanoPlotStats: VolcanoPlotStats = [
+  { effectSize: '0', pValue: '1' },
 ];
+
+const EmptyVolcanoPlotData: VolcanoPlotData = {
+  effectSizeLabel: 'log2(FoldChange)',
+  statistics: EmptyVolcanoPlotStats,
+};
+
+const MARGIN_DEFAULT = 50;
 
 interface TruncationRectangleProps {
   x1: number;
@@ -126,7 +136,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     independentAxisRange,
     dependentAxisRange,
     significanceThreshold,
-    log2FoldChangeThreshold,
+    effectSizeThreshold,
     markerBodyOpacity,
     containerClass = 'web-components-plot',
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },
@@ -134,6 +144,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     truncationBarFill,
     showSpinner = false,
     rawDataMinMaxValues,
+    minPValueCap = 2e-300,
   } = props;
 
   // Use ref forwarding to enable screenshotting of the plot for thumbnail versions.
@@ -150,24 +161,63 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
     []
   );
 
+  const effectSizeLabel = data.effectSizeLabel;
+
   // Set maxes and mins of the data itself from rawDataMinMaxValues prop
   const { min: dataXMin, max: dataXMax } = rawDataMinMaxValues.x;
   const { min: dataYMin, max: dataYMax } = rawDataMinMaxValues.y;
 
   // Set mins, maxes of axes in the plot using axis range props
+  // The y axis max should not be allowed to exceed -log10(minPValueCap)
   const xAxisMin = independentAxisRange?.min ?? 0;
   const xAxisMax = independentAxisRange?.max ?? 0;
   const yAxisMin = dependentAxisRange?.min ?? 0;
-  const yAxisMax = dependentAxisRange?.max ?? 0;
+  const yAxisMax = dependentAxisRange?.max
+    ? dependentAxisRange.max > -Math.log10(minPValueCap)
+      ? -Math.log10(minPValueCap)
+      : dependentAxisRange.max
+    : 0;
+
+  // Do we need to show the special annotation for the case when the y axis is maxxed out?
+  const showCappedDataAnnotation = yAxisMax === -Math.log10(minPValueCap);
+
+  // Truncation indicators
+  // If we have truncation indicators, we'll need to expand the plot range just a tad to
+  // ensure the truncation bars appear. The folowing showTruncationBar variables will
+  // be either 0 (do not show bar) or 1 (show bar).
+  // The y axis has special logic because it gets capped at -log10(minPValueCap)
+  const showXMinTruncationBar = Number(dataXMin < xAxisMin);
+  const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
+  const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
+
+  const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
+  const showYMaxTruncationBar =
+    dataYMin === 0
+      ? Number(-Math.log10(minPValueCap) > yAxisMax)
+      : Number(-Math.log10(dataYMin) > yAxisMax);
+  const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
+
+  /**
+   * Check whether each threshold line is within the graph's axis ranges so we can
+   * prevent the line from rendering outside the graph.
+   */
+  const showNegativeFoldChangeThresholdLine = -effectSizeThreshold > xAxisMin;
+  const showPositiveFoldChangeThresholdLine = effectSizeThreshold < xAxisMax;
+  const showSignificanceThresholdLine =
+    -Math.log10(Number(significanceThreshold)) > yAxisMin &&
+    -Math.log10(Number(significanceThreshold)) < yAxisMax;
 
   /**
    * Accessors - tell visx which value of the data point we should use and where.
    */
 
-  // For the actual volcano plot data
+  // For the actual volcano plot data. Y axis points are capped at -Math.log10(minPValueCap)
   const dataAccessors = {
-    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.log2foldChange),
-    yAccessor: (d: VolcanoPlotDataPoint) => -Math.log10(Number(d?.pValue)),
+    xAccessor: (d: VolcanoPlotDataPoint) => Number(d?.effectSize),
+    yAccessor: (d: VolcanoPlotDataPoint) =>
+      d.pValue === '0'
+        ? -Math.log10(minPValueCap)
+        : -Math.log10(Number(d?.pValue)),
   };
 
   // For all other situations where we need to access point values. For example
@@ -180,30 +230,6 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
       return d?.y;
     },
   };
-
-  // Truncation indicators
-  // If we have truncation indicators, we'll need to expand the plot range just a tad to
-  // ensure the truncation bars appear. The folowing showTruncationBar variables will
-  // be either 0 (do not show bar) or 1 (show bar).
-  const showXMinTruncationBar = Number(dataXMin < xAxisMin);
-  const showXMaxTruncationBar = Number(dataXMax > xAxisMax);
-  const xTruncationBarWidth = 0.02 * (xAxisMax - xAxisMin);
-
-  const showYMinTruncationBar = Number(-Math.log10(dataYMax) < yAxisMin);
-  const showYMaxTruncationBar = Number(-Math.log10(dataYMin) > yAxisMax);
-  const yTruncationBarHeight = 0.02 * (yAxisMax - yAxisMin);
-
-  /**
-   * Check whether each threshold line is within the graph's axis ranges so we can
-   * prevent the line from rendering outside the graph.
-   */
-  const showNegativeFoldChangeThresholdLine =
-    -log2FoldChangeThreshold > xAxisMin;
-  const showPositiveFoldChangeThresholdLine =
-    log2FoldChangeThreshold < xAxisMax;
-  const showSignificanceThresholdLine =
-    -Math.log10(Number(significanceThreshold)) > yAxisMin &&
-    -Math.log10(Number(significanceThreshold)) < yAxisMax;
 
   return (
     // Relative positioning so that tooltips are positioned correctly (tooltips are positioned absolutely)
@@ -238,11 +264,17 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             zero: false,
           }}
           findNearestDatumOverride={findNearestDatumXY}
+          margin={{
+            top: MARGIN_DEFAULT,
+            right: showCappedDataAnnotation ? 150 : MARGIN_DEFAULT,
+            left: MARGIN_DEFAULT,
+            bottom: MARGIN_DEFAULT,
+          }}
         >
           {/* Set up the axes and grid lines. XYChart magically lays them out correctly */}
           <Grid numTicks={6} lineStyle={gridStyles} />
           <Axis orientation="left" label="-log10 Raw P Value" {...axisStyles} />
-          <Axis orientation="bottom" label="log2 Fold Change" {...axisStyles} />
+          <Axis orientation="bottom" label={effectSizeLabel} {...axisStyles} />
 
           {/* X axis annotations */}
           {comparisonLabels &&
@@ -290,13 +322,13 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               />
             </Annotation>
           )}
-          {/* Draw both vertical log2 fold change threshold lines */}
-          {log2FoldChangeThreshold && (
+          {/* Draw both vertical effect size threshold lines */}
+          {effectSizeThreshold && (
             <>
               {showNegativeFoldChangeThresholdLine && (
                 <Annotation
                   datum={{
-                    x: -log2FoldChangeThreshold,
+                    x: -effectSizeThreshold,
                     y: 0, // vertical line so y could be anything
                   }}
                   {...xyAccessors}
@@ -307,7 +339,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
               {showPositiveFoldChangeThresholdLine && (
                 <Annotation
                   datum={{
-                    x: log2FoldChangeThreshold,
+                    x: effectSizeThreshold,
                     y: 0, // vertical line so y could be anything
                   }}
                   {...xyAccessors}
@@ -318,6 +350,31 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
             </>
           )}
 
+          {/* infinity y data annotation line */}
+          {showCappedDataAnnotation && (
+            <Annotation
+              datum={{
+                x: xAxisMax,
+                y: yAxisMax + showYMaxTruncationBar * yTruncationBarHeight,
+              }}
+              {...xyAccessors}
+            >
+              <AnnotationLineSubject
+                {...thresholdLineStyles}
+                orientation="horizontal"
+              />
+              <AnnotationLabel
+                title={'Values above this line are capped'}
+                titleFontWeight={200}
+                titleFontSize={12}
+                horizontalAnchor="start"
+                verticalAnchor="middle"
+                showAnchorLine={false}
+                showBackground={false}
+              />
+            </Annotation>
+          )}
+
           {/* The data itself */}
           {/* Wrapping in a group in order to change the opacity of points. The GlyphSeries is somehow
             a bunch of glyphs which are <circles> so there should be a way to pass opacity
@@ -325,7 +382,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
           <Group opacity={markerBodyOpacity}>
             <GlyphSeries
               dataKey={'data'} // unique key
-              data={data}
+              data={data.statistics}
               {...dataAccessors}
               colorAccessor={(d: VolcanoPlotDataPoint) => d.significanceColor}
               findNearestDatumOverride={findNearestDatumXY}
@@ -381,7 +438,7 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                   ></div>
                   <ul>
                     <li>
-                      <span>log2 Fold Change:</span> {data?.log2foldChange}
+                      <span>{effectSizeLabel}:</span> {data?.effectSize}
                     </li>
                     <li>
                       <span>P Value:</span> {data?.pValue}
@@ -456,10 +513,10 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
  * Assign color to point based on significance and magnitude change thresholds
  */
 export function assignSignificanceColor(
-  log2foldChange: number,
+  effectSize: number,
   pValue: number,
   significanceThreshold: number,
-  log2FoldChangeThreshold: number,
+  effectSizeThreshold: number,
   significanceColors: SignificanceColors
 ) {
   // Test 1. If the y value is higher than the significance threshold, just return not significant
@@ -468,12 +525,12 @@ export function assignSignificanceColor(
   }
 
   // Test 2. So the y is significant. Is the x larger than the positive foldChange threshold?
-  if (log2foldChange >= log2FoldChangeThreshold) {
+  if (effectSize >= effectSizeThreshold) {
     return significanceColors['high'];
   }
 
   // Test 3. Is the x value lower than the negative foldChange threshold?
-  if (log2foldChange <= -log2FoldChangeThreshold) {
+  if (effectSize <= -effectSizeThreshold) {
     return significanceColors['low'];
   }
 
