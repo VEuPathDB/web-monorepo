@@ -1200,7 +1200,8 @@ function MapAnalysisImpl(props: ImplProps) {
     const index = zIndicies.findIndex(
       (panelTitle) => panelTitle === requestedPanelTitle
     );
-    const zIndexFactor = sideNavigationIsExpanded ? 2 : 10;
+    const zIndexFactor = 2; // not sure why we used to do this: sideNavigationIsExpanded ? 2 : 10;
+    // we don't want draggable items to go on top of the navigation menu or handle (z-index: 10)
     return index + zIndexFactor;
   }
 

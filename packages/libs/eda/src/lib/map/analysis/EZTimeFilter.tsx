@@ -152,13 +152,7 @@ export default function EZTimeFilter({
 
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
-    <div
-      style={
-        {
-          //  zIndex: 10, // still need to figure out z-index stuff
-        }
-      }
-    >
+    <div>
       <div
         style={{
           width: timeFilterWidth,
