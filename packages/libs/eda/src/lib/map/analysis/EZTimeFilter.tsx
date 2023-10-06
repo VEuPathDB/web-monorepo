@@ -44,7 +44,7 @@ export default function EZTimeFilter({
   config,
   updateConfig,
 }: Props) {
-  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter aware
+  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const [minimized, setMinimized] = useState(true);
 
   const { variable, active, selectedRange } = config;
@@ -100,6 +100,7 @@ export default function EZTimeFilter({
   const timeFilterData: EZTimeFilterDataProp[] = useMemo(
     () =>
       trimArray(
+        // remove leading and trailing zeroes (subset sensitivity)
         !getTimeSliderData.pending && getTimeSliderData.value != null
           ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
               .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
@@ -109,7 +110,7 @@ export default function EZTimeFilter({
                   val.x != null && val.y != null
               )
           : [],
-        ({ y }) => y === 0 // remove leading and trailing zeroes (filter sensitivity)
+        ({ y }) => y === 0
       ),
     [getTimeSliderData]
   );
