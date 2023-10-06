@@ -204,7 +204,9 @@ export default function EZTimeFilter({
           }}
         >
           {minimized /* just show the variable name as text */ ? (
-            <div style={{}}>{variableMetadata.variable.displayName}</div>
+            <div style={{ ...(active ? {} : { color: '#aaa' }) }}>
+              {variableMetadata.variable.displayName}
+            </div>
           ) : (
             <>
               <div style={sideElementStyle}></div>
