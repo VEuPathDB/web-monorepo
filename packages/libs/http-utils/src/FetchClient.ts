@@ -104,12 +104,17 @@ export abstract class FetchClient {
 
       return await transformResponse(responseBody);
     }
+    const { status, statusText } = response;
+    const { headers, method, url } = request;
+    const traceid = headers.get('traceid');
     const fetchError = new FetchClientError(
-      `${response.status} ${
-        response.statusText
-      }: ${request.method.toUpperCase()} ${request.url}
-      ${'\n'}${await response.text()}`
+      [
+        `${status} ${statusText}: ${method.toUpperCase()} ${url}`,
+        traceid != null ? 'Traceid: ' + traceid + '\n' : '',
+        await response.text(),
+      ].join('\n')
     );
+
     this.onNonSuccessResponse?.(fetchError);
     throw fetchError;
   }

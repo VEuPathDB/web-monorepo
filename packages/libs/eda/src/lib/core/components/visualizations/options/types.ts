@@ -1,11 +1,16 @@
 import { ReactNode } from 'react';
 import { OverlayConfig } from '../../../api/DataClient';
 import { Filter } from '../../../types/filter';
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 import { Computation } from '../../../types/visualization';
 
 export interface XAxisOptions {
-  getXAxisVariable?: (computeConfig: unknown) => VariableDescriptor | undefined;
+  getXAxisVariable?: (
+    computeConfig: unknown
+  ) => VariableDescriptor | VariableCollectionDescriptor | undefined;
 }
 
 export interface OverlayOptions {
