@@ -2,6 +2,7 @@ import { zipWith } from 'lodash';
 
 import {
   createJsonRequest,
+  createPlainTextRequest,
   FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
@@ -17,7 +18,6 @@ import {
 import { array, type, TypeOf, string } from 'io-ts';
 
 const VDI_SERVICE = '/vdi-datasets';
-const CURRENT_USER_DATASET_PATH = `/users/current/${VDI_SERVICE}`;
 
 export class UserDatasetApi extends FetchClientWithCredentials {
   getCurrentUserDatasets = (
@@ -41,7 +41,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
     );
     return this.fetch(
       createJsonRequest({
-        path: `${CURRENT_USER_DATASET_PATH}${queryString}`,
+        path: `${VDI_SERVICE}${queryString}`,
         method: 'GET',
         transformResponse: ioTransformer(array(userDataset)),
       })
@@ -93,7 +93,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   getUserDataset = (id: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${CURRENT_USER_DATASET_PATH}/${id}`,
+        path: `${VDI_SERVICE}/${id}`,
         method: 'GET',
         transformResponse: ioTransformer(userDataset),
       })
@@ -104,7 +104,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   updateUserDataset = (id: string, requestBody: UserDatasetMeta) => {
     return this.fetch(
       createJsonRequest({
-        path: `${CURRENT_USER_DATASET_PATH}/${id}`,
+        path: `${VDI_SERVICE}/${id}`,
         method: 'PATCH',
         body: requestBody,
         transformResponse: noContent,
@@ -115,7 +115,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   removeUserDataset = (id: string) => {
     return this.fetch(
       createJsonRequest({
-        path: `${CURRENT_USER_DATASET_PATH}/${id}`,
+        path: `${VDI_SERVICE}/${id}`,
         method: 'DELETE',
         transformResponse: noContent,
       })
