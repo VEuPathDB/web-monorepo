@@ -202,6 +202,7 @@ export const Variable = t.union([
 export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
 export const VariableTreeNode = t.union([Variable, VariableCategory]);
 
+// TODO change to VariableCollectionTreeNode
 export type CollectionVariableTreeNode = t.TypeOf<
   typeof CollectionVariableTreeNode
 >;
