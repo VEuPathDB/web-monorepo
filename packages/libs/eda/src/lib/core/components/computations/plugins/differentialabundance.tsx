@@ -35,7 +35,6 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
-import { config } from 'process';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -91,7 +90,13 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: isCompleteDifferentialAbundanceConfig,
   visualizationPlugins: {
-    volcanoplot: volcanoPlotVisualization, // Must match name in data service and in visualization.tsx
+    volcanoplot: volcanoPlotVisualization.withOptions({
+      getPlotSubtitle(config) {
+        if (DifferentialAbundanceConfig.is(config)) {
+          return `Differential abundance computed using ${config.differentialAbundanceMethod} with default parameters.`;
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
 };
 

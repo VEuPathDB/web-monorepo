@@ -25,7 +25,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
 // Volcano plot imports
@@ -54,6 +54,7 @@ import SliderWidget, {
 import { ResetButtonCoreUI } from '../../ResetButton';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { fixVarIdLabel } from '../../../utils/visualization';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 // end imports
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
@@ -106,6 +107,7 @@ export const VolcanoPlotConfig = t.partial({
 
 interface Options
   extends LayoutOptions,
+    TitleOptions,
     RequestOptions<VolcanoPlotConfig, {}, VolcanoPlotRequestParams> {}
 
 // Volcano Plot Visualization
@@ -384,6 +386,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     ]
   );
 
+  // plot subtitle
+  const plotSubtitle = options?.getPlotSubtitle?.(
+    computation.descriptor.configuration
+  );
+
   // Add labels to the extremes of the x axis. These may change in the future based on the type
   // of data. For example, for genes we may want to say Up regulated in...
   const comparisonLabels =
@@ -627,12 +634,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         />
       </LabelledGroup>
 
-      {/* This should be populated with info from the colections var. So like "Showing 1000 taxa blah". Waiting on collections annotations. */}
-      {/* <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
-      /> */}
+      <OutputEntityTitle subtitle={plotSubtitle} />
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
