@@ -44,6 +44,7 @@ import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 import { ComputationPlugin } from '../computations/Types';
+import { PlotContainerStylesOverrides } from './VisualizationTypes';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -67,6 +68,7 @@ interface Props {
   /** optional dynamic plugins */
   plugins?: Partial<Record<string, ComputationPlugin>>;
   hideInputsAndControls?: boolean;
+  plotContainerStylesOverrides?: PlotContainerStylesOverrides;
 }
 
 /**
@@ -451,7 +453,8 @@ type FullScreenVisualizationPropKeys =
   | 'computeJobStatus'
   | 'createComputeJob'
   | 'plugins'
-  | 'hideInputsAndControls';
+  | 'hideInputsAndControls'
+  | 'plotContainerStylesOverrides';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -482,6 +485,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     createComputeJob,
     plugins = staticPlugins,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -727,6 +731,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   otherVizOverviews={overviews.others}
                   computeJobStatus={computeJobStatus}
                   hideInputsAndControls={hideInputsAndControls}
+                  plotContainerStylesOverrides={plotContainerStylesOverrides}
                 />
               </div>
             </ComputationStepContainer>
@@ -750,6 +755,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               otherVizOverviews={overviews.others}
               computeJobStatus={computeJobStatus}
               hideInputsAndControls={hideInputsAndControls}
+              plotContainerStylesOverrides={plotContainerStylesOverrides}
             />
           )}
         </div>

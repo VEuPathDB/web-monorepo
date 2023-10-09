@@ -273,12 +273,20 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStylesOverrides,
+    }),
+    [plotContainerStylesOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -1199,7 +1207,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [
       data,
       vizConfig.checkedLegendItems,
@@ -1312,7 +1320,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       },
     },
     containerStyles: !isFaceted(data.value?.dataSetProcess)
-      ? plotContainerStyles
+      ? finalPlotContainerStyles
       : undefined,
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions

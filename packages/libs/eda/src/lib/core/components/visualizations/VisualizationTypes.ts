@@ -12,6 +12,12 @@ import {
 } from '../../types/visualization';
 import { JobStatus } from '../computations/ComputeJobStatusHook';
 
+export interface PlotContainerStylesOverrides
+  extends Omit<React.CSSProperties, 'width' | 'height'> {
+  width?: number;
+  height?: number;
+}
+
 /**
  * Props passed to viz components
  */
@@ -32,7 +38,7 @@ export interface VisualizationProps<Options = undefined> {
   otherVizOverviews: VisualizationOverview[];
   computeJobStatus?: JobStatus;
   hideInputsAndControls?: boolean;
-  plotContainerStyles?: React.CSSProperties;
+  plotContainerStylesOverrides?: PlotContainerStylesOverrides;
 }
 
 export interface IsEnabledInPickerParams {

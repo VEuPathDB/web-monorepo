@@ -224,11 +224,19 @@ function HistogramViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStylesOverrides,
+    }),
+    [plotContainerStylesOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -982,7 +990,7 @@ function HistogramViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [
       data,
       vizConfig.checkedLegendItems,
@@ -1000,7 +1008,9 @@ function HistogramViz(props: VisualizationProps<Options>) {
   );
 
   const histogramProps: HistogramProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? finalPlotContainerStyles
+      : undefined,
     dependentAxisLogScale: vizConfig.dependentAxisLogScale,
     independentAxisLabel: variableDisplayWithUnit(xAxisVariable) ?? 'Main',
     dependentAxisLabel:

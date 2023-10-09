@@ -88,10 +88,6 @@ const plotContainerStyles = {
 
 const plotSpacingOptions = {};
 
-const statsTableStyles = {
-  width: plotContainerStyles.width,
-};
-
 const facetedStatsTableStyles = {};
 
 const facetedStatsTableContainerStyles = {
@@ -201,11 +197,19 @@ function MosaicViz(props: Props<Options>) {
     totalCounts,
     filteredCounts,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStylesOverrides,
+    }),
+    [plotContainerStylesOverrides]
+  );
 
   // set default tab to Mosaic in TabbedDisplay component
   const [activeTab, setActiveTab] = useState(
@@ -550,12 +554,14 @@ function MosaicViz(props: Props<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [data]
   );
 
   const mosaicProps: MosaicPlotProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? finalPlotContainerStyles
+      : undefined,
     spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     independentAxisLabel: xAxisLabel ?? 'X-axis',
     dependentAxisLabel: yAxisLabel ?? 'Y-axis',
@@ -612,7 +618,7 @@ function MosaicViz(props: Props<Options>) {
                 tableContainerStyles={
                   isFaceted(data.value)
                     ? facetedStatsTableStyles
-                    : statsTableStyles
+                    : { width: finalPlotContainerStyles.width }
                 }
                 facetedContainerStyles={facetedStatsTableContainerStyles}
                 independentVariable={xAxisLabel ?? 'X-axis'}

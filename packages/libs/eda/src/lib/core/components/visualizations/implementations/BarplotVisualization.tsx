@@ -113,8 +113,6 @@ export type BarplotDataWithStatistics = (
 ) &
   CoverageStatistics;
 
-// Do we want to pull this out and pass it in as a prop?
-// If so, it will be harder to make sure we honor it as part of the API
 const plotContainerStyles = {
   height: 450,
   width: 750,
@@ -194,11 +192,19 @@ function BarplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStylesOverrides,
+    }),
+    [plotContainerStylesOverrides]
+  );
 
   // use useVizConfig hook
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -635,7 +641,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     // The dependencies for needing to generate a new thumbnail
     [
       data,
@@ -655,7 +661,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
   const plotProps: BarplotProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? finalPlotContainerStyles
+      : undefined,
     spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     orientation: 'vertical',
     barLayout: 'group',

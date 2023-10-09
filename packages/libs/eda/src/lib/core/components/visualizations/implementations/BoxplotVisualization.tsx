@@ -197,11 +197,19 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStylesOverrides,
+    }),
+    [plotContainerStylesOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -690,7 +698,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
       // data.value
       data={data.value}
       updateThumbnail={updateThumbnail}
-      containerStyles={!isFaceted(data.value) ? plotContainerStyles : undefined}
+      containerStyles={
+        !isFaceted(data.value) ? finalPlotContainerStyles : undefined
+      }
       spacingOptions={!isFaceted(data.value) ? plotSpacingOptions : undefined}
       orientation={'vertical'}
       displayLegend={false}

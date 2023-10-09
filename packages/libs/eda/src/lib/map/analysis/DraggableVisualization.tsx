@@ -76,7 +76,11 @@ export default function DraggableVisualization({
       confineToParentContainer
       showPanelTitle
       isOpen
-      styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
+      styleOverrides={{
+        zIndex: zIndexForStackingContext,
+        resize: 'both',
+        overflow: 'hidden',
+      }}
       panelTitle={activeVizOverview?.displayName || ''}
       defaultPosition={{
         x: 535,
@@ -106,36 +110,48 @@ export default function DraggableVisualization({
         </div>
         <div
           style={{
-            // Initial height & width.
-            height: 547,
-            width: 779,
-            // This prevents the panel from collapsing aburdly.
-            minWidth: 400,
-            minHeight: 200,
+            width: '100%',
+            height: '100%',
             overflow: 'auto',
           }}
         >
-          <FullScreenVisualization
-            analysisState={analysisState}
-            computation={activeComputation!}
-            visualizationPlugins={visualizationPlugins}
-            visualizationsOverview={app.visualizations}
-            geoConfigs={geoConfigs}
-            computationAppOverview={app}
-            filters={filters}
-            starredVariables={
-              analysisState.analysis?.descriptor.starredVariables ?? []
-            }
-            toggleStarredVariable={toggleStarredVariable}
-            totalCounts={totalCounts}
-            filteredCounts={filteredCounts}
-            isSingleAppMode
-            disableThumbnailCreation
-            id={activeViz.visualizationId}
-            actions={<></>}
-            plugins={plugins}
-            hideInputsAndControls={hideInputsAndControls}
-          />
+          <div
+            style={{
+              // Initial height & width.
+              height: 547,
+              width: 779,
+              // This prevents the panel from collapsing aburdly.
+              minWidth: 400,
+              minHeight: 200,
+            }}
+          >
+            <FullScreenVisualization
+              analysisState={analysisState}
+              computation={activeComputation!}
+              visualizationPlugins={visualizationPlugins}
+              visualizationsOverview={app.visualizations}
+              geoConfigs={geoConfigs}
+              computationAppOverview={app}
+              filters={filters}
+              starredVariables={
+                analysisState.analysis?.descriptor.starredVariables ?? []
+              }
+              toggleStarredVariable={toggleStarredVariable}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              isSingleAppMode
+              disableThumbnailCreation
+              id={activeViz.visualizationId}
+              actions={<></>}
+              plugins={plugins}
+              hideInputsAndControls={hideInputsAndControls}
+              plotContainerStylesOverrides={
+                hideInputsAndControls
+                  ? { border: 'none', boxShadow: 'none' }
+                  : undefined
+              }
+            />
+          </div>
         </div>
       </div>
     </DraggablePanel>

@@ -125,6 +125,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
     hideInputsAndControls,
+    plotContainerStylesOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -133,6 +134,13 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const dataClient: DataClient = useDataClient();
   const computationConfiguration: DifferentialAbundanceConfig = computation
     .descriptor.configuration as DifferentialAbundanceConfig;
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStylesOverrides,
+    }),
+    [plotContainerStylesOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -375,7 +383,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [
       finalData,
       // vizConfig.checkedLegendItems, TODO
@@ -419,7 +427,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     markerBodyOpacity: data.value
       ? vizConfig.markerBodyOpacity ?? DEFAULT_MARKER_OPACITY
       : 0,
-    containerStyles: plotContainerStyles,
+    containerStyles: finalPlotContainerStyles,
     /**
      * Let's not display comparisonLabels before we have data for the viz. This prevents what may be
      * confusing behavior where selecting group values displays on the empty viz placeholder.
