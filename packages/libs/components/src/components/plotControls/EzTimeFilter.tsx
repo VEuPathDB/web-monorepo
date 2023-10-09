@@ -115,8 +115,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
 
   // bounds
   const xBrushMax = Math.max(width - margin.left - margin.right, 0);
-  // take 80 % of given height considering axis tick/tick labels at the bottom
-  const yBrushMax = Math.max(0.8 * height - margin.top - margin.bottom, 0);
+  // take 70 % of given height considering axis tick/tick labels at the bottom
+  const yBrushMax = Math.max(0.7 * height - margin.top - margin.bottom, 0);
 
   // scaling
   const xBrushScale = useMemo(

@@ -138,7 +138,7 @@ export default function EZTimeFilter({
   // (easily) centering the variable picker requires two same-width divs either side
   const sideElementStyle = { width: '70px' };
 
-  const sliderHeight = minimized ? 55 : 75;
+  const sliderHeight = minimized ? 50 : 75;
 
   const background =
     siteName === 'VectorBase'
@@ -156,7 +156,7 @@ export default function EZTimeFilter({
       <div
         style={{
           width: timeFilterWidth,
-          height: sliderHeight + (minimized ? 25 : 45),
+          height: sliderHeight + (minimized ? 5 : 45),
           background,
           borderRadius,
           boxShadow,
@@ -197,11 +197,7 @@ export default function EZTimeFilter({
             alignItems: 'center',
           }}
         >
-          {minimized /* just show the variable name as text */ ? (
-            <div style={{ ...(active ? {} : { color: '#aaa' }) }}>
-              {variableMetadata.variable.displayName}
-            </div>
-          ) : (
+          {!minimized && (
             <>
               <div style={sideElementStyle}></div>
               <div style={{}}>
