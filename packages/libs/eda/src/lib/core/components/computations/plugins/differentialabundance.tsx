@@ -35,6 +35,7 @@ import {
   GetBinRangesProps,
   getBinRanges,
 } from '../../../../map/analysis/utils/defaultOverlayConfig';
+import { config } from 'process';
 
 const cx = makeClassNameHelper('AppStepConfigurationContainer');
 
@@ -154,16 +155,6 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4>
-        Method:{' '}
-        <span>
-          {differentialAbundanceMethod ? (
-            differentialAbundanceMethod
-          ) : (
-            <i>Not selected</i>
-          )}
-        </span>
-      </h4>
     </div>
   );
 }
@@ -225,7 +216,6 @@ export function DifferentialAbundanceConfiguration(
       }));
   }, [collections]);
 
-  // TODO presumably to keep the saved analyses from breaking, we need to maintain support for a variableId
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
@@ -299,10 +289,29 @@ export function DifferentialAbundanceConfiguration(
       );
 
   const differentialAbundanceMethod = useMemo(() => {
-    if (configuration && 'differentialAbundanceMethod' in configuration) {
-      return configuration.differentialAbundanceMethod;
+    if (configuration && 'collectionVariable' in configuration) {
+      // First find the collection in our collections array so that we can access its annotations
+      const selectedCollection = collections.find(
+        (collection) =>
+          collection.entityId === configuration.collectionVariable.entityId &&
+          collection.id === configuration.collectionVariable.collectionId
+      );
+
+      // Now determine the appropriate method based on the collection's normalization method
+      const method =
+        selectedCollection?.normalizationMethod &&
+        selectedCollection.normalizationMethod === 'NULL'
+          ? DIFFERENTIAL_ABUNDANCE_METHODS[0]
+          : DIFFERENTIAL_ABUNDANCE_METHODS[1];
+      changeConfigHandler('differentialAbundanceMethod', method);
+      return method;
     }
-  }, [configuration]);
+  }, [
+    selectedCollectionVar,
+    collections,
+    configuration?.collectionVariable,
+    changeConfigHandler,
+  ]);
 
   return (
     <ComputationStepContainer
@@ -464,24 +473,6 @@ export function DifferentialAbundanceConfiguration(
               </div>
             </Tooltip>
           </div>
-        </div>
-
-        <div className={cx('-InputContainer')}>
-          <span>Method</span>
-          <SingleSelect
-            value={differentialAbundanceMethod ?? 'Select a method'}
-            buttonDisplayContent={
-              differentialAbundanceMethod ?? 'Select a method'
-            }
-            onSelect={partial(
-              changeConfigHandler,
-              'differentialAbundanceMethod'
-            )}
-            items={DIFFERENTIAL_ABUNDANCE_METHODS.map((method) => ({
-              value: method,
-              display: method,
-            }))}
-          />
         </div>
       </div>
     </ComputationStepContainer>
