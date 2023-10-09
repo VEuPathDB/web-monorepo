@@ -86,18 +86,14 @@ export default function DraggableVisualization({
     >
       <div
         style={{
-          // Initial height & width.
-          height: 547,
-          width: 779,
-          // This prevents the panel from collapsing aburdly.
-          minWidth: 400,
-          minHeight: 200,
+          position: 'relative',
+          width: '100%',
+          height: '100%',
         }}
       >
         <div
           style={{
             position: 'absolute',
-            top: 0,
             right: 0,
             zIndex: 100,
             padding: '0.5rem',
@@ -108,28 +104,39 @@ export default function DraggableVisualization({
             onPress={() => setHideInputsAndControls(!hideInputsAndControls)}
           />
         </div>
-        <FullScreenVisualization
-          // options={{}}
-          analysisState={analysisState}
-          computation={activeComputation!}
-          visualizationPlugins={visualizationPlugins}
-          visualizationsOverview={app.visualizations}
-          geoConfigs={geoConfigs}
-          computationAppOverview={app}
-          filters={filters}
-          starredVariables={
-            analysisState.analysis?.descriptor.starredVariables ?? []
-          }
-          toggleStarredVariable={toggleStarredVariable}
-          totalCounts={totalCounts}
-          filteredCounts={filteredCounts}
-          isSingleAppMode
-          disableThumbnailCreation
-          id={activeViz.visualizationId}
-          actions={<></>}
-          plugins={plugins}
-          hideInputsAndControls={hideInputsAndControls}
-        />
+        <div
+          style={{
+            // Initial height & width.
+            height: 547,
+            width: 779,
+            // This prevents the panel from collapsing aburdly.
+            minWidth: 400,
+            minHeight: 200,
+            overflow: 'auto',
+          }}
+        >
+          <FullScreenVisualization
+            analysisState={analysisState}
+            computation={activeComputation!}
+            visualizationPlugins={visualizationPlugins}
+            visualizationsOverview={app.visualizations}
+            geoConfigs={geoConfigs}
+            computationAppOverview={app}
+            filters={filters}
+            starredVariables={
+              analysisState.analysis?.descriptor.starredVariables ?? []
+            }
+            toggleStarredVariable={toggleStarredVariable}
+            totalCounts={totalCounts}
+            filteredCounts={filteredCounts}
+            isSingleAppMode
+            disableThumbnailCreation
+            id={activeViz.visualizationId}
+            actions={<></>}
+            plugins={plugins}
+            hideInputsAndControls={hideInputsAndControls}
+          />
+        </div>
       </div>
     </DraggablePanel>
   ) : null;
