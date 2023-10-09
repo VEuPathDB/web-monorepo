@@ -4,7 +4,6 @@ export interface LayoutProps {
   containerStyles?: CSSProperties;
   legendNode?: ReactNode;
   legendStyles?: CSSProperties;
-  // inputVariablesNode?: ReactNode;
   plotNode: ReactNode;
   controlsNode?: ReactNode;
   plotStyles?: CSSProperties;
@@ -21,7 +20,6 @@ export interface LayoutOptions {
   hideFacetInputs?: boolean;
   // considering marginal histogram
   showMarginalHistogram?: boolean;
-  // hideInputsAndControls?: boolean;
 }
 
 export interface TitleOptions {

@@ -1238,7 +1238,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
     setTruncatedDependentAxisWarning,
   ]);
 
-  // here
   const controlsNode = (
     <>
       {/* pre-occupied space for Banner: 1 line = 2.5em */}
@@ -1769,7 +1768,6 @@ function LineplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        {/* Here (input variables) */}
         {!hideInputsAndControls && (
           <InputVariables
             inputs={inputs}
