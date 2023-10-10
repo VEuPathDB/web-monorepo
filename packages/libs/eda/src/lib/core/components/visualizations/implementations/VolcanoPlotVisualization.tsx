@@ -121,8 +121,6 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    dataElementConstraints,
-    dataElementDependencyOrder,
     filteredCounts,
     computeJobStatus,
   } = props;

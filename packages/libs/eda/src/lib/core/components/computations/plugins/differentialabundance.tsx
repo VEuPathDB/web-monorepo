@@ -206,11 +206,13 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
+    // Show all collections except for absolute abundance. Eventually this will be performed by
+    // the backend, similar to how we do visualization input var constraints.
     return collections
       .filter((collectionVar) => {
         return collectionVar.normalizationMethod
-          ? collectionVar.normalizationMethod !== 'NULL' &&
-              !collectionVar.displayName?.includes('pathway')
+          ? collectionVar.normalizationMethod !== 'NULL' ||
+              collectionVar.displayName?.includes('pathway')
           : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
       })
       .map((collectionVar) => ({
