@@ -34,7 +34,6 @@ import DataClient, {
   VolcanoPlotResponse,
 } from '../../../api/DataClient';
 import {
-  VolcanoPlotData,
   VolcanoPlotDataPoint,
   VolcanoPlotStats,
 } from '@veupathdb/components/lib/types/plots/volcanoplot';
