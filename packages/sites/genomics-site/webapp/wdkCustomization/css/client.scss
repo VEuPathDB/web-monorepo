@@ -48,6 +48,12 @@
 .wdk-RecordContainer__JunctionRecordClasses\.JunctionRecordClass .wdk-RecordHeading {
   display: none;
 }
+
+/* Hide default record ID printed by WDK for long read transcripts */
+.wdk-RecordContainer__LongReadTranscriptRecordClasses\.LongReadTranscriptRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
 /* Hide default record IF printed by WDK for pathways */
 .wdk-RecordContainer__PathwayRecordClasses\.PathwayRecordClass
   .wdk-RecordHeading {
