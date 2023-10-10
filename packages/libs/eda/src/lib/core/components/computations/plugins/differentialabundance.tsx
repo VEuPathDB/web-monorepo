@@ -123,10 +123,6 @@ function DifferentialAbundanceConfigDescriptionComponent({
     'comparator' in configuration
       ? findEntityAndVariable(configuration.comparator.variable)
       : undefined;
-  const differentialAbundanceMethod =
-    'differentialAbundanceMethod' in configuration
-      ? configuration.differentialAbundanceMethod
-      : undefined;
 
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
@@ -165,7 +161,9 @@ function DifferentialAbundanceConfigDescriptionComponent({
 }
 
 // Include available methods in this array.
-const DIFFERENTIAL_ABUNDANCE_METHODS = ['DESeq', 'Maaslin'];
+// 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
+// and we're poised to release it in the future.
+const DIFFERENTIAL_ABUNDANCE_METHODS = ['Maaslin']; // + 'DESeq' in the future
 
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
@@ -184,6 +182,11 @@ export function DifferentialAbundanceConfiguration(
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
+
+  // Only releasing Maaslin for b66
+  if (configuration)
+    configuration.differentialAbundanceMethod =
+      DIFFERENTIAL_ABUNDANCE_METHODS[0];
 
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -205,11 +208,10 @@ export function DifferentialAbundanceConfiguration(
   const collectionVarItems = useMemo(() => {
     return collections
       .filter((collectionVar) => {
-        return collectionVar.normalizationMethod // i guess diy stuff doesnt have this prop?
-          ? //  !collectionVar.isProportion &&
-            //  collectionVar.normalizationMethod === 'NULL' &&
-            !collectionVar.displayName?.includes('pathway')
-          : true;
+        return collectionVar.normalizationMethod
+          ? collectionVar.normalizationMethod !== 'NULL' &&
+              !collectionVar.displayName?.includes('pathway')
+          : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
       })
       .map((collectionVar) => ({
         value: {
@@ -292,31 +294,6 @@ export function DifferentialAbundanceConfiguration(
           };
         }
       );
-
-  const differentialAbundanceMethod = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
-      // First find the collection in our collections array so that we can access its annotations
-      const selectedCollection = collections.find(
-        (collection) =>
-          collection.entityId === configuration.collectionVariable.entityId &&
-          collection.id === configuration.collectionVariable.collectionId
-      );
-
-      // Now determine the appropriate method based on the collection's normalization method
-      const method =
-        selectedCollection?.normalizationMethod &&
-        selectedCollection.normalizationMethod === 'NULL'
-          ? DIFFERENTIAL_ABUNDANCE_METHODS[0]
-          : DIFFERENTIAL_ABUNDANCE_METHODS[1];
-      changeConfigHandler('differentialAbundanceMethod', method);
-      return method;
-    }
-  }, [
-    selectedCollectionVar,
-    collections,
-    configuration?.collectionVariable,
-    changeConfigHandler,
-  ]);
 
   return (
     <ComputationStepContainer
