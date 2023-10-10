@@ -90,7 +90,13 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: isCompleteDifferentialAbundanceConfig,
   visualizationPlugins: {
-    volcanoplot: volcanoPlotVisualization, // Must match name in data service and in visualization.tsx
+    volcanoplot: volcanoPlotVisualization.withOptions({
+      getPlotSubtitle(config) {
+        if (DifferentialAbundanceConfig.is(config)) {
+          return `Differential abundance computed using ${config.differentialAbundanceMethod} with default parameters.`;
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
 };
 
@@ -116,10 +122,6 @@ function DifferentialAbundanceConfigDescriptionComponent({
   const comparatorVariable =
     'comparator' in configuration
       ? findEntityAndVariable(configuration.comparator.variable)
-      : undefined;
-  const differentialAbundanceMethod =
-    'differentialAbundanceMethod' in configuration
-      ? configuration.differentialAbundanceMethod
       : undefined;
 
   const updatedCollectionVariable = collections.find((collectionVar) =>
@@ -154,22 +156,14 @@ function DifferentialAbundanceConfigDescriptionComponent({
           )}
         </span>
       </h4>
-      <h4>
-        Method:{' '}
-        <span>
-          {differentialAbundanceMethod ? (
-            differentialAbundanceMethod
-          ) : (
-            <i>Not selected</i>
-          )}
-        </span>
-      </h4>
     </div>
   );
 }
 
 // Include available methods in this array.
-const DIFFERENTIAL_ABUNDANCE_METHODS = ['DESeq', 'Maaslin'];
+// 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
+// and we're poised to release it in the future.
+const DIFFERENTIAL_ABUNDANCE_METHODS = ['Maaslin']; // + 'DESeq' in the future
 
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
@@ -189,6 +183,11 @@ export function DifferentialAbundanceConfiguration(
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
+  // Only releasing Maaslin for b66
+  if (configuration)
+    configuration.differentialAbundanceMethod =
+      DIFFERENTIAL_ABUNDANCE_METHODS[0];
+
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
   if (collections.length === 0)
@@ -207,13 +206,14 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
+    // Show all collections except for absolute abundance. Eventually this will be performed by
+    // the backend, similar to how we do visualization input var constraints.
     return collections
       .filter((collectionVar) => {
-        return collectionVar.normalizationMethod // i guess diy stuff doesnt have this prop?
-          ? //  !collectionVar.isProportion &&
-            //  collectionVar.normalizationMethod === 'NULL' &&
-            !collectionVar.displayName?.includes('pathway')
-          : true;
+        return collectionVar.normalizationMethod
+          ? collectionVar.normalizationMethod !== 'NULL' ||
+              collectionVar.displayName?.includes('pathway')
+          : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
       })
       .map((collectionVar) => ({
         value: {
@@ -225,7 +225,6 @@ export function DifferentialAbundanceConfiguration(
       }));
   }, [collections]);
 
-  // TODO presumably to keep the saved analyses from breaking, we need to maintain support for a variableId
   const selectedCollectionVar = useMemo(() => {
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
@@ -297,12 +296,6 @@ export function DifferentialAbundanceConfiguration(
           };
         }
       );
-
-  const differentialAbundanceMethod = useMemo(() => {
-    if (configuration && 'differentialAbundanceMethod' in configuration) {
-      return configuration.differentialAbundanceMethod;
-    }
-  }, [configuration]);
 
   return (
     <ComputationStepContainer
@@ -464,24 +457,6 @@ export function DifferentialAbundanceConfiguration(
               </div>
             </Tooltip>
           </div>
-        </div>
-
-        <div className={cx('-InputContainer')}>
-          <span>Method</span>
-          <SingleSelect
-            value={differentialAbundanceMethod ?? 'Select a method'}
-            buttonDisplayContent={
-              differentialAbundanceMethod ?? 'Select a method'
-            }
-            onSelect={partial(
-              changeConfigHandler,
-              'differentialAbundanceMethod'
-            )}
-            items={DIFFERENTIAL_ABUNDANCE_METHODS.map((method) => ({
-              value: method,
-              display: method,
-            }))}
-          />
         </div>
       </div>
     </ComputationStepContainer>
