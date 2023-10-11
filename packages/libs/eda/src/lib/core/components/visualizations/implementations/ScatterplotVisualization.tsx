@@ -273,7 +273,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
     hideInputsAndControls,
-    plotContainerStylesOverrides,
+    plotContainerStyleOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -283,9 +283,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
-      ...plotContainerStylesOverrides,
+      ...plotContainerStyleOverrides,
     }),
-    [plotContainerStylesOverrides]
+    [plotContainerStyleOverrides]
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(

@@ -197,7 +197,7 @@ function BoxplotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
     hideInputsAndControls,
-    plotContainerStylesOverrides,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -206,9 +206,9 @@ function BoxplotViz(props: VisualizationProps<Options>) {
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
-      ...plotContainerStylesOverrides,
+      ...plotContainerStyleOverrides,
     }),
-    [plotContainerStylesOverrides]
+    [plotContainerStyleOverrides]
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(

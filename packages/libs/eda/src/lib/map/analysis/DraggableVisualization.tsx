@@ -147,7 +147,7 @@ export default function DraggableVisualization({
               actions={<></>}
               plugins={plugins}
               hideInputsAndControls={hideInputsAndControls}
-              plotContainerStylesOverrides={
+              plotContainerStyleOverrides={
                 hideInputsAndControls
                   ? { border: 'none', boxShadow: 'none' }
                   : undefined

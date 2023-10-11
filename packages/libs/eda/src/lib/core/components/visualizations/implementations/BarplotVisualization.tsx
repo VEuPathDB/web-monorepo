@@ -192,7 +192,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     hideInputsAndControls,
-    plotContainerStylesOverrides,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -201,9 +201,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
-      ...plotContainerStylesOverrides,
+      ...plotContainerStyleOverrides,
     }),
-    [plotContainerStylesOverrides]
+    [plotContainerStyleOverrides]
   );
 
   // use useVizConfig hook

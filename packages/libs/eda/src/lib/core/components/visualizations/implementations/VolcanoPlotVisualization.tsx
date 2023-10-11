@@ -124,7 +124,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     filteredCounts,
     computeJobStatus,
     hideInputsAndControls,
-    plotContainerStylesOverrides,
+    plotContainerStyleOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -136,9 +136,9 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
-      ...plotContainerStylesOverrides,
+      ...plotContainerStyleOverrides,
     }),
-    [plotContainerStylesOverrides]
+    [plotContainerStyleOverrides]
   );
 
   const [vizConfig, updateVizConfig] = useVizConfig(

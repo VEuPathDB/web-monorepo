@@ -44,7 +44,7 @@ import { RunComputeButton, StatusIcon } from '../computations/RunComputeButton';
 import { JobStatus } from '../computations/ComputeJobStatusHook';
 import { ComputationStepContainer } from '../computations/ComputationStepContainer';
 import { ComputationPlugin } from '../computations/Types';
-import { PlotContainerStylesOverrides } from './VisualizationTypes';
+import { PlotContainerStyleOverrides } from './VisualizationTypes';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -68,7 +68,7 @@ interface Props {
   /** optional dynamic plugins */
   plugins?: Partial<Record<string, ComputationPlugin>>;
   hideInputsAndControls?: boolean;
-  plotContainerStylesOverrides?: PlotContainerStylesOverrides;
+  plotContainerStyleOverrides?: PlotContainerStyleOverrides;
 }
 
 /**
@@ -454,7 +454,7 @@ type FullScreenVisualizationPropKeys =
   | 'createComputeJob'
   | 'plugins'
   | 'hideInputsAndControls'
-  | 'plotContainerStylesOverrides';
+  | 'plotContainerStyleOverrides';
 
 interface FullScreenVisualizationProps
   extends Pick<Props, FullScreenVisualizationPropKeys> {
@@ -485,7 +485,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
     createComputeJob,
     plugins = staticPlugins,
     hideInputsAndControls,
-    plotContainerStylesOverrides,
+    plotContainerStyleOverrides,
   } = props;
   const themePrimaryColor = useUITheme()?.palette.primary;
   const history = useHistory();
@@ -731,7 +731,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
                   otherVizOverviews={overviews.others}
                   computeJobStatus={computeJobStatus}
                   hideInputsAndControls={hideInputsAndControls}
-                  plotContainerStylesOverrides={plotContainerStylesOverrides}
+                  plotContainerStyleOverrides={plotContainerStyleOverrides}
                 />
               </div>
             </ComputationStepContainer>
@@ -755,7 +755,7 @@ export function FullScreenVisualization(props: FullScreenVisualizationProps) {
               otherVizOverviews={overviews.others}
               computeJobStatus={computeJobStatus}
               hideInputsAndControls={hideInputsAndControls}
-              plotContainerStylesOverrides={plotContainerStylesOverrides}
+              plotContainerStyleOverrides={plotContainerStyleOverrides}
             />
           )}
         </div>

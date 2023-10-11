@@ -197,7 +197,7 @@ function MosaicViz(props: Props<Options>) {
     totalCounts,
     filteredCounts,
     hideInputsAndControls,
-    plotContainerStylesOverrides,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -206,9 +206,9 @@ function MosaicViz(props: Props<Options>) {
   const finalPlotContainerStyles = useMemo(
     () => ({
       ...plotContainerStyles,
-      ...plotContainerStylesOverrides,
+      ...plotContainerStyleOverrides,
     }),
-    [plotContainerStylesOverrides]
+    [plotContainerStyleOverrides]
   );
 
   // set default tab to Mosaic in TabbedDisplay component
