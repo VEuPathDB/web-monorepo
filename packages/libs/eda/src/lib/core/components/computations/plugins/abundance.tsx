@@ -92,7 +92,7 @@ function AbundanceConfigDescriptionComponent({
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
-        variableId: collectionVar.id,
+        collectionId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
       collectionVariable
