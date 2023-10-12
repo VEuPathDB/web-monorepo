@@ -137,15 +137,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   onMetaAttributeSaveFactory(dataset: UserDataset, attrKey: string) {
-    // const { meta } = dataset;
-    const meta = {
-      // @ts-ignore
-      description: dataset.description ?? 'none',
-      // @ts-ignore
-      name: dataset.name ?? 'none',
-      // @ts-ignore
-      summary: dataset.summary ?? 'none',
-    };
+    const { meta } = dataset;
     const { updateUserDatasetDetail } = this.props;
     return (value: string) =>
       updateUserDatasetDetail(dataset, { ...meta, [attrKey]: value });
@@ -290,9 +282,9 @@ class UserDatasetList extends React.Component<Props, State> {
         )),
       },
       {
-        key: 'datafiles',
+        key: 'fileCount',
         name: 'File Count',
-        renderCell: textCell('datafiles', (files: any[]) => files.length),
+        renderCell: textCell('fileCount', (count: number) => count),
       },
       {
         key: 'size',
@@ -305,7 +297,7 @@ class UserDatasetList extends React.Component<Props, State> {
         name: 'Quota Usage',
         sortable: true,
         renderCell: textCell('percentQuotaUsed', (percent: number) =>
-          percent ? `${normalizePercentage(percent)}%` : null
+          percent || percent === 0 ? `${normalizePercentage(percent)}%` : null
         ),
       },
     ].filter((column) => column);

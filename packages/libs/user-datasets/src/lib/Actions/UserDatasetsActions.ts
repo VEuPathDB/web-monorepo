@@ -406,7 +406,6 @@ export function loadUserDatasetList() {
       // @ts-ignore
       wdkService.getCurrentUserDatasets(),
     ]).then(([filterByProject, userDatasets]) => {
-      // console.log({filterByProject, userDatasets})
       const vdiToExistingUds = userDatasets.map(
         (ud: UserDatasetVDI): UserDataset => {
           const {
@@ -417,6 +416,7 @@ export function loadUserDatasetList() {
             datasetType,
             projectIDs,
             datasetID,
+            fileCount,
           } = ud;
           return {
             owner: owner.firstName + ' ' + owner.lastName,
@@ -445,6 +445,7 @@ export function loadUserDatasetList() {
             modified: 1,
             percentQuotaUsed: 0,
             datafiles: [],
+            fileCount,
           };
         }
       );
@@ -461,9 +462,9 @@ export function loadUserDatasetDetail(id: string) {
     wdkService.getUserDataset(id).then(
       // @ts-ignore
       (userDataset) => {
-        const trasnformedResposne =
+        const transformedResponse =
           transformVdiResponseToLegacyResponse(userDataset);
-        return detailReceived(id, trasnformedResposne);
+        return detailReceived(id, transformedResponse);
       },
       (error: ServiceError) =>
         error.status === 404 ? detailReceived(id) : detailError(error)
@@ -500,6 +501,7 @@ export function updateUserDatasetDetail(
   return validateUserDatasetCompatibleThunk<UpdateAction>(({ wdkService }) => [
     detailUpdating(),
     wdkService
+      // @ts-ignore
       .updateUserDataset(userDataset.id, meta)
       .then(
         () => detailUpdateSuccess({ ...userDataset, meta }),
@@ -517,6 +519,7 @@ export function removeUserDataset(
   >(({ wdkService }) => [
     detailRemoving(),
     wdkService
+      // @ts-ignore
       .removeUserDataset(userDataset.id)
       .then(
         () => [
@@ -584,6 +587,7 @@ function transformVdiResponseToLegacyResponse(ud) {
     modified: 1,
     percentQuotaUsed: 0,
     datafiles: files,
+    fileCount: files.length,
   };
   // }
   // )

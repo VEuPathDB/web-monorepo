@@ -59,6 +59,7 @@ export interface UserDataset {
     version: string;
   };
   uploaded: number;
+  fileCount: number;
 }
 
 export interface UserDatasetUpload {
@@ -271,8 +272,6 @@ export const userDatasetDetail = intersection([
     origin: string,
     // projectIDs: array(string),
     status: statusDetails,
-    // fileCount: number,
-    // fileSizeTotal: number,
     created: string,
     files: array(type({ name: string, size: number })),
   }),

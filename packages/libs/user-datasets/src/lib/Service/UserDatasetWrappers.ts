@@ -40,15 +40,15 @@ export const userDatasetsServiceWrappers = {
   //     'get',
   //     `/users/current/user-datasets/${id}`
   //   ),
-  updateUserDataset:
-    (wdkService: WdkService) => (id: number | string, meta: UserDatasetMeta) =>
-      wdkService._fetchJson<void>(
-        'put',
-        `/users/current/user-datasets/${id}/meta`,
-        JSON.stringify(meta)
-      ),
-  removeUserDataset: (wdkService: WdkService) => (id: number | string) =>
-    wdkService._fetchJson<void>('delete', `/users/current/user-datasets/${id}`),
+  // updateUserDataset:
+  //   (wdkService: WdkService) => (id: number | string, meta: UserDatasetMeta) =>
+  //     wdkService._fetchJson<void>(
+  //       'put',
+  //       `/users/current/user-datasets/${id}/meta`,
+  //       JSON.stringify(meta)
+  //     ),
+  // removeUserDataset: (wdkService: WdkService) => (id: number | string) =>
+  //   wdkService._fetchJson<void>('delete', `/users/current/user-datasets/${id}`),
   editUserDatasetSharing:
     (wdkService: WdkService) =>
     (
