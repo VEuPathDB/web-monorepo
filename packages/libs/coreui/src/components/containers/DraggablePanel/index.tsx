@@ -23,6 +23,7 @@ export type DraggablePanelStyleOverrides = {
   resize?: CSSProperties['resize'];
   width?: CSSProperties['width'];
   zIndex?: CSSProperties['zIndex'];
+  overflow?: CSSProperties['overflow'];
 };
 
 export type HeightAndWidthInPixels = {
@@ -205,7 +206,7 @@ export default function DraggablePanel({
           css={css`
             // Hey, so you need to explicitly set overflow wherever
             // you plan to use resize.
-            overflow: auto;
+            overflow: ${styleOverrides?.overflow ?? 'auto'};
             resize: ${styleOverrides?.resize ?? 'none'};
             border-radius: 7px;
             // We want the content to render below the drag handle, so let's put this
