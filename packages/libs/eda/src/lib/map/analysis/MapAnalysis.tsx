@@ -1,7 +1,6 @@
 // TODO #106 Augment header w/ "visible" counts
 // TODO #106 Implement flyto, either in SemanticMarkers, or in a wrapper component
 //      set a new prop on appState to zoom to data; only on brand new analysis and when clicking on zoom-to-data button
-// TODO #106 Make sure advanced config (custom value selection) is propagated to overlay config
 
 import { useCallback, useMemo, useState } from 'react';
 
