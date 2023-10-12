@@ -24,10 +24,6 @@ import { DataNoun, UserDataset } from '../Utils/types';
 
 import '../Components/UserDatasets.scss';
 
-import { useConfiguredVdiClient } from '../Hooks/user-datasets';
-// const VDI_SERVICE_BASE_URL = 'https://vdi-dev.local.apidb.org:8443'
-const VDI_SERVICE_BASE_URL = 'http://localhost:8080';
-
 const ActionCreators = {
   showLoginForm,
   loadUserDatasetList,
@@ -179,7 +175,6 @@ class UserDatasetListController extends PageController<Props> {
           ) : (
             <UserDatasetList {...listProps} />
           )}
-          <VDI baseUrl={VDI_SERVICE_BASE_URL} />
         </div>
       </div>
     );
@@ -199,18 +194,5 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, StateSlice>(
     ownProps,
   })
 );
-
-type VDIProps = {
-  baseUrl: string;
-};
-
-function VDI({ baseUrl }: VDIProps) {
-  const vdi = useConfiguredVdiClient(baseUrl);
-  // console.log(vdi);
-  const uds = vdi.getCurrentUserDatasets();
-  // const uds = vdi.getCommunityDatasets();
-  console.log(uds);
-  return <>Working?</>;
-}
 
 export default withRouter(enhance(UserDatasetListController));

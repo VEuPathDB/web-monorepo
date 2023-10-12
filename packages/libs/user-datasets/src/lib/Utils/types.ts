@@ -30,7 +30,7 @@ export interface UserDatasetShare {
 }
 
 export interface UserDataset {
-  created: number;
+  created: number | string;
   age: number;
   isInstalled: boolean;
   isCompatible: boolean;
@@ -44,7 +44,7 @@ export interface UserDataset {
     size: number;
   }>;
   projects: string[];
-  id: number;
+  id: number | string;
   meta: UserDatasetMeta;
   modified: number;
   owner: string;
@@ -215,6 +215,7 @@ const importStatus = keyof({
   complete: null,
   invalid: null,
   failed: null,
+  queued: null,
 });
 
 const statusDetails = intersection([
@@ -247,6 +248,33 @@ export const userDataset = intersection([
     origin: string,
     projectIDs: array(string),
     status: statusDetails,
+    fileCount: number,
+    fileSizeTotal: number,
+    created: string,
+  }),
+  partial({
+    summary: string,
+    description: string,
+    sourceUrl: string,
+    shares: array(shareDetails),
+    importMessages: array(string),
+  }),
+]);
+
+export const userDatasetDetail = intersection([
+  type({
+    datasetID: string,
+    owner: ownerDetails,
+    datasetType: datasetTypeDetails,
+    visibility: visibilityOptions,
+    name: string,
+    origin: string,
+    // projectIDs: array(string),
+    status: statusDetails,
+    // fileCount: number,
+    // fileSizeTotal: number,
+    created: string,
+    files: array(type({ name: string, size: number })),
   }),
   partial({
     summary: string,

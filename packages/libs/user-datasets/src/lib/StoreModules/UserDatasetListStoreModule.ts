@@ -37,7 +37,7 @@ type ForbiddenState = {
 
 type CompleteState = {
   status: 'complete';
-  userDatasets: number[];
+  userDatasets: Array<string | number>;
   userDatasetsById: Record<string, { isLoading: false; resource: UserDataset }>;
   filterByProject: boolean;
 };
@@ -84,6 +84,7 @@ export function reduce(state: State = initialState, action: Action): State {
           };
 
     case DETAIL_UPDATE_SUCCESS:
+      // @ts-ignore
       return state.status === 'complete'
         ? {
             ...state,
@@ -98,6 +99,7 @@ export function reduce(state: State = initialState, action: Action): State {
         : state;
 
     case DETAIL_REMOVE_SUCCESS:
+      // @ts-ignore
       return state.status === 'complete'
         ? {
             ...state,

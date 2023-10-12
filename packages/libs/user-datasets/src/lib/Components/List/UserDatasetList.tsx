@@ -67,7 +67,7 @@ interface Props {
 }
 
 interface State {
-  selectedRows: number[];
+  selectedRows: Array<number | string>;
   uiState: { sort: MesaSortObject };
   searchTerm: string;
   sharingModalOpen: boolean;
@@ -122,7 +122,7 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   isRowSelected(row: UserDataset): boolean {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     return selectedRows.includes(id);
   }
@@ -137,7 +137,15 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   onMetaAttributeSaveFactory(dataset: UserDataset, attrKey: string) {
-    const { meta } = dataset;
+    // const { meta } = dataset;
+    const meta = {
+      // @ts-ignore
+      description: dataset.description ?? 'none',
+      // @ts-ignore
+      name: dataset.name ?? 'none',
+      // @ts-ignore
+      summary: dataset.summary ?? 'none',
+    };
     const { updateUserDatasetDetail } = this.props;
     return (value: string) =>
       updateUserDatasetDetail(dataset, { ...meta, [attrKey]: value });
@@ -304,18 +312,18 @@ class UserDatasetList extends React.Component<Props, State> {
   }
 
   onRowSelect(row: UserDataset): void {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     if (selectedRows.includes(id)) return;
-    const newSelection: number[] = [...selectedRows, id];
+    const newSelection: Array<number | string> = [...selectedRows, id];
     this.setState({ selectedRows: newSelection });
   }
 
   onRowDeselect(row: UserDataset): void {
-    const id: number = row.id;
+    const id: number | string = row.id;
     const { selectedRows } = this.state;
     if (!selectedRows.includes(id)) return;
-    const newSelection: number[] = selectedRows.filter(
+    const newSelection: Array<number | string> = selectedRows.filter(
       (selectedId) => selectedId !== id
     );
     this.setState({ selectedRows: newSelection });
@@ -328,14 +336,19 @@ class UserDatasetList extends React.Component<Props, State> {
       .filter((dataset: UserDataset) => !selectedRows.includes(dataset.id))
       .map((dataset: UserDataset) => dataset.id);
     if (!unselectedRows.length) return;
-    const newSelection: number[] = [...selectedRows, ...unselectedRows];
+    const newSelection: Array<number | string> = [
+      ...selectedRows,
+      ...unselectedRows,
+    ];
     this.setState({ selectedRows: newSelection });
   }
 
   onMultipleRowDeselect(rows: UserDataset[]): void {
     if (!rows.length) return;
     const { selectedRows } = this.state;
-    const deselectedIds: number[] = rows.map((row: UserDataset) => row.id);
+    const deselectedIds: Array<number | string> = rows.map(
+      (row: UserDataset) => row.id
+    );
     const newSelection = selectedRows.filter(
       (id) => !deselectedIds.includes(id)
     );

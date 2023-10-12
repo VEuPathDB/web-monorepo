@@ -13,6 +13,7 @@ import {
   UserDatasetMeta,
   NewUserDatasetRequest,
   NewUserDataset,
+  userDatasetDetail,
 } from '../Utils/types';
 
 import { array, type, TypeOf, string } from 'io-ts';
@@ -95,7 +96,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: `${VDI_SERVICE}/${id}`,
         method: 'GET',
-        transformResponse: ioTransformer(userDataset),
+        transformResponse: ioTransformer(userDatasetDetail),
       })
     );
   };

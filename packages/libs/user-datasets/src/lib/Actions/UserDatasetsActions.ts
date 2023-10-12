@@ -20,7 +20,7 @@ import {
 } from '../Service/UserDatasetWrappers';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import { UserDataset, UserDatasetMeta } from '../Utils/types';
+import { UserDataset, UserDatasetMeta, UserDatasetVDI } from '../Utils/types';
 
 export type Action =
   | DetailErrorAction
@@ -107,11 +107,11 @@ export const DETAIL_LOADING = 'user-datasets/detail-loading';
 export type DetailLoadingAction = {
   type: typeof DETAIL_LOADING;
   payload: {
-    id: number;
+    id: string;
   };
 };
 
-export function detailLoading(id: number): DetailLoadingAction {
+export function detailLoading(id: string): DetailLoadingAction {
   return {
     type: DETAIL_LOADING,
     payload: {
@@ -127,13 +127,13 @@ export const DETAIL_RECEIVED = 'user-datasets/detail-received';
 export type DetailReceivedAction = {
   type: typeof DETAIL_RECEIVED;
   payload: {
-    id: number;
+    id: string;
     userDataset?: UserDataset;
   };
 };
 
 export function detailReceived(
-  id: number,
+  id: string,
   userDataset?: UserDataset
 ): DetailReceivedAction {
   return {
@@ -392,6 +392,7 @@ type SharingAction =
   | SharingSuccessAction
   | SharingErrorAction;
 
+// replace w/ VDI service
 export function loadUserDatasetList() {
   return validateUserDatasetCompatibleThunk<ListAction>(({ wdkService }) => [
     listLoading(),
@@ -402,20 +403,68 @@ export function loadUserDatasetList() {
         // ignore error and default to false
         () => false
       ),
+      // @ts-ignore
       wdkService.getCurrentUserDatasets(),
-    ]).then(
-      ([filterByProject, userDatasets]) =>
-        listReceived(userDatasets, filterByProject),
-      listErrorReceived
-    ),
+    ]).then(([filterByProject, userDatasets]) => {
+      // console.log({filterByProject, userDatasets})
+      const vdiToExistingUds = userDatasets.map(
+        (ud: UserDatasetVDI): UserDataset => {
+          const {
+            name,
+            description,
+            summary,
+            owner,
+            datasetType,
+            projectIDs,
+            datasetID,
+          } = ud;
+          return {
+            owner: owner.firstName + ' ' + owner.lastName,
+            projects: projectIDs,
+            created: ud.created,
+            type: {
+              display: datasetType.displayName ?? datasetType.name,
+              name: datasetType.name,
+              version: datasetType.version,
+            },
+            meta: {
+              name,
+              description: description ?? name,
+              summary: summary ?? '',
+            },
+            ownerUserId: owner.userID,
+            dependencies: [],
+            age: 0,
+            size: ud.fileSizeTotal,
+            id: datasetID,
+            isCompatible: false,
+            isInstalled: false,
+            sharedWith: [],
+            questions: [],
+            uploaded: 1,
+            modified: 1,
+            percentQuotaUsed: 0,
+            datafiles: [],
+          };
+        }
+      );
+      // return listReceived(userDatasets, filterByProject)
+      return listReceived(vdiToExistingUds, filterByProject);
+    }, listErrorReceived),
   ]);
 }
 
-export function loadUserDatasetDetail(id: number) {
+export function loadUserDatasetDetail(id: string) {
   return validateUserDatasetCompatibleThunk<DetailAction>(({ wdkService }) => [
     detailLoading(id),
+    // @ts-ignore
     wdkService.getUserDataset(id).then(
-      (userDataset) => detailReceived(id, userDataset),
+      // @ts-ignore
+      (userDataset) => {
+        const trasnformedResposne =
+          transformVdiResponseToLegacyResponse(userDataset);
+        return detailReceived(id, trasnformedResposne);
+      },
       (error: ServiceError) =>
         error.status === 404 ? detailReceived(id) : detailError(error)
     ),
@@ -492,4 +541,50 @@ export function updateProjectFilter(filterByProject: boolean) {
     ),
     projectFilter(filterByProject),
   ]);
+}
+
+// @ts-ignore
+function transformVdiResponseToLegacyResponse(ud) {
+  // (ud: UserDatasetVDI): UserDataset => {
+  const {
+    name,
+    description,
+    summary,
+    owner,
+    datasetType,
+    projectIDs,
+    datasetID,
+    files,
+  } = ud;
+  return {
+    owner: owner.firstName + ' ' + owner.lastName,
+    projects: projectIDs ?? [],
+    created: ud.created,
+    type: {
+      display: datasetType.displayName ?? datasetType.name,
+      name: datasetType.name,
+      version: datasetType.version,
+    },
+    meta: {
+      name,
+      description: description ?? name,
+      summary: summary ?? '',
+    },
+    ownerUserId: owner.userID,
+    dependencies: [],
+    age: 0,
+    // @ts-ignore
+    size: ud.fileSizeTotal ?? files.reduce((prev, curr) => prev + curr.size, 0),
+    id: datasetID,
+    isCompatible: false,
+    isInstalled: false,
+    sharedWith: [],
+    questions: [],
+    uploaded: 1,
+    modified: 1,
+    percentQuotaUsed: 0,
+    datafiles: files,
+  };
+  // }
+  // )
 }

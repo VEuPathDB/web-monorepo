@@ -47,7 +47,7 @@ export function UserDatasetRouter<T1 extends string, T2 extends string>({
   return (
     <Switch>
       <WdkRoute
-        path={`${path}/:id(\\d+)`}
+        path={`${path}/:id`}
         requiresLogin
         component={(props: RouteComponentProps<{ id: string }>) => {
           return (

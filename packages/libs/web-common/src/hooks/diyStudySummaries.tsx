@@ -78,7 +78,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
       if (currentUser.isGuest) {
         return [];
       }
-
+      // @ts-ignore
       return wdkService.getCurrentUserDatasets();
     },
     [currentUser]
@@ -116,6 +116,7 @@ export function useDiyStudySummaryRows(): UserStudySummaryRow[] | undefined {
               : userDataset.owner,
           sharedWith:
             userDataset.sharedWith
+              // @ts-ignore
               ?.map(({ userDisplayName }) => userDisplayName)
               ?.join(', ') ?? '',
         },

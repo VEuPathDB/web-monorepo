@@ -30,24 +30,24 @@ const userIdsByEmailDecoder = record({
 });
 
 export const userDatasetsServiceWrappers = {
-  getCurrentUserDatasets: (wdkService: WdkService) => () =>
-    wdkService._fetchJson<UserDataset[]>(
-      'get',
-      '/users/current/user-datasets?expandDetails=true'
-    ),
-  getUserDataset: (wdkService: WdkService) => (id: number) =>
-    wdkService._fetchJson<UserDataset>(
-      'get',
-      `/users/current/user-datasets/${id}`
-    ),
+  // getCurrentUserDatasets: (wdkService: WdkService) => () =>
+  //   wdkService._fetchJson<UserDataset[]>(
+  //     'get',
+  //     '/users/current/user-datasets?expandDetails=true'
+  //   ),
+  // getUserDataset: (wdkService: WdkService) => (id: number) =>
+  //   wdkService._fetchJson<UserDataset>(
+  //     'get',
+  //     `/users/current/user-datasets/${id}`
+  //   ),
   updateUserDataset:
-    (wdkService: WdkService) => (id: number, meta: UserDatasetMeta) =>
+    (wdkService: WdkService) => (id: number | string, meta: UserDatasetMeta) =>
       wdkService._fetchJson<void>(
         'put',
         `/users/current/user-datasets/${id}/meta`,
         JSON.stringify(meta)
       ),
-  removeUserDataset: (wdkService: WdkService) => (id: number) =>
+  removeUserDataset: (wdkService: WdkService) => (id: number | string) =>
     wdkService._fetchJson<void>('delete', `/users/current/user-datasets/${id}`),
   editUserDatasetSharing:
     (wdkService: WdkService) =>
@@ -79,8 +79,9 @@ export const userDatasetsServiceWrappers = {
       );
     },
   getUserDatasetDownloadUrl:
-    (wdkService: WdkService) => (datasetId: number, filename: string) => {
-      if (typeof datasetId !== 'number')
+    (wdkService: WdkService) =>
+    (datasetId: number | string, filename: string) => {
+      if (typeof datasetId !== 'number' && typeof datasetId !== 'string')
         throw new TypeError(
           `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
         );
