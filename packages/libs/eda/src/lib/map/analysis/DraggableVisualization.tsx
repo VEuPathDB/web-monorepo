@@ -104,7 +104,7 @@ export default function DraggableVisualization({
           }}
         >
           <FilledButton
-            text={hideInputsAndControls ? 'Show Controls' : 'Hide Controls'}
+            text={hideInputsAndControls ? 'Show controls' : 'Hide controls'}
             onPress={() => setHideInputsAndControls(!hideInputsAndControls)}
             size="small"
             textTransform="none"
