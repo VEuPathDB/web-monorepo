@@ -29,6 +29,7 @@ interface Props {
   //  visualizationPlugins: Partial<Record<string, VisualizationPlugin>>;
   geoConfigs: GeoConfig[];
   mapType?: MarkerConfiguration['type'];
+  setHideVizInputsAndControls: (value: boolean) => void;
 }
 
 const mapVizManagementClassName = makeClassNameHelper('MapVizManagement');
@@ -41,12 +42,14 @@ export default function MapVizManagement({
   setActiveVisualizationId,
   plugins,
   mapType,
+  setHideVizInputsAndControls,
 }: Props) {
   const [isVizSelectorVisible, setIsVizSelectorVisible] = useState(false);
 
   function onVisualizationCreated(visualizationId: string) {
     setIsVizSelectorVisible(false);
     setActiveVisualizationId(visualizationId);
+    setHideVizInputsAndControls(false);
   }
 
   if (!analysisState.analysis) return null;

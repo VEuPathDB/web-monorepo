@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { AnalysisState, PromiseHookState } from '../../core';
 
 import { AppState, useAppState } from './appState';
@@ -31,6 +29,8 @@ interface Props {
   filters: Filter[];
   zIndexForStackingContext: number;
   additionalRenderCondition?: () => void;
+  hideInputsAndControls: boolean;
+  setHideInputsAndControls: (value: boolean) => void;
 }
 
 export default function DraggableVisualization({
@@ -46,9 +46,9 @@ export default function DraggableVisualization({
   filters,
   zIndexForStackingContext = 10,
   additionalRenderCondition,
+  hideInputsAndControls,
+  setHideInputsAndControls,
 }: Props) {
-  const [hideInputsAndControls, setHideInputsAndControls] = useState(false);
-
   const { computation: activeComputation, visualization: activeViz } =
     analysisState.getVisualizationAndComputation(
       appState.activeVisualizationId
