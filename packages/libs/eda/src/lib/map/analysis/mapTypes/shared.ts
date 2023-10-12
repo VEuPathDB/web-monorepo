@@ -11,6 +11,7 @@ import {
   useDataClient,
   useFindEntityAndVariable,
   useSubsettingClient,
+  OverlayConfig,
 } from '../../../core';
 import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { findEntityAndVariable } from '../../../core/utils/study-metadata';
@@ -124,6 +125,7 @@ export interface DistributionOverlayConfigProps {
   studyId: string;
   filters?: Filter[];
   overlayVariableDescriptor: VariableDescriptor;
+  selectedValues: string[] | undefined;
   binningMethod: DefaultOverlayConfigProps['binningMethod'];
 }
 
@@ -136,6 +138,14 @@ export function useDistributionOverlayConfig(
   return useQuery({
     queryKey: ['distributionOverlayConfig', props],
     queryFn: async function getOverlayConfig() {
+      if (props.selectedValues) {
+        const overlayConfig: OverlayConfig = {
+          overlayType: 'categorical',
+          overlayValues: props.selectedValues,
+          overlayVariable: props.overlayVariableDescriptor,
+        };
+        return overlayConfig;
+      }
       console.log('fetching data for distributionOverlayConfig');
       const { entity: overlayEntity, variable: overlayVariable } =
         findEntityAndVariable(props.overlayVariableDescriptor) ?? {};
@@ -159,6 +169,7 @@ export interface DistributionMarkerDataProps {
   geoConfigs: GeoConfig[];
   boundsZoomLevel?: BoundsViewport;
   selectedVariable: VariableDescriptor;
+  selectedValues: string[] | undefined;
   binningMethod: DefaultOverlayConfigProps['binningMethod'];
 }
 
@@ -171,6 +182,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     studyId,
     filters,
     studyEntities,
+    selectedValues,
   } = props;
 
   const dataClient = useDataClient();
@@ -193,6 +205,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     filters,
     binningMethod,
     overlayVariableDescriptor: selectedVariable,
+    selectedValues,
   });
 
   if (overlayConfigResult.error) {

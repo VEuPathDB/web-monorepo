@@ -75,7 +75,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   const geoConfig = geoConfigs[0];
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as PieMarkerConfiguration;
-  const { selectedVariable, binningMethod } = configuration;
+  const { selectedVariable, selectedValues, binningMethod } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -136,6 +136,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     boundsZoomLevel: appState.boundsZoomLevel,
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
+    selectedValues: configuration.selectedValues,
   });
 
   const continuousMarkerPreview = useMemo(() => {
@@ -181,6 +182,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     filters,
     binningMethod,
     overlayVariableDescriptor: selectedVariable,
+    selectedValues,
   });
 
   const markerVariableConstraints = apps
@@ -276,7 +278,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 }
 
 function MapLayerComponent(props: MapTypeMapLayerProps) {
-  const { selectedVariable, binningMethod } =
+  const { selectedVariable, binningMethod, selectedValues } =
     props.configuration as PieMarkerConfiguration;
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
@@ -285,6 +287,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     geoConfigs: props.geoConfigs,
     boundsZoomLevel: props.appState.boundsZoomLevel,
     selectedVariable,
+    selectedValues,
     binningMethod,
   });
 
@@ -308,8 +311,12 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     appState: { boundsZoomLevel },
     updateConfiguration,
   } = props;
-  const { selectedVariable, binningMethod, activeVisualizationId } =
-    props.configuration as PieMarkerConfiguration;
+  const {
+    selectedVariable,
+    selectedValues,
+    binningMethod,
+    activeVisualizationId,
+  } = props.configuration as PieMarkerConfiguration;
   const findEntityAndVariable = useFindEntityAndVariable();
   const { variable: overlayVariable } =
     findEntityAndVariable(selectedVariable) ?? {};
@@ -331,6 +338,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     boundsZoomLevel,
     binningMethod,
     selectedVariable,
+    selectedValues,
   });
 
   const plugins = useStandaloneVizPlugins({

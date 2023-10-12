@@ -145,6 +145,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     geoConfigs,
     boundsZoomLevel: appState.boundsZoomLevel,
     selectedVariable: configuration.selectedVariable,
+    selectedValues: configuration.selectedValues,
     binningMethod: configuration.binningMethod,
     dependentAxisLogScale: configuration.dependentAxisLogScale,
   });
@@ -312,8 +313,12 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     appState: { boundsZoomLevel },
   } = props;
-  const { selectedVariable, binningMethod, dependentAxisLogScale } =
-    props.configuration as BarPlotMarkerConfiguration;
+  const {
+    selectedVariable,
+    selectedValues,
+    binningMethod,
+    dependentAxisLogScale,
+  } = props.configuration as BarPlotMarkerConfiguration;
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -321,6 +326,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     geoConfigs,
     boundsZoomLevel,
     selectedVariable,
+    selectedValues,
     binningMethod,
     dependentAxisLogScale,
   });
@@ -365,6 +371,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     filters,
     binningMethod: configuration.binningMethod,
     overlayVariableDescriptor: configuration.selectedVariable,
+    selectedValues: configuration.selectedValues,
   });
 
   const markerData = useMarkerData({
@@ -376,6 +383,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
     dependentAxisLogScale: configuration.dependentAxisLogScale,
+    selectedValues: configuration.selectedValues,
   });
 
   const legendItems = markerData?.legendItems;
