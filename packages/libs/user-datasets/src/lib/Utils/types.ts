@@ -313,26 +313,22 @@ const newUserDataset = intersection([
   }),
 ]);
 
-export interface NewUserDatasetRequest {
-  url?: string;
-  file?: File;
-  meta: {
+export interface NewUserDatasetMeta {
+  name: string;
+  datasetType: {
     name: string;
-    datasetType: {
-      name: string;
-      version: string;
-    };
-    origin: string;
-    projects: string[];
-    dependencies: {
-      resourceDisplayName: string;
-      resourceIdentifier: string;
-      resourceVersion: string;
-    }[];
-    visibility?: 'private' | 'public' | 'protected';
-    summary?: string;
-    description?: string;
+    version: string;
   };
+  origin: string;
+  projects: string[];
+  dependencies: {
+    resourceDisplayName: string;
+    resourceIdentifier: string;
+    resourceVersion: string;
+  }[];
+  visibility?: 'private' | 'public' | 'protected';
+  summary?: string;
+  description?: string;
 }
 
 export type UserDatasetVDI = TypeOf<typeof userDataset>;

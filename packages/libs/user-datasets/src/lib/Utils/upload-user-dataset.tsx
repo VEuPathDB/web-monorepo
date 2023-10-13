@@ -16,6 +16,7 @@ export async function uploadUserDataset(
     formSubmission
   );
 
+  // @ts-ignore
   return await wdkService.addDataset(newUserDatasetConfig);
 }
 
@@ -23,14 +24,15 @@ export async function makeNewUserDatasetConfig(
   wdkService: WdkService,
   formSubmission: FormSubmission
 ): Promise<NewUserDataset> {
-  if (formSubmission.dataUploadSelection.type !== 'result') {
+  const { dataUploadSelection, ...remainingFormSubmission } = formSubmission;
+  if (dataUploadSelection.type !== 'result') {
     return {
-      ...formSubmission,
-      uploadMethod: formSubmission.dataUploadSelection,
+      ...remainingFormSubmission,
+      uploadMethod: dataUploadSelection,
     };
   }
 
-  const { compatibleRecordTypes, stepId } = formSubmission.dataUploadSelection;
+  const { compatibleRecordTypes, stepId } = dataUploadSelection;
 
   const { recordClassName } = await wdkService.findStep(stepId);
 
@@ -43,7 +45,7 @@ export async function makeNewUserDatasetConfig(
   }
 
   return {
-    ...formSubmission,
+    ...remainingFormSubmission,
     uploadMethod: {
       type: 'result',
       stepId,

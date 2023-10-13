@@ -2,7 +2,6 @@ import { zipWith } from 'lodash';
 
 import {
   createJsonRequest,
-  createPlainTextRequest,
   FetchClientWithCredentials,
   ioTransformer,
 } from '@veupathdb/http-utils';
@@ -11,7 +10,7 @@ import {
   UserDatasetVDI,
   userDataset,
   UserDatasetMeta,
-  NewUserDatasetRequest,
+  NewUserDatasetMeta,
   NewUserDataset,
   userDatasetDetail,
 } from '../Utils/types';
@@ -52,12 +51,23 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   addDataset = (newUserDatasetConfig: NewUserDataset) => {
     const { uploadMethod, ...remainingConfig } = newUserDatasetConfig;
 
+    const meta: NewUserDatasetMeta = {
+      ...remainingConfig,
+      datasetType: {
+        name: newUserDatasetConfig.datasetType.replace('-', ''),
+        version: '1.0',
+      },
+      dependencies: [],
+      origin: 'direct-upload',
+    };
+
     const fileBody = new FormData();
+
+    fileBody.append('meta', JSON.stringify(meta));
+
     if (uploadMethod.type === 'file') {
-      fileBody.append('uploadMethod', 'file');
       fileBody.append('file', uploadMethod.file);
     } else if (uploadMethod.type === 'url') {
-      fileBody.append('uploadMethod', 'url');
       fileBody.append('url', uploadMethod.url);
     } else {
       throw new Error(
@@ -65,30 +75,13 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       );
     }
 
-    const requestBody: NewUserDatasetRequest = {
-      meta: {
-        ...remainingConfig,
-        datasetType: {
-          name: newUserDatasetConfig.datasetType,
-          version: '1.0',
-        },
-        dependencies: [],
-        origin: 'direct-upload',
-      },
-      ...(uploadMethod.type === 'file'
-        ? { file: uploadMethod.file }
-        : { url: uploadMethod.url }),
-    };
-
-    return this.fetch(
-      createJsonRequest({
-        method: 'POST',
-        path: VDI_SERVICE,
-        body: requestBody,
-        // TODO: figure out how to pull this from userDataset type instead
-        transformResponse: ioTransformer(type({ datasetID: string })),
-      })
-    );
+    return this.fetch({
+      method: 'POST',
+      path: VDI_SERVICE,
+      body: fileBody,
+      // TODO: figure out how to pull this from userDataset type instead
+      transformResponse: ioTransformer(type({ datasetID: string })),
+    });
   };
 
   getUserDataset = (id: string) => {

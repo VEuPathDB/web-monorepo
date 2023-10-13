@@ -195,70 +195,70 @@ export const makeUserDatasetUploadServiceWrappers = ({
   fullWdkServiceUrl,
 }: ServiceConfig) => ({
   [DATASET_IMPORT_URL_KEY]: (wdkService: WdkService) => datasetImportUrl,
-  addDataset:
-    (wdkService: WdkService) =>
-    async (newUserDataset: NewUserDataset): Promise<void> => {
-      const metaBody = JSON.stringify({
-        datasetName: newUserDataset.name,
-        datasetType: newUserDataset.datasetType,
-        description: newUserDataset.description,
-        summary: newUserDataset.summary,
-        projects: newUserDataset.projects,
-        origin: 'direct-upload',
-      });
+  // addDataset:
+  //   (wdkService: WdkService) =>
+  //   async (newUserDataset: NewUserDataset): Promise<void> => {
+  //     const metaBody = JSON.stringify({
+  //       datasetName: newUserDataset.name,
+  //       datasetType: newUserDataset.datasetType,
+  //       description: newUserDataset.description,
+  //       summary: newUserDataset.summary,
+  //       projects: newUserDataset.projects,
+  //       origin: 'direct-upload',
+  //     });
 
-      const fileBody = new FormData();
+  //     const fileBody = new FormData();
 
-      const { uploadMethod } = newUserDataset;
+  //     const { uploadMethod } = newUserDataset;
 
-      if (uploadMethod.type === 'file') {
-        fileBody.append('uploadMethod', 'file');
-        fileBody.append('file', uploadMethod.file);
-      } else if (uploadMethod.type === 'url') {
-        fileBody.append('uploadMethod', 'url');
-        fileBody.append('url', uploadMethod.url);
-      } else if (newUserDataset.uploadMethod.type === 'result') {
-        const temporaryResultPath = await wdkService.getTemporaryResultPath(
-          uploadMethod.stepId,
-          uploadMethod.reportName,
-          uploadMethod.reportConfig
-        );
+  //     if (uploadMethod.type === 'file') {
+  //       fileBody.append('uploadMethod', 'file');
+  //       fileBody.append('file', uploadMethod.file);
+  //     } else if (uploadMethod.type === 'url') {
+  //       fileBody.append('uploadMethod', 'url');
+  //       fileBody.append('url', uploadMethod.url);
+  //     } else if (newUserDataset.uploadMethod.type === 'result') {
+  //       const temporaryResultPath = await wdkService.getTemporaryResultPath(
+  //         uploadMethod.stepId,
+  //         uploadMethod.reportName,
+  //         uploadMethod.reportConfig
+  //       );
 
-        const temporaryResultUrl = `${fullWdkServiceUrl}${temporaryResultPath}`;
+  //       const temporaryResultUrl = `${fullWdkServiceUrl}${temporaryResultPath}`;
 
-        fileBody.append('uploadMethod', 'url');
-        fileBody.append('url', temporaryResultUrl);
-      } else {
-        throw new Error(
-          `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
-        );
-      }
+  //       fileBody.append('uploadMethod', 'url');
+  //       fileBody.append('url', temporaryResultUrl);
+  //     } else {
+  //       throw new Error(
+  //         `Tried to upload a dataset via an unrecognized upload method '${uploadMethod.type}'`
+  //       );
+  //     }
 
-      return fetchDecodedJsonOrThrowMessage(
-        datasetImportUrl,
-        Decode.field('jobId', Decode.string),
-        {
-          path: '/user-datasets',
-          method: 'POST',
-          body: metaBody,
-        }
-      ).then(({ jobId }) =>
-        fetchWithCredentials(
-          datasetImportUrl,
-          '/user-datasets/' + jobId,
-          'POST',
-          fileBody
-        ).then((response) => {
-          if (!response.ok) {
-            return response.text().then((error) => {
-              throw error;
-            });
-          }
+  //     return fetchDecodedJsonOrThrowMessage(
+  //       datasetImportUrl,
+  //       Decode.field('jobId', Decode.string),
+  //       {
+  //         path: '/user-datasets',
+  //         method: 'POST',
+  //         body: metaBody,
+  //       }
+  //     ).then(({ jobId }) =>
+  //       fetchWithCredentials(
+  //         datasetImportUrl,
+  //         '/user-datasets/' + jobId,
+  //         'POST',
+  //         fileBody
+  //       ).then((response) => {
+  //         if (!response.ok) {
+  //           return response.text().then((error) => {
+  //             throw error;
+  //           });
+  //         }
 
-          return;
-        })
-      );
-    },
+  //         return;
+  //       })
+  //     );
+  //   },
   listStatusDetails: () => (): Promise<UserDatasetUpload[]> => {
     return fetchDecodedJsonOrThrowMessage(
       datasetImportUrl,
