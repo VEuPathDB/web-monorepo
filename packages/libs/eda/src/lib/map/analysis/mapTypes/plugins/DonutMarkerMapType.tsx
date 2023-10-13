@@ -294,12 +294,17 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
   if (markerDataResponse.error)
     return <MapFloatingErrorDiv error={markerDataResponse.error} />;
 
-  if (markerDataResponse.markerProps == null) return <Spinner />;
-
-  const markers = markerDataResponse.markerProps.map((markerProps) => (
+  const markers = markerDataResponse.markerProps?.map((markerProps) => (
     <DonutMarker {...markerProps} />
   ));
-  return <SemanticMarkers markers={markers} animation={defaultAnimation} />;
+  return (
+    <>
+      {markerDataResponse.isFetching && <Spinner />}
+      {markers && (
+        <SemanticMarkers markers={markers} animation={defaultAnimation} />
+      )}
+    </>
+  );
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
@@ -342,7 +347,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
   });
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: data?.overlayConfig,
+    selectedOverlayConfig: data.overlayConfig,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
@@ -355,10 +360,10 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={data == null}
+            isLoading={data.legendItems == null}
             plotLegendProps={{
               type: 'list',
-              legendItems: data?.legendItems ?? [],
+              legendItems: data.legendItems ?? [],
             }}
             showCheckbox={false}
           />
@@ -383,9 +388,13 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
 }
 
 function useMarkerData(props: DistributionMarkerDataProps) {
-  const { data: markerData, error } = useDistributionMarkerData(props);
+  const {
+    data: markerData,
+    error,
+    isFetching,
+  } = useDistributionMarkerData(props);
 
-  if (markerData == null) return { error };
+  if (markerData == null) return { error, isFetching };
 
   const {
     mapElements,
@@ -416,6 +425,7 @@ function useMarkerData(props: DistributionMarkerDataProps) {
 
   return {
     error,
+    isFetching,
     markerProps,
     totalVisibleWithOverlayEntityCount,
     totalVisibleEntityCount,

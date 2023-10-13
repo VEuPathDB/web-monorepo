@@ -10,7 +10,6 @@ import {
   MapTypeMapLayerProps,
   MapTypePlugin,
 } from '../types';
-import { getDefaultOverlayConfig } from '../../utils/defaultOverlayConfig';
 import {
   OverlayConfig,
   StandaloneMapMarkersResponse,
@@ -37,14 +36,12 @@ import {
   useDistributionOverlayConfig,
 } from '../shared';
 import {
-  useDataClient,
   useFindEntityAndVariable,
   useSubsettingClient,
 } from '../../../../core/hooks/workspace';
 import { DraggableLegendPanel } from '../../DraggableLegendPanel';
 import { MapLegend } from '../../MapLegend';
 import { filtersFromBoundingBox } from '../../../../core/utils/visualization';
-import { usePromise } from '../../../../core';
 import { sharedStandaloneMarkerProperties } from '../../MarkerConfiguration/CategoricalMarkerPreview';
 import { useToggleStarredVariable } from '../../../../core/hooks/starredVariables';
 import DraggableVisualization from '../../DraggableVisualization';
@@ -81,11 +78,14 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   } = props;
 
   const geoConfig = geoConfigs[0];
-  const dataClient = useDataClient();
   const subsettingClient = useSubsettingClient();
   const configuration = props.configuration as BarPlotMarkerConfiguration;
-  const { selectedVariable, binningMethod, dependentAxisLogScale } =
-    configuration;
+  const {
+    selectedVariable,
+    selectedValues,
+    binningMethod,
+    dependentAxisLogScale,
+  } = configuration;
 
   const { entity: overlayEntity, variable: overlayVariable } =
     findEntityAndVariable(studyEntities, selectedVariable) ?? {};
@@ -189,29 +189,13 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  const overlayConfiguration = usePromise(
-    useCallback(
-      () =>
-        getDefaultOverlayConfig({
-          studyId,
-          filters,
-          overlayEntity,
-          overlayVariable,
-          dataClient,
-          subsettingClient,
-          binningMethod,
-        }),
-      [
-        studyId,
-        filters,
-        overlayEntity,
-        overlayVariable,
-        dataClient,
-        subsettingClient,
-        binningMethod,
-      ]
-    )
-  );
+  const overlayConfiguration = useDistributionOverlayConfig({
+    studyId,
+    filters,
+    binningMethod,
+    overlayVariableDescriptor: selectedVariable,
+    selectedValues,
+  });
 
   const markerVariableConstraints = apps
     .find((app) => app.name === 'standalone-map')
@@ -224,7 +208,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       onChange={updateConfiguration}
       configuration={configuration as BarPlotMarkerConfiguration}
       constraints={markerVariableConstraints}
-      overlayConfiguration={overlayConfiguration.value}
+      overlayConfiguration={overlayConfiguration.data}
       overlayVariable={overlayVariable}
       subsettingClient={subsettingClient}
       studyId={studyId}
@@ -262,7 +246,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
   );
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: overlayConfiguration.value,
+    selectedOverlayConfig: overlayConfiguration.data,
   });
 
   const mapTypeConfigurationMenuTabs: TabbedDisplayProps<
@@ -333,13 +317,18 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
 
   if (markerData.error) return <MapFloatingErrorDiv error={markerData.error} />;
 
-  if (markerData.markerProps == null) return <Spinner />;
-
-  const markers = markerData.markerProps.map((markerProps) => (
+  const markers = markerData.markerProps?.map((markerProps) => (
     <ChartMarker {...markerProps} />
   ));
 
-  return <SemanticMarkers markers={markers} animation={defaultAnimation} />;
+  return (
+    <>
+      {markerData.isFetching && <Spinner />}
+      {markers && (
+        <SemanticMarkers markers={markers} animation={defaultAnimation} />
+      )}
+    </>
+  );
 }
 
 function MapOverlayComponent(props: MapTypeMapLayerProps) {
@@ -366,14 +355,6 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     [configuration, updateConfiguration]
   );
 
-  const { data: overlayConfig } = useDistributionOverlayConfig({
-    studyId,
-    filters,
-    binningMethod: configuration.binningMethod,
-    overlayVariableDescriptor: configuration.selectedVariable,
-    selectedValues: configuration.selectedValues,
-  });
-
   const markerData = useMarkerData({
     studyEntities,
     studyId,
@@ -386,10 +367,10 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     selectedValues: configuration.selectedValues,
   });
 
-  const legendItems = markerData?.legendItems;
+  const legendItems = markerData.legendItems;
 
   const plugins = useStandaloneVizPlugins({
-    selectedOverlayConfig: overlayConfig,
+    selectedOverlayConfig: markerData.overlayConfig,
   });
 
   const toggleStarredVariable = useToggleStarredVariable(props.analysisState);
@@ -540,8 +521,12 @@ interface MarkerDataProps extends DistributionMarkerDataProps {
 }
 
 function useMarkerData(props: MarkerDataProps) {
-  const { data: markerData, error } = useDistributionMarkerData(props);
-  if (markerData == null) return { error };
+  const {
+    data: markerData,
+    error,
+    isFetching,
+  } = useDistributionMarkerData(props);
+  if (markerData == null) return { error, isFetching };
 
   const {
     mapElements,
@@ -591,6 +576,7 @@ function useMarkerData(props: MarkerDataProps) {
 
   return {
     error,
+    isFetching,
     markerProps,
     totalVisibleWithOverlayEntityCount,
     totalVisibleEntityCount,

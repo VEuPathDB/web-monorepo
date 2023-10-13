@@ -136,6 +136,7 @@ export function useDistributionOverlayConfig(
   const subsettingClient = useSubsettingClient();
   const findEntityAndVariable = useFindEntityAndVariable();
   return useQuery({
+    keepPreviousData: true,
     queryKey: ['distributionOverlayConfig', props],
     queryFn: async function getOverlayConfig() {
       if (props.selectedValues) {
@@ -228,6 +229,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
   const overlayConfig = overlayConfigResult.data;
 
   return useQuery({
+    keepPreviousData: true,
     queryKey: ['mapMarkers', requestParams],
     queryFn: async () => {
       const markerData = await dataClient.getStandaloneMapMarkers(

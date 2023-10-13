@@ -179,13 +179,19 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   if (markersData.error)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
-  if (markersData.fetchStatus === 'fetching') return <Spinner />;
-
   const markers =
     markersData.data?.markersData.map((markerProps) => (
       <BubbleMarker {...markerProps} />
     )) ?? [];
-  return <SemanticMarkers markers={markers} animation={defaultAnimation} />;
+
+  return (
+    <>
+      {markersData.isFetching && <Spinner />}
+      {markers && (
+        <SemanticMarkers markers={markers} animation={defaultAnimation} />
+      )}
+    </>
+  );
 }
 
 function BubbleLegends(props: MapTypeMapLayerProps) {
@@ -229,7 +235,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
             </div>
           ) : (
             <MapLegend
-              isLoading={legendData.fetchStatus === 'fetching'}
+              isLoading={legendData.data == null}
               plotLegendProps={{
                 type: 'bubble',
                 legendMax: legendData.data?.bubbleLegendData?.maxSizeValue ?? 0,
@@ -247,7 +253,7 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
       >
         <div style={{ padding: '5px 10px' }}>
           <MapLegend
-            isLoading={legendData.fetchStatus === 'fetching'}
+            isLoading={legendData.data == null}
             plotLegendProps={{
               type: 'colorscale',
               legendMin: legendData.data?.bubbleLegendData?.minColorValue ?? 0,
