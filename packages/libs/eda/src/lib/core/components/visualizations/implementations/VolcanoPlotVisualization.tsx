@@ -25,7 +25,7 @@ import { createVisualizationPlugin } from '../VisualizationPlugin';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import { NumberInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateInputs';
 
-import { LayoutOptions } from '../../layouts/types';
+import { LayoutOptions, TitleOptions } from '../../layouts/types';
 import { RequestOptions } from '../options/types';
 
 // Volcano plot imports
@@ -34,7 +34,6 @@ import DataClient, {
   VolcanoPlotResponse,
 } from '../../../api/DataClient';
 import {
-  VolcanoPlotData,
   VolcanoPlotDataPoint,
   VolcanoPlotStats,
 } from '@veupathdb/components/lib/types/plots/volcanoplot';
@@ -54,6 +53,7 @@ import SliderWidget, {
 import { ResetButtonCoreUI } from '../../ResetButton';
 import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
 import { fixVarIdLabel } from '../../../utils/visualization';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 // end imports
 
 const DEFAULT_SIG_THRESHOLD = 0.05;
@@ -106,6 +106,7 @@ export const VolcanoPlotConfig = t.partial({
 
 interface Options
   extends LayoutOptions,
+    TitleOptions,
     RequestOptions<VolcanoPlotConfig, {}, VolcanoPlotRequestParams> {}
 
 // Volcano Plot Visualization
@@ -120,10 +121,10 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     updateConfiguration,
     updateThumbnail,
     filters,
-    dataElementConstraints,
-    dataElementDependencyOrder,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
@@ -132,6 +133,13 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
   const dataClient: DataClient = useDataClient();
   const computationConfiguration: DifferentialAbundanceConfig = computation
     .descriptor.configuration as DifferentialAbundanceConfig;
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -374,7 +382,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [
       finalData,
       // vizConfig.checkedLegendItems, TODO
@@ -382,6 +390,11 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
       vizConfig.dependentAxisRange,
       vizConfig.markerBodyOpacity,
     ]
+  );
+
+  // plot subtitle
+  const plotSubtitle = options?.getPlotSubtitle?.(
+    computation.descriptor.configuration
   );
 
   // Add labels to the extremes of the x axis. These may change in the future based on the type
@@ -418,7 +431,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
     markerBodyOpacity: data.value
       ? vizConfig.markerBodyOpacity ?? DEFAULT_MARKER_OPACITY
       : 0,
-    containerStyles: plotContainerStyles,
+    containerStyles: finalPlotContainerStyles,
     /**
      * Let's not display comparisonLabels before we have data for the viz. This prevents what may be
      * confusing behavior where selecting group values displays on the empty viz placeholder.
@@ -604,35 +617,32 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
-        <NumberInput
-          onValueChange={(newValue?: NumberOrDate) =>
-            updateVizConfig({ effectSizeThreshold: Number(newValue) })
-          }
-          label={finalData?.effectSizeLabel ?? 'Effect Size'}
-          minValue={0}
-          value={vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD}
-          containerStyles={{ marginRight: 10 }}
-        />
+      {!hideInputsAndControls && (
+        <LabelledGroup label="Threshold lines" alignChildrenHorizontally={true}>
+          <NumberInput
+            onValueChange={(newValue?: NumberOrDate) =>
+              updateVizConfig({ effectSizeThreshold: Number(newValue) })
+            }
+            label={finalData?.effectSizeLabel ?? 'Effect Size'}
+            minValue={0}
+            value={vizConfig.effectSizeThreshold ?? DEFAULT_FC_THRESHOLD}
+            containerStyles={{ marginRight: 10 }}
+          />
 
-        <NumberInput
-          label="P-Value"
-          onValueChange={(newValue?: NumberOrDate) =>
-            updateVizConfig({ significanceThreshold: Number(newValue) })
-          }
-          minValue={0}
-          value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
-          containerStyles={{ marginLeft: 10 }}
-          step={0.001}
-        />
-      </LabelledGroup>
+          <NumberInput
+            label="P-Value"
+            onValueChange={(newValue?: NumberOrDate) =>
+              updateVizConfig({ significanceThreshold: Number(newValue) })
+            }
+            minValue={0}
+            value={vizConfig.significanceThreshold ?? DEFAULT_SIG_THRESHOLD}
+            containerStyles={{ marginLeft: 10 }}
+            step={0.001}
+          />
+        </LabelledGroup>
+      )}
 
-      {/* This should be populated with info from the colections var. So like "Showing 1000 taxa blah". Waiting on collections annotations. */}
-      {/* <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
-      /> */}
+      {!hideInputsAndControls && <OutputEntityTitle subtitle={plotSubtitle} />}
       <LayoutComponent
         isFaceted={false}
         legendNode={legendNode}
@@ -640,6 +650,7 @@ function VolcanoPlotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={false}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );
