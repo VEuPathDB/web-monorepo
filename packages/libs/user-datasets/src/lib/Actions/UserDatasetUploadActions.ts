@@ -8,9 +8,9 @@ import { UserDatasetUpload } from '../Utils/types';
 
 export const submitUploadForm = makeActionCreator(
   'user-dataset-upload/submit-form',
-  (formSubmission: FormSubmission, redirectTo?: string) => ({
+  (formSubmission: FormSubmission, baseUrl?: string) => ({
     formSubmission,
-    redirectTo,
+    baseUrl,
   })
 );
 

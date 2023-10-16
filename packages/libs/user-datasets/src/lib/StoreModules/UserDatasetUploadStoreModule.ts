@@ -65,14 +65,13 @@ function observeSubmitUploadForm(
     filter(submitUploadForm.isOfType),
     mergeMap(async (action) => {
       try {
-        await uploadUserDataset(
+        const response = await uploadUserDataset(
           dependencies.wdkService,
           action.payload.formSubmission
         );
-
-        if (action.payload.redirectTo != null) {
+        if (action.payload.baseUrl != null) {
           dependencies.transitioner.transitionToInternalPage(
-            action.payload.redirectTo
+            `${action.payload.baseUrl}/${response.datasetID}`
           );
         }
         return requestUploadMessages();

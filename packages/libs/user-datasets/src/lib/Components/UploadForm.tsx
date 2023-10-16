@@ -42,7 +42,7 @@ interface Props<T extends string = string> {
   strategyOptions: StrategySummary[];
   resultUploadConfig?: ResultUploadConfig;
   clearBadUpload: () => void;
-  submitForm: (newUserDataset: FormSubmission, redirectTo?: string) => void;
+  submitForm: (newUserDataset: FormSubmission, baseUrl?: string) => void;
   supportedFileUploadTypes: string[];
 }
 
@@ -204,7 +204,7 @@ function UploadForm({
         setErrorMessages(formValidation.errors);
       } else {
         setSubmitting(true);
-        submitForm(formValidation.submission, `${baseUrl}/recent`);
+        submitForm(formValidation.submission, baseUrl);
       }
     },
     [
