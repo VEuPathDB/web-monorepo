@@ -11,16 +11,27 @@ import BipartiteNetwork, {
   BipartiteNetworkProps,
 } from '@veupathdb/components/lib/plots/BipartiteNetwork';
 import VolcanoSVG from './selectorIcons/VolcanoSVG'; // TEMP
-import { BipartiteNetworkRequestParams } from '../../../api/DataClient/types';
+import {
+  BipartiteNetworkRequestParams,
+  BipartiteNetworkResponse,
+} from '../../../api/DataClient/types';
 import {
   BipartiteNetworkData,
   LinkData,
   NodeData,
 } from '@veupathdb/components/lib/types/plots/network';
 import { twoColorPalette } from '@veupathdb/components/lib/types/plots/addOns';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { uniq } from 'lodash';
+import { usePromise } from '../../../hooks/promise';
+import {
+  useDataClient,
+  useStudyEntities,
+  useStudyMetadata,
+} from '../../../hooks/workspace';
+import DataClient from '../../../api/DataClient';
+import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
 // end imports
 
 // Defaults
@@ -64,32 +75,94 @@ interface Options
 // The bipartite network takes no input variables, because the received data will complete the plot.
 // Eventually the user will be able to control the significance and correlation coefficient values.
 function BipartiteNetworkViz(props: VisualizationProps<Options>) {
-  const { options, updateThumbnail } = props;
+  const {
+    options,
+    computation,
+    visualization,
+    updateThumbnail,
+    computeJobStatus,
+    filteredCounts,
+    filters,
+  } = props;
+
+  const studyMetadata = useStudyMetadata();
+  const { id: studyId } = studyMetadata;
+  const entities = useStudyEntities(filters);
+  const dataClient: DataClient = useDataClient();
+  const computationConfiguration: CorrelationAssayMetadataConfig = computation
+    .descriptor.configuration as CorrelationAssayMetadataConfig;
 
   // Fake data
-  const data: BipartiteNetworkData = useMemo(
-    () => genBipartiteNetwork(100, 10),
-    []
+  const data = usePromise(
+    useCallback(async (): Promise<BipartiteNetworkResponse | undefined> => {
+      // Only need to check compute job status and filter status, since there are no
+      // viz input variables.
+      console.log(filteredCounts);
+      if (computeJobStatus !== 'complete') return undefined;
+      if (filteredCounts.pending || filteredCounts.value == null)
+        return undefined;
+
+      // There are _no_ viz request params for the volcano plot (config: {}).
+      // The data service streams the volcano data directly from the compute service.
+      const params = {
+        studyId,
+        filters,
+        config: {},
+        computeConfig: computationConfiguration,
+      };
+      console.log(params);
+
+      const response = await dataClient.getVisualizationData(
+        computation.descriptor.type,
+        visualization.descriptor.type,
+        params,
+        BipartiteNetworkResponse
+      );
+      console.log('new response');
+      console.log(response);
+
+      return response;
+    }, [
+      computeJobStatus,
+      filteredCounts.pending,
+      filteredCounts.value,
+      filters,
+      studyId,
+      computationConfiguration,
+      computation.descriptor.type,
+      dataClient,
+      visualization.descriptor.type,
+    ])
   );
+
+  console.log(data);
 
   // Assign color to links.
   // Color palettes live here in the frontend, but the backend knows that the edges should be two colors.
   // So we'll make it generalizable by mapping the values of the links.color prop to the palette.
   const uniqueLinkColors = uniq(
-    data.links.map((link) => link.color ?? DEFAULT_LINK_COLOR_DATA)
+    data.value?.links.map(
+      (link) => link.linkColor.toString() ?? DEFAULT_LINK_COLOR_DATA
+    )
   );
   const linkColorScale = scaleOrdinal<string>()
     .domain(uniqueLinkColors)
     .range(twoColorPalette); // the output palette may change if this visualization is reused in other contexts.
-  const cleanedData: BipartiteNetworkData = {
-    ...data,
-    links: data.links.map((link) => {
-      return {
-        ...link,
-        color: linkColorScale(link.color ?? DEFAULT_LINK_COLOR_DATA),
-      };
-    }),
-  };
+
+  const cleanedData = useMemo(() => {
+    if (!data.value) return undefined;
+    return {
+      ...data.value,
+      links: data.value.links.map((link) => {
+        return {
+          ...link,
+          color: linkColorScale(
+            link.linkColor.toString() ?? DEFAULT_LINK_COLOR_DATA
+          ),
+        };
+      }),
+    };
+  }, [data]);
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
@@ -97,8 +170,10 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     [cleanedData]
   );
 
+  console.log(cleanedData);
+
   const bipartiteNetworkProps: BipartiteNetworkProps = {
-    data: cleanedData,
+    data: cleanedData ?? undefined,
   };
 
   const plotNode = (
@@ -124,50 +199,4 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
       />
     </div>
   );
-}
-
-// TEMP: Gerenate a bipartite network with a given number of nodes and random edges
-function genBipartiteNetwork(
-  column1nNodes: number,
-  column2nNodes: number
-): BipartiteNetworkData {
-  // Create the first column of nodes
-  const column1Nodes: NodeData[] = [...Array(column1nNodes).keys()].map((i) => {
-    return {
-      id: String(i),
-      label: 'Node ' + String(i),
-    };
-  });
-
-  // Create the second column of nodes
-  const column2Nodes: NodeData[] = [...Array(column2nNodes).keys()].map((i) => {
-    return {
-      id: String(i + column1nNodes),
-      label: 'Node ' + String(i + column1nNodes),
-    };
-  });
-
-  // Create links
-  // Not worried about exactly how many edges we're adding just yet since this is
-  // used for stories only. Adding color here to mimic what the visualization
-  // will do.
-  const links: LinkData[] = [...Array(column1nNodes * 2).keys()].map(() => {
-    return {
-      source: column1Nodes[Math.floor(Math.random() * column1nNodes)],
-      target: column2Nodes[Math.floor(Math.random() * column2nNodes)],
-      strokeWidth: Math.random() * 2,
-      color: Math.random() > 0.5 ? '0' : '1',
-    };
-  });
-
-  const nodes = column1Nodes.concat(column2Nodes);
-  const column1NodeIDs = column1Nodes.map((node) => node.id);
-  const column2NodeIDs = column2Nodes.map((node) => node.id);
-
-  return {
-    nodes,
-    links,
-    column1NodeIDs,
-    column2NodeIDs,
-  };
 }

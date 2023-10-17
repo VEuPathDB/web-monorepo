@@ -17,7 +17,7 @@ import domToImage from 'dom-to-image';
 
 export interface BipartiteNetworkProps {
   /** Bipartite network data */
-  data: BipartiteNetworkData;
+  data: BipartiteNetworkData | undefined;
   /** Name of column 1 */
   column1Name?: string;
   /** Name of column 2 */
@@ -32,6 +32,13 @@ export interface BipartiteNetworkProps {
   width?: number;
 }
 
+const EmptyBipartiteNetworkData: BipartiteNetworkData = {
+  column1NodeIDs: [],
+  column2NodeIDs: [],
+  nodes: [],
+  links: [],
+};
+
 // The BipartiteNetwork function draws a two-column network using visx. This component handles
 // the positioning of each column, and consequently the positioning of nodes and links.
 function BipartiteNetwork(
@@ -39,7 +46,7 @@ function BipartiteNetwork(
   ref: Ref<HTMLDivElement>
 ) {
   const {
-    data,
+    data = EmptyBipartiteNetworkData,
     column1Name,
     column2Name,
     containerStyles = { width: '100%', height: DEFAULT_CONTAINER_HEIGHT },

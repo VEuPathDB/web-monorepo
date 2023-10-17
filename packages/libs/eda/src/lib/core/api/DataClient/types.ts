@@ -392,8 +392,8 @@ export const BipartiteNetworkResponse = type({
     type({
       source: NodeData,
       target: NodeData,
-      strokeWidth: number,
-      color: string,
+      linkColor: string,
+      linkWeight: string,
     })
   ),
 });
