@@ -1,5 +1,5 @@
 import { useCollectionVariables, useStudyMetadata } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import { VariableCollectionDescriptor } from '../../../types/variable';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
 import { useConfigChangeHandler, assertComputationWithConfig } from '../Utils';
@@ -33,7 +33,7 @@ export type CorrelationAssayMetadataConfig = t.TypeOf<
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CorrelationAssayMetadataConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable1: VariableCollectionDescriptor,
   correlationMethod: t.string,
 });
 
@@ -63,8 +63,8 @@ function CorrelationAssayMetadataConfigDescriptionComponent({
 
   const { configuration } = computation.descriptor;
   const collectionVariable =
-    'collectionVariable' in configuration
-      ? configuration.collectionVariable
+    'collectionVariable1' in configuration
+      ? configuration.collectionVariable1
       : undefined;
   const correlationMethod =
     'correlationMethod' in configuration
@@ -145,7 +145,7 @@ export function CorrelationAssayMetadataConfiguration(
   const collectionVarItems = useMemo(() => {
     return collections.map((collectionVar) => ({
       value: {
-        variableId: collectionVar.id,
+        collectionId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
       display:
@@ -154,11 +154,11 @@ export function CorrelationAssayMetadataConfiguration(
   }, [collections]);
 
   const selectedCollectionVar = useMemo(() => {
-    if (configuration && 'collectionVariable' in configuration) {
+    if (configuration && 'collectionVariable1' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
-          entityId: configuration.collectionVariable.entityId,
+          collectionId: configuration.collectionVariable1.collectionId,
+          entityId: configuration.collectionVariable1.entityId,
         })
       );
       return selectedItem;
@@ -189,7 +189,7 @@ export function CorrelationAssayMetadataConfiguration(
                   : 'Select the data'
               }
               items={collectionVarItems}
-              onSelect={partial(changeConfigHandler, 'collectionVariable')}
+              onSelect={partial(changeConfigHandler, 'collectionVariable1')}
             />
           </div>
         </div>
