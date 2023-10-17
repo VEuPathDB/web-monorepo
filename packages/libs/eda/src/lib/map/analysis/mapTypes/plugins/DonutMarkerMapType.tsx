@@ -50,6 +50,7 @@ import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/Tabbe
 import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
+import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 
 const displayName = 'Donuts';
 
@@ -58,6 +59,7 @@ export const plugin: MapTypePlugin = {
   ConfigPanelComponent,
   MapLayerComponent,
   MapOverlayComponent,
+  MapTypeHeaderDetails,
 };
 
 function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
@@ -384,6 +386,31 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         zIndexForStackingContext={2}
       />
     </>
+  );
+}
+
+function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+  const { selectedVariable, binningMethod, selectedValues } =
+    props.configuration as PieMarkerConfiguration;
+  const markerDataResponse = useMarkerData({
+    studyId: props.studyId,
+    filters: props.filters,
+    studyEntities: props.studyEntities,
+    geoConfigs: props.geoConfigs,
+    boundsZoomLevel: props.appState.boundsZoomLevel,
+    selectedVariable,
+    selectedValues,
+    binningMethod,
+  });
+  return (
+    <MapTypeHeaderCounts
+      outputEntityId={selectedVariable.entityId}
+      totalEntityCount={props.totalCounts.value?.[selectedVariable.entityId]}
+      totalEntityInSubsetCount={
+        props.filteredCounts.value?.[selectedVariable.entityId]
+      }
+      visibleEntityCount={markerDataResponse.totalVisibleWithOverlayEntityCount}
+    />
   );
 }
 

@@ -1,4 +1,3 @@
-// TODO #106 Augment header w/ "visible" counts
 // TODO #106 Implement flyto, either in SemanticMarkers, or in a wrapper component
 //      set a new prop on appState to zoom to data; only on brand new analysis and when clicking on zoom-to-data button
 
@@ -63,7 +62,6 @@ import {
   DonutMarkerIcon,
   BubbleMarkerIcon,
 } from './MarkerConfiguration/icons';
-import { leastAncestralEntity } from '../../core/utils/data-element-constraints';
 import { AllAnalyses } from '../../workspace/AllAnalyses';
 import { getStudyId } from '@veupathdb/study-data-access/lib/shared/studies';
 import { isSavedAnalysis } from '../../core/utils/analysis';
@@ -84,6 +82,7 @@ import {
 import EZTimeFilter from './EZTimeFilter';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { defaultViewport } from '../constants';
+import { MapTypeMapLayerProps } from './mapTypes/types';
 
 enum MapSideNavItemLabels {
   Download = 'Download',
@@ -183,17 +182,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const activeMarkerConfiguration = markerConfigurations.find(
     (markerConfig) => markerConfig.type === activeMarkerConfigurationType
   );
-
-  const { variable: overlayVariable, entity: overlayEntity } =
-    findEntityAndVariable(activeMarkerConfiguration?.selectedVariable) ?? {};
-
-  const outputEntity = useMemo(() => {
-    if (geoConfig == null || geoConfig.entity.id == null) return;
-
-    return overlayEntity
-      ? leastAncestralEntity([overlayEntity, geoConfig.entity], studyEntities)
-      : geoConfig.entity;
-  }, [geoConfig, overlayEntity, studyEntities]);
 
   const updateMarkerConfigurations = useCallback(
     (updatedConfiguration: MarkerConfiguration) => {
@@ -314,14 +302,6 @@ function MapAnalysisImpl(props: ImplProps) {
   const subsetVariableAndEntity = useMemo(() => {
     return appState.subsetVariableAndEntity ?? getDefaultVariableDescriptor();
   }, [appState.subsetVariableAndEntity, getDefaultVariableDescriptor]);
-
-  const outputEntityTotalCount =
-    totalCounts.value && outputEntity ? totalCounts.value[outputEntity.id] : 0;
-
-  const outputEntityFilteredCount =
-    filteredCounts.value && outputEntity
-      ? filteredCounts.value[outputEntity.id]
-      : 0;
 
   function openSubsetPanelFromControlOutsideOfNavigation() {
     setActiveSideMenuId(MapSideNavItemLabels.Filter);
@@ -755,6 +735,21 @@ function MapAnalysisImpl(props: ImplProps) {
         const activeSideNavigationItemMenu =
           activePanelItem?.renderSidePanelDrawer(apps) ?? null;
 
+        const mapTypeMapLayerProps: MapTypeMapLayerProps = {
+          apps,
+          analysisState,
+          appState,
+          studyId,
+          filters: filtersIncludingTimeSlider,
+          studyEntities,
+          geoConfigs,
+          configuration: activeMarkerConfiguration,
+          updateConfiguration: updateMarkerConfigurations as any,
+          filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
+          totalCounts,
+          filteredCounts,
+        };
+
         return (
           <ShowHideVariableContextProvider>
             <DocumentationContainer>
@@ -769,15 +764,17 @@ function MapAnalysisImpl(props: ImplProps) {
               >
                 <MapHeader
                   analysisName={analysisState.analysis?.displayName}
-                  outputEntity={outputEntity}
                   filterList={<FilterChipListForHeader />}
                   siteInformation={props.siteInformationProps}
                   onAnalysisNameEdit={analysisState.setName}
                   studyName={studyRecord.displayName}
-                  totalEntityCount={outputEntityTotalCount}
-                  totalEntityInSubsetCount={outputEntityFilteredCount}
-                  visibleEntityCount={Infinity}
-                  overlayActive={overlayVariable != null}
+                  mapTypeDetails={
+                    activeMapTypePlugin?.MapTypeHeaderDetails && (
+                      <activeMapTypePlugin.MapTypeHeaderDetails
+                        {...mapTypeMapLayerProps}
+                      />
+                    )
+                  }
                 >
                   {/* child elements will be distributed across, 'hanging' below the header */}
                   {/*  Time slider component - only if prerequisite variable is available */}
@@ -846,20 +843,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   >
                     {activeMapTypePlugin?.MapLayerComponent && (
                       <activeMapTypePlugin.MapLayerComponent
-                        apps={apps}
-                        analysisState={analysisState}
-                        appState={appState}
-                        studyId={studyId}
-                        filters={filters}
-                        studyEntities={studyEntities}
-                        geoConfigs={geoConfigs}
-                        configuration={activeMarkerConfiguration}
-                        updateConfiguration={updateMarkerConfigurations as any}
-                        filtersIncludingViewport={
-                          filtersIncludingViewportAndTimeSlider
-                        }
-                        totalCounts={totalCounts}
-                        filteredCounts={filteredCounts}
+                        {...mapTypeMapLayerProps}
                       />
                     )}
                   </MapVEuMap>
@@ -867,20 +851,7 @@ function MapAnalysisImpl(props: ImplProps) {
 
                 {activeMapTypePlugin?.MapOverlayComponent && (
                   <activeMapTypePlugin.MapOverlayComponent
-                    apps={apps}
-                    analysisState={analysisState}
-                    appState={appState}
-                    studyId={studyId}
-                    filters={filtersIncludingTimeSlider}
-                    studyEntities={studyEntities}
-                    geoConfigs={geoConfigs}
-                    configuration={activeMarkerConfiguration}
-                    updateConfiguration={updateMarkerConfigurations as any}
-                    filtersIncludingViewport={
-                      filtersIncludingViewportAndTimeSlider
-                    }
-                    totalCounts={totalCounts}
-                    filteredCounts={filteredCounts}
+                    {...mapTypeMapLayerProps}
                   />
                 )}
 

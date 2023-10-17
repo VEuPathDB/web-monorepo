@@ -48,6 +48,7 @@ import { BoundsViewport } from '@veupathdb/components/lib/map/Types';
 import { GeoConfig } from '../../../../core/types/geoConfig';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
+import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
 
 const displayName = 'Bubbles';
 
@@ -56,6 +57,7 @@ export const plugin: MapTypePlugin = {
   ConfigPanelComponent: BubbleMapConfigurationPanel,
   MapLayerComponent: BubbleMapLayer,
   MapOverlayComponent: BubbleLegends,
+  MapTypeHeaderDetails,
 };
 
 function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
@@ -279,6 +281,31 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         zIndexForStackingContext={2}
       />
     </>
+  );
+}
+
+function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
+  const configuration = props.configuration as BubbleMarkerConfiguration;
+  const markerDataResponse = useMarkerData({
+    studyId: props.studyId,
+    filters: props.filters,
+    geoConfigs: props.geoConfigs,
+    boundsZoomLevel: props.appState.boundsZoomLevel,
+    configuration,
+  });
+  return (
+    <MapTypeHeaderCounts
+      outputEntityId={configuration.selectedVariable.entityId}
+      totalEntityCount={
+        props.totalCounts.value?.[configuration.selectedVariable.entityId]
+      }
+      totalEntityInSubsetCount={
+        props.filteredCounts.value?.[configuration.selectedVariable.entityId]
+      }
+      visibleEntityCount={
+        markerDataResponse.data?.totalVisibleWithOverlayEntityCount
+      }
+    />
   );
 }
 

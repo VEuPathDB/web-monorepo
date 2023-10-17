@@ -71,4 +71,8 @@ export interface MapTypePlugin {
    * Returns a ReactNode that is rendered on top of the map
    */
   MapOverlayComponent?: ComponentType<MapTypeMapLayerProps>;
+  /**
+   * Returns a ReactNode that is rendered in the map header
+   */
+  MapTypeHeaderDetails?: ComponentType<MapTypeMapLayerProps>;
 }
