@@ -3,17 +3,12 @@ import React, { ReactNode } from 'react';
 import {
   TypeOf,
   array,
-  boolean,
   intersection,
-  literal,
   number,
   type,
-  union,
   partial,
-  record,
   string,
   keyof,
-  any,
 } from 'io-ts';
 
 export interface UserDatasetMeta {
@@ -270,7 +265,7 @@ export const userDatasetDetail = intersection([
     visibility: visibilityOptions,
     name: string,
     origin: string,
-    // projectIDs: array(string),
+    projectIDs: array(string),
     status: statusDetails,
     created: string,
     files: array(type({ name: string, size: number })),
@@ -281,35 +276,6 @@ export const userDatasetDetail = intersection([
     sourceUrl: string,
     shares: array(shareDetails),
     importMessages: array(string),
-  }),
-]);
-
-interface FileUpload {
-  file: File;
-}
-
-const newUserDataset = intersection([
-  type({
-    name: string,
-    datasetType: type({
-      name: string,
-      version: string,
-    }),
-    origin: string,
-    projects: array(string),
-    dependencies: array(
-      type({
-        resourceDisplayName: string,
-        resourceIdentifier: string,
-        resourceVersion: string,
-      })
-    ),
-  }),
-  partial({
-    visibility: visibilityOptions,
-    summary: string,
-    description: string,
-    url: string,
   }),
 ]);
 
