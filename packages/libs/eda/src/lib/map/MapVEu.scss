@@ -27,8 +27,9 @@
     }
   }
 }
-/*  donut marker highlight */
-.highlight-donutmarker {
+/* donut and bubble markers highlight */
+.highlight-donutmarker,
+.highlight-bubblemarker {
   background-clip: padding-box;
   border-radius: 50%;
   /* add inset to reduce a gap between the element and the box-shadow */

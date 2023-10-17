@@ -647,7 +647,12 @@ function MapAnalysisImpl(props: ImplProps) {
             {...(markerProps as BubbleMarkerProps)}
           />
         ) : (
-          <ChartMarker {...(markerProps as ChartMarkerProps)} />
+          <ChartMarker
+            // pass two new props for multiple markers selection
+            selectedMarkers={selectedMarkers}
+            setSelectedMarkers={setSelectedMarkers}
+            {...(markerProps as ChartMarkerProps)}
+          />
         )
       ) || [],
     [markersData, markerType]
