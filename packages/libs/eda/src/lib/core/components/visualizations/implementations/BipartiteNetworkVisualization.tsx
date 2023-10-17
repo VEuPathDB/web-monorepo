@@ -30,6 +30,7 @@ import {
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
+import { fixVarIdLabel } from '../../../utils/visualization';
 import DataClient from '../../../api/DataClient';
 import { CorrelationAssayMetadataConfig } from '../../computations/plugins/correlationAssayMetadata';
 // end imports
@@ -135,8 +136,6 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
     ])
   );
 
-  console.log(data);
-
   // Assign color to links.
   // Color palettes live here in the frontend, but the backend knows that the edges should be two colors.
   // So we'll make it generalizable by mapping the values of the links.color prop to the palette.
@@ -151,26 +150,42 @@ function BipartiteNetworkViz(props: VisualizationProps<Options>) {
 
   const cleanedData = useMemo(() => {
     if (!data.value) return undefined;
+
+    // Find display labels
+    const nodesWithLabels = data.value.nodes.map((node) => {
+      // node.id is the entityId.variableId
+      const displayLabel = fixVarIdLabel(
+        node.id.split('.')[1],
+        node.id.split('.')[0],
+        entities
+      );
+
+      return {
+        id: node.id,
+        label: displayLabel,
+      };
+    });
     return {
       ...data.value,
+      nodes: nodesWithLabels,
       links: data.value.links.map((link) => {
         return {
-          ...link,
+          source: link.source,
+          target: link.target,
+          strokeWidth: Number(link.linkWeight),
           color: linkColorScale(
             link.linkColor.toString() ?? DEFAULT_LINK_COLOR_DATA
           ),
         };
       }),
     };
-  }, [data]);
+  }, [data, entities, linkColorScale]);
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
     plotContainerStyles,
     [cleanedData]
   );
-
-  console.log(cleanedData);
 
   const bipartiteNetworkProps: BipartiteNetworkProps = {
     data: cleanedData ?? undefined,
