@@ -505,6 +505,7 @@ function MapVEuMapEvents(props: MapVEuMapEventsProps) {
     click: () => {
       removeClassName('highlight-donutmarker');
       removeClassName('highlight-chartmarker');
+      removeClassName('highlight-bubblemarker');
       if (setSelectedMarkers != null) setSelectedMarkers([]);
     },
   });

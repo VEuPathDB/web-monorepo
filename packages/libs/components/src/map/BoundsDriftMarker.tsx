@@ -12,12 +12,20 @@ export interface markerDataProp {
     lat: number;
     lng: number;
   };
-  data: {
+  data?: {
     value: number;
     label: string;
     color?: string;
   }[];
-  markerType: 'donut' | 'chart';
+  // bubble marker's data is not array, so define it as bubbleData
+  bubbleData?: {
+    value: number;
+    diameter?: number;
+    colorValue?: number;
+    colorLabel?: string;
+    color?: string;
+  };
+  markerType: 'donut' | 'chart' | 'bubble';
 }
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
@@ -30,7 +38,7 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   // selectedMarkers setState
   setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
   // marker type to be used for highlighting markers
-  markerType?: 'donut' | 'chart';
+  markerType?: 'donut' | 'chart' | 'bubble';
   // marker data
   markerData?: markerDataProp;
 }
@@ -304,12 +312,15 @@ export default function BoundsDriftMarker({
     // hightlight donutmarker and highlight chartmarker
     if (
       e.target._icon.classList.contains('highlight-donutmarker') ||
-      e.target._icon.classList.contains('highlight-chartmarker')
+      e.target._icon.classList.contains('highlight-chartmarker') ||
+      e.target._icon.classList.contains('highlight-bubblemarker')
     ) {
       if (markerType === 'donut')
         e.target._icon.classList.remove('highlight-donutmarker');
       else if (markerType === 'chart')
         e.target._icon.classList.remove('highlight-chartmarker');
+      else if (markerType === 'bubble')
+        e.target._icon.classList.remove('highlight-bubblemarker');
 
       if (
         selectedMarkers != null &&
@@ -328,6 +339,8 @@ export default function BoundsDriftMarker({
         e.target._icon.classList.add('highlight-donutmarker');
       else if (markerType === 'chart')
         e.target._icon.classList.add('highlight-chartmarker');
+      else if (markerType === 'bubble')
+        e.target._icon.classList.add('highlight-bubblemarker');
 
       if (
         selectedMarkers != null &&

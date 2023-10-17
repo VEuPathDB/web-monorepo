@@ -52,14 +52,10 @@ export interface ChartMarkerProps
  * - accordingly icon size could be reduced
  */
 export default function ChartMarker(props: ChartMarkerProps) {
-  const {
-    html: svgHTML,
-    size,
-    sumValuesString,
-    // selectedMarkers state and setState
-    selectedMarkers,
-    setSelectedMarkers,
-  } = chartMarkerSVGIcon(props);
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
+  const { html: svgHTML, size, sumValuesString } = chartMarkerSVGIcon(props);
 
   // make a prop to pass to BoundsDriftMarker
   const markerData: markerDataProp = {
@@ -195,9 +191,6 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
   html: string;
   size: number;
   sumValuesString: string;
-  // selectedMarkers state and setState
-  selectedMarkers?: markerDataProp[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 } {
   const defaultLineColor = props.borderColor ?? '#7cb5ec'; // '#00000088' was also used before but unsure when
   const borderWidth = props.borderWidth ?? 1;
@@ -358,9 +351,6 @@ function chartMarkerSVGIcon(props: ChartMarkerStandaloneProps): {
     html: svgHTML,
     size: xSize + marginX + borderWidth,
     sumValuesString,
-    // selectedMarkers state and setState
-    selectedMarkers: props.selectedMarkers,
-    setSelectedMarkers: props.setSelectedMarkers,
   };
 }
 

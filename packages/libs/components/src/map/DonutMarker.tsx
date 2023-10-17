@@ -109,14 +109,14 @@ function makeArc(
  * this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
+  const selectedMarkers = props.selectedMarkers;
+  const setSelectedMarkers = props.setSelectedMarkers;
+
   const {
     html: svgHTML,
     size,
     markerLabel,
     sliceTextOverrides,
-    // selectedMarkers state and setState
-    selectedMarkers,
-    setSelectedMarkers,
   } = donutMarkerSVGIcon(props);
 
   // make a prop to pass to BoundsDriftMarker
@@ -248,9 +248,6 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
   size: number;
   sliceTextOverrides: string[];
   markerLabel: string;
-  // selectedMarkers state and setState
-  selectedMarkers?: markerDataProp[];
-  setSelectedMarkers?: React.Dispatch<React.SetStateAction<markerDataProp[]>>;
 } {
   const scale = props.markerScale ?? MarkerScaleDefault;
   const size = 40 * scale;
@@ -358,7 +355,5 @@ function donutMarkerSVGIcon(props: DonutMarkerStandaloneProps): {
     size,
     sliceTextOverrides,
     markerLabel: sumLabel,
-    selectedMarkers: props.selectedMarkers,
-    setSelectedMarkers: props.setSelectedMarkers,
   };
 }
