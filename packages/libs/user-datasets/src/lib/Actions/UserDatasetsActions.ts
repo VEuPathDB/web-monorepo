@@ -20,7 +20,12 @@ import {
 } from '../Service/UserDatasetWrappers';
 
 import { FILTER_BY_PROJECT_PREF } from '../Utils/project-filter';
-import { UserDataset, UserDatasetMeta, UserDatasetVDI } from '../Utils/types';
+import {
+  UserDataset,
+  UserDatasetDetails,
+  UserDatasetMeta,
+  UserDatasetVDI,
+} from '../Utils/types';
 
 export type Action =
   | DetailErrorAction
@@ -460,8 +465,7 @@ export function loadUserDatasetDetail(id: string) {
     detailLoading(id),
     // @ts-ignore
     wdkService.getUserDataset(id).then(
-      // @ts-ignore
-      (userDataset) => {
+      (userDataset: UserDatasetDetails) => {
         const transformedResponse =
           transformVdiResponseToLegacyResponse(userDataset);
         return detailReceived(id, transformedResponse);

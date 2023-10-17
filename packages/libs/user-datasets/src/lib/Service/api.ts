@@ -7,15 +7,14 @@ import {
 } from '@veupathdb/http-utils';
 
 import {
-  UserDatasetVDI,
   userDataset,
   UserDatasetMeta,
   NewUserDatasetMeta,
   NewUserDataset,
-  userDatasetDetail,
+  userDatasetDetails,
 } from '../Utils/types';
 
-import { array, type, TypeOf, string } from 'io-ts';
+import { array, string, type } from 'io-ts';
 
 const VDI_SERVICE = '/vdi-datasets';
 
@@ -89,7 +88,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       createJsonRequest({
         path: `${VDI_SERVICE}/${id}`,
         method: 'GET',
-        transformResponse: ioTransformer(userDatasetDetail),
+        transformResponse: ioTransformer(userDatasetDetails),
       })
     );
   };

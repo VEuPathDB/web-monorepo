@@ -244,9 +244,9 @@ export const userDataset = intersection([
     origin: string,
     projectIDs: array(string),
     status: statusDetails,
+    created: string,
     fileCount: number,
     fileSizeTotal: number,
-    created: string,
   }),
   partial({
     summary: string,
@@ -257,7 +257,7 @@ export const userDataset = intersection([
   }),
 ]);
 
-export const userDatasetDetail = intersection([
+export const userDatasetDetails = intersection([
   type({
     datasetID: string,
     owner: ownerDetails,
@@ -298,3 +298,4 @@ export interface NewUserDatasetMeta {
 }
 
 export type UserDatasetVDI = TypeOf<typeof userDataset>;
+export type UserDatasetDetails = TypeOf<typeof userDatasetDetails>;
