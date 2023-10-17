@@ -1,11 +1,4 @@
-import { Viewport } from '@veupathdb/components/lib/map/MapVEuMap';
 import { CSSProperties } from 'react';
-
-// export default viewport for custom zoom control
-export const defaultViewport: Viewport = {
-  center: [0, 0],
-  zoom: 1,
-};
 
 export const mapSidePanelBackgroundColor = 'white';
 export const mapSidePanelBorder: CSSProperties['border'] = '1px solid #D9D9D9';

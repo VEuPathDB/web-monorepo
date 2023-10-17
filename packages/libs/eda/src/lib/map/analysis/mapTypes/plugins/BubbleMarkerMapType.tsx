@@ -2,7 +2,10 @@ import BubbleMarker, {
   BubbleMarkerProps,
 } from '@veupathdb/components/lib/map/BubbleMarker';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
-import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
+import {
+  defaultAnimationDuration,
+  defaultViewport,
+} from '@veupathdb/components/lib/map/config/map';
 import { getValueToGradientColorMapper } from '@veupathdb/components/lib/types/plots/addOns';
 import { TabbedDisplayProps } from '@veupathdb/coreui/lib/components/grids/TabbedDisplay';
 import { capitalize, sumBy } from 'lodash';
@@ -181,16 +184,24 @@ function BubbleMapLayer(props: MapTypeMapLayerProps) {
   if (markersData.error)
     return <MapFloatingErrorDiv error={markersData.error} />;
 
-  const markers =
-    markersData.data?.markersData.map((markerProps) => (
-      <BubbleMarker {...markerProps} />
-    )) ?? [];
+  const markers = markersData.data?.markersData.map((markerProps) => (
+    <BubbleMarker {...markerProps} />
+  ));
 
   return (
     <>
       {markersData.isFetching && <Spinner />}
       {markers && (
-        <SemanticMarkers markers={markers} animation={defaultAnimation} />
+        <SemanticMarkers
+          markers={markers}
+          animation={defaultAnimation}
+          flyToMarkers={
+            !markersData.isFetching &&
+            markersData.data?.boundsZoomLevel?.zoomLevel ===
+              defaultViewport.zoom
+          }
+          flyToMarkersDelay={500}
+        />
       )}
     </>
   );
@@ -651,6 +662,7 @@ function useMarkerData(props: DataProps) {
         markersData: finalMarkersData,
         totalVisibleWithOverlayEntityCount,
         totalVisibleEntityCount,
+        boundsZoomLevel,
       };
     },
     enabled: !disabled,

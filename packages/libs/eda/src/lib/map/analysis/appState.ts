@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { AnalysisState, useGetDefaultVariableDescriptor } from '../../core';
 import { VariableDescriptor } from '../../core/types/variable';
 import { useGetDefaultTimeVariableDescriptor } from './hooks/eztimeslider';
-import { defaultViewport } from '../constants';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 
 const LatLngLiteral = t.type({ lat: t.number, lng: t.number });
 

@@ -1,6 +1,3 @@
-// TODO #106 Implement flyto, either in SemanticMarkers, or in a wrapper component
-//      set a new prop on appState to zoom to data; only on brand new analysis and when clicking on zoom-to-data button
-
 import { useCallback, useMemo, useState } from 'react';
 
 import {
@@ -81,8 +78,8 @@ import {
 
 import EZTimeFilter from './EZTimeFilter';
 import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
-import { defaultViewport } from '../constants';
 import { MapTypeMapLayerProps } from './mapTypes/types';
+import { defaultViewport } from '@veupathdb/components/lib/map/config/map';
 
 enum MapSideNavItemLabels {
   Download = 'Download',

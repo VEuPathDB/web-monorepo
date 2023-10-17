@@ -21,7 +21,10 @@ import ChartMarker, {
   ChartMarkerProps,
   ChartMarkerStandalone,
 } from '@veupathdb/components/lib/map/ChartMarker';
-import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
+import {
+  defaultAnimationDuration,
+  defaultViewport,
+} from '@veupathdb/components/lib/map/config/map';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
@@ -327,7 +330,15 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     <>
       {markerData.isFetching && <Spinner />}
       {markers && (
-        <SemanticMarkers markers={markers} animation={defaultAnimation} />
+        <SemanticMarkers
+          markers={markers}
+          animation={defaultAnimation}
+          flyToMarkers={
+            !markerData.isFetching &&
+            markerData.boundsZoomLevel?.zoomLevel === defaultViewport.zoom
+          }
+          flyToMarkersDelay={500}
+        />
       )}
     </>
   );
@@ -614,6 +625,7 @@ function useMarkerData(props: MarkerDataProps) {
     totalVisibleEntityCount,
     legendItems,
     overlayConfig,
+    boundsZoomLevel: props.boundsZoomLevel,
   };
 }
 

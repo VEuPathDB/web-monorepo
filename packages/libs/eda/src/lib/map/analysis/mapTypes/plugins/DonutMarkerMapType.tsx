@@ -3,7 +3,10 @@ import DonutMarker, {
   DonutMarkerStandalone,
 } from '@veupathdb/components/lib/map/DonutMarker';
 import SemanticMarkers from '@veupathdb/components/lib/map/SemanticMarkers';
-import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
+import {
+  defaultAnimationDuration,
+  defaultViewport,
+} from '@veupathdb/components/lib/map/config/map';
 import {
   ColorPaletteDefault,
   gradientSequentialColorscaleMap,
@@ -303,7 +306,16 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     <>
       {markerDataResponse.isFetching && <Spinner />}
       {markers && (
-        <SemanticMarkers markers={markers} animation={defaultAnimation} />
+        <SemanticMarkers
+          markers={markers}
+          animation={defaultAnimation}
+          flyToMarkers={
+            !markerDataResponse.isFetching &&
+            markerDataResponse.boundsZoomLevel?.zoomLevel ===
+              defaultViewport.zoom
+          }
+          flyToMarkersDelay={500}
+        />
       )}
     </>
   );
@@ -429,6 +441,7 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     totalVisibleWithOverlayEntityCount,
     legendItems,
     overlayConfig,
+    boundsZoomLevel,
   } = markerData;
 
   const vocabulary =
@@ -458,6 +471,7 @@ function useMarkerData(props: DistributionMarkerDataProps) {
     totalVisibleEntityCount,
     legendItems,
     overlayConfig,
+    boundsZoomLevel,
   };
 }
 

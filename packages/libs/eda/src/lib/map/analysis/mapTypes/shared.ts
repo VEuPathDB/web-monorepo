@@ -292,6 +292,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
         totalVisibleEntityCount,
         legendItems,
         overlayConfig,
+        boundsZoomLevel,
       };
     },
     enabled: overlayConfig != null,
