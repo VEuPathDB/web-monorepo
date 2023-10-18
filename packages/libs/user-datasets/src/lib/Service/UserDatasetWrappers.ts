@@ -8,7 +8,7 @@ import {
 import { EpicDependencies } from '@veupathdb/wdk-client/lib/Core/Store';
 import { ActionThunk } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import { UserDataset, UserDatasetMeta } from '../Utils/types';
+import { UserDataset } from '../Utils/types';
 
 export type UserDatasetsCompatibleWdkService = WdkService &
   {
@@ -30,25 +30,6 @@ const userIdsByEmailDecoder = record({
 });
 
 export const userDatasetsServiceWrappers = {
-  // getCurrentUserDatasets: (wdkService: WdkService) => () =>
-  //   wdkService._fetchJson<UserDataset[]>(
-  //     'get',
-  //     '/users/current/user-datasets?expandDetails=true'
-  //   ),
-  // getUserDataset: (wdkService: WdkService) => (id: number) =>
-  //   wdkService._fetchJson<UserDataset>(
-  //     'get',
-  //     `/users/current/user-datasets/${id}`
-  //   ),
-  // updateUserDataset:
-  //   (wdkService: WdkService) => (id: number | string, meta: UserDatasetMeta) =>
-  //     wdkService._fetchJson<void>(
-  //       'put',
-  //       `/users/current/user-datasets/${id}/meta`,
-  //       JSON.stringify(meta)
-  //     ),
-  // removeUserDataset: (wdkService: WdkService) => (id: number | string) =>
-  //   wdkService._fetchJson<void>('delete', `/users/current/user-datasets/${id}`),
   editUserDatasetSharing:
     (wdkService: WdkService) =>
     (
@@ -77,20 +58,6 @@ export const userDatasetsServiceWrappers = {
         '/users/current/user-dataset-sharing',
         delta
       );
-    },
-  getUserDatasetDownloadUrl:
-    (wdkService: WdkService) =>
-    (datasetId: number | string, filename: string) => {
-      if (typeof datasetId !== 'number' && typeof datasetId !== 'string')
-        throw new TypeError(
-          `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
-        );
-      if (typeof filename !== 'string')
-        throw new TypeError(
-          `Can't build downloadUrl; invalid filename given (${filename}) [${typeof filename}]`
-        );
-
-      return `${wdkService.serviceUrl}/users/current/user-datasets/${datasetId}/user-datafiles/${filename}`;
     },
   getUserIdsByEmail: (wdkService: WdkService) => (emails: string[]) => {
     return wdkService.sendRequest(userIdsByEmailDecoder, {

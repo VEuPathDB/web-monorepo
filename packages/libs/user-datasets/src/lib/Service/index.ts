@@ -8,9 +8,7 @@ import {
   makeUserDatasetUploadServiceWrappers,
 } from './UserDatasetUploadWrappers';
 
-import { UserDatasetApi } from './api';
-
-const VDI_SERVICE_BASE_URL = 'http://localhost:8080';
+import { UserDatasetApi, VDI_SERVICE_BASE_URL } from './api';
 
 export function wrapWdkService(
   serviceConfig: UserDatasetUploadServiceConfig | undefined,

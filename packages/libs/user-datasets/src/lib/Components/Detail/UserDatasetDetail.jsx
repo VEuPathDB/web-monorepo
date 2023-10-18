@@ -13,8 +13,6 @@ import { bytesToHuman } from '@veupathdb/wdk-client/lib/Utils/Converters';
 
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
-import { isUserDatasetsCompatibleWdkService } from '../../Service/UserDatasetWrappers';
-
 import SharingModal from '../Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from '../UserDatasetStatus';
 import { makeClassifier, normalizePercentage } from '../UserDatasetUtils';
@@ -387,34 +385,25 @@ class UserDatasetDetail extends React.Component {
         name: 'Download',
         width: '130px',
         headingStyle: { textAlign: 'center' },
-        renderCell({ row }) {
-          const { name } = row;
-
-          const downloadUrl = !isUserDatasetsCompatibleWdkService(wdkService)
-            ? undefined
-            : wdkService.getUserDatasetDownloadUrl(id, name);
-
-          const downloadAvailable = downloadUrl != null;
+        renderCell() {
+          const downloadAvailable = 'getUserDatasetFiles' in wdkService;
 
           return (
-            <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noreferrer"
-              title="Download this file"
+            <button
+              className="btn btn-info"
+              disabled={!downloadAvailable}
+              title={
+                downloadAvailable
+                  ? 'Download this file'
+                  : 'This download is unavailable. Please contact us if this problem persists.'
+              }
+              onClick={(e) => {
+                e.preventDefault();
+                wdkService.getUserDatasetFiles(id);
+              }}
             >
-              <button
-                className="btn btn-info"
-                disabled={!downloadAvailable}
-                title={
-                  downloadAvailable
-                    ? undefined
-                    : 'This download is unavailable. Please contact us if this problem persists.'
-                }
-              >
-                <Icon fa="save" className="left-side" /> Download
-              </button>
-            </a>
+              <Icon fa="save" className="left-side" /> Download
+            </button>
           );
         },
       },
