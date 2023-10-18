@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import {
-  isTranscripFilterEnabled,
+  isTranscriptFilterEnabled,
   requestTranscriptFilterUpdate,
   isInBasketFilterEnabled,
 } from '../../util/transcriptFilters';
@@ -137,7 +137,7 @@ function TranscriptViewFilter({
 
 const ConnectedTranscriptViewFilter = connect(
   (state, props) => ({
-    isEnabled: isTranscripFilterEnabled(state, { viewId: props.viewId }),
+    isEnabled: isTranscriptFilterEnabled(state, { viewId: props.viewId }),
     inBasketFilterEnabled: isInBasketFilterEnabled(state, {
       viewId: props.viewId,
     }),

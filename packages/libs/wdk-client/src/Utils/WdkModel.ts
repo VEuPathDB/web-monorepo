@@ -46,7 +46,7 @@ export interface Reporter {
   name: string;
   type: string;
   displayName: string;
-  description: string;
+  description?: string;
   isInReport: boolean;
   scopes: string[];
 }
