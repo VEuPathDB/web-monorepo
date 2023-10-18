@@ -23,7 +23,7 @@ export const reporterDecoder: Decode.Decoder<Reporter> = Decode.combine(
   Decode.field('name', Decode.string),
   Decode.field('type', Decode.string),
   Decode.field('displayName', Decode.string),
-  Decode.field('description', Decode.string),
+  Decode.field('description', Decode.optional(Decode.string)),
   Decode.field('isInReport', Decode.boolean),
   Decode.field('scopes', Decode.arrayOf(Decode.string))
 );

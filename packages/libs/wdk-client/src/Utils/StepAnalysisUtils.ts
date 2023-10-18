@@ -14,7 +14,7 @@ import {
   string,
 } from './Json';
 import { ParameterGroup, ParameterValues } from './WdkModel';
-import { paramGroupDecoder } from '../Service/Mixins/SearchesService';
+import { paramGroupDecoder } from '../Service/Decoders/QuestionDecoders';
 import { ValidStepValidation, InvalidStepValidation } from '../Utils/WdkUser';
 
 export interface StepAnalysis {
