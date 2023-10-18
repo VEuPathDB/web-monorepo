@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import EzTimeFilterWidget, {
   EZTimeFilterDataProp,
@@ -122,6 +122,38 @@ export default function EZTimeFilter({
     [getTimeSliderData]
   );
 
+  // for the (literal) edge case where a user-selected time range is no
+  // longer displayable on the timeline, cancel or trim the selectedRange
+  useEffect(() => {
+    if (timeFilterData != null && selectedRange != null) {
+      const leftmostBin = timeFilterData[0];
+      const rightmostBin = timeFilterData[timeFilterData.length - 1];
+      if (leftmostBin != null && rightmostBin != null) {
+        if (
+          selectedRange.end < leftmostBin.x ||
+          selectedRange.start > rightmostBin.x
+        ) {
+          updateConfig({ selectedRange: undefined, variable, active });
+        }
+        if (selectedRange.start < leftmostBin.x) {
+          updateConfig({
+            selectedRange: { ...selectedRange, start: leftmostBin.x },
+            variable,
+            active,
+          });
+        }
+        console.log({ selectedRange, rightmostBin });
+        if (selectedRange.end > rightmostBin.x) {
+          updateConfig({
+            selectedRange: { ...selectedRange, end: rightmostBin.x },
+            variable,
+            active,
+          });
+        }
+      }
+    }
+  }, [timeFilterData, selectedRange, variable, active]);
+
   // set time slider width and y position
   const timeFilterWidth = 750;
 
@@ -170,7 +202,10 @@ export default function EZTimeFilter({
             Apply a temporary time-based filter by dragging a window across the
             graphic
           </li>
-          <li>Click once on the graphic to remove the window</li>
+          <li>
+            Click once on the graphic outside the window to cancel the temporary
+            filter
+          </li>
         </ul>
       </p>
       <p>

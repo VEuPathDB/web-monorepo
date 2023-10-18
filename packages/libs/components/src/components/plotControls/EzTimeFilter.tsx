@@ -159,7 +159,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   // this makes/fakes the brush as a controlled component
   const brushKey =
     initialBrushPosition != null
-      ? initialBrushPosition.start + ':' + initialBrushPosition.end
+      ? initialBrushPosition.start.x + ':' + initialBrushPosition.end.x
       : 'no_brush';
 
   return (
