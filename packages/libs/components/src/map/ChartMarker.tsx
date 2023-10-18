@@ -61,7 +61,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
   const markerData: markerDataProp = {
     id: props.id,
     latLng: props.position,
-    data: props.data,
+    // data: props.data,
     markerType: 'chart',
   };
 

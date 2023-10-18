@@ -123,7 +123,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   const markerData: markerDataProp = {
     id: props.id,
     latLng: props.position,
-    data: props.data,
+    // data: props.data,
     markerType: 'donut',
   };
 
