@@ -21,6 +21,7 @@ import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { SiteInformationProps, mapNavigationBackgroundColor } from '..';
+import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
 
 interface Props {
   studyId: string;
@@ -138,7 +139,7 @@ export default function EZTimeFilter({
   // (easily) centering the variable picker requires two same-width divs either side
   const sideElementStyle = { width: '70px' };
 
-  const sliderHeight = minimized ? 55 : 75;
+  const sliderHeight = minimized ? 50 : 75;
 
   const background =
     siteName === 'VectorBase'
@@ -150,13 +151,37 @@ export default function EZTimeFilter({
   const boxShadow =
     'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,rgba(0, 0, 0, 0.3) 0px 1px 3px -1px';
 
+  const helpText = (
+    <div>
+      <p>
+        This shows the temporal distribution of the data with filters applied.
+        Black bars show when in time there is data. You can quickly apply
+        time-based windowing on filtered data by dragging across the graphic.
+        Click once on the graphic to remove the window. The{' '}
+        <i>{variableMetadata?.entity.displayName}</i> variable{' '}
+        <b>{variableMetadata?.variable.displayName}</b> is being used. You can
+        change to another variable (if available) by clicking on the arrow tab
+        to expand the panel. The expanded panel also offers a toggle for
+        enabling/disabling the time window.
+      </p>
+      {minimized && !active && (
+        <p>
+          <b>
+            This control is currently disabled. To enable it, expand the panel
+            with the arrow tab and click on the toggle.
+          </b>
+        </p>
+      )}
+    </div>
+  );
+
   // if no variable in a study is suitable to time slider, do not show time slider
   return variable != null && variableMetadata != null ? (
     <div>
       <div
         style={{
           width: timeFilterWidth,
-          height: sliderHeight + (minimized ? 25 : 45),
+          height: sliderHeight + (minimized ? 5 : 45),
           background,
           borderRadius,
           boxShadow,
@@ -188,6 +213,9 @@ export default function EZTimeFilter({
           ) : (
             <Spinner size={25} />
           )}
+          <div style={{ position: 'absolute', right: 2, top: 5 }}>
+            <HelpIcon children={helpText} />
+          </div>
         </div>
         <div
           style={{
@@ -197,11 +225,7 @@ export default function EZTimeFilter({
             alignItems: 'center',
           }}
         >
-          {minimized /* just show the variable name as text */ ? (
-            <div style={{ ...(active ? {} : { color: '#aaa' }) }}>
-              {variableMetadata.variable.displayName}
-            </div>
-          ) : (
+          {!minimized && (
             <>
               <div style={sideElementStyle}></div>
               <div style={{}}>
