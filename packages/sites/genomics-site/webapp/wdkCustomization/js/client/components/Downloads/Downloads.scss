@@ -4,9 +4,13 @@
   }
 
   &-Instructions {
-    font-size: 1.2em;
-    margin: 0.5em 0;
+    font-size: 1.1em;
+    margin: 1em 0 2em 0;
     color: #444;
+  }
+
+  &-Instructions li {
+    padding-bottom: 0.3em;
   }
 
   &-Filter-Container {

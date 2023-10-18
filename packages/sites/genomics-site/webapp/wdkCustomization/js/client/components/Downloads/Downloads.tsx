@@ -67,8 +67,30 @@ export function Downloads() {
     <div className="Downloads">
       <h1>Download Data Files</h1>
       <p className="Downloads-Instructions">
-        Use the filters to reduce the table below. Use the table to select the
-        files to download.
+        <ul>
+          <li>
+            Use this tool to download genome scale files such as genome.fasta or
+            GFF files.
+          </li>
+          <li>
+            All files are available in the results table below. The result can
+            be limited by Organism and/or Data File Properties.
+          </li>
+          <li>
+            To filter the result by Data File Properties, choose one or more
+            categories (left) and/or values (right) that define the files you
+            need.
+          </li>
+          <li>
+            Download a single file from the results table by clicking the link
+            in the ‘File’ column, or multiple files using the checkboxes in the
+            first column.
+          </li>
+          <li>
+            To access older files please see the{' '}
+            <a href="/common/downloads/">Download Archive</a>.
+          </li>
+        </ul>
       </p>
       <div className="Downloads-Filter-Container">
         <DownloadsFilter
