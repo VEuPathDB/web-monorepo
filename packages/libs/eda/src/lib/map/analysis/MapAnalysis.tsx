@@ -57,7 +57,11 @@ import { useToggleStarredVariable } from '../../core/hooks/starredVariables';
 import { filtersFromBoundingBox } from '../../core/utils/visualization';
 import { EditLocation, InfoOutlined, Notes, Share } from '@material-ui/icons';
 import { ComputationAppOverview } from '../../core/types/visualization';
-import { useStandaloneMapMarkers } from './hooks/standaloneMapMarkers';
+import {
+  ChartMarkerPropsWithCounts,
+  DonutMarkerPropsWithCounts,
+  useStandaloneMapMarkers,
+} from './hooks/standaloneMapMarkers';
 import { useStandaloneVizPlugins } from './hooks/standaloneVizPlugins';
 import geohashAnimation from '@veupathdb/components/lib/map/animation_functions/geohash';
 import { defaultAnimationDuration } from '@veupathdb/components/lib/map/config/map';
@@ -107,6 +111,7 @@ import DonutMarker, {
 import ChartMarker, {
   ChartMarkerProps,
   ChartMarkerStandalone,
+  getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import { sharedStandaloneMarkerProperties } from './MarkerConfiguration/CategoricalMarkerPreview';
 import { mFormatter, kFormatter } from '../../core/utils/big-number-formatters';
@@ -269,6 +274,8 @@ function MapAnalysisImpl(props: ImplProps) {
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
   const history = useHistory();
+  const [hideVizInputsAndControls, setHideVizInputsAndControls] =
+    useState(false);
 
   // FIXME use the sharingUrl prop to construct this
   const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
@@ -541,20 +548,31 @@ function MapAnalysisImpl(props: ImplProps) {
       !Array.isArray(previewMarkerData[0].data)
     )
       return;
-    const initialDataObject = previewMarkerData[0].data.map((data) => ({
-      label: data.label,
-      value: 0,
-      ...(data.color ? { color: data.color } : {}),
-    }));
     const typedData =
       markerType === 'pie'
-        ? ([...previewMarkerData] as DonutMarkerProps[])
-        : ([...previewMarkerData] as ChartMarkerProps[]);
-    const finalData = typedData.reduce(
+        ? (previewMarkerData as DonutMarkerPropsWithCounts[])
+        : (previewMarkerData as ChartMarkerPropsWithCounts[]);
+    const initialDataObject = typedData[0].data.map((data) => ({
+      label: data.label,
+      value: 0,
+      count: 0,
+      ...(data.color ? { color: data.color } : {}),
+    }));
+    /**
+     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
+     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
+     * previews, let's just overwrite the value property with the count property.
+     *
+     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
+     * needs nor consumes.
+     */
+    const dataWithCountsOnly = typedData.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
-          value: data.value + prevData[index].value,
+          // here's the overwrite mentioned in the above comment
+          value: data.count + prevData[index].count,
+          count: data.count + prevData[index].count,
           ...('color' in prevData[index]
             ? { color: prevData[index].color }
             : 'color' in data
@@ -563,25 +581,32 @@ function MapAnalysisImpl(props: ImplProps) {
         })),
       initialDataObject
     );
+    // NOTE: we could just as well reduce using c.value since we overwrite the value prop with the count data
+    const totalCount = dataWithCountsOnly.reduce((p, c) => p + c.count, 0);
     if (markerType === 'pie') {
       return (
         <DonutMarkerStandalone
-          data={finalData}
-          markerLabel={kFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+          data={dataWithCountsOnly}
+          markerLabel={kFormatter(totalCount)}
           {...sharedStandaloneMarkerProperties}
         />
       );
     } else {
+      const dependentAxisLogScale =
+        activeMarkerConfiguration &&
+        'dependentAxisLogScale' in activeMarkerConfiguration
+          ? activeMarkerConfiguration.dependentAxisLogScale
+          : false;
       return (
         <ChartMarkerStandalone
-          data={finalData}
-          markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
-          dependentAxisLogScale={
-            activeMarkerConfiguration &&
-            'dependentAxisLogScale' in activeMarkerConfiguration
-              ? activeMarkerConfiguration.dependentAxisLogScale
-              : false
-          }
+          data={dataWithCountsOnly}
+          markerLabel={mFormatter(totalCount)}
+          dependentAxisLogScale={dependentAxisLogScale}
+          // pass in an axis range to mimic map markers, especially in log scale
+          dependentAxisRange={getChartMarkerDependentAxisRange(
+            dataWithCountsOnly,
+            dependentAxisLogScale
+          )}
           {...sharedStandaloneMarkerProperties}
         />
       );
@@ -896,6 +921,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   plugins={plugins}
                   geoConfigs={geoConfigs}
                   mapType={activeMarkerConfigurationType}
+                  setHideVizInputsAndControls={setHideVizInputsAndControls}
                 />
               ),
             },
@@ -1421,6 +1447,8 @@ function MapAnalysisImpl(props: ImplProps) {
                       DraggablePanelIds.VIZ_PANEL
                     )}
                     additionalRenderCondition={areMapTypeAndActiveVizCompatible}
+                    hideInputsAndControls={hideVizInputsAndControls}
+                    setHideInputsAndControls={setHideVizInputsAndControls}
                   />
                 )}
 

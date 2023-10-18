@@ -9,6 +9,7 @@ export interface LayoutProps {
   plotStyles?: CSSProperties;
   tableGroupNode: ReactNode;
   tableGroupStyles?: CSSProperties;
+  hideControls?: boolean;
 }
 
 export type StyleProps<P> = Pick<P, keyof P & `${string}Styles`>;

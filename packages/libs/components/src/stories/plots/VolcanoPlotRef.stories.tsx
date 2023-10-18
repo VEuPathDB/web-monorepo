@@ -17,7 +17,7 @@ export default {
 interface TemplateProps {
   data: VEuPathDBVolcanoPlotData;
   markerBodyOpacity: number;
-  log2FoldChangeThreshold: number;
+  effectSizeThreshold: number;
   significanceThreshold: number;
   adjustedPValueGate: number;
   comparisonLabels?: string[];
@@ -27,23 +27,29 @@ interface TemplateProps {
 // Generate fake data
 interface VEuPathDBVolcanoPlotData {
   volcanoplot: {
-    log2foldChange: string[];
-    pValue: string[];
-    adjustedPValue: string[];
-    pointID: string[];
+    effectSizeLabel: string;
+    statistics: {
+      effectSize: string[];
+      pValue: string[];
+      adjustedPValue: string[];
+      pointID: string[];
+    };
   };
 }
 const nPoints = 20;
 const data: VEuPathDBVolcanoPlotData = {
   volcanoplot: {
-    log2foldChange: range(1, nPoints).map((p) =>
-      String(Math.log2(Math.abs(getNormallyDistributedRandomNumber(0, 5))))
-    ),
-    pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
-    adjustedPValue: range(1, nPoints).map((p) =>
-      String(nPoints * Math.random())
-    ),
-    pointID: range(1, nPoints).map((p) => String(p)),
+    effectSizeLabel: 'log2FoldChange',
+    statistics: {
+      effectSize: range(1, nPoints).map((p) =>
+        String(Math.log2(Math.abs(getNormallyDistributedRandomNumber(0, 5))))
+      ),
+      pValue: range(1, nPoints).map((p) => String(Math.random() / 2)),
+      adjustedPValue: range(1, nPoints).map((p) =>
+        String(nPoints * Math.random())
+      ),
+      pointID: range(1, nPoints).map((p) => String(p)),
+    },
   },
 };
 
@@ -65,46 +71,54 @@ const Template: Story<TemplateProps> = (args) => {
   }, []);
 
   // Wrangle data to get it into the nice form for plot component.
-  const volcanoDataPoints: VolcanoPlotData = data.volcanoplot.log2foldChange
-    .map((l2fc, index) => {
-      return {
-        log2foldChange: l2fc,
-        pValue: data.volcanoplot.pValue[index],
-        adjustedPValue: data.volcanoplot.adjustedPValue[index],
-        pointID: data.volcanoplot.pointID[index],
-      };
-    })
-    .map((d) => ({
-      ...d,
-      pointID: d.pointID ? [d.pointID] : undefined,
-      significanceColor: assignSignificanceColor(
-        Number(d.log2foldChange),
-        Number(d.pValue),
-        args.significanceThreshold,
-        args.log2FoldChangeThreshold,
-        significanceColors
-      ),
-    }));
+  const volcanoDataPoints: VolcanoPlotData = {
+    effectSizeLabel: data.volcanoplot.effectSizeLabel,
+    statistics: data.volcanoplot.statistics.effectSize.map(
+      (effectSize, index) => {
+        return {
+          effectSize: effectSize,
+          pValue: data.volcanoplot.statistics.pValue[index],
+          adjustedPValue: data.volcanoplot.statistics.adjustedPValue[index],
+          pointID: data.volcanoplot.statistics.pointID[index],
+          significanceColor: assignSignificanceColor(
+            Number(effectSize),
+            Number(data.volcanoplot.statistics.pValue[index]),
+            args.significanceThreshold,
+            args.effectSizeThreshold,
+            significanceColors
+          ),
+        };
+      }
+    ),
+  };
 
   const rawDataMinMaxValues = {
     x: {
       min:
-        Math.min(...volcanoDataPoints.map((d) => Number(d.log2foldChange))) ??
-        0,
+        Math.min(
+          ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+        ) ?? 0,
       max:
-        Math.max(...volcanoDataPoints.map((d) => Number(d.log2foldChange))) ??
-        0,
+        Math.max(
+          ...volcanoDataPoints.statistics.map((d) => Number(d.effectSize))
+        ) ?? 0,
     },
     y: {
-      min: Math.min(...volcanoDataPoints.map((d) => Number(d.pValue))) ?? 0,
-      max: Math.max(...volcanoDataPoints.map((d) => Number(d.pValue))) ?? 0,
+      min:
+        Math.min(
+          ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+        ) ?? 0,
+      max:
+        Math.max(
+          ...volcanoDataPoints.statistics.map((d) => Number(d.pValue))
+        ) ?? 0,
     },
   };
 
   const volcanoPlotProps: VolcanoPlotProps = {
     data: volcanoDataPoints,
     significanceThreshold: args.significanceThreshold,
-    log2FoldChangeThreshold: args.log2FoldChangeThreshold,
+    effectSizeThreshold: args.effectSizeThreshold,
     markerBodyOpacity: args.markerBodyOpacity,
     comparisonLabels: args.comparisonLabels,
     rawDataMinMaxValues,
@@ -128,7 +142,7 @@ export const ToImage = Template.bind({});
 ToImage.args = {
   data: data,
   significanceThreshold: 0.05,
-  log2FoldChangeThreshold: 2,
+  effectSizeThreshold: 2,
   markerBodyOpacity: 0.9,
   comparisonLabels: ['a', 'b'],
 };
