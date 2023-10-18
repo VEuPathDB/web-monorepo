@@ -40,7 +40,7 @@ export default function BubbleMarker(props: BubbleMarkerProps) {
     id: props.id,
     latLng: props.position,
     // use bubbleData, not data for bubble marker
-    bubbleData: props.data,
+    // bubbleData: props.data,
     markerType: 'bubble',
   };
 
