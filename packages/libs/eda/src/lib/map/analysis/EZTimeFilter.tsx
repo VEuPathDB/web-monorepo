@@ -157,23 +157,42 @@ export default function EZTimeFilter({
     'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,rgba(0, 0, 0, 0.3) 0px 1px 3px -1px';
 
   const helpText = (
-    <div>
+    <div style={{ paddingTop: 10 }}>
+      <H6>Timeline help</H6>
       <p>
-        This shows the temporal distribution of the data with filters applied.
-        Black bars show when in time there is data. You can quickly apply
-        time-based windowing on filtered data by dragging across the graphic.
-        Click once on the graphic to remove the window. The{' '}
-        <i>{variableMetadata?.entity.displayName}</i> variable{' '}
-        <b>{variableMetadata?.variable.displayName}</b> is being used. You can
-        change to another variable (if available) by clicking on the arrow tab
-        to expand the panel. The expanded panel also offers a toggle for
-        enabling/disabling the time window.
+        <ul>
+          <li>Black bars indicate when in time there is available data</li>
+          <li>Permanent filters are applied if applicable</li>
+          <li>
+            You currently have {filters?.length} active permanent filter(s)
+          </li>
+          <li>
+            Apply a temporary time-based filter by dragging a window across the
+            graphic
+          </li>
+          <li>Click once on the graphic to remove the window</li>
+        </ul>
+      </p>
+      <p>
+        Expand the panel with the{' '}
+        <ChevronRight transform={'matrix(0,1,-1,0,0,0)'} /> tab or click{' '}
+        <a style={{ cursor: 'pointer' }} onClick={() => setMinimized(false)}>
+          here
+        </a>{' '}
+        to reveal further controls that allow you to:
+        <ul>
+          <li>
+            change the date variable (currently{' '}
+            <b>{variableMetadata?.variable.displayName}</b>)
+          </li>
+          <li>toggle the temporary time window filter on/off</li>
+        </ul>
       </p>
       {minimized && !active && (
         <p>
           <b>
-            This control is currently disabled. To enable it, expand the panel
-            with the arrow tab and click on the toggle.
+            The timeline temporary filter is currently disabled. To enable it,
+            expand the panel and click on the toggle.
           </b>
         </p>
       )}
