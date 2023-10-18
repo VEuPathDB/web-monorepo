@@ -191,11 +191,20 @@ function BarplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   // use useVizConfig hook
   const [vizConfig, updateVizConfig] = useVizConfig(
@@ -632,7 +641,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     // The dependencies for needing to generate a new thumbnail
     [
       data,
@@ -652,7 +661,9 @@ function BarplotViz(props: VisualizationProps<Options>) {
   // these props are passed to either a single plot
   // or by FacetedPlot to each individual facet plot (where some will be overridden)
   const plotProps: BarplotProps = {
-    containerStyles: !isFaceted(data.value) ? plotContainerStyles : undefined,
+    containerStyles: !isFaceted(data.value)
+      ? finalPlotContainerStyles
+      : undefined,
     spacingOptions: !isFaceted(data.value) ? plotSpacingOptions : undefined,
     orientation: 'vertical',
     barLayout: 'group',
@@ -892,33 +903,37 @@ function BarplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={inputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          toggleStarredVariable={toggleStarredVariable}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
-          }
-          showMissingness={vizConfig.showMissingness}
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={inputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            toggleStarredVariable={toggleStarredVariable}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              computation.descriptor.type === 'pass'
+                ? onShowMissingnessChange
+                : undefined
+            }
+            showMissingness={vizConfig.showMissingness}
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value)}
         plotNode={plotNode}
@@ -926,6 +941,7 @@ function BarplotViz(props: VisualizationProps<Options>) {
         legendNode={showOverlayLegend ? legendNode : null}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

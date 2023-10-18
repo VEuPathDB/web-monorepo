@@ -5,7 +5,10 @@ import {
   usePromise,
   useStudyMetadata,
 } from '../../..';
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 import { volcanoPlotVisualization } from '../../visualizations/implementations/VolcanoPlotVisualization';
 import { ComputationConfigProps, ComputationPlugin } from '../Types';
 import { isEqual, partial } from 'lodash';
@@ -67,7 +70,7 @@ const Comparator = t.intersection([
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const DifferentialAbundanceConfig = t.type({
-  collectionVariable: VariableDescriptor,
+  collectionVariable: VariableCollectionDescriptor,
   comparator: Comparator,
   differentialAbundanceMethod: t.string,
 });
@@ -87,7 +90,13 @@ export const plugin: ComputationPlugin = {
   createDefaultConfiguration: () => undefined,
   isConfigurationValid: isCompleteDifferentialAbundanceConfig,
   visualizationPlugins: {
-    volcanoplot: volcanoPlotVisualization, // Must match name in data service and in visualization.tsx
+    volcanoplot: volcanoPlotVisualization.withOptions({
+      getPlotSubtitle(config) {
+        if (DifferentialAbundanceConfig.is(config)) {
+          return `Differential abundance computed using ${config.differentialAbundanceMethod} with default parameters.`;
+        }
+      },
+    }), // Must match name in data service and in visualization.tsx
   },
 };
 
@@ -118,7 +127,7 @@ function DifferentialAbundanceConfigDescriptionComponent({
   const updatedCollectionVariable = collections.find((collectionVar) =>
     isEqual(
       {
-        variableId: collectionVar.id,
+        collectionId: collectionVar.id,
         entityId: collectionVar.entityId,
       },
       collectionVariable
@@ -151,6 +160,11 @@ function DifferentialAbundanceConfigDescriptionComponent({
   );
 }
 
+// Include available methods in this array.
+// 10/10/23 - decided to only release Maaslin for the first roll-out. DESeq is still available
+// and we're poised to release it in the future.
+const DIFFERENTIAL_ABUNDANCE_METHODS = ['Maaslin']; // + 'DESeq' in the future
+
 export function DifferentialAbundanceConfiguration(
   props: ComputationConfigProps
 ) {
@@ -169,8 +183,10 @@ export function DifferentialAbundanceConfiguration(
   const filters = analysisState.analysis?.descriptor.subset.descriptor;
   const findEntityAndVariable = useFindEntityAndVariable(filters);
 
-  // For now, set the method to DESeq2. When we add the next method, we can just add it here (no api change!)
-  if (configuration) configuration.differentialAbundanceMethod = 'DESeq';
+  // Only releasing Maaslin for b66
+  if (configuration)
+    configuration.differentialAbundanceMethod =
+      DIFFERENTIAL_ABUNDANCE_METHODS[0];
 
   // Include known collection variables in this array.
   const collections = useCollectionVariables(studyMetadata.rootEntity);
@@ -190,17 +206,18 @@ export function DifferentialAbundanceConfiguration(
     );
 
   const collectionVarItems = useMemo(() => {
+    // Show all collections except for absolute abundance. Eventually this will be performed by
+    // the backend, similar to how we do visualization input var constraints.
     return collections
       .filter((collectionVar) => {
         return collectionVar.normalizationMethod
-          ? !collectionVar.isProportion &&
-              collectionVar.normalizationMethod === 'NULL' &&
-              !collectionVar.displayName?.includes('pathway')
-          : true;
+          ? collectionVar.normalizationMethod !== 'NULL' ||
+              collectionVar.displayName?.includes('pathway')
+          : true; // DIY may not have the normalizationMethod annotations, but we still want those datasets to pass.
       })
       .map((collectionVar) => ({
         value: {
-          variableId: collectionVar.id,
+          collectionId: collectionVar.id,
           entityId: collectionVar.entityId,
         },
         display:
@@ -212,7 +229,7 @@ export function DifferentialAbundanceConfiguration(
     if (configuration && 'collectionVariable' in configuration) {
       const selectedItem = collectionVarItems.find((item) =>
         isEqual(item.value, {
-          variableId: configuration.collectionVariable.variableId,
+          collectionId: configuration.collectionVariable.collectionId,
           entityId: configuration.collectionVariable.entityId,
         })
       );
