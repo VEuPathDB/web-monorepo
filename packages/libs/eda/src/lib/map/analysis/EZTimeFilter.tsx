@@ -22,6 +22,7 @@ import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { SiteInformationProps, mapNavigationBackgroundColor } from '..';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
+import { trimArray } from '../../core/utils/trim';
 
 interface Props {
   studyId: string;
@@ -48,7 +49,7 @@ export default function EZTimeFilter({
   updateConfig,
   siteInformation,
 }: Props) {
-  const findEntityAndVariable = useFindEntityAndVariable();
+  const findEntityAndVariable = useFindEntityAndVariable(filters); // filter sensitivity
   const theme = useUITheme();
   const [minimized, setMinimized] = useState(true);
 
@@ -105,15 +106,19 @@ export default function EZTimeFilter({
   // converting data to visx format
   const timeFilterData: EZTimeFilterDataProp[] = useMemo(
     () =>
-      !getTimeSliderData.pending && getTimeSliderData.value != null
-        ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
-            .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
-            // and a type guard filter to avoid any `!` assertions.
-            .filter(
-              (val): val is EZTimeFilterDataProp =>
-                val.x != null && val.y != null
-            )
-        : [],
+      trimArray(
+        // remove leading and trailing zeroes (subset sensitivity)
+        !getTimeSliderData.pending && getTimeSliderData.value != null
+          ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
+              .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
+              // and a type guard filter to avoid any `!` assertions.
+              .filter(
+                (val): val is EZTimeFilterDataProp =>
+                  val.x != null && val.y != null
+              )
+          : [],
+        ({ y }) => y === 0
+      ),
     [getTimeSliderData]
   );
 
