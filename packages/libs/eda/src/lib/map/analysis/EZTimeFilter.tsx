@@ -95,64 +95,59 @@ export default function EZTimeFilter({
         }
       );
 
+      const histo = distributionResponse.histogram;
+      // return the bin starts and the final bin end (with a fixed y value of zero)
       return {
-        x: distributionResponse.histogram.map((d) => d.binStart),
-        // conditionally set y-values to be 1 (with data) and 0 (no data)
-        y: distributionResponse.histogram.map((d) => (d.value >= 1 ? 1 : 0)),
+        x: histo
+          .map((d) => d.binStart)
+          .concat([histo[histo.length - 1].binEnd]),
+        // conditionally set y-values to be 1 (with data) and -1 (can't use zero as it will be trimmed off!)
+        y: histo.map<number>((d) => (d.value >= 1 ? 1 : 0)).concat([-1]),
       };
     }, [variableMetadata?.variable, variable, subsettingClient, filters])
   );
 
   // converting data to visx format
-  const timeFilterData: EZTimeFilterDataProp[] = useMemo(
-    () =>
-      trimArray(
-        // remove leading and trailing zeroes (subset sensitivity)
-        !getTimeSliderData.pending && getTimeSliderData.value != null
-          ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
-              .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
-              // and a type guard filter to avoid any `!` assertions.
-              .filter(
-                (val): val is EZTimeFilterDataProp =>
-                  val.x != null && val.y != null
-              )
-          : [],
-        ({ y }) => y === 0
-      ),
-    [getTimeSliderData]
-  );
+  const timeFilterData: EZTimeFilterDataProp[] = useMemo(() => {
+    const zeroTrimmed = trimArray(
+      // remove leading and trailing zeroes (subset sensitivity)
+      !getTimeSliderData.pending && getTimeSliderData.value != null
+        ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
+            .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
+            // and a type guard filter to avoid any `!` assertions.
+            .filter(
+              (val): val is EZTimeFilterDataProp =>
+                val.x != null && val.y != null
+            )
+        : [],
+      ({ y }) => y === 0
+    );
 
-  // for the (literal) edge case where a user-selected time range is no
-  // longer displayable on the timeline, cancel or trim the selectedRange
-  useEffect(() => {
-    if (timeFilterData != null && selectedRange != null) {
-      const leftmostBin = timeFilterData[0];
-      const rightmostBin = timeFilterData[timeFilterData.length - 1];
+    // for the (literal) edge case where a user-selected time range is no
+    // longer displayable on the timeline, cancel or trim the selectedRange
+
+    if (zeroTrimmed != null && selectedRange != null) {
+      const leftmostBin = zeroTrimmed[0];
+      const rightmostBin = zeroTrimmed[zeroTrimmed.length - 1];
       if (leftmostBin != null && rightmostBin != null) {
-        if (
-          selectedRange.end < leftmostBin.x ||
-          selectedRange.start > rightmostBin.x
-        ) {
-          updateConfig({ selectedRange: undefined, variable, active });
-        }
+        console.log({
+          leftmostBin,
+          rightmostBin,
+          selectedRange,
+          hello: 'worldy',
+        });
+
         if (selectedRange.start < leftmostBin.x) {
-          updateConfig({
-            selectedRange: { ...selectedRange, start: leftmostBin.x },
-            variable,
-            active,
-          });
+          zeroTrimmed.unshift({ x: selectedRange.start, y: 0 });
         }
-        console.log({ selectedRange, rightmostBin });
         if (selectedRange.end > rightmostBin.x) {
-          updateConfig({
-            selectedRange: { ...selectedRange, end: rightmostBin.x },
-            variable,
-            active,
-          });
+          zeroTrimmed.push({ x: selectedRange.end, y: 0 });
         }
       }
     }
-  }, [timeFilterData, selectedRange, variable, active]);
+
+    return zeroTrimmed;
+  }, [getTimeSliderData, selectedRange]);
 
   // set time slider width and y position
   const timeFilterWidth = 750;

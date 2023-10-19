@@ -91,19 +91,24 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   const onBrushChange = useMemo(
     () =>
       debounce((domain: Bounds | null) => {
-        if (!domain) return;
+        if (!domain || !data || data.length < 2) return;
 
         const { x0, x1 } = domain;
 
-        const selectedDomain = {
-          // x0 and x1 are millisecond value
-          start: millisecondTodate(x0),
-          end: millisecondTodate(x1),
-        };
+        // x0 and x1 are millisecond value
+        const startDate = millisecondTodate(x0);
+        const endDate = millisecondTodate(x1);
 
-        setSelectedRange(selectedDomain);
+        setSelectedRange({
+          // don't let the selected range go outside the data.x values
+          start: startDate < data[0].x ? data[0].x : startDate,
+          end:
+            endDate > data[data.length - 1].x
+              ? data[data.length - 1].x
+              : endDate,
+        });
       }, debounceRateMs),
-    [setSelectedRange]
+    [setSelectedRange, data]
   );
 
   // Cancel any pending onBrushChange requests when this component is unmounted
@@ -128,6 +133,8 @@ function EzTimeFilter(props: EzTimeFilterProps) {
       }),
     [data, xBrushMax]
   );
+
+  console.log({ extent: extent(data, getXData) });
 
   const yBrushScale = useMemo(
     () =>
@@ -154,13 +161,16 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   );
 
   // compute bar width manually as scaleTime is used for Bar chart
-  const barWidth = xBrushMax / data.length;
+  const barWidth = xBrushMax / (data.length - 1);
 
-  // this makes/fakes the brush as a controlled component
-  const brushKey =
-    initialBrushPosition != null
-      ? initialBrushPosition.start.x + ':' + initialBrushPosition.end.x
-      : 'no_brush';
+  // This makes/fakes the brush as a controlled component,
+  // but there is a problem with round-tripping the brush position
+  // to selectedRange dates and back to brush position. The brush
+  // expands by about 4 days each time one of the handles is moved.
+  // So we will have to revisit this if we want to have manual date inputs
+  // as well as the draggable brush.
+  const brushKey = 'uncontrolled';
+  // selectedRange != null ? selectedRange.start + ':' + selectedRange.end : 'no_brush';
 
   return (
     <div
@@ -210,7 +220,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             yScale={yBrushScale}
             width={xBrushMax}
             height={yBrushMax}
-            margin={margin}
             handleSize={8}
             // resize
             resizeTriggerAreas={resizeTriggerAreas}
