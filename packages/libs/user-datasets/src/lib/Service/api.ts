@@ -15,6 +15,7 @@ import {
 } from '../Utils/types';
 
 import { array, string, type } from 'io-ts';
+import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 export const VDI_SERVICE_BASE_URL = 'http://localhost:8080';
 const VDI_SERVICE = '/vdi-datasets';
@@ -127,17 +128,18 @@ export class UserDatasetApi extends FetchClientWithCredentials {
   };
 
   // QUESTION: VDI has an option to GET upload files and data files. Should we tweak UI to provide both options?
-  getUserDatasetFiles = (datasetId: number | string) => {
+  getUserDatasetFiles = async (datasetId: number | string) => {
     if (typeof datasetId !== 'number' && typeof datasetId !== 'string')
       throw new TypeError(
         `Can't build downloadUrl; invalid datasetId given (${datasetId}) [${typeof datasetId}]`
       );
-    return this.findUserRequestAuthKey().then((authKey) =>
-      window.open(
-        `${VDI_SERVICE_BASE_URL}${VDI_SERVICE}/${datasetId}/files/data?Auth-Key=${authKey}`,
-        '_self'
-      )
-    );
+    submitAsForm({
+      method: 'GET',
+      action: `${VDI_SERVICE_BASE_URL}${VDI_SERVICE}/${datasetId}/files/data`,
+      inputs: {
+        'Auth-Key': await this.findUserRequestAuthKey(),
+      },
+    });
   };
 }
 
