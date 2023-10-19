@@ -275,11 +275,20 @@ function LineplotViz(props: VisualizationProps<Options>) {
     toggleStarredVariable,
     totalCounts,
     filteredCounts,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -995,7 +1004,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [
       data,
       vizConfig.checkedLegendItems,
@@ -1027,7 +1036,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         : 'Y-axis',
     displayLegend: false,
     containerStyles: !isFaceted(data.value?.dataSetProcess)
-      ? plotContainerStyles
+      ? finalPlotContainerStyles
       : undefined,
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
@@ -1759,58 +1768,62 @@ function LineplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={inputs}
-          customSections={[
-            {
-              title: (
-                <>
-                  <span style={{ marginRight: '0.5em' }}>
-                    Y-axis aggregation{' '}
-                    {vizConfig.yAxisVariable
-                      ? categoricalMode
-                        ? '(categorical Y)'
-                        : '(continuous Y)'
-                      : ''}
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={inputs}
+            customSections={[
+              {
+                title: (
+                  <>
+                    <span style={{ marginRight: '0.5em' }}>
+                      Y-axis aggregation{' '}
+                      {vizConfig.yAxisVariable
+                        ? categoricalMode
+                          ? '(categorical Y)'
+                          : '(continuous Y)'
+                        : ''}
+                    </span>
+                    <HelpIcon children={aggregationHelp} />
+                  </>
+                ),
+                order: 75,
+                content: vizConfig.yAxisVariable ? (
+                  aggregationInputs
+                ) : (
+                  <span style={{ color: '#969696', fontWeight: 500 }}>
+                    First choose a Y-axis variable.
                   </span>
-                  <HelpIcon children={aggregationHelp} />
-                </>
-              ),
-              order: 75,
-              content: vizConfig.yAxisVariable ? (
-                aggregationInputs
-              ) : (
-                <span style={{ color: '#969696', fontWeight: 500 }}>
-                  First choose a Y-axis variable.
-                </span>
-              ),
-            },
-          ]}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          // this can be used to show and hide no data control
-          onShowMissingnessChange={
-            computation.descriptor.type === 'pass'
-              ? onShowMissingnessChange
-              : undefined
-          }
-          outputEntity={outputEntity}
-        />
+                ),
+              },
+            ]}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            // this can be used to show and hide no data control
+            onShowMissingnessChange={
+              computation.descriptor.type === 'pass'
+                ? onShowMissingnessChange
+                : undefined
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError error={data.error} outputSize={outputSize} />
-      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value?.dataSetProcess)}
         legendNode={showOverlayLegend ? legendNode : null}
@@ -1818,6 +1831,7 @@ function LineplotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );

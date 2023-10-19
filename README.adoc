@@ -1,5 +1,7 @@
 = web-monorepo
 
+Please check our project repos at https://github.com/VEuPathDB.
+
 == Prerequisites
 * `Node <=16.17.1`
 * Either a global installation of `yarn >=1.17.0`, or `volta >=1.1.0`
