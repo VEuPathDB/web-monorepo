@@ -154,6 +154,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedValues: configuration.selectedValues,
     binningMethod: configuration.binningMethod,
     dependentAxisLogScale: configuration.dependentAxisLogScale,
+    valueSpec: configuration.selectedPlotMode,
   });
 
   const continuousMarkerPreview = useMemo(() => {
@@ -324,6 +325,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     selectedValues,
     binningMethod,
     dependentAxisLogScale,
+    selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
   const markerData = useMarkerData({
     studyEntities,
@@ -335,6 +337,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     selectedValues,
     binningMethod,
     dependentAxisLogScale,
+    valueSpec: selectedPlotMode,
   });
 
   if (markerData.error) return <MapFloatingErrorDiv error={markerData.error} />;
@@ -395,6 +398,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     binningMethod: configuration.binningMethod,
     dependentAxisLogScale: configuration.dependentAxisLogScale,
     selectedValues: configuration.selectedValues,
+    valueSpec: configuration.selectedPlotMode,
   });
 
   const legendItems = markerData.legendItems;
@@ -445,6 +449,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     binningMethod,
     selectedValues,
     dependentAxisLogScale,
+    selectedPlotMode,
   } = props.configuration as BarPlotMarkerConfiguration;
   const markerDataResponse = useMarkerData({
     studyId: props.studyId,
@@ -456,6 +461,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     selectedValues,
     binningMethod,
     dependentAxisLogScale,
+    valueSpec: selectedPlotMode,
   });
   return (
     <MapTypeHeaderCounts

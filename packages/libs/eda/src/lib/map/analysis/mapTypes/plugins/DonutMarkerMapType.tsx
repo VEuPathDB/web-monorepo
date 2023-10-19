@@ -143,6 +143,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     selectedVariable: configuration.selectedVariable,
     binningMethod: configuration.binningMethod,
     selectedValues: configuration.selectedValues,
+    valueSpec: 'count',
   });
 
   const continuousMarkerPreview = useMemo(() => {
@@ -296,6 +297,7 @@ function MapLayerComponent(props: MapTypeMapLayerProps) {
     selectedVariable,
     selectedValues,
     binningMethod,
+    valueSpec: 'count',
   });
 
   if (markerDataResponse.error)
@@ -360,6 +362,7 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
     binningMethod,
     selectedVariable,
     selectedValues,
+    valueSpec: 'count',
   });
 
   const plugins = useStandaloneVizPlugins({
@@ -416,6 +419,7 @@ function MapTypeHeaderDetails(props: MapTypeMapLayerProps) {
     selectedVariable,
     selectedValues,
     binningMethod,
+    valueSpec: 'count',
   });
   return (
     <MapTypeHeaderCounts

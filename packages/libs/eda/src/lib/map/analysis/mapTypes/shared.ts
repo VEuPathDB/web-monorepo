@@ -172,6 +172,7 @@ export interface DistributionMarkerDataProps {
   selectedVariable: VariableDescriptor;
   selectedValues: string[] | undefined;
   binningMethod: DefaultOverlayConfigProps['binningMethod'];
+  valueSpec: StandaloneMapMarkersRequestParams['config']['valueSpec'];
 }
 
 export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
@@ -184,6 +185,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
     filters,
     studyEntities,
     selectedValues,
+    valueSpec,
   } = props;
 
   const dataClient = useDataClient();
@@ -222,7 +224,7 @@ export function useDistributionMarkerData(props: DistributionMarkerDataProps) {
       longitudeVariable,
       overlayConfig: overlayConfigResult.data,
       outputEntityId,
-      valueSpec: 'count',
+      valueSpec,
       viewport,
     },
   };
