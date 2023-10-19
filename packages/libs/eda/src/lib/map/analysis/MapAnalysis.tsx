@@ -167,6 +167,8 @@ function MapAnalysisImpl(props: ImplProps) {
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
   const history = useHistory();
+  const [hideVizInputsAndControls, setHideVizInputsAndControls] =
+    useState(false);
 
   // FIXME use the sharingUrl prop to construct this
   const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
@@ -401,6 +403,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
                 );
               },
@@ -429,6 +433,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
                 );
               },
@@ -455,6 +461,8 @@ function MapAnalysisImpl(props: ImplProps) {
                     geoConfigs={geoConfigs}
                     configuration={activeMarkerConfiguration}
                     updateConfiguration={updateMarkerConfigurations as any}
+                    hideVizInputsAndControls={hideVizInputsAndControls}
+                    setHideVizInputsAndControls={setHideVizInputsAndControls}
                   />
                 );
               },
@@ -745,6 +753,8 @@ function MapAnalysisImpl(props: ImplProps) {
           filtersIncludingViewport: filtersIncludingViewportAndTimeSlider,
           totalCounts,
           filteredCounts,
+          hideVizInputsAndControls,
+          setHideVizInputsAndControls,
         };
 
         return (

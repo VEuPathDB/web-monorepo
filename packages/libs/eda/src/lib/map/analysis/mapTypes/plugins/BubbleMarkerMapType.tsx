@@ -149,6 +149,7 @@ function BubbleMapConfigurationPanel(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
+          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
         />
       ),
     },
@@ -290,6 +291,8 @@ function BubbleLegends(props: MapTypeMapLayerProps) {
         filters={props.filtersIncludingViewport}
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
+        hideInputsAndControls={props.hideVizInputsAndControls}
+        setHideInputsAndControls={props.setHideVizInputsAndControls}
       />
     </>
   );

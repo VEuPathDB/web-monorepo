@@ -20,6 +20,8 @@ export interface MapTypeConfigPanelProps {
   geoConfigs: GeoConfig[];
   configuration: unknown;
   updateConfiguration: (configuration: unknown) => void;
+  hideVizInputsAndControls: boolean;
+  setHideVizInputsAndControls: (hide: boolean) => void;
 }
 
 export interface MapTypeMapLayerProps {
@@ -35,6 +37,8 @@ export interface MapTypeMapLayerProps {
   totalCounts: PromiseHookState<EntityCounts>;
   filteredCounts: PromiseHookState<EntityCounts>;
   filtersIncludingViewport: Filter[];
+  hideVizInputsAndControls: boolean;
+  setHideVizInputsAndControls: (hide: boolean) => void;
 }
 
 /**

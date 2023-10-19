@@ -9,6 +9,7 @@ import { GeoConfig } from '../../core/types/geoConfig';
 import { EntityCounts } from '../../core/hooks/entityCounts';
 import { VariableDescriptor } from '../../core/types/variable';
 import { Filter } from '../../core/types/filter';
+import { FilledButton } from '@veupathdb/coreui';
 import { DraggablePanel } from '@veupathdb/coreui/lib/components/containers';
 import { ComputationPlugin } from '../../core/components/computations/Types';
 
@@ -25,6 +26,8 @@ interface Props {
   filters: Filter[];
   zIndexForStackingContext: number;
   additionalRenderCondition?: () => void;
+  hideInputsAndControls: boolean;
+  setHideInputsAndControls: (value: boolean) => void;
 }
 
 export default function DraggableVisualization({
@@ -40,6 +43,8 @@ export default function DraggableVisualization({
   filters,
   zIndexForStackingContext = 10,
   additionalRenderCondition,
+  hideInputsAndControls,
+  setHideInputsAndControls,
 }: Props) {
   const { computation: activeComputation, visualization: activeViz } =
     analysisState.getVisualizationAndComputation(visualizationId) ?? {};
@@ -66,7 +71,11 @@ export default function DraggableVisualization({
       confineToParentContainer
       showPanelTitle
       isOpen
-      styleOverrides={{ zIndex: zIndexForStackingContext, resize: 'both' }}
+      styleOverrides={{
+        zIndex: zIndexForStackingContext,
+        resize: 'both',
+        overflow: 'hidden',
+      }}
       panelTitle={activeVizOverview?.displayName || ''}
       defaultPosition={{
         x: 535,
@@ -76,34 +85,71 @@ export default function DraggableVisualization({
     >
       <div
         style={{
-          // Initial height & width.
-          height: 547,
-          width: 779,
-          // This prevents the panel from collapsing aburdly.
-          minWidth: 400,
-          minHeight: 200,
+          position: 'relative',
+          width: '100%',
+          height: '100%',
         }}
       >
-        <FullScreenVisualization
-          analysisState={analysisState}
-          computation={activeComputation!}
-          visualizationPlugins={visualizationPlugins}
-          visualizationsOverview={app.visualizations}
-          geoConfigs={geoConfigs}
-          computationAppOverview={app}
-          filters={filters}
-          starredVariables={
-            analysisState.analysis?.descriptor.starredVariables ?? []
-          }
-          toggleStarredVariable={toggleStarredVariable}
-          totalCounts={totalCounts}
-          filteredCounts={filteredCounts}
-          isSingleAppMode
-          disableThumbnailCreation
-          id={activeViz.visualizationId}
-          actions={<></>}
-          plugins={plugins}
-        />
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            zIndex: 100,
+            padding: '0.5rem',
+          }}
+        >
+          <FilledButton
+            text={hideInputsAndControls ? 'Show controls' : 'Hide controls'}
+            onPress={() => setHideInputsAndControls(!hideInputsAndControls)}
+            size="small"
+            textTransform="none"
+          />
+        </div>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            overflow: 'auto',
+          }}
+        >
+          <div
+            style={{
+              // Initial height & width.
+              height: 547,
+              width: 779,
+              // This prevents the panel from collapsing aburdly.
+              minWidth: 400,
+              minHeight: 200,
+            }}
+          >
+            <FullScreenVisualization
+              analysisState={analysisState}
+              computation={activeComputation!}
+              visualizationPlugins={visualizationPlugins}
+              visualizationsOverview={app.visualizations}
+              geoConfigs={geoConfigs}
+              computationAppOverview={app}
+              filters={filters}
+              starredVariables={
+                analysisState.analysis?.descriptor.starredVariables ?? []
+              }
+              toggleStarredVariable={toggleStarredVariable}
+              totalCounts={totalCounts}
+              filteredCounts={filteredCounts}
+              isSingleAppMode
+              disableThumbnailCreation
+              id={activeViz.visualizationId}
+              actions={<></>}
+              plugins={plugins}
+              hideInputsAndControls={hideInputsAndControls}
+              plotContainerStyleOverrides={
+                hideInputsAndControls
+                  ? { border: 'none', boxShadow: 'none' }
+                  : undefined
+              }
+            />
+          </div>
+        </div>
       </div>
     </DraggablePanel>
   ) : null;

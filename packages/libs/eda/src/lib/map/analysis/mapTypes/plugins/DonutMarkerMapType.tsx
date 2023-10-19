@@ -1,3 +1,4 @@
+import React from 'react';
 import DonutMarker, {
   DonutMarkerProps,
   DonutMarkerStandalone,
@@ -262,6 +263,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
+          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
         />
       ),
     },
@@ -394,8 +396,9 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         filteredCounts={props.filteredCounts}
         toggleStarredVariable={toggleStarredVariable}
         filters={props.filtersIncludingViewport}
-        // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
+        hideInputsAndControls={props.hideVizInputsAndControls}
+        setHideInputsAndControls={props.setHideVizInputsAndControls}
       />
     </>
   );
@@ -548,17 +551,13 @@ const processRawMarkersData = (
               .reduce((sum, { count }) => (sum = sum + count), 0)
           : entityCount; // fallback if not
 
-      const commonMarkerProps = {
+      return {
         data: reorderedData,
         id: geoAggregateValue,
         key: geoAggregateValue,
         bounds,
         position,
         duration: defaultAnimationDuration,
-      };
-
-      return {
-        ...commonMarkerProps,
         markerLabel: kFormatter(count),
       };
     }

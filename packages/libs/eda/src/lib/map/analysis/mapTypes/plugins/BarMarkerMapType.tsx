@@ -18,8 +18,8 @@ import { getDefaultAxisRange } from '../../../../core/utils/computeDefaultAxisRa
 import { NumberRange } from '@veupathdb/components/lib/types/general';
 import { mFormatter } from '../../../../core/utils/big-number-formatters';
 import ChartMarker, {
-  ChartMarkerProps,
   ChartMarkerStandalone,
+  getChartMarkerDependentAxisRange,
 } from '@veupathdb/components/lib/map/ChartMarker';
 import {
   defaultAnimationDuration,
@@ -59,6 +59,7 @@ import MapVizManagement from '../../MapVizManagement';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { MapFloatingErrorDiv } from '../../MapFloatingErrorDiv';
 import { MapTypeHeaderCounts } from '../MapTypeHeaderCounts';
+import { ChartMarkerPropsWithCounts } from '../../hooks/standaloneMapMarkers';
 
 const displayName = 'Bar plots';
 
@@ -166,14 +167,25 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
       (data) => ({
         label: data.label,
         value: 0,
+        count: 0,
         ...(data.color ? { color: data.color } : {}),
       })
     );
+    /**
+     * In the chart marker's proportion mode, the values are pre-calculated proportion values. Using these pre-calculated proportion values results
+     * in an erroneous totalCount summation and some off visualizations in the marker previews. Since no axes/numbers are displayed in the marker
+     * previews, let's just overwrite the value property with the count property.
+     *
+     * NOTE: the donut preview doesn't have proportion mode and was working just fine, but now it's going to receive count data that it neither
+     * needs nor consumes.
+     */
     const finalData = previewMarkerData.markerProps.reduce(
       (prevData, currData) =>
         currData.data.map((data, index) => ({
           label: data.label,
-          value: data.value + prevData[index].value,
+          // here's the overwrite mentioned in the above comment
+          value: data.count + prevData[index].count,
+          count: data.count + prevData[index].count,
           ...('color' in prevData[index]
             ? { color: prevData[index].color }
             : 'color' in data
@@ -185,8 +197,12 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
     return (
       <ChartMarkerStandalone
         data={finalData}
-        markerLabel={mFormatter(finalData.reduce((p, c) => p + c.value, 0))}
+        markerLabel={mFormatter(finalData.reduce((p, c) => p + c.count, 0))}
         dependentAxisLogScale={dependentAxisLogScale}
+        dependentAxisRange={getChartMarkerDependentAxisRange(
+          finalData,
+          dependentAxisLogScale
+        )}
         {...sharedStandaloneMarkerProperties}
       />
     );
@@ -274,6 +290,7 @@ function ConfigPanelComponent(props: MapTypeConfigPanelProps) {
           plugins={plugins}
           geoConfigs={geoConfigs}
           mapType="bubble"
+          setHideVizInputsAndControls={props.setHideVizInputsAndControls}
         />
       ),
     },
@@ -415,6 +432,8 @@ function MapOverlayComponent(props: MapTypeMapLayerProps) {
         filters={props.filtersIncludingViewport}
         // onTouch={moveVizToTop}
         zIndexForStackingContext={2}
+        hideInputsAndControls={props.hideVizInputsAndControls}
+        setHideInputsAndControls={props.setHideVizInputsAndControls}
       />
     </>
   );
@@ -480,9 +499,10 @@ const processRawMarkersData = (
 
       const donutData =
         vocabulary && overlayValues && overlayValues.length
-          ? overlayValues.map(({ binLabel, value }) => ({
+          ? overlayValues.map(({ binLabel, value, count }) => ({
               label: binLabel,
-              value: value,
+              value,
+              count,
               color:
                 overlayType === 'categorical'
                   ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
@@ -506,6 +526,7 @@ const processRawMarkersData = (
                 donutData.find(({ label }) => label === overlayLabel) ?? {
                   label: fixLabelForOtherValues(overlayLabel),
                   value: 0,
+                  count: 0,
                 }
             )
           : // however, if there is no overlay data
@@ -535,7 +556,7 @@ const processRawMarkersData = (
         markerLabel: mFormatter(count),
         dependentAxisRange: defaultDependentAxisRange,
         dependentAxisLogScale,
-      } as ChartMarkerProps;
+      } as ChartMarkerPropsWithCounts;
     }
   );
 };

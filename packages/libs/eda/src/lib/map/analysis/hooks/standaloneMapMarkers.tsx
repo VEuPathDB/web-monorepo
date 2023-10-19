@@ -32,7 +32,10 @@ import { VariableDescriptor } from '../../../core/types/variable';
 import { useDeepValue } from '../../../core/hooks/immutability';
 import { UNSELECTED_DISPLAY_TEXT, UNSELECTED_TOKEN } from '../../constants';
 import { DonutMarkerProps } from '@veupathdb/components/lib/map/DonutMarker';
-import { ChartMarkerProps } from '@veupathdb/components/lib/map/ChartMarker';
+import {
+  ChartMarkerProps,
+  BaseMarkerData,
+} from '@veupathdb/components/lib/map/ChartMarker';
 import { BubbleMarkerProps } from '@veupathdb/components/lib/map/BubbleMarker';
 import { validateProportionValues } from '../MarkerConfiguration/BubbleMarkerConfigurationMenu';
 import _ from 'lodash';
@@ -80,12 +83,28 @@ export interface StandaloneMapMarkersProps {
   dependentAxisLogScale?: boolean;
 }
 
+/** We use the count data in the marker previews for continuous vars */
+interface DonutMarkerDataWithCounts extends BaseMarkerData {
+  count: number;
+}
+interface ChartMarkerDataWithCounts extends BaseMarkerData {
+  count: number;
+}
+
+export type DonutMarkerPropsWithCounts = Omit<DonutMarkerProps, 'data'> & {
+  data: DonutMarkerDataWithCounts[];
+};
+
+export type ChartMarkerPropsWithCounts = Omit<ChartMarkerProps, 'data'> & {
+  data: ChartMarkerDataWithCounts[];
+};
+
 // what this hook returns
 interface MapMarkers {
   /** the markers */
   markersData:
-    | DonutMarkerProps[]
-    | ChartMarkerProps[]
+    | DonutMarkerPropsWithCounts[]
+    | ChartMarkerPropsWithCounts[]
     | BubbleMarkerProps[]
     | undefined;
   /** `totalVisibleEntityCount` tells you how many entities are visible at a given viewport. But not necessarily with data for the overlay variable. */
@@ -600,9 +619,10 @@ const processRawMarkersData = (
 
       const donutData =
         vocabulary && overlayValues && overlayValues.length
-          ? overlayValues.map(({ binLabel, value }) => ({
+          ? overlayValues.map(({ binLabel, value, count }) => ({
               label: binLabel,
-              value: value,
+              value,
+              count,
               color:
                 overlayType === 'categorical'
                   ? ColorPaletteDefault[vocabulary.indexOf(binLabel)]
@@ -626,6 +646,7 @@ const processRawMarkersData = (
                 donutData.find(({ label }) => label === overlayLabel) ?? {
                   label: fixLabelForOtherValues(overlayLabel),
                   value: 0,
+                  count: 0,
                 }
             )
           : // however, if there is no overlay data

@@ -18,9 +18,16 @@ import {
   useStudyEntities,
   useStudyMetadata,
 } from '../../../hooks/workspace';
-import { findEntityAndVariable as findCollectionVariableEntityAndVariable } from '../../../utils/study-metadata';
+import {
+  findEntityAndDynamicData,
+  getTreeNode,
+  isVariableDescriptor,
+} from '../../../utils/study-metadata';
 
-import { VariableDescriptor } from '../../../types/variable';
+import {
+  VariableDescriptor,
+  VariableCollectionDescriptor,
+} from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { BirdsEyeView } from '../../BirdsEyeView';
@@ -243,7 +250,9 @@ interface Options
   getComputedYAxisDetails?(
     config: unknown
   ): ComputedVariableDetails | undefined;
-  getComputedOverlayVariable?(config: unknown): VariableDescriptor | undefined;
+  getComputedOverlayVariable?(
+    config: unknown
+  ): VariableDescriptor | VariableCollectionDescriptor | undefined;
   hideTrendlines?: boolean;
   hideLogScale?: boolean;
 }
@@ -263,12 +272,21 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
     totalCounts,
     filteredCounts,
     computeJobStatus,
+    hideInputsAndControls,
+    plotContainerStyleOverrides,
   } = props;
 
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = useStudyEntities(filters);
   const dataClient: DataClient = useDataClient();
+  const finalPlotContainerStyles = useMemo(
+    () => ({
+      ...plotContainerStyles,
+      ...plotContainerStyleOverrides,
+    }),
+    [plotContainerStyleOverrides]
+  );
 
   const [vizConfig, updateVizConfig] = useVizConfig(
     visualization.descriptor.configuration,
@@ -845,10 +863,14 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const legendTitle = useMemo(() => {
     if (computedOverlayVariableDescriptor) {
-      return findCollectionVariableEntityAndVariable(
-        entities,
-        computedOverlayVariableDescriptor
-      )?.variable.displayName;
+      return getTreeNode(
+        findEntityAndDynamicData(
+          entities,
+          isVariableDescriptor(computedOverlayVariableDescriptor)
+            ? computedOverlayVariableDescriptor
+            : undefined
+        )
+      )?.displayName;
     }
     return variableDisplayWithUnit(overlayVariable);
   }, [entities, overlayVariable, computedOverlayVariableDescriptor]);
@@ -1185,7 +1207,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
 
   const plotRef = useUpdateThumbnailEffect(
     updateThumbnail,
-    plotContainerStyles,
+    finalPlotContainerStyles,
     [
       data,
       vizConfig.checkedLegendItems,
@@ -1298,7 +1320,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
       },
     },
     containerStyles: !isFaceted(data.value?.dataSetProcess)
-      ? plotContainerStyles
+      ? finalPlotContainerStyles
       : undefined,
     spacingOptions: !isFaceted(data.value?.dataSetProcess)
       ? plotSpacingOptions
@@ -1907,7 +1929,9 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
           },
           {
             role: 'Y-axis',
-            required: !computedOverlayVariableDescriptor?.variableId,
+            required: isVariableDescriptor(computedOverlayVariableDescriptor)
+              ? !computedOverlayVariableDescriptor?.variableId
+              : false,
             display: dependentAxisLabel,
             variable:
               !computedOverlayVariableDescriptor && computedYAxisDescriptor
@@ -1919,7 +1943,10 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
             required: !!computedOverlayVariableDescriptor,
             display: legendTitle,
             variable:
-              computedOverlayVariableDescriptor ?? vizConfig.overlayVariable,
+              isVariableDescriptor(computedOverlayVariableDescriptor) &&
+              computedOverlayVariableDescriptor != null
+                ? computedOverlayVariableDescriptor
+                : vizConfig.overlayVariable,
           },
           ...additionalVariableCoverageTableRows,
           {
@@ -2026,29 +2053,31 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
-        <InputVariables
-          inputs={inputs}
-          entities={entities}
-          selectedVariables={selectedVariables}
-          variablesForConstraints={variablesForConstraints}
-          onChange={handleInputVariableChange}
-          constraints={dataElementConstraints}
-          dataElementDependencyOrder={dataElementDependencyOrder}
-          starredVariables={starredVariables}
-          toggleStarredVariable={toggleStarredVariable}
-          enableShowMissingnessToggle={
-            (overlayVariable != null || facetVariable != null) &&
-            data.value?.completeCasesAllVars !==
-              data.value?.completeCasesAxesVars
-          }
-          showMissingness={vizConfig.showMissingness}
-          onShowMissingnessChange={
-            options?.hideShowMissingnessToggle
-              ? undefined
-              : onShowMissingnessChange
-          }
-          outputEntity={outputEntity}
-        />
+        {!hideInputsAndControls && (
+          <InputVariables
+            inputs={inputs}
+            entities={entities}
+            selectedVariables={selectedVariables}
+            variablesForConstraints={variablesForConstraints}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+            enableShowMissingnessToggle={
+              (overlayVariable != null || facetVariable != null) &&
+              data.value?.completeCasesAllVars !==
+                data.value?.completeCasesAxesVars
+            }
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={
+              options?.hideShowMissingnessToggle
+                ? undefined
+                : onShowMissingnessChange
+            }
+            outputEntity={outputEntity}
+          />
+        )}
       </div>
 
       <PluginError
@@ -2071,11 +2100,13 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         ]}
       />
 
-      <OutputEntityTitle
-        entity={outputEntity}
-        outputSize={outputSize}
-        subtitle={plotSubtitle}
-      />
+      {!hideInputsAndControls && (
+        <OutputEntityTitle
+          entity={outputEntity}
+          outputSize={outputSize}
+          subtitle={plotSubtitle}
+        />
+      )}
       <LayoutComponent
         isFaceted={isFaceted(data.value?.dataSetProcess)}
         legendNode={showOverlayLegend ? legendNode : null}
@@ -2083,6 +2114,7 @@ function ScatterplotViz(props: VisualizationProps<Options>) {
         controlsNode={controlsNode}
         tableGroupNode={tableGroupNode}
         showRequiredInputsPrompt={!areRequiredInputsSelected}
+        hideControls={hideInputsAndControls}
       />
     </div>
   );
