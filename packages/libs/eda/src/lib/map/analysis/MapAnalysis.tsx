@@ -275,6 +275,8 @@ function MapAnalysisImpl(props: ImplProps) {
   const subsettingClient = useSubsettingClient();
   const geoConfig = geoConfigs[0];
   const history = useHistory();
+  const [hideVizInputsAndControls, setHideVizInputsAndControls] =
+    useState(false);
 
   // FIXME use the sharingUrl prop to construct this
   const sharingUrl = new URL(`../${analysisId}/import`, window.location.href)
@@ -932,6 +934,7 @@ function MapAnalysisImpl(props: ImplProps) {
                   plugins={plugins}
                   geoConfigs={geoConfigs}
                   mapType={activeMarkerConfigurationType}
+                  setHideVizInputsAndControls={setHideVizInputsAndControls}
                 />
               ),
             },
@@ -1482,6 +1485,8 @@ function MapAnalysisImpl(props: ImplProps) {
                       DraggablePanelIds.VIZ_PANEL
                     )}
                     additionalRenderCondition={areMapTypeAndActiveVizCompatible}
+                    hideInputsAndControls={hideVizInputsAndControls}
+                    setHideInputsAndControls={setHideVizInputsAndControls}
                   />
                 )}
 
