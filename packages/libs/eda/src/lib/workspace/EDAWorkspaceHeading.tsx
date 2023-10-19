@@ -6,7 +6,7 @@ import Path from 'path';
 import { H3, Table, FloatingButton } from '@veupathdb/coreui';
 
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { AnalysisNameDialog } from './AnalysisNameDialog';
+import AnalysisNameDialog from './AnalysisNameDialog';
 import AddIcon from '@material-ui/icons/Add';
 
 // Hooks
