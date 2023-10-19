@@ -1128,6 +1128,7 @@ function MapAnalysisImpl(props: ImplProps) {
                         ? () => setIsAnalysisNameDialogOpen(true)
                         : redirectToNewAnalysis
                     }
+                    textTransform="none"
                   />
                 </div>
               ) : (
