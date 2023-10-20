@@ -444,7 +444,12 @@ function VolcanoPlot(props: VolcanoPlotProps, ref: Ref<HTMLDivElement>) {
                       <span>{effectSizeLabel}:</span> {data?.effectSize}
                     </li>
                     <li>
-                      <span>P Value:</span> {data?.pValue}
+                      <span>P Value:</span>{' '}
+                      {data?.pValue
+                        ? Number(data.pValue) <= pValueFloor
+                          ? '<= ' + pValueFloor
+                          : data?.pValue
+                        : 'n/a'}
                     </li>
                     <li>
                       <span>Adjusted P Value:</span>{' '}

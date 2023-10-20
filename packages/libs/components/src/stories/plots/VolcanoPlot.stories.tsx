@@ -123,6 +123,8 @@ interface TemplateProps {
   comparisonLabels?: string[];
   truncationBarFill?: string;
   showSpinner?: boolean;
+  pValueFloor?: number;
+  adjustedPValueFloor?: number;
 }
 
 const Template: Story<TemplateProps> = (args) => {
@@ -131,22 +133,27 @@ const Template: Story<TemplateProps> = (args) => {
   const volcanoDataPoints: VolcanoPlotData | undefined = {
     effectSizeLabel: args.data?.volcanoplot.effectSizeLabel ?? '',
     statistics:
-      args.data?.volcanoplot.statistics.effectSize.map((effectSize, index) => {
-        return {
-          effectSize: effectSize,
-          pValue: args.data?.volcanoplot.statistics.pValue[index],
-          adjustedPValue:
-            args.data?.volcanoplot.statistics.adjustedPValue[index],
-          pointID: args.data?.volcanoplot.statistics.pointID[index],
+      args.data?.volcanoplot.statistics.effectSize
+        .map((effectSize, index) => {
+          return {
+            effectSize: effectSize,
+            pValue: args.data?.volcanoplot.statistics.pValue[index],
+            adjustedPValue:
+              args.data?.volcanoplot.statistics.adjustedPValue[index],
+            pointID: args.data?.volcanoplot.statistics.pointID[index],
+          };
+        })
+        .map((d) => ({
+          ...d,
+          pointIDs: d.pointID ? [d.pointID] : undefined,
           significanceColor: assignSignificanceColor(
-            Number(effectSize),
-            Number(args.data?.volcanoplot.statistics.pValue[index]),
+            Number(d.effectSize),
+            Number(d.pValue),
             args.significanceThreshold,
             args.effectSizeThreshold,
             significanceColors
           ),
-        };
-      }) ?? [],
+        })) ?? [],
   };
 
   const rawDataMinMaxValues = {
@@ -191,6 +198,8 @@ const Template: Story<TemplateProps> = (args) => {
     truncationBarFill: args.truncationBarFill,
     showSpinner: args.showSpinner,
     rawDataMinMaxValues,
+    pValueFloor: args.pValueFloor,
+    adjustedPValueFloor: args.pValueFloor,
   };
 
   return (
@@ -267,4 +276,19 @@ Empty.args = {
   significanceThreshold: 0.05,
   independentAxisRange: { min: -9, max: 9 },
   dependentAxisRange: { min: -1, max: 9 },
+};
+
+// With a pvalue floor
+export const FlooredPValues = Template.bind({});
+FlooredPValues.args = {
+  data: dataSetVolcano,
+  markerBodyOpacity: 0.8,
+  effectSizeThreshold: 1,
+  significanceThreshold: 0.01,
+  comparisonLabels: ['up in group a', 'up in group b'],
+  independentAxisRange: { min: -8, max: 9 },
+  dependentAxisRange: { min: -1, max: 9 },
+  showSpinner: false,
+  pValueFloor: 0.4,
+  adjustedPValueFloor: 0.4,
 };
