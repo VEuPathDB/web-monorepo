@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { ChevronRight, H6, Toggle } from '@veupathdb/coreui';
 import EzTimeFilterWidget, {
   EZTimeFilterDataProp,
@@ -16,13 +16,12 @@ import { VariableDescriptor } from '../../core/types/variable';
 import { SubsettingClient } from '../../core/api';
 import Spinner from '@veupathdb/components/lib/components/Spinner';
 import { useFindEntityAndVariable, Filter } from '../../core';
-import { zip } from 'lodash';
+import { dropRightWhile, dropWhile, zip } from 'lodash';
 import { AppState } from './appState';
 import { timeSliderVariableConstraints } from './config/eztimeslider';
 import { useUITheme } from '@veupathdb/coreui/lib/components/theming';
 import { SiteInformationProps, mapNavigationBackgroundColor } from '..';
 import HelpIcon from '@veupathdb/wdk-client/lib/Components/Icon/HelpIcon';
-import { trimArray } from '../../core/utils/trim';
 
 interface Props {
   studyId: string;
@@ -57,6 +56,30 @@ export default function EZTimeFilter({
   const variableMetadata = findEntityAndVariable(variable);
   const { siteName } = siteInformation;
 
+  // extend the back end range request if our selectedRange is outside of it
+  const extendedDisplayRange =
+    variableMetadata &&
+    (NumberVariable.is(variableMetadata.variable) ||
+      DateVariable.is(variableMetadata.variable))
+      ? selectedRange == null
+        ? {
+            start: variableMetadata.variable.distributionDefaults.rangeMin,
+            end: variableMetadata.variable.distributionDefaults.rangeMax,
+          }
+        : {
+            start:
+              variableMetadata.variable.distributionDefaults.rangeMin <
+              selectedRange.start
+                ? variableMetadata.variable.distributionDefaults.rangeMin
+                : selectedRange.start,
+            end:
+              variableMetadata.variable.distributionDefaults.rangeMax >
+              selectedRange.end
+                ? variableMetadata.variable.distributionDefaults.rangeMax
+                : selectedRange.end,
+          }
+      : undefined;
+
   // data request to distribution for time slider
   const getTimeSliderData = usePromise(
     useCallback(async () => {
@@ -64,6 +87,7 @@ export default function EZTimeFilter({
       if (
         variableMetadata == null ||
         variable == null ||
+        extendedDisplayRange == null ||
         !(
           NumberVariable.is(variableMetadata.variable) ||
           DateVariable.is(variableMetadata.variable)
@@ -73,10 +97,10 @@ export default function EZTimeFilter({
 
       const binSpec = {
         displayRangeMin:
-          variableMetadata.variable.distributionDefaults.rangeMin +
+          extendedDisplayRange.start +
           (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
         displayRangeMax:
-          variableMetadata.variable.distributionDefaults.rangeMax +
+          extendedDisplayRange.end +
           (variableMetadata.variable.type === 'date' ? 'T00:00:00Z' : ''),
         binWidth: variableMetadata.variable.distributionDefaults.binWidth ?? 1,
         binUnits:
@@ -101,16 +125,22 @@ export default function EZTimeFilter({
         x: histo
           .map((d) => d.binStart)
           .concat([histo[histo.length - 1].binEnd]),
-        // conditionally set y-values to be 1 (with data) and -1 (can't use zero as it will be trimmed off!)
-        y: histo.map<number>((d) => (d.value >= 1 ? 1 : 0)).concat([-1]),
+        // conditionally set y-values to be 1 (with data) and 0 (no data)
+        y: histo.map<number>((d) => (d.value >= 1 ? 1 : 0)).concat([0]),
       };
-    }, [variableMetadata?.variable, variable, subsettingClient, filters])
+    }, [
+      variableMetadata?.variable,
+      variable,
+      subsettingClient,
+      filters,
+      extendedDisplayRange?.start,
+      extendedDisplayRange?.end,
+    ])
   );
 
   // converting data to visx format
   const timeFilterData: EZTimeFilterDataProp[] = useMemo(() => {
-    const zeroTrimmed = trimArray(
-      // remove leading and trailing zeroes (subset sensitivity)
+    const restructured =
       !getTimeSliderData.pending && getTimeSliderData.value != null
         ? zip(getTimeSliderData.value.x, getTimeSliderData.value.y)
             .map(([xValue, yValue]) => ({ x: xValue, y: yValue }))
@@ -119,34 +149,32 @@ export default function EZTimeFilter({
               (val): val is EZTimeFilterDataProp =>
                 val.x != null && val.y != null
             )
-        : [],
-      ({ y }) => y === 0
+        : [];
+
+    // Remove leading and trailing zeroes (subset sensitivity) if they are outside
+    // the current selectedRange (if any).
+    // When removing the right hand side zeroes, operate with an offset of 1
+    // so as to leave one zero at the end of the data series.
+    // This is so that when brushing across the entire time slider, the rightmost
+    // date is the start of the next bin (or the end of the very final bin as added above).
+    const trimmed = dropRightWhile(
+      dropWhile(
+        restructured,
+        ({ x, y }) =>
+          y === 0 && (selectedRange == null || x < selectedRange.start)
+      ),
+      ({ x }, index, array) => {
+        if (index > 0) {
+          return (
+            array[index - 1].y === 0 &&
+            (selectedRange == null || x > selectedRange.end)
+          );
+        }
+        return false;
+      }
     );
 
-    // for the (literal) edge case where a user-selected time range is no
-    // longer displayable on the timeline, cancel or trim the selectedRange
-
-    if (zeroTrimmed != null && selectedRange != null) {
-      const leftmostBin = zeroTrimmed[0];
-      const rightmostBin = zeroTrimmed[zeroTrimmed.length - 1];
-      if (leftmostBin != null && rightmostBin != null) {
-        console.log({
-          leftmostBin,
-          rightmostBin,
-          selectedRange,
-          hello: 'worldy',
-        });
-
-        if (selectedRange.start < leftmostBin.x) {
-          zeroTrimmed.unshift({ x: selectedRange.start, y: 0 });
-        }
-        if (selectedRange.end > rightmostBin.x) {
-          zeroTrimmed.push({ x: selectedRange.end, y: 0 });
-        }
-      }
-    }
-
-    return zeroTrimmed;
+    return trimmed;
   }, [getTimeSliderData, selectedRange]);
 
   // set time slider width and y position

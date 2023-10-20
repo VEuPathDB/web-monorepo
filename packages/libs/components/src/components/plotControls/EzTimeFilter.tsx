@@ -91,16 +91,14 @@ function EzTimeFilter(props: EzTimeFilterProps) {
   const onBrushChange = useMemo(
     () =>
       debounce((domain: Bounds | null) => {
-        if (!domain || !data || data.length < 2) return;
-
+        if (!domain || data.length < 2) return;
         const { x0, x1 } = domain;
-
         // x0 and x1 are millisecond value
         const startDate = millisecondTodate(x0);
         const endDate = millisecondTodate(x1);
-
         setSelectedRange({
           // don't let the selected range go outside the data.x values
+          // TO DO: possibly don't need this...
           start: startDate < data[0].x ? data[0].x : startDate,
           end:
             endDate > data[data.length - 1].x
@@ -134,8 +132,6 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     [data, xBrushMax]
   );
 
-  console.log({ extent: extent(data, getXData) });
-
   const yBrushScale = useMemo(
     () =>
       scaleLinear({
@@ -153,24 +149,29 @@ function EzTimeFilter(props: EzTimeFilterProps) {
     () =>
       selectedRange != null
         ? {
-            start: { x: xBrushScale(new Date(selectedRange.start)) },
-            end: { x: xBrushScale(new Date(selectedRange.end)) },
+            // The +2 and -2 are a nasty hack that seems to solve a problem
+            // when we fake the controlled <Brush> component using the key prop.
+            // The issue is with the round-trip conversion of pixel/date/millisecond positions.
+            // The brush position is provided in pixel coordinates that we convert from YYYY-MM-DD.
+            // The onChange brush callback produces milliseconds since epoch.
+            // We convert that to YYYY-MM-DD when updating `selectedRange`.
+            // With no +2/-2 offset, the brush window widens by about 4 days (in the storybook story)
+            // at each end after is is manually adjusted. It does not seem to be timezone, leap year
+            // any other of the usual suspects.
+            // Let's hope the fix works in practice. It works with a timeslider only 300px wide
+            // so that seems hopeful.
+            start: { x: xBrushScale(new Date(selectedRange.start)) + 2 },
+            end: { x: xBrushScale(new Date(selectedRange.end)) - 2 },
           }
         : undefined,
     [selectedRange, xBrushScale]
   );
 
-  // compute bar width manually as scaleTime is used for Bar chart
-  const barWidth = xBrushMax / (data.length - 1);
-
-  // This makes/fakes the brush as a controlled component,
-  // but there is a problem with round-tripping the brush position
-  // to selectedRange dates and back to brush position. The brush
-  // expands by about 4 days each time one of the handles is moved.
-  // So we will have to revisit this if we want to have manual date inputs
-  // as well as the draggable brush.
-  const brushKey = 'uncontrolled';
-  // selectedRange != null ? selectedRange.start + ':' + selectedRange.end : 'no_brush';
+  // `brushKey` makes/fakes the brush as a controlled component,
+  const brushKey =
+    selectedRange != null
+      ? selectedRange.start + ':' + selectedRange.end
+      : 'no_brush';
 
   return (
     <div
@@ -185,11 +186,18 @@ function EzTimeFilter(props: EzTimeFilterProps) {
           {/* use Bar chart */}
           {data.map((d, i) => {
             const barHeight = yBrushMax - yBrushScale(getYData(d));
+            const x = xBrushScale(getXData(d));
+            // calculate the width using the next bin's date:
+            // subtract a constant to create separate bars for each bin
+            const barWidth =
+              i + 1 >= data.length
+                ? 0
+                : xBrushScale(getXData(data[i + 1])) - x - 1;
             return (
               <React.Fragment key={i}>
                 <Bar
                   key={`bar-${i.toString()}`}
-                  x={xBrushScale(getXData(d))}
+                  x={x}
                   // In SVG bar chart, y-coordinate increases downward, i.e.,
                   // y-coordinates of the top and bottom of the bars are 0 and yBrushMax, respectively
                   // Also, under current yBrushScale, dataY = 0 -> barHeight = 0; dataY = 1 -> barHeight = 60
@@ -200,7 +208,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
                   y={barHeight === 0 ? yBrushMax : (1 / 4) * yBrushMax}
                   height={(1 / 2) * barHeight}
                   // set the last data's barWidth to be 0 so that it does not overflow to dragging area
-                  width={i === data.length - 1 ? 0 : barWidth}
+                  width={barWidth}
                   fill={barColor}
                 />
               </React.Fragment>
@@ -221,7 +229,7 @@ function EzTimeFilter(props: EzTimeFilterProps) {
             width={xBrushMax}
             height={yBrushMax}
             handleSize={8}
-            // resize
+            margin={margin /* prevents brushing offset */}
             resizeTriggerAreas={resizeTriggerAreas}
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}

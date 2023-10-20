@@ -179,7 +179,7 @@ export function useStudyEntities(filters?: Filter[]) {
                             return diff >= 12;
                           }
                         }
-                      ) ?? 'year') as TimeUnit;
+                      ) ?? 'day') as TimeUnit;
 
                       return {
                         ...variable,
