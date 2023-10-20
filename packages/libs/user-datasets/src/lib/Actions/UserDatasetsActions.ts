@@ -447,8 +447,6 @@ export function loadUserDatasetList() {
             isInstalled: false,
             sharedWith: shares?.map((d) => ({
               user: d.userID,
-              time: 0,
-              email: 'email',
               userDisplayName: d.firstName + ' ' + d.lastName,
             })),
             questions: [],
@@ -483,36 +481,62 @@ export function loadUserDatasetDetail(id: string) {
 }
 
 export function shareUserDatasets(
-  userDatasetIds: number[],
+  userDatasetIds: string[],
   recipientUserIds: number[]
 ) {
   return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
-    return (
-      wdkService
-        // @ts-ignore
-        .editUserDatasetSharing('grant', userDatasetIds, recipientUserIds)
-        .then(
-          () =>
-            sharingSuccess({
-              add: {
-                [userDatasetIds[0]]: [
-                  {
-                    userDisplayName: 'My Name',
-                    user: userDatasetIds[0],
-                    email: 'email@email.com',
-                  },
-                ],
-              },
-              delete: { undefined },
-            }),
-          sharingError
+    const requests = [];
+    for (const datasetId of userDatasetIds) {
+      for (const recipientId of recipientUserIds) {
+        requests.push({ datasetId, recipientId });
+      }
+    }
+
+    const sharingSuccessObject = requests.reduce((prev, curr, index) => {
+      const { datasetId, recipientId } = curr;
+      if (datasetId in prev) {
+        return {
+          ...prev,
+          // @ts-ignore
+          [datasetId]: prev[datasetId].concat({
+            userDisplayName: `Name-${index}`,
+            user: recipientId,
+          }),
+        };
+      } else {
+        return {
+          ...prev,
+          [datasetId]: [
+            { userDisplayName: `Name-${index}`, user: recipientId },
+          ],
+        };
+      }
+    }, {});
+
+    return Promise.all(
+      // @ts-ignore
+      requests.map((req) =>
+        wdkService.editUserDatasetSharing(
+          'grant',
+          req.datasetId,
+          req.recipientId
         )
+      )
+    ).then(
+      // can editUserDatasetSharing return a 200 response w/ the recipient's userDisplayName and id?
+      () =>
+        sharingSuccess({
+          //@ts-ignore
+          add: sharingSuccessObject,
+          delete: { undefined },
+        }),
+      sharingError
     );
   });
 }
 
 export function unshareUserDatasets(
-  userDatasetIds: number[],
+  userDatasetIds: string[],
   recipientUserIds: number[]
 ) {
   return validateUserDatasetCompatibleThunk<SharingAction>(({ wdkService }) => {
@@ -528,8 +552,7 @@ export function unshareUserDatasets(
                 [userDatasetIds[0]]: [
                   {
                     userDisplayName: 'My Name',
-                    user: userDatasetIds[0],
-                    email: 'email@email.com',
+                    user: recipientUserIds[0],
                   },
                 ],
               },
@@ -630,9 +653,8 @@ function transformVdiResponseToLegacyResponse(
     sharedWith: shares
       ?.filter((d) => d.status === 'grant')
       .map((d) => ({
-        time: 0,
         userDisplayName: d.recipient.firstName + ' ' + d.recipient.lastName,
-        email: 'email',
+        // TODO: need a way to pass in the unique userId in details
         user: 378138370,
       })),
     questions: [],

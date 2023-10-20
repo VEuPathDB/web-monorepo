@@ -155,8 +155,8 @@ export class UserDatasetApi extends FetchClientWithCredentials {
 
   editUserDatasetSharing = (
     actionName: string,
-    userDatasetIds: number[] | string[],
-    recipientUserIds: number[]
+    userDatasetId: number | string,
+    recipientUserId: number
   ) => {
     const acceptableActions = ['grant', 'revoke'];
     if (!actionName || !acceptableActions.includes(actionName))
@@ -165,7 +165,7 @@ export class UserDatasetApi extends FetchClientWithCredentials {
       );
     return this.fetch(
       createJsonRequest({
-        path: `${VDI_SERVICE}/${userDatasetIds[0]}/shares/${recipientUserIds[0]}/offer`,
+        path: `${VDI_SERVICE}/${userDatasetId}/shares/${recipientUserId}/offer`,
         method: 'PUT',
         body: { action: actionName },
         transformResponse: noContent,

@@ -21,7 +21,7 @@ export interface UserDatasetMeta {
 export interface UserDatasetShare {
   time?: number;
   user: number;
-  email: string;
+  email?: string;
   userDisplayName: string;
 }
 

@@ -49,11 +49,11 @@ interface Props {
   userDatasets: UserDataset[];
   filterByProject: boolean;
   shareUserDatasets: (
-    userDatasetIds: number[],
+    userDatasetIds: string[],
     recipientUserIds: number[]
   ) => any;
   unshareUserDatasets: (
-    userDatasetIds: number[],
+    userDatasetIds: string[],
     recipientUserIds: number[]
   ) => any;
   removeUserDataset: (dataset: UserDataset) => any;
