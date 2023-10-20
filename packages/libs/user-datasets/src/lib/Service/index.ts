@@ -2,7 +2,6 @@ import { mapValues } from 'lodash';
 
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
-import { userDatasetsServiceWrappers } from './UserDatasetWrappers';
 import {
   ServiceConfig as UserDatasetUploadServiceConfig,
   makeUserDatasetUploadServiceWrappers,
@@ -21,9 +20,8 @@ export function wrapWdkService(
 
   const wrappersToInclude =
     serviceConfig == null
-      ? userDatasetsServiceWrappers
+      ? undefined
       : {
-          ...userDatasetsServiceWrappers,
           ...makeUserDatasetUploadServiceWrappers(serviceConfig),
         };
 

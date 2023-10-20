@@ -1,6 +1,13 @@
 import { zipWith } from 'lodash';
 
 import {
+  arrayOf,
+  number,
+  objectOf,
+  record,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
+
+import {
   createJsonRequest,
   FetchClientWithCredentials,
   ioTransformer,
@@ -19,6 +26,10 @@ import { submitAsForm } from '@veupathdb/wdk-client/lib/Utils/FormSubmitter';
 
 export const VDI_SERVICE_BASE_URL = 'http://localhost:8080';
 const VDI_SERVICE = '/vdi-datasets';
+
+const userIdsByEmailDecoder = record({
+  results: arrayOf(objectOf(number)),
+});
 
 export class UserDatasetApi extends FetchClientWithCredentials {
   getCurrentUserDatasets = (
@@ -160,6 +171,16 @@ export class UserDatasetApi extends FetchClientWithCredentials {
         transformResponse: noContent,
       })
     );
+  };
+
+  getUserIdsByEmail = (emails: string[]) => {
+    return this.wdkService.sendRequest(userIdsByEmailDecoder, {
+      path: '/user-id-query',
+      method: 'POST',
+      body: JSON.stringify({
+        emails,
+      }),
+    });
   };
 }
 
